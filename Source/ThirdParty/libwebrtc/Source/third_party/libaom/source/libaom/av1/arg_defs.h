@@ -240,6 +240,7 @@ typedef struct av1_codec_arg_definitions {
   arg_def_t enable_low_complexity_decode;
   arg_def_t screen_detection_mode;
   arg_def_t validate_hbd_input;
+  arg_def_t force_max_q;
 #endif  // CONFIG_AV1_ENCODER
 } av1_codec_arg_definitions_t;
 

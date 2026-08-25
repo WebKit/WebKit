@@ -1807,7 +1807,7 @@ static inline void setup_prune_ref_frame_mask(AV1_COMP *cpi) {
     // Disable all compound references
     cpi->prune_ref_frame_mask = (1 << MODE_CTX_REF_FRAMES) - (1 << REF_FRAMES);
   } else if (!cpi->sf.rt_sf.use_nonrd_pick_mode &&
-             cpi->sf.inter_sf.selective_ref_frame >= 2) {
+             cpi->sf.inter_sf.selective_ref_frame >= 1) {
     AV1_COMMON *const cm = &cpi->common;
     const int cur_frame_display_order_hint =
         cm->current_frame.display_order_hint;
@@ -2232,7 +2232,7 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
 
   int hash_table_created = 0;
   if (!is_stat_generation_stage(cpi) && av1_use_hash_me(cpi) &&
-      !cpi->sf.rt_sf.use_nonrd_pick_mode) {
+      (!cpi->sf.rt_sf.use_nonrd_pick_mode || cpi->sf.rt_sf.rt_use_intrabc)) {
     // TODO(any): move this outside of the recoding loop to avoid recalculating
     // the hash table.
     // add to hash table
@@ -2384,6 +2384,7 @@ static inline void encode_frame_internal(AV1_COMP *cpi) {
     memcpy(cm->lf.ref_deltas, cm->prev_frame->ref_deltas, REF_FRAMES);
     memcpy(cm->lf.mode_deltas, cm->prev_frame->mode_deltas, MAX_MODE_LF_DELTAS);
   }
+  cm->lf.mode_ref_delta_enabled = oxcf->algo_cfg.mode_ref_delta_enabled;
   memcpy(cm->cur_frame->ref_deltas, cm->lf.ref_deltas, REF_FRAMES);
   memcpy(cm->cur_frame->mode_deltas, cm->lf.mode_deltas, MAX_MODE_LF_DELTAS);
 

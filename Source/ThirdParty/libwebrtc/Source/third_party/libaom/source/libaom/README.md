@@ -477,7 +477,7 @@ command:
     $ gcloud storage objects add-iam-policy-binding \
          gs://aom-test-data/test-data-file-name \
          --member="allUsers" \
-         --role="roles/storage.objectViewer"
+         --role="roles/storage.legacyObjectReader"
 ~~~
 This command grants the `AllUsers` group READ access to the file named
 "test-data-file-name" in the `aom-test-data` bucket.

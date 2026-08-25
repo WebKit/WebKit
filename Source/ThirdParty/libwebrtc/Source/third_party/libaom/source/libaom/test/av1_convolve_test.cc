@@ -17,6 +17,7 @@
 #include "config/av1_rtcd.h"
 #include "config/aom_dsp_rtcd.h"
 #include "aom_ports/aom_timer.h"
+#include "aom_ports/sanitizer.h"
 #include "gtest/gtest.h"
 #include "test/acm_random.h"
 
@@ -1290,18 +1291,36 @@ class AV1Convolve2DTest : public AV1ConvolveTest<convolve_2d_func> {
     const InterpFilterParams *filter_params_y =
         av1_get_interp_filter_params_with_block_size(v_f, height);
     const uint8_t *input = FirstRandomInput8(GetParam());
+    const int input_stride = width;
+    // The following variables come from av1_convolve_2d_sr_c().
+    const int im_h = height + filter_params_y->taps - 1;
+    const int fo_vert = filter_params_y->taps / 2 - 1;
+    const int fo_horiz = filter_params_x->taps / 2 - 1;
+    // av1_convolve_2d_sr_sse2() overreads 7 bytes. av1_convolve_2d_sr_avx2()
+    // overreads 5 bytes. av1_convolve_2d_sr_avx512() overreads 8 bytes.
+    // av1_convolve_2d_sr_neon() overreads 2 bytes.
+    // av1_convolve_2d_sr_neon_dotprod() overreads 7 bytes.
+    const int kOverread = 8;
+    const int max_input_offset =
+        -fo_vert * input_stride + (im_h - 1) * input_stride + width - 1 -
+        fo_horiz + filter_params_x->taps - 1 + kOverread;
+    ASAN_POISON_MEMORY_REGION(input + max_input_offset + 1, 16);
+    const int min_input_offset = -fo_vert * input_stride - fo_horiz;
+    ASAN_POISON_MEMORY_REGION(input + min_input_offset - 16, 16);
     DECLARE_ALIGNED(32, uint8_t, reference[MAX_SB_SQUARE]);
     ConvolveParams conv_params1 =
         get_conv_params_no_round(0, 0, nullptr, 0, 0, 8);
-    av1_convolve_2d_sr_c(input, width, reference, kOutputStride, width, height,
-                         filter_params_x, filter_params_y, sub_x, sub_y,
+    av1_convolve_2d_sr_c(input, input_stride, reference, kOutputStride, width,
+                         height, filter_params_x, filter_params_y, sub_x, sub_y,
                          &conv_params1);
     DECLARE_ALIGNED(32, uint8_t, test[MAX_SB_SQUARE]);
     ConvolveParams conv_params2 =
         get_conv_params_no_round(0, 0, nullptr, 0, 0, 8);
-    GetParam().TestFunction()(input, width, test, kOutputStride, width, height,
-                              filter_params_x, filter_params_y, sub_x, sub_y,
-                              &conv_params2);
+    GetParam().TestFunction()(input, input_stride, test, kOutputStride, width,
+                              height, filter_params_x, filter_params_y, sub_x,
+                              sub_y, &conv_params2);
+    ASAN_UNPOISON_MEMORY_REGION(input + max_input_offset + 1, 16);
+    ASAN_UNPOISON_MEMORY_REGION(input + min_input_offset - 16, 16);
     AssertOutputBufferEq(reference, test, width, height);
   }
 
@@ -1383,6 +1402,11 @@ INSTANTIATE_TEST_SUITE_P(SVE2, AV1Convolve2DTest,
 #if HAVE_RVV
 INSTANTIATE_TEST_SUITE_P(RVV, AV1Convolve2DTest,
                          BuildLowbdParams(av1_convolve_2d_sr_rvv));
+#endif
+
+#if HAVE_AVX512 && CONFIG_HIGHWAY
+INSTANTIATE_TEST_SUITE_P(AVX512, AV1Convolve2DTest,
+                         BuildLowbdParams(av1_convolve_2d_sr_avx512));
 #endif
 
 /////////////////////////////////////////////////////////////////

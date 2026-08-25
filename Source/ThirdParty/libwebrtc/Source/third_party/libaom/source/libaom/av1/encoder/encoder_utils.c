@@ -751,7 +751,9 @@ void av1_set_size_dependent_vars(AV1_COMP *cpi, int *q, int *bottom_index,
       cpi->sf.hl_sf.static_segmentation)
     configure_static_seg_features(cpi);
 
-  if (cpi->oxcf.rc_cfg.over_shoot_pct == 0) *top_index = MAXQ;
+  if (cpi->oxcf.rc_cfg.force_max_q || cpi->oxcf.rc_cfg.over_shoot_pct == 0) {
+    *top_index = MAXQ;
+  }
   if (cpi->oxcf.rc_cfg.under_shoot_pct == 0) *bottom_index = MINQ;
 }
 
@@ -1155,11 +1157,16 @@ static void screen_content_tools_determination(
   const int psnr_diff_is_large = (psnr_diff > STRICT_PSNR_DIFF_THRESH);
   const int ratio_is_large =
       ((palette_ratio >= 0.0001) && ((psnr_diff / palette_ratio) > 4));
-  const int is_sc_encoding_much_better = (psnr_diff_is_large || ratio_is_large);
+  const int ratio_is_large_2 = ((psnr_diff > 0.1) && (palette_ratio >= 0.05) &&
+                                ((psnr_diff / palette_ratio) > 2));
+  const int is_sc_encoding_much_better =
+      (psnr_diff_is_large || ratio_is_large || ratio_is_large_2);
+
   if (is_sc_encoding_much_better) {
     // Use screen content tools, if we get coding gain.
     features->allow_screen_content_tools = 1;
-    features->allow_intrabc = cpi->intrabc_used;
+    features->allow_intrabc =
+        (allow_intrabc_orig_decision || cpi->intrabc_used);
     cpi->use_screen_content_tools = 1;
     cpi->is_screen_content_type = 1;
   } else {

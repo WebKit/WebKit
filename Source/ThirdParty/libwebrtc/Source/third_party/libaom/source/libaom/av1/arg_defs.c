@@ -727,5 +727,7 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
               "Check that input samples are within the valid range "
               "for the chosen bit depth with high bit depth encoding (0: "
               "disabled, 1: enabled (default))"),
+  .force_max_q =
+      ARG_DEF(NULL, "force-max-q", 1, "Force max Q used in vbr mode."),
 #endif  // CONFIG_AV1_ENCODER
 };

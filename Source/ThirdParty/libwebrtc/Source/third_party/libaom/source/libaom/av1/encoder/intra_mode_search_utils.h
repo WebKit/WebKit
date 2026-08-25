@@ -621,7 +621,8 @@ static inline int intra_mode_info_cost_uv(const AV1_COMP *cpi,
 // going through the whole txfm/quantize/itxfm process.
 static int64_t intra_model_rd(const AV1_COMMON *cm, MACROBLOCK *const x,
                               int plane, BLOCK_SIZE plane_bsize,
-                              TX_SIZE tx_size, int use_hadamard) {
+                              TX_SIZE tx_size, int use_hadamard,
+                              bool do_border_pad) {
   MACROBLOCKD *const xd = &x->e_mbd;
   const BitDepthInfo bd_info = get_bit_depth_info(xd);
   int row, col;
@@ -644,9 +645,10 @@ static int64_t intra_model_rd(const AV1_COMMON *cm, MACROBLOCK *const x,
       // used in this for loop, therefore we don't need to properly add offset
       // to the buffers.
       av1_subtract_block(
-          bd_info, txbh, txbw, p->src_diff, block_size_wide[plane_bsize],
+          x, txbh, txbw, p->src_diff, block_size_wide[plane_bsize],
           p->src.buf + (((row * p->src.stride) + col) << 2), p->src.stride,
-          pd->dst.buf + (((row * pd->dst.stride) + col) << 2), pd->dst.stride);
+          pd->dst.buf + (((row * pd->dst.stride) + col) << 2), pd->dst.stride,
+          plane, plane_bsize, col, row, DCT_DCT, do_border_pad);
       av1_quick_txfm(use_hadamard, tx_size, bd_info, p->src_diff,
                      block_size_wide[plane_bsize], p->coeff);
       satd_cost += aom_satd(p->coeff, tx_size_2d[tx_size]);
@@ -672,8 +674,8 @@ static inline int model_intra_yrd_and_prune(const AV1_COMP *const cpi,
   const TX_SIZE tx_size = AOMMIN(TX_32X32, max_txsize_lookup[bsize]);
   const int plane = 0;
   const AV1_COMMON *cm = &cpi->common;
-  const int64_t this_model_rd =
-      intra_model_rd(cm, x, plane, bsize, tx_size, /*use_hadamard=*/1);
+  const int64_t this_model_rd = intra_model_rd(
+      cm, x, plane, bsize, tx_size, /*use_hadamard=*/1, cpi->do_border_pad);
   if (*best_model_rd != INT64_MAX &&
       this_model_rd > *best_model_rd + (*best_model_rd >> 2)) {
     return 1;

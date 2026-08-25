@@ -9,11 +9,13 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "av1/common/x86/av1_inv_txfm_ssse3.h"
+
 #include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "av1/common/av1_inv_txfm1d_cfg.h"
-#include "av1/common/x86/av1_inv_txfm_ssse3.h"
+#include "av1/common/av1_inv_txfm2d.h"
 #include "av1/common/x86/av1_txfm_sse2.h"
 
 // TODO(venkatsanampudi@ittiam.com): move this to header file

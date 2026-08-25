@@ -67,17 +67,18 @@ const TestVideoParam kTestVectors[] = {
   { "niklas_1280_720_30.y4m", 8, AOM_IMG_FMT_I420, AOM_BITS_8, 0 },
 };
 
-// Params: test video, lf_control, aq mode, threads, tile columns.
+// Params: test video, lf_control, aq mode, threads, tile columns,
+// mode_ref_delta_enabled.
 class LFControlEndToEndTest
-    : public ::libaom_test::CodecTestWith5Params<TestVideoParam, int,
-                                                 unsigned int, int, int>,
+    : public ::libaom_test::CodecTestWith6Params<TestVideoParam, int,
+                                                 unsigned int, int, int, int>,
       public ::libaom_test::EncoderTest {
  protected:
   LFControlEndToEndTest()
       : EncoderTest(GET_PARAM(0)), test_video_param_(GET_PARAM(1)),
         lf_control_(GET_PARAM(2)), psnr_(0.0), nframes_(0),
         aq_mode_(GET_PARAM(3)), threads_(GET_PARAM(4)),
-        tile_columns_(GET_PARAM(5)) {}
+        tile_columns_(GET_PARAM(5)), mode_ref_delta_enabled_(GET_PARAM(6)) {}
 
   ~LFControlEndToEndTest() override = default;
 
@@ -123,6 +124,8 @@ class LFControlEndToEndTest
       encoder->Control(AV1E_SET_MV_COST_UPD_FREQ, 2);
       encoder->Control(AV1E_SET_DV_COST_UPD_FREQ, 2);
       encoder->Control(AV1E_SET_LOOPFILTER_CONTROL, lf_control_);
+      encoder->Control(AV1E_SET_MODE_REF_DELTA_ENABLED,
+                       mode_ref_delta_enabled_);
     }
   }
 
@@ -164,13 +167,18 @@ class LFControlEndToEndTest
   unsigned int aq_mode_;
   int threads_;
   int tile_columns_;
+  int mode_ref_delta_enabled_;
 };
 
 class LFControlEndToEndTestThreaded : public LFControlEndToEndTest {};
 
+class LFControlModeRefDeltaEndToEndTestTest : public LFControlEndToEndTest {};
+
 TEST_P(LFControlEndToEndTest, EndtoEndPSNRTest) { DoTest(); }
 
 TEST_P(LFControlEndToEndTestThreaded, EndtoEndPSNRTest) { DoTest(); }
+
+TEST_P(LFControlModeRefDeltaEndToEndTestTest, EndtoEndPSNRTest) { DoTest(); }
 
 TEST(LFControlGetterTest, NullptrInput) {
   int *lf_level = nullptr;
@@ -188,11 +196,20 @@ AV1_INSTANTIATE_TEST_SUITE(LFControlEndToEndTest,
                            ::testing::ValuesIn(kTestVectors),
                            ::testing::Range(0, 4),
                            ::testing::Values<unsigned int>(0, 3),
-                           ::testing::Values(1), ::testing::Values(1));
+                           ::testing::Values(1), ::testing::Values(1),
+                           ::testing::Values(1));
 
 AV1_INSTANTIATE_TEST_SUITE(LFControlEndToEndTestThreaded,
                            ::testing::ValuesIn(kTestVectors),
                            ::testing::Range(0, 4),
                            ::testing::Values<unsigned int>(0, 3),
-                           ::testing::Range(2, 5), ::testing::Range(2, 5));
+                           ::testing::Range(2, 5), ::testing::Range(2, 5),
+                           ::testing::Values(1));
+
+AV1_INSTANTIATE_TEST_SUITE(LFControlModeRefDeltaEndToEndTestTest,
+                           ::testing::Values(kTestVectors[0]),
+                           ::testing::Range(0, 4),
+                           ::testing::Values<unsigned int>(0, 3),
+                           ::testing::Values(1), ::testing::Values(1),
+                           ::testing::Values(0));
 }  // namespace

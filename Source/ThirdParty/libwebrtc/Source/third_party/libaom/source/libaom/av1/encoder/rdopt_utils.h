@@ -339,6 +339,67 @@ static inline void get_txb_dimensions(const MACROBLOCKD *xd, int plane,
   if (width) *width = txb_width;
 }
 
+/*!
+ * \brief Computes the effective dimensions of a block.
+ *
+ * \param[in]    x             Pointer to structure holding the data for the
+                               current encoding macroblock
+ * \param[in]    plane         The index of the current plane
+ * \param[in]    plane_bsize   Block size for the current plane
+ * \param[in]    blk_col       Column offset of the transform block, in MI units
+ * \param[in]    blk_row       Row offset of the transform block, in MI units
+ * \param[in]    cols          Transform block width, in pixels
+ * \param[in]    rows          Transform block height, in pixels
+ * \param[in]    clip_dims     If false, returns the original block dimensions
+ *                             If true, clips the block dimensions so they lie
+ *                             within the valid frame extent
+ * \param[out]   visible_cols  Pointer to the effective block width, in pixels
+ * \param[out]   visible_rows  Pointer to the effective block height, in pixels
+ *
+ * \return 1 if the block dimensions were clipped; otherwise 0.
+ */
+static inline int get_visible_dimensions(const MACROBLOCK *x, int plane,
+                                         BLOCK_SIZE plane_bsize, int blk_col,
+                                         int blk_row, int cols, int rows,
+                                         bool clip_dims, int *visible_cols,
+                                         int *visible_rows) {
+  if ((x->pix_to_bottom_edge >= 0 && x->pix_to_right_edge >= 0) || !clip_dims) {
+    if (visible_cols != NULL && visible_rows != NULL) {
+      *visible_rows = rows;
+      *visible_cols = cols;
+    }
+    return 0;
+  }
+  const MACROBLOCKD *const xd = &x->e_mbd;
+  const struct macroblockd_plane *const pd = &xd->plane[plane];
+  int valid_cols, valid_rows;
+
+  if (x->pix_to_bottom_edge >= 0) {
+    valid_rows = rows;
+  } else {
+    const int block_height = block_size_high[plane_bsize];
+    const int block_rows =
+        -ROUND_POWER_OF_TWO(-x->pix_to_bottom_edge, pd->subsampling_y) +
+        block_height;
+    valid_rows = clamp(block_rows - (blk_row << MI_SIZE_LOG2), 0, rows);
+  }
+
+  if (x->pix_to_right_edge >= 0) {
+    valid_cols = cols;
+  } else {
+    const int block_width = block_size_wide[plane_bsize];
+    const int block_cols =
+        -ROUND_POWER_OF_TWO(-x->pix_to_right_edge, pd->subsampling_x) +
+        block_width;
+    valid_cols = clamp(block_cols - (blk_col << MI_SIZE_LOG2), 0, cols);
+  }
+  if (visible_cols != NULL && visible_rows != NULL) {
+    *visible_cols = valid_cols;
+    *visible_rows = valid_rows;
+  }
+  return (valid_cols < cols || valid_rows < rows);
+}
+
 static inline int bsize_to_num_blk(BLOCK_SIZE bsize) {
   int num_blk = 1 << (num_pels_log2_lookup[bsize] - 2 * MI_SIZE_LOG2);
   return num_blk;
@@ -648,6 +709,51 @@ static inline void set_mode_eval_params(const struct AV1_COMP *cpi,
   txfm_params->mode_eval_type = mode_eval_type;
 }
 
+// Calculate global motion weight and transformation types for RD bias.
+// Returns the weight to apply to scaled RD cost for global motion blocks.
+static inline float get_global_mv_mode_bias(const AV1_COMP *cpi,
+                                            const MB_MODE_INFO *mbmi) {
+  if (cpi->sf.inter_sf.bias_gm_mode_rd_scale_pct <= 0.0f) return 0.0f;
+  if (cpi->common.features.cur_frame_force_integer_mv) return 0.0f;
+
+  assert(mbmi->mode == GLOBALMV || mbmi->mode == GLOBAL_GLOBALMV);
+
+  TransformationType ref_trans_type =
+      cpi->common.global_motion[mbmi->ref_frame[0]].wmtype;
+  if (is_global_mv_block(mbmi, ref_trans_type)) {
+    return cpi->sf.inter_sf.bias_gm_mode_rd_scale_pct / 100.0f;
+  }
+
+  if (has_second_ref(mbmi)) {
+    ref_trans_type = cpi->common.global_motion[mbmi->ref_frame[1]].wmtype;
+    if (is_global_mv_block(mbmi, ref_trans_type)) {
+      return cpi->sf.inter_sf.bias_gm_mode_rd_scale_pct / 100.0f;
+    }
+  }
+
+  return 0.0f;
+}
+
+static inline int increase_motion_mode_rate(const AV1_COMP *cpi,
+                                            const MB_MODE_INFO *this_mbmi,
+                                            int rate) {
+  const INTER_MODE_SPEED_FEATURES *const inter_sf = &cpi->sf.inter_sf;
+  double rd_bias_scale = 0.0;
+  if (this_mbmi->motion_mode == WARPED_CAUSAL) {
+    rd_bias_scale = inter_sf->bias_warp_mode_rd_scale_pct / 100.0;
+  } else if (this_mbmi->motion_mode == OBMC_CAUSAL) {
+    rd_bias_scale = inter_sf->bias_obmc_mode_rd_scale_pct / 100.0;
+  } else if (this_mbmi->mode == GLOBALMV ||
+             this_mbmi->mode == GLOBAL_GLOBALMV) {
+    rd_bias_scale = get_global_mv_mode_bias(cpi, this_mbmi);
+  }
+  if (rd_bias_scale <= 0.0) return rate;
+
+  int scaled_rate = rate;
+  scaled_rate += (int)(rd_bias_scale * rate + 0.5);
+  return scaled_rate;
+}
+
 // Similar to store_cfl_required(), but for use during the RDO process,
 // where we haven't yet determined whether this block uses CfL.
 static inline CFL_ALLOWED_TYPE store_cfl_required_rdo(const AV1_COMMON *cm,
@@ -677,10 +783,11 @@ static inline void init_sbuv_mode(MB_MODE_INFO *const mbmi) {
 
 // Store best mode stats for winner mode processing
 static inline void store_winner_mode_stats(
-    const AV1_COMMON *const cm, MACROBLOCK *x, const MB_MODE_INFO *mbmi,
+    const AV1_COMP *cpi, MACROBLOCK *x, const MB_MODE_INFO *mbmi,
     RD_STATS *rd_cost, RD_STATS *rd_cost_y, RD_STATS *rd_cost_uv,
     THR_MODES mode_index, uint8_t *color_map, BLOCK_SIZE bsize, int64_t this_rd,
     int multi_winner_mode_type, int txfm_search_done) {
+  const AV1_COMMON *const cm = &cpi->common;
   WinnerModeStats *winner_mode_stats = x->winner_mode_stats;
   int mode_idx = 0;
   int is_palette_mode = mbmi->palette_mode_info.palette_size[PLANE_TYPE_Y] > 0;
@@ -725,10 +832,12 @@ static inline void store_winner_mode_stats(
 
     winner_mode_stats[mode_idx].rd_cost = *rd_cost;
     if (txfm_search_done) {
-      winner_mode_stats[mode_idx].rate_y =
-          rd_cost_y->rate +
+      const int skip_rate =
           x->mode_costs
               .skip_txfm_cost[skip_ctx][rd_cost->skip_txfm || skip_txfm];
+      const int scaled_skip_rate =
+          increase_motion_mode_rate(cpi, mbmi, skip_rate);
+      winner_mode_stats[mode_idx].rate_y = rd_cost_y->rate + scaled_skip_rate;
       winner_mode_stats[mode_idx].rate_uv = rd_cost_uv->rate;
     }
   }

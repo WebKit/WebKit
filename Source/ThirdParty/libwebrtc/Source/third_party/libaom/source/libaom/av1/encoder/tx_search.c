@@ -127,21 +127,25 @@ int64_t av1_pixel_diff_dist(const MACROBLOCK *x, int plane, int blk_row,
                             const BLOCK_SIZE tx_bsize,
                             unsigned int *block_mse_q8) {
   int visible_rows, visible_cols;
-  const MACROBLOCKD *xd = &x->e_mbd;
-  get_txb_dimensions(xd, plane, plane_bsize, blk_row, blk_col, tx_bsize, NULL,
-                     NULL, &visible_cols, &visible_rows);
-  const int diff_stride = block_size_wide[plane_bsize];
-  const int16_t *diff = x->plane[plane].src_diff;
+  const int txb_cols = block_size_wide[tx_bsize];
+  const int txb_rows = block_size_high[tx_bsize];
+  get_visible_dimensions(x, plane, plane_bsize, blk_col, blk_row, txb_cols,
+                         txb_rows, /*clip_dims=*/true, &visible_cols,
+                         &visible_rows);
 
-  diff += ((blk_row * diff_stride + blk_col) << MI_SIZE_LOG2);
-  uint64_t sse =
-      aom_sum_squares_2d_i16(diff, diff_stride, visible_cols, visible_rows);
-  if (block_mse_q8 != NULL) {
-    if (visible_cols > 0 && visible_rows > 0)
+  uint64_t sse = 0;
+  if (visible_cols > 0 && visible_rows > 0) {
+    const int diff_stride = block_size_wide[plane_bsize];
+    const int16_t *diff = x->plane[plane].src_diff;
+
+    diff += ((blk_row * diff_stride + blk_col) << MI_SIZE_LOG2);
+    sse = aom_sum_squares_2d_i16(diff, diff_stride, visible_cols, visible_rows);
+    if (block_mse_q8 != NULL) {
       *block_mse_q8 =
           (unsigned int)((256 * sse) / (visible_cols * visible_rows));
-    else
-      *block_mse_q8 = UINT_MAX;
+    }
+  } else {
+    if (block_mse_q8 != NULL) *block_mse_q8 = 0;
   }
   return sse;
 }
@@ -153,17 +157,21 @@ static inline int64_t pixel_diff_stats(
     const BLOCK_SIZE plane_bsize, const BLOCK_SIZE tx_bsize,
     unsigned int *block_mse_q8, int64_t *per_px_mean, uint64_t *block_var) {
   int visible_rows, visible_cols;
-  const MACROBLOCKD *xd = &x->e_mbd;
-  get_txb_dimensions(xd, plane, plane_bsize, blk_row, blk_col, tx_bsize, NULL,
-                     NULL, &visible_cols, &visible_rows);
-  const int diff_stride = block_size_wide[plane_bsize];
-  const int16_t *diff = x->plane[plane].src_diff;
+  const int txb_cols = block_size_wide[tx_bsize];
+  const int txb_rows = block_size_high[tx_bsize];
+  get_visible_dimensions(x, plane, plane_bsize, blk_col, blk_row, txb_cols,
+                         txb_rows, /*clip_dims=*/true, &visible_cols,
+                         &visible_rows);
 
-  diff += ((blk_row * diff_stride + blk_col) << MI_SIZE_LOG2);
   uint64_t sse = 0;
-  int sum = 0;
-  sse = aom_sum_sse_2d_i16(diff, diff_stride, visible_cols, visible_rows, &sum);
   if (visible_cols > 0 && visible_rows > 0) {
+    const int diff_stride = block_size_wide[plane_bsize];
+    const int16_t *diff = x->plane[plane].src_diff;
+
+    diff += ((blk_row * diff_stride + blk_col) << MI_SIZE_LOG2);
+    int sum = 0;
+    sse =
+        aom_sum_sse_2d_i16(diff, diff_stride, visible_cols, visible_rows, &sum);
     double norm_factor = 1.0 / (visible_cols * visible_rows);
     int sign_sum = sum > 0 ? 1 : -1;
     // Conversion to transform domain
@@ -172,7 +180,9 @@ static inline int64_t pixel_diff_stats(
     *block_mse_q8 = (unsigned int)(norm_factor * (256 * sse));
     *block_var = (uint64_t)(sse - (uint64_t)(norm_factor * sum * sum));
   } else {
-    *block_mse_q8 = UINT_MAX;
+    *block_mse_q8 = 0;
+    *block_var = 0;
+    *per_px_mean = 0;
   }
   return sse;
 }
@@ -966,36 +976,8 @@ static inline void recon_intra(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
   }
 }
 
-static unsigned pixel_dist_visible_only(
-    const AV1_COMP *const cpi, const MACROBLOCK *x, const uint8_t *src,
-    const int src_stride, const uint8_t *dst, const int dst_stride,
-    const BLOCK_SIZE tx_bsize, int txb_rows, int txb_cols, int visible_rows,
-    int visible_cols) {
-  unsigned sse;
-
-  if (txb_rows == visible_rows && txb_cols == visible_cols) {
-    cpi->ppi->fn_ptr[tx_bsize].vf(src, src_stride, dst, dst_stride, &sse);
-    return sse;
-  }
-
-#if CONFIG_AV1_HIGHBITDEPTH
-  const MACROBLOCKD *xd = &x->e_mbd;
-  if (is_cur_buf_hbd(xd)) {
-    uint64_t sse64 = aom_highbd_sse_odd_size(src, src_stride, dst, dst_stride,
-                                             visible_cols, visible_rows);
-    return (unsigned int)ROUND_POWER_OF_TWO(sse64, (xd->bd - 8) * 2);
-  }
-#else
-  (void)x;
-#endif
-  sse = aom_sse_odd_size(src, src_stride, dst, dst_stride, visible_cols,
-                         visible_rows);
-  return sse;
-}
-
 // Compute the pixel domain distortion from src and dst on all visible 4x4s in
-// the
-// transform block.
+// the transform block.
 static unsigned pixel_dist(const AV1_COMP *const cpi, const MACROBLOCK *x,
                            int plane, const uint8_t *src, const int src_stride,
                            const uint8_t *dst, const int dst_stride,
@@ -1003,10 +985,12 @@ static unsigned pixel_dist(const AV1_COMP *const cpi, const MACROBLOCK *x,
                            const BLOCK_SIZE plane_bsize,
                            const BLOCK_SIZE tx_bsize) {
   int txb_rows, txb_cols, visible_rows, visible_cols;
-  const MACROBLOCKD *xd = &x->e_mbd;
+  txb_cols = block_size_wide[tx_bsize];
+  txb_rows = block_size_high[tx_bsize];
 
-  get_txb_dimensions(xd, plane, plane_bsize, blk_row, blk_col, tx_bsize,
-                     &txb_cols, &txb_rows, &visible_cols, &visible_rows);
+  get_visible_dimensions(x, plane, plane_bsize, blk_col, blk_row, txb_cols,
+                         txb_rows, /*clip_dims=*/true, &visible_cols,
+                         &visible_rows);
   assert(visible_rows > 0);
   assert(visible_cols > 0);
 
@@ -2118,6 +2102,17 @@ static void search_tx_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
   const bool predict_dc_block =
       txfm_params->predict_dc_level >= 1 && txw != 64 && txh != 64;
   int64_t per_px_mean = INT64_MAX;
+
+  int is_border_block = 0;
+  if (cpi->do_border_pad) {
+    is_border_block =
+        get_visible_dimensions(x, plane, plane_bsize, blk_col, blk_row, txw,
+                               txh, /*clip_dims=*/true, NULL, NULL);
+    if (is_border_block)
+      av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size,
+                       best_tx_type, cpi->do_border_pad);
+  }
+
   if (predict_dc_block) {
     predict_dc_only_block(x, plane, plane_bsize, tx_size, block, blk_row,
                           blk_col, best_rd_stats, &block_sse, &block_mse_q8,
@@ -2208,6 +2203,10 @@ static void search_tx_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
     if (plane == 0) xd->tx_type_map[tx_type_map_idx] = tx_type;
     RD_STATS this_rd_stats;
     av1_invalid_rd_stats(&this_rd_stats);
+
+    if (is_border_block)
+      av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size,
+                       tx_type, cpi->do_border_pad);
 
     if (!dc_only_blk)
       av1_xform(x, plane, block, blk_row, blk_col, plane_bsize, &txfm_param);
@@ -2380,6 +2379,10 @@ static void search_tx_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
         cpi, x, plane, plane_bsize, block, blk_row, blk_col, tx_size);
     best_rd_stats->sse = block_sse;
   }
+
+  if (is_border_block)
+    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size,
+                     best_tx_type, cpi->do_border_pad);
 
   // Intra mode needs decoded pixels such that the next transform block
   // can use them for prediction.
@@ -3083,7 +3086,8 @@ static inline void block_rd_txfm(int plane, int block, int blk_row, int blk_col,
 
   if (!is_inter) {
     av1_predict_intra_block_facade(cm, xd, plane, blk_col, blk_row, tx_size);
-    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size);
+    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size, DCT_DCT,
+                     false);
 #if !CONFIG_REALTIME_ONLY
     const TxfmSearchParams *const txfm_params = &x->txfm_search_params;
     if (txfm_params->enable_nn_prune_intra_tx_depths) {
@@ -3194,6 +3198,8 @@ int64_t av1_estimate_txfm_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
       QUANT_PARAM quant_param;
       av1_setup_xform(&cpi->common, x, tx_size, DCT_DCT, &txfm_param);
       av1_setup_quant(tx_size, 0, AV1_XFORM_QUANT_B, 0, &quant_param);
+      av1_subtract_txb(x, PLANE_TYPE_Y, bs, blk_col, blk_row, tx_size, DCT_DCT,
+                       cpi->do_border_pad);
 
       av1_xform(x, 0, i, blk_row, blk_col, bs, &txfm_param);
       av1_quant(x, 0, i, &txfm_param, &quant_param);
@@ -3709,7 +3715,7 @@ int av1_txfm_uvrd(const AV1_COMP *const cpi, MACROBLOCK *x, RD_STATS *rd_stats,
 
   if (is_inter) {
     for (int plane = 1; plane < MAX_MB_PLANE; ++plane)
-      av1_subtract_plane(x, plane_bsize, plane);
+      av1_subtract_plane(x, plane_bsize, plane, cpi->do_border_pad);
   }
 
   const TX_SIZE uv_tx_size = av1_get_tx_size(AOM_PLANE_U, xd);
@@ -3820,7 +3826,7 @@ int av1_txfm_search(const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
   rd_stats->rate = mode_rate;
 
   // cost and distortion
-  av1_subtract_plane(x, bsize, 0);
+  av1_subtract_plane(x, bsize, PLANE_TYPE_Y, cpi->do_border_pad);
   if (txfm_params->tx_mode_search_type == TX_MODE_SELECT &&
       !xd->lossless[mbmi->segment_id]) {
     av1_pick_recursive_tx_size_type_yrd(cpi, x, rd_stats_y, bsize, rd_thresh);
@@ -3856,7 +3862,14 @@ int av1_txfm_search(const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
     const int is_cost_valid_uv =
         av1_txfm_uvrd(cpi, x, rd_stats_uv, bsize, ref_best_chroma_rd);
     if (!is_cost_valid_uv) return 0;
-    av1_merge_rd_stats(rd_stats, rd_stats_uv);
+
+    if (cpi->sf.hl_sf.weighted_chroma_distortion) {
+      // Apply weighted distortion/SSE accumulation while merging uv rd stats to
+      // y rd stats.
+      av1_merge_rd_stats_weighted(rd_stats, rd_stats_uv);
+    } else {
+      av1_merge_rd_stats(rd_stats, rd_stats_uv);
+    }
   }
 
   int choose_skip_txfm = rd_stats->skip_txfm;

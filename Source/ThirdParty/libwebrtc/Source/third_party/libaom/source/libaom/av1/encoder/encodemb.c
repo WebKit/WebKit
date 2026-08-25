@@ -35,27 +35,147 @@
 #include "av1/encoder/rd.h"
 #include "av1/encoder/rdopt.h"
 
-void av1_subtract_block(BitDepthInfo bd_info, int rows, int cols, int16_t *diff,
+// Compute the average value of the wxh block.
+static inline int16_t avg_wxh_block_c(int16_t *diff, ptrdiff_t diff_stride,
+                                      int w, int h) {
+  assert(w > 0 && h > 0);
+  int32_t sum = 0;
+  for (int row = 0; row < h; ++row) {
+    for (int col = 0; col < w; ++col) {
+      sum += diff[row * diff_stride + col];
+    }
+  }
+  return (int16_t)DIVIDE_AND_ROUND_SIGNED(sum, w * h);
+}
+
+// Compute the row average value of the wxh block.
+static inline void avg_wxh_block_horiz_c(int16_t *diff, ptrdiff_t diff_stride,
+                                         int w, int h, int16_t *out) {
+  assert(w > 0 && h > 0);
+  for (int row = 0; row < h; ++row) {
+    int32_t sum = 0;
+    for (int col = 0; col < w; ++col) {
+      sum += diff[row * diff_stride + col];
+    }
+    out[row] = (int16_t)DIVIDE_AND_ROUND_SIGNED(sum, w);
+  }
+}
+
+// Compute the column average value of the wxh block.
+static inline void avg_wxh_block_vert_c(int16_t *diff, ptrdiff_t diff_stride,
+                                        int w, int h, int16_t *out) {
+  assert(w > 0 && h > 0);
+  for (int col = 0; col < w; ++col) {
+    int32_t sum = 0;
+    for (int row = 0; row < h; ++row) {
+      sum += diff[row * diff_stride + col];
+    }
+    out[col] = (int16_t)DIVIDE_AND_ROUND_SIGNED(sum, h);
+  }
+}
+
+// Fill the outside-frame part's residues with values derived from the in-frame
+// part's residues.
+static inline void fill_residue_outside_frame(
+    int16_t *diff, ptrdiff_t diff_stride, int tx_cols, int tx_rows,
+    int visible_tx_cols, int visible_tx_rows, TX_TYPE tx_type) {
+  const int complete_block_outside =
+      (visible_tx_cols == 0 || visible_tx_rows == 0);
+
+  if (tx_type <= IDTX) {
+    int16_t avg = 0;
+    if (tx_type != IDTX && !complete_block_outside)
+      avg =
+          avg_wxh_block_c(diff, diff_stride, visible_tx_cols, visible_tx_rows);
+
+    // Fill the remaining parts of the block with the average value
+    const int right_pixels = tx_cols - visible_tx_cols;
+    for (int i = 0; i < tx_rows; ++i) {
+      aom_memset16(diff + i * diff_stride + visible_tx_cols, avg, right_pixels);
+    }
+
+    for (int i = visible_tx_rows; i < tx_rows; ++i) {
+      aom_memset16(diff + i * diff_stride, avg, visible_tx_cols);
+    }
+  } else if (htx_tab[tx_type] == IDTX_1D) {
+    if (visible_tx_rows < tx_rows) {
+      int16_t out[64] = { 0 };
+      if (!complete_block_outside)
+        avg_wxh_block_vert_c(diff, diff_stride, visible_tx_cols,
+                             visible_tx_rows, out);
+
+      for (int j = 0; j < visible_tx_cols; j++) {
+        for (int i = visible_tx_rows; i < tx_rows; ++i) {
+          *(diff + i * diff_stride + j) = out[j];
+        }
+      }
+    }
+
+    const int right_pixels = tx_cols - visible_tx_cols;
+    if (right_pixels) {
+      for (int i = 0; i < tx_rows; ++i) {
+        memset(diff + i * diff_stride + visible_tx_cols, 0,
+               right_pixels * sizeof(*diff));
+      }
+    }
+  } else {
+    assert(vtx_tab[tx_type] == IDTX_1D);
+
+    const int right_pixels = tx_cols - visible_tx_cols;
+    if (right_pixels) {
+      int16_t out[64] = { 0 };
+      if (!complete_block_outside)
+        avg_wxh_block_horiz_c(diff, diff_stride, visible_tx_cols,
+                              visible_tx_rows, out);
+
+      for (int i = 0; i < visible_tx_rows; ++i) {
+        aom_memset16(diff + i * diff_stride + visible_tx_cols, out[i],
+                     right_pixels);
+      }
+    }
+
+    for (int i = visible_tx_rows; i < tx_rows; ++i) {
+      memset(diff + i * diff_stride, 0, tx_cols * sizeof(*diff));
+    }
+  }
+}
+
+void av1_subtract_block(const MACROBLOCK *x, int rows, int cols, int16_t *diff,
                         ptrdiff_t diff_stride, const uint8_t *src8,
                         ptrdiff_t src_stride, const uint8_t *pred8,
-                        ptrdiff_t pred_stride) {
+                        ptrdiff_t pred_stride, int plane,
+                        BLOCK_SIZE plane_bsize, int blk_col, int blk_row,
+                        TX_TYPE tx_type, bool do_border_pad) {
   assert(rows >= 4 && cols >= 4);
+  const MACROBLOCKD *const xd = &x->e_mbd;
+  BitDepthInfo bd_info = get_bit_depth_info(xd);
 #if CONFIG_AV1_HIGHBITDEPTH
   if (bd_info.use_highbitdepth_buf) {
     aom_highbd_subtract_block(rows, cols, diff, diff_stride, src8, src_stride,
                               pred8, pred_stride);
-    return;
+  } else {
+    aom_subtract_block(rows, cols, diff, diff_stride, src8, src_stride, pred8,
+                       pred_stride);
   }
-#endif
+#else
   (void)bd_info;
   aom_subtract_block(rows, cols, diff, diff_stride, src8, src_stride, pred8,
                      pred_stride);
+#endif
+  if (!do_border_pad) return;
+
+  int visible_cols, visible_rows;
+  const int is_border_block = get_visible_dimensions(
+      x, plane, plane_bsize, blk_col, blk_row, cols, rows,
+      /*clip_dims=*/true, &visible_cols, &visible_rows);
+  if (is_border_block)
+    fill_residue_outside_frame(diff, diff_stride, cols, rows, visible_cols,
+                               visible_rows, tx_type);
 }
 
 void av1_subtract_txb(MACROBLOCK *x, int plane, BLOCK_SIZE plane_bsize,
-                      int blk_col, int blk_row, TX_SIZE tx_size) {
-  MACROBLOCKD *const xd = &x->e_mbd;
-  const BitDepthInfo bd_info = get_bit_depth_info(xd);
+                      int blk_col, int blk_row, TX_SIZE tx_size,
+                      TX_TYPE tx_type, bool do_border_pad) {
   struct macroblock_plane *const p = &x->plane[plane];
   const struct macroblockd_plane *const pd = &x->e_mbd.plane[plane];
   const int diff_stride = block_size_wide[plane_bsize];
@@ -67,21 +187,22 @@ void av1_subtract_txb(MACROBLOCK *x, int plane, BLOCK_SIZE plane_bsize,
   uint8_t *src = &p->src.buf[(blk_row * src_stride + blk_col) << MI_SIZE_LOG2];
   int16_t *src_diff =
       &p->src_diff[(blk_row * diff_stride + blk_col) << MI_SIZE_LOG2];
-  av1_subtract_block(bd_info, tx1d_height, tx1d_width, src_diff, diff_stride,
-                     src, src_stride, dst, dst_stride);
+  av1_subtract_block(x, tx1d_height, tx1d_width, src_diff, diff_stride, src,
+                     src_stride, dst, dst_stride, plane, plane_bsize, blk_col,
+                     blk_row, tx_type, do_border_pad);
 }
 
-void av1_subtract_plane(MACROBLOCK *x, BLOCK_SIZE plane_bsize, int plane) {
+void av1_subtract_plane(MACROBLOCK *x, BLOCK_SIZE plane_bsize, int plane,
+                        bool do_border_pad) {
   struct macroblock_plane *const p = &x->plane[plane];
   const struct macroblockd_plane *const pd = &x->e_mbd.plane[plane];
   assert(plane_bsize < BLOCK_SIZES_ALL);
   const int bw = block_size_wide[plane_bsize];
   const int bh = block_size_high[plane_bsize];
-  const MACROBLOCKD *xd = &x->e_mbd;
-  const BitDepthInfo bd_info = get_bit_depth_info(xd);
 
-  av1_subtract_block(bd_info, bh, bw, p->src_diff, bw, p->src.buf,
-                     p->src.stride, pd->dst.buf, pd->dst.stride);
+  av1_subtract_block(x, bh, bw, p->src_diff, bw, p->src.buf, p->src.stride,
+                     pd->dst.buf, pd->dst.stride, plane, plane_bsize, 0, 0,
+                     DCT_DCT, do_border_pad);
 }
 
 int av1_optimize_b(const struct AV1_COMP *cpi, MACROBLOCK *x, int plane,
@@ -401,6 +522,9 @@ static void encode_block(int plane, int block, int blk_row, int blk_col,
   if (!mbmi->skip_mode) {
     tx_type = av1_get_tx_type(xd, pd->plane_type, blk_row, blk_col, tx_size,
                               cm->features.reduced_tx_set_used);
+
+    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size, tx_type,
+                     cpi->do_border_pad);
     TxfmParam txfm_param;
     QUANT_PARAM quant_param;
     const int use_trellis = is_trellis_used(args->enable_optimize_b, dry_run);
@@ -628,7 +752,7 @@ static void encode_block_pass1(int plane, int block, int blk_row, int blk_col,
 
 void av1_encode_sby_pass1(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize) {
   encode_block_pass1_args args = { cpi, x };
-  av1_subtract_plane(x, bsize, 0);
+  av1_subtract_plane(x, bsize, PLANE_TYPE_Y, cpi->do_border_pad);
   av1_foreach_transformed_block_in_plane(&x->e_mbd, bsize, 0,
                                          encode_block_pass1, &args);
 }
@@ -672,7 +796,6 @@ void av1_encode_sb(const struct AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
     const int step =
         tx_size_wide_unit[max_tx_size] * tx_size_high_unit[max_tx_size];
     av1_get_entropy_contexts(plane_bsize, pd, ctx.ta[plane], ctx.tl[plane]);
-    av1_subtract_plane(x, plane_bsize, plane);
     arg.ta = ctx.ta[plane];
     arg.tl = ctx.tl[plane];
     const BLOCK_SIZE max_unit_bsize =
@@ -723,12 +846,13 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
     *eob = 0;
     p->txb_entropy_ctx[block] = 0;
   } else {
-    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size);
-
     const ENTROPY_CONTEXT *a = &args->ta[blk_col];
     const ENTROPY_CONTEXT *l = &args->tl[blk_row];
     tx_type = av1_get_tx_type(xd, plane_type, blk_row, blk_col, tx_size,
                               cm->features.reduced_tx_set_used);
+    TX_TYPE primary_tx_type = is_stat_generation_stage(cpi) ? DCT_DCT : tx_type;
+    av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size,
+                     primary_tx_type, cpi->do_border_pad);
     TxfmParam txfm_param;
     QUANT_PARAM quant_param;
     const int use_trellis =

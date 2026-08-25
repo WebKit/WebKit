@@ -73,6 +73,22 @@ function(add_intrinsics_object_library flag opt_name target_to_update sources)
     target_compile_options(${target_name} PUBLIC ${flag})
   endif()
 
+  # GCC has a bug where it drops tokens after escaped quotes inside macros. This
+  # causes the static assert statement in HWY_BEFORE_NAMESPACE() and
+  # HWY_AFTER_NAMESPACE() to be dropped, leaving a stray semicolon which
+  # triggers -Wextra-semi. Since Highway requires a semicolon after these
+  # macros, and the bug resists mitigation within the macros, we work around it
+  # by disabling -Wextra-semi for GCC on Highway source files.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    foreach(source ${${sources}})
+      if(source MATCHES "hwy" AND source MATCHES "\\.cc$")
+        set_property(SOURCE ${source}
+                     APPEND
+                     PROPERTY COMPILE_FLAGS "-Wno-extra-semi")
+      endif()
+    endforeach()
+  endif()
+
   target_sources(aom PRIVATE $<TARGET_OBJECTS:${target_name}>)
   if(BUILD_SHARED_LIBS)
     target_sources(aom_static PRIVATE $<TARGET_OBJECTS:${target_name}>)

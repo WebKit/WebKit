@@ -421,7 +421,7 @@ static inline void idct32_stage9_sse4_1(__m128i *bf1, __m128i *out,
   addsub_sse4_1(bf1[15], bf1[16], out + 15, out + 16, clamp_lo, clamp_hi);
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     for (int i = 0; i < 32; i += 8) {
@@ -460,7 +460,7 @@ static void idct4x4_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  int log_range = get_log_range(bd, do_cols);
   __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u0, u1, u2, u3;
@@ -501,7 +501,7 @@ static void idct4x4_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   addsub_sse4_1(v1, v2, out + 1, out + 2, &clamp_lo, &clamp_hi);
 
   if (!do_cols) {
-    log_range = AOMMAX(16, bd + 6);
+    log_range = get_log_range_out(bd);
     clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -622,7 +622,7 @@ static void iadst4x4_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   out[3] = u3;
 
   if (!do_cols) {
-    const int log_range = AOMMAX(16, bd + 6);
+    const int log_range = get_log_range_out(bd);
     const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
     round_shift_4x4(out, out_shift);
@@ -711,7 +711,7 @@ static void iidentity4_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range = AOMMAX(16, bd + 6);
+    const int log_range = get_log_range_out(bd);
     const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
     round_shift_4x4(out, out_shift);
@@ -874,7 +874,7 @@ static void idct8x8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u0, u1, u2, u3, u4, u5, u6, u7;
@@ -974,7 +974,7 @@ static void idct8x8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     round_shift_8x8(out, out_shift);
@@ -999,7 +999,7 @@ static void iadst8x8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
   const __m128i kZero = _mm_setzero_si128();
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u[8], v[8], x;
@@ -1139,7 +1139,7 @@ static void iadst8x8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     out[12] = u[5];
     out[14] = _mm_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1288,7 +1288,7 @@ static void iadst8x8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     out[13] = u[5];
     out[15] = _mm_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1316,7 +1316,7 @@ static void iidentity8_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   out[7] = _mm_add_epi32(in[7], in[7]);
 
   if (!do_cols) {
-    const int log_range = AOMMAX(16, bd + 6);
+    const int log_range = get_log_range_out(bd);
     const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
     round_shift_4x4(out, out_shift);
@@ -1472,7 +1472,7 @@ static void idct8x8_low1_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const int32_t *cospi = cospi_arr(bit);
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i x;
@@ -1488,7 +1488,7 @@ static void idct8x8_low1_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   // stage 4
   // stage 5
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     clamp_lo = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     clamp_hi = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1523,7 +1523,7 @@ static void idct8x8_new_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u0, u1, u2, u3, u4, u5, u6, u7;
@@ -1611,7 +1611,7 @@ static void idct8x8_new_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   addsub_sse4_1(u3, u4, out + 3, out + 4, &clamp_lo, &clamp_hi);
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1695,7 +1695,7 @@ static void iadst8x8_low1_sse4_1(__m128i *in, __m128i *out, int bit,
     out[6] = u[5];
     out[7] = _mm_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1727,7 +1727,7 @@ static void iadst8x8_new_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
   const __m128i kZero = _mm_setzero_si128();
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u[8], v[8], x;
@@ -1866,7 +1866,7 @@ static void iadst8x8_new_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     out[6] = u[5];
     out[7] = _mm_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -1886,7 +1886,7 @@ static void idct16x16_low1_sse4_1(__m128i *in, __m128i *out, int bit,
   const int32_t *cospi = cospi_arr(bit);
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  int log_range = get_log_range(bd, do_cols);
   __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   // stage 0
@@ -1902,7 +1902,7 @@ static void idct16x16_low1_sse4_1(__m128i *in, __m128i *out, int bit,
   // stage 6
   // stage 7
   if (!do_cols) {
-    log_range = AOMMAX(16, bd + 6);
+    log_range = get_log_range_out(bd);
     clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
     if (out_shift != 0) {
@@ -1953,7 +1953,7 @@ static void idct16x16_low8_sse4_1(__m128i *in, __m128i *out, int bit,
   const __m128i cospim36 = _mm_set1_epi32(-cospi[36]);
   const __m128i cospim52 = _mm_set1_epi32(-cospi[52]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u[16], x, y;
@@ -2066,7 +2066,7 @@ static void idct16x16_low8_sse4_1(__m128i *in, __m128i *out, int bit,
   addsub_sse4_1(u[7], u[8], out + 7, out + 8, &clamp_lo, &clamp_hi);
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     round_shift_8x8(out, out_shift);
@@ -2223,7 +2223,7 @@ static void iadst16x16_low1_sse4_1(__m128i *in, __m128i *out, int bit,
     out[14] = v[9];
     out[15] = _mm_sub_epi32(zero, v[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -2276,7 +2276,7 @@ static void iadst16x16_low8_sse4_1(__m128i *in, __m128i *out, int bit,
   const __m128i cospim48 = _mm_set1_epi32(-cospi[48]);
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i zero = _mm_setzero_si128();
@@ -2540,7 +2540,7 @@ static void iadst16x16_low8_sse4_1(__m128i *in, __m128i *out, int bit,
     out[14] = u[9];
     out[15] = _mm_sub_epi32(zero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -2590,7 +2590,7 @@ static void idct16x16_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i cospim48 = _mm_set1_epi32(-cospi[48]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i u[16], v[16], x, y;
@@ -2735,7 +2735,7 @@ static void idct16x16_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     addsub_sse4_1(v[7], v[8], out + 7, out + 8, &clamp_lo, &clamp_hi);
 
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
       const __m128i clamp_hi_out =
           _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2775,7 +2775,7 @@ static void iadst16x16_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospim48 = _mm_set1_epi32(-cospi[48]);
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   const __m128i zero = _mm_setzero_si128();
@@ -3099,7 +3099,7 @@ static void iadst16x16_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     out[14] = v[9];
     out[15] = _mm_sub_epi32(zero, v[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -3146,7 +3146,7 @@ static void iidentity16_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range = AOMMAX(16, bd + 6);
+    const int log_range = get_log_range_out(bd);
     const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
     const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
     round_shift_8x8(out, out_shift);
@@ -3278,7 +3278,7 @@ static inline void idct64_stage11_sse4_1(__m128i *u, __m128i *out, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
 
@@ -3294,7 +3294,7 @@ static void idct64x64_low1_sse4_1(__m128i *in, __m128i *out, int bit,
                                   int do_cols, int bd, int out_shift) {
   const int32_t *cospi = cospi_arr(bit);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -3316,7 +3316,7 @@ static void idct64x64_low1_sse4_1(__m128i *in, __m128i *out, int bit,
     // stage 10
     // stage 11
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       clamp_lo = _mm_set1_epi32(-(1 << (log_range_out - 1)));
       clamp_hi = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
       if (out_shift != 0) {
@@ -3399,7 +3399,7 @@ static void idct64x64_low8_sse4_1(__m128i *in, __m128i *out, int bit,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -3630,7 +3630,7 @@ static void idct64x64_low16_sse4_1(__m128i *in, __m128i *out, int bit,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -3940,7 +3940,7 @@ static void idct64x64_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m128i rnding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -4400,7 +4400,7 @@ static void idct64x64_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
     }
 
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
       const __m128i clamp_hi_out =
           _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -4418,7 +4418,7 @@ static void idct32x32_low1_sse4_1(__m128i *in, __m128i *out, int bit,
   const int32_t *cospi = cospi_arr(bit);
   const __m128i cospi32 = _mm_set1_epi32(cospi[32]);
   const __m128i rounding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i bf1;
@@ -4441,7 +4441,7 @@ static void idct32x32_low1_sse4_1(__m128i *in, __m128i *out, int bit,
     bf1 = _mm_max_epi32(bf1, clamp_lo);
     bf1 = _mm_min_epi32(bf1, clamp_hi);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     clamp_lo = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     clamp_hi = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     if (out_shift != 0) {
@@ -4517,7 +4517,7 @@ static void idct32x32_low8_sse4_1(__m128i *in, __m128i *out, int bit,
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i rounding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i bf1[32];
@@ -4640,7 +4640,7 @@ static void idct32x32_low16_sse4_1(__m128i *in, __m128i *out, int bit,
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i rounding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i bf1[32];
@@ -4799,7 +4799,7 @@ static void idct32x32_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   const __m128i cospi16 = _mm_set1_epi32(cospi[16]);
   const __m128i cospim16 = _mm_set1_epi32(-cospi[16]);
   const __m128i rounding = _mm_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m128i clamp_lo = _mm_set1_epi32(-(1 << (log_range - 1)));
   const __m128i clamp_hi = _mm_set1_epi32((1 << (log_range - 1)) - 1);
   __m128i bf1[32], bf0[32];
@@ -5116,7 +5116,7 @@ static void idct32x32_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   addsub_sse4_1(bf0[15], bf0[16], out + 15, out + 16, &clamp_lo, &clamp_hi);
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     round_shift_8x8(out, out_shift);
@@ -5189,7 +5189,7 @@ static void iidentity32_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m128i clamp_lo_out = _mm_set1_epi32(-(1 << (log_range_out - 1)));
     const __m128i clamp_hi_out = _mm_set1_epi32((1 << (log_range_out - 1)) - 1);
     round_shift_8x8(out, out_shift);

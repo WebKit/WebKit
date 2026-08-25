@@ -244,6 +244,11 @@ typedef struct TplParams {
   YV12_BUFFER_CONFIG prev_gop_arf_src;
 
   /*!
+   * The buffer for the past gop's last frame's tpl recon.
+   */
+  YV12_BUFFER_CONFIG prev_gop_arf_tpl_recon;
+
+  /*!
    * Display order of the past gop's last frame.
    */
   int64_t prev_gop_arf_disp_order;

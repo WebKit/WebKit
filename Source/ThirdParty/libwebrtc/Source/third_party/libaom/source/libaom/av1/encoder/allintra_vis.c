@@ -349,8 +349,10 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
           xd, cm->seq_params->sb_size, cm->seq_params->enable_intra_edge_filter,
           block_size, block_size, tx_size, mode, 0, 0, FILTER_INTRA_MODES,
           mb_buffer, buf_stride, dst_buffer, dst_buffer_stride, 0, 0, 0);
-      av1_subtract_block(bd_info, block_size, block_size, src_diff, block_size,
-                         mb_buffer, buf_stride, dst_buffer, dst_buffer_stride);
+      av1_subtract_block(x, block_size, block_size, src_diff, block_size,
+                         mb_buffer, buf_stride, dst_buffer, dst_buffer_stride,
+                         PLANE_TYPE_Y, bsize, 0, 0, DCT_DCT,
+                         cpi->do_border_pad);
       av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
       int intra_cost = aom_satd(coeff, coeff_count);
       if (intra_cost < best_intra_cost) {
@@ -363,8 +365,9 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
         xd, cm->seq_params->sb_size, cm->seq_params->enable_intra_edge_filter,
         block_size, block_size, tx_size, best_mode, 0, 0, FILTER_INTRA_MODES,
         mb_buffer, buf_stride, dst_buffer, dst_buffer_stride, 0, 0, 0);
-    av1_subtract_block(bd_info, block_size, block_size, src_diff, block_size,
-                       mb_buffer, buf_stride, dst_buffer, dst_buffer_stride);
+    av1_subtract_block(x, block_size, block_size, src_diff, block_size,
+                       mb_buffer, buf_stride, dst_buffer, dst_buffer_stride,
+                       PLANE_TYPE_Y, bsize, 0, 0, DCT_DCT, cpi->do_border_pad);
     av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
 
     const struct macroblock_plane *const p = &x->plane[0];

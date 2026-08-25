@@ -94,7 +94,7 @@ static inline void compute_global_motion_for_ref_frame(
   int gm_erroradv_tr_level = cpi->sf.gm_sf.gm_erroradv_tr_level;
   bool mem_alloc_failed = false;
 
-  assert(gm_erroradv_tr_level < 2);
+  assert(gm_erroradv_tr_level < 3);
   // Select the best model based on fractional error reduction.
   // By initializing this to erroradv_tr, the same logic which is used to
   // select the best model will automatically filter out any model which

@@ -64,7 +64,7 @@ static void grain_table_entry_read(FILE *file,
                          "Unable to read entry params. Read %d != 12",
                          num_read);
     }
-    if (!fscanf(file, "\tsY %d ", &pars->num_y_points)) {
+    if (1 != fscanf(file, "\tsY %d ", &pars->num_y_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num y points");
     }
@@ -75,7 +75,7 @@ static void grain_table_entry_read(FILE *file,
                            "Unable to read y scaling points");
       }
     }
-    if (!fscanf(file, "\n\tsCb %d", &pars->num_cb_points)) {
+    if (1 != fscanf(file, "\n\tsCb %d", &pars->num_cb_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num cb points");
     }
@@ -86,7 +86,7 @@ static void grain_table_entry_read(FILE *file,
                            "Unable to read cb scaling points");
       }
     }
-    if (!fscanf(file, "\n\tsCr %d", &pars->num_cr_points)) {
+    if (1 != fscanf(file, "\n\tsCr %d", &pars->num_cr_points)) {
       aom_internal_error(error_info, AOM_CODEC_ERROR,
                          "Unable to read num cr points");
     }
@@ -296,13 +296,14 @@ aom_codec_err_t aom_film_grain_table_read(
                            "Unable to allocate grain table entry");
       }
       memset(entry, 0, sizeof(*entry));
-      grain_table_entry_read(file, error_info, entry);
       entry->next = NULL;
 
       if (prev_entry) prev_entry->next = entry;
       if (!t->head) t->head = entry;
       t->tail = entry;
       prev_entry = entry;
+
+      grain_table_entry_read(file, error_info, entry);
     }
   }
 

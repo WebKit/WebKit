@@ -267,6 +267,8 @@ class BuildCompDiffwtdMaskD16Test
 
     const int in_precision =
         bd + 2 * FILTER_BITS - conv_params.round_0 - conv_params.round_1 + 2;
+    ASSERT_GT(in_precision, 0);
+    ASSERT_LE(in_precision, 18);
 
     for (int i = 0; i < MAX_SB_SQUARE; i++) {
       src0[i] = rnd_.Rand16() & ((1 << in_precision) - 1);
@@ -308,6 +310,8 @@ class BuildCompDiffwtdMaskD16Test
 
     const int in_precision =
         bd + 2 * FILTER_BITS - conv_params.round_0 - conv_params.round_1 + 2;
+    ASSERT_GT(in_precision, 0);
+    ASSERT_LE(in_precision, 18);
 
     for (int i = 0; i < MAX_SB_SQUARE; i++) {
       src0[i] = rnd_.Rand16() & ((1 << in_precision) - 1);

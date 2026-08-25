@@ -1,0 +1,126 @@
+Name: libyuv
+URL: https://chromium.googlesource.com/libyuv/libyuv/
+Version: N/A
+Update Mechanism: Manual
+Revision: dfaf7534e0e536f7e5ef8ddd7326797bd09b8622
+License: BSD-3-Clause
+License File: LICENSE
+Shipped in Chromium: no
+Security Critical: yes
+
+Description:
+libyuv is an open source project that includes YUV conversion and scaling
+functionality.
+
+The optimized scaler in libyuv is used in multiple resolution encoder example,
+which down-samples the original input video (f.g. 1280x720) a number of times
+in order to encode multiple resolution bit streams.
+
+Local Modifications:
+
+diff --git a/third_party/libyuv/source/cpu_id.cc b/third_party/libyuv/source/cpu_id.cc
+index fe89452b7..72a7fb82f 100644
+--- a/third_party/libyuv/source/cpu_id.cc
++++ b/third_party/libyuv/source/cpu_id.cc
+@@ -108,7 +108,7 @@ void CpuId(int eax, int ecx, int* cpu_info) {
+ //  }
+ // For VS2013 and earlier 32 bit, the _xgetbv(0) optimizer produces bad code.
+ // https://code.google.com/p/libyuv/issues/detail?id=529
+-#if defined(_M_IX86) && (_MSC_VER < 1900)
++#if defined(_M_IX86) && defined(_MSC_VER) && (_MSC_VER < 1900)
+ #pragma optimize("g", off)
+ #endif
+ #if (defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || \
+@@ -129,7 +129,7 @@ int GetXCR0() {
+ #define GetXCR0() 0
+ #endif  // defined(_M_IX86) || defined(_M_X64) ..
+ // Return optimization to previous setting.
+-#if defined(_M_IX86) && (_MSC_VER < 1900)
++#if defined(_M_IX86) && defined(_MSC_VER) && (_MSC_VER < 1900)
+ #pragma optimize("g", on)
+ #endif
+diff --git a/third_party/libyuv/source/row_common.cc b/third_party/libyuv/source/row_common.cc
+index 79aed5c787..b0add63a6e 100644
+--- a/third_party/libyuv/source/row_common.cc
++++ b/third_party/libyuv/source/row_common.cc
+@@ -37,7 +37,7 @@ extern "C" {
+ // llvm x86 is poor at ternary operator, so use branchless min/max.
+
+ #define USE_BRANCHLESS 1
+-#if USE_BRANCHLESS
++#if defined(USE_BRANCHLESS)
+ static __inline int32_t clamp0(int32_t v) {
+   return -(v >= 0) & v;
+ }
+@@ -460,7 +460,7 @@ static __inline int RGB2xToV(uint16_t r, uint16_t g, uint16_t b) {
+
+ // ARGBToY_C and ARGBToUV_C
+ // Intel version mimic SSE/AVX which does 2 pavgb
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+
+ #define MAKEROWY(NAME, R, G, B, BPP)                                         \
+   void NAME##ToYRow_C(const uint8_t* src_argb0, uint8_t* dst_y, int width) { \
+@@ -602,7 +602,7 @@ static __inline int RGB2xToVJ(uint16_t r, uint16_t g, uint16_t b) {
+
+ // ARGBToYJ_C and ARGBToUVJ_C
+ // Intel version mimic SSE/AVX which does 2 pavgb
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+ #define MAKEROWYJ(NAME, R, G, B, BPP)                                         \
+   void NAME##ToYJRow_C(const uint8_t* src_argb0, uint8_t* dst_y, int width) { \
+     int x;                                                                    \
+@@ -766,7 +766,7 @@ void RGB565ToUVRow_C(const uint8_t* src_rgb565,
+     g3 = (g3 << 2) | (g3 >> 4);
+     r3 = (r3 << 3) | (r3 >> 2);
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(AVGB(b0, b2), AVGB(b1, b3));
+     uint8_t ag = AVGB(AVGB(g0, g2), AVGB(g1, g3));
+     uint8_t ar = AVGB(AVGB(r0, r2), AVGB(r1, r3));
+@@ -800,7 +800,7 @@ void RGB565ToUVRow_C(const uint8_t* src_rgb565,
+     g2 = (g2 << 2) | (g2 >> 4);
+     r2 = (r2 << 3) | (r2 >> 2);
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(b0, b2);
+     uint8_t ag = AVGB(g0, g2);
+     uint8_t ar = AVGB(r0, r2);
+@@ -850,7 +850,7 @@ void ARGB1555ToUVRow_C(const uint8_t* src_argb1555,
+     g3 = (g3 << 3) | (g3 >> 2);
+     r3 = (r3 << 3) | (r3 >> 2);
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(AVGB(b0, b2), AVGB(b1, b3));
+     uint8_t ag = AVGB(AVGB(g0, g2), AVGB(g1, g3));
+     uint8_t ar = AVGB(AVGB(r0, r2), AVGB(r1, r3));
+@@ -884,7 +884,7 @@ void ARGB1555ToUVRow_C(const uint8_t* src_argb1555,
+     g2 = (g2 << 3) | (g2 >> 2);
+     r2 = (r2 << 3) | (r2 >> 2);
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(b0, b2);
+     uint8_t ag = AVGB(g0, g2);
+     uint8_t ar = AVGB(r0, r2);
+@@ -934,7 +934,7 @@ void ARGB4444ToUVRow_C(const uint8_t* src_argb4444,
+     g3 = (g3 << 4) | g3;
+     r3 = (r3 << 4) | r3;
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(AVGB(b0, b2), AVGB(b1, b3));
+     uint8_t ag = AVGB(AVGB(g0, g2), AVGB(g1, g3));
+     uint8_t ar = AVGB(AVGB(r0, r2), AVGB(r1, r3));
+@@ -968,7 +968,7 @@ void ARGB4444ToUVRow_C(const uint8_t* src_argb4444,
+     g2 = (g2 << 4) | g2;
+     r2 = (r2 << 4) | r2;
+
+-#if LIBYUV_ARGBTOUV_PAVGB
++#if defined(LIBYUV_ARGBTOUV_PAVGB)
+     uint8_t ab = AVGB(b0, b2);
+     uint8_t ag = AVGB(g0, g2);
+     uint8_t ar = AVGB(r0, r2);

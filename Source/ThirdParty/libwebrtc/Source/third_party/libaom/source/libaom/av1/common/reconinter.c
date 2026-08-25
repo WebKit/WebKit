@@ -19,7 +19,6 @@
 
 #include "aom/aom_integer.h"
 #include "aom_dsp/blend.h"
-#include "aom_ports/aom_once.h"
 
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
@@ -125,39 +124,8 @@ void av1_make_inter_predictor(const uint8_t *src, int src_stride, uint8_t *dst,
   }
 }
 
-static const uint8_t wedge_master_oblique_odd[MASK_MASTER_SIZE] = {
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  2,  6,  18,
-  37, 53, 60, 63, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-};
-static const uint8_t wedge_master_oblique_even[MASK_MASTER_SIZE] = {
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  4,  11, 27,
-  46, 58, 62, 63, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-};
-static const uint8_t wedge_master_vertical[MASK_MASTER_SIZE] = {
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  7,  21,
-  43, 57, 62, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-};
-
-static inline void shift_copy(const uint8_t *src, uint8_t *dst, int shift,
-                              int width) {
-  if (shift >= 0) {
-    memcpy(dst + shift, src, width - shift);
-    memset(dst, src[0], shift);
-  } else {
-    shift = -shift;
-    memcpy(dst, src + shift, width - shift);
-    memset(dst + width - shift, src[width - 1], shift);
-  }
-}
-
 /* clang-format off */
-DECLARE_ALIGNED(16, static uint8_t,
+DECLARE_ALIGNED(16, static const uint8_t,
                 wedge_signflip_lookup[BLOCK_SIZES_ALL][MAX_WEDGE_TYPES]) = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },  // not used
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },  // not used
@@ -184,21 +152,15 @@ DECLARE_ALIGNED(16, static uint8_t,
 };
 /* clang-format on */
 
-// [negative][direction]
-DECLARE_ALIGNED(
-    16, static uint8_t,
-    wedge_mask_obl[2][WEDGE_DIRECTIONS][MASK_MASTER_SIZE * MASK_MASTER_SIZE]);
-
-// 4 * MAX_WEDGE_SQUARE is an easy to compute and fairly tight upper bound
-// on the sum of all mask sizes up to an including MAX_WEDGE_SQUARE.
-DECLARE_ALIGNED(16, static uint8_t,
-                wedge_mask_buf[2 * MAX_WEDGE_TYPES * 4 * MAX_WEDGE_SQUARE]);
-
-DECLARE_ALIGNED(16, static uint8_t,
-                smooth_interintra_mask_buf[INTERINTRA_MODES][BLOCK_SIZES_ALL]
-                                          [MAX_WEDGE_SQUARE]);
-
-static wedge_masks_type wedge_masks[BLOCK_SIZES_ALL][2];
+// The wedge / inter-intra mask buffers used to be writable .data populated
+// by init_all_wedge_masks() at runtime, which gave every process its own
+// private COW copy. They are now precomputed at codegen time (see
+// tools/gen_wedge_masks_data.py) and included here as const data so they
+// live in .rdata and are shared across processes.
+//
+// `wedge_masks` stores byte offsets into `wedge_mask_buf` (not pointers) to
+// avoid loader relocations that would otherwise dirty the .rdata pages.
+#include "av1/common/wedge_masks_data.inc"
 
 static const wedge_code_type wedge_codebook_16_hgtw[16] = {
   { WEDGE_OBLIQUE27, 4, 4 },  { WEDGE_OBLIQUE63, 4, 4 },
@@ -267,24 +229,11 @@ const wedge_params_type av1_wedge_params_lookup[BLOCK_SIZES_ALL] = {
   { 0, NULL, NULL, NULL },
 };
 
-static const uint8_t *get_wedge_mask_inplace(int wedge_index, int neg,
-                                             BLOCK_SIZE sb_type) {
-  const uint8_t *master;
-  const int bh = block_size_high[sb_type];
-  const int bw = block_size_wide[sb_type];
-  const wedge_code_type *a =
-      av1_wedge_params_lookup[sb_type].codebook + wedge_index;
-  int woff, hoff;
-  const uint8_t wsignflip =
-      av1_wedge_params_lookup[sb_type].signflip[wedge_index];
-
-  assert(wedge_index >= 0 && wedge_index < get_wedge_types_lookup(sb_type));
-  woff = (a->x_offset * bw) >> 3;
-  hoff = (a->y_offset * bh) >> 3;
-  master = wedge_mask_obl[neg ^ wsignflip][a->direction] +
-           MASK_MASTER_STRIDE * (MASK_MASTER_SIZE / 2 - hoff) +
-           MASK_MASTER_SIZE / 2 - woff;
-  return master;
+const uint8_t *av1_get_contiguous_soft_mask(int8_t wedge_index,
+                                            int8_t wedge_sign,
+                                            BLOCK_SIZE sb_type) {
+  return wedge_mask_buf +
+         av1_wedge_params_lookup[sb_type].masks[wedge_sign][wedge_index];
 }
 
 const uint8_t *av1_get_compound_type_mask(
@@ -446,81 +395,8 @@ void av1_build_compound_diffwtd_mask_highbd_c(
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static inline void init_wedge_master_masks(void) {
-  int i, j;
-  const int w = MASK_MASTER_SIZE;
-  const int h = MASK_MASTER_SIZE;
-  const int stride = MASK_MASTER_STRIDE;
-  // Note: index [0] stores the masters, and [1] its complement.
-  // Generate prototype by shifting the masters
-  int shift = h / 4;
-  for (i = 0; i < h; i += 2) {
-    shift_copy(wedge_master_oblique_even,
-               &wedge_mask_obl[0][WEDGE_OBLIQUE63][i * stride], shift,
-               MASK_MASTER_SIZE);
-    shift--;
-    shift_copy(wedge_master_oblique_odd,
-               &wedge_mask_obl[0][WEDGE_OBLIQUE63][(i + 1) * stride], shift,
-               MASK_MASTER_SIZE);
-    memcpy(&wedge_mask_obl[0][WEDGE_VERTICAL][i * stride],
-           wedge_master_vertical,
-           MASK_MASTER_SIZE * sizeof(wedge_master_vertical[0]));
-    memcpy(&wedge_mask_obl[0][WEDGE_VERTICAL][(i + 1) * stride],
-           wedge_master_vertical,
-           MASK_MASTER_SIZE * sizeof(wedge_master_vertical[0]));
-  }
-
-  for (i = 0; i < h; ++i) {
-    for (j = 0; j < w; ++j) {
-      const int msk = wedge_mask_obl[0][WEDGE_OBLIQUE63][i * stride + j];
-      wedge_mask_obl[0][WEDGE_OBLIQUE27][j * stride + i] = msk;
-      wedge_mask_obl[0][WEDGE_OBLIQUE117][i * stride + w - 1 - j] =
-          wedge_mask_obl[0][WEDGE_OBLIQUE153][(w - 1 - j) * stride + i] =
-              (1 << WEDGE_WEIGHT_BITS) - msk;
-      wedge_mask_obl[1][WEDGE_OBLIQUE63][i * stride + j] =
-          wedge_mask_obl[1][WEDGE_OBLIQUE27][j * stride + i] =
-              (1 << WEDGE_WEIGHT_BITS) - msk;
-      wedge_mask_obl[1][WEDGE_OBLIQUE117][i * stride + w - 1 - j] =
-          wedge_mask_obl[1][WEDGE_OBLIQUE153][(w - 1 - j) * stride + i] = msk;
-      const int mskx = wedge_mask_obl[0][WEDGE_VERTICAL][i * stride + j];
-      wedge_mask_obl[0][WEDGE_HORIZONTAL][j * stride + i] = mskx;
-      wedge_mask_obl[1][WEDGE_VERTICAL][i * stride + j] =
-          wedge_mask_obl[1][WEDGE_HORIZONTAL][j * stride + i] =
-              (1 << WEDGE_WEIGHT_BITS) - mskx;
-    }
-  }
-}
-
-static inline void init_wedge_masks(void) {
-  uint8_t *dst = wedge_mask_buf;
-  BLOCK_SIZE bsize;
-  memset(wedge_masks, 0, sizeof(wedge_masks));
-  for (bsize = BLOCK_4X4; bsize < BLOCK_SIZES_ALL; ++bsize) {
-    const wedge_params_type *wedge_params = &av1_wedge_params_lookup[bsize];
-    const int wtypes = wedge_params->wedge_types;
-    if (wtypes == 0) continue;
-    const uint8_t *mask;
-    const int bw = block_size_wide[bsize];
-    const int bh = block_size_high[bsize];
-    int w;
-    for (w = 0; w < wtypes; ++w) {
-      mask = get_wedge_mask_inplace(w, 0, bsize);
-      aom_convolve_copy(mask, MASK_MASTER_STRIDE, dst, bw /* dst_stride */, bw,
-                        bh);
-      wedge_params->masks[0][w] = dst;
-      dst += bw * bh;
-
-      mask = get_wedge_mask_inplace(w, 1, bsize);
-      aom_convolve_copy(mask, MASK_MASTER_STRIDE, dst, bw /* dst_stride */, bw,
-                        bh);
-      wedge_params->masks[1][w] = dst;
-      dst += bw * bh;
-    }
-    assert(sizeof(wedge_mask_buf) >= (size_t)(dst - wedge_mask_buf));
-  }
-}
-
 /* clang-format off */
+#if CONFIG_AV1_HIGHBITDEPTH
 static const uint8_t ii_weights1d[MAX_SB_SIZE] = {
   60, 58, 56, 54, 52, 50, 48, 47, 45, 44, 42, 41, 39, 38, 37, 35, 34, 33, 32,
   31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 22, 21, 20, 19, 19, 18, 18, 17, 16,
@@ -530,13 +406,19 @@ static const uint8_t ii_weights1d[MAX_SB_SIZE] = {
   2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,
   1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1
 };
-static uint8_t ii_size_scales[BLOCK_SIZES_ALL] = {
+static const uint8_t ii_size_scales[BLOCK_SIZES_ALL] = {
     32, 16, 16, 16, 8, 8, 8, 4,
     4,  4,  2,  2,  2, 1, 1, 1,
     8,  8,  4,  4,  2, 2
 };
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 /* clang-format on */
 
+#if CONFIG_AV1_HIGHBITDEPTH
+// Used at runtime by combine_interintra_highbd() below for a per-call
+// stack-allocated mask. The block-size-major precomputed
+// `smooth_interintra_mask_buf` only covers block sizes with bw,bh <=
+// MAX_WEDGE_SIZE; the highbd path may need larger sizes.
 static inline void build_smooth_interintra_mask(uint8_t *mask, int stride,
                                                 BLOCK_SIZE plane_bsize,
                                                 INTERINTRA_MODE mode) {
@@ -577,27 +459,12 @@ static inline void build_smooth_interintra_mask(uint8_t *mask, int stride,
       break;
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static inline void init_smooth_interintra_masks(void) {
-  for (int m = 0; m < INTERINTRA_MODES; ++m) {
-    for (int bs = 0; bs < BLOCK_SIZES_ALL; ++bs) {
-      const int bw = block_size_wide[bs];
-      const int bh = block_size_high[bs];
-      if (bw > MAX_WEDGE_SIZE || bh > MAX_WEDGE_SIZE) continue;
-      build_smooth_interintra_mask(smooth_interintra_mask_buf[m][bs], bw, bs,
-                                   m);
-    }
-  }
-}
-
-// Equation of line: f(x, y) = a[0]*(x - a[2]*w/8) + a[1]*(y - a[3]*h/8) = 0
-static void init_all_wedge_masks(void) {
-  init_wedge_master_masks();
-  init_wedge_masks();
-  init_smooth_interintra_masks();
-}
-
-void av1_init_wedge_masks(void) { aom_once(init_all_wedge_masks); }
+// No-op now that the wedge / inter-intra mask buffers are precomputed at
+// codegen time and stored in `.rdata`. The symbol is kept exported because
+// decoder.c, encoder.c, and unit tests still call it.
+void av1_init_wedge_masks(void) {}
 
 static inline void build_masked_compound_no_round(
     uint8_t *dst, int dst_stride, const CONV_BUF_TYPE *src0, int src0_stride,

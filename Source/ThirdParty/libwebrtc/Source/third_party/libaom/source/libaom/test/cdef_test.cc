@@ -10,6 +10,7 @@
  */
 
 #include <array>
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -89,6 +90,7 @@ int64_t test_cdef(BLOCK_SIZE bsize, int iterations,
       ((bsize == BLOCK_8X8) || (bsize == BLOCK_8X4)) ? 8 : 4;
   const int block_height =
       ((bsize == BLOCK_8X8) || (bsize == BLOCK_4X8)) ? 8 : 4;
+  assert(depth >= 8);  // Suppress static analysis warning w/negative depth - 8.
   const unsigned int max_pos = size * size >> static_cast<int>(depth == 8);
   for (pridamping = 3 + depth - 8; pridamping < 7 - 3 * !!boundary + depth - 8;
        pridamping++) {

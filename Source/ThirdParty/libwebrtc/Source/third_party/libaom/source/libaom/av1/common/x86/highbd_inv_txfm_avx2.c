@@ -429,7 +429,7 @@ static inline void idct32_stage9_avx2(__m256i *bf1, __m256i *out,
   addsub_avx2(bf1[14], bf1[17], out + 14, out + 17, clamp_lo, clamp_hi);
   addsub_avx2(bf1[15], bf1[16], out + 15, out + 16, clamp_lo, clamp_hi);
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m256i clamp_lo_out = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     const __m256i clamp_hi_out =
         _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -444,7 +444,7 @@ static void idct32_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const int32_t *cospi = cospi_arr(bit);
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rounding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i x;
@@ -463,7 +463,7 @@ static void idct32_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   // stage 8
   // stage 9
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     __m256i offset = _mm256_set1_epi32((1 << out_shift) >> 1);
     clamp_lo = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     clamp_hi = _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -536,7 +536,7 @@ static void idct32_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospi16 = _mm256_set1_epi32(cospi[16]);
   const __m256i cospim16 = _mm256_set1_epi32(-cospi[16]);
   const __m256i rounding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i bf1[32];
@@ -661,7 +661,7 @@ static void idct32_low16_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospi16 = _mm256_set1_epi32(cospi[16]);
   const __m256i cospim16 = _mm256_set1_epi32(-cospi[16]);
   const __m256i rounding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i bf1[32];
@@ -823,7 +823,7 @@ static void idct32_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
   const __m256i cospi16 = _mm256_set1_epi32(cospi[16]);
   const __m256i cospim16 = _mm256_set1_epi32(-cospi[16]);
   const __m256i rounding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i bf1[32], bf0[32];
@@ -1140,7 +1140,7 @@ static void idct32_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
     addsub_avx2(bf0[14], bf0[17], out + 14, out + 17, &clamp_lo, &clamp_hi);
     addsub_avx2(bf0[15], bf0[16], out + 15, out + 16, &clamp_lo, &clamp_hi);
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -1156,7 +1156,7 @@ static void idct16_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const int32_t *cospi = cospi_arr(bit);
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -1174,7 +1174,7 @@ static void idct16_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
     // stage 6
     // stage 7
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       clamp_lo = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       clamp_hi = _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
       __m256i offset = _mm256_set1_epi32((1 << out_shift) >> 1);
@@ -1223,7 +1223,7 @@ static void idct16_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospim36 = _mm256_set1_epi32(-cospi[36]);
   const __m256i cospim52 = _mm256_set1_epi32(-cospi[52]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u[16], x, y;
@@ -1338,7 +1338,7 @@ static void idct16_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
     addsub_avx2(u[7], u[8], out + 7, out + 8, &clamp_lo, &clamp_hi);
 
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -1376,7 +1376,7 @@ static void idct16_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
   const __m256i cospim16 = _mm256_set1_epi32(-cospi[16]);
   const __m256i cospim48 = _mm256_set1_epi32(-cospi[48]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u[16], v[16], x, y;
@@ -1521,7 +1521,7 @@ static void idct16_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
     addsub_avx2(v[7], v[8], out + 7, out + 8, &clamp_lo, &clamp_hi);
 
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -1684,7 +1684,7 @@ static void iadst16_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
       out[14] = v[9];
       out[15] = _mm256_sub_epi32(_mm256_setzero_si256(), v[1]);
     } else {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -1740,7 +1740,7 @@ static void iadst16_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospim48 = _mm256_set1_epi32(-cospi[48]);
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u[16], x, y;
@@ -2005,7 +2005,7 @@ static void iadst16_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
       out[14] = u[9];
       out[15] = _mm256_sub_epi32(_mm256_setzero_si256(), u[1]);
     } else {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -2061,7 +2061,7 @@ static void iadst16_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospim48 = _mm256_set1_epi32(-cospi[48]);
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u[16], v[16], x, y;
@@ -2385,7 +2385,7 @@ static void iadst16_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
       out[14] = v[9];
       out[15] = _mm256_sub_epi32(_mm256_setzero_si256(), v[1]);
     } else {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =
@@ -2415,7 +2415,7 @@ static void idct8x8_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const int32_t *cospi = cospi_arr(bit);
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i x;
@@ -2431,7 +2431,7 @@ static void idct8x8_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   // stage 4
   // stage 5
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     __m256i offset = _mm256_set1_epi32((1 << out_shift) >> 1);
     clamp_lo = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     clamp_hi = _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2463,7 +2463,7 @@ static void idct8x8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospim16 = _mm256_set1_epi32(-cospi[16]);
   const __m256i cospi16 = _mm256_set1_epi32(cospi[16]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u0, u1, u2, u3, u4, u5, u6, u7;
@@ -2550,7 +2550,7 @@ static void idct8x8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   addsub_avx2(u3, u4, out + 3, out + 4, &clamp_lo, &clamp_hi);
   // stage 5
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m256i clamp_lo_out = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     const __m256i clamp_hi_out =
         _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2634,7 +2634,7 @@ static void iadst8x8_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
     out[6] = u[5];
     out[7] = _mm256_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m256i clamp_lo_out = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     const __m256i clamp_hi_out =
         _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2667,7 +2667,7 @@ static void iadst8x8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   const __m256i cospi32 = _mm256_set1_epi32(cospi[32]);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
   const __m256i kZero = _mm256_setzero_si256();
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
   __m256i u[8], v[8], x;
@@ -2803,7 +2803,7 @@ static void iadst8x8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
     out[6] = u[5];
     out[7] = _mm256_sub_epi32(kZero, u[1]);
   } else {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m256i clamp_lo_out = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     const __m256i clamp_hi_out =
         _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2942,7 +2942,7 @@ static inline void idct64_stage11_avx2(__m256i *u, __m256i *out, int do_cols,
   }
 
   if (!do_cols) {
-    const int log_range_out = AOMMAX(16, bd + 6);
+    const int log_range_out = get_log_range_out(bd);
     const __m256i clamp_lo_out = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
     const __m256i clamp_hi_out =
         _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
@@ -2959,7 +2959,7 @@ static void idct64_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
                              int bd, int out_shift) {
   const int32_t *cospi = cospi_arr(bit);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -2981,7 +2981,7 @@ static void idct64_low1_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
     // stage 10
     // stage 11
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       clamp_lo = _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       clamp_hi = _mm256_set1_epi32((1 << (log_range_out - 1)) - 1);
       if (out_shift != 0) {
@@ -3063,7 +3063,7 @@ static void idct64_low8_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -3293,7 +3293,7 @@ static void idct64_low16_avx2(__m256i *in, __m256i *out, int bit, int do_cols,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -3602,7 +3602,7 @@ static void idct64_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
   int i, j;
   const int32_t *cospi = cospi_arr(bit);
   const __m256i rnding = _mm256_set1_epi32(1 << (bit - 1));
-  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  const int log_range = get_log_range(bd, do_cols);
   const __m256i clamp_lo = _mm256_set1_epi32(-(1 << (log_range - 1)));
   const __m256i clamp_hi = _mm256_set1_epi32((1 << (log_range - 1)) - 1);
 
@@ -4061,7 +4061,7 @@ static void idct64_avx2(__m256i *in, __m256i *out, int bit, int do_cols, int bd,
                   &clamp_hi);
     }
     if (!do_cols) {
-      const int log_range_out = AOMMAX(16, bd + 6);
+      const int log_range_out = get_log_range_out(bd);
       const __m256i clamp_lo_out =
           _mm256_set1_epi32(-(1 << (log_range_out - 1)));
       const __m256i clamp_hi_out =

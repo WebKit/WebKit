@@ -42,7 +42,7 @@ void aom_free(void *memblk);
 static inline void *aom_memset16(void *dest, int val, size_t length) {
   size_t i;
   uint16_t *dest16 = (uint16_t *)dest;
-  for (i = 0; i < length; i++) *dest16++ = val;
+  for (i = 0; i < length; i++) *dest16++ = (uint16_t)val;
   return dest;
 }
 

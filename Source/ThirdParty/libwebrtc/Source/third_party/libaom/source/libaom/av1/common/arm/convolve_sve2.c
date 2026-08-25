@@ -60,9 +60,6 @@ static inline void convolve_2d_sr_vert_12tap_sve2(
   // The no-op filter should never be used here.
   assert(vgetq_lane_s16(y_filter_0_7, 5) != 128);
 
-  const int bd = 8;
-  const int16x8_t sub_const = vdupq_n_s16(1 << (bd - 1));
-
   uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kSVEDotProdMergeBlockTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
@@ -128,9 +125,6 @@ static inline void convolve_2d_sr_vert_12tap_sve2(
       int16x8_t dd23 =
           vcombine_s16(vqrshrn_n_s32(d2, 2 * FILTER_BITS - ROUND0_BITS),
                        vqrshrn_n_s32(d3, 2 * FILTER_BITS - ROUND0_BITS));
-
-      dd01 = vsubq_s16(dd01, sub_const);
-      dd23 = vsubq_s16(dd23, sub_const);
 
       uint8x8_t d01 = vqmovun_s16(dd01);
       uint8x8_t d23 = vqmovun_s16(dd23);

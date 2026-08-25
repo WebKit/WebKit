@@ -179,6 +179,32 @@ static inline void av1_merge_rd_stats(RD_STATS *rd_stats_dst,
 #endif
 }
 
+static inline void av1_merge_rd_stats_weighted(RD_STATS *rd_stats_dst,
+                                               const RD_STATS *rd_stats_src) {
+  if (rd_stats_dst->rate == INT_MAX || rd_stats_src->rate == INT_MAX) {
+    // If rd_stats_dst or rd_stats_src has invalid rate, we will make
+    // rd_stats_dst invalid.
+    av1_invalid_rd_stats(rd_stats_dst);
+    return;
+  }
+  rd_stats_dst->rate = (int)AOMMIN(
+      ((int64_t)rd_stats_dst->rate + (int64_t)rd_stats_src->rate), INT_MAX);
+  if (!rd_stats_dst->zero_rate)
+    rd_stats_dst->zero_rate = rd_stats_src->zero_rate;
+  rd_stats_dst->dist += rd_stats_src->dist * 15 / 16;
+  if (rd_stats_dst->sse < INT64_MAX && rd_stats_src->sse < INT64_MAX) {
+    rd_stats_dst->sse += rd_stats_src->sse * 15 / 16;
+  }
+  rd_stats_dst->skip_txfm &= rd_stats_src->skip_txfm;
+#if CONFIG_RD_DEBUG
+  // This may run into problems when monochrome video is
+  // encoded, as there will only be 1 plane
+  for (int plane = 0; plane < MAX_MB_PLANE; ++plane) {
+    rd_stats_dst->txb_coeff_cost[plane] += rd_stats_src->txb_coeff_cost[plane];
+  }
+#endif
+}
+
 static inline void av1_accumulate_rd_stats(RD_STATS *rd_stats, int64_t dist,
                                            int rate, int skip_txfm, int64_t sse,
                                            int zero_rate) {

@@ -77,7 +77,7 @@ void av1_convert_model_to_params(const double *params,
                                  WarpedMotionParams *model);
 
 // Criteria for accepting a global motion model
-static const double erroradv_tr[2] = { 0.65, 0.2 };
+static const double erroradv_tr[3] = { 0.65, 0.3, 0.2 };
 static const double erroradv_prod_tr = 20000;
 
 // Early exit threshold for global motion refinement

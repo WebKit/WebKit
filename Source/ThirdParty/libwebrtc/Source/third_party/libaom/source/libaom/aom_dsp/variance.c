@@ -1098,6 +1098,100 @@ uint64_t aom_mse_16xh_16bit_c(uint8_t *dst, int dstride, uint16_t *src, int w,
   return sum;
 }
 
+int64_t aom_calc_variance_stat_c(const uint8_t *src, int stride, int bw,
+                                 int bh) {
+  DECLARE_ALIGNED(16, uint8_t, dclevel[(MAX_SB_SIZE + 2) * (MAX_SB_SIZE + 2)]);
+  int pstride = bw + 2;
+  uint8_t *pred_ptr = &dclevel[pstride + 1];
+
+  static const int gau_filter[3][3] = {
+    { 1, 2, 1 },
+    { 2, 4, 2 },
+    { 1, 2, 1 },
+  };
+
+  for (int idy = -1; idy < bh + 1; ++idy) {
+    for (int idx = -1; idx < bw + 1; ++idx) {
+      int offset_idy = idy;
+      int offset_idx = idx;
+      if (idy == -1) offset_idy = 0;
+      if (idy == bh) offset_idy = bh - 1;
+      if (idx == -1) offset_idx = 0;
+      if (idx == bw) offset_idx = bw - 1;
+
+      int offset = offset_idy * stride + offset_idx;
+      pred_ptr[idy * pstride + idx] = src[offset];
+    }
+  }
+
+  int64_t var_stats = 0;
+
+  for (int idy = 0; idy < bh; ++idy) {
+    for (int idx = 0; idx < bw; ++idx) {
+      int sum = 0;
+      for (int iy = 0; iy < 3; ++iy)
+        for (int ix = 0; ix < 3; ++ix)
+          sum += pred_ptr[(idy + iy - 1) * pstride + (idx + ix - 1)] *
+                 gau_filter[iy][ix];
+
+      sum = sum >> 4;
+
+      int64_t diff = pred_ptr[idy * pstride + idx] - sum;
+      var_stats += diff * diff;
+    }
+  }
+  var_stats <<= 4;
+
+  return var_stats;
+}
+
+int64_t aom_highbd_calc_variance_stat_c(const uint16_t *src, int stride, int bw,
+                                        int bh) {
+  DECLARE_ALIGNED(16, uint16_t, dclevel[(MAX_SB_SIZE + 2) * (MAX_SB_SIZE + 2)]);
+  int pstride = bw + 2;
+  uint16_t *pred_ptr = &dclevel[pstride + 1];
+
+  static const int gau_filter[3][3] = {
+    { 1, 2, 1 },
+    { 2, 4, 2 },
+    { 1, 2, 1 },
+  };
+
+  for (int idy = -1; idy < bh + 1; ++idy) {
+    for (int idx = -1; idx < bw + 1; ++idx) {
+      int offset_idy = idy;
+      int offset_idx = idx;
+      if (idy == -1) offset_idy = 0;
+      if (idy == bh) offset_idy = bh - 1;
+      if (idx == -1) offset_idx = 0;
+      if (idx == bw) offset_idx = bw - 1;
+
+      int offset = offset_idy * stride + offset_idx;
+      pred_ptr[idy * pstride + idx] = src[offset];
+    }
+  }
+
+  int64_t var_stats = 0;
+
+  for (int idy = 0; idy < bh; ++idy) {
+    for (int idx = 0; idx < bw; ++idx) {
+      int sum = 0;
+      for (int iy = 0; iy < 3; ++iy)
+        for (int ix = 0; ix < 3; ++ix)
+          sum += pred_ptr[(idy + iy - 1) * pstride + (idx + ix - 1)] *
+                 gau_filter[iy][ix];
+
+      sum = sum >> 4;
+
+      int64_t diff = pred_ptr[idy * pstride + idx] - sum;
+      var_stats += diff * diff;
+    }
+  }
+  var_stats <<= 4;
+
+  return var_stats;
+}
+
 #if CONFIG_AV1_HIGHBITDEPTH
 uint64_t aom_mse_wxh_16bit_highbd_c(uint16_t *dst, int dstride, uint16_t *src,
                                     int sstride, int w, int h) {

@@ -72,6 +72,10 @@
 
 #define DIVIDE_AND_ROUND(x, y) (((x) + ((y) >> 1)) / (y))
 
+/* This macro requires d > 0. */
+#define DIVIDE_AND_ROUND_SIGNED(n, d) \
+  (((n) < 0) ? (((n) - (d) / 2) / (d)) : (((n) + (d) / 2) / (d)))
+
 #define CONVERT_TO_SHORTPTR(x) ((uint16_t *)(((uintptr_t)(x)) << 1))
 #define CONVERT_TO_BYTEPTR(x) ((uint8_t *)(((uintptr_t)(x)) >> 1))
 

@@ -42,6 +42,7 @@
 #define MM256_BROADCASTSI128_SI256(x) _mm256_broadcastsi128_si256(x)
 #endif  // __clang__
 
+#if !CONFIG_HIGHWAY
 static inline void xx_storeu2_epi32(const uint8_t *output_ptr,
                                     const ptrdiff_t stride, const __m256i *a) {
   *((int *)(output_ptr)) = _mm_cvtsi128_si32(_mm256_castsi256_si128(*a));
@@ -784,8 +785,6 @@ static void aom_filter_block1d16_h8_avx2(
   }
 }
 
-#if !CONFIG_HIGHWAY
-
 static inline __m256i xx_loadu2_epi64(const void *hi, const void *lo) {
   __m256i a = _mm256_castsi128_si256(_mm_loadl_epi64((const __m128i *)(lo)));
   a = _mm256_inserti128_si256(a, _mm_loadl_epi64((const __m128i *)(hi)), 1);
@@ -1405,6 +1404,7 @@ static void aom_filter_block1d4_v4_avx2(
 #endif  // !CONFIG_HIGHWAY
 
 #if HAVE_AVX2 && HAVE_SSSE3
+#if !CONFIG_HIGHWAY
 filter8_1dfunction aom_filter_block1d16_h2_ssse3;
 filter8_1dfunction aom_filter_block1d8_h2_ssse3;
 filter8_1dfunction aom_filter_block1d4_h2_ssse3;
@@ -1419,7 +1419,6 @@ filter8_1dfunction aom_filter_block1d4_h2_ssse3;
 //                                int w, int h);
 FUN_CONV_1D(horiz, x_step_q4, filter_x, h, src, , avx2)
 
-#if !CONFIG_HIGHWAY
 filter8_1dfunction aom_filter_block1d4_v8_ssse3;
 filter8_1dfunction aom_filter_block1d16_v2_ssse3;
 filter8_1dfunction aom_filter_block1d8_v2_ssse3;
@@ -1437,4 +1436,4 @@ filter8_1dfunction aom_filter_block1d4_v2_ssse3;
 FUN_CONV_1D(vert, y_step_q4, filter_y, v, src - src_stride * 3, , avx2)
 #endif  // !CONFIG_HIGHWAY
 
-#endif  // HAVE_AX2 && HAVE_SSSE3
+#endif  // HAVE_AVX2 && HAVE_SSSE3

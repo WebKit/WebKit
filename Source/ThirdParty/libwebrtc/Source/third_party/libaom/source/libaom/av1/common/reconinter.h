@@ -63,13 +63,18 @@ typedef struct {
   int y_offset;
 } wedge_code_type;
 
-typedef uint8_t *wedge_masks_type[MAX_WEDGE_TYPES];
+// `wedge_masks` is a table of byte offsets into `wedge_mask_buf` (see
+// av1/common/wedge_masks_data.inc) so the lookup table can live in `.rdata`
+// without any load-time relocations. The largest offset emitted by the
+// generator currently exceeds 65 KiB, so `uint16_t` is not wide enough;
+// use `uint32_t`.
+typedef uint32_t wedge_masks_type[MAX_WEDGE_TYPES];
 
 typedef struct {
   int wedge_types;
   const wedge_code_type *codebook;
-  uint8_t *signflip;
-  wedge_masks_type *masks;
+  const uint8_t *signflip;
+  const wedge_masks_type *masks;
 } wedge_params_type;
 
 extern const wedge_params_type av1_wedge_params_lookup[BLOCK_SIZES_ALL];
@@ -453,11 +458,12 @@ void av1_count_overlappable_neighbors(const AV1_COMMON *cm, MACROBLOCKD *xd);
 
 void av1_init_wedge_masks(void);
 
-static inline const uint8_t *av1_get_contiguous_soft_mask(int8_t wedge_index,
-                                                          int8_t wedge_sign,
-                                                          BLOCK_SIZE sb_type) {
-  return av1_wedge_params_lookup[sb_type].masks[wedge_sign][wedge_index];
-}
+// Defined out-of-line in reconinter.c so that the underlying
+// `wedge_mask_buf` (defined in wedge_masks_data.inc) can stay
+// `static const` and live in `.rdata`.
+const uint8_t *av1_get_contiguous_soft_mask(int8_t wedge_index,
+                                            int8_t wedge_sign,
+                                            BLOCK_SIZE sb_type);
 
 void av1_dist_wtd_comp_weight_assign(const AV1_COMMON *cm,
                                      const MB_MODE_INFO *mbmi, int *fwd_offset,

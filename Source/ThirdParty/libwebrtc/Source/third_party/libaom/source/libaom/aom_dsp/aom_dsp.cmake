@@ -103,6 +103,7 @@ list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
 
 if(CONFIG_HIGHWAY)
   list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
+              "${AOM_ROOT}/aom_dsp/x86/convolve_hwy_avx2.cc"
               "${AOM_ROOT}/aom_dsp/x86/convolve_vert_hwy_avx2.cc")
   list(APPEND AOM_DSP_COMMON_INTRIN_AVX512
               "${AOM_ROOT}/aom_dsp/x86/convolve_hwy_avx512.cc"

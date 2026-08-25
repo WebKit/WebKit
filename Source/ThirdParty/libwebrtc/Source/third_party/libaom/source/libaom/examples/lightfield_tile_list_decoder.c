@@ -186,6 +186,10 @@ int main(int argc, char **argv) {
       snprintf(name, sizeof(name), "ref_%d.yuv", i);
       printf("writing ref image to %s, %u, %u\n", name, img->d_w, img->d_h);
       FILE *ref_file = fopen(name, "wb");
+      if (!ref_file) {
+        fprintf(stderr, "Unable to open ref_file '%s'\n", name);
+        continue;
+      }
       aom_img_write(img, ref_file);
       fclose(ref_file);
     }

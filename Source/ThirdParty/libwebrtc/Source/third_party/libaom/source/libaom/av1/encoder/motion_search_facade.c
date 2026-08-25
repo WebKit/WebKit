@@ -443,7 +443,6 @@ void av1_single_motion_search(const AV1_COMP *const cpi, MACROBLOCK *x,
                 mbmi->mv[0].as_mv = best_mv->as_mv;
                 av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, &orig_dst,
                                               bsize, 0, 0);
-                av1_subtract_plane(x, bsize, 0);
                 RD_STATS this_rd_stats;
                 av1_init_rd_stats(&this_rd_stats);
                 av1_estimate_txfm_yrd(cpi, x, &this_rd_stats, INT64_MAX, bsize,
@@ -459,7 +458,6 @@ void av1_single_motion_search(const AV1_COMP *const cpi, MACROBLOCK *x,
                 mbmi->mv[0].as_mv = this_best_mv;
                 av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, &orig_dst,
                                               bsize, 0, 0);
-                av1_subtract_plane(x, bsize, 0);
                 RD_STATS tmp_rd_stats;
                 av1_init_rd_stats(&tmp_rd_stats);
                 av1_estimate_txfm_yrd(cpi, x, &tmp_rd_stats, INT64_MAX, bsize,

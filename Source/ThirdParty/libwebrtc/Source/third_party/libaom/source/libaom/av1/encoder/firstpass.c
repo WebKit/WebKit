@@ -398,6 +398,7 @@ static inline int calc_wavelet_energy(const AV1EncoderConfig *oxcf) {
 typedef struct intra_pred_block_pass1_args {
   const SequenceHeader *seq_params;
   MACROBLOCK *x;
+  bool do_border_pad;
 } intra_pred_block_pass1_args;
 
 static inline void copy_rect(uint8_t *dst, int dstride, const uint8_t *src,
@@ -437,11 +438,13 @@ static void first_pass_intra_pred_and_calc_diff(int plane, int block,
       pd->height, tx_size, mbmi->mode, 0, 0, FILTER_INTRA_MODES, src,
       src_stride, dst, dst_stride, blk_col, blk_row, plane);
 
-  av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size);
+  av1_subtract_txb(x, plane, plane_bsize, blk_col, blk_row, tx_size, DCT_DCT,
+                   args->do_border_pad);
 }
 
 static void first_pass_predict_intra_block_for_luma_plane(
-    const SequenceHeader *seq_params, MACROBLOCK *x, BLOCK_SIZE bsize) {
+    const SequenceHeader *seq_params, MACROBLOCK *x, BLOCK_SIZE bsize,
+    bool do_border_pad) {
   assert(bsize < BLOCK_SIZES_ALL);
   const MACROBLOCKD *const xd = &x->e_mbd;
   const int plane = AOM_PLANE_Y;
@@ -455,7 +458,7 @@ static void first_pass_predict_intra_block_for_luma_plane(
   const int src_stride = p->src.stride;
   const uint8_t *src = p->src.buf;
 
-  intra_pred_block_pass1_args args = { seq_params, x };
+  intra_pred_block_pass1_args args = { seq_params, x, do_border_pad };
   av1_foreach_transformed_block_in_plane(
       xd, plane_bsize, plane, first_pass_intra_pred_and_calc_diff, &args);
 
@@ -518,6 +521,12 @@ static int firstpass_intra_prediction(
   set_mi_row_col(xd, tile, unit_row * unit_scale, mi_size_high[bsize],
                  unit_col * unit_scale, mi_size_wide[bsize], mi_params->mi_rows,
                  mi_params->mi_cols);
+
+  set_pixels_to_frame_edge(x, mi_size_wide[bsize], mi_size_high[bsize],
+                           unit_col * unit_scale, unit_row * unit_scale,
+                           mi_params->mi_cols, mi_params->mi_rows, cm->width,
+                           cm->height, cpi->do_border_pad);
+
   set_plane_n4(xd, mi_size_wide[bsize], mi_size_high[bsize], num_planes);
   xd->mi[0]->segment_id = 0;
   xd->lossless[xd->mi[0]->segment_id] = (qindex == 0);
@@ -526,7 +535,8 @@ static int firstpass_intra_prediction(
   xd->mi[0]->skip_txfm = 0;
 
   if (cpi->sf.fp_sf.disable_recon)
-    first_pass_predict_intra_block_for_luma_plane(seq_params, x, bsize);
+    first_pass_predict_intra_block_for_luma_plane(seq_params, x, bsize,
+                                                  cpi->do_border_pad);
   else
     av1_encode_intra_block_plane(cpi, x, bsize, 0, DRY_RUN_NORMAL, 0);
   int this_intra_error = aom_get_mb_ss(x->plane[0].src_diff);

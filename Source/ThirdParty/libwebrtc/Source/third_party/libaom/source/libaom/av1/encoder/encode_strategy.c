@@ -778,6 +778,13 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
 #endif
   // Save the pointer to the original source image.
   YV12_BUFFER_CONFIG *source_buffer = frame_input->source;
+
+  // Set cm->current_frame.frame_type and cpi->rc.this_frame_target
+  // so that the call to av1_rc_pick_q_and_bounds() below returns the
+  // correct q_index.
+  cm->current_frame.frame_type = frame_params->frame_type;
+  av1_set_frame_size(cpi, cm->width, cm->height);
+
   // apply filtering to frame
   if (apply_filtering) {
     int show_existing_alt_ref = 0;
@@ -788,8 +795,6 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
         cpi, cpi->oxcf.frm_dim_cfg.width, cpi->oxcf.frm_dim_cfg.height,
         cpi->gf_frame_index, &bottom_index, &top_index);
 
-    // TODO(bohanli): figure out why we need frame_type in cm here.
-    cm->current_frame.frame_type = frame_params->frame_type;
     if (update_type == KF_UPDATE || update_type == ARF_UPDATE) {
       YV12_BUFFER_CONFIG *tf_buf = av1_tf_info_get_filtered_buf(
           &cpi->ppi->tf_info, cpi->gf_frame_index, &frame_diff);
@@ -859,9 +864,6 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
   int set_mv_params = frame_params->frame_type == KEY_FRAME ||
                       update_type == ARF_UPDATE || update_type == GF_UPDATE;
   cm->show_frame = frame_params->show_frame;
-  cm->current_frame.frame_type = frame_params->frame_type;
-  // TODO(bohanli): Why is this? what part of it is necessary?
-  av1_set_frame_size(cpi, cm->width, cm->height);
   if (set_mv_params) av1_set_mv_search_params(cpi);
 
 #if CONFIG_RD_COMMAND

@@ -96,6 +96,7 @@ void av1_print_modes_and_motion_vectors(AV1_COMMON *cm, const char *file) {
 void av1_print_uncompressed_frame_header(const uint8_t *data, int size,
                                          const char *filename) {
   FILE *hdrFile = fopen(filename, "w");
+  if (!hdrFile) return;
   fwrite(data, size, sizeof(uint8_t), hdrFile);
 
   // Reset order hints(7bit + a previous bit) to 0, so that all camera frame
@@ -109,6 +110,7 @@ void av1_print_uncompressed_frame_header(const uint8_t *data, int size,
 
 void av1_print_frame_contexts(const FRAME_CONTEXT *fc, const char *filename) {
   FILE *fcFile = fopen(filename, "w");
+  if (!fcFile) return;
   const uint16_t *fcp = (uint16_t *)fc;
   const unsigned int n_contexts = sizeof(FRAME_CONTEXT) / sizeof(uint16_t);
   unsigned int i;
