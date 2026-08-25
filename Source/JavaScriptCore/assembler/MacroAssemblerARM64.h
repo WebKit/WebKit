@@ -7310,6 +7310,12 @@ public:
         case GreaterThanOrEqual:
             return PositiveOrZero;
             break;
+        case Above:
+            // Unsigned x > 0 is exactly x != 0.
+            return NonZero;
+        case BelowOrEqual:
+            // Unsigned x <= 0 is exactly x == 0.
+            return Zero;
         default:
             return std::nullopt;
         }
