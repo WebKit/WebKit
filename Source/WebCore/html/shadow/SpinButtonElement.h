@@ -29,20 +29,12 @@
 #include "HTMLDivElement.h"
 #include "PopupOpeningObserver.h"
 #include "Timer.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class SpinButtonOwner;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpinButtonOwner> : std::true_type { };
-}
-
-namespace WebCore {
-
-class SpinButtonOwner : public CanMakeWeakPtr<SpinButtonOwner> {
+class SpinButtonOwner : public AbstractRefCountedAndCanMakeWeakPtr<SpinButtonOwner> {
 public:
     virtual ~SpinButtonOwner() = default;
     virtual void focusAndSelectSpinButtonOwner() = 0;
