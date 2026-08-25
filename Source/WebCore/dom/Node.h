@@ -826,7 +826,7 @@ private:
     CheckedPtr<ContainerNode> m_parentNode;
     TreeScope* m_treeScope { nullptr };
     Node* m_shadowIncludingRoot { nullptr };
-    Node* m_previousSibling { nullptr };
+    CheckedPtr<Node> m_previousSibling;
     CheckedPtr<Node> m_next;
     RenderObject* m_renderer { nullptr };
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
