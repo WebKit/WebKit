@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-encoding.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-stylesheets.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-base-pushstate.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-base.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-url-moretests.html
@@ -24,10 +23,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-internal-subset.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-parsererror.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml-scripting-support-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-xml.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/XMLSerializer-serializeToString.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/createContextualFragment-in-detached-xml-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/createContextualFragment-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/createContextualFragment.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/domparser-spurious-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-01.xhtml
@@ -36,6 +38,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-05.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-06.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-07.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-08.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-li-autoclosing.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-mxss.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/insert-adjacent.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/insert_adjacent_html-001-crash.html

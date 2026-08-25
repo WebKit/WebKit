@@ -1,0 +1,4 @@
+
+PASS innerHTML on html element with trailing comment
+PASS innerHTML on html element with trailing comment (no explicit head)
+
