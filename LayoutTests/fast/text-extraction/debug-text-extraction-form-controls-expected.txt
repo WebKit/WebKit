@@ -37,6 +37,12 @@ root
                 input range uid=… name=volume value=42
                 input button uid=… name=cancel value=Cancel
                 input uid=… name=submit value='Sign Up Now'
+            button 'Change'
+            button 'Add passkey'
+            form autocomplete=on name=two-step
+                button 'Turn on'
+            form label='Delete account' autocomplete=on
+                button 'Delete'
             select uid=…
                 option value=one 'Number 1'
                 option value=two 'Number 2'
@@ -108,6 +114,14 @@ root
                 <input type='range' uid=… name='volume' value='42'>
                 <input type='button' uid=… name='cancel' value='Cancel'>
                 <input type='submit' uid=… name='submit' value='Sign Up Now'>
+            </form>
+            <button>Change</button>
+            <button>Add passkey</button>
+            <form autocomplete='on' name='two-step'>
+                <button>Turn on</button>
+            </form>
+            <form aria-label='Delete account' autocomplete='on'>
+                <button>Delete</button>
             </form>
             <select uid=…>
                 <option value='one'>Number 1</option>
@@ -470,6 +484,62 @@ root
                   "controlType": "submit",
                   "name": "submit",
                   "value": "Sign Up Now"
+                }
+              ]
+            },
+            {
+              "type": "button",
+              "nodeName": "button",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Change"
+                }
+              ]
+            },
+            {
+              "type": "button",
+              "nodeName": "button",
+              "children": [
+                {
+                  "type": "text",
+                  "content": "Add passkey"
+                }
+              ]
+            },
+            {
+              "type": "form",
+              "nodeName": "form",
+              "autocomplete": "on",
+              "name": "two-step",
+              "children": [
+                {
+                  "type": "button",
+                  "nodeName": "button",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Turn on"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "form",
+              "nodeName": "form",
+              "aria-label": "Delete account",
+              "autocomplete": "on",
+              "children": [
+                {
+                  "type": "button",
+                  "nodeName": "button",
+                  "children": [
+                    {
+                      "type": "text",
+                      "content": "Delete"
+                    }
+                  ]
                 }
               ]
             },
