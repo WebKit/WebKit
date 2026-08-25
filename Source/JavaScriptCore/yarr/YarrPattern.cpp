@@ -1909,8 +1909,7 @@ public:
             // FixedCount{min} + Greedy/NonGreedy{0,max-min}. The split would deep-copy
             // the disjunction subtree, which can hit OffsetTooLarge / pattern-size limits
             // for very large bounds (e.g. (?:x){2147483648,...}). Backward parens
-            // (lookbehinds) still use the expansion path; the JIT's right-to-left
-            // backtracking machinery hasn't been generalized for single-term VariableMin.
+            // (lookbehinds) still use the expansion path.
             term.quantify(min, max, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
         } else {
             if (term.matchDirection() == Forward) {

@@ -5402,7 +5402,8 @@ class YarrGenerator final : public YarrJITInfo {
                     // This is because NonGreedy already tried with count = 0, failing and reaching here.
                     // So there is no way to proceed further, just propagate a failure.
                     noPreviousIteration.link(&m_jit);
-                    emitClearCapturesForTerm(term);
+                    if (!term->parentheses.isCopy)
+                        emitClearCapturesForTerm(term);
                     storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
                     m_backtrackingState.fallthrough();
                     break;
@@ -5495,7 +5496,7 @@ class YarrGenerator final : public YarrJITInfo {
                         exceededMatchLimit.append(m_jit.branch32(MacroAssembler::AboveOrEqual, countTemporary, MacroAssembler::Imm32(term->quantityMaxCount)));
                     }
 
-                    m_jit.branch32(MacroAssembler::Above, m_regs.index, beginTemporary).linkTo(beginOp.m_reentry, &m_jit);
+                    m_jit.branch32(m_direction == Backward ? MacroAssembler::Below : MacroAssembler::Above, m_regs.index, beginTemporary).linkTo(beginOp.m_reentry, &m_jit);
 
                     exceededMatchLimit.link(&m_jit);
                     break;
@@ -5802,15 +5803,13 @@ class YarrGenerator final : public YarrJITInfo {
                     break;
 
                 case PatternTerm::Type::ParenthesesSubpattern:
-                    if (term.quantityMaxCount != 1 || term.parentheses.isCopy)
-                        return unsupported();
                     ASSERT(!term.parentheses.isStringList && !term.parentheses.isTerminal);
                     if (auto reversed = reverseDisjunctionForBackward(term.parentheses.disjunction, inputPosition)) {
                         term.parentheses.disjunction = reversed.get();
                         m_reversedDisjunctions.append(WTF::move(reversed));
                     } else
                         return nullptr;
-                    if (term.quantityType == QuantifierType::FixedCount)
+                    if (term.quantityMaxCount == 1 && !term.parentheses.isCopy && term.quantityType == QuantifierType::FixedCount)
                         inputPosition += term.parentheses.disjunction->m_minimumSize;
                     term.inputPosition = inputPosition;
                     break;
