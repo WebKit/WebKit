@@ -6105,9 +6105,8 @@ void SpeculativeJIT::compile(Node* node)
         // we're looking for, or we realize we're comparing against another entity, and go to the
         // slow path anyways.
         load32(Address(implGPR, UniquedStringImpl::flagsOffset()), hashGPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), hashGPR);
         load32(Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
-        add32(structureIDGPR, hashGPR);
+        addUnsignedRightShift32(structureIDGPR, hashGPR, TrustedImm32(StringImpl::s_flagCount), hashGPR);
         and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
         if (hasOneBitSet(sizeof(HasOwnPropertyCache::Entry))) // is a power of 2
             lshift32(TrustedImm32(getLSBSet(sizeof(HasOwnPropertyCache::Entry))), hashGPR);

@@ -451,8 +451,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPR
         // we're looking for, or we realize we're comparing against another entity, and go to the
         // slow path anyways.
         load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
-        add32(scratch2GPR, scratch3GPR);
+        addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
     and32(TrustedImm32(primaryMask), scratch3GPR);
@@ -579,8 +578,7 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
         // we're looking for, or we realize we're comparing against another entity, and go to the
         // slow path anyways.
         load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
-        add32(scratch2GPR, scratch3GPR);
+        addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
     and32(TrustedImm32(MegamorphicCache::storeCachePrimaryMask), scratch3GPR);
@@ -674,8 +672,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
         // we're looking for, or we realize we're comparing against another entity, and go to the
         // slow path anyways.
         load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
-        add32(scratch2GPR, scratch3GPR);
+        addUnsignedRightShift32(scratch3GPR, scratch2GPR, TrustedImm32(StringImpl::s_flagCount), scratch3GPR);
     }
 
     and32(TrustedImm32(MegamorphicCache::hasCachePrimaryMask), scratch3GPR);
