@@ -132,7 +132,6 @@ mac/WebView/WebDynamicScrollBarsView.mm @nonARC
 mac/WebView/WebGeolocationPosition.mm @nonARC
 mac/WebView/WebHTMLRepresentation.mm @nonARC
 mac/WebView/WebIndicateLayer.mm @nonARC
-mac/WebView/WebJSPDFDoc.mm @nonARC
 mac/WebView/WebMediaPlaybackTargetPicker.mm @nonARC
 mac/WebView/WebNavigationData.mm @nonARC
 mac/WebView/WebNotification.mm @nonARC

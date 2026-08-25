@@ -27,10 +27,9 @@
 
 #import "WebPDFViewPlaceholder.h"
 
+#import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
 #import "WebPDFViewIOS.h"
-#import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/DataTransfer.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -42,13 +41,14 @@
 #import <WebCore/MouseEvent.h>
 #import <WebKitLegacy/WebDataSourcePrivate.h>
 #import <WebKitLegacy/WebFramePrivate.h>
-#import <WebKitLegacy/WebJSPDFDoc.h>
 #import <WebKitLegacy/WebNSURLExtras.h>
 #import <WebKitLegacy/WebNSViewExtras.h>
 #import <WebKitLegacy/WebPDFDocumentExtras.h>
+#import <WebKitLegacy/WebUIDelegate.h>
 #import <WebKitLegacy/WebViewPrivate.h>
 #import <numbers>
 #import <wtf/MonotonicTime.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -86,7 +86,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 @interface WebPDFViewPlaceholder ()
 
-- (void)_evaluateJSForDocument:(CGPDFDocumentRef)document;
+- (void)_printIfDocumentContainsPrintScript:(CGPDFDocumentRef)document;
 - (void)_updateTitleForDocumentIfAvailable;
 - (void)_updateTitleForURL:(NSURL *)URL;
 - (CGSize)_computePageRects:(CGPDFDocumentRef)document;
@@ -263,7 +263,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     [self _updateTitleForDocumentIfAvailable];
-    [self _evaluateJSForDocument:_document];
+    [self _printIfDocumentContainsPrintScript:_document];
 
     // Any remaining work on the document should be done before this call to -layout,
     // which will hand ownership of the document to the delegate (UIWebPDFView) and
@@ -297,20 +297,16 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 #pragma mark internal stuff
 
-- (void)_evaluateJSForDocument:(CGPDFDocumentRef)pdfDocument
+- (void)_printIfDocumentContainsPrintScript:(CGPDFDocumentRef)pdfDocument
 {
     if (!pdfDocument || !CGPDFDocumentIsUnlocked(pdfDocument))
         return;
 
-    NSArray *scripts = allScriptsInPDFDocument(pdfDocument);
+    if (!pdfDocumentContainsPrintScript(pdfDocument))
+        return;
 
-    if ([scripts count]) {
-        JSGlobalContextRef ctx = JSGlobalContextCreate(0);
-        JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, _dataSource);
-        for (NSString *script in scripts)
-            JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script).get(), jsPDFDoc, nullptr, 0, nullptr);
-        JSGlobalContextRelease(ctx);
-    }
+    RetainPtr frame = [_dataSource webFrame];
+    CallUIDelegate([frame webView], @selector(webView:printFrameView:), [frame frameView]);
 }
 
 - (void)_updateTitleForURL:(NSURL *)URL

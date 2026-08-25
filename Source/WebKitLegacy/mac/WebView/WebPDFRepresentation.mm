@@ -31,12 +31,13 @@
 #import "WebPDFRepresentation.h"
 
 #import "WebDataSourcePrivate.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebFrame.h"
-#import "WebJSPDFDoc.h"
+#import "WebFrameView.h"
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFView.h"
-#import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/OpaqueJSString.h>
+#import "WebUIDelegate.h"
+#import "WebView.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
@@ -73,19 +74,16 @@
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
+    RetainPtr frame = [dataSource webFrame];
+    RetainPtr frameView = [frame frameView];
+    RetainPtr view = checked_objc_cast<WebPDFView>([frameView documentView]);
     auto document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]]);
     [view setPDFDocument:document.get()];
 
-    RetainPtr scripts = allScriptsInPDFDocument(document.get());
-    if (![scripts.get() count])
+    if (!pdfDocumentContainsPrintScript(document.get()))
         return;
 
-    JSGlobalContextRef ctx = JSGlobalContextCreate(0);
-    JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, dataSource);
-    for (NSString *script in scripts.get())
-        JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script).get(), jsPDFDoc, nullptr, 0, nullptr);
-    JSGlobalContextRelease(ctx);
+    CallUIDelegate([frame webView], @selector(webView:printFrameView:), frameView);
 }
 
 - (BOOL)canProvideDocumentSource

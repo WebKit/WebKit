@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+bool pdfDocumentContainsPrintScript(CGPDFDocumentRef);
+
 #if !PLATFORM(IOS_FAMILY)
 @class PDFDocument;
-#endif
-
-NSArray *allScriptsInPDFDocument(CGPDFDocumentRef);
-
-#if !PLATFORM(IOS_FAMILY)
-NSArray *allScriptsInPDFDocument(PDFDocument *);
+bool pdfDocumentContainsPrintScript(PDFDocument *);
 #endif

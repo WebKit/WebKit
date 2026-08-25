@@ -100,8 +100,6 @@
 		37A4533D1899EE710034DC25 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A4533C1899EE710034DC25 /* Security.framework */; };
 		37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B6FB4C1063530C000FDB3B /* WebPDFDocumentExtras.h */; };
 		37B6FB4F1063530C000FDB3B /* WebPDFDocumentExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37B6FB4D1063530C000FDB3B /* WebPDFDocumentExtras.mm */; };
-		37D1DCA81065928C0068F7EF /* WebJSPDFDoc.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D1DCA61065928C0068F7EF /* WebJSPDFDoc.h */; };
-		37D1DCA91065928C0068F7EF /* WebJSPDFDoc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37D1DCA71065928C0068F7EF /* WebJSPDFDoc.mm */; };
 		3AB02AF612C1319B00FBB694 /* WebStorageManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3AB02AF512C1319B00FBB694 /* WebStorageManager.mm */; };
 		3AB02B0012C132B200FBB694 /* WebStorageManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB02AFF12C132B200FBB694 /* WebStorageManagerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3ABB3C7A1309C3B500E93D94 /* WebStorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABB3C781309C3B500E93D94 /* WebStorageTrackerClient.h */; };
@@ -801,8 +799,6 @@
 		37A4533C1899EE710034DC25 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		37B6FB4C1063530C000FDB3B /* WebPDFDocumentExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFDocumentExtras.h; sourceTree = "<group>"; };
 		37B6FB4D1063530C000FDB3B /* WebPDFDocumentExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPDFDocumentExtras.mm; sourceTree = "<group>"; };
-		37D1DCA61065928C0068F7EF /* WebJSPDFDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebJSPDFDoc.h; sourceTree = "<group>"; };
-		37D1DCA71065928C0068F7EF /* WebJSPDFDoc.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebJSPDFDoc.mm; sourceTree = "<group>"; };
 		3944606B020F50ED0ECA1767 /* WebDynamicScrollBarsView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebDynamicScrollBarsView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606E020F50ED0ECA1767 /* WebPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferences.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1841,8 +1837,6 @@
 			isa = PBXGroup;
 			children = (
 				A10C1D84182030450036883A /* ios */,
-				37D1DCA61065928C0068F7EF /* WebJSPDFDoc.h */,
-				37D1DCA71065928C0068F7EF /* WebJSPDFDoc.mm */,
 				37B6FB4C1063530C000FDB3B /* WebPDFDocumentExtras.h */,
 				37B6FB4D1063530C000FDB3B /* WebPDFDocumentExtras.mm */,
 				51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */,
@@ -3013,7 +3007,6 @@
 				B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */,
 				7A8FF0D11075024A00A80A08 /* WebInspectorPrivate.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
-				37D1DCA81065928C0068F7EF /* WebJSPDFDoc.h in Headers */,
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
@@ -3600,7 +3593,6 @@
 				A10C1D711820300E0036883A /* WebInspectorClientIOS.mm in Sources */,
 				B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,
-				37D1DCA91065928C0068F7EF /* WebJSPDFDoc.mm in Sources */,
 				939811030824BF01008DF038 /* WebKitErrors.m in Sources */,
 				CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */,
 				939810C30824BF01008DF038 /* WebKitLogging.m in Sources */,

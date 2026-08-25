@@ -28,13 +28,11 @@
 #import "WebPDFViewIOS.h"
 #import "WebDataSourceInternal.h"
 
+#import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
-#import "WebJSPDFDoc.h"
 #import "WebKitVersionChecks.h"
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFViewPlaceholder.h"
-#import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/Color.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/GraphicsContext.h>
@@ -47,6 +45,7 @@
 #import <WebKitLegacy/WebFramePrivate.h>
 #import <WebKitLegacy/WebFrameView.h>
 #import <WebKitLegacy/WebNSViewExtras.h>
+#import <WebKitLegacy/WebUIDelegate.h>
 #import <WebKitLegacy/WebViewPrivate.h>
 #import <numbers>
 #import <wtf/Assertions.h>
@@ -315,16 +314,11 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     [self _checkPDFTitle];
     [self _computePageRects];
 
-    NSArray *scripts = allScriptsInPDFDocument(_PDFDocument);
-
-    if (![scripts count])
+    if (!pdfDocumentContainsPrintScript(_PDFDocument))
         return;
 
-    JSGlobalContextRef ctx = JSGlobalContextCreate(0);
-    JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, dataSource);
-    for (NSString *script in scripts)
-        JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script).get(), jsPDFDoc, nullptr, 0, nullptr);
-    JSGlobalContextRelease(ctx);
+    RetainPtr frame = [dataSource webFrame];
+    CallUIDelegate([frame webView], @selector(webView:printFrameView:), [frame frameView]);
 
     [self setNeedsDisplay:YES];
 }
