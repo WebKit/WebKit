@@ -3057,7 +3057,10 @@ static constexpr Quirk table[] = {
             NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
         }),
         .site = QuirkSite::CEAC },
-
+#if PLATFORM(IOS)
+    { .match = QuirkMatch::domain("chess.com"_s).onlyIf(QuirkCondition::SmallScreen),
+        .behaviors = quirkBehaviors({ ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen }) },
+#endif
     { .match = QuirkMatch::domain("claude.ai"_s),
         .behaviors = quirkBehaviors({
 #if PLATFORM(IOS_FAMILY)

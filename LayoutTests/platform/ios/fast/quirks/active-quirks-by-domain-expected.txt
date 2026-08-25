@@ -92,7 +92,7 @@ https://www.forbes.com/
 https://gizmodo.com/
     NeedsFullscreenDisplayNoneQuirk
 https://play.geforcenow.com/
-    (none)
+    NeedsGeforcenowWarningDisplayNoneQuirk
 https://www.google.com/
     MaybeBypassBackForwardCache
 https://www.google.com/maps/
@@ -132,6 +132,8 @@ https://www.carrentals.com/
     NeedsExpediaGroupAnimationQuirk
 https://www.cheaptickets.com/
     NeedsExpediaGroupAnimationQuirk
+https://www.chess.com/
+    ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
 https://www.ebookers.de/
     NeedsExpediaGroupAnimationQuirk
 https://www.expedia.com/

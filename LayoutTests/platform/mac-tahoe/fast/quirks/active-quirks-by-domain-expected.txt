@@ -123,6 +123,8 @@ https://www.carrentals.com/
     NeedsExpediaGroupAnimationQuirk
 https://www.cheaptickets.com/
     NeedsExpediaGroupAnimationQuirk
+https://www.chess.com/
+    (none)
 https://www.ebookers.de/
     NeedsExpediaGroupAnimationQuirk
 https://www.expedia.com/

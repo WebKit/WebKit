@@ -187,6 +187,11 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "EnabledBySettingOrQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "note": "Gates enablement on either a setting or quirk. Value is SettingName|QuirkName, e.g., EnabledBySettingOrQuirk=FullScreenEnabled|shouldEnterNativeFullscreenWhenCallingElementRequestFullscreen"
+        },
         "EnabledByDeprecatedGlobalSetting": {
             "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
             "values": ["*"],

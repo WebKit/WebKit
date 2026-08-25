@@ -2209,6 +2209,7 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{EnabledForWorld}
         || $context->extendedAttributes->{EnabledBySetting}
         || $context->extendedAttributes->{EnabledByQuirk}
+        || $context->extendedAttributes->{EnabledBySettingOrQuirk}
         || $context->extendedAttributes->{DisabledByQuirk}
         || $context->extendedAttributes->{SecureContext};
 }
@@ -4535,6 +4536,21 @@ sub GenerateRuntimeEnableConditionalString
             } else {
                 push(@conjuncts, "downcast<Document>(" . $jsDOMGlobalObjectExpr . "->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
             }
+        }
+    }
+
+    if ($context->extendedAttributes->{EnabledBySettingOrQuirk}) {
+        assert("Must specify value for EnabledBySettingOrQuirk.") if $context->extendedAttributes->{EnabledByQuirk} eq "VALUE_IS_MISSING";
+        my @flags = split(/\|/, $context->extendedAttributes->{EnabledBySettingOrQuirk});
+
+        assert("Must specify exactly two values for EnabledBySettingOrQuirk.") if scalar(@{flags}) != 2;
+        my $settingName = $flags[0];
+        my $quirkName = $flags[1];
+
+        if ($interface->type->name eq "DOMWindow") {
+            push(@conjuncts, "(scriptExecutionContext && (scriptExecutionContext->settingsValues()." . ToMethodName($settingName) . " || downcast<Document>(scriptExecutionContext)->quirks()." . ToMethodName($quirkName) . "Quirk()))");
+        } else {
+            push(@conjuncts, '(' . $jsDOMGlobalObjectExpr . "->scriptExecutionContext()->settingsValues()." . ToMethodName($settingName) . " || downcast<Document>(" . $jsDOMGlobalObjectExpr . "->scriptExecutionContext())->quirks()." . ToMethodName($quirkName) . "Quirk())");
         }
     }
 
