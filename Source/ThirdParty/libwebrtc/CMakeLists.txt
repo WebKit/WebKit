@@ -41,6 +41,7 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/base/internal/cpu_detect.cc
     Source/third_party/abseil-cpp/absl/base/internal/cycleclock.cc
     Source/third_party/abseil-cpp/absl/base/internal/exception_safety_testing.cc
+    Source/third_party/abseil-cpp/absl/base/internal/hardening.cc
     Source/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc
     Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
     Source/third_party/abseil-cpp/absl/base/internal/scoped_set_env.cc
