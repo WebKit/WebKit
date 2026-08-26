@@ -215,7 +215,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (!InspectorBackend.hasCommand("Page.getCookies"))
+        if (!WI.CookieStorageObject.canGetCookies)
             return;
 
         // Add the host of the frame that changed the main resource to the list of hosts there could be cookies for.

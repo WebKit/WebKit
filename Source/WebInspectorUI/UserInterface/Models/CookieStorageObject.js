@@ -50,6 +50,15 @@ WI.CookieStorageObject = class CookieStorageObject
         return !!resourceDomain.match(new RegExp("^(?:[^\\.]+\\.)*" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
     }
 
+    // Static, because the sidebar decides whether there are cookie buckets at all before there is any
+    // WI.CookieStorageObject to ask.
+    static get canGetCookies()
+    {
+        if (WI.storageManager.shouldUseStorageDomain)
+            return WI.backendTarget.hasCommand("Storage.getCookies");
+        return InspectorBackend.hasCommand("Page.getCookies");
+    }
+
     // Public
 
     get host()
@@ -64,9 +73,7 @@ WI.CookieStorageObject = class CookieStorageObject
 
     get canGetCookies()
     {
-        if (this._useStorageDomain)
-            return WI.backendTarget.hasCommand("Storage.getCookies");
-        return InspectorBackend.hasCommand("Page.getCookies");
+        return WI.CookieStorageObject.canGetCookies;
     }
 
     get canSetCookie()
@@ -94,7 +101,7 @@ WI.CookieStorageObject = class CookieStorageObject
     getCookies()
     {
         if (this._useStorageDomain) {
-            // No filter: fetch the full authoritative store; the view buckets by host. Partition
+            // No filter: fetch the full authoritative store; filterCookiesForHost buckets by host. Partition
             // "context" targets the inspected page's data store.
             return WI.backendTarget.StorageAgent.getCookies.invoke({partition: {type: "context"}}).then((payload) => payload.cookies);
         }
@@ -129,6 +136,18 @@ WI.CookieStorageObject = class CookieStorageObject
         return WI.assumingMainTarget().PageAgent.deleteCookie(cookie.name, cookie.url);
     }
 
+    filterCookiesForHost(cookies)
+    {
+        if (this._useStorageDomain) {
+            // Match by domain, not by resource URL: an out-of-process frame's only resource can be a stub whose
+            // URL is the bare origin, so a path check would drop every cookie scoped to a subdirectory.
+            return cookies.filter((cookie) => cookie.domain && WI.CookieStorageObject.cookieDomainMatchesResourceDomain(cookie.domain, this._host));
+        }
+
+        let resources = this._resourcesForHost();
+        return cookies.filter((cookie) => resources.some((resource) => WI.CookieStorageObject.cookieMatchesResourceURL(cookie, resource.url)));
+    }
+
     saveIdentityToCookie(cookie)
     {
         // FIXME <https://webkit.org/b/151413>: This class should actually store cookie data for this host.
@@ -140,6 +159,20 @@ WI.CookieStorageObject = class CookieStorageObject
     get _useStorageDomain()
     {
         return WI.storageManager.shouldUseStorageDomain;
+    }
+
+    _resourcesForHost()
+    {
+        let allResources = [];
+
+        // The main resource isn't part of `resourceCollection`, so add it as a candidate too.
+        for (let frame of WI.networkManager.frames)
+            allResources.push(frame.mainResource, ...frame.resourceCollection);
+
+        return allResources.filter((resource) => {
+            let urlComponents = resource.urlComponents;
+            return urlComponents && urlComponents.host && urlComponents.host === this._host;
+        });
     }
 };
 
