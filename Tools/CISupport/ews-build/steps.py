@@ -3511,8 +3511,15 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     logfiles = {'json': jsonFileName}
     results_db_log_name = 'results-db'
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={jsonFileName}', WithProperties('--%(configuration)s')]
-    # We rely on run-jsc-stress-tests to weed out any flaky tests
-    command_extra = ['--treat-failing-as-flaky=0.6,10,200']
+    # We rely on run-jsc-stress-tests to weed out any flaky tests. We also cap
+    # the effective timeout to avoid the dreaded "command timed out: 1200
+    # seconds without output" with buildbot killing the whole run because of a
+    # hanging stress test.
+    # NB: The default JSCTEST_hardTimeout is 300s (and is additive, see
+    # https://commits.webkit.org/227144@main), so use 800 here to also allow for
+    # some slack (run-jsc-stress-test spends some time silently collecting test
+    # results before printing out the summary).
+    command_extra = ['--treat-failing-as-flaky=0.6,10,200', '--max-timeout', '800']
     prefix = 'jsc_'
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
     FAILURE_THRESHOLD = 1000

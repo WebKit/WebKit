@@ -1616,7 +1616,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=1 * 60 * 60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         )
             .exit(0),
@@ -1631,7 +1631,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=1 * 60 * 60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --remote-config-file=remote-machines.json --no-testmasm --no-testair --no-testb3 --no-testdfg --no-testapi --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --remote-config-file=remote-machines.json --no-testmasm --no-testair --no-testb3 --no-testdfg --no-testapi --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         )
             .exit(0),
@@ -1645,7 +1645,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=1 * 60 * 60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         )
             .log('stdio', stdout='9 failures found.')
@@ -1662,7 +1662,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(2)
             .log('json', stdout=self.jsc_single_stress_test_failure),
@@ -1681,7 +1681,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(2)
             .log('json', stdout=self.jsc_multiple_stress_test_failures),
@@ -1700,7 +1700,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(2)
             .log('json', stdout=self.jsc_masm_failure),
@@ -1718,7 +1718,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(2)
             .log('json', stdout=self.jsc_b3_and_stress_test_failure),
@@ -1736,7 +1736,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(2)
             .log('json', stdout=self.jsc_dfg_air_and_stress_test_failure),
@@ -1755,7 +1755,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1 * 60 * 60,
                         logfiles={'json': self.jsonFileName},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --memory-limited --verbose --jsc-only --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         )
             .exit(0)
             .log('json', stdout=self.jsc_passed_with_flaky),
@@ -1785,7 +1785,7 @@ class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         timeout=1 * 60 * 60,
                         )
@@ -1801,7 +1801,7 @@ class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         timeout=1 * 60 * 60,
                         )
