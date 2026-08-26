@@ -48,7 +48,7 @@ static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 {
-    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString } });
+    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes });
 }
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
