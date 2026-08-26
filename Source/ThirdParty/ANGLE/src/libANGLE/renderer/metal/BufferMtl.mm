@@ -478,7 +478,8 @@ template <typename T>
 static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const uint8_t> data)
 {
     std::vector<DrawIndexRange> result;
-    angle::Span<const T> elements = angle::reinterpret_span<const T>(data);
+    angle::Span<const T> elements =
+        angle::reinterpret_span<const T>(data.first(data.size() - data.size() % sizeof(T)));
     constexpr T restartMarker     = std::numeric_limits<T>::max();
     const auto begin              = elements.cbegin();
     const auto end                = elements.cend();
