@@ -372,6 +372,8 @@ void WebProcessProxy::addHostedDomain(const WebCore::RegistrableDomain& domain)
         return;
     if (RefPtr dataStore = websiteDataStore())
         protect(dataStore->networkProcess())->addHostedDomainForWebProcess(*this, domain, [] { });
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->addHostedDomainForWebProcess(*this, domain, [] { });
 }
 
 void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& domain, LoadedWebArchive loadedWebArchive)

@@ -110,6 +110,31 @@ GPUProcess& GPUProcess::singleton()
     return gpuProcess.get().get();
 }
 
+void GPUProcess::addHostedDomainForWebProcess(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
+{
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(domain))
+        return completionHandler();
+
+    m_hostedDomainsByProcess.ensure(processIdentifier, [] {
+        return HashSet<WebCore::RegistrableDomain> { };
+    }).iterator->value.add(WTF::move(domain));
+
+    completionHandler();
+}
+
+bool GPUProcess::hostsDomain(WebCore::ProcessIdentifier processIdentifier, const WebCore::RegistrableDomain& domain) const
+{
+    if (domain.isEmpty())
+        return false;
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(domain))
+        return false;
+
+    auto iterator = m_hostedDomainsByProcess.find(processIdentifier);
+    if (iterator == m_hostedDomainsByProcess.end())
+        return false;
+    return iterator->value.contains(domain);
+}
+
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
@@ -118,6 +143,14 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
     // If sender exited before we received the handle, the handle may not be valid.
     if (!connectionHandle)
         return;
+
+    if (!parameters.hostedDomains.isEmpty()) {
+        auto& hostedDomains = m_hostedDomainsByProcess.ensure(identifier, [] {
+            return HashSet<WebCore::RegistrableDomain> { };
+        }).iterator->value;
+        for (auto& domain : parameters.hostedDomains)
+            hostedDomains.add(domain);
+    }
 
     auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(connectionHandle), WTF::move(parameters));
 
@@ -165,6 +198,7 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
+    m_hostedDomainsByProcess.remove(connection.webProcessIdentifier());
 
     if (m_isNowPlayingArbiterActive)
         recomputeNowPlayingOwner();

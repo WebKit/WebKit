@@ -537,6 +537,8 @@ std::optional<GPUProcessMediaCodecCapabilities> GPUProcessProxy::s_gpuProcessMed
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
     parameters.mediaCodecCapabilities = s_gpuProcessMediaCodecCapabilities;
+    parameters.hostedDomains = webProcessProxy.hostedDomains();
+    m_hostedDomainsByProcess.set(webProcessProxy, webProcessProxy.hostedDomains());
 
     if (RefPtr store = webProcessProxy.websiteDataStore())
         addSession(*store);
@@ -547,6 +549,16 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void GPUProcessProxy::addHostedDomainForWebProcess(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    auto& domains = m_hostedDomainsByProcess.ensure(webProcessProxy, [] {
+        return HashSet<WebCore::RegistrableDomain> { };
+    }).iterator->value;
+    if (!domains.add(domain).isNewEntry)
+        return completionHandler();
+    sendWithAsyncReply(Messages::GPUProcess::AddHostedDomainForWebProcess(webProcessProxy.coreProcessIdentifier(), domain), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)

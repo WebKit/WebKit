@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,40 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include "GPUProcessMediaCodecCapabilities.h"
-#include "SharedPreferencesForWebProcess.h"
-#include <WebCore/ProcessIdentity.h>
+#include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
+#include "Untrusted.h"
 #include <WebCore/RegistrableDomain.h>
-#include <wtf/MachSendRight.h>
+#include <WebCore/SecurityOriginData.h>
 
-#if HAVE(AUDIT_TOKEN)
-#include "CoreIPCAuditToken.h"
-#include <WebCore/PageIdentifier.h>
-#endif
+#if ENABLE(GPU_PROCESS)
 
 namespace WebKit {
 
-struct GPUProcessConnectionParameters {
-    WebCore::ProcessIdentity webProcessIdentity;
-    SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
-    bool isLockdownModeEnabled { false };
-    HashSet<WebCore::RegistrableDomain> hostedDomains;
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting { false };
-#endif
-#if HAVE(AUDIT_TOKEN)
-    HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> presentingApplicationAuditTokens;
-#endif
-#if PLATFORM(COCOA)
-    String applicationBundleIdentifier;
-#endif
-    std::optional<GPUProcessMediaCodecCapabilities> mediaCodecCapabilities;
+class GPUHostedDomainAuthority : public IPC::CanValidateUntrusted<GPUHostedDomainAuthority> {
+public:
+    explicit GPUHostedDomainAuthority(GPUConnectionToWebProcess& connection)
+        : m_connection(connection)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData& origin) const
+    {
+        if (!m_connection->gpuProcess().hostsDomain(m_connection->webProcessIdentifier(), WebCore::RegistrableDomain { origin }))
+            return IPC::ValidationFailure::Terminate;
+        return std::nullopt;
+    }
+
+private:
+    Ref<GPUConnectionToWebProcess> m_connection;
 };
 
-}; // namespace WebKit
+} // namespace WebKit
+
+namespace IPC {
+
+template<> struct IsValidationProcedureFor<WebKit::GPUHostedDomainAuthority, WebCore::SecurityOriginData> : std::true_type { };
+
+} // namespace IPC
 
 #endif // ENABLE(GPU_PROCESS)

@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AuxiliaryProcessProxy.h"
+#include <WebCore/RegistrableDomain.h>
 #include "GPUProcessMediaCodecCapabilities.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
@@ -96,6 +97,7 @@ public:
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
+    void addHostedDomainForWebProcess(WebProcessProxy&, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(const SecurityFlags&);
 
@@ -244,6 +246,7 @@ private:
     RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
+    WeakHashMap<WebProcessProxy, HashSet<WebCore::RegistrableDomain>> m_hostedDomainsByProcess;
     WebCore::IntDegrees m_orientation { 0 };
     WeakHashSet<WebPageProxy> m_pagesListeningToVoiceActivity;
     bool m_shouldListenToVoiceActivity { false };
