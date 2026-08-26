@@ -421,8 +421,27 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     });
 }
 
-void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
+void WebSWServerConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedRegistrationKey, WorkerFetchResult&& result)
 {
+    auto registrationKey = WTF::move(untrustedRegistrationKey).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    SWServer::Connection::finishFetchingScriptInServer(jobDataIdentifier, registrationKey, WTF::move(result));
+}
+
+void WebSWServerConnection::didResolveRegistrationPromise(IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedKey)
+{
+    auto key = WTF::move(untrustedKey).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    SWServer::Connection::didResolveRegistrationPromise(key);
+}
+
+void WebSWServerConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<RetrieveRecordsOptions>&& untrustedOptions, MatchBackgroundFetchCallback&& callback)
+{
+    auto options = WTF::move(untrustedOptions).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    SWServer::Connection::matchBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(options), WTF::move(callback));
+}
+
+void WebSWServerConnection::scheduleJobInServer(IPC::Untrusted<ServiceWorkerJobData>&& untrustedJobData)
+{
+    auto jobData = WTF::move(untrustedJobData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!checkTopOrigin(jobData.topOrigin))
         return;
 

@@ -29,7 +29,7 @@
     EnabledBy=UseGPUProcessForMediaEnabled
 ]
 messages -> RemoteMediaPlayerManagerProxy {
-    CreateMediaPlayer(WebCore::MediaPlayerIdentifier identifier, WebCore::MediaPlayerClientIdentifier clientIdentifier, enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, struct WebKit::RemoteMediaPlayerProxyConfiguration proxyConfiguration)
+    CreateMediaPlayer(WebCore::MediaPlayerIdentifier identifier, WebCore::MediaPlayerClientIdentifier clientIdentifier, enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, struct IPC::Untrusted<WebKit::RemoteMediaPlayerProxyConfiguration> proxyConfiguration)
     DeleteMediaPlayer(WebCore::MediaPlayerIdentifier identifier)
 
     GetSupportedTypes(enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier) -> (Vector<String> types) Synchronous
