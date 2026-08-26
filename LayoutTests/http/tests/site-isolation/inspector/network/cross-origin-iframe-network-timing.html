@@ -1,0 +1,78 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.Timing");
+
+    async function finishedResourceFromCrossOriginIFrame() {
+        let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin fetch iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+        let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+        let resource = (await resourceAddedPromise).data.resource;
+
+        if (!resource.finished)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+        return resource;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Timing.CrossOriginIFrame.PhasesAreOrdered",
+        description: "Network.Response.timing should be populated for a cross-origin iframe load, with phases in a sane order (rdar://171758328).",
+        async test() {
+            let resource = await finishedResourceFromCrossOriginIFrame();
+            let timing = resource.timingData;
+
+            // Never print absolute times: startTime is raw monotonic seconds under Site Isolation,
+            // so its magnitude depends on machine uptime. Assert relationships only.
+            //
+            // startTime, fetchStart, requestStart and responseStart all come from the timing payload
+            // this patch added. responseEnd does not: WI.Resource.markAsFinished overwrites it with
+            // the Network.loadingFinished timestamp, so the check below is really a cross-check that
+            // the finish timestamp (now derived from NetworkLoadMetrics::responseEnd in the
+            // NetworkProcess) lands on the same timebase as the load start in the WebContent process.
+            InspectorTest.expectGreaterThan(timing.startTime, 0, "Timing should have a start time.");
+            InspectorTest.expectGreaterThanOrEqual(timing.fetchStart, timing.startTime, "fetchStart should not precede startTime.");
+            InspectorTest.expectGreaterThanOrEqual(timing.responseStart, timing.fetchStart, "responseStart should not precede fetchStart.");
+            InspectorTest.expectGreaterThanOrEqual(timing.responseStart, timing.requestStart, "responseStart should not precede requestStart.");
+            InspectorTest.expectGreaterThanOrEqual(timing.responseEnd, timing.startTime, "The finish timestamp should not precede startTime.");
+            InspectorTest.expectGreaterThanOrEqual(timing.responseEnd, timing.responseStart, "The finish timestamp should not precede responseStart.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Timing.CrossOriginIFrame.SharesTimebaseWithMainFrame",
+        description: "Timestamps from two different WebContent processes must be comparable, which is why this path reports raw monotonic time instead of a per-frame execution stopwatch.",
+        async test() {
+            let iframeResource = await finishedResourceFromCrossOriginIFrame();
+
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            InspectorTest.evaluateInPage("triggerMainFrameFetch()");
+            let mainFrameResource = (await resourceAddedPromise).data.resource;
+            if (!mainFrameResource.finished)
+                await mainFrameResource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            // The main frame fetch was started strictly after the iframe fetch finished. If the two
+            // processes were reporting on separate stopwatch epochs this ordering would not hold,
+            // and the Network waterfall would interleave them wrongly.
+            InspectorTest.expectGreaterThanOrEqual(mainFrameResource.timingData.startTime, iframeResource.timingData.startTime,
+                "The later main frame load should not appear to start before the earlier cross-origin iframe load.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+function triggerMainFrameFetch() {
+    fetch("resources/data.json?" + Math.random());
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network.ResourceTiming is populated under Site Isolation and that timestamps from different WebContent processes share one timebase.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>
