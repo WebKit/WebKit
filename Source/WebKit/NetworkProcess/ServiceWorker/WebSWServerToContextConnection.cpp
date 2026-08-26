@@ -36,6 +36,7 @@
 #include "NetworkSession.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
+#include "ServiceWorkerOriginAuthority.h"
 #include "SharedBufferReference.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
@@ -341,9 +342,10 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
 
 void WebSWServerToContextConnection::openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedURL, OpenWindowCallback&& callback)
 {
-    // FIXME: Sent by a service worker process, so this should be checked against the
-    // worker's own origin rather than taken on trust.
-    openWindow(identifier, WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview), WTF::move(callback));
+    auto validatedURL = WTF::move(untrustedURL).validate(ServiceWorkerSiteAuthority { site() });
+    if (!validatedURL)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "URL is not same site as the service worker"_s }));
+    openWindow(identifier, *validatedURL, WTF::move(callback));
 }
 
 void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, WebCore::ServiceWorkerContextData::ImportedScript&& script)
@@ -542,7 +544,10 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
 
 void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
 {
-    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedURL = WTF::move(untrustedURL).validate(ServiceWorkerSiteAuthority { site() });
+    if (!validatedURL)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "URL is not same site as the service worker"_s }));
+    auto url = WTF::move(*validatedURL);
 
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
