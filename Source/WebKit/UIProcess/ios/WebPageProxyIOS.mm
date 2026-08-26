@@ -73,6 +73,7 @@
 #import "WebPageProxyInternals.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import "FirstPartyAuthority.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
 #import <WebCore/AXObjectCache.h>
@@ -103,6 +104,13 @@
 #if PLATFORM(VISION)
 static constexpr CGFloat kTargetFullscreenAspectRatio = 1.7778;
 #endif
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, connection, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(name##Validated), connection); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -912,7 +920,7 @@ void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContex
 
 void WebPageProxy::elementDidFocus(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
-    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(information, untrustedInformation, connection, FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
     m_pendingInputModeChange = std::nullopt;
     m_focusedElementProcessID = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
 
@@ -950,7 +958,7 @@ void WebPageProxy::elementDidBlur(IPC::Connection& connection)
 
 void WebPageProxy::updateFocusedElementInformation(IPC::Untrusted<FocusedElementInformation>&& untrustedInformation)
 {
-    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(information, untrustedInformation, connection, FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
     convertFocusedElementInformationRectsToMainFrameCoordinates(information,
         [weakThis = WeakPtr { *this }](FocusedElementInformation convertedInfo) {
             RefPtr protectedThis = weakThis.get();
@@ -1955,3 +1963,5 @@ bool WebPageProxy::hasMouseDevice()
 #undef WEBPAGEPROXY_RELEASE_LOG
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK

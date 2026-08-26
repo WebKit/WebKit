@@ -3595,8 +3595,8 @@ void WebProcessProxy::clearSandboxExtensions()
 
 void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ScriptMessageHandlerIdentifier handlerID, IPC::Untrusted<JavaScriptEvaluationResult>&& untrustedMessage, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
-    auto message = WTF::move(untrustedMessage).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(message, untrustedMessage, completionHandler(makeUnexpected(String())), FirstPartyStructAuthority { *this });
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, completionHandler(makeUnexpected(String())), FirstPartyStructAuthority { *this });
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
         return completionHandler(makeUnexpected(String()));
