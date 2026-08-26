@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteMediaPlayerProxy.h"
 
+#include "GPUHostedDomainAuthority.h"
+
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "ArgumentCoders.h"
@@ -1179,9 +1181,14 @@ void RemoteMediaPlayerProxy::performTaskAtTime(const MediaTime& taskTime, Perfor
 
 void RemoteMediaPlayerProxy::isCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
-    // FIXME: The GPU process has no record of which origins a web process may name, so
-    // there is nothing to check against yet.
-    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    RefPtr manager = m_manager.get();
+    RefPtr gpuConnection = manager ? manager->gpuConnectionToWebProcess() : nullptr;
+    if (!gpuConnection)
+        return completionHandler(std::nullopt);
+    auto validatedOrigin = WTF::move(untrustedOrigin).validate(GPUHostedDomainAuthority { *gpuConnection });
+    if (!validatedOrigin)
+        return completionHandler(std::nullopt);
+    auto originData = WTF::move(*validatedOrigin);
     completionHandler(protect(m_player)->isCrossOrigin(originData.securityOrigin()));
 }
 

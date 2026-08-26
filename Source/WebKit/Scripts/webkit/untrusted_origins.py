@@ -86,12 +86,13 @@ TRAVERSED_CONTAINERS = {
 
 UNTRUSTED_WRAPPER = "IPC::Untrusted"
 
-# Files permitted to declare a pre-ordained validation procedure by specializing
-# IPC::IsPreordainedValidator. Confining these keeps the set of ways to recover a
-# trusted value from an Untrusted<T> small and reviewable. Enforced by
-# test_preordained_validators_are_confined below.
+# Files permitted to declare a pre-ordained validation procedure, either by specializing
+# IPC::IsPreordainedValidator or by deriving from IPC::UntrustedValidation. Confining these
+# keeps the set of ways to recover a trusted value from an Untrusted<T> small and reviewable.
+# Enforced by test_preordained_validators_are_confined below.
 PREORDAINED_VALIDATOR_HEADERS = {
     "Platform/IPC/Untrusted.h",
+    "GPUProcess/GPUHostedDomainAuthority.h",
     "NetworkProcess/FirstPartyForCookiesAuthority.h",
     "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
     "NetworkProcess/webrtc/RTCDomainAuthority.h",
