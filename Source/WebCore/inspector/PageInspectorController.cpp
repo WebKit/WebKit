@@ -96,7 +96,7 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     , m_injectedScriptManager(WebInjectedScriptManager::create(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-    , m_overlay(makeUniqueRefWithoutRefCountedCheck<InspectorOverlay>(*this, inspectorBackendClient.get()))
+    , m_overlay(makeUniqueRefWithoutRefCountedCheck<InspectorOverlay>(*this))
     , m_executionStopwatch(Stopwatch::create())
     , m_inspectorBackendClient(WTF::move(inspectorBackendClient))
     , m_identifierRegistry(Inspector::LegacyIdentifierRegistry::create())
@@ -420,6 +420,21 @@ bool PageInspectorController::enabled() const
 Page& PageInspectorController::inspectedPage() const
 {
     return m_page;
+}
+
+Page* PageInspectorController::overlayOwnerPage() const
+{
+    // Always non-null: this controller is owned by the page.
+    return m_page.ptr();
+}
+
+Vector<size_t> PageInspectorController::overlayOwnerFlexLineStarts(const RenderObject& renderer) const
+{
+    // Deliberately does not create the DOM agent: with no agent there is nothing cached to report.
+    CheckedPtr domAgent = m_domAgent;
+    if (!domAgent)
+        return { };
+    return domAgent->flexibleBoxRendererCachedItemsAtStartOfLine(renderer);
 }
 
 void PageInspectorController::dispatchMessageFromFrontend(const String& message)

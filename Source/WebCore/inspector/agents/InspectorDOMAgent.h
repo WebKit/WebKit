@@ -229,7 +229,7 @@ public:
 
     InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
     Vector<Document*> documents();
-    Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&);
+    Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&) const;
     void reset();
 
     Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
