@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkBroadcastChannelRegistry.h"
 
+#include "FirstPartyForCookiesAuthority.h"
+
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
@@ -39,6 +41,22 @@ namespace WebKit {
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, connection, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated), connection); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, connection, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(name##Validated), connection, completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 // Via the "allowsFirstPartyForCookies" check, we know which domains a given IPC::Connection should have access to.
 bool NetworkBroadcastChannelRegistry::isOriginAllowedForConnection(IPC::Connection& connection, const WebCore::ClientOrigin& origin) const
@@ -72,8 +90,11 @@ NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess&
 
 NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 
-void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
+void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
 {
+    RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(connection);
+    MESSAGE_CHECK(connectionToWebProcess, connection);
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, connection, HostedDomainAuthority { m_networkProcess, connectionToWebProcess->webProcessIdentifier() });
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
     MESSAGE_CHECK(!name.isNull(), connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
@@ -84,8 +105,11 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
     connectionIdentifiersForName.append(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
+void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
 {
+    RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(connection);
+    MESSAGE_CHECK(connectionToWebProcess, connection);
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, connection, HostedDomainAuthority { m_networkProcess, connectionToWebProcess->webProcessIdentifier() });
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
     MESSAGE_CHECK(!name.isNull(), connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
@@ -103,8 +127,11 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
+    RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(connection);
+    MESSAGE_CHECK_COMPLETION(connectionToWebProcess, connection, completionHandler());
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(), HostedDomainAuthority { m_networkProcess, connectionToWebProcess->webProcessIdentifier() });
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(isOriginAllowedForConnection(connection, origin), connection, completionHandler());
@@ -153,5 +180,7 @@ std::optional<SharedPreferencesForWebProcess> NetworkBroadcastChannelRegistry::s
 
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_COMPLETION
+#undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION
 
 } // namespace WebKit

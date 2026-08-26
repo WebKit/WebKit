@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include "RetrieveRecordResponseBodyCallbackIdentifier.h"
 #include "ServiceWorkerFetchTask.h"
+#include "Untrusted.h"
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/NavigationPreloadState.h>
@@ -101,7 +102,7 @@ public:
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
 
-    void registerServiceWorkerClient(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
+    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void registerServiceWorkerClientInternal(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient);
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
@@ -132,9 +133,9 @@ private:
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
-    void matchRegistration(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void getRegistrations(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
+    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
@@ -178,6 +179,7 @@ private:
 #endif
 
     bool checkTopOrigin(const WebCore::SecurityOriginData&);
+    friend class ServiceWorkerClientOriginAuthority;
 
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 

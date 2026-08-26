@@ -53,6 +53,7 @@ UNTRUSTED_TYPES = {
 # a web-content-supplied origin on trust.
 PRIVILEGED_PROCESSES = {
     "UI",
+    "Networking",
 }
 
 # Containers traversed when looking for an untrusted type. Every template parameter
@@ -87,6 +88,9 @@ UNTRUSTED_WRAPPER = "IPC::Untrusted"
 # test_preordained_validators_are_confined below.
 PREORDAINED_VALIDATOR_HEADERS = {
     "Platform/IPC/Untrusted.h",
+    "NetworkProcess/FirstPartyForCookiesAuthority.h",
+    "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
+    "NetworkProcess/storage/StorageOriginAuthority.h",
     "UIProcess/FirstPartyAuthority.h",
 }
 
