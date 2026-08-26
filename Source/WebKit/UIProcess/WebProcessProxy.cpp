@@ -355,6 +355,16 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
+void WebProcessProxy::addHostedDomain(const WebCore::RegistrableDomain& domain)
+{
+    if (domain.isEmpty())
+        return;
+    if (!m_hostedDomains.add(domain).isNewEntry)
+        return;
+    if (RefPtr dataStore = websiteDataStore())
+        protect(dataStore->networkProcess())->addHostedDomainForWebProcess(*this, domain, [] { });
+}
+
 void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& domain, LoadedWebArchive loadedWebArchive)
 {
     m_allowedFirstPartiesForCookies.second.add(domain);
@@ -534,6 +544,7 @@ void WebProcessProxy::platformDestroy()
 void WebProcessProxy::addSharedProcessDomain(const RegistrableDomain& domain)
 {
     m_sharedProcessDomains.add(domain);
+    addHostedDomain(domain);
 }
 
 void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcessType, std::optional<WebCore::Site> mainFrameSite)
@@ -2692,6 +2703,7 @@ void WebProcessProxy::updateSiteForMainFrameNavigation(const URL& url)
     else {
         // Associate the process with this site.
         m_committedSites.add(site);
+        addHostedDomain(site.domain());
         m_site = WTF::move(site);
     }
 }
@@ -2707,6 +2719,7 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_committedSites.add(*site);
+    addHostedDomain(site->domain());
     m_site = *site;
 }
 

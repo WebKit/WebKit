@@ -478,6 +478,8 @@ public:
     enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
+    bool hostsDomain(WebCore::ProcessIdentifier, const RegistrableDomain&) const;
+    void addHostedDomainForWebProcess(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
 
     // Per launch, so a reconnecting web process keeps its Vary entries.
@@ -641,6 +643,7 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::RegistrableDomain>> m_hostedDomainsByProcess;
     HashMap<WebCore::ProcessIdentifier, Vector<CompletionHandler<void()>>> m_webProcessConnectionCloseHandlers;
 
     bool m_hasSetCacheModel { false };
