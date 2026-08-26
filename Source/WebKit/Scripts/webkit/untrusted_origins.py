@@ -94,6 +94,7 @@ PREORDAINED_VALIDATOR_HEADERS = {
     "Platform/IPC/Untrusted.h",
     "NetworkProcess/FirstPartyForCookiesAuthority.h",
     "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
+    "NetworkProcess/webrtc/RTCDomainAuthority.h",
     "NetworkProcess/storage/StorageOriginAuthority.h",
     "UIProcess/FirstPartyAuthority.h",
 }
