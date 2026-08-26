@@ -31,6 +31,7 @@
 #include "LibWebRTCResolverIdentifier.h"
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
+#include "Untrusted.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
@@ -131,14 +132,14 @@ private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
     void startListeningForIPC();
 
-    void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&);
-    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&);
+    void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t, WebPageProxyIdentifier, RTCSocketCreationFlags, IPC::Untrusted<WebCore::RegistrableDomain>&&);
+    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int, WebPageProxyIdentifier, RTCSocketCreationFlags, IPC::Untrusted<WebCore::RegistrableDomain>&&);
     void sendToSocket(WebCore::LibWebRTCSocketIdentifier, std::span<const uint8_t>, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
     void setSocketOption(WebCore::LibWebRTCSocketIdentifier, int option, int value);
 
     void createResolver(LibWebRTCResolverIdentifier, String&&);
     void stopResolver(LibWebRTCResolverIdentifier);
-    void getInterfaceName(URL&&, WebPageProxyIdentifier, RTCSocketCreationFlags, WebCore::RegistrableDomain&&, CompletionHandler<void(String&&)>&&);
+    void getInterfaceName(URL&&, WebPageProxyIdentifier, RTCSocketCreationFlags, IPC::Untrusted<WebCore::RegistrableDomain>&&, CompletionHandler<void(String&&)>&&);
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 

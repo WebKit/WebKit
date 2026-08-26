@@ -41,10 +41,10 @@ messages -> WebSWServerConnection {
 
     [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
-    [EnabledBy=ServiceWorkersEnabled] MatchRegistration(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    [EnabledBy=ServiceWorkersEnabled] GetRegistrations(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
-    [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
+    [EnabledBy=ServiceWorkersEnabled] MatchRegistration(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] GetRegistrations(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerClient(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
     [EnabledBy=ServiceWorkersEnabled] TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
