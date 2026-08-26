@@ -138,7 +138,7 @@ private:
     void terminateDueToUnresponsiveness() final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
     void openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, OpenWindowCallback&&);
-    void setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, WebCore::ServiceWorkerContextData::ImportedScript&&);
+    void setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, IPC::Untrusted<WebCore::ServiceWorkerImportedScript>&&);
     void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, uint64_t requestIdentifier);
     void startPendingStreamUploadForwarding(WebCore::FetchIdentifier);
     void pendingStreamDataAvailable(WebCore::FetchIdentifier);

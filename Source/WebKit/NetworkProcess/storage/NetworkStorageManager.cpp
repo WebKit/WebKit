@@ -2519,8 +2519,9 @@ void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connect
     cache->retrieveRecords(WTF::move(options), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageRemoveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStorageRemoveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, IPC::Untrusted<WebCore::ResourceRequest>&& untrustedRequest, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -2531,8 +2532,9 @@ void NetworkStorageManager::cacheStorageRemoveRecords(IPC::Connection& connectio
     cache->removeRecords(WTF::move(request), WTF::move(options), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, IPC::Untrusted<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>>&& untrustedRecords, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
+    auto records = WTF::move(untrustedRecords).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
