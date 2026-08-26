@@ -26,6 +26,9 @@
 #include "config.h"
 #include "NetworkRTCProvider.h"
 
+#include "FirstPartyForCookiesAuthority.h"
+#include "RTCDomainAuthority.h"
+
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCNetworkMessages.h"
@@ -254,6 +257,27 @@ bool NetworkRTCProvider::webRTCInterfaceMonitoringViaNWEnabled() const
     return connection && connection->webRTCInterfaceMonitoringViaNWEnabled();
 }
 
+bool NetworkRTCProvider::hostsDomain(const WebCore::RegistrableDomain& domain)
+{
+    assertIsRTCNetworkThread();
+
+    if (m_hostedDomains.contains(domain))
+        return true;
+
+    bool hosts = false;
+    callOnMainRunLoopAndWait([this, &hosts, &domain] {
+        RefPtr connection = m_connection.get();
+        if (!connection)
+            return;
+        Ref networkProcess = connection->networkProcess();
+        hosts = !canCheckDomainAuthority(networkProcess, connection->webProcessIdentifier())
+            || networkProcess->hostsDomain(connection->webProcessIdentifier(), domain);
+    });
+    if (hosts)
+        m_hostedDomains.add(domain.isolatedCopy());
+    return hosts;
+}
+
 const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
 {
     return m_attributedBundleIdentifiers.ensure(pageIdentifier, [protectedThis = Ref { *this }, pageIdentifier]() -> String {
@@ -269,9 +293,10 @@ const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(W
 
 void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
-    // FIXME: This runs on the RTC network thread, where the network process's authority
-    // maps cannot be read; validation has to move to the main thread first.
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedDomain = WTF::move(untrustedDomain).validate(RTCDomainAuthority { *this });
+    if (!validatedDomain)
+        return;
+    auto domain = WTF::move(*validatedDomain);
 
     assertIsRTCNetworkThread();
 
@@ -293,9 +318,10 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 
 void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
-    // FIXME: This runs on the RTC network thread, where the network process's authority
-    // maps cannot be read; validation has to move to the main thread first.
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedDomain = WTF::move(untrustedDomain).validate(RTCDomainAuthority { *this });
+    if (!validatedDomain)
+        return;
+    auto domain = WTF::move(*validatedDomain);
 
     assertIsRTCNetworkThread();
 
@@ -322,9 +348,10 @@ void NetworkRTCProvider::getInterfaceName(IPC::Untrusted<URL>&& untrustedURL, We
 {
     auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
 
-    // FIXME: This runs on the RTC network thread, where the network process's authority
-    // maps cannot be read; validation has to move to the main thread first.
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedDomain = WTF::move(untrustedDomain).validate(RTCDomainAuthority { *this });
+    if (!validatedDomain)
+        return;
+    auto domain = WTF::move(*validatedDomain);
 
     if (!url.protocolIsInHTTPFamily()) {
         completionHandler({ });

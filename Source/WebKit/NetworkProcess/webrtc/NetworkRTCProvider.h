@@ -158,6 +158,9 @@ private:
 
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
 
+    bool hostsDomain(const WebCore::RegistrableDomain&);
+    friend class RTCDomainAuthority;
+
     void NODELETE assertIsRTCNetworkThread();
 
     static constexpr size_t maxSockets { 256 };
@@ -175,6 +178,7 @@ private:
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     CString m_applicationBundleIdentifier;
+    HashSet<WebCore::RegistrableDomain> m_hostedDomains;
     const Ref<WorkQueue> m_rtcNetworkThreadQueue;
 #endif
 
