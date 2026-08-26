@@ -436,7 +436,7 @@ bool copyVideoFrameBuffer(VideoFrameBuffer& buffer, uint8_t* data)
         auto* i420Frame = buffer.GetI420();
         auto* dataY = data;
         auto strideY = i420Frame->width();
-        auto strideUV = i420Frame->width();
+        auto strideUV = i420Frame->width() & 1 ? i420Frame->width() + 1 : i420Frame->width();
         auto* dataUV = data + (i420Frame->width() * i420Frame->height());
         return !libyuv::I420ToNV12(i420Frame->DataY(), i420Frame->StrideY(),
                                    i420Frame->DataU(), i420Frame->StrideU(),
@@ -448,7 +448,7 @@ bool copyVideoFrameBuffer(VideoFrameBuffer& buffer, uint8_t* data)
         auto* i010Frame = buffer.GetI010();
         auto* dataY = reinterpret_cast<uint16_t*>(data);
         auto strideY = i010Frame->width();
-        auto strideUV = i010Frame->width();
+        auto strideUV = i010Frame->width() & 1 ? i010Frame->width() + 1 : i010Frame->width();
         auto* dataUV = dataY + (i010Frame->width() * i010Frame->height());
         return !libyuv::I010ToP010(i010Frame->DataY(), i010Frame->StrideY(),
                                    i010Frame->DataU(), i010Frame->StrideU(),

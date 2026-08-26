@@ -29,9 +29,16 @@
 #import <WebCore/SharedVideoFrameInfo.h>
 #include <wtf/Vector.h>
 
+#if USE(LIBWEBRTC)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <webrtc/api/video/i010_buffer.h>
+#include <webrtc/api/video/i420_buffer.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace TestWebKitAPI {
 
-TEST(WebCore, SharedVideoFramePlaneAlphaSize)
+TEST(SharedVideoFrame, PlaneAlphaSize)
 {
     Vector<uint8_t> data(128);
     WebCore::SharedVideoFrameInfo info {
@@ -53,5 +60,126 @@ TEST(WebCore, SharedVideoFramePlaneAlphaSize)
     info2 = WebCore::SharedVideoFrameInfo::decode(data.span().subspan(0, 28));
     EXPECT_FALSE(info2);
 }
+
+#if USE(LIBWEBRTC)
+
+template<typename SampleType, typename Buffer>
+static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer)
+{
+    static_assert(sizeof(SampleType) == 1 || sizeof(SampleType) == 2);
+
+    const int width = buffer.width();
+    const int height = buffer.height();
+    const int chromaWidth = (width + 1) / 2;
+    const int chromaHeight = (height + 1) / 2;
+
+    // I420 stores 8-bit samples; I010 stores 10-bit samples in uint16_t.
+    constexpr unsigned valueMask = sizeof(SampleType) == 1 ? 0xFFu : 0x3FFu;
+    constexpr unsigned msbShift = sizeof(SampleType) == 1 ? 0u : 6u;
+
+    auto fillPlane = [&](std::span<SampleType> plane, int stride, int planeWidth, int planeHeight, unsigned seed) {
+        for (int y = 0; y < planeHeight; ++y) {
+            auto row = plane.subspan(y * stride, planeWidth);
+            for (int x = 0; x < planeWidth; ++x)
+                row[x] = static_cast<SampleType>((seed + 31u * y + 7u * x) & valueMask);
+        }
+    };
+    fillPlane(unsafeMakeSpan(buffer.MutableDataY(), buffer.StrideY() * height), buffer.StrideY(), width, height, 1);
+    fillPlane(unsafeMakeSpan(buffer.MutableDataU(), buffer.StrideU() * chromaHeight), buffer.StrideU(), chromaWidth, chromaHeight, 101);
+    fillPlane(unsafeMakeSpan(buffer.MutableDataV(), buffer.StrideV() * chromaHeight), buffer.StrideV(), chromaWidth, chromaHeight, 211);
+
+    auto info = WebCore::SharedVideoFrameInfo::fromVideoFrameBuffer(buffer);
+    EXPECT_GT(info.storageSize(), 0u);
+
+    constexpr size_t guardSize = 64;
+    constexpr uint8_t guardByte = 0xCD;
+
+    Vector<uint8_t> storage(info.storageSize() + guardSize);
+    auto allBytes = storage.mutableSpan();
+    auto frameBytes = allBytes.subspan(0, info.storageSize());
+    auto guardBytes = allBytes.subspan(info.storageSize());
+    for (auto& b : guardBytes)
+        b = guardByte;
+
+    EXPECT_TRUE(info.writeVideoFrameBuffer(buffer, frameBytes));
+
+    for (auto byte : guardBytes)
+        EXPECT_EQ(byte, guardByte);
+
+    auto payload = spanReinterpretCast<const SampleType>(frameBytes.subspan(sizeof(WebCore::SharedVideoFrameInfo)));
+    const int outStrideY = width;
+    const int outStrideUV = (width & 1) ? width + 1 : width;
+    auto outY = payload.first(outStrideY * height);
+    auto outUV = payload.subspan(outStrideY * height, outStrideUV * chromaHeight);
+
+    auto srcY = unsafeMakeSpan(buffer.DataY(), buffer.StrideY() * height);
+    auto srcU = unsafeMakeSpan(buffer.DataU(), buffer.StrideU() * chromaHeight);
+    auto srcV = unsafeMakeSpan(buffer.DataV(), buffer.StrideV() * chromaHeight);
+
+    for (int y = 0; y < height; ++y) {
+        auto srcRow = srcY.subspan(y * buffer.StrideY(), width);
+        auto outRow = outY.subspan(y * outStrideY, width);
+        for (int x = 0; x < width; ++x) {
+            auto expected = static_cast<SampleType>(static_cast<uint32_t>(srcRow[x]) << msbShift);
+            EXPECT_EQ(outRow[x], expected) << "Y mismatch at (" << x << ", " << y << ")";
+        }
+    }
+
+    for (int y = 0; y < chromaHeight; ++y) {
+        auto srcURow = srcU.subspan(y * buffer.StrideU(), chromaWidth);
+        auto srcVRow = srcV.subspan(y * buffer.StrideV(), chromaWidth);
+        auto outRow = outUV.subspan(y * outStrideUV, 2 * chromaWidth);
+        for (int x = 0; x < chromaWidth; ++x) {
+            auto expectedU = static_cast<SampleType>(static_cast<uint32_t>(srcURow[x]) << msbShift);
+            auto expectedV = static_cast<SampleType>(static_cast<uint32_t>(srcVRow[x]) << msbShift);
+            EXPECT_EQ(outRow[2 * x], expectedU) << "U mismatch at (" << x << ", " << y << ")";
+            EXPECT_EQ(outRow[2 * x + 1], expectedV) << "V mismatch at (" << x << ", " << y << ")";
+        }
+    }
+}
+
+TEST(SharedVideoFrame, OddWidthI420)
+{
+    auto buffer = webrtc::I420Buffer::Create(681, 1280);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint8_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, OddHeightI420)
+{
+    auto buffer = webrtc::I420Buffer::Create(680, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint8_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, OddWidthAndHeightI420)
+{
+    auto buffer = webrtc::I420Buffer::Create(681, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint8_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, OddWidthI010)
+{
+    auto buffer = webrtc::I010Buffer::Create(681, 1280);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint16_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, OddHeightI010)
+{
+    auto buffer = webrtc::I010Buffer::Create(680, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint16_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, OddWidthAndHeightI010)
+{
+    auto buffer = webrtc::I010Buffer::Create(681, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint16_t>(*buffer);
+}
+
+#endif // USE(LIBWEBRTC)
 
 }; // namespace TestWebKitAPI
