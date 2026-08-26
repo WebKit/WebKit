@@ -1219,14 +1219,7 @@ public:
     void selectTextWithGranularityAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
-    void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
-
-    void setShouldRevealCurrentSelectionAfterInsertion(bool);
-        
-    void setScreenIsBeingCaptured(bool);
-
+#if ENABLE(UI_SIDE_COMPOSITING)
     double displayedContentScale() const;
     WebCore::FloatRect exposedContentRect() const;
     WebCore::FloatRect unobscuredContentRect() const;
@@ -1234,12 +1227,22 @@ public:
     WebCore::FloatRect unobscuredContentRectRespectingInputViewBounds() const;
     // When visual viewports are enabled, this is the layout viewport rect.
     WebCore::FloatRect layoutViewportRect() const;
-    WebCore::FloatBoxExtent computedObscuredInset() const;
 
     void resendLastVisibleContentRects();
 
     WebCore::FloatRect computeLayoutViewportRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentLayoutViewportRect, double displayedContentScale, WebCore::LayoutViewportConstraint) const;
     WebCore::FloatRect unconstrainedLayoutViewportRect() const;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
+    void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
+
+    void setShouldRevealCurrentSelectionAfterInsertion(bool);
+
+    void setScreenIsBeingCaptured(bool);
+
+    WebCore::FloatBoxExtent computedObscuredInset() const;
 
     void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID);
     void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>);
@@ -1358,7 +1361,12 @@ public:
     void didCommitMainFrameData(const MainFrameData&, const TransactionID&);
     void layerTreeCommitComplete();
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+    // Takes the layout viewport parameters the web process sends with each main frame commit.
+    // computeLayoutViewportRect() needs them all, or the layout viewport loses its minimum size and gets clamped
+    // to the document origin, misplacing fixed and sticky layers.
     bool updateLayoutViewportParameters(const MainFrameData&);
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
@@ -1586,6 +1594,12 @@ public:
     void scalePageRelativeToScrollPosition(double scale, const WebCore::IntPoint& origin);
     double NODELETE pageScaleFactor() const;
     void pageScaleFactorDidChange();
+
+    // True when the UI process owns the page scale and applies it above the render tree. Always the case on iOS,
+    // where it's UIScrollView's zoomScale, and on macOS with unified zoom enabled. This is the UI-process side
+    // of Page::delegatesScaling().
+    bool delegatesScalingToUIProcess() const;
+
     double viewScaleFactor() const { return m_viewScaleFactor; }
     void scaleView(double scale);
     void setShouldScaleViewToFitDocument(bool);

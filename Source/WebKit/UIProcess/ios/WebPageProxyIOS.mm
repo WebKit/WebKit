@@ -62,7 +62,6 @@
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "VideoPresentationManagerProxy.h"
-#import "ViewUpdateDispatcherMessages.h"
 #import "WKMouseDeviceObserver.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
 #import "WebAutocorrectionContext.h"
@@ -188,95 +187,12 @@ void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const
     protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), WTF::move(callback), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
-{
-    if (visibleContentRectUpdate == internals().lastVisibleContentRectUpdate && !sendEvenIfUnchanged)
-        return;
-
-    internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
-
-    if (!hasRunningProcess())
-        return;
-
-    protect(m_legacyMainFrameProcess)->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(webPageIDInMainFrameProcess(), visibleContentRectUpdate), 0);
-}
-
-void WebPageProxy::updateVisibleContentRectsLocally(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
-{
-    internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
-}
-
-void WebPageProxy::resendLastVisibleContentRects()
-{
-    if (internals().lastVisibleContentRectUpdate)
-        protect(m_legacyMainFrameProcess)->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(webPageIDInMainFrameProcess(), *internals().lastVisibleContentRectUpdate), 0);
-}
-
 void WebPageProxy::updateStringForFind(const String& string)
 {
     if (!hasRunningProcess())
         return;
 
     WebKit::updateStringForFind(string);
-}
-
-static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)
-{
-    if (exposedRectEdge < documentEdge)
-        return documentEdge - factor * (documentEdge - exposedRectEdge);
-    
-    return exposedRectEdge;
-}
-
-static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRectEdge, float factor)
-{
-    if (exposedRectEdge > documentEdge)
-        return documentEdge + factor * (exposedRectEdge - documentEdge);
-    
-    return exposedRectEdge;
-}
-
-WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentLayoutViewportRect, double displayedContentScale, LayoutViewportConstraint constraint) const
-{
-    RefPtr pageClient = this->pageClient();
-    if (!pageClient)
-        return { };
-
-    FloatRect constrainedUnobscuredRect = unobscuredContentRect;
-    FloatRect documentRect = pageClient->documentRect();
-
-    if (constraint == LayoutViewportConstraint::ConstrainedToDocumentRect)
-        constrainedUnobscuredRect.intersect(documentRect);
-
-    double minimumScale = pageClient->minimumZoomScale();
-    bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
-    if (isBelowMinimumScale) {
-        const CGFloat slope = 12;
-        CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
-
-        constrainedUnobscuredRect.setX(adjustedUnexposedEdge(documentRect.x(), constrainedUnobscuredRect.x(), factor));
-        constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
-        constrainedUnobscuredRect.setWidth(adjustedUnexposedMaxEdge(documentRect.maxX(), constrainedUnobscuredRect.maxX(), factor) - constrainedUnobscuredRect.x());
-        constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
-    }
-
-    bool resizesContent = pageClient->viewportMetaTagInteractiveWidget() == WebCore::InteractiveWidgetValue::ResizesContent;
-    FloatRect sizeSourceRect = resizesContent ? unobscuredContentRectRespectingInputViewBounds : unobscuredContentRect;
-    FloatSize constrainedSize = isBelowMinimumScale ? constrainedUnobscuredRect.size() : sizeSourceRect.size();
-    FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;
-
-    double heightExpansionFactor = internals().allowsLayoutViewportHeightExpansion ? protect(m_preferences)->layoutViewportHeightExpansionFactor() : 0;
-    auto layoutViewportSize = LocalFrameView::expandedLayoutViewportSize(internals().baseLayoutViewportSize, LayoutSize(documentRect.size()), heightExpansionFactor);
-    FloatRect layoutViewportRect = LocalFrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentLayoutViewportRect), LayoutRect(documentRect), LayoutSize(constrainedSize), LayoutRect(unobscuredContentRectForViewport), layoutViewportSize, internals().minStableLayoutViewportOrigin, internals().maxStableLayoutViewportOrigin, constraint);
-    
-    if (layoutViewportRect != currentLayoutViewportRect)
-        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeLayoutViewportRect: new layout viewport  " << layoutViewportRect);
-    return layoutViewportRect;
-}
-
-FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
-{
-    return computeLayoutViewportRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), layoutViewportRect(), displayedContentScale(), LayoutViewportConstraint::Unconstrained);
 }
 
 void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID nodeID)
@@ -378,19 +294,6 @@ void WebPageProxy::setOverrideViewportArguments(const std::optional<ViewportArgu
     internals().overrideViewportArguments = viewportArguments;
     if (hasRunningProcess())
         protect(m_legacyMainFrameProcess)->send(Messages::WebPage::SetOverrideViewportArguments(viewportArguments), webPageIDInMainFrameProcess());
-}
-
-bool WebPageProxy::updateLayoutViewportParameters(const MainFrameData& mainFrameData)
-{
-    if (internals().baseLayoutViewportSize == mainFrameData.baseLayoutViewportSize
-        && internals().minStableLayoutViewportOrigin == mainFrameData.minStableLayoutViewportOrigin
-        && internals().maxStableLayoutViewportOrigin == mainFrameData.maxStableLayoutViewportOrigin)
-        return false;
-    internals().baseLayoutViewportSize = mainFrameData.baseLayoutViewportSize;
-    internals().minStableLayoutViewportOrigin = mainFrameData.minStableLayoutViewportOrigin;
-    internals().maxStableLayoutViewportOrigin = mainFrameData.maxStableLayoutViewportOrigin;
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::updateLayoutViewportParameters: baseLayoutViewportSize: " << internals().baseLayoutViewportSize << " minStableLayoutViewportOrigin: " << internals().minStableLayoutViewportOrigin << " maxStableLayoutViewportOrigin: " << internals().maxStableLayoutViewportOrigin);
-    return true;
 }
 
 void WebPageProxy::updateSelectionWithTouches(IntPoint point, SelectionTouch touches, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& callback)
@@ -1783,48 +1686,6 @@ void WebPageProxy::statusBarWasTapped()
 
     m_uiClient->statusBarWasTapped();
 #endif
-}
-
-double WebPageProxy::displayedContentScale() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->scale();
-    return 1;
-}
-
-FloatRect WebPageProxy::exposedContentRect() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->exposedContentRect();
-    return { };
-}
-
-FloatRect WebPageProxy::unobscuredContentRect() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->unobscuredContentRect();
-    return { };
-}
-
-bool WebPageProxy::inStableState() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->inStableState();
-    return false;
-}
-
-FloatRect WebPageProxy::unobscuredContentRectRespectingInputViewBounds() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->unobscuredContentRectRespectingInputViewBounds();
-    return { };
-}
-
-FloatRect WebPageProxy::layoutViewportRect() const
-{
-    if (internals().lastVisibleContentRectUpdate)
-        return internals().lastVisibleContentRectUpdate->layoutViewportRect();
-    return { };
 }
 
 FloatBoxExtent WebPageProxy::computedObscuredInset() const

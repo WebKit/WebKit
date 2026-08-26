@@ -48,15 +48,30 @@ public:
 
     FloatSize NODELETE viewToContentsOffset(const FloatPoint& scrollPosition) const;
 
+    // Converts a point in the view coordinates events arrive in to the unscaled contents coordinates the tree
+    // hit-tests in. viewToContentsOffset() can't undo the zoom on its own.
+    FloatPoint NODELETE viewToContentsPoint(const FloatPoint& pointInViewCoordinates, const FloatPoint& scrollPosition) const;
+
     FloatRect layoutViewport() const { return m_layoutViewport; };
     void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };
 
     FloatRect layoutViewportRespectingRubberBanding() const;
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
+
+    // The page scale when the UI process owns it, otherwise 1. Scroll positions stay unscaled, so anything
+    // converting them to layer coordinates has to apply this.
+    float delegatedPageScaleFactor() const;
+    void setDelegatedPageScaleFactor(float);
+
+    // Repositions the scrolling layers after a delegated scale change, without the related-layer work
+    // wasScrolledByDelegatedScrolling() has already done.
+    void repositionScrollingLayersForDelegatedScaleChange() WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
+    // The view size less the scrollbars, in view coordinates, so unlike the layout viewport it doesn't zoom.
+    FloatSize sizeForVisibleContent() const;
 #if HAVE(NSREFRESHCONTROLLER)
     float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
 #endif
@@ -73,7 +88,6 @@ public:
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
-    FloatSize sizeForVisibleContent() const { return m_sizeForVisibleContent; }
     FloatPoint minLayoutViewportOrigin() const { return m_minLayoutViewportOrigin; }
     FloatPoint maxLayoutViewportOrigin() const { return m_maxLayoutViewportOrigin; }
 
@@ -93,6 +107,7 @@ private:
     std::optional<FloatSize> m_overrideVisualViewportSize;
     
     float m_frameScaleFactor { 1 };
+    float m_delegatedPageScaleFactor { 1 };
     FloatBoxExtent m_obscuredContentInsets;
 #if HAVE(NSREFRESHCONTROLLER)
     float m_topScrollStretchForRefreshController { 0 };

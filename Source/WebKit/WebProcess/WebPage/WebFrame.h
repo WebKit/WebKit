@@ -249,7 +249,7 @@ public:
 
     RefPtr<WebImage> createSelectionSnapshot() const;
 
-#if ENABLE(TWO_PHASE_CLICKS)
+#if ENABLE(TWO_PHASE_CLICKS) || ENABLE(UI_SIDE_COMPOSITING)
     std::optional<TransactionID> firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
@@ -357,7 +357,7 @@ private:
     bool m_wasRemovedInAnotherProcess { false };
     bool m_hasAppliedInitialRemoteFrameRect { false };
 
-#if ENABLE(TWO_PHASE_CLICKS)
+#if ENABLE(TWO_PHASE_CLICKS) || ENABLE(UI_SIDE_COMPOSITING)
     std::optional<TransactionID> m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
     std::optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;

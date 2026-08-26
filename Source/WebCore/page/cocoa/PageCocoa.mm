@@ -47,6 +47,15 @@
 
 namespace WebCore {
 
+#if ENABLE(TREE_DEBUGGING)
+static void printScrollingStateTree()
+{
+    Page::forEachPage([](Page& page) {
+        WTFLogAlways("Scrolling state tree for page %p:\n%s", &page, page.scrollingStateTreeAsText().utf8().data()); // NOLINT
+    });
+}
+#endif // ENABLE(TREE_DEBUGGING)
+
 void Page::platformInitialize()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -65,6 +74,7 @@ void Page::platformInitialize()
         PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showPaintOrderTree"_s, printPaintOrderTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showScrollingStateTree"_s, printScrollingStateTree);
 #endif // ENABLE(TREE_DEBUGGING)
 
         PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments"_s, [] {

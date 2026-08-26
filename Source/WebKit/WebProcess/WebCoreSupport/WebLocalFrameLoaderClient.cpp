@@ -1770,7 +1770,15 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     if (isMainFrame)
         view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 
-    webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
+    RefPtr corePage = webPage->corePage();
+    corePage->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
+
+#if PLATFORM(MAC)
+    // Give the tiled backing a zoomed-out grid to fall back on. With a zero zoomedOutPageScaleFactor it drops the
+    // old grid as soon as the scale changes, and a frame can present with no tiles.
+    if (isMainFrame && drawingArea->usesDelegatedPageScaling())
+        corePage->setZoomedOutPageScaleFactor(webPage->minimumPageScaleFactorForUIProcessScale());
+#endif
 #endif
 
     if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)

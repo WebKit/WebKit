@@ -44,7 +44,6 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteRenderingBackendProxy.h"
-#import "RemoteScrollingCoordinator.h"
 #import "RemoteSnapshotRecorderProxy.h"
 #import "RemoteWebTouchEvent.h"
 #import "RevealItem.h"
@@ -195,7 +194,6 @@
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/CoroutineUtilities.h>
 #import <wtf/MathExtras.h>
-#import <wtf/MemoryPressureHandler.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
@@ -239,15 +237,6 @@ static void adjustCandidateAutocorrectionInFrame(const String& correction, Local
 #else
     UNUSED_PARAM(frame);
 #endif
-}
-
-// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
-// we need to ignore differences that are within a small rounding error, with enough leeway
-// to handle rounding differences that may result from round-tripping through UIScrollView.
-bool scalesAreEssentiallyEqual(float a, float b)
-{
-    const auto scaleFactorEpsilon = 0.01f;
-    return WTF::areEssentiallyEqual(a, b, scaleFactorEpsilon);
 }
 
 void WebPage::platformDetach()
@@ -557,19 +546,6 @@ static FloatPoint relativeCenterAfterContentSizeChange(const FloatRect& original
     float relativeHorizontalPosition = oldContentCenter.x() / oldContentSize.width();
     float relativeVerticalPosition =  oldContentCenter.y() / oldContentSize.height();
     return FloatPoint(relativeHorizontalPosition * newContentSize.width(), relativeVerticalPosition * newContentSize.height());
-}
-
-static inline FloatRect adjustExposedRectForNewScale(const FloatRect& exposedRect, double exposedRectScale, double newScale)
-{
-    if (exposedRectScale == newScale)
-        return exposedRect;
-
-    float horizontalChange = exposedRect.width() * exposedRectScale / newScale - exposedRect.width();
-    float verticalChange = exposedRect.height() * exposedRectScale / newScale - exposedRect.height();
-
-    auto adjustedRect = exposedRect;
-    adjustedRect.inflate({ horizontalChange / 2, verticalChange / 2 });
-    return adjustedRect;
 }
 
 void WebPage::restorePageState(const HistoryItem& historyItem)
@@ -3567,279 +3543,6 @@ void WebPage::applicationWillEnterForegroundForMedia(bool isSuspendedUnderLock)
         manager->applicationWillEnterForeground(isSuspendedUnderLock);
 }
 
-static inline void adjustVelocityDataForBoundedScale(VelocityData& velocityData, double exposedRectScale, double minimumScale, double maximumScale)
-{
-    if (velocityData.scaleChangeRate) {
-        velocityData.horizontalVelocity = 0;
-        velocityData.verticalVelocity = 0;
-    }
-
-    if (exposedRectScale >= maximumScale || exposedRectScale <= minimumScale || scalesAreEssentiallyEqual(exposedRectScale, minimumScale) || scalesAreEssentiallyEqual(exposedRectScale, maximumScale))
-        velocityData.scaleChangeRate = 0;
-}
-
-std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
-{
-    auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
-    if (m_internals->lastTransactionIDWithScaleChange && m_internals->lastTransactionIDWithScaleChange->greaterThanSameProcess(transactionIDForLastScaleFromUIProcess))
-        return std::nullopt;
-
-    float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();
-    float currentScale = m_page->pageScaleFactor();
-
-    double scaleNoiseThreshold = 0.005;
-    if (!m_isInStableState && std::abs(scaleFromUIProcess - currentScale) < scaleNoiseThreshold) {
-        // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
-        // visual noise. We filter those useless updates.
-        scaleFromUIProcess = currentScale;
-    }
-    
-    scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
-    if (scalesAreEssentiallyEqual(currentScale, scaleFromUIProcess))
-        return std::nullopt;
-
-    return scaleFromUIProcess;
-}
-
-static bool selectionIsInsideFixedPositionContainer(LocalFrame& frame)
-{
-    auto& selection = frame.selection().selection();
-    if (selection.isNone())
-        return false;
-
-    bool isInsideFixedPosition = false;
-    if (selection.isCaret()) {
-        protect(frame.selection())->absoluteCaretBounds(&isInsideFixedPosition);
-        return isInsideFixedPosition;
-    }
-
-    selection.visibleStart().absoluteCaretBounds(&isInsideFixedPosition);
-    if (isInsideFixedPosition)
-        return true;
-
-    selection.visibleEnd().absoluteCaretBounds(&isInsideFixedPosition);
-    return isInsideFixedPosition;
-}
-
-void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo, MonotonicTime oldestTimestamp)
-{
-    LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage " << m_identifier << " updateVisibleContentRects " << visibleContentRectUpdateInfo);
-
-    // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
-    if (m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad() && visibleContentRectUpdateInfo.lastLayerTreeTransactionID().lessThanSameProcess(*m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad()) && !visibleContentRectUpdateInfo.isFirstUpdateForNewViewSize())
-        return;
-
-    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
-    m_isInStableState = visibleContentRectUpdateInfo.inStableState();
-
-    auto scaleFromUIProcess = this->scaleFromUIProcess(visibleContentRectUpdateInfo);
-
-    // Skip progressively redrawing tiles if pinch-zooming while the system is under memory pressure.
-    if (scaleFromUIProcess && !m_isInStableState && MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        return;
-
-    if (m_isInStableState)
-        m_hasStablePageScaleFactor = true;
-    else {
-        if (!m_oldestNonStableUpdateVisibleContentRectsTimestamp)
-            m_oldestNonStableUpdateVisibleContentRectsTimestamp = oldestTimestamp;
-    }
-
-    float scaleToUse = scaleFromUIProcess.value_or(m_page->pageScaleFactor());
-    FloatRect exposedContentRect = visibleContentRectUpdateInfo.exposedContentRect();
-    FloatRect adjustedExposedContentRect = adjustExposedRectForNewScale(exposedContentRect, visibleContentRectUpdateInfo.scale(), scaleToUse);
-    protect(m_drawingArea)->setExposedContentRect(adjustedExposedContentRect);
-    RefPtr localMainFrame = protect(m_page)->localMainFrame();
-    if (!localMainFrame)
-        return;
-    RefPtr frameView = *localMainFrame->view();
-
-    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
-        Ref remoteScrollingCoordinator = downcast<RemoteScrollingCoordinator>(*scrollingCoordinator);
-        if (auto mainFrameScrollingNodeID = frameView->scrollingNodeID()) {
-            if (visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ScrollViewRubberBanding))
-                remoteScrollingCoordinator->addNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
-            else
-                remoteScrollingCoordinator->removeNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
-        }
-    }
-
-    auto layoutViewportRect = visibleContentRectUpdateInfo.layoutViewportRect();
-    auto unobscuredContentRect = visibleContentRectUpdateInfo.unobscuredContentRect();
-    auto scrollPosition = roundedIntPoint(unobscuredContentRect.location());
-
-    // Computation of layoutViewportRect is done in LayoutUnits which loses some precision, so test with an epsilon.
-    // FIXME (302123): The loss of precision when converting floating point values to LayoutUnit does not, by itself, explain
-    // the differences between the `layoutViewportRect` and `unobscuredContentRect`'s locations. While scrolling on iOS,
-    // the absolute differences can sometimes exceed 3px, which is well over this fractional error threshold.
-    // For now, we maintain behavior shipped in iOS 26 by snapping to the unobscured content rect location as long as
-    // the difference is fairly small (~45 px).
-    static constexpr auto maxEpsilon = 45.0;
-    static constexpr auto epsilonRatio = 1.0 / (2 * kFixedPointDenominator);
-    auto unobscuredContentRectLocation = unobscuredContentRect.location();
-    auto epsilonX = std::min(maxEpsilon, epsilonRatio * std::abs(unobscuredContentRectLocation.x()));
-    auto epsilonY = std::min(maxEpsilon, epsilonRatio * std::abs(unobscuredContentRectLocation.y()));
-    auto layoutViewportRectLocation = layoutViewportRect.location();
-    if (std::abs(unobscuredContentRectLocation.x() - layoutViewportRectLocation.x()) <= epsilonX && std::abs(unobscuredContentRectLocation.y() - layoutViewportRectLocation.y()) <= epsilonY)
-        layoutViewportRect.setLocation(scrollPosition);
-
-    bool pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale = ([&] {
-        if (!m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage)
-            return false;
-
-        if (scalesAreEssentiallyEqual(scaleToUse, m_page->pageScaleFactor()))
-            return false;
-
-        auto [transactionIdBeforeScalingPage, scaleBeforeScalingPage] = *m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
-        if (!scalesAreEssentiallyEqual(scaleBeforeScalingPage, scaleToUse))
-            return false;
-
-        return transactionIdBeforeScalingPage.greaterThanOrEqualSameProcess( visibleContentRectUpdateInfo.lastLayerTreeTransactionID());
-    })();
-
-    if (!pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale) {
-        bool shouldSetCorePageScale = [this, protectedThis = Ref { *this }] {
-#if ENABLE(PDF_PLUGIN)
-            RefPtr pluginView = mainFramePlugIn();
-            if (!pluginView)
-                return true;
-            return !pluginView->pluginHandlesPageScaleFactor();
-#else
-            UNUSED_PARAM(this);
-            return true;
-#endif
-        }();
-
-        auto setCorePageScaleFactor = [this, protectedThis = Ref { *this }](float scale, const auto& origin, bool inStableState) {
-            m_page->setPageScaleFactor(scale, origin, inStableState);
-#if ENABLE(PDF_PLUGIN)
-            if (RefPtr pluginView = mainFramePlugIn())
-                pluginView->mainFramePageScaleFactorDidChange();
-#endif
-        };
-
-        bool hasSetPageScale = false;
-        if (scaleFromUIProcess) {
-            m_scaleWasSetByUIProcess = true;
-            m_hasStablePageScaleFactor = m_isInStableState;
-
-            m_internals->dynamicSizeUpdateHistory.clear();
-
-            if (shouldSetCorePageScale)
-                setCorePageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
-
-            hasSetPageScale = true;
-            send(Messages::WebPageProxy::DidSetPageScaleFactor(scaleFromUIProcess.value()));
-        }
-
-        if (!hasSetPageScale && m_isInStableState && shouldSetCorePageScale)
-            setCorePageScaleFactor(scaleToUse, scrollPosition, true);
-    }
-
-    if (scrollPosition != frameView->scrollPosition())
-        m_internals->dynamicSizeUpdateHistory.clear();
-
-    if (m_viewportConfiguration.setCanIgnoreScalingConstraints(visibleContentRectUpdateInfo.allowShrinkToFit()))
-        viewportConfigurationChanged();
-
-    double minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints = ([&] {
-        RefPtr document = localMainFrame->document();
-        if (!document)
-            return 0;
-
-        if (!document->quirks().shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints())
-            return 0;
-
-        // This value is chosen to be close to the minimum width of a Safari window on macOS.
-        return 500;
-    })();
-
-    if (m_viewportConfiguration.setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints(minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints))
-        viewportConfigurationChanged();
-
-    frameView->clearObscuredInsetsAdjustmentsIfNeeded();
-    frameView->setUnobscuredContentSize(unobscuredContentRect.size());
-    Ref page = *m_page;
-    page->setContentInsets(visibleContentRectUpdateInfo.contentInsets());
-    page->setObscuredInsets(visibleContentRectUpdateInfo.obscuredInsets());
-    page->setUnobscuredSafeAreaInsets(visibleContentRectUpdateInfo.unobscuredSafeAreaInsets());
-    page->setEnclosedInScrollableAncestorView(visibleContentRectUpdateInfo.enclosedInScrollableAncestorView());
-
-    VelocityData scrollVelocity = visibleContentRectUpdateInfo.scrollVelocity();
-    adjustVelocityDataForBoundedScale(scrollVelocity, visibleContentRectUpdateInfo.scale(), m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
-    frameView->setScrollVelocity(scrollVelocity);
-
-    bool visualViewportChanged = unobscuredContentRect != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds();
-    if (visualViewportChanged)
-        frameView->setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
-    else if (m_isInStableState) {
-        frameView->setVisualViewportOverrideRect(std::nullopt);
-        visualViewportChanged = true;
-    }
-
-    bool isChangingObscuredInsetsInteractively = visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ChangingObscuredInsetsInteractively);
-    bool shouldPerformLayout = m_isInStableState && !isChangingObscuredInsetsInteractively;
-
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << layoutViewportRect);
-    frameView->setLayoutViewportOverrideRect(LayoutRect(layoutViewportRect), shouldPerformLayout ? LocalFrameView::TriggerLayoutOrNot::Yes : LocalFrameView::TriggerLayoutOrNot::No);
-
-    if (m_isInStableState) {
-        if (selectionIsInsideFixedPositionContainer(*localMainFrame)) {
-            // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
-            frameView->frame().selection().setCaretRectNeedsUpdate();
-            scheduleFullEditorStateUpdate();
-        }
-    }
-
-    if (visualViewportChanged)
-        frameView->layoutOrVisualViewportChanged();
-
-    if (!isChangingObscuredInsetsInteractively)
-        frameView->setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
-
-    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
-        auto viewportStability = ViewportRectStability::Stable;
-        auto layerAction = ScrollingLayerPositionAction::Sync;
-        
-        if (isChangingObscuredInsetsInteractively) {
-            viewportStability = ViewportRectStability::ChangingObscuredInsetsInteractively;
-            layerAction = ScrollingLayerPositionAction::SetApproximate;
-        } else if (!m_isInStableState) {
-            viewportStability = ViewportRectStability::Unstable;
-            layerAction = ScrollingLayerPositionAction::SetApproximate;
-        }
-
-        auto mainFrameScrollingNodeID = frameView->scrollingNodeID();
-        if (!mainFrameScrollingNodeID) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        auto scrollUpdate = ScrollUpdate {
-            .nodeID = *mainFrameScrollingNodeID,
-            .scrollPosition = scrollPosition,
-            .data = ScrollUpdateData {
-                .updateType = ScrollUpdateType::PositionUpdate,
-                .updateLayerPositionAction = layerAction,
-                .layoutViewportOriginOrOverrideRect = visibleContentRectUpdateInfo.layoutViewportRect()
-            }
-        };
-
-        // We don't actually know that these are user scrolls; we get here for all kinds of state changes.
-        scrollingCoordinator->applyScrollUpdate(WTF::move(scrollUpdate), ScrollType::User, viewportStability);
-
-        if (visibleContentRectUpdateInfo.needsScrollend() && frameView->scrollingNodeID()) {
-            auto scrollUpdate = ScrollUpdate {
-                .nodeID = *frameView->scrollingNodeID(),
-                .scrollPosition = { },
-                .data = ScrollUpdateData {
-                    .updateType = ScrollUpdateType::WheelEventScrollDidEnd,
-                }
-            };
-            scrollingCoordinator->applyScrollUpdate(WTF::move(scrollUpdate), ScrollType::User);
-        }
-    }
-}
 
 void WebPage::scheduleLayoutViewportHeightExpansionUpdate()
 {
@@ -4759,12 +4462,6 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     protect(targetFrame->selection())->setSelectedRange(makeSimpleRange(position), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
     flushPendingFocusedElementUpdateIfNeeded();
     completionHandler(true);
-}
-
-void WebPage::platformDidScalePage()
-{
-    auto transactionID = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).lastCommittedTransactionID();
-    m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = { { transactionID, m_lastTransactionPageScaleFactor } };
 }
 
 #if USE(QUICK_LOOK)

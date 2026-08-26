@@ -36,7 +36,9 @@
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
 #import "TransientZoomState.h"
+#import "VisibleContentRectUpdateInfo.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
@@ -46,11 +48,16 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/ScrollView.h>
+#import <WebCore/VelocityData.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/ApproximateTime.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/SetForScope.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -63,6 +70,7 @@ static NSString * const transientClipPositionAnimationKey = @"wkTransientClipPos
 static NSString * const transientClipSizeAnimationKey = @"wkTransientClipSize";
 static NSString * const transientScrolledContentsPositionAnimationKey = @"wkTransientScrolledContentsPosition";
 static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkScrollPositionOverride";
+static NSString * const delegatedZoomSnapAnimationKey = @"wkDelegatedZoomSnap";
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client, public ThreadSafeRefCounted<RemoteLayerTreeDisplayLinkClient> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDisplayLinkClient);
@@ -234,9 +242,52 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     m_scrolledContentsLayerID = mainFrameCommitData.scrolledContentsLayerID;
     m_mainFrameClipLayerID = mainFrameCommitData.mainFrameClipLayerID;
 
-    if (m_transientZoomScale)
-        applyTransientZoomToLayer();
-    else if (m_transactionIDAfterEndingTransientZoom && transactionID.greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
+    // iOS does this from -[WKWebView _didCommitLayerTree:]. Without it the parameters stay zero on macOS, which
+    // drops the layout viewport's minimum size and pins its origin to the top of the document, breaking sticky.
+    if (page && usesDelegatedPageScaling())
+        page->updateLayoutViewportParameters(mainFrameCommitData);
+
+    // Re-apply on every commit, since the web process re-rasterizes during the gesture and those commits would
+    // otherwise drop us back to the committed scale.
+    if (m_transientZoomScale) {
+        if (usesDelegatedPageScaling())
+            applyDelegatedZoomToLayer(*m_transientZoomScale, m_transientZoomOriginInVisibleRect.value_or(FloatPoint { }));
+        else
+            applyTransientZoomToLayer();
+    } else if (usesDelegatedPageScaling()) {
+        // No gesture in flight, but still re-assert the scale every commit, using what the web process just
+        // reported so that resets clear it.
+        auto scaleToApply = mainFrameCommitData.pageScaleFactor;
+        if (m_delegatedZoomCommittedScale) {
+            // Keep showing the committed scale while the hold lasts, so an in-flight commit can't move the layer.
+            scaleToApply = *m_delegatedZoomCommittedScale;
+
+            if (++m_commitsSinceCommittingDelegatedZoom > maxCommitsToHoldDelegatedZoomScale) {
+                m_delegatedZoomCommittedScale = { };
+                m_commitsSinceCommittingDelegatedZoom = 0;
+            }
+        }
+
+        // Only remove the override at (essentially) unity. It carries the whole visual scale, so calling 1.0043
+        // near enough would leave the page permanently shrunk; zooming out commits exactly 1.0 anyway. Wait for
+        // any snap-back to finish, since resetting to identity would cut the ease short.
+        constexpr double unityScaleEpsilon = 0.0001;
+        if (WTF::areEssentiallyEqual(scaleToApply, 1.0, unityScaleEpsilon)) {
+            if (!hasDelegatedZoomSnapAnimation()) {
+                m_delegatedZoomOriginInVisibleRect = { };
+                removeDelegatedZoomFromLayer();
+            }
+        } else if (!hasDelegatedZoomSnapAnimation()) {
+            // Skipped while easing, since this would replace the position override the snap-back is animating
+            // and jump the content. animateDelegatedZoomSnapBack() re-asserts both when the ease is done.
+            applyDelegatedZoomToLayer(scaleToApply, m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { }));
+        }
+
+        // The tree scales this layer's position by the same scale, so it has to agree with the transform, or
+        // scroll offsets get scaled with nothing compensating for it. Use scaleToApply, not the commit value.
+        if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+            scrollingCoordinatorProxy->setDelegatedPageScaleFactor(scaleToApply);
+    } else if (m_transactionIDAfterEndingTransientZoom && transactionID.greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
@@ -375,7 +426,395 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
 #endif
 }
 
+bool RemoteLayerTreeDrawingAreaProxyMac::usesDelegatedPageScaling() const
+{
+    RefPtr page = this->page();
+    return page && page->delegatesScalingToUIProcess();
+}
+
+bool RemoteLayerTreeDrawingAreaProxyMac::ownsTransformOfLayer(WebCore::PlatformLayerIdentifier layerID) const
+{
+    // This is the one layer whose transform is the page scale instead of page content.
+    if (!usesDelegatedPageScaling() || m_scrolledContentsLayerID != layerID)
+        return false;
+
+    // Not the same as a gesture being in flight; didCommitLayerTree() installs an override for the committed
+    // scale too.
+    return m_delegatedZoomAppliedScale.has_value();
+}
+
+bool RemoteLayerTreeDrawingAreaProxyMac::ownsPositionOfLayer(WebCore::PlatformLayerIdentifier layerID) const
+{
+    if (!usesDelegatedPageScaling() || m_scrolledContentsLayerID != layerID)
+        return false;
+
+    // The scrolling thread writes the right position here, but the web process's committed one is unscaled,
+    // since RenderLayerCompositor uses -scrollPosition and normally has the page scale baked in below.
+    return m_delegatedZoomAppliedScale.has_value();
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::applyDelegatedZoomToLayer(double scale, FloatPoint originInVisibleRect)
+{
+    // Scale the scrolled-contents layer like iOS does: inside the frame clipping layer so the viewport clip keeps
+    // its size, and above the fixed and sticky layers so content at 0,0 lands in the corner.
+    RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID);
+    if (!layerForPageScale)
+        return;
+
+    // A pure scale, so a point p ends up at (p - scrollPosition) * scale and fixed content laid out at the layout
+    // viewport origin lands in the viewport corner at any scale. Anchoring is done by scrolling.
+    TransformationMatrix transform;
+    transform.scale(scale);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    // Set the model transform instead of animating it, because CA would intermittently ignore a fill-forwards
+    // animation for a commit and present the model values. ownsTransformOfLayer() keeps this from being clobbered.
+    [layerForPageScale setTransform:transform];
+    m_delegatedZoomAppliedScale = scale;
+
+    // Override the position in the same CA commit as the transform, or a frame with one and not the other jumps
+    // by (scale - 1) * scroll. With no scrolling coordinator there's nothing to anchor to.
+    if (RefPtr page = this->page(); page && page->scrollingCoordinatorProxy()) {
+        auto scaledScrollPosition = scrolledContentsLayerPositionForScale(scale, scrollPositionAnchoringGestureOrigin(scale, originInVisibleRect));
+        // An animation here, unlike the transform, since the scrolling thread rewrites this layer's model
+        // position every commit and an animation wins over that.
+        [layerForPageScale addAnimation:transientPositionAnimation(scaledScrollPosition).get() forKey:transientScrolledContentsPositionAnimationKey];
+    }
+
+    END_BLOCK_OBJC_EXCEPTIONS
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (RefPtr page = this->page()) {
+        if (RefPtr pageClient = page->pageClient()) {
+            if (m_transientZoomScale || m_delegatedZoomCommittedScale)
+                pageClient->didUpdateTransientZoomStateForScrollPocket({ { scale, originInVisibleRect } });
+            else
+                pageClient->didUpdateTransientZoomStateForScrollPocket(std::nullopt);
+        }
+    }
+#endif
+}
+
+bool RemoteLayerTreeDrawingAreaProxyMac::hasDelegatedZoomSnapAnimation() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID))
+        return !![layerForPageScale animationForKey:delegatedZoomSnapAnimationKey];
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
+}
+
+// Eases the scale on the layer to the committed one, like the non-delegated path's snap back out of the elastic
+// range. The transform is a model value here, so the animation needs an explicit fromValue; it expires on its
+// own and leaves the model value alone.
+void RemoteLayerTreeDrawingAreaProxyMac::animateDelegatedZoomSnapBack(double fromScale, double toScale, FloatPoint originInVisibleRect)
+{
+    RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID);
+    if (!layerForPageScale)
+        return;
+
+    TransformationMatrix fromTransform;
+    fromTransform.scale(fromScale);
+    TransformationMatrix toTransform;
+    toTransform.scale(toScale);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    auto animation = DrawingArea::transientZoomSnapAnimationForKeyPath("transform"_s);
+    // The model transform is already toScale, so this animation just covers the gap. It has to be removed on
+    // completion, or animationForKey: keeps reporting it and hasDelegatedZoomSnapAnimation() never lets the
+    // unity cleanup run.
+    [animation setFillMode:kCAFillModeRemoved];
+    [animation setRemovedOnCompletion:YES];
+    [animation setFromValue:[NSValue valueWithCATransform3D:fromTransform]];
+    [animation setToValue:[NSValue valueWithCATransform3D:toTransform]];
+    [layerForPageScale removeAnimationForKey:delegatedZoomSnapAnimationKey];
+    [layerForPageScale addAnimation:animation.get() forKey:delegatedZoomSnapAnimationKey];
+
+    // The position is scaled by the page scale too, so easing only the transform drifts by
+    // (toScale - presented) * scroll, which can be hundreds of pixels when the clamp fires while scrolled. Ease
+    // it over the same curve, replacing the override applyDelegatedZoomToLayer() just installed. This one has to
+    // stay fill-forwards, since the scrolling thread rewrites the model position every commit.
+    if (RefPtr page = this->page(); page && page->scrollingCoordinatorProxy()) {
+        auto fromPosition = scrolledContentsLayerPositionForScale(fromScale, scrollPositionAnchoringGestureOrigin(fromScale, originInVisibleRect));
+        auto toPosition = scrolledContentsLayerPositionForScale(toScale, scrollPositionAnchoringGestureOrigin(toScale, originInVisibleRect));
+        if (fromPosition != toPosition) {
+            auto positionAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("position"_s);
+            [positionAnimation setFromValue:[NSValue valueWithPoint:fromPosition]];
+            [positionAnimation setToValue:[NSValue valueWithPoint:toPosition]];
+            [layerForPageScale addAnimation:positionAnimation.get() forKey:transientScrolledContentsPositionAnimationKey];
+        }
+    }
+
+    // Re-assert the settled transform and position once the ease has run, and leave the unity cleanup to the
+    // next commit.
+    if (RefPtr page = this->page()) {
+        page->callAfterNextPresentationUpdate([page, toScale, originInVisibleRect] {
+            RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxyMac>(page->drawingArea());
+            if (!drawingArea || drawingArea->hasDelegatedZoomSnapAnimation())
+                return;
+            drawingArea->applyDelegatedZoomToLayer(toScale, originInVisibleRect);
+        });
+    }
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+FloatPoint RemoteLayerTreeDrawingAreaProxyMac::scrollPositionAnchoringGestureOrigin(double scale, FloatPoint originInVisibleRect) const
+{
+    RefPtr page = this->page();
+    CheckedPtr scrollingCoordinatorProxy = page ? page->scrollingCoordinatorProxy() : nullptr;
+    if (!scrollingCoordinatorProxy)
+        return { };
+
+    // A zoom that picked its own destination has no origin to anchor; see m_delegatedZoomTargetScrollPosition.
+    if (m_delegatedZoomTargetScrollPosition)
+        return constrainScrollPositionForScale(scale, *m_delegatedZoomTargetScrollPosition);
+
+    auto currentScrollPosition = scrollingCoordinatorProxy->currentMainFrameScrollPosition();
+    if (!m_delegatedZoomInitialScale || scale <= 0 || *m_delegatedZoomInitialScale <= 0)
+        return currentScrollPosition;
+
+    // Solve (p - scroll) * scale == origin for scroll, where p is the content point that was under the cursor
+    // when the gesture started. Unscaled content coordinates, like the rest of the scrolling tree.
+    auto anchorOffset = originInVisibleRect;
+    anchorOffset.scale(1.0f / *m_delegatedZoomInitialScale - 1.0f / scale);
+
+    // This positions the scrolled-contents layer and is also what sendVisibleContentRectUpdate() gives the
+    // scrolling tree and the web process
+    return constrainScrollPositionForScale(scale, m_delegatedZoomInitialScrollPosition + toFloatSize(anchorOffset));
+}
+
+FloatSize RemoteLayerTreeDrawingAreaProxyMac::unobscuredViewportSize() const
+{
+    RefPtr page = this->page();
+    CheckedPtr scrollingCoordinatorProxy = page ? page->scrollingCoordinatorProxy() : nullptr;
+    if (!scrollingCoordinatorProxy)
+        return { };
+
+    // Leaves out the space the scrollbars take, like ScrollView::sizeForUnobscuredContent() does in the web
+    // process. The tree's value is in view coordinates, so it doesn't move with the zoom.
+    auto sizeForVisibleContent = scrollingCoordinatorProxy->sizeForVisibleContent();
+    auto viewportSize = sizeForVisibleContent.isEmpty() ? FloatSize { size() } : sizeForVisibleContent;
+
+    auto obscuredInsets = scrollingCoordinatorProxy->obscuredContentInsets();
+    viewportSize.expand(-(obscuredInsets.left() + obscuredInsets.right()), -(obscuredInsets.top() + obscuredInsets.bottom()));
+    return viewportSize;
+}
+
+FloatPoint RemoteLayerTreeDrawingAreaProxyMac::constrainScrollPositionForScale(double scale, FloatPoint scrollPosition) const
+{
+    RefPtr page = this->page();
+    CheckedPtr scrollingCoordinatorProxy = page ? page->scrollingCoordinatorProxy() : nullptr;
+    if (!scrollingCoordinatorProxy || scale <= 0)
+        return scrollPosition;
+
+    // Unscaled, so the viewport grows as the scale falls. Idempotent, since the bounds come from the sizes alone.
+    auto inverseScale = static_cast<float>(1.0 / scale);
+    auto unobscuredViewportAtScale = FloatRect { scrollPosition, unobscuredViewportSize() * inverseScale };
+    return ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(unobscuredViewportAtScale), roundedIntSize(scrollingCoordinatorProxy->totalContentsSize()), roundedIntPoint(scrollPosition), scrollingCoordinatorProxy->scrollOrigin(), scrollingCoordinatorProxy->headerHeight(), scrollingCoordinatorProxy->footerHeight());
+}
+
+// Has to match what ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers() writes for the same scale
+// and scroll position, or the page jumps as the override comes and goes.
+FloatPoint RemoteLayerTreeDrawingAreaProxyMac::scrolledContentsLayerPositionForScale(double scale, FloatPoint scrollPosition) const
+{
+    RefPtr page = this->page();
+    CheckedPtr scrollingCoordinatorProxy = page ? page->scrollingCoordinatorProxy() : nullptr;
+    if (!scrollingCoordinatorProxy)
+        return { };
+
+    auto rootContentsLayerPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollingCoordinatorProxy->scrollOrigin(), scrollingCoordinatorProxy->obscuredContentInsets(), scrollingCoordinatorProxy->headerHeight());
+    return LocalFrameView::scrolledContentsLayerPositionForDelegatedPageScale(scrollPosition, scale, rootContentsLayerPosition);
+}
+
+String RemoteLayerTreeDrawingAreaProxyMac::delegatedZoomOverrideAsTextForTesting() const
+{
+    if (!m_delegatedZoomAppliedScale)
+        return { };
+
+    auto scale = *m_delegatedZoomAppliedScale;
+    auto originInVisibleRect = m_transientZoomOriginInVisibleRect.value_or(m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { }));
+
+    // The value both authorities are supposed to share: applyDelegatedZoomToLayer() turns it into the layer
+    // position below, and sendVisibleContentRectUpdate() hands it to the scrolling tree and the web process.
+    auto anchoringScrollPosition = roundedIntPoint(scrollPositionAnchoringGestureOrigin(scale, originInVisibleRect));
+
+    // Read back off the layer rather than recomputed, so this is the position CA is presenting.
+    auto layerPosition = IntPoint { };
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID)) {
+        RetainPtr animation = dynamic_objc_cast<CABasicAnimation>([layerForPageScale animationForKey:transientScrolledContentsPositionAnimationKey]);
+        if (RetainPtr value = dynamic_objc_cast<NSValue>([animation toValue]))
+            layerPosition = roundedIntPoint(FloatPoint { [value pointValue] });
+    }
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    return makeString("scale "_s, FormattedNumber::fixedWidth(scale, 2),
+        " anchoring scroll position ("_s, anchoringScrollPosition.x(), ", "_s, anchoringScrollPosition.y(),
+        ") scrolled contents layer position ("_s, layerPosition.x(), ", "_s, layerPosition.y(), ')');
+}
+
+
+void RemoteLayerTreeDrawingAreaProxyMac::removeDelegatedZoomFromLayer()
+{
+    // Cleared first so ownsTransformOfLayer() and ownsPositionOfLayer() are right even if a removal throws.
+    m_delegatedZoomAppliedScale = { };
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID)) {
+        // The transform is a model value, so it needs resetting or the scale stays on the layer.
+        [layerForPageScale setTransform:CATransform3DIdentity];
+
+        // The position doesn't need resetting, since the scrolling thread owns and rewrites it. Removing the
+        // animations is enough, including the non-delegated path's, which uses this same layer.
+        [layerForPageScale removeAnimationForKey:transientZoomAnimationKey];
+        [layerForPageScale removeAnimationForKey:transientZoomCommitAnimationKey];
+        [layerForPageScale removeAnimationForKey:transientScrolledContentsPositionAnimationKey];
+        [layerForPageScale removeAnimationForKey:delegatedZoomSnapAnimationKey];
+    }
+
+    if (RetainPtr clipLayer = remoteLayerTreeHost().layerForID(m_mainFrameClipLayerID)) {
+        [clipLayer removeAnimationForKey:transientClipPositionAnimationKey];
+        [clipLayer removeAnimationForKey:transientClipSizeAnimationKey];
+    }
+    END_BLOCK_OBJC_EXCEPTIONS
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (RefPtr page = this->page()) {
+        if (RefPtr pageClient = page->pageClient())
+            pageClient->didUpdateTransientZoomStateForScrollPocket(std::nullopt);
+    }
+#endif
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double scale, IsStableState isStableState)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return;
+
+    // adjustLayersForLayoutViewport() below repositions layers under the scrolling tree lock, and that makes the
+    // tree emit a scroll update on this thread, which comes back through updateLayoutViewportForScroll(). Set for
+    // the whole function so the reentrant call bails out before it reads the tree and deadlocks.
+    SetForScope sendingVisibleContentRectUpdate { m_isSendingVisibleContentRectUpdate, true };
+
+    // Take the origin from the scrolling tree and let WebCore do the obscured inset math; the insets move with
+    // the scroll position, so computing it here from the view size wouldn't work.
+    auto visibleContentRect = scrollingCoordinatorProxy->computeVisibleContentRect();
+    auto obscuredInsets = scrollingCoordinatorProxy->obscuredContentInsets();
+
+    // The transform is a pure scale, so the gesture origin is anchored by moving the scroll position. The tree,
+    // the layout viewport and the web process all have to agree on this value.
+    auto anchoredScrollPosition = scrollPositionAnchoringGestureOrigin(scale, m_transientZoomOriginInVisibleRect.value_or(m_delegatedZoomOriginInVisibleRect.value_or(FloatPoint { })));
+
+    // Size comes from the view, not from that rect. The web process recomputes the layout viewport from what we
+    // send, so scaling it again every frame compounds and collapses the viewport mid-gesture.
+    FloatSize viewportSize { size() };
+    viewportSize.expand(-(obscuredInsets.left() + obscuredInsets.right()), -(obscuredInsets.top() + obscuredInsets.bottom()));
+
+    auto inverseScale = static_cast<float>(1.0 / scale);
+
+    // scrollPositionAnchoringGestureOrigin() already clamps what it synthesizes, so this only bounds the tree's
+    // own live position.
+    anchoredScrollPosition = constrainScrollPositionForScale(scale, anchoredScrollPosition);
+
+    visibleContentRect.setLocation(anchoredScrollPosition);
+
+    auto unobscuredContentRect = visibleContentRect;
+    unobscuredContentRect.setSize(unobscuredViewportSize() * inverseScale);
+
+    // The exposed rect is the full view, including the obscured areas the unobscured rect leaves out.
+    auto exposedContentRect = unobscuredContentRect;
+    exposedContentRect.setSize(FloatSize { size() } * inverseScale);
+
+    auto layoutViewportRect = page->computeLayoutViewportRect(unobscuredContentRect, unobscuredContentRect, page->layoutViewportRect(), scale, LayoutViewportConstraint::ConstrainedToDocumentRect);
+
+    // The view is unstable while the gesture is in flight, which keeps the web process from laying out
+    // synchronously every frame. The update at the end of the gesture is stable.
+    OptionSet<ViewStabilityFlag> viewStability;
+    if (isStableState == IsStableState::No)
+        viewStability.add(ViewStabilityFlag::ScrollViewInteracting);
+
+    // Unscaled, since this is in scroll view coordinates. The resize event and window.inner* are sized from it
+    // and shouldn't change as the page zooms, see LocalFrameView::sizeForResizeEvent().
+    auto unobscuredRectInViewCoordinates = FloatRect { unobscuredContentRect.location(), viewportSize };
+
+    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
+        exposedContentRect,
+        unobscuredContentRect,
+        FloatBoxExtent { }, // contentInsets
+        unobscuredRectInViewCoordinates,
+        unobscuredContentRect, // unobscuredContentRectRespectingInputViewBounds
+        layoutViewportRect,
+        obscuredInsets,
+        FloatBoxExtent { }, // unobscuredSafeAreaInsets
+        scale,
+        viewStability,
+        false, // isFirstUpdateForNewViewSize
+        false, // allowShrinkToFit
+        false, // enclosedInScrollableAncestorView
+        false, // needsScrollend
+        WebCore::VelocityData { },
+        lastCommittedMainFrameLayerTreeTransactionID());
+
+    LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate " << visibleContentRectUpdateInfo.dump());
+
+    page->updateVisibleContentRects(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
+
+    // Push the layout viewport into the UI-process scrolling tree so fixed and sticky layers are placed against
+    // the rect we just sent instead of lagging until the next commit. Read it back from the page, which
+    // updateVisibleContentRects() has already updated, so it matches what the web process will compute.
+    auto unconstrainedLayoutViewport = page->unconstrainedLayoutViewportRect();
+
+    // Pass the tree's own scroll position; on macOS the tree owns it.
+    page->adjustLayersForLayoutViewport(anchoredScrollPosition, unconstrainedLayoutViewport, scale);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::updateLayoutViewportForScroll(IsStableState isStableState)
+{
+    if (!usesDelegatedPageScaling())
+        return;
+
+    // A magnify gesture already drives updates from adjustTransientZoom(), at its own scale.
+    if (m_transientZoomScale)
+        return;
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    // This is the scale the layout viewport was computed against. Not
+    // RemoteScrollingCoordinatorProxy::mainFrameScaleFactor(), which is frameScaleFactor() and stays 1 here.
+    auto scale = page->displayedContentScale();
+
+    // At unity the layout viewport is just the unobscured rect, and the web process keeps that up to date itself.
+    constexpr double unityScaleEpsilon = 0.0001;
+    if (scale <= 0 || WTF::areEssentiallyEqual(scale, 1.0, unityScaleEpsilon))
+        return;
+
+    CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return;
+
+    if (m_isSendingVisibleContentRectUpdate || scrollingCoordinatorProxy->isCommittingScrollingTreeState())
+        return;
+
+    // Nothing has moved since the last push, so there is no new rect to send.
+    auto scrollPosition = scrollingCoordinatorProxy->currentMainFrameScrollPosition();
+    if (isStableState == IsStableState::No && m_lastScrollPositionPushedForLayoutViewport == scrollPosition && m_lastScalePushedForLayoutViewport == scale)
+        return;
+
+    m_lastScrollPositionPushedForLayoutViewport = scrollPosition;
+    m_lastScalePushedForLayoutViewport = scale;
+
+    sendVisibleContentRectUpdate(scale, isStableState);
+}
+
 void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect)
+
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom - scale " << scale << " originInLayerForPageScale " << originInLayerForPageScale << " originInVisibleRect " << originInVisibleRect);
 
@@ -383,17 +822,120 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
     m_transientZoomOriginInLayerForPageScale = originInLayerForPageScale;
     m_transientZoomOriginInVisibleRect = originInVisibleRect;
 
+    if (usesDelegatedPageScaling()) {
+        // A new gesture takes over from the previous hold, which would otherwise bring back a stale scale, and
+        // from any snap-back still easing out of the last release.
+        m_delegatedZoomCommittedScale = { };
+        m_commitsSinceCommittingDelegatedZoom = 0;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        if (RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID))
+            [layerForPageScale removeAnimationForKey:delegatedZoomSnapAnimationKey];
+        END_BLOCK_OBJC_EXCEPTIONS
+
+        // First frame of the gesture, so remember where we started for scrollPositionAnchoringGestureOrigin().
+        if (!m_delegatedZoomInitialScale) {
+            RefPtr page = this->page();
+            CheckedPtr scrollingCoordinatorProxy = page ? page->scrollingCoordinatorProxy() : nullptr;
+            m_delegatedZoomInitialScale = page ? page->pageScaleFactor() : 1;
+            m_delegatedZoomInitialScrollPosition = scrollingCoordinatorProxy ? scrollingCoordinatorProxy->currentMainFrameScrollPosition() : FloatPoint { };
+        }
+
+        applyDelegatedZoomToLayer(scale, originInVisibleRect);
+        sendVisibleContentRectUpdate(scale, IsStableState::No);
+        return;
+    }
+
     applyTransientZoomToLayer();
-    
+
     // FIXME: Only send these messages as fast as the web process is responding to them.
     send(Messages::DrawingArea::AdjustTransientZoom(scale, originInLayerForPageScale));
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
+void RemoteLayerTreeDrawingAreaProxyMac::commitDelegatedZoom(double scale, FloatPoint originInVisibleRect)
 {
     RefPtr page = this->page();
     if (!page)
         return;
+
+    auto rootScrollingNodeID = [&]() -> std::optional<WebCore::ScrollingNodeID> {
+        CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
+        if (!scrollingCoordinatorProxy)
+            return std::nullopt;
+        auto nodeID = scrollingCoordinatorProxy->rootScrollingNodeID();
+        if (nodeID)
+            scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, WheelEventTestMonitorDeferReason::CommittingTransientZoom);
+        return nodeID;
+    }();
+
+    // The gesture goes into the elastic range, down to minMagnification * 0.75, and endMagnificationGesture()
+    // clamps back to [min, max], so the layer can be showing a scale the committed one has to travel to. Ease
+    // over that gap like the non-delegated path does.
+    auto appliedScale = m_delegatedZoomAppliedScale;
+    m_delegatedZoomOriginInVisibleRect = originInVisibleRect;
+    applyDelegatedZoomToLayer(scale, originInVisibleRect);
+    if (appliedScale && !WTF::areEssentiallyEqual(*appliedScale, scale))
+        animateDelegatedZoomSnapBack(*appliedScale, scale, originInVisibleRect);
+
+    // Hold this scale until the web process catches up. Commits already in flight carry the old pageScaleFactor,
+    // and applying those would visibly step the scale backwards.
+    m_delegatedZoomCommittedScale = scale;
+    m_commitsSinceCommittingDelegatedZoom = 0;
+
+    m_transientZoomScale = { };
+    m_transientZoomOriginInLayerForPageScale = { };
+    m_transientZoomOriginInVisibleRect = { };
+
+    // The scale rides along on the stable visible content rect update. scalePageRelativeToScrollPosition() would
+    // multiply in viewScaleFactor() again and bake the scale back into the render tree.
+    sendVisibleContentRectUpdate(scale, IsStableState::Yes);
+
+    // The gesture is over; the next one captures its own starting scale and scroll position.
+    m_delegatedZoomInitialScale = { };
+    m_delegatedZoomInitialScrollPosition = { };
+
+    // Release the hold once the web process has drawn at the committed scale. Not gated on rootScrollingNodeID,
+    // or a page with no scrolling node would keep the override forever.
+    page->callAfterNextPresentationUpdate([page, scale] {
+        RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxyMac>(page->drawingArea());
+        if (!drawingArea)
+            return;
+
+        // A new gesture may have started in the meantime, in which case it owns the scale and
+        // adjustTransientZoom() has already cleared this.
+        if (!drawingArea->m_delegatedZoomCommittedScale || *drawingArea->m_delegatedZoomCommittedScale != scale)
+            return;
+
+        drawingArea->m_delegatedZoomCommittedScale = { };
+        drawingArea->m_commitsSinceCommittingDelegatedZoom = 0;
+    });
+
+    if (!rootScrollingNodeID)
+        return;
+
+    page->callAfterNextPresentationUpdate([rootScrollingNodeID, page] {
+        if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+            scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(rootScrollingNodeID, WheelEventTestMonitorDeferReason::CommittingTransientZoom);
+    });
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin, std::optional<FloatPoint> targetScrollPosition)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    if (usesDelegatedPageScaling()) {
+        // Our transform is a pure scale, so `origin`, a layer translation, can't move the page here, and it can't
+        // be converted into a scroll position that would: ViewGestureController::scaledMagnificationOrigin() folds
+        // m_visibleContentRect.location() into it, which is in unscaled content coordinates once the UI process
+        // owns the page scale (FrameView::visibleContentScaleFactor()), while the anchor it's added to is in view
+        // coordinates. A gesture is anchored from the origin adjustTransientZoom() tracked instead, and a zoom that
+        // picked its own destination has to name it outright.
+        m_delegatedZoomTargetScrollPosition = targetScrollPosition;
+        commitDelegatedZoom(scale, m_transientZoomOriginInVisibleRect.value_or(FloatPoint { }));
+        m_delegatedZoomTargetScrollPosition = { };
+        return;
+    }
 
     CheckedRef scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
     auto visibleContentRect = scrollingCoordinatorProxy->computeVisibleContentRect();

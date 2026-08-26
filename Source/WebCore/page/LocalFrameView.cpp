@@ -616,8 +616,10 @@ void LocalFrameView::applyOverflowToViewport(const RenderElement& renderer, Scro
     // To combat the inability to scroll on a page with overflow:hidden on the root when scaled, disregard hidden when
     // there is a frameScaleFactor that is greater than one on the main frame. Also disregard hidden if there is a
     // header or footer.
-
-    bool overrideHidden = m_frame->isMainFrame() && ((m_frame->frameScaleFactor() > 1) || headerHeight() || footerHeight());
+    // The page scale shows up in frameScaleFactor(), or in visibleContentScaleFactor() when scaling is
+    // delegated to the UI process, so check both.
+    bool isScaled = m_frame->frameScaleFactor() > 1 || visibleContentScaleFactor() > 1;
+    bool overrideHidden = m_frame->isMainFrame() && (isScaled || headerHeight() || footerHeight());
 
     Overflow overflowX = renderer.style().overflowX();
     Overflow overflowY = renderer.style().overflowY();
@@ -1004,17 +1006,8 @@ GraphicsLayer* LocalFrameView::graphicsLayerForPlatformWidget(PlatformWidget pla
     return widgetLayer->backing()->parentForSublayers();
 }
 
-GraphicsLayer* LocalFrameView::graphicsLayerForPageScale()
+GraphicsLayer* LocalFrameView::graphicsLayerForRenderViewBacking() const
 {
-    auto* page = m_frame->page();
-    if (!page)
-        return nullptr;
-
-    if (page->delegatesScaling()) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
     auto* renderView = this->renderView();
     if (!renderView)
         return nullptr;
@@ -1027,6 +1020,22 @@ GraphicsLayer* LocalFrameView::graphicsLayerForPageScale()
         return contentsContainmentLayer;
 
     return backing->graphicsLayer();
+}
+
+GraphicsLayer* LocalFrameView::graphicsLayerForPageScale()
+{
+    auto* page = m_frame->page();
+    if (!page)
+        return nullptr;
+
+    if (page->delegatesScaling()) {
+        // The page scale isn't on this layer when scaling is delegated. Callers who want the layer
+        // itself should use graphicsLayerForRenderViewBacking().
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    return graphicsLayerForRenderViewBacking();
 }
 
 GraphicsLayer* LocalFrameView::graphicsLayerForScrolledContents()
@@ -2074,10 +2083,42 @@ LayoutRect LocalFrameView::visibleDocumentRect(const FloatRect& visibleContentRe
 
 LayoutRect LocalFrameView::visualViewportRect() const
 {
+    FloatRect visibleContentRect = this->visibleContentRect(LegacyIOSDocumentVisibleRect);
+
+#if !PLATFORM(IOS_FAMILY)
+    // visibleDocumentRect() scales the origin too, but the scroll position is already unscaled here.
+    if (m_frame->page() && m_frame->page()->delegatesScaling() && (m_visualViewportOverrideRect || visibleContentScaleFactor() != 1)) {
+        auto inverseScale = 1 / visibleContentScaleFactor();
+
+        auto origin = FloatPoint { visibleContentRect.location() };
+
+        // Use our own size, not the override's: only we know how much room the scrollbars take once
+        // laid out at this scale. visibleContentRect() would round up and offset every fixed element.
+        auto sizeInContentCoordinates = FloatSize { sizeForUnobscuredContent() };
+        sizeInContentCoordinates.scale(inverseScale);
+
+        // The override's origin records where a zoom gesture anchored, but goes stale when we scroll
+        // ourselves, so only take it if it still agrees with the scroll position.
+        if (m_visualViewportOverrideRect && roundedIntPoint(FloatPoint { m_visualViewportOverrideRect->location() }) == roundedIntPoint(origin))
+            origin = m_visualViewportOverrideRect->location();
+
+        // Header and footer aren't zoomed. The bottom comes off the unclamped top so that clamping
+        // shortens the viewport instead of moving it down.
+        auto contentsHeight = totalContentsSize().height() - headerHeight() - footerHeight();
+        auto unclampedTop = origin.y() - headerHeight() * inverseScale;
+        auto top = std::max<float>(unclampedTop, 0);
+        auto bottom = std::min<float>(unclampedTop + sizeInContentCoordinates.height(), std::max<float>(contentsHeight, 0));
+
+        return LayoutRect(FloatRect {
+            FloatPoint { origin.x(), top },
+            FloatSize { sizeInContentCoordinates.width(), std::max<float>(bottom - top, 0) }
+        });
+    }
+#endif
+
     if (m_visualViewportOverrideRect)
         return m_visualViewportOverrideRect.value();
 
-    FloatRect visibleContentRect = this->visibleContentRect(LegacyIOSDocumentVisibleRect);
     return visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), frameScaleFactor());
 }
 
@@ -2778,6 +2819,15 @@ FloatPoint LocalFrameView::positionForRootContentLayer() const
     return positionForRootContentLayer(scrollPosition(), scrollOrigin(), obscuredContentInsets(), headerHeight());
 }
 
+FloatPoint LocalFrameView::scrolledContentsLayerPositionForDelegatedPageScale(const FloatPoint& scrollPosition, float delegatedPageScaleFactor, const FloatPoint& rootContentsLayerPosition)
+{
+    // The layer composes as screen(p) = (rootContentsLayerPosition + p) * scale + position, so the second
+    // term takes the scale back off the content root's offset, which is chrome rather than page content.
+    auto position = scrollPosition.scaled(delegatedPageScaleFactor);
+    position += toFloatSize(rootContentsLayerPosition).scaled(delegatedPageScaleFactor - 1);
+    return -position;
+}
+
 #if PLATFORM(IOS_FAMILY)
 LayoutRect LocalFrameView::rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements scrollBehavior)
 {
@@ -2869,7 +2919,9 @@ ScrollPosition LocalFrameView::unscaledMaximumScrollPosition() const
     if (CheckedPtr renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         unscaledDocumentRect.expand(0, headerHeight() + footerHeight());
-        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize()).expandedTo({ 0, 0 });
+        // visibleSize() is zoomed, and everything else here is unscaled, so it would push the maximum too far down.
+        auto viewportSize = visibleContentScaleFactor() == 1 ? visibleSize() : sizeForUnobscuredContent();
+        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - viewportSize).expandedTo({ 0, 0 });
         if (m_frame->isMainFrame() && m_scrollPinningBehavior == ScrollPinningBehavior::PinToTop)
             maximumPosition.setY(unscaledMinimumScrollPosition().y());
 
@@ -3684,9 +3736,10 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
     minScrollPosition.move(-contentInsets.left(), -contentInsets.top());
     maxScrollPosition.move(contentInsets.right(), contentInsets.bottom());
 #endif
-    // Move the target rect into "scrollView contents" coordinates.
+    // Move the target rect into "scrollView contents" coordinates. The header isn't zoomed, so it needs
+    // scaling down to match when the page scale is applied above the contents. A no-op otherwise.
     auto targetRect = absoluteRect;
-    targetRect.move(0, headerHeight());
+    targetRect.move(0, LayoutUnit { headerHeight() / visibleContentScaleFactor() });
 
     // scroll-padding applies to the scroll container, but expand the rectangle that we want to expose in order
     // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
@@ -4055,8 +4108,13 @@ void LocalFrameView::addTrackedRepaintRect(const FloatRect& r)
     if (!m_isTrackingRepaints || r.isEmpty())
         return;
 
+    // These rects are dumped by tests, so they need to be in the same space whether or not the page scale
+    // is applied above the contents. scrollPosition() is unscaled in that case, so scale it up.
+    auto scrollOffset = toFloatSize(scrollPosition());
+    scrollOffset.scale(visibleContentScaleFactor());
+
     FloatRect repaintRect = r;
-    repaintRect.moveBy(-scrollPosition());
+    repaintRect.move(-scrollOffset);
     m_trackedRepaintRects.append(repaintRect);
 }
 
@@ -4325,7 +4383,7 @@ void LocalFrameView::setNeedsCompositingConfigurationUpdate()
 void LocalFrameView::setNeedsCompositingGeometryUpdate()
 {
     CheckedPtr renderView = this->renderView();
-    if (renderView->usesCompositing()) {
+    if (renderView && renderView->usesCompositing()) {
         if (auto* rootLayer = renderView->layer())
             rootLayer->setNeedsCompositingGeometryUpdate();
         renderView->compositor().scheduleCompositingLayerUpdate();
@@ -4334,8 +4392,10 @@ void LocalFrameView::setNeedsCompositingGeometryUpdate()
 
 void LocalFrameView::setDescendantsNeedUpdateBackingAndHierarchyTraversal()
 {
+    // The render tree can be gone here: Page::setPageScaleFactor() reaches this at didCommitLoad, before the
+    // incoming document has been attached.
     CheckedPtr renderView = this->renderView();
-    if (renderView->usesCompositing()) {
+    if (renderView && renderView->usesCompositing()) {
         if (auto* rootLayer = renderView->layer())
             rootLayer->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
         renderView->compositor().scheduleCompositingLayerUpdate();
@@ -4972,13 +5032,16 @@ void LocalFrameView::updateAnchorPositionedAfterScroll()
 
 IntSize LocalFrameView::sizeForResizeEvent() const
 {
-#if PLATFORM(IOS_FAMILY)
     if (m_customSizeForResizeEvent)
         return *m_customSizeForResizeEvent;
-#endif
     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
         return fixedLayoutSize();
-    return visibleContentRectIncludingScrollbars().size();
+
+    // The window doesn't change size when the page is zoomed, so neither may this. The visible content rect
+    // is the view divided by the page scale when scaling is delegated, so scale it back up. A no-op otherwise.
+    auto size = FloatSize { visibleContentRectIncludingScrollbars().size() };
+    size.scale(visibleContentScaleFactor());
+    return expandedIntSize(size);
 }
 
 void LocalFrameView::primeResizeEventBaseline(IntSize size)
@@ -6719,18 +6782,18 @@ bool LocalFrameView::updateFixedPositionLayoutRect()
     return false;
 }
 
-void LocalFrameView::setCustomSizeForResizeEvent(IntSize customSize)
-{
-    m_customSizeForResizeEvent = customSize;
-    scheduleResizeEventIfNeeded();
-}
-
 void LocalFrameView::setScrollVelocity(const VelocityData& velocityData)
 {
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setVelocity(velocityData);
 }
 #endif // PLATFORM(IOS_FAMILY)
+
+void LocalFrameView::setCustomSizeForResizeEvent(IntSize customSize)
+{
+    m_customSizeForResizeEvent = customSize;
+    scheduleResizeEventIfNeeded();
+}
 
 void LocalFrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerformanceTestingEnabled)
 {
@@ -7117,7 +7180,12 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
     
     // FIXME: the value returned should take into account the value of the overflow
     // property on the root element.
-    auto visibleContentSizeIncludingScrollbars = visibleContentRectIncludingScrollbars().size();
+
+    // Viewport units must not shrink as the page is zoomed, and visibleContentRectIncludingScrollbars() is
+    // the zoomed rect when scaling is delegated. The two are the same otherwise.
+    auto visibleContentSizeIncludingScrollbars = visibleContentScaleFactor() == 1
+        ? visibleContentRectIncludingScrollbars().size()
+        : sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
     viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
     viewportSize.height = viewportSize.height.value_or(visibleContentSizeIncludingScrollbars.height());
     return { *viewportSize.width, *viewportSize.height };
@@ -7131,8 +7199,12 @@ FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
     if (useFixedLayout())
         return fixedLayoutSize();
 
-    if (m_frame->settings().visualViewportEnabled())
+    if (m_frame->settings().visualViewportEnabled()) {
+        // As in calculateSizeForCSSViewportUnitsOverride(), the unobscured rect is zoomed and viewport units are not.
+        if (visibleContentScaleFactor() != 1)
+            return sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
         return unobscuredContentRectIncludingScrollbars().size();
+    }
 
     return viewportConstrainedVisibleContentRect().size();
 }
@@ -7166,6 +7238,15 @@ void LocalFrameView::didFinishProhibitingScrollingWhenChangingContentSize()
 float LocalFrameView::pageScaleFactor() const
 {
     return m_frame->frameScaleFactor();
+}
+
+IntSize LocalFrameView::snapportSize() const
+{
+    // Snap offsets and areas are computed against baseLayoutViewportSize(), so measure the snapport the same
+    // way. visibleSize() is divided by visibleContentScaleFactor(), which would make an area that fits the
+    // viewport look larger than it and wrongly relax mandatory snapping.
+    // See https://www.w3.org/TR/css-scroll-snap-1/#snap-overflow.
+    return roundedIntSize(baseLayoutViewportSize());
 }
 
 void LocalFrameView::didStartScrollAnimation()
@@ -7294,18 +7375,23 @@ LayoutRect LocalFrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibl
     if (!isFixed)
         return getRectToExposeForScrollIntoView(visibleRect, exposeRect, alignX, alignY);
 
+    // frameScaleFactor() is 1 when scaling is delegated, which would take the "not scaled" early return below
+    // while still zoomed.
+    auto effectiveScaleFactor = frameScaleFactor() != 1 ? frameScaleFactor() : visibleContentScaleFactor();
+
     // If the element is inside position:fixed and we're not scaled, no amount of scrolling is going to move things around.
-    if (frameScaleFactor() == 1)
+    if (effectiveScaleFactor == 1)
         return visibleRect;
 
     // FIXME: Shouldn't this return visibleRect as well?
     if (!m_frame->settings().visualViewportEnabled())
         return getRectToExposeForScrollIntoView(visibleRect, exposeRect, alignX, alignY);
 
-    // exposeRect is in absolute coords, affected by page scale. Unscale it.
+    // exposeRect is in absolute coords, affected by page scale. Unscale it. The header isn't zoomed, so scale
+    // it down to match; scrollRectToVisibleInTopLevelView() adds the same quantity.
     auto unscaledExposeRect = exposeRect;
     unscaledExposeRect.scale(1 / frameScaleFactor());
-    unscaledExposeRect.move(0, -headerHeight());
+    unscaledExposeRect.move(0, LayoutUnit { -headerHeight() / visibleContentScaleFactor() });
 
     // These are both in unscaled coordinates.
     auto layoutViewport = layoutViewportRect();
@@ -7322,7 +7408,7 @@ LayoutRect LocalFrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibl
 
     // Scale it back up.
     requiredVisualViewport.scale(frameScaleFactor());
-    requiredVisualViewport.move(0, headerHeight());
+    requiredVisualViewport.move(0, LayoutUnit { headerHeight() / visibleContentScaleFactor() });
     return requiredVisualViewport;
 }
 

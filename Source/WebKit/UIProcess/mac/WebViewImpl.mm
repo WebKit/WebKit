@@ -8080,10 +8080,21 @@ void WebViewImpl::updateWebContentDistancesFromEdges()
 
     auto leftInset = obscuredContentInsets().left();
     auto viewWidth = [view bounds].size.width;
-    auto contentsWidth = m_lastPageContentsSize.width;
-    auto effectiveScrollOffsetX = m_scrollOffsetBeforeTransientZoom
+    auto contentsWidth = static_cast<CGFloat>(m_lastPageContentsSize.width);
+    auto effectiveScrollOffsetX = static_cast<CGFloat>(m_scrollOffsetBeforeTransientZoom
         ? m_scrollOffsetBeforeTransientZoom->x()
-        : m_lastPageScrollOffset.x();
+        : m_lastPageScrollOffset.x());
+
+    // These distances are in view coordinates, but with delegated scaling the web process reports the contents
+    // size and scroll offset unscaled, since Frame::frameScaleFactor() is 1 there. Otherwise the page scale is
+    // already baked into both.
+    if (m_page->delegatesScalingToUIProcess()) {
+        // The scale those values were reported at. That's the committed one except mid-gesture, where the block
+        // below carries the geometry the rest of the way.
+        auto baselineScale = m_pageScaleBeforeTransientZoom.value_or(m_page->pageScaleFactor());
+        contentsWidth = std::trunc(contentsWidth * baselineScale);
+        effectiveScrollOffsetX = std::trunc(effectiveScrollOffsetX * baselineScale);
+    }
 
     auto leftDistance = leftInset - effectiveScrollOffsetX;
     auto rightDistance = viewWidth - leftInset - contentsWidth + effectiveScrollOffsetX;

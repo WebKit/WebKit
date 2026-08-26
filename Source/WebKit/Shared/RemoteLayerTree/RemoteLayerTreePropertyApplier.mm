@@ -389,7 +389,12 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayerCustomAppearance
 void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
-        layer.position = CGPointMake(properties.position.x(), properties.position.y());
+        // The UI process may own this position: under unified zoom it's the scroll offset scaled by the page
+        // scale, and the committed value is unscaled. zPosition is unaffected.
+        RefPtr drawingArea = layerTreeNode && layerTreeHost ? &layerTreeHost->drawingArea() : nullptr;
+        bool uiProcessOwnsPosition = drawingArea && drawingArea->ownsPositionOfLayer(layerTreeNode->layerID());
+        if (!uiProcessOwnsPosition)
+            layer.position = CGPointMake(properties.position.x(), properties.position.y());
         layer.zPosition = properties.position.z();
     }
 
@@ -401,8 +406,14 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BoundsChanged)
         layer.bounds = properties.bounds;
 
-    if (properties.changedProperties & LayerChange::TransformChanged)
-        layer.transform = properties.transform ? (CATransform3D)*properties.transform.get() : CATransform3DIdentity;
+    if (properties.changedProperties & LayerChange::TransformChanged) {
+        // The UI process may own this transform: under unified zoom it's the page scale, so applying the
+        // committed value would present an unscaled frame. A null layerTreeHost means we're the web process.
+        RefPtr drawingArea = layerTreeNode && layerTreeHost ? &layerTreeHost->drawingArea() : nullptr;
+        bool uiProcessOwnsTransform = drawingArea && drawingArea->ownsTransformOfLayer(layerTreeNode->layerID());
+        if (!uiProcessOwnsTransform)
+            layer.transform = properties.transform ? (CATransform3D)*properties.transform.get() : CATransform3DIdentity;
+    }
 
     if (properties.changedProperties & LayerChange::SublayerTransformChanged)
         layer.sublayerTransform = properties.sublayerTransform ? (CATransform3D)*properties.sublayerTransform.get() : CATransform3DIdentity;

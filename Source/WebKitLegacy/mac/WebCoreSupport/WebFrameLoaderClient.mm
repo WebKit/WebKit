@@ -1407,7 +1407,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
 
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     auto* coreFrame = core(m_webFrame.get());
-    auto* page = coreFrame->page();
+    RefPtr page = coreFrame->page();
     bool isMainFrame = coreFrame->isMainFrame();
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);

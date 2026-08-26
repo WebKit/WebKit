@@ -61,6 +61,9 @@ public:
     std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
     std::optional<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
 
+    // The zoom override currently installed on the scrolled-contents layer, empty when there is none
+    String delegatedZoomOverrideAsTextForTesting() const;
+
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
 
@@ -74,13 +77,48 @@ private:
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
-    void commitTransientZoom(double, WebCore::FloatPoint) override;
+    void commitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::FloatPoint>) override;
     std::optional<double> committedTransientZoomScale() const override { return m_committedTransientZoomScale; }
 
     void sendCommitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::ScrollingNodeID>);
 
     void applyTransientZoomToLayer();
     void removeTransientZoomFromLayer();
+
+    // With unified zoom the UI process owns the page scale and applies it below the scrolling layers, so the
+    // viewport clip stays a fixed size and the scrolling tree keeps working in unscaled content coordinates.
+    bool usesDelegatedPageScaling() const;
+    // While a zoom override is installed on the scrolled-contents layer we own both its transform and its
+    // position, so the property applier has to leave them alone.
+    bool ownsTransformOfLayer(WebCore::PlatformLayerIdentifier) const final;
+    bool ownsPositionOfLayer(WebCore::PlatformLayerIdentifier) const final;
+    // The transform here is a pure scale, so there's no originInLayerForPageScale; the gesture origin is
+    // anchored by the scroll position instead.
+    void applyDelegatedZoomToLayer(double scale, WebCore::FloatPoint originInVisibleRect);
+    void animateDelegatedZoomSnapBack(double fromScale, double toScale, WebCore::FloatPoint originInVisibleRect);
+    bool hasDelegatedZoomSnapAnimation() const;
+    void removeDelegatedZoomFromLayer();
+    void commitDelegatedZoom(double scale, WebCore::FloatPoint originInVisibleRect);
+
+    // The scroll position that keeps content under the gesture origin from moving at this scale. The zoom
+    // transform sits above the scroll offset, so anchoring is done by scrolling, like UIScrollView does.
+    WebCore::FloatPoint scrollPositionAnchoringGestureOrigin(double scale, WebCore::FloatPoint originInVisibleRect) const;
+
+    // The unobscured viewport in view coordinates
+    WebCore::FloatSize unobscuredViewportSize() const;
+
+    // Clamps to what the document can reach at this scale
+    WebCore::FloatPoint constrainScrollPositionForScale(double scale, WebCore::FloatPoint scrollPosition) const;
+
+    // The scrolled-contents layer position the scrolling thread would write for this scale and scroll position.
+    WebCore::FloatPoint scrolledContentsLayerPositionForScale(double scale, WebCore::FloatPoint scrollPosition) const;
+
+    enum class IsStableState : bool { No, Yes };
+    void sendVisibleContentRectUpdate(double scale, IsStableState);
+
+    // Scrolling has to refresh the web process's layout viewport override, or fixed and sticky layers stay placed
+    // against the rect from the last zoom. iOS does this from -[WKContentView didUpdateVisibleRect:].
+    void updateLayoutViewportForScroll(IsStableState);
 
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
@@ -125,6 +163,38 @@ private:
     std::optional<double> m_committedTransientZoomScale;
     std::optional<WebCore::FloatPoint> m_transientZoomOriginInLayerForPageScale;
     std::optional<WebCore::FloatPoint> m_transientZoomOriginInVisibleRect;
+
+    // The gesture origin, kept so later commits can recompute the scroll position anchoring it. The scale comes
+    // from each commit's MainFrameData::pageScaleFactor.
+    std::optional<WebCore::FloatPoint> m_delegatedZoomOriginInVisibleRect;
+
+    // Captured when a zoom gesture begins, to anchor the origin:
+    // newScroll = initialScroll + origin * (1/initialScale - 1/scale).
+    std::optional<double> m_delegatedZoomInitialScale;
+    WebCore::FloatPoint m_delegatedZoomInitialScrollPosition;
+
+    // Where the commit in progress was told to land, in unscaled content coordinates. Only zooms that pick their
+    // own destination up front, like smart magnify, set it; a gesture has an origin to anchor instead, so this
+    // stays empty and scrollPositionAnchoringGestureOrigin() does the work.
+    std::optional<WebCore::FloatPoint> m_delegatedZoomTargetScrollPosition;
+
+    // What updateLayoutViewportForScroll() last sent, so we don't bounce back a scroll update caused by our push.
+    std::optional<WebCore::FloatPoint> m_lastScrollPositionPushedForLayoutViewport;
+    std::optional<double> m_lastScalePushedForLayoutViewport;
+    // Set while sendVisibleContentRectUpdate() holds the scrolling tree lock. The tree calls back into
+    // updateLayoutViewportForScroll() from under the lock, where reading the tree again would deadlock.
+    bool m_isSendingVisibleContentRectUpdate { false };
+
+    // The scale committed at the end of a gesture, held until the web process has drawn at it. Commits still in
+    // flight carry the old pageScaleFactor, and applying those would step the scale backwards.
+    std::optional<double> m_delegatedZoomCommittedScale;
+    // The scale installed on the scrolled-contents layer as a transform override. ownsTransformOfLayer() uses
+    // this to tell whether an override exists.
+    std::optional<double> m_delegatedZoomAppliedScale;
+    unsigned m_commitsSinceCommittingDelegatedZoom { 0 };
+    // In case the presentation update callback never arrives. Deliberately generous, since releasing the scale
+    // too early is the bug we're guarding against.
+    static constexpr unsigned maxCommitsToHoldDelegatedZoomScale { 60 };
 };
 
 } // namespace WebKit
