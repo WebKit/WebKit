@@ -78,8 +78,6 @@ private:
 };
 
 enum class UnvalidatedReason : uint8_t {
-    // Not worked out yet: a bootstrapping state for a sweep that has not been burned down.
-    NeedsReview,
     // Another check, here or in the handler this one delegates to, already establishes it.
     // You MUST document where.
     ValidatedElsewhere,
