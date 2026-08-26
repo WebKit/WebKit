@@ -32,6 +32,7 @@
 #include <wtf/Expected.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Variant.h>
 
 namespace IPC {
 
@@ -130,6 +131,9 @@ inline std::optional<ValidationFailure> unvalidated(UnvalidatedReason)
 template<typename> struct IsStdOptional : std::false_type { };
 template<typename T> struct IsStdOptional<std::optional<T>> : std::true_type { };
 
+template<typename> struct IsVariant : std::false_type { };
+template<typename... Ts> struct IsVariant<Variant<Ts...>> : std::true_type { };
+
 template<typename Validator, typename T>
 constexpr bool checksUntrustedKind(OptionSet<UntrustedValueKind> kinds, UntrustedValueKind kind)
 {
@@ -180,6 +184,10 @@ public:
             if (!value)
                 return std::nullopt;
             return checkAnyUntrusted(*value);
+        } else if constexpr (IsVariant<T>::value) {
+            return WTF::switchOn(value, [&](const auto& alternative) {
+                return checkAnyUntrusted(alternative);
+            });
         } else if constexpr (CarriesUntrustedValues<T>) {
             static_assert(checksUntrustedKinds<Derived>(ArgumentCoder<T>::untrustedValueKinds),
                 "This validator does not say what it does with every kind of untrusted value this struct carries. "
@@ -239,6 +247,10 @@ struct IsPreordainedValidator<Validator, std::optional<T>> : IsPreordainedValida
 // HashSet's last template parameter is a non-type parameter, so it must be spelled out.
 template<typename Validator, typename T, typename HashArg, typename TraitsArg, typename TableTraitsArg, WTF::ShouldValidateKey shouldValidateKey>
 struct IsPreordainedValidator<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>> : IsPreordainedValidator<Validator, T> { };
+
+template<typename Validator, typename... Ts>
+struct IsPreordainedValidator<Validator, Variant<Ts...>>
+    : std::bool_constant<(IsPreordainedValidator<Validator, Ts>::value && ...)> { };
 
 // Any authority can validate a struct that carries untrusted values, because the generated
 // visitor presents them one at a time and UntrustedValidation applies the authority's own

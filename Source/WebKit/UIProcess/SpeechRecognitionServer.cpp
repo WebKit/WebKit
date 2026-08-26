@@ -86,7 +86,7 @@ std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPre
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, WebCore::FrameIdentifier mainFrameIdentifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority { *m_process });
     MESSAGE_CHECK(!m_requests.contains(clientIdentifier));
     EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, CommittedClientOriginAuthority { *m_process });
     auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTF::move(lang), continuous, interimResults, maxAlternatives, WTF::move(origin), mainFrameIdentifier };
