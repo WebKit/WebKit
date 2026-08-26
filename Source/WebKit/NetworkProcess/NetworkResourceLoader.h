@@ -203,6 +203,7 @@ public:
     void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
+    std::optional<WebCore::ResourceError> doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(const WebCore::ResourceResponse&);
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
 
     bool NODELETE isAppInitiated();

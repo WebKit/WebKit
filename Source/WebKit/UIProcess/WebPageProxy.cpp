@@ -907,7 +907,7 @@ static Ref<BrowsingContextGroup> getOrCreateBrowsingContextGroup(const API::Page
     if (RefPtr preferredBrowsingContextGroup = configuration.preferredBrowsingContextGroup())
         return *preferredBrowsingContextGroup;
 
-    return BrowsingContextGroup::create();
+    return BrowsingContextGroup::create(CrossOriginMode::Shared);
 }
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
@@ -1455,14 +1455,16 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     RefPtr relatedPage = m_configuration->relatedPage();
 
     bool siteIsolationEnabled = protect(preferences())->siteIsolationEnabled();
+    auto crossOriginMode = protect(browsingContextGroup())->crossOriginMode();
     if (RefPtr frameProcess = protect(browsingContextGroup())->processForSite(site)) {
         ASSERT(siteIsolationEnabled);
         m_legacyMainFrameProcess = frameProcess->process();
-    } else if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage) && !siteIsolationEnabled) {
+    // Its process may still be the dummy proxy, which is always Shared; its group is not.
+    } else if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage) && !siteIsolationEnabled && protect(relatedPage->browsingContextGroup())->crossOriginMode() == crossOriginMode) {
         m_legacyMainFrameProcess = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_legacyMainFrameProcess.ptr(), m_legacyMainFrameProcess->processID());
     } else
-        m_legacyMainFrameProcess = processPool->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, site, site, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, currentEnhancedSecurityState(), m_configuration, WebCore::ProcessSwapDisposition::None);
+        m_legacyMainFrameProcess = processPool->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, site, site, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, currentEnhancedSecurityState(), m_configuration, WebCore::ProcessSwapDisposition::None, crossOriginMode);
 
     m_shouldReloadDueToCrashWhenVisible = false;
     m_isLockdownModeExplicitlySet = m_configuration->isLockdownModeExplicitlySet();
@@ -1535,7 +1537,9 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_legacyMainFrameProcess->processID());
     mainFrame->frameLoadState().didSuspend();
 
-    Ref suspendedPage = SuspendedPageProxy::create(*this, protect(legacyMainFrameProcess()), mainFrame.releaseNonNull(), std::exchange(m_browsingContextGroup, BrowsingContextGroup::create()), shouldDelayClosingUntilFirstLayerFlush);
+    // The page is in its old process until swapToProvisionalPage(), so the placeholder keeps the mode.
+    Ref placeholderBrowsingContextGroup = BrowsingContextGroup::create(protect(m_browsingContextGroup)->crossOriginMode());
+    Ref suspendedPage = SuspendedPageProxy::create(*this, protect(legacyMainFrameProcess()), mainFrame.releaseNonNull(), std::exchange(m_browsingContextGroup, WTF::move(placeholderBrowsingContextGroup)), shouldDelayClosingUntilFirstLayerFlush);
     std::optional<BackForwardFrameItemIdentifier> mainFrameItemID;
     Ref preferences = this->preferences();
     if (fromItem && preferences->siteIsolationEnabled() && preferences->multiProcessBackForwardCacheEnabled())
@@ -5814,14 +5818,31 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFra
     if (!frame.isMainFrame())
         return m_browsingContextGroup;
 
+    // During a browsing context group switch the page has not adopted the new group yet.
+    RefPtr provisionalPage = m_provisionalPage;
+    Ref currentBrowsingContextGroup = provisionalPage && provisionalPage->navigationID() == navigation.navigationID() ? Ref { provisionalPage->browsingContextGroup() } : m_browsingContextGroup;
+
     bool usesSameWebsiteDataStore = &websiteDataStore == &this->websiteDataStore();
-    Site requestedSite { navigation.currentRequest().url() };
+    auto& requestedURL = navigation.currentRequest().url();
+    Site requestedSite { requestedURL };
     bool mainFrameSiteChanges = !m_mainFrame || Site { m_mainFrame->url() } != requestedSite;
+
+    // The only main-frame navigations that never re-run COOP enforcement. about:blank re-runs it in
+    // DocumentLoader::maybeLoadEmpty(), and blob: and data: reach NetworkResourceLoader.
+    bool skipsCrossOriginOpenerPolicyEnforcement = navigation.substituteData() || urlSchemeHandlerForScheme(requestedURL.protocol());
+    // FIXME: Dropping cross-origin isolation is not a browsing context group switch and should not sever
+    // openers, but doing it in place needs the group's mode to be mutable.
+    auto carriedOverGroup = [&](Ref<BrowsingContextGroup>&& group) -> Ref<BrowsingContextGroup> {
+        if (skipsCrossOriginOpenerPolicyEnforcement && group->crossOriginMode() == CrossOriginMode::Isolated)
+            return BrowsingContextGroup::create(CrossOriginMode::Shared);
+        return WTF::move(group);
+    };
+
     if (RefPtr targetBackForwardItem = navigation.targetItem(); targetBackForwardItem && targetBackForwardItem->browsingContextGroup() && usesSameWebsiteDataStore)
-        return *targetBackForwardItem->browsingContextGroup();
+        return carriedOverGroup(Ref { *targetBackForwardItem->browsingContextGroup() });
 
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes || !usesSameWebsiteDataStore || (navigation.isRequestFromClientOrUserInput() && !navigation.isFromLoadData() && mainFrameSiteChanges))
-        return BrowsingContextGroup::create();
+        return BrowsingContextGroup::create(CrossOriginMode::Shared);
 
     // Under Site Isolation, keeping the current group for a site-changing, non-back/forward main-frame
     // navigation would let the incoming document share a group with the outgoing page once that page enters
@@ -5829,10 +5850,10 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFra
     // Start a fresh group instead.
     // FIXME: The non-Site-Isolation PSON path still adopts the outgoing (possibly back/forward-cached) group;
     // it should get a fresh group here too.
-    if (protect(preferences())->siteIsolationEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !protect(m_browsingContextGroup)->hasMultiplePages())
-        return BrowsingContextGroup::create();
+    if (protect(preferences())->siteIsolationEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !currentBrowsingContextGroup->hasMultiplePages())
+        return BrowsingContextGroup::create(CrossOriginMode::Shared);
 
-    return m_browsingContextGroup;
+    return carriedOverGroup(WTF::move(currentBrowsingContextGroup));
 }
 
 void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& processInitiatingNavigation, PolicyAction policyAction, API::Navigation& navigation, Ref<API::NavigationAction>&& navigationAction, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, const FrameInfoData& frameInfo, WasNavigationIntercepted wasNavigationIntercepted, std::optional<PolicyDecisionConsoleMessage>&& message, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -6062,8 +6083,9 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             && processNavigatingTo->coreProcessIdentifier() == frame->process().coreProcessIdentifier()) {
             // If re-using the same process for navigation and the site is changing, call ensureProcessForSite for the new site, but don't InjectBrowsingContextIntoProcess
             // since BrowsingContextGroup is already keeping track of the process under the previous site.
+            // The destination group, which differs from the page's during a group switch.
             if (frameProcessSite != site)
-                frame->setProcess(protect(this->browsingContextGroup())->ensureProcessForSite(site, mainFrameSite, frame->frameProcess().process(), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
+                frame->setProcess(browsingContextGroup->ensureProcessForSite(site, mainFrameSite, frame->frameProcess().process(), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
         }
 
         if (loadContinuingInNonInitiatingProcess) {
@@ -10674,29 +10696,29 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
 
 void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
 {
-    // FIXME: When site isolation is enabled, this should probably switch the BrowsingContextGroup. <rdar://116203642>
     ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup);
     RefPtr navigation = m_navigationState->navigation(navigationID);
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: bcgDecision=%u, navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, static_cast<unsigned>(browsingContextGroupSwitchDecision), navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (!navigation)
         return completionHandler(false);
 
+    // Tag the group, not just the main frame process, so every process it later acquires is isolated.
+    // FIXME: Subframe responses that skip COEP enforcement (memory and DOM cache hits, custom URL scheme
+    // handlers) still get an isolated process.
+    auto crossOriginMode = browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup ? CrossOriginMode::Isolated : CrossOriginMode::Shared;
+
+    // Adopted in swapToProvisionalPage(), so a navigation that never commits cannot tag the page.
+    Ref browsingContextGroupForSwap = BrowsingContextGroup::create(crossOriginMode);
+
     m_openedMainFrameName = { };
-    setBrowsingContextGroup(BrowsingContextGroup::create());
 
     RefPtr provisionalPage = m_provisionalPage;
     auto lockdownMode = provisionalPage ? provisionalPage->process().lockdownMode() : m_legacyMainFrameProcess->lockdownMode();
     auto enhancedSecurity = provisionalPage ? provisionalPage->process().enhancedSecurity() : m_legacyMainFrameProcess->enhancedSecurity();
 
-    Ref processForNavigation = [&]() -> Ref<WebProcessProxy> {
-        if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup) {
-            auto enableWebAssemblyDebugger = protect(m_configuration->preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
-            return protect(m_configuration->processPool())->createNewWebProcess(protect(websiteDataStore()).ptr(), lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated, WebKit::jscOptionsForWebProcess(protect(m_configuration->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
-        }
-        return protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP);
-    }();
+    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP, crossOriginMode);
 
-    performProcessSwapForNavigationResponse(*navigation, m_browsingContextGroup.copyRef(), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
+    performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
 }
 
 void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIdentifier navigationID, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
@@ -10720,7 +10742,7 @@ void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIden
     RefPtr provisionalPage = m_provisionalPage;
     auto lockdownMode = provisionalPage ? provisionalPage->process().lockdownMode() : m_legacyMainFrameProcess->lockdownMode();
 
-    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, EnhancedSecurity::EnabledInsecure, m_configuration, WebCore::ProcessSwapDisposition::None);
+    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, EnhancedSecurity::EnabledInsecure, m_configuration, WebCore::ProcessSwapDisposition::None, browsingContextGroupForSwap->crossOriginMode());
 
     performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::None, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
 }
@@ -10987,7 +11009,9 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
             newPage->internals().privateClickMeasurement = { { WTF::move(*privateClickMeasurement), { }, { } } };
 
         // When site isolation is enabled, blobs get a dedicated process if its opener process is cross-site from the main process.
-        if (navigationDataForNewProcess && (protect(preferences())->siteIsolationEnabled() || !openedBlobURL))  {
+        // The reply below can only describe a page in this process.
+        bool isInOpenerProcess = newPage->m_mainFrame && newPage->drawingArea() && newPage->legacyMainFrameProcess().coreProcessIdentifier() == process->coreProcessIdentifier();
+        if (navigationDataForNewProcess && (protect(preferences())->siteIsolationEnabled() || !openedBlobURL || !isInOpenerProcess))  {
             bool isRequestFromClientOrUserInput = navigationDataForNewProcess->isRequestFromClientOrUserInput;
 
             if (openedBlobURL) {
@@ -11001,7 +11025,11 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
             return;
         }
 
-        ASSERT(newPage->m_mainFrame);
+        if (!newPage->m_mainFrame || !newPage->drawingArea()) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "createNewPage: New page has no main frame or drawing area");
+            reply(std::nullopt, std::nullopt);
+            return;
+        }
         reply(newPage->webPageIDInProcess(process), newPage->creationParameters(process, *protect(newPage->drawingArea()).get(), newPage->m_mainFrame->frameID(), std::nullopt));
 
 #if HAVE(APP_SSO)
@@ -11029,7 +11057,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     configuration->setOpenedMainFrameName(openedMainFrameName);
 
     if (RefPtr openerFrame = originatingFrame; navigationActionData.hasOpener && openerFrame) {
-        configuration->setRelatedPage(*this);
+        configuration->setRelatedPage(*this, API::PageConfiguration::RelatedPageUse::SameBrowsingContextGroup);
         configuration->setOpenerInfo({ {
             openerFrame->frameProcess().process(),
             m_browsingContextGroup.copyRef(),
@@ -11045,7 +11073,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         configuration->setOpenedSite(openedSite);
         WebCore::Site originatingSite { originatingFrameInfo->request().url() };
         if ((openedBlobURL && !protect(preferences())->siteIsolationEnabled()) || openedSite == originatingSite)
-            configuration->setRelatedPage(*this);
+            configuration->setRelatedPage(*this, API::PageConfiguration::RelatedPageUse::SameBrowsingContextGroup);
     }
 
 #if PLATFORM(MAC)
@@ -14465,7 +14493,7 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
 }
 #endif
 
-WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, WebCore::FrameIdentifier mainFrameIdentifier, std::optional<RemotePageParameters>&& remotePageParameters, bool isProcessSwap)
+WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, WebCore::FrameIdentifier mainFrameIdentifier, std::optional<RemotePageParameters>&& remotePageParameters, bool isProcessSwap, BrowsingContextGroup* browsingContextGroup)
 {
     if (m_sessionStateWasRestoredByAPIRequest)
         backForwardList().setItemsAsRestoredFromSession();
@@ -14476,7 +14504,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         .drawingAreaIdentifier = drawingArea.identifier(),
         .webPageProxyIdentifier = identifier(),
         .pageGroupData = m_pageGroup->data(),
-        .browsingContextGroupIdentifier = m_browsingContextGroup->identifier(),
+        .browsingContextGroupIdentifier = browsingContextGroup ? browsingContextGroup->identifier() : m_browsingContextGroup->identifier(),
         .visitedLinkTableID = m_visitedLinkStore->identifier(),
         .userContentControllerParameters = m_userContentController->parametersForProcess(process),
         .mainFrameIdentifier = mainFrameIdentifier,
@@ -14817,10 +14845,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     return parameters;
 }
 
-WebPageCreationParameters WebPageProxy::creationParametersForProvisionalPage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, WebCore::FrameIdentifier mainFrameIdentifier)
+WebPageCreationParameters WebPageProxy::creationParametersForProvisionalPage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, WebCore::FrameIdentifier mainFrameIdentifier, BrowsingContextGroup& browsingContextGroup)
 {
     constexpr bool isProcessSwap = true;
-    return creationParameters(process, drawingArea, mainFrameIdentifier, std::nullopt, isProcessSwap);
+    return creationParameters(process, drawingArea, mainFrameIdentifier, std::nullopt, isProcessSwap, &browsingContextGroup);
 }
 
 WebPageCreationParameters WebPageProxy::creationParametersForRemotePage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RemotePageParameters&& remotePageParameters)
