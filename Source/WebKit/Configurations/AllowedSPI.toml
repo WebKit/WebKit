@@ -340,3 +340,12 @@ request = "rdar://166719636"
 symbols = [
     "SecQWACTLSBindingVerify"
 ]
+
+[[not-web-essential]]
+request = "rdar://185838347"
+selectors = [
+    { name = "invalidateWithReason:", class = "BEWebContentProcess" },
+    { name = "invalidateWithReason:", class = "BENetworkingProcess" },
+    { name = "invalidateWithReason:", class = "BERenderingProcess" },
+]
+requires = ["USE_EXTENSIONKIT"]

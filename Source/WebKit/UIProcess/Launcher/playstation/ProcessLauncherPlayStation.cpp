@@ -101,7 +101,7 @@ void ProcessLauncher::launchProcess()
     });
 }
 
-void ProcessLauncher::terminateProcess()
+void ProcessLauncher::terminateProcess(const String&)
 {
     if (!m_processID)
         return;
