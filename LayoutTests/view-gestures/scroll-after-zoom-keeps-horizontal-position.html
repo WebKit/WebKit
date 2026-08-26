@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // The scrolling tree's scrollable area size is the frame view's visible size, which shrinks as the page
+        // zooms in, and the tree subtracts it from the contents size to decide how far the page can scroll. A
+        // delegated zoom skips layout, so nothing refreshed that size and the tree kept the unity-scale one: this
+        // document has no horizontal overflow un-zoomed, which left the tree thinking the horizontal range was
+        // still zero and clamping the scroll position the zoom anchored to back to the left edge on the next
+        // scroll. Only the vertical position survived, since 3000px overflows at any scale.
+        async function doTest()
+        {
+            const output = [];
+            const scrollableAreaSize = async () => {
+                const tree = await UIHelper.getScrollingTree();
+                return tree.split('\n').filter(line => line.includes('scrollable area size')).map(line => line.trim())[0];
+            };
+
+            window.scrollTo(0, 400);
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensurePresentationUpdate();
+            output.push('Un-zoomed: ' + await scrollableAreaSize());
+
+            // Zoom in away from the left edge, so the anchored scroll position has somewhere horizontal to go.
+            await UIHelper.magnifyGestureAt(400, 300, 1.0);
+            output.push('Zoomed in: ' + await scrollableAreaSize());
+            output.push('Zoomed in: ' + await UIHelper.delegatedZoomOverrideAsText());
+
+            const zoomedScrollX = window.scrollX;
+            const zoomedScrollY = window.scrollY;
+            await UIHelper.mouseWheelScrollAt(400, 300, 0, -1, 0, -10);
+            output.push('After scrolling down while zoomed: horizontal scroll position ' + Math.round(window.scrollX)
+                + ' (unchanged: ' + (window.scrollX == zoomedScrollX) + '), scrolled down: ' + (window.scrollY > zoomedScrollY));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

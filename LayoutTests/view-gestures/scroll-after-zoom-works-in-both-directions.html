@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Once a delegated zoom settles, the frame view has to be resized so that it gets a horizontal scrollbar
+        // for the content the zoom pushed out of view. Without one it reports itself pinned to both horizontal
+        // edges wherever it is scrolled, which stops leftward scrolling.
+        async function doTest()
+        {
+            const output = [];
+            const scrollX = () => Math.round(window.scrollX);
+
+            window.scrollTo(0, 400);
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensurePresentationUpdate();
+            const unzoomedScrollWidth = document.documentElement.scrollWidth;
+            output.push('Un-zoomed, the document has no horizontal overflow: '
+                + (unzoomedScrollWidth == document.documentElement.clientWidth));
+
+            // Zoom in away from the left edge, so the anchored scroll position has somewhere horizontal to go.
+            await UIHelper.magnifyGestureAt(400, 300, 1.0);
+            const anchoredScrollX = scrollX();
+            output.push('The zoom anchored away from the left edge: ' + (anchoredScrollX > 0));
+            output.push('Zooming in did not reflow the document: '
+                + (document.documentElement.scrollWidth == unzoomedScrollWidth));
+
+            // Negative deltaX moves the scroll position up, i.e. the view travels right.
+            await UIHelper.mouseWheelScrollAt(400, 300, -10, 0, -10, 0);
+            const movedRight = scrollX() - anchoredScrollX;
+
+            await UIHelper.mouseWheelScrollAt(400, 300, 10, 0, 10, 0);
+            const movedLeft = scrollX() - anchoredScrollX - movedRight;
+
+            output.push('Scrolled right while zoomed: ' + (movedRight > 0));
+            output.push('The same gesture leftward moved back the same distance: ' + (movedLeft == -movedRight));
+            output.push('Back at the position the zoom anchored to: ' + (scrollX() == anchoredScrollX));
+
+            // Far enough to reach the edge from anywhere the gestures above could have left the page.
+            await UIHelper.mouseWheelScrollAt(400, 300, 40, 0, 40, 0);
+            output.push('A long leftward scroll reaches the left edge: ' + (scrollX() == 0));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

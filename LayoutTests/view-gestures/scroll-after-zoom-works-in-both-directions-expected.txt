@@ -1,0 +1,7 @@
+Un-zoomed, the document has no horizontal overflow: true
+The zoom anchored away from the left edge: true
+Zooming in did not reflow the document: true
+Scrolled right while zoomed: true
+The same gesture leftward moved back the same distance: true
+Back at the position the zoom anchored to: true
+A long leftward scroll reaches the left edge: true
