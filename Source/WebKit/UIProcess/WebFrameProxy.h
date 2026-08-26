@@ -41,6 +41,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
@@ -160,29 +161,33 @@ public:
 
     FrameLoadState& frameLoadState() LIFETIME_BOUND { return m_frameLoadState; }
 
+    const URL& url() const LIFETIME_BOUND { return m_frameLoadState.url(); }
+    const URL& provisionalURL() const LIFETIME_BOUND { return m_frameLoadState.provisionalURL(); }
+    const URL& unreachableURL() const LIFETIME_BOUND { return m_frameLoadState.unreachableURL(); }
+
+    const String& mimeType() const LIFETIME_BOUND { return m_MIMEType; }
+
+    const String& title() const LIFETIME_BOUND { return m_title; }
+    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
+    const ListHashSet<Ref<WebFrameProxy>>& childFrames() const LIFETIME_BOUND { return m_childFrames; }
+
+    const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
+    const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
+    FrameProcess& frameProcess() { return m_frameProcess.get(); }
+
+    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const { return m_cspOriginsThatUpgradeInsecureNavigations; }
+
     void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
     void loadURL(const URL&, const String& referrer = String());
     // Sub frames only. For main frames, use WebPageProxy::loadData.
     void loadData(std::span<const uint8_t>, const String& MIMEType, const String& encodingName, const URL& baseURL);
 
-    const URL& url() const LIFETIME_BOUND { return m_frameLoadState.url(); }
-    const URL& provisionalURL() const LIFETIME_BOUND { return m_frameLoadState.provisionalURL(); }
-
     void setUnreachableURL(const URL&);
-    const URL& unreachableURL() const LIFETIME_BOUND { return m_frameLoadState.unreachableURL(); }
-
-    const String& mimeType() const LIFETIME_BOUND { return m_MIMEType; }
     bool containsPluginDocument() const { return m_containsPluginDocument; }
 
-    const String& title() const LIFETIME_BOUND { return m_title; }
-
     void setSpecifiedName(const String& name) { m_frameName = name; }
-    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
-    const ListHashSet<Ref<WebFrameProxy>>& childFrames() const LIFETIME_BOUND { return m_childFrames; }
     WebCore::SecurityOriginData documentSecurityOriginData() const;
-
-    const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
 
     void commitCertificateInfo(const URL&, bool hasCertificateInfo);
     void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
@@ -245,10 +250,16 @@ public:
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
     std::optional<uint64_t> NODELETE indexInFrameTreeSiblings() const;
 
+    // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
+    // Mirrors LocalDOMWindow::notifyActivated, propagating activation to ancestor frames
+    // (any origin) and same-origin descendant frames.
+    void notifyActivated(MonotonicTime activationTime);
+
+    // https://html.spec.whatwg.org/multipage/interaction.html#transient-activation
+    bool hasTransientActivation() const;
+
     WebProcessProxy& NODELETE process() const;
     void setProcess(FrameProcess&);
-    const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
-    FrameProcess& frameProcess() { return m_frameProcess.get(); }
     void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
@@ -260,6 +271,13 @@ public:
         No,
         Yes
     };
+
+    struct TraversalResult {
+        RefPtr<WebFrameProxy> frame;
+        DidWrap didWrap { DidWrap::No };
+    };
+
+    enum class ForInitialization : bool { No, Yes };
     void remoteProcessDidTerminate(WebProcessProxy&, ClearFrameTreeSyncData);
 
     Ref<WebCore::FrameTreeSyncData> calculateFrameTreeSyncData() const;
@@ -269,11 +287,6 @@ public:
     void bindAccessibilityFrameWithData(std::span<const uint8_t>);
 
     bool NODELETE isFocused() const;
-
-    struct TraversalResult {
-        RefPtr<WebFrameProxy> frame;
-        DidWrap didWrap { DidWrap::No };
-    };
     TraversalResult traverseNext() const;
     TraversalResult traverseNext(CanWrap) const;
     WebFrameProxy* NODELETE traverseNext(const WebFrameProxy* stayWithin) const;
@@ -300,8 +313,6 @@ public:
 
     WebCore::ScrollbarMode scrollingMode() const { return m_scrollingMode; }
     void updateScrollingMode(WebCore::ScrollbarMode);
-
-    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const { return m_cspOriginsThatUpgradeInsecureNavigations; }
     void setCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&& origins) { m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(origins); }
 
     void updateOpener(std::optional<WebCore::FrameIdentifier>);
@@ -344,8 +355,6 @@ private:
     WebCore::CertificateInfo certificateInfoFromNetworkProcess(const URL&) const;
 
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
-
-    enum class ForInitialization : bool { No, Yes };
     void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
 
     RefPtr<WebFrameProxy> deepLastChild();
@@ -353,6 +362,8 @@ private:
     WebFrameProxy* NODELETE lastChild() const;
     WebFrameProxy* NODELETE nextSibling() const;
     WebFrameProxy* NODELETE previousSibling() const;
+
+    void propagateActivationToSameOriginDescendants(const WebCore::SecurityOriginData& rootOrigin, MonotonicTime);
 
     WeakPtr<WebPageProxy> m_page;
     Ref<FrameProcess> m_frameProcess;
@@ -381,6 +392,7 @@ private:
     bool m_isShowingInitialAboutBlank { true };
     std::optional<WebCore::IntRect> m_remoteFrameRect;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
+    MonotonicTime m_lastActivationTimestamp { -MonotonicTime::infinity() };
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
