@@ -197,11 +197,28 @@ void MarkedSpace::freeMemory()
         [&] (MarkedBlock::Handle* block) {
             freeBlock(block);
         });
+    releaseCachedBlocks();
     for (PreciseAllocation* allocation : m_preciseAllocations)
         allocation->destroy();
     forEachSubspace([&](Subspace& subspace) {
         if (subspace.isIsoSubspace())
             static_cast<IsoSubspace&>(subspace).destroyLowerTierPreciseFreeList();
+        return IterationStatus::Continue;
+    });
+}
+
+void MarkedSpace::releaseCachedBlocks()
+{
+    forEachSubspace([&](Subspace& subspace) {
+        subspace.alignedMemoryAllocator()->releaseFreeChunks();
+        return IterationStatus::Continue;
+    });
+}
+
+void MarkedSpace::purgeCachedBlocks()
+{
+    forEachSubspace([&](Subspace& subspace) {
+        subspace.alignedMemoryAllocator()->purgeFreeSpans(MarkedBlock::blockSize);
         return IterationStatus::Continue;
     });
 }

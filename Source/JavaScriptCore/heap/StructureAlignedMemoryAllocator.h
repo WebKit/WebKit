@@ -50,6 +50,11 @@ public:
     void freeAlignedMemory(void*) final;
 
     static void initializeStructureAddressSpace();
+
+private:
+    // Structure blocks come out of a dedicated reservation that only ever hands out one block at
+    // a time, so there is nothing to carve chunks from.
+    unsigned spansPerChunk() const final { return 1; }
 };
 
 } // namespace JSC

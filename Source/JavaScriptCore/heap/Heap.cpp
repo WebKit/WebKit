@@ -1314,6 +1314,10 @@ void Heap::sweepSynchronously()
     }
     m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
+    // Blocks are cached for reuse on the assumption that speed matters more than footprint.
+    // Under memory pressure that trade inverts, so give the cached pages back.
+    if (overCriticalMemoryThreshold())
+        m_objectSpace.purgeCachedBlocks();
 #if ENABLE(WEBASSEMBLY)
     Wasm::TypeInformation::cleanupIfRequested();
 #endif

@@ -1048,6 +1048,7 @@ void VM::shrinkFootprintWhenIdle()
         sanitizeStackForVM(*this);
         deleteAllCode(DeleteAllCodeIfNotCollecting);
         heap.collectNow(Synchronousness::Sync, CollectionScope::Full);
+        heap.objectSpace().purgeCachedBlocks();
         // FIXME: Consider stopping various automatic threads here.
         // https://bugs.webkit.org/show_bug.cgi?id=185447
         WTF::releaseFastMallocFreeMemory();

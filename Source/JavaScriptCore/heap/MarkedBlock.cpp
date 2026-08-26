@@ -59,7 +59,7 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(JSC::Heap& heap, AlignedMemoryAlloca
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    void* blockSpace = alignedMemoryAllocator->tryAllocateAlignedMemory(blockSize, blockSize);
+    void* blockSpace = alignedMemoryAllocator->tryAllocateSpan(blockSize);
     if (!blockSpace)
         return nullptr;
     if (scribbleFreeCells())
@@ -85,7 +85,7 @@ MarkedBlock::Handle::~Handle()
     }
     m_directory->removeBlock(this, BlockDirectory::WillDeleteBlock::Yes);
     m_block->~MarkedBlock();
-    m_alignedMemoryAllocator->freeAlignedMemory(m_block);
+    m_alignedMemoryAllocator->freeSpan(m_block, blockSize);
     heap.didFreeBlock(blockSize);
 }
 

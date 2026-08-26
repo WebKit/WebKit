@@ -129,6 +129,8 @@ public:
     template<typename Functor> void forEachSubspace(const Functor&);
 
     void shrink();
+    void releaseCachedBlocks();
+    void purgeCachedBlocks();
     void freeBlock(MarkedBlock::Handle*);
 
     void didAddBlock(MarkedBlock::Handle*);

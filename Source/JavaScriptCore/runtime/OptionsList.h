@@ -244,6 +244,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, preciseAllocationCutoff, 100000, Normal, nullptr) \
     v(Bool, dumpSizeClasses, false, Normal, nullptr) \
     v(Bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
+    v(Unsigned, markedBlockSpansPerChunk, 8, Normal, "how many MarkedBlock-sized spans to carve from each chunk obtained from the underlying allocator; 1 allocates every block separately"_s) \
     v(Bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     v(Bool, dumpZappedCellCrashData, false, Normal, nullptr) \
     \

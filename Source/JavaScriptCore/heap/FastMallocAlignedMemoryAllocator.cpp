@@ -37,7 +37,10 @@ FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator()
 {
 }
 
-FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator() = default;
+FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator()
+{
+    releaseFreeChunks();
+}
 
 void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {
