@@ -5701,7 +5701,6 @@ void WebViewImpl::rotateWithEvent(NSEvent *event)
 
 void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent& event)
 {
-    // FIXME: We need to drive the -_gestureEventWasNotHandledByWebCore: SPI even when there is no backing NSEvent.
     if (RetainPtr nativeEvent = event.nativeEvent()) {
         [m_view.get() _web_gestureEventWasNotHandledByWebCore:nativeEvent];
         return;
@@ -5710,7 +5709,10 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent
     if (event.kind() != NativeWebGestureEvent::Kind::Magnification)
         return;
 
-    magnificationGestureWasNotHandledByWebCoreFromViewOnly(event.gestureScale(), event.phase(), event.position());
+    auto eventPhase = WebEventFactory::toNativeEventPhase(event.phase());
+    auto locationInWindow = [m_view.get() convertPoint:event.position() toView:nil];
+
+    [m_view.get() _web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:eventPhase magnification:event.gestureScale() locationInWindow:locationInWindow];
 }
 
 #endif
@@ -5720,10 +5722,15 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
     if (event.type != NSEventTypeMagnify)
         return;
 
-    magnificationGestureWasNotHandledByWebCoreFromViewOnly(event.magnification, WebEventFactory::phaseForEvent(event), [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
+    applyNativeMagnification(event.magnification, WebEventFactory::phaseForEvent(event), [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
 }
 
-void WebViewImpl::magnificationGestureWasNotHandledByWebCoreFromViewOnly(float magnification, WebEventPhase phase, FloatPoint originInViewCoordinates)
+void WebViewImpl::magnificationGestureEventWasNotHandledByWebCoreFromViewOnly(NSEventPhase phase, CGFloat magnification, NSPoint locationInWindow)
+{
+    applyNativeMagnification(magnification, WebEventFactory::phaseForNativeEventPhase(phase), [m_view.get() convertPoint:locationInWindow fromView:nil]);
+}
+
+void WebViewImpl::applyNativeMagnification(float magnification, WebEventPhase phase, FloatPoint originInViewCoordinates)
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (m_allowsMagnification && m_gestureController)

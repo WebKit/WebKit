@@ -186,6 +186,7 @@ using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 - (void)_web_editorStateDidChange;
 
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
+- (void)_web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow;
 
 - (void)_web_didChangeContentSize:(NSSize)newSize;
 
@@ -683,6 +684,7 @@ public:
     void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&);
 #endif
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
+    void magnificationGestureEventWasNotHandledByWebCoreFromViewOnly(NSEventPhase, CGFloat magnification, NSPoint locationInWindow);
 
     void didRestoreScrollPosition();
     
@@ -1030,7 +1032,7 @@ private:
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
     bool inputMethodUsesCorrectKeyEventOrder();
 
-    void magnificationGestureWasNotHandledByWebCoreFromViewOnly(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates);
+    void applyNativeMagnification(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates);
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

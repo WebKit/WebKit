@@ -61,6 +61,8 @@ public:
     static OptionSet<WebKit::WebEventModifier> NODELETE toWebEventModifierFlags(NSEventModifierFlags);
 
     static WebEventPhase phaseForEvent(NSEvent *);
+    static WebEventPhase NODELETE phaseForNativeEventPhase(NSEventPhase);
+    static NSEventPhase NODELETE toNativeEventPhase(WebEventPhase);
 #endif
 #endif // USE(APPKIT)
 };

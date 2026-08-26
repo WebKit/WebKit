@@ -927,6 +927,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
 }
 
+- (void)_web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow
+{
+}
+
 - (void)_didHandleAcceptedCandidate
 {
 }
