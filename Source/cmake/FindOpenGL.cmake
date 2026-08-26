@@ -52,7 +52,7 @@ This will define the following variables in your project:
 #  - Consider whether FindGLES2.cmake could be moved here as well.
 
 find_package(PkgConfig QUIET)
-webkit_pkg_check_modules(PC_OPENGL IMPORTED_TARGET opengl)
+pkg_check_modules(PC_OPENGL IMPORTED_TARGET opengl)
 
 if (PC_OPENGL_FOUND AND TARGET PkgConfig::PC_OPENGL)
     #
@@ -87,10 +87,9 @@ else ()
 
     if (OpenGL_LIBRARY AND NOT TARGET OpenGL::OpenGL)
         add_library(OpenGL::OpenGL UNKNOWN IMPORTED GLOBAL)
-        WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(_opengl_scoped_cflags ${PC_OPENGL_CFLAGS_OTHER})
         set_target_properties(OpenGL::OpenGL PROPERTIES
             IMPORTED_LOCATION "${OpenGL_LIBRARY}"
-            INTERFACE_COMPILE_OPTIONS "${_opengl_scoped_cflags}"
+            INTERFACE_COMPILE_OPTIONS "${PC_OPENGL_CFLAGS_OTHER}"
             INTERFACE_INCLUDE_DIRECTORIES "${OpenGL_INCLUDE_DIR}"
         )
     endif ()

@@ -71,11 +71,11 @@ private:
     LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     inline Style::GridTrackSizingDirection NODELETE gridAxisDirection() const;
 
-    unsigned gridAxisTracksCount() const { return static_cast<unsigned>(m_runningPositions.size()); }
-
     bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection gridAxisDirection) const;
     GridArea NODELETE gridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
+
+    const unsigned m_gridAxisTracksCount;
 
     Vector<LayoutUnit> m_runningPositions;
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
@@ -84,6 +84,7 @@ private:
     LayoutUnit m_gridContentSize;
 
     const Style::GridTrackSizingDirection m_stackingAxisDirection;
+    const GridSpan m_stackingAxisSpan = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
 
     unsigned m_autoFlowNextCursor { 0 };
 };

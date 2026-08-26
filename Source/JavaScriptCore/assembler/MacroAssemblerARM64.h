@@ -191,10 +191,6 @@ public:
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            zeroExtend32ToWord(src, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)
@@ -326,10 +322,6 @@ public:
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            move(src, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)
@@ -360,10 +352,6 @@ public:
     void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            move(src, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)
@@ -1515,10 +1503,6 @@ public:
     void sub32(RegisterID left, TrustedImm32 imm, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            zeroExtend32ToWord(left, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)
@@ -1591,10 +1575,6 @@ public:
     void sub64(RegisterID left, TrustedImm32 imm, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            move(left, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)
@@ -1615,10 +1595,6 @@ public:
     void sub64(RegisterID left, TrustedImm64 imm, RegisterID dest)
     {
         auto immediate = imm.m_value;
-        if (!immediate) {
-            move(left, dest);
-            return;
-        }
         if (auto tuple = tryExtractShiftedImm(immediate)) {
             auto [u12, shift, inverted] = tuple.value();
             if (!inverted)

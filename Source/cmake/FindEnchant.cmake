@@ -48,7 +48,7 @@ This will define the following variables in your project:
 
 
 find_package(PkgConfig QUIET)
-webkit_pkg_check_modules(PC_Enchant QUIET IMPORTED_TARGET enchant-2)
+pkg_check_modules(PC_Enchant QUIET IMPORTED_TARGET enchant-2)
 
 set(Enchant_COMPILE_OPTIONS ${PC_Enchant_CFLAGS_OTHER})
 set(Enchant_VERSION ${PC_Enchant_VERSION})
@@ -59,8 +59,6 @@ if (PC_Enchant_FOUND AND TARGET PkgConfig::PC_Enchant AND NOT TARGET Enchant::En
     add_library(Enchant::Enchant INTERFACE IMPORTED GLOBAL)
     set_property(TARGET Enchant::Enchant PROPERTY INTERFACE_LINK_LIBRARIES PkgConfig::PC_Enchant)
 endif ()
-
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Enchant_COMPILE_OPTIONS ${Enchant_COMPILE_OPTIONS})
 
 # Search the library by hand, as a fallback.
 if (NOT TARGET Enchant::Enchant)

@@ -54,13 +54,14 @@ class Name
     bool empty() const;
     bool beginsWith(const Name &prefix) const;
 
-    void emit(TInfoSinkBase &out, char userSymbolPrefix) const;
+    void emit(TInfoSinkBase &out) const;
 
   private:
     ImmutableString mRawName;
     SymbolType mSymbolType;
     template <typename T>
-    void emitImpl(T &out, char userSymbolPrefix) const;
+    void emitImpl(T &out) const;
+    friend std::ostream &operator<<(std::ostream &os, const sh::Name &name);
 };
 
 constexpr Name kBaseInstanceName = Name("baseInstance");

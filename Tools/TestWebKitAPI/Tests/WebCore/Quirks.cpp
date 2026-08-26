@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include <WebCore/QuirkTable.h>
+#include <WebCore/QuirkMatch.h>
 #include <WebCore/Quirks.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
@@ -48,7 +48,7 @@ static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 {
-    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes });
+    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString } });
 }
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)

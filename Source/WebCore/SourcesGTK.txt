@@ -67,8 +67,6 @@ platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
-platform/graphics/egl/BitmapTexture.cpp @no-unify
-platform/graphics/egl/BitmapTexturePool.cpp @no-unify
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextWrapper.cpp @no-unify
 platform/graphics/egl/GLDisplay.cpp @no-unify

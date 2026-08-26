@@ -89,13 +89,16 @@ private:
             fixIntOrBooleanEdge(rightChild);
             // We need to be careful about skipping overflow check because div / mod can generate non integer values
             // from (Int32, Int32) inputs. For now, we always check non-zero divisor.
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::Unchecked);
-                node->clearFlags(NodeMustGenerate);
-            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else
                 node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            // Regardless of whether we have a check, we clear MustGenerate flag. If nobody is using the output (including MovHint),
+            // we do not need to perform checks and keep this node.
+            // This condition is met only when we are not utilizing this checks as an additional constraint in integer-range-optimization.
+            node->clearFlags(NodeMustGenerate);
             return;
         }
 
@@ -140,13 +143,16 @@ private:
         if ((node->op() == ArithMod || node->op() == ValueMod) && m_graph.modShouldSpeculateInt52(node)) {
             fixEdge<Int52RepUse>(leftChild);
             fixEdge<Int52RepUse>(rightChild);
-            if (bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            if (bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::Unchecked);
-                node->clearFlags(NodeMustGenerate);
-            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else
                 node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            // Regardless of whether we have a check, we clear MustGenerate flag. If nobody is using the output (including MovHint),
+            // we do not need to perform checks and keep this node.
+            // This condition is met only when we are not utilizing this checks as an additional constraint in integer-range-optimization.
+            node->clearFlags(NodeMustGenerate);
             node->setResult(NodeResultInt52);
             return;
         }
@@ -162,13 +168,16 @@ private:
         if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setArithMode(Arith::Unchecked);
-                node->clearFlags(NodeMustGenerate);
-            } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+            else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
                 node->setArithMode(Arith::CheckOverflow);
             else
                 node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            // Regardless of whether we have a check, we clear MustGenerate flag. If nobody is using the output (including MovHint),
+            // we do not need to perform checks and keep this node.
+            // This condition is met only when we are not utilizing this checks as an additional constraint in integer-range-optimization.
+            node->clearFlags(NodeMustGenerate);
             return;
         }
         if (m_graph.binaryArithShouldSpeculateInt52(node, FixupPass)) {
@@ -178,6 +187,10 @@ private:
                 node->setArithMode(Arith::CheckOverflow);
             else
                 node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            // Regardless of whether we have a check, we clear MustGenerate flag. If nobody is using the output (including MovHint),
+            // we do not need to perform checks and keep this node.
+            // This condition is met only when we are not utilizing this checks as an additional constraint in integer-range-optimization.
+            node->clearFlags(NodeMustGenerate);
             node->setResult(NodeResultInt52);
             return;
         }
@@ -485,14 +498,14 @@ private:
             if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
                 node->setOp(ArithNegate);
                 fixIntOrBooleanEdge(node->child1());
-                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
-                    node->clearFlags(NodeMustGenerate);
-                } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt32);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             
@@ -504,6 +517,7 @@ private:
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt52);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
@@ -638,14 +652,14 @@ private:
         case ArithNegate: {
             if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
-                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
-                    node->clearFlags(NodeMustGenerate);
-                } else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt32);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (m_graph.unaryArithShouldSpeculateInt52(node, FixupPass)) {
@@ -655,6 +669,7 @@ private:
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt52);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
 
@@ -844,11 +859,11 @@ private:
             if (node->child1()->shouldSpeculateInt32OrBoolean()
                 && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
-                if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
-                    node->clearFlags(NodeMustGenerate);
-                } else
+                else
                     node->setArithMode(Arith::CheckOverflow);
+                node->clearFlags(NodeMustGenerate);
                 node->setResult(NodeResultInt32);
                 break;
             }

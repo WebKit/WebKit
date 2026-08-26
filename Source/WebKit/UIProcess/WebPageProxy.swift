@@ -27,13 +27,73 @@ import Foundation
 import WebKit_Internal
 import WebCore_Private
 
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension WebKit.WebPageProxy.SelectWithGestureCompletionHandler: @unsafe CxxCompletionHandler {
-    typealias Argument = WebKit.SelectWithGestureResult
-}
-
 extension WebKit.WebPageProxy {
+    @MainActor
+    func selectWithGesture(
+        at point: WebCore.IntPoint,
+        type: WebKit.GestureType,
+        state: WebKit.GestureRecognizerState,
+        isInteractingWithFocusedElement: Bool
+    ) async {
+        await withCheckedContinuation { continuation in
+            selectWithGesture(
+                nil,
+                point,
+                type,
+                state,
+                isInteractingWithFocusedElement,
+                consuming: .init({ _ in continuation.resume() }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
+            )
+        }
+    }
+
+    @MainActor
+    func selectPosition(at point: WebCore.IntPoint, isInteractingWithFocusedElement: Bool) async {
+        await withCheckedContinuation { continuation in
+            selectPositionAtPoint(
+                point,
+                isInteractingWithFocusedElement,
+                consuming: .init({ continuation.resume() }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
+            )
+        }
+    }
+
+    @MainActor
+    func selectText(
+        at point: WebCore.IntPoint,
+        by granularity: WebCore.TextGranularity,
+        isInteractingWithFocusedElement: Bool
+    ) async {
+        await withCheckedContinuation { continuation in
+            selectTextWithGranularityAtPoint(
+                nil,
+                point,
+                granularity,
+                isInteractingWithFocusedElement,
+                consuming: .init({ continuation.resume() }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
+            )
+        }
+    }
+
+    @MainActor
+    @discardableResult
+    func updateSelection(
+        withExtentPoint point: WebCore.IntPoint,
+        by granularity: WebCore.TextGranularity,
+        isInteractingWithFocusedElement: Bool,
+        source: WebKit.TextInteractionSource,
+    ) async -> Bool {
+        await withCheckedContinuation { continuation in
+            updateSelectionWithExtentPointAndBoundary(
+                point,
+                granularity,
+                isInteractingWithFocusedElement,
+                source,
+                consuming: .init({ continuation.resume(returning: $0) }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
+            )
+        }
+    }
+
     private borrowing func editorStateCopy() -> WebKit.EditorState {
         unsafe __editorStateUnsafe().pointee
     }

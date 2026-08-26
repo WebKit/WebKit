@@ -1080,19 +1080,19 @@ bool ValidateGetMultisamplefvRobustANGLE(const Context *context,
 bool ValidateFramebufferParameteri(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    GLenum target,
-                                   FramebufferParameter pnamePacked,
+                                   GLenum pname,
                                    GLint param)
 {
-    return ValidateFramebufferParameteriBase(context, entryPoint, target, pnamePacked, param);
+    return ValidateFramebufferParameteriBase(context, entryPoint, target, pname, param);
 }
 
 bool ValidateGetFramebufferParameteriv(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        GLenum target,
-                                       FramebufferParameter pnamePacked,
+                                       GLenum pname,
                                        const GLint *params)
 {
-    return ValidateGetFramebufferParameterivBase(context, entryPoint, target, pnamePacked, params);
+    return ValidateGetFramebufferParameterivBase(context, entryPoint, target, pname, params);
 }
 
 bool ValidateGetProgramResourceIndex(const Context *context,
@@ -2663,15 +2663,27 @@ bool ValidatePatchParameteriBase(const PrivateState &state,
                                  GLenum pname,
                                  GLint value)
 {
-    if (ANGLE_UNLIKELY(pname != GL_PATCH_VERTICES))
+    if (state.getClientVersion() < ES_3_1)
+    {
+        errors->validationError(entryPoint, GL_INVALID_OPERATION, kES31Required);
+        return false;
+    }
+
+    if (pname != GL_PATCH_VERTICES)
     {
         errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
         return false;
     }
 
-    if (ANGLE_UNLIKELY(value <= 0 || value > state.getCaps().maxPatchVertices))
+    if (value <= 0)
     {
-        errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidPatchVerticesValue);
+        errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidValueNonPositive);
+        return false;
+    }
+
+    if (value > state.getCaps().maxPatchVertices)
+    {
+        errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidValueExceedsMaxPatchSize);
         return false;
     }
 

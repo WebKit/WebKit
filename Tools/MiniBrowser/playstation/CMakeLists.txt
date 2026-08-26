@@ -33,7 +33,7 @@ endif ()
 WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
 WEBKIT_EXECUTABLE(MiniBrowser)
 
-target_link_options(MiniBrowser PRIVATE "LINKER:--no-demangle")
+target_link_options(MiniBrowser PRIVATE -Wl,--no-demangle)
 
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     # Set the debugger working directory for Visual Studio

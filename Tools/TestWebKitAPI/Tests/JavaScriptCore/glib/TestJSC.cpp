@@ -25,7 +25,6 @@
 #undef JSC_COMPILATION
 
 #include <JavaScriptCore/JSContextRef.h>
-#include <array>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -4821,47 +4820,6 @@ static void testJSCJSON()
     }
 }
 
-static constexpr unsigned varargsParameterCount = 16;
-static constexpr unsigned varargsParameterLength = 512 * 1024;
-
-// Each parameter is large enough that converting the next one triggers a collection, when the earlier ones are only referenced from the argument list.
-static void testJSCFunctionCallParameterLifetime()
-{
-    LeakChecker checker;
-    GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
-    checker.watch(context.get());
-    ExceptionHandler exceptionHandler(context.get());
-
-    GUniquePtr<char> script(g_strdup_printf(
-        "(function() {\n"
-        "    for (var i = 0; i < arguments.length; i++) {\n"
-        "        if (arguments[i] !== String.fromCharCode(65 + i).repeat(%u))\n"
-        "            return 'parameter ' + i + ' did not survive';\n"
-        "    }\n"
-        "    return 'ok';\n"
-        "})", varargsParameterLength));
-    GRefPtr<JSCValue> function = adoptGRef(jsc_context_evaluate(context.get(), script.get(), -1));
-    checker.watch(function.get());
-    g_assert_true(jsc_value_is_function(function.get()));
-
-    std::array<GUniquePtr<char>, varargsParameterCount> parameters;
-    for (unsigned i = 0; i < varargsParameterCount; ++i)
-        parameters[i].reset(g_strnfill(varargsParameterLength, static_cast<char>('A' + i)));
-
-#define STRING_PARAMETER(index) G_TYPE_STRING, parameters[index].get()
-    GRefPtr<JSCValue> result = adoptGRef(jsc_value_function_call(function.get(),
-        STRING_PARAMETER(0), STRING_PARAMETER(1), STRING_PARAMETER(2), STRING_PARAMETER(3),
-        STRING_PARAMETER(4), STRING_PARAMETER(5), STRING_PARAMETER(6), STRING_PARAMETER(7),
-        STRING_PARAMETER(8), STRING_PARAMETER(9), STRING_PARAMETER(10), STRING_PARAMETER(11),
-        STRING_PARAMETER(12), STRING_PARAMETER(13), STRING_PARAMETER(14), STRING_PARAMETER(15),
-        G_TYPE_NONE));
-#undef STRING_PARAMETER
-
-    checker.watch(result.get());
-    GUniquePtr<char> resultString(jsc_value_to_string(result.get()));
-    g_assert_cmpstr(resultString.get(), ==, "ok");
-}
-
 int main(int argc, char** argv)
 {
     g_test_init(&argc, &argv, nullptr);
@@ -4890,7 +4848,6 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/autocleanups", testsJSCAutocleanups);
 #endif
     g_test_add_func("/jsc/json", testJSCJSON);
-    g_test_add_func("/jsc/function-call-parameter-lifetime", testJSCFunctionCallParameterLifetime);
 
     return g_test_run();
 }

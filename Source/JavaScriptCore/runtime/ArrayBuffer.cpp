@@ -748,7 +748,7 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::tryGrow(const Abstr
     for (Ref anchor : memoryHandle->anchors(locker)) {
         Locker locker { anchor->m_lock };
         if (JSWebAssemblyInstance* instance = anchor->instance())
-            instance->updateMatchingCachedMemoriesConcurrently(*this);
+            instance->updateCachedMemories();
     }
 #endif
     return deltaByteLength;

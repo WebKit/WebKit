@@ -623,6 +623,10 @@ static bool renderThemePaintLiquidGlassSwitchThumb(OptionSet<ControlStyle::State
     const auto styleColorOptions = renderer.styleColorOptions();
 
     auto thumbColor = liquidGlassSwitchThumbColor(renderer);
+#if PLATFORM(MAC)
+    if (states.contains(ControlStyle::State::Pressed) && states.contains(ControlStyle::State::Enabled))
+        adjustSwitchColorForPressedState(thumbColor, styleColorOptions);
+#endif
     auto roundedTrackRect = switchTrackRoundedRect(trackRect, isVertical, switchCornerRadiusFraction);
 
     Path trackPath = continuousRoundedRectFromRoundedRect(roundedTrackRect);

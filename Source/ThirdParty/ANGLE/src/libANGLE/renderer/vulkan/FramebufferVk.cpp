@@ -2950,7 +2950,7 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
                 break;
             }
         }
-        const gl::FramebufferAttachment *depthStencil = mState.getDepthOrStencilAttachment();
+        const gl::FramebufferAttachment *depthStencil = mState.getDepthStencilAttachment();
         if (depthStencil && depthStencil->isRenderToTexture())
         {
             ASSERT(!contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||

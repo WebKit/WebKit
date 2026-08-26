@@ -30,7 +30,6 @@
 #include <WebCore/RetrieveRecordsOptions.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/NativePromise.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -71,11 +70,10 @@ public:
     virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 
 private:
-    uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody&) WTF_EXCLUDES_LOCK(m_opaqueResponseToSizeWithPaddingMapLock);
+    uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody&);
 
 protected:
-    Lock m_opaqueResponseToSizeWithPaddingMapLock;
-    HashMap<uint64_t, uint64_t> m_opaqueResponseToSizeWithPaddingMap WTF_GUARDED_BY_LOCK(m_opaqueResponseToSizeWithPaddingMapLock);
+    HashMap<uint64_t, uint64_t> m_opaqueResponseToSizeWithPaddingMap;
 };
 
 } // namespace WebCore

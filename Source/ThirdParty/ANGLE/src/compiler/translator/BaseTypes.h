@@ -95,7 +95,8 @@ enum TBasicType
     EbtUSampler2DRect,
     EbtUSamplerBuffer,
     EbtUSamplerCubeArray,
-    EbtGuardSamplerEnd = EbtUSamplerCubeArray,  // non type: see implementation of IsSampler()
+    EbtSamplerVideoWEBGL,
+    EbtGuardSamplerEnd = EbtSamplerVideoWEBGL,  // non type: see implementation of IsSampler()
 
     // images
     EbtGuardImageBegin,
@@ -260,6 +261,7 @@ inline bool IsIntegerSampler(TBasicType type)
         case EbtSamplerBuffer:
         case EbtSamplerCubeArray:
         case EbtSamplerCubeArrayShadow:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             ASSERT(!IsSampler(type));
@@ -404,6 +406,7 @@ inline bool IsSampler2D(TBasicType type)
         case EbtSampler2DMS:
         case EbtISampler2DMS:
         case EbtUSampler2DMS:
+        case EbtSamplerVideoWEBGL:
             return true;
         case EbtSampler2DArray:
         case EbtISampler2DArray:
@@ -472,6 +475,7 @@ inline bool IsSamplerCube(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             ASSERT(!IsSampler(type));
@@ -518,6 +522,7 @@ inline bool IsSampler3D(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             ASSERT(!IsSampler(type));
@@ -564,6 +569,7 @@ inline bool IsSamplerArray(TBasicType type)
         case EbtISamplerBuffer:
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             ASSERT(!IsSampler(type));
@@ -596,6 +602,7 @@ inline bool IsSampler2DArray(TBasicType type)
         case EbtSampler2DMS:
         case EbtISampler2DMS:
         case EbtUSampler2DMS:
+        case EbtSamplerVideoWEBGL:
         case EbtSampler3D:
         case EbtISampler3D:
         case EbtUSampler3D:
@@ -669,6 +676,7 @@ inline bool IsShadowSampler(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             ASSERT(!IsSampler(type));

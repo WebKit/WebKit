@@ -490,17 +490,13 @@ angle::Result CLKernelVk::allocateDescriptorSet(
 {
     if (mDescriptorSets[index] && mDescriptorSets[index]->valid())
     {
-        // Safe to reuse: descriptor set is no longer in use by the GPU.
-        if (mContext->getRenderer()->hasResourceUseFinished(
-                mDescriptorSets[index]->getResourceUse()))
+        if (mDescriptorSets[index]->usedByCommandBuffer(computePassCommands->getQueueSerial()))
         {
-            // Set DS serial to current CB serial upon reuse.
-            mDescriptorSets[index]->setQueueSerial(computePassCommands->getQueueSerial());
-            return angle::Result::Continue;
+            mDescriptorSets[index].reset();
         }
         else
         {
-            mDescriptorSets[index].reset();
+            return angle::Result::Continue;
         }
     }
 

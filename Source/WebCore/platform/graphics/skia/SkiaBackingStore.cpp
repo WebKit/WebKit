@@ -43,13 +43,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#else
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaBackingStore);
@@ -214,10 +207,10 @@ void SkiaBackingStore::Tile::ensureTexture(const IntSize& size, CoordinatedTileB
     if (m_texture) {
         if (buffer.supportsAlpha() == m_texture->isOpaque())
             m_texture->reset(size, flags);
-    } else
+    } else {
         m_texture = BitmapTexturePool::singleton().acquireTexture(size, flags);
-
-    m_cachedImage = nullptr;
+        m_cachedImage = nullptr;
+    }
 }
 
 void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer& buffer)
@@ -252,6 +245,20 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
                 m_surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kYes, characterization.imageInfo(), characterization.sampleCount(), characterization.origin(), &characterization.surfaceProps());
 
             skgpu::ganesh::DrawDDL(m_surface.get(), displayList);
+        } else if (auto texture = acceleratedBuffer.texture()) {
+            ASSERT(!m_surface);
+
+            if (dirtyRect.size() == tileRect.size()) {
+                // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
+                if (m_texture)
+                    m_texture->swapTexture(*texture);
+                else
+                    m_texture = WTF::move(texture);
+                m_cachedImage = nullptr;
+            } else {
+                ensureTexture(tileRect.size(), buffer);
+                m_texture->copyFromExternalTexture(texture->id(), dirtyRect, { });
+            }
         }
     } else {
         auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
@@ -283,10 +290,7 @@ sk_sp<SkImage> SkiaBackingStore::Tile::image() const
         auto allocatedSize = m_texture->allocatedSize();
         auto backendTexture = GrBackendTextures::MakeGL(allocatedSize.width(), allocatedSize.height(), skgpu::Mipmapped::kNo, externalTexture);
         auto alphaType = m_texture->isOpaque() ? kOpaque_SkAlphaType : kPremul_SkAlphaType;
-        m_texture->ref();
-        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB(), +[](void* userData) {
-            static_cast<BitmapTexture*>(userData)->deref();
-        }, m_texture.get());
+        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB());
     }
     return m_cachedImage;
 }

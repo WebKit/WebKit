@@ -141,6 +141,8 @@ const char *getBasicString(TBasicType t)
             return "uimageBuffer";
         case EbtAtomicCounter:
             return "atomic_uint";
+        case EbtSamplerVideoWEBGL:
+            return "samplerVideoWEBGL";
         case EbtPixelLocalANGLE:
             return "pixelLocalANGLE";
         case EbtIPixelLocalANGLE:

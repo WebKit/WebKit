@@ -3,6 +3,8 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    platform/graphics/texmap/BitmapTexture.cpp
+    platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/ClipPath.cpp
     platform/graphics/texmap/ClipStack.cpp
     platform/graphics/texmap/FloatPlane3D.cpp
@@ -22,6 +24,8 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/texmap/BitmapTexture.h
+    platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipPath.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/FloatPlane3D.h

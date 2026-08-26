@@ -57,11 +57,6 @@ G_BEGIN_DECLS
  * @WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL: Load failure due to unknown protocol
  * @WEBKIT_NETWORK_ERROR_CANCELLED: Load failure due to cancellation
  * @WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST: Load failure due to missing file
- * @WEBKIT_NETWORK_ERROR_HTTPS_UPGRADE_REDIRECT_LOOP: Load failure due to a redirect
- *     loop caused by upgrading the navigation to HTTPS. Since: 2.56
- * @WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY: Load failure due to the
- *     navigation being for a non-upgradable HTTP URI while
- *     %WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE is in effect. Since: 2.56
  *
  * Enum values used to denote the various network errors.
  **/
@@ -70,9 +65,7 @@ typedef enum {
     WEBKIT_NETWORK_ERROR_TRANSPORT = 300,
     WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL = 301,
     WEBKIT_NETWORK_ERROR_CANCELLED = 302,
-    WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303,
-    WEBKIT_NETWORK_ERROR_HTTPS_UPGRADE_REDIRECT_LOOP = 304,
-    WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY = 305
+    WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303
 } WebKitNetworkError;
 
 /**

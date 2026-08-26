@@ -51,10 +51,6 @@ void TransformFeedbackVk::onDestroy(const gl::Context *context)
 
 void TransformFeedbackVk::clearCachedBufferData()
 {
-    for (VkBuffer &buffer : mBufferHandles)
-    {
-        buffer = VK_NULL_HANDLE;
-    }
     for (VkDeviceSize &offset : mBufferOffsets)
     {
         offset = 0;
@@ -62,10 +58,6 @@ void TransformFeedbackVk::clearCachedBufferData()
     for (VkDeviceSize &size : mBufferSizes)
     {
         size = 0;
-    }
-    for (vk::BufferHelper *&bufferHelper : mBufferHelpers)
-    {
-        bufferHelper = nullptr;
     }
 }
 

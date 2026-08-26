@@ -93,7 +93,6 @@ TOutputGLSLBase::TOutputGLSLBase(TCompiler *compiler,
       mSkippedDeclaringAnonymousStruct(false),
       mHashFunction(compiler->getHashFunction()),
       mUserVariablePrefix(compiler->getUserVariableNamePrefix()),
-      mUserBlockPrefix(compiler->getUserBlockNamePrefix()),
       mNameMap(compiler->getNameMap()),
       mShaderType(compiler->getShaderType()),
       mShaderVersion(compiler->getShaderVersion()),
@@ -1185,17 +1184,19 @@ void TOutputGLSLBase::visitPreprocessorDirective(TIntermPreprocessorDirective *n
 
 ImmutableString TOutputGLSLBase::getTypeName(const TType &type)
 {
+    if (type.getBasicType() == EbtSamplerVideoWEBGL)
+    {
+        // TODO(http://anglebug.com/42262534): translate SamplerVideoWEBGL into different token
+        // when necessary (e.g. on Android devices)
+        return ImmutableString("sampler2D");
+    }
+
     return GetTypeName(type, mUserVariablePrefix, mHashFunction, &mNameMap);
 }
 
 ImmutableString TOutputGLSLBase::hashName(const TSymbol *symbol)
 {
     return HashName(symbol, mUserVariablePrefix, mHashFunction, &mNameMap);
-}
-
-ImmutableString TOutputGLSLBase::hashBlockName(const TSymbol *symbol)
-{
-    return HashName(symbol, mUserBlockPrefix, mHashFunction, &mNameMap);
 }
 
 ImmutableString TOutputGLSLBase::hashFieldName(const TField *field)
@@ -1350,7 +1351,7 @@ void TOutputGLSLBase::declareInterfaceBlock(const TType &type)
     const TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
     TInfoSinkBase &out                    = objSink();
 
-    out << hashBlockName(interfaceBlock) << "{\n";
+    out << hashName(interfaceBlock) << "{\n";
     const TFieldList &fields = interfaceBlock->fields();
     for (const TField *field : fields)
     {

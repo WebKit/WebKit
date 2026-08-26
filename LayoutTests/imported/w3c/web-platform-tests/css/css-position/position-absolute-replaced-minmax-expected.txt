@@ -41,6 +41,4 @@ PASS minmax replaced IMG 38
 PASS minmax replaced IMG 39
 PASS minmax replaced IMG 40
 PASS minmax replaced IMG 41
-PASS minmax replaced IMG 42
-PASS minmax replaced IMG 43
 

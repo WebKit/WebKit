@@ -217,10 +217,6 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             WriteParamValueReplay<ParamType::TFramebufferIDPointer>(
                 os, call, param.value.FramebufferIDPointerVal);
             break;
-        case ParamType::TFramebufferParameter:
-            WriteParamValueReplay<ParamType::TFramebufferParameter>(
-                os, call, param.value.FramebufferParameterVal);
-            break;
         case ParamType::TGLDEBUGPROC:
             WriteParamValueReplay<ParamType::TGLDEBUGPROC>(os, call, param.value.GLDEBUGPROCVal);
             break;
@@ -1046,8 +1042,6 @@ const char *ParamTypeToString(ParamType paramType)
             return "const GLuint *";
         case ParamType::TFramebufferIDPointer:
             return "GLuint *";
-        case ParamType::TFramebufferParameter:
-            return "GLenum";
         case ParamType::TGLDEBUGPROC:
             return "GLDEBUGPROC";
         case ParamType::TGLDEBUGPROCKHR:

@@ -92,8 +92,6 @@ find_package_handle_standard_args(Cairo
     VERSION_VAR Cairo_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Cairo_COMPILE_OPTIONS ${Cairo_COMPILE_OPTIONS})
-
 if (Cairo_LIBRARY AND NOT TARGET Cairo::Cairo)
     add_library(Cairo::Cairo UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Cairo::Cairo PROPERTIES

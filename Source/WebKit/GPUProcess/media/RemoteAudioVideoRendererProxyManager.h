@@ -66,16 +66,15 @@ class GPUConnectionToWebProcess;
 class RemoteVideoFrameObjectHeap;
 struct SharedPreferencesForWebProcess;
 
-// Destroyed on the main thread like the GPUConnectionToWebProcess that owns it, since it holds media
-// objects that expect to be torn down there.
-class RemoteAudioVideoRendererProxyManager final : public IPC::MessageReceiver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioVideoRendererProxyManager, WTF::DestructionThread::Main> {
+class RemoteAudioVideoRendererProxyManager final : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioVideoRendererProxyManager);
 public:
-    static Ref<RemoteAudioVideoRendererProxyManager> create(GPUConnectionToWebProcess&);
+    RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess&);
     ~RemoteAudioVideoRendererProxyManager();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    void ref() const final;
+    void deref() const final;
+    ThreadSafeWeakPtrControlBlock& controlBlock() const;
 
     void connectionToWebProcessClosed();
 
@@ -90,10 +89,8 @@ public:
     RefPtr<WebCore::AudioVideoRenderer> rendererFor(std::optional<WebCore::MediaPlayerIdentifier>) const;
 
 private:
-    explicit RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess&);
-
     // Messages
-    void createManager(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
+    void create(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
     void shutdown(RemoteAudioVideoRendererIdentifier);
 
     void setPreferences(RemoteAudioVideoRendererIdentifier, WebCore::VideoRendererPreferences);

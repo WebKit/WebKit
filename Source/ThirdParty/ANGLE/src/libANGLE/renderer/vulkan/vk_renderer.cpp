@@ -441,14 +441,6 @@ constexpr const char *kSkippedMessagesWithRenderPassObjectsAndVulkanSCB[] = {
     "VUID-vkCmdExecuteCommands-pCommandBuffers-00099",
 };
 
-// When MSRTSS-rendering to a cubemap, ANGLE queries support without using the CUBE_COMPATIBLE
-// create flag because otherwise Vulkan requires that the driver returns VK_SAMPLE_COUNT_1_BIT.  VVL
-// doesn't do this however, so it complains that multisampling is not supported.
-constexpr const char *kSkippedMessagesWithMSRTSSWithoutDynamicRendering[] = {
-    "VUID-VkFramebufferCreateInfo-samples-07009",
-    "VUID-VkRenderPassAttachmentBeginInfo-pAttachments-07010",
-};
-
 // VVL bugs with dynamic rendering
 constexpr const char *kSkippedMessagesWithDynamicRendering[] = {
     // https://anglebug.com/42266678
@@ -800,22 +792,6 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessagesWithMSRTTEmulation[] 
          "BIT)",
          "command = vkCmdClearDepthStencilImage",
          "prior_command = vkCmdNextSubpass",
-     }},
-    // When one aspect of depth/stencil is LOAD and the other is DONT_CARE and the image is
-    // previously initialized, the transfer->depth_stencil barrier's dst access does not include
-    // DEPTH_STENCIL_WRITE correctly.  See
-    // MSRTTES3Test.RenderToTextureDepthOnly/ES3_1_Vulkan_SwiftShader_EnableMultisampledRenderToTexture_RobustResourceInit
-    // for example.
-    {"SYNC-HAZARD-WRITE-AFTER-WRITE",
-     false,
-     {
-         "message_type = RenderPassLoadOpError",
-         "access = "
-         "VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT(VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_"
-         "BIT)",
-         "prior_access = VK_PIPELINE_STAGE_2_CLEAR_BIT(VK_ACCESS_2_TRANSFER_WRITE_BIT)",
-         "command = vkCmdBeginRenderPass",
-         "prior_command = vkCmdClearDepthStencilImage",
      }},
 };
 
@@ -4732,73 +4708,21 @@ angle::Result Renderer::createDeviceAndQueue(vk::ErrorContext *context,
     uint32_t queueCount = std::min(queueFamily.getDeviceQueueCount(),
                                    static_cast<uint32_t>(egl::ContextPriority::EnumCount));
 
-    // We use VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT only if queueCount >=3
-    if (globalPriority == VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT && queueCount < 3)
+    uint32_t queueCreateInfoCount              = 1;
+    VkDeviceQueueCreateInfo queueCreateInfo[1] = {};
+    queueCreateInfo[0].sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo[0].flags = enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
+    queueCreateInfo[0].queueFamilyIndex = queueFamilyIndex;
+    queueCreateInfo[0].queueCount       = queueCount;
+    queueCreateInfo[0].pQueuePriorities = vk::QueueFamily::kQueuePriorities;
+
+    VkDeviceQueueGlobalPriorityCreateInfo queueGlobalPriorityCreateInfo = {};
+    queueGlobalPriorityCreateInfo.sType =
+        VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO;
+    if (mFeatures.supportsGlobalPriorityQuery.enabled)
     {
-        globalPriority = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM;
-    }
-
-    uint32_t queueCreateInfoCount                                          = 1;
-    VkDeviceQueueCreateInfo queueCreateInfo[3]                             = {};
-    VkDeviceQueueGlobalPriorityCreateInfo queueGlobalPriorityCreateInfo[3] = {};
-
-    // If global priority is supported, we split queueCreateInfo into three groups so that the
-    // middle group uses VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT.
-    if (globalPriority == VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT)
-    {
-        ASSERT(mFeatures.supportsGlobalPriorityQuery.enabled);
-        ASSERT(queueCount >= 3);
-
-        // queueCreateInfo[0] is for Medium and High
-        queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo[0].flags =
-            enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
-        queueCreateInfo[0].queueFamilyIndex = queueFamilyIndex;
-        queueCreateInfo[0].queueCount       = 2;
-        queueCreateInfo[0].pQueuePriorities = &vk::QueueFamily::kQueuePriorities[0];
-        queueGlobalPriorityCreateInfo[0].sType =
-            VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO;
-        queueGlobalPriorityCreateInfo[0].globalPriority = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM;
-        vk::AddToPNextChain(&queueCreateInfo[0], &queueGlobalPriorityCreateInfo[0]);
-
-        ASSERT(vk::QueueFamily::kQueuePriorities[2] == QueueFamily::kQueuePriorityRealtime);
-        // queueCreateInfo[1] is for Realtime
-        queueCreateInfo[1].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo[1].flags =
-            enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
-        queueCreateInfo[1].queueFamilyIndex = queueFamilyIndex;
-        queueCreateInfo[1].queueCount       = 1;
-        queueCreateInfo[1].pQueuePriorities = &vk::QueueFamily::kQueuePriorities[2];
-        queueGlobalPriorityCreateInfo[1].sType =
-            VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO;
-        queueGlobalPriorityCreateInfo[1].globalPriority = VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT;
-        vk::AddToPNextChain(&queueCreateInfo[1], &queueGlobalPriorityCreateInfo[1]);
-        queueCreateInfoCount++;
-
-        if (queueCount == 4)
-        {
-            // queueCreateInfo[2] is for Low
-            queueCreateInfo[2].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queueCreateInfo[2].flags =
-                enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
-            queueCreateInfo[2].queueFamilyIndex = queueFamilyIndex;
-            queueCreateInfo[2].queueCount       = 1;
-            queueCreateInfo[2].pQueuePriorities = &vk::QueueFamily::kQueuePriorities[3];
-            queueGlobalPriorityCreateInfo[2].sType =
-                VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO;
-            queueGlobalPriorityCreateInfo[2].globalPriority = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM;
-            vk::AddToPNextChain(&queueCreateInfo[2], &queueGlobalPriorityCreateInfo[2]);
-            queueCreateInfoCount++;
-        }
-    }
-    else
-    {
-        queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo[0].flags =
-            enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
-        queueCreateInfo[0].queueFamilyIndex = queueFamilyIndex;
-        queueCreateInfo[0].queueCount       = queueCount;
-        queueCreateInfo[0].pQueuePriorities = vk::QueueFamily::kQueuePriorities.data();
+        queueGlobalPriorityCreateInfo.globalPriority = globalPriority;
+        vk::AddToPNextChain(&queueCreateInfo, &queueGlobalPriorityCreateInfo);
     }
 
     // Setup device initialization struct
@@ -5006,15 +4930,6 @@ void Renderer::initializeValidationMessageSuppressions()
             mSkippedValidationMessages.end(), kSkippedMessagesWithRenderPassObjectsAndVulkanSCB,
             kSkippedMessagesWithRenderPassObjectsAndVulkanSCB +
                 ArraySize(kSkippedMessagesWithRenderPassObjectsAndVulkanSCB));
-    }
-
-    if (!getFeatures().preferDynamicRendering.enabled &&
-        getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
-    {
-        mSkippedValidationMessages.insert(
-            mSkippedValidationMessages.end(), kSkippedMessagesWithMSRTSSWithoutDynamicRendering,
-            kSkippedMessagesWithMSRTSSWithoutDynamicRendering +
-                ArraySize(kSkippedMessagesWithMSRTSSWithoutDynamicRendering));
     }
 
     if (getFeatures().preferDynamicRendering.enabled)
@@ -6930,9 +6845,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsUnifiedImageLayouts,
                             mUnifiedImageLayoutsFeatures.unifiedImageLayouts == VK_TRUE);
 
+    // This feature is forcing all queue created with VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT. Disable
+    // for everybody for now. Disable the feature on Samsung devices - http://anglebug.com/467875813
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsGlobalPriority,
-        ExtensionFound(VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME, deviceExtensionNames));
+        ExtensionFound(VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME, deviceExtensionNames) && false);
 
     // REALTIME priority is not permitted on most operating systems.  This feature is limited to
     // Android for now.

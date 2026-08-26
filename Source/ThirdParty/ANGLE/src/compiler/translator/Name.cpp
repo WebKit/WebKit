@@ -63,13 +63,13 @@ bool Name::beginsWith(const Name &prefix) const
     return mRawName.beginsWith(prefix.mRawName);
 }
 
-void Name::emit(TInfoSinkBase &out, char userSymbolPrefix) const
+void Name::emit(TInfoSinkBase &out) const
 {
-    emitImpl(out, userSymbolPrefix);
+    emitImpl(out);
 }
 
 template <typename T>
-void Name::emitImpl(T &out, char userSymbolPrefix) const
+void Name::emitImpl(T &out) const
 {
     switch (mSymbolType)
     {
@@ -82,7 +82,7 @@ void Name::emitImpl(T &out, char userSymbolPrefix) const
             ASSERT(!mRawName.empty());
             if (mRawName != "main")
             {
-                out << '_' << userSymbolPrefix << mRawName;
+                out << '_' << kUserDefinedNamePrefix << mRawName;
             }
             else
             {
@@ -106,6 +106,12 @@ void Name::emitImpl(T &out, char userSymbolPrefix) const
             UNREACHABLE();
             break;
     }
+}
+
+std::ostream &operator<<(std::ostream &out, const Name &name)
+{
+    name.emitImpl(out);
+    return out;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

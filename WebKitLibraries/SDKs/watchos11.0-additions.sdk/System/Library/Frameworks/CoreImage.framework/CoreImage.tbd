@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/Frameworks/CoreImage.framework/CoreImage
+current-version: 6
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_kCIContextWorkingColorSpace, _kCIInputImageKey]
+        objc-classes: [CIContext, CIFilter, CIImage, CIVector]
+...

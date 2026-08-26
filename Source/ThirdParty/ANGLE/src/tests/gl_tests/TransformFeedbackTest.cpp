@@ -219,6 +219,9 @@ void main()
 
 TEST_P(TransformFeedbackTest, ZeroSizedViewport)
 {
+    // http://anglebug.com/42263715
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
+
     // Set the program's transform feedback varyings (just gl_Position)
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("gl_Position");
@@ -573,6 +576,9 @@ void main() {
 // old position)
 TEST_P(TransformFeedbackTest, BufferRebinding)
 {
+    // http://anglebug.com/42263715
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
+
     glDisable(GL_DEPTH_TEST);
 
     // Set the program's transform feedback varyings (just gl_Position)
@@ -647,6 +653,12 @@ TEST_P(TransformFeedbackTest, BufferRebinding)
 // afterward.
 TEST_P(TransformFeedbackTest, RecordAndDraw)
 {
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
+
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
+
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -718,6 +730,9 @@ TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
 {
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
+
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/42263967
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -811,6 +826,9 @@ TEST_P(TransformFeedbackTest, UseAsUBOThenUpdateThenCapture)
 
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
+
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     const std::array<uint32_t, 12> kInitialData = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     const std::array<uint32_t, 12> kUpdateData  = {
@@ -968,6 +986,9 @@ TEST_P(TransformFeedbackTest, ClearWhileRecordingDoesNotContribute)
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
+
     // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
@@ -1005,6 +1026,9 @@ TEST_P(TransformFeedbackTest, CopyWhileRecordingDoesNotContribute)
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
+
     // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
@@ -1038,6 +1062,9 @@ TEST_P(TransformFeedbackTest, BlitWhileRecordingDoesNotContribute)
 {
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
+
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -1137,6 +1164,9 @@ TEST_P(TransformFeedbackTest, TooSmallBuffers)
 // Test that buffer binding happens only on the current transform feedback object
 TEST_P(TransformFeedbackTest, BufferBinding)
 {
+    // http://anglebug.com/42263715
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
+
     // Reset any state
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
@@ -1338,6 +1368,9 @@ TEST_P(TransformFeedbackTest, InactiveStructureVarying)
 // Test that multiple paused transform feedbacks do not generate errors or crash
 TEST_P(TransformFeedbackTest, MultiplePaused)
 {
+    // Crashes on Mac Intel GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
+
     const size_t drawSize = 1024;
     std::vector<float> transformFeedbackData(drawSize);
     for (size_t i = 0; i < drawSize; i++)
@@ -1425,6 +1458,9 @@ void main(void)
 // contexts returns the correct results.  Helps expose bugs in ANGLE's virtual contexts.
 TEST_P(TransformFeedbackTest, MultiContext)
 {
+    // These tests are flaky, do not lift these unless you find the root cause and the fix.
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
+
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
@@ -1606,6 +1642,9 @@ TEST_P(TransformFeedbackTest, PackingBug)
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
+    // TODO(anglebug.com/40096747): Timing out on ARM-based Apple DTKs.
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
+
     // TODO(jmadill): With points and rasterizer discard?
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -1737,6 +1776,8 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
 {
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(jmadill): With points and rasterizer discard?
     constexpr char kVS[] =
@@ -1803,6 +1844,9 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
 // glBeginTransformFeedback is called
 TEST_P(TransformFeedbackTest, OffsetResetOnBeginTransformFeedback)
 {
+    // http://anglebug.com/42263637
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsAMD());
+
     // http://anglebug.com/42263637
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
@@ -2511,6 +2555,9 @@ TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVarying)
 // nonexistent varying is prefixed with "gl_".
 TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVaryingWithGLPrefix)
 {
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
+
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("gl_Bogus");
 
@@ -2611,6 +2658,9 @@ TEST_P(TransformFeedbackTest, NoTransformFeedbackVaryingsInUse)
 // Test that you can pause transform feedback without drawing first.
 TEST_P(TransformFeedbackTest, SwitchProgramBeforeDraw)
 {
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
+
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("gl_Position");
     compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
@@ -2886,6 +2936,9 @@ TEST_P(TransformFeedbackTest, OverrunWithPause)
     // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
+    // Fails on Mac Intel GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
+
     const std::vector<GLfloat> vertices = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
         -1.0f, 1.0f, 0.5f, 1.0f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f, 1.0f,  0.5f, 1.0f,
@@ -2963,6 +3016,12 @@ TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
 
     // Fails on Windows Intel GL drivers. http://anglebug.com/42263296
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+
+    // Fails on Mac AMD GL drivers. http://anglebug.com/40644736
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsMac());
+
+    // Crashes on Mac Intel GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const std::vector<GLfloat> vertices = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
@@ -3081,6 +3140,9 @@ TEST_P(TransformFeedbackTest, EndThenBindNewBufferAndRestart)
 // feedback buffers, as they were not "dirty".
 TEST_P(TransformFeedbackTest, DrawWithoutTransformFeedbackThenWith)
 {
+    // Fails on Mac Intel GL drivers. http://anglebug.com/42263565
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
+
     constexpr char kVS[] =
         R"(#version 300 es
 in float in_value;
@@ -5224,65 +5286,6 @@ TEST_P(TransformFeedbackTest, StaleBufferBindingInactiveXfb)
     // Regular draw while TF inactive, but still using a program that was compiled with transform
     // feedback.  It shouldn't crash.
     glDrawArrays(GL_POINTS, 0, 1);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Test that deleting a buffer bound to a transform feedback slot, and then drawing with a different
-// program that has transform feedback varyings (causing a default-uniform descriptor-set cache
-// miss) while transform feedback is inactive, doesn't cause a use-after-free.
-TEST_P(TransformFeedbackTest, StaleBufferBindingInactiveXfbWithUniforms)
-{
-    std::vector<std::string> tfVaryings = {"gl_Position"};
-    constexpr char kVS1[]               = R"(#version 300 es
-in vec4 a_position;
-uniform vec4 uOff;
-void main() {
-    gl_Position = a_position + uOff;
-})";
-    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program1, kVS1, essl3_shaders::fs::Red(), tfVaryings,
-                                        GL_INTERLEAVED_ATTRIBS);
-    ASSERT_NE(0u, program1);
-    glUseProgram(program1);
-
-    GLBuffer buf0;
-    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buf0);
-    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_DYNAMIC_COPY);
-
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf0);
-
-    GLint uOffLocation = glGetUniformLocation(program1, "uOff");
-    ASSERT_NE(-1, uOffLocation);
-    glUniform4f(uOffLocation, 0.0f, 0.0f, 0.0f, 0.0f);
-
-    glBeginTransformFeedback(GL_TRIANGLES);
-    drawQuad(program1, "a_position", 0.5f);
-    glEndTransformFeedback();
-
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
-    buf0.reset();
-
-    // Create a new program with TF varyings and a uniform to force a descriptor set cache miss.
-    constexpr char kVS2[] = R"(#version 300 es
-in vec4 a_position;
-uniform vec4 uOff2;
-void main() {
-    gl_Position = a_position + uOff2;
-})";
-    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program2, kVS2, essl3_shaders::fs::Green(), tfVaryings,
-                                        GL_INTERLEAVED_ATTRIBS);
-    ASSERT_NE(0u, program2);
-    glUseProgram(program2);
-
-    GLint uOff2Location = glGetUniformLocation(program2, "uOff2");
-    ASSERT_NE(-1, uOff2Location);
-    glUniform4f(uOff2Location, 0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Regular draw while TF inactive, but still using a program that was compiled with transform
-    // feedback to trigger a default-uniform descriptor-set cache miss.
-    drawQuad(program2, "a_position", 0.5f);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-
     ASSERT_GL_NO_ERROR();
 }
 

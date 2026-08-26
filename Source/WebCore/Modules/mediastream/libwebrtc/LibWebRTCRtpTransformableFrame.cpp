@@ -159,18 +159,25 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
 
     if (newMetadata.frameId)
         rtcMetadata.SetFrameId(*newMetadata.frameId);
-    // FIXME: newMetadata.dependencies
+    if (newMetadata.dependencies)
+        rtcMetadata.SetDependencies(newMetadata.dependencies->span());
     if (newMetadata.width)
         rtcMetadata.SetWidth(*newMetadata.width);
     if (newMetadata.height)
         rtcMetadata.SetHeight(*newMetadata.height);
-    // FIXME: newMetadata.spatialIndex
+    if (newMetadata.spatialIndex)
+        rtcMetadata.SetSpatialIndex(*newMetadata.spatialIndex);
     if (newMetadata.temporalIndex)
         rtcMetadata.SetTemporalIndex(*newMetadata.temporalIndex);
     if (newMetadata.synchronizationSource)
         rtcMetadata.SetSsrc(*newMetadata.synchronizationSource);
     // FIXME: newMetadata.payloadType
-    // FIXME: newMetadata.contributingSources
+    if (newMetadata.contributingSources) {
+        std::vector<uint32_t> csrcs(newMetadata.contributingSources->size());
+        for (auto& csrc : *newMetadata.contributingSources)
+            csrcs.push_back(csrc);
+        rtcMetadata.SetCsrcs(WTF::move(csrcs));
+    }
     if (newMetadata.rtpTimestamp)
         m_rtcFrame->SetRTPTimestamp(*newMetadata.rtpTimestamp);
     // FIXME: newMetadata.mimeType

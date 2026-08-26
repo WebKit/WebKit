@@ -54,7 +54,6 @@ class FormDataReference;
 }
 
 namespace WebCore {
-class DocumentSyncData;
 class RegistrableDomain;
 class ResourceRequest;
 enum class CrossOriginOpenerPolicyValue : uint8_t;
@@ -63,7 +62,6 @@ enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 struct BackForwardItemIdentifierType;
 struct DiagnosticLoggingDictionary;
-struct DocumentSyncSerializationData;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 }
 
@@ -120,10 +118,6 @@ public:
     bool didFailProvisionalLoad() const { return m_didFailProvisionalLoad; }
     const std::optional<WebCore::Site>& deferredRemoteTransitionSite() const { return m_deferredRemoteTransitionSite; }
     bool hasActiveLoadForNavigation(const API::Navigation&) const;
-
-    void setDeferredTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&&);
-    void updateDeferredTopDocumentSyncData(const WebCore::DocumentSyncSerializationData&);
-    RefPtr<WebCore::DocumentSyncData> takeDeferredTopDocumentSyncData();
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     RefPtr<DrawingAreaProxy> takeDrawingArea();
@@ -241,7 +235,6 @@ private:
     bool m_shouldClosePage { true };
     bool m_didFailProvisionalLoad { false };
     std::optional<WebCore::Site> m_deferredRemoteTransitionSite;
-    RefPtr<WebCore::DocumentSyncData> m_deferredTopDocumentSyncData;
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     RefPtr<API::WebsitePolicies> m_mainFrameWebsitePolicies;

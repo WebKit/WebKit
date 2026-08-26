@@ -114,7 +114,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-mpath.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-rect.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-rotate-angle.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-spline-invalid-keyTimes.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-still.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateTransform-pattern-transform.html

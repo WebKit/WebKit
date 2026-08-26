@@ -8,10 +8,6 @@ import("//third_party/dawn/scripts/dawn_features.gni")
 import("../../../../gni/angle.gni")
 import("wgpu_sources.gni")
 
-if (angle_use_wayland) {
-  import("//build_overrides/wayland.gni")
-}
-
 assert(angle_enable_wgpu)
 assert(defined(angle_dawn_dir))
 
@@ -32,17 +28,4 @@ angle_source_set("angle_wgpu_backend") {
     "${angle_dawn_dir}/src/dawn/native",
     "${angle_root}:translator",
   ]
-
-  if (angle_use_wayland) {
-    public_configs += [ "$angle_root:angle_wayland_config" ]
-
-    # wl_proxy_get_display() (used by WindowSurfaceWgpuWayland) is declared in
-    # wayland-client-core.h, which is only exposed by the wayland_client
-    # target's config -- angle_wayland_config alone does not put it on the
-    # include path.
-    deps += [
-      "$wayland_gn_dir:wayland_client",
-      "$wayland_gn_dir:wayland_egl",
-    ]
-  }
 }

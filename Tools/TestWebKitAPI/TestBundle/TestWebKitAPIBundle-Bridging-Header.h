@@ -23,4 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "../Tests/WTF/cocoa/SwiftCxxInteropTestbed.h"
 #import "UIKitSPIForTesting.h"

@@ -225,6 +225,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_vertex_array_object"] = enableableExtension(&Extensions::vertexArrayObjectOES);
         map["GL_OES_vertex_half_float"] = enableableExtension(&Extensions::vertexHalfFloatOES);
         map["GL_OES_vertex_type_10_10_10_2"] = enableableExtension(&Extensions::vertexType1010102OES);
+        map["GL_WEBGL_video_texture"] = enableableExtension(&Extensions::videoTextureWEBGL);
         map["GL_EXT_YUV_target"] = enableableExtension(&Extensions::YUVTargetEXT);
 
         // ANGLE unofficial extension strings
@@ -242,7 +243,6 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_CHROMIUM_copy_compressed_texture"] = esOnlyExtension(&Extensions::copyCompressedTextureCHROMIUM);
         map["GL_CHROMIUM_copy_texture"] = esOnlyExtension(&Extensions::copyTextureCHROMIUM);
         map["GL_ANGLE_copy_texture_3d"] = enableableExtension(&Extensions::copyTexture3dANGLE);
-        map["GL_ANGLE_explicit_context"] = esOnlyExtension(&Extensions::explicitContextANGLE);
         map["GL_WEBKIT_explicit_resolve_target"] = enableableExtension(&Extensions::explicitResolveTargetWEBKIT);
         map["GL_CHROMIUM_framebuffer_mixed_samples"] = esOnlyExtension(&Extensions::framebufferMixedSamplesCHROMIUM);
         map["GL_ANGLE_framebuffer_multisample"] = enableableExtension(&Extensions::framebufferMultisampleANGLE);

@@ -69,7 +69,7 @@ private class TestNavigationDecider: WebPage.NavigationDeciding {
     }
 }
 
-#if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#if ENABLE_CXX_INTEROP
 @MainActor
 private struct TrustingNavigationDecider: WebPage.NavigationDeciding {
     mutating func decideAuthenticationChallengeDisposition(
@@ -89,7 +89,7 @@ extension WebPage.Configuration {
         self.websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
     }
 }
-#endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#endif // ENABLE_CXX_INTEROP
 
 // MARK: Tests
 
@@ -113,7 +113,7 @@ struct WebPageTests {
         // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }
 
-    #if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+    #if ENABLE_CXX_INTEROP
     @Test
     func qualifiedServerTrust() async throws {
         var server = HTTPServer(protocol: .httpsProxy) {
@@ -163,7 +163,7 @@ struct WebPageTests {
             #expect(page.qualifiedServerTrust == nil)
         }
     }
-    #endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+    #endif // ENABLE_CXX_INTEROP
 
     @Test
     func decidePolicyForNavigationActionFragment() async throws {

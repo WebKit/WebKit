@@ -68,39 +68,13 @@ class State;
 struct OSRExitDescriptorImpl;
 struct OSRExitHandle;
 
-class JITCode;
-
-// Stores one ExitValue per operand of the exit (arguments, then locals, then tmps) as
-// a byte stream: a tag byte followed by an optional payload.
-//
-//   0x00-0x3F  (tag + 1) consecutive dead values
-//   0x40-0x43  InJSStack / AsInt32 / AsInt52 / AsDouble, flushed to the operand's own virtual register
-//   0x44-0x47  the same, flushed to another virtual register: zigzag LEB128 register offset follows
-//   0x48       Constant: LEB128 index into JITCode::osrExitConstants follows
-//   0x49       MaterializeNewObject: LEB128 index into OSRExitDescriptor::m_materializations follows
-//   0x4A       Argument: DataFormat byte and LEB128 stackmap index follow
-//
-// Virtual registers are stored before the localsOffset adjustment; decode() applies it.
-class OSRExitValues {
-    WTF_MAKE_NONCOPYABLE(OSRExitValues);
-public:
-    OSRExitValues() = default;
-
-    void encode(const Operands<ExitValue>&, const Bag<ExitTimeObjectMaterialization>&, JITCode&);
-    FixedOperands<ExitValue> decode(const JITCode&, const Bag<ExitTimeObjectMaterialization>&) const;
-
-private:
-    FixedVector<uint8_t> m_bytes;
-    unsigned m_numberOfArguments { 0 };
-    unsigned m_numberOfLocals { 0 };
-    unsigned m_numberOfTmps { 0 };
-};
-
 struct OSRExitDescriptor {
 private:
     WTF_MAKE_NONCOPYABLE(OSRExitDescriptor);
 public:
-    OSRExitDescriptor(DataFormat profileDataFormat, MethodOfGettingAValueProfile);
+    OSRExitDescriptor(
+        DataFormat profileDataFormat, MethodOfGettingAValueProfile,
+        unsigned numberOfArguments, unsigned numberOfLocals, unsigned numberOfTmps);
 
     // The first argument to the exit call may be a value we wish to profile.
     // If that's the case, the format will be not Invalid and we'll have a
@@ -109,11 +83,9 @@ public:
     // correct them.
     DataFormat m_profileDataFormat;
     MethodOfGettingAValueProfile m_valueProfile;
-
-    OSRExitValues m_values;
+    
+    FixedOperands<ExitValue> m_values;
     Bag<ExitTimeObjectMaterialization> m_materializations;
-
-    FixedOperands<ExitValue> values(const JITCode& jitCode) const { return m_values.decode(jitCode, m_materializations); }
 
     void validateReferences(const TrackedReferences&);
 

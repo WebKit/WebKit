@@ -77,21 +77,45 @@ public:
         return result;
     }
     
-    static ExitValue inJSStack(ExitValueKind kind, VirtualRegister reg)
+    static ExitValue inJSStack(VirtualRegister reg)
     {
         ExitValue result;
-        result.m_kind = kind;
+        result.m_kind = ExitValueInJSStack;
         UnionType u;
         u.virtualRegister = reg.offset();
         result.m_value = WTF::move(u);
-        ASSERT(result.isInJSStackSomehow());
         return result;
     }
-
-    static ExitValue inJSStack(VirtualRegister reg) { return inJSStack(ExitValueInJSStack, reg); }
-    static ExitValue inJSStackAsInt32(VirtualRegister reg) { return inJSStack(ExitValueInJSStackAsInt32, reg); }
-    static ExitValue inJSStackAsInt52(VirtualRegister reg) { return inJSStack(ExitValueInJSStackAsInt52, reg); }
-    static ExitValue inJSStackAsDouble(VirtualRegister reg) { return inJSStack(ExitValueInJSStackAsDouble, reg); }
+    
+    static ExitValue inJSStackAsInt32(VirtualRegister reg)
+    {
+        ExitValue result;
+        result.m_kind = ExitValueInJSStackAsInt32;
+        UnionType u;
+        u.virtualRegister = reg.offset();
+        result.m_value = WTF::move(u);
+        return result;
+    }
+    
+    static ExitValue inJSStackAsInt52(VirtualRegister reg)
+    {
+        ExitValue result;
+        result.m_kind = ExitValueInJSStackAsInt52;
+        UnionType u;
+        u.virtualRegister = reg.offset();
+        result.m_value = WTF::move(u);
+        return result;
+    }
+    
+    static ExitValue inJSStackAsDouble(VirtualRegister reg)
+    {
+        ExitValue result;
+        result.m_kind = ExitValueInJSStackAsDouble;
+        UnionType u;
+        u.virtualRegister = reg.offset();
+        result.m_value = WTF::move(u);
+        return result;
+    }
     
     static ExitValue constant(JSValue value)
     {

@@ -103,7 +103,20 @@ T *AllocateOrGetSharedResourceManager(const State *shareContextState,
 // refactory done.
 bool IsTextureCompatibleWithSampler(TextureType texture, TextureType sampler)
 {
-    return sampler == texture;
+    if (sampler == texture)
+    {
+        return true;
+    }
+
+    if (sampler == TextureType::VideoImage)
+    {
+        if (texture == TextureType::VideoImage || texture == TextureType::_2D)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // While pixel local storage is active, the drawbuffers on and after 'firstPLSDrawBuffer'
@@ -2558,6 +2571,10 @@ void State::initialize(Context *context)
     {
         mSamplerTextures[TextureType::External].resize(getCaps().maxCombinedTextureImageUnits);
     }
+    if (nativeExtensions.videoTextureWEBGL)
+    {
+        mSamplerTextures[TextureType::VideoImage].resize(getCaps().maxCombinedTextureImageUnits);
+    }
     mCompleteTextureBindings.reserve(getCaps().maxCombinedTextureImageUnits);
     for (int32_t textureIndex = 0; textureIndex < getCaps().maxCombinedTextureImageUnits;
          ++textureIndex)
@@ -2695,14 +2712,12 @@ ANGLE_INLINE void State::setActiveTextureDirty(size_t textureIndex, Texture *tex
         return;
     }
 
-    const bool needsRobustInit =
-        isRobustResourceInitEnabled() && texture->initState() == InitState::MayNeedInit;
-    if (texture->hasAnyDirtyBit() || needsRobustInit)
+    if (texture->hasAnyDirtyBit())
     {
         setTextureDirty(textureIndex);
     }
 
-    if (needsRobustInit)
+    if (isRobustResourceInitEnabled() && texture->initState() == InitState::MayNeedInit)
     {
         mDirtyObjects.set(state::DIRTY_OBJECT_TEXTURES_INIT);
     }
@@ -3850,6 +3865,21 @@ void State::getBooleani_v(GLenum target, GLuint index, GLboolean *data) const
 // refactor done.
 Texture *State::getTextureForActiveSampler(TextureType type, size_t index)
 {
+    if (type != TextureType::VideoImage)
+    {
+        return mSamplerTextures[type][index].get();
+    }
+
+    ASSERT(type == TextureType::VideoImage);
+
+    Texture *candidateTexture = mSamplerTextures[type][index].get();
+    if (candidateTexture->getWidth(TextureTarget::VideoImage, 0) == 0 ||
+        candidateTexture->getHeight(TextureTarget::VideoImage, 0) == 0 ||
+        candidateTexture->getDepth(TextureTarget::VideoImage, 0) == 0)
+    {
+        return mSamplerTextures[TextureType::_2D][index].get();
+    }
+
     return mSamplerTextures[type][index].get();
 }
 
@@ -4133,11 +4163,14 @@ angle::Result State::onExecutableChange(const Context *context)
         if (!image)
             continue;
 
-        const bool needsRobustInit =
-            isRobustResourceInitEnabled() && image->initState() == InitState::MayNeedInit;
-        if (image->hasAnyDirtyBit() || needsRobustInit)
+        if (image->hasAnyDirtyBit())
         {
             ANGLE_TRY(image->syncState(context, Command::Other));
+        }
+
+        if (isRobustResourceInitEnabled() && image->initState() == InitState::MayNeedInit)
+        {
+            mDirtyObjects.set(state::DIRTY_OBJECT_IMAGES_INIT);
         }
     }
 
@@ -4231,15 +4264,13 @@ void State::onImageStateChange(const Context *context, size_t unit)
         if (!image.texture.get())
             return;
 
-        const bool needsRobustInit =
-            isRobustResourceInitEnabled() && image.texture->initState() == InitState::MayNeedInit;
-        if (image.texture->hasAnyDirtyBit() || needsRobustInit)
+        if (image.texture->hasAnyDirtyBit())
         {
             mDirtyImages.set(unit);
             mDirtyObjects.set(state::DIRTY_OBJECT_IMAGES);
         }
 
-        if (needsRobustInit)
+        if (isRobustResourceInitEnabled() && image.texture->initState() == InitState::MayNeedInit)
         {
             mDirtyObjects.set(state::DIRTY_OBJECT_IMAGES_INIT);
         }

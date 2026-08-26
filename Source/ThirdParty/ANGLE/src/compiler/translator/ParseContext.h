@@ -764,8 +764,6 @@ class TParseContext : angle::NonCopyable
     void checkVariableLocations(const TSourceLoc &line, const TVariable *variable);
     void postParseValidateFragmentOutputLocations();
 
-    void prependPendingStructDeclarations();
-
     void sizeUnsizedArrayTypes(uint32_t arraySize);
 
     enum class ControlFlowType
@@ -918,7 +916,7 @@ class TParseContext : angle::NonCopyable
     // should not exceed a sensible threshold.
     angle::base::CheckedNumeric<size_t> mTotalPrivateVariablesSize;
     // Tracks if a type has been validated as safe in checkVariableSize.
-    TMap<TType, size_t> mValidatedVariableTypeSizes;
+    TMap<TType, bool> mValidatedVariableTypeSizes;
 
     // Track state related to control flow, used for various validation:
     //
@@ -973,13 +971,6 @@ class TParseContext : angle::NonCopyable
 
     // Potential errors to generate immediately upon encountering a pixel local storage uniform.
     std::vector<std::tuple<const TSourceLoc, PLSIllegalOperations>> mPLSPotentialErrors;
-
-    // Some transformations might need to create helper functions that reference a function local
-    // struct.  For this reason, local structs are promoted to global scope.  To avoid naming
-    // collisions, global structs are suffixed by |_0| and function-local structs are suffixed by
-    // |_uniqueId|.
-    TVector<TStructure *> mGlobalNamedStructs;
-    TVector<TStructure *> mFunctionLocalNamedStructs;
 
     // Track the locations used by input and output varyings to detect conflicts.
     LocationValidationMap mInputVaryingLocations;

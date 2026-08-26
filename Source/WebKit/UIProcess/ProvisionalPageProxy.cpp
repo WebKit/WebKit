@@ -204,22 +204,6 @@ bool ProvisionalPageProxy::hasActiveLoadForNavigation(const API::Navigation& nav
     return !m_didFailProvisionalLoad && m_navigationID == navigation.navigationID();
 }
 
-void ProvisionalPageProxy::setDeferredTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&& data)
-{
-    m_deferredTopDocumentSyncData = WTF::move(data);
-}
-
-void ProvisionalPageProxy::updateDeferredTopDocumentSyncData(const WebCore::DocumentSyncSerializationData& data)
-{
-    if (RefPtr deferredTopDocumentSyncData = m_deferredTopDocumentSyncData)
-        deferredTopDocumentSyncData->update(data);
-}
-
-RefPtr<WebCore::DocumentSyncData> ProvisionalPageProxy::takeDeferredTopDocumentSyncData()
-{
-    return std::exchange(m_deferredTopDocumentSyncData, nullptr);
-}
-
 void ProvisionalPageProxy::processDidTerminate()
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "processDidTerminate:");

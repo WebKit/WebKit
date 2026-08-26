@@ -1441,6 +1441,8 @@ TEST_P(IOSurfaceClientBufferTest, SetNonZeroBaseLevel)
 }
 
 ANGLE_INSTANTIATE_TEST(IOSurfaceClientBufferTest,
+                       ES2_OPENGL(),
+                       ES3_OPENGL(),
                        ES2_VULKAN_SWIFTSHADER(),
                        ES3_VULKAN_SWIFTSHADER(),
                        ES2_METAL(),

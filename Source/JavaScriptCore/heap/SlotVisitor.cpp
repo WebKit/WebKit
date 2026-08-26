@@ -637,7 +637,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                         return SharedDrainResult::TimedOut;
 
                     if (didReachTermination(locker)) {
-                        // No marker needs waking here. There is no work which can be processed in the helpers.
+                        m_heap.m_markingConditionVariable.notifyAll();
                         return SharedDrainResult::Done;
                     }
                     
@@ -653,7 +653,6 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                     return SharedDrainResult::TimedOut;
                 
                 if (didReachTermination(locker)) {
-                    // This is necessary to wake up MainDrain side.
                     m_heap.m_markingConditionVariable.notifyAll();
                     
                     // If we're in concurrent mode, then we know that the mutator will eventually do
@@ -698,7 +697,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
             m_heap.m_numberOfActiveParallelMarkers++;
             m_heap.m_numberOfWaitingParallelMarkers--;
         }
-
+        
         if (bonusTask) {
             bonusTask->run(*this);
 
@@ -741,19 +740,22 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
         return drainInParallel(timeout);
     }
 
-    Locker locker { m_heap.m_markingMutex };
-    donateAll(locker);
+    donateAll(Locker { m_heap.m_markingMutex });
+    return waitForTermination(timeout);
+}
 
-    // Wait for termination.
+SlotVisitor::SharedDrainResult SlotVisitor::waitForTermination(MonotonicTime timeout)
+{
+    Locker locker { m_heap.m_markingMutex };
     for (;;) {
         if (hasElapsed(timeout))
             return SharedDrainResult::TimedOut;
-
+        
         if (didReachTermination(locker)) {
-            // No marker needs waking here. There is no work which can be processed in the helpers.
+            m_heap.m_markingConditionVariable.notifyAll();
             return SharedDrainResult::Done;
         }
-
+        
         m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout);
     }
 }

@@ -75,8 +75,6 @@ find_package_handle_standard_args(ATKBridge
     VERSION_VAR ATKBridge_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(ATKBridge_COMPILE_OPTIONS ${ATKBridge_COMPILE_OPTIONS})
-
 if (ATKBridge_LIBRARY AND NOT TARGET ATK::Bridge)
     add_library(ATK::Bridge UNKNOWN IMPORTED GLOBAL)
     set_target_properties(ATK::Bridge PROPERTIES

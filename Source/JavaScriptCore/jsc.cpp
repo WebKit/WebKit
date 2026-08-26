@@ -956,7 +956,7 @@ private:
 
     static JSPromise* moduleLoaderImportModule(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
     static Identifier moduleLoaderResolve(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, bool useImportMap);
-    static JSPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, const String&, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+    static JSPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
 
 #if ENABLE(FUZZILLI)
@@ -1475,7 +1475,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     return result;
 }
 
-JSPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, const String&, RefPtr<ScriptFetchParameters> attributes, RefPtr<ScriptFetcher>)
+JSPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, RefPtr<ScriptFetchParameters> attributes, RefPtr<ScriptFetcher>)
 {
     VM& vm = globalObject->vm();
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());

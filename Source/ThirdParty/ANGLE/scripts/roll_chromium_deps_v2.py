@@ -49,12 +49,7 @@ DEFAULT_REVISION_CHARACTERS = 10
 
 # GN variables that need to be synced. A map from ANGLE variable name to
 # Chromium variable name.
-SYNCED_VARIABLES = {
-    # TODO(crbug.com/528413044): Sync third_party/android_toolchain/ndk
-    # directly once `gclient setdeps` works properly with the specified
-    # version.
-    'android_ndk_version': None,
-}
+SYNCED_VARIABLES = {}
 
 # DEPS entries which have dep_type = cipd. In the Chromium DEPS file, these
 # will be prefixed with src/.
@@ -69,6 +64,7 @@ SYNCED_CIPD_DEPS = {
     'third_party/android_build_tools/lint/cipd',
     'third_party/android_build_tools/manifest_merger/cipd',
     'third_party/android_build_tools/nullaway/cipd',
+    'third_party/android_toolchain/ndk',
     'third_party/android_sdk/public',
     'third_party/android_system_sdk/cipd',
     'third_party/fuchsia-sdk/sdk',
@@ -551,7 +547,6 @@ def _get_changed_variables(angle_deps: dict, chromium_deps: dict) -> list[Change
     """
     changed_variables = []
     for angle_var, chromium_var in SYNCED_VARIABLES.items():
-        chromium_var = chromium_var or angle_var
         angle_value = angle_deps['vars'].get(angle_var)
         chromium_value = chromium_deps['vars'].get(chromium_var)
         if not angle_value:

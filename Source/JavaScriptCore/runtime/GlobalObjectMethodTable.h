@@ -63,7 +63,7 @@ struct GlobalObjectMethodTable {
 
     JSPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
     Identifier (*moduleLoaderResolve)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, bool useImportMap);
-    JSPromise* (*moduleLoaderFetch)(JSGlobalObject*, JSModuleLoader*, JSValue key, const String& referrer, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+    JSPromise* (*moduleLoaderFetch)(JSGlobalObject*, JSModuleLoader*, JSValue, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     JSObject* (*moduleLoaderCreateImportMetaProperties)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
     JSValue (*moduleLoaderEvaluate)(JSGlobalObject*, JSModuleLoader*, JSValue key, JSValue moduleRecordValue, RefPtr<ScriptFetcher>, JSValue awaitedValue, JSValue resumeMode);
 

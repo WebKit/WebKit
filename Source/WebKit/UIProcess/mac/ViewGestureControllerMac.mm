@@ -128,13 +128,11 @@ double ViewGestureController::resistanceForDelta(double deltaScale, double curre
     return resistance;
 }
 
-void ViewGestureController::handleMagnificationGesture(double scale, WebEventPhase phase, FloatPoint origin, WebEventInputSource inputSource)
+void ViewGestureController::handleMagnificationGesture(double scale, WebEventPhase phase, FloatPoint origin)
 {
     RefPtr page = m_webPageProxy.get();
     if (!page)
         return;
-
-    m_magnificationGestureInputSource = inputSource;
 
     auto obscuredContentInsets = page->obscuredContentInsets();
     origin.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());

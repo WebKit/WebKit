@@ -159,17 +159,9 @@ ALWAYS_INLINE int32_t hwPhysicalCPUMax() { return kernTCSMAwareNumberOfProcessor
 #endif
 
 #if CPU(ARM64) && OS(DARWIN)
-// Cores are reported as performance levels ordered fastest first, but a level's index does not
-// identify the kind of core it holds: a chip with Super and Performance cores and a chip with
-// Performance and Efficiency cores both report two levels. A category a chip lacks reports zero.
-enum class CoreCategory : uint8_t {
-    Super,
-    Performance,
-    Efficiency,
-};
-static constexpr unsigned numberOfCoreCategories = 3;
-
-int32_t hwNumberOfCores(CoreCategory);
+int32_t hwNumberOfP0Cores();
+int32_t hwNumberOfP1Cores();
+int32_t hwNumberOfP2Cores();
 #endif
 
 constexpr size_t prologueStackPointerDelta()

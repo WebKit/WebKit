@@ -412,6 +412,8 @@ GLenum GLVariableType(const TType &type)
             return GL_UNSIGNED_INT_IMAGE_BUFFER;
         case EbtAtomicCounter:
             return GL_UNSIGNED_INT_ATOMIC_COUNTER;
+        case EbtSamplerVideoWEBGL:
+            return GL_SAMPLER_VIDEO_IMAGE_WEBGL;
         case EbtPixelLocalANGLE:
         case EbtIPixelLocalANGLE:
         case EbtUPixelLocalANGLE:
@@ -856,6 +858,7 @@ bool IsOutputHLSL(ShShaderOutput output)
 {
     switch (output)
     {
+        case SH_HLSL_3_0_OUTPUT:
         case SH_HLSL_4_1_OUTPUT:
             return true;
         default:

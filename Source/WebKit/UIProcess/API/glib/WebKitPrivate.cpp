@@ -140,10 +140,6 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_NETWORK_ERROR_CANCELLED;
     case API::Error::Network::FileDoesNotExist:
         return WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST;
-    case API::Error::Network::HTTPSUpgradeRedirectLoop:
-        return WEBKIT_NETWORK_ERROR_HTTPS_UPGRADE_REDIRECT_LOOP;
-    case API::Error::Network::HTTPNavigationWithHTTPSOnlyError:
-        return WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY;
     case API::Error::Policy::CannotShowMIMEType:
         return WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE;
     case API::Error::Policy::CannotShowURL:
@@ -267,10 +263,6 @@ unsigned toWebCoreError(unsigned webKitError)
         return API::Error::Network::Cancelled;
     case WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST:
         return API::Error::Network::FileDoesNotExist;
-    case WEBKIT_NETWORK_ERROR_HTTPS_UPGRADE_REDIRECT_LOOP:
-        return API::Error::Network::HTTPSUpgradeRedirectLoop;
-    case WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY:
-        return API::Error::Network::HTTPNavigationWithHTTPSOnlyError;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE:
         return API::Error::Policy::CannotShowMIMEType;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI:

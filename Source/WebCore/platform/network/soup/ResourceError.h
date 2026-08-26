@@ -70,7 +70,7 @@ public:
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
 
-    WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
+    ErrorRecoveryMethod errorRecoveryMethod() const { return ErrorRecoveryMethod::NoRecovery; }
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 

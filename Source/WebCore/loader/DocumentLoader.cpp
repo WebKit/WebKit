@@ -614,8 +614,7 @@ bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegist
 
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
-    bool shouldTryLoadingThroughServiceWorker = m_canUseServiceWorkers && !frameLoader()->isReloadingFromOrigin() && m_frame->page()
-        && (url.protocolIsInHTTPFamily() || LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(url.protocol()));
+    bool shouldTryLoadingThroughServiceWorker = m_canUseServiceWorkers && !frameLoader()->isReloadingFromOrigin() && m_frame->page() && url.protocolIsInHTTPFamily();
     if (!shouldTryLoadingThroughServiceWorker) {
         callback(std::nullopt);
         return;
@@ -1360,7 +1359,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                     document->createNewIdentifier();
             }
 
-            if (m_frame->document()->activeServiceWorker() || document->url().protocolIsInHTTPFamily() || LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(document->url().protocol()) || (document->page() && document->page()->isServiceWorkerPage()) || (document->parentDocument() && shouldUseActiveServiceWorkerFromParent(document, *protect(document->parentDocument()))))
+            if (m_frame->document()->activeServiceWorker() || document->url().protocolIsInHTTPFamily() || (document->page() && document->page()->isServiceWorkerPage()) || (document->parentDocument() && shouldUseActiveServiceWorkerFromParent(document, *protect(document->parentDocument()))))
                 document->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
             if (m_resultingClientId) {
@@ -2231,7 +2230,7 @@ void DocumentLoader::startLoadingMainResource()
 
         DOCUMENTLOADER_RELEASE_LOG_FORWARDABLE(DocumentLoaderStartLoadingMainResourceStartingLoad);
 
-        if (m_substituteData.isValid() || LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(request.url().protocol())) {
+        if (m_substituteData.isValid()) {
             auto url = request.url();
             matchRegistration(url, [request = WTF::move(request), protectedThis = Ref { *this }, this] (auto&& registrationData) mutable {
                 if (!m_mainDocumentError.isNull()) {
@@ -2327,10 +2326,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
             return;
         }
 
-        bool isHTTPSOnlyActive = advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
-            || m_httpsByDefaultMode == HTTPSByDefaultMode::UpgradeWithUserMediatedFallback
-            || m_httpsByDefaultMode == HTTPSByDefaultMode::UpgradeAndNoFallback;
-        if (isHTTPSOnlyActive) {
+        if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)) {
             if (platformStrategies()->loaderStrategy()->isHttpNavigationWithHTTPSOnlyError(mainResourceOrError.error())) {
                 DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL has HTTP scheme with HTTPSOnly enabled");
                 cancelMainResourceLoad(mainResourceOrError.error());

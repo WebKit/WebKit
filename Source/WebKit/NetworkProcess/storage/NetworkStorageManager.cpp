@@ -1653,7 +1653,7 @@ void NetworkStorageManager::setWebProcessSuspended(WebCore::ProcessIdentifier pr
     workQueue().dispatch([this, protectedThis = Ref { *this }, processIdentifier, isSuspended] {
         assertIsCurrent(workQueue());
         if (RefPtr connectionToClient = m_idbStorageRegistry->existingConnectionToClient(processIdentifier))
-            connectionToClient->setClientSuspended(isSuspended);
+            connectionToClient->setClientProcessSuspended(isSuspended);
     });
 }
 

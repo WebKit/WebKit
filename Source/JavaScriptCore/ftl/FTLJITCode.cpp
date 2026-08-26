@@ -29,9 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLState.h"
-#include "JSCJSValueInlines.h"
 #include "JSCPtrTag.h"
-#include "TrackedReferences.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -143,7 +141,6 @@ void JITCode::shrinkToFit()
     common.shrinkToFit();
     m_osrExit.shrinkToFit();
     osrExitDescriptors.shrinkToFit();
-    osrExitConstants.shrinkToFit();
     lazySlowPaths.shrinkToFit();
 }
 
@@ -151,8 +148,6 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 {
     common.validateReferences(trackedReferences);
     
-    for (EncodedJSValue constant : osrExitConstants)
-        trackedReferences.check(JSValue::decode(constant));
     for (OSRExit& exit : m_osrExit)
         exit.m_descriptor->validateReferences(trackedReferences);
 }

@@ -298,13 +298,6 @@ static RetainPtr<CABasicAnimation> transientPositionAnimation(const FloatPoint& 
     return fillFowardsAnimationWithKeyPathAndValue(@"position", [NSValue valueWithPoint:position]);
 }
 
-static RetainPtr<CABasicAnimation> additiveTransientPositionAnimation(const FloatSize& offset)
-{
-    RetainPtr animation = fillFowardsAnimationWithKeyPathAndValue(@"position", [NSValue valueWithPoint:toFloatPoint(offset)]);
-    [animation setAdditive:YES];
-    return animation;
-}
-
 void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
 {
     ASSERT(m_transientZoomScale);
@@ -326,10 +319,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
     auto clipLayerPosition = FloatPoint { [clipLayer position] };
     auto clipLayerZoomOrigin = clipLayerPosition + *m_transientZoomOriginInVisibleRect;
     auto transientClipLayerFrame = scaledRectAtOrigin([clipLayer frame], scaleForClipLayerAdjustment, clipLayerZoomOrigin);
-    // Instead of deriving a position relative to the scrolled contents layer,
-    // we use this as an additive offset. Otherwise, transient zoom and scrolling
-    // try to stomp over the same property in every frame.
-    auto scrolledContentsCorrection = clipLayerPosition - transientClipLayerFrame.location();
+    auto transientScrolledContentsPosition = FloatPoint { [scrolledContentsLayer position] } + (clipLayerPosition - transientClipLayerFrame.location());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto animationWithScale = transientZoomTransformOverrideAnimation(transform);
@@ -340,7 +330,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
     [clipLayer addAnimation:transientPositionAnimation(transientClipLayerFrame.location()).get() forKey:transientClipPositionAnimationKey];
     [clipLayer addAnimation:transientSizeAnimation(transientClipLayerFrame.size()).get() forKey:transientClipSizeAnimationKey];
     [scrolledContentsLayer removeAnimationForKey:transientScrolledContentsPositionAnimationKey];
-    [scrolledContentsLayer addAnimation:additiveTransientPositionAnimation(scrolledContentsCorrection).get() forKey:transientScrolledContentsPositionAnimationKey];
+    [scrolledContentsLayer addAnimation:transientPositionAnimation(transientScrolledContentsPosition).get() forKey:transientScrolledContentsPositionAnimationKey];
     END_BLOCK_OBJC_EXCEPTIONS
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)

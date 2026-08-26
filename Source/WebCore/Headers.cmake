@@ -2081,7 +2081,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PrintContext.h
     page/ProcessWarming.h
     page/QuirkMatch.h
-    page/QuirkTable.h
     page/Quirks.h
     page/QuirksData.h
     page/RemoteDOMWindow.h
@@ -2771,8 +2770,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/displaylists/DisplayListRecorder.h
     platform/graphics/displaylists/DisplayListRecorderImpl.h
 
-    platform/graphics/egl/BitmapTexture.h
-    platform/graphics/egl/BitmapTexturePool.h
     platform/graphics/egl/GLContext.h
     platform/graphics/egl/GLContextWrapper.h
     platform/graphics/egl/GLDisplay.h

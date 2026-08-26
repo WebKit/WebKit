@@ -123,7 +123,7 @@ void ProcessLauncher::launchProcess()
     });
 }
 
-void ProcessLauncher::terminateProcess(const String&)
+void ProcessLauncher::terminateProcess()
 {
     if (!m_hProcess)
         return;

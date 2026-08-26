@@ -140,6 +140,8 @@ public:
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
+    
+    SharedDrainResult waitForTermination(MonotonicTime timeout = MonotonicTime::infinity());
 
     // Attempts to perform an increment of draining that involves only walking `bytes` worth of data. This
     // is likely to accidentally walk more or less than that. It will usually mark more than bytes. It may

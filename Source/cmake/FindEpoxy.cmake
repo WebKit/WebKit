@@ -85,8 +85,6 @@ find_package_handle_standard_args(Epoxy
     VERSION_VAR Epoxy_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Epoxy_COMPILE_OPTIONS ${Epoxy_COMPILE_OPTIONS})
-
 if (Epoxy_LIBRARY AND NOT TARGET Epoxy::Epoxy)
     add_library(Epoxy::Epoxy UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Epoxy::Epoxy PROPERTIES

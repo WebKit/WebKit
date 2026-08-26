@@ -3123,12 +3123,11 @@ void CaptureReadnPixelsKHR_data(const State &glState,
 // GL_MESA_framebuffer_flip_y
 void CaptureGetFramebufferParameterivMESA_params(const State &glState,
                                                  GLenum target,
-                                                 FramebufferParameter pnamePacked,
+                                                 GLenum pname,
                                                  GLint *params,
                                                  angle::ParamCapture *paramCapture)
 {
-    // All glGetFramebufferParameteriv queries write back one single value.
-    paramCapture->readBufferSizeBytes = sizeof(GLint);
+    // Skipped
 }
 
 // GL_NV_fence

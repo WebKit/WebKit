@@ -53,7 +53,7 @@ else ()
 endif ()
 
 find_package(PkgConfig QUIET)
-webkit_pkg_check_modules(ATSPI QUIET IMPORTED_TARGET "${ATSPI_PKG_CONFIG_SPEC}")
+pkg_check_modules(ATSPI QUIET IMPORTED_TARGET "${ATSPI_PKG_CONFIG_SPEC}")
 
 if (TARGET PkgConfig::ATSPI AND NOT TARGET ATSPI::ATSPI)
     add_library(ATSPI::ATSPI INTERFACE IMPORTED GLOBAL)

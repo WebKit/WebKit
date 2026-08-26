@@ -97,8 +97,6 @@ find_package_handle_standard_args(WPE
     VERSION_VAR WPE_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(WPE_COMPILE_OPTIONS ${WPE_COMPILE_OPTIONS})
-
 if (WPE_LIBRARY AND NOT TARGET WPE::libwpe)
     add_library(WPE::libwpe UNKNOWN IMPORTED GLOBAL)
     set_target_properties(WPE::libwpe PROPERTIES

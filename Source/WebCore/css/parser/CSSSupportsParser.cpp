@@ -220,47 +220,10 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFuncti
     if (!function.atEnd())
         return Invalid;
 
-    // List all the at-rules here, so when adding a new at-rule, the compiler
-    // will remind to add them to this list.
-    // FIXME: should look into auto-generating this list using data from CSSProperties.json
-    switch (cssAtRuleID(atKeywordToken.value())) {
-    case CSSAtRuleWebkitKeyframes:
-    case CSSAtRuleAnnotation:
-    case CSSAtRuleCharacterVariant:
-    case CSSAtRuleContainer:
-    case CSSAtRuleCounterStyle:
-    case CSSAtRuleFontFace:
-    case CSSAtRuleFontFeatureValues:
-    case CSSAtRuleFontPaletteValues:
-    case CSSAtRuleImport:
-    case CSSAtRuleKeyframes:
-    case CSSAtRuleLayer:
-    case CSSAtRuleMedia:
-    case CSSAtRuleNamespace:
-    case CSSAtRuleOrnaments:
-    case CSSAtRulePage:
-    case CSSAtRulePositionTry:
-    case CSSAtRuleProperty:
-    case CSSAtRuleScope:
-    case CSSAtRuleStartingStyle:
-    case CSSAtRuleStyleset:
-    case CSSAtRuleStylistic:
-    case CSSAtRuleSupports:
-    case CSSAtRuleSwash:
-    case CSSAtRuleViewTransition:
-        return Supported;
+    auto atRuleID = cssAtRuleID(atKeywordToken.value());
 
-    case CSSAtRuleFunction:
-        return m_parser.context().propertySettings.cssFunctionAtRuleEnabled ? Supported : Unsupported;
-
-    case CSSAtRuleInvalid:
     // Per spec, @charset is not an at-rule.
-    case CSSAtRuleCharset:
-        return Unsupported;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Invalid;
+    return ((atRuleID != CSSAtRuleInvalid) && (atRuleID != CSSAtRuleCharset)) ? Supported : Unsupported;
 }
 
 // <supports-named-feature-fn> = named-feature( <ident> )

@@ -596,6 +596,7 @@ basic_types_enumeration = [
     'USampler2DRect',
     'USamplerBuffer',
     'USamplerCubeArray',
+    'SamplerVideoWEBGL',
     'Image2D',
     'Image3D',
     'Image2DArray',

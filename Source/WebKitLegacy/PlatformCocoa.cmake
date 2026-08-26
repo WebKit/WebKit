@@ -275,7 +275,6 @@ target_link_options(WebKitLegacy PRIVATE
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-    "-framework SecurityInterface"
     "-framework WebCore"
 )
 add_dependencies(WebKitLegacy WebCore)
@@ -1721,3 +1720,5 @@ set(WebKitLegacy_PROJECT_HEADERS
     mac/WebView/WebViewInternal.h
     mac/WebView/WebViewRenderingUpdateScheduler.h
 )
+
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework SecurityInterface")

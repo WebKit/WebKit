@@ -170,6 +170,8 @@ const char *getBasicMetalString(const TType *t)
             }
         case EbtAtomicCounter:
             return "atomic_uint";
+        case EbtSamplerVideoWEBGL:
+            return "$samplerVideoWEBGL";
         default:
             UNREACHABLE();
             return "unknown type";

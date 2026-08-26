@@ -155,7 +155,6 @@
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
-#include "LogInitialization.h"
 #include "MallocStatistics.h"
 #include "MediaControlsHost.h"
 #include "MediaDevices.h"
@@ -7257,14 +7256,6 @@ void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 
     if (RefPtr page = contextDocument()->page())
         page->setConsoleMessageListenerForTesting(WTF::move(listener));
-}
-
-void Internals::configureLoggingChannel(const String& channelName, bool enabled)
-{
-    if (auto* channel = getLogChannel(channelName)) {
-        channel->state = enabled ? WTFLogChannelState::On : WTFLogChannelState::Off;
-        channel->level = enabled ? WTFLogLevel::Info : WTFLogLevel::Error;
-    }
 }
 
 void Internals::setResponseSizeWithPadding(FetchResponse& response, uint64_t size)

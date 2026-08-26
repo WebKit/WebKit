@@ -1,0 +1,11 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /Developer/usr/lib/libXCTestSwiftSupport.dylib
+current-version: 23790
+swift-abi-version: 7
+reexported-libraries:
+-       targets: [arm64-xros, arm64e-xros]
+        libraries: ['@rpath/XCTest.framework/XCTest']
+exports: []
+...

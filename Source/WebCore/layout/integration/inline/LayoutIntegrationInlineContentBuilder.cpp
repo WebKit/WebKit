@@ -150,10 +150,10 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
 
     for (size_t lineIndex = startIndex; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
-        auto lineScrollableOverflowRect = line.hasBlockLevelBox() ? FloatRect { } : line.scrollableOverflow();
+        auto lineScrollableOverflowRect = line.scrollableOverflow();
         auto adjustOverflowLogicalWidthWithBlockFlowQuirk = [&] {
             if (line.hasBlockLevelBox()) {
-                // A block box contributes its own through layoutOverflowRectForPropagation(), which uses the margin the box ended up with.
+                // A block box contributes its own through layoutOverflowRectForPropagation(), which uses the margin the box ended up with. See InlineDisplayLineBuilder::collectEnclosingLineGeometry.
                 return;
             }
             auto scrollableOverflowLogicalWidth = isHorizontalWritingMode ? lineScrollableOverflowRect.width() : lineScrollableOverflowRect.height();
@@ -177,7 +177,8 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
             inlineContent.setHasPaintedInlineLevelBoxes();
 
         auto firstBoxIndex = boxIndex;
-        auto lineInkOverflowRect = lineScrollableOverflowRect;
+        // A block level box on a line contributes its own ink overflow below, and only when it is not self painting.
+        auto lineInkOverflowRect = line.hasBlockLevelBox() ? FloatRect { } : lineScrollableOverflowRect;
         // Collect overflow from boxes.
         // Note while we compute ink overflow for all type of boxes including atomic inline level boxes (e.g. <iframe> <img>) as part of constructing
         // display boxes (see InlineDisplayContentBuilder) RenderBlockFlow expects visual overflow.
@@ -210,6 +211,9 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
                     childInkOverflow.move(box.left(), box.top());
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
+
+                if (box.isBlockLevelBox() && renderer->isInFlowPositioned())
+                    lineScrollableOverflowRect.move(renderer->offsetForInFlowPosition());
 
                 if (!renderer->hasControlClip()) {
                     auto childScrollableOverflow = renderer->layoutOverflowRectForPropagation(renderer->parent()->writingMode());

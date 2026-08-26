@@ -83,9 +83,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-use.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-image-href-mutating-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-image-href-mutating-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-image-href-mutating.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-nth-child-of-expected.svg

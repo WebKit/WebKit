@@ -125,6 +125,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
         WI.Target.registerInitializationPromise((async () => {
+            let existingSerializedBreakpoints = WI.Setting.migrateValue("breakpoints");
+            if (existingSerializedBreakpoints) {
+                for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
+                    await WI.objectStores.breakpoints.putObject(WI.JavaScriptBreakpoint.fromJSON(existingSerializedBreakpoint));
+            }
+
             let serializedBreakpoints = await WI.objectStores.breakpoints.getAll();
 
             this._restoringBreakpoints = true;
@@ -167,8 +173,20 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 queueMicrotask(resolve);
             });
 
-            let loadSpecialBreakpoint = (setting) => {
+            let loadSpecialBreakpoint = (setting, enabledSettingsKey, shownSettingsKey) => {
                 let serializedBreakpoint = setting.value;
+
+                if (!serializedBreakpoint && (!shownSettingsKey || WI.Setting.migrateValue(shownSettingsKey))) {
+                    serializedBreakpoint = setting.value = {};
+                    setting.save();
+                }
+
+                if (WI.Setting.migrateValue(enabledSettingsKey)) {
+                    if (!serializedBreakpoint)
+                        serializedBreakpoint = setting.value = {};
+                    serializedBreakpoint.disabled = false;
+                    setting.save();
+                }
 
                 if (!serializedBreakpoint)
                     return null;
@@ -179,25 +197,25 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._restoringBreakpoints = true;
 
             if (WI.JavaScriptBreakpoint.supportsDebuggerStatements()) {
-                this._debuggerStatementsBreakpoint = loadSpecialBreakpoint(this._debuggerStatementsBreakpointSetting);
+                this._debuggerStatementsBreakpoint = loadSpecialBreakpoint(this._debuggerStatementsBreakpointSetting, "break-on-debugger-statements");
                 if (this._debuggerStatementsBreakpoint)
                     this.addBreakpoint(this._debuggerStatementsBreakpoint);
             }
 
-            this._allExceptionsBreakpoint = loadSpecialBreakpoint(this._allExceptionsBreakpointSetting);
+            this._allExceptionsBreakpoint = loadSpecialBreakpoint(this._allExceptionsBreakpointSetting, "break-on-all-exceptions");
             if (this._allExceptionsBreakpoint)
                 this.addBreakpoint(this._allExceptionsBreakpoint);
 
-            this._uncaughtExceptionsBreakpoint = loadSpecialBreakpoint(this._uncaughtExceptionsBreakpointSetting);
+            this._uncaughtExceptionsBreakpoint = loadSpecialBreakpoint(this._uncaughtExceptionsBreakpointSetting, "break-on-uncaught-exceptions");
             if (this._uncaughtExceptionsBreakpoint)
                 this.addBreakpoint(this._uncaughtExceptionsBreakpoint);
 
-            this._assertionFailuresBreakpoint = loadSpecialBreakpoint(this._assertionFailuresBreakpointSetting);
+            this._assertionFailuresBreakpoint = loadSpecialBreakpoint(this._assertionFailuresBreakpointSetting, "break-on-assertion-failures", "show-assertion-failures-breakpoint");
             if (this._assertionFailuresBreakpoint)
                 this.addBreakpoint(this._assertionFailuresBreakpoint);
 
             if (WI.JavaScriptBreakpoint.supportsMicrotasks()) {
-                this._allMicrotasksBreakpoint = loadSpecialBreakpoint(this._allMicrotasksBreakpointSetting);
+                this._allMicrotasksBreakpoint = loadSpecialBreakpoint(this._allMicrotasksBreakpointSetting, "break-on-all-microtasks", "show-all-microtasks-breakpoint");
                 if (this._allMicrotasksBreakpoint)
                     this.addBreakpoint(this._allMicrotasksBreakpoint);
             }

@@ -935,11 +935,6 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
         if (m_clientsToBeCreatedById.contains(clientData.identifier))
             return;
 
-        // The worker's own hosting page (e.g. an extension's service worker page) is an implementation
-        // detail, not a real client, and should not be exposed to matchAll().
-        if (worker.serviceWorkerPageIdentifier() == clientData.identifier)
-            return;
-
         if (!options.includeUncontrolled) {
             auto registrationIdentifier = m_clientToControllingRegistration.get(clientData.identifier);
             if (worker.data().registrationIdentifier != registrationIdentifier)

@@ -62,17 +62,6 @@ void ExtensionProcess::invalidate() const
     });
 }
 
-void ExtensionProcess::invalidate(const String& reason) const
-{
-    WTF::switchOn(m_process, [&] (auto& process) {
-        if (![process respondsToSelector:@selector(invalidateWithReason:)]) {
-            [process invalidate];
-            return;
-        }
-        [process invalidateWithReason:reason.createNSString().get()];
-    });
-}
-
 OSObjectPtr<xpc_connection_t> ExtensionProcess::makeLibXPCConnection() const
 {
     NSError *error = nil;

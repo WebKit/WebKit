@@ -93,10 +93,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-008.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-009-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-009.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-010-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-010.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale.html

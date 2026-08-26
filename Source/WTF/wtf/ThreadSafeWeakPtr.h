@@ -30,12 +30,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TaggedPtr.h>
 #include <wtf/WordLock.h>
 
 namespace WTF {
 
-template<typename T> class ThreadSafeWeakPtr;
-template<typename T> class ThreadSafeWeakRef;
+template<typename T, typename> class ThreadSafeWeakPtr;
+template<typename T, typename> class ThreadSafeWeakRef;
 template<typename> class ThreadSafeWeakHashSet;
 template<typename, DestructionThread> class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
 
@@ -43,8 +44,6 @@ class ThreadSafeWeakPtrControlBlock {
     WTF_MAKE_NONCOPYABLE(ThreadSafeWeakPtrControlBlock);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeWeakPtrControlBlock);
 public:
-    using ObjectOffset = int16_t;
-
     ThreadSafeWeakPtrControlBlock* weakRef()
     {
         Locker locker { m_lock };
@@ -119,46 +118,27 @@ public:
         }
     }
 
-    // N.B. These don't just make a strong reference to m_object because a ThreadSafeWeakPtr could be
-    // referring to some interior pointer when there is multiple inheritance.
-    // Consider:
-    // struct Cat : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Cat>;
-    // struct Dog { virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0; };
-    // struct CatDog : public Cat, public Dog {
-    //     ThreadSafeWeakPtrControlBlock& controlBlock() const { return Cat::controlBlock(); }
-    // };
-    //
-    // If we have a ThreadSafeWeakPtr<Dog> from a CatDog then we want to return the CatDog's Dog*
-    // and not m_object's CatDog* pointer.
-    template<typename U>
-    RefPtr<U> makeStrongReferenceIfPossible(ObjectOffset objectOffset) const
-    {
-        auto* object = static_cast<uint8_t*>(refObjectIfAlive());
-        if (!object)
-            return nullptr;
-        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
-        return adoptRef(reinterpret_cast<U*>(object + objectOffset));
-        IGNORE_WARNINGS_END
-    }
-
     template<typename U>
     RefPtr<U> makeStrongReferenceIfPossible(const U* maybeInteriorPointer) const
     {
-        if (!refObjectIfAlive())
-            return nullptr;
-        return adoptRef(const_cast<U*>(maybeInteriorPointer));
-    }
-
-    template<typename U>
-    ObjectOffset objectOffset(const U* maybeInteriorPointer) const
-    {
         Locker locker { m_lock };
-        if (!m_object)
-            return 0;
-        ptrdiff_t offset = reinterpret_cast<const uint8_t*>(maybeInteriorPointer) - static_cast<const uint8_t*>(m_object);
-        auto truncatedOffset = static_cast<ObjectOffset>(offset);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(truncatedOffset == offset);
-        return truncatedOffset;
+        // N.B. We don't just return m_object here since a ThreadSafeWeakPtr could be calling with a pointer to
+        // some interior pointer when there is multiple inheritance.
+        // Consider:
+        // struct Cat : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Cat>;
+        // struct Dog { virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0; };
+        // struct CatDog : public Cat, public Dog {
+        //     ThreadSafeWeakPtrControlBlock& controlBlock() const { return Cat::controlBlock(); }
+        // };
+        //
+        // If we have a ThreadSafeWeakPtr<Dog> from a CatDog then we want to return maybeInteriorPointer's Dog*
+        // and not m_object's CatDog* pointer.
+        if (m_object) {
+            // Calling the RefPtr constructor would call strongRef() and deadlock.
+            ++m_strongReferenceCount;
+            return adoptRef(const_cast<U*>(maybeInteriorPointer));
+        }
+        return nullptr;
     }
 
     // These should really only be used for debugging and shouldn't be used to guard any checks in production,
@@ -200,17 +180,6 @@ private:
 
     void setStrongReferenceCountDuringInitialization(uint32_t count) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { m_strongReferenceCount = count; }
 
-    // Returns the object with its strong reference count incremented, or null if the object has started deletion.
-    void* refObjectIfAlive() const
-    {
-        Locker locker { m_lock };
-        if (!m_object)
-            return nullptr;
-        // Calling the RefPtr constructor would call strongRef() and deadlock.
-        ++m_strongReferenceCount;
-        return m_object;
-    }
-
     mutable WordLock m_lock;
     mutable uint32_t m_strongReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 1 };
     mutable uint32_t m_weakReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
@@ -232,83 +201,6 @@ struct ThreadSafeWeakPtrControlBlockRefDerefTraits {
     }
 };
 using ControlBlockRefPtr = RefPtr<ThreadSafeWeakPtrControlBlock, RawPtrTraits<ThreadSafeWeakPtrControlBlock>, ThreadSafeWeakPtrControlBlockRefDerefTraits>;
-
-class ThreadSafeWeakPtrStorage {
-    WTF_MAKE_NONCOPYABLE(ThreadSafeWeakPtrStorage);
-public:
-    using ObjectOffset = ThreadSafeWeakPtrControlBlock::ObjectOffset;
-
-    ThreadSafeWeakPtrStorage() = default;
-
-    ThreadSafeWeakPtrStorage(ThreadSafeWeakPtrControlBlock* controlBlock, ObjectOffset objectOffset)
-        : m_controlBlock(controlBlock ? controlBlock->weakRef() : nullptr)
-        , m_objectOffset(objectOffset)
-    {
-    }
-
-    ~ThreadSafeWeakPtrStorage() { clear(); }
-
-    template<typename T>
-    RefPtr<T> makeStrongReferenceIfPossible() const
-    {
-        Locker locker { m_lock };
-        if (!m_controlBlock)
-            return nullptr;
-        return m_controlBlock->makeStrongReferenceIfPossible<T>(m_objectOffset);
-    }
-
-    void set(ThreadSafeWeakPtrControlBlock* controlBlock, ObjectOffset objectOffset)
-    {
-        if (controlBlock)
-            controlBlock->weakRef();
-        adopt(controlBlock, objectOffset);
-    }
-
-    void clear() { adopt(nullptr, 0); }
-
-    void copyFrom(const ThreadSafeWeakPtrStorage& other)
-    {
-        ThreadSafeWeakPtrControlBlock* controlBlock;
-        ObjectOffset objectOffset;
-        {
-            Locker locker { other.m_lock };
-            controlBlock = other.m_controlBlock;
-            objectOffset = other.m_objectOffset;
-            if (controlBlock)
-                controlBlock->weakRef();
-        }
-        adopt(controlBlock, objectOffset);
-    }
-
-    void moveFrom(ThreadSafeWeakPtrStorage& other)
-    {
-        ThreadSafeWeakPtrControlBlock* controlBlock;
-        ObjectOffset objectOffset;
-        {
-            Locker locker { other.m_lock };
-            controlBlock = std::exchange(other.m_controlBlock, nullptr);
-            objectOffset = std::exchange(other.m_objectOffset, 0);
-        }
-        adopt(controlBlock, objectOffset);
-    }
-
-private:
-    void adopt(ThreadSafeWeakPtrControlBlock* controlBlock, ObjectOffset objectOffset)
-    {
-        ThreadSafeWeakPtrControlBlock* previous;
-        {
-            Locker locker { m_lock };
-            previous = std::exchange(m_controlBlock, controlBlock);
-            m_objectOffset = objectOffset;
-        }
-        if (previous)
-            previous->weakDeref();
-    }
-
-    ThreadSafeWeakPtrControlBlock* m_controlBlock WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
-    ObjectOffset m_objectOffset WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    mutable Lock m_lock;
-};
 
 template<typename T, DestructionThread destructionThread = DestructionThread::Any>
 class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr {
@@ -445,58 +337,72 @@ private:
 #endif
     }
 
-    template<typename> friend class ThreadSafeWeakPtr;
-    template<typename> friend class ThreadSafeWeakRef;
+    template<typename, typename> friend class ThreadSafeWeakPtr;
+    template<typename, typename> friend class ThreadSafeWeakRef;
     template<typename> friend class ThreadSafeWeakHashSet;
 
     mutable Atomic<uintptr_t> m_bits { refIncrement + strongOnlyFlag };
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-template<typename T>
+template<typename T, typename TaggingTraits /* = NoTaggingTraits<T> */>
 class ThreadSafeWeakPtr {
 public:
+    using TagType = typename TaggingTraits::TagType;
     ThreadSafeWeakPtr() = default;
 
     ThreadSafeWeakPtr(std::nullptr_t) { }
 
-    ThreadSafeWeakPtr(const ThreadSafeWeakPtr& other) { m_storage.copyFrom(other.m_storage); }
+    ThreadSafeWeakPtr(const ThreadSafeWeakPtr& other)
+        : m_objectOfCorrectType(other.m_objectOfCorrectType)
+        , m_controlBlock(other.m_controlBlock)
+    { }
 
-    ThreadSafeWeakPtr(ThreadSafeWeakPtr&& other) { m_storage.moveFrom(other.m_storage); }
+    ThreadSafeWeakPtr(ThreadSafeWeakPtr&& other)
+        : m_objectOfCorrectType(std::exchange(other.m_objectOfCorrectType, nullptr))
+        , m_controlBlock(std::exchange(other.m_controlBlock, nullptr))
+    { }
 
     template<typename U>
         requires (!std::is_pointer_v<U>)
     ThreadSafeWeakPtr(const U& retainedReference)
-        : ThreadSafeWeakPtr(controlBlockAndObjectOffset(retainedReference))
+        : m_objectOfCorrectType(static_cast<const T*>(&retainedReference))
+        , m_controlBlock(controlBlock(retainedReference))
     { }
 
     template<typename U>
     ThreadSafeWeakPtr(const U* retainedPointer)
-        : ThreadSafeWeakPtr(retainedPointer ? controlBlockAndObjectOffset(*retainedPointer) : ControlBlockAndObjectOffset { })
+        : m_objectOfCorrectType(static_cast<const T*>(retainedPointer))
+        , m_controlBlock(retainedPointer ? controlBlock(*retainedPointer) : nullptr)
     { }
 
     template<typename U>
     ThreadSafeWeakPtr(const Ref<U>& strongReference)
-        : ThreadSafeWeakPtr(strongReference.get())
+        : m_objectOfCorrectType(static_cast<const T*>(strongReference.ptr()))
+        , m_controlBlock(controlBlock(strongReference.get()))
     { }
 
     template<typename U>
     ThreadSafeWeakPtr(const RefPtr<U>& strongReference)
-        : ThreadSafeWeakPtr(strongReference.get())
+        : m_objectOfCorrectType(static_cast<const T*>(strongReference.get()))
+        , m_controlBlock(strongReference ? controlBlock(*strongReference) : nullptr)
     { }
 
     ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock& controlBlock, const T& objectOfCorrectType)
-        : m_storage(&controlBlock, controlBlock.objectOffset(&objectOfCorrectType))
+        : m_objectOfCorrectType(&objectOfCorrectType)
+        , m_controlBlock(&controlBlock)
     { }
 
     ThreadSafeWeakPtr& operator=(ThreadSafeWeakPtr&& other)
     {
-        m_storage.moveFrom(other.m_storage);
+        m_controlBlock = std::exchange(other.m_controlBlock, nullptr);
+        m_objectOfCorrectType = std::exchange(other.m_objectOfCorrectType, nullptr);
         return *this;
     }
 
     ThreadSafeWeakPtr& operator=(const ThreadSafeWeakPtr& other)
     {
-        m_storage.copyFrom(other.m_storage);
+        m_controlBlock = other.m_controlBlock;
+        m_objectOfCorrectType = other.m_objectOfCorrectType;
         return *this;
     }
 
@@ -504,101 +410,112 @@ public:
         requires (!std::is_pointer_v<U>)
     ThreadSafeWeakPtr& operator=(const U& retainedReference)
     {
-        auto [controlBlock, objectOffset] = controlBlockAndObjectOffset(retainedReference);
-        m_storage.set(controlBlock, objectOffset);
+        m_controlBlock = controlBlock(retainedReference);
+        m_objectOfCorrectType = static_cast<const T*>(static_cast<const U*>(&retainedReference));
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const U* retainedPointer)
     {
-        if (!retainedPointer) {
-            m_storage.clear();
-            return *this;
-        }
-        auto [controlBlock, objectOffset] = controlBlockAndObjectOffset(*retainedPointer);
-        m_storage.set(controlBlock, objectOffset);
+        m_controlBlock = retainedPointer ? controlBlock(*retainedPointer) : nullptr;
+        m_objectOfCorrectType = static_cast<const T*>(retainedPointer);
         return *this;
     }
 
     ThreadSafeWeakPtr& operator=(std::nullptr_t)
     {
-        m_storage.clear();
+        m_controlBlock = nullptr;
+        m_objectOfCorrectType = nullptr;
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const Ref<U>& strongReference)
     {
-        return *this = strongReference.get();
+        m_controlBlock = controlBlock(strongReference);
+        m_objectOfCorrectType = static_cast<const T*>(strongReference.ptr());
+        return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const RefPtr<U>& strongReference)
     {
-        return *this = strongReference.get();
+        m_controlBlock = strongReference ? controlBlock(*strongReference) : nullptr;
+        m_objectOfCorrectType = static_cast<const T*>(strongReference.get());
+        return *this;
     }
 
-    RefPtr<T> get() const { return m_storage.makeStrongReferenceIfPossible<T>(); }
+    RefPtr<T> get() const { return m_controlBlock ? m_controlBlock->template makeStrongReferenceIfPossible<T>(m_objectOfCorrectType.ptr()) : nullptr; }
+
+    void setTag(TagType tag) { m_objectOfCorrectType.setTag(tag); }
+    TagType tag() const { return m_objectOfCorrectType.tag(); }
 
 private:
-    struct ControlBlockAndObjectOffset {
-        ThreadSafeWeakPtrControlBlock* controlBlock { nullptr };
-        ThreadSafeWeakPtrControlBlock::ObjectOffset objectOffset { 0 };
-    };
-
-    explicit ThreadSafeWeakPtr(ControlBlockAndObjectOffset pair)
-        : m_storage(pair.controlBlock, pair.objectOffset)
-    { }
-
     template<typename U>
     requires (std::is_convertible_v<U*, T*>)
-    static ControlBlockAndObjectOffset controlBlockAndObjectOffset(const U& classOrChildClass)
+    ThreadSafeWeakPtrControlBlock* controlBlock(const U& classOrChildClass)
     {
-        auto& controlBlock = classOrChildClass.controlBlock();
-        return { &controlBlock, controlBlock.objectOffset(static_cast<const T*>(&classOrChildClass)) };
+        return &classOrChildClass.controlBlock();
     }
 
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
     template<typename> friend class ThreadSafeWeakHashSet;
 
-    ThreadSafeWeakPtrStorage m_storage;
+    TaggedPtr<T, TaggingTraits> m_objectOfCorrectType;
+    // FIXME: Use CompactRefPtrTuple to reduce sizeof(ThreadSafeWeakPtr) by storing just an offset
+    // from ThreadSafeWeakPtrControlBlock::m_object and don't support structs larger than 65535.
+    // https://bugs.webkit.org/show_bug.cgi?id=283929
+    ControlBlockRefPtr m_controlBlock;
 } SWIFT_ESCAPABLE;
 
 template<class T> ThreadSafeWeakPtr(const T&) -> ThreadSafeWeakPtr<T>;
 template<class T> ThreadSafeWeakPtr(const T*) -> ThreadSafeWeakPtr<T>;
 
-template<typename T>
+template<typename T, typename TaggingTraits /* = NoTaggingTraits<T> */>
 class ThreadSafeWeakRef {
 public:
-    ThreadSafeWeakRef(const ThreadSafeWeakRef& other) { m_storage.copyFrom(other.m_storage); }
+    using TagType = typename TaggingTraits::TagType;
 
-    ThreadSafeWeakRef(ThreadSafeWeakRef&& other) { m_storage.moveFrom(other.m_storage); }
+    ThreadSafeWeakRef(const ThreadSafeWeakRef& other)
+        : m_objectOfCorrectType(other.m_objectOfCorrectType)
+        , m_controlBlock(other.m_controlBlock)
+    { }
+
+    ThreadSafeWeakRef(ThreadSafeWeakRef&& other)
+        : m_objectOfCorrectType(std::exchange(other.m_objectOfCorrectType, nullptr))
+        , m_controlBlock(std::exchange(other.m_controlBlock, nullptr))
+    { }
 
     template<typename U>
         requires (!std::is_pointer_v<U>)
     ThreadSafeWeakRef(const U& retainedReference)
-        : ThreadSafeWeakRef(controlBlockAndObjectOffset(retainedReference))
+        : m_objectOfCorrectType(static_cast<const T*>(&retainedReference))
+        , m_controlBlock(controlBlock(retainedReference))
     { }
 
     template<typename U>
     ThreadSafeWeakRef(const Ref<U>& strongReference)
-        : ThreadSafeWeakRef(strongReference.get())
+        : m_objectOfCorrectType(static_cast<const T*>(strongReference.ptr()))
+        , m_controlBlock(controlBlock(strongReference.get()))
     { }
 
     ThreadSafeWeakRef(ThreadSafeWeakPtrControlBlock& controlBlock, const T& objectOfCorrectType)
-        : m_storage(&controlBlock, controlBlock.objectOffset(&objectOfCorrectType))
+        : m_objectOfCorrectType(&objectOfCorrectType)
+        , m_controlBlock(&controlBlock)
     { }
 
     ThreadSafeWeakRef& operator=(ThreadSafeWeakRef&& other)
     {
-        m_storage.moveFrom(other.m_storage);
+        m_controlBlock = std::exchange(other.m_controlBlock, nullptr);
+        m_objectOfCorrectType = std::exchange(other.m_objectOfCorrectType, nullptr);
         return *this;
     }
 
     ThreadSafeWeakRef& operator=(const ThreadSafeWeakRef& other)
     {
-        m_storage.copyFrom(other.m_storage);
+        m_controlBlock = other.m_controlBlock;
+        m_objectOfCorrectType = other.m_objectOfCorrectType;
         return *this;
     }
 
@@ -606,58 +523,58 @@ public:
         requires (!std::is_pointer_v<U>)
     ThreadSafeWeakRef& operator=(const U& retainedReference)
     {
-        auto [controlBlock, objectOffset] = controlBlockAndObjectOffset(retainedReference);
-        m_storage.set(controlBlock, objectOffset);
+        m_controlBlock = controlBlock(retainedReference);
+        m_objectOfCorrectType = static_cast<const T*>(static_cast<const U*>(&retainedReference));
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakRef& operator=(const Ref<U>& strongReference)
     {
-        return *this = strongReference.get();
+        m_controlBlock = controlBlock(strongReference);
+        m_objectOfCorrectType = static_cast<const T*>(strongReference.ptr());
+        return *this;
     }
 
     Ref<T> get() const
     {
-        RefPtr result = m_storage.makeStrongReferenceIfPossible<T>();
+        RELEASE_ASSERT(m_controlBlock);
+        RefPtr result = m_controlBlock->template makeStrongReferenceIfPossible<T>(m_objectOfCorrectType.ptr());
         RELEASE_ASSERT(result);
         return result.releaseNonNull();
     }
 
+    void setTag(TagType tag) { m_objectOfCorrectType.setTag(tag); }
+    TagType tag() const { return m_objectOfCorrectType.tag(); }
+
 private:
-    struct ControlBlockAndObjectOffset {
-        ThreadSafeWeakPtrControlBlock* controlBlock { nullptr };
-        ThreadSafeWeakPtrControlBlock::ObjectOffset objectOffset { 0 };
-    };
-
-    explicit ThreadSafeWeakRef(ControlBlockAndObjectOffset pair)
-        : m_storage(pair.controlBlock, pair.objectOffset)
-    { }
-
     template<typename U>
     requires (std::is_convertible_v<U*, T*>)
-    static ControlBlockAndObjectOffset controlBlockAndObjectOffset(const U& classOrChildClass)
+    ThreadSafeWeakPtrControlBlock* controlBlock(const U& classOrChildClass)
     {
-        auto& controlBlock = classOrChildClass.controlBlock();
-        return { &controlBlock, controlBlock.objectOffset(static_cast<const T*>(&classOrChildClass)) };
+        return &classOrChildClass.controlBlock();
     }
 
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
     template<typename> friend class ThreadSafeWeakHashSet;
 
-    ThreadSafeWeakPtrStorage m_storage;
+    TaggedPtr<T, TaggingTraits> m_objectOfCorrectType;
+    // FIXME: Use CompactRefPtrTuple to reduce sizeof(ThreadSafeWeakPtr) by storing just an offset
+    // from ThreadSafeWeakPtrControlBlock::m_object and don't support structs larger than 65535.
+    // https://bugs.webkit.org/show_bug.cgi?id=283929
+    ControlBlockRefPtr m_controlBlock;
 } SWIFT_ESCAPABLE;
 
 template<class T> ThreadSafeWeakRef(const T&) -> ThreadSafeWeakRef<T>;
 
-template<typename T>
-ALWAYS_INLINE RefPtr<T> protect(const ThreadSafeWeakPtr<T>& weakPtr)
+template<typename T, typename TaggingTraits = NoTaggingTraits<T>>
+ALWAYS_INLINE RefPtr<T> protect(const ThreadSafeWeakPtr<T, TaggingTraits>& weakPtr)
 {
     return weakPtr.get();
 }
 
-template<typename T>
-ALWAYS_INLINE Ref<T> protect(const ThreadSafeWeakRef<T>& weakRef)
+template<typename T, typename TaggingTraits = NoTaggingTraits<T>>
+ALWAYS_INLINE Ref<T> protect(const ThreadSafeWeakRef<T, TaggingTraits>& weakRef)
 {
     return weakRef.get();
 }

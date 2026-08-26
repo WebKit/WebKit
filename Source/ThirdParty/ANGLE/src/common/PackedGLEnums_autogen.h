@@ -222,24 +222,6 @@ FogMode FromGLenum<FogMode>(GLenum from);
 GLenum ToGLenum(FogMode from);
 std::ostream &operator<<(std::ostream &os, FogMode value);
 
-enum class FramebufferParameter : uint8_t
-{
-    DefaultWidth                = 0,
-    DefaultHeight               = 1,
-    DefaultLayers               = 2,
-    DefaultSamples              = 3,
-    DefaultFixedSampleLocations = 4,
-    FlipY                       = 5,
-
-    InvalidEnum = 6,
-    EnumCount   = 6,
-};
-
-template <>
-FramebufferParameter FromGLenum<FramebufferParameter>(GLenum from);
-GLenum ToGLenum(FramebufferParameter from);
-std::ostream &operator<<(std::ostream &os, FramebufferParameter value);
-
 enum class GraphicsResetStatus : uint8_t
 {
     NoError              = 0,
@@ -771,10 +753,11 @@ enum class TextureTarget : uint8_t
     CubeMapPositiveZ    = 11,
     CubeMapNegativeZ    = 12,
     CubeMapArray        = 13,
-    Buffer              = 14,
+    VideoImage          = 14,
+    Buffer              = 15,
 
-    InvalidEnum = 15,
-    EnumCount   = 15,
+    InvalidEnum = 16,
+    EnumCount   = 16,
 };
 
 template <>
@@ -793,10 +776,11 @@ enum class TextureType : uint8_t
     Rectangle           = 6,
     CubeMap             = 7,
     CubeMapArray        = 8,
-    Buffer              = 9,
+    VideoImage          = 9,
+    Buffer              = 10,
 
-    InvalidEnum = 10,
-    EnumCount   = 10,
+    InvalidEnum = 11,
+    EnumCount   = 11,
 };
 
 template <>

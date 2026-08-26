@@ -440,9 +440,6 @@
     "glFramebufferFoveationParameters": {
         "framebuffer": "FramebufferID"
     },
-    "glFramebufferParameteri": {
-        "pname": "FramebufferParameter"
-    },
     "glFramebufferResolveRenderbufferWEBKIT": {
         "renderbuffer": "RenderbufferID"
     },
@@ -604,9 +601,6 @@
     },
     "glGetFragDataLocation": {
         "program": "ShaderProgramID"
-    },
-    "glGetFramebufferParameteriv": {
-        "pname": "FramebufferParameter"
     },
     "glGetFramebufferPixelLocalStorageParameterfv": {
         "pname": "PlaneParameter"

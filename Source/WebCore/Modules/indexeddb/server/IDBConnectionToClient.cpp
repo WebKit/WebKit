@@ -216,21 +216,21 @@ void IDBConnectionToClient::connectionToClientClosed()
     ASSERT(m_databaseConnections.isEmptyIgnoringNullReferences());
 }
 
-void IDBConnectionToClient::setClientSuspended(bool isSuspended)
+void IDBConnectionToClient::setClientProcessSuspended(bool isSuspended)
 {
-    if (m_isClientSuspended == isSuspended)
+    if (m_isClientProcessSuspended == isSuspended)
         return;
 
-    m_isClientSuspended = isSuspended;
+    m_isClientProcessSuspended = isSuspended;
+    if (!isSuspended)
+        return;
 
-    HashSet<CheckedPtr<UniqueIDBDatabase>> databases;
-    m_databaseConnections.forEach([&](UniqueIDBDatabaseConnection& connection) {
+    // Transactions from other clients may already be queued behind this client's
+    // in-progress transactions, which cannot finish while the client is suspended.
+    m_databaseConnections.forEach([](UniqueIDBDatabaseConnection& connection) {
         if (CheckedPtr database = connection.database())
-            databases.add(database);
+            database->abortInProgressTransactionsBlockedOnSuspendedClients();
     });
-
-    for (auto& database : databases)
-        database->handleTransactionsAfterAbortingSuspendedClientTransactions();
 }
 
 } // namespace IDBServer

@@ -5854,16 +5854,14 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
 
 void WebViewImpl::magnificationGestureEventWasNotHandledByWebCoreFromViewOnly(NSEventPhase phase, CGFloat magnification, NSPoint locationInWindow)
 {
-    applyNativeMagnification(magnification, WebEventFactory::phaseForNativeEventPhase(phase), [m_view.get() convertPoint:locationInWindow fromView:nil], WebEventInputSource::Automation);
+    applyNativeMagnification(magnification, WebEventFactory::phaseForNativeEventPhase(phase), [m_view.get() convertPoint:locationInWindow fromView:nil]);
 }
 
-void WebViewImpl::applyNativeMagnification(float magnification, WebEventPhase phase, FloatPoint originInViewCoordinates, WebEventInputSource inputSource)
+void WebViewImpl::applyNativeMagnification(float magnification, WebEventPhase phase, FloatPoint originInViewCoordinates)
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (m_allowsMagnification && m_gestureController)
-        m_gestureController->handleMagnificationGesture(magnification, phase, originInViewCoordinates, inputSource);
-#else
-    UNUSED_PARAM(inputSource);
+        m_gestureController->handleMagnificationGesture(magnification, phase, originInViewCoordinates);
 #endif
 }
 

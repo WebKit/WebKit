@@ -136,8 +136,8 @@ public:
     {
     }
 
-    template<typename X>
-    Ref(const ThreadSafeWeakRef<X>& other) requires std::is_convertible_v<X*, T*>
+    template<typename X, typename Y>
+    Ref(const ThreadSafeWeakRef<X, Y>& other) requires std::is_convertible_v<X*, T*>
         : m_ptr(&RefDerefTraits::ref(other.get()))
     {
     }
@@ -209,8 +209,8 @@ template<typename X, typename Y> Ref(const WeakRef<X, Y>&) -> Ref<X, RawPtrTrait
 template<typename X, typename Y> Ref(WeakRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 template<typename X, typename Y> Ref(const CheckedRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 template<typename X, typename Y> Ref(CheckedRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
-template<typename X> Ref(const ThreadSafeWeakRef<X>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
-template<typename X> Ref(ThreadSafeWeakRef<X>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> Ref(const ThreadSafeWeakRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> Ref(ThreadSafeWeakRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 
 template<typename T, typename _PtrTraits, typename RefDerefTraits> Ref<T, _PtrTraits, RefDerefTraits> adoptRef(T&);
 

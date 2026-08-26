@@ -22,14 +22,10 @@ add_subdirectory(JavaScriptCore)
 
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)
-    foreach (_angle_target IN ITEMS ANGLE ANGLEFramework GLESv2Framework EGLFramework)
-        webkit_scope_target_interface_definitions(${_angle_target})
-    endforeach ()
 endif ()
 
 if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
-    webkit_scope_target_interface_definitions(gtestFramework)
 endif ()
 
 if (USE_XDGMIME)
@@ -48,7 +44,6 @@ endif ()
 
 if (USE_SKIA)
     add_subdirectory(ThirdParty/skia)
-    webkit_scope_target_interface_definitions(Skia)
 endif ()
 
 if (USE_SYSTEM_SYSPROF_CAPTURE)

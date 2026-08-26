@@ -244,50 +244,22 @@ void GridLayout::updateOverflow(RenderGrid& renderGrid)
     auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
     auto contentBoxOffset = LayoutSize { gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop() };
 
-    // https://drafts.csswg.org/css-overflow-3/#scrollable
-    auto gridItemsLayoutOverflowRect = LayoutRect { };
-    auto gridItemsVisualOverflowRect = LayoutRect { };
+    auto gridItemsOverflowRect = LayoutRect { };
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
         LayoutRect gridItemBorderBoxRect = Layout::BoxGeometry::borderBoxRect(layoutState->geometryForBox(layoutBox));
         gridItemBorderBoxRect.move(contentBoxOffset);
-        gridItemsVisualOverflowRect.unite(gridItemBorderBoxRect);
+        gridItemsOverflowRect.unite(gridItemBorderBoxRect);
 
         CheckedRef gridItemRenderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
-
-        // A grid item's content is laid out outside of this formatting context, so the overflow that
-        // its own subtree generates is only available from the renderer. The returned rect already
-        // includes the grid item's border box.
-        auto gridItemLayoutOverflowRect = gridItemRenderer->layoutOverflowRectForPropagation(renderGrid.writingMode());
-        gridItemLayoutOverflowRect.move(gridItemRenderer->locationOffset());
-        gridItemsLayoutOverflowRect.unite(gridItemLayoutOverflowRect);
-
         if (gridItemRenderer->hasVisualOverflow()) {
             auto gridItemVisualOverflowRect = gridItemRenderer->visualOverflowRectForPropagation(renderGrid.writingMode());
             gridItemVisualOverflowRect.move(gridItemRenderer->locationOffset());
-            gridItemsVisualOverflowRect.unite(gridItemVisualOverflowRect);
+            gridItemsOverflowRect.unite(gridItemVisualOverflowRect);
         }
     }
 
-    renderGrid.addLayoutOverflow(gridItemsLayoutOverflowRect);
-
-    // Out-of-flow boxes whose containing block is the grid container are laid out by
-    // layoutOutOfFlowBoxes, also outside of this formatting context.
-    auto outOfFlowBoxesLayoutOverflowRect = LayoutRect { };
-    if (auto* outOfFlowDescendants = renderGrid.outOfFlowBoxes()) {
-        for (CheckedRef outOfFlowBox : *outOfFlowDescendants) {
-            // Fixed positioned boxes do not scroll with the content, so they never contribute to the
-            // scrollable overflow area.
-            if (outOfFlowBox->isFixedPositioned())
-                continue;
-            auto outOfFlowBoxLayoutOverflowRect = outOfFlowBox->layoutOverflowRectForPropagation(renderGrid.writingMode());
-            outOfFlowBoxLayoutOverflowRect.move(outOfFlowBox->locationOffset());
-            outOfFlowBoxesLayoutOverflowRect.unite(outOfFlowBoxLayoutOverflowRect);
-        }
-    }
-    renderGrid.addLayoutOverflow(outOfFlowBoxesLayoutOverflowRect);
-
-    if (!renderGrid.borderBoxRect().contains(gridItemsVisualOverflowRect))
-        renderGrid.addVisualOverflow(gridItemsVisualOverflowRect);
+    if (!renderGrid.borderBoxRect().contains(gridItemsOverflowRect))
+        renderGrid.addVisualOverflow(gridItemsOverflowRect);
 }
 
 void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes)

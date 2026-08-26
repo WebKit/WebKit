@@ -31,13 +31,10 @@
 #include "LocalizedStrings.h"
 #include "URLSoup.h"
 #include <libsoup/soup.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
-
-// Use the same value as in NSURLError.h
-static constexpr int errorCodeTimeout = -1001;
 
 ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type, IsSanitized isSanitized)
     : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
@@ -111,32 +108,13 @@ ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors,
 
 ResourceError ResourceError::timeoutError(const URL& failingURL)
 {
-    return ResourceError(errorDomainWebKitNetwork, errorCodeTimeout, failingURL, "Request timed out"_s, ResourceError::Type::Timeout);
-}
+    // FIXME: This should probably either be integrated into ErrorsGtk.h or the
+    // networking errors from that file should be moved here.
 
-ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
-{
-    if (!m_failingURL.protocolIs("https"_s) || isCancellation())
-        return ErrorRecoveryMethod::NoRecovery;
-
-    static const NeverDestroyed<String> ioErrorDomain = String::fromLatin1(g_quark_to_string(G_IO_ERROR));
-
-    // Only failures that suggest the host does not serve HTTPS at all are
-    // recoverable. G_TLS_ERROR is deliberately absent: a TLS failure means
-    // there is an HTTPS server, so retrying over cleartext is never right.
-    bool isRecoverableError = false;
-    if (m_domain == ioErrorDomain.get()) {
-        switch (m_errorCode) {
-        case G_IO_ERROR_CONNECTION_REFUSED:
-        case G_IO_ERROR_CONNECTION_CLOSED:
-        case G_IO_ERROR_NOT_CONNECTED:
-        case G_IO_ERROR_TIMED_OUT:
-            isRecoverableError = true;
-        }
-    } else if (m_domain == errorDomainWebKitNetwork)
-        isRecoverableError = m_errorCode == errorCodeHTTPSUpgradeRedirectLoop || m_errorCode == errorCodeTimeout;
-
-    return isRecoverableError ? ErrorRecoveryMethod::HTTPFallback : ErrorRecoveryMethod::NoRecovery;
+    // Use the same value as in NSURLError.h
+    static constexpr int timeoutError = -1001;
+    static constexpr auto errorDomain = "WebKitNetworkError"_s;
+    return ResourceError(errorDomain, timeoutError, failingURL, "Request timed out"_s, ResourceError::Type::Timeout);
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)

@@ -26,7 +26,6 @@ template = """// GENERATED FILE - DO NOT EDIT.
 //   Contains the GetLoadFunctionsMap for texture_format_util.h
 //
 
-#include "common/debug.h"
 #include "libANGLE/renderer/load_functions_table.h"
 
 #include "image_util/copyimage.h"
@@ -59,7 +58,7 @@ void UnimplementedLoadFunction(const ImageLoadContext &context,
                                size_t outputRowPitch,
                                size_t outputDepthPitch)
 {{
-    FATAL() << "UNIMPLEMENTED load function.";
+    UNIMPLEMENTED();
 }}
 
 void UnreachableLoadFunction(const ImageLoadContext &context,
@@ -73,7 +72,7 @@ void UnreachableLoadFunction(const ImageLoadContext &context,
                              size_t outputRowPitch,
                              size_t outputDepthPitch)
 {{
-    FATAL() << "UNREACHABLE load function.";
+    UNREACHABLE();
 }}
 
 {load_functions_data}}}  // namespace

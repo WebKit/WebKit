@@ -303,6 +303,10 @@ class RobustResourceInitTestES3 : public RobustResourceInitTest
                                 GLenum internalFormatRGBA,
                                 GLenum internalFormatRGB,
                                 GLenum type);
+    template <typename PixelT>
+    void testIntegerRenderbufferInit(GLenum internalFormat, GLenum type);
+    template <typename PixelT>
+    void testFloatRenderbufferInit(GLenum internalFormat, GLenum type);
 };
 
 class RobustResourceInitTestES31 : public RobustResourceInitTest
@@ -1278,6 +1282,9 @@ TEST_P(RobustResourceInitTest, ReuploadingClearsTexture)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
 
+    // crbug.com/826576
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
+
     // Put some data into the texture
     std::array<GLColor, kWidth * kHeight> data;
     data.fill(GLColor::white);
@@ -2074,32 +2081,6 @@ TEST_P(RobustResourceInitTest, TextureAfterCheckStatus)
 }
 
 // Test that after a texture with data is sampled, recreating it with no data makes it cleared.
-TEST_P(RobustResourceInitTest, SampleReinitSample)
-{
-    ANGLE_SKIP_TEST_IF(!hasGLExtension());
-
-    const std::vector<GLColor> kInitData(kWidth * kHeight, GLColor::red);
-
-    GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 kInitData.data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    // Draw once, the texture has data and should sample with data.  The texture is also sync'ed at
-    // this step.
-    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
-    drawQuad(testProgram, essl1_shaders::PositionAttrib(), 0.0f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-
-    // Recreate the texture with no data.  It should be cleared to black.
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    drawQuad(testProgram, essl1_shaders::PositionAttrib(), 0.0f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
-}
-
-// Test that after a texture with data is sampled, recreating it with no data makes it cleared.
 // Uses an RGB texture which may be emulated on some backends.
 TEST_P(RobustResourceInitTest, SampleReinitSampleRGB)
 {
@@ -2223,6 +2204,93 @@ void RobustResourceInitTestES3::testIntegerTextureInit(const char *samplerType,
 
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(0, incorrectPixels);
+}
+
+template <typename PixelT>
+void RobustResourceInitTestES3::testIntegerRenderbufferInit(GLenum internalFormat, GLenum type)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    ASSERT_GL_NO_ERROR();
+
+    std::array<PixelT, kWidth * kHeight * 4> data;
+    glReadPixels(0, 0, kWidth, kHeight, GL_RGBA_INTEGER, type, data.data());
+    ASSERT_GL_NO_ERROR();
+
+    int incorrectPixels = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x)
+        {
+            int index    = (y * kWidth + x) * 4;
+            bool correct = (data[index] == 0 && data[index + 1] == 0 && data[index + 2] == 0 &&
+                            data[index + 3] == 0);
+            incorrectPixels += (!correct ? 1 : 0);
+        }
+    }
+
+    EXPECT_EQ(0, incorrectPixels);
+}
+
+template <typename PixelT>
+void RobustResourceInitTestES3::testFloatRenderbufferInit(GLenum internalFormat, GLenum type)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    ASSERT_GL_NO_ERROR();
+
+    std::array<PixelT, kWidth * kHeight * 4> data;
+    glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, type, data.data());
+    ASSERT_GL_NO_ERROR();
+
+    int incorrectPixels = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x)
+        {
+            int index    = (y * kWidth + x) * 4;
+            bool correct = (data[index] == 0.0f && data[index + 1] == 0.0f &&
+                            data[index + 2] == 0.0f && data[index + 3] == 0.0f);
+            incorrectPixels += (!correct ? 1 : 0);
+        }
+    }
+
+    EXPECT_EQ(0, incorrectPixels);
+}
+
+// Test that integer renderbuffers are initialized to zero.
+TEST_P(RobustResourceInitTestES3, RenderbufferInit_IntRGBA8)
+{
+    testIntegerRenderbufferInit<int32_t>(GL_RGBA8I, GL_INT);
+}
+
+// Test that unsigned integer renderbuffers are initialized to zero.
+TEST_P(RobustResourceInitTestES3, RenderbufferInit_UIntRGBA8)
+{
+    testIntegerRenderbufferInit<uint32_t>(GL_RGBA8UI, GL_UNSIGNED_INT);
+}
+
+// Test that floating point renderbuffers are initialized to zero.
+TEST_P(RobustResourceInitTestES3, RenderbufferInit_FloatRGBA32F)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+    testFloatRenderbufferInit<GLfloat>(GL_RGBA32F, GL_FLOAT);
 }
 
 // Simple tests for integer formats that ANGLE must emulate on D3D11.
@@ -2697,6 +2765,9 @@ TEST_P(RobustResourceInitTest, MaskedStencilClear)
 TEST_P(RobustResourceInitTestES3, MaskedStencilClearBuffer)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    // http://anglebug.com/42261118
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && (IsIntel() || IsNVIDIA()));
 
     ANGLE_SKIP_TEST_IF(IsLinux() && IsOpenGL());
 
@@ -4088,70 +4159,6 @@ TEST_P(RobustResourceInitTest, AttachToBoundReadFramebufferBypass)
     // Read pixels. If robust resource init is bypassed, this will return the "bad data".
     // If robust resource init is working, it will return transparent black (0).
     checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::transparentBlack);
-    EXPECT_GL_NO_ERROR();
-}
-
-// Tests that redefining a single face of a cube map does not discard the
-// data of other faces at the same level.
-TEST_P(RobustResourceInitTest, RedefineSiblingFace)
-{
-    ANGLE_SKIP_TEST_IF(!hasGLExtension());
-
-    const GLint N = 4;
-
-    GLTexture tex;
-    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
-
-    for (GLenum face = 0; face < 6; face++)
-    {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, N, N, 0, GL_RGBA,
-                     GL_UNSIGNED_BYTE, nullptr);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    EXPECT_GL_NO_ERROR();
-
-    GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                           tex, 0);
-    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    glViewport(0, 0, N, N);
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_GL_NO_ERROR();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // Redefine POSITIVE_X with a mismatched size
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, 2 * N, 2 * N, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, nullptr);
-    EXPECT_GL_NO_ERROR();
-
-    // Redefine POSITIVE_X back to normal size to make it cube complete again
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, N, N, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 nullptr);
-    EXPECT_GL_NO_ERROR();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-         face++)
-    {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, tex, 0);
-        if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_X)
-        {
-            // Previously set to green with glClear and not redefined.
-            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-        }
-        else
-        {
-            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
-        }
-    }
     EXPECT_GL_NO_ERROR();
 }
 

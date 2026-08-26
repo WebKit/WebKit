@@ -2055,12 +2055,12 @@ bool ValidateReadnPixelsKHR(const Context *context,
 bool ValidateFramebufferParameteriMESA(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        GLenum target,
-                                       FramebufferParameter pnamePacked,
+                                       GLenum pname,
                                        GLint param);
 bool ValidateGetFramebufferParameterivMESA(const Context *context,
                                            angle::EntryPoint entryPoint,
                                            GLenum target,
-                                           FramebufferParameter pnamePacked,
+                                           GLenum pname,
                                            const GLint *params);
 
 // GL_NV_fence

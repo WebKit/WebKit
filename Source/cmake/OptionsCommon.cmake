@@ -3,10 +3,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP OFF)
 
-webkit_add_compile_definitions(BUILDING_WITH_CMAKE=1)
-webkit_add_compile_definitions(BUILDING_WEBKIT=1)
-webkit_add_compile_definitions(HAVE_CONFIG_H=1)
-webkit_add_compile_definitions(PAS_BMALLOC=1)
+add_definitions(-DBUILDING_WITH_CMAKE=1)
+add_definitions(-DBUILDING_WEBKIT=1)
+add_definitions(-DHAVE_CONFIG_H=1)
+add_definitions(-DPAS_BMALLOC=1)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 define_property(TARGET PROPERTY FOLDER INHERITED BRIEF_DOCS "folder" FULL_DOCS "IDE folder name")
@@ -35,13 +35,9 @@ CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
 if (USE_LD_LLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
     if (LD_VERSION MATCHES "(^|[ \t])LLD ")
-        # Swift's spelling of -fuse-ld= is different.
-        add_link_options(
-            "$<$<NOT:$<LINK_LANGUAGE:Swift>>:-fuse-ld=lld>"
-            "$<$<LINK_LANGUAGE:Swift>:-use-ld=lld>")
-        # The probes below use the C compiler spelling of -fuse-ld
-        # unconditionally.
-        set(LD_PROBE_FLAGS "-fuse-ld=lld")
+        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
+        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
+        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
     else ()
         set(USE_LD_LLD OFF)
     endif ()
@@ -49,7 +45,7 @@ endif ()
 
 # Determine which linker is being used with the chosen linker flags.
 separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
-    "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} ${LD_PROBE_FLAGS} -Wl,--version"
+    "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"
 )
 execute_process(
     COMMAND ${LD_VERSION_COMMAND}
@@ -59,7 +55,7 @@ execute_process(
 unset(LD_VERSION_COMMAND)
 
 separate_arguments(LD_USAGE_COMMAND UNIX_COMMAND
-    "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} ${LD_PROBE_FLAGS} -Wl,--help"
+    "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--help"
 )
 execute_process(
   COMMAND ${LD_USAGE_COMMAND}
@@ -141,7 +137,9 @@ message(STATUS "  Archiver supports thin archives - ${AR_SUPPORTS_THIN_ARCHIVES}
 # Remove unused sections to reduce the binary size when supported.
 if (LD_SUPPORTS_GC_SECTIONS)
     WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-ffunction-sections -fdata-sections)
-    add_link_options("LINKER:--gc-sections")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,--gc-sections")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,--gc-sections")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -Wl,--gc-sections")
 endif ()
 
 # Use --disable-new-dtags to ensure that the rpath set by CMake when building
@@ -152,7 +150,9 @@ endif ()
 # of LD_LIBRARY_PATH set in the environment, resulting in unexpected behaviour
 # for developers.
 if (LD_SUPPORTS_DISABLE_NEW_DTAGS)
-    add_link_options("LINKER:--disable-new-dtags")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,--disable-new-dtags")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,--disable-new-dtags")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -Wl,--disable-new-dtags")
 endif ()
 
 # Prefer thin archives by default if they can be both created by the
@@ -185,7 +185,8 @@ if (DEBUG_FISSION)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gsplit-dwarf")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gsplit-dwarf")
     if (LD_SUPPORTS_GDB_INDEX)
-        add_link_options("LINKER:--gdb-index")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
     endif ()
 endif ()
 
@@ -274,7 +275,7 @@ option(USE_CXX_STDLIB_ASSERTIONS
 if (USE_CXX_STDLIB_ASSERTIONS)
     if (CXX_STDLIB_ASSERTIONS_MACRO)
         message(STATUS "  Assertions enabled, ${CXX_STDLIB_ASSERTIONS_MACRO}")
-        webkit_add_compile_definitions("${CXX_STDLIB_ASSERTIONS_MACRO}")
+        add_compile_definitions("${CXX_STDLIB_ASSERTIONS_MACRO}")
     else ()
         message(STATUS "  Assertions disabled, CXX_STDLIB_ASSERTIONS_MACRO undefined")
     endif ()

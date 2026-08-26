@@ -315,7 +315,7 @@ add_compile_options(
 )
 
 if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
-    webkit_add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)
+    add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)
 endif ()
 
 if (CMAKE_CXX_COMPILER_LAUNCHER OR CMAKE_C_COMPILER_LAUNCHER)
@@ -350,22 +350,19 @@ if (ENABLE_SANITIZERS)
     # harmless and avoids per-target plumbing).
     string(FIND "${ENABLE_SANITIZERS}" "thread" _tsan_pos)
     if (NOT _tsan_pos EQUAL -1)
-        add_link_options("LINKER:-no_compact_unwind")
+        add_link_options("-Wl,-no_compact_unwind")
     endif ()
 endif ()
 
-add_link_options("$<$<NOT:$<CONFIG:Debug>>:LINKER:-dead_strip>")
-add_link_options("LINKER:-dead_strip_dylibs")
+add_link_options("$<$<NOT:$<CONFIG:Debug>>:-Wl,-dead_strip>")
+add_link_options(-Wl,-dead_strip_dylibs)
 
 # Mirrors DYLIB_COMPATIBILITY_VERSION / DYLIB_CURRENT_VERSION in
 # Configurations/Version.xcconfig. Set globally rather than per framework so that
 # every dylib carries them: clients linked against the Xcode frameworks record a
 # required compatibility version of 1.0.0, and dyld refuses to substitute a dylib
 # that declares 0.0.0. Shared-only, since ld rejects these flags for executables.
-add_link_options(
-    "$<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:LINKER:-compatibility_version,1.0.0>"
-    "$<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:LINKER:-current_version,${WEBKIT_MAC_VERSION}>"
-)
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " -compatibility_version 1.0.0 -current_version ${WEBKIT_MAC_VERSION}")
 
 # Linked globally because PAL has Swift sources that get force-loaded into WebCore,
 # and WebCore does not link JavaScriptCore directly on all platforms.
@@ -457,7 +454,7 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     # Local dev builds are not part of the dyld shared cache. System-path install
     # names would otherwise mark some frameworks "shared-cache eligible" and the
     # linker rejects eligible->ineligible links between them. Opt every dylib out.
-    add_link_options("LINKER:-not_for_dyld_shared_cache")
+    add_link_options("-Wl,-not_for_dyld_shared_cache")
 
     # Define USE_APPLE_INTERNAL_SDK for the Swift Clang-module importer. Module
     # PCMs (e.g. WebKitLegacy consumed by WebKit's Swift) are built from

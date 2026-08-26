@@ -1780,30 +1780,28 @@ void QueryInternalFormativ(const Context *context,
     }
 }
 
-void QueryFramebufferParameteriv(const Framebuffer *framebuffer,
-                                 FramebufferParameter pnamePacked,
-                                 GLint *params)
+void QueryFramebufferParameteriv(const Framebuffer *framebuffer, GLenum pname, GLint *params)
 {
-    ASSERT(framebuffer != nullptr);
+    ASSERT(framebuffer);
 
-    switch (pnamePacked)
+    switch (pname)
     {
-        case FramebufferParameter::DefaultWidth:
+        case GL_FRAMEBUFFER_DEFAULT_WIDTH:
             *params = framebuffer->getDefaultWidth();
             break;
-        case FramebufferParameter::DefaultHeight:
+        case GL_FRAMEBUFFER_DEFAULT_HEIGHT:
             *params = framebuffer->getDefaultHeight();
             break;
-        case FramebufferParameter::DefaultLayers:
-            *params = framebuffer->getDefaultLayers();
-            break;
-        case FramebufferParameter::DefaultSamples:
+        case GL_FRAMEBUFFER_DEFAULT_SAMPLES:
             *params = framebuffer->getDefaultSamples();
             break;
-        case FramebufferParameter::DefaultFixedSampleLocations:
+        case GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS:
             *params = ConvertToGLBoolean(framebuffer->getDefaultFixedSampleLocations());
             break;
-        case FramebufferParameter::FlipY:
+        case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
+            *params = framebuffer->getDefaultLayers();
+            break;
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
             *params = ConvertToGLBoolean(framebuffer->getFlipY());
             break;
         default:
@@ -2045,29 +2043,29 @@ void SetSamplerParameterIuiv(Context *context,
 
 void SetFramebufferParameteri(const Context *context,
                               Framebuffer *framebuffer,
-                              FramebufferParameter pnamePacked,
+                              GLenum pname,
                               GLint param)
 {
-    ASSERT(framebuffer != nullptr);
+    ASSERT(framebuffer);
 
-    switch (pnamePacked)
+    switch (pname)
     {
-        case FramebufferParameter::DefaultWidth:
+        case GL_FRAMEBUFFER_DEFAULT_WIDTH:
             framebuffer->setDefaultWidth(context, param);
             break;
-        case FramebufferParameter::DefaultHeight:
+        case GL_FRAMEBUFFER_DEFAULT_HEIGHT:
             framebuffer->setDefaultHeight(context, param);
             break;
-        case FramebufferParameter::DefaultLayers:
-            framebuffer->setDefaultLayers(param);
-            break;
-        case FramebufferParameter::DefaultSamples:
+        case GL_FRAMEBUFFER_DEFAULT_SAMPLES:
             framebuffer->setDefaultSamples(context, param);
             break;
-        case FramebufferParameter::DefaultFixedSampleLocations:
+        case GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS:
             framebuffer->setDefaultFixedSampleLocations(context, ConvertToBool(param));
             break;
-        case FramebufferParameter::FlipY:
+        case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
+            framebuffer->setDefaultLayers(param);
+            break;
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
             framebuffer->setFlipY(ConvertToBool(param));
             break;
         default:

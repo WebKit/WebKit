@@ -103,9 +103,6 @@ struct GLColorRGB
     static const GLColorRGB green;
     static const GLColorRGB red;
     static const GLColorRGB yellow;
-    static const GLColorRGB magenta;
-    static const GLColorRGB cyan;
-    static const GLColorRGB white;
 };
 
 struct GLColorRG

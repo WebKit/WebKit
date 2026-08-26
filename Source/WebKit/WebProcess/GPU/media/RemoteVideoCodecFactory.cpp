@@ -42,19 +42,14 @@ public:
     void notifyDecodingResult(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp);
 
     void NODELETE close() { m_isClosed = true; }
-    void addDuration(int64_t timestamp, uint64_t duration)
-    {
-        Locker locker { m_timestampToDurationLock };
-        m_timestampToDuration.insert_or_assign(timestamp, duration);
-    }
+    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.insert_or_assign(timestamp, duration); }
 
 private:
     explicit RemoteVideoDecoderCallbacks(WebCore::VideoDecoder::OutputCallback&&);
 
     WebCore::VideoDecoder::OutputCallback m_outputCallback;
-    std::atomic<bool> m_isClosed { false };
-    Lock m_timestampToDurationLock;
-    StdUnorderedMap<int64_t, uint64_t> m_timestampToDuration WTF_GUARDED_BY_LOCK(m_timestampToDurationLock);
+    bool m_isClosed { false };
+    StdUnorderedMap<int64_t, uint64_t> m_timestampToDuration;
 };
 
 class RemoteVideoDecoder : public WebCore::VideoDecoder {
@@ -89,7 +84,7 @@ private:
 
     WebCore::VideoEncoder::DescriptionCallback m_descriptionCallback;
     WebCore::VideoEncoder::OutputCallback m_outputCallback;
-    std::atomic<bool> m_isClosed { false };
+    bool m_isClosed { false };
 };
 
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
@@ -244,13 +239,10 @@ void RemoteVideoDecoderCallbacks::notifyDecodingResult(RefPtr<WebCore::VideoFram
         return;
     }
     uint64_t duration = 0;
-    {
-        Locker locker { m_timestampToDurationLock };
-        auto iterator = m_timestampToDuration.find(timestamp);
-        if (iterator != m_timestampToDuration.end()) {
-            duration = iterator->second;
-            m_timestampToDuration.erase(iterator);
-        }
+    auto iterator = m_timestampToDuration.find(timestamp);
+    if (iterator != m_timestampToDuration.end()) {
+        duration = iterator->second;
+        m_timestampToDuration.erase(iterator);
     }
     m_outputCallback(WebCore::VideoDecoder::DecodedFrame { frame.releaseNonNull(), static_cast<int64_t>(timestamp), duration });
 }

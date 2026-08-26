@@ -58,7 +58,7 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
     }
 }
 
-bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer)
+bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::optional<ServiceWorkersMode> serviceWorkersMode)
 {
     ASSERT(m_promise);
     ASSERT(!m_cachedScript);
@@ -76,7 +76,7 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
             break;
         }
     }
-    m_cachedScript = protect(scriptFetcher())->requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode, referrer);
+    m_cachedScript = protect(scriptFetcher())->requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode);
     if (!m_cachedScript)
         return false;
     m_sourceURL = WTF::move(sourceURL);

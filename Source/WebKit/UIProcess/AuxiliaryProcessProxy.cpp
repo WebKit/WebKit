@@ -43,7 +43,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include "CoreIPCSecureCoding.h"
@@ -227,15 +226,13 @@ void AuxiliaryProcessProxy::terminate(std::optional<IPC::MessageName> invalidMes
         if (connection->kill(invalidMessageName))
             return;
     }
+#else
+    UNUSED_PARAM(invalidMessageName);
 #endif
 
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
-    if (RefPtr processLauncher = m_processLauncher) {
-        String terminationReason;
-        if (invalidMessageName)
-            terminationReason = makeString("Received invalid IPC message: "_s, IPC::description(*invalidMessageName));
-        processLauncher->terminateProcess(terminationReason);
-    }
+    if (RefPtr processLauncher = m_processLauncher)
+        processLauncher->terminateProcess();
 }
 
 String AuxiliaryProcessProxy::stateString() const

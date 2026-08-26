@@ -3169,6 +3169,7 @@ mod promote {
             | ImageDimension::Rect
             | ImageDimension::External
             | ImageDimension::ExternalY2Y
+            | ImageDimension::Video
             | ImageDimension::PixelLocal
             | ImageDimension::Subpass => {
                 if is_array {

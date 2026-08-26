@@ -144,7 +144,6 @@
 #include <string>
 
 #include "common/event_tracer.h"
-#include "common/unsafe_buffers.h"
 
 // By default, const char* argument values are assumed to have long-lived scope
 // and will not be copied. Use this macro to force a const char* to be copied.
@@ -697,7 +696,7 @@ static inline void unpackArguments(const char **names,
 {
     *names = argName;
     setTraceValue(argVal, types, values);
-    ANGLE_UNSAFE_TODO(unpackArguments(++names, ++types, ++values, args...));
+    unpackArguments(++names, ++types, ++values, args...);
 }
 
 // The addTraceEvent template function is defined here instead of in the

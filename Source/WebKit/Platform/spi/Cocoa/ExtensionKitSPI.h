@@ -38,17 +38,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BEWebContentProcess (ExtensionProcess)
 +(void)webContentProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BEWebContentProcess *_Nullable process, NSError *_Nullable error))completion;
--(void)invalidateWithReason:(NSString *)reason;
 @end
 
 @interface BENetworkingProcess (ExtensionProcess)
 +(void)networkProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BENetworkingProcess *_Nullable process, NSError *_Nullable error))completion;
--(void)invalidateWithReason:(NSString *)reason;
 @end
 
 @interface BERenderingProcess (ExtensionProcess)
 +(void)renderingProcessWithBundleID:(NSString *_Nullable)bundleID interruptionHandler:(void(^)(void) _Nullable)interruptionHandler completion:(void(^)(BERenderingProcess  *_Nullable process, NSError *_Nullable error))completion;
--(void)invalidateWithReason:(NSString *)reason;
 @end
 
 NS_ASSUME_NONNULL_END

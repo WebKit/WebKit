@@ -38,8 +38,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/PlatformDisplay.cpp
 
-    platform/graphics/egl/BitmapTexture.cpp
-    platform/graphics/egl/BitmapTexturePool.cpp
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextLibWPE.cpp
     platform/graphics/egl/GLContextWrapper.cpp

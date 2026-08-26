@@ -161,13 +161,6 @@ static URLSchemesMap& secureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return secureSchemes;
 }
 
-static URLSchemesMap& NODELETE schemesAllowingServiceWorkerClients()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<URLSchemesMap> schemesAllowingServiceWorkerClients;
-    return schemesAllowingServiceWorkerClients;
-}
-
 static std::span<const ASCIILiteral> builtinSchemesWithUniqueOrigins()
 {
     static constexpr std::array schemes {
@@ -383,24 +376,6 @@ bool LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(StringView scheme)
 
     Locker locker { schemeRegistryLock };
     return secureSchemes().contains<StringViewHashTranslator>(scheme);
-}
-
-void LegacySchemeRegistry::registerURLSchemeAsAllowingServiceWorkerClients(const String& scheme)
-{
-    ASSERT(isMainThread());
-    if (scheme.isNull())
-        return;
-
-    schemesAllowingServiceWorkerClients().add(scheme);
-}
-
-bool LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(StringView scheme)
-{
-    ASSERT(isMainThread());
-    if (scheme.isNull())
-        return false;
-
-    return schemesAllowingServiceWorkerClients().contains<StringViewHashTranslator>(scheme);
 }
 
 void LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)

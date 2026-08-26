@@ -151,7 +151,7 @@ public:
     bool isLaunching() const { return m_isLaunching; }
     ProcessID processID() const { return m_processID; }
 
-    void terminateProcess(const String& reason = { });
+    void terminateProcess();
     void invalidate();
 
 #if USE(EXTENSIONKIT)

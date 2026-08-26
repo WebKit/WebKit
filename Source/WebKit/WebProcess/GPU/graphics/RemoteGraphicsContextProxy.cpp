@@ -885,10 +885,12 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const F
 void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
 {
     auto& state = m_state;
-    auto pendingChanges = computeStateChanges();
-    if (!pendingChanges)
+    auto& lastDrawingState = currentState().lastDrawingState;
+    if (lastDrawingState)
+        state.filterLastChangesForMatching(*lastDrawingState);
+    auto changes = state.changes();
+    if (!changes)
         return;
-    auto changes = pendingChanges;
     if (changes.contains(GraphicsContextState::Change::FillBrush)) {
         const auto& fillBrush = state.fillBrush();
         if (auto packedColor = fillBrush.packedColor())
@@ -964,13 +966,22 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
     if (changes.contains(GraphicsContextState::Change::DrawLuminanceMask))
         send(Messages::RemoteGraphicsContext::SetDrawLuminanceMask(state.drawLuminanceMask()));
 
-    commitStateChanges(pendingChanges);
+    if (lastDrawingState)
+        lastDrawingState->copyLastChangesFrom(state);
+    else {
+        lastDrawingState = state;
+        lastDrawingState->didApplyChanges();
+    }
+    state.didApplyChanges();
 }
 
 std::optional<RemoteGraphicsContextProxy::InlineStrokeData> RemoteGraphicsContextProxy::inlineStrokeStateIfBatchable()
 {
     auto& state = m_state;
-    auto changes = computeStateChanges();
+    auto& lastDrawingState = currentState().lastDrawingState;
+    if (lastDrawingState)
+        state.filterLastChangesForMatching(*lastDrawingState);
+    auto changes = state.changes();
     // Only fold the line into the batch if the sole pending state changes are
     // stroke color and/or thickness; anything else has to go through the normal
     // state-flush path.
@@ -982,10 +993,21 @@ std::optional<RemoteGraphicsContextProxy::InlineStrokeData> RemoteGraphicsContex
         return std::nullopt; // Gradient/pattern stroke: not representable inline.
 
     if (changes) {
-        // The stroke color and thickness travel inline with each buffered line. The GPU process
-        // applies them with setStrokeColor()/setStrokeThickness(), which replace the whole brush, so
-        // this is exactly the same state change the normal flush path would have made.
-        commitStateChanges(changes);
+        // The stroke color/thickness travel inline with each buffered line, so
+        // mark them applied and keep lastDrawingState in sync for future diffs.
+        if (!lastDrawingState)
+            lastDrawingState = state;
+        else {
+            if (changes.contains(GraphicsContextState::Change::StrokeBrush)) {
+                // Set through strokeBrush() to avoid comparison. Only the color is copied: the GPU
+                // process applies the inline color on top of whatever brush it already has.
+                lastDrawingState->strokeBrush().setColor(state.strokeBrush().color());
+            }
+            if (changes.contains(GraphicsContextState::Change::StrokeThickness))
+                lastDrawingState->setStrokeThickness(state.strokeThickness());
+        }
+        state.didApplyChanges();
+        lastDrawingState->didApplyChanges();
     }
     return InlineStrokeData { *packedColor, state.strokeThickness() };
 }

@@ -100,10 +100,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     if (!IsOutputGLSL(shaderOutput) && !IsOutputESSL(shaderOutput))
     {
-        hasUnsupportedOptions = hasUnsupportedOptions || options.emulateAtan2FloatFunction ||
-                                options.clampFragDepth || options.rewriteRepeatedAssignToSwizzled ||
-                                options.useUnusedStandardSharedBlocks ||
-                                options.selectViewInNvGLSLVertexShader;
+        hasUnsupportedOptions =
+            hasUnsupportedOptions || options.emulateAtan2FloatFunction || options.clampFragDepth ||
+            options.regenerateStructNames || options.rewriteRepeatedAssignToSwizzled ||
+            options.useUnusedStandardSharedBlocks || options.selectViewInNvGLSLVertexShader;
 
         hasUnsupportedOptions = hasUnsupportedOptions || hasMacGLSLOptions;
     }
@@ -169,6 +169,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     validOutputs.push_back(SH_GLSL_440_CORE_OUTPUT);
     validOutputs.push_back(SH_GLSL_450_CORE_OUTPUT);
     validOutputs.push_back(SH_SPIRV_VULKAN_OUTPUT);
+    validOutputs.push_back(SH_HLSL_3_0_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_1_OUTPUT);
 #endif
 #ifdef ANGLE_ENABLE_METAL

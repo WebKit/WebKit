@@ -197,6 +197,7 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/SplitSequenceOperator.cpp"
     "src/compiler/translator/tree_ops/SplitSequenceOperator.h"
     "src/compiler/translator/tree_ops/glsl/ExpandFragmentOutputsToVec4.h"
+    "src/compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
     "src/compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.h"
     "src/compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.h"
     "src/compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.h"
@@ -266,6 +267,7 @@ set(angle_translator_glsl_sources
     "src/compiler/translator/glsl/TranslatorGLSL.cpp"
     "src/compiler/translator/glsl/VersionGLSL.cpp"
     "src/compiler/translator/tree_ops/glsl/ExpandFragmentOutputsToVec4.cpp"
+    "src/compiler/translator/tree_ops/glsl/RegenerateStructNames.cpp"
     "src/compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.cpp"
     "src/compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.cpp"
 )

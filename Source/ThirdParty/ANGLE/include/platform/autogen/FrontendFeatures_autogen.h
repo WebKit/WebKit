@@ -189,12 +189,6 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
-    FeatureInfo enableCreateContextBackwardsCompatible = {
-        "enableCreateContextBackwardsCompatible",
-        FeatureCategory::FrontendFeatures,
-        &members,
-    };
-
     FeatureInfo clipCullDistanceBrokenWithPassthroughShaders = {
         "clipCullDistanceBrokenWithPassthroughShaders",
         FeatureCategory::FrontendFeatures,

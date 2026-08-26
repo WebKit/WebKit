@@ -61,12 +61,6 @@ if (SWIFT_REQUIRED)
     endif ()
     add_compile_options($<$<COMPILE_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
     add_link_options($<$<LINK_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
-
-    if (APPLE)
-        # When Swift is used as a linker frontend, disable dSYM generation. The
-        # objects being linked still contain debug info.
-        add_link_options("$<$<LINK_LANGUAGE:Swift>:-gnone>")
-    endif ()
     # The static archive rule (<CMAKE_Swift_CREATE_STATIC_LIBRARY>) uses neither
     # <FLAGS> nor link options, so inject the flag directly into the template.
     string(REPLACE "<CMAKE_Swift_COMPILER>"

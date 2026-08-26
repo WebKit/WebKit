@@ -17,16 +17,13 @@ namespace sh
 
 // Can be used with TSymbol or TField or TFunc.
 template <typename StringStreamType, typename Object>
-void WriteNameOf(StringStreamType &output, const Object &namedObject, char userSymbolPrefix)
+void WriteNameOf(StringStreamType &output, const Object &namedObject)
 {
-    WriteNameOf(output, namedObject.symbolType(), namedObject.name(), userSymbolPrefix);
+    WriteNameOf(output, namedObject.symbolType(), namedObject.name());
 }
 
 template <typename StringStreamType>
-void WriteNameOf(StringStreamType &output,
-                 SymbolType symbolType,
-                 const ImmutableString &name,
-                 char userSymbolPrefix);
+void WriteNameOf(StringStreamType &output, SymbolType symbolType, const ImmutableString &name);
 
 enum class WgslAddressSpace
 {
@@ -45,14 +42,10 @@ struct EmitTypeConfig
 
 template <typename StringStreamType>
 void WriteWgslBareTypeName(StringStreamType &output,
-                           const ShBuiltInResources &resources,
                            const TType &type,
                            const EmitTypeConfig &config);
 template <typename StringStreamType>
-void WriteWgslType(StringStreamType &output,
-                   const ShBuiltInResources &resources,
-                   const TType &type,
-                   const EmitTypeConfig &config);
+void WriteWgslType(StringStreamType &output, const TType &type, const EmitTypeConfig &config);
 
 // GLSL's samplers are split into a separate sampler and texture in WGSL, so two different types
 // will be emitted for a single sampler type.

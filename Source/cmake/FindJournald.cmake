@@ -86,8 +86,6 @@ find_package_handle_standard_args(Journald
     VERSION_VAR Journald_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Journald_COMPILE_OPTIONS ${Journald_COMPILE_OPTIONS})
-
 if (Journald_LIBRARY AND NOT TARGET Journald::Journald)
     add_library(Journald::Journald UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Journald::Journald PROPERTIES

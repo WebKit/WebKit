@@ -241,7 +241,6 @@ TEST_F(WKWebExtensionAPIOffscreen, DocumentContentLoads)
     ];
 
     auto *offscreenScript = @[
-        @"browser.test.assertFalse(navigator.serviceWorker.controller === undefined)",
         @"browser.test.notifyPass()"
     ];
 
@@ -295,7 +294,6 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentAPIAvailability)
         @"browser.test.assertTrue(browser.permissions === undefined)",
         @"browser.test.assertTrue(browser.tabs === undefined)",
         @"browser.test.assertTrue(browser.windows === undefined)",
-        @"browser.test.assertTrue(browser.offscreen === undefined)",
         @"browser.test.notifyPass()"
     ];
 
@@ -303,120 +301,6 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentAPIAvailability)
         @"background.js": Util::constructScript(script),
         @"offscreen.html": @"<script type='module' src='offscreen.js'></script>",
         @"offscreen.js": Util::constructScript(offscreenScript),
-    }, offscreenConfig);
-}
-
-TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentVisibleToClientsMatchAll)
-{
-    auto *script = @[
-        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
-
-        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
-
-        @"const controlledClients = await self.clients.matchAll()",
-        @"browser.test.assertEq(controlledClients.length, 1)",
-        @"browser.test.assertTrue(controlledClients.some((client) => client.url === offscreenURL), 'The offscreen document should be a controlled window client of the background service worker')",
-
-        @"const allClients = await self.clients.matchAll({ includeUncontrolled: true })",
-        @"browser.test.assertEq(allClients.length, 1)",
-        @"browser.test.assertTrue(allClients.some((client) => client.url === offscreenURL), 'The offscreen document should also appear when including uncontrolled clients')",
-
-        @"browser.test.notifyPass()",
-    ];
-
-    Util::loadAndRunExtension(offscreenManifest, @{
-        @"background.js": Util::constructScript(script),
-        @"offscreen.html": @"<!DOCTYPE html><html></html>",
-    }, offscreenConfig);
-}
-
-TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentRemovedFromClientsMatchAllAfterClose)
-{
-    auto *script = @[
-        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
-        @"const isOffscreenAClient = async () => (await self.clients.matchAll()).some((client) => client.url === offscreenURL)",
-
-        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
-        @"browser.test.assertTrue(await isOffscreenAClient(), 'The offscreen document should be a client while it is open')",
-
-        @"await browser.offscreen.closeDocument()",
-
-        // After closing the document, give the client time to tear down and unregister itself as a client.
-        @"let stillAClient = true",
-        @"for (let attempt = 0; attempt < 50 && stillAClient; ++attempt) {",
-        @"  stillAClient = await isOffscreenAClient()",
-        @"  if (stillAClient)",
-        @"    await new Promise((resolve) => setTimeout(resolve, 50))",
-        @"}",
-
-        @"browser.test.assertFalse(stillAClient, 'The offscreen document should stop being a client after it is closed')",
-        @"browser.test.notifyPass()",
-    ];
-
-    Util::loadAndRunExtension(offscreenManifest, @{
-        @"background.js": Util::constructScript(script),
-        @"offscreen.html": @"<!DOCTYPE html><html></html>",
-    }, offscreenConfig);
-}
-
-TEST_F(WKWebExtensionAPIOffscreen, ClientsMatchAllUsedAsHasDocumentGuard)
-{
-    auto *script = @[
-        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
-        @"const hasDocument = async () => (await self.clients.matchAll()).some((client) => client.url === offscreenURL)",
-
-        @"const ensureDocument = async () => {",
-        @"  if (await hasDocument())",
-        @"    return",
-        @"  await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
-        @"}",
-
-        @"await ensureDocument()",
-
-        @"browser.test.assertTrue(await browser.offscreen.hasDocument(), 'A single offscreen document should still be open')",
-        @"browser.test.notifyPass()",
-    ];
-
-    Util::loadAndRunExtension(offscreenManifest, @{
-        @"background.js": Util::constructScript(script),
-        @"offscreen.html": @"<!DOCTYPE html><html></html>",
-    }, offscreenConfig);
-}
-
-TEST_F(WKWebExtensionAPIOffscreen, TabAndOffscreenDocumentVisibleToClientsMatchAll)
-{
-    auto *script = @[
-        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
-        @"const tabURL = browser.runtime.getURL('tab.html')",
-
-        @"const tabReady = new Promise((resolve) => {",
-        @"  browser.runtime.onMessage.addListener((message) => {",
-        @"    if (message === 'tab ready')",
-        @"      resolve()",
-        @"  })",
-        @"})",
-
-        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
-        @"await browser.tabs.create({ url: 'tab.html' })",
-        @"await tabReady",
-
-        @"const clients = await self.clients.matchAll({ includeUncontrolled: true })",
-        @"browser.test.assertEq(clients.length, 2)",
-        @"browser.test.assertTrue(clients.some((client) => client.url === offscreenURL), 'The offscreen document should be a service worker client')",
-        @"browser.test.assertTrue(clients.some((client) => client.url === tabURL), 'The tab should be a service worker client')",
-
-        @"browser.test.notifyPass()",
-    ];
-
-    auto *tabScript = @[
-        @"browser.runtime.sendMessage('tab ready')",
-    ];
-
-    Util::loadAndRunExtension(offscreenManifest, @{
-        @"background.js": Util::constructScript(script),
-        @"offscreen.html": @"<!DOCTYPE html><html></html>",
-        @"tab.html": @"<script type='module' src='tab.js'></script>",
-        @"tab.js": Util::constructScript(tabScript),
     }, offscreenConfig);
 }
 

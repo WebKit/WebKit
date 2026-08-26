@@ -165,9 +165,7 @@ void CcidConnection::trySelectFidoApplet()
             if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f })) {
                 if (RefPtr service = protectedThis->m_service.get())
                     service->didConnectTag();
-                return;
             }
-            protectedThis->stop();
         });
     });
 }

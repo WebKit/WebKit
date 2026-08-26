@@ -244,7 +244,6 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/HTTPParsers.cpp
         Tests/WebCore/IDBKeyData.cpp
         Tests/WebCore/IDBSerializationTest.cpp
-        Tests/WebCore/IPAddressSpaceTests.cpp
         Tests/WebCore/ImageBufferTests.cpp
         Tests/WebCore/IntPointTests.cpp
         Tests/WebCore/IntRectTests.cpp
@@ -308,10 +307,12 @@ if (ENABLE_WEBCORE)
         ${TESTWEBKITAPI_DIR}
     )
 
+    set(TestWebCore_DEFINITIONS
+      WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
+    )
+
     WEBKIT_EXECUTABLE_DECLARE(TestWebCore)
-    # TestWebCore gains Swift sources via WEBKIT_TEST_ENABLE_SWIFT.
-    webkit_target_compile_definitions(TestWebCore PUBLIC
-        "WEBKIT_SRC_DIR=\"${CMAKE_SOURCE_DIR}\"")
+    target_compile_definitions(TestWebCore PUBLIC TestWebCore_DEFINITIONS)
 endif ()
 
 # TestWebKitLegacy definitions

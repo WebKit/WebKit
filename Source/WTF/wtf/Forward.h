@@ -167,8 +167,8 @@ template<typename, typename WeakPtrImpl = DefaultWeakPtrImpl, typename = RawPtrT
 template<typename, typename = DefaultWeakPtrImpl> class WeakRef;
 template<typename T> class InlineWeakPtr;
 template<typename T> struct NoTaggingTraits;
-template<typename T> class ThreadSafeWeakPtr;
-template<typename T> class ThreadSafeWeakRef;
+template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakPtr;
+template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakRef;
 
 template <typename T>
 using SaSegmentedVector = SegmentedVector<T, 8, 0, SegmentedVectorGrowthPolicy::Constant, SequesteredArenaMalloc>;

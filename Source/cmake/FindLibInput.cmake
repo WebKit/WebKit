@@ -75,8 +75,6 @@ find_package_handle_standard_args(LibInput
     VERSION_VAR LibInput_VERSION
 )
 
-WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(LibInput_COMPILE_OPTIONS ${LibInput_COMPILE_OPTIONS})
-
 if (LibInput_LIBRARY AND NOT TARGET LibInput::LibInput)
     add_library(LibInput::LibInput UNKNOWN IMPORTED GLOBAL)
     set_target_properties(LibInput::LibInput PROPERTIES

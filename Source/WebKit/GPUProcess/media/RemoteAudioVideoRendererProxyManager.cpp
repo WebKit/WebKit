@@ -89,11 +89,6 @@ RefPtr<AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::createRenderer(
 #endif
 }
 
-Ref<RemoteAudioVideoRendererProxyManager> RemoteAudioVideoRendererProxyManager::create(GPUConnectionToWebProcess& connection)
-{
-    return adoptRef(*new RemoteAudioVideoRendererProxyManager(connection));
-}
-
 RemoteAudioVideoRendererProxyManager::RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess& connection)
     : m_videoFrameObjectHeap(connection.videoFrameObjectHeap())
     , m_gpuConnectionToWebProcess(connection)
@@ -115,6 +110,21 @@ RemoteAudioVideoRendererProxyManager::~RemoteAudioVideoRendererProxyManager()
     }
 }
 
+void RemoteAudioVideoRendererProxyManager::ref() const
+{
+    m_gpuConnectionToWebProcess.get()->ref();
+}
+
+void RemoteAudioVideoRendererProxyManager::deref() const
+{
+    m_gpuConnectionToWebProcess.get()->deref();
+}
+
+ThreadSafeWeakPtrControlBlock& RemoteAudioVideoRendererProxyManager::controlBlock() const
+{
+    return m_gpuConnectionToWebProcess.get()->controlBlock();
+}
+
 void RemoteAudioVideoRendererProxyManager::connectionToWebProcessClosed()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -131,7 +141,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioVideoRendererProxyManag
     return m_gpuConnectionToWebProcess.get()->sharedPreferencesForWebProcess();
 }
 
-void RemoteAudioVideoRendererProxyManager::createManager(RemoteAudioVideoRendererIdentifier identifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&& completionHandler)
+void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdentifier identifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&& completionHandler)
 {
     MESSAGE_CHECK(!m_renderers.contains(identifier));
 

@@ -4215,7 +4215,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
                 return false;
             }
 
-            auto borderBoxLogicalTop = logicalTopForChild(*blockRenderer);
+            auto borderBoxLogicalTop = blockRenderer->logicalTop();
             auto marginBoxLogicalTop = borderBoxLogicalTop;
 
             if (!marginInfo.canCollapseWithMarginBefore()) {
@@ -4236,7 +4236,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
             };
             if (shouldFallbackToNormalInlineLayout())
                 return false;
-            setLogicalTopForChild(*blockRenderer, borderBoxLogicalTop);
+            blockRenderer->setLogicalTop(borderBoxLogicalTop);
         }
         return true;
     };

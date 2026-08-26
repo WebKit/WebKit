@@ -44,6 +44,7 @@
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
+#include "compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
 #include "compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.h"
 #include "compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.h"
 #include "compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.h"
@@ -412,11 +413,13 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
 
 TCompiler::~TCompiler() {}
 
-bool TCompiler::shouldRunLoopAndIndexingValidation() const
+bool TCompiler::shouldRunLoopAndIndexingValidation(const ShCompileOptions &compileOptions) const
 {
-    // If compiling an ESSL 1.00 shader for WebGL, validate loop and indexing as well (to verify
-    // that the shader only uses minimal functionality of ESSL 1.00 as in Appendix A of the spec).
-    return IsWebGLBasedSpec(mShaderSpec) && mShaderVersion == 100;
+    // If compiling an ESSL 1.00 shader for WebGL, or if its been requested through the API,
+    // validate loop and indexing as well (to verify that the shader only uses minimal functionality
+    // of ESSL 1.00 as in Appendix A of the spec).
+    return (IsWebGLBasedSpec(mShaderSpec) && mShaderVersion == 100) ||
+           compileOptions.validateLoopIndexing;
 }
 
 bool TCompiler::Init(const ShBuiltInResources &resources)
@@ -907,6 +910,14 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
+    if (compileOptions.regenerateStructNames)
+    {
+        if (!RegenerateStructNames(this, root, &mSymbolTable))
+        {
+            return false;
+        }
+    }
+
     if (compileOptions.emulateGLDrawID &&
         IsExtensionEnabled(mExtensionBehavior, TExtension::ANGLE_multi_draw))
     {
@@ -1105,7 +1116,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         // init statements can declare arrays or nameless structs and have multiple
         // declarations.
 
-        if (!shouldRunLoopAndIndexingValidation())
+        if (!shouldRunLoopAndIndexingValidation(compileOptions))
         {
             if (!SimplifyLoopConditions(this, root,
                                         IntermNodePatternMatcher::kArrayDeclaration |
@@ -1436,8 +1447,8 @@ void TCompiler::collectVariables(TIntermBlock *root)
     ASSERT(!mVariablesCollected);
     CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
                      &mOutputVaryings, &mSharedVariables, &mUniformBlocks, &mShaderStorageBlocks,
-                     mResources.UserVariableNamePrefix, mResources.UserBlockNamePrefix,
-                     mResources.HashFunction, &mSymbolTable, mShaderType, mExtensionBehavior,
+                     mResources.UserVariableNamePrefix, mResources.HashFunction, &mSymbolTable,
+                     mShaderType, mExtensionBehavior,
                      mCompileOptions.transformFloatUniformTo16Bits);
     collectInterfaceBlocks();
     mVariablesCollected = true;

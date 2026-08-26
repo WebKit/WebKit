@@ -737,13 +737,13 @@ JSC::Identifier JSDOMGlobalObject::moduleLoaderResolve(JSC::JSGlobalObject* glob
     return { };
 }
 
-JSC::JSPromise* JSDOMGlobalObject::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, const String& referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
+JSC::JSPromise* JSDOMGlobalObject::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSDOMGlobalObject* thisObject = downcast<JSDOMGlobalObject>(globalObject);
     if (auto* loader = scriptModuleLoader(thisObject))
-        RELEASE_AND_RETURN(scope, loader->fetch(globalObject, moduleLoader, moduleKey, referrer, WTF::move(parameters), WTF::move(scriptFetcher)));
+        RELEASE_AND_RETURN(scope, loader->fetch(globalObject, moduleLoader, moduleKey, WTF::move(parameters), WTF::move(scriptFetcher)));
     JSC::JSPromise* promise = JSC::JSPromise::create(vm, globalObject->promiseStructure());
     scope.release();
     promise->reject(vm, jsUndefined());

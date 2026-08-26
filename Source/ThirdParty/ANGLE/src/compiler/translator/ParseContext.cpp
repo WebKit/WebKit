@@ -24,7 +24,6 @@
 #include "common/utilities.h"
 #include "compiler/preprocessor/SourceLocation.h"
 #include "compiler/translator/Declarator.h"
-#include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/ValidateGlobalInitializer.h"
 #include "compiler/translator/glslang.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
@@ -56,11 +55,14 @@ constexpr size_t kWebGLMaxTotalPrivateVariableSizeInBytes = static_cast<size_t>(
 // The 1024 character identifier limit, `-2` for the `_u`
 constexpr size_t kMaxAvailableIdentifierLength = 1022;
 
-bool ShouldEnforceESSL100LoopAndIndexingLimitations(ShShaderSpec spec, int shaderVersion)
+bool ShouldEnforceESSL100LoopAndIndexingLimitations(ShShaderSpec spec,
+                                                    int shaderVersion,
+                                                    const ShCompileOptions &compileOptions)
 {
-    // If compiling an ESSL 1.00 shader for WebGL, validate loop and indexing as well (to verify
-    // that the shader only uses minimal functionality of ESSL 1.00 as in Appendix A of the spec).
-    return IsWebGLBasedSpec(spec) && shaderVersion == 100;
+    // If compiling an ESSL 1.00 shader for WebGL, or if its been requested through the API,
+    // validate loop and indexing as well (to verify that the shader only uses minimal functionality
+    // of ESSL 1.00 as in Appendix A of the spec).
+    return (IsWebGLBasedSpec(spec) && shaderVersion == 100) || compileOptions.validateLoopIndexing;
 }
 
 struct IsSamplerFunc
@@ -460,44 +462,6 @@ unsigned int GetMaxUniformBlocksForShaderType(sh::GLenum shaderType,
             return 0;
     }
 }
-
-enum class StructureOriginalScope
-{
-    Global,
-    FunctionLocal,
-};
-
-TIntermDeclaration *RenameAndDeclareStruct(TSymbolTable *symbolTable,
-                                           TStructure *structure,
-                                           StructureOriginalScope scope)
-{
-    ASSERT(!structure->name().empty());
-
-    // We need +2 space for _0 if global, or +11 for "_uniqueId" if function-local.  Using +11
-    // always for simplicity.  +1 for the NUL terminator.
-    //
-    // If appending ID and the name is too long, cut off the end of the name.  The ID makes it
-    // unique.
-    constexpr uint32_t kAppendExtraChars = 1 + 11;  // underscore + 32-bit number
-    const ImmutableString name(
-        structure->name().data(),
-        std::min<size_t>(structure->name().length(), kESSLMaxIdentifierLength - kAppendExtraChars));
-
-    ImmutableStringBuilder builder(structure->name().length() + kAppendExtraChars);
-    builder << name << "_"
-            << (scope == StructureOriginalScope::Global ? 0 : structure->uniqueId().get());
-    structure->setName(builder);
-
-    TType *namedType = new TType(structure, true);
-    namedType->setQualifier(EvqGlobal);
-
-    TVariable *structVariable =
-        new TVariable(symbolTable, kEmptyImmutableString, namedType, SymbolType::Empty);
-    TIntermSymbol *structDeclarator       = new TIntermSymbol(structVariable);
-    TIntermDeclaration *structDeclaration = new TIntermDeclaration;
-    structDeclaration->appendDeclarator(structDeclarator);
-    return structDeclaration;
-}
 }  // namespace
 
 // This tracks each binding point's current default offset for inheritance of subsequent
@@ -582,7 +546,7 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mMainFunction(nullptr),
       mIsReturnVisitedInMain(false),
       mValidateESSL100Limitations(
-          ShouldEnforceESSL100LoopAndIndexingLimitations(spec, mShaderVersion)),
+          ShouldEnforceESSL100LoopAndIndexingLimitations(spec, mShaderVersion, options)),
       mFragmentOutputIndex1Used(false),
       mFragmentOutputFragDepthUsed(false),
       mMaxFragDataArrayIndexUsed(0),
@@ -633,8 +597,8 @@ void TParseContext::onShaderVersionDeclared(const TSourceLoc &loc, int version)
     mShaderVersion = version;
     checkShaderVersion(loc);
     // Update cached decisions that depend on the shader version
-    mValidateESSL100Limitations =
-        ShouldEnforceESSL100LoopAndIndexingLimitations(mShaderSpec, mShaderVersion);
+    mValidateESSL100Limitations = ShouldEnforceESSL100LoopAndIndexingLimitations(
+        mShaderSpec, mShaderVersion, mCompileOptions);
 }
 
 void TParseContext::fatal(const TSourceLoc &loc, const char *reason)
@@ -1399,11 +1363,11 @@ bool TParseContext::checkIsNotReserved(const TSourceLoc &line, const ImmutableSt
 
     // Validate that identifier names won't conflict with the name hashing done later.
     // See https://crbug.com/499176133
-    if (identifier.length() >= kMaxAvailableIdentifierLength && identifier[0] == '_' &&
-        (identifier[1] == mResources.UserVariableNamePrefix ||
-         identifier[1] == mResources.UserBlockNamePrefix))
+    if ((identifier.length() >= kMaxAvailableIdentifierLength) &&
+        mResources.UserVariableNamePrefix != '\0' && identifier[0] == '_' &&
+        identifier[1] == mResources.UserVariableNamePrefix)
     {
-        std::string err = "identifiers beginning with `_` must be < " +
+        std::string err = "identifiers beginning with `_u` must be < " +
                           std::to_string(kMaxAvailableIdentifierLength) + " characters";
         error(line, err.c_str(), identifier);
         return false;
@@ -1916,28 +1880,23 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
     }
 
     // Check the cache of validated types first.
-    size_t variableSize   = 0;
     auto preValidatedIter = mValidatedVariableTypeSizes.find(*type);
     if (preValidatedIter != mValidatedVariableTypeSizes.end())
     {
-        variableSize = preValidatedIter->second;
-    }
-    else
-    {
-        // Note: the only allowed interface block in webgl shaders is UBOs in std140 mode, so the
-        // size is unconditionally calculated with std140 rules if the variable is an interface
-        // block. Uniform variables are treated the same way as UBOs, as they are often packed the
-        // same way later on.
-        variableSize = CalculateVariableSize(
-                           type, type->isInterfaceBlock() || type->getQualifier() == EvqUniform)
-                           .ValueOrDefault(std::numeric_limits<size_t>::max());
-
-        mValidatedVariableTypeSizes[*type] = variableSize;
+        return preValidatedIter->second;
     }
 
+    // Note: the only allowed interface block in webgl shaders is UBOs in std140 mode, so the size
+    // is unconditionally calculated with std140 rules if the variable is an interface block.
+    // Uniform variables are treated the same way as UBOs, as they are often packed the same way
+    // later on.
+    const size_t variableSize =
+        CalculateVariableSize(type, type->isInterfaceBlock() || type->getQualifier() == EvqUniform)
+            .ValueOrDefault(std::numeric_limits<size_t>::max());
     if (variableSize > kWebGLMaxVariableSizeInBytes)
     {
         error(line, "Size of declared variable exceeds implementation-defined limit", identifier);
+        mValidatedVariableTypeSizes[*type] = false;
         return false;
     }
 
@@ -1984,6 +1943,7 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
                 error(line,
                       "Size of declared private variable exceeds implementation-defined limit",
                       identifier);
+                mValidatedVariableTypeSizes[*type] = false;
                 return false;
             }
             mTotalPrivateVariablesSize += variableSize;
@@ -1992,6 +1952,7 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
             break;
     }
 
+    mValidatedVariableTypeSizes[*type] = true;
     return true;
 }
 
@@ -6362,7 +6323,7 @@ TFunctionLookup *TParseContext::addConstructorFunc(const TPublicType &publicType
         error(publicType.getLine(), "array constructor supported in GLSL ES 3.00 and above only",
               "[]");
     }
-    if (publicType.isStructSpecifierForValidation())
+    if (publicType.isStructSpecifier())
     {
         error(publicType.getLine(), "constructor can't be a structure definition",
               getBasicString(publicType.getBasicType()));
@@ -6401,7 +6362,7 @@ TParameter TParseContext::parseParameterDeclarator(const TPublicType &type,
             error(nameLoc, "illegal use of type 'void'", name);
         }
     }
-    if (type.isStructSpecifierForValidation())
+    if (type.isStructSpecifier())
     {
         // ESSL 3.00.6 section 12.10.
         error(nameLoc, "Function parameter type cannot be a structure definition", name);
@@ -8469,8 +8430,7 @@ TTypeSpecifierNonArray TParseContext::addStructure(const TSourceLoc &structLine,
                                                    TFieldList *fieldList)
 {
     SymbolType structSymbolType = SymbolType::UserDefined;
-    const bool isNamelessStruct = structName.empty();
-    if (isNamelessStruct)
+    if (structName.empty())
     {
         structSymbolType = SymbolType::Empty;
     }
@@ -8579,23 +8539,9 @@ TTypeSpecifierNonArray TParseContext::addStructure(const TSourceLoc &structLine,
             angle::Span<const TField *const>(reorderedFields->data(), reorderedFields->size())),
         {}, false, false, symbolTable.atGlobalLevel());
 
-    // Nameless structs are declared inline with their variables.  But named structs are always
-    // separately declared at the end of parse.
     TTypeSpecifierNonArray typeSpecifierNonArray;
-    typeSpecifierNonArray.initializeStruct(structure, isNamelessStruct, true, structLine);
+    typeSpecifierNonArray.initializeStruct(structure, true, structLine);
     exitStructDeclaration();
-
-    if (!isNamelessStruct)
-    {
-        if (symbolTable.atGlobalLevel())
-        {
-            mGlobalNamedStructs.push_back(structure);
-        }
-        else
-        {
-            mFunctionLocalNamedStructs.push_back(structure);
-        }
-    }
 
     return typeSpecifierNonArray;
 }
@@ -10297,39 +10243,6 @@ void TParseContext::endStatementWithValue(TIntermNode *statement)
     }
 }
 
-void TParseContext::prependPendingStructDeclarations()
-{
-    TIntermSequence allStructDecls;
-
-    // Do the following for all structs:
-    //
-    // * First, modify the name of the struct.  This breaks the symbol table, as names cannot be
-    //   looked up anymore, but that's ok because this is the end of parse and no transformation
-    //   looks up user symbol names anymore.  The struct names are used during link to match
-    //   uniforms, and so for global structs, the name is suffixed by |_0| to be identical between
-    //   shader stages.  For function-local structs it's suffixed by |_uniqueId|
-    // * Then, create a global declarator for the struct and append it to the list of declarations.
-    //
-    // The whole list is prepended to the shader at the end.  Global structs are declared first, as
-    // they may be used by function-local structs.  Within global or function-local structs, they
-    // are declared in the order they are encountered in the shader for the same reason.
-
-    for (TStructure *structure : mGlobalNamedStructs)
-    {
-        allStructDecls.push_back(
-            RenameAndDeclareStruct(&symbolTable, structure, StructureOriginalScope::Global));
-    }
-
-    for (TStructure *structure : mFunctionLocalNamedStructs)
-    {
-        allStructDecls.push_back(
-            RenameAndDeclareStruct(&symbolTable, structure, StructureOriginalScope::FunctionLocal));
-    }
-
-    mTreeRoot->getSequence()->insert(mTreeRoot->getSequence()->begin(), allStructDecls.begin(),
-                                     allStructDecls.end());
-}
-
 void TParseContext::checkCallGraph()
 {
     // Verify that the call graph does not contain a loop.
@@ -10623,12 +10536,6 @@ bool TParseContext::postParseChecks()
     // If parse failed, we shouldn't reach here.
     ASSERT(!mCompileOptions.useIR || mTreeRoot != nullptr);
 #endif
-
-    // Struct declarations are delayed to the end of parse, add them to the AST now
-    if (mTreeRoot != nullptr)
-    {
-        prependPendingStructDeclarations();
-    }
 
     // If gl_Position is expected to be zero-initialized, make sure it's declared to the IR; it
     // should still be done if gl_Position is statically not used by the shader.

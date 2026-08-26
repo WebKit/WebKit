@@ -119,7 +119,7 @@ pub const TYPED_CONSTANT_ID_YUV_CSC_ITU709: TypedId =
     TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU709, TYPE_ID_YUV_CSC_STANDARD);
 
 // Prefixes used for symbols.
-pub const USER_SYMBOL_PREFIX: &str = "_"; // followed by CompileOptions::user_variable_name_prefix
+pub const USER_SYMBOL_PREFIX: &str = "_u";
 pub const TEMP_VARIABLE_PREFIX: &str = "t";
 pub const TEMP_FUNCTION_PREFIX: &str = "f";
 pub const TEMP_STRUCT_PREFIX: &str = "s";
@@ -1986,6 +1986,8 @@ pub enum ImageDimension {
     External,
     // For GL_EXT_YUV_target
     ExternalY2Y,
+    // For WebGL_video_texture
+    Video,
     // For ANGLE_shader_pixel_local_storage
     PixelLocal,
     // For subpass inputs

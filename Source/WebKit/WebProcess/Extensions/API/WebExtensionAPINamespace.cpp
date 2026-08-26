@@ -65,12 +65,12 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return extensionContext->inTestingMode();
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (name == "offscreen"_s)
+        return page && page->corePage() && page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
+
     // The offscreen document is not a full extension environment; only runtime and test are reachable from it.
     if (page && extensionContext->isOffscreenPage(*page))
         return name == "runtime"_s;
-
-    if (name == "offscreen"_s)
-        return page && page->corePage() && page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
 #endif
 
     if (name == "action"_s)

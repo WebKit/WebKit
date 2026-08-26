@@ -225,13 +225,14 @@ CallCapture CaptureDrawElementsIndirect(const State &glState,
 CallCapture CaptureFramebufferParameteri(const State &glState,
                                          bool isCallValid,
                                          GLenum target,
-                                         FramebufferParameter pnamePacked,
+                                         GLenum pname,
                                          GLint param)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addEnumParam("target", GLESEnum::FramebufferTarget, ParamType::TGLenum, target);
-    paramBuffer.addValueParam("pnamePacked", ParamType::TFramebufferParameter, pnamePacked);
+    paramBuffer.addEnumParam("pname", GLESEnum::FramebufferParameterName, ParamType::TGLenum,
+                             pname);
     paramBuffer.addValueParam("param", ParamType::TGLint, param);
 
     return CallCapture(angle::EntryPoint::GLFramebufferParameteri, std::move(paramBuffer));
@@ -294,19 +295,20 @@ CallCapture CaptureGetBooleani_v(const State &glState,
 CallCapture CaptureGetFramebufferParameteriv(const State &glState,
                                              bool isCallValid,
                                              GLenum target,
-                                             FramebufferParameter pnamePacked,
+                                             GLenum pname,
                                              GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addEnumParam("target", GLESEnum::FramebufferTarget, ParamType::TGLenum, target);
-    paramBuffer.addValueParam("pnamePacked", ParamType::TFramebufferParameter, pnamePacked);
+    paramBuffer.addEnumParam("pname", GLESEnum::FramebufferAttachmentParameterName,
+                             ParamType::TGLenum, pname);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-        CaptureGetFramebufferParameteriv_params(glState, target, pnamePacked, params, &paramsParam);
+        CaptureGetFramebufferParameteriv_params(glState, target, pname, params, &paramsParam);
     }
     else
     {

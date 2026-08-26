@@ -23,9 +23,11 @@ class ResourcesHLSL : angle::NonCopyable
 {
   public:
     ResourcesHLSL(StructureHLSL *structureHLSL,
+                  ShShaderOutput outputType,
                   const std::vector<ShaderVariable> &uniforms,
                   unsigned int firstUniformRegister);
 
+    void reserveUniformRegisters(unsigned int registerCount);
     void reserveUniformBlockRegisters(unsigned int registerCount);
     void uniformsHeader(TInfoSinkBase &out,
                         ShShaderOutput outputType,
@@ -118,6 +120,7 @@ class ResourcesHLSL : angle::NonCopyable
     unsigned int mReadonlyImageCount = 0;
     unsigned int mImageCount         = 0;
     StructureHLSL *mStructureHLSL;
+    ShShaderOutput mOutputType;
 
     const std::vector<ShaderVariable> &mUniforms;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;

@@ -414,7 +414,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -424,7 +424,7 @@ void GL_APIENTRY GL_{name}({params})
         {{
             context->{name_lower_no_suffix}({internal_params});
         }}
-        ANGLE_CAPTURE_GL({name_enum}, isCallValid, {gl_capture_params});
+        ANGLE_CAPTURE_GL({name}, isCallValid, {gl_capture_params});
     }}
     else
     {{
@@ -439,7 +439,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -448,7 +448,7 @@ void GL_APIENTRY GL_{name}({params})
         {{
             ContextPrivate{name_no_suffix}({context_private_internal_params});
         }}
-        ANGLE_CAPTURE_GL({name_enum}, isCallValid, {gl_capture_params});
+        ANGLE_CAPTURE_GL({name}, isCallValid, {gl_capture_params});
     }}
     else
     {{
@@ -463,7 +463,7 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -477,14 +477,14 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
         }}
         else
         {{
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name_enum}, {return_type}>();
+            returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name}, {return_type}>();
         }}
-        ANGLE_CAPTURE_GL({name_enum}, isCallValid, {gl_capture_params}, returnValue);
+        ANGLE_CAPTURE_GL({name}, isCallValid, {gl_capture_params}, returnValue);
     }}
     else
     {{
         {constext_lost_error_generator}
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name_enum}, {return_type}>();
+        returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name}, {return_type}>();
     }}
     {epilog}
     return returnValue;
@@ -496,7 +496,7 @@ TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -508,14 +508,14 @@ TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_WITH_RETURN = """\
         }}
         else
         {{
-            returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name_enum}, {return_type}>();
+            returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name}, {return_type}>();
         }}
-        ANGLE_CAPTURE_GL({name_enum}, isCallValid, {gl_capture_params}, returnValue);
+        ANGLE_CAPTURE_GL({name}, isCallValid, {gl_capture_params}, returnValue);
     }}
     else
     {{
         {constext_lost_error_generator}
-        returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name_enum}, {return_type}>();
+        returnValue = GetDefaultReturnValue<angle::EntryPoint::GL{name}, {return_type}>();
     }}
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
@@ -1927,20 +1927,15 @@ def get_stubs_header_template(api):
         return ""
 
 
-def format_entry_point_decl(api, cmd_name, proto, params, explicit_context):
+def format_entry_point_decl(api, cmd_name, proto, params):
     comma_if_needed = ", " if len(params) > 0 else ""
     stripped = strip_api_prefix(cmd_name)
-    decl_params = params[:]
-    if explicit_context:
-        stripped = generate_explicit_context_function_name(stripped)
-        add_explicit_context_parameters(decl_params)
-
     return TEMPLATE_ENTRY_POINT_DECL.format(
         angle_export=entry_point_export(api),
         export_def=get_api_entry_def(api),
         name="%s%s" % (entry_point_prefix(api), stripped),
         return_type=proto[:-len(cmd_name)].strip(),
-        params=", ".join(decl_params),
+        params=", ".join(params),
         comma_if_needed=comma_if_needed)
 
 
@@ -2077,17 +2072,11 @@ def is_context_lost_acceptable_cmd(cmd_name):
     return False
 
 
-def get_context_getter_function(cmd_name, explicit_context):
-    if explicit_context:
-        if is_context_lost_acceptable_cmd(cmd_name):
-            return "GetContext(dpy, ctx)"
-        else:
-            return "GetValidContext(dpy, ctx)"
-    else:
-        if is_context_lost_acceptable_cmd(cmd_name):
-            return "GetGlobalContext()"
-        else:
-            return "GetValidGlobalContext()"
+def get_context_getter_function(cmd_name):
+    if is_context_lost_acceptable_cmd(cmd_name):
+        return "GetGlobalContext()"
+
+    return "GetValidGlobalContext()"
 
 
 def get_valid_context_check(cmd_name):
@@ -2173,8 +2162,8 @@ def get_def_template(api, cmd_name, return_type, has_errcode_ret):
 
 
 def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packed_enums,
-                           packed_param_types, ep_to_object, sources, sources_by_command_no_suffix,
-                           explicit_context):
+                           packed_param_types, ep_to_object, sources,
+                           sources_by_command_no_suffix):
     packed_enums = get_packed_enums(api, cmd_packed_enums, cmd_name, packed_param_types, params)
     internal_params = [just_the_name_packed(param, packed_enums) for param in params]
     if internal_params and internal_params[-1] == "errcode_ret":
@@ -2213,14 +2202,6 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             if 'AttributeMap' in internal_type:
                 attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
 
-    name = strip_api_prefix(cmd_name)
-    decl_params = params[:]
-
-    # When generating the explicit context entry point, update the function named and prepend the explicit context parameter
-    if explicit_context:
-        name = generate_explicit_context_function_name(name)
-        add_explicit_context_parameters(decl_params)
-
     pass_params = [param_print_argument(api, command_node, param) for param in params]
     format_params = [param_format_string(param) for param in params]
     return_type = proto[:-len(cmd_name)].strip()
@@ -2234,17 +2215,15 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
 
     format_params = {
         "name":
-            name,
+            strip_api_prefix(cmd_name),
         "name_no_suffix":
             name_no_suffix,
         "name_lower_no_suffix":
             name_lower_no_suffix,
-        "name_enum":
-            strip_api_prefix(cmd_name),
         "return_type":
             return_type,
         "params":
-            ", ".join(decl_params),
+            ", ".join(params),
         "internal_params":
             ", ".join(internal_params),
         "attrib_map_init":
@@ -2275,7 +2254,7 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         "format_params":
             ", ".join(format_params),
         "context_getter":
-            get_context_getter_function(cmd_name, explicit_context),
+            get_context_getter_function(cmd_name),
         "valid_context_check":
             get_valid_context_check(cmd_name),
         "constext_lost_error_generator":
@@ -2516,28 +2495,14 @@ def format_context_decl(api, cmd_name, proto, params, template, cmd_packed_gl_en
         maybe_const=maybe_const)
 
 
-def generate_explicit_context_function_name(name):
-    return name + "ContextANGLE"
-
-
-def add_explicit_context_parameters(decl_params):
-    decl_params.insert(0, "GLeglDisplayANGLE dpy")
-    decl_params.insert(1, "GLeglContextANGLE ctx")
-
-
-def format_entry_point_export(cmd_name, proto, params, template, explicit_context):
+def format_entry_point_export(cmd_name, proto, params, template):
     internal_params = [just_the_name(param) for param in params]
     return_type = proto[:-len(cmd_name)].strip()
-    stripped = strip_api_prefix(cmd_name)
-    decl_params = params[:]
-    if explicit_context:
-        stripped = generate_explicit_context_function_name(stripped)
-        add_explicit_context_parameters(decl_params)
 
     return template.format(
-        name=stripped,
+        name=strip_api_prefix(cmd_name),
         return_type=return_type,
-        params=", ".join(decl_params),
+        params=", ".join(params),
         internal_params=", ".join(internal_params))
 
 
@@ -2626,21 +2591,17 @@ class ANGLEEntryPoints(registry_xml.EntryPoints):
         self.capture_protos = []
         self.capture_methods = []
         self.capture_pointer_funcs = []
-        self.explicit_context_decls = []
-        self.explicit_context_defs = []
 
         for (cmd_name, command_node, param_text, proto_text) in self.get_infos():
-            self.decls.append(
-                format_entry_point_decl(self.api, cmd_name, proto_text, param_text, False))
+            self.decls.append(format_entry_point_decl(self.api, cmd_name, proto_text, param_text))
             self.defs.append(
                 format_entry_point_def(self.api, command_node, cmd_name, proto_text, param_text,
                                        cmd_packed_enums, packed_param_types, ep_to_object,
                                        xml.sources_by_command[cmd_name],
-                                       xml.sources_by_command_no_suffix, False))
+                                       xml.sources_by_command_no_suffix))
 
             self.export_defs.append(
-                format_entry_point_export(cmd_name, proto_text, param_text, export_template,
-                                          False))
+                format_entry_point_export(cmd_name, proto_text, param_text, export_template))
 
             if (cmd_name not in ALWAYS_VALID):
                 self.validation_protos.append(
@@ -2666,15 +2627,6 @@ class ANGLEEntryPoints(registry_xml.EntryPoints):
                 format_capture_method(self.api, command_node, cmd_name, proto_text, param_text,
                                       all_param_types, self.capture_pointer_funcs,
                                       cmd_packed_enums, packed_param_types))
-
-            if api == apis.GLES:
-                self.explicit_context_decls.append(
-                    format_entry_point_decl(self.api, cmd_name, proto_text, param_text, True))
-                self.explicit_context_defs.append(
-                    format_entry_point_def(self.api, command_node, cmd_name, proto_text,
-                                           param_text, cmd_packed_enums, packed_param_types,
-                                           ep_to_object, xml.sources_by_command[cmd_name],
-                                           xml.sources_by_command_no_suffix, True))
 
         # Ensure we store GLint64 in the param types for use with the replay interpreter.
         all_param_types.add('GLint64')
@@ -3755,8 +3707,6 @@ def main():
             '../src/libGLESv2/entry_points_gles_3_2_autogen.h',
             '../src/libGLESv2/entry_points_gles_ext_autogen.cpp',
             '../src/libGLESv2/entry_points_gles_ext_autogen.h',
-            '../src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp',
-            '../src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.h',
             '../src/libGLESv2/libGLESv2_autogen.cpp',
             '../src/libGLESv2/libGLESv2_autogen.def',
             '../src/libGLESv2/libGLESv2_no_capture_autogen.def',
@@ -3791,9 +3741,6 @@ def main():
     # Stores core commands to keep track of duplicates
     all_commands_no_suffix = []
     all_commands_with_suffix = []
-
-    explicit_context_decls = []
-    explicit_context_defs = []
 
     # Collect all context-private-state-accessing helper declarations
     context_private_call_protos = []
@@ -3868,9 +3815,6 @@ def main():
         write_capture_source(apis.GLES, 'gles_' + version, validation_annotation, comment,
                              eps.capture_methods)
 
-        explicit_context_decls += eps.explicit_context_decls
-        explicit_context_defs += eps.explicit_context_defs
-
     # After we finish with the main entry points, we process the extensions.
     extension_decls = ["extern \"C\" {"]
     extension_defs = ["extern \"C\" {"]
@@ -3911,8 +3855,6 @@ def main():
         ext_capture_protos += [comment] + eps.capture_protos
         ext_capture_methods += eps.capture_methods
         ext_capture_pointer_funcs += eps.capture_pointer_funcs
-        explicit_context_decls += eps.explicit_context_decls
-        explicit_context_defs += eps.explicit_context_defs
 
         for proto, function in zip(eps.context_private_call_protos,
                                    eps.context_private_call_functions):
@@ -4148,17 +4090,6 @@ def main():
     write_file("gles_ext", "GLES extension", TEMPLATE_ENTRY_POINT_SOURCE,
                "\n".join([item for item in extension_defs]), "cpp", GLES_EXT_SOURCE_INCLUDES,
                "libGLESv2", "gl.xml and gl_angle_ext.xml")
-
-    explicit_context_decls.insert(0, "extern \"C\" {")
-    explicit_context_decls.append("} // extern \"C\"")
-    explicit_context_defs.insert(0, "extern \"C\" {")
-    explicit_context_defs.append("} // extern \"C\"")
-    write_file("gles_ext_explicit_context", "GLES extension", TEMPLATE_ENTRY_POINT_HEADER,
-               "\n".join([item for item in explicit_context_decls]), "h", GLES_EXT_HEADER_INCLUDES,
-               "libGLESv2", "gl.xml and gl_angle_ext.xml")
-    write_file("gles_ext_explicit_context", "GLES extension", TEMPLATE_ENTRY_POINT_SOURCE,
-               "\n".join([item for item in explicit_context_defs]), "cpp",
-               GLES_EXT_SOURCE_INCLUDES, "libGLESv2", "gl.xml and gl_angle_ext.xml")
 
     write_gl_validation_header("ESEXT", "ES extension", ext_validation_protos,
                                "gl.xml and gl_angle_ext.xml")

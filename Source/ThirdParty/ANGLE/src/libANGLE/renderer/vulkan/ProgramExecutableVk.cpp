@@ -2146,10 +2146,7 @@ angle::Result ProgramExecutableVk::updateUniformsAndXfbDescInfo(
     ANGLE_TRY(updateUniformsAndXfbDescriptorSet(context, currentFrameCount, updateBuilder,
                                                 currentUniformBuffer, &newSharedCacheKey));
 
-    // If transform feedback is inactive or paused, updateUniformsAndXfb (via
-    // updateTransformFeedbackDescriptorDesc) will bind emptyBuffer, so there is no need to register
-    // the new descriptor set cache key with the actual transform feedback buffers.
-    if (newSharedCacheKey && activeUnpaused)
+    if (newSharedCacheKey)
     {
         transformFeedbackVk->onNewDescriptorSet(*getExecutable(), newSharedCacheKey);
     }
@@ -2494,14 +2491,10 @@ angle::Result ProgramExecutableVk::updateUniforms(vk::Context *context,
         vk::SharedDescriptorSetCacheKey newSharedCacheKey;
         ANGLE_TRY(updateUniformsAndXfbDescriptorSet(context, currentFrame, updateBuilder,
                                                     defaultUniformBuffer, &newSharedCacheKey));
-        // If transform feedback is inactive or paused, updateUniformsAndXfb (via
-        // updateTransformFeedbackDescriptorDesc) will bind emptyBuffer, so there is no need to
-        // register the new descriptor set cache key with the actual transform feedback buffers.
         if (newSharedCacheKey)
         {
             if (mExecutable->hasTransformFeedbackOutput() &&
-                context->getFeatures().emulateTransformFeedback.enabled &&
-                isTransformFeedbackActiveUnpaused)
+                context->getFeatures().emulateTransformFeedback.enabled)
             {
                 transformFeedbackVk->onNewDescriptorSet(*mExecutable, newSharedCacheKey);
             }

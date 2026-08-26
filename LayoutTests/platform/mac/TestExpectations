@@ -205,6 +205,7 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
+webkit.org/b/321534 [ Debug ] fast/mediastream/applyConstraints-with-takePhoto.html [ Skip ]
 
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf

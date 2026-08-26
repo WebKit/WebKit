@@ -137,7 +137,6 @@ inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
 overlay-region [ Skip ]
 pdf [ Skip ]
-ipc/cocoa [ Skip ]
 ipc/ios [ Skip ]
 ipc/mac [ Skip ]
 ipc/restrictedendpoints/mac [ Skip ]
@@ -5139,10 +5138,14 @@ webkit.org/b/292182 webgl/2.0.y/conformance2/rendering/clipping-wide-points.html
 webkit.org/b/313392 webgl/2.0.y/conformance2/textures/misc/tex-image-10bpc.html
 
 # To be fixed failures after "Update WebGL conformance tests 2026-07-18 (f15a73f727d8ee66a3ec6d0bed9f02f08cacc2c1)"
+webkit.org/b/320901 webgl/1.0.x/conformance/attribs/gl-get-attrib-location-errors.html [ Failure ]
 webkit.org/b/320901 webgl/1.0.x/conformance/glsl/misc/shader-with-double-underscore.html [ Failure ]
 webkit.org/b/320901 webgl/1.0.x/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure ]
+webkit.org/b/320901 webgl/1.0.x/conformance/uniforms/gl-get-uniform-location-errors.html [ Failure ]
+webkit.org/b/320901 webgl/2.0.y/conformance/attribs/gl-get-attrib-location-errors.html [ Failure ]
 webkit.org/b/320901 webgl/2.0.y/conformance/glsl/misc/shader-with-double-underscore.html [ Failure ]
 webkit.org/b/320901 webgl/2.0.y/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure ]
+webkit.org/b/320901 webgl/2.0.y/conformance/uniforms/gl-get-uniform-location-errors.html [ Failure ]
 webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Failure ]
 
 # Until more platforms ship with WebGL GPUP
@@ -6628,6 +6631,12 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-same-origin.https.tentative.html [ Pass Failure ]
 
 webkit.org/b/258192 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Pass Failure ]
+
+# These tests are timing out since their import.
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?indexed [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_self [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_parent [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_top [ Skip ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-box-edge-no-half-leading-simple.html [ Skip ]
@@ -8528,5 +8537,3 @@ imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-007.htm
 fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-href-in-shadow-tree.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/svg/as-image/sprite-sheet-fractional-size.html [ ImageOnlyFailure ]

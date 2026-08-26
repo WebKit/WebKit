@@ -132,9 +132,7 @@ void QueryInternalFormativ(const Context *context,
                            GLsizei count,
                            GLint *params);
 
-void QueryFramebufferParameteriv(const Framebuffer *framebuffer,
-                                 FramebufferParameter pnamePacked,
-                                 GLint *params);
+void QueryFramebufferParameteriv(const Framebuffer *framebuffer, GLenum pname, GLint *params);
 
 void QueryFramebufferPixelLocalStorageParameterfv(Context *context,
                                                   GLint plane,
@@ -187,7 +185,7 @@ void SetSamplerParameterIuiv(Context *context,
 
 void SetFramebufferParameteri(const Context *context,
                               Framebuffer *framebuffer,
-                              FramebufferParameter pnamePacked,
+                              GLenum pname,
                               GLint param);
 
 void SetProgramParameteri(const Context *context, Program *program, GLenum pname, GLint value);

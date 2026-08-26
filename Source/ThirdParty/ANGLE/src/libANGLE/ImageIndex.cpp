@@ -38,6 +38,7 @@ GLint TextureTargetToLayer(TextureTarget target)
         case TextureTarget::External:
         case TextureTarget::Rectangle:
         case TextureTarget::_2D:
+        case TextureTarget::VideoImage:
         case TextureTarget::_2DArray:
         case TextureTarget::_2DMultisample:
         case TextureTarget::_2DMultisampleArray:

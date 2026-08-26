@@ -983,14 +983,6 @@ void XMLDocumentParser::endElementNs()
     }
 
     if (!element || m_isInFrameView == IsInFrameView::No) {
-        // We never prepare scripts in this case (e.g. when parsing a fragment or a document without
-        // a frame view, like a DOMParser document). Mark them as already started so that they stay
-        // inert when cloned or adopted into a document that does execute scripts, matching what
-        // HTMLConstructionSite does for the HTML fragment parser.
-        if (element && !parserContentPolicy().contains(ParserContentPolicy::DoNotMarkAlreadyStarted)) {
-            if (auto* scriptElement = dynamicDowncastScriptElement(*element))
-                scriptElement->markAlreadyStarted();
-        }
         popCurrentNode();
         return;
     }

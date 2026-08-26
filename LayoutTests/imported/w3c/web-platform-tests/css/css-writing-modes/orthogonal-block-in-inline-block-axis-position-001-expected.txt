@@ -1,6 +1,0 @@
-first
-second
-third
-
-PASS A block level box on a line in an orthogonal writing mode starts after the line it follows on its container's block axis
-

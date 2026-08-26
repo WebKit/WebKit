@@ -27,231 +27,123 @@
 #include "IPAddressSpace.h"
 
 #include "DNS.h"
-#include "SecurityOrigin.h"
 #include "Site.h"
 #include <array>
-#include <optional>
-#include <span>
-#include <wtf/ASCIICType.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
+#if OS(UNIX)
+#include <arpa/inet.h>
+#endif
+
 namespace WebCore {
 
-struct AddressRange {
-    std::array<uint8_t, 16> address;
-    uint8_t prefixLength;
-    IPAddressSpace space;
-};
-
-static bool matchesPrefix(std::span<const uint8_t> bytes, const AddressRange& range)
+static IPAddressSpace classifyHost(String host)
 {
-    ASSERT(range.prefixLength <= bytes.size() * 8);
-    size_t wholeBytes = range.prefixLength / 8;
-    unsigned trailingBits = range.prefixLength % 8;
-    for (size_t byteIndex = 0; byteIndex < wholeBytes; ++byteIndex) {
-        if (bytes[byteIndex] != range.address[byteIndex])
-            return false;
-    }
-    if (!trailingBits)
-        return true;
-    uint8_t mask = 0xFF << (8 - trailingBits);
-    return (bytes[wholeBytes] & mask) == (range.address[wholeBytes] & mask);
-}
+    if (!URL::hostIsIPAddress(host))
+        return IPAddressSpace::Public;
 
-static IPAddressSpace classifyAddress(std::span<const uint8_t> bytes, std::span<const AddressRange> ranges)
-{
-    for (auto& range : ranges) {
-        if (matchesPrefix(bytes, range))
-            return range.space;
-    }
-    return IPAddressSpace::Public;
-}
-
-static IPAddressSpace classifyIPv4Address(std::span<const uint8_t, 4> bytes)
-{
-    static constexpr AddressRange ranges[] = {
-        { { 0, 0, 0, 0 }, 32, IPAddressSpace::Loopback },
-        { { 127 }, 8, IPAddressSpace::Loopback },
-        { { 198, 18 }, 15, IPAddressSpace::Loopback },
-        { { 0 }, 8, IPAddressSpace::Local },
-        { { 10 }, 8, IPAddressSpace::Local },
-        { { 100, 64 }, 10, IPAddressSpace::Local },
-        { { 172, 16 }, 12, IPAddressSpace::Local },
-        { { 192, 168 }, 16, IPAddressSpace::Local },
-        { { 169, 254 }, 16, IPAddressSpace::Local },
-        { { 192, 0, 0 }, 24, IPAddressSpace::Local },
-        { { 192, 0, 2 }, 24, IPAddressSpace::Local },
-        { { 192, 88, 99 }, 24, IPAddressSpace::Local },
-        { { 198, 51, 100 }, 24, IPAddressSpace::Local },
-        { { 203, 0, 113 }, 24, IPAddressSpace::Local },
-        { { 224 }, 4, IPAddressSpace::Local },
-        { { 240 }, 4, IPAddressSpace::Local },
-    };
-    return classifyAddress(bytes, ranges);
-}
-
-// RFC 6052 embeds an IPv4 address in the bits immediately following the prefix, skipping the octet at
-// bits 64-71 that the IPv6 addressing architecture reserves. Only the two prefixes with fixed values
-// can be recognised here; an operator's network-specific prefix is not knowable.
-static std::optional<std::array<uint8_t, 4>> nat64EmbeddedIPv4Address(std::span<const uint8_t, 16> bytes)
-{
-    // 64:ff9b::/96, the Well-Known Prefix (RFC 6052).
-    static constexpr std::array<uint8_t, 12> wellKnownPrefix { 0x00, 0x64, 0xFF, 0x9B };
-    if (equalSpans(bytes.first<12>(), std::span { wellKnownPrefix }))
-        return std::array<uint8_t, 4> { bytes[12], bytes[13], bytes[14], bytes[15] };
-
-    // 64:ff9b:1::/48, reserved for local use (RFC 8215), where the address straddles the reserved octet.
-    static constexpr std::array<uint8_t, 6> localUsePrefix { 0x00, 0x64, 0xFF, 0x9B, 0x00, 0x01 };
-    if (equalSpans(bytes.first<6>(), std::span { localUsePrefix }))
-        return std::array<uint8_t, 4> { bytes[6], bytes[7], bytes[9], bytes[10] };
-
-    return std::nullopt;
-}
-
-static IPAddressSpace classifyIPv6Address(std::span<const uint8_t, 16> bytes)
-{
-    static constexpr AddressRange ipv4MappedRange { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF }, 96, IPAddressSpace::Public };
-    if (matchesPrefix(bytes, ipv4MappedRange))
-        return classifyIPv4Address(bytes.subspan<12, 4>());
-
-    if (auto embedded = nat64EmbeddedIPv4Address(bytes))
-        return classifyIPv4Address(std::span<const uint8_t, 4> { *embedded });
-
-    static constexpr AddressRange ranges[] = {
-        { { }, 128, IPAddressSpace::Loopback },
-        { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 128, IPAddressSpace::Loopback },
-        { { 0xFC }, 7, IPAddressSpace::Local },
-        { { 0xFE, 0x80 }, 10, IPAddressSpace::Local },
-        { { 0xFE, 0xC0 }, 10, IPAddressSpace::Local },
-        { { 0x20, 0x01, 0x0D, 0xB8 }, 32, IPAddressSpace::Local },
-        { { 0x3F, 0xFF }, 20, IPAddressSpace::Local },
-        { { 0xFF }, 8, IPAddressSpace::Local },
-        { { 0x01 }, 64, IPAddressSpace::Local },
-    };
-    return classifyAddress(bytes, ranges);
-}
-
-static std::optional<std::array<uint8_t, 4>> parseIPv4Address(StringView host)
-{
-    std::array<uint8_t, 4> bytes { };
-    size_t index = 0;
-    for (auto octet : host.split('.')) {
-        if (index >= 4)
-            return std::nullopt;
-        if (octet.isEmpty() || !isASCIIDigit(octet[0]))
-            return std::nullopt;
-        auto value = parseInteger<uint8_t>(octet);
-        if (!value)
-            return std::nullopt;
-        bytes[index++] = *value;
-    }
-    if (index != 4)
-        return std::nullopt;
-    return bytes;
-}
-
-static std::optional<std::array<uint8_t, 16>> parseIPv6Address(StringView host)
-{
-    if (auto percent = host.find('%'); percent != notFound)
-        host = host.left(percent);
-
-    if (host.isEmpty())
-        return std::nullopt;
-
-    StringView head = host;
-    StringView tail;
-    bool isCompressed = false;
-    if (auto doubleColon = host.find("::"_s); doubleColon != notFound) {
-        isCompressed = true;
-        head = host.left(doubleColon);
-        tail = host.substring(doubleColon + 2);
-        if (tail.contains("::"_s))
-            return std::nullopt;
-    }
-
-    auto parseGroups = [](StringView text, std::span<uint8_t, 16> out, size_t offset) -> std::optional<size_t> {
-        if (text.isEmpty())
-            return 0;
-        size_t written = 0;
-        for (auto group : text.split(':')) {
-            if (group.isEmpty())
-                return std::nullopt;
-            if (group.contains('.')) {
-                auto ipv4 = parseIPv4Address(group);
-                if (!ipv4 || offset + written + 4 > 16)
-                    return std::nullopt;
-                for (size_t i = 0; i < 4; ++i)
-                    out[offset + written + i] = (*ipv4)[i];
-                written += 4;
-                continue;
-            }
-            if (group.length() > 4)
-                return std::nullopt;
-            auto value = parseInteger<uint16_t>(group, 16);
-            if (!value || offset + written + 2 > 16)
-                return std::nullopt;
-            out[offset + written] = static_cast<uint8_t>(*value >> 8);
-            out[offset + written + 1] = static_cast<uint8_t>(*value & 0xFF);
-            written += 2;
-        }
-        return written;
-    };
-
-    std::array<uint8_t, 16> bytes { };
-    auto headBytes = parseGroups(head, bytes, 0);
-    if (!headBytes)
-        return std::nullopt;
-
-    if (!isCompressed)
-        return *headBytes == 16 ? std::make_optional(bytes) : std::nullopt;
-
-    std::array<uint8_t, 16> tailBuffer { };
-    auto tailBytes = parseGroups(tail, tailBuffer, 0);
-    if (!tailBytes || *headBytes + *tailBytes > 16)
-        return std::nullopt;
-
-    if (*headBytes + *tailBytes == 16)
-        return std::nullopt;
-
-    for (size_t i = 0; i < *tailBytes; ++i)
-        bytes[16 - *tailBytes + i] = tailBuffer[i];
-
-    return bytes;
-}
-
-static IPAddressSpace classifyHost(StringView host)
-{
+    // Handle IPv6 addresses (check for colon to distinguish from IPv4)
     if (host.contains(':')) {
-        if (auto bytes = parseIPv6Address(host))
-            return classifyIPv6Address(std::span<const uint8_t, 16> { *bytes });
+        // ::1/128 - IPv6 Loopback
+        if (host == "::1")
+            return IPAddressSpace::Loopback;
+
+        // fc00::/7 - Unique Local - local
+        if (host.startsWith("fc"_s) || host.startsWith("fd"_s))
+            return IPAddressSpace::Local;
+
+        // fe80::/10 - Link-Local Unicast - local
+        if (host.startsWith("fe8"_s) || host.startsWith("fe9"_s) || host.startsWith("fea"_s) || host.startsWith("feb"_s))
+            return IPAddressSpace::Local;
+        // ::ffff: - IPv4 Mapped IPv6 Addresses - format for parsing by IPv4 Algorithm.
+        if (host.startsWith("::ffff:"_s)) {
+            host = host.substring(7);
+            if (!host.contains('.')) {
+                // Parse hex representation like "c0a8:101" -> "192.168.1.1"
+                StringView hostView { host };
+                auto colonPosition = hostView.find(':');
+                if (colonPosition == notFound || hostView.find(':', colonPosition + 1) != notFound)
+                    return IPAddressSpace::Public;
+
+                auto value1 = parseInteger<uint16_t>(hostView.left(colonPosition), 16);
+                auto value2 = parseInteger<uint16_t>(hostView.substring(colonPosition + 1), 16);
+
+                if (!value1.has_value() || !value2.has_value())
+                    return IPAddressSpace::Public;
+
+                // Convert 16-bit hex values to dotted decimal IPv4 format
+                uint16_t val1 = *value1;
+                uint16_t val2 = *value2;
+
+                host = makeString(
+                    static_cast<unsigned>(val1 >> 8), '.',
+                    static_cast<unsigned>(val1 & 0xFF), '.',
+                    static_cast<unsigned>(val2 >> 8), '.',
+                    static_cast<unsigned>(val2 & 0xFF)
+                );
+            }
+        }
+    }
+    if (host.contains('.')) {
+        std::array<uint8_t, 4> parts;
+        size_t i = 0;
+        for (auto octet : StringView(host).split('.')) {
+            if (i >= 4)
+                return IPAddressSpace::Public;
+            auto value = parseInteger<uint8_t>(octet);
+            if (!value)
+                return IPAddressSpace::Public;
+            parts[i++] = *value;
+        }
+        if (i != 4)
+            return IPAddressSpace::Public;
+
+        // Check IPv4 address blocks according to spec table:
+
+        // 127.0.0.0/8 - IPv4 Loopback
+        if (parts[0] == 127)
+            return IPAddressSpace::Loopback;
+
+        // 10.0.0.0/8 - Local Use - local
+        if (parts[0] == 10)
+            return IPAddressSpace::Local;
+
+        // 100.64.0.0/10 - Carrier-Grade NAT - local
+        if (parts[0] == 100 && (parts[1] & 0xC0) == 64)
+            return IPAddressSpace::Local;
+
+        // 172.16.0.0/12 - Local Use - local
+        if (parts[0] == 172 && (parts[1] & 0xF0) == 16)
+            return IPAddressSpace::Local;
+
+        // 192.168.0.0/16 - Local Use - local
+        if (parts[0] == 192 && parts[1] == 168)
+            return IPAddressSpace::Local;
+
+        // 198.18.0.0/15 - Benchmarking - local
+        if (parts[0] == 198 && (parts[1] & 0xFE) == 18)
+            return IPAddressSpace::Local;
+
+        // 169.254.0.0/16 - Link Local - local
+        if (parts[0] == 169 && parts[1] == 254)
+            return IPAddressSpace::Local;
+
         return IPAddressSpace::Public;
     }
-
-    if (auto bytes = parseIPv4Address(host))
-        return classifyIPv4Address(std::span<const uint8_t, 4> { *bytes });
-
     return IPAddressSpace::Public;
 }
 
 static IPAddressSpace determineIPAddressSpaceFromHost(StringView host)
 {
+    // Defined in https://wicg.github.io/local-network-access/#ip-address-space-section
     if (host.startsWith('[') && host.endsWith(']'))
         host = host.substring(1, host.length() - 2);
 
-    if (host.endsWith('.'))
-        host = host.left(host.length() - 1);
-
-    // classifyHost() only parses address literals, so these reserved names need matching separately.
-    if (SecurityOrigin::isLocalhostAddress(host))
-        return IPAddressSpace::Loopback;
-
-    if (host.endsWithIgnoringASCIICase(".local"_s))
-        return IPAddressSpace::Local;
-
-    return classifyHost(host);
+    return classifyHost(host.toString());
 }
 
 IPAddressSpace determineIPAddressSpace(const URL& url)
@@ -264,15 +156,27 @@ IPAddressSpace determineIPAddressSpace(const Site& site)
     return determineIPAddressSpaceFromHost(site.domain().string());
 }
 
+#if OS(UNIX)
 IPAddressSpace classifyIPAddressSpace(const IPAddress& address)
 {
-    if (address.isIPv4())
-        return classifyIPv4Address(asByteSpan(address.ipv4Address()).first<4>());
+    char buffer[INET6_ADDRSTRLEN];
+    if (address.isIPv4()) {
+        if (!inet_ntop(AF_INET, &address.ipv4Address(), buffer, sizeof(buffer)))
+            return IPAddressSpace::Unknown;
+    } else if (address.isIPv6()) {
+        if (!inet_ntop(AF_INET6, &address.ipv6Address(), buffer, sizeof(buffer)))
+            return IPAddressSpace::Unknown;
+    } else
+        return IPAddressSpace::Unknown;
 
-    if (address.isIPv6())
-        return classifyIPv6Address(asByteSpan(address.ipv6Address()).first<16>());
-
+    return classifyHost(String::fromLatin1(buffer));
+}
+#else
+IPAddressSpace classifyIPAddressSpace(const IPAddress&)
+{
+    // IPAddress::fromString() is OS(UNIX)-only (see DNS.cpp), so there's no address to classify here.
     return IPAddressSpace::Unknown;
 }
+#endif
 
 } // namespace WebCore

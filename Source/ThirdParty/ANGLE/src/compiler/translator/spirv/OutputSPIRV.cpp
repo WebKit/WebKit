@@ -2281,12 +2281,11 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
             ASSERT(paramQualifier == EvqParamIn || paramQualifier == EvqParamOut ||
                    paramQualifier == EvqParamInOut);
 
-            // Need to create a temp variable and pass that.  Use the precision of the parameter,
-            // since it's going to be passed to the parameter.
+            // Need to create a temp variable and pass that.
             tempVarTypeIds[paramIndex] = mBuilder.getTypeData(paramType, {}).id;
             tempVarIds[paramIndex]     = mBuilder.declareVariable(
                 tempVarTypeIds[paramIndex], spv::StorageClassFunction,
-                mBuilder.getDecorations(paramType), nullptr, "param", nullptr);
+                mBuilder.getDecorations(argType), nullptr, "param", nullptr);
 
             // If it's an in or inout parameter, the temp variable needs to be initialized with the
             // value of the parameter first.
@@ -2317,6 +2316,7 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
         }
 
         const TType &paramType           = function->getParam(paramIndex)->getType();
+        const TType &argType             = node->getChildNode(paramIndex)->getAsTyped()->getType();
         const TQualifier &paramQualifier = paramType.getQualifier();
         NodeData &param = mNodeData[mNodeData.size() - parameterCount + paramIndex];
 
@@ -2329,7 +2329,7 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
         NodeData tempVarData;
         nodeDataInitLValue(&tempVarData, tempVarIds[paramIndex], tempVarTypeIds[paramIndex],
                            spv::StorageClassFunction, {});
-        const spirv::IdRef tempVarValue = accessChainLoad(&tempVarData, paramType, nullptr);
+        const spirv::IdRef tempVarValue = accessChainLoad(&tempVarData, argType, nullptr);
         accessChainStore(&param, tempVarValue, function->getParam(paramIndex)->getType());
     }
 
@@ -3532,6 +3532,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         case EOpTexture3D:
         case EOpShadow2DEXT:
         case EOpTexture2DRect:
+        case EOpTextureVideoWEBGL:
         case EOpTexture:
 
         case EOpTexture2DBias:
@@ -6215,7 +6216,7 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
         else
         {
             // Otherwise generate code to load from right hand side expression.
-            initializerId = accessChainLoad(&mNodeData.back(), initializer->getType(), nullptr);
+            initializerId = accessChainLoad(&mNodeData.back(), symbol->getType(), nullptr);
         }
 
         // Clean up the initializer data.

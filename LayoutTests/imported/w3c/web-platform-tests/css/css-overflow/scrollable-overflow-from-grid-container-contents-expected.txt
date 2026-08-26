@@ -1,8 +1,0 @@
-
-PASS A grid item wider than its column contributes to the inline scrollable overflow
-PASS A grid item taller than its row contributes to the block scrollable overflow
-PASS A descendant of a grid item contributes to the inline scrollable overflow
-PASS A relatively positioned grid item contributes its offset position
-PASS An absolutely positioned box whose containing block is the grid container contributes to the scrollable overflow
-PASS A fixed positioned box does not contribute to the scrollable overflow
-

@@ -561,15 +561,11 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     });
 }
 
-void ProcessLauncher::terminateProcess([[maybe_unused]] const String& reason)
+void ProcessLauncher::terminateProcess()
 {
 #if USE(EXTENSIONKIT)
-    if (m_process) {
-        if (reason.isEmpty())
-            m_process->invalidate();
-        else
-            m_process->invalidate(reason);
-    }
+    if (m_process)
+        m_process->invalidate();
 #endif
 
     terminateXPCConnection();

@@ -35,7 +35,6 @@
 
 #include <EGL/eglext.h>
 #include <algorithm>
-#include <cctype>
 #include <sstream>
 
 using angle::CheckedNumeric;
@@ -222,59 +221,6 @@ bool PrecisionMeetsSpecForHighpFloat(const gl::TypePrecision &precision)
     return precision.range[0] >= 62 && precision.range[1] >= 62 && precision.precision >= 16;
 }
 }  // namespace
-
-// Example GL_VENDOR, GL_RENDERER and GL_VERSION strings:
-//   GL_VENDOR:   "Imagination Technologies"
-//   GL_RENDERER: "PowerVR D-Series DXT-48-1536"
-//   GL_VERSION:  "OpenGL ES 3.2 build 25.3@6908880"
-//   GL_VENDOR:   "Imagination Technologies"
-//   GL_RENDERER: "PowerVR D-Series DXT-48-1536"
-//   GL_VERSION:  "OpenGL ES 3.2 build 26.1@7000000"
-bool GetPowerVRDriverVersion(const std::string &vendorString,
-                             const std::string &rendererString,
-                             const std::string &versionString,
-                             std::array<int, 2> *versionOut)
-{
-    ASSERT(versionOut);
-    (*versionOut)[0] = 0;
-    (*versionOut)[1] = 0;
-
-    if (vendorString.find("Imagination") == std::string::npos)
-    {
-        return false;
-    }
-
-    if (rendererString.find("PowerVR") == std::string::npos)
-    {
-        return false;
-    }
-
-    size_t atPos = versionString.find('@');
-    if (atPos == std::string::npos)
-    {
-        return false;
-    }
-
-    size_t startPos = atPos;
-    while (startPos > 0 && !std::isspace(static_cast<unsigned char>(versionString[startPos - 1])))
-    {
-        --startPos;
-    }
-
-    // SAFETY: this offset is computed safely above.
-    std::istringstream stream(ANGLE_UNSAFE_BUFFERS(&versionString[startPos]));
-    int major = 0;
-    int minor = 0;
-    char dot  = 0;
-    if (!(stream >> major >> dot >> minor) || dot != '.')
-    {
-        return false;
-    }
-
-    (*versionOut)[0] = major;
-    (*versionOut)[1] = minor;
-    return true;
-}
 
 SwapControlData::SwapControlData()
     : targetSwapInterval(0), maxSwapInterval(-1), currentSwapInterval(-1)
@@ -1646,6 +1592,10 @@ void GenerateCaps(const FunctionsGL *functions,
             QuerySingleGLInt(functions, GL_FRAGMENT_INTERPOLATION_OFFSET_BITS_OES);
     }
 
+    // Support video texture extension on non Android backends.
+    // TODO(crbug.com/776222): support Android and Apple devices.
+    extensions->videoTextureWEBGL = !IsAndroid() && !IsApple();
+
     if (features.multiviewViaViewportArray.enabled)
     {
         extensions->multiviewOVR  = true;
@@ -2403,20 +2353,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, unpackOverlappingRowsSeparatelyUnpackBuffer, isNvidia);
     ANGLE_FEATURE_CONDITION(features, packOverlappingRowsSeparatelyPackBuffer, isNvidia);
-    // Mali GLES computes readPixels row_stride as (int32_t)(row_length*bpp)*8;
-    // wraps negative when the byte pitch >= 0x10000000 -> OOB write into the
-    // PBO's cmem mapping. Route through readPixelsRowByRow so Mali only ever
-    // sees PACK_ROW_LENGTH=0. Also apply to Imagination GPUs which crash on
-    // the new test. crbug.com/529867799
-    ANGLE_FEATURE_CONDITION(features, packLargeRowLengthSeparatelyPackBuffer,
-                            isMali || IsPowerVR(vendor));
-
-    std::array<int, 2> powerVRVersion = {0, 0};
-    bool isPowerVRDriver =
-        GetPowerVRDriverVersion(GetVendorString(functions), GetRendererString(functions),
-                                GetVersionString(functions), &powerVRVersion);
-    ANGLE_FEATURE_CONDITION(features, splitLevel0PboFullSubImage2D,
-                            isPowerVRDriver && powerVRVersion < (std::array<int, 2>{26, 2}));
 
     ANGLE_FEATURE_CONDITION(features, initializeCurrentVertexAttributes, isNvidia);
 
@@ -2512,6 +2448,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, removeDynamicIndexingOfSwizzledVector,
                             IsApple() || IsAndroid() || IsWindows());
+
+    // Ported from gpu_driver_bug_list.json (#89)
+    ANGLE_FEATURE_CONDITION(features, regenerateStructNames, IsApple());
 
     // Ported from gpu_driver_bug_list.json (#184)
     ANGLE_FEATURE_CONDITION(features, preAddTexelFetchOffsets, IsApple() && isIntel);
@@ -2983,7 +2922,7 @@ bool UseTexImage2D(gl::TextureType textureType)
     return textureType == gl::TextureType::_2D || textureType == gl::TextureType::CubeMap ||
            textureType == gl::TextureType::Rectangle ||
            textureType == gl::TextureType::_2DMultisample ||
-           textureType == gl::TextureType::External;
+           textureType == gl::TextureType::External || textureType == gl::TextureType::VideoImage;
 }
 
 bool UseTexImage3D(gl::TextureType textureType)
@@ -3025,12 +2964,12 @@ GLenum GetTextureBindingQuery(gl::TextureType textureType)
 
 GLenum GetTextureBindingTarget(gl::TextureType textureType)
 {
-    return ToGLenum(textureType);
+    return ToGLenum(GetNativeTextureType(textureType));
 }
 
 GLenum GetTextureBindingTarget(gl::TextureTarget textureTarget)
 {
-    return ToGLenum(textureTarget);
+    return ToGLenum(GetNativeTextureTarget(textureTarget));
 }
 
 GLenum GetBufferBindingQuery(gl::BufferBinding bufferBinding)
@@ -3074,6 +3013,46 @@ std::string GetBufferBindingString(gl::BufferBinding bufferBinding)
     std::ostringstream os;
     os << bufferBinding << "_BINDING";
     return os.str();
+}
+
+gl::TextureType GetNativeTextureType(gl::TextureType type)
+{
+    // VideoImage texture type is a WebGL type. It doesn't have
+    // directly mapping type in native OpenGL/OpenGLES.
+    // Actually, it will be translated to different texture type
+    // (TEXTURE2D, TEXTURE_EXTERNAL_OES and TEXTURE_RECTANGLE)
+    // based on OS and other conditions.
+    // This will introduce problem that binding VideoImage may
+    // unbind native image implicitly. Please make sure state
+    // manager is aware of this implicit unbind behaviour.
+    if (type != gl::TextureType::VideoImage)
+    {
+        return type;
+    }
+
+    // TODO(http://anglebug.com/42262534): need to figure out rectangle texture and
+    // external image when these backend are implemented.
+    return gl::TextureType::_2D;
+}
+
+gl::TextureTarget GetNativeTextureTarget(gl::TextureTarget target)
+{
+    // VideoImage texture type is a WebGL type. It doesn't have
+    // directly mapping type in native OpenGL/OpenGLES.
+    // Actually, it will be translated to different texture target
+    // (TEXTURE2D, TEXTURE_EXTERNAL_OES and TEXTURE_RECTANGLE)
+    // based on OS and other conditions.
+    // This will introduce problem that binding VideoImage may
+    // unbind native image implicitly. Please make sure state
+    // manager is aware of this implicit unbind behaviour.
+    if (target != gl::TextureTarget::VideoImage)
+    {
+        return target;
+    }
+
+    // TODO(http://anglebug.com/42262534): need to figure out rectangle texture and
+    // external image when these backend are implemented.
+    return gl::TextureTarget::_2D;
 }
 
 }  // namespace nativegl

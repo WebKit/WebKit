@@ -631,7 +631,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProces
 RemoteAudioVideoRendererProxyManager& GPUConnectionToWebProcess::remoteAudioVideoRendererProxyManager()
 {
     if (!m_remoteAudioVideoRendererProxyManager)
-        lazyInitialize(m_remoteAudioVideoRendererProxyManager, RemoteAudioVideoRendererProxyManager::create(*this));
+        lazyInitialize(m_remoteAudioVideoRendererProxyManager, makeUniqueWithoutRefCountedCheck<RemoteAudioVideoRendererProxyManager>(*this));
 
     return *m_remoteAudioVideoRendererProxyManager;
 }

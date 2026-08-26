@@ -104,7 +104,7 @@ list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES ${_wtr_mac_include_dirs
 # TestRunnerInjectedBundle links WebCoreTestSupport (static) which references
 # WTF symbols. The bundle is loaded into a process that already has WTF, so
 # use -undefined dynamic_lookup to resolve them at runtime.
-target_link_options(TestRunnerInjectedBundle PRIVATE "LINKER:-undefined,dynamic_lookup")
+list(APPEND TestRunnerInjectedBundle_PRIVATE_LIBRARIES "-Wl,-undefined,dynamic_lookup")
 
 list(APPEND TestRunnerInjectedBundle_SOURCES
     ${WebKitTestRunner_DIR}/cocoa/CrashReporterInfo.mm
@@ -245,7 +245,7 @@ set(_wktr_ios_include_dirs
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES ${_wktr_ios_include_dirs})
 list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES ${_wktr_ios_include_dirs})
 
-target_link_options(TestRunnerInjectedBundle PRIVATE "LINKER:-undefined,dynamic_lookup" "LINKER:-not_for_dyld_shared_cache")
+list(APPEND TestRunnerInjectedBundle_PRIVATE_LIBRARIES "-Wl,-undefined,dynamic_lookup" "-Wl,-not_for_dyld_shared_cache")
 
 list(APPEND TestRunnerInjectedBundle_SOURCES
     ${WebKitTestRunner_DIR}/cocoa/CrashReporterInfo.mm

@@ -1007,6 +1007,8 @@ webkit.org/b/160119 fast/block/positioning/fixed-position-stacking-context.html 
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 
+imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-existing-session.htm [ Failure ]
+
 webkit.org/b/252953 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width.html [ ImageOnlyFailure ]
 webkit.org/b/252953 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-width-constrained-by-max-height.html [ ImageOnlyFailure ]
 # Ftp code is disabled in gtk port
@@ -1174,7 +1176,7 @@ webkit.org/b/309266 [ Release ] css3/scroll-snap/scroll-snap-drag-scrollbar-thum
 platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
 
 webkit.org/b/309892 [ Release ] accessibility/aria-role-on-label.html [ Pass Crash ]
-webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout Crash ]
+webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0.html [ Pass ]
 
@@ -1300,28 +1302,3 @@ webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass
 webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
 
 webkit.org/b/322025 fast/animation/request-animation-frame-during-modal.html [ Failure Pass ]
-
-webkit.org/b/322486 media/event-attributes.html [ Crash ]
-
-# Gardening 2026-08-26
-webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Failure ]
-webkit.org/b/322626 fast/events/touch/touch-target-limited.html [ Timeout ]
-webkit.org/b/322627 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-box-shadow-spread-elliptical.html [ ImageOnlyFailure ]
-webkit.org/b/322628 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outline-offset-bevel.html [ ImageOnlyFailure ]
-webkit.org/b/322629 imported/w3c/web-platform-tests/css/css-transforms/transform-input-017.html [ ImageOnlyFailure ]
-webkit.org/b/322630 media/video-background-tab-playback.html [ Failure ]
-webkit.org/b/322631 [ Release ] media/media-controller-playbackrate.html [ Pass Failure ]
-webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html [ Pass Crash ]
-webkit.org/b/322633 [ Debug ] webrtc/msection-recycling.html [ Pass Crash ]
-webkit.org/b/322635 [ Debug ] fast/mediastream/play-newly-added-audio-track.html [ Pass Timeout ]
-webkit.org/b/322636 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Pass Timeout ]
-webkit.org/b/322638 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
-webkit.org/b/322640 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html?buttonType=MIDDLE&button=1&buttons=4 [ Pass Failure ]
-webkit.org/b/322643 [ Debug ] imported/w3c/web-platform-tests/webrtc/receiver-track-live.https.html [ Pass Failure ]
-webkit.org/b/322644 [ Debug ] inspector/dom-debugger/event-interval-breakpoints.html [ Pass Timeout ]
-webkit.org/b/322645 [ Debug ] js/weakref-finalizationregistry.html [ Pass Timeout ]
-webkit.org/b/322647 [ Debug ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
-webkit.org/b/322648 [ Debug ] navigation-api/navigation-api-rate-limit-history-api.html [ Pass Failure ]
-webkit.org/b/322650 [ Debug ] webrtc/video-h264.html [ Pass Crash Failure ]
-webkit.org/b/322651 [ Debug ] webrtc/video-remote-mute.html [ Pass Crash Failure ]
-webkit.org/b/322652 [ Debug ] workers/btoa-oom.html [ Pass Timeout ]

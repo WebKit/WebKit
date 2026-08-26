@@ -168,12 +168,6 @@ void Frame::detachFromPage()
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }
     }
-
-    if (m_frameType == FrameType::Remote) {
-        if (RefPtr page = m_page.get())
-            page->didDetachRemoteFrame();
-    }
-
     m_page = nullptr;
 }
 

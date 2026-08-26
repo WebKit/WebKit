@@ -39,9 +39,12 @@ const WTF::String& Error::webKitErrorDomain()
 
 const WTF::String& Error::webKitNetworkErrorDomain()
 {
-    static StaticStringImpl impl(WebCore::errorDomainWebKitNetwork);
-    static NeverDestroyed<WTF::String> webKitNetworkErrorDomainString(&static_cast<StringImpl&>(impl));
-    return webKitNetworkErrorDomainString;
+#if USE(GLIB)
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitNetworkError"));
+    return webKitErrorDomainString;
+#else
+    return webKitErrorDomain();
+#endif
 }
 
 const WTF::String& Error::webKitPolicyErrorDomain()

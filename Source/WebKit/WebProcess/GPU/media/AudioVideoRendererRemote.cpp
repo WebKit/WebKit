@@ -106,7 +106,7 @@ AudioVideoRendererRemote::AudioVideoRendererRemote(LoggerHelper* loggerHelper, G
     connection.connection().addWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_identifier.toUInt64());
     connection.addClient(*this);
 
-    connection.connection().sendWithAsyncReply(Messages::RemoteAudioVideoRendererProxyManager::CreateManager(identifier, mediaElementIdentifier, playerIdentifier), [weakThis = ThreadSafeWeakPtr { *this }](auto&& handle) {
+    connection.connection().sendWithAsyncReply(Messages::RemoteAudioVideoRendererProxyManager::Create(identifier, mediaElementIdentifier, playerIdentifier), [weakThis = ThreadSafeWeakPtr { *this }](auto&& handle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

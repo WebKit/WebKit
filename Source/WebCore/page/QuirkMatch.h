@@ -25,8 +25,13 @@
 
 #pragma once
 
+#include <WebCore/PublicSuffixStore.h>
+#include <WebCore/QuirksData.h>
+#include <WebCore/RegistrableDomain.h>
 #include <array>
+#include <initializer_list>
 #include <optional>
+#include <ranges>
 #include <span>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
@@ -37,19 +42,19 @@
 
 namespace WebCore {
 
-enum class QuirkEnvironment : uint8_t {
+enum class QuirkCondition : uint8_t {
     SmallScreen,
     TubularApp,
     LensApp,
 };
 
-WEBCORE_EXPORT bool evaluateQuirkEnvironment(QuirkEnvironment);
+WEBCORE_EXPORT bool evaluateQuirkCondition(QuirkCondition);
 
 enum class IsTopDocument : bool { No, Yes };
 
 class QuirkMatchContext {
 public:
-    QuirkMatchContext(URL topURL, URL documentURL, IsTopDocument isTopDocument)
+    QuirkMatchContext(URL topURL, URL documentURL, IsTopDocument isTopDocument = IsTopDocument::Yes)
         : m_topURL(WTF::move(topURL))
         , m_documentURL(WTF::move(documentURL))
         , m_isTopDocument(isTopDocument)
@@ -60,188 +65,77 @@ public:
 
     bool isTopDocument() const { return m_isTopDocument == IsTopDocument::Yes; }
 
-    StringView topHost() const LIFETIME_BOUND { return m_topURL.host(); }
+    StringView host() const LIFETIME_BOUND { return m_topURL.host(); }
 
-    WEBCORE_EXPORT const String& topRegistrableDomain() const LIFETIME_BOUND;
+    const String& registrableDomain() const LIFETIME_BOUND
+    {
+        if (!m_registrableDomain)
+            m_registrableDomain = RegistrableDomain { m_topURL }.string();
+        return *m_registrableDomain;
+    }
 
-    WEBCORE_EXPORT const String& topDomainWithoutPublicSuffix() const LIFETIME_BOUND;
+    const String& domainWithoutPublicSuffix() const LIFETIME_BOUND
+    {
+        if (!m_domainWithoutPublicSuffix)
+            m_domainWithoutPublicSuffix = PublicSuffixStore::singleton().domainWithoutPublicSuffix(registrableDomain());
+        return *m_domainWithoutPublicSuffix;
+    }
 
-    WEBCORE_EXPORT const String& documentRegistrableDomain() const LIFETIME_BOUND;
+    const String& documentDomain() const LIFETIME_BOUND
+    {
+        if (!m_documentDomain)
+            m_documentDomain = RegistrableDomain { m_documentURL }.string();
+        return *m_documentDomain;
+    }
 
 private:
     const URL m_topURL;
     const URL m_documentURL;
     const IsTopDocument m_isTopDocument;
-    mutable std::optional<String> m_topRegistrableDomain;
-    mutable std::optional<String> m_topDomainWithoutPublicSuffix;
-    mutable std::optional<String> m_documentRegistrableDomain;
+    mutable std::optional<String> m_registrableDomain;
+    mutable std::optional<String> m_domainWithoutPublicSuffix;
+    mutable std::optional<String> m_documentDomain;
 };
-
-class QuirkPatternList {
-public:
-    constexpr QuirkPatternList() = default;
-
-    constexpr QuirkPatternList(ASCIILiteral pattern)
-        : m_single(pattern)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!pattern.isNull());
-    }
-
-    template<size_t size> constexpr QuirkPatternList(const std::array<ASCIILiteral, size>& patterns LIFETIME_BOUND)
-        : m_multiple(patterns)
-    {
-        static_assert(size, "A quirk pattern list must name at least one pattern.");
-    }
-
-    constexpr bool isEmpty() const { return m_single.isNull() && m_multiple.empty(); }
-
-    bool contains(StringView value) const
-    {
-        return containsMatching([&](ASCIILiteral pattern) { return value == pattern; });
-    }
-
-    bool containsMatching(NOESCAPE const Invocable<bool(ASCIILiteral)> auto& predicate) const
-    {
-        for (auto pattern : span()) {
-            if (predicate(pattern))
-                return true;
-        }
-        return false;
-    }
-
-private:
-    constexpr std::span<const ASCIILiteral> span() const LIFETIME_BOUND
-    {
-        if (!m_multiple.empty())
-            return m_multiple;
-        if (m_single.isNull())
-            return { };
-        return singleElementSpan(m_single);
-    }
-
-    ASCIILiteral m_single;
-    std::span<const ASCIILiteral> m_multiple;
-};
-
-namespace QuirkRefinement {
-
-struct PathContains {
-    ASCIILiteral substring;
-};
-
-struct PathStartsWith {
-    ASCIILiteral prefix;
-};
-
-struct PathOrFragmentContains {
-    ASCIILiteral substring;
-};
-
-struct DocumentDomainIs {
-    QuirkPatternList domains;
-};
-
-struct HostIs {
-    QuirkPatternList hosts;
-};
-
-struct EnvironmentIs {
-    QuirkEnvironment environment;
-};
-
-struct Embedded { };
-
-constexpr PathContains pathContains(ASCIILiteral substring)
-{
-    return { substring };
-}
-
-constexpr PathStartsWith pathStartsWith(ASCIILiteral prefix)
-{
-    return { prefix };
-}
-
-constexpr PathOrFragmentContains pathOrFragmentContains(ASCIILiteral substring)
-{
-    return { substring };
-}
-
-constexpr DocumentDomainIs documentDomainIs(QuirkPatternList domains)
-{
-    return { domains };
-}
-
-constexpr HostIs hostIs(QuirkPatternList hosts)
-{
-    return { hosts };
-}
-
-constexpr Embedded embedded()
-{
-    return { };
-}
-
-constexpr EnvironmentIs smallScreen()
-{
-    return { QuirkEnvironment::SmallScreen };
-}
-
-constexpr EnvironmentIs tubularApp()
-{
-    return { QuirkEnvironment::TubularApp };
-}
-
-constexpr EnvironmentIs lensApp()
-{
-    return { QuirkEnvironment::LensApp };
-}
-
-} // namespace QuirkRefinement
 
 // QuirkMatch represents a declarative description of which pages a quirk applies to
 //
-// Every match starts with exactly one static factory, which picks how the site is
-// identified. Each takes a single pattern or a list of them:
+// Every match starts with exactly one static factory, which picks how the site
+// is identified, and is then optionally narrowed by chained refinements. All
+// conditions are ANDed together:
 //
-//     domain()             the registrable domain, so "youtube.com" also covers
-//                          player.youtube.com but not youtube.co.uk
-//     host()               the exact host, so "docs.google.com" covers nothing else
-//     hostOrSubdomainOf()  the host or any subdomain of it, respecting label boundaries,
-//                          for HTTP-family URLs only
-//     anyTopLevelDomain()  the domain under every public suffix, so "amazon" covers
-//                          amazon.com and amazon.co.uk
-//     anySite()            every page with a host, for quirks keyed only on refinements
-//
-// when() then narrows the match with QuirkRefinement refinements, all of which are ANDed
-// together:
-//
-//     QuirkMatch::anyTopLevelDomain("apple"_s).when(pathStartsWith("/store"_s))
-//
-// exceptWhen() takes the same refinements to carve matching pages back out, so a
-// refinement reads identically in either position and its scope is bounded by the call:
-//
-//     QuirkMatch::domain("wix.com"_s).exceptWhen(pathStartsWith("/website/templates/"_s))
+//     QuirkMatch::anyTopLevelDomain("apple"_s).pathStartsWith("/store"_s)
 //
 class QuirkMatch {
 public:
-    static constexpr QuirkMatch domain(QuirkPatternList domains)
+    static constexpr QuirkMatch domain(ASCIILiteral domain)
     {
-        return QuirkMatch { Kind::Domain, domains };
+        return QuirkMatch { Kind::Domain, domain };
     }
 
-    static constexpr QuirkMatch host(QuirkPatternList hosts)
+    template<const auto& patterns> static constexpr QuirkMatch domains()
     {
-        return QuirkMatch { Kind::Host, hosts };
+        static_assert(std::size(patterns), "A quirk must match at least one domain.");
+        return QuirkMatch { Kind::Domain, std::span<const ASCIILiteral> { patterns } };
     }
 
-    static constexpr QuirkMatch hostOrSubdomainOf(QuirkPatternList hosts)
+    static constexpr QuirkMatch host(ASCIILiteral host)
     {
-        return QuirkMatch { Kind::HostOrSubdomainOf, hosts };
+        return QuirkMatch { Kind::Host, host };
     }
 
-    static constexpr QuirkMatch anyTopLevelDomain(QuirkPatternList names)
+    static constexpr QuirkMatch hostOrSubdomainOf(ASCIILiteral host)
     {
-        return QuirkMatch { Kind::AnyTopLevelDomain, names };
+        return QuirkMatch { Kind::HostOrSubdomainOf, host };
+    }
+
+    static constexpr QuirkMatch hostEndingWith(ASCIILiteral suffix)
+    {
+        return QuirkMatch { Kind::HostEndingWith, suffix };
+    }
+
+    static constexpr QuirkMatch anyTopLevelDomain(ASCIILiteral name)
+    {
+        return QuirkMatch { Kind::AnyTopLevelDomain, name };
     }
 
     static constexpr QuirkMatch anySite()
@@ -249,119 +143,260 @@ public:
         return QuirkMatch { Kind::AnySite };
     }
 
-    template<typename... Refinements> constexpr QuirkMatch when(Refinements... refinements) &&
+    constexpr QuirkMatch&& pathContains(ASCIILiteral substring) &&
     {
-        static_assert(sizeof...(refinements), "when() must name at least one refinement to match.");
+        return WTF::move(*this).setPathConstraint(PathConstraintKind::PathContains, substring);
+    }
 
-        (applyRefinement(m_refinements, refinements), ...);
+    constexpr QuirkMatch&& pathStartsWith(ASCIILiteral prefix) &&
+    {
+        return WTF::move(*this).setPathConstraint(PathConstraintKind::PathStartsWith, prefix);
+    }
+
+    constexpr QuirkMatch&& pathOrFragmentContains(ASCIILiteral substring) &&
+    {
+        return WTF::move(*this).setPathConstraint(PathConstraintKind::PathOrFragmentContains, substring);
+    }
+
+    constexpr QuirkMatch&& onlyIf(QuirkCondition condition) &&
+    {
+        currentRefinements().condition = condition;
         return WTF::move(*this);
     }
 
-    template<typename... Refinements> constexpr QuirkMatch exceptWhen(Refinements... refinements) &&
+    constexpr QuirkMatch&& documentDomainIs(ASCIILiteral pattern) &&
     {
-        static_assert(sizeof...(refinements), "exceptWhen() must name at least one refinement to exclude.");
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!m_exception);
-
-        RefinementSet exception;
-        (applyRefinement(exception, refinements), ...);
-        m_exception = exception;
+        currentRefinements().documentDomains = PatternList { pattern };
         return WTF::move(*this);
     }
 
-    WEBCORE_EXPORT bool matches(const QuirkMatchContext&) const;
+    template<const auto& patterns> constexpr QuirkMatch&& documentDomainIsOneOf() &&
+    {
+        static_assert(std::size(patterns), "A quirk must match at least one document domain.");
+        currentRefinements().documentDomains = PatternList { std::span<const ASCIILiteral> { patterns } };
+        return WTF::move(*this);
+    }
+
+    template<const auto& patterns> constexpr QuirkMatch&& hostIsOneOf() &&
+    {
+        static_assert(std::size(patterns), "A quirk must match at least one host.");
+        currentRefinements().hosts = std::span<const ASCIILiteral> { patterns };
+        return WTF::move(*this);
+    }
+
+    constexpr QuirkMatch&& onlyIfEmbedded() &&
+    {
+        currentRefinements().requiresEmbeddedDocument = true;
+        return WTF::move(*this);
+    }
+
+    constexpr QuirkMatch&& exceptWhen() &&
+    {
+        m_refiningException = true;
+        return WTF::move(*this);
+    }
+
+    bool matches(const QuirkMatchContext& context) const
+    {
+        if (!matchesSite(context)) [[likely]]
+            return false;
+
+        if (!matchesRefinements(m_refinements, context))
+            return false;
+
+        if (!m_exception.isEmpty() && matchesRefinements(m_exception, context))
+            return false;
+
+        return true;
+    }
 
 private:
     enum class Kind : uint8_t {
         Domain,
         Host,
         HostOrSubdomainOf,
+        HostEndingWith,
         AnyTopLevelDomain,
         AnySite,
     };
 
-    enum class PathComparison : uint8_t {
+    enum class PathConstraintKind : uint8_t {
         PathContains,
         PathStartsWith,
         PathOrFragmentContains,
     };
 
-    struct RefinementSet {
-        PathComparison pathComparison { PathComparison::PathContains };
-        ASCIILiteral pathPattern;
-        std::optional<QuirkEnvironment> environment;
-        QuirkPatternList documentDomains;
-        QuirkPatternList hosts;
-        bool requiresEmbeddedDocument { false };
+    class PatternList {
+    public:
+        constexpr PatternList() = default;
 
-        bool matches(const QuirkMatchContext&) const;
+        constexpr explicit PatternList(ASCIILiteral pattern)
+            : m_single(pattern)
+        {
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(!pattern.isNull());
+        }
+
+        constexpr explicit PatternList(std::span<const ASCIILiteral> patterns)
+            : m_multiple(patterns)
+        {
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(!patterns.empty());
+        }
+
+        std::span<const ASCIILiteral> span() const LIFETIME_BOUND
+        {
+            if (!m_multiple.empty())
+                return m_multiple;
+            if (m_single.isNull())
+                return { };
+            return singleElementSpan(m_single);
+        }
+
+        constexpr bool isEmpty() const { return m_multiple.empty() && m_single.isNull(); }
 
     private:
-        bool matchesPathPattern(const URL& topURL) const;
+        ASCIILiteral m_single;
+        std::span<const ASCIILiteral> m_multiple;
     };
 
-    static constexpr void setPathPattern(RefinementSet& set, PathComparison comparison, ASCIILiteral pattern)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(set.pathPattern.isNull());
-        set.pathComparison = comparison;
-        set.pathPattern = pattern;
-    }
+    struct Refinements {
+        PathConstraintKind pathConstraintKind { PathConstraintKind::PathContains };
+        ASCIILiteral pathConstraint;
+        std::optional<QuirkCondition> condition;
+        PatternList documentDomains;
+        std::span<const ASCIILiteral> hosts;
+        bool requiresEmbeddedDocument { false };
 
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::PathContains refinement)
-    {
-        setPathPattern(set, PathComparison::PathContains, refinement.substring);
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::PathStartsWith refinement)
-    {
-        setPathPattern(set, PathComparison::PathStartsWith, refinement.prefix);
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::PathOrFragmentContains refinement)
-    {
-        setPathPattern(set, PathComparison::PathOrFragmentContains, refinement.substring);
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::DocumentDomainIs refinement)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(set.documentDomains.isEmpty());
-        set.documentDomains = refinement.domains;
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::HostIs refinement)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(set.hosts.isEmpty());
-        set.hosts = refinement.hosts;
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::EnvironmentIs refinement)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!set.environment);
-        set.environment = refinement.environment;
-    }
-
-    static constexpr void applyRefinement(RefinementSet& set, QuirkRefinement::Embedded)
-    {
-        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!set.requiresEmbeddedDocument);
-        set.requiresEmbeddedDocument = true;
-    }
+        constexpr bool isEmpty() const
+        {
+            return !requiresEmbeddedDocument && pathConstraint.isNull() && !condition && documentDomains.isEmpty() && hosts.empty();
+        }
+    };
 
     constexpr explicit QuirkMatch(Kind kind)
         : m_kind(kind)
     {
     }
 
-    constexpr QuirkMatch(Kind kind, QuirkPatternList patterns)
+    constexpr QuirkMatch(Kind kind, ASCIILiteral pattern)
+        : m_kind(kind)
+        , m_patterns(pattern)
+    {
+    }
+
+    constexpr QuirkMatch(Kind kind, std::span<const ASCIILiteral> patterns)
         : m_kind(kind)
         , m_patterns(patterns)
     {
     }
 
-    bool matchesSite(const QuirkMatchContext&) const;
+    constexpr Refinements& currentRefinements() LIFETIME_BOUND
+    {
+        return m_refiningException ? m_exception : m_refinements;
+    }
+
+    constexpr QuirkMatch&& setPathConstraint(PathConstraintKind kind, ASCIILiteral value) &&
+    {
+        auto& refinements = currentRefinements();
+        refinements.pathConstraintKind = kind;
+        refinements.pathConstraint = value;
+        return WTF::move(*this);
+    }
+
+    template<typename Function> bool anyPattern(NOESCAPE Function&& match) const
+    {
+        return std::ranges::any_of(m_patterns.span(), match);
+    }
+
+    bool matchesSite(const QuirkMatchContext& context) const
+    {
+        switch (m_kind) {
+        case Kind::Domain:
+            return anyPattern([&](ASCIILiteral pattern) { return context.registrableDomain() == pattern; });
+        case Kind::Host:
+            return anyPattern([&](ASCIILiteral pattern) { return context.host() == pattern; });
+        case Kind::HostOrSubdomainOf:
+            return anyPattern([&](ASCIILiteral pattern) { return context.topURL().isMatchingDomain(pattern); });
+        case Kind::HostEndingWith:
+            return anyPattern([&](ASCIILiteral pattern) { return context.host().endsWithIgnoringASCIICase(pattern); });
+        case Kind::AnyTopLevelDomain:
+            return anyPattern([&](ASCIILiteral pattern) { return context.domainWithoutPublicSuffix() == pattern; });
+        case Kind::AnySite:
+            return !context.host().isEmpty();
+        }
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    bool matchesRefinements(const Refinements& refinements, const QuirkMatchContext& context) const
+    {
+        if (!refinements.pathConstraint.isNull() && !matchesPathConstraint(refinements, context.topURL()))
+            return false;
+
+        if (refinements.condition && !evaluateQuirkCondition(*refinements.condition))
+            return false;
+
+        if (refinements.requiresEmbeddedDocument && context.isTopDocument())
+            return false;
+
+        if (!refinements.documentDomains.isEmpty() && !anyOf(refinements.documentDomains.span(), context.documentDomain()))
+            return false;
+
+        if (!refinements.hosts.empty() && !anyOf(refinements.hosts, context.host()))
+            return false;
+
+        return true;
+    }
+
+    template<typename StringType> static bool anyOf(std::span<const ASCIILiteral> patterns, const StringType& value)
+    {
+        return std::ranges::any_of(patterns, [&](ASCIILiteral pattern) { return value == pattern; });
+    }
+
+    bool matchesPathConstraint(const Refinements& refinements, const URL& topURL) const
+    {
+        switch (refinements.pathConstraintKind) {
+        case PathConstraintKind::PathContains:
+            return topURL.path().contains(refinements.pathConstraint);
+        case PathConstraintKind::PathStartsWith:
+            return startsWithLettersIgnoringASCIICase(topURL.path(), refinements.pathConstraint);
+        case PathConstraintKind::PathOrFragmentContains:
+            return topURL.path().contains(refinements.pathConstraint) || topURL.fragmentIdentifier().contains(refinements.pathConstraint);
+        }
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     Kind m_kind;
-    QuirkPatternList m_patterns;
-    RefinementSet m_refinements;
-    std::optional<RefinementSet> m_exception;
+    PatternList m_patterns;
+    Refinements m_refinements;
+    Refinements m_exception;
+    bool m_refiningException { false };
 };
+
+consteval QuirksData::QuirkBitSet quirkBehaviors(std::initializer_list<QuirksData::SiteSpecificQuirk> quirks)
+{
+    QuirksData::QuirkBitSet bits;
+    for (auto quirk : quirks)
+        bits.set(static_cast<size_t>(quirk));
+    return bits;
+}
+
+struct Quirk {
+    QuirkMatch match;
+    QuirksData::QuirkBitSet behaviors { };
+    std::optional<QuirkSite> site { };
+
+    void apply(QuirksData& quirksData) const
+    {
+        quirksData.activeQuirks.merge(behaviors);
+
+        if (site)
+            quirksData.addSite(*site);
+    }
+};
+
+WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const QuirkMatchContext&);
 
 } // namespace WebCore

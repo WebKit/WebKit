@@ -175,6 +175,7 @@ static bool IsAnyRasterOrdered(const TVector<const TVariable *> &imageVars)
 }  // anonymous namespace
 
 ResourcesHLSL::ResourcesHLSL(StructureHLSL *structureHLSL,
+                             ShShaderOutput outputType,
                              const std::vector<ShaderVariable> &uniforms,
                              unsigned int firstUniformRegister)
     : mUniformRegister(firstUniformRegister),
@@ -183,8 +184,14 @@ ResourcesHLSL::ResourcesHLSL(StructureHLSL *structureHLSL,
       mUAVRegister(0),
       mSamplerCount(0),
       mStructureHLSL(structureHLSL),
+      mOutputType(outputType),
       mUniforms(uniforms)
 {}
+
+void ResourcesHLSL::reserveUniformRegisters(unsigned int registerCount)
+{
+    mUniformRegister = registerCount;
+}
 
 void ResourcesHLSL::reserveUniformBlockRegisters(unsigned int registerCount)
 {
@@ -253,7 +260,7 @@ unsigned int ResourcesHLSL::assignUniformRegister(const TType &type,
         mUniformRegisterMap[uniform->name] = registerIndex;
     }
 
-    unsigned int registerCount = HLSLVariableRegisterCount(*uniform);
+    unsigned int registerCount = HLSLVariableRegisterCount(*uniform, mOutputType);
 
     if (IsSampler(type.getBasicType()) ||
         (IsImage(type.getBasicType()) && type.getMemoryQualifier().readonly))
@@ -492,11 +499,12 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                 const ShaderVariable *uniform = findUniformByName(variable.name());
                 if (type.getMemoryQualifier().readonly)
                 {
-                    reservedReadonlyImageRegisterCount += HLSLVariableRegisterCount(*uniform);
+                    reservedReadonlyImageRegisterCount +=
+                        HLSLVariableRegisterCount(*uniform, mOutputType);
                 }
                 else
                 {
-                    reservedImageRegisterCount += HLSLVariableRegisterCount(*uniform);
+                    reservedImageRegisterCount += HLSLVariableRegisterCount(*uniform, mOutputType);
                 }
                 continue;
             }
@@ -529,9 +537,19 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                 {
                     const TType &samplerType = sampler->getType();
 
-                    HLSLTextureGroup group = TextureGroup(samplerType.getBasicType());
-                    groupedSamplerUniforms[group].push_back(sampler);
-                    samplerInStructSymbolsToAPINames[sampler] = symbolsToAPINames[sampler];
+                    if (outputType == SH_HLSL_4_1_OUTPUT)
+                    {
+                        HLSLTextureGroup group = TextureGroup(samplerType.getBasicType());
+                        groupedSamplerUniforms[group].push_back(sampler);
+                        samplerInStructSymbolsToAPINames[sampler] = symbolsToAPINames[sampler];
+                    }
+                    else
+                    {
+                        ASSERT(outputType == SH_HLSL_3_0_OUTPUT);
+                        unsigned int registerIndex = assignSamplerInStructUniformRegister(
+                            samplerType, symbolsToAPINames[sampler], nullptr);
+                        outputUniform(out, samplerType, *sampler, registerIndex);
+                    }
                 }
             }
             unsigned int registerIndex = assignUniformRegister(type, variable.name(), nullptr);

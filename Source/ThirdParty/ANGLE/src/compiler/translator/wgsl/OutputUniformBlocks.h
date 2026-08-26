@@ -84,7 +84,6 @@ struct WGSLGenerationMetadataForUniforms
 };
 bool OutputUniformWrapperStructsAndConversions(
     TInfoSinkBase &output,
-    const ShBuiltInResources &resources,
     const WGSLGenerationMetadataForUniforms &wgslGenerationMetadataForUniforms);
 
 bool IsMatCx2(const TType *type);

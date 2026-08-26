@@ -61,7 +61,7 @@ private:
 
     static JSPromise* moduleLoaderImportModule(JSGlobalObject*, JSModuleLoader*, JSString* moduleNameValue, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
     static Identifier moduleLoaderResolve(JSGlobalObject*, JSModuleLoader*, JSValue keyValue, JSValue referrerValue, RefPtr<ScriptFetcher>, bool useImportMap);
-    static JSPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, const String&, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+    static JSPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
     static JSValue moduleLoaderEvaluate(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, JSValue, JSValue);
 };

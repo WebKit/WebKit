@@ -48,9 +48,9 @@ BrowsingContextGroup::BrowsingContextGroup() = default;
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;
 
-static bool isLoopbackOrLocalNetworkSite(const Site& site, bool localNetworkAccessEnabled)
+static bool isLoopbackOrLocalNetworkSite(const Site& site)
 {
-    if (localNetworkAccessEnabled && determineIPAddressSpace(site) != IPAddressSpace::Public)
+    if (determineIPAddressSpace(site) != IPAddressSpace::Public)
         return true;
     return SecurityOrigin::isLocalHostOrLoopbackIPAddress(site.domain().string());
 }
@@ -64,7 +64,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     if (site.isEmpty() || m_processMap.contains(site))
         return completionHandler(nullptr);
 
-    if (isLoopbackOrLocalNetworkSite(site, preferences.localNetworkAccessEnabled()))
+    if (isLoopbackOrLocalNetworkSite(site))
         return completionHandler(nullptr);
 
     if (!m_sharedProcessSites.contains(site)) {
@@ -238,7 +238,6 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
     if (process.isSharedProcess()) {
         m_sharedProcess = nullptr;
         m_sharedProcessSites.clear();
-        m_pagesInSharedProcess.clear();
     } else {
         auto& site = *process.site();
         // Either we are still the current entry for this site (normal teardown), or a

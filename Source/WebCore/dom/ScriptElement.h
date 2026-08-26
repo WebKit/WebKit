@@ -53,8 +53,6 @@ public:
 
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
-    void markAlreadyStarted() { m_alreadyStarted = true; }
-
     const AtomString& scriptCharset() const LIFETIME_BOUND { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
     void executeClassicScript(const ScriptSourceCode&);

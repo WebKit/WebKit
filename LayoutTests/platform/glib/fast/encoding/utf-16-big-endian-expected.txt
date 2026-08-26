@@ -1,5 +1,5 @@
-layer at (0,0) size 785x1122
-  RenderView at (0,0) size 785x600
+layer at (0,0) size 797x1122
+  RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1122
   RenderBlock {HTML} at (0,0) size 785x1122
     RenderBody {BODY} at (8,8) size 769x1101 [bgcolor=#EEEEEE]
@@ -391,7 +391,7 @@ layer at (23,8) size 600x39
       text run at (73,146) width 106: "DEBI STANGEL, "
       text run at (178,146) width 119: "119 GLEN COURT, "
       text run at (296,146) width 139: "DANVILLE CA Z/94526"
-layer at (23,8) size 769x73 backgroundClip at (0,0) size 785x1122 clip at (0,0) size 785x1122
+layer at (23,8) size 769x73
   RenderInline (relative positioned) {SPAN} at (0,205) size 769x73
     RenderText {#text} at (0,0) size 0x0
     RenderImage {IMG} at (0,197) size 20x21

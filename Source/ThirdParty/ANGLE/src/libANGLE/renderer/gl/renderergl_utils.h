@@ -19,7 +19,6 @@
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 
-#include <array>
 #include <string>
 #include <vector>
 
@@ -144,6 +143,8 @@ GLenum GetTextureBindingTarget(gl::TextureType textureType);
 GLenum GetTextureBindingTarget(gl::TextureTarget textureTarget);
 GLenum GetBufferBindingQuery(gl::BufferBinding bufferBinding);
 std::string GetBufferBindingString(gl::BufferBinding bufferBinding);
+gl::TextureType GetNativeTextureType(gl::TextureType type);
+gl::TextureTarget GetNativeTextureTarget(gl::TextureTarget target);
 }  // namespace nativegl
 
 bool CanMapBufferForRead(const FunctionsGL *functions);
@@ -186,11 +187,6 @@ std::vector<ContextCreationTry> GenerateContextCreationToTry(EGLint requestedTyp
 std::string GetRendererString(const FunctionsGL *functions);
 std::string GetVendorString(const FunctionsGL *functions);
 std::string GetVersionString(const FunctionsGL *functions);
-
-bool GetPowerVRDriverVersion(const std::string &vendorString,
-                             const std::string &rendererString,
-                             const std::string &versionString,
-                             std::array<int, 2> *versionOut);
 
 }  // namespace rx
 

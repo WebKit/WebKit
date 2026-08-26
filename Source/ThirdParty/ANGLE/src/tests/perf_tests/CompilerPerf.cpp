@@ -194,6 +194,7 @@ bool IsPlatformAvailable(const CompilerParameters &param)
     switch (param.output)
     {
         case SH_HLSL_4_1_OUTPUT:
+        case SH_HLSL_3_0_OUTPUT:
         {
             angle::PoolAllocator allocator;
             InitializePoolIndex();

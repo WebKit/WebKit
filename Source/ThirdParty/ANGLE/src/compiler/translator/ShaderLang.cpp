@@ -36,8 +36,6 @@ namespace sh
 
 namespace
 {
-const char kUserVariableNamePrefix = 'u';
-const char kUserBlockNamePrefix    = 'b';
 
 bool isInitialized = false;
 
@@ -234,6 +232,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->ANGLE_multi_draw                               = 0;
     resources->ANGLE_base_vertex_base_instance                = 0;
     resources->ANGLE_base_vertex_base_instance_shader_builtin = 0;
+    resources->WEBGL_video_texture                            = 0;
     resources->APPLE_clip_distance                            = 0;
     resources->OES_texture_cube_map_array                     = 0;
     resources->EXT_texture_cube_map_array                     = 0;
@@ -274,8 +273,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     // Disable name hashing by default.
     resources->HashFunction = nullptr;
 
-    resources->UserVariableNamePrefix = kUserVariableNamePrefix;
-    resources->UserBlockNamePrefix    = kUserBlockNamePrefix;
+    resources->UserVariableNamePrefix = kUserDefinedNamePrefix;
 
     resources->MaxExpressionComplexity = 256;
     resources->MaxStatementDepth       = 256;
@@ -518,7 +516,7 @@ const std::map<std::string, std::string> *GetNameHashingMap(const ShHandle handl
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
-    return &(compiler->getNameMap().getInternalMap());
+    return &(compiler->getNameMap());
 }
 
 const std::vector<ShaderVariable> *GetUniforms(const ShHandle handle)
@@ -901,6 +899,11 @@ uint32_t GetAdvancedBlendEquations(const ShHandle handle)
 
     return compiler->getAdvancedBlendEquations().bits();
 }
+
+// Can't prefix with just _ because then we might introduce a double underscore, which is not safe
+// in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
+// use by the underlying implementation). u is short for user-defined.
+const char kUserDefinedNamePrefix = 'u';
 
 const char *BlockLayoutTypeToString(BlockLayoutType type)
 {

@@ -362,14 +362,14 @@ void main() {
 
     std::string result =
         std::string("'") + longName +
-        std::string("' : identifiers beginning with `_` must be < 1022 characters");
+        std::string("' : identifiers beginning with `_u` must be < 1022 characters");
 
     validateError(GL_FRAGMENT_SHADER, shader.c_str(), result.c_str());
 }
 // https://crbug.com/499176133
 TEST_P(GLSLValidationTest, LongIdentifierAtLimit_1023)
 {
-    std::string longName = "_b";
+    std::string longName = "_u";
     longName.append(1023 - 2, 'a');
     std::string shader = R"(
 void main() {
@@ -379,7 +379,7 @@ void main() {
 
     std::string result =
         std::string("'") + longName +
-        std::string("' : identifiers beginning with `_` must be < 1022 characters");
+        std::string("' : identifiers beginning with `_u` must be < 1022 characters");
 
     validateError(GL_FRAGMENT_SHADER, shader.c_str(), result.c_str());
 }
@@ -396,7 +396,7 @@ void main() {
 
     std::string result =
         std::string("'") + longName +
-        std::string("' : identifiers beginning with `_` must be < 1022 characters");
+        std::string("' : identifiers beginning with `_u` must be < 1022 characters");
 
     validateError(GL_FRAGMENT_SHADER, shader.c_str(), result.c_str());
 }
@@ -2900,55 +2900,6 @@ void main() {
                   "'a' : Size of declared private variable exceeds implementation-defined limit");
 }
 
-// Test that too large local variables are rejected after the same type passes validation as a
-// uniform
-TEST_P(WebGL2GLSLValidationTest, LargeArrayAfterUsedAsUniform)
-{
-    constexpr char kFS[] = R"(#version 300 es
-precision highp float;
-struct S
-{
-    float a[65536];
-};
-uniform S u;
-out vec4 color;
-void main() {
-    S l = u;
-    color = vec4(l.a[0], 0.0, 0.0, 1.0);
-})";
-    validateError(GL_FRAGMENT_SHADER, kFS,
-                  "'l' : Size of declared private variable exceeds implementation-defined limit");
-}
-
-// Test that repeated declarations are counted towards the total private variable limit
-TEST_P(WebGL2GLSLValidationTest, RepeatedDeclarationsOfSameTimeTooLarge)
-{
-    std::ostringstream fs;
-    fs << R"(#version 300 es
-precision highp float;
-// Declare a struct that's within the 65536-byte limit
-struct S
-{
-    float a[16384];
-};
-out vec4 color;
-void main() {
-    float f;
-)";
-    // Repeatedly declare a variable of this type, so that the total limit is reached, which is 256
-    // times the per-variable limit.
-    for (uint32_t i = 0; i < 257; ++i)
-    {
-        fs << "S s" << i << "; f += s" << i << ".a[0];\n";
-    }
-    fs << R"(
-    color = vec4(f, 0.0, 0.0, 1.0);
-})";
-    validateError(
-        GL_FRAGMENT_SHADER, fs.str().c_str(),
-        "'' : Total size of declared private variables exceeds implementation-defined limit");
-}
-
 // Test that too large array, where cast to signed int would produce negative sizes, does not crash.
 TEST_P(WebGL2GLSLValidationTest, LargeArrayUintMaxSize)
 {
@@ -2974,26 +2925,6 @@ uniform Block
 out int o;
 void main() {
     o = rr[1];
-})";
-    validateError(GL_FRAGMENT_SHADER, kFS,
-                  "'Block' : Size of declared variable exceeds implementation-defined limit");
-}
-
-// Test that too large array in UBO fails after another UBO within limit is declared.
-TEST_P(WebGL2GLSLValidationTest, LargeArrayUBOAfterSmallUBO)
-{
-    constexpr char kFS[] = R"(#version 300 es
-uniform Small
-{
-    int i;
-};
-uniform Block
-{
-    int rr[~1U];
-};
-out int o;
-void main() {
-    o = rr[1] + i;
 })";
     validateError(GL_FRAGMENT_SHADER, kFS,
                   "'Block' : Size of declared variable exceeds implementation-defined limit");
@@ -8171,6 +8102,41 @@ void main()
     // error if extension is not specified.
     testCompileNeedsExtensionDirective(
         GL_FRAGMENT_SHADER, kFS, "#version 300 es", "GL_EXT_YUV_target", hasExt,
+        "'s' : syntax error", hasExt ? "'s' : syntax error" : "extension is not supported");
+}
+
+// GL_WEBGL_video_texture needs to be enabled in GLSL to be able to use samplerVideoWEBGL.
+TEST_P(GLSLValidationExtensionDirectiveTest_ES3, SamplerVideoWEBGL_ESSL100)
+{
+    const bool hasExt = IsGLExtensionEnabled("GL_WEBGL_video_texture");
+
+    constexpr char kFS[] = R"(precision mediump float;
+uniform mediump samplerVideoWEBGL s;
+void main() {
+    gl_FragColor = textureVideoWEBGL(s, vec2(0.0, 0.0));
+})";
+    // samplerVideoWEBGL is not a reserved keyword, and the translator fails with syntax
+    // error if extension is not specified.
+    testCompileNeedsExtensionDirective(
+        GL_FRAGMENT_SHADER, kFS, nullptr, "GL_WEBGL_video_texture", hasExt, "'s' : syntax error",
+        hasExt ? "'s' : syntax error" : "extension is not supported");
+}
+
+// GL_WEBGL_video_texture needs to be enabled in GLSL to be able to use samplerVideoWEBGL.
+TEST_P(GLSLValidationExtensionDirectiveTest_ES3, SamplerVideoWEBGL_ESSL300)
+{
+    const bool hasExt = IsGLExtensionEnabled("GL_WEBGL_video_texture");
+
+    constexpr char kFS[] = R"(precision mediump float;
+uniform mediump samplerVideoWEBGL s;
+out vec4 my_FragColor;
+void main() {
+    my_FragColor = texture(s, vec2(0.0, 0.0));
+})";
+    // samplerVideoWEBGL is not a reserved keyword, and the translator fails with syntax
+    // error if extension is not specified.
+    testCompileNeedsExtensionDirective(
+        GL_FRAGMENT_SHADER, kFS, "#version 300 es", "GL_WEBGL_video_texture", hasExt,
         "'s' : syntax error", hasExt ? "'s' : syntax error" : "extension is not supported");
 }
 

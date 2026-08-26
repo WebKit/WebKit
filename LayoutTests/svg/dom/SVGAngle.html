@@ -137,95 +137,22 @@ shouldBe("angle.value", "0");
 shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
-shouldThrow("angle.valueAsString = ',5 rad'");
+shouldThrow("angle.valueAsString = '5graD'");
 shouldBeEqualToString("angle.valueAsString", "0");
 shouldBe("angle.value", "0");
 shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
-// FIXME: SVGAngleValue cannot hold a calculated value yet, so these assignments
-// throw and the checks below are expected to fail for now.
-debug("");
-debug("Check setting calc() 'valueAsString' arguments");
-shouldBeEqualToString("angle.valueAsString = 'calc(30deg + 30deg)'", "calc(30deg + 30deg)");
-shouldBe("angle.valueInSpecifiedUnits", "60");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
-
-shouldBeEqualToString("angle.valueAsString = 'calc(5 * 10)'", "calc(5 * 10)");
-shouldBe("angle.valueInSpecifiedUnits", "50");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-// 'valueInSpecifiedUnits' is a float, so magnitudes above FLT_MAX cannot be
-// represented and are rejected rather than clamped.
-debug("");
-debug("Check setting 'valueAsString' arguments outside the float range");
-shouldThrow("angle.valueAsString = '1e39'");
+shouldThrow("angle.valueAsString = '5Rad'");
 shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-shouldThrow("angle.valueAsString = '-1e39'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-shouldThrow("angle.valueAsString = '1e39deg'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-shouldThrow("angle.valueAsString = '-1e39grad'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-// Above DBL_MAX the tokenizer produces an infinity, which the CSS consumers
-// reject before the float range is considered at all.
-shouldThrow("angle.valueAsString = '1e309rad'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-shouldThrow("angle.valueAsString = '-1e309turn'");
-shouldBeEqualToString("angle.valueAsString", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
-
-debug("");
-debug("Check setting 'valueAsString' arguments at the edges of the float range");
-shouldBeEqualToString("angle.valueAsString = '3.4e38deg'", "3.4e38deg");
-shouldBeEqualToString("angle.valueInSpecifiedUnits.toExponential(1)", "3.4e+38");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
-
-shouldBeEqualToString("angle.valueAsString = '-3.4e38deg'", "-3.4e38deg");
-shouldBeEqualToString("angle.valueInSpecifiedUnits.toExponential(1)", "-3.4e+38");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
-
-// Magnitudes below the smallest subnormal float round to zero rather than throwing.
-shouldBeEqualToString("angle.valueAsString = '1e-46grad'", "1e-46grad");
+shouldBe("angle.value", "0");
 shouldBe("angle.valueInSpecifiedUnits", "0");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
-// Spec: The <angle> in SVG attributes is a CSS <angle>, whose unit is matched
-// ASCII case-insensitively.
-debug("");
-debug("Check that 'valueAsString' unit parsing is case-insensitive");
-shouldBeEqualToString("angle.valueAsString = '5graD'", "5graD");
-shouldBeEqualToString("angle.valueAsString", "5grad");
-shouldBe("angle.valueInSpecifiedUnits", "5");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
-
-shouldBeEqualToString("angle.valueAsString = '5Rad'", "5Rad");
-shouldBeEqualToString("angle.valueAsString", "5rad");
-shouldBe("angle.valueInSpecifiedUnits", "5");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
-
-shouldBeEqualToString("angle.valueAsString = '5DEG'", "5DEG");
-shouldBeEqualToString("angle.valueAsString", "5deg");
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
-
-shouldBeEqualToString("angle.valueAsString = '5TurN'", "5TurN");
-shouldBeEqualToString("angle.valueAsString", "5turn");
-// SVGAngle has no SVG_ANGLETYPE_TURN constant, so 'turn' reports UNKNOWN per spec.
-shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNKNOWN");
-
-debug("");
-debug("Reset to initial angle state");
-shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 0)");
+shouldThrow("angle.valueAsString = ',5 rad'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");

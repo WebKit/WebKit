@@ -116,24 +116,15 @@ void GraphicsContextState::filterLastChangesForMatching(const GraphicsContextSta
     });
 }
 
-void GraphicsContextState::copyPropertiesFrom(const GraphicsContextState& state, ChangeFlags changes)
+void GraphicsContextState::copyLastChangesFrom(const GraphicsContextState& state)
 {
+    auto changes = state.m_changeFlags;
     if (!changes)
         return;
     forEachProperty([&](Change change, auto property) {
         if (changes.contains(change))
             this->*property = state.*property;
     });
-}
-
-bool GraphicsContextState::propertiesEqual(const GraphicsContextState& other) const
-{
-    bool equal = true;
-    forEachProperty([&](Change, auto property) {
-        if (!(this->*property == other.*property))
-            equal = false;
-    });
-    return equal;
 }
 
 static ASCIILiteral stateChangeName(GraphicsContextState::Change change)

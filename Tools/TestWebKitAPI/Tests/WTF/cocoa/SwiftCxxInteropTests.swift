@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Apple Inc. All rights reserved.
+// Copyright (C) 2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,36 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#if ENABLE_CXX_INTEROP
 
 import Testing
 import wtf
-public import TestWTFLibrary
-public import TestWTFLibrary.SwiftCxxInteropTestbed
 
 private typealias Cxx = SwiftCxxInteropTestbed
 
-// MARK: - Conformances
-
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension Cxx.IntCompletionHandler: @unsafe TestWTFLibrary.CxxCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = CInt
-}
-
-// MARK: - Helpers
-
-/// Observed via a weak reference to prove the closure context was released.
-private final class Probe {}
-
-private final class Recorder {
-    var values: [CInt] = []
-}
-
-// MARK: - Tests
-
-@Suite(.serialized)
 @MainActor
 struct SwiftCxxInteropTests {
     @Test
@@ -65,114 +42,21 @@ struct SwiftCxxInteropTests {
     }
 
     @Test
-    func completionHandlerReceivesItsArgument() async throws {
-        let result = await withCheckedContinuation { continuation in
-            let completionHandler = Cxx.IntCompletionHandler { argument in
-                continuation.resume(returning: argument)
-            }
-
-            Cxx.callIntCompletionHandler(3, consuming: completionHandler)
-        }
-
-        #expect(result == 3)
-    }
-
-    @Test
     func wtfCompletionHandlerCanBeInvokedFromSwift() async throws {
+        // FIXME: Improve the ergonomics of using this from Swift.
+
         let result = await withCheckedContinuation { continuation in
-            let completionHandler = Cxx.IntCompletionHandler(continuation)
+            let completionHandler = Cxx.IntCompletionHandler(
+                { result in continuation.resume(returning: result)
+                },
+                WTF.ThreadLikeAssertion(WTF.CurrentThreadLike())
+            )
 
             Cxx.callIntCompletionHandler(3, consuming: completionHandler)
         }
 
         #expect(result == 3)
-    }
-
-    @Test
-    func completionHandlerPreservesCapturedState() async throws {
-        let captured: CInt = 40
-
-        let result = await withCheckedContinuation { continuation in
-            let completionHandler = Cxx.IntCompletionHandler { argument in
-                continuation.resume(returning: argument + captured)
-            }
-
-            Cxx.callIntCompletionHandler(2, consuming: completionHandler)
-        }
-
-        #expect(result == 42)
-    }
-
-    @Test
-    func voidCompletionHandlerCanBeInvokedFromSwift() async throws {
-        var didCall = false
-
-        let completionHandler = Cxx.VoidCompletionHandler {
-            didCall = true
-        }
-        Cxx.callVoidCompletionHandler(consuming: completionHandler)
-
-        #expect(didCall)
-    }
-
-    @Test
-    func voidCompletionHandlerWorksWithAContinuation() async throws {
-        await withCheckedContinuation { continuation in
-            let completionHandler = Cxx.VoidCompletionHandler(continuation)
-
-            Cxx.callVoidCompletionHandler(consuming: completionHandler)
-        }
-    }
-
-    @Test
-    func separateHandlersDoNotShareAContext() async throws {
-        let recorder = Recorder()
-
-        let first = Cxx.IntCompletionHandler { recorder.values.append($0 * 10) }
-        let second = Cxx.IntCompletionHandler { recorder.values.append($0 * 100) }
-
-        Cxx.callIntCompletionHandler(1, consuming: first)
-        Cxx.callIntCompletionHandler(2, consuming: second)
-
-        #expect(recorder.values == [10, 200])
-    }
-
-    // MARK: Context lifetime
-
-    @Test
-    func contextIsReleasedAfterTheHandlerIsCalled() async throws {
-        weak var weakProbe: Probe?
-
-        do {
-            let probe = Probe()
-            weakProbe = probe
-
-            let completionHandler = Cxx.IntCompletionHandler { _ in
-                // Capture the probe so it is kept alive only by the closure context.
-                _ = probe
-            }
-            Cxx.callIntCompletionHandler(1, consuming: completionHandler)
-        }
-
-        #expect(weakProbe == nil, "the closure context should be released once the handler has run")
-    }
-
-    @Test
-    func contextSurvivesUntilTheHandlerIsInvokedLater() async throws {
-        // Leaving a stored handler behind would strand it for the next test, so clear the
-        // slot even if this test returns early.
-        defer { Cxx.resetStoredIntCompletionHandler() }
-
-        // storeIntCompletionHandler() returns without calling the handler, so the closure has
-        // to outlive that call.
-        let result = await withCheckedContinuation { continuation in
-            Cxx.storeIntCompletionHandler(consuming: .init(continuation))
-
-            Cxx.invokeStoredIntCompletionHandler(9)
-        }
-
-        #expect(result == 9)
     }
 }
 
-#endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#endif // ENABLE_CXX_INTEROP

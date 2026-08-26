@@ -195,31 +195,13 @@ public:
             m_callback(WTF::move(m_records));
     }
 
-    bool hasMatchingRecord(const ResourceRequest& request) const
-    {
-        auto iterator = m_recordPositionsByURL.find(request.url().stringWithoutFragmentIdentifier());
-        if (iterator == m_recordPositionsByURL.end())
-            return false;
-
-        CacheQueryOptions options;
-        for (auto position : iterator->value) {
-            auto& record = m_records[position];
-            if (DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
-                return true;
-        }
-        return false;
-    }
+    const Vector<Record>& NODELETE records() const { return m_records; }
 
     size_t addRecord(Record&& record)
     {
         ASSERT(!isDone());
-        auto url = record.request.url().stringWithoutFragmentIdentifier();
         m_records.append(WTF::move(record));
-        auto position = m_records.size() - 1;
-        m_recordPositionsByURL.ensure(WTF::move(url), [] {
-            return Vector<size_t> { };
-        }).iterator->value.append(position);
-        return position;
+        return m_records.size() - 1;
     }
 
     void addResponseBody(size_t position, FetchResponse& response, DOMCacheEngine::ResponseBody&& data)
@@ -247,7 +229,6 @@ private:
 
     const Ref<DOMCache> m_domCache;
     Vector<Record> m_records;
-    HashMap<String, Vector<size_t>> m_recordPositionsByURL;
     CompletionHandler<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
 
@@ -342,9 +323,12 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 return;
             }
 
-            if (taskHandler->hasMatchingRecord(request->resourceRequest())) {
-                taskHandler->error(Exception { ExceptionCode::InvalidStateError, "addAll cannot store several matching requests"_s });
-                return;
+            CacheQueryOptions options;
+            for (const auto& record : taskHandler->records()) {
+                if (DOMCacheEngine::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
+                    taskHandler->error(Exception { ExceptionCode::InvalidStateError, "addAll cannot store several matching requests"_s });
+                    return;
+                }
             }
             size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
 

@@ -2262,12 +2262,6 @@ unsigned NODELETE Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
-bool Page::hasRemoteFrames() const
-{
-    ASSERT_IMPLIES(mainFrame().tree().containsRemoteFrame(), m_remoteFrameCount);
-    return !!m_remoteFrameCount;
-}
-
 void Page::syncLocalFrameInfoToRemote()
 {
     forEachLocalFrame([] (LocalFrame& frame) {
@@ -2622,7 +2616,7 @@ void Page::doAfterUpdateRendering()
 
     computeSampledPageTopColorIfNecessary();
 
-    if (hasRemoteFrames())
+    if (settings().siteIsolationEnabled())
         syncLocalFrameInfoToRemote();
 }
 

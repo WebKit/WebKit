@@ -79,6 +79,7 @@ enum class TExtension : uint8_t
     OES_texture_storage_multisample_2d_array,
     OVR_multiview,
     OVR_multiview2,
+    WEBGL_video_texture,
 };
 
 enum TBehavior : uint8_t

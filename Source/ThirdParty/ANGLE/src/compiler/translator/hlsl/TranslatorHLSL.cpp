@@ -117,7 +117,7 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         return false;
     }
 
-    if (!shouldRunLoopAndIndexingValidation())
+    if (!shouldRunLoopAndIndexingValidation(compileOptions))
     {
         // HLSL doesn't support dynamic indexing of vectors and matrices.
         if (!RemoveDynamicIndexingOfNonSSBOVectorOrMatrix(this, root, &getSymbolTable(),

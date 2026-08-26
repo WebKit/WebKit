@@ -384,7 +384,7 @@ private:
 #endif
     RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
-    const RefPtr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
+    const std::unique_ptr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
     Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)

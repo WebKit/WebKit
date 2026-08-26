@@ -233,20 +233,6 @@ public:
         }
     }
 
-    void updateMatchingCachedMemoriesConcurrently(const SharedArrayBufferContents& grownMemory)
-    {
-        if (!m_wasmMemory)
-            return;
-
-        for (unsigned i = 0; i < m_moduleInformation->memoryCount(); i++) {
-            if (!m_memories[i] || m_memories[i]->memory().shared() != &grownMemory)
-                continue;
-            updateCachedMemoryBaseSizePair(i);
-            if (!i)
-                m_cachedMemory0Size = m_memories[i]->memory().size();
-        }
-    }
-
     uint32_t cachedTable0Length() const { return m_cachedTable0Length; }
     Wasm::FuncRefTable::Function* cachedTable0Buffer() const { return m_cachedTable0Buffer; }
 

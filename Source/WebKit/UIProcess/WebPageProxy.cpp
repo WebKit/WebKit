@@ -6132,14 +6132,13 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
     ](FrameProcess* sharedProcess) mutable {
         if (sharedProcess) {
+            navigation->setPendingSharedProcess(*sharedProcess);
             ASSERT(!sharedProcess->process().isInProcessCache());
-            Ref sharedFrameProcess { *sharedProcess };
             if (frame->isMainFrame()) {
                 Ref process { sharedProcess->process() };
                 auto shutdownPreventingScope = process->shutdownPreventingScope();
                 protect(websiteDataStore->networkProcess())->addAllowedFirstPartyForCookies(sharedProcess->process(), site.domain(), LoadedWebArchive::No, [
                     process = WTF::move(process),
-                    sharedFrameProcess = WTF::move(sharedFrameProcess),
                     shutdownPreventingScope = WTF::move(shutdownPreventingScope),
                     continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
                 ] mutable {
@@ -6359,11 +6358,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     const auto oldProcessID = siteIsolatedProcess().coreProcessIdentifier();
     const auto oldWebPageID = m_webPageID;
-    RefPtr deferredTopDocumentSyncData = provisionalPage->takeDeferredTopDocumentSyncData();
     swapToProvisionalPage(provisionalPage.releaseNonNull());
-
-    if (deferredTopDocumentSyncData)
-        applyDeferredTopDocumentSyncDataFromCommittedProcess(deferredTopDocumentSyncData.releaseNonNull());
 
     didCommitLoadForFrame(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, hasCertificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
 
@@ -9086,11 +9081,8 @@ Ref<WebCore::DocumentSyncData> WebPageProxy::topDocumentSyncData() const
 void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const WebCore::DocumentSyncSerializationData& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
-    if (process.ptr() != &legacyMainFrameProcess()) {
-        if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && &provisionalPage->process() == process.ptr())
-            provisionalPage->updateDeferredTopDocumentSyncData(data);
+    if (process.ptr() != &legacyMainFrameProcess())
         return;
-    }
 
     if (RefPtr topDocumentSyncData = m_topDocumentSyncData)
         topDocumentSyncData->update(data);
@@ -9104,25 +9096,12 @@ void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const 
 void WebPageProxy::broadcastAllDocumentSyncData(IPC::Connection& connection, Ref<WebCore::DocumentSyncData>&& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
-    if (process.ptr() != &legacyMainFrameProcess()) {
-        if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && &provisionalPage->process() == process.ptr())
-            provisionalPage->setDeferredTopDocumentSyncData(WTF::move(data));
+    if (process.ptr() != &legacyMainFrameProcess())
         return;
-    }
 
     m_topDocumentSyncData = data.copyRef();
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
-            return;
-        webProcess.send(Messages::WebPage::AllTopDocumentSyncDataChangedInAnotherProcess(data), pageID);
-    });
-}
-
-void WebPageProxy::applyDeferredTopDocumentSyncDataFromCommittedProcess(Ref<WebCore::DocumentSyncData>&& data)
-{
-    m_topDocumentSyncData = data.copyRef();
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        if (&webProcess == &legacyMainFrameProcess())
             return;
         webProcess.send(Messages::WebPage::AllTopDocumentSyncDataChangedInAnotherProcess(data), pageID);
     });
@@ -13236,27 +13215,16 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<S
         ASSERT(transcodingURLs.size() == transcodedURLs.size());
 
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, fileURLs = crossThreadCopy(WTF::move(fileURLs)), transcodedURLs = crossThreadCopy(WTF::move(transcodedURLs))]() {
-            auto sendFilesToWebProcess = [this, protectedThis = Ref { *this }, fileURLs, transcodedURLs] {
 #if ENABLE(SANDBOX_EXTENSIONS)
-                Vector<String> sandboxExtensionFiles;
-                for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
-                    sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
-                for (auto& file : sandboxExtensionFiles)
-                    protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
-                auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
-                send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)));
+            Vector<String> sandboxExtensionFiles;
+            for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
+                sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
+            for (auto& file : sandboxExtensionFiles)
+                protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
+            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
+            send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)));
 #endif
-                send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, transcodedURLs));
-            };
-            auto allowedTranscodedURLs = transcodedURLs;
-            allowedTranscodedURLs.removeAllMatching([](auto& url) {
-                return url.isNull();
-            });
-            if (allowedTranscodedURLs.isEmpty()) {
-                sendFilesToWebProcess();
-                return;
-            }
-            protect(protect(websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(legacyMainFrameProcess().coreProcessIdentifier(), allowedTranscodedURLs), WTF::move(sendFilesToWebProcess));
+            send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, transcodedURLs));
         });
     });
 
@@ -13265,44 +13233,6 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<S
     UNUSED_PARAM(fileURLs);
     UNUSED_PARAM(allowedMIMETypes);
     return false;
-#endif
-}
-
-void WebPageProxy::transcodeChosenFiles(IPC::Connection& connection, Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-#if PLATFORM(MAC)
-    WEBPAGEPROXY_RELEASE_LOG(DragAndDrop, "WebPageProxy::transcodeChosenFiles");
-    Ref process = WebProcessProxy::fromConnection(connection);
-    transcodeImagesInBackgroundQueue(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), [this, protectedThis = Ref { *this }, process = WTF::move(process), completionHandler = WTF::move(completionHandler)](auto&& replacementPaths) mutable {
-        Vector<String> transcodedPaths;
-        for (auto& path : replacementPaths) {
-            if (!path.isNull())
-                transcodedPaths.append(path);
-        }
-
-        if (transcodedPaths.isEmpty()) {
-            WEBPAGEPROXY_RELEASE_LOG(DragAndDrop, "WebPageProxy::transcodeChosenFiles no file transcoded");
-            return completionHandler(WTF::move(replacementPaths));
-        }
-
-        for (auto& path : transcodedPaths)
-            process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(path));
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-        auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::transcodeChosenFiles"_s, transcodedPaths);
-        process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(process.get()));
-#endif
-
-        protect(protect(protectedThis->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process->coreProcessIdentifier(), transcodedPaths), [replacementPaths = WTF::move(replacementPaths), completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(WTF::move(replacementPaths));
-        });
-    });
-#else
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(transcodingPaths);
-    UNUSED_PARAM(destinationUTI);
-    UNUSED_PARAM(destinationExtension);
-    completionHandler({ });
 #endif
 }
 

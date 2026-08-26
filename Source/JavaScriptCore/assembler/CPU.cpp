@@ -27,11 +27,8 @@
 #include "CPU.h"
 
 #if (CPU(X86) || CPU(X86_64) || CPU(ARM64)) && OS(DARWIN)
-#include <array>
 #include <mutex>
-#include <optional>
 #include <sys/sysctl.h>
-#include <wtf/text/StringView.h>
 #endif
 
 #if ENABLE(ASSEMBLER)
@@ -109,7 +106,7 @@ int32_t hwPhysicalCPUMax()
 #endif // #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 
 #if CPU(ARM64) && OS(DARWIN)
-static int32_t sysctlInt32(const char* name)
+static int32_t hwPerfLevelPhysicalCPUMax(const char* name)
 {
     int32_t val = 0;
     size_t valSize = sizeof(val);
@@ -119,75 +116,22 @@ static int32_t sysctlInt32(const char* name)
     return val;
 }
 
-struct PerfLevelSysctls {
-    const ASCIILiteral physicalCPUMax;
-    const ASCIILiteral name;
-};
-
-static constexpr std::array<PerfLevelSysctls, numberOfCoreCategories> perfLevelSysctls = { {
-    { "hw.perflevel0.physicalcpu_max"_s, "hw.perflevel0.name"_s },
-    { "hw.perflevel1.physicalcpu_max"_s, "hw.perflevel1.name"_s },
-    { "hw.perflevel2.physicalcpu_max"_s, "hw.perflevel2.name"_s },
-} };
-
-static std::optional<CoreCategory> categoryFromPerfLevelName(unsigned level)
+// The highest performance cores.
+int32_t hwNumberOfP0Cores()
 {
-    std::array<char, 32> buffer { };
-    size_t bufferSize = buffer.size();
-    if (sysctlbyname(perfLevelSysctls[level].name, buffer.data(), &bufferSize, nullptr, 0) < 0)
-        return std::nullopt;
-    auto name = StringView::fromLatin1(buffer.data());
-    if (name == "Super"_s)
-        return CoreCategory::Super;
-    if (name == "Performance"_s)
-        return CoreCategory::Performance;
-    if (name == "Efficiency"_s)
-        return CoreCategory::Efficiency;
-    // A chip whose cores are all alike reports one level named "Standard". Nothing slower exists to
-    // contrast those cores with, so they are the performance cores.
-    if (name == "Standard"_s)
-        return CoreCategory::Performance;
-    return std::nullopt;
+    if (int32_t numberOfCoresOverride = Options::numberOfP0CoresOverrides())
+        return numberOfCoresOverride;
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel0.physicalcpu_max");
 }
 
-// Fallback for a level whose name is missing or unfamiliar. The slowest level always holds the
-// efficiency cores, and only a chip reporting all three levels has Super cores.
-static CoreCategory categoryFromPerfLevelIndex(unsigned level, unsigned lastLevel)
+int32_t hwNumberOfP1Cores()
 {
-    if (lastLevel && level == lastLevel)
-        return CoreCategory::Efficiency;
-    if (lastLevel > 1 && !level)
-        return CoreCategory::Super;
-    return CoreCategory::Performance;
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel1.physicalcpu_max");
 }
 
-int32_t hwNumberOfCores(CoreCategory category)
+int32_t hwNumberOfP2Cores()
 {
-    static std::once_flag onceFlag;
-    static std::array<int32_t, numberOfCoreCategories> coresPerCategory { };
-    std::call_once(onceFlag, [] {
-        constexpr unsigned maxLevelCount = perfLevelSysctls.size();
-        std::array<int32_t, maxLevelCount> coresPerLevel { };
-        std::array<std::optional<CoreCategory>, maxLevelCount> categoryPerLevel { };
-        unsigned lastLevel = 0;
-        // A level this chip does not have simply fails to answer, so ask about every level rather
-        // than assuming the ones that answer are contiguous.
-        for (unsigned level = 0; level < maxLevelCount; ++level) {
-            int32_t cores = sysctlInt32(perfLevelSysctls[level].physicalCPUMax);
-            if (cores <= 0)
-                continue;
-            coresPerLevel[level] = cores;
-            categoryPerLevel[level] = categoryFromPerfLevelName(level);
-            lastLevel = level;
-        }
-        for (unsigned level = 0; level < maxLevelCount; ++level) {
-            if (coresPerLevel[level] <= 0)
-                continue;
-            CoreCategory levelCategory = categoryPerLevel[level].value_or(categoryFromPerfLevelIndex(level, lastLevel));
-            coresPerCategory[static_cast<unsigned>(levelCategory)] += coresPerLevel[level];
-        }
-    });
-    return coresPerCategory[static_cast<unsigned>(category)];
+    return hwPerfLevelPhysicalCPUMax("hw.perflevel2.physicalcpu_max");
 }
 #endif // #if CPU(ARM64) && OS(DARWIN)
 

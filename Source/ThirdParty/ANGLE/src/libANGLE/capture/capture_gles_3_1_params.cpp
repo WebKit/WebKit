@@ -74,7 +74,7 @@ void CaptureGetBooleani_v_data(const State &glState,
 
 void CaptureGetFramebufferParameteriv_params(const State &glState,
                                              GLenum target,
-                                             FramebufferParameter pnamePacked,
+                                             GLenum pname,
                                              GLint *params,
                                              ParamCapture *paramCapture)
 {

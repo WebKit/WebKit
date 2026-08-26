@@ -5085,8 +5085,7 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
                 if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
                     page->chrome().focus();
             }
-            if (!features.wantsNoOpener())
-                frame->updateOpener(openerFrame);
+            frame->updateOpener(openerFrame);
             return { frame, CreatedNewPage::No };
         }
     }
