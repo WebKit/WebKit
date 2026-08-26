@@ -28,18 +28,19 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 
+enum class SVGAngleType : uint8_t {
+    Unknown = 0,
+    Unspecified = 1,
+    Deg = 2,
+    Rad = 3,
+    Grad = 4,
+    Turn = 5
+};
+
 class SVGAngleValue {
     WTF_MAKE_TZONE_ALLOCATED(SVGAngleValue);
 public:
-    enum Type {
-        // FIXME: Change the casing style of the enum type or naming of the Angle Value (webkit.org/b/269429).
-        SVG_ANGLETYPE_UNKNOWN = 0,
-        SVG_ANGLETYPE_UNSPECIFIED = 1,
-        SVG_ANGLETYPE_DEG = 2,
-        SVG_ANGLETYPE_RAD = 3,
-        SVG_ANGLETYPE_GRAD = 4,
-        SVG_ANGLETYPE_TURN = 5
-    };
+    using Type = SVGAngleType;
 
     Type unitType() const { return m_unitType; }
 
@@ -56,7 +57,7 @@ public:
     ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType);
 
 private:
-    Type m_unitType { SVG_ANGLETYPE_UNSPECIFIED };
+    Type m_unitType { Type::Unspecified };
     float m_valueInSpecifiedUnits { 0 };
 };
 
