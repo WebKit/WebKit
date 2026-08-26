@@ -449,6 +449,19 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
     auto viewportSize = pageView->sizeForVisibleContent();
 
+    // Everything below emits root-view coordinates, but a frame overlay paints into an
+    // OverlayType::Document surface positioned at the contents origin, so it receives contents
+    // coordinates. Undo contentsToView(), which subtracts documentScrollPositionRelativeToViewOrigin()
+    // -- and is a no-op when scrolling is delegated, so this must be too. PageOverlay::drawRect() has
+    // already translated by scrollOrigin(), which is part of that same conversion and must not be
+    // re-applied here. Must precede the clearRect below, which is also viewport-relative.
+    // FIXME: <rdar://116202544> Remove once frame overlays can use OverlayType::View, which needs a
+    // per-frame view-overlay root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the
+    // main frame.
+    GraphicsContextStateSaver documentSurfaceStateSaver(context);
+    if (isFrameScoped() && !pageView->delegatesScrollingToNativeView())
+        context.translate(pageView->documentScrollPositionRelativeToViewOrigin() - pageView->scrollOrigin());
+
     context.clearRect({ FloatPoint::zero(), viewportSize });
 
     GraphicsContextStateSaver stateSaver(context);
@@ -1347,6 +1360,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         obscuredContentInsets.setTop(obscuredContentInsets.top() + rulerSize);
         obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
     }
+
+    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
+    // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
+    // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
+    // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.
 
     auto expectedLabelSize = InspectorOverlayLabel::expectedSize(labelContents, InspectorOverlayLabel::Arrow::Direction::Up);
     auto boundsCenterX = bounds.center().x();
