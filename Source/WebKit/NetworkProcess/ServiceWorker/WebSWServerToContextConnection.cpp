@@ -351,8 +351,7 @@ void WebSWServerToContextConnection::openWindowFromServiceWorker(WebCore::Servic
 
 void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, WebCore::ServiceWorkerContextData::ImportedScript&& script)
 {
-    // FIXME: As for openWindowFromServiceWorker, this needs the worker's own origin.
-    setScriptResource(identifier, WTF::move(untrustedScriptURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview), WTF::move(script));
+    setScriptResource(identifier, WTF::move(untrustedScriptURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget), WTF::move(script));
 }
 
 void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
