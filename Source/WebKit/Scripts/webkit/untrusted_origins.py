@@ -96,6 +96,7 @@ PREORDAINED_VALIDATOR_HEADERS = {
     "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
     "NetworkProcess/webrtc/RTCDomainAuthority.h",
     "NetworkProcess/storage/StorageOriginAuthority.h",
+    "UIProcess/Extensions/ExtensionHostPermissionAuthority.h",
     "UIProcess/FirstPartyAuthority.h",
 }
 
