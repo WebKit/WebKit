@@ -1023,7 +1023,11 @@ void SpeculativeJIT::emitCall(Node* node)
                 nativeFunction = uncheckedDowncast<NativeExecutable>(executable)->function();
         }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (nativeFunction && !vm().isDebuggerHookInjected()) {
+#else
+        if (nativeFunction && !isTail && !vm().isDebuggerHookInjected()) {
+#endif
             auto emitCallTarget = [&]() {
                 emitFunctionPrologue();
                 emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
@@ -1045,6 +1049,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 emitFunctionEpilogue();
             };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
             if (isTail) {
                 emitStoreCallSiteIndex(callSite);
                 CallFrameShuffler(*this, shuffleData).prepareForTailCall();
@@ -1053,6 +1058,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 useChildren(node);
                 return;
             }
+#endif
 
             auto done = jump();
             auto callTarget = label();
