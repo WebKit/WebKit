@@ -245,7 +245,7 @@ template<typename Op> static std::optional<TypedChild> consumeExactlyOneArgument
     // the tree. Simplify the Deg2Rad eagerly so that fully-resolved angles collapse into a Number
     // (which then lets the trig simplification below reduce the whole expression to a Number).
     if constexpr (std::same_as<Op, Sin> || std::same_as<Op, Cos> || std::same_as<Op, Tan>) {
-        if (sum->type.template matchesAny<Type::Match::Angle>({ .allowsPercentHint = true })) {
+        if (sum->type.template matchesAny<Type::Match::Angle>({ .percentHint = PercentHint::Angle })) {
             Deg2Rad conversion { .angle = WTF::move(op.a) };
             if (auto* simplificationOptions = state.simplificationOptions) {
                 if (auto replacement = simplify(conversion, *simplificationOptions))

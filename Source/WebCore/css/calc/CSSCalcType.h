@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,8 @@ enum class PercentHint : uint8_t {
     Time,
     Frequency,
     Resolution,
-    Flex
+    Flex,
+    Percent
 };
 
 // https://drafts.css-houdini.org/css-typed-om-1/#cssnumericvalue-type
@@ -72,7 +73,8 @@ struct Type {
             Time = static_cast<uint8_t>(PercentHint::Time),
             Frequency = static_cast<uint8_t>(PercentHint::Frequency),
             Resolution = static_cast<uint8_t>(PercentHint::Resolution),
-            Flex = static_cast<uint8_t>(PercentHint::Flex)
+            Flex = static_cast<uint8_t>(PercentHint::Flex),
+            Percent = static_cast<uint8_t>(PercentHint::Percent)
         };
 
     public:
@@ -112,7 +114,7 @@ struct Type {
     static constexpr Type makeFrequency() { return { .frequency = 1 }; }
     static constexpr Type makeResolution() { return { .resolution = 1 }; }
     static constexpr Type makeFlex() { return { .flex = 1 }; }
-    static constexpr Type makePercent() { return { .percent = 1 }; }
+    static constexpr Type makePercent() { return { .percent = 1, .percentHint = PercentHint::Percent }; }
 
     static Type NODELETE determineType(CSSUnitType);
     static PercentHintValue NODELETE determinePercentHint(CSS::Category);
@@ -128,7 +130,7 @@ struct Type {
     static std::optional<Type> NODELETE madeConsistent(Type base, Type input);
 
     static constexpr decltype(auto) allBaseTypes();
-    static constexpr decltype(auto) allPotentialPercentHintTypes();
+    static constexpr decltype(auto) allPercentHintTypesExceptPercent();
 
     constexpr Exponent& operator[](BaseType);
     constexpr Exponent operator[](BaseType) const;
@@ -141,7 +143,7 @@ struct Type {
     constexpr bool allNonZeroValuesEqual(Type) const;
 
     struct MatchingContext {
-        bool allowsPercentHint;
+        std::optional<PercentHint> percentHint;
     };
     enum class Match : uint8_t {
         Number,
@@ -153,7 +155,7 @@ struct Type {
         Resolution,
         Flex
     };
-    template<Match...> constexpr bool matchesAny(MatchingContext = { .allowsPercentHint = false }) const;
+    template<Match...> constexpr bool matchesAny(MatchingContext = { .percentHint = std::nullopt }) const;
 
     bool NODELETE matches(CSS::Category) const;
 
@@ -181,7 +183,7 @@ constexpr decltype(auto) Type::allBaseTypes()
     };
 }
 
-constexpr decltype(auto) Type::allPotentialPercentHintTypes()
+constexpr decltype(auto) Type::allPercentHintTypesExceptPercent()
 {
     return std::array {
         PercentHint::Length,
@@ -239,6 +241,7 @@ constexpr Type::Exponent& Type::operator[](PercentHint percentHint)
     case PercentHint::Frequency: return frequency;
     case PercentHint::Resolution: return resolution;
     case PercentHint::Flex: return flex;
+    case PercentHint::Percent: return percent;
     }
 
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -254,6 +257,7 @@ constexpr Type::Exponent Type::operator[](PercentHint percentHint) const
     case PercentHint::Frequency: return frequency;
     case PercentHint::Resolution: return resolution;
     case PercentHint::Flex: return flex;
+    case PercentHint::Percent: return percent;
     }
 
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -264,16 +268,18 @@ constexpr void Type::applyPercentHint(PercentHint hint)
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#apply-the-percent-hint
 
-    // 1. If type doesn’t contain `hint`, set type[hint] to 0.
+    // 1. Set type’s percent hint to `hint`.
+    this->percentHint = hint;
+
+    // 2. If type doesn’t contain `hint`, set type[hint] to 0.
     //
     //   No work required as we represent "doesn't contain" as `0`.
 
-    // 2. If type contains "percent", add type["percent"] to type[hint], then set type["percent"] to 0.
-    (*this)[hint] += (*this)[BaseType::Percent];
-    (*this)[BaseType::Percent] = 0;
-
-    // 3. Set type’s percent hint to `hint`.
-    this->percentHint = hint;
+    // 3. If `hint` is anything other than "percent", and type contains "percent", add type["percent"] to type[hint], then set type["percent"] to 0.
+    if (hint != PercentHint::Percent && (*this)[BaseType::Percent]) {
+        (*this)[hint] += (*this)[BaseType::Percent];
+        (*this)[BaseType::Percent] = 0;
+    }
 }
 
 constexpr bool Type::allNonZeroValuesEqual(Type otherType) const
@@ -367,11 +373,12 @@ template<Type::Match... M> constexpr bool Type::matchesAny(MatchingContext match
     if (!TypeMatcher<M...>::matchesAny(*this))
         return false;
 
-    // If the context in which the value is used does not allow <percentage> values, then the type must additionally have a null percent hint to be considered matching.
-    if (percentHint && !matchingContext.allowsPercentHint)
-        return false;
+    // If the context in which the value is used allows <percentage> values, and those percentages are resolved against another type, then for the type to be considered matching it must either have a null percent hint, or the percent hint must match the other type.
+    if (matchingContext.percentHint)
+        return !percentHint || percentHint == *matchingContext.percentHint;
 
-    return true;
+    // If the context does not allow <percentage> values to be mixed with <length>/etc values (or doesn’t allow <percentage> values at all, such as border-width), then for the type to be considered matching the percent hint must be null.
+    return !percentHint;
 }
 
 // Policy to apply to validate argument types.
@@ -385,9 +392,9 @@ template<AllowedTypes allowed> inline bool validateType(Type a)
     if constexpr (allowed == AllowedTypes::Any)
         return true;
     else if constexpr (allowed == AllowedTypes::Number)
-        return a.matchesAny<Type::Match::Number>({ .allowsPercentHint = true });
+        return a.matchesAny<Type::Match::Number>();
     else if constexpr (allowed == AllowedTypes::NumberOrAngle)
-        return a.matchesAny<Type::Match::Number, Type::Match::Angle>({ .allowsPercentHint = true });
+        return a.matchesAny<Type::Match::Number, Type::Match::Angle>({ .percentHint = PercentHint::Angle });
 }
 
 // Policy used to merge argument types.
