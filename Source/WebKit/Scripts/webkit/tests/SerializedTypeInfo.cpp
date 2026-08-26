@@ -51,6 +51,9 @@
 #include "StructHeader.h"
 #endif
 #include "TemplateTest.h"
+#include "TestNoUntrustedValue.h"
+#include "TestUntrustedValueCarrier.h"
+#include "TestUntrustedValueConditionalCarrier.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #if !(ENABLE(OUTER_CONDITION))
@@ -583,6 +586,78 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "NotDispatchableFromWebContent"_s,
                 "member"_s
+            },
+        } },
+        { "WebKit::TestUntrustedValueCarrier"_s, {
+            {
+                "WebCore::SecurityOriginData"_s,
+                "origin"_s
+            },
+            {
+                "WebCore::SecurityOriginData"_s,
+                "getterOrigin()"_s
+            },
+            {
+                "std::optional<URL>"_s,
+                "optionalURL"_s
+            },
+            {
+                "RefPtr<WebCore::SecurityOrigin>"_s,
+                "nullableOrigin"_s
+            },
+            {
+                "Vector<Ref<WebCore::SecurityOrigin>>"_s,
+                "origins"_s
+            },
+            {
+                "HashMap<WebCore::RegistrableDomain, String>"_s,
+                "domainStrings"_s
+            },
+            {
+                "HashMap<String, Vector<URL>>"_s,
+                "urlsByName"_s
+            },
+            {
+                "Variant<String, URL>"_s,
+                "stringOrURL"_s
+            },
+            {
+                "WebKit::TestUntrustedValueCarrier::Inlined"_s,
+                "inlined"_s
+            },
+            {
+                "int"_s,
+                "notAnOrigin"_s
+            },
+#if ENABLE(TEST_FEATURE)
+            {
+                "WebCore::ClientOrigin"_s,
+                "conditionalOrigin"_s
+            },
+#endif
+        } },
+        { "WebKit::TestUntrustedValueCarrier::Inlined"_s, {
+            {
+                "URL"_s,
+                "url"_s
+            },
+        } },
+        { "WebKit::TestUntrustedValueConditionalCarrier"_s, {
+#if ENABLE(TEST_FEATURE)
+            {
+                "WebCore::Site"_s,
+                "site"_s
+            },
+#endif
+            {
+                "int"_s,
+                "notAnOrigin"_s
+            },
+        } },
+        { "WebKit::TestNoUntrustedValue"_s, {
+            {
+                "int"_s,
+                "notAnOrigin"_s
             },
         } },
 #if USE(PASSKIT)
