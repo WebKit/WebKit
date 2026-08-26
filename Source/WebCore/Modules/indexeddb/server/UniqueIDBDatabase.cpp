@@ -1397,8 +1397,7 @@ void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& t
     ASSERT(transaction->info().mode() != IDBTransactionMode::Versionchange);
 
     m_pendingTransactions.append(WTF::move(transaction));
-
-    handleTransactions();
+    handleTransactionsAfterAbortingSuspendedClientTransactions();
 }
 
 void UniqueIDBDatabase::handleTransactions()
@@ -1424,10 +1423,6 @@ void UniqueIDBDatabase::handleTransactions()
         transaction = takeNextRunnableTransaction(hadDeferredTransactions);
     }
     LOG(IndexedDB, "UniqueIDBDatabase::handleTransactions - There are %zu pending after this round of handling", m_pendingTransactions.size());
-
-    // In-progress transactions of a suspended client process can never finish while the client
-    // stays suspended, so transactions queued behind them would be blocked indefinitely.
-    abortInProgressTransactionsBlockedOnSuspendedClients();
 }
 
 void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTransaction& transaction)
@@ -1451,6 +1446,12 @@ template<typename T> bool NODELETE scopesOverlap(const T& aScopes, const Vector<
     return false;
 }
 
+static bool isTransactionOfSuspendedClient(const UniqueIDBDatabaseTransaction& transaction)
+{
+    RefPtr databaseConnection = transaction.databaseConnection();
+    return databaseConnection && databaseConnection->connectionToClient().isClientSuspended();
+}
+
 RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransaction(bool& hadDeferredTransactions)
 {
     hadDeferredTransactions = false;
@@ -1471,15 +1472,22 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
     HashSet<IDBObjectStoreIdentifier> deferredReadWriteScopes;
 
     while (!m_pendingTransactions.isEmpty()) {
+        // Avoid starting transaction of suspended client since they cannot make any progress on it.
         currentTransaction = m_pendingTransactions.takeFirst();
+        if (isTransactionOfSuspendedClient(*currentTransaction)) {
+            deferredTransactions.append(currentTransaction.releaseNonNull());
+            continue;
+        }
 
         switch (currentTransaction->info().mode()) {
         case IDBTransactionMode::Readonly: {
             bool hasOverlappingScopes = scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
             hasOverlappingScopes |= scopesOverlap(m_objectStoreWriteTransactions, currentTransaction->objectStoreIdentifiers());
 
-            if (hasOverlappingScopes)
+            if (hasOverlappingScopes) {
                 deferredTransactions.append(currentTransaction.releaseNonNull());
+                hadDeferredTransactions = true;
+            }
 
             break;
         }
@@ -1491,6 +1499,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
                 for (auto objectStore : currentTransaction->objectStoreIdentifiers())
                     deferredReadWriteScopes.add(objectStore);
                 deferredTransactions.append(currentTransaction.releaseNonNull());
+                hadDeferredTransactions = true;
             }
 
             break;
@@ -1504,10 +1513,6 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
         if (currentTransaction)
             break;
     }
-
-    hadDeferredTransactions = !deferredTransactions.isEmpty();
-    if (!hadDeferredTransactions)
-        return currentTransaction;
 
     // Prepend the deferred transactions back on the beginning of the deque for future scheduling passes.
     while (!deferredTransactions.isEmpty())
@@ -1622,6 +1627,9 @@ bool UniqueIDBDatabase::transactionBlocksPendingTransactions(UniqueIDBDatabaseTr
     bool serializesReadWrites = backingStore && !backingStore->supportsSimultaneousReadWriteTransactions();
 
     for (auto& pendingTransaction : m_pendingTransactions) {
+        if (isTransactionOfSuspendedClient(pendingTransaction))
+            continue;
+
         if (pendingTransaction->isReadOnly()) {
             // A pending read-only transaction is only blocked by an overlapping in-progress write.
             if (!inProgressIsReadOnly && scopesOverlap(inProgressScopes, pendingTransaction->objectStoreIdentifiers()))
@@ -1639,20 +1647,31 @@ bool UniqueIDBDatabase::transactionBlocksPendingTransactions(UniqueIDBDatabaseTr
     return false;
 }
 
-void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
+void UniqueIDBDatabase::handleTransactionsAfterAbortingSuspendedClientTransactions()
 {
-    if (m_pendingTransactions.isEmpty() || m_inProgressTransactions.isEmpty())
-        return;
+    if (abortInProgressTransactionsOfSuspendedClientsIfNeeded() == DidAbortAnyTransaction::Yes) {
+        // Previously blocked requests might be able to run now.
+        handleDatabaseOperations();
+    }
 
-    SetForScope recursionScope(m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth, m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth + 1);
-    if (m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth > 5)
-        RELEASE_LOG_ERROR(IndexedDB, "UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients - recursion depth reaches %u", m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth);
+    handleTransactions();
+}
+
+UniqueIDBDatabase::DidAbortAnyTransaction UniqueIDBDatabase::abortInProgressTransactionsOfSuspendedClientsIfNeeded()
+{
+#if ASSERT_ENABLED
+    ASSERT(!m_isAbortingTransactionsOfSuspendedClients);
+    SetForScope abortingScope(m_isAbortingTransactionsOfSuspendedClients, true);
+#endif
+
+    if (m_pendingTransactions.isEmpty() || m_inProgressTransactions.isEmpty())
+        return DidAbortAnyTransaction::No;
 
     Vector<Ref<UniqueIDBDatabaseTransaction>> transactionsToAbort;
     for (auto& transaction : m_inProgressTransactions.values()) {
-        RefPtr databaseConnection = transaction->databaseConnection();
-        if (!databaseConnection || !databaseConnection->connectionToClient().isClientProcessSuspended())
+        if (!isTransactionOfSuspendedClient(transaction))
             continue;
+
         if (transactionBlocksPendingTransactions(transaction))
             transactionsToAbort.append(transaction);
     }
@@ -1664,7 +1683,7 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
         if (!takenTransaction)
             continue;
 
-        LOG(IndexedDB, "UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients - Aborting transaction %s of suspended client", transactionIdentifier.loggingString().utf8().data());
+        LOG(IndexedDB, "UniqueIDBDatabase::abortInProgressTransactionsOfSuspendedClientsIfNeeded - Aborting transaction %s of suspended client", transactionIdentifier.loggingString().utf8().data());
 
         // Aborting a versionchange transaction must roll back the in-memory schema and clear the
         // version-change connection, matching the standard abort path, so an interrupted upgrade
@@ -1691,10 +1710,7 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
         abortedAnyTransaction = true;
     }
 
-    if (abortedAnyTransaction) {
-        handleDatabaseOperations();
-        handleTransactions();
-    }
+    return abortedAnyTransaction ? DidAbortAnyTransaction::Yes : DidAbortAnyTransaction::No;
 }
 
 void UniqueIDBDatabase::close()
