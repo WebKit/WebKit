@@ -63,6 +63,9 @@ struct SecurityFlags {
     // Applies one flag at a time, so a reader on another thread always sees a well-defined value for the flag it asked about.
     void replaceWith(const SecurityFlags&);
 
+    // Replaces the value securityFlags() answers for this process; true when that value changed.
+    static bool update(SecurityFlags&&);
+
     bool operator==(const SecurityFlags&) const = default;
 
     // Nullopt if this build has no flag by that name.
@@ -98,7 +101,14 @@ struct SecurityFlags {
     }
 
 private:
+    friend const SecurityFlags& securityFlags();
+
+    static SecurityFlags s_flagsForProcess;
+
     WTF::BitSet<flagCount> m_disabledFlags;
 };
+
+// The one value for this process. The WebContent process is never given one, so reading there is a bug.
+const SecurityFlags& securityFlags();
 
 } // namespace WebKit

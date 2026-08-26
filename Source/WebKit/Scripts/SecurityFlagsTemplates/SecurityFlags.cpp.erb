@@ -28,7 +28,32 @@
 #include "config.h"
 #include "SecurityFlags.h"
 
+#include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
+
 namespace WebKit {
+
+SecurityFlags SecurityFlags::s_flagsForProcess;
+
+const SecurityFlags& securityFlags()
+{
+    ASSERT(!isInWebProcess());
+
+    return SecurityFlags::s_flagsForProcess;
+}
+
+bool SecurityFlags::update(SecurityFlags&& flags)
+{
+    // Release-assert on the write side: a write there would disable flags, where a read answers the secure default.
+    RELEASE_ASSERT(!isInWebProcess());
+    ASSERT(RunLoop::isMain());
+
+    if (flags == s_flagsForProcess)
+        return false;
+
+    s_flagsForProcess.replaceWith(flags);
+    return true;
+}
 
 bool SecurityFlags::disableFlagNamed(StringView name)
 {

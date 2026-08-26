@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WebKit2Initialize.h"
 
+#include "SecurityFlagsController.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/WebCoreJITOperations.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 namespace WebKit {
 
@@ -46,6 +48,10 @@ void InitializeWebKit2()
     WTF::RefCountDebuggerBase::enableThreadingChecksGlobally();
 
     WebCore::populateJITOperations();
+
+    // Every auxiliary process entry point calls setAuxiliaryProcessType() before this, so this is the UIProcess.
+    if (!isInAuxiliaryProcess())
+        SecurityFlagsController::initialize();
 }
 
 #endif // !PLATFORM(COCOA)
