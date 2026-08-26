@@ -893,6 +893,22 @@ public:
         return branchTestPtr(Zero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
     }
 
+    // Returns the cases where implGPR, already loaded from stringGPR, is not an AtomStringImpl. The
+    // per-cell bit lets both checks be skipped when it is set; a clear bit proves nothing, so the
+    // checks remain on the fall-through path. stringGPR must survive the impl load, so the two
+    // registers cannot be the same: the flags byte of a JSCell overlaps StringImpl::m_length.
+    JumpList branchIfNotAtomStringImpl(GPRReg stringGPR, GPRReg implGPR, bool canBeRope = true)
+    {
+        ASSERT(noOverlap(stringGPR, implGPR));
+        JumpList notAtomCases;
+        Jump knownAtom = branchTest8(NonZero, Address(stringGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(TypeInfoPerCellBit));
+        if (canBeRope)
+            notAtomCases.append(branchIfRopeStringImpl(implGPR));
+        notAtomCases.append(branchTest32(Zero, Address(implGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+        knownAtom.link(this);
+        return notAtomCases;
+    }
+
     JumpList branchIfInlineWatchpointSetIsStillValid(GPRReg setThenScratchGPR)
     {
         JumpList result;

@@ -2244,6 +2244,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
+static JSC_DECLARE_HOST_FUNCTION(functionIsDefinitelyAtomString);
+static JSC_DECLARE_HOST_FUNCTION(functionIsAtomString);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
 static JSC_DECLARE_HOST_FUNCTION(functionMonotonicTimeNow);
 static JSC_DECLARE_HOST_FUNCTION(functionWallTimeNow);
@@ -4302,6 +4304,29 @@ JSC_DEFINE_HOST_FUNCTION(functionIsPrivateSymbol, (JSGlobalObject*, CallFrame* c
     return JSValue::encode(jsBoolean(asSymbol(callFrame->argument(0))->uid().isPrivate()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionIsDefinitelyAtomString, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    JSValue value = callFrame->argument(0);
+    if (!value.isString())
+        return JSValue::encode(jsBoolean(false));
+
+    return JSValue::encode(jsBoolean(asString(value)->isDefinitelyAtom()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionIsAtomString, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    JSValue value = callFrame->argument(0);
+    if (!value.isString())
+        return JSValue::encode(jsBoolean(false));
+
+    const StringImpl* impl = asString(value)->tryGetValueImpl();
+    return JSValue::encode(jsBoolean(impl && impl->isAtom()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4735,6 +4760,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "toUncacheableDictionary"_s, functionToUncacheableDictionary, 1);
 
     addFunction(vm, allowIfNotFuzz, "isPrivateSymbol"_s, functionIsPrivateSymbol, 1);
+    addFunction(vm, allowIfNotFuzz, "isDefinitelyAtomString"_s, functionIsDefinitelyAtomString, 1);
+    addFunction(vm, allowIfNotFuzz, "isAtomString"_s, functionIsAtomString, 1);
     addFunction(vm, allowIfNotFuzz, "dumpAndResetPasDebugSpectrum"_s, functionDumpAndResetPasDebugSpectrum, 0);
 
     addFunction(vm, alwaysAllow, "monotonicTimeNow"_s, functionMonotonicTimeNow, 0);

@@ -154,8 +154,14 @@ private:
         return TypeInfoBlob::typeInfoBlob(NonArray, defaultTypeInfo().type(), defaultTypeInfo().inlineTypeFlags());
     }
 
+    static constexpr int32_t typeInfoBlobForAtomness(bool isAtom)
+    {
+        auto flags = static_cast<TypeInfo::InlineTypeFlags>(defaultTypeInfo().inlineTypeFlags() | (isAtom ? TypeInfoPerCellBit : 0));
+        return TypeInfoBlob::typeInfoBlob(NonArray, defaultTypeInfo().type(), flags);
+    }
+
     JSString(VM& vm, Ref<StringImpl>&& value)
-        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
+        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), typeInfoBlobForAtomness(value->isAtom()))
     {
         new (&uninitializedValueInternal()) String(WTF::move(value));
     }
@@ -275,6 +281,30 @@ public:
     }
 
     bool is8Bit() const;
+
+    // Set only when this string is known to hold an AtomStringImpl. A clear bit proves nothing, since
+    // AtomStringImpl::add can atomize a StringImpl that several JSStrings already share, so never
+    // conclude from it that a string is not an atom. A reader that sees the bit set must not go on to
+    // load the StringImpl: it has no ordering against the impl store, which is the whole reason value
+    // profiling consults the bit.
+    ALWAYS_INLINE bool isDefinitelyAtom() const { return perCellBit(); }
+
+    void markAsAtom() const
+    {
+        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+        ASSERT(!isRope() && getValueImpl()->isAtom());
+        const_cast<JSString*>(this)->setPerCellBit(true);
+    }
+
+    AtomStringImpl* existingAtomOrNull() const
+    {
+        StringImpl* impl = valueInternal().impl();
+        if (!impl->isAtom())
+            return nullptr;
+        // Record for profiling.
+        markAsAtom();
+        return static_cast<AtomStringImpl*>(impl);
+    }
 
     ALWAYS_INLINE JSString* tryReplaceOneChar(JSGlobalObject*, char16_t, JSString* replacement);
     inline std::optional<size_t> tryFindOneChar(JSGlobalObject*, char16_t character, unsigned& startPosition) const;
@@ -853,9 +883,12 @@ ALWAYS_INLINE void JSString::swapToAtomString(VM& vm, RefPtr<AtomStringImpl>&& a
     // Heap::clearConcurrentRetainedDataIfPossible clears the vector entirely when no JS is executing
     // and no JIT compilations are in progress.
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    ASSERT(atom && atom->isAtom());
     String target(WTF::move(atom));
     WTF::storeStoreFence(); // Ensure AtomStringImpl's string is fully initialized when it is exposed to concurrent threads.
     valueInternal().swap(target);
+    WTF::storeStoreFence(); // Publish the impl before the per-cell bit that advertises it.
+    markAsAtom();
     vm.heap.appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(this, WTF::move(target));
 }
 
@@ -866,16 +899,16 @@ ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) co
     if (isRope())
         return static_cast<const JSRopeString*>(this)->toIdentifier(globalObject);
     VM& vm = getVM(globalObject);
-    if (valueInternal().impl()->isAtom())
-        return Identifier::fromString(vm, Ref { *static_cast<AtomStringImpl*>(valueInternal().impl()) });
+    if (SUPPRESS_UNCOUNTED_LOCAL AtomStringImpl* atom = existingAtomOrNull())
+        return Identifier::fromString(vm, Ref { *atom });
     if (vm.lastAtomizedIdentifierStringImpl.ptr() != valueInternal().impl()) {
         vm.lastAtomizedIdentifierStringImpl = *valueInternal().impl();
         vm.lastAtomizedIdentifierAtomStringImpl = AtomStringImpl::add(valueInternal().impl()).releaseNonNull();
+        // It is possible that AtomStringImpl::add converts existing valueInternal()'s StringImpl to AtomicStringImpl,
+        // thus we need to recheck atomicity status here.
+        if (!existingAtomOrNull())
+            swapToAtomString(vm, RefPtr { vm.lastAtomizedIdentifierAtomStringImpl.ptr() });
     }
-    // It is possible that AtomStringImpl::add converts existing valueInternal()'s StringImpl to AtomicStringImpl,
-    // thus we need to recheck atomicity status here.
-    if (!valueInternal().impl()->isAtom())
-        swapToAtomString(vm, RefPtr { vm.lastAtomizedIdentifierAtomStringImpl.ptr() });
     return Identifier::fromString(vm, Ref { vm.lastAtomizedIdentifierAtomStringImpl });
 }
 
@@ -885,8 +918,8 @@ ALWAYS_INLINE GCOwnedDataScope<AtomStringImpl*> JSString::toAtomString(JSGlobalO
         getVM(globalObject).verifyCanGC();
     if (isRope())
         return { this, static_cast<const JSRopeString*>(this)->resolveRopeToAtomString(globalObject) };
-    if (valueInternal().impl()->isAtom())
-        return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
+    if (SUPPRESS_UNCOUNTED_LOCAL AtomStringImpl* atom = existingAtomOrNull())
+        return { this, atom };
     AtomString atom(valueInternal());
     swapToAtomString(getVM(globalObject), atom.releaseImpl());
     return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
@@ -898,8 +931,8 @@ ALWAYS_INLINE GCOwnedDataScope<AtomStringImpl*> JSString::toExistingAtomString(J
         getVM(globalObject).verifyCanGC();
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomString(globalObject);
-    if (valueInternal().impl()->isAtom())
-        return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
+    if (SUPPRESS_UNCOUNTED_LOCAL AtomStringImpl* atom = existingAtomOrNull())
+        return { this, atom };
     if (auto atom = AtomStringImpl::lookUp(valueInternal().impl())) {
         swapToAtomString(getVM(globalObject), WTF::move(atom));
         return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };

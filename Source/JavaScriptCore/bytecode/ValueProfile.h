@@ -67,17 +67,6 @@ struct ValueProfileBase {
             clearEncodedJSValueConcurrent(m_buckets[i]);
     }
     
-    const ClassInfo* classInfo(unsigned bucket) const
-    {
-        JSValue value = JSValue::decodeConcurrent(&m_buckets[bucket]);
-        if (!!value) {
-            if (!value.isCell())
-                return nullptr;
-            return value.asCell()->classInfo();
-        }
-        return nullptr;
-    }
-    
     unsigned numberOfSamples() const
     {
         unsigned result = 0;
@@ -109,7 +98,7 @@ struct ValueProfileBase {
         out.print("sampled before = ", isSampledBefore(), " live samples = ", numberOfSamples(), " prediction = ", SpeculationDump(m_prediction));
         bool first = true;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
-            JSValue value = JSValue::decode(m_buckets[i]);
+            JSValue value = JSValue::decodeConcurrent(&m_buckets[i]);
             if (!!value) {
                 if (first) {
                     out.printf(": ");
@@ -129,7 +118,7 @@ struct ValueProfileBase {
             if (!value)
                 continue;
             
-            mergeSpeculation(merged, speculationFromValue(value));
+            mergeSpeculation(merged, speculationFromValueForProfiling(value));
 
             updateEncodedJSValueConcurrent(m_buckets[i], JSValue::encode(JSValue()));
         }
@@ -142,7 +131,7 @@ struct ValueProfileBase {
     void computeUpdatedPredictionForExtraValue(const ConcurrentJSLocker&, JSValue& value)
     {
         if (value)
-            mergeSpeculation(m_prediction, speculationFromValue(value));
+            mergeSpeculation(m_prediction, speculationFromValueForProfiling(value));
         value = JSValue();
     }
 

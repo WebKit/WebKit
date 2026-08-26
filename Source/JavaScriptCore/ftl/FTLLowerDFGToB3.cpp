@@ -26119,6 +26119,13 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.testIsZeroPtr(m_out.loadPtr(string, m_heaps.JSString_value), m_out.constIntPtr(JSString::isRopeInPointer));
     }
 
+    // True only when the string is known to be a non-rope holding an AtomStringImpl. False proves
+    // nothing, so callers must keep their full check on the false path.
+    LValue isDefinitelyAtomString(LValue string)
+    {
+        return m_out.testNonZero32(m_out.load8ZeroExt32(string, m_heaps.JSCell_typeInfoFlags), m_out.constInt32(TypeInfoPerCellBit));
+    }
+
     LValue isNotSymbol(LValue cell, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecSymbol))
@@ -26608,12 +26615,21 @@ IGNORE_CLANG_WARNINGS_END
         if (!m_interpreter.needsTypeCheck(edge, SpecStringIdent | ~SpecString))
             return;
 
+        LBasicBlock checkCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isDefinitelyAtomString(string), usually(continuation), rarely(checkCase));
+
+        LBasicBlock lastNext = m_out.appendTo(checkCase, continuation);
         speculate(BadStringType, jsValueValue(string), edge.node(), isRopeString(string));
         speculate(
             BadStringType, jsValueValue(string), edge.node(),
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
                 m_out.constInt32(StringImpl::flagIsAtom())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
         m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
     }
 

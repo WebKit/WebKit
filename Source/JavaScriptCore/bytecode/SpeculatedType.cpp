@@ -591,7 +591,12 @@ SpeculatedType speculationFromStructure(Structure* structure)
     return speculatedTypeMapping[type];
 }
 
-SpeculatedType speculationFromCell(JSCell* cell)
+// avoidStringDereference restricts this to words stored within the cell itself. A value profile
+// bucket is written with no ordering against the stores that initialize a JSString, so a compiler
+// thread reading the bucket can observe the cell before the StringImpl pointer inside it. Stale
+// flags or pointer bits only cost a wrong prediction; a stale pointer, dereferenced, is a crash.
+template<bool avoidStringDereference>
+static ALWAYS_INLINE SpeculatedType speculationFromCellImpl(JSCell* cell)
 {
     // FIXME: rdar://69036888: remove isSanePointer checks when no longer needed.
     if (!Integrity::isSanePointer(cell)) [[unlikely]] {
@@ -601,23 +606,37 @@ SpeculatedType speculationFromCell(JSCell* cell)
 
     if (cell->isString()) {
         JSString* string = uncheckedDowncast<JSString>(cell);
-        if (const StringImpl* impl = string->tryGetValueImpl()) {
-            if (!Integrity::isSanePointer(impl)) [[unlikely]] {
-                ASSERT_NOT_REACHED();
-                return SpecNone;
-            }
-            if (impl->isAtom())
+        if constexpr (avoidStringDereference) {
+            if (string->isDefinitelyAtom())
                 return SpecStringIdent;
+            if (string->isRope())
+                return SpecString;
             return SpecStringResolved;
+        } else {
+            if (const StringImpl* impl = string->tryGetValueImpl()) {
+                if (!Integrity::isSanePointer(impl)) [[unlikely]] {
+                    ASSERT_NOT_REACHED();
+                    return SpecNone;
+                }
+                if (impl->isAtom())
+                    return SpecStringIdent;
+                return SpecStringResolved;
+            }
+            return SpecString;
         }
-        return SpecString;
     }
 
     JSType type = cell->type();
     return speculatedTypeMapping[type];
 }
 
-SpeculatedType speculationFromValue(JSValue value)
+SpeculatedType speculationFromCell(JSCell* cell)
+{
+    return speculationFromCellImpl<false>(cell);
+}
+
+template<bool avoidStringDereference>
+static ALWAYS_INLINE SpeculatedType speculationFromValueImpl(JSValue value)
 {
     if (value.isEmpty())
         return SpecEmpty;
@@ -637,11 +656,21 @@ SpeculatedType speculationFromValue(JSValue value)
     if (value.isBigInt32())
         return SpecBigInt32;
     if (value.isCell())
-        return speculationFromCell(value.asCell());
+        return speculationFromCellImpl<avoidStringDereference>(value.asCell());
     if (value.isBoolean())
         return SpecBoolean;
     ASSERT(value.isUndefinedOrNull());
     return SpecOther;
+}
+
+SpeculatedType speculationFromValue(JSValue value)
+{
+    return speculationFromValueImpl<false>(value);
+}
+
+SpeculatedType speculationFromValueForProfiling(JSValue value)
+{
+    return speculationFromValueImpl<true>(value);
 }
 
 SpeculatedType int52AwareSpeculationFromValue(JSValue value)

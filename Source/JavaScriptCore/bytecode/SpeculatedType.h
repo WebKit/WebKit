@@ -564,6 +564,10 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo*);
 SpeculatedType NODELETE speculationFromStructure(Structure*);
 SpeculatedType NODELETE speculationFromCell(JSCell*);
 SpeculatedType NODELETE speculationFromValue(JSValue);
+// For collecting a value profile, which merges what it is told and so may be given a broader type
+// than the truth. This never dereferences a JSString's StringImpl, so it must not be used where the
+// exact type is required, such as constant reasoning or OSR entry validation.
+SpeculatedType NODELETE speculationFromValueForProfiling(JSValue);
 // If it's an anyInt(), it'll return speculated types from the Int52 lattice.
 // Otherwise, it'll return types from the JSValue lattice.
 JS_EXPORT_PRIVATE SpeculatedType NODELETE int52AwareSpeculationFromValue(JSValue);

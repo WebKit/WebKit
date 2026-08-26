@@ -12118,13 +12118,11 @@ void SpeculativeJIT::speculateStringOrOther(Edge edge)
 void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage)
 {
     loadPtr(Address(string, JSString::offsetOfValue()), storage);
-    
+
     if (!needsTypeCheck(edge, SpecStringIdent | ~SpecString))
         return;
 
-    if (canBeRope(edge))
-        speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchIfRopeStringImpl(storage));
-    speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchTest32(Zero, Address(storage, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+    speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchIfNotAtomStringImpl(string, storage, canBeRope(edge)));
 
     m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
 }
