@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "UntrustedValueVisitor.h"
 #include <concepts>
 #include <expected>
 #include <optional>
+#include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
@@ -154,6 +156,39 @@ template<typename T> struct ArgumentCoder<Untrusted<T>> {
     }
 };
 
+// Records that a value needs no check in this context. The reason is not used at runtime; it
+// exists so the claim is stated positively and can be audited alongside
+// Untrusted::unsafeExtractWithoutValidation.
+inline std::optional<ValidationFailure> unvalidated(UnvalidatedReason)
+{
+    return std::nullopt;
+}
+
+template<typename Validator, typename T>
+constexpr bool checksUntrustedKind(OptionSet<UntrustedValueKind> kinds, UntrustedValueKind kind)
+{
+    if (!kinds.contains(kind))
+        return true;
+    return requires(const Validator& validator, const T& value)
+    {
+        validator.checkUntrusted(value);
+    };
+}
+
+// True if the validator states a disposition for every kind of untrusted value the struct can
+// actually carry. Kinds the struct cannot contain are not required, so an authority is never
+// pushed into claiming something about a value it will never be shown.
+template<typename Validator>
+constexpr bool checksUntrustedKinds(OptionSet<UntrustedValueKind> kinds)
+{
+    return checksUntrustedKind<Validator, URL>(kinds, UntrustedValueKind::URL)
+        && checksUntrustedKind<Validator, WebCore::ClientOrigin>(kinds, UntrustedValueKind::ClientOrigin)
+        && checksUntrustedKind<Validator, WebCore::RegistrableDomain>(kinds, UntrustedValueKind::RegistrableDomain)
+        && checksUntrustedKind<Validator, WebCore::SecurityOrigin>(kinds, UntrustedValueKind::SecurityOrigin)
+        && checksUntrustedKind<Validator, WebCore::SecurityOriginData>(kinds, UntrustedValueKind::SecurityOriginData)
+        && checksUntrustedKind<Validator, WebCore::Site>(kinds, UntrustedValueKind::Site);
+}
+
 // Base class for validation procedures, the only things that can turn an IPC::Untrusted<T> into
 // an IPC::Validated<T>.
 template<typename Derived>
@@ -177,6 +212,14 @@ public:
             if (!value)
                 return std::nullopt;
             return checkAnyUntrusted(*value);
+        } else if constexpr (CarriesUntrustedValues<T>) {
+            static_assert(checksUntrustedKinds<Derived>(ArgumentCoder<T>::untrustedValueKinds),
+                "This validator does not say what it does with every kind of untrusted value this struct carries. "
+                "Add a checkUntrusted overload for the missing one, returning IPC::unvalidated() with a reason if "
+                "it needs no check here.");
+            StructVisitor visitor { *this };
+            ArgumentCoder<T>::visitUntrustedValues(value, visitor);
+            return visitor.failure();
         } else {
             for (auto& item : value) {
                 if (auto failure = checkAnyUntrusted(item))
@@ -185,6 +228,41 @@ public:
             return std::nullopt;
         }
     }
+
+private:
+    class StructVisitor final : public UntrustedValueVisitor {
+    public:
+        explicit StructVisitor(const CanValidateUntrusted& validation)
+            : m_validation(validation)
+        {
+        }
+
+        std::optional<ValidationFailure> failure() const { return m_failure; }
+
+        void visitUntrusted(const URL& value) final { check(value); }
+        void visitUntrusted(const WebCore::ClientOrigin& value) final { check(value); }
+        void visitUntrusted(const WebCore::RegistrableDomain& value) final { check(value); }
+        void visitUntrusted(const WebCore::SecurityOrigin& value) final { check(value); }
+        void visitUntrusted(const WebCore::SecurityOriginData& value) final { check(value); }
+        void visitUntrusted(const WebCore::Site& value) final { check(value); }
+
+    private:
+        template<typename T> void check(const T& value)
+        {
+            // Unreachable for a kind outside untrustedValueKinds, which checkAnyUntrusted has
+            // already required a disposition for. Asserting rather than ignoring the value keeps
+            // a generator bug from turning into a silently skipped check.
+            if constexpr (requires (const Derived& validator) { validator.checkUntrusted(value); }) {
+                if (m_failure)
+                    return;
+                m_failure = m_validation.checkAnyUntrusted(value);
+            } else
+                RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        const CanValidateUntrusted& m_validation;
+        std::optional<ValidationFailure> m_failure;
+    };
 };
 
 // A procedure declared for T also covers a container of T, because CanValidateUntrusted applies
@@ -195,6 +273,13 @@ struct IsValidationProcedureFor<Validator, std::optional<T>> : IsValidationProce
 // HashSet's last template parameter is a non-type parameter, so it must be spelled out.
 template<typename Validator, typename T, typename HashArg, typename TraitsArg, typename TableTraitsArg, WTF::ShouldValidateKey shouldValidateKey>
 struct IsValidationProcedureFor<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>> : IsValidationProcedureFor<Validator, T> { };
+
+// Any authority can validate a struct that carries untrusted values, because the generated
+// visitor presents them one at a time and CanValidateUntrusted applies the authority's own
+// procedure to each. What confines this is CanValidateUntrusted itself: deriving from it is
+// only permitted in the headers listed in Scripts/webkit/untrusted_origins.py.
+template<typename Validator, typename T> requires CarriesUntrustedValues<T>
+struct IsValidationProcedureFor<Validator, T> : std::is_base_of<CanValidateUntrusted<Validator>, Validator> { };
 
 } // namespace IPC
 

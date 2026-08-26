@@ -439,12 +439,14 @@ template<> struct ArgumentCoder<WebCore::OpaqueTypeObject> {
 template<> struct ArgumentCoder<WebKit::TestUntrustedValueCarrier> {
     static void encode(Encoder&, const WebKit::TestUntrustedValueCarrier&);
     static std::optional<WebKit::TestUntrustedValueCarrier> decode(Decoder&);
+    static constexpr OptionSet<UntrustedValueKind> untrustedValueKinds { UntrustedValueKind::ClientOrigin, UntrustedValueKind::RegistrableDomain, UntrustedValueKind::SecurityOrigin, UntrustedValueKind::SecurityOriginData, UntrustedValueKind::URL };
     static void visitUntrustedValues(const WebKit::TestUntrustedValueCarrier&, UntrustedValueVisitor&);
 };
 
 template<> struct ArgumentCoder<WebKit::TestUntrustedValueConditionalCarrier> {
     static void encode(Encoder&, const WebKit::TestUntrustedValueConditionalCarrier&);
     static std::optional<WebKit::TestUntrustedValueConditionalCarrier> decode(Decoder&);
+    static constexpr OptionSet<UntrustedValueKind> untrustedValueKinds { UntrustedValueKind::Site };
     static void visitUntrustedValues(const WebKit::TestUntrustedValueConditionalCarrier&, UntrustedValueVisitor&);
 };
 

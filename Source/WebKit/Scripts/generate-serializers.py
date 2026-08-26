@@ -664,6 +664,8 @@ def one_argument_coder_declaration(type, template_argument, untrusted_value_cont
     else:
         result.append(f'    static std::optional<{name_with_template}> decode(Decoder&);')
     if untrusted_value_context is not None and untrusted_value_context.has_visitor(type):
+        kinds = ', '.join(f'UntrustedValueKind::{kind}' for kind in untrusted_value_context.kinds_carried_by(type))
+        result.append(f'    static constexpr OptionSet<UntrustedValueKind> untrustedValueKinds {{ {kinds} }};')
         result.append(f'    static void visitUntrustedValues(const {name_with_template}&, UntrustedValueVisitor&);')
     result.append('};')
     if type.condition is not None:
@@ -955,6 +957,7 @@ class UntrustedValueContext(object):
             name = type.namespace_and_name()
             if type.nested and name in self.carrying:
                 self.inlined[name] = type
+        self.kinds = untrusted_value_kinds(serialized_types, self)
 
     def conveys(self, type_str):
         return untrusted_origins.conveys_untrusted_value(type_str, extra_types=self.carrying) is not None
@@ -962,6 +965,51 @@ class UntrustedValueContext(object):
     def has_visitor(self, type):
         name = type.namespace_and_name()
         return name in self.carrying and name not in self.inlined
+
+    def kinds_carried_by(self, type):
+        return sorted(self.kinds.get(type.namespace_and_name(), set()))
+
+
+def untrusted_value_leaves(type_str, context, leaves, referenced):
+    """Split the untrusted values reachable from type_str into leaf kinds and other types."""
+    clean_type = untrusted_origins.canonical_type(type_str)
+    if clean_type in untrusted_origins.UNTRUSTED_TYPES:
+        leaves.add(untrusted_origins.UNTRUSTED_VALUE_KINDS[clean_type])
+        return
+    if clean_type in context.carrying:
+        referenced.add(clean_type)
+        return
+    _, parameters = untrusted_origins.split_container(clean_type)
+    for parameter in parameters or []:
+        if context.conveys(parameter):
+            untrusted_value_leaves(parameter, context, leaves, referenced)
+
+
+def untrusted_value_kinds(serialized_types, context):
+    """Maps each carrying type onto the kinds of untrusted value it transitively carries."""
+    direct = {}
+    references = {}
+    for type in serialized_types:
+        name = type.namespace_and_name()
+        if name not in context.carrying:
+            continue
+        leaves = direct.setdefault(name, set())
+        referenced = references.setdefault(name, set())
+        for member in untrusted_members(type):
+            if context.conveys(member.type):
+                untrusted_value_leaves(member.type, context, leaves, referenced)
+
+    kinds = {name: set(leaves) for name, leaves in direct.items()}
+    while True:
+        changed = False
+        for name, referenced in references.items():
+            for other in referenced:
+                merged = kinds[name] | kinds.get(other, set())
+                if merged != kinds[name]:
+                    kinds[name] = merged
+                    changed = True
+        if not changed:
+            return kinds
 
 
 def types_carrying_untrusted_values(serialized_types):

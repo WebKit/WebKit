@@ -620,6 +620,7 @@ if (ENABLE_WEBKIT)
             Tests/IPC/StreamConnectionWorkQueueTests.cpp
             Tests/IPC/ThreadSafeObjectHeapTests.cpp
             Tests/IPC/TransferStringTests.cpp
+            Tests/IPC/UntrustedTests.cpp
             Tests/IPC/WebFoundTextRangeTests.cpp
         )
 
