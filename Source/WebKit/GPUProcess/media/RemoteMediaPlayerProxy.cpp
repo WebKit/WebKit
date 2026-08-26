@@ -1175,8 +1175,11 @@ void RemoteMediaPlayerProxy::performTaskAtTime(const MediaTime& taskTime, Perfor
     }, taskTime);
 }
 
-void RemoteMediaPlayerProxy::isCrossOrigin(WebCore::SecurityOriginData originData, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+void RemoteMediaPlayerProxy::isCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
+    // FIXME: The GPU process has no record of which origins a web process may name, so
+    // there is nothing to check against yet.
+    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     completionHandler(protect(m_player)->isCrossOrigin(originData.securityOrigin()));
 }
 

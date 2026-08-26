@@ -105,7 +105,7 @@ messages -> RemoteMediaPlayerProxy {
     TextTrackSetMode(WebCore::TrackID trackId, enum:uint8_t WebCore::InbandTextTrackPrivateMode mode)
 
     PerformTaskAtTime(MediaTime mediaTime) -> (std::optional<MediaTime> mediaTime)
-    IsCrossOrigin(WebCore::SecurityOriginData origin) -> (std::optional<bool> crossOrigin) Synchronous
+    IsCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData> origin) -> (std::optional<bool> crossOrigin) Synchronous
 
     SetVideoPlaybackMetricsUpdateInterval(double interval)
 
