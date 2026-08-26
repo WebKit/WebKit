@@ -28,21 +28,22 @@
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
+#import "WebEventFactory.h"
 #import "WebGestureEvent.h"
 #import <WebCore/IntPoint.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 
 namespace WebKit {
 
-static inline std::optional<WebEventType> webEventTypeForNSEvent(NSEvent *event)
+static inline std::optional<WebEventType> webEventTypeForPhase(WebEventPhase phase)
 {
-    switch (event.phase) {
-    case NSEventPhaseBegan:
+    switch (phase) {
+    case WebEventPhase::Began:
         return WebEventType::GestureStart;
-    case NSEventPhaseChanged:
+    case WebEventPhase::Changed:
         return WebEventType::GestureChange;
-    case NSEventPhaseEnded:
-    case NSEventPhaseCancelled:
+    case WebEventPhase::Ended:
+    case WebEventPhase::Cancelled:
         return WebEventType::GestureEnd;
     default:
         break;
@@ -50,28 +51,54 @@ static inline std::optional<WebEventType> webEventTypeForNSEvent(NSEvent *event)
     return std::nullopt;
 }
 
-static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
+static WebCore::IntPoint positionInView(WebCore::FloatPoint locationInWindow, NSView *view)
 {
-    NSPoint location = [event locationInWindow];
-    if (windowView)
-        location = [windowView convertPoint:location fromView:nil];
-    return location;
+    return WebCore::IntPoint { view ? WebCore::FloatPoint { [view convertPoint:locationInWindow fromView:nil] } : locationInWindow };
+}
+
+static NativeWebGestureEvent::Init initForEvent(NSEvent *event)
+{
+    using Kind = NativeWebGestureEvent::Kind;
+
+    ASSERT(event.type == NSEventTypeMagnify || event.type == NSEventTypeRotate);
+    bool isRotation = event.type == NSEventTypeRotate;
+
+    return {
+        isRotation ? Kind::Rotation : Kind::Magnification,
+        WebEventFactory::phaseForEvent(event),
+        WebCore::FloatPoint { event.locationInWindow },
+        isRotation ? 0 : static_cast<float>(event.magnification),
+        isRotation ? static_cast<float>(event.rotation) : 0,
+        MonotonicTime::fromRawSeconds(event.timestamp)
+    };
 }
 
 std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
 {
-    auto type = webEventTypeForNSEvent(event);
-    if (!type)
-        return std::nullopt;
-    return { NativeWebGestureEvent { *type, event, view } };
+    return create(initForEvent(event), view, event);
 }
 
-NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, NSEvent *event, NSView *view)
-    : WebGestureEvent(
-        { type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(event.timestamp) },
-        WebCore::IntPoint(pointForEvent(event, view)),
-        event.type == NSEventTypeMagnify ? event.magnification : 0,
-        event.type == NSEventTypeRotate ? event.rotation : 0)
+std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view)
+{
+    return create(init, view, nil);
+}
+
+std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view, NSEvent *event)
+{
+    return webEventTypeForPhase(init.phase).
+        and_then([&init, view = RetainPtr { view }, event = RetainPtr { event }](auto type) {
+            return std::optional { NativeWebGestureEvent { type, init, view, event } };
+        });
+}
+
+NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, const Init& init, NSView *view, NSEvent *event)
+    : WebGestureEvent {
+        { type, { }, init.timestamp },
+        positionInView(init.locationInWindow, view),
+        init.gestureScale,
+        init.gestureRotation,
+        init.phase }
+    , m_kind(init.kind)
     , m_nativeEvent(event)
 {
 }

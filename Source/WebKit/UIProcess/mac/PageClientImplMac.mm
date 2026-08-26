@@ -734,7 +734,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 #if ENABLE(MAC_GESTURE_EVENTS)
 void PageClientImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent& event)
 {
-    m_impl->gestureEventWasNotHandledByWebCore(event.nativeEvent());
+    m_impl->gestureEventWasNotHandledByWebCore(event);
 }
 #endif
 
