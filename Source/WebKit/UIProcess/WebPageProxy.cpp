@@ -2341,8 +2341,10 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
             loadParameters.sandboxExtensionHandle = WTF::move(*sandboxExtensionHandle);
         protectedThis->prepareToLoadWebPage(*weakProcess, loadParameters);
 
-        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
-            protectedThis->preconnectTo(ResourceRequest { loadParameters.request });
+        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No) {
+            auto advancedPrivacyProtections = loadParameters.advancedPrivacyProtections.value_or(protect(protectedThis->m_configuration->defaultWebsitePolicies())->advancedPrivacyProtections());
+            protectedThis->preconnectTo(ResourceRequest { loadParameters.request }, advancedPrivacyProtections);
+        }
 
         navigation->setIsLoadedWithNavigationShared(true);
         protectedProcess->markProcessAsRecentlyUsed();
@@ -7969,7 +7971,7 @@ void WebPageProxy::updateOpener(IPC::Connection& connection, WebCore::FrameIdent
     });
 }
 
-void WebPageProxy::preconnectTo(ResourceRequest&& request)
+void WebPageProxy::preconnectTo(ResourceRequest&& request, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     Ref websiteDataStore = m_websiteDataStore;
     if (!websiteDataStore->configuration().allowsServerPreconnect())
@@ -7986,7 +7988,7 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request)
     }
     request.setFirstPartyForCookies(request.url());
     request.setPriority(ResourceLoadPriority::VeryHigh);
-    protect(websiteDataStore->networkProcess())->preconnectTo(sessionID(), identifier(), webPageIDInMainFrameProcess(), WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain());
+    protect(websiteDataStore->networkProcess())->preconnectTo(sessionID(), identifier(), webPageIDInMainFrameProcess(), WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain(), advancedPrivacyProtections);
 }
 
 void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
