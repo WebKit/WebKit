@@ -216,7 +216,6 @@ void WebInspectorBackendClient::hideHighlight()
 #endif
 }
 
-// FIXME: Nothing drives the frame overlays below yet; FrameDOMAgent's highlight commands are stubs.
 RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(LocalFrame& frame)
 {
     RefPtr page = m_page.get();
