@@ -85,8 +85,8 @@ void JIT::emit_op_new_object(const JSInstruction* currentInstruction)
     RegisterID scratchReg = regT2;
     RegisterID structureReg = regT3;
 
-    loadPtrFromMetadata(bytecode, OpNewObject::Metadata::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator(), allocatorReg);
-    loadPtrFromMetadata(bytecode, OpNewObject::Metadata::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure(), structureReg);
+    static_assert(ObjectAllocationProfile::offsetOfStructure() == ObjectAllocationProfile::offsetOfAllocator() + sizeof(void*));
+    loadPairPtrFromMetadata(bytecode, OpNewObject::Metadata::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator(), allocatorReg, structureReg);
 
     JumpList slowCases;
     auto butterfly = TrustedImmPtr(nullptr);
