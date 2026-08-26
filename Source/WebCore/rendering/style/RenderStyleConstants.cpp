@@ -1299,6 +1299,7 @@ TextStream& operator<<(TextStream& ts, UserSelect userSelect)
     case UserSelect::None: ts << "none"_s; break;
     case UserSelect::Text: ts << "text"_s; break;
     case UserSelect::All: ts << "all"_s; break;
+    case UserSelect::AutoAll: ts << "-internal-auto-all"_s; break;
     }
     return ts;
 }

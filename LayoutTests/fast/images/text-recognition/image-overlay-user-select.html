@@ -7,13 +7,27 @@
 <div inert>
     <img id="inInert" src="../resources/green-400x400.png">
 </div>
+<div contenteditable>
+    <img id="inEditable" src="../resources/green-400x400.png">
+</div>
 <script>
 description('The user-select value of recognized text inside an image overlay should be all or none.');
 
 jsTestIsAsync = true;
 
-function overlayText(image) {
-    return internals.shadowRoot(image).querySelector(".image-overlay-text");
+function overlayText(imageID) {
+    return internals.shadowRoot(document.getElementById(imageID)).querySelector(".image-overlay-text");
+}
+
+function selectedTextInOverlay(imageID) {
+    getSelection().selectAllChildren(overlayText(imageID));
+    return getSelection().toString();
+}
+
+function selectedTextAfterExtendingOneCharacter(imageID) {
+    getSelection().setPosition(overlayText(imageID).firstChild, 0);
+    getSelection().modify("extend", "forward", "character");
+    return getSelection().toString();
 }
 
 addEventListener("load", () => {
@@ -26,7 +40,7 @@ addEventListener("load", () => {
                 bottomLeft : new DOMPointReadOnly(0, 1),
                 children: [
                     {
-                        text : "Hello",
+                        text : image.id,
                         topLeft : new DOMPointReadOnly(0, 0),
                         topRight : new DOMPointReadOnly(1, 0),
                         bottomRight : new DOMPointReadOnly(1, 1),
@@ -37,17 +51,23 @@ addEventListener("load", () => {
         ]);
     }
 
-    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "all");
-    shouldBeEqualToString("getComputedStyle(overlayText(unselectable)).webkitUserSelect", "none");
+    shouldBeEqualToString("selectedTextInOverlay('plain')", "plain");
+    shouldBeEqualToString("selectedTextAfterExtendingOneCharacter('plain')", "plain");
 
-    shouldBeEqualToString("getComputedStyle(overlayText(inInert)).webkitUserSelect", "all");
-    getSelection().selectAllChildren(overlayText(inInert));
-    shouldBeEqualToString("getSelection().toString()", "");
+    shouldBeEqualToString("selectedTextInOverlay('unselectable')", "");
+    shouldBeEqualToString("selectedTextInOverlay('inInert')", "");
+
+    // Being editable overrides none:
+    shouldBeEqualToString("selectedTextInOverlay('inEditable')", "inEditable");
+    shouldBeEqualToString("selectedTextAfterExtendingOneCharacter('inEditable')", "inEditable");
+    inEditable.style.webkitUserSelect = "none";
+    shouldBeEqualToString("selectedTextInOverlay('inEditable')", "inEditable");
+    shouldBeEqualToString("selectedTextAfterExtendingOneCharacter('inEditable')", "inEditable");
 
     plain.style.webkitUserSelect = "none";
-    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "none");
+    shouldBeEqualToString("selectedTextInOverlay('plain')", "");
     plain.style.webkitUserSelect = "text";
-    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "all");
+    shouldBeEqualToString("selectedTextInOverlay('plain')", "plain");
 
     getSelection().removeAllRanges();
     finishJSTest();

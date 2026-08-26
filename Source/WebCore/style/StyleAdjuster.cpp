@@ -821,15 +821,6 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     adjustForSiteSpecificQuirks(style);
 
     adjustUsedUserSelect(style);
-    // Don't allow selecting individual glyphs on text recognized inside an image:
-#if ENABLE(IMAGE_ANALYSIS)
-    if (m_element && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
-        auto userSelect = style.usedUserSelectIgnoringEffectivelyInert() == UserSelect::None ? UserSelect::None : UserSelect::All;
-        style.setWebkitUserSelect(userSelect);
-        style.setUserSelect(userSelect);
-        style.setUsedUserSelect(userSelect);
-    }
-#endif
 }
 
 static bool considerUnprefixedUserSelect()
@@ -844,6 +835,12 @@ static bool considerUnprefixedUserSelect()
 
 void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
 {
+    auto resolveInternalAutoAll = [&](UserSelect value) {
+        if (value != UserSelect::AutoAll)
+            return value;
+        return m_parentStyle.usedUserSelectIgnoringEffectivelyInert() == UserSelect::None ? UserSelect::None : UserSelect::All;
+    };
+
     if (!m_document->settings().cssUserSelectEnabled() || !considerUnprefixedUserSelect()) {
         // Legacy behavior: only -webkit-user-select is consulted and it doesn't behave
         // according to spec; 'user-select' is ignored.
@@ -858,7 +855,7 @@ void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
         if (value == UserSelect::Auto)
             value = UserSelect::Text;
 
-        style.setUsedUserSelect(value);
+        style.setUsedUserSelect(resolveInternalAutoAll(value));
         return;
     }
 
@@ -883,10 +880,10 @@ void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
 
     // FIXME: this should be overridden to UserSelect::Contain, which is unimplemented but is how
     // editable content with 'text' already behaves.
-    if (style.userModify() != UserModify::ReadOnly)
+    if (value != UserSelect::AutoAll && style.userModify() != UserModify::ReadOnly)
         value = UserSelect::Text;
 
-    style.setUsedUserSelect(value);
+    style.setUsedUserSelect(resolveInternalAutoAll(value));
 }
 
 static bool NODELETE hasEffectiveDisplayNoneForDisplayContents(const Element& element)

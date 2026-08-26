@@ -12560,7 +12560,12 @@
                 "auto",
                 "text",
                 "none",
-                "all"
+                "all",
+                {
+                    "value": "-internal-auto-all",
+                    "status": "internal",
+                    "comment": "'none' if the parent's used value is 'none', 'all' otherwise. Used by image overlays so that recognized text can only be selected atomically."
+                }
             ],
             "codegen-properties": {
                 "computed-style-has-explicitly-set-policy": "value-only",
@@ -12587,7 +12592,12 @@
                     "value": "contain",
                     "status": "unimplemented"
                 },
-                "all"
+                "all",
+                {
+                    "value": "-internal-auto-all",
+                    "status": "internal",
+                    "comment": "'none' if the parent's used value is 'none', 'all' otherwise. Used by image overlays so that recognized text can only be selected atomically."
+                }
             ],
             "codegen-properties": {
                 "computed-style-has-explicitly-set-policy": "value-only",

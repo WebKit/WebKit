@@ -1242,6 +1242,8 @@ constexpr CSSValueID toCSSValueID(UserSelect e)
         return CSSValueText;
     case UserSelect::All:
         return CSSValueAll;
+    case UserSelect::AutoAll:
+        return CSSValueInternalAutoAll;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -1258,6 +1260,8 @@ template<> constexpr UserSelect fromCSSValueID(CSSValueID valueID)
         return UserSelect::Text;
     case CSSValueAll:
         return UserSelect::All;
+    case CSSValueInternalAutoAll:
+        return UserSelect::AutoAll;
     default:
         break;
     }
