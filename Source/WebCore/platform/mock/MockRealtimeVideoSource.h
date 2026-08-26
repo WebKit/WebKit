@@ -151,7 +151,7 @@ private:
     DrawingState& drawingState();
     void invalidateDrawingState();
 
-    std::optional<DrawingState> m_drawingState;
+    std::optional<DrawingState> m_drawingState WTF_GUARDED_BY_LOCK(m_imageBufferLock);
     mutable RefPtr<ImageBuffer> m_imageBuffer WTF_GUARDED_BY_LOCK(m_imageBufferLock);
 
     Path m_path;

@@ -672,9 +672,9 @@ void MockRealtimeVideoSource::delaySamples(Seconds delta)
 RefPtr<ImageBuffer> MockRealtimeVideoSource::generatePhoto()
 {
     ASSERT(!isMainThread());
-    ASSERT(!m_drawingState);
 
     Locker lock { m_imageBufferLock };
+    invalidateDrawingState();
     auto currentImage = generateFrameInternal();
     invalidateDrawingState();
 
