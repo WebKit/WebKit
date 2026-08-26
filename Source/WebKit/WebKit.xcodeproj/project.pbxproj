@@ -2396,6 +2396,7 @@
 		C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */ = {isa = PBXBuildFile; fileRef = C6A4CA092252899800169289 /* WKBundlePageMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */; };
 		C7A41E912E8F1A0100D3B841 /* Untrusted.h in Headers */ = {isa = PBXBuildFile; fileRef = C7A41E902E8F1A0100D3B841 /* Untrusted.h */; };
+		CDB19DE00D770045ABB14914 /* UntrustedValueVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = D5A2709661BC7AC4FF825658 /* UntrustedValueVisitor.h */; };
 		C7A41E932E8F1A0100D3B841 /* untrusted_origins.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = C7A41E922E8F1A0100D3B841 /* untrusted_origins.py */; };
 		C7A41E952E8F1A0100D3B841 /* ValidationProcedures.h in Headers */ = {isa = PBXBuildFile; fileRef = C7A41E942E8F1A0100D3B841 /* ValidationProcedures.h */; };
 		CA05397923EE324400A553DC /* ContentAsStringIncludesChildFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */; };
@@ -8510,6 +8511,7 @@
 		C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageMac.mm; sourceTree = "<group>"; };
 		C6BE81F46F00E97FF47359F2 /* DisplayOnlyImageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayOnlyImageProxy.h; sourceTree = "<group>"; };
 		C7A41E902E8F1A0100D3B841 /* Untrusted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Untrusted.h; sourceTree = "<group>"; };
+		D5A2709661BC7AC4FF825658 /* UntrustedValueVisitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UntrustedValueVisitor.h; sourceTree = "<group>"; };
 		C7A41E922E8F1A0100D3B841 /* untrusted_origins.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = untrusted_origins.py; path = webkit/untrusted_origins.py; sourceTree = "<group>"; };
 		C7A41E942E8F1A0100D3B841 /* ValidationProcedures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValidationProcedures.h; sourceTree = "<group>"; };
 		C7B3F06E178BBE8B83E67A24 /* RemotePlaceholderRenderingContextSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePlaceholderRenderingContextSource.h; sourceTree = "<group>"; };
@@ -11257,6 +11259,7 @@
 				7B8486832ED9C1D500E34DC1 /* TransferString.cpp */,
 				7B8486822ED9C1D500E34DC1 /* TransferString.h */,
 				C7A41E902E8F1A0100D3B841 /* Untrusted.h */,
+				D5A2709661BC7AC4FF825658 /* UntrustedValueVisitor.h */,
 				7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */,
 			);
 			path = IPC;
@@ -19190,6 +19193,7 @@
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
 				C7A41E912E8F1A0100D3B841 /* Untrusted.h in Headers */,
+				CDB19DE00D770045ABB14914 /* UntrustedValueVisitor.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */,
