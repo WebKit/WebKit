@@ -168,3 +168,16 @@ template<typename Validator, typename T, typename HashArg, typename TraitsArg, t
 struct IsPreordainedValidator<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>> : IsPreordainedValidator<Validator, T> { };
 
 } // namespace IPC
+
+// A translation unit that validates untrusted values defines the following over its own
+// MESSAGE_CHECK, whose argument order varies between receivers. They expand to two
+// declarations around a check, so they are statements that declare names and cannot be
+// brace-less if/else bodies.
+//
+//     #define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+//         auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+//         MESSAGE_CHECK(name##Validated); \
+//         auto name = WTF::move(*name##Validated)
+//
+// The validator is the trailing variadic argument because it is brace-initialised and the
+// preprocessor splits on the commas inside the braces.

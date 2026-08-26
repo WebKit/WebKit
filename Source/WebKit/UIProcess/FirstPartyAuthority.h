@@ -41,22 +41,41 @@ public:
     {
     }
 
-    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData&) const
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData& origin) const
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        return failureFor(WebCore::RegistrableDomain { origin });
     }
 
-    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain&) const
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain& domain) const
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        return failureFor(domain);
     }
 
-    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site&) const
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site& site) const
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        return failureFor(site.domain());
     }
 
 private:
+    std::optional<IPC::ValidationFailure> failureFor(const WebCore::RegistrableDomain& domain) const
+    {
+        // Without site isolation, WebProcessProxy records only the main frame's site while the
+        // process hosts every site the page pulls in, so this question has no useful answer.
+        auto& preferences = m_process->sharedPreferencesForWebProcessValue();
+        if (!preferences.siteIsolationEnabled || preferences.usesSingleWebProcess)
+            return std::nullopt;
+
+        switch (m_process->allowsFirstPartyAccess(domain)) {
+        case WebProcessProxy::FirstPartyAccessResult::Pass:
+            return std::nullopt;
+        case WebProcessProxy::FirstPartyAccessResult::SilentFailure:
+            return IPC::ValidationFailure::Ignore;
+        case WebProcessProxy::FirstPartyAccessResult::HardFailure:
+            return IPC::ValidationFailure::Terminate;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     Ref<const WebProcessProxy> m_process;
 };
 
@@ -67,9 +86,11 @@ public:
     {
     }
 
-    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin&) const
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin& origin) const
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        if (!m_process->hasCommittedClientOrigin(origin))
+            return IPC::ValidationFailure::Terminate;
+        return std::nullopt;
     }
 
 private:
