@@ -58,7 +58,7 @@ Procedure::Procedure(bool usesSIMD)
     , m_heaps(makeUniqueRef<AbstractHeapRepository>())
 {
     if (usesSIMD)
-        setUsessSIMD();
+        setUsesSIMD();
     // Initialize all our fields before constructing Air::Code since
     // it looks into our fields.
     m_code = std::unique_ptr<Air::Code>(new Air::Code(*this));
