@@ -60,6 +60,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKJSHandle.h>
@@ -10619,6 +10620,206 @@ TEST(SiteIsolation, FocusingMainFrameFieldKeepsFocusAfterCrossOriginIframeField)
     [webView waitForNextPresentationUpdate];
 
     EXPECT_TRUE([webView hasActiveInputSession]);
+}
+
+static RetainPtr<_WKActivatedElementInfo> activatedElementAtPosition(TestWKWebView *webView, CGPoint position)
+{
+    __block RetainPtr<_WKActivatedElementInfo> result;
+    __block bool done = false;
+    [webView _requestActivatedElementAtPosition:position completionBlock:^(_WKActivatedElementInfo *elementInfo) {
+        result = elementInfo;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+// The frame-owner geometry a frame needs to convert its reply is synced to it asynchronously, so an
+// early answer carries an unconverted rect. Ask until the expected rect appears; the caller still asserts.
+static RetainPtr<_WKActivatedElementInfo> activatedElementAtPositionWithBoundingRect(TestWKWebView *webView, CGPoint position, CGRect expectedBoundingRect)
+{
+    RetainPtr<_WKActivatedElementInfo> result;
+    Util::waitFor([&] {
+        result = activatedElementAtPosition(webView, position);
+        return CGRectEqualToRect([result boundingRect], expectedBoundingRect);
+    });
+    return result;
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://domain2.com/destination' id='testID' title='LinkTitle' style='display: block; margin: 50px; width: 100px; height: 50px;'>link</a></body></html>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://domain2.com"_s } }
+        },
+    });
+
+    // The link is at (50, 50) in the iframe, which is at (100, 100) in the main frame.
+    RetainPtr elementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(175, 175), CGRectMake(150, 150, 100, 50));
+    EXPECT_EQ(_WKActivatedElementTypeLink, [elementInfo type]);
+    EXPECT_WK_STREQ("https://domain2.com/destination", [elementInfo URL].absoluteString);
+    EXPECT_WK_STREQ("LinkTitle", [elementInfo title]);
+    EXPECT_WK_STREQ("testID", [elementInfo ID]);
+    EXPECT_EQ(CGRectMake(150, 150, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInNestedCrossOriginIframes)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='display: block; margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://domain3.com/destination' style='display: block; margin: 25px; width: 100px; height: 50px;'>link</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    // Two levels of nesting, so the innermost frame reports 100 + 50 + 25.
+    RetainPtr elementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(200, 200), CGRectMake(175, 175, 100, 50));
+    EXPECT_EQ(_WKActivatedElementTypeLink, [elementInfo type]);
+    EXPECT_WK_STREQ("https://domain3.com/destination", [elementInfo URL].absoluteString);
+    EXPECT_EQ(CGRectMake(175, 175, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInScrolledCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://domain2.com/destination' style='display: block; margin: 50px; width: 100px; height: 50px;'>link</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    // Points are in the main frame's document coordinates on iOS, so scrolling does not move them.
+    RetainPtr elementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(175, 575), CGRectMake(150, 550, 100, 50));
+    EXPECT_EQ(_WKActivatedElementTypeLink, [elementInfo type]);
+    EXPECT_EQ(CGRectMake(150, 550, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInMainFrameIsNotOffset)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><a href='https://example.com/destination' style='display: block; margin: 100px; width: 100px; height: 50px;'>link</a><iframe style='display: block; width: 400px; height: 300px; border: none;' src='https://domain2.com/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>iframe</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr elementInfo = activatedElementAtPosition(webView.get(), CGPointMake(125, 125));
+    EXPECT_EQ(_WKActivatedElementTypeLink, [elementInfo type]);
+    EXPECT_EQ(CGRectMake(100, 100, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForNonLinkElementInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><div id='box' onclick='void 0' style='margin: 50px; width: 100px; height: 50px;'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // The <div> is at (50, 50) in the iframe, at (100, 100) in the main frame. A rect of
+    // (100, 100, 400, 300) would mean the <iframe> answered instead.
+    RetainPtr elementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(175, 175), CGRectMake(150, 150, 100, 50));
+    EXPECT_EQ(_WKActivatedElementTypeUnspecified, [elementInfo type]);
+    EXPECT_WK_STREQ("box", [elementInfo ID]);
+    EXPECT_EQ(CGRectMake(150, 150, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInIframeSharingTheMainFrameProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='display: block; margin: 50px; width: 200px; height: 150px; border: none;' src='https://example.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://example.com/destination' style='display: block; margin: 25px; width: 100px; height: 50px;'>link</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    // The innermost frame shares the main frame's process, so the request has to name it.
+    RetainPtr elementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(200, 200), CGRectMake(175, 175, 100, 50));
+    EXPECT_EQ(_WKActivatedElementTypeLink, [elementInfo type]);
+    EXPECT_WK_STREQ("https://example.com/destination", [elementInfo URL].absoluteString);
+    EXPECT_EQ(CGRectMake(175, 175, 100, 50), [elementInfo boundingRect]);
+}
+
+TEST(SiteIsolation, PositionInformationForLinkInSameSiteSiblingIframes)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 0; width: 300px; height: 200px; border: none;' src='https://domain2.com/first'></iframe><iframe style='display: block; margin: 0; width: 300px; height: 200px; border: none;' src='https://domain2.com/second'></iframe></body>"_s } },
+        { "/first"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://domain2.com/first-destination' style='display: block; margin: 20px; width: 100px; height: 50px;'>first</a></body>"_s } },
+        { "/second"_s, { "<!DOCTYPE html><body style='margin: 0'><a href='https://domain2.com/second-destination' style='display: block; margin: 40px; width: 100px; height: 50px;'>second</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView mainFrame].childFrames.count >= 2;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    // Both iframes are local roots in one process, so each request has to name the frame it wants.
+    RetainPtr firstElementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(70, 45), CGRectMake(20, 20, 100, 50));
+    EXPECT_WK_STREQ("https://domain2.com/first-destination", [firstElementInfo URL].absoluteString);
+    EXPECT_EQ(CGRectMake(20, 20, 100, 50), [firstElementInfo boundingRect]);
+
+    // The second iframe starts at y = 200, and its link is 40px into it.
+    RetainPtr secondElementInfo = activatedElementAtPositionWithBoundingRect(webView.get(), CGPointMake(90, 265), CGRectMake(40, 240, 100, 50));
+    EXPECT_WK_STREQ("https://domain2.com/second-destination", [secondElementInfo URL].absoluteString);
+    EXPECT_EQ(CGRectMake(40, 240, 100, 50), [secondElementInfo boundingRect]);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -103,7 +103,9 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     Vector<WebCore::ElementAnimationContext>&& animationsAtPoint,
 #endif
     std::optional<WebCore::ElementContext>&& elementContext,
-    std::optional<WebCore::ElementContext>&& hostImageOrVideoElementContext
+    std::optional<WebCore::ElementContext>&& hostImageOrVideoElementContext,
+    Markable<WebCore::FrameIdentifier>&& localRootFrameID,
+    std::optional<RemoteFrameHit>&& remoteFrameHit
 )
     : request(WTF::move(request))
     , canBeValid(canBeValid)
@@ -174,12 +176,21 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
 #endif
     , elementContext(WTF::move(elementContext))
     , hostImageOrVideoElementContext(WTF::move(hostImageOrVideoElementContext))
+    , localRootFrameID(WTF::move(localRootFrameID))
+    , remoteFrameHit(WTF::move(remoteFrameHit))
 {
 }
 
 void InteractionInformationAtPosition::mergeCompatibleOptionalInformation(const InteractionInformationAtPosition& oldInformation)
 {
     if (oldInformation.request.point != request.point)
+        return;
+
+    // Snapshots and text indicators are only comparable when the same frame measured both.
+    if (oldInformation.localRootFrameID != localRootFrameID)
+        return;
+
+    if (oldInformation.remoteFrameHit || remoteFrameHit)
         return;
 
     if (oldInformation.request.includeSnapshot && !request.includeSnapshot)

@@ -1,0 +1,11 @@
+Long-pressing a link inside a cross-origin iframe should show a context menu describing the link, not the iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS contextMenu.isLink is true
+PASS contextMenu.url is "http://localhost:8000/site-isolation/resources/simple.html"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

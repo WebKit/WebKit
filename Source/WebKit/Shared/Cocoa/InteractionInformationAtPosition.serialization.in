@@ -29,6 +29,11 @@
     UnselectableDueToMediaControls,
 };
 
+[Nested] struct WebKit::InteractionInformationAtPosition::RemoteFrameHit {
+    WebCore::FrameIdentifier remoteFrameID;
+    WebCore::FloatPoint transformedPoint;
+};
+
 struct WebKit::InteractionInformationAtPosition {
     WebKit::InteractionInformationRequest request;
 
@@ -106,6 +111,9 @@ struct WebKit::InteractionInformationAtPosition {
 
     std::optional<WebCore::ElementContext> elementContext;
     std::optional<WebCore::ElementContext> hostImageOrVideoElementContext;
+
+    Markable<WebCore::FrameIdentifier> localRootFrameID;
+    std::optional<WebKit::InteractionInformationAtPosition::RemoteFrameHit> remoteFrameHit;
 };
 
 #endif

@@ -63,14 +63,27 @@ void PositionInformationManager::doAfterUpdate(const InteractionInformationReque
 
 void PositionInformationManager::didChange(const InteractionInformationAtPosition& info)
 {
-    if (m_lastOutstandingRequest && info.request.isValidForRequest(*m_lastOutstandingRequest))
+    // The routed reply is the answer, so leave the request outstanding to coalesce against.
+    if (m_lastOutstandingRequest && !info.remoteFrameHit && info.request.isValidForRequest(*m_lastOutstandingRequest))
         m_lastOutstandingRequest = std::nullopt;
+
+    // Do not replace a real answer for this point with one that only describes the <iframe>.
+    if (info.remoteFrameHit && m_hasValidCurrentInformation && !m_currentInformation.remoteFrameHit && m_currentInformation.request.point == info.request.point)
+        return;
 
     auto newInfo = info;
     newInfo.mergeCompatibleOptionalInformation(m_currentInformation);
 
     m_currentInformation = WTF::move(newInfo);
     m_hasValidCurrentInformation = m_currentInformation.canBeValid;
+
+    if (!m_hasValidCurrentInformation) {
+        auto abandonedPoint = m_currentInformation.request.point;
+        invokeAndRemovePendingHandlers([&](const InteractionInformationRequest& request) {
+            return request.point == abandonedPoint;
+        }, std::nullopt);
+        return;
+    }
 
     // Only the callbacks whose request the newly-arrived information satisfies should resolve now.
     invokeAndRemovePendingHandlers([&](const InteractionInformationRequest& request) {
@@ -119,11 +132,18 @@ void PositionInformationManager::requestUpdate(const InteractionInformationReque
 
 bool PositionInformationManager::currentIsValid(const InteractionInformationRequest& request) const
 {
+    // An answer describing an <iframe> another process hosts is not usable; wait for the routed reply.
+    if (m_currentInformation.remoteFrameHit)
+        return false;
+
     return m_hasValidCurrentInformation && m_currentInformation.request.isValidForRequest(request);
 }
 
 bool PositionInformationManager::currentIsApproximatelyValid(const InteractionInformationRequest& request, int radius) const
 {
+    if (m_currentInformation.remoteFrameHit)
+        return false;
+
     return m_hasValidCurrentInformation && m_currentInformation.request.isApproximatelyValidForRequest(request, radius);
 }
 

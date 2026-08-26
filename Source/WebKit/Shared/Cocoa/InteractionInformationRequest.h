@@ -29,6 +29,7 @@
 
 #if PLATFORM(COCOA)
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionGeometry.h>
 #include <WebCore/ShareableBitmap.h>
@@ -38,7 +39,12 @@
 namespace WebKit {
 
 struct InteractionInformationRequest {
+    // Always in the main frame's root-view coordinates, so a reply can be matched to its request.
     WebCore::IntPoint point;
+
+    // Set when the request was routed. `pointInTargetFrame` is `point` in `targetFrameID`'s root-view coordinates.
+    Markable<WebCore::FrameIdentifier> targetFrameID;
+    std::optional<WebCore::IntPoint> pointInTargetFrame;
 
     bool includeSnapshot { false };
     bool includeLinkIndicator { false };
@@ -55,8 +61,10 @@ struct InteractionInformationRequest {
     {
     }
 
-    explicit InteractionInformationRequest(WebCore::IntPoint point, bool includeSnapshot, bool includeLinkIndicator, bool includeCursorContext, bool includeHasDoubleClickHandler, bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins)
+    explicit InteractionInformationRequest(WebCore::IntPoint point, Markable<WebCore::FrameIdentifier> targetFrameID, std::optional<WebCore::IntPoint> pointInTargetFrame, bool includeSnapshot, bool includeLinkIndicator, bool includeCursorContext, bool includeHasDoubleClickHandler, bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins)
         : point(point)
+        , targetFrameID(targetFrameID)
+        , pointInTargetFrame(pointInTargetFrame)
         , includeSnapshot(includeSnapshot)
         , includeLinkIndicator(includeLinkIndicator)
         , includeCursorContext(includeCursorContext)
