@@ -27,4 +27,5 @@
 ]
 messages -> TestWithDispatchedFromAndTo {
     AlwaysEnabled(String url)
+    UntrustedOrigin(IPC::Untrusted<WebCore::SecurityOriginData> origin)
 }

@@ -119,8 +119,10 @@ void WebGeolocationManagerProxy::resetPermissions()
 }
 #endif
 
-void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
+void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
 {
+    auto registrableDomain = WTF::move(untrustedRegistrableDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     startUpdatingWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain, pageProxyID, authorizationToken, enableHighAccuracy);
 }
 
@@ -155,8 +157,10 @@ void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, 
         proxy.send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData.lastPosition.value()), 0);
 }
 
-void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain)
+void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain)
 {
+    auto registrableDomain = WTF::move(untrustedRegistrableDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     stopUpdatingWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain);
 }
 
@@ -185,8 +189,10 @@ void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, c
         m_perDomainData.remove(it);
 }
 
-void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain, bool enabled)
+void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain, bool enabled)
 {
+    auto registrableDomain = WTF::move(untrustedRegistrableDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     setEnableHighAccuracyWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain, enabled);
 }
 

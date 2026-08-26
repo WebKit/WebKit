@@ -27,7 +27,7 @@
     EnabledBy=GeolocationAPIEnabled
 ]
 messages -> WebGeolocationManagerProxy {
-    StartUpdating(WebCore::RegistrableDomain registrableDomain, WebKit::WebPageProxyIdentifier pageProxyID, String authorizationToken, bool enableHighAccuracy)
-    StopUpdating(WebCore::RegistrableDomain registrableDomain)
-    SetEnableHighAccuracy(WebCore::RegistrableDomain registrableDomain, bool enabled)
+    StartUpdating(IPC::Untrusted<WebCore::RegistrableDomain> registrableDomain, WebKit::WebPageProxyIdentifier pageProxyID, String authorizationToken, bool enableHighAccuracy)
+    StopUpdating(IPC::Untrusted<WebCore::RegistrableDomain> registrableDomain)
+    SetEnableHighAccuracy(IPC::Untrusted<WebCore::RegistrableDomain> registrableDomain, bool enabled)
 }

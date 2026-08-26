@@ -88,6 +88,7 @@ enum class MessageName : uint16_t {
     TestWithDeferSendingOption_NoOptions,
     TestWithDeferSendingOption_OneIndex,
     TestWithDispatchedFromAndTo_AlwaysEnabled,
+    TestWithDispatchedFromAndTo_UntrustedOrigin,
     TestWithEnabledByAndConjunction_AlwaysEnabled,
     TestWithEnabledByOrConjunction_AlwaysEnabled,
     TestWithEnabledBy_AlwaysEnabled,

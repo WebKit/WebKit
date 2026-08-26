@@ -56,11 +56,11 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     MemoryPressureStatusChanged(WTF::SystemMemoryPressureStatus status)
 
-    DidCollectPrewarmInformation(WebCore::RegistrableDomain domain, struct WebCore::PrewarmInformation prewarmInformation)
+    DidCollectPrewarmInformation(IPC::Untrusted<WebCore::RegistrableDomain> domain, struct WebCore::PrewarmInformation prewarmInformation)
 
-    DidCompleteAutofill(WebCore::Site site)
+    DidCompleteAutofill(IPC::Untrusted<WebCore::Site> site)
 
-    DidObserveFirstPartyUserGesture(WebCore::Site site)
+    DidObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Site> site)
 
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
@@ -95,7 +95,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #if ENABLE(NOTIFICATION_EVENT)
     [EnabledBy=NotificationEventEnabled] GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
 #endif
-    [EnabledBy=AppBadgeEnabled] SetAppBadgeFromWorker(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    [EnabledBy=AppBadgeEnabled] SetAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData> origin, std::optional<uint64_t> badge)
 
     SerializeAndWrapCryptoKey(struct WebCore::CryptoKeyData key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
     UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
