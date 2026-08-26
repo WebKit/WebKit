@@ -455,7 +455,7 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
 
     CGDataConsumerCallbacks callbacks {
         [](void* context, const void* buffer, size_t count) -> size_t {
-            auto functor = *static_cast<const ScopedLambda<PutBytesCallback>*>(context);
+            auto& functor = *static_cast<const ScopedLambda<PutBytesCallback>*>(context);
             return functor(unsafeMakeSpan(static_cast<const uint8_t*>(buffer), count));
         },
         nullptr
