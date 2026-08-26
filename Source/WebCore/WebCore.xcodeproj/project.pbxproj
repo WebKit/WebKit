@@ -4440,6 +4440,7 @@
 		A52460C12FF48CE4003567A5 /* GridItemSizingFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460BE2FF48CE4003567A5 /* GridItemSizingFunctions.h */; };
 		A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C02FF48CE4003567A5 /* GridSizeTypes.h */; };
 		A52460C52FF48CE4003567A5 /* GridItemPlacer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C32FF48CE4003567A5 /* GridItemPlacer.h */; };
+		A52460C82FF48CE4003567A5 /* GridSizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C62FF48CE4003567A5 /* GridSizer.h */; };
 		A52B348F1FA3BDA6008B6246 /* ServiceWorkerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A52B34961FA3E290008B6246 /* ServiceWorkerInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17663,6 +17664,8 @@
 		A52460C02FF48CE4003567A5 /* GridSizeTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridSizeTypes.h; sourceTree = "<group>"; };
 		A52460C32FF48CE4003567A5 /* GridItemPlacer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridItemPlacer.h; sourceTree = "<group>"; };
 		A52460C42FF48CE4003567A5 /* GridItemPlacer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridItemPlacer.cpp; sourceTree = "<group>"; };
+		A52460C62FF48CE4003567A5 /* GridSizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridSizer.h; sourceTree = "<group>"; };
+		A52460C72FF48CE4003567A5 /* GridSizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridSizer.cpp; sourceTree = "<group>"; };
 		A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDebuggable.h; sourceTree = "<group>"; };
 		A52B348E1FA3BD79008B6246 /* ServiceWorkerDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDebuggable.cpp; sourceTree = "<group>"; };
 		A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerInspectorProxy.h; sourceTree = "<group>"; };
@@ -34626,6 +34629,8 @@
 				A5CE23262F35106900179F07 /* GridLayoutState.h */,
 				A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */,
 				A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */,
+				A52460C72FF48CE4003567A5 /* GridSizer.cpp */,
+				A52460C62FF48CE4003567A5 /* GridSizer.h */,
 				A52460C02FF48CE4003567A5 /* GridSizeTypes.h */,
 				A5FA576D2E85F8A400EF058F /* GridTypeAliases.h */,
 				A532262E2E7492C100DDFA5E /* ImplicitGrid.cpp */,
@@ -45943,6 +45948,7 @@
 				A5AC7CAD2F4E9AC700981859 /* GridLayoutConstraints.h in Headers */,
 				A5CE23272F35106E00179F07 /* GridLayoutState.h in Headers */,
 				A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */,
+				A52460C82FF48CE4003567A5 /* GridSizer.h in Headers */,
 				A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */,
 				A51432582DE0CE6E0059FFA1 /* GridSpan.h in Headers */,
 				E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */,
