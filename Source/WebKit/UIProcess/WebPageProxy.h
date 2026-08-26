@@ -30,6 +30,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "TextExtractionAssertionScope.h"
+#include "Untrusted.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
@@ -2731,7 +2732,7 @@ public:
     void pageWillLikelyUseNotifications();
 
 #if USE(SYSTEM_PREVIEW)
-    void beginSystemPreview(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
+    void beginSystemPreview(const URL&, IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 #endif
 
@@ -2768,7 +2769,7 @@ public:
     void didDestroyFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void disconnectFramesFromPage();
 
-    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
+    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
 
     void didCreateSleepDisabler(IPC::Connection&, WebCore::SleepDisablerIdentifier, const String& reason, bool display);
     void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
@@ -3266,17 +3267,17 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
-    void requestUserMediaPermissionForFrame(IPC::Connection&, WebCore::UserMediaRequestIdentifier, FrameInfoData&&, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
-    void enumerateMediaDevicesForFrame(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
+    void requestUserMediaPermissionForFrame(IPC::Connection&, WebCore::UserMediaRequestIdentifier, FrameInfoData&&, IPC::Untrusted<WebCore::SecurityOriginData>&& userMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
+    void enumerateMediaDevicesForFrame(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& userMediaDocumentOriginData, IPC::Untrusted<WebCore::SecurityOriginData>&& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
     void beginMonitoringCaptureDevices();
-    void validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier, WebCore::ClientOrigin&&, FrameInfoData&&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    void validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&&, FrameInfoData&&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void setShouldListenToVoiceActivity(bool);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     MediaKeySystemPermissionRequestManagerProxy& mediaKeySystemPermissionRequestManager() LIFETIME_BOUND;
 #endif
-    void requestMediaKeySystemPermissionForFrame(IPC::Connection&, WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier, WebCore::ClientOrigin&&, const String&);
+    void requestMediaKeySystemPermissionForFrame(IPC::Connection&, WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&&, const String&);
 
     void runModal();
     void NODELETE notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
@@ -3694,10 +3695,10 @@ private:
     void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, std::optional<WebCore::FrameIdentifier>&&);
 
     void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::UserGestureTokenIdentifier>);
-    void postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<WebCore::UserGestureTokenData>&&);
+    void postMessageToRemote(WebCore::FrameIdentifier source, IPC::Untrusted<WebCore::SecurityOriginData>&& sourceOrigin, WebCore::FrameIdentifier target, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<WebCore::UserGestureTokenData>&&);
     void renderTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
     void layerTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>, CompletionHandler<void(String&&)>&&);
-    void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&);
+    void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void addMessageToConsoleForTesting(String&&);
     void frameTextForTesting(WebCore::FrameIdentifier, CompletionHandler<void(String&&)>&&);
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, WebCore::AccessibilityRemoteToken dataToken, CompletionHandler<void(WebCore::AccessibilityRemoteToken, int)>&&);

@@ -1361,8 +1361,9 @@ static inline void getArePasskeysDisallowedForRelyingParty(const WebCore::Securi
     handler(false);
 }
 
-void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const WebCore::SecurityOriginData& data, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
+    auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     getCanCurrentProcessAccessPasskeyForRelyingParty(data, [handler = WTF::move(handler)](bool canAccessPasskeyData) mutable {
         handler(canAccessPasskeyData && [getASCWebKitSPISupportClassSingleton() shouldUseAlternateCredentialStore]);
     });
@@ -1383,8 +1384,10 @@ static void setRelatedOriginsCapability(Vector<KeyValuePair<String, bool>>& capa
     capabilities.append({ relatedOriginsCapability, true });
 }
 
-void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::SecurityOriginData& originData, CapabilitiesCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CapabilitiesCompletionHandler&& handler)
 {
+    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (![getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getClientCapabilitiesForRelyingParty:withCompletionHandler:)]) {
         Vector<KeyValuePair<String, bool>> capabilities;
         setRelatedOriginsCapability(capabilities);
@@ -1405,8 +1408,9 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::Secu
     }).get()];
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData& data, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
+    auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (m_webPageProxy->configuration().backgroundTextExtractionEnabled()) {
         handler(false);
         return;
@@ -1469,8 +1473,10 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::SecurityOriginData&, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
+    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     auto decodedCredentialId = base64URLDecode(options.credentialId);
     if (!decodedCredentialId) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse credentialId for signalUnknownCredential.");
@@ -1494,8 +1500,10 @@ void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::Se
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCore::SecurityOriginData&, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
+    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");
@@ -1529,8 +1537,10 @@ void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCor
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(const WebCore::SecurityOriginData&, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
+    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");

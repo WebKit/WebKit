@@ -3214,8 +3214,10 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, const WebCore::SecurityOriginData& origin)
+void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;

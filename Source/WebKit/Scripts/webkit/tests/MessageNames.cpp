@@ -38,6 +38,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithDeferSendingOption_NoOptions"_s, ReceiverName::TestWithDeferSendingOption, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithDeferSendingOption_OneIndex"_s, ReceiverName::TestWithDeferSendingOption, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithDispatchedFromAndTo_AlwaysEnabled"_s, ReceiverName::TestWithDispatchedFromAndTo, false, false, false, ProcessName::WebContent, ProcessName::UI },
+    MessageDescription { "TestWithDispatchedFromAndTo_UntrustedOrigin"_s, ReceiverName::TestWithDispatchedFromAndTo, false, false, false, ProcessName::WebContent, ProcessName::UI },
     MessageDescription { "TestWithEnabledByAndConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByAndConjunction, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithEnabledByOrConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByOrConjunction, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithEnabledBy_AlwaysEnabled"_s, ReceiverName::TestWithEnabledBy, false, false, false, ProcessName::Unknown, ProcessName::Unknown },

@@ -81,6 +81,7 @@ def main(argv):
 
         receiver.enforce_attribute_constraints()
         receiver.enforce_opaque_ipc_types_usage()
+        receiver.enforce_untrusted_origin_usage()
 
         receivers.append(receiver)
         if receiver_name != receiver.name:

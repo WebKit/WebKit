@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "Untrusted.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebLockIdentifier.h>
@@ -57,11 +58,11 @@ public:
 
 private:
     // IPC Message handlers.
-    void requestLock(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, WebCore::WebLockMode, bool steal, bool ifAvailable);
-    void releaseLock(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name);
-    void abortLockRequest(WebCore::ClientOrigin&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, CompletionHandler<void(bool)>&&);
-    void snapshot(WebCore::ClientOrigin&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
-    void clientIsGoingAway(WebCore::ClientOrigin&&, WebCore::ScriptExecutionContextIdentifier);
+    void requestLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, WebCore::WebLockMode, bool steal, bool ifAvailable);
+    void releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name);
+    void abortLockRequest(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, String&& name, CompletionHandler<void(bool)>&&);
+    void snapshot(IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&);
+    void clientIsGoingAway(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ScriptExecutionContextIdentifier);
 
     const CheckedRef<WebProcessProxy> m_process;
     bool m_hasEverRequestedLocks { false };

@@ -31,6 +31,7 @@
 #include "PolicyDecision.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
+#include "Untrusted.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
@@ -187,7 +188,7 @@ private:
     void didNavigateWithNavigationData(const WebNavigationDataStore&, WebCore::FrameIdentifier);
     void didPerformClientRedirect(String&& sourceURLString, String&& destinationURLString, WebCore::FrameIdentifier);
     void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
-    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
+    void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
     void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& provisionalURL, WebCore::ResourceError&&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
 
     Ref<FrameState> copyFrameStateForBackForwardNavigation(API::Navigation&, WebBackForwardListItem&) const;

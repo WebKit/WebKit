@@ -31,6 +31,7 @@
 #include "PlatformXRCoordinator.h"
 #include "ProcessActivityGroup.h"
 #include "ProcessThrottler.h"
+#include "Untrusted.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PlatformXR.h>
 #include <WebCore/SecurityOriginData.h>
@@ -94,7 +95,7 @@ private:
 
     // Message handlers
     void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
-    void requestPermissionOnSessionFeatures(IPC::Connection&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
+    void requestPermissionOnSessionFeatures(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering(IPC::Connection&, std::optional<WebCore::WebGPU::TextureFormat>, std::optional<WebCore::WebGPU::TextureFormat>);
     void shutDownTrackingAndRendering(IPC::Connection&);
     void requestFrame(IPC::Connection&, std::optional<PlatformXR::RequestData>&&, CompletionHandler<void(PlatformXR::FrameData&&)>&&);

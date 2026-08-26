@@ -26,6 +26,7 @@ import re
 import sys
 
 from webkit.opaque_ipc_types import opaque_ipc_types
+from webkit.untrusted_origins import unwrap_untrusted
 from webkit import parser
 from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
 
@@ -226,7 +227,17 @@ builtin_types = frozenset([
     'WebCore::TrackID',
 ])
 
+def sender_type(type):
+    # IPC::Untrusted<T> only exists on the receiving side: it is what the decoder
+    # produces and therefore what the handler must accept. Senders continue to deal
+    # in T, so the message class stores and encodes a T and the wire format is
+    # unchanged. See Platform/IPC/Untrusted.h.
+    return unwrap_untrusted(type) or type
+
+
 def function_parameter_type(type, kind, for_reply=False):
+    type = sender_type(type)
+
     # Don't use references for built-in types.
     if type in builtin_types:
         return type
@@ -241,6 +252,7 @@ def function_parameter_type(type, kind, for_reply=False):
 
 
 def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=False):
+    type = sender_type(type)
     return not (
         type in builtin_types or
         kind.startswith('enum:') or
@@ -249,7 +261,7 @@ def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=Fals
 
 
 def arguments_constructor_name(type, name):
-    if type in types_that_must_be_moved():
+    if sender_type(type) in types_that_must_be_moved():
         return 'WTF::move(%s)' % name
 
     return name
@@ -336,7 +348,7 @@ def message_to_struct_declaration(receiver, message):
         result.append('        ')
         if requires_suppress_forward_decl[i]:
             result.append('SUPPRESS_FORWARD_DECL_ARG ')
-        if parameter.type in types_that_must_be_moved():
+        if sender_type(parameter.type) in types_that_must_be_moved():
             result.append('encoder << WTF::move(m_%s);\n' % parameter.name)
         else:
             result.append('encoder << m_%s;\n' % parameter.name)
@@ -789,6 +801,13 @@ def forward_declarations_and_headers(receiver):
         kind = parameter.kind
         type = parameter.type
 
+        # The message class deals in the wrapped type, so forward declare that; the
+        # wrapper's own header is still needed for the Arguments tuple.
+        unwrapped_type = unwrap_untrusted(type)
+        if unwrapped_type:
+            headers.update(headers_for_type(type))
+            type = unwrapped_type
+
         if type.startswith('std::optional<') and type.endswith('>'):
             type = type[14: len(type) - 1]
 
@@ -1080,6 +1099,7 @@ def class_template_headers(template_string):
         'std::tuple': {'headers': ['<tuple>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Variant': {'headers': ['<wtf/Variant.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReferenceTuple': {'headers': ['"ArrayReferenceTuple.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'IPC::Untrusted': {'headers': ['"Untrusted.h"'], 'argument_coder_headers': ['"Untrusted.h"']},
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},

@@ -27,11 +27,15 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
+#include "Untrusted.h"
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class SecurityOriginData;
+}
 
 namespace Messages {
 namespace TestWithDispatchedFromAndTo {
@@ -74,6 +78,32 @@ public:
 
 private:
     const String& m_url;
+};
+
+class UntrustedOrigin {
+public:
+    using Arguments = std::tuple<IPC::Untrusted<WebCore::SecurityOriginData>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit UntrustedOrigin(const WebCore::SecurityOriginData& origin)
+        : m_origin(origin)
+    {
+        ASSERT(isInWebProcess());
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_origin;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const WebCore::SecurityOriginData& m_origin;
 };
 
 } // namespace TestWithDispatchedFromAndTo
