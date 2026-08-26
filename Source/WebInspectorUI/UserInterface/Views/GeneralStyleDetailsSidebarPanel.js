@@ -36,7 +36,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._panel.addEventListener(WI.StyleDetailsPanel.Event.NodeChanged, this._handleNodeChanged, this);
 
         if (this._panel.supportsToggleCSSClassList && InspectorBackend.hasCommand("DOM.resolveNode"))
-            this._classListContainerToggledSetting = new WI.Setting(identifier + "-class-list-container-toggled", !!WI.Setting.migrateValue("class-list-container-toggled"));
+            this._classListContainerToggledSetting = new WI.Setting(identifier + "-class-list-container-toggled", false);
 
         if (this._panel.supportsToggleCSSForcedPseudoClass && WI.cssManager.canForcePseudoClass()) {
             this._forcedPseudoClassContainerToggledSetting = new WI.Setting(identifier + "-forced-pseudo-class-container-toggled", this._panel.initialToggleCSSForcedPseudoClassState);
