@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2023-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -220,7 +220,7 @@ static std::pair<int, int> NODELETE lowerAndUpperBound(int component1, int compo
         if (component1 <= component2 && component2 >= component3)
             return { component3, component2 };
     } else if (component1 > component3) {
-        if (component1 < component2 && component2 > component3)
+        if (component1 >= component2 && component2 >= component3)
             return { component3, component1 };
         if (component1 > component2 && component2 < component3)
             return { component2, component3 };
