@@ -9,6 +9,9 @@
         const firstTwoTypesOnly = container == "HashMap";
 
         const set = new Set();
+        // A Variant whose alternatives are all compiled out has no types to contribute.
+        if (!list.length)
+            return set;
         let nestedTypeDepth = 0;
         let atComma = false;
         let previousTypeEnd = 0;
@@ -166,23 +169,25 @@
         // Note: This set should only be shrinking. If you need to add to this set to fix the test,
         // add IPC metadata in a *.serialization.in file instead.
         let result = [
-            "CTFontDescriptorOptions",
-            "MachSendRight",
             "GenericPromise::Result", // Added to hide the implementation details that simulate an Expected<void, void>
         ];
         if (window.testRunner) {
-            if (testRunner.isMac) {
+            if (!testRunner.isIOSFamily) {
                 result.push("WebCore::ContextMenuAction");
-                if (!testRunner.haveSecureCodingDataDetectors) {
-                    result.push("WKDDActionContext");
+            }
+            if (testRunner.isMac || testRunner.isIOSFamily) {
+                result.push("CTFontDescriptorOptions");
+                result.push("MachSendRight");
+                if (!testRunner.haveSecureCodingRequest) {
+                    result.push("NSObject<NSSecureCoding>");
+                    result.push("NSURLRequest");
                 }
-            }
-            if (!testRunner.haveSecureCodingRequest) {
-                result.push("NSObject<NSSecureCoding>");
-                result.push("NSURLRequest");
-            }
-            if (!testRunner.haveSecureCodingDataDetectors) {
-                result.push("DDScannerResult");
+                if (!testRunner.haveSecureCodingDataDetectors) {
+                    result.push("DDScannerResult");
+                    if (testRunner.isMac) {
+                        result.push("WKDDActionContext");
+                    }
+                }
             }
         }
         return result.sort();
