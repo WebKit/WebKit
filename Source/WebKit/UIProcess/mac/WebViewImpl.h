@@ -1237,6 +1237,7 @@ private:
     CGFloat m_topScrollStretchForRefreshController { 0 };
     bool m_canShowRefreshController { false };
     bool m_refreshControllerIsTracking { false };
+    bool m_suppressRefreshControllerUpdates { false };
     CGFloat m_cachedTopScrollStretch { 0 };
 #endif
 
