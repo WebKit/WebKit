@@ -505,9 +505,12 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
-        .bug("https://webkit.org/b/314804", "Triple click does not generate a line selection on PDF")
+        .bug("https://webkit.org/b/314804", "Triple click does not generate a line selection on PDF"),
+        arguments: [true, false]
     )
-    func tripleClickingInPDFSelectsLine() async throws {
+    func tripleClickingInPDFSelectsLine(useAlternatePDFHUD: Bool) async throws {
+        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
+
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
@@ -527,6 +530,68 @@ extension AppKitGesturesTests.Basic {
 
         let selectedText = await page.copySelection()
         #expect(selectedText == "Test PDF Content")
+    }
+
+    @Test(arguments: [true, false])
+    func clickingOnPDFHUDButtonPerformsAction(useAlternatePDFHUD: Bool) async throws {
+        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
+
+        let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
+        try await page.load(pdfURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let hud = try #require(page.pdfHUDs.first?.subviews.first)
+        let hudCenterInWindow = hud.convert(CGPoint(x: hud.bounds.midX, y: hud.bounds.midY), to: nil)
+        let hudCenterInScreen = screenBounds(ofPointInWindowCoordinates: hudCenterInWindow)
+        let zoomInButton = NSPoint(x: hudCenterInScreen.x - 20, y: hudCenterInScreen.y)
+
+        let scaleBeforeZooming = page.pageZoom
+
+        await recap.play { composer in
+            composer._wk_click(at: zoomInButton, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+        }
+
+        let scaleAfterZooming = page.pageZoom
+
+        #expect(scaleAfterZooming > scaleBeforeZooming)
+    }
+
+    @Test(arguments: [false])
+    func clickingOnPDFShowsHUD(useAlternatePDFHUD: Bool) async throws {
+        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
+
+        let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
+        try await page.load(pdfURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let clickPoint = screenBounds(ofPointInWindowCoordinates: .init(x: 100, y: 350))
+
+        let hud = try #require(page.pdfHUDs.first)
+
+        unsafe hud.perform(Selector(("_hideForTesting")))
+
+        // Reach in to the view hierarchy and get the view whose opacity actually changes,
+        // which is dependent on the implementation.
+        // FIXME: Depending on implementation-specific details like this is very not great.
+
+        let visibleView =
+            if useAlternatePDFHUD {
+                try #require(hud.subviews.first?.subviews.first)
+            } else {
+                try #require(hud.subviews.first)
+            }
+
+        try await Task.sleep(for: .seconds(1))
+        #expect(visibleView.alphaValue == 0)
+
+        await recap.play { composer in
+            composer._wk_click(at: clickPoint, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+        }
+
+        try await Task.sleep(for: .seconds(1))
+        #expect(visibleView.alphaValue == 1)
     }
 
     @Test(arguments: [0.1, 0.5, 0.9])

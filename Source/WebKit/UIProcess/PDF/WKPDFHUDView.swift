@@ -173,6 +173,13 @@ extension WKPDFHUDView {
     // For testing only.
     // swift-format-ignore: NoLeadingUnderscores
     @objc
+    private func _hideForTesting() {
+        hideTimerFired()
+    }
+
+    // For testing only.
+    // swift-format-ignore: NoLeadingUnderscores
+    @objc
     private func _performAction(forControl controlName: String) {
         switch controlName {
         case "minus.magnifyingglass":
