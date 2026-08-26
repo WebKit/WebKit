@@ -502,3 +502,6 @@
 356399840 WGPU : dEQP-GLES2.functional.uniform_api.value.*.render.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.uniform_api.random.* = FAIL
 392542001 WGPU : dEQP-GLES2.functional.vertex_arrays.multiple_attributes* = FAIL
+
+// webkit.org/b/319849
+0 METAL : dEQP-GLES2.functional.shaders.linkage.varying* = SKIP
