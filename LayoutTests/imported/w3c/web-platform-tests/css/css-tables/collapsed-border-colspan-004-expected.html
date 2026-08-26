@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>CSS Test Reference</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; direction: rtl; }
+  td { border: 1px solid orange; padding: 5px; }
+</style>
+
+<p>The bottom border of the top cell should be thick black only above "def" (rightmost cell in RTL), and thin orange above "ghi" and "jkl".</p>
+
+<table>
+  <tr>
+    <td style="border-bottom: 5px solid black; border-left-style: none;">abc</td>
+    <td style="border-right-style: none; border-left-style: none;"></td>
+    <td style="border-right-style: none;"></td>
+  </tr>
+  <tr>
+    <td style="border-top: 5px solid black;">def</td>
+    <td>ghi</td>
+    <td>jkl</td>
+  </tr>
+</table>
