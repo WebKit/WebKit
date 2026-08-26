@@ -27,6 +27,7 @@
 #pragma once
 
 #include "WebEvent.h"
+#include "WebEventPhase.h"
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
 
@@ -43,16 +44,7 @@ public:
         ScrollByPixelWheelEvent
     };
 
-    enum class Phase : uint8_t {
-        None,
-        Began,
-        Stationary,
-        Changed,
-        Ended,
-        Cancelled,
-        MayBegin,
-        WillBegin,
-    };
+    using Phase = WebEventPhase;
 
     enum class MomentumEndType : uint8_t {
         Unknown,

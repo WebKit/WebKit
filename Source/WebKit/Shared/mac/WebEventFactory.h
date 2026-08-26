@@ -44,6 +44,8 @@ namespace WebKit {
 // FIXME: This is not needed in the WebProcess and should be moved to be a peer
 // of WKView.
 
+enum class WebEventPhase : uint8_t;
+
 class WebEventFactory {
 public:
 #if USE(APPKIT)
@@ -57,6 +59,8 @@ public:
     static NSInteger NODELETE toNSButtonNumber(WebKit::WebMouseEventButton);
 
     static OptionSet<WebKit::WebEventModifier> NODELETE toWebEventModifierFlags(NSEventModifierFlags);
+
+    static WebEventPhase phaseForEvent(NSEvent *);
 #endif
 #endif // USE(APPKIT)
 };

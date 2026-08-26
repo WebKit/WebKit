@@ -110,6 +110,8 @@ class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
 
+enum class WebEventPhase : uint8_t;
+
 class ViewGestureController final : public IPC::MessageReceiver, public RefCounted<ViewGestureController> {
     WTF_MAKE_TZONE_ALLOCATED(ViewGestureController);
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
@@ -164,7 +166,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void handleMagnificationGestureEvent(PlatformMagnificationEvent, WebCore::FloatPoint origin);
+    void handleMagnificationGesture(double scale, WebEventPhase, WebCore::FloatPoint origin);
     void handleSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 
     void gestureEventWasNotHandledByWebCore(PlatformMagnificationEvent, WebCore::FloatPoint origin);
