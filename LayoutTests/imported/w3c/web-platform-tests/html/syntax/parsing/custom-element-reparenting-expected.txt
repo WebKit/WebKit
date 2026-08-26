@@ -1,0 +1,7 @@
+
+
+PASS Baseline: a custom element that does not reparent anything
+PASS attributeChangedCallback gives the element a parent before it is inserted
+PASS attributeChangedCallback detaches the intended parent before the element is inserted
+PASS Custom element constructor attaches an unrelated shadow root
+

@@ -148,11 +148,17 @@ static inline void insert(HTMLConstructionSiteTask& task)
         }
     }
 
-    ASSERT(!task.child->parentNode());
+    Ref child = *task.child;
+    Ref parent = *task.parent;
+
+    if (containsIncludingHostElements(child, parent)) [[unlikely]]
+        return;
+
+    ASSERT(!child->parentNode());
     if (task.nextChild)
-        SUPPRESS_UNCOUNTED_ARG task.parent->parserInsertBefore(protect(*task.child), protect(*task.nextChild));
+        parent->parserInsertBefore(child, protect(*task.nextChild));
     else
-        SUPPRESS_UNCOUNTED_ARG task.parent->parserAppendChild(protect(*task.child));
+        parent->parserAppendChild(child);
 }
 
 static inline void executeInsertTask(HTMLConstructionSiteTask& task)
@@ -192,7 +198,7 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
     if (RefPtr parent = child->parentNode())
         parent->parserRemoveChild(child);
 
-    if (child->parentNode() || containsIncludingHostElements(child, *protect(task.parent)))
+    if (child->parentNode())
         return;
 
     insert(task);

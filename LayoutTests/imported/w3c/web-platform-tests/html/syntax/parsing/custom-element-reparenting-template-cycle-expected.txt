@@ -1,0 +1,4 @@
+
+
+PASS Custom element constructor moves the intended parent into a template element's contents
+

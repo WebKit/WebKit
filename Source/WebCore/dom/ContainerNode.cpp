@@ -542,21 +542,33 @@ static inline bool NODELETE isChildTypeAllowed(ContainerNode& newParent, Node& c
     return true;
 }
 
+static inline const ContainerNode* NODELETE hostIncludingParent(const Node& node)
+{
+    if (auto* parent = node.parentNode())
+        return parent;
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(node))
+        return shadowRoot->host();
+    if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(node))
+        return fragment->host();
+    return nullptr;
+}
+
+// https://dom.spec.whatwg.org/#concept-tree-host-including-inclusive-ancestor
 bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
-    const Node* currentNode = &node;
-    do {
+    if (&possibleAncestor == &node)
+        return true;
+
+    if (!possibleAncestor.hasChildNodes() && !possibleAncestor.shadowRoot() && !possibleAncestor.hasTagName(HTMLNames::templateTag))
+        return false;
+
+    auto* possibleAncestorRoot = &possibleAncestor.shadowIncludingRoot();
+    for (auto* currentNode = &node; currentNode; currentNode = hostIncludingParent(*currentNode)) {
         if (currentNode == &possibleAncestor)
             return true;
-        const ContainerNode* parent = currentNode->parentNode();
-        if (!parent) {
-            if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*currentNode))
-                parent = shadowRoot->host();
-            else if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(*currentNode))
-                parent = fragment->host();
-        }
-        currentNode = WTF::move(parent);
-    } while (currentNode);
+        if (auto* currentRoot = &currentNode->shadowIncludingRoot(); currentRoot != possibleAncestorRoot)
+            currentNode = currentRoot;
+    }
 
     return false;
 }
