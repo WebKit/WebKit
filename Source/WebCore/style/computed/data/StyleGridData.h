@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <WebCore/StyleFlowTolerance.h>
+#include <WebCore/StyleFitTolerance.h>
 #include <WebCore/StyleGridAutoFlow.h>
 #include <WebCore/StyleGridTemplateAreas.h>
 #include <WebCore/StyleGridTemplateList.h>
@@ -56,7 +56,7 @@ public:
     GridTemplateAreas gridTemplateAreas;
     GridTemplateList gridTemplateColumns;
     GridTemplateList gridTemplateRows;
-    FlowTolerance flowTolerance;
+    FitTolerance fitTolerance;
 
 private:
     GridData();

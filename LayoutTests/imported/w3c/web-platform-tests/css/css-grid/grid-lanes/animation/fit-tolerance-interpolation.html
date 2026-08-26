@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>CSS Grid Lanes Test: flow-tolerance interpolation</title>
+    <title>CSS Grid Lanes Test: fit-tolerance interpolation</title>
     <link rel="author" title="Yanling Wang" href="mailto:yanlingwang@microsoft.com">
     <link rel="help" href="https://drafts.csswg.org/css-grid-3/#placement-tolerance">
-    <meta name="assert" content="flow-tolerance supports animation as length.">
+    <meta name="assert" content="fit-tolerance supports animation as length.">
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
     <script src="/css/support/interpolation-testcommon.js"></script>
@@ -16,7 +16,7 @@
 
       // Length values interpolate smoothly.
       test_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: '10px',
         to: '50px'
       }, [
@@ -31,7 +31,7 @@
 
       // Percentage values interpolate smoothly.
       test_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: '10%',
         to: '50%'
       }, [
@@ -42,7 +42,7 @@
 
       // Length to percentage uses calc.
       test_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: '10px',
         to: '50%'
       }, [
@@ -53,7 +53,7 @@
 
       // calc values interpolate smoothly.
       test_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: 'calc(20% + 10px)',
         to: 'calc(60% + 50px)'
       }, [
@@ -66,25 +66,25 @@
 
       // Keywords use discrete interpolation.
       test_no_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: 'normal',
         to: '50px'
       });
 
       test_no_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: 'infinite',
         to: '50px'
       });
 
       test_no_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: 'normal',
         to: 'infinite'
       });
 
       test_no_interpolation({
-        property: 'flow-tolerance',
+        property: 'fit-tolerance',
         from: '10px',
         to: 'normal'
       });
