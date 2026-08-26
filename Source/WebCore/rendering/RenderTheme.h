@@ -449,6 +449,7 @@ public:
     bool isIndeterminate(const RenderElement&) const;
     bool isEnabled(const RenderElement&) const;
     bool isFocused(const RenderElement&) const;
+    bool appearsFocused(const RenderElement&) const;
     bool isPressed(const RenderElement&) const;
     bool isSpinUpButtonPartPressed(const RenderElement&) const;
     bool isHovered(const RenderElement&) const;

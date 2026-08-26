@@ -205,9 +205,9 @@ fast/forms/form-control-refresh/accent-color-contrast-checkbox-radio-do-not-disa
 fast/forms/form-control-refresh/accent-color-contrast-checkbox-radio-do-not-disappear-light-mode.html [ Pass ]
 fast/forms/form-control-refresh/accent-color-contrast-submit-does-not-disappear.html [ Pass ]
 fast/forms/form-control-refresh/button-like-controls-text-color-matches.html [ Pass ]
-fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Pass ]
-fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Pass ]
-fast/forms/form-control-refresh/submit-button-appearance-matches-button-window-inactive.html [ Pass ]
+fast/forms/form-control-refresh/window-inactive/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Pass ]
+fast/forms/form-control-refresh/window-inactive/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Pass ]
+fast/forms/form-control-refresh/window-inactive/submit-button-appearance-matches-button-window-inactive.html [ Pass ]
 
 fast/forms/month/month-editable-components/month-editable-components-user-invalid-uncommitted.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-invalid-with-empty-components.html [ Pass ]
