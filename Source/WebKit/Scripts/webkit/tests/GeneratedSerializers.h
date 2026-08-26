@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "UntrustedValueVisitor.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -119,6 +120,9 @@ class CoreIPCclass NSSomeOtherFoundationType;
 class CoreIPCDDScannerResult;
 #endif
 class RValueWithFunctionCalls;
+struct TestUntrustedValueCarrier;
+struct TestUntrustedValueConditionalCarrier;
+struct TestNoUntrustedValue;
 class Fabulous;
 }
 
@@ -430,6 +434,23 @@ template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
 template<> struct ArgumentCoder<WebCore::OpaqueTypeObject> {
     static void encode(Encoder&, const WebCore::OpaqueTypeObject&);
     static std::optional<WebCore::OpaqueTypeObject> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::TestUntrustedValueCarrier> {
+    static void encode(Encoder&, const WebKit::TestUntrustedValueCarrier&);
+    static std::optional<WebKit::TestUntrustedValueCarrier> decode(Decoder&);
+    static void visitUntrustedValues(const WebKit::TestUntrustedValueCarrier&, UntrustedValueVisitor&);
+};
+
+template<> struct ArgumentCoder<WebKit::TestUntrustedValueConditionalCarrier> {
+    static void encode(Encoder&, const WebKit::TestUntrustedValueConditionalCarrier&);
+    static std::optional<WebKit::TestUntrustedValueConditionalCarrier> decode(Decoder&);
+    static void visitUntrustedValues(const WebKit::TestUntrustedValueConditionalCarrier&, UntrustedValueVisitor&);
+};
+
+template<> struct ArgumentCoder<WebKit::TestNoUntrustedValue> {
+    static void encode(Encoder&, const WebKit::TestNoUntrustedValue&);
+    static std::optional<WebKit::TestNoUntrustedValue> decode(Decoder&);
 };
 
 } // namespace IPC
