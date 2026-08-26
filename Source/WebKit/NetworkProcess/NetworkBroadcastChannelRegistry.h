@@ -54,7 +54,7 @@ public:
 
     void registerChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
     void unregisterChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
-    void postMessage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name, WebCore::MessageWithMessagePorts&&, Vector<URL>&& blobURLs, CompletionHandler<void()>&&);
+    void postMessage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name, WebCore::MessageWithMessagePorts&&, IPC::Untrusted<Vector<URL>>&& blobURLs, CompletionHandler<void()>&&);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:

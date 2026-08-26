@@ -134,9 +134,9 @@ private:
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
-    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
+    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
@@ -157,7 +157,7 @@ private:
     void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, Vector<URL>&& blobURLs);
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, IPC::Untrusted<Vector<URL>>&& blobURLs);
     void controlClient(const NetworkResourceLoadParameters&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&, WebCore::ProcessIdentifier);
 
     using ExceptionOrVoidCallback = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;
@@ -176,7 +176,7 @@ private:
     void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&);
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
     bool checkTopOrigin(const WebCore::SecurityOriginData&);
