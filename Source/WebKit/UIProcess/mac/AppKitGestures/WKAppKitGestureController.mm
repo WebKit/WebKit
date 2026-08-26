@@ -1483,6 +1483,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool canScrollVertically = [_panGestureRecognizer _canPanVertically] && !(pinnedState.top() && pinnedState.bottom());
     gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, prefersUnlockedScroll, [gesture timestamp]) };
 
+    // FIXME: Fold this into WKDirectionalScrollLockTracker as a hard clamp  applied _after_ directional lock heuristics.
+    if (!canScrollVertically)
+        gestureDelta.setHeight(0);
+    if (!canScrollHorizontally)
+        gestureDelta.setWidth(0);
+
     auto wheelTicks { gestureDelta.scaled(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep())) };
     auto granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent;
     bool directionInvertedFromDevice = false;
@@ -1706,14 +1712,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (gestureController->hasActiveMagnificationGesture()) {
-        gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { });
+        gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Automation);
         return;
     }
 
     if (webEvent)
         page->handleGestureEvent(*webEvent);
 #else
-    gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { });
+    gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Automation);
 #endif
 }
 

@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "NativeWebWheelEvent.h"
 #include "SameDocumentNavigationType.h"
+#include "WebEvent.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
@@ -165,7 +166,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void handleMagnificationGesture(double scale, WebEventPhase, WebCore::FloatPoint originInViewCoordinates);
+    void handleMagnificationGesture(double scale, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::UserDriven);
     void handleSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
@@ -423,6 +424,7 @@ private:
 
     double m_initialMagnification { 1 };
     WebCore::FloatPoint m_initialMagnificationOrigin;
+    std::optional<WebEventInputSource> m_magnificationGestureInputSource;
 #endif
 
 #if PLATFORM(MAC)

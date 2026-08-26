@@ -1041,7 +1041,7 @@ private:
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
     bool inputMethodUsesCorrectKeyEventOrder();
 
-    void applyNativeMagnification(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates);
+    void applyNativeMagnification(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::UserDriven);
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

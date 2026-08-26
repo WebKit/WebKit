@@ -205,6 +205,9 @@ void ViewGestureController::didEndGesture()
 
     m_activeGestureType = ViewGestureType::None;
     m_currentGestureID = 0;
+#if !PLATFORM(IOS_FAMILY)
+    m_magnificationGestureInputSource = std::nullopt;
+#endif
 
     if (RefPtr page = m_webPageProxy.get())
         page->didEndViewGesture();
@@ -792,7 +795,15 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
     scaledMagnificationOrigin.moveBy(m_visibleContentRect.location());
     float magnificationOriginScale = 1 - (scale / m_initialMagnification);
     scaledMagnificationOrigin.scale(magnificationOriginScale);
-    scaledMagnificationOrigin.move(origin - m_initialMagnificationOrigin);
+
+    // Trackpad magnification (InputSource::UserDriven) should not have a moving origin
+    // during transient zoom. However, in configurations where that is possible, we do
+    // not want to double account for the potential scroll from the magnification origin
+    // moving around, which should already have been accounted for since we produced
+    // representative wheel events.
+    if (m_magnificationGestureInputSource != WebEventInputSource::Automation)
+        scaledMagnificationOrigin.move(origin - m_initialMagnificationOrigin);
+
     return scaledMagnificationOrigin;
 }
 
