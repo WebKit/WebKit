@@ -25,13 +25,22 @@
 
 #pragma once
 
+#include <memory>
 #include <tuple>
+#include <type_traits>
 #include <utility>
+#include <wtf/Compiler.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/ThreadAssertions.h>
 
 namespace WTF {
+
+// The C ABI a Swift closure reduces to, used by the `CxxCompletionHandler` Swift protocol to build a
+// CompletionHandler out of a Swift closure.
+using SwiftClosureInvoke = void (* WTF_NONNULL)(void* WTF_NONNULL context, const void* WTF_NULLABLE argument);
+using SwiftClosureDestroy = void (* WTF_NONNULL)(void* WTF_NONNULL context);
 
 template<typename> class CompletionHandler;
 class CompletionHandlerCallThread {
@@ -44,11 +53,18 @@ public:
 // Wraps a Function to make sure it is always called once and only once.
 template <typename Out, typename... In>
 class CompletionHandler<Out(In...)> {
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandler);
+IGNORE_CLANG_WARNINGS_END
 public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
     using Impl = typename Function<Out(In...)>::Impl;
+
+#if !COMPILER(MSVC)
+    // Used by Swift's `CxxCompletionHandlerBase` protocol.
+    using Argument = std::tuple_element_t<0, std::tuple<In..., void>>;
+#endif
 
     CompletionHandler() = default;
 
@@ -62,16 +78,7 @@ public:
 
 #if defined(__APPLE__)
     // Always use C++ lambdas to create a WTF::CompletionHandler in Objective-C++.
-    // Always use Swift closures (implicitly as Objective-C blocks) to create a WTF::CompletionHandler in Swift.
-#ifndef __swift__
-    CompletionHandler(Out (^block)(In... args), ThreadLikeAssertion = CompletionHandlerCallThread::ConstructionThread) = delete;
-#else
-    CompletionHandler(Out (^block)(In... args), ThreadLikeAssertion callThread = CompletionHandlerCallThread::ConstructionThread)
-        : m_function(block)
-        , m_callThread(WTF::move(callThread))
-    {
-    }
-#endif
+    CompletionHandler(Out (^ WTF_NULLABLE block)(In... args), ThreadLikeAssertion = CompletionHandlerCallThread::ConstructionThread) = delete;
 #endif // defined(__APPLE__)
 
     CompletionHandler(CompletionHandler&&) = default;
@@ -83,9 +90,25 @@ public:
         m_callThread = anyThreadLike;
     }
 
+#ifdef __swift__
+    // This should only be called within the initializers of the `CxxCompletionHandler` protocol.
+    CompletionHandler(SwiftClosureInvoke invoke, SwiftClosureDestroy destroy, void* WTF_NONNULL context) SWIFT_NAME(init(invoke:destroy:context:))
+        : CompletionHandler([invoke, owner = std::unique_ptr<void, SwiftClosureDestroy> { context, destroy }](In... arguments) -> Out {
+            static_assert(std::is_void_v<Out>, "Swift closures can only be used with completion handlers that return void.");
+            static_assert(sizeof...(In) <= 1, "Swift closures can only be used with completion handlers that take at most one argument.");
+
+            if constexpr (!sizeof...(In))
+                invoke(owner.get(), nullptr);
+            else
+                invoke(owner.get(), std::addressof(arguments)...);
+        })
+    {
+    }
+#endif
+
     explicit operator bool() const { return !!m_function; }
 
-    [[nodiscard]] Impl* leak() { return m_function.leak(); }
+    [[nodiscard]] Impl* WTF_NULLABLE leak() { return m_function.leak(); }
 
     Out operator()(In... in)
     {
@@ -105,7 +128,9 @@ private:
 template<typename> class CompletionHandlerWithFinalizer;
 template <typename Out, typename... In>
 class CompletionHandlerWithFinalizer<Out(In...)> {
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandlerWithFinalizer);
+IGNORE_CLANG_WARNINGS_END
 public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
@@ -149,7 +174,9 @@ namespace Detail {
 
 template<typename Out, typename... In>
 class CallableWrapper<CompletionHandler<Out(In...)>, Out, In...> : public CallableWrapperBase<Out, In...> {
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallableWrapper);
+IGNORE_CLANG_WARNINGS_END
 public:
     explicit CallableWrapper(CompletionHandler<Out(In...)>&& completionHandler)
         : m_completionHandler(WTF::move(completionHandler))
@@ -164,7 +191,9 @@ private:
 } // namespace Detail
 
 class CompletionHandlerCallingScope final {
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandlerCallingScope);
+IGNORE_CLANG_WARNINGS_END
 public:
     CompletionHandlerCallingScope() = default;
 
@@ -187,10 +216,13 @@ private:
     CompletionHandler<void()> m_completionHandler;
 };
 
-template<typename Out, typename... In> CompletionHandler<Out(In...)> adopt(typename CompletionHandler<Out(In...)>::Impl* impl)
+template<typename Out, typename... In> CompletionHandler<Out(In...)> adopt(typename CompletionHandler<Out(In...)>::Impl* WTF_NONNULL impl)
 {
     return Function<Out(In...)>(impl, Function<Out(In...)>::Adopt);
 }
+
+using VoidCompletionHandler = CompletionHandler<void()>;
+using BoolCompletionHandler = CompletionHandler<void(bool)>;
 
 } // namespace WTF
 

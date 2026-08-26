@@ -214,7 +214,7 @@ private:
     }
     StorageType m_storage { 0 };
 
-    friend struct ConstexprOptionSet<E>;
+    template<typename> friend struct ConstexprOptionSet;
 };
 
 namespace IsValidOptionSetHelper {

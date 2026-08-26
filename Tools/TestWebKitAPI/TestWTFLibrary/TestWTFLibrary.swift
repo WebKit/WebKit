@@ -1,4 +1,4 @@
-// Copyright (C) 2026 Apple Inc. All rights reserved.
+// Copyright (C) 2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,26 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE_APPKIT_GESTURES_SUPPORT
+// The Swift module shadows the Clang module and the Swift module therefore needs to publicly import and re-export the underlying Clang module.
 
-import Foundation
-import WebKit_Internal
-import WebCore_Private
-
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension WebKit.WebPageProxy.SelectWithGestureCompletionHandler: @unsafe CxxCompletionHandler {
-    typealias Argument = WebKit.SelectWithGestureResult
-}
-
-extension WebKit.WebPageProxy {
-    private borrowing func editorStateCopy() -> WebKit.EditorState {
-        unsafe __editorStateUnsafe().pointee
-    }
-
-    var editorState: WebKit.EditorState {
-        editorStateCopy()
-    }
-}
-
-#endif // HAVE_APPKIT_GESTURES_SUPPORT
+@_exported public import TestWTFLibrary

@@ -29,20 +29,33 @@
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/Function.h>
+#import <wtf/StdLibExtras.h>
 
 namespace SwiftCxxInteropTestbed {
+
+// MARK: Types
 
 // MARK: Using declarations
 
 using IntBoolFunction = WTF::Function<int(bool)>;
 
 using IntCompletionHandler = WTF::CompletionHandler<void(int)>;
+using VoidCompletionHandler = WTF::CompletionHandler<void()>;
 
 // MARK: Function declarations
 
 int callIntBoolFunction(bool, IntBoolFunction&&);
 
 void callIntCompletionHandler(int, IntCompletionHandler&&);
+
+void callVoidCompletionHandler(VoidCompletionHandler&&);
+
+void storeIntCompletionHandler(IntCompletionHandler&&);
+void invokeStoredIntCompletionHandler(int);
+
+// Call from test teardown: storing a handler and returning without invoking it would
+// otherwise leave it stranded for the next test to trip over.
+void resetStoredIntCompletionHandler();
 
 }
 

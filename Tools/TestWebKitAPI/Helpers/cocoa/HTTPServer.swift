@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_CXX_INTEROP
+#if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
 import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServer
@@ -194,14 +194,7 @@ public struct HTTPServer: ~Copyable {
         _ body: (Configuration) async throws(E) -> sending Result
     ) async throws(E) -> sending Result where E: Error, Result: ~Copyable {
         await withCheckedContinuation { continuation in
-            unsafe self.storage.pointee.startListening(
-                consuming: .init(
-                    {
-                        continuation.resume()
-                    },
-                    WTF.ThreadLikeAssertion(WTF.CurrentThreadLike())
-                )
-            )
+            unsafe self.storage.pointee.startListening(consuming: .init(continuation))
         }
 
         let port = unsafe Int(storage.pointee.port())
@@ -210,14 +203,7 @@ public struct HTTPServer: ~Copyable {
         let result = try await body(configuration)
 
         await withCheckedContinuation { continuation in
-            unsafe self.storage.pointee.cancel(
-                consuming: .init(
-                    {
-                        continuation.resume()
-                    },
-                    WTF.ThreadLikeAssertion(WTF.CurrentThreadLike())
-                )
-            )
+            unsafe self.storage.pointee.cancel(consuming: .init(continuation))
         }
 
         return result
@@ -253,4 +239,4 @@ extension HTTPServer {
     }
 }
 
-#endif // ENABLE_CXX_INTEROP
+#endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN

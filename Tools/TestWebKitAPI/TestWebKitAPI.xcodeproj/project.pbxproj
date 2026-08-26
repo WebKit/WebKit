@@ -551,6 +551,13 @@
 			);
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 		};
+		07AA229F303BD11300B7274D /* Exceptions for "Tests" folder in "TestWTF" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WTF/cocoa/SwiftCxxInteropTests.swift,
+			);
+			target = 7C83DF951D0A5AE400FEBCF3 /* TestWTF */;
+		};
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -578,6 +585,14 @@
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
+		};
+		07AA4051303BEDDD00B7274D /* Exceptions for "TestWTFLibrary" folder in "TestWTFLibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SwiftCxxInteropTestbed.cpp,
+				TestWTFLibrary.swift,
+			);
+			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
 		};
 		07C907B32F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPILibrary" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -636,6 +651,7 @@
 				mac/TestInspectorBar.mm,
 				mac/VirtualGamepad.mm,
 				mac/WebKitAgnosticTest.mm,
+				"WTFCompletionHandler+Extras.swift",
 			);
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 		};
@@ -644,6 +660,7 @@
 			membershipExceptions = (
 				cocoa/UtilitiesCocoa.mm,
 				Counters.cpp,
+				"WTFCompletionHandler+Extras.swift",
 			);
 			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
 		};
@@ -1382,8 +1399,6 @@
 				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
-				WTF/cocoa/SwiftCxxInteropTestbed.cpp,
-				WTF/cocoa/SwiftCxxInteropTests.swift,
 			);
 			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
 		};
@@ -1590,6 +1605,14 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		07AA404F303BEDD700B7274D /* TestWTFLibrary */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07AA4051303BEDDD00B7274D /* Exceptions for "TestWTFLibrary" folder in "TestWTFLibrary" target */,
+			);
+			path = TestWTFLibrary;
+			sourceTree = "<group>";
+		};
 		07C904CF2F8207FB003A09D8 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = App;
@@ -1643,6 +1666,7 @@
 				07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */,
 				07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */,
 				07C913E02F820CCA003A09D8 /* Exceptions for "Tests" folder in "Copy Files" phase from "TestWGSL" target */,
+				07AA229F303BD11300B7274D /* Exceptions for "Tests" folder in "TestWTF" target */,
 				07C913E12F820CCA003A09D8 /* Exceptions for "Tests" folder in "InjectedBundleTestWebKitAPI" target */,
 				07C913E22F820CCA003A09D8 /* Exceptions for "Tests" folder in "WebProcessPlugIn" target */,
 			);
@@ -1778,6 +1802,7 @@
 				07C913E62F820CF1003A09D8 /* Scripts */,
 				DD7024AE302CE42A009B6CC0 /* Shared */,
 				07C913EF2F820D85003A09D8 /* TestBundle */,
+				07AA404F303BEDD700B7274D /* TestWTFLibrary */,
 				07C907D82F820949003A09D8 /* TestWebKitAPILibrary */,
 				07C910F42F820CC7003A09D8 /* Tests */,
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,

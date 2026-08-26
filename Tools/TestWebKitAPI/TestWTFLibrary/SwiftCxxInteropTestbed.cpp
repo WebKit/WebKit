@@ -26,7 +26,13 @@
 #include "config.h"
 #include "SwiftCxxInteropTestbed.h"
 
+#include <optional>
+#include <wtf/Assertions.h>
+
 namespace SwiftCxxInteropTestbed {
+
+// Handed to a stored handler that resetStoredIntCompletionHandler() has to call itself.
+static constexpr int teardownValue = -2;
 
 int callIntBoolFunction(bool argument, IntBoolFunction&& function)
 {
@@ -36,6 +42,47 @@ int callIntBoolFunction(bool argument, IntBoolFunction&& function)
 void callIntCompletionHandler(int argument, IntCompletionHandler&& completionHandler)
 {
     completionHandler(argument);
+}
+
+void callVoidCompletionHandler(VoidCompletionHandler&& completionHandler)
+{
+    completionHandler();
+}
+
+static std::optional<IntCompletionHandler>& storedIntCompletionHandler()
+{
+    static std::optional<IntCompletionHandler> handler;
+    return handler;
+}
+
+void storeIntCompletionHandler(IntCompletionHandler&& completionHandler)
+{
+    // Overwriting the slot would destroy an uncalled handler: that trips
+    // ~CompletionHandler's assertion and strands whatever the handler owned, so a test
+    // awaiting a continuation it held would hang instead of failing.
+    RELEASE_ASSERT(!storedIntCompletionHandler());
+    storedIntCompletionHandler().emplace(WTF::move(completionHandler));
+}
+
+void invokeStoredIntCompletionHandler(int argument)
+{
+    auto handler = WTF::move(storedIntCompletionHandler());
+    storedIntCompletionHandler().reset();
+
+    if (handler)
+        (*handler)(argument);
+}
+
+void resetStoredIntCompletionHandler()
+{
+    auto handler = WTF::move(storedIntCompletionHandler());
+    storedIntCompletionHandler().reset();
+
+    // Call rather than just drop it, both because ~CompletionHandler requires it and so
+    // that a test which returned early fails on the sentinel instead of hanging. Teardown
+    // must never assert itself, so check the handler has not already run.
+    if (handler && *handler)
+        (*handler)(teardownValue);
 }
 
 };

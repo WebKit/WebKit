@@ -92,12 +92,15 @@ extension WKTextSelectionController {
         }
 
         Task.immediate {
-            await page.updateSelection(
-                withExtentPoint: WebCore.IntPoint(point),
-                by: .init(currentRangeSelectionGranularity),
-                isInteractingWithFocusedElement: true, // FIXME: Properly handle the case where this isn't actually true.
-                source: .Mouse
-            )
+            await withCheckedContinuation { continuation in
+                page.updateSelectionWithExtentPointAndBoundary(
+                    WebCore.IntPoint(point),
+                    .init(currentRangeSelectionGranularity),
+                    true, // FIXME: Properly handle the case where this isn't actually true.
+                    .Mouse,
+                    consuming: .init(continuation)
+                )
+            }
         }
     }
 }
@@ -179,17 +182,24 @@ extension WKTextSelectionController {
         let isInteractingWithFocusedElement = true
 
         if placeAtWordBoundary {
-            await page.selectWithGesture(
-                at: WebCore.IntPoint(point),
-                type: .OneFingerTap,
-                state: .Ended,
-                isInteractingWithFocusedElement: isInteractingWithFocusedElement,
-            )
+            _ = await withCheckedContinuation { continuation in
+                page.selectWithGesture(
+                    nil,
+                    WebCore.IntPoint(point),
+                    .OneFingerTap,
+                    .Ended,
+                    isInteractingWithFocusedElement,
+                    consuming: .init(continuation)
+                )
+            }
         } else {
-            await page.selectPosition(
-                at: WebCore.IntPoint(point),
-                isInteractingWithFocusedElement: isInteractingWithFocusedElement,
-            )
+            await withCheckedContinuation { continuation in
+                page.selectPositionAtPoint(
+                    WebCore.IntPoint(point),
+                    isInteractingWithFocusedElement,
+                    consuming: .init(continuation)
+                )
+            }
         }
 
         let newState = page.editorState
@@ -343,11 +353,15 @@ extension WKTextSelectionController {
         impl.beginSuppressingSingleClickGestureForTextSelection()
 
         Task.immediate {
-            await page.selectText(
-                at: WebCore.IntPoint(point),
-                by: .init(granularity),
-                isInteractingWithFocusedElement: true // FIXME: Properly handle the case where this isn't actually true.
-            )
+            await withCheckedContinuation { continuation in
+                page.selectTextWithGranularityAtPoint(
+                    nil,
+                    WebCore.IntPoint(point),
+                    .init(granularity),
+                    true, // FIXME: Properly handle the case where this isn't actually true.
+                    consuming: .init(continuation)
+                )
+            }
         }
     }
 
@@ -367,12 +381,15 @@ extension WKTextSelectionController {
         lastRangeSelectionExtentPoint = point
 
         Task.immediate {
-            await page.updateSelection(
-                withExtentPoint: WebCore.IntPoint(point),
-                by: .init(currentRangeSelectionGranularity),
-                isInteractingWithFocusedElement: true, // FIXME: Properly handle the case where this isn't actually true.
-                source: .Mouse
-            )
+            await withCheckedContinuation { continuation in
+                page.updateSelectionWithExtentPointAndBoundary(
+                    WebCore.IntPoint(point),
+                    .init(currentRangeSelectionGranularity),
+                    true, // FIXME: Properly handle the case where this isn't actually true.
+                    .Mouse,
+                    consuming: .init(continuation)
+                )
+            }
         }
     }
 
