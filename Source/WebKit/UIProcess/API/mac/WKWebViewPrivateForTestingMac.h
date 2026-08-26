@@ -55,6 +55,10 @@
 
 - (void)_setSelectedColorForColorPicker:(NSColor *)color;
 
+// The looked-up text and the rect positioning the highlight, in root view coordinates. Pass nil to
+// clear. The force touch path reports through _WKHitTestResult instead and does not reach this.
+- (void)_setDidPerformDictionaryLookupHandlerForTesting:(void (^)(NSString *text, CGRect textBoundingRect))handler;
+
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
 @property (nonatomic, readonly) NSRect _windowRelativeBoundsForCustomSwipeViewsForTesting;
 

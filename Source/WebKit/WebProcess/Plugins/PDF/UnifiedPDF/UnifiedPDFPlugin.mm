@@ -2617,6 +2617,10 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     if (!frameView)
         return std::nullopt;
 
+    RefPtr page = this->page();
+    if (!page)
+        return std::nullopt;
+
     auto contextMenuEventRootViewPoint = flooredIntPoint(contextMenuEvent.position());
 
     Vector<PDFContextMenuItem> menuItems;
@@ -2653,7 +2657,9 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     auto contextMenuEventDocumentPoint = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, contextMenuEventPluginPoint);
     menuItems.appendVector(navigationContextMenuItemsForPageAtIndex(protect(m_presentationController)->nearestPageIndexForDocumentPoint(contextMenuEventDocumentPoint)));
 
-    auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
+    // rootViewToScreen() takes top-level coordinates; the event position is local root relative.
+    auto contextMenuPointInRootView = convertFromLocalRootViewToRootView(FloatPoint { contextMenuEventRootViewPoint });
+    auto contextMenuPoint = page->chrome().rootViewToScreen(roundedIntPoint(contextMenuPointInRootView));
 
     return PDFContextMenu {
         contextMenuPoint,
@@ -3891,6 +3897,13 @@ bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
         return false;
 
     auto dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce);
+
+    // DidPerformDictionaryLookup carries no frame for the UI process to convert against, unlike the
+    // immediate action path's RemoteDictionaryPopupInfoToRootView.
+    dictionaryPopupInfo.origin = convertFromLocalRootViewToRootView(dictionaryPopupInfo.origin);
+    if (RefPtr textIndicator = dictionaryPopupInfo.textIndicator)
+        convertTextIndicatorRectsFromLocalRootViewToRootView(*textIndicator);
+
     page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
     return true;
 }

@@ -72,6 +72,7 @@ class FragmentedSharedBuffer;
 class GraphicsContext;
 class Element;
 class HTMLPlugInElement;
+class LocalFrameView;
 class NetscapePlugInStreamLoaderClient;
 class ResourceResponse;
 class Scrollbar;
@@ -261,6 +262,15 @@ public:
             return inverseTransform->mapPoint(value);
     }
 
+    // The root view above is this process's root frame, which under site isolation is the frame
+    // hosting the plugin, not the top-level frame. These continue the walk up the remote ancestors.
+    // FIXME: The remote hop omits the ancestor's page scale and obscured content insets.
+    // FIXME: boundsOnScreen(), the accessibility screen conversions and the autoscroll screen point
+    // need this too.
+    WebCore::FloatPoint convertFromLocalRootViewToRootView(WebCore::FloatPoint) const;
+    WebCore::FloatRect convertFromLocalRootViewToRootView(WebCore::FloatRect) const;
+    void convertTextIndicatorRectsFromLocalRootViewToRootView(WebCore::TextIndicator&) const;
+
     WebCore::IntRect boundsOnScreen() const;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
@@ -379,6 +389,9 @@ protected:
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     void ensureDataBufferLength(uint64_t) WTF_REQUIRES_LOCK(m_streamedDataLock);
+
+    // Where convertFromPluginToRootView() lands: the view Widget::convertToRootView() stops at.
+    RefPtr<WebCore::LocalFrameView> localRootFrameView() const;
 
     bool NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.

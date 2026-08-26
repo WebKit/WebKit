@@ -346,6 +346,9 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
+    if (m_didPerformDictionaryLookupCallbackForTesting)
+        m_didPerformDictionaryLookupCallbackForTesting(dictionaryPopupInfo);
+
     if (RefPtr pageClient = this->pageClient()) {
         pageClient->didPerformDictionaryLookup(dictionaryPopupInfo);
 
