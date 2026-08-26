@@ -28,6 +28,7 @@
 #endif
 
 #import "config.h"
+#import "ExtensionHostPermissionAuthority.h"
 #import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
@@ -43,9 +44,10 @@ namespace WebKit {
 
 void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, IPC::Untrusted<std::optional<URL>>&& untrustedFrameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
 {
-    // FIXME: Sent by a devtools extension; scoping this needs host permissions rather
-    // than site-isolation authority.
-    auto frameURL = WTF::move(untrustedFrameURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedFrameURL = WTF::move(untrustedFrameURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedFrameURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this frame"));
+    auto frameURL = WTF::move(*validatedFrameURL);
 
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
