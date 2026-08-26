@@ -28,6 +28,7 @@
 #endif
 
 #import "config.h"
+#import "ExtensionHostPermissionAuthority.h"
 #import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -117,9 +118,10 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
 
 void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
-    // FIXME: Sent by an extension content script. Extension host permissions are a
-    // separate trust tier from site-isolation authority.
-    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
 
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
@@ -153,9 +155,10 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
 
 void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<URL>&& untrustedURL, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
-    // FIXME: Sent by an extension content script. Extension host permissions are a
-    // separate trust tier from site-isolation authority.
-    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
 
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
@@ -192,9 +195,10 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
 
 void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
-    // FIXME: Sent by an extension content script. Extension host permissions are a
-    // separate trust tier from site-isolation authority.
-    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
 
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
