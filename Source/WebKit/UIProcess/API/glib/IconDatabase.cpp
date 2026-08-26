@@ -380,7 +380,7 @@ std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
     if (!m_addIconStatement) {
-        m_addIconStatement = m_db->prepareStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
+        m_addIconStatement = m_db->prepareStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, unixepoch());"_s);
         if (!m_addIconStatement) {
             LOG_ERROR("Preparing statement addIcon failed");
             return std::nullopt;
