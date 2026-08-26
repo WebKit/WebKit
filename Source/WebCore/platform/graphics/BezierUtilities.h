@@ -26,6 +26,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,8 +38,44 @@ struct BezierSegment {
     FloatPoint end;
 };
 
+struct BezierIntersection {
+    double parameterOnFirst { 0 };
+    double parameterOnSecond { 0 };
+    FloatPoint point;
+    // Touching without crossing
+    bool tangential { false };
+};
+
+// A range over which two edges lie on top of one another
+struct BezierCoincidentSpan {
+    double firstStart { 0 };
+    double firstEnd { 0 };
+    double secondStart { 0 };
+    double secondEnd { 0 };
+    bool opposedDirection { false };
+};
+
+struct BezierIntersections {
+    // Two cubics cross at most nine times.
+    Vector<BezierIntersection, 9> crossings;
+    Vector<BezierCoincidentSpan, 2> coincidences;
+};
+
+WEBCORE_EXPORT BezierIntersections intersectBeziers(const BezierSegment& first, const BezierSegment& second);
+WEBCORE_EXPORT Vector<BezierIntersection, 3> intersectBezierAndLine(const BezierSegment&, const FloatPoint& lineStart, const FloatPoint& lineEnd);
+WEBCORE_EXPORT Vector<BezierSegment> splitBezierAtParameters(const BezierSegment&, const Vector<double>& parameters);
+
 WEBCORE_EXPORT Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect&);
+
+using BezierLoop = Vector<BezierSegment>;
+
+// Non-zero winding number of `loop` around `point`, for classifying which side of a loop a piece lies on.
+WEBCORE_EXPORT int windingNumberForLoop(const BezierLoop&, const FloatPoint&);
+
+// Returns the loops bounding what is left of `region` once `sliver` is taken out of it, or none if the sliver covered it entirely.
+WEBCORE_EXPORT Vector<BezierLoop> subtractLoopFromLoop(const BezierLoop& region, const BezierLoop& sliver);
 // `parameter` is the Bézier curve parameter t in [0, 1]: 0 is the start point, 1 is the end point (not arc length).
 FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter);
+WEBCORE_EXPORT FloatSize tangentOnBezierAtParameter(const BezierSegment& curve, double parameter);
 
 } // namespace WebCore

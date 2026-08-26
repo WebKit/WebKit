@@ -46,6 +46,10 @@ public:
     constexpr double width() const { return m_width; }
     constexpr double height() const { return m_height; }
 
+    double diagonalLength() const
+    {
+        return std::hypot(m_width, m_height);
+    }
 
 #if USE(CG)
     WEBCORE_EXPORT DoubleSize(const CGSize&);

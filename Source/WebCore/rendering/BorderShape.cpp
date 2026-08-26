@@ -478,7 +478,7 @@ Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, 
     return pathForOuterRoundedRect(outerSnapped);
 }
 
-static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
+static ContourOutcome addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
 {
     auto outerRect = outerSnapped.rect();
     auto innerRect = innerSnapped.rect();
@@ -491,7 +491,7 @@ static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
     RectCorners<CornerInput> cornerRects;
     buildCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
     rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, innerRect);
-    borderContourPath(path, cornerRects, &innerRect);
+    return borderContourPath(path, cornerRects, &innerRect);
 }
 
 Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
@@ -505,8 +505,7 @@ Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, 
         if (!path.isEmpty())
             return path;
     }
-    addInnerCornerShapeToPath(path, outerSnapped, innerSnapped, m_cornerCurvatures, snappedOffsetReference);
-    if (path.isEmpty())
+    if (addInnerCornerShapeToPath(path, outerSnapped, innerSnapped, m_cornerCurvatures, snappedOffsetReference) == ContourOutcome::NotBuilt)
         return pathForInnerRoundedRect(innerSnapped);
     return path;
 }
