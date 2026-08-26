@@ -240,9 +240,12 @@ void PlatformMediaSession::endInterruption(OptionSet<EndInterruptionFlags> flags
     if (activeInterruptionCount() || interruption.ignored)
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "restoring state ", m_stateToRestore);
+    // An admission in flight means play is intended, whatever this session was doing when the
+    // interruption began. Same rule as beginInterruption(), which cannot apply it for an admission
+    // that only started once the session was already interrupted.
+    State stateToRestore = m_preparingToPlay ? State::Playing : m_stateToRestore;
+    ALWAYS_LOG(LOGIDENTIFIER, "restoring state ", stateToRestore);
 
-    State stateToRestore = m_stateToRestore;
     m_stateToRestore = State::Idle;
     setState(stateToRestore);
 

@@ -598,7 +598,8 @@ Ref<GenericPromise> MediaSessionManagerInterface::startSessionAdmission(Platform
             if (session->commitPlaybackAdmission(stateAtStart)) {
                 enforceConcurrentPlaybackRestriction(*session);
                 sessionDidCompleteAdmission(*session);
-            }
+            } else
+                ALWAYS_LOG(logSiteIdentifier, sessionLogId, " session stayed paused, not claiming playback on its behalf");
         }
         ALWAYS_LOG(logSiteIdentifier, sessionLogId, " returning true");
         return GenericPromise::createAndResolve();
