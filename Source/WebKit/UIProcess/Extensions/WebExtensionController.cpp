@@ -380,26 +380,30 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
 
 // MARK: webNavigation
 
-void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
+void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, IPC::Untrusted<WebExtensionFrameParameters>&& untrustedFrameParameters, WallTime timestamp)
 {
+    auto frameParameters = WTF::move(untrustedFrameParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     for (Ref context : m_extensionContexts)
         context->didStartProvisionalLoadForFrame(pageID, frameParameters, timestamp);
 }
 
-void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
+void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, IPC::Untrusted<WebExtensionFrameParameters>&& untrustedFrameParameters, WallTime timestamp)
 {
+    auto frameParameters = WTF::move(untrustedFrameParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     for (Ref context : m_extensionContexts)
         context->didCommitLoadForFrame(pageID, frameParameters, timestamp);
 }
 
-void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
+void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, IPC::Untrusted<WebExtensionFrameParameters>&& untrustedFrameParameters, WallTime timestamp)
 {
+    auto frameParameters = WTF::move(untrustedFrameParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     for (Ref context : m_extensionContexts)
         context->didFinishLoadForFrame(pageID, frameParameters, timestamp);
 }
 
-void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, const WebExtensionFrameParameters& frameParameters, WallTime timestamp)
+void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, IPC::Untrusted<WebExtensionFrameParameters>&& untrustedFrameParameters, WallTime timestamp)
 {
+    auto frameParameters = WTF::move(untrustedFrameParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     for (Ref context : m_extensionContexts)
         context->didFailLoadForFrame(pageID, frameParameters, timestamp);
 }

@@ -33,7 +33,7 @@ messages -> RemoteMediaPlayerManagerProxy {
     DeleteMediaPlayer(WebCore::MediaPlayerIdentifier identifier)
 
     GetSupportedTypes(enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier) -> (Vector<String> types) Synchronous
-    SupportsTypeAndCodecs(enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, struct WebCore::MediaEngineSupportParameters type) -> (enum:uint8_t WebCore::MediaPlayerSupportsType support) Synchronous
+    SupportsTypeAndCodecs(enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, struct IPC::Untrusted<WebCore::MediaEngineSupportParameters> type) -> (enum:uint8_t WebCore::MediaPlayerSupportsType support) Synchronous
     SupportsKeySystem(enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, String keySystem, String mimeType) -> (bool supports) Synchronous
 }
 

@@ -107,13 +107,13 @@ private:
     ServiceWorkerFetchTask(NetworkResourceLoader&, WebCore::ResourceRequest&&);
 
     enum class ShouldSetSource : bool { No, Yes };
-    void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
-    void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
+    void didReceiveRedirectResponse(IPC::Untrusted<WebCore::ResourceResponse>&&);
+    void didReceiveResponse(IPC::Untrusted<WebCore::ResourceResponse>&&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferReference&);
     void didReceiveDataFromPreloader(const WebCore::FragmentedSharedBuffer&);
-    void NODELETE didReceiveFormData(const IPC::FormDataReference&);
+    void NODELETE didReceiveFormData(IPC::Untrusted<IPC::FormDataReference>&&);
     void didFinish(const WebCore::NetworkLoadMetrics&);
-    void didFail(const WebCore::ResourceError&);
+    void didFail(IPC::Untrusted<WebCore::ResourceError>&&);
     void didNotHandle();
     void usePreload();
 

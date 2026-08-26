@@ -30,12 +30,12 @@
 ]
 messages -> ModelProcessModelPlayerProxy {
     CreateLayer()
-    ReloadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
+    ReloadModel(WebCore::NodeIdentifier nodeID, IPC::Untrusted<Ref<WebCore::Model>> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
     ModelVisibilityDidChange(bool isVisible)
     [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
     
     # WebCore::ModelPlayer
-    LoadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
+    LoadModel(WebCore::NodeIdentifier nodeID, IPC::Untrusted<Ref<WebCore::Model>> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
     UnloadModel(WebCore::NodeIdentifier nodeID)
     SizeDidChange(WebCore::LayoutSize layoutSize)
     SetEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)

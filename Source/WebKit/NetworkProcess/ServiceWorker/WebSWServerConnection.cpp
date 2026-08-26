@@ -428,8 +428,9 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     });
 }
 
-void WebSWServerConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedRegistrationKey, WorkerFetchResult&& result)
+void WebSWServerConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedRegistrationKey, IPC::Untrusted<WorkerFetchResult>&& untrustedResult)
 {
+    auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     EXTRACT_WITH_MESSAGE_CHECK(registrationKey, untrustedRegistrationKey, ServiceWorkerClientOriginAuthority { *this });
     SWServer::Connection::finishFetchingScriptInServer(jobDataIdentifier, registrationKey, WTF::move(result));
 }
@@ -438,6 +439,12 @@ void WebSWServerConnection::didResolveRegistrationPromise(IPC::Untrusted<Service
 {
     EXTRACT_WITH_MESSAGE_CHECK(key, untrustedKey, ServiceWorkerClientOriginAuthority { *this });
     SWServer::Connection::didResolveRegistrationPromise(key);
+}
+
+void WebSWServerConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<Vector<BackgroundFetchRequest>>&& untrustedRequests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
+{
+    auto requests = WTF::move(untrustedRequests).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    SWServer::Connection::startBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(requests), WTF::move(options), WTF::move(callback));
 }
 
 void WebSWServerConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<RetrieveRecordsOptions>&& untrustedOptions, MatchBackgroundFetchCallback&& callback)
@@ -578,8 +585,9 @@ void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOri
     });
 }
 
-void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, IPC::Untrusted<ServiceWorkerClientData>&& untrustedData, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
+    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     auto clientOriginValidated = WTF::move(untrustedClientOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
     if (!clientOriginValidated)
         return;
