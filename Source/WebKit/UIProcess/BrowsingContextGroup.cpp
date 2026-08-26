@@ -238,6 +238,7 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
     if (process.isSharedProcess()) {
         m_sharedProcess = nullptr;
         m_sharedProcessSites.clear();
+        m_pagesInSharedProcess.clear();
     } else {
         auto& site = *process.site();
         // Either we are still the current entry for this site (normal teardown), or a

@@ -52,7 +52,6 @@ class ResourceResponse;
 
 namespace WebKit {
 class BrowsingWarning;
-class FrameProcess;
 class WebBackForwardListFrameItem;
 }
 
@@ -201,8 +200,6 @@ public:
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
 
-    void setPendingSharedProcess(WebKit::FrameProcess&);
-
     void NODELETE setHasStorageForCurrentSite(bool);
     bool hasStorageForCurrentSite() const { return m_hasStorageForCurrentSite; }
 
@@ -254,7 +251,6 @@ private:
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
     Vector<Function<void()>> m_safeBrowsingCheckCompletionCallbacks;
-    RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };
 
