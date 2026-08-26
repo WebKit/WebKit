@@ -986,6 +986,7 @@
 		3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934591315B9980097A7BC /* WKCookieManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3311023B2B17B49E00B21C8C /* WebExtensionAPIDeclarativeNetRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3311023A2B17B49E00B21C8C /* WebExtensionAPIDeclarativeNetRequest.h */; };
 		331102412B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3311023F2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h */; };
+		3323520F303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3323520E303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift */; };
 		3326F2662B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3326F2622B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3326F2672B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3326F2632B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5407,6 +5408,7 @@
 		3311023E2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIDeclarativeNetRequest.mm; sourceTree = "<group>"; };
 		3311023F2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIDeclarativeNetRequest.h; sourceTree = "<group>"; };
 		331102462B17CFE300B21C8C /* WebExtensionContextAPIDeclarativeNetRequestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIDeclarativeNetRequestCocoa.mm; sourceTree = "<group>"; };
+		3323520E303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKMouseTrackingGestureRecognizer.swift; sourceTree = "<group>"; };
 		33238F5D2B7EFD3B0014AE88 /* WKAccessibilityPDFDocumentObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKAccessibilityPDFDocumentObject.h; path = PDF/WKAccessibilityPDFDocumentObject.h; sourceTree = "<group>"; };
 		33238F5E2B7EFD6A0014AE88 /* WKAccessibilityPDFDocumentObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAccessibilityPDFDocumentObject.mm; path = PDF/WKAccessibilityPDFDocumentObject.mm; sourceTree = "<group>"; };
 		3326F2612B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionDeclarativeNetRequestRule.mm; sourceTree = "<group>"; };
@@ -9648,6 +9650,7 @@
 				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
 				078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */,
 				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
+				3323520E303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift */,
 			);
 			path = AppKitGestures;
 			sourceTree = "<group>";
@@ -22644,6 +22647,7 @@
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				E502E4F82D4810EA00C3D56D /* WKMaterialHostingSupport.swift in Sources */,
 				07FEBC9A2E035A8B004A6D5D /* WKMouseDeviceObserver.swift in Sources */,
+				3323520F303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift in Sources */,
 				07CB79982CE943E400199C49 /* WKNavigationDelegateAdapter.swift in Sources */,
 				0739F9AB301572270066ED1B /* WKPDFPageNumberIndicator.mm in Sources */,
 				E31869C42B1A7C2400571519 /* WKProcessExtension.mm in Sources */,
