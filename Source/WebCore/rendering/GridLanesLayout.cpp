@@ -267,8 +267,9 @@ GridSpan GridLanesLayout::gridAxisSpanFromArea(const GridArea& gridArea) const
 
 GridArea GridLanesLayout::gridAreaFromGridAxisSpan(const GridSpan& gridAxisSpan) const
 {
+    auto stackingAxisSpan = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
     return m_stackingAxisDirection == Style::GridTrackSizingDirection::Rows
-        ? GridArea { m_stackingAxisSpan, gridAxisSpan }
-        : GridArea { gridAxisSpan, m_stackingAxisSpan };
+        ? GridArea { stackingAxisSpan, gridAxisSpan }
+        : GridArea { gridAxisSpan, stackingAxisSpan };
 }
 } // end namespace WebCore

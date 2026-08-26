@@ -84,7 +84,6 @@ private:
     LayoutUnit m_gridContentSize;
 
     const Style::GridTrackSizingDirection m_stackingAxisDirection;
-    const GridSpan m_stackingAxisSpan = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
 
     unsigned m_autoFlowNextCursor { 0 };
 };
