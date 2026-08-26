@@ -3496,7 +3496,7 @@ private:
     void convertFocusedElementInformationRectsToMainFrameCoordinates(FocusedElementInformation, CompletionHandler<void(FocusedElementInformation)>&&);
     void updateInputContextAfterBlurringAndRefocusingElement();
     void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&);
-    void updateFocusedElementInformation(IPC::Untrusted<FocusedElementInformation>&&);
+    void updateFocusedElementInformation(IPC::Connection&, IPC::Untrusted<FocusedElementInformation>&&);
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
 

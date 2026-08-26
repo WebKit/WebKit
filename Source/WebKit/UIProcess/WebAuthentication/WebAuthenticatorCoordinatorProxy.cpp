@@ -30,6 +30,7 @@
 
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
+#include "FirstPartyAuthority.h"
 #include "LocalService.h"
 #include "Logging.h"
 #include "RelatedOriginsValidator.h"
@@ -46,6 +47,15 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, connection, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION_BASE(IPC::valueMayBeLegitimate(name##Validated), connection, completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -80,7 +90,9 @@ std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, connection,
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }),
+        FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
@@ -104,7 +116,9 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connectio
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, connection,
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }),
+        FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
     // The handler walks the frame's ancestor chain, which is stronger than domain authority.
     auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr webPageProxy = m_webPageProxy.get();
@@ -313,3 +327,5 @@ bool WebAuthenticatorCoordinatorProxy::removeMatchingAutofillEventForUsername(co
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION

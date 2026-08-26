@@ -8354,7 +8354,7 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<URL>&& untrustedUnreachableURL, const UserData& userData, WallTime timestamp)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     // Checked by MESSAGE_CHECK_URL in the shared handler this forwards to.
     auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     // Checked by MESSAGE_CHECK_URL in the shared handler this forwards to.
@@ -8604,7 +8604,7 @@ void WebPageProxy::didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&& 
 
 void WebPageProxy::didFailProvisionalLoadForFrame(IPC::Connection& connection, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, ResourceError&& error, WillContinueLoading willContinueLoading, const UserData& userData, WillInternallyHandleFailure willInternallyHandleFailure)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
         return;
@@ -8823,7 +8823,7 @@ void WebPageProxy::recordFirstPartyVisit(const URL& url)
 
 void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedCspOriginsThatUpgradeInsecureNavigations, FirstPartyAuthority);
 
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " didCommitLoadForFrame in navigation %" PRIu64, identifier().toUInt64(), navigationID ? navigationID->toUInt64() : 0);
@@ -9344,7 +9344,7 @@ void WebPageProxy::didConsumeUserActivation(IPC::Connection& connection, FrameId
 
 void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, const UserData& userData, WallTime timestamp)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     LOG(Loading, "WebPageProxy::didFinishLoadForFrame - WebPageProxy %p with navigationID %" PRIu64 " didFinishLoad", this, navigationID ? navigationID->toUInt64() : 0);
 
     RefPtr protectedPageClient { pageClient() };
@@ -9421,7 +9421,7 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
 
 void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceError& error, const UserData& userData)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     RefPtr protectedPageClient { pageClient() };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -9551,7 +9551,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
 
 void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& connection, SameDocumentNavigationType navigationType, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<NavigationActionData>&& untrustedNavigationActionData, const UserData& userData)
 {
-    auto navigationActionData = WTF::move(untrustedNavigationActionData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(navigationActionData, untrustedNavigationActionData, FirstPartyStructAuthority);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(url, untrustedURL, FirstPartyAuthority);
 
     RefPtr protectedPageClient { pageClient() };
@@ -9849,7 +9849,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL&, API::Navigation&, bool for
 
 void WebPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection& connection, IPC::Untrusted<NavigationActionData>&& untrustedData, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
-    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(data, untrustedData, completionHandler({ }), FirstPartyStructAuthority);
     if (auto pending = std::exchange(m_pendingBlobURLReleaseForOldPage, std::nullopt)) {
         if (RefPtr oldProcess = pending->oldProcess.get())
             oldProcess->send(Messages::WebPage::ReleaseKeptBlobURLForNewWindowNavigation(), pending->oldPageID);
@@ -10394,7 +10394,7 @@ void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pag
 
 void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connection, IPC::Untrusted<NavigationActionData>&& untrustedData, CompletionHandler<void(PolicyDecision&&)>&& reply)
 {
-    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(data, untrustedData, reply({ }), FirstPartyStructAuthority);
     auto frameID = data.frameInfo.frameID;
     Ref process = WebProcessProxy::fromConnection(connection);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -10435,7 +10435,7 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
 
 void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, IPC::Untrusted<NavigationActionData>&& untrustedNavigationActionData, const String& frameName, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
-    auto navigationActionData = WTF::move(untrustedNavigationActionData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(navigationActionData, untrustedNavigationActionData, completionHandler({ }), FirstPartyStructAuthority);
     RefPtr protectedPageClient { pageClient() };
     auto frameInfo = navigationActionData.frameInfo;
     auto request = navigationActionData.request;
@@ -10472,7 +10472,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, I
 
 void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, completionHandler({ }), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
         return completionHandler({ });
@@ -10818,8 +10818,8 @@ void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIden
 
 void WebPageProxy::willSubmitForm(IPC::Connection& connection, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfoData, IPC::Untrusted<FrameInfoData>&& untrustedSourceFrameInfoData, Vector<std::pair<String, String>>&& textFieldValues, const UserData& userData, IPC::Untrusted<URL>&& untrustedRequestURL, const String& method, CompletionHandler<void()>&& completionHandler)
 {
-    auto sourceFrameInfoData = WTF::move(untrustedSourceFrameInfoData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto frameInfoData = WTF::move(untrustedFrameInfoData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(sourceFrameInfoData, untrustedSourceFrameInfoData, completionHandler(), FirstPartyStructAuthority);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfoData, untrustedFrameInfoData, completionHandler(), FirstPartyStructAuthority);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(requestURL, untrustedRequestURL, completionHandler(), FirstPartyAuthority);
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfoData.frameID);
@@ -11003,7 +11003,7 @@ static void trySOAuthorization(Ref<API::PageConfiguration>&& configuration, Ref<
 // serializing redundant information that has to be just right.
 void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& windowFeatures, IPC::Untrusted<NavigationActionData>&& untrustedNavigationActionData, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebKit::WebPageCreationParameters>)>&& reply)
 {
-    auto navigationActionData = WTF::move(untrustedNavigationActionData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(navigationActionData, untrustedNavigationActionData, reply(std::nullopt, std::nullopt), FirstPartyStructAuthority);
     auto& originatingFrameInfoData = navigationActionData.originatingFrameInfoData;
     auto& request = navigationActionData.request;
     bool openedBlobURL = request.url().protocolIsBlob();
@@ -11365,7 +11365,7 @@ void WebPageProxy::purgeQueuedModalDialogs()
 
 void WebPageProxy::runJavaScriptAlert(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, String&& message, CompletionHandler<void()>&& reply)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, reply(), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return reply();
@@ -11396,7 +11396,7 @@ void WebPageProxy::runJavaScriptAlert(IPC::Connection& connection, FrameIdentifi
 
 void WebPageProxy::runJavaScriptConfirm(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, String&& message, CompletionHandler<void(bool)>&& reply)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, reply(false), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return reply(false);
@@ -11427,7 +11427,7 @@ void WebPageProxy::runJavaScriptConfirm(IPC::Connection& connection, FrameIdenti
 
 void WebPageProxy::runJavaScriptPrompt(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, String&& message, String&& defaultValue, CompletionHandler<void(const String&)>&& reply)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, reply({ }), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return reply({ });
@@ -11463,6 +11463,8 @@ void WebPageProxy::setStatusText(const String& text)
 
 void WebPageProxy::mouseDidMoveOverElement(IPC::Untrusted<WebHitTestResultData>&& untrustedHitTestResultData, OptionSet<WebEventModifier> modifiers)
 {
+    // FIXME: this validated a value belonging to the sending frame against the main frame's
+    // process, which is the wrong authority under site isolation. Restored in a later commit.
     auto hitTestResultData = WTF::move(untrustedHitTestResultData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
 #if PLATFORM(MAC)
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData, this);
@@ -11642,7 +11644,7 @@ void WebPageProxy::scheduleAccessibilityFrameGeometryUpdate()
 
 void WebPageProxy::runBeforeUnloadConfirmPanel(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, String&& message, CompletionHandler<void(bool)>&& reply)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, reply(false), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return reply(false);
@@ -11730,7 +11732,7 @@ void WebPageProxy::setHasModelElement(bool hasModelElement)
 
 void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, const FileChooserSettings& settings)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     if (RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr))
         openPanelResultListener->invalidate();
 
@@ -11810,7 +11812,7 @@ static VirtualWalletDisposition applyVirtualWalletBehavior(const VirtualWalletBe
 #if ENABLE(WEB_AUTHN)
 void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, std::optional<WebCore::FrameIdentifier>&& frameID, IPC::Untrusted<WebCore::DigitalCredentialsRequestData>&& untrustedRequestData, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    auto requestData = WTF::move(untrustedRequestData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(requestData, untrustedRequestData, completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Invalid digital credentials request."_s })), FirstPartyStructAuthority);
     WTF::switchOn(requestData,
         [&](const auto& requestData) {
             LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: received IPC from WebProcess for origin: %s", requestData.topOrigin.toString().utf8().data());
@@ -13007,7 +13009,11 @@ void WebPageProxy::hidePopupMenu()
 
 void WebPageProxy::showContextMenuFromFrame(IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, IPC::Untrusted<ContextMenuContextData>&& untrustedContextMenuContextData, UserData&& userData)
 {
+    // FIXME: this validated a value belonging to the sending frame against the main frame's
+    // process, which is the wrong authority under site isolation. Restored in a later commit.
     auto contextMenuContextData = WTF::move(untrustedContextMenuContextData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    // FIXME: this validated a value belonging to the sending frame against the main frame's
+    // process, which is the wrong authority under site isolation. Restored in a later commit.
     auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
@@ -15146,7 +15152,7 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
 
 void WebPageProxy::requestGeolocationPermissionForFrame(IPC::Connection& connection, GeolocationIdentifier geolocationID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     Ref process = WebProcessProxy::fromConnection(connection);
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
@@ -15411,8 +15417,8 @@ void WebPageProxy::microphoneMuteStatusChanged(bool isMuting)
 
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedUserMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopLevelDocumentOriginIdentifier, MediaStreamRequest&& request)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(userMediaDocumentOriginData, untrustedUserMediaDocumentOriginIdentifier, FirstPartyAuthority);
     // FIXME: Consider switching to TopLevelFirstPartyAuthority, but may drop messages during site load
     EXTRACT_WITH_MESSAGE_CHECK(validationProcess, topLevelDocumentOriginData, untrustedTopLevelDocumentOriginIdentifier, FirstPartyAuthority { m_legacyMainFrameProcess });
@@ -15492,6 +15498,8 @@ private:
 
 void WebPageProxy::validateCaptureStateUpdate(IPC::Connection& connection, WebCore::UserMediaRequestIdentifier requestIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
+    // FIXME: this validated a value belonging to the sending frame against the main frame's
+    // process, which is the wrong authority under site isolation. Restored in a later commit.
     auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(clientOrigin, untrustedClientOrigin,
         completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "invalid client origin"_s }), CommittedClientOriginAuthority);
@@ -15680,7 +15688,7 @@ void WebPageProxy::requestMediaKeySystemPermissionForFrame(IPC::Connection& conn
 
 void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, completionHandler(DeviceOrientationOrMotionPermissionState::Denied), FirstPartyStructAuthority);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return completionHandler(DeviceOrientationOrMotionPermissionState::Denied);
@@ -15785,6 +15793,8 @@ MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermiss
 
 void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, HTMLMediaElementIdentifier identifier, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
 {
+    // FIXME: this validated a value belonging to the sending frame against the main frame's
+    // process, which is the wrong authority under site isolation. Restored in a later commit.
     auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (RefPtr pageClient = this->pageClient())
         pageClient->showMediaControlsContextMenu(WTF::move(targetFrame), WTF::move(items), frameInfo, identifier, WTF::move(completionHandler));
@@ -17370,7 +17380,7 @@ void WebPageProxy::immediateActionDidComplete()
 
 void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection, IPC::Untrusted<WebHitTestResultData>&& untrustedResult, bool contentPreventsDefault, const UserData& userData)
 {
-    auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(result, untrustedResult, FirstPartyStructAuthority);
     if (protect(preferences())->siteIsolationEnabled()) {
         if (result.remoteUserInputEventData) {
             performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, FloatPoint(result.remoteUserInputEventData->transformedPoint));
@@ -17857,7 +17867,7 @@ WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(StringView scheme)
 
 void WebPageProxy::startURLSchemeTask(IPC::Connection& connection, IPC::Untrusted<URLSchemeTaskParameters>&& untrustedParameters)
 {
-    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(parameters, untrustedParameters, FirstPartyStructAuthority);
     Ref process = WebProcessProxy::fromConnection(connection);
     auto webPageID = webPageIDInProcess(process);
     startURLSchemeTaskShared(connection, WTF::move(process), webPageID, WTF::move(parameters));
@@ -17883,7 +17893,7 @@ void WebPageProxy::stopURLSchemeTask(IPC::Connection& connection, WebURLSchemeHa
 
 void WebPageProxy::loadSynchronousURLSchemeTask(IPC::Connection& connection, IPC::Untrusted<URLSchemeTaskParameters>&& untrustedParameters, CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, Vector<uint8_t>&&)>&& reply)
 {
-    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(parameters, untrustedParameters, reply({ }, { }, { }), FirstPartyStructAuthority);
     MESSAGE_CHECK_COMPLETION_BASE(decltype(Internals::urlSchemeHandlersByIdentifier)::isValidKey(parameters.handlerIdentifier), connection, reply({ }, { }, { }));
     auto iterator = internals().urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK_COMPLETION_BASE(iterator != internals().urlSchemeHandlersByIdentifier.end(), connection, reply({ }, { }, { }));
