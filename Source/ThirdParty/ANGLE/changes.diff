@@ -1343,7 +1343,7 @@ index 016783ae32ac04437ec1b1ac152633e356dc3421..cc810ac31c5479d8d86d173df74d3ee2
 +#include "common/mathutil.h"
 +#include "common/span.h"
 +#ifdef ANGLE_PLATFORM_APPLE
-+#    if __has_include(<WebKitAdditions/ANGLEAllocProfile.h>)
++#    if __has_include(<CoreFoundation/CFPriv.h>) // Matches USE_APPLE_INTERNAL_SDK in WTF.
 +#        include <WebKitAdditions/ANGLEAllocProfile.h>
 +#    endif
 +#endif
