@@ -140,8 +140,12 @@ public:
     // Removes change bit for each property that matches another state property.
     WEBCORE_EXPORT void filterLastChangesForMatching(const GraphicsContextState&);
 
-    // Copies properties that are marked changed in another state.
-    WEBCORE_EXPORT void copyLastChangesFrom(const GraphicsContextState&);
+    // Copies the given properties from another state, without marking them changed here. Used to
+    // track what the underlying context has been given.
+    WEBCORE_EXPORT void copyPropertiesFrom(const GraphicsContextState&, ChangeFlags);
+
+    // Whether every property holds the same value, ignoring changes() and purpose(). For assertions.
+    WEBCORE_EXPORT bool propertiesEqual(const GraphicsContextState&) const;
 
     Purpose purpose() const { return m_purpose; }
 
