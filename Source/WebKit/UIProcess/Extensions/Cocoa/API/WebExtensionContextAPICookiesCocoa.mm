@@ -171,8 +171,9 @@ void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID,
     });
 }
 
-void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, const WebExtensionCookieParameters& cookieParameters, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<WebExtensionCookieParameters>&& untrustedCookieParameters, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto cookieParameters = WTF::move(untrustedCookieParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.set()", nullString(), @"cookie store not found"));

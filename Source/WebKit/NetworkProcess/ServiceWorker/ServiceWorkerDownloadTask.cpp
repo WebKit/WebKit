@@ -205,8 +205,9 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
     });
 }
 
-void ServiceWorkerDownloadTask::didReceiveFormData(const IPC::FormDataReference& formData)
+void ServiceWorkerDownloadTask::didReceiveFormData(IPC::Untrusted<IPC::FormDataReference>&& untrustedFormData)
 {
+    auto formData = WTF::move(untrustedFormData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     ASSERT(!isMainRunLoop());
 
     // FIXME: Support writing formData in downloads.
@@ -242,8 +243,9 @@ void ServiceWorkerDownloadTask::didFinish()
     });
 }
 
-void ServiceWorkerDownloadTask::didFail(ResourceError&& error)
+void ServiceWorkerDownloadTask::didFail(IPC::Untrusted<ResourceError>&& untrustedError)
 {
+    auto error = WTF::move(untrustedError).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     ASSERT(!isMainRunLoop());
 
     didFailDownload(WTF::move(error));

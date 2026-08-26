@@ -27,8 +27,8 @@
     DispatchedTo=Networking
 ]
 messages -> ServiceWorkerDownloadTask {
-    DidFail(WebCore::ResourceError error)
+    DidFail(IPC::Untrusted<WebCore::ResourceError> error)
     DidReceiveData(IPC::SharedBufferReference data)
-    DidReceiveFormData(IPC::FormDataReference data)
+    DidReceiveFormData(IPC::Untrusted<IPC::FormDataReference> data)
     DidFinish()
 }
