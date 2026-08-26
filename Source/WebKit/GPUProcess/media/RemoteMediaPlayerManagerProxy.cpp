@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 
+#include "GPUHostedDomainAuthority.h"
+
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "GPUConnectionToWebProcess.h"
@@ -51,6 +53,13 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_gpuConnectionToWebProcess.get()->connection())
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -91,7 +100,7 @@ void RemoteMediaPlayerManagerProxy::clear()
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, IPC::Untrusted<RemoteMediaPlayerProxyConfiguration>&& untrustedProxyConfiguration)
 {
-    auto proxyConfiguration = WTF::move(untrustedProxyConfiguration).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(proxyConfiguration, untrustedProxyConfiguration, GPUHostedDomainAuthority { *m_gpuConnectionToWebProcess.get() });
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return;
@@ -218,3 +227,5 @@ std::optional<SharedPreferencesForWebProcess> RemoteMediaPlayerManagerProxy::sha
 #undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK
