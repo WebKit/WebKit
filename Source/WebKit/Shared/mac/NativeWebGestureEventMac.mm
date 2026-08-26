@@ -98,6 +98,7 @@ NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, const Init& init
         init.gestureScale,
         init.gestureRotation,
         init.phase }
+    , m_allowsNativeZoom(init.allowsNativeZoom)
     , m_kind(init.kind)
     , m_nativeEvent(event)
 {
