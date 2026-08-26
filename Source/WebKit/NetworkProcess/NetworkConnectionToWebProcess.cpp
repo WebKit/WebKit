@@ -256,8 +256,9 @@ void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
     protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::SetWebProcessHasUploads(m_webProcessIdentifier, hasUpload), 0);
 }
 
-void NetworkConnectionToWebProcess::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork, CompletionHandler<void(std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::loadImageForDecoding(IPC::Untrusted<WebCore::ResourceRequest>&& untrustedRequest, WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork, CompletionHandler<void(std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&& completionHandler)
 {
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     auto url = request.url();
     MESSAGE_CHECK_COMPLETION(url.isValid() && url.protocolIsInHTTPFamily(), completionHandler(makeUnexpected<WebCore::ResourceError>({ })));
 
@@ -550,8 +551,9 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
     protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier, messageName), 0);
 }
 
-void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+void NetworkConnectionToWebProcess::createSocketChannel(IPC::Untrusted<ResourceRequest>&& untrustedRequest, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
 {
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     EXTRACT_WITH_MESSAGE_CHECK(clientOrigin, untrustedClientOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
 
     MESSAGE_CHECK(request.url().isValid());
@@ -775,8 +777,9 @@ void NetworkConnectionToWebProcess::sendH2Ping(IPC::Untrusted<URL>&& untrustedUR
 #endif
 }
 
-void NetworkConnectionToWebProcess::preconnectTo(PreconnectRequest&& preconnectRequest)
+void NetworkConnectionToWebProcess::preconnectTo(IPC::Untrusted<PreconnectRequest>&& untrustedPreconnectRequest)
 {
+    auto preconnectRequest = WTF::move(untrustedPreconnectRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     MESSAGE_CHECK(!preconnectRequest.request.httpBody());
 
     CONNECTION_RELEASE_LOG(Loading, "preconnectTo: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", legacyPresentingApplicationPID(), preconnectRequest.webPageProxyID.toUInt64(), preconnectRequest.webPageID.toUInt64(), preconnectRequest.webFrameID.toUInt64(), preconnectRequest.preconnectionIdentifier ? preconnectRequest.preconnectionIdentifier->toUInt64() : 0);
@@ -835,8 +838,9 @@ NetworkStorageSession* NetworkConnectionToWebProcess::storageSession()
     return m_networkProcess->storageSession(m_sessionID);
 }
 
-void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
+void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, IPC::Untrusted<ResourceRequest>&& untrustedRequest, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
 {
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
 
     if (!request.firstPartyForCookies().isEmpty())
@@ -850,8 +854,10 @@ void NetworkConnectionToWebProcess::loadCancelledDownloadRedirectRequestInFrame(
     m_connection->send(Messages::NetworkProcessConnection::LoadCancelledDownloadRedirectRequestInFrame(request, frameID, pageID), 0);
 }
 
-void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, const ResourceResponse& response, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, IPC::Untrusted<ResourceRequest>&& untrustedRequest, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, IPC::Untrusted<ResourceResponse>&& untrustedResponse, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
 
     RELEASE_ASSERT(RunLoop::isMain());
@@ -1005,8 +1011,9 @@ void NetworkConnectionToWebProcess::getRawCookies(IPC::Untrusted<URL>&& untruste
     completionHandler(WTF::move(result));
 }
 
-void NetworkConnectionToWebProcess::setRawCookie(IPC::Untrusted<URL>&& untrustedFirstParty, IPC::Untrusted<URL>&& untrustedURL, const WebCore::Cookie& cookie, ShouldPartitionCookie shouldPartitionCookie)
+void NetworkConnectionToWebProcess::setRawCookie(IPC::Untrusted<URL>&& untrustedFirstParty, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<WebCore::Cookie>&& untrustedCookie, ShouldPartitionCookie shouldPartitionCookie)
 {
+    auto cookie = WTF::move(untrustedCookie).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     auto access = validateCookieAccess("setRawCookie"_s, WTF::move(untrustedFirstParty), WTF::move(untrustedURL), nullptr);
     MESSAGE_CHECK(access || access.error() != CookieAccess::Terminate);
     if (!access)
@@ -1065,8 +1072,9 @@ void NetworkConnectionToWebProcess::cookiesForDOMAsync(IPC::Untrusted<URL>&& unt
     completionHandler(WTF::move(result));
 }
 
-void NetworkConnectionToWebProcess::setCookieFromDOMAsync(IPC::Untrusted<URL>&& untrustedFirstParty, const SameSiteInfo& sameSiteInfo, IPC::Untrusted<URL>&& untrustedURL, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WebCore::Cookie&& cookie, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::setCookieFromDOMAsync(IPC::Untrusted<URL>&& untrustedFirstParty, const SameSiteInfo& sameSiteInfo, IPC::Untrusted<URL>&& untrustedURL, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IPC::Untrusted<WebCore::Cookie>&& untrustedCookie, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(bool)>&& completionHandler)
 {
+    auto cookie = WTF::move(untrustedCookie).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     auto access = validateCookieAccess("setCookieFromDOMAsync"_s, WTF::move(untrustedFirstParty), WTF::move(untrustedURL), &sameSiteInfo);
     MESSAGE_CHECK_COMPLETION(access || access.error() != CookieAccess::Terminate, completionHandler(false));
     if (!access)
@@ -1232,8 +1240,9 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(IPC::Untrusted<U
     session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTF::move(extensionHandle))), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerInternalBlobURL(IPC::Untrusted<URL>&& untrustedURL, Vector<BlobPart>&& blobParts, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURL(IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<Vector<WebCore::BlobPart>>&& untrustedBlobParts, const String& contentType)
 {
+    auto blobParts = WTF::move(untrustedBlobParts).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     EXTRACT_WITH_MESSAGE_CHECK(url, untrustedURL, BlobURLOriginAuthority { m_networkProcess, m_webProcessIdentifier });
 
 
@@ -2060,8 +2069,9 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 }
 #endif
 
-void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceResponse&& response)
+void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, IPC::Untrusted<WebCore::ResourceResponse>&& untrustedResponse)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     MESSAGE_CHECK(response.isRedirection());
     RefPtr loader = m_networkResourceLoaders.get(identifier);
     if (!loader)

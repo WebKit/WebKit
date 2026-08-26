@@ -1210,7 +1210,7 @@ void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& para
 {
     ASSERT(isLoaded());
 
-    windowsCreate(parameters, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](std::expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) mutable {
+    windowsCreate(IPC::Untrusted<WebExtensionWindowParameters> { WebExtensionWindowParameters { parameters } }, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](std::expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) mutable {
         if (!result || !result.value()) {
             completionHandler(nullptr);
             return;
@@ -1222,7 +1222,7 @@ void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& para
 
 void WebExtensionContext::openNewTab(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>)>&& completionHandler)
 {
-    tabsCreate(std::nullopt, parameters, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) mutable {
+    tabsCreate(std::nullopt, IPC::Untrusted<WebExtensionTabParameters> { WebExtensionTabParameters { parameters } }, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&& result) mutable {
         if (!result || !result.value()) {
             completionHandler(nullptr);
             return;

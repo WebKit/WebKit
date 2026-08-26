@@ -267,7 +267,7 @@ public:
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 
-    void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
+    void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, IPC::Untrusted<WebCore::ResourceResponse>&&);
 
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
@@ -306,7 +306,7 @@ private:
     void loadPing(IPC::Untrusted<NetworkResourceLoadParameters>&&);
     void prefetchDNS(const String&);
     void sendH2Ping(IPC::Untrusted<URL>&&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, std::optional<NavigatingToAppBoundDomain>, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
-    void preconnectTo(PreconnectRequest&&);
+    void preconnectTo(IPC::Untrusted<PreconnectRequest>&&);
     void isResourceLoadFinished(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(bool)>&&);
 #if ENABLE(IPC_TESTING_API)
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
@@ -316,8 +316,8 @@ private:
     void pageLoadCompleted(WebCore::PageIdentifier);
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
     void crossOriginRedirectReceived(WebCore::ResourceLoaderIdentifier, const URL& redirectURL);
-    void startDownload(DownloadID, const WebCore::ResourceRequest&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt);
-    void convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, const WebCore::ResourceResponse&, std::optional<NavigatingToAppBoundDomain>);
+    void startDownload(DownloadID, IPC::Untrusted<WebCore::ResourceRequest>&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt);
+    void convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID, IPC::Untrusted<WebCore::ResourceRequest>&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin, IPC::Untrusted<WebCore::ResourceResponse>&&, std::optional<NavigatingToAppBoundDomain>);
 
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
@@ -329,16 +329,16 @@ private:
     void setCookiesFromDOM(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);
     void cookieRequestHeaderFieldValueDigest(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, WebCore::IncludeSecureCookies, CompletionHandler<void(std::optional<SHA1::Digest> digest)>&&);
     void getRawCookies(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
-    void setRawCookie(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie);
+    void setRawCookie(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, IPC::Untrusted<WebCore::Cookie>&&, WebCore::ShouldPartitionCookie);
     void deleteCookie(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, const String& cookieName, CompletionHandler<void()>&&);
     void cookiesEnabledSync(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
     void cookiesEnabled(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
 
     void cookiesForDOMAsync(IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::CookieStoreGetOptions&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
-    void setCookieFromDOMAsync(IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::Cookie&&, WebCore::RequiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(bool)>&&);
+    void setCookieFromDOMAsync(IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, IPC::Untrusted<WebCore::Cookie>&&, WebCore::RequiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(bool)>&&);
 
     void registerInternalFileBlobURL(IPC::Untrusted<URL>&&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
-    void registerInternalBlobURL(IPC::Untrusted<URL>&&, Vector<WebCore::BlobPart>&&, const String& contentType);
+    void registerInternalBlobURL(IPC::Untrusted<URL>&&, IPC::Untrusted<Vector<WebCore::BlobPart>>&&, const String& contentType);
     void registerBlobURL(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, WebCore::PolicyContainer&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
     void registerInternalBlobURLOptionallyFileBacked(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, const String& fileBackedPath, String&& contentType);
     void registerInternalBlobURLForSlice(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, int64_t start, int64_t end, const String& contentType);
@@ -355,7 +355,7 @@ private:
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
-    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, IPC::Untrusted<WebCore::ClientOrigin>&&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
+    void createSocketChannel(IPC::Untrusted<WebCore::ResourceRequest>&&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, IPC::Untrusted<WebCore::ClientOrigin>&&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
     void countWebSocketChannelsForTesting(CompletionHandler<void(uint32_t)>&&);
 
     void establishSharedWorkerServerConnection();
@@ -488,7 +488,7 @@ private:
 
     void hasUploadStateChanged(bool);
 
-    void loadImageForDecoding(WebCore::ResourceRequest&&, WebPageProxyIdentifier, uint64_t, CompletionHandler<void(std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&&);
+    void loadImageForDecoding(IPC::Untrusted<WebCore::ResourceRequest>&&, WebPageProxyIdentifier, uint64_t, CompletionHandler<void(std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&&);
 
     void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
     void prioritizeResourceLoads(const Vector<WebCore::ResourceLoaderIdentifier>&);

@@ -1107,8 +1107,9 @@ void WebPageProxy::setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier
     sendToProcessContainingFrame(frameID, Messages::WebPage::SetSelectElementIsOpen(context, isOpen));
 }
 
-void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
+void WebPageProxy::didPerformDictionaryLookup(IPC::Untrusted<DictionaryPopupInfo>&& untrustedDictionaryPopupInfo)
 {
+    auto dictionaryPopupInfo = WTF::move(untrustedDictionaryPopupInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (RefPtr pageClient = this->pageClient())
         pageClient->didPerformDictionaryLookup(dictionaryPopupInfo);
 }

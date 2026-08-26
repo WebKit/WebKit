@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
 #include "DataTaskIdentifier.h"
+#include "FormDataReference.h"
 #include "IdentifierTypes.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
@@ -66,7 +67,6 @@
 #endif
 
 namespace IPC {
-class FormDataReference;
 }
 
 namespace API {

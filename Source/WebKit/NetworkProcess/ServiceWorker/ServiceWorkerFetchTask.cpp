@@ -204,7 +204,7 @@ void ServiceWorkerFetchTask::contextClosed()
         return;
 
     if (m_wasHandled && !m_isLoadingFromPreloader) {
-        didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+        didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s } });
         return;
     }
     cannotHandle();
@@ -245,8 +245,9 @@ void ServiceWorkerFetchTask::startFetch()
         sendNavigationPreloadUpdate();
 }
 
-void ServiceWorkerFetchTask::didReceiveRedirectResponse(WebCore::ResourceResponse&& response)
+void ServiceWorkerFetchTask::didReceiveRedirectResponse(IPC::Untrusted<WebCore::ResourceResponse>&& untrustedResponse)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     cancelPreloadIfNecessary();
 
     if (auto* loader = m_loader.get())
@@ -273,8 +274,9 @@ void ServiceWorkerFetchTask::processRedirectResponse(ResourceResponse&& response
     loader->willSendServiceWorkerRedirectedRequest(ResourceRequest(m_currentRequest), WTF::move(newRequest), WTF::move(response));
 }
 
-void ServiceWorkerFetchTask::didReceiveResponse(WebCore::ResourceResponse&& response, bool needsContinueDidReceiveResponseMessage)
+void ServiceWorkerFetchTask::didReceiveResponse(IPC::Untrusted<WebCore::ResourceResponse>&& untrustedResponse, bool needsContinueDidReceiveResponseMessage)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (m_preloader && !m_preloader->isServiceWorkerNavigationPreloadEnabled())
         cancelPreloadIfNecessary();
 
@@ -304,7 +306,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
     if (loader->parameters().options.mode == FetchOptions::Mode::Navigate) {
         if (auto parentOrigin = loader->parameters().parentOrigin()) {
             if (auto error = validateCrossOriginResourcePolicy(loader->parameters().parentCrossOriginEmbedderPolicy.value, *parentOrigin, m_currentRequest.url(), response, ForNavigation::Yes, loader->connectionToWebProcess().originAccessPatterns())) {
-                didFail(*error);
+                didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { *error } });
                 return;
             }
         }
@@ -312,13 +314,13 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
     if (loader->parameters().options.mode == FetchOptions::Mode::NoCors) {
         Ref sourceOrigin = *loader->parameters().sourceOrigin;
         if (auto error = validateCrossOriginResourcePolicy(loader->parameters().crossOriginEmbedderPolicy.value, sourceOrigin, m_currentRequest.url(), response, ForNavigation::No, loader->connectionToWebProcess().originAccessPatterns())) {
-            didFail(*error);
+            didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { *error } });
             return;
         }
     }
 
     if (auto error = loader->doCrossOriginOpenerHandlingOfResponse(response)) {
-        didFail(*error);
+        didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { *error } });
         return;
     }
 
@@ -358,8 +360,9 @@ void ServiceWorkerFetchTask::didReceiveDataFromPreloader(const WebCore::Fragment
     sendData(buffer.releaseNonNull());
 }
 
-void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& formData)
+void ServiceWorkerFetchTask::didReceiveFormData(IPC::Untrusted<IPC::FormDataReference>&& untrustedFormData)
 {
+    auto formData = WTF::move(untrustedFormData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (m_isDone)
         return;
 
@@ -385,8 +388,9 @@ void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetr
     cancelPreloadIfNecessary();
 }
 
-void ServiceWorkerFetchTask::didFail(const ResourceError& error)
+void ServiceWorkerFetchTask::didFail(IPC::Untrusted<ResourceError>&& untrustedError)
 {
+    auto error = WTF::move(untrustedError).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     m_isDone = true;
     if (m_timeoutTimer && m_timeoutTimer->isActive()) {
         m_timeoutTimer->stop();
@@ -573,7 +577,7 @@ void ServiceWorkerFetchTask::processPreloadResponse()
 {
     if (!m_preloader->error().isNull()) {
         // Let's copy the error as calling didFail might destroy m_preloader.
-        didFail(ResourceError { m_preloader->error() });
+        didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { m_preloader->error() } });
         return;
     }
 
@@ -613,7 +617,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
     ASSERT(m_isLoadingFromPreloader);
     if (!m_preloader) {
         SWFETCH_RELEASE_LOG_ERROR("loadBodyFromPreloader preloader is null");
-        didFail(ResourceError(errorDomainWebKitInternal, 0, m_currentRequest.url(), "Request canceled from preloader"_s, ResourceError::Type::Cancellation));
+        didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { errorDomainWebKitInternal, 0, m_currentRequest.url(), "Request canceled from preloader"_s, ResourceError::Type::Cancellation } });
         return;
     }
 
@@ -623,7 +627,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
             return;
         if (!protectedThis->m_preloader->error().isNull()) {
             // Let's copy the error as calling didFail might destroy m_preloader.
-            protectedThis->didFail(ResourceError { protectedThis->m_preloader->error() });
+            protectedThis->didFail(IPC::Untrusted<WebCore::ResourceError> { ResourceError { protectedThis->m_preloader->error() } });
             return;
         }
         if (!chunk) {

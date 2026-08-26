@@ -405,8 +405,9 @@ void WebPageProxy::drainDeferredModalsForNewNavigation()
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-void WebPageProxy::contentFilterDidBlockLoadForFrame(IPC::Connection& connection, const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
+void WebPageProxy::contentFilterDidBlockLoadForFrame(IPC::Connection& connection, IPC::Untrusted<WebCore::ContentFilterUnblockHandler>&& untrustedUnblockHandler, FrameIdentifier frameID)
 {
+    auto unblockHandler = WTF::move(untrustedUnblockHandler).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     contentFilterDidBlockLoadForFrameShared(connection, unblockHandler, frameID);
 }
 
@@ -484,8 +485,9 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
+void WebPageProxy::startDrag(IPC::Untrusted<DragItem>&& untrustedDragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
+    auto dragItem = WTF::move(untrustedDragItem).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (RefPtr pageClient = this->pageClient())
         pageClient->startDrag(dragItem, WTF::move(dragImageHandle), nodeID, frameID);
 }
@@ -806,8 +808,9 @@ void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier i
     mediaUsageManager().addMediaSession(identifier, bundleIdentifier, pageURL);
 }
 
-void WebPageProxy::updateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier identifier, const WebCore::MediaUsageInfo& info)
+void WebPageProxy::updateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier identifier, IPC::Untrusted<WebCore::MediaUsageInfo>&& untrustedInfo)
 {
+    auto info = WTF::move(untrustedInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     mediaUsageManager().updateMediaUsage(identifier, info);
 }
 
@@ -2250,8 +2253,9 @@ void WebPageProxy::selectWithGesture(std::optional<WebCore::FrameIdentifier> fra
     } });
 }
 
-void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
+void WebPageProxy::didReceivePositionInformation(IPC::Untrusted<InteractionInformationAtPosition>&& untrustedInfo)
 {
+    auto info = WTF::move(untrustedInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (RefPtr pageClient = this->pageClient())
         pageClient->positionInformationDidChange(info);
 }

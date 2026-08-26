@@ -231,10 +231,10 @@ private:
     String stateFilePath(const String& uniqueIdentifier) const;
     RefPtr<WebExtensionStorageSQLiteStore> sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
 
-    void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
-    void didCommitLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
-    void didFinishLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
-    void didFailLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
+    void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, IPC::Untrusted<WebExtensionFrameParameters>&&, WallTime);
+    void didCommitLoadForFrame(WebPageProxyIdentifier, IPC::Untrusted<WebExtensionFrameParameters>&&, WallTime);
+    void didFinishLoadForFrame(WebPageProxyIdentifier, IPC::Untrusted<WebExtensionFrameParameters>&&, WallTime);
+    void didFailLoadForFrame(WebPageProxyIdentifier, IPC::Untrusted<WebExtensionFrameParameters>&&, WallTime);
 
     void purgeOldMatchedRules();
 

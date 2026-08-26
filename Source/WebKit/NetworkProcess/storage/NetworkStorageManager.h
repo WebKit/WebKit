@@ -276,8 +276,8 @@ private:
     void lockCacheStorage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&);
     void unlockCacheStorage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&);
     void cacheStorageRetrieveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
-    void cacheStorageRemoveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
-    void cacheStoragePutRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void cacheStorageRemoveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, IPC::Untrusted<WebCore::ResourceRequest>&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void cacheStoragePutRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, IPC::Untrusted<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void cacheStorageClearMemoryRepresentation(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void()>&&);
     void cacheStorageRepresentation(CompletionHandler<void(const String&)>&&);
 

@@ -349,8 +349,9 @@ void WebSWServerToContextConnection::openWindowFromServiceWorker(WebCore::Servic
     openWindow(identifier, *validatedURL, WTF::move(callback));
 }
 
-void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, WebCore::ServiceWorkerContextData::ImportedScript&& script)
+void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, IPC::Untrusted<WebCore::ServiceWorkerImportedScript>&& untrustedScript)
 {
+    auto script = WTF::move(untrustedScript).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     setScriptResource(identifier, WTF::move(untrustedScriptURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget), WTF::move(script));
 }
 

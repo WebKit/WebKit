@@ -102,7 +102,7 @@ public:
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
 
-    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
+    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, IPC::Untrusted<WebCore::ServiceWorkerClientData>&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void registerServiceWorkerClientInternal(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient);
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
@@ -130,9 +130,10 @@ private:
 
     // These hide the same-named methods on WebCore::SWServer::Connection, which cannot take an
     // IPC type. They unwrap and call the base.
-    void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&, WebCore::WorkerFetchResult&&);
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&, IPC::Untrusted<WebCore::WorkerFetchResult>&&);
     void didResolveRegistrationPromise(IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&);
     void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&&, MatchBackgroundFetchCallback&&);
+    void startBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, IPC::Untrusted<Vector<WebCore::BackgroundFetchRequest>>&&, WebCore::BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
 
     using UnregisterJobResult = std::expected<bool, WebCore::ExceptionData>;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&&);

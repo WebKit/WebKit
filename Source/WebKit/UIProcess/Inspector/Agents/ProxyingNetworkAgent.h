@@ -100,12 +100,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess FrameNetworkAgentProxy
-    void requestWillBeSent(ResourceID, FrameID, const String& loaderId, const String& targetID, const String& documentURL, const WebCore::ResourceRequest&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime);
-    void responseReceived(ResourceID, FrameID, const String& loaderId, const WebCore::ResourceResponse&, ResourceType, double timestamp);
+    void requestWillBeSent(ResourceID, FrameID, const String& loaderId, const String& targetID, const String& documentURL, IPC::Untrusted<WebCore::ResourceRequest>&&, IPC::Untrusted<std::optional<WebCore::ResourceResponse>>&&, ResourceType, double timestamp, double walltime);
+    void responseReceived(ResourceID, FrameID, const String& loaderId, IPC::Untrusted<WebCore::ResourceResponse>&&, ResourceType, double timestamp);
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
     void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
-    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
+    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, IPC::Untrusted<WebCore::ResourceResponse>&&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
 
     void removeAllRegisteredReceivers();
 

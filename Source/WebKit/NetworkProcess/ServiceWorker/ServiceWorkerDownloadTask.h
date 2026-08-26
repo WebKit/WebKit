@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "Download.h"
+#include "FormDataReference.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkDataTask.h"
 #include <WebCore/FetchIdentifier.h>
@@ -73,9 +74,9 @@ private:
 
     // IPC Message
     void didReceiveData(const IPC::SharedBufferReference&);
-    void didReceiveFormData(const IPC::FormDataReference&);
+    void didReceiveFormData(IPC::Untrusted<IPC::FormDataReference>&&);
     void didFinish();
-    void didFail(WebCore::ResourceError&&);
+    void didFail(IPC::Untrusted<WebCore::ResourceError>&&);
 
     // NetworkDataTask
     void cancel() final;
