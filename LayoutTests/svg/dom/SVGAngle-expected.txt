@@ -105,20 +105,69 @@ PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = '5graD' threw exception SyntaxError: The string did not match the expected pattern..
-PASS angle.valueAsString is "0"
-PASS angle.value is 0
-PASS angle.valueInSpecifiedUnits is 0
-PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = '5Rad' threw exception SyntaxError: The string did not match the expected pattern..
-PASS angle.valueAsString is "0"
-PASS angle.value is 0
-PASS angle.valueInSpecifiedUnits is 0
-PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS angle.valueAsString = ',5 rad' threw exception SyntaxError: The string did not match the expected pattern..
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting calc() 'valueAsString' arguments
+FAIL angle.valueAsString = 'calc(30deg + 30deg)' should be calc(30deg + 30deg). Threw exception SyntaxError: The string did not match the expected pattern.
+FAIL angle.valueInSpecifiedUnits should be 60. Was 0.
+FAIL angle.unitType should be 2. Was 1.
+FAIL angle.valueAsString = 'calc(5 * 10)' should be calc(5 * 10). Threw exception SyntaxError: The string did not match the expected pattern.
+FAIL angle.valueInSpecifiedUnits should be 50. Was 0.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting 'valueAsString' arguments outside the float range
+PASS angle.valueAsString = '1e39' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '-1e39' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '1e39deg' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '-1e39grad' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '1e309rad' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '-1e309turn' threw exception SyntaxError: The string did not match the expected pattern..
+PASS angle.valueAsString is "0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting 'valueAsString' arguments at the edges of the float range
+PASS angle.valueAsString = '3.4e38deg' is "3.4e38deg"
+PASS angle.valueInSpecifiedUnits.toExponential(1) is "3.4e+38"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS angle.valueAsString = '-3.4e38deg' is "-3.4e38deg"
+PASS angle.valueInSpecifiedUnits.toExponential(1) is "-3.4e+38"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS angle.valueAsString = '1e-46grad' is "1e-46grad"
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
+
+Check that 'valueAsString' unit parsing is case-insensitive
+PASS angle.valueAsString = '5graD' is "5graD"
+PASS angle.valueAsString is "5grad"
+PASS angle.valueInSpecifiedUnits is 5
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
+PASS angle.valueAsString = '5Rad' is "5Rad"
+PASS angle.valueAsString is "5rad"
+PASS angle.valueInSpecifiedUnits is 5
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
+PASS angle.valueAsString = '5DEG' is "5DEG"
+PASS angle.valueAsString is "5deg"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS angle.valueAsString = '5TurN' is "5TurN"
+PASS angle.valueAsString is "5turn"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNKNOWN
+
+Reset to initial angle state
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 0) is undefined.
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Check setting invalid 'valueInSpecifiedUnits' arguments
@@ -199,6 +248,7 @@ PASS angle.valueInSpecifiedUnits.toFixed(1) is "180.0"
 PASS angle.valueAsString is "180deg"
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

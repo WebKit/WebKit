@@ -22,13 +22,16 @@
 #include "config.h"
 #include "SVGAngleValue.h"
 
+#include "CSSParserContext.h"
+#include "CSSParserTokenRange.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
+#include "CSSTokenizer.h"
 #include "ExceptionOr.h"
-#include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
@@ -93,24 +96,15 @@ String SVGAngleValue::valueAsString() const
     return String();
 }
 
-template<typename CharacterType> static inline SVGAngleValue::Type NODELETE parseAngleType(StringParsingBuffer<CharacterType> buffer)
+static inline SVGAngleValue::Type NODELETE cssAngleUnitToSVGAngleType(CSS::AngleUnit unit)
 {
-    switch (buffer.lengthRemaining()) {
-    case 0:
-        return SVGAngleValue::SVG_ANGLETYPE_UNSPECIFIED;
-    case 3:
-        if (compareCharacters(buffer.position(), 'd', 'e', 'g'))
-            return SVGAngleValue::SVG_ANGLETYPE_DEG;
-        if (compareCharacters(buffer.position(), 'r', 'a', 'd'))
-            return SVGAngleValue::SVG_ANGLETYPE_RAD;
-        break;
-    case 4:
-        if (compareCharacters(buffer.position(), 'g', 'r', 'a', 'd'))
-            return SVGAngleValue::SVG_ANGLETYPE_GRAD;
-        if (compareCharacters(buffer.position(), 't', 'u', 'r', 'n'))
-            return SVGAngleValue::SVG_ANGLETYPE_TURN;
-        break;
+    switch (unit) {
+    case CSS::AngleUnit::Deg:   return SVGAngleValue::SVG_ANGLETYPE_DEG;
+    case CSS::AngleUnit::Rad:   return SVGAngleValue::SVG_ANGLETYPE_RAD;
+    case CSS::AngleUnit::Grad:  return SVGAngleValue::SVG_ANGLETYPE_GRAD;
+    case CSS::AngleUnit::Turn:  return SVGAngleValue::SVG_ANGLETYPE_TURN;
     }
+    ASSERT_NOT_REACHED();
     return SVGAngleValue::SVG_ANGLETYPE_UNKNOWN;
 }
 
@@ -121,19 +115,49 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
         return { };
     }
 
-    return readCharactersForParsing(value, [&](auto buffer) -> ExceptionOr<void> {
-        auto valueInSpecifiedUnits = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
-        if (!valueInSpecifiedUnits)
-            return Exception { ExceptionCode::SyntaxError };
+    // Unresolved CSS primitive numeric types always hold their value as a double, and
+    // CSS::All neither rejects nor clamps, so guard against values that are not
+    // representable as the float this stores.
+    auto isFloatOverflow = [](double value) {
+        return value > FLT_MAX || value < -FLT_MAX;
+    };
 
-        auto unitType = parseAngleType(buffer);
-        if (unitType == SVGAngleValue::SVG_ANGLETYPE_UNKNOWN)
-            return Exception { ExceptionCode::SyntaxError };
+    auto parserContext = CSSParserContext { SVGAttributeMode };
+    auto parserState = CSS::PropertyParserState {
+        .context = parserContext
+    };
 
-        m_unitType = unitType;
-        m_valueInSpecifiedUnits = *valueInSpecifiedUnits;
-        return { };
-    });
+    CSSTokenizer tokenizer(value);
+    auto tokenRange = tokenizer.tokenRange();
+
+    // Leading whitespace is allowed; the consumers below take care of the trailing
+    // whitespace by way of CSSParserTokenRange::consumeIncludingWhitespace().
+    tokenRange.consumeWhitespace();
+
+    // A unitless value must stay SVG_ANGLETYPE_UNSPECIFIED rather than becoming
+    // SVG_ANGLETYPE_DEG, so consume <number> ahead of <angle>. The raw types are used
+    // so that calc() is not consumed at all.
+    // FIXME: Add support for calculated angles.
+    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::NumberRaw<>, CSS::AngleRaw<>>::consume(tokenRange, parserState, { });
+    if (!parsedValue || !tokenRange.atEnd())
+        return Exception { ExceptionCode::SyntaxError };
+
+    return WTF::switchOn(*parsedValue,
+        [&](const CSS::NumberRaw<>& number) -> ExceptionOr<void> {
+            if (isFloatOverflow(number.value))
+                return Exception { ExceptionCode::SyntaxError };
+            m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
+            m_valueInSpecifiedUnits = number.value;
+            return { };
+        },
+        [&](const CSS::AngleRaw<>& angle) -> ExceptionOr<void> {
+            if (isFloatOverflow(angle.value))
+                return Exception { ExceptionCode::SyntaxError };
+            m_unitType = cssAngleUnitToSVGAngleType(angle.unit);
+            m_valueInSpecifiedUnits = angle.value;
+            return { };
+        }
+    );
 }
 
 ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
