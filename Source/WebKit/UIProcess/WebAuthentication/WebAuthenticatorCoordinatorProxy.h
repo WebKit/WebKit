@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "Untrusted.h"
+
 #if ENABLE(WEB_AUTHN)
 
 #include "MessageReceiver.h"
-#include "Untrusted.h"
 #include <WebCore/CredentialRequestOptions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediationRequirement.h>

@@ -96,7 +96,7 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
 
 void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
-    auto securityOrigin = WTF::move(untrustedSecurityOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto securityOrigin = WTF::move(untrustedSecurityOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
 
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()
     // can report it for cross-origin children, whose commit the inspectedPage's WebFrameProxy

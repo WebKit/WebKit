@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SpeechRecognitionServer.h"
 
+#include "FirstPartyAuthority.h"
+
 #include "MessageSenderInlines.h"
 #include "UserMediaProcessManager.h"
 #include "WebProcessProxy.h"
@@ -35,6 +37,13 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, *messageSenderConnection())
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -77,9 +86,8 @@ std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPre
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, WebCore::FrameIdentifier mainFrameIdentifier, FrameInfoData&& frameInfo)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     MESSAGE_CHECK(!m_requests.contains(clientIdentifier));
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, CommittedClientOriginAuthority { *m_process });
     auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTF::move(lang), continuous, interimResults, maxAlternatives, WTF::move(origin), mainFrameIdentifier };
     auto& newRequest = m_requests.add(clientIdentifier, WebCore::SpeechRecognitionRequest::create(WTF::move(requestInfo))).iterator->value;
 
@@ -222,3 +230,4 @@ void SpeechRecognitionServer::mute()
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK

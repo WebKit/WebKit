@@ -79,6 +79,7 @@
 #include "DragEventForwardingData.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "FirstPartyAuthority.h"
 #include "DrawingAreaProxyMessages.h"
 #include "EnhancedSecurity.h"
 #include "EventDispatcherMessages.h"
@@ -501,6 +502,22 @@
 #define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
 #define MESSAGE_CHECK_URL_COMPLETION(process, url, completion) MESSAGE_CHECK_COMPLETION_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection(), completion)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(process, name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(process, IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(process, name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(process, IPC::valueMayBeLegitimate(name##Validated), completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), m_webPageID.toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 #define WEBPAGEPROXY_RELEASE_LOG_WITH_THIS(channel, thisPtr, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, WTF::getPtr(thisPtr), thisPtr->identifier().toUInt64(), thisPtr->m_webPageID.toUInt64(), thisPtr->m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
@@ -8782,7 +8799,8 @@ void WebPageProxy::recordFirstPartyVisit(const URL& url)
 
 void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
-    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOriginsThatUpgradeInsecureNavigations).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(validationProcess, cspOriginsThatUpgradeInsecureNavigations, untrustedCspOriginsThatUpgradeInsecureNavigations, FirstPartyAuthority { validationProcess });
 
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " didCommitLoadForFrame in navigation %" PRIu64, identifier().toUInt64(), navigationID ? navigationID->toUInt64() : 0);
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
@@ -15316,8 +15334,9 @@ void WebPageProxy::microphoneMuteStatusChanged(bool isMuting)
 
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, FrameInfoData&& frameInfo, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedUserMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopLevelDocumentOriginIdentifier, MediaStreamRequest&& request)
 {
-    auto userMediaDocumentOriginData = WTF::move(untrustedUserMediaDocumentOriginIdentifier).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto topLevelDocumentOriginData = WTF::move(untrustedTopLevelDocumentOriginIdentifier).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(validationProcess, userMediaDocumentOriginData, untrustedUserMediaDocumentOriginIdentifier, FirstPartyAuthority { validationProcess });
+    EXTRACT_WITH_MESSAGE_CHECK(validationProcess, topLevelDocumentOriginData, untrustedTopLevelDocumentOriginIdentifier, FirstPartyAuthority { validationProcess });
 
     Ref process = WebProcessProxy::fromConnection(connection);
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
@@ -15334,8 +15353,9 @@ void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connectio
 
 void WebPageProxy::enumerateMediaDevicesForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedUserMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopLevelDocumentOriginIdentifier, CompletionHandler<void(const Vector<CaptureDeviceWithCapabilities>&, MediaDeviceHashSalts&&)>&& completionHandler)
 {
-    auto userMediaDocumentOriginData = WTF::move(untrustedUserMediaDocumentOriginIdentifier).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto topLevelDocumentOriginData = WTF::move(untrustedTopLevelDocumentOriginIdentifier).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(validationProcess, userMediaDocumentOriginData, untrustedUserMediaDocumentOriginIdentifier, completionHandler({ }, { }), FirstPartyAuthority { validationProcess });
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(validationProcess, topLevelDocumentOriginData, untrustedTopLevelDocumentOriginIdentifier, completionHandler({ }, { }), FirstPartyAuthority { validationProcess });
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
@@ -15392,7 +15412,7 @@ private:
 
 void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier requestIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, FrameInfoData&& frameInfo, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    auto clientOrigin = WTF::move(untrustedClientOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, clientOrigin, untrustedClientOrigin, completionHandler(std::nullopt), CommittedClientOriginAuthority { m_legacyMainFrameProcess });
 
     WEBPAGEPROXY_RELEASE_LOG(WebRTC, "validateCaptureStateUpdate: isActive=%d kind=%hhu", isActive, static_cast<unsigned char>(kind));
     RefPtr webFrame = WebFrameProxy::webFrame(frameInfo.frameID);
@@ -15548,7 +15568,8 @@ void WebPageProxy::clearUserMediaState()
 
 void WebPageProxy::requestMediaKeySystemPermissionForFrame(IPC::Connection& connection, MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier frameID, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, const String& keySystem)
 {
-    auto clientOrigin = WTF::move(untrustedClientOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(validationProcess, clientOrigin, untrustedClientOrigin, CommittedClientOriginAuthority { validationProcess });
 
 #if ENABLE(ENCRYPTED_MEDIA)
     MESSAGE_CHECK_BASE(WebFrameProxy::webFrame(frameID), connection);
@@ -19229,7 +19250,7 @@ bool WebPageProxy::hasSleepDisabler() const
 #if USE(SYSTEM_PREVIEW)
 void WebPageProxy::beginSystemPreview(const URL& url, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    auto topOrigin = WTF::move(untrustedTopOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, topOrigin, untrustedTopOrigin, completionHandler(), FirstPartyAuthority { m_legacyMainFrameProcess });
 
     RefPtr systemPreviewController = m_systemPreviewController;
     if (!systemPreviewController)
@@ -19490,8 +19511,9 @@ void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameI
 
 void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSourceOrigin, WebCore::FrameIdentifier target, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTargetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
-    auto sourceOrigin = WTF::move(untrustedSourceOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    auto targetOrigin = WTF::move(untrustedTargetOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref sourceProcess = processContainingFrame(source);
+    EXTRACT_WITH_MESSAGE_CHECK(sourceProcess, sourceOrigin, untrustedSourceOrigin, FirstPartyAuthority { sourceProcess });
+    auto targetOrigin = WTF::move(untrustedTargetOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
 
     if (message.transferredPorts.isEmpty()) {
         sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
@@ -19540,7 +19562,8 @@ void WebPageProxy::layerTreeAsTextForTesting(FrameIdentifier frameID, uint64_t b
 
 void WebPageProxy::dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier frameID, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedNavigatingFrameOrigin)
 {
-    auto navigatingFrameOrigin = WTF::move(untrustedNavigatingFrameOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref navigatingProcess = processContainingFrame(frameID);
+    EXTRACT_WITH_MESSAGE_CHECK(navigatingProcess, navigatingFrameOrigin, untrustedNavigatingFrameOrigin, FirstPartyAuthority { navigatingProcess });
 
     sendToProcessContainingFrame(frameID, Messages::WebPage::DispatchCrossOriginBeforeUnloadCheckForFrame(frameID, WTF::move(navigatingFrameOrigin)));
 }
@@ -20205,3 +20228,5 @@ void WebPageProxy::receivedQualifiedServerTrust(WebCore::CertificateInfo&& serve
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION

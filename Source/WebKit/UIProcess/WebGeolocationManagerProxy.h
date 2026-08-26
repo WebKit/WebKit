@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "Untrusted.h"
+
 #include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include "Untrusted.h"
 #include "WebContextSupplement.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/GeolocationPositionData.h>

@@ -32,6 +32,7 @@
 #include "Connection.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "FirstPartyAuthority.h"
 #include "FrameInspectorTarget.h"
 #include "FrameProcess.h"
 #include "FrameTreeCreationParameters.h"
@@ -108,6 +109,13 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -1140,22 +1148,19 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::setAppBadge(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, std::optional<uint64_t> badge)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    Ref protectedProcess = process();
-    auto firstPartyAccessResult = protectedProcess->allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
-    if (firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::SilentFailure)
+    auto origin = WTF::move(untrustedOrigin).validate(FirstPartyAuthority { process() });
+    if (!origin && origin.error() == IPC::ValidationFailure::Ignore)
         return;
-    MESSAGE_CHECK(firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::Pass);
+    MESSAGE_CHECK(origin);
 
     if (RefPtr webPageProxy = m_page.get())
-        webPageProxy->uiClient().updateAppBadge(*webPageProxy, origin, badge);
+        webPageProxy->uiClient().updateAppBadge(*webPageProxy, *origin, badge);
 }
 
-void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations)
+void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedOrigins)
 {
-    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOriginsThatUpgradeInsecureNavigations).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    Ref<WebProcessProxy> validationProcess = process();
+    EXTRACT_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedOrigins, FirstPartyAuthority { validationProcess });
     setCSPOriginsThatUpgradeInsecureNavigations(WTF::move(cspOriginsThatUpgradeInsecureNavigations));
 }
 
@@ -1366,3 +1371,4 @@ void WebFrameProxy::setCertificateInfoForProcessSwapOnNavigationResponse(const U
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK
