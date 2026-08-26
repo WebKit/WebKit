@@ -168,6 +168,8 @@ bool PolymorphicAccessJITStubRoutine::visitWeakImpl(VM& vm)
     bool isValid = true;
     for (StructureID weakReference : m_weakStructures)
         isValid &= vm.heap.isMarked(weakReference.decode());
+    for (auto& accessCase : m_cases)
+        isValid &= accessCase->visitWeak(vm);
     isValid &= Base::visitWeakImpl(vm);
     return isValid;
 }
