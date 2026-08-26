@@ -1136,6 +1136,7 @@ def headers_for_type(type, for_implementation_file=False):
         'CVPixelBufferRef': ['<WebCore/CVUtilities.h>'],
         'GCGLint': ['<WebCore/GraphicsTypesGL.h>'],
         'GenericPromise::Result': ['<wtf/NativePromise.h>'],
+        'Inspector::EmulationOverrides': ['<WebCore/EmulationOverrides.h>'],
         'Inspector::ExtensionAppearance': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionTabID': ['"InspectorExtensionTypes.h"'],
