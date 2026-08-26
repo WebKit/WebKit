@@ -42,6 +42,7 @@ struct NetworkProcessConnectionParameters {
     Vector<WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
     LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
     HashSet<WebCore::RegistrableDomain> allowedFirstPartiesForCookies;
+    HashSet<WebCore::RegistrableDomain> hostedDomains;
     HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
 };
 
