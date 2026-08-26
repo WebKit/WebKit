@@ -61,6 +61,11 @@ enum class UnvalidatedReason : uint8_t {
     // name this reason at all.
     IPCTestingAPIIntrospection,
 #endif
+    // The struct mixes origins the sender must have authority over with origins it legitimately
+    // does not - a frame's ancestor chain, say, which under site isolation lives in other
+    // processes. The generated visitor presents them all alike, so no single rule fits; telling
+    // them apart needs a visitor that identifies the field it is presenting.
+    MixedFieldAuthority,
 };
 
 // True unless the value could not have been legitimate. A validation that fails with
