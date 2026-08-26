@@ -386,9 +386,6 @@ public:
 
 private:
     bool needsQuirks() const;
-    bool isDomain(const String&) const;
-    bool isEmbedDomain(const String&) const;
-    bool isYoutubeEmbedDomain() const;
 
     static bool domainNeedsAvoidResizingWhenInputViewBoundsChangeQuirk(const URL&, QuirksData&);
     static bool domainNeedsScrollbarWidthThinDisabledQuirk(const URL&, QuirksData&);

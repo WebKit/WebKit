@@ -234,24 +234,6 @@ bool Quirks::shouldDisableBlobFileAccessEnforcement()
     return shouldDisableBlobFileAccessEnforcementInternal();
 }
 
-// FIXME: Add more options to the helper to cover more patterns.
-// - end of domain
-// - full domain
-// - path?
-// or make different helpers
-bool Quirks::isDomain(const String& domainString) const
-{
-    return RegistrableDomain(topDocumentURL()).string() == domainString;
-}
-
-bool Quirks::isEmbedDomain(const String& domainString) const
-{
-    RefPtr document = m_document.get();
-    if (document->isTopDocument())
-        return false;
-    return RegistrableDomain(document->url()).string() == domainString;
-}
-
 // thesaurus.com, dictionary.com https://bugs.webkit.org/show_bug.cgi?id=312692 rdar://174959285
 bool Quirks::needsAnchorToBeMouseFocusable() const
 {
@@ -468,11 +450,6 @@ String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
     if (domain == "live.com"_s && url.host() != "teams.live.com"_s)
         return { };
     return iterator->value;
-}
-
-bool Quirks::isYoutubeEmbedDomain() const
-{
-    return isEmbedDomain("youtube.com"_s) || isEmbedDomain("youtube-nocookie.com"_s);
 }
 
 // apple.com rdar://154434137
@@ -1768,7 +1745,7 @@ bool Quirks::shouldDisableScrollAnchoringQuirk() const
 
 #if PLATFORM(IOS_FAMILY)
     // reddit.com only disables scroll anchoring while the Sink It extension's element is present.
-    if (isDomain("reddit.com"_s)) {
+    if (m_quirksData.isSite(QuirkSite::Reddit)) {
         RefPtr document = m_document.get();
         if (!document)
             return false;
@@ -2581,7 +2558,9 @@ bool Quirks::needsAmazonDesignMenuViewportUnitQuirk(const Style::ComputedStyle& 
 bool Quirks::needsLimitedMatroskaSupport() const
 {
 #if ENABLE(MEDIA_RECORDER) && ENABLE(COCOA_WEBM_PLAYER)
-    return isDomain("zencastr.com"_s);
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsLimitedMatroskaSupportQuirk);
 #else
     return false;
 #endif
@@ -2590,7 +2569,9 @@ bool Quirks::needsLimitedMatroskaSupport() const
 #if ENABLE(MEDIA_SOURCE)
 bool Quirks::needsSupportsProgressMonitoring() const
 {
-    return isDomain("ui.com"_s);
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsSupportsProgressMonitoringQuirk);
 }
 #endif
 
@@ -2880,9 +2861,11 @@ static constexpr std::array expediaGroupDomains {
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
 static constexpr std::array naverHostsWithoutSimulatedMouseEvents { "tv.naver.com"_s, "mail.naver.com"_s, "m.naver.com"_s };
 #endif
+#if PLATFORM(COCOA)
+static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
+#endif
 #if PLATFORM(IOS_FAMILY)
 static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
-static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
 #endif
 
 namespace SiteSpecificQuirks {
@@ -3495,7 +3478,8 @@ static constexpr Quirk table[] = {
             // reddit.com with Sink It extension: rdar://176377447.
             ShouldDisableScrollAnchoringQuirk,
 #endif
-        } },
+        },
+        .site = QuirkSite::Reddit },
 #endif
 
     { .match = QuirkMatch::domain("scribd.com"_s),
@@ -3605,6 +3589,12 @@ static constexpr Quirk table[] = {
     // https://tympanus.net/Tutorials/WebGPUFluid/ does not load (rdar://143839620).
     { .match = QuirkMatch::domain("tympanus.net"_s),
         .behaviors = { ShouldBlockFetchWithNewlineAndLessThan } },
+
+#if ENABLE(MEDIA_SOURCE)
+    // unifi.ui.com rdar://180411019
+    { .match = QuirkMatch::domain("ui.com"_s),
+        .behaviors = { NeedsSupportsProgressMonitoringQuirk } },
+#endif
 
     // Breaks express checkout on victoriassecret.com (rdar://104818312).
     { .match = QuirkMatch::domain("victoriassecret.com"_s),
@@ -3745,6 +3735,12 @@ static constexpr Quirk table[] = {
 #endif
         } },
 
+#if PLATFORM(COCOA)
+    // Embedded youtube.com players need the caption quirk regardless of the embedding site.
+    { .match = QuirkMatch::anySite().when(embedded(), documentDomainIs(youTubeEmbedDomains)),
+        .behaviors = { NeedsYouTubeCaptionQuirk } },
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     // YouTube.com does not provide AirPlay controls in fullscreen
     // (Ref: rdar://121471373)
@@ -3776,6 +3772,12 @@ static constexpr Quirk table[] = {
     // Lens.app rdar://178769976
     { .match = QuirkMatch::domain("youtube.com"_s).when(lensApp()),
         .behaviors = { RequiresUserGestureToPlayInFullscreenQuirk } },
+#endif
+
+#if ENABLE(MEDIA_RECORDER) && ENABLE(COCOA_WEBM_PLAYER)
+    // zencastr.com rdar://143087016
+    { .match = QuirkMatch::domain("zencastr.com"_s),
+        .behaviors = { NeedsLimitedMatroskaSupportQuirk } },
 #endif
 
     // zillow.com rdar://53103732
@@ -3841,10 +3843,6 @@ void Quirks::determineRelevantQuirks()
 
     // Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
     m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldDisablePushStateFilePathRestrictions, shouldDisablePushStateFilePathRestrictions);
-#endif
-
-#if PLATFORM(COCOA)
-    m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionQuirk, isYoutubeEmbedDomain());
 #endif
 
     auto quirksURL = topDocumentURL();

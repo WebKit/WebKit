@@ -51,6 +51,7 @@ enum class QuirkSite : uint8_t {
     NBA,
     Netflix,
     Outlook,
+    Reddit,
     SoundCloud,
     Thesaurus,
     TikTok,
@@ -89,6 +90,9 @@ struct QuirksData {
         NeedsChromeMediaControlsPseudoElementQuirk,
 #if PLATFORM(COCOA)
         NeedsCNNCaptionQuirk,
+#endif
+#if ENABLE(MEDIA_RECORDER) && ENABLE(COCOA_WEBM_PLAYER)
+        NeedsLimitedMatroskaSupportQuirk,
 #endif
         NeedsLogoutCookieCleanupQuirk,
 #if PLATFORM(IOS_FAMILY)
@@ -134,6 +138,9 @@ struct QuirksData {
         NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
         NeedsScrollbarWidthThinDisabledQuirk,
         NeedsSeekingSupportDisabledQuirk,
+#if ENABLE(MEDIA_SOURCE)
+        NeedsSupportsProgressMonitoringQuirk,
+#endif
         NeedsSuppressPostLayoutBoundaryEventsQuirk,
         NeedsTikTokOverflowingContentQuirk,
         NeedsVideoShouldMaintainAspectRatioQuirk,
