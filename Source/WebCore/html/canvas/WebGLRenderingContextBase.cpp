@@ -1841,12 +1841,12 @@ GCGLint WebGLRenderingContextBase::getAttribLocation(WebGLProgram& program, cons
         return -1;
     if (!validateString("getAttribLocation"_s, name))
         return -1;
-    if (isPrefixReserved(name))
-        return -1;
     if (!program.linkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getAttribLocation"_s, "program not linked"_s);
         return -1;
     }
+    if (isPrefixReserved(name))
+        return -1;
     return program.attribLocations().getOptional(name).value_or(-1);
 }
 
@@ -2656,12 +2656,12 @@ RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGL
         return nullptr;
     if (!validateString("getUniformLocation"_s, name))
         return nullptr;
-    if (isPrefixReserved(name))
-        return nullptr;
     if (!program.linkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getUniformLocation"_s, "program not linked"_s);
         return nullptr;
     }
+    if (isPrefixReserved(name))
+        return nullptr;
     if (auto location = program.uniformLocations().getOptional(name))
         return WebGLUniformLocation::create(program, location.value());
     return nullptr;
