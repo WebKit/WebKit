@@ -467,6 +467,11 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
 
+#if ENABLE(VIDEO)
+    if (m_remoteAudioVideoRendererProxyManager)
+        m_remoteAudioVideoRendererProxyManager->connectionToWebProcessClosed();
+#endif
+
     Ref gpuProcess = this->gpuProcess();
     gpuProcess->connectionToWebProcessClosed(connection);
     gpuProcess->removeGPUConnectionToWebProcess(*this); // May destroy |this|.
