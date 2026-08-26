@@ -49,6 +49,8 @@ UNTRUSTED_TYPES = {
 PRIVILEGED_PROCESSES = {
     "UI",
     "Networking",
+    "GPU",
+    "Model",
 }
 
 
