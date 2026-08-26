@@ -507,16 +507,52 @@ String foldTextForReplacement(const String& source)
     return foldForReplacement(source).text;
 }
 
+static bool isWordCharacter(char32_t codePoint)
+{
+    return !!u_isalnum(codePoint);
+}
+
+static bool anchorsToWordBoundary(char32_t codePoint)
+{
+    if (!isWordCharacter(codePoint))
+        return false;
+
+    switch (u_getIntPropertyValue(codePoint, UCHAR_LINE_BREAK)) {
+    case U_LB_IDEOGRAPHIC:
+    case U_LB_COMPLEX_CONTEXT:
+    case U_LB_CONDITIONAL_JAPANESE_STARTER:
+    case U_LB_NONSTARTER:
+    case U_LB_H2:
+    case U_LB_H3:
+    case U_LB_JL:
+    case U_LB_JV:
+    case U_LB_JT:
+        return false;
+    default:
+        return true;
+    }
+}
+
+static bool matchIsWordBounded(StringView text, StringView key, unsigned start)
+{
+    if (start && anchorsToWordBoundary(key.codePointAt(0)) && isWordCharacter(text.codePointBefore(start)))
+        return false;
+
+    auto end = start + key.length();
+    return end >= text.length() || !anchorsToWordBoundary(key.codePointBefore(key.length())) || !isWordCharacter(text.codePointAt(end));
+}
+
 String applyReplacements(const String& text, const Vector<std::pair<String, String>>& replacementStrings)
 {
     if (replacementStrings.isEmpty())
         return text;
 
     auto folded = foldForReplacement(text);
+    auto foldedView = StringView { folded.text };
     StringBuilder result;
     result.reserveCapacity(text.length());
     unsigned cursor = 0;
-    while (cursor < folded.text.length()) {
+    while (cursor < foldedView.length()) {
         bool matched = false;
         for (auto& [foldedKey, replacement] : replacementStrings) {
             if (foldedKey.isEmpty()) {
@@ -524,10 +560,13 @@ String applyReplacements(const String& text, const Vector<std::pair<String, Stri
                 break;
             }
 
-            if (foldedKey.length() > folded.text.length() - cursor)
+            if (foldedKey.length() > foldedView.length() - cursor)
                 continue;
 
-            if (StringView { folded.text }.substring(cursor, foldedKey.length()) != foldedKey)
+            if (foldedView.substring(cursor, foldedKey.length()) != foldedKey)
+                continue;
+
+            if (!matchIsWordBounded(foldedView, foldedKey, cursor))
                 continue;
 
             result.append(replacement);
