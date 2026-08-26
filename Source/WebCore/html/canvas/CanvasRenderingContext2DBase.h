@@ -363,7 +363,7 @@ protected:
     GraphicsContext* effectiveDrawingContext() const;
     AffineTransform baseTransform() const;
 
-    enum class DidDrawOption {
+    enum class WillUpdateContentsOption {
         ApplyTransform = 1 << 0,
         ApplyShadow = 1 << 1,
         ApplyClip = 1 << 2,
@@ -371,28 +371,26 @@ protected:
         PreserveCachedContents = 1 << 4,
     };
 
-    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptions()
+    static constexpr OptionSet<WillUpdateContentsOption> defaultWillUpdateContentsOptions()
     {
         return {
-            DidDrawOption::ApplyTransform,
-            DidDrawOption::ApplyShadow,
-            DidDrawOption::ApplyClip,
-            DidDrawOption::ApplyPostProcessing,
+            WillUpdateContentsOption::ApplyTransform,
+            WillUpdateContentsOption::ApplyShadow,
+            WillUpdateContentsOption::ApplyClip,
+            WillUpdateContentsOption::ApplyPostProcessing,
         };
     }
 
-    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptionsWithoutPostProcessing()
+    static constexpr OptionSet<WillUpdateContentsOption> defaultWillUpdateContentsOptionsWithoutPostProcessing()
     {
         return {
-            DidDrawOption::ApplyTransform,
-            DidDrawOption::ApplyShadow,
-            DidDrawOption::ApplyClip,
+            WillUpdateContentsOption::ApplyTransform,
+            WillUpdateContentsOption::ApplyShadow,
+            WillUpdateContentsOption::ApplyClip,
         };
     }
-    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = defaultDidDrawOptions());
-    void didDrawEntireCanvas(OptionSet<DidDrawOption> options = defaultDidDrawOptions());
-    void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
-    template<typename RectProvider> void didDraw(bool entireCanvas, NOESCAPE const RectProvider&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    void willUpdateContents(std::optional<FloatRect>, OptionSet<WillUpdateContentsOption> = defaultWillUpdateContentsOptions());
+    void willUpdateEntireContents(OptionSet<WillUpdateContentsOption> options = defaultWillUpdateContentsOptions());
 
     virtual std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
 

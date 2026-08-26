@@ -457,7 +457,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(const CanvasRenderingContext& c
     m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->memoryCost());
 }
 
-void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
+void InspectorCanvasAgent::canvasContentsWillChange(CanvasBase& canvasBase, const FloatRect&)
 {
     RefPtr context = canvasBase.renderingContext();
     if (!context)
@@ -468,7 +468,7 @@ void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect
     if (!inspectorCanvas)
         return;
 
-    inspectorCanvas->canvasChanged();
+    inspectorCanvas->canvasContentsWillChange();
 }
 
 void InspectorCanvasAgent::canvasDestroyed(CanvasBase& canvasBase)

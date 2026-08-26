@@ -42,7 +42,7 @@ public:
 
     virtual bool isStyleCanvasImage() const { return false; }
 
-    virtual void canvasChanged(CanvasBase&, const FloatRect& changedRect) = 0;
+    virtual void canvasContentsWillChange(CanvasBase&, const FloatRect& changingRect) = 0;
     virtual void canvasResized(CanvasBase&) = 0;
     virtual void canvasDestroyed(CanvasBase&) = 0;
 };

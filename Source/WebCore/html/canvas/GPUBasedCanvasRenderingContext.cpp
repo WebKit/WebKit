@@ -44,10 +44,10 @@ HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const
     return dynamicDowncast<HTMLCanvasElement>(canvasBase());
 }
 
-void GPUBasedCanvasRenderingContext::markCanvasChanged()
+void GPUBasedCanvasRenderingContext::willUpdateCanvasContents()
 {
     Ref canvas = canvasBase();
-    canvas->didDraw(FloatRect { { }, canvas->size() }, ShouldApplyPostProcessingToDirtyRect::No);
+    canvas->willUpdateContents(FloatRect { { }, canvas->size() }, ShouldApplyPostProcessingToDirtyRect::No);
 }
 
 } // namespace WebCore

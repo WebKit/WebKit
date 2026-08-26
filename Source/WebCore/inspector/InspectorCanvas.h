@@ -85,7 +85,7 @@ public:
     HashSet<Ref<Element>> cssCanvasClientNodes() const;
     size_t memoryCost() const;
 
-    void canvasChanged();
+    void canvasContentsWillChange();
 
     bool hasActiveInspectorCanvasCallTracer() const;
     void setHasActiveInspectorCanvasCallTracer(bool);

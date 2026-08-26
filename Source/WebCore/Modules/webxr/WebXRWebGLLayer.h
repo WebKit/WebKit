@@ -102,7 +102,7 @@ private:
     static IntSize computeNativeWebGLFramebufferResolution();
     static IntSize computeRecommendedWebGLFramebufferResolution();
 
-    void canvasChanged(CanvasBase&, const FloatRect&) final { };
+    void canvasContentsWillChange(CanvasBase&, const FloatRect&) final { };
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
 

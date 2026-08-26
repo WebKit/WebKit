@@ -76,7 +76,7 @@ private:
         Source(HTMLCanvasElement&, std::optional<double>&&);
 
         // CanvasObserver overrides.
-        void canvasChanged(CanvasBase&, const FloatRect&) final;
+        void canvasContentsWillChange(CanvasBase&, const FloatRect&) final;
         void canvasResized(CanvasBase&) final;
         void canvasDestroyed(CanvasBase&) final;
 

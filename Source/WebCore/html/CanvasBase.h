@@ -90,7 +90,7 @@ public:
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
     bool NODELETE hasObserver(CanvasObserver&) const;
-    void notifyObserversCanvasChanged(const FloatRect&);
+    void notifyObserversContentsWillChange(const FloatRect&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
     void addDisplayBufferObserver(CanvasDisplayBufferObserver&);
@@ -100,9 +100,11 @@ public:
 
     HashSet<Ref<Element>> cssCanvasClients() const;
 
+    // Called before the canvas contents are updated, so that the observers and the pending
+    // readback post-processing are notified of the area that is about to change.
     // !rect means caller knows the full canvas is invalidated previously.
-    void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
-    virtual void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
+    void willUpdateContents(const std::optional<FloatRect>& rect) { return willUpdateContents(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
+    virtual void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
 
     virtual Image* copiedImage() const = 0;
     virtual void clearCopiedImage() const = 0;

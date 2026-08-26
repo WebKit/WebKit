@@ -595,7 +595,7 @@ std::optional<FloatRect> HTMLCanvasElement::computeDirtyRectangleIfNeeded(const 
     return dirtyRect;
 }
 
-void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
+void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     clearCopiedImage();
     if (CheckedPtr renderer = renderBox()) {
@@ -605,7 +605,7 @@ void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldAppl
         else if (dirtyRect)
             renderer->repaintRectangle(enclosingIntRect(*dirtyRect));
     }
-    CanvasBase::didDraw(rect, shouldApplyPostProcessingToDirtyRect);
+    CanvasBase::willUpdateContents(rect, shouldApplyPostProcessingToDirtyRect);
 }
 
 void HTMLCanvasElement::didUpdateSizeProperties()

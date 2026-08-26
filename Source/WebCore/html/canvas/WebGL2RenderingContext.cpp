@@ -666,8 +666,8 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
 {
     if (isContextLost())
         return;
+    willUpdateDrawingBufferContents(CallerTypeOther);
     protect(graphicsContextGL())->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    markContextChangedAndNotifyCanvasObserver(CallerTypeOther);
 }
 
 void WebGL2RenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
@@ -1598,6 +1598,7 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *protect(m_currentProgram)))
         return;
 
+    willUpdateDrawingBufferContents();
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
@@ -1605,8 +1606,6 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
 
         protect(graphicsContextGL())->drawRangeElements(mode, start, end, count, type, offset);
     }
-
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
@@ -1666,6 +1665,9 @@ void WebGL2RenderingContext::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, 
     if (!data)
         return;
 
+    // This might be used to clear the stencil buffer of the default back buffer.
+    // Notification is required to update the canvas.
+    willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
     clearIfComposited(CallerTypeDrawOrClear);
@@ -1695,15 +1697,14 @@ void WebGL2RenderingContext::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, 
     if (!data)
         return;
 
+    // This might be used to clear the color buffer of the default back buffer.
+    // Notification is required to update the canvas.
+    willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
     clearIfComposited(CallerTypeDrawOrClear);
 
     protect(graphicsContextGL())->clearBufferfv(buffer, drawbuffer, data.value());
-
-    // This might have been used to clear the color buffer of the default
-    // back buffer. Notification is required to update the canvas.
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGL2RenderingContext::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, GCGLfloat depth, GCGLint stencil)
@@ -1711,6 +1712,9 @@ void WebGL2RenderingContext::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, 
     if (isContextLost())
         return;
 
+    // This might be used to clear the depth and stencil buffers of the default back buffer.
+    // Notification is required to update the canvas.
+    willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
     clearIfComposited(CallerTypeDrawOrClear);

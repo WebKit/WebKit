@@ -61,6 +61,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWE
     if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
+    context->willUpdateDrawingBufferContents();
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
@@ -68,8 +69,6 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWE
 
         protect(context->graphicsContextGL())->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
     }
-
-    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance)
@@ -84,6 +83,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBa
     if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
+    context->willUpdateDrawingBufferContents();
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
@@ -91,8 +91,6 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBa
 
         protect(context->graphicsContextGL())->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
     }
-
-    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 } // namespace WebCore

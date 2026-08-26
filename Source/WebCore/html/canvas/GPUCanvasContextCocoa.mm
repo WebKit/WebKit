@@ -615,7 +615,7 @@ ExceptionOr<Ref<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
     if (currentTexture)
         return currentTexture.releaseNonNull();
 
-    markContextChangedAndNotifyCanvasObservers();
+    willUpdateDisplayBufferContents();
     m_currentTexture = m_presentationContext->getCurrentTexture(m_configuration->frameCount);
     currentTexture = m_currentTexture;
     return currentTexture.releaseNonNull();
@@ -722,14 +722,14 @@ std::optional<FramesPerSecond> GPUCanvasContextCocoa::preferredRenderingUpdateFr
     return m_framePacer.preferredFramesPerSecond(MonotonicTime::now());
 }
 
-void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
+void GPUCanvasContextCocoa::willUpdateDisplayBufferContents()
 {
     m_compositingResultsNeedsUpdating = true;
     if (m_readDisplayBuffer) {
         m_readDisplayBuffer = nullptr;
         updateMemoryCost();
     }
-    markCanvasChanged();
+    willUpdateCanvasContents();
 }
 
 void GPUCanvasContextCocoa::updateMemoryCost() const

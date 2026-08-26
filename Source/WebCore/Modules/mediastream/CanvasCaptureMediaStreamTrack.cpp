@@ -168,7 +168,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
     setSize(IntSize(canvas.width(), canvas.height()));
 }
 
-void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase&, const FloatRect&)
+void CanvasCaptureMediaStreamTrack::Source::canvasContentsWillChange(CanvasBase&, const FloatRect&)
 {
     // If canvas needs preparation, the capture will be scheduled once document prepares the canvas.
     RefPtr canvas = m_canvas.get();

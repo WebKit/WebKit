@@ -74,6 +74,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
     if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
+    context->willUpdateDrawingBufferContents();
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
@@ -81,8 +82,6 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
 
         protect(context->graphicsContextGL())->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.span().subspan(firstsOffset).data(), countsList.span().subspan(countsOffset).data(), instanceCountsList.span().subspan(instanceCountsOffset).data(), baseInstancesList.span().subspan(baseInstancesOffset).data(), static_cast<size_t>(drawcount) });
     }
-
-    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, Int32List&& baseVerticesList, GCGLuint baseVerticesOffset, Uint32List&& baseInstancesList, GCGLuint baseInstancesOffset, GCGLsizei drawcount)
@@ -106,6 +105,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
     if (RefPtr currentProgram = context->m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context.get(), *currentProgram))
         return;
 
+    context->willUpdateDrawingBufferContents();
     context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
@@ -113,8 +113,6 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
 
         protect(context->graphicsContextGL())->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.span().subspan(countsOffset).data(), offsetsList.span().subspan(offsetsOffset).data(), instanceCountsList.span().subspan(instanceCountsOffset).data(), baseVerticesList.span().subspan(baseVerticesOffset).data(), baseInstancesList.span().subspan(baseInstancesOffset).data(), static_cast<size_t>(drawcount) }, type);
     }
-
-    context->markContextChangedAndNotifyCanvasObserver();
 }
 
 bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateDrawcount(WebGLRenderingContextBase& context, ASCIILiteral functionName, GCGLsizei drawcount)

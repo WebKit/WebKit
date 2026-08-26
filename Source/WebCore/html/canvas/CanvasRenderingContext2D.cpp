@@ -174,8 +174,8 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
         return;
     CheckedPtr canvasStyle = canvas->computedStyle();
     auto zoomFactor = canvasStyle ? canvasStyle->usedZoom() : 1.f;
+    willUpdateEntireContents();
     context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(protect(element.document())->styleColorOptions(canvasStyle)), zoomFactor);
-    didDrawEntireCanvas();
 
     if (CheckedPtr cache = element.document().existingAXObjectCache()) {
         auto pathBounds = path.boundingRect();

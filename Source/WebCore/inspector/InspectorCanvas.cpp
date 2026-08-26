@@ -336,7 +336,7 @@ size_t InspectorCanvas::memoryCost() const
     );
 }
 
-void InspectorCanvas::canvasChanged()
+void InspectorCanvas::canvasContentsWillChange()
 {
     Ref context = std::get<WeakRef<CanvasRenderingContext>>(m_context);
     if (!context->hasActiveInspectorCanvasCallTracer())

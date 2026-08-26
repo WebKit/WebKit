@@ -133,17 +133,17 @@ void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 
 void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, bool originClean, bool opaque)
 {
-    m_opaque = opaque;
     IntSize newSize = newBuffer->truncatedLogicalSize();
+    Ref canvas = this->canvas();
+    canvas->willUpdateContents(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
+    m_opaque = opaque;
     updateMemoryCost(newBuffer->memoryCost());
     m_buffer = WTF::move(newBuffer);
-    Ref canvas = this->canvas();
     canvas->setSizeForControllingContext(newSize);
     if (originClean)
         canvas->setOriginClean();
     else
         canvas->setOriginTainted();
-    canvas->didDraw(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
 }
 
 PixelFormat PlaceholderRenderingContext::pixelFormat() const

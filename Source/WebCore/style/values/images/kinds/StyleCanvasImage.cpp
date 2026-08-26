@@ -119,12 +119,12 @@ void CanvasImage::didRemoveClient(RenderElement& renderer)
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
 }
 
-void CanvasImage::canvasChanged(CanvasBase& canvasBase, const FloatRect& changedRect)
+void CanvasImage::canvasContentsWillChange(CanvasBase& canvasBase, const FloatRect& changingRect)
 {
     ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
     ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
 
-    auto imageChangeRect = enclosingIntRect(changedRect);
+    auto imageChangeRect = enclosingIntRect(changingRect);
     for (auto entry : clients()) {
         auto& client = entry.key;
         client.imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);

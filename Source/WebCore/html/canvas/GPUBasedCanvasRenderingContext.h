@@ -45,7 +45,7 @@ protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&, CanvasRenderingContext::Type);
 
     HTMLCanvasElement* NODELETE htmlCanvas() const;
-    void markCanvasChanged();
+    void willUpdateCanvasContents();
 };
     
 } // namespace WebCore

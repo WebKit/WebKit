@@ -58,7 +58,7 @@ public:
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
-    void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
+    void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
     void setSizeForControllingContext(IntSize) { };
 
     Image* copiedImage() const final;

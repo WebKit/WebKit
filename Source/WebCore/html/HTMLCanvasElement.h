@@ -123,7 +123,7 @@ public:
 #endif
 
     // Used for rendering
-    void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
+    void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
 
     void paint(GraphicsContext&, const LayoutRect&);
 

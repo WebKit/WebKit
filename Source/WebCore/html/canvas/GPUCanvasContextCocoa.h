@@ -84,7 +84,7 @@ public:
 private:
     explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&, Document*);
 
-    void markContextChangedAndNotifyCanvasObservers();
+    void willUpdateDisplayBufferContents();
 
     bool isConfigured() const
     {

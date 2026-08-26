@@ -74,7 +74,7 @@ private:
 
     // CanvasObserver.
     bool isStyleCanvasImage() const final { return true; }
-    void canvasChanged(CanvasBase&, const FloatRect&) final;
+    void canvasContentsWillChange(CanvasBase&, const FloatRect&) final;
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final;
 

@@ -348,11 +348,11 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTF::move(blob));
 }
 
-void OffscreenCanvas::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
+void OffscreenCanvas::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     clearCopiedImage();
     scheduleCommitToPlaceholderCanvas();
-    CanvasBase::didDraw(rect, shouldApplyPostProcessingToDirtyRect);
+    CanvasBase::willUpdateContents(rect, shouldApplyPostProcessingToDirtyRect);
 }
 
 Image* OffscreenCanvas::copiedImage() const

@@ -77,6 +77,7 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
         return { };
 
     Ref canvasBase = this->canvasBase();
+    canvasBase->willUpdateContents(FloatRect { { }, canvasBase->size() });
     if (originClean)
         canvasBase->setOriginClean();
     else
@@ -90,7 +91,6 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
         m_buffer = nullptr;
         updateMemoryCost(0);
     }
-    canvasBase->didDraw(FloatRect { { }, canvasBase->size() });
     return { };
 }
 
@@ -100,10 +100,10 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
     auto size = canvasBase->size();
     if (!m_buffer)
         return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    canvasBase->willUpdateContents(FloatRect { { }, size });
     RefPtr result = std::exchange(m_buffer, { });
     updateMemoryCost(0);
     canvasBase->setOriginClean();
-    canvasBase->didDraw(FloatRect { { }, size });
     return result;
 }
 

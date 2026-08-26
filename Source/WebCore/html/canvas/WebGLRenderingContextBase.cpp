@@ -678,7 +678,7 @@ void WebGLRenderingContextBase::destroyGraphicsContextGL()
     }
 }
 
-void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLRenderingContextBase::CallerType caller)
+void WebGLRenderingContextBase::willUpdateDrawingBufferContents(WebGLRenderingContextBase::CallerType caller)
 {
     // Draw and clear ops with rasterizer discard enabled do not change the canvas.
     if (caller == CallerTypeDrawOrClear && m_rasterizerDiscardEnabled)
@@ -693,7 +693,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
         m_readDrawingBuffer = nullptr;
         updateMemoryCost();
     }
-    markCanvasChanged();
+    willUpdateCanvasContents();
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
@@ -1269,9 +1269,10 @@ void WebGLRenderingContextBase::clear(GCGLbitfield mask)
 {
     if (isContextLost())
         return;
-    if (!clearIfComposited(CallerTypeDrawOrClear, mask))
+    willUpdateDrawingBufferContents();
+    bool cleared = clearIfComposited(CallerTypeDrawOrClear, mask);
+    if (!cleared)
         protect(graphicsContextGL())->clear(mask);
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::clearColor(GCGLfloat r, GCGLfloat g, GCGLfloat b, GCGLfloat a)
@@ -1642,14 +1643,13 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
     if (RefPtr currentProgram = m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *currentProgram))
         return;
 
+    willUpdateDrawingBufferContents();
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         protect(graphicsContextGL())->drawArrays(mode, first, count);
     }
-
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset)
@@ -1662,13 +1662,13 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     if (RefPtr currentProgram = m_currentProgram; currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *currentProgram))
         return;
 
+    willUpdateDrawingBufferContents();
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         protect(graphicsContextGL())->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
     }
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::enable(GCGLenum cap)
@@ -5461,14 +5461,13 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     if (currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *currentProgram))
         return;
 
+    willUpdateDrawingBufferContents();
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         protect(graphicsContextGL())->drawArraysInstanced(mode, first, count, primcount);
     }
-
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
@@ -5482,14 +5481,13 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *currentProgram))
         return;
 
+    willUpdateDrawingBufferContents();
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
         protect(graphicsContextGL())->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
     }
-
-    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)

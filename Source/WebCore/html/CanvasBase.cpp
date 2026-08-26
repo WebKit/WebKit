@@ -140,19 +140,19 @@ bool CanvasBase::hasObserver(CanvasObserver& observer) const
     return m_observers.contains(observer);
 }
 
-void CanvasBase::notifyObserversCanvasChanged(const FloatRect& rect)
+void CanvasBase::notifyObserversContentsWillChange(const FloatRect& rect)
 {
     for (CheckedRef observer : m_observers)
-        observer->canvasChanged(*this, rect);
+        observer->canvasContentsWillChange(*this, rect);
 }
 
-void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
+void CanvasBase::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     addCanvasNeedingPreparationForDisplayOrFlush();
     IntRect dirtyRect { { }, size() };
     if (rect)
         dirtyRect.intersect(enclosingIntRect(*rect));
-    notifyObserversCanvasChanged(dirtyRect);
+    notifyObserversContentsWillChange(dirtyRect);
 
     // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
     if (shouldInjectNoiseBeforeReadback()) {
