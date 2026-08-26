@@ -23,6 +23,7 @@
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
 #include "WebKitWebsitePolicies.h"
+#include <algorithm>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -419,6 +420,125 @@ static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpstr(secondSeenUserAgent.data(), ==, kSiteZUserAgent);
 }
 
+static void setProxySettings(PolicyClientTest* test, WebKitNetworkProxyMode mode, WebKitNetworkProxySettings* proxySettings)
+{
+#if ENABLE(2022_GLIB_API)
+    webkit_network_session_set_proxy_settings(test->m_networkSession.get(), mode, proxySettings);
+#else
+    auto* websiteDataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
+    webkit_website_data_manager_set_network_proxy_settings(websiteDataManager, mode, proxySettings);
+#endif
+}
+
+static void testUpgradeToHTTPSPolicy(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
+
+    GRefPtr<WebKitWebsitePolicies> defaultPolicies = adoptGRef(webkit_website_policies_new());
+    g_assert_cmpint(webkit_website_policies_get_upgrade_to_https_policy(defaultPolicies.get()), ==, WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED);
+
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("upgrade-to-https-policy", WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP, nullptr));
+    g_assert_cmpint(webkit_website_policies_get_upgrade_to_https_policy(test->m_websitePolicies.get()), ==, WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP);
+
+    // Server listens on an IP address, which is never upgraded, so the load is
+    // unaffected by the policy.
+    auto serverURI = kServer->getURIForPath("/");
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    test->loadURI(serverURI.data());
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadFailed);
+    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(test->m_webView.get()), ==, serverURI);
+    g_assert_cmpint(std::ranges::count(test->m_loadEvents, LoadTrackingTest::ProvisionalLoadStarted), ==, 1);
+
+    // Route http through server and https to a port nothing listens on, so that
+    // the upgraded navigation fails and falls back to http.
+    WebKitNetworkProxySettings* proxySettings = webkit_network_proxy_settings_new(nullptr, nullptr);
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", kServer->baseURL().string().utf8().data());
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "https", "http://127.0.0.1:1/");
+    setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, proxySettings);
+
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    test->loadURI("http://site.example/");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadFailed);
+    g_assert_cmpstr(webkit_web_view_get_uri(test->m_webView.get()), ==, "http://site.example/");
+    // The HTTPS attempt and the HTTP fallback are two separate provisional loads.
+    g_assert_cmpint(std::ranges::count(test->m_loadEvents, LoadTrackingTest::ProvisionalLoadStarted), ==, 2);
+
+    setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
+    webkit_network_proxy_settings_free(proxySettings);
+
+    // With ERROR_ON_FAILURE an HTTP navigation that cannot be upgraded fails
+    // instead of loading over cleartext.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("upgrade-to-https-policy", WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE, nullptr));
+    g_assert_cmpint(webkit_website_policies_get_upgrade_to_https_policy(test->m_websitePolicies.get()), ==, WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE);
+
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    test->loadURI(serverURI.data());
+    test->waitUntilLoadFinished();
+    g_assert_true(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY);
+}
+
+static void policySchemeRequestCallback(WebKitURISchemeRequest* request, gpointer)
+{
+    static const char* replyHTML = "<html><body>custom scheme</body></html>";
+    GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(replyHTML, strlen(replyHTML), nullptr));
+    webkit_uri_scheme_request_finish(request, stream.get(), strlen(replyHTML), "text/html");
+}
+
+static void testUpgradeToHTTPSPolicySecureSchemes(PolicyClientTest* test, gconstpointer)
+{
+    // ERROR_ON_FAILURE rejects any scheme that is not registered as secure, not
+    // just cleartext HTTP.
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("upgrade-to-https-policy", WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE, nullptr));
+
+    webkit_web_context_register_uri_scheme(test->m_webContext.get(), "policyscheme", policySchemeRequestCallback, nullptr, nullptr);
+
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    test->loadURI("policyscheme:index.html");
+    test->waitUntilLoadFinished();
+    g_assert_true(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY);
+
+    // Once registered as secure the same navigation is allowed.
+    webkit_security_manager_register_uri_scheme_as_secure(webkit_web_context_get_security_manager(test->m_webContext.get()), "policyscheme");
+
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+    test->loadURI("policyscheme:index.html");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadFailed);
+    g_assert_cmpstr(webkit_web_view_get_uri(test->m_webView.get()), ==, "policyscheme:index.html");
+}
+
+static void testHTTPSByDefaultSetting(PolicyClientTest* test, gconstpointer)
+{
+    // The global HTTPS-by-default feature upgrades every navigation, independently
+    // of any website policies.
+    WebKitFeatureList* features = webkit_settings_get_experimental_features();
+    WebKitFeature* httpsByDefault = webkit_feature_list_find(features, "HTTPSByDefault");
+    g_assert_nonnull(httpsByDefault);
+    webkit_settings_set_feature_enabled(webkit_web_view_get_settings(test->m_webView.get()), httpsByDefault, TRUE);
+
+    WebKitNetworkProxySettings* proxySettings = webkit_network_proxy_settings_new(nullptr, nullptr);
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "http", kServer->baseURL().string().utf8().data());
+    webkit_network_proxy_settings_add_proxy_for_scheme(proxySettings, "https", "http://127.0.0.1:1/");
+    setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, proxySettings);
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->loadURI("http://site.example/");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadFailed);
+    g_assert_cmpstr(webkit_web_view_get_uri(test->m_webView.get()), ==, "http://site.example/");
+    g_assert_cmpint(std::ranges::count(test->m_loadEvents, LoadTrackingTest::ProvisionalLoadStarted), ==, 2);
+
+    setProxySettings(test, WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
+    webkit_network_proxy_settings_free(proxySettings);
+    webkit_settings_set_feature_enabled(webkit_web_view_get_settings(test->m_webView.get()), httpsByDefault, FALSE);
+    webkit_feature_list_unref(features);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -428,6 +548,9 @@ void beforeAll()
     PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "autoplay-policy", testAutoplayPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "custom-user-agent-policy", testCustomUserAgentPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "upgrade-to-https-policy", testUpgradeToHTTPSPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "upgrade-to-https-policy-secure-schemes", testUpgradeToHTTPSPolicySecureSchemes);
+    PolicyClientTest::add("WebKitPolicyClient", "https-by-default-setting", testHTTPSByDefaultSetting);
     // WARNING: This test must come last, it uses racey constructs that
     // interfere nondeterminisically with any test running after it.
     // https://bugs.webkit.org/show_bug.cgi?id=213190

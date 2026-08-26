@@ -64,6 +64,40 @@ typedef enum {
     WEBKIT_AUTOPLAY_DENY
 } WebKitAutoplayPolicy;
 
+/**
+ * WebKitUpgradeToHTTPSPolicy:
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED: Do not request an upgrade.
+ *     Note that this does not disable HSTS, which applies to every navigation.
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP: Upgrade HTTP
+ *     navigations to HTTPS, silently falling back to HTTP if the HTTPS load
+ *     fails. Cleartext HTTP is still allowed for navigations that cannot be
+ *     upgraded.
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE: Upgrade HTTP navigations to
+ *     HTTPS and never load insecurely. Navigations that cannot be upgraded, and
+ *     upgraded navigations whose HTTPS load fails, fail with
+ *     %WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY. This applies to
+ *     every scheme that is not registered as secure, not only HTTP, so custom
+ *     schemes need [method@SecurityManager.register_uri_scheme_as_secure] to
+ *     remain loadable.
+ *
+ * Enum values used to specify how HTTP navigations are upgraded to HTTPS.
+ *
+ * This is an optimistic upgrade attempted without any prior knowledge about the
+ * host. This is unlike and independent of HSTS which will never downgrade to
+ * HTTP.
+ *
+ * Only main frame navigations are upgraded; requests to localhost and to IP
+ * addresses are never upgraded. Falling back to HTTP is never done for TLS
+ * failures, which always fail the load.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED,
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP,
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE
+} WebKitUpgradeToHTTPSPolicy;
+
 WEBKIT_API WebKitWebsitePolicies *
 webkit_website_policies_new                                   (void);
 
@@ -76,5 +110,8 @@ webkit_website_policies_get_autoplay_policy                   (WebKitWebsitePoli
 
 WEBKIT_API const gchar *
 webkit_website_policies_get_custom_user_agent                 (WebKitWebsitePolicies *policies);
+
+WEBKIT_API WebKitUpgradeToHTTPSPolicy
+webkit_website_policies_get_upgrade_to_https_policy           (WebKitWebsitePolicies *policies);
 
 G_END_DECLS

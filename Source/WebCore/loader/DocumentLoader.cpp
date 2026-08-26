@@ -2326,7 +2326,10 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
             return;
         }
 
-        if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)) {
+        bool isHTTPSOnlyActive = advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+            || m_httpsByDefaultMode == HTTPSByDefaultMode::UpgradeWithUserMediatedFallback
+            || m_httpsByDefaultMode == HTTPSByDefaultMode::UpgradeAndNoFallback;
+        if (isHTTPSOnlyActive) {
             if (platformStrategies()->loaderStrategy()->isHttpNavigationWithHTTPSOnlyError(mainResourceOrError.error())) {
                 DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL has HTTP scheme with HTTPSOnly enabled");
                 cancelMainResourceLoad(mainResourceOrError.error());

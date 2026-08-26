@@ -191,11 +191,8 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
         case NSURLErrorClientCertificateRequired:
             isRecoverableError = true;
         }
-    } else if ([nsDomain isEqualToString:@"WebKitErrorDomain"]) {
-        // FIXME: These literals should be moved into a central location that is shared with WebKit::API.
-        constexpr auto httpsUpgradeRedirectLoop { 304 };
-        isRecoverableError = m_errorCode == httpsUpgradeRedirectLoop;
-    }
+    } else if (m_domain == errorDomainWebKitNetwork)
+        isRecoverableError = m_errorCode == errorCodeHTTPSUpgradeRedirectLoop;
 
     if (isRecoverableError && m_failingURL.protocolIs("https"_s))
         return ResourceError::ErrorRecoveryMethod::HTTPFallback;
