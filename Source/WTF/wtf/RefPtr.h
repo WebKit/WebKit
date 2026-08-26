@@ -103,7 +103,7 @@ public:
     template<typename X, typename Y> RefPtr(Ref<X, Y>&&);
     template<typename X, typename Y, typename Z> RefPtr(const WeakPtr<X, Y, Z>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
     template<typename X, typename Y> RefPtr(const CheckedPtr<X, Y>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
-    template<typename X, typename Y> RefPtr(const ThreadSafeWeakPtr<X, Y>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
+    template<typename X> RefPtr(const ThreadSafeWeakPtr<X>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     RefPtr(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
@@ -163,8 +163,8 @@ template<typename X, typename Y, typename Z> RefPtr(const WeakPtr<X, Y, Z>&) -> 
 template<typename X, typename Y, typename Z> RefPtr(WeakPtr<X, Y, Z>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 template<typename X, typename Y> RefPtr(const CheckedPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 template<typename X, typename Y> RefPtr(CheckedPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
-template<typename X, typename Y> RefPtr(const ThreadSafeWeakPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
-template<typename X, typename Y> RefPtr(ThreadSafeWeakPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X> RefPtr(const ThreadSafeWeakPtr<X>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X> RefPtr(ThreadSafeWeakPtr<X>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
 
 template<typename T, typename U, typename V>
 template<typename X, typename Y>
