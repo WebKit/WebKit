@@ -739,6 +739,7 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 #endif
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
+    _impl->setUpGestureController();
     _impl->addTextSelectionManager();
 #endif
 }

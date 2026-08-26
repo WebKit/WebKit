@@ -41,6 +41,7 @@
 #import "ViewGestureController.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebView.h"
+#import "WKWebViewInternal.h"
 #import "WebEventModifier.h"
 #import "WebEventType.h"
 #import "WebKit-Swift.h"
@@ -72,7 +73,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/WeakPtr.h>
 
 #define WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(pageID, fmt, ...) RELEASE_LOG(ViewGestures, "[pageProxyID=%llu] %s: " fmt, pageID, std::source_location::current().function_name(), ##__VA_ARGS__)
 #define WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(pageID, fmt, ...) RELEASE_LOG_DEBUG(ViewGestures, "[pageProxyID=%llu] %s: " fmt, pageID, std::source_location::current().function_name(), ##__VA_ARGS__)
@@ -189,8 +189,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 @end
 
 @implementation WKAppKitGestureController {
-    WeakPtr<WebKit::WebPageProxy> _page;
-    WeakPtr<WebKit::WebViewImpl> _viewImpl;
+    WeakObjCPtr<WKWebView> _view;
 
     RetainPtr<NSPanGestureRecognizer> _panGestureRecognizer;
     RetainPtr<NSPressGestureRecognizer> _mouseTrackingGestureRecognizer;
@@ -211,14 +210,10 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     bool _potentialClickInProgress;
     bool _isClickHighlightIDValid;
-    bool _hasHighlightForPotentialClick;
-    bool _isExpectingFastClickCommit;
     bool _isSuppressingSingleClickGestureForTextSelection;
 
     std::optional<WebKit::TransactionID> _layerTreeTransactionIdAtLastInteractionStart;
     Markable<WebKit::ClickIdentifier> _latestClickID;
-    WebCore::PointerID _commitPotentialClickPointerId;
-    WebCore::FloatPoint _lastInteractionLocationInWebView;
 
     bool _mouseTrackingHasSentMouseDown;
     WebCore::FloatPoint _mouseTrackingStartLocationInWindow;
@@ -239,40 +234,37 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
 #import <WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>
-#elif __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditions.mm>)
-#import <WebKitAdditions/WKAppKitGestureControllerAdditions.mm>
 #endif
 
-- (instancetype)initWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)viewImpl
+- (instancetype)initWithView:(WKWebView *)view
 {
     if (!(self = [super init]))
         return nil;
 
-    _page = page.get();
-    _viewImpl = viewImpl.get();
-    _positionInformationManager = makeUnique<WebKit::PositionInformationManager>(page.get());
+    _view = view;
     _fastScrollTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKFastScrollTracker>(WebKit::WKFastScrollTracker::init());
     _directionalScrollLockTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKDirectionalScrollLockTracker>(WebKit::WKDirectionalScrollLockTracker::init());
+
+    return self;
+}
+
+- (void)setUp
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    _positionInformationManager = makeUnique<WebKit::PositionInformationManager>(*[webView _protectedPage]);
 
     [self setUpGestureRecognizers];
     [self addGesturesToWebView];
     [self enableGesturesIfNeeded];
     [self ensureGesturesAreNotArchived];
-
-    return self;
 }
 
 - (WKWebView *)webView
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return nil;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return nil;
-
-    return webView.getAutoreleased();
+    return _view.getAutoreleased();
 }
 
 - (NSPanGestureRecognizer *)panGestureRecognizer
@@ -378,11 +370,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)addGesturesToWebView
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return;
 
@@ -439,44 +427,40 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)enableGestureIfNeeded:(NSGestureRecognizer *)gesture
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    bool gestureEnabled = protect(page->preferences())->useAppKitGestures();
+    bool gestureEnabled = protect([webView _protectedPage]->preferences())->useAppKitGestures();
 
     if (gesture == _imageAnalysisGestureRecognizer)
         gestureEnabled = gestureEnabled && WebKit::isLiveTextAvailableAndEnabled();
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "%@ setEnabled:%d", gestureLogDescription(gesture), static_cast<int>(gestureEnabled));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "%@ setEnabled:%d", gestureLogDescription(gesture), static_cast<int>(gestureEnabled));
     [gesture setEnabled:gestureEnabled];
 }
 
 - (void)beginSuppressingSingleClickGestureForTextSelection
 {
-    RefPtr page = _page.get();
-    if (!page) {
-        ASSERT_NOT_REACHED();
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
-    }
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Begin suppressing single-click gesture for text selection");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Begin suppressing single-click gesture for text selection");
 
     _isSuppressingSingleClickGestureForTextSelection = true;
 
     [self _handleClickCancelled];
-    page->cancelPotentialClick();
+    [webView _protectedPage]->cancelPotentialClick();
 }
 
 - (void)endSuppressingSingleClickGestureForTextSelection
 {
-    RefPtr page = _page.get();
-    if (!page) {
-        ASSERT_NOT_REACHED();
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
-    }
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "End suppressing single-click gesture for text selection");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "End suppressing single-click gesture for text selection");
 
     _isSuppressingSingleClickGestureForTextSelection = false;
 }
@@ -485,31 +469,28 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)panGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     RELEASE_ASSERT(_panGestureRecognizer == gesture);
 
-    if (viewImpl->ignoresAllEvents()) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Ignored gesture");
+    CheckedPtr impl = [webView _impl];
+    if (impl->ignoresAllEvents()) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Ignored gesture");
         return;
     }
 
     if ([gesture state] == NSGestureRecognizerStateBegan) {
-        viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
+        impl->dismissContentRelativeChildWindowsWithAnimation(false);
         _fastScrollTracker->didStartGesture([gesture locationInView:nil]);
         _directionalScrollLockTracker->didStartGesture();
     }
 
 #if HAVE(NSREFRESHCONTROLLER)
-    viewImpl->updateRefreshControllerForPanGesture([gesture state]);
+    impl->updateRefreshControllerForPanGesture([gesture state]);
 #endif
 
     [self sendWheelEventForGesture:_panGestureRecognizer];
@@ -530,19 +511,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)singleClickGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     RELEASE_ASSERT(_singleClickGestureRecognizer == gesture);
 
@@ -567,7 +540,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     // forward the click manually.
     if (gesture.state == NSGestureRecognizerStateBegan) {
         WebCore::FloatPoint location { [gesture locationInView:webView.get()] };
-        if (RetainPtr hitView = viewImpl->hitTestPDFHUD(location); hitView && viewImpl->isViewVisible(hitView.get())) {
+        CheckedPtr impl = [webView _impl];
+        if (RetainPtr hitView = impl->hitTestPDFHUD(location); hitView && impl->isViewVisible(hitView.get())) {
             if (RetainPtr hudButton = dynamic_objc_cast<NSButton>(hitView))
                 [hudButton performClick:nil];
             gesture.state = NSGestureRecognizerStateCancelled;
@@ -593,43 +567,28 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)doubleClickGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     RELEASE_ASSERT(_doubleClickGestureRecognizer == gesture);
 
-    viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
+    CheckedPtr impl = [webView _impl];
+    impl->dismissContentRelativeChildWindowsWithAnimation(false);
 
     auto magnificationOrigin = [webView convertPoint:[gesture locationInView:nil] fromView:nil];
-    protect(viewImpl->ensureGestureController())->handleSmartMagnificationGesture(magnificationOrigin);
+    protect(impl->ensureGestureController())->handleSmartMagnificationGesture(magnificationOrigin);
 }
 
 - (void)secondaryClickGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     RELEASE_ASSERT(_secondaryClickGestureRecognizer == gesture);
 
@@ -645,57 +604,45 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto modifierFlags = [gesture modifierFlags];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto location = [gesture locationInView:nil];
-    auto windowNumber = viewImpl->windowNumber();
+    CheckedPtr impl = [webView _impl];
+    auto windowNumber = impl->windowNumber();
 
     RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:location modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:windowNumber context:NULL eventNumber:0 clickCount:1 pressure:1.0];
-    viewImpl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation);
+    impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation);
 
     RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:location modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:windowNumber context:NULL eventNumber:0 clickCount:1 pressure:0.0];
-    viewImpl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation);
+    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation);
 }
 
 - (void)mouseTrackingGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl) {
-        ASSERT_NOT_REACHED();
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
-    }
 
-    RetainPtr webView = viewImpl->view();
-    if (!webView) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr page = _page.get();
-    if (!page) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     if (_dragGestureHasSentMouseDown) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Exiting early because _dragGestureHasSentMouseDown is true");
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Exiting early because _dragGestureHasSentMouseDown is true");
         return;
     }
 
     if (_isSuppressingSingleClickGestureForTextSelection) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Exiting early because _isSuppressingSingleClickGestureForTextSelection is true");
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Exiting early because _isSuppressingSingleClickGestureForTextSelection is true");
         return;
     }
 
     RELEASE_ASSERT(_mouseTrackingGestureRecognizer == gesture);
 
-    if (viewImpl->ignoresAllEvents())
+    CheckedPtr impl = [webView _impl];
+    if (impl->ignoresAllEvents())
         return;
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto modifierFlags = [gesture modifierFlags];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     WebCore::FloatPoint locationInWindow { [gesture locationInView:nil] };
-    auto windowNumber = viewImpl->windowNumber();
+    auto windowNumber = impl->windowNumber();
     auto timestamp = GetCurrentEventTime();
 
     switch (gesture.state) {
@@ -728,7 +675,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 eventNumber:0
                 clickCount:1
                 pressure:1.0];
-            viewImpl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+            impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
             _mouseTrackingHasSentMouseDown = true;
         }
 
@@ -741,7 +688,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             eventNumber:0
             clickCount:1
             pressure:1.0];
-        viewImpl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+        impl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         break;
     }
 
@@ -756,7 +703,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 eventNumber:0
                 clickCount:1
                 pressure:0.0];
-            viewImpl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+            impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         }
         [[fallthrough]];
     }
@@ -795,27 +742,19 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)imageAnalysisGestureRecognized:(NSGestureRecognizer *)gesture
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
     RELEASE_ASSERT(_imageAnalysisGestureRecognizer == gesture);
 
     if (gesture.state != NSGestureRecognizerStateBegan)
         return;
 
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
+    if (protect([webView _impl])->ignoresAllEvents())
         return;
 
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return;
-
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    if (viewImpl->ignoresAllEvents())
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { [gesture locationInView:webView.get()] } };
     request.includeImageData = true;
@@ -833,12 +772,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!strongSelf)
             return;
 
-        CheckedPtr viewImpl = strongSelf->_viewImpl.get();
-        if (!viewImpl)
-            return;
-
-        RefPtr page = strongSelf->_page.get();
-        if (!page)
+        RetainPtr webView = strongSelf->_view.get();
+        if (!webView)
             return;
 
         if (!isAnalyzableImageForLiveText(info)) {
@@ -863,21 +798,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         // This dereference is guaranteed to be non-nil due to the `isAnalyzableImageForLiveText` check above.
         const auto elementContext = *info.hostImageOrVideoElementContext;
 
-        const auto analyzerRequest = WebKit::createImageAnalyzerRequest(cgImage.get(), VKAnalysisTypeText);
+        RetainPtr analyzerRequest = WebKit::createImageAnalyzerRequest(cgImage.get(), VKAnalysisTypeText);
         const auto startTime = MonotonicTime::now();
-        viewImpl->processImageAnalyzerRequest(analyzerRequest.get(), [weakSelf, elementContext, requestLocation, gestureDeferralToken = WTF::move(gestureDeferralToken), startTime](RetainPtr<VKCImageAnalysis>&& result, NSError *) mutable {
+        protect([webView _impl])->processImageAnalyzerRequest(analyzerRequest.get(), [weakSelf, elementContext, requestLocation, gestureDeferralToken = WTF::move(gestureDeferralToken), startTime](RetainPtr<VKCImageAnalysis>&& result, NSError *) mutable {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
 
-            RefPtr page = strongSelf->_page.get();
-            if (!page)
+            RetainPtr webView = strongSelf->_view.get();
+            if (!webView)
                 return;
 
             auto hasTextResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeText];
             RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), hasTextResults);
 
-            page->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result.get()), elementContext, requestLocation, [gestureDeferralToken = WTF::move(gestureDeferralToken)](const auto& updateResult) mutable {
+            [webView _protectedPage]->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result.get()), elementContext, requestLocation, [gestureDeferralToken = WTF::move(gestureDeferralToken)](const auto& updateResult) mutable {
                 // Text found and injected as an image overlay -> allow the deferred text selection and
                 // prevent the drag / context-menu fallback (Live Text wins). Otherwise -> the reverse.
                 gestureDeferralToken->setOutcome(updateResult == WebKit::TextRecognitionUpdateResult::Text
@@ -910,11 +845,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(NSGestureRecognizer *)gestureRecognizer
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
 
@@ -934,11 +865,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginAction:(NSEvent *)event
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
 
@@ -946,12 +873,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     const auto isInScrollbar = [self _isPointInScrollbar:locationInView];
 
-    if (!isInScrollbar && viewImpl->isTextSelectedAtPoint(locationInView)) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "deferral: not deferring; text already selected at %@", NSStringFromPoint(locationInView));
+    if (!isInScrollbar && protect([webView _impl])->isTextSelectedAtPoint(locationInView)) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral: not deferring; text already selected at %@", NSStringFromPoint(locationInView));
         return NO;
     }
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
 
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInView } };
     _positionInformationManager->doAfterUpdate(request, [weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const auto& optionalInfo) {
@@ -965,9 +892,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!strongSelf || !strongDeferring)
             return;
 
+        RetainPtr webView = strongSelf->_view.get();
+        if (!webView)
+            return;
+
         auto deferralState = [strongDeferring state];
         if (deferralState != NSGestureRecognizerStatePossible) {
-            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(),
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(),
                 "deferral: position info arrived after deferring gesture exited Possible (state=%ld); skipping resolution", static_cast<long>(deferralState));
             return;
         }
@@ -978,7 +909,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             // Over a scrollbar: drive the scrollbar, not text selection -- prevent the deferred gestures
             // so the mouse-tracking -> `Scrollbar::mouseDown` path wins.
             if (isInScrollbar) {
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "deferral resolved: over scrollbar; preventing text-selection gestures");
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: over scrollbar; preventing text-selection gestures");
                 return true;
             }
 
@@ -998,13 +929,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
             if (strongDeferring == strongSelf->_dragDeferringGestureRecognizer) {
                 const auto isDraggable = representsDraggableElement(info);
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "deferral resolved: isDraggable=%d (link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d)", isDraggable, info.isLink, info.isImage, info.isAttachment, info.isDHTMLDraggable, info.isColorInput, info.prefersDraggingOverTextSelection);
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: isDraggable=%d (link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d)", isDraggable, info.isLink, info.isImage, info.isAttachment, info.isDHTMLDraggable, info.isColorInput, info.prefersDraggingOverTextSelection);
                 return isDraggable && !overLiveTextImage;
             }
 
             if (strongDeferring == strongSelf->_secondaryClickDeferringGestureRecognizer) {
                 const auto isSelectable = info.isSelectable();
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { strongSelf->_page.get() }->logIdentifier(), "Resolved deferral: isSelectable=%d", isSelectable);
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d", isSelectable);
                 return !isSelectable && !overLiveTextImage;
             }
 
@@ -1023,7 +954,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (deferringGestureRecognizer.state != NSGestureRecognizerStatePossible)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { _page.get() }->logIdentifier(), "deferral: press ended before position info arrived; unblocking text selection");
+    if (RetainPtr webView = _view.get())
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "deferral: press ended before position info arrived; unblocking text selection");
+
     _positionInformationManager->abandonOutstandingRequest();
 
     [deferringGestureRecognizer endDeferralShouldPreventGestures:NO];
@@ -1050,8 +983,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_isPointInScrollbar:(NSPoint)locationInViewCoordinates
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    return viewImpl && viewImpl->isPointInScrollbar(locationInViewCoordinates);
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    return protect([webView _impl])->isPointInScrollbar(locationInViewCoordinates);
 }
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
@@ -1081,6 +1017,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_dragPressShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
     int radius = static_cast<int>(std::ceil([_dragPressGestureRecognizer allowableMovement]));
 
     const auto& information = _positionInformationManager->currentInformation();
@@ -1092,7 +1032,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool shouldDrag = requestIsValid && isDraggable;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
-        RefPtr { _page.get() }->logIdentifier(),
+        [webView _protectedPage]->logIdentifier(),
         "Drag-press shouldBegin → %d (hasInfo=%d link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d radius=%d)",
         shouldDrag,
         _positionInformationManager->hasValidCurrentInformation(),
@@ -1113,6 +1053,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_panShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
     static constexpr int panPositionInformationToleranceRadius = 15;
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius];
 
@@ -1123,7 +1067,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool yieldToContent = requestIsValid && prefersInteraction;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
-        RefPtr { _page.get() }->logIdentifier(),
+        [webView _protectedPage]->logIdentifier(),
         "Pan shouldBegin → %d (hasInfo=%d valid=%d prefersInteraction=%d)",
         !yieldToContent,
         _positionInformationManager->hasValidCurrentInformation(),
@@ -1138,21 +1082,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)dragPressGestureRecognized:(NSGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "%@", gestureLogDescription(gesture));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     if (_dragPressGestureRecognizer != gesture)
         return;
 
-    if (viewImpl->ignoresAllEvents()) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Ignored gesture");
+    CheckedPtr impl = [webView _impl];
+    if (impl->ignoresAllEvents()) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Ignored gesture");
         return;
     }
 
@@ -1160,7 +1101,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto modifierFlags = [gesture modifierFlags];
     ALLOW_NEW_API_WITHOUT_GUARDS_END
     NSPoint locationInWindow = [gesture locationInView:nil];
-    auto windowNumber = viewImpl->windowNumber();
+    auto windowNumber = impl->windowNumber();
     auto timestamp = GetCurrentEventTime();
 
     switch (gesture.state) {
@@ -1169,7 +1110,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         _dragGestureHasSentMouseDown = false;
 
         RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
-        viewImpl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         _dragGestureHasSentMouseDown = true;
         break;
     }
@@ -1180,7 +1121,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         // gesture itself and WebCore is driven by the platform drag callbacks, so we stop feeding it.
         if (!_gestureDraggingSession) {
             RetainPtr mouseDragged = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
-            viewImpl->mouseDragged(mouseDragged, WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+            impl->mouseDragged(mouseDragged, WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         }
         break;
     }
@@ -1191,7 +1132,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             break;
 
         RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:0.0];
-        viewImpl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
 
         // We do not clear gesture drag state here since startDrag() may still be in flight via IPC.
         // State is cleared in draggingSessionEnded: (normal completion) or in startDrag() when
@@ -1207,25 +1148,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)_handleClickBegan:(NSGestureRecognizer *)gesture
 {
-    if (_isSuppressingSingleClickGestureForTextSelection)
-        return;
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
+    if (_isSuppressingSingleClickGestureForTextSelection)
         return;
 
     WebCore::FloatPoint position = [gesture locationInView:webView.get()];
-    _lastInteractionLocationInWebView = position;
 
-    if (RefPtr drawingArea = page->drawingArea()) {
+    if (RefPtr drawingArea = [webView _protectedPage]->drawingArea()) {
         if (RefPtr remoteDrawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea))
             _layerTreeTransactionIdAtLastInteractionStart = remoteDrawingArea->lastCommittedMainFrameLayerTreeTransactionID();
     }
@@ -1233,30 +1165,27 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _latestClickID = WebKit::ClickIdentifier::generate();
     _potentialClickInProgress = true;
     _isClickHighlightIDValid = true;
-    _isExpectingFastClickCommit = ![_doubleClickGestureRecognizer isEnabled];
 
-    page->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestClickID, WebKit::WebEventInputSource::Automation);
+    [webView _protectedPage]->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestClickID, WebKit::WebEventInputSource::Automation);
 }
 
 - (void)_handleClickEnded:(NSGestureRecognizer *)gesture
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
     if (!_potentialClickInProgress)
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
     [self _endPotentialClickAndEnableDoubleClickGesturesIfNecessary];
-
-    _commitPotentialClickPointerId = WebCore::mousePointerID;
 
     if (!_layerTreeTransactionIdAtLastInteractionStart) {
         [self _handleClickCancelled];
         return;
     }
 
-    page->commitPotentialClick(std::nullopt, { }, *_layerTreeTransactionIdAtLastInteractionStart, _commitPotentialClickPointerId);
+    [webView _protectedPage]->commitPotentialClick(std::nullopt, { }, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID);
 }
 
 - (void)_handleClickCancelled
@@ -1267,8 +1196,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _potentialClickInProgress = false;
     _isClickHighlightIDValid = false;
 
-    if (RefPtr page = _page.get())
-        page->cancelPotentialClick();
+    if (RetainPtr webView = _view.get())
+        [webView _protectedPage]->cancelPotentialClick();
 }
 
 - (void)_endPotentialClickAndEnableDoubleClickGesturesIfNecessary
@@ -1293,19 +1222,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
     if (!_isClickHighlightIDValid || _latestClickID != requestID)
         return;
 
     _isClickHighlightIDValid = false;
-    _hasHighlightForPotentialClick = _potentialClickInProgress;
 
     // FIXME: Bring up support for click highlighting here.
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Received click highlight for request %llu, nodeHasBuiltInClickHandling=%d", requestID.toUInt64(), nodeHasBuiltInClickHandling);
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Received click highlight for request %llu, nodeHasBuiltInClickHandling=%d", requestID.toUInt64(), nodeHasBuiltInClickHandling);
 }
 
 - (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID
@@ -1318,43 +1246,40 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)commitPotentialClickFailed
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    _commitPotentialClickPointerId = 0;
     [self _handleClickCancelled];
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR(page->logIdentifier(), "Commit potential click failed");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR([webView _protectedPage]->logIdentifier(), "Commit potential click failed");
 }
 
 - (void)didCompleteSyntheticClick
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    _commitPotentialClickPointerId = 0;
-
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Synthetic click completed");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Synthetic click completed");
 }
 
 - (void)didHandleClickAsHover
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Click was handled as hover");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click was handled as hover");
 }
 
 - (void)didNotHandleClickAsClick:(const WebCore::IntPoint&)point
 {
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Click at (%d, %d) was not handled as click", point.x(), point.y());
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click at (%d, %d) was not handled as click", point.x(), point.y());
 
     // FIXME: Consider smart magnification here if a double-click is pending and the point hasn't moved significantly.
 }
@@ -1365,16 +1290,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)sendWheelEventForGesture:(NSPanGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
-        return;
-
-    RefPtr page = _page.get();
-    if (!page)
         return;
 
     auto timestamp = MonotonicTime::fromRawSeconds([gesture timestamp]);
@@ -1386,7 +1303,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (std::exchange(_suppressNextPanScrollDelta, false))
         gestureDelta = { };
 
-    auto pinnedState = page->pinnedStateIncludingAncestorsAtPoint(locationInView);
+    auto pinnedState = [webView _protectedPage]->pinnedStateIncludingAncestorsAtPoint(locationInView);
     bool canScrollHorizontally = [_panGestureRecognizer _canPanHorizontally] && !(pinnedState.left() && pinnedState.right());
     bool canScrollVertically = [_panGestureRecognizer _canPanVertically] && !(pinnedState.top() && pinnedState.bottom());
     gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, [gesture timestamp]) };
@@ -1424,28 +1341,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     WebKit::NativeWebWheelEvent nativeEvent { wheelEvent };
 
-    if (viewImpl->allowsBackForwardNavigationGestures() && protect(viewImpl->ensureGestureController())->handleScrollWheelEvent(nativeEvent)) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "View gesture controller handled gesture");
+    CheckedPtr impl = [webView _impl];
+    if (impl->allowsBackForwardNavigationGestures() && protect(impl->ensureGestureController())->handleScrollWheelEvent(nativeEvent)) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
         return;
     }
 
-    page->handleNativeWheelEvent(nativeEvent);
+    [webView _protectedPage]->handleNativeWheelEvent(nativeEvent);
 }
 
 #pragma mark - Momentum Handling
 
 - (void)startMomentumIfNeededForGesture:(NSPanGestureRecognizer *)gesture
 {
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
-        return;
-
-    RefPtr page = _page.get();
-    if (!page)
         return;
 
     if (gesture.state != NSGestureRecognizerStateEnded)
@@ -1516,13 +1426,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if HAVE(NSREFRESHCONTROLLER)
     // The refresh controller should not track synthetic momentum scrolling.
-    viewImpl->clearRefreshControllerTracking();
+    protect([webView _impl])->clearRefreshControllerTracking();
 #endif
 
-    page->handleNativeWheelEvent(nativeMomentumEvent);
+    [webView _protectedPage]->handleNativeWheelEvent(nativeMomentumEvent);
     _isMomentumActive = true;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Started momentum scrolling with velocity %.2f pts/s", velocityMagnitude);
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Started momentum scrolling with velocity %.2f pts/s", velocityMagnitude);
 }
 
 - (void)interruptMomentumIfNeeded
@@ -1530,8 +1440,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!std::exchange(_isMomentumActive, false))
         return;
 
-    RefPtr page = _page.get();
-    if (!page)
+    RetainPtr webView = _view.get();
+    if (!webView)
         return;
 
     _fastScrollTracker->didCatchMomentum();
@@ -1539,6 +1449,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _caughtDeceleratingScroll = true;
     _suppressNextPanScrollDelta = true;
 
+    RefPtr page = [webView _protectedPage];
     page->interruptSyntheticMomentumScrolling();
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Interrupted momentum scrolling");
 }
@@ -1569,9 +1480,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler
 {
     if (_textSelectionDragGesture) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR(RefPtr { _page.get() }->logIdentifier(),
-            "Replacing prior text-selection drag gesture %@ (completion handler set: %d); prior drag never reached setGestureDraggingSession:",
-            gestureLogDescription(_textSelectionDragGesture), !!_textSelectionDragCompletionHandler);
+        if (RetainPtr webView = _view.get()) {
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR([webView _protectedPage]->logIdentifier(),
+                "Replacing prior text-selection drag gesture %@ (completion handler set: %d); prior drag never reached setGestureDraggingSession:",
+                gestureLogDescription(_textSelectionDragGesture), !!_textSelectionDragCompletionHandler);
+        }
         ASSERT_NOT_REACHED();
     }
 
@@ -1585,7 +1498,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!_gestureDraggingSession)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { _page.get() }->logIdentifier(), "Drag session began");
+    if (RetainPtr webView = _view.get())
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Drag session began");
+
     if (auto handler = std::exchange(_textSelectionDragCompletionHandler, nullptr))
         handler(_gestureDraggingSession);
 }
@@ -1628,7 +1543,11 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
 - (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
 {
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), _panGestureRecognizer.get()))
         return YES;
@@ -1660,14 +1579,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (gestureRecognizer == _mouseTrackingGestureRecognizer && isSystemWindowResizeGestureRecognizer(otherGestureRecognizer))
         return YES;
 
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
     // Allow the single click or mouse tracking GRs to be simultaneously
     // recognized with any of those from the text selection manager.
     for (NSGestureRecognizer *gestureForFailureRequirements in [[webView textSelectionManager] gesturesForFailureRequirements]) {
@@ -1682,15 +1593,11 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
 - (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
 {
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
@@ -1706,22 +1613,18 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
 - (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
 {
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@, Other gesture: %@", gestureLogDescription(gestureRecognizer), gestureLogDescription(otherGestureRecognizer));
 
     if (gestureRecognizer == _singleClickGestureRecognizer && otherGestureRecognizer == _doubleClickGestureRecognizer)
         return YES;
 
     if (gestureRecognizer == _mouseTrackingGestureRecognizer && otherGestureRecognizer == _panGestureRecognizer) {
         bool panCanScroll = [self panGestureRecognizerCanScroll];
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Mouse tracking requires pan to fail: %d", panCanScroll);
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Mouse tracking requires pan to fail: %d", panCanScroll);
         return panCanScroll;
     }
 
@@ -1730,15 +1633,11 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
 - (BOOL)gestureRecognizerShouldBegin:(NSGestureRecognizer *)gestureRecognizer
 {
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Gesture: %@", gestureLogDescription(gestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@", gestureLogDescription(gestureRecognizer));
 
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
@@ -1753,18 +1652,18 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
 
-    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
+    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView.get()];
 
     // An event over a scrollbar is a scrollbar interaction; only the mouse-tracking gesture (which drives
     // `Scrollbar::mouseDown` -> thumb drag) should handle it. The AppKit text-selection/context-menu gestures
     // are handled separately in the deferral delegate.
     if ([self _isPointInScrollbar:locationInViewCoordinates] && gestureRecognizer != _mouseTrackingGestureRecognizer) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Denying gesture over scrollbar: %@", gestureLogDescription(gestureRecognizer));
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Denying gesture over scrollbar: %@", gestureLogDescription(gestureRecognizer));
         return NO;
     }
 
     if (gestureRecognizer == _doubleClickGestureRecognizer)
-        return viewImpl->allowsMagnification();
+        return protect([webView _impl])->allowsMagnification();
 
     // Live Text (see the Image Analysis design note): the preflight is a passive observer and is only
     // enabled when Live Text is available, so it's always allowed to begin to measure the press.
@@ -1781,10 +1680,10 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
         return [self _panShouldBeginAtLocation:locationInViewCoordinates];
 
     if (gestureRecognizer == _singleClickGestureRecognizer)
-        return !viewImpl->isTextSelectedAtPoint(locationInViewCoordinates);
+        return !protect([webView _impl])->isTextSelectedAtPoint(locationInViewCoordinates);
 
     if (gestureRecognizer == _mouseTrackingGestureRecognizer)
-        return !viewImpl->isTextSelectedAtPoint(locationInViewCoordinates);
+        return !protect([webView _impl])->isTextSelectedAtPoint(locationInViewCoordinates);
 
     return YES;
 }
@@ -1796,15 +1695,11 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
 - (BOOL)_gestureRecognizer:(NSGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(NSGestureRecognizer *)preventedGestureRecognizer
 {
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Preventing gesture: %@, Prevented gesture: %@", gestureLogDescription(preventingGestureRecognizer), gestureLogDescription(preventedGestureRecognizer));
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
+    RetainPtr webView = _view.get();
     if (!webView)
         return NO;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Preventing gesture: %@, Prevented gesture: %@", gestureLogDescription(preventingGestureRecognizer), gestureLogDescription(preventedGestureRecognizer));
 
     // None of our gesture recognizers may prevent an enclosing scroll view's pan (or any other
     // scroll/zoom) gesture, so that a scroll can always be handed off to the enclosing scroll view
