@@ -33,6 +33,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "FrameInlines.h"
 #include "NodeDocument.h"
+#include "Page.h"
 #include "PrivateClickMeasurement.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"
@@ -65,9 +66,14 @@ RemoteFrame::RemoteFrame(Page& page, ClientCreator&& clientCreator, FrameIdentif
     , m_colorSchemePreference(ColorSchemePreference::NoPreference)
 {
     setView(RemoteFrameView::create(*this));
+
+    page.didAttachRemoteFrame();
 }
 
-RemoteFrame::~RemoteFrame() = default;
+RemoteFrame::~RemoteFrame()
+{
+    detachFromPage();
+}
 
 ProcessIdentifier RemoteFrame::hostingProcessIdentifier() const
 {
@@ -158,6 +164,7 @@ void RemoteFrame::frameDetached()
 {
     m_client->frameDetached();
     m_window->frameDetached();
+    detachFromPage();
 }
 
 String RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)

@@ -10574,7 +10574,7 @@ void Document::updateIntersectionObservers()
     updateAndNotifyIntersectionObservers(m_localIntersectionObservers, *frame);
     updateRemoteIntersectionObservers();
 
-    if (settings().siteIsolationEnabled())
+    if (page->hasRemoteFrames())
         page->chrome().client().updateRemoteIntersectionObserversInOtherWebProcesses();
 }
 
