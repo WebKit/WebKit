@@ -51,28 +51,11 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
     if (m_attributes.has_value())
         return;
 
+    Ref patternElement = this->patternElement();
+
     auto attributes = PatternAttributes { };
-
-    RefPtr current = patternElement();
-
-    while (current) {
-        if (!current->renderer())
-            break;
-        current->collectPatternAttributes(attributes);
-
-        auto target = SVGURIReference::targetElementFromIRIString(current->href(), protect(current->treeScopeForSVGReferences()));
-        current = dynamicDowncast<SVGPatternElement>(target.element.get());
-    }
-
-    // If we couldn't determine the pattern content element root, stop here.
-    if (!attributes.patternContentElement())
-        return;
-
-    // An empty viewBox disables rendering.
-    if (attributes.hasViewBox() && attributes.viewBox().isEmpty())
-        return;
-
-    m_attributes = WTF::move(attributes);
+    if (patternElement->collectPatternAttributes(attributes))
+        m_attributes = WTF::move(attributes);
 }
 
 RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer)

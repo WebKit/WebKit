@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="100">
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-2000"/>
+    <!-- An xlink:href cycle has to stop at the first pattern it reaches twice, no earlier and no
+         later. All three squares show the same green checkerboard rotated by 45 degrees, the last
+         one shifted right by 5 units. -->
+    <defs>
+        <!-- Two patterns pointing at each other. #two-b contributes the patternTransform. -->
+        <pattern id="two-a" xlink:href="#two-b" patternUnits="userSpaceOnUse" width="20" height="20">
+            <rect width="10" height="10" fill="green"/>
+        </pattern>
+        <pattern id="two-b" xlink:href="#two-a" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
+            <rect width="20" height="20" fill="red"/>
+        </pattern>
+
+        <!-- A pattern pointing at itself. -->
+        <pattern id="self" xlink:href="#self" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="rotate(45)">
+            <rect width="10" height="10" fill="green"/>
+        </pattern>
+
+        <!-- Three patterns in a ring. #three-b contributes the patternTransform, #three-c the x. -->
+        <pattern id="three-a" xlink:href="#three-b" patternUnits="userSpaceOnUse" width="20" height="20">
+            <rect width="10" height="10" fill="green"/>
+        </pattern>
+        <pattern id="three-b" xlink:href="#three-c" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
+            <rect width="20" height="20" fill="red"/>
+        </pattern>
+        <pattern id="three-c" xlink:href="#three-a" patternUnits="userSpaceOnUse" x="5" width="60" height="60">
+            <rect width="30" height="30" fill="blue"/>
+        </pattern>
+    </defs>
+
+    <rect x="10" y="10" width="80" height="80" fill="url(#two-a)"/>
+    <rect x="110" y="10" width="80" height="80" fill="url(#self)"/>
+    <rect x="210" y="10" width="80" height="80" fill="url(#three-a)"/>
+</svg>

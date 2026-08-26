@@ -195,13 +195,14 @@ svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html         
 # Crash / Timeout #
 ###################
 
-svg/custom/pattern-3-step-cycle-dynamic-4.html [ Pass Crash ]
-
 ###############
 #  OVERRIDES  #
 ###############
 
 # Reset results inherited from TestExpectations chaining
+fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html                                          [ Pass ]
+fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html                                               [ Pass ]
+fast/shadow-dom/svg-pattern-href-in-shadow-tree.html                                                              [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html                  [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html                          [ Pass ]
@@ -210,7 +211,6 @@ imported/w3c/web-platform-tests/svg/extensibility/foreignObject/scroll-transform
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/will-change-in-foreign-object-paint-order.html    [ Pass ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html                                          [ Pass ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html                                          [ Pass ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html                        [ Pass ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html                        [ Pass ]
 imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg                             [ Pass ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.html                                 [ Pass ]

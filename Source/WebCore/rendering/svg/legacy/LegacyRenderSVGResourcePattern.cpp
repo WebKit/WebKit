@@ -77,7 +77,7 @@ void LegacyRenderSVGResourcePattern::collectPatternAttributes(PatternAttributes&
 
     while (current) {
         Ref pattern = current->patternElement();
-        pattern->collectPatternAttributes(attributes);
+        pattern->collectOwnPatternAttributes(attributes);
 
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
         ASSERT_IMPLIES(resources && resources->linkedResource(), is<LegacyRenderSVGResourcePattern>(resources->linkedResource()));

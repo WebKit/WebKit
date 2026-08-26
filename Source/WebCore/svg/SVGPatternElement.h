@@ -39,7 +39,8 @@ class SVGPatternElement final : public SVGElement, public SVGFitToViewBox, publi
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
 
-    void collectPatternAttributes(PatternAttributes&) const;
+    bool collectPatternAttributes(PatternAttributes&);
+    void collectOwnPatternAttributes(PatternAttributes&) const;
 
     AffineTransform localCoordinateSpaceTransform(CTMScope) const final;
 

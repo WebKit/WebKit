@@ -399,7 +399,6 @@ svg/SVGPathByteStream.h
 svg/SVGPathElement.cpp
 svg/SVGPatternElement.cpp
 svg/SVGPolyElement.cpp
-svg/SVGRadialGradientElement.cpp
 svg/SVGSVGElement.cpp
 svg/SVGTRefElement.cpp
 svg/SVGTextPositioningElement.cpp

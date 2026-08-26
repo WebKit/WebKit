@@ -8530,3 +8530,10 @@ imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-003.htm
 imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-007.html [ ImageOnlyFailure ]
+
+# The legacy SVG engine does not resolve a pattern xlink:href inside a shadow tree, so the pattern
+# inherits nothing and paints nothing. The layer based engine renders these correctly, see the
+# overrides in LayoutTests/platform/mac-tahoe-wk2-lbse-text/TestExpectations.
+fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html [ ImageOnlyFailure ]
+fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html [ ImageOnlyFailure ]
+fast/shadow-dom/svg-pattern-href-in-shadow-tree.html [ ImageOnlyFailure ]

@@ -34,6 +34,7 @@
 #include "PatternAttributes.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
@@ -41,6 +42,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGStringList.h"
 #include "Settings.h"
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -157,7 +159,44 @@ bool SVGPatternElement::hasPatternTransformAttribute() const
     return !m_patternTransform->baseVal()->isEmpty();
 }
 
-void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
+bool SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes)
+{
+    if (!renderer())
+        return false;
+
+    HashSet<Ref<SVGPatternElement>> processedPatterns;
+    RefPtr current { this };
+
+    while (current) {
+        current->collectOwnPatternAttributes(attributes);
+
+        auto target = SVGURIReference::targetElementFromIRIString(current->href(), protect(treeScopeForSVGReferences()));
+        RefPtr next = dynamicDowncast<SVGPatternElement>(target.element.get());
+        if (!next)
+            break;
+
+        processedPatterns.add(current.releaseNonNull());
+        if (processedPatterns.contains(*next))
+            break;
+
+        if (!next->renderer())
+            return false;
+
+        current = WTF::move(next);
+    }
+
+    // If we couldn't determine the pattern content element root, stop here.
+    if (!attributes.patternContentElement())
+        return false;
+
+    // An empty viewBox disables rendering.
+    if (attributes.hasViewBox() && attributes.viewBox().isEmpty())
+        return false;
+
+    return true;
+}
+
+void SVGPatternElement::collectOwnPatternAttributes(PatternAttributes& attributes) const
 {
     if (!attributes.hasX() && hasAttribute(SVGNames::xAttr))
         attributes.setX(x());
