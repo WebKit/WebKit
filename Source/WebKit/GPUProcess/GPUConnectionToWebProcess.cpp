@@ -350,6 +350,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
     , m_sharedPreferencesForWebProcess(WTF::move(parameters.sharedPreferencesForWebProcess))
 {
+    m_hostedDomains = WTF::move(parameters.hostedDomains);
     RELEASE_ASSERT(RunLoop::isMain());
 
     // This must be called before any media playback function is invoked.
@@ -390,6 +391,12 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     };
     m_connection->send(Messages::GPUProcessConnection::DidInitialize(info), 0);
     ++gObjectCountForTesting;
+}
+
+bool GPUConnectionToWebProcess::hostsDomain(const WebCore::RegistrableDomain& domain) const
+{
+    // A URL without a registrable domain, such as a file: URL, has no site to check.
+    return !m_hostedDomains || domain.isEmpty() || m_hostedDomains->contains(domain);
 }
 
 GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
