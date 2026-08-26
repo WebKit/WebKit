@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformXRSystem.h"
 
+#include "FirstPartyAuthority.h"
+
 #if ENABLE(WEBXR)
 
 #include "GPUProcessProxy.h"
@@ -42,6 +44,22 @@
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(process, name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(process, IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(process, name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(process, IPC::valueMayBeLegitimate(name##Validated), completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -162,9 +180,13 @@ static bool checkFeaturesConsent(const std::optional<PlatformXR::Device::Feature
 
 void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     ASSERT(RunLoop::isMain());
+
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    auto validatedOrigin = WTF::move(untrustedOrigin).validate(FirstPartyAuthority { validationProcess });
+    if (!validatedOrigin)
+        return completionHandler(std::nullopt);
+    auto securityOriginData = WTF::move(*validatedOrigin);
 
     RefPtr page = m_page.get();
     if (!page) {
@@ -473,5 +495,7 @@ PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION
 
 #endif // ENABLE(WEBXR)

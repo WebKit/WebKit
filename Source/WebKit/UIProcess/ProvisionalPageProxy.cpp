@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ProvisionalPageProxy.h"
 
+#include "FirstPartyAuthority.h"
+
 #include "APINavigation.h"
 #include "APIWebsitePolicies.h"
 #include "BrowsingContextGroup.h"
@@ -491,7 +493,11 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
 
 void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCSPOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
-    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCSPOrigins).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref<WebProcessProxy> validationProcess = process();
+    auto validatedCSPOrigins = WTF::move(untrustedCSPOrigins).validate(FirstPartyAuthority { validationProcess });
+    if (!validatedCSPOrigins)
+        return;
+    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(*validatedCSPOrigins);
     if (!validateInput(frameID, navigationID))
         return;
 

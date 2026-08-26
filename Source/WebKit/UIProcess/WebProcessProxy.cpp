@@ -33,6 +33,7 @@
 #include "AuthenticatorManager.h"
 #include "DownloadProxyMap.h"
 #include "DrawingAreaProxy.h"
+#include "FirstPartyAuthority.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GoToBackForwardItemParameters.h"
 #include "JavaScriptEvaluationResult.h"
@@ -2545,28 +2546,28 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
 
 void WebProcessProxy::didCollectPrewarmInformation(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, const WebCore::PrewarmInformation& prewarmInformation)
 {
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    MESSAGE_CHECK(!domain.isEmpty());
-    protect(processPool())->didCollectPrewarmInformation(domain, prewarmInformation);
+    auto domain = WTF::move(untrustedDomain).validate(FirstPartyAuthority { *this });
+    MESSAGE_CHECK(domain);
+    MESSAGE_CHECK(!domain->isEmpty());
+    protect(processPool())->didCollectPrewarmInformation(*domain, prewarmInformation);
 }
 
 void WebProcessProxy::didCompleteAutofill(IPC::Untrusted<WebCore::Site>&& untrustedSite)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    MESSAGE_CHECK(!site.isEmpty());
+    auto site = WTF::move(untrustedSite).validate(FirstPartyAuthority { *this });
+    MESSAGE_CHECK(site);
+    MESSAGE_CHECK(!site->isEmpty());
     if (RefPtr dataStore = websiteDataStore())
-        protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::Autofill);
+        protect(dataStore->isolatedSiteStore())->addSite(*site, IsolatedSiteStore::Signal::Autofill);
 }
 
 void WebProcessProxy::didObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Site>&& untrustedSite)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    MESSAGE_CHECK(!site.isEmpty());
+    auto site = WTF::move(untrustedSite).validate(FirstPartyAuthority { *this });
+    MESSAGE_CHECK(site);
+    MESSAGE_CHECK(!site->isEmpty());
     if (RefPtr dataStore = websiteDataStore())
-        protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
+        protect(dataStore->isolatedSiteStore())->addSite(*site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
 }
 
 void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -3275,11 +3276,10 @@ WebProcessProxy::FirstPartyAccessResult WebProcessProxy::allowsFirstPartyAccess(
 
 void WebProcessProxy::setAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, std::optional<uint64_t> badge)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }) == FirstPartyAccessResult::Pass);
+    auto origin = WTF::move(untrustedOrigin).validate(FirstPartyAuthority { *this });
+    MESSAGE_CHECK(origin);
     if (RefPtr dataStore = websiteDataStore())
-        dataStore->workerUpdatedAppBadge(origin, badge);
+        dataStore->workerUpdatedAppBadge(*origin, badge);
 }
 
 const WeakHashSet<WebProcessProxy>* WebProcessProxy::serviceWorkerClientProcesses() const

@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "Untrusted.h"
+
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SpeechRecognitionPermissionRequest.h"
-#include "Untrusted.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SpeechRecognitionError.h>
 #include <WebCore/SpeechRecognitionRequest.h>
