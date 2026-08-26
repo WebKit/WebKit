@@ -230,6 +230,7 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
+    m_hostedDomainsByProcess.remove(connection.webProcessIdentifier());
     auto completionHandlers = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier());
     for (auto& completionHandler : completionHandlers)
         completionHandler();
@@ -414,6 +415,14 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     for (auto& domain : parameters.allowedFirstPartiesForCookies)
         currentDomains.add(domain);
 
+    if (!parameters.hostedDomains.isEmpty()) {
+        auto& hostedDomains = m_hostedDomainsByProcess.ensure(identifier, [] {
+            return HashSet<RegistrableDomain> { };
+        }).iterator->value;
+        for (auto& domain : parameters.hostedDomains)
+            hostedDomains.add(domain);
+    }
+
     auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
     Ref connection = newConnection;
 
@@ -474,6 +483,36 @@ void NetworkProcess::securityFlagsDidChange(SecurityFlags&& securityFlags)
 void NetworkProcess::isSecurityFlagEnabledForTesting(const String& flagName, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
     completionHandler(securityFlags().isFlagEnabledNamedForTesting(flagName));
+}
+
+void NetworkProcess::addHostedDomainForWebProcess(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
+{
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(domain))
+        return completionHandler();
+
+    m_hostedDomainsByProcess.ensure(processIdentifier, [] {
+        return HashSet<RegistrableDomain> { };
+    }).iterator->value.add(WTF::move(domain));
+
+    completionHandler();
+}
+
+bool NetworkProcess::hostsDomain(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& domain) const
+{
+    if (domain.isEmpty())
+        return false;
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(domain))
+        return false;
+
+    // A web archive is its own authority for every domain it contains.
+    auto firstPartyIterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
+    if (firstPartyIterator != m_allowedFirstPartiesForCookies.end() && firstPartyIterator->value.first == LoadedWebArchive::Yes)
+        return true;
+
+    auto iterator = m_hostedDomainsByProcess.find(processIdentifier);
+    if (iterator == m_hostedDomainsByProcess.end())
+        return false;
+    return iterator->value.contains(domain);
 }
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
