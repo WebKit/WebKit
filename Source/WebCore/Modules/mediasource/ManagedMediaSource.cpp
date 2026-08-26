@@ -128,6 +128,12 @@ void ManagedMediaSource::monitorSourceBuffers()
     auto currentTime = this->currentTime();
     ASSERT(currentTime.isValid());
 
+    // Once the source is ended and the playback position has reached the end of the media, no further data can ever be needed.
+    if (isEnded() && currentTime >= duration()) {
+        setStreaming(false);
+        return;
+    }
+
     auto limitAhead = [&] (double upper) {
         MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
         return isEnded() ? std::min(duration(), aheadTime) : aheadTime;

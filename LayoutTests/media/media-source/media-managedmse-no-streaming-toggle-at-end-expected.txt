@@ -1,0 +1,23 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+EVENT(startstreaming)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(source.duration = sourceBuffer.buffered.end(0))
+EVENT(durationchange)
+RUN(source.endOfStream())
+EVENT(endstreaming)
+EXPECTED (source.streaming == 'false') OK
+RUN(video.currentTime = video.duration)
+EVENT(seeked)
+EVENT(ended)
+EXPECTED (video.currentTime == video.duration == 'true') OK
+EXPECTED (source.streaming == 'false') OK
+EXPECTED (streamingEvents == '0') OK
+EXPECTED (endedEvents == '1') OK
+END OF TEST
+
