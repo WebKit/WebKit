@@ -531,7 +531,7 @@ void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceW
 
 void WebSWContextManagerConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, const ServiceWorkerContextData::ImportedScript& script)
 {
-    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetScriptResource { serviceWorkerIdentifier, url, script }, 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetScriptResourceFromServiceWorker { serviceWorkerIdentifier, url, script }, 0);
 }
 
 void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
@@ -555,7 +555,7 @@ void WebSWContextManagerConnection::matchAll(WebCore::ServiceWorkerIdentifier se
 
 void WebSWContextManagerConnection::openWindow(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, OpenWindowCallback&& callback)
 {
-    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::OpenWindow { serviceWorkerIdentifier, url }, [callback = WTF::move(callback)] (auto&& result) mutable {
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::OpenWindowFromServiceWorker { serviceWorkerIdentifier, url }, [callback = WTF::move(callback)] (auto&& result) mutable {
         if (!result.has_value()) {
             callback(result.error().toException());
             return;

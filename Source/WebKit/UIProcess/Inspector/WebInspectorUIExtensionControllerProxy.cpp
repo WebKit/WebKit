@@ -268,8 +268,10 @@ void WebInspectorUIExtensionControllerProxy::didHideExtensionTab(const Inspector
     extensionClient->didHideExtensionTab(extensionTabID);
 }
 
-void WebInspectorUIExtensionControllerProxy::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
+void WebInspectorUIExtensionControllerProxy::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, IPC::Untrusted<URL>&& untrustedNewURL)
 {
+    auto newURL = WTF::move(untrustedNewURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     RefPtr extension = m_extensionAPIObjectMap.get(extensionID);
     if (!extension)
         return;
@@ -281,8 +283,10 @@ void WebInspectorUIExtensionControllerProxy::didNavigateExtensionTab(const Inspe
     extensionClient->didNavigateExtensionTab(extensionTabID, newURL);
 }
 
-void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(const URL& newURL)
+void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(IPC::Untrusted<URL>&& untrustedNewURL)
 {
+    auto newURL = WTF::move(untrustedNewURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     for (auto& extension : copyToVector(m_extensionAPIObjectMap.values())) {
         auto extensionClient = extension->client();
         if (!extensionClient)

@@ -35,6 +35,7 @@
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include "Untrusted.h"
 #include <WebCore/ControlFactory.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -158,7 +159,7 @@ public:
     void beginPage(const WebCore::FloatRect&);
     void endPage();
 
-    void setURLForRect(const URL&, const WebCore::FloatRect&);
+    void setURLForRect(IPC::Untrusted<URL>&&, const WebCore::FloatRect&);
 
 protected:
     RemoteGraphicsContext(WebCore::GraphicsContext&, RemoteRenderingBackend&);

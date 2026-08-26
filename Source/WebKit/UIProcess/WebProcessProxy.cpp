@@ -168,6 +168,22 @@
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(name##Validated), completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
+
 #define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(this), processID(), ##__VA_ARGS__)
 #define WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(channel, thisPtr, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(WTF::getPtr(thisPtr)), thisPtr->processID(), ##__VA_ARGS__)
 
@@ -3193,8 +3209,10 @@ void WebProcessProxy::systemBeep()
 }
 #endif
 
-void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+void WebProcessProxy::getNotifications(IPC::Untrusted<URL>&& untrustedRegistrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(registrationURL, untrustedRegistrationURL, callback({ }), FirstPartyAuthority { *this });
+
     if (RefPtr websiteDataStore = m_websiteDataStore; websiteDataStore->hasClientGetDisplayedNotifications()) {
         auto callbackHandlingTags = [tag, callback = WTF::move(callback)] (Vector<NotificationData>&& notifications) mutable {
             if (tag.isEmpty()) {
@@ -3691,6 +3709,8 @@ void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK_COMPLETION
+#undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION
 #undef WEBPROCESSPROXY_RELEASE_LOG
 #undef WEBPROCESSPROXY_RELEASE_LOG_ERROR
 

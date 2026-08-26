@@ -31,7 +31,7 @@
 messages -> RemoteMediaPlayerProxy {
     PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerPreload preload, bool preservesPitch, enum:uint8_t WebCore::MediaPlayerPitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, enum:uint8_t WebCore::DynamicRangeMode mode, WebCore::PlatformDynamicRangeLimit platformDynamicRangeLimit)
 
-    Load(URL url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, struct WebCore::MediaPlayerLoadOptions options) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
+    Load(IPC::Untrusted<URL> url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, struct WebCore::MediaPlayerLoadOptions options) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
     CancelLoad()
 
     PrepareToPlay()

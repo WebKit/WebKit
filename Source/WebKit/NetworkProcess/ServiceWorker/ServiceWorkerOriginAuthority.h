@@ -29,6 +29,7 @@
 #include "WebSWServerConnection.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
@@ -42,6 +43,11 @@ public:
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData& origin) const
     {
         return failureFor(origin);
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        return failureFor(WebCore::SecurityOriginData::fromURL(url));
     }
 
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin& origin) const
@@ -66,5 +72,6 @@ namespace IPC {
 
 template<> struct IsPreordainedValidator<WebKit::ServiceWorkerClientOriginAuthority, WebCore::SecurityOriginData> : std::true_type { };
 template<> struct IsPreordainedValidator<WebKit::ServiceWorkerClientOriginAuthority, WebCore::ClientOrigin> : std::true_type { };
+template<> struct IsPreordainedValidator<WebKit::ServiceWorkerClientOriginAuthority, URL> : std::true_type { };
 
 } // namespace IPC

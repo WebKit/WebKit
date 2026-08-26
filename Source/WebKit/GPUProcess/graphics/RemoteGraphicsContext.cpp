@@ -738,8 +738,10 @@ void RemoteGraphicsContext::endPage()
     context().endPage();
 }
 
-void RemoteGraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
+void RemoteGraphicsContext::setURLForRect(IPC::Untrusted<URL>&& untrustedLink, const FloatRect& destRect)
 {
+    auto link = WTF::move(untrustedLink).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     context().setURLForRect(link, destRect);
 }
 
