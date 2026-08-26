@@ -255,6 +255,7 @@
 		07E065132F19DDEF00ECDA2E /* DocumentEditingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7FD190223C730F007887F1 /* DocumentEditingContext.h */; };
 		07E065142F19E01000ECDA2E /* RemoteGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C98C03827446A09002CCB78 /* RemoteGPU.h */; };
 		07E065152F19E03900ECDA2E /* GPUConnectionToWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9FB2002375209D0049F936 /* GPUConnectionToWebProcess.h */; };
+		B6692905E218F96201102BB6 /* GPUHostedDomainAuthority.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F9734569A847FC0DEC4C13 /* GPUHostedDomainAuthority.h */; };
 		07E065162F19E04000ECDA2E /* ServiceWorkerFetchTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 41518535222704F5005430C6 /* ServiceWorkerFetchTask.h */; };
 		BBAC69F732D9F2D4F05A91DA /* ServiceWorkerOriginAuthority.h in Headers */ = {isa = PBXBuildFile; fileRef = 3646C1698212EF952A511A19 /* ServiceWorkerOriginAuthority.h */; };
 		07E065172F19E04800ECDA2E /* NetworkMDNSRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B7ED70206965900087D853 /* NetworkMDNSRegister.h */; };
@@ -5306,6 +5307,7 @@
 		2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageInjectedBundleClient.h; sourceTree = "<group>"; };
 		2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInjectedBundleClient.cpp; sourceTree = "<group>"; };
 		2D9FB2002375209D0049F936 /* GPUConnectionToWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUConnectionToWebProcess.h; sourceTree = "<group>"; };
+		72F9734569A847FC0DEC4C13 /* GPUHostedDomainAuthority.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUHostedDomainAuthority.h; sourceTree = "<group>"; };
 		2D9FB2012375209D0049F936 /* GPUProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcess.cpp; sourceTree = "<group>"; };
 		2D9FB2022375209D0049F936 /* GPUProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcess.messages.in; sourceTree = "<group>"; };
 		2D9FB2032375209D0049F936 /* GPUProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessCreationParameters.h; sourceTree = "<group>"; };
@@ -12637,6 +12639,7 @@
 				2D9FB20C2375209D0049F936 /* GPUConnectionToWebProcess.cpp */,
 				2D9FB2002375209D0049F936 /* GPUConnectionToWebProcess.h */,
 				2D9FB2092375209D0049F936 /* GPUConnectionToWebProcess.messages.in */,
+				72F9734569A847FC0DEC4C13 /* GPUHostedDomainAuthority.h */,
 				2D9FB2012375209D0049F936 /* GPUProcess.cpp */,
 				2D9FB2152375209D0049F936 /* GPUProcess.h */,
 				2D9FB2022375209D0049F936 /* GPUProcess.messages.in */,
@@ -18685,6 +18688,7 @@
 				07187E0B2F2DC28E005FC058 /* GestureTypes.h in Headers */,
 				46C71AC92A942E2900E459AF /* GoToBackForwardItemParameters.h in Headers */,
 				07E065152F19E03900ECDA2E /* GPUConnectionToWebProcess.h in Headers */,
+				B6692905E218F96201102BB6 /* GPUHostedDomainAuthority.h in Headers */,
 				4614F13225DED875007006E7 /* GPUProcessConnectionParameters.h in Headers */,
 				515CA7C92E8E90E200F8A78E /* GPUProcessMediaCodecCapabilities.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,

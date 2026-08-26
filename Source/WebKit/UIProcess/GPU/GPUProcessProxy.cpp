@@ -537,6 +537,7 @@ std::optional<GPUProcessMediaCodecCapabilities> GPUProcessProxy::s_gpuProcessMed
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
     parameters.mediaCodecCapabilities = s_gpuProcessMediaCodecCapabilities;
+    parameters.hostedDomains = webProcessProxy.hostedDomains();
 
     if (RefPtr store = webProcessProxy.websiteDataStore())
         addSession(*store);

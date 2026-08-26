@@ -58,12 +58,13 @@ PRIVILEGED_PROCESSES = {
 
 UNTRUSTED_WRAPPER = "IPC::Untrusted"
 
-# Files permitted to declare a designated validation procedure by specializing
-# IPC::IsValidationProcedureFor. Confining these keeps the set of ways to recover a
-# trusted value from an Untrusted<T> small and reviewable. Enforced by
-# test_validation_procedures_are_confined below.
+# Files permitted to declare a designated validation procedure, either by specializing
+# IPC::IsValidationProcedureFor or by deriving from IPC::CanValidateUntrusted. Confining these
+# keeps the set of ways to recover a trusted value from an Untrusted<T> small and reviewable.
+# Enforced by test_validation_procedures_are_confined below.
 VALIDATION_PROCEDURE_HEADERS = {
     "Platform/IPC/Untrusted.h",
+    "GPUProcess/GPUHostedDomainAuthority.h",
     "NetworkProcess/FirstPartyForCookiesAuthority.h",
     "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
     "NetworkProcess/webrtc/RTCDomainAuthority.h",

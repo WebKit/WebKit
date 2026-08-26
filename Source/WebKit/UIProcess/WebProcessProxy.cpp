@@ -616,7 +616,7 @@ void WebProcessProxy::platformDestroy()
 void WebProcessProxy::addSharedProcessDomain(const RegistrableDomain& domain)
 {
     if (m_sharedProcessDomains.add(domain).isNewEntry)
-        sendHostedDomainsToNetworkProcess();
+        sendHostedDomains();
 }
 
 std::optional<HashSet<RegistrableDomain>> WebProcessProxy::hostedDomains() const
@@ -636,17 +636,21 @@ void WebProcessProxy::setMayHostAnySite()
 {
     if (std::exchange(m_hostedSiteTracking, HostedSiteTracking::AnySite) == HostedSiteTracking::AnySite)
         return;
-    sendHostedDomainsToNetworkProcess();
+    sendHostedDomains();
 }
 
-// Sent ahead of the AddAllowedFirstPartyForCookies that every load waits for, on the same connection.
-void WebProcessProxy::sendHostedDomainsToNetworkProcess()
+// Sent to the network process ahead of the AddAllowedFirstPartyForCookies that every load waits for, on the same connection.
+void WebProcessProxy::sendHostedDomains()
 {
-    RefPtr dataStore = m_websiteDataStore;
-    if (!dataStore)
-        return;
-    if (RefPtr networkProcess = dataStore->networkProcessIfExists())
-        networkProcess->send(Messages::NetworkProcess::SetHostedDomains(coreProcessIdentifier(), hostedDomains()), 0);
+    auto domains = hostedDomains();
+    if (RefPtr dataStore = m_websiteDataStore) {
+        if (RefPtr networkProcess = dataStore->networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::SetHostedDomains(coreProcessIdentifier(), domains), 0);
+    }
+#if ENABLE(GPU_PROCESS)
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::SetHostedDomains(coreProcessIdentifier(), WTF::move(domains)), 0);
+#endif
 }
 
 void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcessType, std::optional<WebCore::Site> mainFrameSite)
@@ -2959,14 +2963,14 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
         m_site = makeUnexpected(SiteState::SharedProcess);
         m_sharedProcessMainFrameSite = mainFrameSite;
         m_hostedSiteTracking = std::max(m_hostedSiteTracking, HostedSiteTracking::Recorded);
-        sendHostedDomainsToNetworkProcess();
+        sendHostedDomains();
         return;
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_committedSites.add(*site);
     m_site = *site;
     m_hostedSiteTracking = std::max(m_hostedSiteTracking, HostedSiteTracking::Recorded);
-    sendHostedDomainsToNetworkProcess();
+    sendHostedDomains();
 }
 
 unsigned WebProcessProxy::suspendedPageCount() const
