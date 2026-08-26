@@ -125,6 +125,17 @@ ThreadSafeWeakPtrControlBlock& RemoteAudioVideoRendererProxyManager::controlBloc
     return m_gpuConnectionToWebProcess.get()->controlBlock();
 }
 
+void RemoteAudioVideoRendererProxyManager::connectionToWebProcessClosed()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    for (auto& keyValuePair : std::exchange(m_renderers, { })) {
+        if (RefPtr renderer = keyValuePair.value.renderer) {
+            renderer->pause();
+            renderer->flush();
+        }
+    }
+}
+
 std::optional<SharedPreferencesForWebProcess> RemoteAudioVideoRendererProxyManager::sharedPreferencesForWebProcess() const
 {
     return m_gpuConnectionToWebProcess.get()->sharedPreferencesForWebProcess();
