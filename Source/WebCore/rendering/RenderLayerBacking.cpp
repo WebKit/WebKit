@@ -629,6 +629,35 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
         m_overflowControlsContainer->setShowDebugBorder(showBorder);
 }
 
+void RenderLayerBacking::updateAppliesPageScale()
+{
+    // Only the root frame's RenderView layer applies page scale to its own geometry, and only when scaling
+    // isn't delegated. The compositor's root contents layer does it otherwise, see ensureRootLayer().
+    if (!m_isRootFrameRenderViewLayer)
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    // iOS always delegates scaling. Page::delegatesScaling() isn't set until didCommitLoad, so it would read
+    // false for layers created before then.
+    bool appliesPageScale = false;
+#else
+    // updateConfiguration() calls this again, since delegatesScaling is set at didCommitLoad, which can
+    // happen after this layer is created.
+    bool appliesPageScale = !renderer().page().delegatesScaling();
+#endif
+
+    // A fixed root background splits the RenderView's layers, and the contents containment layer carries the
+    // flag for the pair. Only one of the two may apply the scale, and neither may when the root contents layer
+    // above already does, or we scale twice.
+    if (m_contentsContainmentLayer) {
+        m_contentsContainmentLayer->setAppliesPageScale(appliesPageScale);
+        m_graphicsLayer->setAppliesPageScale(false);
+        return;
+    }
+
+    m_graphicsLayer->setAppliesPageScale(appliesPageScale);
+}
+
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
     String layerName = m_owningLayer.name();
@@ -645,10 +674,8 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if !PLATFORM(IOS_FAMILY)
     if (m_isMainFrameRenderViewLayer)
         m_graphicsLayer->setContentsOpaque(!compositor().viewHasTransparentBackground());
-    // Page scale is applied above the RenderView on iOS.
-    if (m_isRootFrameRenderViewLayer)
-        m_graphicsLayer->setAppliesPageScale();
 #endif
+    updateAppliesPageScale();
 
 #if USE(CA)
     if (!compositor().acceleratedDrawingEnabled() && renderer().isRenderHTMLCanvas()) {
@@ -1241,6 +1268,10 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground || m_requiresBackgroundLayer))
         layerConfigChanged = true;
+
+    // Page::delegatesScaling() is set at didCommitLoad, which can be after this backing was created. Has to
+    // come after updateBackgroundLayer(), which decides whether there's a contents containment layer.
+    updateAppliesPageScale();
 
     if (updateForegroundLayer(compositor.needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;

@@ -1843,9 +1843,18 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
-        if (state.isMappingSecondaryQuad())
+        if (state.isMappingSecondaryQuad()) {
+#if PLATFORM(MAC)
+            bool secondaryMapWasClamped = false;
+            auto secondaryQuad = state.mappedSecondaryQuad(&secondaryMapWasClamped);
+            auto coverageRectForSelf = clipRectForSelf;
+            if (secondaryQuad && !secondaryMapWasClamped && !applyWasClamped)
+                coverageRectForSelf = intersection(secondaryQuad->boundingBox(), FloatRect { { }, m_size });
+            state.reset(clipRectForSelf, coverageRectForSelf);
+#else
             state.reset(clipRectForSelf, clipRectForSelf);
-        else
+#endif
+        } else
             state.reset(clipRectForSelf);
     }
 
@@ -5280,9 +5289,15 @@ void GraphicsLayerCA::computePixelAlignment(float pageScale, const FloatPoint& p
     float contentsScale = pageScale * deviceScaleFactor();
     // Scale by the page scale factor to compute the screen-relative bounds.
     scaledBounds.scale(contentsScale);
+    FloatRect alignedBounds;
+#if PLATFORM(MAC)
+    alignedBounds = scaledBounds;
+    alignedBounds.setLocation({ std::round(scaledBounds.x()), std::round(scaledBounds.y()) });
+#else
     // Round to integer boundaries.
-    FloatRect alignedBounds = encloseRectToDevicePixels(LayoutRect(scaledBounds), deviceScaleFactor());
-    
+    alignedBounds = encloseRectToDevicePixels(LayoutRect(scaledBounds), deviceScaleFactor());
+#endif
+
     // Convert back to layer coordinates.
     alignedBounds.scale(1 / contentsScale);
 

@@ -655,6 +655,17 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
 const char* expectedSKAdNetworkConsoleMessage = "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3";
 static NSString *linkToAppStoreHTML = @"<body><a href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a></body>";
 
+// The message can show up anywhere in the log, since apps.apple.com's quirks log messages of their own.
+static void expectSKAdNetworkConsoleMessage(const Vector<String>& consoleMessages)
+{
+    auto expectedMessage = String::fromUTF8(expectedSKAdNetworkConsoleMessage);
+    if (Util::waitFor([&] { return consoleMessages.contains(expectedMessage); }))
+        return;
+
+    // Compare against everything that was logged, so a failure shows what arrived instead.
+    EXPECT_WK_STREQ(makeStringByJoining(consoleMessages.span(), "\n"_s), expectedSKAdNetworkConsoleMessage);
+}
+
 TEST(PrivateClickMeasurement, SKAdNetwork)
 {
     __block Vector<String> consoleMessages;
@@ -668,9 +679,7 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
         consoleMessages.append(log);
     };
     setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
-    while (consoleMessages.isEmpty())
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
+    expectSKAdNetworkConsoleMessage(consoleMessages);
 }
 
 TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
@@ -695,9 +704,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
     "    <a target='_blank' href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
     "</body>";
     setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTMLWithAboutBlank, uiDelegate.get());
-    while (consoleMessages.isEmpty())
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
+    expectSKAdNetworkConsoleMessage(consoleMessages);
 }
 
 TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
@@ -717,9 +724,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
     };
     setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
 
-    while (consoleMessages.isEmpty())
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
+    expectSKAdNetworkConsoleMessage(consoleMessages);
 }
 
 TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
