@@ -4173,7 +4173,6 @@ imported/w3c/web-platform-tests/css/css-display/display-flow-root-002.html [ Ima
 imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ ImageOnlyFailure ]
 
 # Initial failures on the initial import of css-overflow
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-024.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-025.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-002.tentative.html [ ImageOnlyFailure ]

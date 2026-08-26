@@ -53,7 +53,8 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
         return;
 
     m_previousLineClamp = layoutState->lineClamp();
-    if (blockContainer.isFieldset() || blockContainer.isNonReplacedAtomicInlineLevelBox() || blockContainer.isFloatingOrOutOfFlowPositioned()) {
+    if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || blockContainer.isFloatingOrOutOfFlowPositioned()) {
+        // Legacy line clamp does not cross into the interior of an atomic inline-level box.
         layoutState->setLineClamp({ });
 
         m_skippedLegacyLineClampToRestore = layoutState->legacyLineClamp();
