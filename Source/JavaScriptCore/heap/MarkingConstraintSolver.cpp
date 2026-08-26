@@ -53,7 +53,7 @@ bool MarkingConstraintSolver::didVisitSomething() const
     return false;
 }
 
-void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)
+void MarkingConstraintSolver::execute(SchedulerPreference preference, const ScopedLambda<std::optional<unsigned>()>& pickNext)
 {
     m_pickNextIsStillActive = true;
     RELEASE_ASSERT(!m_numThreadsThatMayProduceWork);
@@ -152,7 +152,7 @@ void MarkingConstraintSolver::addParallelTask(RefPtr<SharedTask<void(SlotVisitor
     m_toExecuteInParallel.append(TaskWithConstraint(WTF::move(task), &constraint));
 }
 
-void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)
+void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, const ScopedLambda<std::optional<unsigned>()>& pickNext)
 {
     for (;;) {
         bool doParallelWorkMode;

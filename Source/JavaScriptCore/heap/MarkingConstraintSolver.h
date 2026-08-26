@@ -56,7 +56,7 @@ public:
         NextConstraintFirst
     };
 
-    void execute(SchedulerPreference, ScopedLambda<std::optional<unsigned>()> pickNext);
+    void execute(SchedulerPreference, const ScopedLambda<std::optional<unsigned>()>& pickNext);
     
     void drain(BitVector& unexecuted);
     
@@ -68,7 +68,7 @@ public:
     void addParallelTask(RefPtr<SharedTask<void(SlotVisitor&)>>, MarkingConstraint&);
     
 private:
-    void runExecutionThread(SlotVisitor&, SchedulerPreference, ScopedLambda<std::optional<unsigned>()> pickNext);
+    void runExecutionThread(SlotVisitor&, SchedulerPreference, const ScopedLambda<std::optional<unsigned>()>& pickNext);
     
     struct TaskWithConstraint {
         TaskWithConstraint() { }

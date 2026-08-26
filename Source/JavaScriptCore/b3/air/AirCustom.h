@@ -59,7 +59,7 @@ namespace JSC { namespace B3 { namespace Air {
 // Definition of Patch instruction. Patch is used to delegate the behavior of the instruction to the
 // Special object, which will be the first argument to the instruction.
 struct PatchCustom {
-    static void forEachArg(Inst& inst, ScopedLambda<Inst::EachArgCallback> lambda)
+    static void forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& lambda)
     {
         // This is basically bogus, but it works for analyses that model Special as an
         // immediate.

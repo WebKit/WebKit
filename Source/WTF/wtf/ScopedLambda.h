@@ -66,6 +66,7 @@ public:
 
     template<typename Functor>
     requires (!std::same_as<std::remove_cvref_t<Functor>, std::nullptr_t>
+        && !std::same_as<std::remove_cvref_t<Functor>, ScopedLambda>
         && Invocable<Functor, ResultType(ArgumentTypes...)>)
     ScopedLambda(Functor&& functor LIFETIME_BOUND)
         : m_impl([] (void* argument, ArgumentTypes... arguments) -> ResultType {
