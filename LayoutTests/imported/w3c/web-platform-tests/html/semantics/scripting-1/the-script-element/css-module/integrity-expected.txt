@@ -1,4 +1,4 @@
 
-Harness Error (FAIL), message = TypeError: Import attribute type "css" is not valid
-
+PASS The integrity attribute must be verified on the top-level of a module loading a CSS module and allow it to execute when it matches
+PASS The integrity attribute must be verified on the top-level of a module loading a CSS module and not allow it to execute when there's a mismatch
 

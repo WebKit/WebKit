@@ -219,7 +219,7 @@ void ModuleRegistryEntry::provideFetch(JSGlobalObject* globalObject, SourceCode&
     provideFetch(globalObject, JSSourceCode::create(globalObject->vm(), WTF::move(sourceCode)));
 }
 
-void ModuleRegistryEntry::provideFetch(JSGlobalObject* globalObject, JSSourceCode* jsSourceCode)
+void ModuleRegistryEntry::provideFetch(JSGlobalObject* globalObject, JSValue moduleData)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -231,7 +231,7 @@ void ModuleRegistryEntry::provideFetch(JSGlobalObject* globalObject, JSSourceCod
 
     scope.release();
     m_status = Status::Fetching;
-    m_fetchPromise->fulfill(vm, jsSourceCode);
+    m_fetchPromise->fulfill(vm, moduleData);
 }
 
 void ModuleRegistryEntry::fetchComplete(JSGlobalObject* globalObject, AbstractModuleRecord* record)

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT import-style-blocked Test timed out
+PASS import-style-blocked
 

@@ -117,6 +117,7 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,
+        &moduleTypeCanBeLoaded, // moduleTypeCanBeLoaded
     };
     return &table;
 };

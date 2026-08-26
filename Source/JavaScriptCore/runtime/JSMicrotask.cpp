@@ -986,8 +986,8 @@ static void moduleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, Thr
     auto* modulePromise = uncheckedDowncast<JSPromise>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* jsSourceCode = downcast<JSSourceCode>(arguments[1]);
-        JSPromise* makeModulePromise = JSModuleLoader::makeModule(globalObject, entry->key(), jsSourceCode);
+        auto moduleData = arguments[1];
+        JSPromise* makeModulePromise = JSModuleLoader::makeModule(globalObject, entry->key(), moduleData);
         if (scope.exception()) {
             modulePromise->rejectWithCaughtException(vm, scope);
             return;
@@ -1126,13 +1126,13 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
     auto* intermediatePromise = uncheckedDowncast<JSPromise>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* jsSourceCode = downcast<JSSourceCode>(arguments[1]);
+        auto moduleData = arguments[1];
 
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
         ScriptFetcher* scriptFetcher = context->scriptFetcher();
 
-        globalObject->moduleLoader()->provideFetch(globalObject, specifier, type, jsSourceCode);
+        globalObject->moduleLoader()->provideFetch(globalObject, specifier, type, moduleData);
         if (scope.exception()) {
             intermediatePromise->rejectWithCaughtException(vm, scope);
             return;

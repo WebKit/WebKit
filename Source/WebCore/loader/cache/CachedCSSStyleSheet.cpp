@@ -77,7 +77,7 @@ ASCIILiteral CachedCSSStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const
+String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, ForceUTF8Encoding forceUTF8Encoding, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const
 {
     // Ensure hasValidMIMEType and hasHTTPStatusOK always get set (even if m_data is null or empty) — which in turn
     // ensures that if the MIME type isn't text/css or the HTTP status isn't an OK status, we never load the resource.
@@ -88,11 +88,18 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
     if (!data || data->isEmpty())
         return String();
 
-    if (!m_decodedSheetText.isNull())
-        return m_decodedSheetText;
+    switch (forceUTF8Encoding) {
+    case ForceUTF8Encoding::No:
+        if (!m_decodedSheetText.isNull())
+            return m_decodedSheetText;
 
-    // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
-    return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
+        // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
+        return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
+    case ForceUTF8Encoding::Yes:
+        auto utf8Decoder = TextResourceDecoder::create(cssContentTypeAtom(), PAL::UTF8Encoding());
+        utf8Decoder->setAlwaysUseUTF8();
+        return utf8Decoder->decodeAndFlush(data->makeContiguous()->span());
+    }
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
@@ -160,11 +167,10 @@ bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint, bool*
         return response().url().protocolIsInHTTPFamily() && !response().isSuccessful();
     }();
 
-    if (shouldAvoidUsingStyleSheetDueToUnsuccessfulRequest) {
-        if (hasHTTPStatusOK)
-            *hasHTTPStatusOK = false;
+    if (hasHTTPStatusOK)
+        *hasHTTPStatusOK = !shouldAvoidUsingStyleSheetDueToUnsuccessfulRequest;
+    if (shouldAvoidUsingStyleSheetDueToUnsuccessfulRequest)
         return false;
-    }
 
     if (!mimeTypeAllowedByNosniff()) {
         if (hasValidMIMEType)
@@ -172,8 +178,11 @@ bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint, bool*
         return false;
     }
 
-    if (mimeTypeCheckHint == MIMETypeCheckHint::Lax)
+    if (mimeTypeCheckHint == MIMETypeCheckHint::Lax) {
+        if (hasValidMIMEType)
+            *hasValidMIMEType = true;
         return true;
+    }
 
     // This check exactly matches Firefox.  Note that we grab the Content-Type
     // header directly because we want to see what the value is BEFORE content

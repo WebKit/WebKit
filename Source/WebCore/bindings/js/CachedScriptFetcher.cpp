@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedScriptFetcher.h"
 
+#include "CachedCSSStyleSheet.h"
 #include "CachedScript.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
@@ -41,12 +42,12 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
     return adoptRef(*new CachedScriptFetcher(charset));
 }
 
-CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
+CachedResourceHandle<CachedResource> CachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
 {
-    return requestScriptWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode);
+    return requestResourceWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode);
 }
 
-RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode) const
+RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode) const
 {
     if (!document.settings().isScriptEnabled())
         return nullptr;
@@ -62,7 +63,6 @@ RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& docum
     options.fetchPriority = m_fetchPriority;
     options.nonce = m_nonce;
     options.destination = destination;
-    ASSERT(destination == FetchOptionsDestination::Script || destination == FetchOptionsDestination::Json || destination == FetchOptionsDestination::Text);
 
     auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);
@@ -71,8 +71,25 @@ RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& docum
     if (!m_initiatorType.isNull())
         request.setInitiatorType(m_initiatorType);
 
-    auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
-    return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    switch (destination) {
+    case FetchOptionsDestination::Script:
+    case FetchOptionsDestination::Json:
+    case FetchOptionsDestination::Text: {
+        auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
+        return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    }
+
+    case FetchOptionsDestination::Style: {
+        auto result = protect(document.cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request));
+        return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    }
+
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 }

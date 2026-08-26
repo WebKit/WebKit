@@ -71,6 +71,7 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,
+        nullptr, // moduleTypeCanBeLoaded
     };
     return &table;
 };

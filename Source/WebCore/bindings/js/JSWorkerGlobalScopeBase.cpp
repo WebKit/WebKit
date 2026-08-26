@@ -79,6 +79,7 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,
+        nullptr, // moduleTypeCanBeLoaded
     };
     return &table;
 };

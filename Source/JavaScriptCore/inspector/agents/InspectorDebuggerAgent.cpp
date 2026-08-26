@@ -104,6 +104,8 @@ static Protocol::Debugger::ScriptType scriptTypeForScript(const JSC::Debugger::S
     case JSC::SourceProviderSourceType::JSON:
     case JSC::SourceProviderSourceType::Text:
     case JSC::SourceProviderSourceType::ImportMap:
+    // FIXME: Maybe it should be treated as a separate CSS type and not just Program?
+    case JSC::SourceProviderSourceType::CSS:
         return Protocol::Debugger::ScriptType::Program;
     }
 

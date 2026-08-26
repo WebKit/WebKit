@@ -695,6 +695,7 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
         &codeForEval,
         &canCompileStrings,
         &trustedScriptStructure,
+        nullptr // moduleTypeCanBeLoaded
     };
     return &table;
 };

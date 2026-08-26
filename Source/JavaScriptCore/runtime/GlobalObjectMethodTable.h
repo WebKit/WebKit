@@ -22,6 +22,7 @@
 #pragma once
 
 #include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/ScriptFetchParameters.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -42,7 +43,6 @@ class JSValue;
 class Microtask;
 class RuntimeFlags;
 class ScriptFetcher;
-class ScriptFetchParameters;
 class SourceOrigin;
 class Structure;
 class QueuedTask;
@@ -87,6 +87,8 @@ struct GlobalObjectMethodTable {
     String (*codeForEval)(JSGlobalObject*, JSValue);
     bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, const ArgList&);
     Structure* (*trustedScriptStructure)(JSGlobalObject*);
+
+    bool (*moduleTypeCanBeLoaded)(ScriptFetchParameters::Type);
 };
 
 } // namespace JSC
