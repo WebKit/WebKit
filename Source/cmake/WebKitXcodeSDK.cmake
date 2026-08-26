@@ -3,8 +3,10 @@
 # Always pass --sdk to xcrun explicitly -- otherwise, toolchain and SDK
 # are not guaranteed to match.
 
-# Sets CMAKE_OSX_SYSROOT, WEBKIT_SDK_NAME, and WEBKIT_SDK_VERSION in the caller's scope.
+# Caches CMAKE_OSX_SYSROOT and WEBKIT_SDK_NAME, and sets WEBKIT_SDK_VERSION in
+# the caller's scope.
 function(WEBKIT_RESOLVE_SDK)
+    set(WEBKIT_SDK_REQUEST "${ARGN}" CACHE INTERNAL "")
     foreach (_sdk IN LISTS ARGN)
         execute_process(COMMAND xcrun --sdk ${_sdk} --show-sdk-path
             OUTPUT_VARIABLE _sdk_path
@@ -19,8 +21,9 @@ function(WEBKIT_RESOLVE_SDK)
 
             message(STATUS "Xcode SDK: ${_sdk_canonical_name} at ${_sdk_path}")
             set(WEBKIT_SDK_VERSION "${_sdk_version}" PARENT_SCOPE)
-            set(WEBKIT_SDK_NAME "${_platform_name}" PARENT_SCOPE)
+            set(WEBKIT_SDK_NAME "${_platform_name}" CACHE INTERNAL "")
             set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "" FORCE)
+            set(WEBKIT_SDK_RESOLVED "${_sdk_path}" CACHE INTERNAL "")
             if (_sdk_path MATCHES "\\.[Ii]nternal.sdk$")
                 set(USE_APPLE_INTERNAL_SDK ON CACHE BOOL "" FORCE)
             else ()
@@ -103,13 +106,44 @@ function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
     endif ()
 endfunction()
 
+function(WEBKIT_FORGET_XCODE _xcode)
+    message(STATUS "Xcode moved from ${_xcode}; forgetting what was found in it")
+
+    # CMake never repeats a cached find_* or check_*. An SDK given as a path
+    # does not move with the toolchain, so what is inside it is kept.
+    set(_sdk "${CMAKE_OSX_SYSROOT}")
+    get_cmake_property(_cache_vars CACHE_VARIABLES)
+    foreach (_var IN LISTS _cache_vars)
+        set(_value "$CACHE{${_var}}")
+        cmake_path(IS_PREFIX _xcode "${_value}" _in_xcode)
+        cmake_path(IS_PREFIX _sdk "${_value}" _in_sdk)
+        get_property(_help CACHE ${_var} PROPERTY HELPSTRING)
+        if ((_in_xcode AND NOT _in_sdk) OR _help MATCHES "^(Test|Have|CHECK_TYPE_SIZE:) ")
+            unset(${_var} CACHE)
+        endif ()
+    endforeach ()
+    unset(SWIFT_CXX_INTEROP_SUPPORTED CACHE)
+    unset(SWIFT_DETECTED_VERSION CACHE)
+
+    # CMake deletes the whole cache, preset values included, when a compiler no
+    # longer matches its record of it. Drop the record, as a CMake upgrade does.
+    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/CMakeFiles/${CMAKE_VERSION}")
+endfunction()
+
 # ----------------------------------------------------------------------------
 # Initialization logic. Sets CMAKE_OSX_SYSROOT if needed, and pins compiler
 # tools from the SDK.
 # ----------------------------------------------------------------------------
 
-if (CMAKE_OSX_SYSROOT)
-    WEBKIT_RESOLVE_SDK(${CMAKE_OSX_SYSROOT})
+# CMAKE_OSX_SYSROOT starts as a request like "macosx.internal;macosx" and is
+# replaced by the path it resolved to. Resolve the request again, not the path.
+set(_sdk_request "${CMAKE_OSX_SYSROOT}")
+if (_sdk_request STREQUAL "$CACHE{WEBKIT_SDK_RESOLVED}")
+    set(_sdk_request "$CACHE{WEBKIT_SDK_REQUEST}")
+endif ()
+
+if (_sdk_request)
+    WEBKIT_RESOLVE_SDK(${_sdk_request})
 elseif (PORT STREQUAL "Mac" OR PORT STREQUAL "Cocoa" OR PORT STREQUAL "JSCOnly" OR NOT PORT)
     WEBKIT_RESOLVE_SDK(macosx.internal macosx)
 elseif (PORT STREQUAL "IOS" AND CMAKE_IOS_SIMULATOR)
@@ -120,6 +154,7 @@ else ()
     message(FATAL_ERROR "Building for an Apple platform without an SDK "
         "directory (CMAKE_OSX_SYSROOT) or supported PORT variable.")
 endif ()
+unset(_sdk_request)
 
 # One entry per SDK the Cocoa port builds for, matching SUPPORTED_PLATFORMS in the
 # Xcode configurations. The fields, in order: the platform name Info.plists carry,
@@ -222,6 +257,21 @@ endif ()
 # Subsequent use of `xcrun` or any of the system Xcode and BSD tools will
 # use the selected SDK and toolchain.
 set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
+
+# An Xcode update can move Xcode and leave the old copy in place, so compare
+# the active Xcode with the one the cached compiler came from.
+WEBKIT_XCRUN(_clang -f clang)
+if (NOT EXISTS "${_clang}")
+    message(FATAL_ERROR "xcrun could not find clang in ${CMAKE_OSX_SYSROOT}")
+endif ()
+string(REGEX REPLACE "/Contents/Developer/.*$" "/Contents/Developer" _xcode "${_clang}")
+string(REGEX REPLACE "/Contents/Developer/.*$" "/Contents/Developer" _cached_xcode "$CACHE{CMAKE_C_COMPILER}")
+if (_cached_xcode MATCHES "/Contents/Developer$" AND NOT _cached_xcode STREQUAL _xcode)
+    WEBKIT_FORGET_XCODE("${_cached_xcode}")
+endif ()
+unset(_clang)
+unset(_xcode)
+unset(_cached_xcode)
 
 WEBKIT_RESOLVE_TOOL(CMAKE_C_COMPILER "clang")
 WEBKIT_RESOLVE_TOOL(CMAKE_ASM_COMPILER "clang")
