@@ -179,7 +179,7 @@ void FrameInspectorController::createLazyAgents()
 
     auto context = frameAgentContext();
     m_agents.append(makeUniqueRef<FrameDebuggerAgent>(context));
-    m_agents.append(makeUniqueRef<FrameDOMAgent>(context));
+    m_agents.append(makeUniqueRef<FrameDOMAgent>(context, m_overlay.get()));
     m_agents.append(makeUniqueRef<FrameDOMStorageAgent>(context));
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
