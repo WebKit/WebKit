@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#import "FirstPartyAuthority.h"
+
 #import "APIAttachment.h"
 #import "APINavigation.h"
 #import "APIPageConfiguration.h"
@@ -797,8 +799,10 @@ MediaUsageManager& WebPageProxy::mediaUsageManager()
     return *m_mediaUsageManager;
 }
 
-void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, IPC::Untrusted<URL>&& untrustedPageURL)
 {
+    auto pageURL = WTF::move(untrustedPageURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     mediaUsageManager().addMediaSession(identifier, bundleIdentifier, pageURL);
 }
 
@@ -1006,8 +1010,12 @@ void WebPageProxy::setUpHighlightsObserver()
 
 #if ENABLE(APPLE_PAY_AMS_UI)
 
-void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+void WebPageProxy::startApplePayAMSUISession(IPC::Untrusted<URL>&& untrustedOriginatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
+    auto validatedOriginatingURL = WTF::move(untrustedOriginatingURL).validate(FirstPartyAuthority { m_legacyMainFrameProcess });
+    MESSAGE_CHECK_COMPLETION(validatedOriginatingURL, m_legacyMainFrameProcess->connection(), completionHandler(std::nullopt));
+    auto originatingURL = WTF::move(*validatedOriginatingURL);
+
     if (!AppleMediaServicesUILibrary()) {
         completionHandler(std::nullopt);
         return;

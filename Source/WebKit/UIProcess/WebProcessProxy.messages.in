@@ -93,7 +93,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
 #if ENABLE(NOTIFICATION_EVENT)
-    [EnabledBy=NotificationEventEnabled] GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
+    [EnabledBy=NotificationEventEnabled] GetNotifications(IPC::Untrusted<URL> registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
 #endif
     [EnabledBy=AppBadgeEnabled] SetAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData> origin, std::optional<uint64_t> badge)
 
@@ -110,7 +110,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    [EnabledBy=ServiceWorkersEnabled] CreateServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL url, enum:bool WebCore::ServiceWorkerIsInspectable isInspectable) -> (bool shouldWaitForAutoInspection) Async
+    [EnabledBy=ServiceWorkersEnabled] CreateServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL> url, enum:bool WebCore::ServiceWorkerIsInspectable isInspectable) -> (bool shouldWaitForAutoInspection) Async
     [EnabledBy=ServiceWorkersEnabled] DeleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier)
     [EnabledBy=ServiceWorkersEnabled] SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
 #endif

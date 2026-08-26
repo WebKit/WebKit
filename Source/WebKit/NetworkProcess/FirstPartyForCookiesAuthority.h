@@ -28,11 +28,13 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "Untrusted.h"
+#include <WebCore/BlobURL.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
@@ -68,6 +70,11 @@ public:
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site& site) const
     {
         return failureFor(site.domain());
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        return failureFor(WebCore::RegistrableDomain { url });
     }
 
 private:
@@ -109,6 +116,11 @@ public:
         return failureFor(WebCore::RegistrableDomain { origin });
     }
 
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        return failureFor(WebCore::RegistrableDomain { url });
+    }
+
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin& origin) const
     {
         if (auto failure = failureFor(WebCore::RegistrableDomain { origin.clientOrigin }))
@@ -130,6 +142,24 @@ private:
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
+class BlobURLOriginAuthority : public IPC::UntrustedValidation<BlobURLOriginAuthority> {
+public:
+    BlobURLOriginAuthority(NetworkProcess& networkProcess, WebCore::ProcessIdentifier webProcessIdentifier)
+        : m_inner(networkProcess, webProcessIdentifier)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        if (!url.protocolIsBlob())
+            return IPC::ValidationFailure::Terminate;
+        return m_inner.checkUntrusted(WebCore::BlobURL::getOriginURL(url));
+    }
+
+private:
+    HostedDomainAuthority m_inner;
+};
+
 } // namespace WebKit
 
 namespace IPC {
@@ -137,9 +167,13 @@ namespace IPC {
 template<> struct IsPreordainedValidator<WebKit::FirstPartyForCookiesAuthority, WebCore::SecurityOriginData> : std::true_type { };
 template<> struct IsPreordainedValidator<WebKit::FirstPartyForCookiesAuthority, WebCore::RegistrableDomain> : std::true_type { };
 template<> struct IsPreordainedValidator<WebKit::FirstPartyForCookiesAuthority, WebCore::Site> : std::true_type { };
+template<> struct IsPreordainedValidator<WebKit::FirstPartyForCookiesAuthority, URL> : std::true_type { };
 
 template<> struct IsPreordainedValidator<WebKit::HostedDomainAuthority, WebCore::RegistrableDomain> : std::true_type { };
 template<> struct IsPreordainedValidator<WebKit::HostedDomainAuthority, WebCore::SecurityOriginData> : std::true_type { };
 template<> struct IsPreordainedValidator<WebKit::HostedDomainAuthority, WebCore::ClientOrigin> : std::true_type { };
+template<> struct IsPreordainedValidator<WebKit::HostedDomainAuthority, URL> : std::true_type { };
+
+template<> struct IsPreordainedValidator<WebKit::BlobURLOriginAuthority, URL> : std::true_type { };
 
 } // namespace IPC

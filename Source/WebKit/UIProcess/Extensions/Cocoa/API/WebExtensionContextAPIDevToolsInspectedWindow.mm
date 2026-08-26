@@ -40,8 +40,12 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, IPC::Untrusted<std::optional<URL>>&& untrustedFrameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&)>&& completionHandler)
 {
+    // FIXME: Sent by a devtools extension; scoping this needs host permissions rather
+    // than site-isolation authority.
+    auto frameURL = WTF::move(untrustedFrameURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
