@@ -48,8 +48,6 @@ enum class ValidationFailure : uint8_t {
 template<typename T> using Validated = Expected<T, ValidationFailure>;
 
 enum class UnvalidatedReason : uint8_t {
-    // Not worked out yet: a bootstrapping state for a sweep that has not been burned down.
-    NeedsReview,
     // Another check, here or in the handler this one delegates to, already establishes it.
     ValidatedElsewhere,
     // Names where a request is going or came from, not what the sender may act as.
