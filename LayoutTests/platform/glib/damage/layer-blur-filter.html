@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      #x {
+          filter: blur(10px);
+          will-change: transform;
+          width: 100px;
+          height: 100px;
+          background: green;
+      }
+      #y {
+          width: 100px;
+          height: 100px;
+          background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id=x>x</div>
+    <div id=y>y</div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { document.getElementById('y').style.visibility = 'hidden'; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[0, 100, 100, 100]]); },
+      ], 0);
+    </script>
+  </body>
+</html>
