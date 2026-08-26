@@ -32,13 +32,11 @@ import WebKit_Internal
 @_spiOnly import WebKit_Private._WKHitTestResult
 #endif
 
-private struct DefaultDialogPresenting: WebPage.DialogPresenting {
-}
-
 @MainActor
 final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
     init(dialogPresenter: (any WebPage.DialogPresenting)?) {
-        self.dialogPresenter = dialogPresenter ?? DefaultDialogPresenting()
+        self.dialogPresenter = dialogPresenter
+        self.hasDialogPresenter = dialogPresenter != nil
     }
 
     weak var owner: WebPage? = nil
@@ -47,11 +45,33 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
     var menuBuilder: ((WKContextMenuElementInfoAdapter) -> NSMenu)? = nil
     #endif
 
-    private let dialogPresenter: any WebPage.DialogPresenting
+    private let dialogPresenter: (any WebPage.DialogPresenting)?
+
+    // responds(to:) overrides a nonisolated method, so it cannot read the main
+    // actor-isolated dialogPresenter; record whether one was provided instead.
+    private nonisolated let hasDialogPresenter: Bool
+
+    // When no dialog presenter was provided, hide runOpenPanelWith: from
+    // respondsToSelector: so that UIDelegate.mm falls back to
+    // WKFileUploadPanel (the Safari-default file picker).
+    nonisolated override func responds(to aSelector: Selector!) -> Bool {
+        if aSelector == #selector(
+            (any WKUIDelegate).webView(
+                _:
+                runOpenPanelWith:
+                initiatedByFrame:
+                completionHandler:
+            )
+        ) {
+            return hasDialogPresenter
+        }
+        return super.responds(to: aSelector)
+    }
 
     // MARK: Dialog presentation
 
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async {
+        guard let dialogPresenter else { return }
         await dialogPresenter.handleJavaScriptAlert(message: message, initiatedBy: .init(frame))
     }
 
@@ -60,6 +80,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
         runJavaScriptConfirmPanelWithMessage message: String,
         initiatedByFrame frame: WKFrameInfo
     ) async -> Bool {
+        guard let dialogPresenter else { return false }
         let result = await dialogPresenter.handleJavaScriptConfirm(message: message, initiatedBy: .init(frame))
 
         return switch result {
@@ -74,6 +95,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
         defaultText: String?,
         initiatedByFrame frame: WKFrameInfo
     ) async -> String? {
+        guard let dialogPresenter else { return nil }
         let result = await dialogPresenter.handleJavaScriptPrompt(message: prompt, defaultText: defaultText, initiatedBy: .init(frame))
 
         return switch result {
@@ -87,6 +109,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
         runOpenPanelWith parameters: WKOpenPanelParameters,
         initiatedByFrame frame: WKFrameInfo
     ) async -> [URL]? {
+        guard let dialogPresenter else { return nil }
         let result = await dialogPresenter.handleFileInputPrompt(parameters: parameters, initiatedBy: .init(frame))
 
         return switch result {

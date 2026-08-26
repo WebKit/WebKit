@@ -91,6 +91,18 @@ extension WebPage.Configuration {
 }
 #endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
+private struct TestDialogPresenter: WebPage.DialogPresenting {
+}
+
+private let openPanelSelector = #selector(
+    (any WKUIDelegate).webView(
+        _:
+        runOpenPanelWith:
+        initiatedByFrame:
+        completionHandler:
+    )
+)
+
 // MARK: Tests
 
 @MainActor
@@ -265,6 +277,39 @@ struct WebPageTests {
 
         let afterClear = try await page.callJavaScript("return document.body.foo", contentWorld: world)
         #expect(afterClear == nil)
+    }
+
+    @Test
+    func uiDelegateFallsBackToDefaultOpenPanelHandlingWithoutDialogPresenter() throws {
+        let page = WebPage()
+
+        let uiDelegate = try #require(page.backingWebView.uiDelegate)
+
+        // When no custom DialogPresenting is provided, the UI delegate must report
+        // runOpenPanelWith: as unimplemented so that WebKit presents its default
+        // file upload UI instead of silently cancelling the file input prompt.
+        #expect(!uiDelegate.responds(to: openPanelSelector))
+    }
+
+    @Test
+    func uiDelegateHandlesOpenPanelWithCustomDialogPresenter() throws {
+        let page = WebPage(dialogPresenter: TestDialogPresenter())
+
+        let uiDelegate = try #require(page.backingWebView.uiDelegate)
+
+        #expect(uiDelegate.responds(to: openPanelSelector))
+    }
+
+    @Test
+    func javaScriptDialogsAreCancelledWithoutDialogPresenter() async throws {
+        let page = WebPage()
+        try await page.load(html: "<body></body>").wait()
+
+        let confirmResult = try await page.callJavaScript("return window.confirm('message');") as? Bool
+        #expect(confirmResult == false)
+
+        let promptResult = try await page.callJavaScript("return window.prompt('message') === null;") as? Bool
+        #expect(promptResult == true)
     }
 }
 
