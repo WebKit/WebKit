@@ -182,7 +182,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<WebKit::RendererBufferTransportMode> rendererBufferTransportMode;
     WebCore::SystemSettings::State systemSettings;
-    std::optional<WTF::MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
+    std::optional<MemoryPressureHandlerConfiguration> memoryPressureHandlerConfiguration;
     bool disableFontHintingForTesting;
     OptionSet<WebKit::AvailableInputDevices> availableInputDevices;
 #endif

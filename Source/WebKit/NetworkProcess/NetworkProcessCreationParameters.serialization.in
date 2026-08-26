@@ -49,7 +49,7 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy
     Vector<String> languages
-    std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration
+    std::optional<MemoryPressureHandlerConfiguration> memoryPressureHandlerConfiguration
 #endif
 
     Vector<String> urlSchemesRegisteredAsSecure

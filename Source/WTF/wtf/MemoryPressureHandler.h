@@ -277,6 +277,7 @@ private:
 
 using WTF::Critical;
 using WTF::MemoryPressureHandler;
+using WTF::MemoryPressureHandlerConfiguration;
 using WTF::Synchronous;
 using WTF::SystemMemoryPressureStatus;
 using WTF::WebsamProcessState;
