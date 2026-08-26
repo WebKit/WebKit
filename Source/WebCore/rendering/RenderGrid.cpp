@@ -45,6 +45,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "StyleFitTolerance.h"
 #include "StyleGridPositionsResolver.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <ranges>
@@ -592,6 +593,40 @@ bool RenderGrid::layoutUsingGridFormattingContext()
     return true;
 }
 
+static GridLanesLayout::ResolvedFitTolerance resolveFitTolerance(const RenderGrid& grid, Style::GridTrackSizingDirection stackingAxisDirection)
+{
+    const auto& tolerance = grid.style().fitTolerance();
+    if (tolerance.isInfinite())
+        return CSS::Keyword::Infinite { };
+
+    // Placement tolerance is a distance measured along the stacking axis, so a percentage
+    // resolves against the stacking axis content box size.
+    auto stackingAxisContentBoxSize = stackingAxisDirection == Style::GridTrackSizingDirection::Rows
+        ? grid.contentBoxLogicalHeight()
+        : grid.contentBoxLogicalWidth();
+
+    return tolerance.switchOn(
+        [&](const CSS::Keyword::Normal&) -> LayoutUnit {
+            // Normal resolves to 1em
+            return LayoutUnit { grid.style().computedFontSize() };
+        },
+        [&](const Style::FitTolerance::Fixed& fixed) -> LayoutUnit {
+            return LayoutUnit { fixed.resolveZoom(grid.style().usedZoomForLength()) };
+        },
+        [&](const Style::FitTolerance::Percentage& percentage) -> LayoutUnit {
+            return Style::evaluate<LayoutUnit>(percentage, stackingAxisContentBoxSize);
+        },
+        [&](const Style::FitTolerance::Calc& calc) -> LayoutUnit {
+            return Style::evaluate<LayoutUnit>(calc, stackingAxisContentBoxSize, grid.style().usedZoomForLength());
+        },
+        [](const CSS::Keyword::Infinite&) -> LayoutUnit {
+            // Handled by the isInfinite() early return above.
+            ASSERT_NOT_REACHED();
+            return LayoutUnit { };
+        }
+    );
+}
+
 void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
 {
     ASSERT(isGridLanes());
@@ -657,7 +692,7 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         auto gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(orthogonalDirection(stackingAxisDirection));
 
         auto gridLanesLayout = GridLanesLayout { *this, gridAxisTracksBeforeAutoPlacement, stackingAxisDirection };
-        gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, GridLanesLayout::Phase::Layout);
+        gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, resolveFitTolerance(*this, stackingAxisDirection), GridLanesLayout::Phase::Layout);
 
         // Only the layout phase records this. computeIntrinsicLogicalWidths() also performs
         // placement, but its min-content and max-content results are not what the overlay should
@@ -862,12 +897,14 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
         // content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
         // Constructing a GridLanesLayout clears the grid, so the track count both runs are given
         // has to be the one taken before either of them placed anything.
+        auto fitTolerance = resolveFitTolerance(*this, Style::GridTrackSizingDirection::Columns);
+
         auto minContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
-        minContentLayout.performGridLanesPlacement(algorithm, GridLanesLayout::Phase::MinContent);
+        minContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MinContent);
         minLogicalWidth = minContentLayout.gridContentSize();
 
         auto maxContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
-        maxContentLayout.performGridLanesPlacement(algorithm, GridLanesLayout::Phase::MaxContent);
+        maxContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MaxContent);
         maxLogicalWidth = maxContentLayout.gridContentSize();
     }
 
