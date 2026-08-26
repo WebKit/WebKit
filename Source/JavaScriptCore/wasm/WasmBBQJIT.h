@@ -254,6 +254,13 @@ public:
             return m_ref;
         }
 
+        ALWAYS_INLINE v128_t asV128() const
+        {
+            ASSERT(m_kind == Const);
+            ASSERT(m_type == TypeKind::V128);
+            return m_v128;
+        }
+
         ALWAYS_INLINE LocalOrTempIndex asTemp() const
         {
             ASSERT(m_kind == Temp);
@@ -327,6 +334,15 @@ public:
             return val;
         }
 
+        ALWAYS_INLINE static Value fromV128(v128_t immediate)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = TypeKind::V128;
+            val.m_v128 = immediate;
+            return val;
+        }
+
         ALWAYS_INLINE static Value fromTemp(TypeKind type, LocalOrTempIndex temp)
         {
             Value val;
@@ -392,6 +408,7 @@ public:
             LocalOrTempIndex m_index;
             Location m_pinned;
             EncodedJSValue m_ref;
+            v128_t m_v128;
         };
 
         Kind m_kind;
