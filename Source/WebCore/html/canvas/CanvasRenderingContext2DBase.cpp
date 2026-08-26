@@ -37,6 +37,8 @@
 #include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
 #include "CSSMarkup.h"
+#include "CSSParser.h"
+#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
@@ -52,6 +54,7 @@
 #include "CanvasPattern.h"
 #include "ColorConversion.h"
 #include "ColorSerialization.h"
+#include "ComplexTextController.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
 #include "FloatQuad.h"
@@ -91,6 +94,7 @@
 #include "TextShapingResultAndDisplayList.h"
 #include "TextUtil.h"
 #include "WebCodecsVideoFrame.h"
+#include "WidthIterator.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
@@ -3086,6 +3090,8 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     auto& font = *fontProxy;
     auto& fontMetrics = font.metricsOfPrimaryFont();
 
+    metrics = TextMetrics::create(font.fontCascade(), textRun.textAsString());
+
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
     float fontWidth = font.width(textRun, &glyphOverflow);
@@ -3107,6 +3113,10 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 
     metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
     metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
+
+    metrics->m_textAlignOffset = -offset.x();
+    metrics->m_direction = state().direction;
+    metrics->m_directionalOverride = textRun.directionalOverride();
 
     return metrics;
 }
@@ -3389,6 +3399,82 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::allocateImageBuffer() const
 RefPtr<ImageBuffer> CanvasRenderingContext2DBase::createCompatibleImageBuffer(GraphicsContext& context, const FloatSize& size) const
 {
     return context.createImageBuffer(size, colorSpace(), pixelFormat());
+}
+
+ExceptionOr<Ref<DOMRectReadOnly>> TextMetrics::getActualBoundingBox(uint32_t start, uint32_t end)
+{
+    if (start >= m_text.length() || end >= m_text.length())
+        return Exception { ExceptionCode::IndexSizeError };
+
+    // FIXME: implement me.
+    return DOMRectReadOnly::create(0, 0, 0, 0);
+}
+
+unsigned TextMetrics::getIndexFromOffset(double offset)
+{
+    offset += m_textAlignOffset;
+    if (offset < 0)
+        offset = 0;
+    if (offset > m_width)
+        offset = m_width;
+    auto direction = (m_direction == CanvasDirection::Rtl) ? TextDirection::RTL : TextDirection::LTR;
+    TextRun textRun(m_text, 0, 0, ExpansionBehavior::allowRightOnly(), direction, m_directionalOverride, true);
+
+    auto codePathToUse = m_font.codePath(textRun);
+    if (codePathToUse == FontCascade::CodePath::Complex) {
+        ComplexTextController complexIterator(m_font, textRun, false, nullptr);
+        float runWidthSoFar = 0;
+        char32_t c = m_text.codePointAt(0);
+        char32_t previousC = c;
+        unsigned i = U16_LENGTH(c);
+        while (i <= m_text.length()) {
+            complexIterator.advance(i, nullptr, GlyphIterationStyle::IncludePartialGlyphs, nullptr);
+            c = m_text.codePointAt(i);
+            if (offset < complexIterator.runWidthSoFar()) {
+                float w = complexIterator.runWidthSoFar() - runWidthSoFar;
+                if (offset <= (runWidthSoFar + (w / 2)))
+                    return i - U16_LENGTH(previousC);
+                return i;
+            }
+            i += U16_LENGTH(c);
+            previousC = c;
+            runWidthSoFar = complexIterator.runWidthSoFar();
+        }
+    } else {
+        SingleThreadWeakHashSet<const Font> localFallbackFonts;
+        WidthIterator simpleIterator(m_font, textRun, &localFallbackFonts, true);
+        GlyphBuffer glyphBuffer;
+        simpleIterator.advance(m_text.length(), glyphBuffer);
+        simpleIterator.finalize(glyphBuffer);
+        float runWidthSoFar = 0;
+        char32_t character = m_text.codePointAt(0);
+        unsigned index = 0;
+        unsigned glyphIndex = 0;
+        while (glyphIndex < glyphBuffer.size()) {
+            float w = WebCore::width(glyphBuffer.advanceAt(glyphIndex));
+            character = m_text.codePointAt(index);
+            if (offset < (runWidthSoFar + w)) {
+                if (offset <= (runWidthSoFar + (w / 2)))
+                    return index;
+                return index + U16_LENGTH(character);
+            }
+            index += U16_LENGTH(character);
+            runWidthSoFar += w;
+            glyphIndex++;
+        }
+    }
+
+    return m_text.length();
+}
+
+ExceptionOr<Vector<Ref<DOMRectReadOnly>>> TextMetrics::getSelectionRects(uint32_t start, uint32_t end)
+{
+    if (start > m_text.length() || end > m_text.length())
+        return Exception { ExceptionCode::IndexSizeError };
+
+    Vector<Ref<DOMRectReadOnly>> selectionRects;
+    // FIXME: implement me.
+    return selectionRects;
 }
 
 } // namespace WebCore
