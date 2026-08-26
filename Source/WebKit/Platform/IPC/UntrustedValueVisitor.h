@@ -27,6 +27,7 @@
 
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 class RegistrableDomain;
@@ -37,6 +38,15 @@ struct ClientOrigin;
 }
 
 namespace IPC {
+
+enum class UntrustedValueKind : uint8_t {
+    URL = 1 << 0,
+    ClientOrigin = 1 << 1,
+    RegistrableDomain = 1 << 2,
+    SecurityOrigin = 1 << 3,
+    SecurityOriginData = 1 << 4,
+    Site = 1 << 5,
+};
 
 // Presented with every origin, site, domain and URL reachable from a serialized struct.
 // Implemented by the designated validation procedures, which cannot be templates here
@@ -54,13 +64,16 @@ public:
 };
 
 // Specialized by generate-serializers.py: every serialized type that transitively carries
-// one of the types above gets ArgumentCoder<T>::visitUntrustedValues. It lives on the
-// argument coder because that is already a friend of the type it serializes, so the
-// traversal can reach private members. Wrapping such a struct in IPC::Untrusted<T> is
-// therefore as strong as wrapping the origin itself: no field can be reached without a visit.
+// one of the types above gets ArgumentCoder<T>::visitUntrustedValues, plus an
+// untrustedValueKinds set naming which of them it can actually contain, so that a validator
+// applied to it need only account for those. The visitor lives on the argument coder because
+// that is already a friend of the type it serializes, so the traversal can reach private
+// members. Wrapping such a struct in IPC::Untrusted<T> is therefore as strong as wrapping the
+// origin itself: no field can be reached without a visit.
 template<typename T> concept CarriesUntrustedValues = requires(const T& value, UntrustedValueVisitor& visitor)
 {
     ArgumentCoder<T>::visitUntrustedValues(value, visitor);
+    { ArgumentCoder<T>::untrustedValueKinds } -> std::convertible_to<OptionSet<UntrustedValueKind>>;
 };
 
 } // namespace IPC

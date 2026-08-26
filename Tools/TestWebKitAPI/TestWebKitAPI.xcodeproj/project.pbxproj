@@ -1452,6 +1452,7 @@
 				IPC/ThreadSafeObjectHeapTests.cpp,
 				IPC/TransferStringObjCTests.mm,
 				IPC/TransferStringTests.cpp,
+				IPC/UntrustedTests.cpp,
 				IPC/WebFoundTextRangeTests.cpp,
 			);
 			target = 7B9FC39428A26137007570E7 /* TestIPC */;

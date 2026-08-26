@@ -46,6 +46,19 @@ UNTRUSTED_TYPES = {
     "WebCore::Site",
 }
 
+# Maps each untrusted type onto the IPC::UntrustedValueKind naming it. A serialized struct
+# publishes the kinds it carries so that a validator applied to it need only account for
+# those, rather than for every kind any struct might contain.
+UNTRUSTED_VALUE_KINDS = {
+    "URL": "URL",
+    "WTF::URL": "URL",
+    "WebCore::ClientOrigin": "ClientOrigin",
+    "WebCore::RegistrableDomain": "RegistrableDomain",
+    "WebCore::SecurityOrigin": "SecurityOrigin",
+    "WebCore::SecurityOriginData": "SecurityOriginData",
+    "WebCore::Site": "Site",
+}
+
 # Processes that hold privilege a web content process does not, and so must not take
 # a web-content-supplied origin on trust.
 PRIVILEGED_PROCESSES = {
