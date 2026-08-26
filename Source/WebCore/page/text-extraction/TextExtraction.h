@@ -43,7 +43,7 @@ WEBCORE_EXPORT Result extractItem(Request&&, LocalFrame&);
 
 WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
 
-WEBCORE_EXPORT void handleInteraction(Interaction&&, LocalFrame&, CompletionHandler<void(bool, String&&, FloatRect)>&&);
+WEBCORE_EXPORT void handleInteraction(Interaction&&, LocalFrame&, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&&);
 
 enum class Tense : bool { Present, Past };
 WEBCORE_EXPORT InteractionDescription interactionDescription(const Interaction&, LocalFrame&, Tense = Tense::Present);
