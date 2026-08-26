@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Regression test for rdar://184581483.  Exercises the WorkerThread::createThread()
+// thread-start handoff: shared workers that close themselves immediately make the main
+// thread drop SharedWorkerContextManager's map reference while the new thread is still
+// starting up.
+//
+// Start the workers before js-test.js is fetched: the handoff window is widest while the
+// page is still coming up, and waiting for that script halves how often the race is lost.
+//
+// self.close() is what actually stops a shared worker: its pending-activity flag keeps
+// this side alive, so closing the port alone would leave the thread running until
+// document teardown, after the test has finished.
+for (let i = 0; i < 10; ++i) {
+    const url = URL.createObjectURL(new Blob(["self.close();//" + i], { type: "text/javascript" }));
+    new SharedWorker(url, "worker" + i);
+}
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a shared worker closing itself while its thread is still starting up does not crash.");
+jsTestIsAsync = true;
+
+// Stay alive long enough for each close() to reach the main thread, so a crash
+// lands in this test rather than in whichever test runs next.
+setTimeout(function() {
+    testPassed("Started and closed 10 shared workers without crashing.");
+    finishJSTest();
+}, 500);
+</script>
+</body>
+</html>

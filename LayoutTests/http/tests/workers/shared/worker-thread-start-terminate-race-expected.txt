@@ -1,0 +1,10 @@
+Tests that a shared worker closing itself while its thread is still starting up does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Started and closed 10 shared workers without crashing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
