@@ -135,6 +135,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 
 // Test only.
 - (NSSet<NSNumber *> *)_prewarmedProcessIdentifiersForTesting WK_API_AVAILABLE(macos(26.4), ios(26.4));
+- (NSSet<NSNumber *> *)_crossOriginIsolatedProcessIdentifiersForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_countWebPagesInAllProcessesForTesting:(void(^)(unsigned))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4));
 
 - (void)_terminateAllWebContentProcesses;

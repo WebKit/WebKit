@@ -205,6 +205,7 @@ public:
     void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
+    std::optional<WebCore::ResourceError> doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(const WebCore::ResourceResponse&);
     void checkLocalNetworkAccess(const WebCore::ResourceRequest&, const URL& currentURL, WebCore::IPAddressSpace connectionAddressSpace, CompletionHandler<void(std::optional<WebCore::ResourceError>)>&&);
     void continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed, ResourceLoadInfo&&, ResponseCompletionHandler&&);
     void continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry>);
