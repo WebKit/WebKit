@@ -127,8 +127,9 @@ void WebExtensionContext::runtimeReload()
     std::ignore = reload();
 }
 
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"runtime.sendMessage()";
 
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
@@ -175,8 +176,9 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     });
 }
 
-void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"runtime.connect()";
 
     const auto sourceContentWorldType = senderParameters.contentWorldType;
@@ -439,8 +441,9 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     }).get()];
 }
 
-void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
         completionHandler({ });
@@ -496,8 +499,9 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     });
 }
 
-void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"runtime.connect()";
 
     constexpr auto sourceContentWorldType = WebExtensionContentWorldType::WebPage;

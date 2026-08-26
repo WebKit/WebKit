@@ -134,7 +134,7 @@ def struct_types_carrying_untrusted_origins():
 
     serialized_types = generator.resolve_inheritance(serialized_types)
     context = generator.UntrustedValueContext(serialized_types)
-    _struct_carriers = {name for name, kinds in context.kinds.items() if kinds & ORIGIN_VALUE_KINDS}
+    _struct_carriers = set(context.kinds)
     return _struct_carriers
 
 
