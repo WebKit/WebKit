@@ -121,7 +121,7 @@ file Tools/CMakeLists.txt
 file Tools/PlatformGTK.cmake
 
 file Tools/Scripts/rewrite-compile-commands
-file Tools/Scripts/swift/swiftc-wrapper.sh
+file Tools/Scripts/swift/swiftc-wrapper.py
 
 directory ${CMAKE_BINARY_DIR}/Documentation/javascriptcoregtk-${WEBKITGTK_API_VERSION} Documentation/jsc-glib-${WEBKITGTK_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}

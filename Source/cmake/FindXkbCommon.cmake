@@ -51,7 +51,7 @@ else ()
 endif ()
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(XkbCommon QUIET IMPORTED_TARGET "${XkbCommon_PKG_CONFIG_SPEC}")
+webkit_pkg_check_modules(XkbCommon QUIET IMPORTED_TARGET "${XkbCommon_PKG_CONFIG_SPEC}")
 
 if (TARGET PkgConfig::XkbCommon AND NOT TARGET XkbCommon::XkbCommon)
     add_library(XkbCommon::XkbCommon INTERFACE IMPORTED GLOBAL)

@@ -45,7 +45,7 @@ Result Variables
 #]=======================================================================]
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(Secret QUIET IMPORTED_TARGET libsecret-1)
+webkit_pkg_check_modules(Secret QUIET IMPORTED_TARGET libsecret-1)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Secret

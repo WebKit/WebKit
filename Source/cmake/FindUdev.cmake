@@ -75,6 +75,8 @@ find_package_handle_standard_args(Udev
     VERSION_VAR Udev_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Udev_COMPILE_OPTIONS ${Udev_COMPILE_OPTIONS})
+
 if (Udev_LIBRARY AND NOT TARGET Udev::Udev)
     add_library(Udev::Udev UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Udev::Udev PROPERTIES

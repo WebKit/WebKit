@@ -426,12 +426,12 @@ if (ENABLE_BREAKPAD)
     endif ()
 endif ()
 
-add_definitions(-DBUILDING_WPE__=1)
-add_definitions(-DGETTEXT_PACKAGE="WPE")
+webkit_add_compile_definitions(BUILDING_WPE__=1)
+webkit_add_compile_definitions(GETTEXT_PACKAGE="WPE")
 add_definitions(-DJSC_GLIB_API_ENABLED)
 
 if (USER_AGENT_BRANDING)
-    add_definitions(-DUSER_AGENT_BRANDING=${USER_AGENT_BRANDING})
+    webkit_add_compile_definitions(USER_AGENT_BRANDING=${USER_AGENT_BRANDING})
 endif ()
 
 if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")

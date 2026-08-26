@@ -162,6 +162,9 @@ find_package_handle_standard_args(HarfBuzz
     VERSION_VAR HarfBuzz_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(HarfBuzz_COMPILE_OPTIONS ${HarfBuzz_COMPILE_OPTIONS})
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(HarfBuzz_ICU_COMPILE_OPTIONS ${HarfBuzz_ICU_COMPILE_OPTIONS})
+
 if (HarfBuzz_LIBRARY AND NOT TARGET HarfBuzz::HarfBuzz)
     add_library(HarfBuzz::HarfBuzz UNKNOWN IMPORTED GLOBAL)
     set_target_properties(HarfBuzz::HarfBuzz PROPERTIES

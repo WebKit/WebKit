@@ -93,6 +93,8 @@ find_package_handle_standard_args(Manette
     VERSION_VAR Manette_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Manette_COMPILE_OPTIONS ${Manette_COMPILE_OPTIONS})
+
 if (Manette_LIBRARY AND NOT TARGET Manette::Manette)
     add_library(Manette::Manette UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Manette::Manette PROPERTIES

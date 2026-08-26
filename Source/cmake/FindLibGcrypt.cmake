@@ -127,6 +127,8 @@ if (LibGcrypt_GpgError_LIBRARY AND NOT TARGET LibGcrypt::GpgError)
     )
 endif ()
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(LibGcrypt_COMPILE_OPTIONS ${LibGcrypt_COMPILE_OPTIONS})
+
 if (LibGcrypt_LIBRARY AND NOT TARGET LibGcrypt::LibGcrypt)
     add_library(LibGcrypt::LibGcrypt UNKNOWN IMPORTED GLOBAL)
     set_target_properties(LibGcrypt::LibGcrypt PROPERTIES

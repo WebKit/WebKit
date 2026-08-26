@@ -88,7 +88,7 @@ target_compile_definitions(WebGPU PRIVATE
 )
 
 if (SWIFT_REQUIRED)
-    target_compile_definitions(WebGPU PRIVATE ENABLE_WEBGPU_SWIFT=1)
+    webkit_target_compile_definitions(WebGPU PRIVATE ENABLE_WEBGPU_SWIFT=1)
 endif ()
 
 # Generate an empty cmakeconfig.h for the WebGPU target

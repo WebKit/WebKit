@@ -93,6 +93,8 @@ find_package_handle_standard_args(SysProfCapture
     VERSION_VAR SysProfCapture_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(SysProfCapture_COMPILE_OPTIONS ${SysProfCapture_COMPILE_OPTIONS})
+
 if (SysProfCapture_LIBRARY AND NOT TARGET SysProfCapture::SysProfCapture)
     add_library(SysProfCapture::SysProfCapture UNKNOWN IMPORTED GLOBAL)
     set_target_properties(SysProfCapture::SysProfCapture PROPERTIES

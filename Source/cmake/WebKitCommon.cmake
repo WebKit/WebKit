@@ -382,7 +382,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         # LTO builds error out on duplicate __llvm_profile_filename definitions.
         set(PGO_LINK_FLAGS "${PGO_COMPILE_OPTIONS}")
         if (LD_SUPPORTS_ALLOW_MULTIPLE_DEFINITION)
-            string(PREPEND PGO_LINK_FLAGS "-Wl,--allow-multiple-definition ")
+            add_link_options("LINKER:--allow-multiple-definition")
         endif ()
         string(PREPEND CMAKE_EXE_LINKER_FLAGS "${PGO_LINK_FLAGS} ")
         string(PREPEND CMAKE_SHARED_LINKER_FLAGS "${PGO_LINK_FLAGS} ")

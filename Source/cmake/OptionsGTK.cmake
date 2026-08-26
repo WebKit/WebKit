@@ -221,17 +221,14 @@ SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_QUARTZ ${ENABLE_QUARTZ_TARGET})
 SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_X11 ${ENABLE_X11_TARGET})
 SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_WAYLAND ${ENABLE_WAYLAND_TARGET})
 
-add_definitions(-DBUILDING_GTK__=1)
-add_definitions(-DGETTEXT_PACKAGE="WebKitGTK-${WEBKITGTK_API_VERSION}")
+# FIXME: Swift should be using the .resp file of platform flags from
+# `WTF/Scripts/generate-platform-args`, which would define BUILDING_GTK.
+webkit_add_compile_definitions(BUILDING_GTK__=1)
+webkit_add_compile_definitions(GETTEXT_PACKAGE="WebKitGTK-${WEBKITGTK_API_VERSION}")
 add_definitions(-DJSC_GLIB_API_ENABLED)
-# We do not yet have a systematic way of representing the equivalent of WTF PLATFORM_ macros
-# within Swift. This task is represented within Apple as rdar://168139870.
-# For now, our only immediate need is to determine if we're being built
-# on GTK, so pass --DBUILDING_GTK__.
-add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-DBUILDING_GTK__>")
 
 if (USER_AGENT_BRANDING)
-    add_definitions(-DUSER_AGENT_BRANDING="${USER_AGENT_BRANDING}")
+    webkit_add_compile_definitions(USER_AGENT_BRANDING="${USER_AGENT_BRANDING}")
 endif ()
 
 if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")

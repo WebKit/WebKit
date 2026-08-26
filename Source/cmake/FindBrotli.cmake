@@ -136,6 +136,8 @@ find_package_handle_standard_args(Brotli
     VERSION_VAR Brotli_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Brotli_COMPILE_OPTIONS ${Brotli_COMPILE_OPTIONS})
+
 if (Brotli_LIBRARY AND NOT TARGET Brotli::common)
     add_library(Brotli::common UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Brotli::common PROPERTIES

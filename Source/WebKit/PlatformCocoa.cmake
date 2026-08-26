@@ -554,20 +554,20 @@ list(APPEND WebKit_PRIVATE_LIBRARIES
 
 if (WEBKIT_SDK_IS_MACOS)
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        "-weak_framework PowerLog"
         ${APPLICATIONSERVICES_LIBRARY}
         ${SECURITYINTERFACE_LIBRARY}
         $<$<BOOL:${AVFAUDIO_LIBRARY}>:${AVFAUDIO_LIBRARY}>
     )
+    target_link_options(WebKit PRIVATE "LINKER:-weak_framework,PowerLog")
     if (USE_APPLE_INTERNAL_SDK)
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            "-weak_framework CoreML"
-            "-weak_framework NaturalLanguage"
+        target_link_options(WebKit PRIVATE
+            "LINKER:-weak_framework,CoreML"
+            "LINKER:-weak_framework,NaturalLanguage"
         )
     endif ()
 elseif (WEBKIT_SDK_IS_IOS_FAMILY)
+    target_link_options(WebKit PRIVATE "LINKER:-delay_framework,CoreTelephony")
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        -Wl,-delay_framework,CoreTelephony
         -lnetworkextension
         -lsqlite3
         ${CFNETWORK_LIBRARY}
@@ -633,23 +633,23 @@ target_link_options(WebKit PRIVATE -framework AuthKit)
 
 
 target_link_options(WebKit PRIVATE
-    -Wl,-unexported_symbol,__ZTISt9bad_alloc
-    -Wl,-unexported_symbol,__ZTISt9exception
-    -Wl,-unexported_symbol,__ZTSSt9bad_alloc
-    -Wl,-unexported_symbol,__ZTSSt9exception
-    -Wl,-unexported_symbol,__ZdlPvS_
-    -Wl,-unexported_symbol,__ZnwmPv
-    -Wl,-unexported_symbol,__Znwm
-    -Wl,-unexported_symbol,__ZTVNSt3__117bad_function_callE
-    -Wl,-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE
-    -Wl,-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE
-    -Wl,-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE
-    -Wl,-unexported_symbol,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
-    -Wl,-unexported_symbol,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE
-    -Wl,-unexported_symbol,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
-    -Wl,-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE
-    -Wl,-unexported_symbol,__ZTAXtlN7WebCore3CSS5RangeELdfff0000000000000ELd7ff0000000000000EEE
-    "-Wl,-unexported_symbol,_$s*3Cxx*"
+    "LINKER:-unexported_symbol,__ZTISt9bad_alloc"
+    "LINKER:-unexported_symbol,__ZTISt9exception"
+    "LINKER:-unexported_symbol,__ZTSSt9bad_alloc"
+    "LINKER:-unexported_symbol,__ZTSSt9exception"
+    "LINKER:-unexported_symbol,__ZdlPvS_"
+    "LINKER:-unexported_symbol,__ZnwmPv"
+    "LINKER:-unexported_symbol,__Znwm"
+    "LINKER:-unexported_symbol,__ZTVNSt3__117bad_function_callE"
+    "LINKER:-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE"
+    "LINKER:-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE"
+    "LINKER:-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE"
+    "LINKER:-unexported_symbol,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE"
+    "LINKER:-unexported_symbol,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE"
+    "LINKER:-unexported_symbol,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE"
+    "LINKER:-unexported_symbol,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE"
+    "LINKER:-unexported_symbol,__ZTAXtlN7WebCore3CSS5RangeELdfff0000000000000ELd7ff0000000000000EEE"
+    "LINKER:-unexported_symbol,_$s*3Cxx*"
 )
 
 set(WebKit_OUTPUT_NAME WebKit)
@@ -1617,22 +1617,22 @@ file(WRITE "${CMAKE_BINARY_DIR}/WebKit/Modules/WebKit.swiftcrossimport/SwiftUI.s
 "---\nversion: 1\nmodules:\n- name: _WebKit_SwiftUI\n")
 
 target_link_options(WebKit PRIVATE
-    "SHELL:-weak_framework BrowserEngineKit"
-    "SHELL:-weak_framework CoreML"
-    "SHELL:-weak_framework CorePrediction"
-    "SHELL:-weak_framework NaturalLanguage"
-    -Wl,-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist
+    "LINKER:-weak_framework,BrowserEngineKit"
+    "LINKER:-weak_framework,CoreML"
+    "LINKER:-weak_framework,CorePrediction"
+    "LINKER:-weak_framework,NaturalLanguage"
+    "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist"
 )
 
 if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "SHELL:-Wl,-hidden-lsandbox-static")
+    target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")
 else ()
     target_link_options(WebKit PRIVATE -lsandbox)
 endif ()
 
 add_dependencies(WebKit WebKitLegacy)
 target_link_options(WebKit PRIVATE
-    "-Wl,-reexport_library,$<TARGET_LINKER_FILE:WebKitLegacy>"
+    "LINKER:-reexport_library,$<TARGET_LINKER_FILE:WebKitLegacy>"
 )
 
 set(_wk_framework_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework)
@@ -1786,17 +1786,17 @@ with open(sys.argv[2], 'wb') as f:
         execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_service_dir}/Info.plist)
 
         target_link_options(${_target} PRIVATE
-            -Wl,-rpath,@executable_path/..
-            -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/..
-            -Wl,-dyld_env,DYLD_LIBRARY_PATH=@executable_path/..
+            "LINKER:-rpath,@executable_path/.."
+            "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
+            "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/.."
         )
 
         if (_is_simulator)
             set(_xpc_der "${CMAKE_CURRENT_BINARY_DIR}/${_bundle_identifier}.entitlements.der")
             WEBKIT_GENERATE_DER_ENTITLEMENTS(${_default_sim_entitlements} ${_xpc_der})
             target_link_options(${_target} PRIVATE
-                -Wl,-sectcreate,__TEXT,__entitlements,${_default_sim_entitlements}
-                -Wl,-sectcreate,__TEXT,__ents_der,${_xpc_der})
+                "LINKER:-sectcreate,__TEXT,__entitlements,${_default_sim_entitlements}"
+                "LINKER:-sectcreate,__TEXT,__ents_der,${_xpc_der}")
         endif ()
 
         target_link_libraries(${_target} PRIVATE
@@ -1984,17 +1984,17 @@ with open(sys.argv[2], 'wb') as f:
         )
 
         target_link_options(${_name} PRIVATE
-            -Wl,-rpath,@loader_path/../../Frameworks
-            -Wl,-rpath,@loader_path/../..
-            -Wl,-e,_NSExtensionMain
+            "LINKER:-rpath,@loader_path/../../Frameworks"
+            "LINKER:-rpath,@loader_path/../.."
+            "LINKER:-e,_NSExtensionMain"
         )
 
         # Simulator: embed only. Device: embed and pass to codesign.
         set(_ext_der "${CMAKE_CURRENT_BINARY_DIR}/${_name}.entitlements.der")
         WEBKIT_GENERATE_DER_ENTITLEMENTS(${_entitlements} ${_ext_der})
         target_link_options(${_name} PRIVATE
-            -Wl,-sectcreate,__TEXT,__entitlements,${_entitlements}
-            -Wl,-sectcreate,__TEXT,__ents_der,${_ext_der})
+            "LINKER:-sectcreate,__TEXT,__entitlements,${_entitlements}"
+            "LINKER:-sectcreate,__TEXT,__ents_der,${_ext_der}")
 
         if (_is_simulator)
             add_custom_command(TARGET ${_name} POST_BUILD
@@ -2452,16 +2452,16 @@ foreach (_header IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
     endif ()
 endforeach ()
 
-# -Wl,-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
+# LINKER:-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE
     -lsandbox
     -F${CMAKE_BINARY_DIR}
-    -weak_framework WebInspectorUI
-    -Wl,-u,_WebInspectorUIFrameworkLoad
-    "SHELL:-weak_framework CoreML"
-    "SHELL:-weak_framework NaturalLanguage"
+    "LINKER:-weak_framework,WebInspectorUI"
+    "LINKER:-u,_WebInspectorUIFrameworkLoad"
+    "LINKER:-weak_framework,CoreML"
+    "LINKER:-weak_framework,NaturalLanguage"
     # for bincompat, cf. rdar://117360317
-    -Wl,-reexport-lobjc
+    "LINKER:-reexport-lobjc"
 )
 add_dependencies(WebKit WebInspectorUIFramework)
 

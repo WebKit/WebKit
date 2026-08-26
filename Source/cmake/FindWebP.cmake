@@ -161,6 +161,8 @@ find_package_handle_standard_args(WebP
     VERSION_VAR WebP_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(WebP_COMPILE_OPTIONS ${WebP_COMPILE_OPTIONS})
+
 if (WebP_LIBRARY AND NOT TARGET WebP::libwebp)
     add_library(WebP::libwebp UNKNOWN IMPORTED GLOBAL)
     set_target_properties(WebP::libwebp PROPERTIES

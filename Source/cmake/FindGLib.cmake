@@ -140,6 +140,8 @@ if (NOT GLib_VERSION AND EXISTS "${GLib_Config_INCLUDE_DIR}/glibconfig.h")
     set(GLib_VERSION "${GLib_VERSION_MAJOR}.${GLib_VERSION_MINOR}.${GLib_VERSION_MICRO}")
 endif ()
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(GLib_COMPILE_OPTIONS ${GLib_COMPILE_OPTIONS})
+
 if (GLib_LIBRARY AND NOT TARGET GLib::GLib)
     add_library(GLib::GLib UNKNOWN IMPORTED GLOBAL)
     set_target_properties(GLib::GLib PROPERTIES
@@ -197,8 +199,9 @@ function(GLib_HandleComponent name)
     set_target_properties(GLib::${name} PROPERTIES IMPORTED_LOCATION "${GLib_${name}_LIBRARY}")
     target_include_directories(GLib::${name} INTERFACE ${PC_GLib_${name}_INCLUDEDIR})
     target_include_directories(GLib::${name} INTERFACE ${PC_GLib_${name}_INCLUDE_DIRS})
-    target_compile_options(GLib::${name} INTERFACE ${PC_GLib_${name}_CFLAGS})
-    target_compile_options(GLib::${name} INTERFACE ${PC_GLib_${name}_CFLAGS_OTHER})
+    WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(_component_cflags
+        ${PC_GLib_${name}_CFLAGS} ${PC_GLib_${name}_CFLAGS_OTHER})
+    target_compile_options(GLib::${name} INTERFACE ${_component_cflags})
     target_link_libraries(GLib::${name} INTERFACE ${dependencies})
 endfunction()
 

@@ -46,7 +46,7 @@ Result Variables
 #]=======================================================================]
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_Tasn1 QUIET IMPORTED_TARGET libtasn1)
+webkit_pkg_check_modules(PC_Tasn1 QUIET IMPORTED_TARGET libtasn1)
 
 set(Tasn1_COMPILE_OPTIONS ${PC_Tasn1_CFLAGS_OTHER})
 set(Tasn1_VERSION ${PC_Tasn1_VERSION})
@@ -57,6 +57,8 @@ if (PC_Tasn1_FOUND AND TARGET PkgConfig::PC_Tasn1 AND NOT TARGET Tasn1::Tasn1)
     add_library(Tasn1::Tasn1 INTERFACE IMPORTED GLOBAL)
     set_property(TARGET Tasn1::Tasn1 PROPERTY INTERFACE_LINK_LIBRARIES PkgConfig::PC_Tasn1)
 endif ()
+
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Tasn1_COMPILE_OPTIONS ${Tasn1_COMPILE_OPTIONS})
 
 # Search the library by hand, as a fallback.
 if (NOT TARGET Tasn1::Tasn1)

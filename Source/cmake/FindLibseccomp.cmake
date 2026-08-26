@@ -93,6 +93,8 @@ find_package_handle_standard_args(Libseccomp
     VERSION_VAR Libseccomp_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Libseccomp_COMPILE_OPTIONS ${Libseccomp_COMPILE_OPTIONS})
+
 if (Libseccomp_LIBRARY AND NOT TARGET Libseccomp::Libseccomp)
     add_library(Libseccomp::Libseccomp UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Libseccomp::Libseccomp PROPERTIES

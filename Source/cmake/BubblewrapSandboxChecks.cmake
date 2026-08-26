@@ -53,6 +53,6 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
         endif ()
     endif ()
 
-    add_definitions(-DBWRAP_EXECUTABLE="${BWRAP_EXECUTABLE}")
-    add_definitions(-DDBUS_PROXY_EXECUTABLE="${DBUS_PROXY_EXECUTABLE}")
+    webkit_add_compile_definitions(BWRAP_EXECUTABLE="${BWRAP_EXECUTABLE}")
+    webkit_add_compile_definitions(DBUS_PROXY_EXECUTABLE="${DBUS_PROXY_EXECUTABLE}")
 endif ()

@@ -607,9 +607,7 @@ list(APPEND TestWebKit_SOURCES
     Helpers/cocoa/UtilitiesCocoa.mm
 )
 
-list(APPEND TestWebKit_PRIVATE_LIBRARIES
-    "-Wl,-undefined,dynamic_lookup"
-)
+target_link_options(TestWebKit PRIVATE "LINKER:-undefined,dynamic_lookup")
 
 list(APPEND TestWebKit_LIBRARIES
     "-framework QuartzCore"
@@ -644,7 +642,7 @@ list(APPEND TestIPC_LIBRARIES
 )
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(TestIPC -Wno-deprecated-declarations)
-target_link_options(TestIPC PRIVATE -Wl,-undefined,dynamic_lookup -Wl,-not_for_dyld_shared_cache)
+target_link_options(TestIPC PRIVATE "LINKER:-undefined,dynamic_lookup" "LINKER:-not_for_dyld_shared_cache")
 
 # InjectedBundle configuration.
 set_target_properties(TestWebKitAPIInjectedBundle PROPERTIES

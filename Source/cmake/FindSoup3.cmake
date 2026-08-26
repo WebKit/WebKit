@@ -85,6 +85,8 @@ find_package_handle_standard_args(Soup3
     VERSION_VAR Soup3_VERSION
 )
 
+WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(Soup3_COMPILE_OPTIONS ${Soup3_COMPILE_OPTIONS})
+
 if (Soup3_LIBRARY AND NOT TARGET Soup3::Soup3)
     add_library(Soup3::Soup3 UNKNOWN IMPORTED GLOBAL)
     set_target_properties(Soup3::Soup3 PROPERTIES
