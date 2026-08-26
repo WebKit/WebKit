@@ -663,7 +663,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$$$)
 
         if ($shouldMentionTests) {
             if (@$addedRegressionTests) {
-                print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
+                print CHANGE_LOG normalizeLineEndings(testListForChangeLog(@$addedRegressionTests), $endl);
             } else {
                 print CHANGE_LOG normalizeLineEndings("        No new tests (OOPS!).\n\n", $endl);
             }
@@ -2312,13 +2312,15 @@ sub testListForChangeLog(@)
 
     return "" unless @tests;
 
+    # Drop the LayoutTests prefix before sorting, so the list is alphabetical as printed.
+    # Sorting the full paths instead puts Tools/TestWebKitAPI tests after LayoutTests ones.
+    @tests = sort map { my $test = $_; $test =~ s/^LayoutTests\///; $test } @tests;
+
     my $leadString = "        Test" . (@tests == 1 ? "" : "s") . ": ";
     my $list = $leadString;
     foreach my $i (0..$#tests) {
         $list .= " " x length($leadString) if $i;
-        my $test = $tests[$i];
-        $test =~ s/^LayoutTests\///;
-        $list .= "$test\n";
+        $list .= "$tests[$i]\n";
     }
     $list .= "\n";
 

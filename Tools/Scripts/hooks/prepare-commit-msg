@@ -17,6 +17,9 @@ CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
 REFNAME_RE = re.compile(r'^refs/remotes/(?P<remote>[^/ ]+)/(?P<branch>\S+)$')
 HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 IDENTIFIER_RE = re.compile(r'(\d+\.)?\d+@\S+')
+TESTS_HEADER_RE = re.compile(r'^Tests?: ')
+TESTS_NO_NEW_RE = re.compile(r'^No new tests \(OOPS!\)\.$')
+TESTS_CONTINUATION_RE = re.compile(r'^ +\S')
 PREFER_RADAR = {{ prefer_radar }}
 
 DEFAULT_BRANCH = '{{ default_branch }}'
@@ -112,30 +115,44 @@ def parseChanges(command, commit_message):
         return
     return changes
 
-def message(source=None, sha=None, mention_tests=True):
+def split_test_lines(changes):
+    """Split prepare-ChangeLog output into its tests section and its file list."""
+    tests = []
+    files = []
+    in_tests = False
+    for line in changes or []:
+        if TESTS_HEADER_RE.match(line) or TESTS_NO_NEW_RE.match(line):
+            in_tests = True
+            tests.append(line)
+        elif in_tests and TESTS_CONTINUATION_RE.match(line):
+            tests.append(line)
+        else:
+            in_tests = False
+            files.append(line)
+    return tests, files
+
+def message(source=None, sha=None):
     commit_message = []
     amend_changes = None
-    command = PREPARE_CHANGELOG_CMD
-
-    if not mention_tests:
-        command = command + ["--no-mention-tests"]
+    # A copy, because the amend case appends to it.
+    command = list(PREPARE_CHANGELOG_CMD)
 
     if sha:
         commit_message.append('Amend changes:')
-        amend_changes = parseChanges(command, commit_message)
+        _, amend_changes = split_test_lines(parseChanges(command, commit_message))
         commit_message.append('')
 
         commit_message.append('Combined changes:')
         command += ['--git-commit', 'HEAD']
 
-    combined_changes = parseChanges(command, commit_message)
+    combined_tests, combined_changes = split_test_lines(parseChanges(command, commit_message))
 
     revert_msg = os.environ.get('COMMIT_MESSAGE_REVERT', '')
     if revert_msg:
         return '''{title}\n{revert}'''.format(
             title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
             revert=revert_msg,
-        ), combined_changes, amend_changes
+        ), combined_tests, combined_changes, amend_changes
     else:
         bugs_string = get_bugs_string()
         return '''{title}
@@ -150,7 +167,7 @@ Explanation of why this fixes the bug (OOPS!).
         title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
         bugs=bugs_string,
         content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
-    ), combined_changes, amend_changes
+    ), combined_tests, combined_changes, amend_changes
 
 def source_branches():
     proc = None
@@ -321,19 +338,21 @@ def annotate_deleted_lines(amend_changes, combined_changes):
         annotated_lines.append(line)
     return annotated_lines
 
-def amended_message(full_message, combined_changes, amend_changes, update_changelog):
+def amended_message(full_message, combined_tests, combined_changes, amend_changes, update_changelog):
     if amend_changes and update_changelog:
         try:
             from webkitscmpy.commit_parser import CommitMessageParser
         except ImportError as e:
             sys.stderr.write(f'{e}: Could not update changelog automatically. Falling back to the default template.\n')
-        else:
-            commit_message_parser = CommitMessageParser()
+            return full_message
+
+        commit_message_parser = CommitMessageParser()
         commit_message_parser.parse_message(full_message)
         updated_changelog_lines = commit_message_parser.reconcile_with_changed_files(combined_changes)
         reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
         description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
-        tests_lines = commit_message_parser.tests_lines + [''] if commit_message_parser.tests_lines else []
+        updated_tests_lines = commit_message_parser.reconcile_tests(combined_tests)
+        tests_lines = updated_tests_lines + [''] if updated_tests_lines else []
         amended_message = commit_message_parser.title_lines + [''] + reviewed_by_lines + [''] + description_lines + [''] + tests_lines + updated_changelog_lines
         removed_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(annotate_deleted_lines(amend_changes, combined_changes), return_deleted=True)
         return '''{message_body}
@@ -404,16 +423,16 @@ def main(file_name=None, source=None, sha=None):
 
     with open(file_name, 'w') as commit_message_file:
         if sha:
-            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha, mention_tests=False)
+            generated_msg, combined_tests, combined_changes, amend_changes = message(source=source, sha=sha)
             git_log_msg = subprocess.run(
                 ['git', 'log', sha, '-1', '--pretty=format:%B'],
                 encoding='utf-8',
                 capture_output=True,
                 check=True
             ).stdout
-            commit_message_file.write(amended_message(git_log_msg, combined_changes, amend_changes, update_changelog))
+            commit_message_file.write(amended_message(git_log_msg, combined_tests, combined_changes, amend_changes, update_changelog))
         else:
-            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha)
+            generated_msg, combined_tests, combined_changes, amend_changes = message(source=source, sha=sha)
             commit_message_file.write(generated_msg)
 
         commit_message_file.write('''
