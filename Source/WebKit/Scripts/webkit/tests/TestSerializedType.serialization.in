@@ -367,6 +367,37 @@ class WebCore::OpaqueTypeObject {
     NotDispatchableFromWebContent member
 }
 
+struct WebKit::TestUntrustedValueCarrier {
+    WebCore::SecurityOriginData origin;
+    WebCore::SecurityOriginData getterOrigin();
+    std::optional<URL> optionalURL;
+    RefPtr<WebCore::SecurityOrigin> nullableOrigin;
+    Vector<Ref<WebCore::SecurityOrigin>> origins;
+    HashMap<WebCore::RegistrableDomain, String> domainStrings;
+    HashMap<String, Vector<URL>> urlsByName;
+    Variant<String, URL> stringOrURL;
+    WebKit::TestUntrustedValueCarrier::Inlined inlined;
+    int notAnOrigin;
+#if ENABLE(TEST_FEATURE)
+    WebCore::ClientOrigin conditionalOrigin;
+#endif
+}
+
+[Nested] struct WebKit::TestUntrustedValueCarrier::Inlined {
+    URL url;
+}
+
+struct WebKit::TestUntrustedValueConditionalCarrier {
+#if ENABLE(TEST_FEATURE)
+    WebCore::Site site;
+#endif
+    int notAnOrigin;
+}
+
+struct WebKit::TestNoUntrustedValue {
+    int notAnOrigin;
+}
+
 using WebCore::AliasOpaqueTypeWrapper = Variant<int, Vector<uint8_t>>
 
 using WebCore::ConditionalVariant = Variant<

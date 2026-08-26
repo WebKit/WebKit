@@ -30,6 +30,7 @@ import re
 import sys
 
 from webkit.opaque_ipc_types import is_opaque_type, opaque_ipc_types
+from webkit import untrusted_origins
 
 # Generated serializers are split into per-bundle translation units to keep
 # any single .{mm,cpp} from dominating the critical path. Each
@@ -642,7 +643,7 @@ def one_argument_coder_declaration_cf(type):
     return result
 
 
-def one_argument_coder_declaration(type, template_argument):
+def one_argument_coder_declaration(type, template_argument, untrusted_value_context=None):
     if type.cf_type is not None:
         return one_argument_coder_declaration_cf(type)
     result = []
@@ -662,13 +663,15 @@ def one_argument_coder_declaration(type, template_argument):
         result.append(f'    static std::optional<Ref<{name_with_template}>> decode(Decoder&);')
     else:
         result.append(f'    static std::optional<{name_with_template}> decode(Decoder&);')
+    if untrusted_value_context is not None and untrusted_value_context.has_visitor(type):
+        result.append(f'    static void visitUntrustedValues(const {name_with_template}&, UntrustedValueVisitor&);')
     result.append('};')
     if type.condition is not None:
         result.append('#endif')
     return result
 
 
-def argument_coder_declarations(serialized_types, skip_nested, webkit_platform, bundle_filter=None):
+def argument_coder_declarations(serialized_types, skip_nested, webkit_platform, bundle_filter=None, untrusted_value_context=None):
     result = []
     for type in serialized_types:
         if type.nested == skip_nested:
@@ -679,9 +682,9 @@ def argument_coder_declarations(serialized_types, skip_nested, webkit_platform, 
             continue
         if type.templates:
             for template in type.templates:
-                result.extend(one_argument_coder_declaration(type, template))
+                result.extend(one_argument_coder_declaration(type, template, untrusted_value_context))
         else:
-            result.extend(one_argument_coder_declaration(type, None))
+            result.extend(one_argument_coder_declaration(type, None, untrusted_value_context))
     return result
 
 
@@ -796,11 +799,12 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
     return result
 
 
-def generate_header(serialized_types, serialized_enums, additional_forward_declarations):
+def generate_header(serialized_types, serialized_enums, additional_forward_declarations, untrusted_value_context):
     result = []
     result.append(_license_header)
     result.append('#pragma once')
     result.append('')
+    result.append('#include "UntrustedValueVisitor.h"')
     for header in ['<wtf/ArgumentCoder.h>', '<wtf/OptionSet.h>', '<wtf/Ref.h>', '<wtf/RetainPtr.h>']:
         result.append(f'#include {header}')
 
@@ -823,7 +827,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('class Decoder;')
     result.append('class Encoder;')
     result.append('class StreamConnectionEncoder;')
-    result = result + argument_coder_declarations(serialized_types, True, None)
+    result = result + argument_coder_declarations(serialized_types, True, None, untrusted_value_context=untrusted_value_context)
     result.append('')
     result.append('} // namespace IPC\n')
     result.append('')
@@ -917,6 +921,180 @@ def check_type_members(type, checking_parent_class):
         if optional_tuple_state == 'middle':
             result.append('    >::value);')
             optional_tuple_state = None
+    result.append('')
+    return result
+
+
+# Containers from untrusted_origins.TRAVERSED_CONTAINERS, grouped by the shape of the C++
+# needed to reach their contents. One that is missing here raises rather than silently
+# leaving an untrusted value unvisited.
+_ALWAYS_DEREFERENCED = {'Ref', 'UniqueRef'}
+_DEREFERENCED_IF_SET = {'Markable', 'RefPtr', 'std::optional', 'std::unique_ptr'}
+_ITERATED = {'FixedVector', 'HashSet', 'MemoryCompactLookupOnlyRobinHoodHashSet', 'Vector'}
+_ITERATED_KEY_VALUE = {'HashCountedSet', 'HashMap', 'MemoryCompactRobinHoodHashMap'}
+_MEMBER_PAIR = {'KeyValuePair': ('key', 'value'), 'std::pair': ('first', 'second')}
+
+
+def untrusted_members(type):
+    members = list(type.serialized_members())
+    if type.parent_class is not None:
+        return untrusted_members(type.parent_class) + members
+    return members
+
+
+class UntrustedValueContext(object):
+    """The serialized types that carry an untrusted value, and how to reach into each.
+
+    A nested type has no ArgumentCoder specialization outside the bundle that defines it, so
+    it gets no visitor of its own; its members are traversed inline in its enclosing type.
+    """
+    def __init__(self, serialized_types):
+        self.carrying = types_carrying_untrusted_values(serialized_types)
+        self.inlined = {}
+        for type in serialized_types:
+            name = type.namespace_and_name()
+            if type.nested and name in self.carrying:
+                self.inlined[name] = type
+
+    def conveys(self, type_str):
+        return untrusted_origins.conveys_untrusted_value(type_str, extra_types=self.carrying) is not None
+
+    def has_visitor(self, type):
+        name = type.namespace_and_name()
+        return name in self.carrying and name not in self.inlined
+
+
+def types_carrying_untrusted_values(serialized_types):
+    """Names of the serialized types that transitively carry an origin, site, domain or URL.
+
+    Such a struct is as sensitive as the value inside it, so wrapping it in IPC::Untrusted<T>
+    has to be able to reach that value; see Platform/IPC/UntrustedValueVisitor.h.
+    """
+    carrying = set()
+    while True:
+        found = set()
+        for type in serialized_types:
+            name = type.namespace_and_name()
+            if name in carrying or name in untrusted_origins.UNTRUSTED_TYPES:
+                continue
+            for member in untrusted_members(type):
+                if untrusted_origins.conveys_untrusted_value(member.type, extra_types=carrying):
+                    found.add(name)
+                    break
+        if not found:
+            return carrying
+        carrying |= found
+
+
+def untrusted_member_visits(type, expression, context, indentation, depth=0):
+    """Statements presenting every untrusted value in type's members to a visitor."""
+    if type.templates or type.cf_type is not None or type.is_webkit_secure_coding_type() or type.members_are_subclasses:
+        raise Exception(f'{type.namespace_and_name()} carries an untrusted origin or URL that generate-serializers.py cannot traverse')
+    result = []
+    for member in untrusted_members(type):
+        if not context.conveys(member.type):
+            continue
+        if member.is_subclass:
+            raise Exception(f'{type.namespace_and_name()}.{member.name} carries an untrusted origin or URL that generate-serializers.py cannot traverse')
+        if member.condition is not None:
+            result.append(f'#if {member.condition}')
+        member_expression = f'{expression}.{member.name}'
+        if '()' in member.name:
+            # A getter may return by value, so bind it once rather than re-evaluating it
+            # or taking the address of a temporary.
+            local = f'{sanitize_string_for_variable_name(member.name)}{depth}'
+            result.append(f'{indentation}const auto& {local} = {member_expression};')
+            member_expression = local
+        result += untrusted_value_visits(member.type, member_expression, context, indentation, depth)
+        if member.condition is not None:
+            result.append('#endif')
+    return result
+
+
+def _control_clause(clause, body, indentation):
+    """clause wrapped around body, braced only when body is more than one statement."""
+    if len(body) == 1:
+        return [f'{indentation}{clause}'] + body
+    return [f'{indentation}{clause} {{'] + body + [f'{indentation}}}']
+
+
+def untrusted_value_visits(member_type, expression, context, indentation, depth=0):
+    """Statements presenting every untrusted value reachable from expression to a visitor."""
+    clean_type = untrusted_origins.canonical_type(member_type)
+    if clean_type in untrusted_origins.UNTRUSTED_TYPES:
+        return [f'{indentation}visitor.visitUntrusted({expression});']
+    if clean_type in context.inlined:
+        return untrusted_member_visits(context.inlined[clean_type], expression, context, indentation, depth + 1)
+    if clean_type in context.carrying:
+        return [f'{indentation}ArgumentCoder<{clean_type}>::visitUntrustedValues({expression}, visitor);']
+
+    container, parameters = untrusted_origins.split_container(clean_type)
+    if not container:
+        raise Exception(f'generate-serializers.py cannot reach the untrusted value in {member_type}')
+
+    def nested(type_str, nested_expression, nested_indentation):
+        return untrusted_value_visits(type_str, nested_expression, context, nested_indentation, depth + 1)
+
+    if container in _ALWAYS_DEREFERENCED:
+        return nested(parameters[0], f'{expression}.get()', indentation)
+    if container in _DEREFERENCED_IF_SET:
+        return _control_clause(f'if ({expression})',
+                               nested(parameters[0], f'(*{expression})', indentation + '    '),
+                               indentation)
+    if container in _ITERATED:
+        item = f'item{depth}'
+        return _control_clause(f'for (auto& {item} : {expression})',
+                               nested(parameters[0], item, indentation + '    '),
+                               indentation)
+    if container in _ITERATED_KEY_VALUE:
+        entry = f'entry{depth}'
+        key_type = parameters[0]
+        value_type = parameters[1] if len(parameters) > 1 else 'unsigned'
+        body = []
+        if context.conveys(key_type):
+            body += nested(key_type, f'{entry}.key', indentation + '    ')
+        if context.conveys(value_type):
+            body += nested(value_type, f'{entry}.value', indentation + '    ')
+        return _control_clause(f'for (auto& {entry} : {expression})', body, indentation)
+    if container in _MEMBER_PAIR:
+        first, second = _MEMBER_PAIR[container]
+        result = []
+        if context.conveys(parameters[0]):
+            result += nested(parameters[0], f'{expression}.{first}', indentation)
+        if context.conveys(parameters[1]):
+            result += nested(parameters[1], f'{expression}.{second}', indentation)
+        return result
+    if container == 'Variant':
+        result = []
+        for parameter in parameters:
+            if not context.conveys(parameter):
+                continue
+            alternative = f'alternative{depth}'
+            result += _control_clause(f'if (auto* {alternative} = std::get_if<{parameter}>(&{expression}))',
+                                      nested(parameter, f'(*{alternative})', indentation + '    '),
+                                      indentation)
+        return result
+
+    raise Exception(f'generate-serializers.py cannot reach the untrusted value in {member_type}')
+
+
+def untrusted_value_visitor_definition(type, context):
+    name = type.namespace_and_name()
+    body = untrusted_member_visits(type, 'instance', context, '    ')
+    unconditional = any(context.conveys(member.type) and member.condition is None for member in untrusted_members(type))
+
+    result = []
+    if type.condition is not None:
+        result.append(f'#if {type.condition}')
+    result.append(f'void ArgumentCoder<{name}>::visitUntrustedValues(const {name}& instance, UntrustedValueVisitor& visitor)')
+    result.append('{')
+    if not unconditional:
+        result.append('    UNUSED_PARAM(instance);')
+        result.append('    UNUSED_PARAM(visitor);')
+    result += body
+    result.append('}')
+    if type.condition is not None:
+        result.append('#endif')
     result.append('')
     return result
 
@@ -1271,7 +1449,7 @@ def generate_one_impl(type, template_argument, serialized_types):
     return result
 
 
-def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types, bundle_filter=None):
+def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types, untrusted_value_context, bundle_filter=None):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1332,7 +1510,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append(f'#endif // {type.condition}')
         result.append('')
 
-    result = result + argument_coder_declarations(serialized_types, False, generating_webkit_platform_impl, bundle_filter=bundle_filter)
+    result = result + argument_coder_declarations(serialized_types, False, generating_webkit_platform_impl, bundle_filter=bundle_filter, untrusted_value_context=untrusted_value_context)
     result.append('')
 
     for type in serialized_types:
@@ -1345,6 +1523,14 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
                 result.extend(generate_one_impl(type, template, serialized_types))
         else:
             result.extend(generate_one_impl(type, None, serialized_types))
+    for type in serialized_types:
+        if type.webkit_platform != generating_webkit_platform_impl:
+            continue
+        if not matches_bundle(type, bundle_filter):
+            continue
+        if not untrusted_value_context.has_visitor(type):
+            continue
+        result.extend(untrusted_value_visitor_definition(type, untrusted_value_context))
     result.append('} // namespace IPC')
     result.append('')
     result.append('namespace WTF {')
@@ -2201,6 +2387,7 @@ def main(argv):
     headers = sorted(header_set)
 
     serialized_types = resolve_inheritance(serialized_types)
+    untrusted_value_context = UntrustedValueContext(serialized_types)
 
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -2211,7 +2398,7 @@ def main(argv):
         return filename
 
     with open(output_path('GeneratedSerializers.h'), "w+") as output:
-        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
+        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list, untrusted_value_context))
     if split_by_directory:
         # Emit one .{ext} per bundle. Each bundle file is always emitted
         # (even if empty) so CMake/Xcode output lists stay deterministic. The
@@ -2219,12 +2406,12 @@ def main(argv):
         # (e.g. WebCore-generated inputs that aren't under Source/WebKit/).
         for bundle in ALL_BUNDLES:
             with open(output_path(f'GeneratedSerializers{bundle}.{file_extension}'), "w+") as output:
-                output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], bundle_filter=bundle))
+                output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], untrusted_value_context, bundle_filter=bundle))
     else:
         with open(output_path('GeneratedSerializers.%s' % file_extension), "w+") as output:
-            output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))
+            output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], untrusted_value_context))
     with open(output_path('WebKitPlatformGeneratedSerializers.%s' % file_extension), "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
+        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types, untrusted_value_context))
     with open(output_path('SerializedTypeInfo.%s' % file_extension), "w+") as output:
         output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
     with open(output_path('GeneratedWebKitSecureCoding.h'), "w+") as output:

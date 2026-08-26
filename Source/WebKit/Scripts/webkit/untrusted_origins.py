@@ -141,13 +141,26 @@ def unwrap_if_untrusted(type_str):
     return unwrap_untrusted(type_str) or type_str
 
 
-def conveys_untrusted_value(type_str, visited=None):
+def canonical_type(type_str):
+    """Return type_str without leading const or surrounding whitespace."""
+    return _strip_const_and_whitespace(type_str)
+
+
+def split_container(type_str):
+    """Return (container_name, parameters) if type_str is a template, else (None, None)."""
+    return _split_container(_strip_const_and_whitespace(type_str))
+
+
+def conveys_untrusted_value(type_str, visited=None, extra_types=None):
     """Return the untrusted type conveyed by type_str, or None.
 
     An IPC::Untrusted<T> wrapper is transparent here: what matters is whether the
     parameter names an origin or URL at all, not whether it is already wrapped.
 
     Every container is traversed.
+
+    extra_types names further types to treat as untrusted, used to propagate
+    untrustedness out of the structs that carry an origin or URL in a field.
     """
     if visited is None:
         visited = set()
@@ -159,12 +172,14 @@ def conveys_untrusted_value(type_str, visited=None):
     clean_type = _strip_const_and_whitespace(type_str)
     if clean_type in UNTRUSTED_TYPES:
         return clean_type
+    if extra_types and clean_type in extra_types:
+        return clean_type
 
     container, parameters = _split_container(clean_type)
     if not container or not parameters:
         return None
     for parameter in parameters:
-        result = conveys_untrusted_value(parameter, visited.copy())
+        result = conveys_untrusted_value(parameter, visited.copy(), extra_types)
         if result is not None:
             return result
 
@@ -207,6 +222,21 @@ if __name__ == '__main__':
         def test_unknown_containers_are_traversed(self):
             self.assertEqual(conveys_untrusted_value('SomeUnknownTemplate<WebCore::Site>'), 'WebCore::Site')
             self.assertIsNone(conveys_untrusted_value('SomeUnknownTemplate<String>'))
+
+        def test_extra_types(self):
+            carrying = {'WebKit::FrameInfoData'}
+            self.assertIsNone(conveys_untrusted_value('WebKit::FrameInfoData'))
+            self.assertEqual(conveys_untrusted_value('WebKit::FrameInfoData', extra_types=carrying),
+                             'WebKit::FrameInfoData')
+            self.assertEqual(conveys_untrusted_value('std::optional<WebKit::FrameInfoData>', extra_types=carrying),
+                             'WebKit::FrameInfoData')
+            self.assertIsNone(conveys_untrusted_value('WebKit::SomethingElse', extra_types=carrying))
+
+        def test_canonical_type_and_split_container(self):
+            self.assertEqual(canonical_type('  const URL '), 'URL')
+            self.assertEqual(split_container('HashMap<WebCore::ClientOrigin, uint64_t>'),
+                             ('HashMap', ['WebCore::ClientOrigin', 'uint64_t']))
+            self.assertEqual(split_container('URL'), (None, None))
 
         def test_wrapper_is_transparent_to_detection(self):
             self.assertEqual(conveys_untrusted_value('IPC::Untrusted<URL>'), 'URL')
