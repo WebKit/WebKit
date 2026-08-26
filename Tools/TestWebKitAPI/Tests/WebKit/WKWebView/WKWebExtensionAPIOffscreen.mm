@@ -295,6 +295,7 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentAPIAvailability)
         @"browser.test.assertTrue(browser.permissions === undefined)",
         @"browser.test.assertTrue(browser.tabs === undefined)",
         @"browser.test.assertTrue(browser.windows === undefined)",
+        @"browser.test.assertTrue(browser.offscreen === undefined)",
         @"browser.test.notifyPass()"
     ];
 
