@@ -3608,7 +3608,7 @@ private:
     void elementDidBlur(IPC::Connection&);
     void updateInputContextAfterBlurringAndRefocusingElement();
     void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&);
-    void updateFocusedElementInformation(IPC::Untrusted<FocusedElementInformation>&&);
+    void updateFocusedElementInformation(IPC::Connection&, IPC::Untrusted<FocusedElementInformation>&&);
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
 

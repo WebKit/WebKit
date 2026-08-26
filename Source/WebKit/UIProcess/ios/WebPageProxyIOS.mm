@@ -63,6 +63,7 @@
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
+#import "ValidationProcedures.h"
 #import "VideoPresentationManagerProxy.h"
 #import "WKMouseDeviceObserver.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
@@ -113,6 +114,14 @@
 #if PLATFORM(VISION)
 static constexpr CGFloat kTargetFullscreenAspectRatio = 1.7778;
 #endif
+
+#define EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(name, untrusted, ValidationProcedure) \
+    Ref name##Process = WebProcessProxy::fromConnection(connection); \
+    auto name##Validated = WTF::move(untrusted).validate(ValidationProcedure { name##Process }); \
+    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(name##Validated), connection); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -883,7 +892,7 @@ void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContex
 
 void WebPageProxy::elementDidFocus(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
-    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(information, untrustedInformation, FirstPartyStructAuthority);
     Ref process = WebProcessProxy::fromConnection(connection);
 
     m_pendingInputModeChange = std::nullopt;
@@ -912,9 +921,9 @@ void WebPageProxy::elementDidBlur(IPC::Connection& connection)
         pageClient->elementDidBlur();
 }
 
-void WebPageProxy::updateFocusedElementInformation(IPC::Untrusted<FocusedElementInformation>&& untrustedInformation)
+void WebPageProxy::updateFocusedElementInformation(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation)
 {
-    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(information, untrustedInformation, FirstPartyStructAuthority);
     if (RefPtr pageClient = this->pageClient())
         pageClient->updateFocusedElementInformation(information);
 }
@@ -1937,3 +1946,5 @@ bool WebPageProxy::hasMouseDevice()
 #undef WEBPAGEPROXY_RELEASE_LOG
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#undef EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK
