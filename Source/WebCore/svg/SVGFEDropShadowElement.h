@@ -48,6 +48,9 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
 
+    static constexpr float offsetInitalValue = 2.0f;
+    static constexpr float stdDeviationInitalValue = 2.0f;
+
 private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
 
@@ -62,10 +65,10 @@ private:
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, 2) };
+    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, offsetInitalValue) };
+    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, offsetInitalValue) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, stdDeviationInitalValue) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, stdDeviationInitalValue) };
 };
     
 } // namespace WebCore

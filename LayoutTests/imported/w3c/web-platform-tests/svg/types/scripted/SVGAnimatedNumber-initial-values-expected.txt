@@ -39,14 +39,14 @@ PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.azimu
 PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.azimuth (invalid value)
 PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.elevation (remove)
 PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.elevation (invalid value)
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (remove) assert_equals: initial after expected 2 but got 0
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (invalid value) assert_equals: initial after expected 2 but got 0
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (remove) assert_equals: initial after expected 2 but got 0
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (invalid value) assert_equals: initial after expected 2 but got 0
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (remove) assert_equals: initial after expected 2 but got 42
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (invalid value) assert_equals: initial after expected 2 but got 42
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (remove) assert_equals: initial after expected 2 but got 42
-FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (invalid value) assert_equals: initial after expected 2 but got 42
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (invalid value)
 FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationX (remove) assert_equals: initial after expected 0 but got 42
 FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationX (invalid value) assert_equals: initial after expected 0 but got 42
 FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationY (remove) assert_equals: initial after expected 0 but got 42

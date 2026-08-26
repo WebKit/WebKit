@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,39 @@
 
 #pragma once
 
+#include "SVGAnimatedPropertyAccessor.h"
+
 namespace WebCore {
 
-class SVGAnimatedPropertyBase;
-class SVGAttributeAnimator;
+template<typename OwnerType, typename AnimatedPropertyType>
+class SVGAnimatedPrimitivePropertyAccessor : public SVGAnimatedPropertyAccessor<OwnerType, AnimatedPropertyType> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, AnimatedPropertyType>;
 
-class SVGPropertyRegistry {
 public:
-    SVGPropertyRegistry() = default;
-    virtual ~SVGPropertyRegistry() = default;
+    using Base::property;
+    using ValueType = AnimatedPropertyType::ValueType;
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedPropertyBase&) const = 0;
-    virtual void setAnimatedPropertyDirty(const QualifiedName&, SVGAnimatedPropertyBase&) const = 0;
-    virtual std::optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
-    virtual void resetPropertyBaseVal(const QualifiedName&) const = 0;
+    SVGAnimatedPrimitivePropertyAccessor(const Ref<AnimatedPropertyType> OwnerType::*property, ValueType initialValue)
+        : Base(property)
+        , m_initialValue(initialValue)
+    {
+    }
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
-    virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
-    virtual RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    template<typename AccessorType, const Ref<AnimatedPropertyType> OwnerType::*property, ValueType initialValue>
+    static const SVGMemberAccessor<OwnerType>& singleton()
+    {
+        static NeverDestroyed<AccessorType> propertyAccessor { property, initialValue };
+        return propertyAccessor;
+    }
+
+    void resetBaseVal(const OwnerType& owner) const override
+    {
+        property(owner)->setBaseValInternal(m_initialValue);
+    }
+
+protected:
+    ValueType m_initialValue;
 };
 
-}
+} // namespace WebCore
+

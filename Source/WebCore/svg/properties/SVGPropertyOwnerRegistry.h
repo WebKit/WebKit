@@ -93,10 +93,10 @@ public:
         registerProperty(attributeName, SVGAnimatedEnumerationAccessor<OwnerType, EnumType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property, int initialValue = 0>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property, initialValue>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLength> OwnerType::*property>
@@ -111,10 +111,10 @@ public:
         registerProperty(attributeName, SVGAnimatedLengthListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property, float initialValue = 0.0f>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedNumberAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGAnimatedNumberAccessor<OwnerType>::template singleton<property, initialValue>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumberList> OwnerType::*property>
@@ -126,7 +126,7 @@ public:
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedAngle> OwnerType::*property1, const Ref<SVGAnimatedOrientType> OwnerType::*property2>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedAngleOrientAccessor<OwnerType>::template singleton<property1, property2>());
+        registerProperty(attributeName, SVGAnimatedAngleOrientAccessor<OwnerType>::singleton(SVGAnimatedAngleAccessor<OwnerType>(property1), SVGAnimatedOrientTypeAccessor<OwnerType>(property2)));
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPath> OwnerType::*property>
@@ -165,16 +165,16 @@ public:
         registerProperty(attributeName, SVGAnimatedTransformListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property1, const Ref<SVGAnimatedInteger> OwnerType::*property2>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property1, const Ref<SVGAnimatedInteger> OwnerType::*property2, int initialValue1 = 0, int initialValue2 = 0>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedIntegerPairAccessor<OwnerType>::template singleton<property1, property2>());
+        registerProperty(attributeName, SVGAnimatedIntegerPairAccessor<OwnerType>::singleton(SVGAnimatedIntegerAccessor<OwnerType>(property1, initialValue1), SVGAnimatedIntegerAccessor<OwnerType>(property2, initialValue2)));
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property1, const Ref<SVGAnimatedNumber> OwnerType::*property2>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property1, const Ref<SVGAnimatedNumber> OwnerType::*property2, float initialValue1 = 0.0f, float initialValue2 = 0.0f>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedNumberPairAccessor<OwnerType>::template singleton<property1, property2>());
+        registerProperty(attributeName, SVGAnimatedNumberPairAccessor<OwnerType>::singleton(SVGAnimatedNumberAccessor<OwnerType>(property1, initialValue1), SVGAnimatedNumberAccessor<OwnerType>(property2, initialValue2)));
     }
 
     // Enumerate all the SVGMemberAccessors recursively. The functor will be called and will
@@ -294,6 +294,13 @@ public:
             return true;
         });
         return map;
+    }
+
+    void resetPropertyBaseVal(const QualifiedName& attributeName) const override
+    {
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            accessor.resetBaseVal(m_owner);
+        });
     }
 
     bool isAnimatedPropertyAttribute(const QualifiedName& attributeName) const override

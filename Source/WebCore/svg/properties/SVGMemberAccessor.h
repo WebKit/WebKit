@@ -39,6 +39,7 @@ class SVGMemberAccessor {
 public:
     virtual ~SVGMemberAccessor() = default;
 
+    virtual void resetBaseVal(const OwnerType&) const { }
     virtual void detach(const OwnerType&) const { }
     virtual bool isAnimatedProperty() const { return false; }
     virtual bool isAnimatedLength() const { return false; }

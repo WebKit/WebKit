@@ -45,9 +45,9 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
-        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx>();
-        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy>();
-        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY>();
+        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx, offsetInitalValue>();
+        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy, offsetInitalValue>();
+        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY, stdDeviationInitalValue, stdDeviationInitalValue>();
     }
 }
 
@@ -70,16 +70,23 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
-        }
+        } else
+            propertyRegistry().resetPropertyBaseVal(name);
         break;
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::dxAttr:
-        m_dx->setBaseValInternal(newValue.toFloat());
+        if (auto result = parseNumber(newValue))
+            m_dx->setBaseValInternal(*result);
+        else
+            propertyRegistry().resetPropertyBaseVal(name);
         break;
     case AttributeNames::dyAttr:
-        m_dy->setBaseValInternal(newValue.toFloat());
+        if (auto result = parseNumber(newValue))
+            m_dy->setBaseValInternal(*result);
+        else
+            propertyRegistry().resetPropertyBaseVal(name);
         break;
     default:
         break;

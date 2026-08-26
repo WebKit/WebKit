@@ -36,17 +36,17 @@ class SVGAnimatedPropertyPairAccessor : public SVGMemberAccessor<OwnerType> {
     using Base = SVGMemberAccessor<OwnerType>;
 
 public:
-    SVGAnimatedPropertyPairAccessor(const Ref<AnimatedPropertyType1> OwnerType::*property1, const Ref<AnimatedPropertyType2> OwnerType::*property2)
-        : m_accessor1(property1)
-        , m_accessor2(property2)
+    SVGAnimatedPropertyPairAccessor(AccessorType1&& accessor1, AccessorType2&& accessor2)
+        : m_accessor1(WTF::move(accessor1))
+        , m_accessor2(WTF::move(accessor2))
     {
     }
 
 protected:
-    template<typename AccessorType, auto property1, auto property2>
-    static SVGMemberAccessor<OwnerType>& singleton()
+    template<typename AccessorType>
+    static SVGMemberAccessor<OwnerType>& singleton(AccessorType1&& accessor1, AccessorType2&& accessor2)
     {
-        static NeverDestroyed<AccessorType> propertyAccessor { property1, property2 };
+        static NeverDestroyed<AccessorType> propertyAccessor { WTF::move(accessor1), WTF::move(accessor2) };
         return propertyAccessor;
     }
 
@@ -57,6 +57,12 @@ protected:
 
     const Ref<AnimatedPropertyType2>& property2(OwnerType& owner) const { return m_accessor2.property(owner); }
     const Ref<AnimatedPropertyType2>& property2(const OwnerType& owner) const { return m_accessor2.property(owner); }
+
+    void resetBaseVal(const OwnerType& owner) const override
+    {
+        m_accessor1.resetBaseVal(owner);
+        m_accessor2.resetBaseVal(owner);
+    }
 
     void detach(const OwnerType& owner) const override
     {

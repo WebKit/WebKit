@@ -45,8 +45,11 @@ class SVGAnimatedAngleOrientAccessor final : public SVGAnimatedPropertyPairAcces
 
 public:
     using Base::Base;
-    template<auto property1, auto property2>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleOrientAccessor, property1, property2>(); }
+
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton(SVGAnimatedAngleAccessor<OwnerType>&& accessor1, SVGAnimatedOrientTypeAccessor<OwnerType>&& accessor2)
+    {
+        return Base::template singleton<SVGAnimatedAngleOrientAccessor>(WTF::move(accessor1), WTF::move(accessor2));
+    }
 
 private:
     void setDirty(const OwnerType& owner, SVGAnimatedPropertyBase& animatedProperty) const final
@@ -92,8 +95,11 @@ class SVGAnimatedIntegerPairAccessor final : public SVGAnimatedPropertyPairAcces
 
 public:
     using Base::Base;
-    template<auto property1, auto property2>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerPairAccessor, property1, property2>(); }
+
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton(SVGAnimatedIntegerAccessor<OwnerType>&& accessor1, SVGAnimatedIntegerAccessor<OwnerType>&& accessor2)
+    {
+        return Base::template singleton<SVGAnimatedIntegerPairAccessor>(WTF::move(accessor1), WTF::move(accessor2));
+    }
 
 private:
     std::optional<String> synchronize(const OwnerType& owner) const final
@@ -127,8 +133,11 @@ class SVGAnimatedNumberPairAccessor final : public SVGAnimatedPropertyPairAccess
 
 public:
     using Base::Base;
-    template<auto property1, auto property2>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberPairAccessor, property1, property2>(); }
+
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton(SVGAnimatedNumberAccessor<OwnerType>&& accessor1, SVGAnimatedNumberAccessor<OwnerType>&& accessor2)
+    {
+        return Base::template singleton<SVGAnimatedNumberPairAccessor>(WTF::move(accessor1), WTF::move(accessor2));
+    }
 
 private:
     std::optional<String> synchronize(const OwnerType& owner) const final
