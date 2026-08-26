@@ -29,6 +29,7 @@
 
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
+#include "Untrusted.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
@@ -72,8 +73,8 @@ public:
     // WebInspectorUIExtensionControllerProxy IPC messages.
     void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier);
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
-    void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&);
-    void inspectedPageDidNavigate(const URL&);
+    void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, IPC::Untrusted<URL>&&);
+    void inspectedPageDidNavigate(IPC::Untrusted<URL>&&);
 
     // Notifications.
     void inspectorFrontendLoaded();

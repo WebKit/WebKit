@@ -95,12 +95,15 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
     return IdentifierRegistry::protocolFrameId(frameID);
 }
 
-void ProxyingPageAgent::frameNavigated(IPC::Connection& connection, FrameIdentifier frameID, const URL& url, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
+void ProxyingPageAgent::frameNavigated(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<URL>&& untrustedURL, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
-    auto validatedSecurityOrigin = WTF::move(untrustedSecurityOrigin).validate(FirstPartyAuthority { WebProcessProxy::fromConnection(connection) });
-    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(validatedSecurityOrigin), connection);
-    if (!validatedSecurityOrigin)
+    FirstPartyAuthority sendingProcessAuthority { WebProcessProxy::fromConnection(connection) };
+    auto validatedURL = WTF::move(untrustedURL).validate(sendingProcessAuthority);
+    auto validatedSecurityOrigin = WTF::move(untrustedSecurityOrigin).validate(sendingProcessAuthority);
+    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(validatedURL) && IPC::valueMayBeLegitimate(validatedSecurityOrigin), connection);
+    if (!validatedURL || !validatedSecurityOrigin)
         return;
+    auto url = WTF::move(*validatedURL);
     auto securityOrigin = WTF::move(*validatedSecurityOrigin);
 
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()

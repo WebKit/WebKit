@@ -73,10 +73,10 @@ messages -> WebExtensionContext {
     [Validator=isCommandsMessageAllowed] CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands)
 
     // Cookies APIs
-    [Validator=isCookiesMessageAllowed] CookiesGet(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [Validator=isCookiesMessageAllowed] CookiesGetAll(std::optional<PAL::SessionID> sessionID, URL url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (std::expected<Vector<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesGet(std::optional<PAL::SessionID> sessionID, String name, IPC::Untrusted<URL> url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesGetAll(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<URL> url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (std::expected<Vector<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
     [Validator=isCookiesMessageAllowed] CookiesSet(std::optional<PAL::SessionID> sessionID, struct WebKit::WebExtensionCookieParameters cookie) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [Validator=isCookiesMessageAllowed] CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, IPC::Untrusted<URL> url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
     [Validator=isCookiesMessageAllowed] CookiesGetAllCookieStores() -> (std::expected<HashMap<PAL::SessionID, Vector<WebKit::WebExtensionTabIdentifier>>, WebKit::WebExtensionError> result)
 
     // DeclarativeNetRequest APIs
@@ -93,7 +93,7 @@ messages -> WebExtensionContext {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools APIs
     [Validator=isDevToolsMessageAllowed] DevToolsPanelsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String title, String iconPath, String pagePath) -> (std::expected<Inspector::ExtensionTabID, WebKit::WebExtensionError> result)
-    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (std::expected<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
+    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, IPC::Untrusted<std::optional<URL>> frameURL) -> (std::expected<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
     [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<bool> ignoreCache)
 #endif
 

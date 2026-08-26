@@ -130,7 +130,7 @@ messages -> RemoteGraphicsContext Stream {
 
     BeginPage(WebCore::FloatRect pageRect)
     EndPage()
-    SetURLForRect(URL link, WebCore::FloatRect destRect) StreamBatched
+    SetURLForRect(IPC::Untrusted<URL> link, WebCore::FloatRect destRect) StreamBatched
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, struct WebCore::ImageOrientation orientation, bool shouldDiscardAlpha) NotStreamEncodable

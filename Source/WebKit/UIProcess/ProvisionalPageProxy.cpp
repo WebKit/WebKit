@@ -453,8 +453,13 @@ void ProvisionalPageProxy::didPerformClientRedirect(String&& sourceURLString, St
         page->didPerformClientRedirectShared(protect(process()), WTF::move(sourceURLString), WTF::move(destinationURLString), frameID);
 }
 
-void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
+void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<URL>&& untrustedUnreachableURL, const UserData& userData, WallTime timestamp)
 {
+    // A provisional navigation target is legitimately not the sending process's own
+    // origin; file-URL access is checked by MESSAGE_CHECK_URL in the shared handler.
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
+    // Checked by MESSAGE_CHECK_URL in didStartProvisionalLoadForFrameShared.
+    auto unreachableURL = WTF::move(untrustedUnreachableURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     if (!validateInput(frameID, navigationID))
         return;
 
@@ -548,8 +553,11 @@ void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationData
         page->didNavigateWithNavigationDataShared(protect(process()), store, frameID);
 }
 
-void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url)
+void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL)
 {
+    // A provisional navigation target is legitimately not the sending process's own
+    // origin; file-URL access is checked by MESSAGE_CHECK_URL in the shared handler.
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     if (!validateInput(frameID, navigationID))
         return;
 

@@ -318,8 +318,10 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         signalSocketIsClosed(identifier);
 }
 
-void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, CompletionHandler<void(String&&)>&& completionHandler)
+void NetworkRTCProvider::getInterfaceName(IPC::Untrusted<URL>&& untrustedURL, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
     // FIXME: This runs on the RTC network thread, where the network process's authority
     // maps cannot be read; validation has to move to the main thread first.
     auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);

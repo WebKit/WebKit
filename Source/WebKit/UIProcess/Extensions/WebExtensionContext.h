@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "ProcessActivityGroup.h"
 #include "RunJavaScriptResult.h"
+#include "Untrusted.h"
 #include "WebExtension.h"
 #include "WebExtensionAction.h"
 #include "WebExtensionAlarm.h"
@@ -902,10 +903,10 @@ private:
 
     // Cookies APIs
     bool isCookiesMessageAllowed(IPC::Decoder&);
-    void cookiesGet(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
-    void cookiesGetAll(std::optional<PAL::SessionID>, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
+    void cookiesGet(std::optional<PAL::SessionID>, const String& name, IPC::Untrusted<URL>&&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
+    void cookiesGetAll(std::optional<PAL::SessionID>, IPC::Untrusted<URL>&&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesSet(std::optional<PAL::SessionID>, const WebExtensionCookieParameters&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
-    void cookiesRemove(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
+    void cookiesRemove(std::optional<PAL::SessionID>, const String& name, IPC::Untrusted<URL>&&, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesGetAllCookieStores(CompletionHandler<void(std::expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&&);
     void fireCookiesChangedEventIfNeeded();
 
@@ -928,7 +929,7 @@ private:
     // DevTools APIs
     bool isDevToolsMessageAllowed(IPC::Decoder&);
     void devToolsPanelsCreate(WebPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&&);
-    void devToolsInspectedWindowEval(WebPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&&);
+    void devToolsInspectedWindowEval(WebPageProxyIdentifier, const String& scriptSource, IPC::Untrusted<std::optional<URL>>&& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&&);
     void devToolsInspectedWindowReload(WebPageProxyIdentifier, const std::optional<bool>& ignoreCache);
 #endif
 

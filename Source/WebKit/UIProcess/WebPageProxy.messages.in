@@ -144,11 +144,11 @@ messages -> WebPageProxy {
     DidDestroyFrame(WebCore::FrameIdentifier frameID)
 
     # Frame load messages
-    DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, URL url, URL unreachableURL, WebKit::UserData userData, WallTime timestamp)
+    DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL> url, IPC::Untrusted<URL> unreachableURL, WebKit::UserData userData, WallTime timestamp)
     DidReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
     WillPerformClientRedirectForFrame(WebCore::FrameIdentifier frameID, String url, double delay, enum:bool WebCore::LockBackForwardList lockBackForwardList)
     DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
-    DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL url)
+    DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL> url)
     DidFailProvisionalLoadForFrame(struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
     DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String proxyName, enum:uint8_t WebCore::ResourceResponseSource source, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, struct WebCore::DocumentSecurityPolicy documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>> cspOriginsThatUpgradeInsecureNavigations, WebKit::UserData userData, enum:bool WebCore::RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<WebKit::FrameState> redirectReplaceFrameState)
     DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceError error, WebKit::UserData userData)
@@ -158,10 +158,10 @@ messages -> WebPageProxy {
     DidFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData, WallTime timestamp)
     DidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones, WallTime timestamp)
     DidReceiveTitleForFrame(WebCore::FrameIdentifier frameID, String title, WebKit::UserData userData)
-    DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, WebKit::UserData userData)
-    DidSameDocumentNavigationForFrameViaJS(enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
+    DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, IPC::Untrusted<URL> url, WebKit::UserData userData)
+    DidSameDocumentNavigationForFrameViaJS(enum:uint8_t WebKit::SameDocumentNavigationType type, IPC::Untrusted<URL> url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
     DidChangeMainDocument(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID)
-    DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
+    DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, IPC::Untrusted<URL> url, String mimeType)
     DidDestroyNavigation(WebCore::NavigationIdentifier navigationID)
     UpdateSandboxFlags(WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags)
     UpdateReferrerPolicy(WebCore::FrameIdentifier frameID, WebCore::ReferrerPolicy referrerPolicy)
@@ -194,7 +194,7 @@ messages -> WebPageProxy {
     DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, std::span<const uint8_t> data)
 
     # Forms messages
-    WillSubmitForm(struct WebKit::FrameInfoData frame, struct WebKit::FrameInfoData sourceFrame, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData, URL requestURL, String method) -> ()
+    WillSubmitForm(struct WebKit::FrameInfoData frame, struct WebKit::FrameInfoData sourceFrame, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData, IPC::Untrusted<URL> requestURL, String method) -> ()
 
 #if PLATFORM(COCOA)
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
@@ -263,7 +263,7 @@ messages -> WebPageProxy {
     SetHasFocusedElementWithUserInteraction(bool hasFocusedElement)
 
 #if ENABLE(IMAGE_ANALYSIS)
-    RequestTextRecognition(URL imageURL, WebCore::ShareableBitmapHandle imageData, String source, String target) -> (struct WebCore::TextRecognitionResult result)
+    RequestTextRecognition(IPC::Untrusted<URL> imageURL, WebCore::ShareableBitmapHandle imageData, String source, String target) -> (struct WebCore::TextRecognitionResult result)
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -505,7 +505,7 @@ messages -> WebPageProxy {
     PerformSwitchHapticFeedback()
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
+    ContentRuleListNotification(IPC::Untrusted<URL> url, struct WebCore::ContentRuleListResults results)
     ContentRuleListMatchedRule(struct WebCore::ContentRuleListMatchedRule matchedRule)
 #endif
 
@@ -626,7 +626,7 @@ messages -> WebPageProxy {
     DidFindTextManipulationItems(Vector<WebCore::TextManipulationItem> items)
 
 #if ENABLE(MEDIA_USAGE)
-    AddMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, String bundleIdentifier, URL pageURL);
+    AddMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, String bundleIdentifier, IPC::Untrusted<URL> pageURL);
     UpdateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier identifier, struct WebCore::MediaUsageInfo info);
     RemoveMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier);
 #endif
@@ -642,18 +642,18 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
-    [EnabledBy=ApplePayEnabled] StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
+    [EnabledBy=ApplePayEnabled] StartApplePayAMSUISession(IPC::Untrusted<URL> originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
     [EnabledBy=ApplePayEnabled] AbortApplePayAMSUISession()
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    [EnabledBy=SystemPreviewEnabled] BeginSystemPreview(URL url, IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
+    [EnabledBy=SystemPreviewEnabled] BeginSystemPreview(IPC::Untrusted<URL> url, IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
     DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
 
-    DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
+    DidApplyLinkDecorationFiltering(IPC::Untrusted<URL> originalURL, IPC::Untrusted<URL> adjustedURL)
     [EnabledBy=SiteIsolationEnabled] BroadcastDocumentSyncData(struct WebCore::DocumentSyncSerializationData processSyncData)
     [EnabledBy=SiteIsolationEnabled] BroadcastAllDocumentSyncData(Ref<WebCore::DocumentSyncData> documentSyncData)
 
@@ -679,7 +679,7 @@ messages -> WebPageProxy {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     [EnabledBy=SiteIsolationEnabled] UpdateRemoteFrameAccessibilityInheritedState(WebCore::FrameIdentifier frameID, struct WebCore::InheritedFrameState state)
 #endif
-    [EnabledBy=SiteIsolationEnabled] ReportMixedContentViolation(WebCore::FrameIdentifier frameID, bool blocked, URL target)
+    [EnabledBy=SiteIsolationEnabled] ReportMixedContentViolation(WebCore::FrameIdentifier frameID, bool blocked, IPC::Untrusted<URL> target)
     [EnabledBy=SiteIsolationEnabled] DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (bool success)
 
     NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)

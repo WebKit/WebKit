@@ -504,8 +504,10 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     });
 }
 
-void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
     auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
     if (!topOriginValidated)
         return;
@@ -517,8 +519,10 @@ void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOr
     doRegistrationMatching(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
     auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
     if (!topOriginValidated)
         return;
@@ -530,8 +534,10 @@ void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::Securi
     SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
+void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
     auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
     if (!topOriginValidated)
         return;
@@ -1066,8 +1072,13 @@ void WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifi
 }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::getNotifications(IPC::Untrusted<URL>&& untrustedRegistrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    auto validatedRegistrationURL = WTF::move(untrustedRegistrationURL).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!validatedRegistrationURL)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this registration"_s }));
+    auto registrationURL = WTF::move(*validatedRegistrationURL);
+
     CheckedPtr session = this->session();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));

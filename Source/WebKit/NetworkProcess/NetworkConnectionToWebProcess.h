@@ -305,7 +305,7 @@ private:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
     void loadPing(NetworkResourceLoadParameters&&);
     void prefetchDNS(const String&);
-    void sendH2Ping(URL&&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, std::optional<NavigatingToAppBoundDomain>, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    void sendH2Ping(IPC::Untrusted<URL>&&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, std::optional<NavigatingToAppBoundDomain>, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void preconnectTo(PreconnectRequest&&);
     void isResourceLoadFinished(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(bool)>&&);
 #if ENABLE(IPC_TESTING_API)
@@ -322,35 +322,36 @@ private:
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
     enum class CookieAccess : uint8_t { Disallow, Allow, Terminate };
-    CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*);
+    using CookieAccessResult = std::expected<std::pair<URL, URL>, CookieAccess>;
+    CookieAccessResult validateCookieAccess(ASCIILiteral messageName, IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo*);
 
-    void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebPageProxyIdentifier, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);
-    void cookieRequestHeaderFieldValueDigest(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies, CompletionHandler<void(std::optional<SHA1::Digest> digest)>&&);
-    void getRawCookies(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
-    void setRawCookie(const URL& firstParty, const URL&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie);
-    void deleteCookie(const URL& firstParty, const URL&, const String& cookieName, CompletionHandler<void()>&&);
-    void cookiesEnabledSync(const URL& firstParty, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
-    void cookiesEnabled(const URL& firstParty, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
+    void cookiesForDOM(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebPageProxyIdentifier, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void setCookiesFromDOM(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);
+    void cookieRequestHeaderFieldValueDigest(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, WebCore::IncludeSecureCookies, CompletionHandler<void(std::optional<SHA1::Digest> digest)>&&);
+    void getRawCookies(IPC::Untrusted<URL>&& firstParty, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void setRawCookie(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie);
+    void deleteCookie(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, const String& cookieName, CompletionHandler<void()>&&);
+    void cookiesEnabledSync(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
+    void cookiesEnabled(IPC::Untrusted<URL>&& firstParty, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebPageProxyIdentifier, CompletionHandler<void(bool enabled)>&&);
 
-    void cookiesForDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::CookieStoreGetOptions&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
-    void setCookieFromDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::Cookie&&, WebCore::RequiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(bool)>&&);
+    void cookiesForDOMAsync(IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::CookieStoreGetOptions&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
+    void setCookieFromDOMAsync(IPC::Untrusted<URL>&&, const WebCore::SameSiteInfo&, IPC::Untrusted<URL>&&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::Cookie&&, WebCore::RequiresScriptTrackingPrivacy, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(bool)>&&);
 
-    void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
-    void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
-    void registerInternalBlobURLOptionallyFileBacked(URL&&, URL&& srcURL, const String& fileBackedPath, String&& contentType);
-    void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
-    void blobType(const URL&, CompletionHandler<void(String)>&&);
-    void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
-    void unregisterBlobURL(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
+    void registerInternalFileBlobURL(IPC::Untrusted<URL>&&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
+    void registerInternalBlobURL(IPC::Untrusted<URL>&&, Vector<WebCore::BlobPart>&&, const String& contentType);
+    void registerBlobURL(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, WebCore::PolicyContainer&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
+    void registerInternalBlobURLOptionallyFileBacked(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, const String& fileBackedPath, String&& contentType);
+    void registerInternalBlobURLForSlice(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& srcURL, int64_t start, int64_t end, const String& contentType);
+    void blobType(IPC::Untrusted<URL>&&, CompletionHandler<void(String)>&&);
+    void blobSize(IPC::Untrusted<URL>&&, CompletionHandler<void(uint64_t)>&&);
+    void unregisterBlobURL(IPC::Untrusted<URL>&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&);
     void generalStoragePathForTesting(CompletionHandler<void(String&&)>&&);
     bool isFilePathAllowed(String path);
 
-    void registerBlobURLHandle(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
-    void unregisterBlobURLHandle(const URL&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
+    void registerBlobURLHandle(IPC::Untrusted<URL>&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
+    void unregisterBlobURLHandle(IPC::Untrusted<URL>&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& topOrigin);
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
@@ -414,7 +415,7 @@ private:
     void hasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     void queryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(WebCore::PermissionState)>&&);
-    void storageAccessQuirkForTopFrameDomain(URL&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&&);
+    void storageAccessQuirkForTopFrameDomain(IPC::Untrusted<URL>&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&&);
     void requestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain>&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, IPC::Untrusted<WebCore::RegistrableDomain>&& openerDomain);
 
     void setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&&, WebCore::IsLoggedIn, std::optional<WebCore::LoginStatus>&&, CompletionHandler<void()>&&);
@@ -427,10 +428,10 @@ private:
 
     MessageBatchIdentifier nextMessageBatchIdentifier(CompletionHandler<void()>&&);
 
-    void domCookiesForHost(const URL& host, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
+    void domCookiesForHost(IPC::Untrusted<URL>&& host, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    void subscribeToCookieChangeNotifications(const URL&, const URL& firstParty, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
+    void subscribeToCookieChangeNotifications(IPC::Untrusted<URL>&&, IPC::Untrusted<URL>&& firstParty, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
     void unsubscribeFromCookieChangeNotifications(const String& host);
 
     // WebCore::CookieChangeObserver.
@@ -447,13 +448,13 @@ private:
     void cookieEnabledStateMayHaveChanged() final;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    void navigatorSubscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
-    void navigatorUnsubscribeFromPushService(URL&& scopeURL, const WebCore::PushSubscriptionIdentifier&, CompletionHandler<void(std::expected<bool, WebCore::ExceptionData>&&)>&&);
-    void navigatorGetPushSubscription(URL&& scopeURL, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
-    void navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
+    void navigatorSubscribeToPushService(IPC::Untrusted<URL>&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
+    void navigatorUnsubscribeFromPushService(IPC::Untrusted<URL>&& scopeURL, const WebCore::PushSubscriptionIdentifier&, CompletionHandler<void(std::expected<bool, WebCore::ExceptionData>&&)>&&);
+    void navigatorGetPushSubscription(IPC::Untrusted<URL>&& scopeURL, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
+    void navigatorGetPushPermissionState(IPC::Untrusted<URL>&& scopeURL, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 #endif
 
-    void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, Vector<KeyValuePair<String, String>>&&, WebPageProxyIdentifier&&, IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
+    void initializeWebTransportSession(WebTransportSessionIdentifier, IPC::Untrusted<URL>&&, WebCore::WebTransportOptions&&, Vector<KeyValuePair<String, String>>&&, WebPageProxyIdentifier&&, IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void destroyWebTransportSession(WebTransportSessionIdentifier);
 
     struct ResourceNetworkActivityTracker {

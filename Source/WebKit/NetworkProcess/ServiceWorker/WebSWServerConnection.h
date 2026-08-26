@@ -133,9 +133,9 @@ private:
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
-    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
+    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
@@ -175,7 +175,7 @@ private:
     void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&);
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
     bool checkTopOrigin(const WebCore::SecurityOriginData&);

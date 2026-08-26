@@ -37,6 +37,7 @@
 #import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
 #import "ExtensionCapabilityGranter.h"
+#import "FirstPartyAuthority.h"
 #import "InsertTextOptions.h"
 #import "LegacyWebArchiveCallbackAggregator.h"
 #import "LoadParameters.h"
@@ -797,8 +798,11 @@ MediaUsageManager& WebPageProxy::mediaUsageManager()
     return *m_mediaUsageManager;
 }
 
-void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void WebPageProxy::addMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, IPC::Untrusted<URL>&& untrustedPageURL)
 {
+    // Recorded for media usage reporting only.
+    auto pageURL = WTF::move(untrustedPageURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     mediaUsageManager().addMediaSession(identifier, bundleIdentifier, pageURL);
 }
 
@@ -1015,8 +1019,14 @@ void WebPageProxy::didCompleteApplePayPayment()
 
 #if ENABLE(APPLE_PAY_AMS_UI)
 
-void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+void WebPageProxy::startApplePayAMSUISession(IPC::Untrusted<URL>&& untrustedOriginatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
 {
+    // Assumes Apple Pay AMS UI is reachable only from the main frame, so the main frame's process
+    // is the right authority for the originating URL.
+    auto validatedOriginatingURL = WTF::move(untrustedOriginatingURL).validate(FirstPartyAuthority { m_legacyMainFrameProcess });
+    MESSAGE_CHECK_COMPLETION(validatedOriginatingURL, m_legacyMainFrameProcess->connection(), completionHandler(std::nullopt));
+    auto originatingURL = WTF::move(*validatedOriginatingURL);
+
     if (!AppleMediaServicesUILibrary()) {
         completionHandler(std::nullopt);
         return;

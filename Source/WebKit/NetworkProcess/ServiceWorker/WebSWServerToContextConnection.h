@@ -132,11 +132,13 @@ private:
     void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
-    void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, CompletionHandler<void(std::expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);
+    void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, CompletionHandler<void(std::expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);
 
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
+    void openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, OpenWindowCallback&&);
+    void setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, WebCore::ServiceWorkerContextData::ImportedScript&&);
     void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, uint64_t requestIdentifier);
     void startPendingStreamUploadForwarding(WebCore::FetchIdentifier);
     void pendingStreamDataAvailable(WebCore::FetchIdentifier);

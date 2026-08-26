@@ -41,9 +41,9 @@ messages -> WebSWServerConnection {
 
     [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
-    [EnabledBy=ServiceWorkersEnabled] MatchRegistration(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    [EnabledBy=ServiceWorkersEnabled] GetRegistrations(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    [EnabledBy=ServiceWorkersEnabled] MatchRegistration(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, IPC::Untrusted<URL> clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, IPC::Untrusted<URL> clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] GetRegistrations(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, IPC::Untrusted<URL> clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
     [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerClient(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
@@ -79,6 +79,6 @@ messages -> WebSWServerConnection {
     AddRoutes(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::ServiceWorkerRoute> subscriptions) -> (std::expected<void, WebCore::ExceptionData> result)
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    GetNotifications(URL registrationURL, String tag) -> (std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
+    GetNotifications(IPC::Untrusted<URL> registrationURL, String tag) -> (std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
 #endif
 }

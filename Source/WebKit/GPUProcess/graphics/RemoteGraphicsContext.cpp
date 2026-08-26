@@ -738,8 +738,11 @@ void RemoteGraphicsContext::endPage()
     context().endPage();
 }
 
-void RemoteGraphicsContext::setURLForRect(const URL& link, const FloatRect& destRect)
+void RemoteGraphicsContext::setURLForRect(IPC::Untrusted<URL>&& untrustedLink, const FloatRect& destRect)
 {
+    // Recorded as a link annotation in the page's own drawing; the GPU process never resolves it.
+    auto link = WTF::move(untrustedLink).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+
     context().setURLForRect(link, destRect);
 }
 

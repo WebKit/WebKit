@@ -31,6 +31,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -76,6 +77,13 @@ public:
     {
         return checkUntrustedDomain([&]() -> const WebCore::RegistrableDomain& {
             return site.domain();
+        });
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        return checkUntrustedDomain([&] {
+            return WebCore::RegistrableDomain { url };
         });
     }
 
@@ -180,6 +188,7 @@ namespace IPC {
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::SecurityOriginData> : std::true_type { };
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::RegistrableDomain> : std::true_type { };
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::Site> : std::true_type { };
+template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, URL> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::TopLevelFirstPartyAuthority, WebCore::SecurityOriginData> : std::true_type { };
 

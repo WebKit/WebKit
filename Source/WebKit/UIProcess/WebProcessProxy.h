@@ -564,7 +564,7 @@ public:
     void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
     void setCaptionLanguage(const String&);
 #endif
-    void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
     void serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unwrapCryptoKey(WebCore::WrappedCryptoKey&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
@@ -798,7 +798,7 @@ private:
     void sharedPreferencesDidChange();
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, URL&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
+    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
