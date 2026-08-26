@@ -133,8 +133,10 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
     return 0;
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSourceOrigin, Vector<URL>&& blobURLs)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSourceOrigin, IPC::Untrusted<Vector<URL>>&& untrustedBlobURLs)
 {
+    // Only blob URLs the sending process registered are retained for the message.
+    auto blobURLs = WTF::move(untrustedBlobURLs).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     // FIXME: This becomes MessageEvent.origin in the client, so it should be checked
     // against the origin of the service worker named by sourceIdentifier.
     auto sourceOrigin = WTF::move(untrustedSourceOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
@@ -345,8 +347,22 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
     protect(m_connection)->terminateSWContextConnectionDueToUnresponsiveness();
 }
 
+void WebSWServerToContextConnection::openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedURL, OpenWindowCallback&& callback)
+{
+    // FIXME: Sent by a service worker process, so this should be checked against the
+    // worker's own origin rather than taken on trust.
+    openWindow(identifier, WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview), WTF::move(callback));
+}
+
+void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, WebCore::ServiceWorkerContextData::ImportedScript&& script)
+{
+    // FIXME: As for openWindowFromServiceWorker, this needs the worker's own origin.
+    setScriptResource(identifier, WTF::move(untrustedScriptURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview), WTF::move(script));
+}
+
 void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
 {
+
     RefPtr server = this->server();
     if (!server) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
@@ -532,8 +548,10 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
     connection->focusServiceWorkerClient(clientIdentifier, WTF::move(callback));
 }
 
-void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
+void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "no service worker"_s }));

@@ -128,8 +128,10 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, IPC::Untrusted<Vector<URL>>&& untrustedBlobURLs, CompletionHandler<void()>&& completionHandler)
 {
+    // Only blob URLs the sending process registered are retained for the message.
+    auto blobURLs = WTF::move(untrustedBlobURLs).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(connection);
     MESSAGE_CHECK_COMPLETION(connectionToWebProcess, connection, completionHandler());
     EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(), HostedDomainAuthority { m_networkProcess, connectionToWebProcess->webProcessIdentifier() });
