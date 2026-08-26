@@ -31,6 +31,7 @@
 #include "JSRetainPtr.h"
 #include "JSTypedArray.h"
 #include "LiteralParser.h"
+#include "MarkedVector.h"
 #include "OpaqueJSString.h"
 #include "TypedArrayType.h"
 #include <array>
@@ -873,16 +874,16 @@ char** jsc_value_object_enumerate_properties(JSCValue* value)
     return result.leakSpan().data();
 }
 
-static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef function, JSC::JSCCallbackFunction::Type functionType, JSObjectRef thisObject, const Vector<JSValueRef>& arguments, JSValueRef* exception)
+static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef function, JSC::JSCCallbackFunction::Type functionType, JSObjectRef thisObject, std::span<const JSValueRef> arguments, JSValueRef* exception)
 {
     switch (functionType) {
     case JSC::JSCCallbackFunction::Type::Constructor:
-        return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.span().data(), exception);
+        return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.data(), exception);
     case JSC::JSCCallbackFunction::Type::Method:
         ASSERT(thisObject);
         [[fallthrough]];
     case JSC::JSCCallbackFunction::Type::Function:
-        return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.span().data(), exception);
+        return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.data(), exception);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -895,7 +896,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
     JSC::JSLockHolder locker(globalObject);
 
     JSValueRef exception = nullptr;
-    Vector<JSValueRef> arguments;
+    JSC::MarkedVector<JSValueRef> arguments;
     GType parameterType = firstParameterType;
     while (parameterType != G_TYPE_NONE) {
         GValue parameter;
@@ -918,7 +919,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         parameterType = va_arg(args, GType);
     }
 
-    auto result = jsObjectCall(jsContext, function, functionType, thisObject, arguments, &exception);
+    auto result = jsObjectCall(jsContext, function, functionType, thisObject, arguments.span(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return adoptGRef(jsc_value_new_undefined(priv->context.get()));
 
@@ -1017,7 +1018,7 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
         return jscValueGetJSValue(parametersSpan[i]);
     });
 
-    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Method, object, arguments, &exception);
+    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Method, object, arguments.span(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
@@ -1368,7 +1369,7 @@ JSCValue* jsc_value_function_callv(JSCValue* value, unsigned parametersCount, JS
         return jscValueGetJSValue(parametersSpan[i]);
     });
 
-    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Function, nullptr, arguments, &exception);
+    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Function, nullptr, arguments.span(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
@@ -1452,7 +1453,7 @@ JSCValue* jsc_value_constructor_callv(JSCValue* value, unsigned parametersCount,
         return jscValueGetJSValue(parametersSpan[i]);
     });
 
-    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Constructor, nullptr, arguments, &exception);
+    auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Constructor, nullptr, arguments.span(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
