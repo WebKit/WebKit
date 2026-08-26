@@ -54,6 +54,8 @@ UNTRUSTED_TYPES = {
 PRIVILEGED_PROCESSES = {
     "UI",
     "Networking",
+    "GPU",
+    "Model",
 }
 
 # Containers traversed when looking for an untrusted type. Every template parameter
