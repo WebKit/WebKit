@@ -554,6 +554,12 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return set.contains(firstPartyDomain) ? AllowCookieAccess::Allow : terminateOrDisallow;
 }
 
+bool NetworkProcess::hostsDomain(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& domain) const
+{
+    RefPtr connection = webProcessConnection(processIdentifier);
+    return connection && connection->hostsDomain(domain);
+}
+
 // Dropped when the connection does not exist yet: NetworkProcessConnectionParameters carries the current value.
 void NetworkProcess::setHostedDomains(WebCore::ProcessIdentifier processIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains)
 {

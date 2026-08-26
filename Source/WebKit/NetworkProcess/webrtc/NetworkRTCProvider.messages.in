@@ -29,14 +29,14 @@
     SharedPreferencesNeedsConnection
 ]
 messages -> NetworkRTCProvider {
-    CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::WebRTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, WebCore::RegistrableDomain domain)
-    CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::WebRTCNetwork::SocketAddress localAddress, WebKit::WebRTCNetwork::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, WebCore::RegistrableDomain domain)
+    CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::WebRTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain> domain)
+    CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::WebRTCNetwork::SocketAddress localAddress, WebKit::WebRTCNetwork::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain> domain)
 
     CreateResolver(WebKit::LibWebRTCResolverIdentifier identifier, String address)
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)
 
 #if PLATFORM(COCOA)
-    GetInterfaceName(URL url, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, WebCore::RegistrableDomain domain) -> (String interfaceName) async
+    GetInterfaceName(URL url, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, IPC::Untrusted<WebCore::RegistrableDomain> domain) -> (String interfaceName) async
 #endif
 
     SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::WebRTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)
