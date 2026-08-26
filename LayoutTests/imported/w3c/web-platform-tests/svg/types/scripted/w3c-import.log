@@ -31,6 +31,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGTextContentElement.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGTextPathElement.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-initial-values.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-invalid-values.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedInteger-initial-values.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedInteger.html
@@ -92,6 +94,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGMatrix.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGPathElement.getTotalLength-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGPointList-error-handling.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGRect.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/event-handler-all-document-element-events.svg

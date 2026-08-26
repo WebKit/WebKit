@@ -12,4 +12,5 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/resources/svg-tags.js
 /LayoutTests/imported/w3c/web-platform-tests/svg/resources/svg-transform-equals.js

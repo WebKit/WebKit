@@ -20,3 +20,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/outer-svg-transform-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/symbol-not-rendered.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/use-external-use-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/reference/use-image-href-mutating-ref.svg

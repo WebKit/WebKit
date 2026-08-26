@@ -98,6 +98,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/stroke-color-inherit-link-visited-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/stroke-color-inherit-link-visited.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/style-sheet-interfaces.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-element-attributeStyleMap.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-cross-origin-frame-in-cross-origin-frame-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-cross-origin-frame-in-cross-origin-frame.tentative.sub.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-cross-origin-frame-in-cross-origin-frame.tentative.sub.https.html
@@ -132,6 +133,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-web-plugin.tentative.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-web-plugin.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/symbol-g-graphics-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/text-overflow-presentation-attribute-foreignobject-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/text-overflow-presentation-attribute-foreignobject-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/text-overflow-presentation-attribute-foreignobject.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-animations-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/use-element-attr-selector-expected.html

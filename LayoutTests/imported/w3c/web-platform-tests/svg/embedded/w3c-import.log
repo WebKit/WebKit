@@ -65,3 +65,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-2.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-3-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/embedded/image-remove-href-3.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/embedded/svg-zero-size-crash.html
