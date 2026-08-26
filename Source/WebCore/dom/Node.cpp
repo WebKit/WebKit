@@ -2899,8 +2899,8 @@ void Node::defaultEventHandler(Event& event)
 
 bool Node::willRespondToMouseMoveEvents() const
 {
-    // FIXME: Why is the iOS code path different from the non-iOS code path?
-#if !PLATFORM(IOS_FAMILY)
+    // FIXME: Why is the Cocoa code path different from the non-Cocoa code path?
+#if !PLATFORM(COCOA)
     auto* element = dynamicDowncast<Element>(*this);
     if (!element)
         return false;
@@ -2940,8 +2940,8 @@ bool Node::willRespondToMouseClickEvents(const Style::ComputedStyle* styleToUse)
 
 bool Node::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    // FIXME: Why is the iOS code path different from the non-iOS code path?
-#if !PLATFORM(IOS_FAMILY)
+    // FIXME: Why is the Cocoa code path different from the non-Cocoa code path?
+#if !PLATFORM(COCOA)
     auto* element = dynamicDowncast<Element>(*this);
     if (!element)
         return false;

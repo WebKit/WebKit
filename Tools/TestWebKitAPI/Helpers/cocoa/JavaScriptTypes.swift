@@ -208,6 +208,33 @@ extension CGRect {
     }
 }
 
+/// Represents a DOM element.
+public enum DOMElement: Sendable {
+    /// The document element.
+    case document
+
+    /// An element with the specific id.
+    case id(String)
+}
+
+extension DOMElement: WebPage.JavaScriptEncodable {
+    // Protocol conformance.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public func encoded() -> [String: Any?] {
+        switch self {
+        case .id(let value):
+            [
+                "kind": "id",
+                "value": value,
+            ]
+        case .document:
+            [
+                "kind": "document"
+            ]
+        }
+    }
+}
+
 /// A coordinate position.
 public struct DOMPoint: Sendable {
     /// The x coordinate.
