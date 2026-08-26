@@ -30,10 +30,10 @@
     SharedPreferencesNeedsConnection
 ]
  messages -> NetworkStorageManager {
-    Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
-    Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
-    Estimate(struct WebCore::ClientOrigin origin) -> (struct std::optional<WebCore::StorageEstimate> result);
-    [EnabledBy=FileSystemEnabled] FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, WebKit::FileSystemStorageError> result)
+    Persisted(struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (bool persisted)
+    Persist(struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (bool persisted)
+    Estimate(struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (struct std::optional<WebCore::StorageEstimate> result);
+    [EnabledBy=FileSystemEnabled] FileSystemGetDirectory(struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] CloseHandle(WebCore::FileSystemHandleIdentifier identifier)
     [EnabledBy=FileSystemEnabled] IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result)
     [EnabledBy=FileSystemEnabled] GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, WebKit::FileSystemStorageError> result)
@@ -50,13 +50,13 @@
     [EnabledBy=FileSystemWritableStreamEnabled && FileSystemEnabled] ExecuteCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, enum:uint8_t WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError) ->  (std::optional<WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (std::expected<Vector<String>, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (std::expected<std::optional<WebCore::FileSystemHandleInfo>, WebKit::FileSystemStorageError> result)
-    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] AddGlobalIdentifierReference(struct WebCore::ClientOrigin origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
-    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] RemoveGlobalIdentifierReferences(struct WebCore::ClientOrigin origin, Vector<WebCore::FileSystemHandleGlobalIdentifier> globalIdentifiers)
-    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] ResolveGlobalIdentifier(struct WebCore::ClientOrigin origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) -> (std::expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
+    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] AddGlobalIdentifierReference(struct IPC::Untrusted<WebCore::ClientOrigin> origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
+    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] RemoveGlobalIdentifierReferences(struct IPC::Untrusted<WebCore::ClientOrigin> origin, Vector<WebCore::FileSystemHandleGlobalIdentifier> globalIdentifiers)
+    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] ResolveGlobalIdentifier(struct IPC::Untrusted<WebCore::ClientOrigin> origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) -> (std::expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
 
-    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier)
-    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
-    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] CancelConnectToStorageArea(WebCore::StorageType type, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin)
+    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier)
+    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
+    [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] CancelConnectToStorageArea(WebCore::StorageType type, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct IPC::Untrusted<WebCore::ClientOrigin> origin)
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier)
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems)
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> (bool hasError, HashMap<String, String> allItems)
@@ -88,20 +88,20 @@
     [EnabledBy=IndexedDBAPIEnabled] DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
     [EnabledBy=IndexedDBAPIEnabled] OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info)
     [EnabledBy=IndexedDBAPIEnabled] IterateCursor(WebCore::IDBRequestData requestData, struct WebCore::IDBIterateCursorData data)
-    [EnabledBy=IndexedDBAPIEnabled] GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin)
+    [EnabledBy=IndexedDBAPIEnabled] GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct IPC::Untrusted<WebCore::ClientOrigin> origin)
 
-    CacheStorageOpenCache(struct WebCore::ClientOrigin origin, String cacheName) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
+    CacheStorageOpenCache(struct IPC::Untrusted<WebCore::ClientOrigin> origin, String cacheName) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
     CacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier) -> (WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError result)
-    CacheStorageAllCaches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
+    CacheStorageAllCaches(struct IPC::Untrusted<WebCore::ClientOrigin> origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
     CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier)
     CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier)
-    LockCacheStorage(struct WebCore::ClientOrigin origin)
-    UnlockCacheStorage(struct WebCore::ClientOrigin origin)
+    LockCacheStorage(struct IPC::Untrusted<WebCore::ClientOrigin> origin)
+    UnlockCacheStorage(struct IPC::Untrusted<WebCore::ClientOrigin> origin)
     CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::CrossThreadRecordsOrError result)
     CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
     CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord> records) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
-    CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> ()
+    CacheStorageClearMemoryRepresentation(struct IPC::Untrusted<WebCore::ClientOrigin> origin) -> ()
     [EnabledBy=AllowTestOnlyIPC] CacheStorageRepresentation() -> (String representation)
 
-    ResetQuotaUpdatedBasedOnUsageForTesting(struct WebCore::ClientOrigin origin)
+    ResetQuotaUpdatedBasedOnUsageForTesting(struct IPC::Untrusted<WebCore::ClientOrigin> origin)
 }

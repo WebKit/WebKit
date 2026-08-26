@@ -27,6 +27,7 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
+#include "FirstPartyForCookiesAuthority.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
@@ -133,6 +134,22 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, this->connection(), completion)
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, this->connection(), returnValue)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(name##Validated), completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -533,8 +550,10 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
     protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier, messageName), 0);
 }
 
-void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(clientOrigin, untrustedClientOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     MESSAGE_CHECK(request.url().isValid());
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) != NetworkProcess::AllowCookieAccess::Terminate);
 
@@ -809,8 +828,10 @@ NetworkStorageSession* NetworkConnectionToWebProcess::storageSession()
     return m_networkProcess->storageSession(m_sessionID);
 }
 
-void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
+void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (!request.firstPartyForCookies().isEmpty())
         MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
 
@@ -822,8 +843,10 @@ void NetworkConnectionToWebProcess::loadCancelledDownloadRedirectRequestInFrame(
     m_connection->send(Messages::NetworkProcessConnection::LoadCancelledDownloadRedirectRequestInFrame(request, frameID, pageID), 0);
 }
 
-void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, const ResourceResponse& response, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin, const ResourceResponse& response, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     RELEASE_ASSERT(RunLoop::isMain());
 
     if (!request.firstPartyForCookies().isEmpty())
@@ -1113,16 +1136,22 @@ void NetworkConnectionToWebProcess::allCookiesDeleted()
 
 #endif
 
-void NetworkConnectionToWebProcess::subscribeToStorageAccessPermissionChanges(RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain)
+void NetworkConnectionToWebProcess::subscribeToStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->startListeningForStorageAccessPermissionChanges(*this, WTF::move(topFrameDomain), WTF::move(subFrameDomain));
     }
 }
 
-void NetworkConnectionToWebProcess::unsubscribeFromStorageAccessPermissionChanges(RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain)
+void NetworkConnectionToWebProcess::unsubscribeFromStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->stopListeningForStorageAccessPermissionChanges(*this, WTF::move(topFrameDomain), WTF::move(subFrameDomain));
@@ -1196,8 +1225,10 @@ void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vect
     session->blobRegistry().registerInternalBlobURL(url, WTF::move(blobParts), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1229,8 +1260,10 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& u
     session->blobRegistry().registerInternalBlobURLForSlice(url, srcURL, start, end, contentType);
 }
 
-void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
+void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1239,8 +1272,10 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, const std:
     session->blobRegistry().unregisterBlobURL(url, topOrigin);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
+void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1249,8 +1284,10 @@ void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, const 
     session->blobRegistry().registerBlobURLHandle(url, topOrigin);
 }
 
-void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
+void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTopOrigin)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(topOrigin, untrustedTopOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1348,8 +1385,10 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier 
         storageSession->removeStorageAccessForFrame(frameID, pageID);
 }
 
-void NetworkConnectionToWebProcess::logUserInteraction(RegistrableDomain&& domain)
+void NetworkConnectionToWebProcess::logUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domain) != NetworkProcess::AllowCookieAccess::Allow) {
         ASSERT_NOT_REACHED();
         return;
@@ -1392,8 +1431,11 @@ void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<Resourc
     completionHandler();
 }
 
-void NetworkConnectionToWebProcess::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::hasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->hasStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frameID, pageID, WTF::move(completionHandler));
@@ -1406,8 +1448,11 @@ void NetworkConnectionToWebProcess::hasStorageAccess(RegistrableDomain&& subFram
     completionHandler(false);
 }
 
-void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult result)>&& completionHandler)
+void NetworkConnectionToWebProcess::requestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult result)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->requestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frameID, webPageID, webPageProxyID, scope, hasUserGestureOrNoUserGestureRequired, WTF::move(completionHandler));
@@ -1418,8 +1463,11 @@ void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& sub
     completionHandler({ WebCore::StorageAccessWasGranted::Yes, WebCore::StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 }
 
-void NetworkConnectionToWebProcess::queryStorageAccessPermission(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+void NetworkConnectionToWebProcess::queryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedSubFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedTopFrameDomain, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(subFrameDomain, untrustedSubFrameDomain, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(topFrameDomain, untrustedTopFrameDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->queryStorageAccessPermission(WTF::move(subFrameDomain), WTF::move(topFrameDomain), webPageProxyID, WTF::move(completionHandler));
@@ -1430,8 +1478,10 @@ void NetworkConnectionToWebProcess::queryStorageAccessPermission(RegistrableDoma
     completionHandler(PermissionState::Denied);
 }
 
-void NetworkConnectionToWebProcess::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (isLoginStatusAPIRequiresWebAuthnEnabled() && !lastAuthentication) {
         auto umanagedAuthentication = LoginStatus::create(domain, emptyString(), WebCore::LoginStatus::CredentialTokenType::HTTPStateToken, WebCore::LoginStatus::AuthenticationType::Unmanaged, WebCore::LoginStatus::TimeToLiveAuthentication);
         if (umanagedAuthentication.hasException())
@@ -1448,8 +1498,10 @@ void NetworkConnectionToWebProcess::setLoginStatus(RegistrableDomain&& domain, I
     completionHandler();
 }
 
-void NetworkConnectionToWebProcess::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::isLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->isLoggedIn(WTF::move(domain), WTF::move(completionHandler));
@@ -1464,8 +1516,11 @@ void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& to
     completionHandler(NetworkStorageSession::storageAccessQuirkForTopFrameDomain(topFrameURL));
 }
 
-void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)
+void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomainInNeedOfStorageAccess, PageIdentifier openerPageID, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedOpenerDomain)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(domainInNeedOfStorageAccess, untrustedDomainInNeedOfStorageAccess, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+    EXTRACT_WITH_MESSAGE_CHECK(openerDomain, untrustedOpenerDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
+
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domainInNeedOfStorageAccess) == NetworkProcess::AllowCookieAccess::Allow);
 
     if (CheckedPtr networkSession = this->networkSession()) {
@@ -1607,8 +1662,11 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(WebCore::Resour
     });
 }
 
-void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::Site&& site, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, IPC::Untrusted<WebCore::Site>&& untrustedSite, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
 {
+    // Checked below by allowsFirstPartyForCookies() before the context connection is made.
+    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
+
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
     if (CheckedPtr session = networkSession()) {
         auto allowCookieAccess = session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
@@ -1689,8 +1747,11 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
     server->addConnection(WTF::move(connection));
 }
 
-void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, IPC::Untrusted<WebCore::Site>&& untrustedSite, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy, CompletionHandler<void()>&& completionHandler)
 {
+    // Checked below by allowsFirstPartyForCookies() before the context connection is made.
+    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
+
     CheckedPtr session = networkSession();
 
     if (session) {
@@ -2012,8 +2073,10 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
 }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebPageProxyIdentifier&& pageID, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(clientOrigin, untrustedClientOrigin, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
+
     if (!url.isValid()
         || !portAllowed(url)
         || isIPAddressDisallowed(url)
@@ -2082,3 +2145,5 @@ void NetworkConnectionToWebProcess::takeInvalidMessageStringForTesting(Completio
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
+#undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION

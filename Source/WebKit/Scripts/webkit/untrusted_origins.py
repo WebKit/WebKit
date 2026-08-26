@@ -48,6 +48,7 @@ UNTRUSTED_TYPES = {
 # a web-content-supplied origin on trust.
 PRIVILEGED_PROCESSES = {
     "UI",
+    "Networking",
 }
 
 
@@ -59,6 +60,9 @@ UNTRUSTED_WRAPPER = "IPC::Untrusted"
 # test_validation_procedures_are_confined below.
 VALIDATION_PROCEDURE_HEADERS = {
     "Platform/IPC/Untrusted.h",
+    "NetworkProcess/FirstPartyForCookiesAuthority.h",
+    "NetworkProcess/ServiceWorker/ServiceWorkerOriginAuthority.h",
+    "NetworkProcess/storage/StorageOriginAuthority.h",
     "UIProcess/FirstPartyAuthority.h",
 }
 

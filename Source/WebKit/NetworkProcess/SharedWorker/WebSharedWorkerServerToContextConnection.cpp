@@ -137,7 +137,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
                     swOldConnection->unregisterServiceWorkerClient(*contextIdentifier);
                     if (RefPtr swNewConnection = connection->swConnection()) {
                         clientData->serviceWorkerClientData.identifier = *initializationData.clientIdentifier;
-                        swNewConnection->registerServiceWorkerClient(WTF::move(clientData->clientOrigin), WTF::move(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTF::move(clientData->userAgent));
+                        swNewConnection->registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin> { WTF::move(clientData->clientOrigin) }, WTF::move(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTF::move(clientData->userAgent));
                     }
                 }
             }
