@@ -30,6 +30,7 @@
 
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <wtf/HashMap.h>
@@ -99,6 +100,8 @@ void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
     extensionSchemes().addVoid(canonicalScheme.value());
     validSchemes().addVoid(canonicalScheme.value());
     supportedSchemes().addVoid(canonicalScheme.value());
+
+    LegacySchemeRegistry::registerURLSchemeAsAllowingServiceWorkerClients(canonicalScheme.value());
 
     for (auto& pool : WebProcessPool::allProcessPools())
         pool->sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsWebExtension(urlScheme));

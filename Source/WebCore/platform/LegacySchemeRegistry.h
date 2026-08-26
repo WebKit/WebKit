@@ -52,6 +52,9 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsNoAccess(const String&); // Thread safe.
     static bool shouldTreatURLSchemeAsNoAccess(StringView); // Thread safe.
 
+    WEBCORE_EXPORT static void registerURLSchemeAsAllowingServiceWorkerClients(const String&); // Must be called on the main thread.
+    static bool shouldTreatURLSchemeAsAllowingServiceWorkerClients(StringView); // Must be called on the main thread.
+
     // Display-isolated schemes can only be displayed (in the sense of
     // SecurityOrigin::canDisplay) by documents from the same scheme.
     WEBCORE_EXPORT static void registerURLSchemeAsDisplayIsolated(const String&); // Thread safe.
