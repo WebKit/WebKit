@@ -218,6 +218,21 @@ TEST_P(PolygonModeTest, ExtensionStateANGLE)
     }
 }
 
+// Test that if both extensions are enabled, the ANGLE command allows GL_POINT_NV.
+TEST_P(PolygonModeTest, ExtensionInteraction)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_polygon_mode"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_NV_polygon_mode"));
+
+    glPolygonModeANGLE(GL_FRONT_AND_BACK, GL_POINT_NV);
+    EXPECT_GL_NO_ERROR();
+
+    GLint result = 0;
+    glGetIntegerv(GL_POLYGON_MODE_NV, &result);
+    EXPECT_GLENUM_EQ(GL_POINT_NV, result);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test line rasterization mode
 TEST_P(PolygonModeTest, DrawLines)
 {

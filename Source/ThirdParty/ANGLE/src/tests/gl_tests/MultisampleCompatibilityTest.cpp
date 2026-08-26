@@ -173,9 +173,6 @@ TEST_P(EXTMultisampleCompatibilityTest, DrawAndResolve)
     if (!isApplicable())
         return;
 
-    // http://anglebug.com/40644773
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
-
     static const float kBlue[]  = {0.0f, 0.0f, 1.0f, 1.0f};
     static const float kGreen[] = {0.0f, 1.0f, 0.0f, 1.0f};
     static const float kRed[]   = {1.0f, 0.0f, 0.0f, 1.0f};

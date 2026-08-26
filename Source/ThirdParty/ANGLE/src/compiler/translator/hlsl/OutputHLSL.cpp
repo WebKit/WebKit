@@ -298,14 +298,14 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
       mIsEarlyFragmentTestsSpecified(isEarlyFragmentTestsSpecified),
       mNeedStructMapping(false)
 {
-    mUsesFragColor        = false;
-    mUsesFragData         = false;
-    mUsesDepthRange       = false;
-    mUsesFragCoord        = false;
-    mUsesPointCoord       = false;
-    mUsesFrontFacing      = false;
-    mUsesPointSize        = false;
-    mUsesInstanceID       = false;
+    mUsesFragColor   = false;
+    mUsesFragData    = false;
+    mUsesDepthRange  = false;
+    mUsesFragCoord   = false;
+    mUsesPointCoord  = false;
+    mUsesFrontFacing = false;
+    mUsesPointSize   = false;
+    mUsesInstanceID  = false;
     mHasMultiviewExtensionEnabled =
         IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview) ||
         IsExtensionEnabled(mExtensionBehavior, TExtension::OVR_multiview2);
@@ -332,30 +332,12 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mInsideDiscontinuousLoop = false;
     mNestedLoopDepth         = 0;
 
-    mExcessiveLoopIndex = nullptr;
-
     mStructureHLSL       = new StructureHLSL;
     mTextureFunctionHLSL = new TextureFunctionHLSL;
     mImageFunctionHLSL   = new ImageFunctionHLSL;
 
     unsigned int firstUniformRegister = compileOptions.skipD3DConstantRegisterZero ? 1u : 0u;
-    mResourcesHLSL = new ResourcesHLSL(mStructureHLSL, outputType, uniforms, firstUniformRegister);
-
-    if (mOutputType == SH_HLSL_3_0_OUTPUT)
-    {
-        // Fragment shaders need dx_DepthRange, dx_ViewCoords, dx_DepthFront,
-        // and dx_FragCoordOffset.
-        // Vertex shaders need a slightly different set: dx_DepthRange, dx_ViewCoords and
-        // dx_ViewAdjust.
-        if (mShaderType == GL_VERTEX_SHADER)
-        {
-            mResourcesHLSL->reserveUniformRegisters(3);
-        }
-        else
-        {
-            mResourcesHLSL->reserveUniformRegisters(4);
-        }
-    }
+    mResourcesHLSL = new ResourcesHLSL(mStructureHLSL, uniforms, firstUniformRegister);
 
     // Reserve registers for the default uniform block and driver constants
     mResourcesHLSL->reserveUniformBlockRegisters(2);
@@ -546,7 +528,9 @@ TString OutputHLSL::generateStructMapping(const std::vector<MappedStruct> &std14
                     mappedStruct.blockDeclarator->variable().name();
                 unsigned int instanceStringArrayIndex = GL_INVALID_INDEX;
                 if (isInstanceArray)
+                {
                     instanceStringArrayIndex = instanceArrayIndex;
+                }
                 TString instanceString = mResourcesHLSL->InterfaceBlockInstanceString(
                     instanceName, instanceStringArrayIndex);
                 originalName += instanceString;
@@ -835,36 +819,15 @@ void OutputHLSL::header(TInfoSinkBase &out,
                 out << "    float2 dx_ViewScale : packoffset(c3.z);\n";
             }
 
-            if (mOutputType == SH_HLSL_4_1_OUTPUT)
-            {
-                out << "    uint dx_Misc : packoffset(c2.w);\n";
-                const unsigned int registerIndex = 4;
-                mResourcesHLSL->samplerMetadataUniforms(out, registerIndex);
-            }
+            out << "    uint dx_Misc : packoffset(c2.w);\n";
+            const unsigned int registerIndex = 4;
+            mResourcesHLSL->samplerMetadataUniforms(out, registerIndex);
 
             out << "};\n";
 
-            if (mOutputType == SH_HLSL_4_1_OUTPUT && mResourcesHLSL->hasImages())
+            if (mResourcesHLSL->hasImages())
             {
                 out << kImage2DFunctionString << "\n";
-            }
-        }
-        else
-        {
-            if (mUsesDepthRange)
-            {
-                out << "uniform float3 dx_DepthRange : register(c0);";
-            }
-
-            if (mUsesFragCoord)
-            {
-                out << "uniform float4 dx_ViewCoords : register(c1);\n";
-            }
-
-            if (mUsesFragCoord || mUsesFrontFacing)
-            {
-                out << "uniform float3 dx_DepthFront : register(c2);\n";
-                out << "uniform float2 dx_FragCoordOffset : register(c3);\n";
             }
         }
 
@@ -994,48 +957,25 @@ void OutputHLSL::header(TInfoSinkBase &out,
                 out << "    float3 dx_DepthRange : packoffset(c0);\n";
             }
 
-            // dx_ViewAdjust and dx_ViewCoords are only used by some shaders (e.g. the D3D9
-            // backend). However, we declare them for all shaders. The bytecode is the same whether
-            // we declare them or not, since D3DCompiler removes them if they're unused.
-            out << "    float4 dx_ViewAdjust : packoffset(c1);\n";
-            out << "    float2 dx_ViewCoords : packoffset(c2);\n";
-            out << "    float2 dx_ViewScale  : packoffset(c3);\n";
+            out << "    float2 dx_ViewScale  : packoffset(c1);\n";
 
-            out << "    float clipControlOrigin : packoffset(c3.z);\n";
-            out << "    float clipControlZeroToOne : packoffset(c3.w);\n";
+            out << "    float clipControlOrigin : packoffset(c1.z);\n";
+            out << "    float clipControlZeroToOne : packoffset(c1.w);\n";
 
-            if (mOutputType == SH_HLSL_4_1_OUTPUT)
-            {
-                mResourcesHLSL->samplerMetadataUniforms(out, 5);
-            }
+            mResourcesHLSL->samplerMetadataUniforms(out, 3);
 
             if (mUsesVertexID)
             {
-                out << "    uint dx_VertexID : packoffset(c4.x);\n";
+                out << "    uint dx_VertexID : packoffset(c2.x);\n";
             }
 
             if (mClipDistanceSize)
             {
-                out << "    uint clipDistancesEnabled : packoffset(c4.y);\n";
+                out << "    uint clipDistancesEnabled : packoffset(c2.y);\n";
             }
 
             out << "};\n"
                    "\n";
-        }
-        else
-        {
-            if (mUsesDepthRange)
-            {
-                out << "uniform float3 dx_DepthRange : register(c0);\n";
-            }
-
-            out << "uniform float4 dx_ViewAdjust : register(c1);\n";
-            out << "uniform float2 dx_ViewCoords : register(c2);\n";
-
-            out << "static const float clipControlOrigin = -1.0f;\n";
-            out << "static const float clipControlZeroToOne = 0.0f;\n";
-
-            out << "\n";
         }
 
         if (mUsesDepthRange)
@@ -1045,7 +985,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "\n";
         }
 
-        if (mOutputType == SH_HLSL_4_1_OUTPUT && mResourcesHLSL->hasImages())
+        if (mResourcesHLSL->hasImages())
         {
             out << kImage2DFunctionString << "\n";
         }
@@ -1903,9 +1843,13 @@ bool OutputHLSL::visitUnary(Visit visit, TIntermUnary *node)
             break;
         case EOpIsnan:
             if (node->getUseEmulatedFunction())
+            {
                 writeEmulatedFunctionTriplet(out, visit, node->getFunction());
+            }
             else
+            {
                 outputTriplet(out, visit, "isnan(", "", ")");
+            }
             mRequiresIEEEStrictCompiling = true;
             break;
         case EOpIsinf:
@@ -2346,8 +2290,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
                                                  nullptr, mSymbolTable);
                     for (const TVariable *sampler : samplerSymbols)
                     {
-                        // In case of HLSL 4.1+, this symbol is the sampler index, and in case
-                        // of D3D9, it's the sampler variable.
+                        // This symbol is the sampler index.
                         out << ", " << sampler->name();
                     }
                 }
@@ -2674,17 +2617,6 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
 
     TInfoSinkBase &out = getInfoSink();
 
-    if (mOutputType == SH_HLSL_3_0_OUTPUT)
-    {
-        if (handleExcessiveLoop(out, node))
-        {
-            mInsideDiscontinuousLoop = wasDiscontinuous;
-            mNestedLoopDepth--;
-
-            return false;
-        }
-    }
-
     const char *unroll = mCurrentFunctionMetadata->hasGradientInCallGraph(node) ? "LOOP" : "";
     if (node->getType() == ELoopDoWhile)
     {
@@ -2760,16 +2692,7 @@ bool OutputHLSL::visitBranch(Visit visit, TIntermBranch *node)
                     mUsesNestedBreak = true;
                 }
 
-                if (mExcessiveLoopIndex)
-                {
-                    out << "{Break";
-                    mExcessiveLoopIndex->traverse(this);
-                    out << " = true; break;}\n";
-                }
-                else
-                {
-                    out << "break";
-                }
+                out << "break";
                 break;
             case EOpContinue:
                 out << "continue";
@@ -2798,225 +2721,6 @@ bool OutputHLSL::visitBranch(Visit visit, TIntermBranch *node)
     }
 
     return true;
-}
-
-// Handle loops with more than 254 iterations (unsupported by D3D9) by splitting them
-// (The D3D documentation says 255 iterations, but the compiler complains at anything more than
-// 254).
-bool OutputHLSL::handleExcessiveLoop(TInfoSinkBase &out, TIntermLoop *node)
-{
-    const int MAX_LOOP_ITERATIONS = 254;
-
-    // Parse loops of the form:
-    // for(int index = initial; index [comparator] limit; index += increment)
-    TIntermSymbol *index = nullptr;
-    TOperator comparator = EOpNull;
-    int initial          = 0;
-    int limit            = 0;
-    int increment        = 0;
-
-    // Parse index name and intial value
-    if (node->getInit())
-    {
-        TIntermDeclaration *init = node->getInit()->getAsDeclarationNode();
-
-        if (init)
-        {
-            TIntermSequence *sequence = init->getSequence();
-            TIntermTyped *variable    = (*sequence)[0]->getAsTyped();
-
-            if (variable && variable->getQualifier() == EvqTemporary)
-            {
-                TIntermBinary *assign = variable->getAsBinaryNode();
-
-                if (assign != nullptr && assign->getOp() == EOpInitialize)
-                {
-                    TIntermSymbol *symbol          = assign->getLeft()->getAsSymbolNode();
-                    TIntermConstantUnion *constant = assign->getRight()->getAsConstantUnion();
-
-                    if (symbol && constant)
-                    {
-                        if (constant->getBasicType() == EbtInt && constant->isScalar())
-                        {
-                            index   = symbol;
-                            initial = constant->getIConst(0);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Parse comparator and limit value
-    if (index != nullptr && node->getCondition())
-    {
-        TIntermBinary *test = node->getCondition()->getAsBinaryNode();
-
-        if (test && test->getLeft()->getAsSymbolNode()->uniqueId() == index->uniqueId())
-        {
-            TIntermConstantUnion *constant = test->getRight()->getAsConstantUnion();
-
-            if (constant)
-            {
-                if (constant->getBasicType() == EbtInt && constant->isScalar())
-                {
-                    comparator = test->getOp();
-                    limit      = constant->getIConst(0);
-                }
-            }
-        }
-    }
-
-    // Parse increment
-    if (index != nullptr && comparator != EOpNull && node->getExpression())
-    {
-        TIntermBinary *binaryTerminal = node->getExpression()->getAsBinaryNode();
-        TIntermUnary *unaryTerminal   = node->getExpression()->getAsUnaryNode();
-
-        if (binaryTerminal)
-        {
-            TOperator op                   = binaryTerminal->getOp();
-            TIntermConstantUnion *constant = binaryTerminal->getRight()->getAsConstantUnion();
-
-            if (constant)
-            {
-                if (constant->getBasicType() == EbtInt && constant->isScalar())
-                {
-                    int value = constant->getIConst(0);
-
-                    switch (op)
-                    {
-                        case EOpAddAssign:
-                            increment = value;
-                            break;
-                        case EOpSubAssign:
-                            increment = -value;
-                            break;
-                        default:
-                            UNIMPLEMENTED();
-                    }
-                }
-            }
-        }
-        else if (unaryTerminal)
-        {
-            TOperator op = unaryTerminal->getOp();
-
-            switch (op)
-            {
-                case EOpPostIncrement:
-                    increment = 1;
-                    break;
-                case EOpPostDecrement:
-                    increment = -1;
-                    break;
-                case EOpPreIncrement:
-                    increment = 1;
-                    break;
-                case EOpPreDecrement:
-                    increment = -1;
-                    break;
-                default:
-                    UNIMPLEMENTED();
-            }
-        }
-    }
-
-    if (index != nullptr && comparator != EOpNull && increment != 0)
-    {
-        if (comparator == EOpLessThanEqual)
-        {
-            comparator = EOpLessThan;
-            limit += 1;
-        }
-
-        if (comparator == EOpLessThan)
-        {
-            int iterations = (limit - initial) / increment;
-
-            if (iterations <= MAX_LOOP_ITERATIONS)
-            {
-                return false;  // Not an excessive loop
-            }
-
-            TIntermSymbol *restoreIndex = mExcessiveLoopIndex;
-            mExcessiveLoopIndex         = index;
-
-            out << "{int ";
-            index->traverse(this);
-            out << ";\n"
-                   "bool Break";
-            index->traverse(this);
-            out << " = false;\n";
-
-            bool firstLoopFragment = true;
-
-            while (iterations > 0)
-            {
-                int clampedLimit = initial + increment * std::min(MAX_LOOP_ITERATIONS, iterations);
-
-                if (!firstLoopFragment)
-                {
-                    out << "if (!Break";
-                    index->traverse(this);
-                    out << ") {\n";
-                }
-
-                if (iterations <= MAX_LOOP_ITERATIONS)  // Last loop fragment
-                {
-                    mExcessiveLoopIndex = nullptr;  // Stops setting the Break flag
-                }
-
-                // for(int index = initial; index < clampedLimit; index += increment)
-                const char *unroll =
-                    mCurrentFunctionMetadata->hasGradientInCallGraph(node) ? "LOOP" : "";
-
-                out << unroll << " for(";
-                index->traverse(this);
-                out << " = ";
-                out << initial;
-
-                out << "; ";
-                index->traverse(this);
-                out << " < ";
-                out << clampedLimit;
-
-                out << "; ";
-                index->traverse(this);
-                out << " += ";
-                out << increment;
-                out << ")\n";
-
-                outputLineDirective(out, node->getLine().first_line);
-                out << "{\n";
-
-                node->getBody()->traverse(this);
-
-                outputLineDirective(out, node->getLine().first_line);
-                out << ";}\n";
-
-                if (!firstLoopFragment)
-                {
-                    out << "}\n";
-                }
-
-                firstLoopFragment = false;
-
-                initial += MAX_LOOP_ITERATIONS * increment;
-                iterations -= MAX_LOOP_ITERATIONS;
-            }
-
-            out << "}";
-
-            mExcessiveLoopIndex = restoreIndex;
-
-            return true;
-        }
-        else
-            UNIMPLEMENTED();
-    }
-
-    return false;  // Not handled as an excessive loop
 }
 
 void OutputHLSL::outputTriplet(TInfoSinkBase &out,
@@ -3065,13 +2769,10 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
 
     if (IsSampler(type.getBasicType()))
     {
-        if (mOutputType == SH_HLSL_4_1_OUTPUT)
-        {
-            // Samplers are passed as indices to the sampler array.
-            ASSERT(qualifier != EvqParamOut && qualifier != EvqParamInOut);
-            out << "const uint " << nameStr << ArrayString(type);
-            return;
-        }
+        // Samplers are passed as indices to the sampler array.
+        ASSERT(qualifier != EvqParamOut && qualifier != EvqParamInOut);
+        out << "const uint " << nameStr << ArrayString(type);
+        return;
     }
 
     out << QualifierString(qualifier) << " " << TypeString(type) << " " << nameStr
@@ -3090,16 +2791,7 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
         for (const TVariable *sampler : samplerSymbols)
         {
             const TType &samplerType = sampler->getType();
-            if (mOutputType == SH_HLSL_4_1_OUTPUT)
-            {
-                out << ", const uint " << sampler->name() << ArrayString(samplerType);
-            }
-            else
-            {
-                ASSERT(IsSampler(samplerType.getBasicType()));
-                out << ", " << QualifierString(qualifier) << " " << TypeString(samplerType) << " "
-                    << sampler->name() << ArrayString(samplerType);
-            }
+            out << ", const uint " << sampler->name() << ArrayString(samplerType);
         }
     }
 }

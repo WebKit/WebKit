@@ -85,9 +85,6 @@ TEST_P(FramebufferObjectTest, TextureObjectDifferentFormats)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_framebuffer_object"));
 
-    // http://anglebug.com/42264178
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
-
     GLuint fboId;
 
     glGenFramebuffersOES(1, &fboId);

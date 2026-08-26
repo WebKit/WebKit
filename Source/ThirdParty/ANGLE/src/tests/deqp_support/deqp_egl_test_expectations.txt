@@ -110,7 +110,6 @@
 // Mac failures
 42261255 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL
 42261255 MAC : dEQP-EGL.functional.negative_api.swap_interval = FAIL
-42261255 MAC OPENGL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 42261255 MAC : dEQP-EGL.functional.thread_cleanup.* = SKIP
 
 // Android GLES-only failues

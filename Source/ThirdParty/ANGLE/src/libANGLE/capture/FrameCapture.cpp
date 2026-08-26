@@ -4810,6 +4810,26 @@ bool IsZombieTextureBinding(const gl::State &state,
     return false;
 }
 
+// GLES1 Modelview and Projection matrix stacks are initialized with an identity entry, so skip
+// the push before the first load to keep from adding a glPushMatrix call in each trace upgrade
+void CaptureGLES1Matrices(std::vector<CallCapture> *setupCalls,
+                          const gl::State &replayState,
+                          const gl::State &apiState,
+                          gl::MatrixType mode)
+{
+    Capture(setupCalls, CaptureMatrixMode(replayState, true, mode));
+    bool firstPush = true;
+    for (angle::Mat4 matrix : apiState.gles1().getMatrixStack(mode))
+    {
+        if (!firstPush)
+        {
+            Capture(setupCalls, CapturePushMatrix(replayState, true));
+        }
+        Capture(setupCalls, CaptureLoadMatrixf(replayState, true, matrix.elements().data()));
+        firstPush = false;
+    }
+}
+
 void CaptureMidExecutionSetup(const gl::Context *context,
                               std::vector<CallCapture> *setupCalls,
                               StateResetHelper &resetHelper,
@@ -5431,21 +5451,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
             capCap(GL_TEXTURE_2D, currentTextureState);
         }
 
-        cap(CaptureMatrixMode(replayState, true, gl::MatrixType::Projection));
-        for (angle::Mat4 projectionMatrix :
-             apiState.gles1().getMatrixStack(gl::MatrixType::Projection))
-        {
-            cap(CapturePushMatrix(replayState, true));
-            cap(CaptureLoadMatrixf(replayState, true, projectionMatrix.elements().data()));
-        }
-
-        cap(CaptureMatrixMode(replayState, true, gl::MatrixType::Modelview));
-        for (angle::Mat4 modelViewMatrix :
-             apiState.gles1().getMatrixStack(gl::MatrixType::Modelview))
-        {
-            cap(CapturePushMatrix(replayState, true));
-            cap(CaptureLoadMatrixf(replayState, true, modelViewMatrix.elements().data()));
-        }
+        CaptureGLES1Matrices(setupCalls, replayState, apiState, gl::MatrixType::Projection);
+        CaptureGLES1Matrices(setupCalls, replayState, apiState, gl::MatrixType::Modelview);
 
         gl::MatrixType currentMatrixMode = apiState.gles1().getMatrixMode();
         if (currentMatrixMode != gl::MatrixType::Modelview)

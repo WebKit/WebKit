@@ -204,6 +204,9 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
 
     angle::Result releaseTexStorage(const gl::Context *context,
                                     const gl::TexLevelMask &copyStorageToImagesMask);
+    angle::Result releaseTexStorage(
+        const gl::Context *context,
+        const gl::CubeFaceArray<gl::TexLevelMask> &copyStorageToImagesMask);
 
     GLuint getBaseLevel() const { return mBaseLevel; }
 

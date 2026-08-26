@@ -157,8 +157,8 @@ App::App(Platform &platform, Archive &archive, TestLog &log, const CommandLine &
 
         // Initialize watchdog
         if (cmdLine.isWatchDogEnabled())
-            TCU_CHECK_INTERNAL(m_watchDog = qpWatchDog_create(onWatchdogTimeout, this, WATCHDOG_TOTAL_TIME_LIMIT_SECS,
-                                                              WATCHDOG_INTERVAL_TIME_LIMIT_SECS));
+            TCU_CHECK_INTERNAL(m_watchDog = qpWatchDog_create(onWatchdogTimeout, this, cmdLine.getWatchDogTotalTime(),
+                                                              cmdLine.getWatchDogIntervalTime()));
 
         // Initialize crash handler.
         if (cmdLine.isCrashHandlingEnabled())

@@ -510,17 +510,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
         switch (param.getRenderer())
         {
             case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
-                if (IsIOS())
-                {
-                    // OpenGL backend has been deprecated on iOS.
-                    return false;
-                }
-                // ES 3.1+ back-end is not supported properly.
-                if (param.majorVersion == 3 && param.minorVersion > 0)
-                {
-                    return false;
-                }
-                return true;
+                // OpenGL/ES backend has been deprecated on Mac and iOS.
+                return false;
             case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
                 return true;
             case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:

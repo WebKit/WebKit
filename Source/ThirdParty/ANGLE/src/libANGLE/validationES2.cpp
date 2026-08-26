@@ -236,8 +236,6 @@ bool IsValidCopyTextureSourceTarget(const Context *context, TextureType type)
             return context->getExtensions().textureRectangleANGLE;
         case TextureType::External:
             return context->getExtensions().EGLImageExternalOES;
-        case TextureType::VideoImage:
-            return context->getExtensions().videoTextureWEBGL;
         default:
             return false;
     }
@@ -951,7 +949,6 @@ bool ValidateES2TexImageParameters(const Context *context,
     switch (texType)
     {
         case TextureType::_2D:
-        case TextureType::VideoImage:
             if (width > (caps.max2DTextureSize >> level) ||
                 height > (caps.max2DTextureSize >> level))
             {
@@ -1497,6 +1494,88 @@ bool ValidateES2TexImageParameters(const Context *context,
                     return false;
             }
         }
+        else
+        {
+            // Checking format combination also applies to TexSubImage commands, albeit with the
+            // existing texture's internalformat arg instead of an input.
+            // From the ES 2.0 spec:
+            // The same constraints and errors apply to the TexSubImage commands' argument format
+            // and the internalformat of the texture array being respecified as apply to the format
+            // and internalformat arguments of its TexImage counterparts.
+            //
+            // The original valid combinations for ES 2.0 come from Table 3.4 in the spec, where the
+            // internal format is expected to match the base format. However, some extensions allow
+            // additional internal formats which do not necessarily match the base format, and more
+            // valid combinations. Some such extensions are as follows:
+            // - GL_ANGLE_rgbx_internal_format
+            // - GL_OES_required_internalformat
+            // - GL_EXT_sRGB
+            // - GL_EXT_texture_format_BGRA8888
+            // - GL_EXT_texture_storage
+            // - GL_EXT_texture_type_2_10_10_10_REV
+            const GLenum textureInternalFormat =
+                texture->getFormat(target, level).info->sizedInternalFormat;
+            bool isValidCombination;
+            switch (textureInternalFormat)
+            {
+                case GL_RGB8:
+                {
+                    isValidCombination =
+                        (format == GL_RGB && (type == GL_UNSIGNED_BYTE ||
+                                              (type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT &&
+                                               context->getExtensions().requiredInternalformatOES &&
+                                               context->getExtensions().textureType2101010REVEXT)));
+                    break;
+                }
+                case GL_RGB565:
+                {
+                    isValidCombination = (format == GL_RGB &&
+                                          (type == GL_UNSIGNED_SHORT_5_6_5 ||
+                                           (type == GL_UNSIGNED_BYTE &&
+                                            context->getExtensions().requiredInternalformatOES) ||
+                                           (type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT &&
+                                            context->getExtensions().requiredInternalformatOES &&
+                                            context->getExtensions().textureType2101010REVEXT)));
+                    break;
+                }
+                case GL_RGB5_A1:
+                {
+                    isValidCombination = (format == GL_RGBA &&
+                                          (type == GL_UNSIGNED_SHORT_5_5_5_1 ||
+                                           (type == GL_UNSIGNED_BYTE &&
+                                            context->getExtensions().requiredInternalformatOES) ||
+                                           (type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT &&
+                                            context->getExtensions().requiredInternalformatOES &&
+                                            context->getExtensions().textureType2101010REVEXT)));
+                    break;
+                }
+                case GL_RGBA4:
+                {
+                    isValidCombination = (format == GL_RGBA &&
+                                          (type == GL_UNSIGNED_SHORT_4_4_4_4 ||
+                                           (type == GL_UNSIGNED_BYTE &&
+                                            context->getExtensions().requiredInternalformatOES)));
+                    break;
+                }
+                default:
+                {
+                    // If the internal format does not correspond to a core ES 2.0 format
+                    // combination, the extension checks for it are expected to have been performed
+                    // during the texture definition. Therefore, their respective combinations,
+                    // along with the core internal format with no new combinations, can be simply
+                    // checked via the lookup table in ValidES3FormatCombination().
+                    isValidCombination =
+                        ValidES3FormatCombination(format, type, textureInternalFormat);
+                    break;
+                }
+            }
+
+            if (!isValidCombination)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
+                return false;
+            }
+        }
     }
 
     if (isSubImage)
@@ -1508,15 +1587,11 @@ bool ValidateES2TexImageParameters(const Context *context,
             return false;
         }
 
-        bool formatsMatch = format == textureInternalFormat.format;
-        if (!formatsMatch && textureInternalFormat.sizedInternalFormat == GL_RGBX8_ANGLE)
-        {
-            // ANGLE_rgbx_internal_format allows GL_RGBA to be uploaded to GL_RGBX8_ANGLE textures
-            // even if the base format is GL_RGB.
-            formatsMatch = format == GL_RGBA;
-        }
-
-        if (!formatsMatch)
+        // ANGLE_rgbx_internal_format allows GL_RGBA to be uploaded to GL_RGBX8_ANGLE textures
+        // even if the base format is GL_RGB.
+        const GLenum textureSizedInternalFormat = textureInternalFormat.sizedInternalFormat;
+        bool isFormatSpecialCase                = textureSizedInternalFormat == GL_RGBX8_ANGLE;
+        if (!isFormatSpecialCase && format != textureInternalFormat.format)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureFormatMismatch);
             return false;
@@ -1524,37 +1599,17 @@ bool ValidateES2TexImageParameters(const Context *context,
 
         if (context->isWebGL())
         {
-            const GLenum textureSizedInternalFormat = textureInternalFormat.sizedInternalFormat;
-            auto isValid                            = false;
-
-            if (textureSizedInternalFormat == GL_RGBX8_ANGLE)
-            {
-                // Special case: As per extension ANGLE_rgbx_internal_format,
-                // ANGLE_rgbx_internal_format allows GL_RGB/GL_UNSIGNED_BYTE and
-                // GL_RGBA/GL_UNSIGNED_BYTE to be uploaded to GL_RGBX8_ANGLE textures even if sized
-                // internal formats mismatch.
-                isValid = (type == GL_UNSIGNED_BYTE && (format == GL_RGB || format == GL_RGBA));
-            }
-            else
-            {
-                if (format == GL_BGRA_EXT)
-                {
-                    // GL_BGRA_EXT is registered as a sized format in ANGLE, which can cause
-                    // GetInternalFormatInfo to return it as an alias for GL_BGRA8_EXT. We
-                    // check both GetSizedFormatInternal (which resolves to the canonical
-                    // sized format) and GetInternalFormatInfo (which might return GL_BGRA_EXT
-                    // itself) to handle all cases.
-                    isValid = (GetSizedFormatInternal(format, type) == textureSizedInternalFormat ||
-                               GetInternalFormatInfo(format, type).sizedInternalFormat ==
-                                   textureSizedInternalFormat);
-                }
-                else
-                {
-                    isValid = (GetInternalFormatInfo(format, type).sizedInternalFormat ==
-                               textureSizedInternalFormat);
-                }
-            }
-            if (!isValid)
+            // For valid GL_RGBX8_ANGLE combinations, GetInternalFormatInfo returns as either
+            // GL_RGB8 or GL_RGBA8.
+            // GL_BGRA_EXT is registered as a sized format in ANGLE, which can
+            // cause GetInternalFormatInfo to return it as an alias for GL_BGRA8_EXT. We check both
+            // GetSizedFormatInternal (which resolves to the canonical sized format) and
+            // GetInternalFormatInfo (which might return GL_BGRA_EXT itself) to handle all cases.
+            bool isSizedFormatSpecialCase = textureSizedInternalFormat == GL_RGBX8_ANGLE ||
+                                            textureSizedInternalFormat == GL_BGRA8_EXT;
+            if (!isSizedFormatSpecialCase &&
+                textureSizedInternalFormat !=
+                    GetInternalFormatInfo(format, type).sizedInternalFormat)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureTypeMismatch);
                 return false;
@@ -5922,27 +5977,7 @@ bool ValidateVertexAttribDivisorANGLE(const PrivateState &privateState,
                                       GLuint index,
                                       GLuint divisor)
 {
-    if (index >= static_cast<GLuint>(privateState.getCaps().maxVertexAttributes))
-    {
-        errors->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
-        return false;
-    }
-
-    if (privateState.getLimitations().attributeZeroRequiresZeroDivisorInEXT)
-    {
-        if (index == 0 && divisor != 0)
-        {
-            errors->validationError(entryPoint, GL_INVALID_OPERATION,
-                                    kAttributeZeroRequiresDivisorLimitation);
-
-            // We also output an error message to the debugger window if tracing is active, so
-            // that developers can see the error message.
-            ERR() << kAttributeZeroRequiresDivisorLimitation;
-            return false;
-        }
-    }
-
-    return true;
+    return ValidateVertexAttribDivisor(privateState, errors, entryPoint, index, divisor);
 }
 
 bool ValidateVertexAttribDivisorEXT(const PrivateState &privateState,
@@ -6189,11 +6224,6 @@ void RecordBindTextureTypeError(const Context *context,
             ASSERT(!context->getExtensions().EGLImageExternalOES &&
                    !context->getExtensions().EGLStreamConsumerExternalNV);
             ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kExternalTextureNotSupported);
-            break;
-
-        case TextureType::VideoImage:
-            ASSERT(!context->getExtensions().videoTextureWEBGL);
-            ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kExtensionNotEnabled);
             break;
 
         case TextureType::Buffer:

@@ -308,7 +308,7 @@ TEST_F(TypeTrackingTest, StructConstructorResultNoPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Construct (structure 'S')"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (structure 'S_0')"));
 }
 
 TEST_F(TypeTrackingTest, PackResultTypeAndPrecision)
@@ -676,16 +676,20 @@ void main()
 }
 )";
     const char kExpected[] = R"(0:2: Code block
-0:6:   Declaration
-0:?:     '' (structure 's2' (specifier))
+0:?:   Declaration
+0:?:     '' (structure 's2_0' (specifier))
 0:?:       member: 'i' (mediump int)
+0:?:   Declaration
+0:?:     '' (structure 's1_0' (specifier))
+0:?:       member: 'ss' (structure 's2_0')
+0:?:       member: 'm' (highp 4X4 matrix of float)
+0:3:   Declaration
+0:3:     'o' (out highp 4-component vector of float)
 0:10:   Declaration
-0:10:     initialize first child with second child (const structure 's1' (specifier))
-0:10:       's11' (const structure 's1' (specifier))
-0:10:         member: 'ss' (structure 's2')
-0:10:         member: 'm' (highp 4X4 matrix of float)
-0:10:       Construct (const structure 's1')
-0:10:         Constant union (const structure 's2' (specifier))
+0:10:     initialize first child with second child (const structure 's1_0')
+0:10:       's11' (const structure 's1_0')
+0:10:       Construct (const structure 's1_0')
+0:10:         Constant union (const structure 's2_0')
 0:10:           8 (const int)
 0:10:         Constant union (const 4X4 matrix of float)
 0:10:           5.0 (const float)
@@ -704,28 +708,22 @@ void main()
 0:10:           0.0 (const float)
 0:10:           0.0 (const float)
 0:10:           5.0 (const float)
-0:3:   Declaration
-0:3:     'o' (out highp 4-component vector of float)
 0:11:   Function Definition:
-0:11:     Function Prototype: 'f' (structure 's1')
-0:11:       parameter: 's' (in structure 's1')
+0:11:     Function Prototype: 'f' (structure 's1_0')
+0:11:       parameter: 's' (in structure 's1_0')
 0:12:     Code block
 0:13:       Branch: Return with expression
-0:13:           's' (in structure 's1')
+0:13:           's' (in structure 's1_0')
 0:15:   Function Definition:
 0:15:     Function Prototype: 'main' (void)
 0:16:     Code block
 0:17:       If test
 0:17:         Condition
 0:17:           Compare Equal (bool)
-0:17:             Call a function: 'f' (structure 's1')
-0:17:               's11' (const structure 's1' (specifier))
-0:17:                 member: 'ss' (structure 's2')
-0:17:                 member: 'm' (highp 4X4 matrix of float)
-0:17:             Call a function: 'f' (structure 's1')
-0:17:               's11' (const structure 's1' (specifier))
-0:17:                 member: 'ss' (structure 's2')
-0:17:                 member: 'm' (highp 4X4 matrix of float)
+0:17:             Call a function: 'f' (structure 's1_0')
+0:17:               's11' (const structure 's1_0')
+0:17:             Call a function: 'f' (structure 's1_0')
+0:17:               's11' (const structure 's1_0')
 0:17:         true case
 0:18:           Code block
 0:18:             move second child to first child (highp 4-component vector of float)
@@ -755,29 +753,32 @@ void main()
     } s11 = s1(s22, mat4(5));
     s11 = s11;
     if (s11 == s11)
-       o = vec4(1);
+      o = vec4(1);
 }
 )";
     const char kExpected[] = R"(0:2: Code block
+0:?:   Declaration
+0:?:     '' (structure 's2_3003' (specifier))
+0:?:       member: 'i' (mediump int)
+0:?:   Declaration
+0:?:     '' (structure 's1_3005' (specifier))
+0:?:       member: 'ss' (structure 's2_3003')
+0:?:       member: 'm' (highp 4X4 matrix of float)
 0:3:   Declaration
 0:3:     'o' (out highp 4-component vector of float)
 0:4:   Function Definition:
 0:4:     Function Prototype: 'main' (void)
 0:5:     Code block
 0:8:       Declaration
-0:8:         initialize first child with second child (structure 's2' (specifier))
-0:8:           's22' (structure 's2' (specifier))
-0:8:             member: 'i' (mediump int)
-0:8:           Constant union (const structure 's2')
+0:8:         initialize first child with second child (structure 's2_3003')
+0:8:           's22' (structure 's2_3003')
+0:8:           Constant union (const structure 's2_3003')
 0:8:             8 (const int)
 0:12:       Declaration
-0:12:         initialize first child with second child (structure 's1' (specifier))
-0:12:           's11' (structure 's1' (specifier))
-0:12:             member: 'ss' (structure 's2')
-0:12:             member: 'm' (highp 4X4 matrix of float)
-0:12:           Construct (structure 's1')
-0:12:             's22' (structure 's2' (specifier))
-0:12:               member: 'i' (mediump int)
+0:12:         initialize first child with second child (structure 's1_3005')
+0:12:           's11' (structure 's1_3005')
+0:12:           Construct (structure 's1_3005')
+0:12:             's22' (structure 's2_3003')
 0:12:             Constant union (const 4X4 matrix of float)
 0:12:               5.0 (const float)
 0:12:               0.0 (const float)
@@ -795,22 +796,14 @@ void main()
 0:12:               0.0 (const float)
 0:12:               0.0 (const float)
 0:12:               5.0 (const float)
-0:13:       move second child to first child (structure 's1' (specifier))
-0:13:         's11' (structure 's1' (specifier))
-0:13:           member: 'ss' (structure 's2')
-0:13:           member: 'm' (highp 4X4 matrix of float)
-0:13:         's11' (structure 's1' (specifier))
-0:13:           member: 'ss' (structure 's2')
-0:13:           member: 'm' (highp 4X4 matrix of float)
+0:13:       move second child to first child (structure 's1_3005')
+0:13:         's11' (structure 's1_3005')
+0:13:         's11' (structure 's1_3005')
 0:14:       If test
 0:14:         Condition
 0:14:           Compare Equal (bool)
-0:14:             's11' (structure 's1' (specifier))
-0:14:               member: 'ss' (structure 's2')
-0:14:               member: 'm' (highp 4X4 matrix of float)
-0:14:             's11' (structure 's1' (specifier))
-0:14:               member: 'ss' (structure 's2')
-0:14:               member: 'm' (highp 4X4 matrix of float)
+0:14:             's11' (structure 's1_3005')
+0:14:             's11' (structure 's1_3005')
 0:14:         true case
 0:15:           Code block
 0:15:             move second child to first child (highp 4-component vector of float)

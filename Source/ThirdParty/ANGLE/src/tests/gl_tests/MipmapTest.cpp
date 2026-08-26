@@ -511,9 +511,6 @@ class MipmapTestES31 : public BaseMipmapTest
 // conformance2/textures/misc/tex-mipmap-levels WebGL2 test.
 TEST_P(MipmapTestES3, GenerateMipmapPartialLevels)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     const std::vector<GLColor> kRedData(64, GLColor::red);
     const std::vector<GLColor> kGreenData(16, GLColor::green);
     const std::vector<GLColor> kBlueData(4, GLColor::blue);
@@ -1767,9 +1764,6 @@ TEST_P(MipmapTestES3, GenerateMipmapBaseLevel)
     // Observed incorrect rendering on AMD, sampling level 2 returns black.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
 
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     glBindTexture(GL_TEXTURE_2D, mTexture);
 
     ASSERT_EQ(getWindowWidth(), getWindowHeight());
@@ -1821,9 +1815,6 @@ TEST_P(MipmapTestES3, GenerateMipmapPreservesOutOfRangeMips)
 
     // http://anglebug.com/40096708
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNVIDIAShield());
-
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     constexpr GLint kTextureSize = 16;
     const std::vector<GLColor> kLevel0Data(kTextureSize * kTextureSize, GLColor::red);
@@ -1890,9 +1881,6 @@ TEST_P(MipmapTestES3, GenerateMipmapCubeBaseLevel)
     // Observed incorrect rendering on AMD, sampling level 2 returns black.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
 
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     ASSERT_EQ(getWindowWidth(), getWindowHeight());
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
@@ -1944,9 +1932,6 @@ TEST_P(MipmapTestES3, GenerateMipmapCubeBaseLevel)
 // the levelbase array, are left unchanged by this computation."
 TEST_P(MipmapTestES3, GenerateMipmapMaxLevel)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     glBindTexture(GL_TEXTURE_2D, mTexture);
 
     // Fill level 0 with blue
@@ -2051,9 +2036,6 @@ TEST_P(MipmapTestES3, BaseLevelTextureBug)
     // Seems to be passing on AMD GPUs. Definitely not NVIDIA.
     // Probably not Intel.
     ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA());
-
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     std::vector<GLColor> texDataRed(2u * 2u, GLColor::red);
 

@@ -1064,6 +1064,10 @@ config("libANGLE_config") {
     defines += [ "ANGLE_ENABLE_PERF_COUNTER_OUTPUT=1" ]
   }
 
+  if (angle_enable_explicit_context) {
+    defines += [ "ANGLE_ENABLE_EXPLICIT_CONTEXT" ]
+  }
+
   if (!is_android) {
     # b/283233503
     # Only export the ANGLE platform methods on Android, the EGL loader depends
@@ -1440,6 +1444,10 @@ template("angle_libGLESv2") {
         invoker.sources + libglesv2_entry_point_sources + libglesv2_sources
     deps = invoker.deps + [ ":includes" ]
     defines = [ "LIBGLESV2_IMPLEMENTATION" ]
+
+    if (angle_enable_explicit_context) {
+      defines += [ "ANGLE_ENABLE_EXPLICIT_CONTEXT" ]
+    }
 
     output_name = "${invoker.output_name}${angle_libs_suffix}"
     if (angle_glesv2_extension != "") {

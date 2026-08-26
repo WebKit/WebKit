@@ -43,12 +43,6 @@ class TestLog;
 class TestPackageRoot;
 class TestRunStatus;
 
-enum
-{
-    WATCHDOG_TOTAL_TIME_LIMIT_SECS    = 300,
-    WATCHDOG_INTERVAL_TIME_LIMIT_SECS = 30
-};
-
 /*--------------------------------------------------------------------*//*!
  * \brief Test application
  *

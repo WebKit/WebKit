@@ -1228,16 +1228,6 @@ void CommandQueue::popInFlightBatchLocked()
     --mNumAllCommands;
 }
 
-// QueuePriorities:
-constexpr float kVulkanQueuePriorityLow      = 0.0;
-constexpr float kVulkanQueuePriorityMedium   = 0.4;
-constexpr float kVulkanQueuePriorityHigh     = 0.8;
-constexpr float kVulkanQueuePriorityRealtime = 1.0;
-
-const float QueueFamily::kQueuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)] =
-    {kVulkanQueuePriorityMedium, kVulkanQueuePriorityHigh, kVulkanQueuePriorityRealtime,
-     kVulkanQueuePriorityLow};
-
 DeviceQueueMap::~DeviceQueueMap() {}
 
 void DeviceQueueMap::destroy()

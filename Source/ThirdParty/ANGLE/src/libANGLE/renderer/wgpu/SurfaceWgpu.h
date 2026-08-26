@@ -155,8 +155,20 @@ class WindowSurfaceWgpu : public SurfaceWgpu
     AttachmentImage mDepthStencilAttachment;
 };
 
+// Linux provides per-platform variants so both X11 and Wayland can be compiled simultaneously
+// and dispatched at runtime via DisplayWgpu::mWindowSystem.
+#if defined(ANGLE_USE_X11)
+WindowSurfaceWgpu *CreateWgpuX11WindowSurface(const egl::SurfaceState &surfaceState,
+                                              EGLNativeWindowType window);
+#endif
+#if defined(ANGLE_USE_WAYLAND)
+WindowSurfaceWgpu *CreateWgpuWaylandWindowSurface(const egl::SurfaceState &surfaceState,
+                                                  EGLNativeWindowType window);
+#endif
+#if !defined(ANGLE_USE_X11) && !defined(ANGLE_USE_WAYLAND)
 WindowSurfaceWgpu *CreateWgpuWindowSurface(const egl::SurfaceState &surfaceState,
                                            EGLNativeWindowType window);
+#endif
 
 }  // namespace rx
 

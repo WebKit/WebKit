@@ -6345,6 +6345,7 @@ angle::Result ImageHelper::initializeNonZeroMemory(ErrorContext *context,
 
             gl_vk::GetExtent(getLevelExtents(level), &copyRegion.imageExtent);
             copyRegion.imageSubresource.aspectMask = getAspectFlags();
+            copyRegion.imageSubresource.mipLevel   = level.get();
             copyRegion.imageSubresource.layerCount = mLayerCount;
 
             // If image has depth and stencil, copy to each individually per Vulkan spec.
@@ -9413,10 +9414,7 @@ bool ImageHelper::isVkImageContentDefined() const
 angle::Result ImageHelper::stagePartialClear(ContextVk *contextVk,
                                              const gl::Box &clearArea,
                                              const ClearTextureMode clearMode,
-                                             gl::TextureType textureType,
-                                             uint32_t levelIndexGL,
-                                             uint32_t layerIndex,
-                                             uint32_t layerCount,
+                                             const gl::ImageIndex &index,
                                              GLenum type,
                                              const gl::InternalFormat &formatInfo,
                                              const Format &vkFormat,
@@ -9476,23 +9474,25 @@ angle::Result ImageHelper::stagePartialClear(ContextVk *contextVk,
         aspectFlags |= formatInfo.stencilBits > 0 ? VK_IMAGE_ASPECT_STENCIL_BIT : 0;
     }
 
+    const gl::LevelIndex levelIndexGL = gl::LevelIndex(index.getLevelIndex());
+    const bool is3D                   = index.getType() == gl::TextureType::_3D;
+    ASSERT(!is3D || index.getLayerIndex() == clearArea.z);
+    ASSERT(!is3D || index.getLayerCount() == clearArea.depth);
+
+    const uint32_t layerIndex = is3D ? 0 : index.getLayerIndex();
+    const uint32_t layerCount = is3D ? 1 : index.getLayerCount();
+
     if (clearMode == ClearTextureMode::FullClear)
     {
-        bool useLayerAsDepth = textureType == gl::TextureType::CubeMap ||
-                               textureType == gl::TextureType::CubeMapArray ||
-                               textureType == gl::TextureType::_2DArray ||
-                               textureType == gl::TextureType::_2DMultisampleArray;
-        const gl::ImageIndex index = gl::ImageIndex::MakeFromType(
-            textureType, levelIndexGL, 0, useLayerAsDepth ? clearArea.depth : 1);
-
-        appendSubresourceUpdate(gl::LevelIndex(levelIndexGL),
-                                SubresourceUpdate(aspectFlags, clearValue, index));
+        appendSubresourceUpdate(
+            levelIndexGL,
+            SubresourceUpdate(aspectFlags, clearValue, levelIndexGL, layerIndex, layerCount));
     }
     else
     {
-        appendSubresourceUpdate(gl::LevelIndex(levelIndexGL),
-                                SubresourceUpdate(aspectFlags, clearValue, textureType,
-                                                  levelIndexGL, layerIndex, layerCount, clearArea));
+        appendSubresourceUpdate(levelIndexGL,
+                                SubresourceUpdate(aspectFlags, clearValue, levelIndexGL, layerIndex,
+                                                  layerCount, clearArea));
     }
     return angle::Result::Continue;
 }
@@ -10410,12 +10410,11 @@ angle::Result ImageHelper::flushStagedUpdatesImpl(ContextVk *contextVk,
                     params.clearArea                       = clearArea;
                     params.clearValue                      = clearPartialUpdate.clearValue;
 
-                    bool shouldUseDepthAsLayer =
-                        clearPartialUpdate.textureType == gl::TextureType::_3D;
-                    uint32_t clearBaseLayer =
-                        shouldUseDepthAsLayer ? clearArea.z : clearPartialUpdate.layerIndex;
-                    uint32_t clearLayerCount =
-                        shouldUseDepthAsLayer ? clearArea.depth : clearPartialUpdate.layerCount;
+                    const bool is3D = mImageType == VK_IMAGE_TYPE_3D;
+                    const uint32_t clearBaseLayer =
+                        is3D ? clearArea.z : clearPartialUpdate.layerIndex;
+                    const uint32_t clearLayerCount =
+                        is3D ? clearArea.depth : clearPartialUpdate.layerCount;
 
                     for (uint32_t layerIndex = clearBaseLayer;
                          layerIndex < clearBaseLayer + clearLayerCount; ++layerIndex)
@@ -11226,13 +11225,9 @@ angle::Result ImageHelper::readPixelsForGetImage(ContextVk *contextVk,
 
     if (mExtents.depth > 1 || layerCount > 1)
     {
-        ASSERT(layer == 0);
-        ASSERT(layerCount == 1 || mipExtents.depth == 1);
+        const uint32_t lastLayer = layer + layerCount;
 
-        uint32_t lastLayer = std::max(static_cast<uint32_t>(mipExtents.depth), layerCount);
-
-        // Depth > 1 means this is a 3D texture and we need to copy all layers
-        for (uint32_t mipLayer = 0; mipLayer < lastLayer; mipLayer++)
+        for (uint32_t mipLayer = layer; mipLayer < lastLayer; mipLayer++)
         {
             ANGLE_UNSAFE_TODO(
                 ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
@@ -11275,10 +11270,7 @@ angle::Result ImageHelper::readPixelsForCompressedGetImage(ContextVk *contextVk,
 
     if (mExtents.depth > 1 || layerCount > 1)
     {
-        ASSERT(layer == 0);
-        ASSERT(layerCount == 1 || mipExtents.depth == 1);
-
-        uint32_t lastLayer = std::max(static_cast<uint32_t>(mipExtents.depth), layerCount);
+        const uint32_t lastLayer = layer + layerCount;
 
         const vk::Format &vkFormat = contextVk->getRenderer()->getFormat(readFormat->id);
         const gl::InternalFormat &storageFormatInfo =
@@ -11290,8 +11282,7 @@ angle::Result ImageHelper::readPixelsForCompressedGetImage(ContextVk *contextVk,
         ANGLE_VK_CHECK_MATH(contextVk,
                             storageFormatInfo.computeCompressedImageSize(mipExtents, &layerSize));
 
-        // Depth > 1 means this is a 3D texture and we need to copy all layers
-        for (uint32_t mipLayer = 0; mipLayer < lastLayer; mipLayer++)
+        for (uint32_t mipLayer = layer; mipLayer < lastLayer; mipLayer++)
         {
             ANGLE_UNSAFE_TODO(
                 ANGLE_TRY(readPixels(contextVk, area, params, aspectFlags, levelGL, mipLayer,
@@ -11535,7 +11526,8 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
 
     ImageHelper *src = this;
 
-    ASSERT(!hasStagedUpdatesForSubresource(levelGL, layer, 1));
+    const bool is3D = mImageType == VK_IMAGE_TYPE_3D;
+    ASSERT(!hasStagedUpdatesForSubresource(levelGL, is3D ? 0 : layer, 1));
 
     if (isMultisampled)
     {
@@ -11579,9 +11571,9 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     VkExtent3D srcExtent = {static_cast<uint32_t>(area.width), static_cast<uint32_t>(area.height),
                             1};
 
-    if (mExtents.depth > 1)
+    if (is3D)
     {
-        // Depth > 1 means this is a 3D texture and we need special handling
+        // For 3D texture we need special handling
         srcOffset.z                   = layer;
         srcSubresource.baseArrayLayer = 0;
     }
@@ -11839,16 +11831,14 @@ ImageHelper::SubresourceUpdate::SubresourceUpdate() : updateSource(UpdateSource:
 
 ImageHelper::SubresourceUpdate::SubresourceUpdate(const VkImageAspectFlags aspectFlags,
                                                   const VkClearValue &clearValue,
-                                                  const gl::TextureType textureType,
-                                                  const uint32_t levelIndex,
+                                                  const gl::LevelIndex levelIndex,
                                                   const uint32_t layerIndex,
                                                   const uint32_t layerCount,
                                                   const gl::Box &clearArea)
     : updateSource(UpdateSource::ClearPartial)
 {
     data.clearPartial.aspectFlags = aspectFlags;
-    data.clearPartial.levelIndex  = levelIndex;
-    data.clearPartial.textureType = textureType;
+    data.clearPartial.levelIndex  = levelIndex.get();
     data.clearPartial.layerIndex  = layerIndex;
     data.clearPartial.layerCount  = layerCount;
     data.clearPartial.offset      = {clearArea.x, clearArea.y, clearArea.z};
@@ -12551,18 +12541,16 @@ angle::Result ImageViewHelper::initReadViewsImpl(ContextVk *contextVk,
         }
     }
 
-    gl::TextureType fetchType = viewType;
-    if (viewType == gl::TextureType::CubeMap || viewType == gl::TextureType::_2DArray ||
-        viewType == gl::TextureType::_2DMultisampleArray)
-    {
-        fetchType = Get2DTextureType(layerCount, image.getSamples());
-    }
+    const gl::TextureType fetchType =
+        image.getType() == VK_IMAGE_TYPE_3D
+            ? gl::TextureType::_3D
+            : Get2DTextureType(image.getLayerCount(), image.getSamples());
 
     if (!image.getActualFormat().isBlock && !getCopyImageView().valid())
     {
         ANGLE_TRY(image.initLayerImageViewWithUsage(
             contextVk, fetchType, aspectFlags, formatSwizzle, &getCopyImageView(), LevelIndex(0),
-            image.getLevelCount(), baseLayer, layerCount, imageUsageFlags, astcDecodePrecision));
+            image.getLevelCount(), 0, image.getLayerCount(), imageUsageFlags, astcDecodePrecision));
     }
     return angle::Result::Continue;
 }
@@ -12639,29 +12627,26 @@ angle::Result ImageViewHelper::initLinearAndSrgbReadViewsImpl(ContextVk *context
         }
     }
 
-    gl::TextureType fetchType = viewType;
-
-    if (viewType == gl::TextureType::CubeMap || viewType == gl::TextureType::_2DArray ||
-        viewType == gl::TextureType::_2DMultisampleArray)
-    {
-        fetchType = Get2DTextureType(layerCount, image.getSamples());
-    }
+    const gl::TextureType fetchType =
+        image.getType() == VK_IMAGE_TYPE_3D
+            ? gl::TextureType::_3D
+            : Get2DTextureType(image.getLayerCount(), image.getSamples());
 
     if (!image.getActualFormat().isBlock)
     {
         if (!mLinearCopyImageView.valid())
         {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, formatSwizzle, &mLinearCopyImageView, baseLevel,
-                levelCount, baseLayer, layerCount, imageUsageFlags, linearFormat,
-                astcDecodePrecision));
+                contextVk, fetchType, aspectFlags, formatSwizzle, &mLinearCopyImageView,
+                LevelIndex(0), image.getLevelCount(), 0, image.getLayerCount(), imageUsageFlags,
+                linearFormat, astcDecodePrecision));
         }
         if (srgbFormat != angle::FormatID::NONE && !mSRGBCopyImageView.valid())
         {
             ANGLE_TRY(image.initReinterpretedLayerImageView(
-                contextVk, fetchType, aspectFlags, formatSwizzle, &mSRGBCopyImageView, baseLevel,
-                levelCount, baseLayer, layerCount, imageUsageFlags, srgbFormat,
-                astcDecodePrecision));
+                contextVk, fetchType, aspectFlags, formatSwizzle, &mSRGBCopyImageView,
+                LevelIndex(0), image.getLevelCount(), 0, image.getLayerCount(), imageUsageFlags,
+                srgbFormat, astcDecodePrecision));
         }
     }
 

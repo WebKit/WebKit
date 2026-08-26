@@ -106,14 +106,12 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
         // Disable user variable prefixing if using the null output type. The untranslated source
         // shader is used so make sure the mapped names match the input names.
         mResources.UserVariableNamePrefix = '\0';
+        mResources.UserBlockNamePrefix    = '\0';
     }
 
     // EXT_multisampled_render_to_texture and EXT_multisampled_render_to_texture2
     mResources.EXT_multisampled_render_to_texture  = extensions.multisampledRenderToTextureEXT;
     mResources.EXT_multisampled_render_to_texture2 = extensions.multisampledRenderToTexture2EXT;
-
-    // WEBGL_video_texture
-    mResources.WEBGL_video_texture = extensions.videoTextureWEBGL;
 
     // OES_texture_cube_map_array
     mResources.OES_texture_cube_map_array = extensions.textureCubeMapArrayOES;

@@ -2327,8 +2327,9 @@ void Display::initDisplayExtensions()
     // say that ANativeWindow is not recordable.
     mDisplayExtensions.recordable = true;
 
-    // All backends support specific context versions
-    mDisplayExtensions.createContextBackwardsCompatible = true;
+    // EGL_ANGLE_create_context_backwards_compatible
+    mDisplayExtensions.createContextBackwardsCompatible =
+        mFrontendFeatures.enableCreateContextBackwardsCompatible.enabled;
 
     // EGL_ANGLE_memory_usage_report is implemented on front end.
     mDisplayExtensions.memoryUsageReportANGLE = true;
@@ -2437,6 +2438,11 @@ void Display::initializeFrontendFeatures()
     // Enable on all Impls
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, loseContextOnOutOfMemory, true);
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, allowCompressedFormats, true);
+
+    // If this feature is enabled, the context can be created with a certain requested version
+    // via EGL_ANGLE_create_context_backwards_compatible. Otherwise, the context will be created
+    // with the latest compatible version with the device.
+    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, enableCreateContextBackwardsCompatible, true);
 
     // Togglable until work on the extension is complete - anglebug.com/40096838.
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);

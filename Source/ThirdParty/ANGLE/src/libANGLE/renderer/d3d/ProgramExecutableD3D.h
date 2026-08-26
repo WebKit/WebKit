@@ -331,11 +331,11 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
     gl::RangeUI getUsedImageRange(gl::ShaderType type, bool readonly) const;
 
     bool usesPointSize() const { return mUsesPointSize; }
-    bool usesPointSpriteEmulation(RendererD3D *renderer) const;
+    bool usesPointSpriteEmulation() const;
     bool usesGeometryShader(RendererD3D *renderer,
                             const gl::ProvokingVertexConvention provokingVertex,
                             gl::PrimitiveMode drawMode) const;
-    bool usesGeometryShaderForPointSpriteEmulation(RendererD3D *renderer) const;
+    bool usesGeometryShaderForPointSpriteEmulation() const;
 
     angle::Result getVertexExecutableForCachedInputLayout(d3d::Context *context,
                                                           RendererD3D *renderer,
@@ -430,7 +430,6 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
                              gl::RangeUI *outUsedRange);
 
     void gatherTransformFeedbackVaryings(
-        RendererD3D *renderer,
         const gl::VaryingPacking &varyings,
         const std::vector<std::string> &transformFeedbackVaryingNames,
         const BuiltinInfo &builtins);

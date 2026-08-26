@@ -161,6 +161,8 @@ class DisplayWgpu : public DisplayImpl
     webgpu::FormatTable mFormatTable;
 
     angle::FeaturesWgpu mFeatures;
+
+    angle::NativeWindowSystem mWindowSystem = angle::NativeWindowSystem::Other;
 };
 
 }  // namespace rx

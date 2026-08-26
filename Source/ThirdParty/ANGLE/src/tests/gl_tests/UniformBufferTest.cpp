@@ -413,9 +413,6 @@ TEST_P(UniformBufferTest, BufferBlockBindingChange)
 // https://code.google.com/p/angleproject/issues/detail?id=965
 TEST_P(UniformBufferTest, UniformBufferManyUpdates)
 {
-    // TODO(jmadill): Figure out why this fails on OSX Intel OpenGL.
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     int px = getWindowWidth() / 2;
     int py = getWindowHeight() / 2;
 
@@ -2510,7 +2507,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifier)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
     // http://anglebug.com/40096480
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     constexpr char kFS[] =
         R"(#version 300 es
@@ -2558,7 +2555,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithPerMemberRowMajorQualifier)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
     // http://anglebug.com/40096480
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     constexpr char kFS[] =
         R"(#version 300 es
@@ -2652,7 +2649,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifierOnStruct)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
     // http://anglebug.com/40096480
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     constexpr char kFS[] =
         R"(#version 300 es
@@ -2715,9 +2712,6 @@ void main()
 {
   fragColor = color;
 })";
-
-    // http://anglebug.com/40096481
-    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
 
@@ -2978,9 +2972,6 @@ void main()
 // Test a uniform block where an array of row-major matrices is dynamically indexed.
 TEST_P(UniformBufferTest, Std140UniformBlockWithDynamicallyIndexedRowMajorArray)
 {
-    // http://anglebug.com/42262481 , http://anglebug.com/40096480
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && (IsIntel() || IsAMD()));
-
     constexpr char kFS[] =
         R"(#version 300 es
 
@@ -3881,8 +3872,6 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, TwoUniformBlocksInDiffProgram)
 // buffer data correctly.
 TEST_P(UniformBlockWithOneLargeArrayMemberTest, SharedSameBufferWithOtherOne)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     std::ostringstream stream;
     generateArraySizeAndDivisorsDeclaration(stream, false, true, false);
     const std::string &kFS =
@@ -4094,7 +4083,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndInstanced)
 TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndRowMajorQualifier)
 {
     // http://anglebug.com/42262481 , http://anglebug.com/40096480
-    ANGLE_SKIP_TEST_IF((IsMac() && IsOpenGL()) || IsAndroid() || (IsAMD() && IsOpenGL()) ||
+    ANGLE_SKIP_TEST_IF(IsAndroid() || (IsAMD() && IsOpenGL()) ||
                        (IsLinux() && IsIntel() && IsOpenGL()));
 
     std::ostringstream stream;

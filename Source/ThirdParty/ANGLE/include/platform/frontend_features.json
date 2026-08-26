@@ -227,6 +227,14 @@
             "issue": "https://anglebug.com/398857482"
         },
         {
+            "name": "enable_create_context_backwards_compatible",
+            "category": "Features",
+            "description": [
+                "It allows the creation of a context with a requested version by exposing EGL_ANGLE_create_context_backwards_compatible."
+            ],
+            "issue": "http://issuetracker.google.com/522318550"
+        },
+        {
             "name": "clip_cull_distance_broken_with_passthrough_shaders",
             "category": "Features",
             "description": [

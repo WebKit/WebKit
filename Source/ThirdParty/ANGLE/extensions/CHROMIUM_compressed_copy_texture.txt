@@ -22,7 +22,7 @@ Dependencies
 Overview
 
     This extension provides functionality for copying compressed textures. It
-    adds a new function glCompressedCopyTextureCHROMIUM that works similarily
+    adds a new function glCompressedCopyTextureCHROMIUM that works similarly
     to glCopyTextureCHROMIUM, but for compressed textures.
 
     Which compressed texture formats that this extension supports depends on
@@ -31,7 +31,7 @@ Overview
 Issues
 
     glCompressedCopyTextureCHROMIUM will first try to copy into a compressed
-    texture of the same format as the source texture. If unsucessful, the
+    texture of the same format as the source texture. If unsuccessful, the
     destination texture format will be changed to GL_RGBA and the texture will
     be stored uncompressed.
 

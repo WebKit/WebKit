@@ -764,12 +764,7 @@ void TextureState::setImageDescChain(GLuint baseLevel,
 {
     for (GLuint level = baseLevel; level <= maxLevel; level++)
     {
-        int relativeLevel = (level - baseLevel);
-        Extents levelSize(std::max<int>(baseSize.width >> relativeLevel, 1),
-                          std::max<int>(baseSize.height >> relativeLevel, 1),
-                          (IsArrayTextureType(mType))
-                              ? baseSize.depth
-                              : std::max<int>(baseSize.depth >> relativeLevel, 1));
+        Extents levelSize = ComputeMipSize(baseSize, level - baseLevel, mType);
         ImageDesc levelInfo(levelSize, format, initState);
 
         if (mType == TextureType::CubeMap)
@@ -2450,7 +2445,8 @@ GLuint Texture::getId() const
 
 angle::Result Texture::syncState(const Context *context, Command source)
 {
-    ASSERT(hasAnyDirtyBit() || source == Command::GenerateMipmap);
+    ASSERT(hasAnyDirtyBit() || source == Command::GenerateMipmap ||
+           (context->isRobustResourceInitEnabled() && mState.mInitState == InitState::MayNeedInit));
     ANGLE_TRY(ensureInitialized(context));
     ANGLE_TRY(mTexture->syncState(context, mDirtyBits, source));
     mDirtyBits.reset();

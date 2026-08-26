@@ -54,6 +54,7 @@ class Reducer : public TIntermRebuild
                 auto &structure =
                     *new TStructure(&mSymbolTable, interfaceBlock->name(),
                                     &interfaceBlock->fields(), interfaceBlock->symbolType());
+                structure.setImplementingInterfaceBlock();
                 auto &structVar = CreateStructTypeVariable(mSymbolTable, structure);
                 auto &instanceVar =
                     CreateInstanceVariable(mSymbolTable, structure, newInstanceVarName,

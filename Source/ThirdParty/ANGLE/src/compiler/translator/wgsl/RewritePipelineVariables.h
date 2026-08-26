@@ -103,7 +103,7 @@ struct RewritePipelineVarOutput
     bool IsOutputVar(TSymbolUniqueId angleOutputVar) const;
 
     bool OutputStructs(TInfoSinkBase &output);
-    bool OutputMainFunction(TInfoSinkBase &output);
+    bool OutputMainFunction(TInfoSinkBase &output, char userSymbolPrefix);
 
   private:
     friend RewritePipelineVarOutputBuilder;

@@ -150,7 +150,5 @@ TEST_P(EGLSurfaceTestMac, ContentsScale)
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST(EGLSurfaceTestMac,
-                       WithNoFixture(ES2_OPENGL()),
-                       WithNoFixture(ES3_OPENGL()),
                        WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES3_METAL()));

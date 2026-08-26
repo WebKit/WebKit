@@ -90,7 +90,6 @@ pub const UNSIGNED_INT_ATOMIC_COUNTER: Enum = 0x92DB;
 pub const SAMPLER_EXTERNAL_OES: Enum = 0x8D66;
 pub const SAMPLER_EXTERNAL_2D_Y2Y_EXT: Enum = 0x8BE7;
 pub const SAMPLER_2D_RECT_ANGLE: Enum = 0x8B63;
-pub const SAMPLER_VIDEO_IMAGE_WEBGL: Enum = 0x9249;
 
 // For ShaderVariable::gl_precision
 pub const LOW_FLOAT: Enum = 0x8DF0;

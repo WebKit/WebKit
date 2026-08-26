@@ -470,12 +470,7 @@ TEST_P(WebGLFramebufferTest, TestAttachments)
             testColorRenderbuffer(width, height, GL_RGBA4, allowedStatusForGoodCase);
 
             // Attach color renderbuffer with internalformat == RGB5_A1.
-            // This particular format seems to be bugged on NVIDIA Retina. http://crbug.com/635081
-            // TODO(jmadill): Figure out if we can add a format workaround.
-            if (!(IsNVIDIA() && IsMac() && IsOpenGL()))
-            {
-                testColorRenderbuffer(width, height, GL_RGB5_A1, allowedStatusForGoodCase);
-            }
+            testColorRenderbuffer(width, height, GL_RGB5_A1, allowedStatusForGoodCase);
 
             // Attach color renderbuffer with internalformat == RGB565.
             testColorRenderbuffer(width, height, GL_RGB565, allowedStatusForGoodCase);

@@ -34,6 +34,7 @@
 #include "tcuRenderTarget.hpp"
 #include "tcuCPUWarmup.hpp"
 #include "tcuApp.hpp"
+#include "tcuCommandLine.hpp"
 
 #include "glwEnums.hpp"
 #include "glwFunctions.hpp"
@@ -65,10 +66,8 @@ namespace
 
 enum
 {
-    MAX_VIEWPORT_SIZE      = 256,
-    MAX_SAMPLE_DURATION_US = 150 * 1000,
-    MAX_CALIBRATE_DURATION_US =
-        tcu::WATCHDOG_INTERVAL_TIME_LIMIT_SECS / 3 * 1000 * 1000, // Abort when the watch dog gets nervous
+    MAX_VIEWPORT_SIZE        = 256,
+    MAX_SAMPLE_DURATION_US   = 150 * 1000,
     WAIT_TIME_MS             = 200,
     MIN_DRAW_CALL_COUNT      = 10,
     MAX_DRAW_CALL_COUNT      = 1 << 20,
@@ -289,6 +288,8 @@ FlushFinishCase::CalibrationParams FlushFinishCase::calibrate(void)
     CalibrationParams params;
 
     const uint64_t calibrateStartTime = deGetMicroseconds();
+    const uint64_t MAX_CALIBRATE_DURATION_US =
+        m_testCtx.getCommandLine().getWatchDogIntervalTime() / 3 * 1000 * 1000; // Abort when the watch dog gets nervous
 
     // Step 1: find iteration count that results in rougly 1/10th of target maximum sample duration.
     {

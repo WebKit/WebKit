@@ -136,8 +136,15 @@ class QueueFamily final : angle::NonCopyable
                               VkQueueFlags optionalFlags,
                               VkQueueFlags excludeFlags,
                               uint32_t *matchCount);
-    static const uint32_t kQueueCount = static_cast<uint32_t>(egl::ContextPriority::EnumCount);
-    static const float kQueuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)];
+
+    static constexpr float kQueuePriorityLow      = 0.0f;
+    static constexpr float kQueuePriorityMedium   = 0.4f;
+    static constexpr float kQueuePriorityHigh     = 0.8f;
+    static constexpr float kQueuePriorityRealtime = 1.0f;
+
+    static constexpr std::array<float, static_cast<uint32_t>(egl::ContextPriority::EnumCount)>
+        kQueuePriorities = {kQueuePriorityMedium, kQueuePriorityHigh, kQueuePriorityRealtime,
+                            kQueuePriorityLow};
 
     QueueFamily() : mProperties{}, mQueueFamilyIndex(kInvalidIndex) {}
     ~QueueFamily() {}
@@ -506,6 +513,8 @@ class CommandQueue : angle::NonCopyable
     // Protect multi-thread access to mFinishedCommandBatches.pop/front.
     angle::SimpleMutex mCmdReleaseMutex;
 
+    FenceRecycler mFenceRecycler;
+
     CommandBatchQueue mInFlightCommands;
     // Temporary storage for finished command batches that should be reset.
     CommandBatchQueue mFinishedCommandBatches;
@@ -524,8 +533,6 @@ class CommandQueue : angle::NonCopyable
 
     // QueueMap
     DeviceQueueMap mQueueMap;
-
-    FenceRecycler mFenceRecycler;
 
     angle::VulkanPerfCounters mPerfCounters;
 };

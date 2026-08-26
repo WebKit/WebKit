@@ -776,6 +776,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     vk::BufferHelper &getEmptyBuffer() { return mEmptyBuffer; }
 
+    // Returns a 1x1 placeholder storage image matching the shader's format
+    // for unbound image units.
+    angle::Result getOrCreateNullStorageImageView(GLenum shaderFormat,
+                                                  VkImageView *imageViewOut,
+                                                  vk::ImageOrBufferViewSerial *serialOut);
+
     // Keeping track of the buffer copy size. Used to determine when to submit the outside command
     // buffer.
     angle::Result onCopyUpdate(VkDeviceSize size, bool *commandBufferWasFlushedOut);
@@ -1703,6 +1709,13 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // atomic counter buffer array, or places where there is no vertex buffer since Vulkan does not
     // allow binding a null vertex buffer.
     vk::BufferHelper mEmptyBuffer;
+    struct NullStorageImageEntry
+    {
+        vk::ImageHelper image;
+        vk::ImageView view;
+        vk::ImageOrBufferViewSerial serial;
+    };
+    angle::HashMap<GLenum, std::unique_ptr<NullStorageImageEntry>> mNullStorageImages;
 
     // Storage for default uniforms of ProgramVks and ProgramPipelineVks.
     vk::DynamicBuffer mDefaultUniformStorage;

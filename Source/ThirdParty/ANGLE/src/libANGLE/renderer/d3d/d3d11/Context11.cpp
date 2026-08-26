@@ -174,8 +174,6 @@ TextureImpl *Context11::createTexture(const gl::TextureState &state)
     switch (state.getType())
     {
         case gl::TextureType::_2D:
-        // GL_TEXTURE_VIDEO_IMAGE_WEBGL maps to native 2D texture on Windows platform
-        case gl::TextureType::VideoImage:
             return new TextureD3D_2D(state, mRenderer);
         case gl::TextureType::CubeMap:
             return new TextureD3D_Cube(state, mRenderer);

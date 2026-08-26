@@ -278,8 +278,6 @@
     /* GL_KHR_texture_compression_astc_ldr */                                                      \
     /* GL_KHR_texture_compression_astc_sliced_3d */                                                \
     /* GL_MESA_framebuffer_flip_y */                                                               \
-    void framebufferParameteriMESA(GLenum target, GLenum pname, GLint param);                      \
-    void getFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params);                \
     /* GL_NV_EGL_stream_consumer_external */                                                       \
     /* GL_NV_fence */                                                                              \
     void deleteFencesNV(GLsizei n, const FenceNVID *fencesPacked);                                 \
@@ -384,7 +382,6 @@
     /* GL_QCOM_tiled_rendering */                                                                  \
     void endTiling(GLbitfield preserveMask);                                                       \
     void startTiling(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask);    \
-    /* GL_WEBGL_video_texture */                                                                   \
                                                                                                    \
     /* ANGLE Extensions */                                                                         \
                                                                                                    \
@@ -418,6 +415,7 @@
                           GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLint z,  \
                           GLint width, GLint height, GLint depth, GLboolean unpackFlipY,           \
                           GLboolean unpackPremultiplyAlpha, GLboolean unpackUnmultiplyAlpha);      \
+    /* GL_ANGLE_explicit_context */                                                                \
     /* GL_ANGLE_framebuffer_multisample */                                                         \
     /* GL_ANGLE_get_image */                                                                       \
     void getTexImage(TextureTarget targetPacked, GLint level, GLenum format, GLenum type,          \

@@ -110,6 +110,8 @@ gl::AttributesMask MergeClientAttribsRange(
     ASSERT(renderer->getFeatures().enableMergeClientAttribBuffer.enabled);
     std::array<size_t, gl::MAX_VERTEX_ATTRIBS> sortedIndices;
     size_t sortedCount = 0;
+    // Per-attribute alignment requirement, only meaningful for combinable attributes.
+    std::array<size_t, gl::MAX_VERTEX_ATTRIBS> alignments = {};
 
     // 1. Analyze attributes and calculate individual range
     for (size_t attribIndex : activeStreamedAttribs)
@@ -118,14 +120,16 @@ gl::AttributesMask MergeClientAttribsRange(
         ASSERT(attrib.enabled);
         const gl::VertexBinding &binding = bindings[attrib.bindingIndex];
 
+        const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
+
         bool canCombine = ShouldCombineAttributes(renderer, attrib, binding);
         if (canCombine)
         {
             sortedIndices[sortedCount++] = attribIndex;
+            alignments[attribIndex]      = vertexFormat.getVertexInputAlignment();
         }
 
-        const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
-        const GLuint pixelBytes        = vertexFormat.getActualBufferFormat().pixelBytes;
+        const GLuint pixelBytes = vertexFormat.getActualBufferFormat().pixelBytes;
         // If combining, we copy the full stride (padding included). If not, we might pack tightly.
         const size_t destStride      = canCombine ? binding.getStride() : pixelBytes;
         const uintptr_t startAddress = reinterpret_cast<uintptr_t>(attrib.pointer);
@@ -169,7 +173,8 @@ gl::AttributesMask MergeClientAttribsRange(
         // Check for overlap or adjacency:
         // Leader: [Start ............ End]
         // Next:              [Start ............ End]
-        if (leaderRange.endAddr >= nextRange.startAddr)
+        if (leaderRange.endAddr >= nextRange.startAddr &&
+            (leaderRange.startAddr % alignments[nextAttribIndex]) == 0)
         {
             // MERGE:
             // 1. Extend the leader's end address to cover the next attribute

@@ -91,7 +91,7 @@ class BufferPool
     MTLStorageMode storageMode(ContextMtl *contextMtl) const;
     void reset();
     angle::Result allocateNewBuffer(ContextMtl *contextMtl);
-    void destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers);
+    void destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers, bool isFreeList);
     angle::Result finalizePendingBuffer(ContextMtl *contextMtl);
 
     BufferRef mBuffer;

@@ -1176,22 +1176,6 @@ impl<'a> Validator<'a> {
                             None
                         }
                     }
-                    ImageDimension::Video => {
-                        if *basic_type == ImageBasicType::Int
-                            || *basic_type == ImageBasicType::Uint
-                            || !image_type.is_sampled
-                            || image_type.is_array
-                            || image_type.is_ms
-                            || image_type.is_shadow
-                        {
-                            Some(
-                                "int video image, uint video image, storage video image, array \
-                                 video image, multisample video image, shadow video image",
-                            )
-                        } else {
-                            None
-                        }
-                    }
                     ImageDimension::PixelLocal => {
                         if image_type.is_sampled
                             || image_type.is_array

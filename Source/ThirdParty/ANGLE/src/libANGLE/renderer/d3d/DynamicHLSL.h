@@ -114,13 +114,6 @@ struct BuiltinInfo
     BuiltinVarying glLayer;
 };
 
-inline std::string GetVaryingSemantic(int majorShaderModel, bool programUsesPointSize)
-{
-    // SM3 reserves the TEXCOORD semantic for point sprite texcoords (gl_PointCoord)
-    // In D3D11 we manually compute gl_PointCoord in the GS.
-    return ((programUsesPointSize && majorShaderModel < 4) ? "COLOR" : "TEXCOORD");
-}
-
 class BuiltinVaryingsD3D
 {
   public:
@@ -153,7 +146,6 @@ class DynamicHLSL : angle::NonCopyable
         const std::vector<gl::ProgramInput> &shaderAttributes,
         size_t baseUAVRegister);
     static std::string GeneratePixelShaderForOutputSignature(
-        RendererD3D *renderer,
         const std::string &sourceShader,
         const std::vector<PixelShaderOutputVariable> &outputVariables,
         FragDepthUsage fragDepthUsage,
@@ -169,7 +161,6 @@ class DynamicHLSL : angle::NonCopyable
         const gl::ImageUnitTextureTypeMap &image2DBindLayout,
         unsigned int baseUAVRegister);
     static void GenerateShaderLinkHLSL(
-        RendererD3D *renderer,
         const gl::Caps &caps,
         const gl::ShaderMap<gl::SharedCompiledShaderState> &shaderData,
         const gl::ShaderMap<SharedCompiledShaderStateD3D> &shaderDataD3D,
@@ -178,14 +169,12 @@ class DynamicHLSL : angle::NonCopyable
         const BuiltinVaryingsD3D &builtinsD3D,
         gl::ShaderMap<std::string> *shaderHLSL);
 
-    static std::string GenerateGeometryShaderPreamble(RendererD3D *renderer,
-                                                      const gl::VaryingPacking &varyingPacking,
+    static std::string GenerateGeometryShaderPreamble(const gl::VaryingPacking &varyingPacking,
                                                       const BuiltinVaryingsD3D &builtinsD3D,
                                                       const bool hasMultiviewEnabled,
                                                       const bool selectViewInVS);
 
-    static std::string GenerateGeometryShaderHLSL(RendererD3D *renderer,
-                                                  const gl::Caps &caps,
+    static std::string GenerateGeometryShaderHLSL(const gl::Caps &caps,
                                                   gl::PrimitiveMode primitiveType,
                                                   const bool useViewScale,
                                                   const bool hasMultiviewEnabled,
@@ -201,11 +190,9 @@ class DynamicHLSL : angle::NonCopyable
                                         std::vector<PixelShaderOutputVariable> *outPixelShaderKey);
 
   private:
-    static void GenerateVaryingLinkHLSL(RendererD3D *renderer,
-                                        const gl::VaryingPacking &varyingPacking,
+    static void GenerateVaryingLinkHLSL(const gl::VaryingPacking &varyingPacking,
                                         const BuiltinInfo &builtins,
                                         FragDepthUsage fragDepthUsage,
-                                        bool programUsesPointSize,
                                         std::ostringstream &hlslStream);
 
     static void GenerateAttributeConversionHLSL(angle::FormatID vertexFormatID,

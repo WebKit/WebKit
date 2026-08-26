@@ -667,6 +667,13 @@ set(libglesv2_entry_point_sources
     "src/libGLESv2/resource.h"
 )
 
+if(angle_enable_explicit_context)
+    list(APPEND libglesv2_entry_point_sources
+        "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp"
+        "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.h"
+    )
+endif()
+
 set(libglesv2_sources "src/libGLESv2/libGLESv2_autogen.cpp")
 
 set(libglesv2_cl_sources

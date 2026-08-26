@@ -709,56 +709,6 @@ TEST_F(ParseTest, SeparateStructStructSpecificationFunctionNoCrash)
     EXPECT_TRUE(compile(kShader));
 }
 
-// Test showing that prototypes get the function definition variable names.
-// An example where parser loses information.
-TEST_F(ParseTest, VariableNamesInPrototypesUnnamedOut)
-{
-    const char kShader[]   = R"(
-precision highp float;
-void f(out float, out float);
-void main()
-{
-    gl_FragColor = vec4(0.5);
-    f(gl_FragColor.r, gl_FragColor.g);
-}
-void f(out float r, out float)
-{
-    r = 1.0;
-}
-)";
-    const char kExpected[] = R"(0:2: Code block
-0:3:   Function Prototype: 'f' (symbol id 3001) (void)
-0:3:     parameter: 'r' (symbol id 3006) (out highp float)
-0:3:     parameter: '' (symbol id 3007) (out highp float)
-0:4:   Function Definition:
-0:4:     Function Prototype: 'main' (symbol id 3004) (void)
-0:5:     Code block
-0:6:       move second child to first child (mediump 4-component vector of float)
-0:6:         gl_FragColor (symbol id 1917) (FragColor mediump 4-component vector of float)
-0:6:         Constant union (const mediump 4-component vector of float)
-0:6:           0.5 (const float)
-0:6:           0.5 (const float)
-0:6:           0.5 (const float)
-0:6:           0.5 (const float)
-0:7:       Call a function: 'f' (symbol id 3001) (void)
-0:7:         vector swizzle (x) (mediump float)
-0:7:           gl_FragColor (symbol id 1917) (FragColor mediump 4-component vector of float)
-0:7:         vector swizzle (y) (mediump float)
-0:7:           gl_FragColor (symbol id 1917) (FragColor mediump 4-component vector of float)
-0:9:   Function Definition:
-0:9:     Function Prototype: 'f' (symbol id 3001) (void)
-0:9:       parameter: 'r' (symbol id 3006) (out highp float)
-0:9:       parameter: '' (symbol id 3007) (out highp float)
-0:10:     Code block
-0:11:       move second child to first child (highp float)
-0:11:         'r' (symbol id 3006) (out highp float)
-0:11:         Constant union (const highp float)
-0:11:           1.0 (const float)
-)";
-    EXPECT_TRUE(compile(kShader));
-    EXPECT_EQ(kExpected, intermediateTree());
-}
-
 TEST_F(ParseTest, ConstInSamplerParamNoCrash)
 {
     mCompileOptions.validateAST = 1;

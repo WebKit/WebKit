@@ -86,6 +86,15 @@
             ]
         },
         {
+            "name": "pack_large_row_length_separately_pack_buffer",
+            "category": "Workarounds",
+            "description": [
+                "When packing to a pixel pack buffer with a row pitch >= 256MiB, pack row by row.",
+                "Mali GLES computes stride in bits as int32; row_length*bpp*8 wraps at 0x10000000."
+            ],
+            "issue": "http://crbug.com/529867799"
+        },
+        {
             "name": "initialize_current_vertex_attributes",
             "category": "Workarounds",
             "description": [
@@ -376,15 +385,6 @@
                 "position + offset, lod)."
             ],
             "issue": "http://crbug.com/642605"
-        },
-        {
-            "name": "regenerate_struct_names",
-            "category": "Workarounds",
-            "description": [
-                "All Mac drivers do not handle struct scopes correctly. This workaround overwrites a struct",
-                "name with a unique prefix."
-            ],
-            "issue": "http://crbug.com/403957"
         },
         {
             "name": "read_pixels_using_implementation_color_read_format_for_norm16",
@@ -925,6 +925,14 @@
                 "Disable the EXT_clear_texture extension due to driver bugs."
             ],
             "issue": "http://crbug.com/475877320"
+        },
+        {
+            "name": "split_level_0_pbo_full_sub_image_2D",
+            "category": "Workarounds",
+            "description": [
+                "Split full-image level 0 PBO uploads via TexSubImage2D into two calls to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/496807874"
         }
     ]
 }

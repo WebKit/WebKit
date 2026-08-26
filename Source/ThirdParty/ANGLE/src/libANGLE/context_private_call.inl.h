@@ -783,14 +783,8 @@ inline void ContextPrivatePatchParameteri(PrivateState *privateState,
                                           GLenum pname,
                                           GLint value)
 {
-    switch (pname)
-    {
-        case GL_PATCH_VERTICES:
-            privateState->setPatchVertices(value);
-            break;
-        default:
-            break;
-    }
+    ASSERT(pname == GL_PATCH_VERTICES);
+    privateState->setPatchVertices(value);
 }
 
 inline void ContextPrivateAlphaFunc(PrivateState *privateState,

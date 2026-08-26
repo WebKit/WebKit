@@ -80,8 +80,7 @@
     OP(OES_texture_cube_map_array,                     310, 320) \
     OP(OES_texture_storage_multisample_2d_array,       300, 320) \
     OP(OVR_multiview,                                  300, 320) \
-    OP(OVR_multiview2,                                 300, 320) \
-    OP(WEBGL_video_texture,                            100, 320)
+    OP(OVR_multiview2,                                 300, 320)
 // clang-format on
 
 namespace sh

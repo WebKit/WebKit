@@ -1283,7 +1283,6 @@ void Builder::builtIn(TOperator op, size_t argCount)
         case EOpTexture2DRect:
         case EOpTexture3D:
         case EOpTextureCube:
-        case EOpTextureVideoWEBGL:
         {
             // texture() takes the sampler, coordinates and possibly a compare parameter.
             // Note that the variant with a bias parameter is given a different Op.

@@ -95,6 +95,7 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/FloatLex_test.cpp",
   "compiler_tests/GeometryShader_test.cpp",
   "compiler_tests/GlFragDataNotModified_test.cpp",
+  "compiler_tests/HashNames_test.cpp",
   "compiler_tests/ImmutableString_test.cpp",
   "compiler_tests/IntermNode_test.cpp",
   "compiler_tests/NV_draw_buffers_test.cpp",
@@ -107,10 +108,8 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/QualificationOrderESSL31_test.cpp",
   "compiler_tests/QualificationOrder_test.cpp",
   "compiler_tests/RecordConstantPrecision_test.cpp",
-  "compiler_tests/RegenerateStructNames_test.cpp",
   "compiler_tests/RemoveUnreferencedVariables_test.cpp",
   "compiler_tests/SamplerMultisample_test.cpp",
-  "compiler_tests/SeparateDeclarations_test.cpp",
   "compiler_tests/ShCompile_test.cpp",
   "compiler_tests/ShaderValidation_test.cpp",
   "compiler_tests/ShaderVariable_test.cpp",
@@ -133,8 +132,10 @@ angle_unittests_hlsl_sources = [
   "compiler_tests/UnrollFlatten_test.cpp",
 ]
 
-angle_unittests_gl_sources =
-    [ "../libANGLE/renderer/gl/DisplayGL_unittest.cpp" ]
+angle_unittests_gl_sources = [
+  "../libANGLE/renderer/gl/DisplayGL_unittest.cpp",
+  "../libANGLE/renderer/gl/renderergl_utils_unittest.cpp",
+]
 
 angle_unittests_msl_sources = [
   "../common/apple/ObjCPtr_test.mm",

@@ -226,11 +226,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
         options->rewriteTexelFetchOffsetToTexelFetch = true;
     }
 
-    if (features.regenerateStructNames.enabled)
-    {
-        options->regenerateStructNames = true;
-    }
-
     if (features.rewriteRowMajorMatrices.enabled)
     {
         options->rewriteRowMajorMatrices = true;

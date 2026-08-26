@@ -88,10 +88,7 @@ bool FindFlatInterpolationVarying(const gl::ShaderMap<gl::SharedCompiledShaderSt
 class HLSLBlockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFactory
 {
   public:
-    sh::BlockLayoutEncoder *makeEncoder() override
-    {
-        return new sh::HLSLBlockEncoder(sh::HLSLBlockEncoder::ENCODE_PACKED, false);
-    }
+    sh::BlockLayoutEncoder *makeEncoder() override { return new sh::HLSLBlockEncoder(false); }
 };
 
 // GetExecutableTask class
@@ -181,8 +178,7 @@ ProgramD3DMetadata::ProgramD3DMetadata(
     const gl::SharedCompiledShaderState &fragmentShader,
     const gl::ShaderMap<SharedCompiledShaderStateD3D> &attachedShaders,
     int shaderVersion)
-    : mRendererMajorShaderModel(renderer->getMajorShaderModel()),
-      mUsesViewScale(renderer->presentPathFastEnabled()),
+    : mUsesViewScale(renderer->presentPathFastEnabled()),
       mCanSelectViewInVertexShader(renderer->canSelectViewInVertexShader()),
       mFragmentShader(fragmentShader),
       mAttachedShaders(attachedShaders),
@@ -190,11 +186,6 @@ ProgramD3DMetadata::ProgramD3DMetadata(
 {}
 
 ProgramD3DMetadata::~ProgramD3DMetadata() = default;
-
-int ProgramD3DMetadata::getRendererMajorShaderModel() const
-{
-    return mRendererMajorShaderModel;
-}
 
 bool ProgramD3DMetadata::usesBroadcast(const gl::Version &clientVersion) const
 {
@@ -235,7 +226,7 @@ bool ProgramD3DMetadata::usesPointSize() const
 
 bool ProgramD3DMetadata::usesInsertedPointCoordValue() const
 {
-    return usesPointCoord() && mRendererMajorShaderModel >= 4;
+    return usesPointCoord();
 }
 
 bool ProgramD3DMetadata::usesViewScale() const
@@ -658,7 +649,7 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
                                 mState.getAttachedShader(gl::ShaderType::Vertex)->shaderVersion);
     BuiltinVaryingsD3D builtins(metadata, varyingPacking);
 
-    DynamicHLSL::GenerateShaderLinkHLSL(mRenderer, caps, mState.getAttachedShaders(),
+    DynamicHLSL::GenerateShaderLinkHLSL(caps, mState.getAttachedShaders(),
                                         executableD3D->mAttachedShaders, metadata, varyingPacking,
                                         builtins, &executableD3D->mShaderHLSL);
 
@@ -677,19 +668,16 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
     executableD3D->mUsesFlatInterpolation =
         FindFlatInterpolationVarying(mState.getAttachedShaders());
 
-    if (mRenderer->getMajorShaderModel() >= 4)
-    {
-        executableD3D->mGeometryShaderPreamble = DynamicHLSL::GenerateGeometryShaderPreamble(
-            mRenderer, varyingPacking, builtins, executableD3D->mHasMultiviewEnabled,
-            metadata.canSelectViewInVertexShader());
-    }
+    executableD3D->mGeometryShaderPreamble = DynamicHLSL::GenerateGeometryShaderPreamble(
+        varyingPacking, builtins, executableD3D->mHasMultiviewEnabled,
+        metadata.canSelectViewInVertexShader());
 
     executableD3D->initAttribLocationsToD3DSemantic(
         mState.getAttachedShader(gl::ShaderType::Vertex));
 
     executableD3D->defineUniformsAndAssignRegisters(mRenderer, mState.getAttachedShaders());
 
-    executableD3D->gatherTransformFeedbackVaryings(mRenderer, varyingPacking,
+    executableD3D->gatherTransformFeedbackVaryings(varyingPacking,
                                                    mState.getTransformFeedbackVaryingNames(),
                                                    builtins[gl::ShaderType::Vertex]);
 

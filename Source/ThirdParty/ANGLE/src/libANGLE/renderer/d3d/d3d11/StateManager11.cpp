@@ -162,11 +162,6 @@ void UpdateUniformBuffer(ID3D11DeviceContext *deviceContext,
                                      0);
 }
 
-size_t GetReservedBufferCount(bool usesPointSpriteEmulation)
-{
-    return usesPointSpriteEmulation ? 1 : 0;
-}
-
 bool CullsEverything(const gl::State &glState)
 {
     return (glState.getRasterizerState().cullFace &&
@@ -360,13 +355,6 @@ void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
     mPixel.viewCoords[1] = glViewport.height * 0.5f;
     mPixel.viewCoords[2] = glViewport.x + (glViewport.width * 0.5f);
     mPixel.viewCoords[3] = glViewport.y + (glViewport.height * 0.5f);
-
-    // Instanced pointsprite emulation requires ViewCoords to be defined in the
-    // the vertex shader.
-    mVertex.viewCoords[0] = mPixel.viewCoords[0];
-    mVertex.viewCoords[1] = mPixel.viewCoords[1];
-    mVertex.viewCoords[2] = mPixel.viewCoords[2];
-    mVertex.viewCoords[3] = mPixel.viewCoords[3];
 
     const float zNear = dxViewport.MinDepth;
     const float zFar  = dxViewport.MaxDepth;
@@ -1224,9 +1212,7 @@ void StateManager11::syncViewport(const gl::Context *context)
     {
         // When present path fast is active and we're rendering to framebuffer 0, we must invert
         // the viewport in Y-axis.
-        // NOTE: We delay the inversion until right before the call to RSSetViewports, and leave
-        // dxViewportTopLeftY unchanged. This allows us to calculate viewAdjust below using the
-        // unaltered dxViewportTopLeftY value.
+        // NOTE: We delay the inversion until right before the call to RSSetViewports.
         dxViewport.TopLeftY = static_cast<float>(mCurPresentPathFastColorBufferHeight -
                                                  dxViewportTopLeftY - dxViewportHeight);
     }
@@ -1793,7 +1779,9 @@ angle::Result StateManager11::syncCurrentValueAttribs(
     for (auto attribIndex : dirtyActiveAttribs)
     {
         if (vertexAttributes[attribIndex].enabled)
+        {
             continue;
+        }
 
         const auto *attrib                      = &vertexAttributes[attribIndex];
         const auto &currentValue                = currentValues[attribIndex];
@@ -2823,36 +2811,6 @@ bool StateManager11::syncIndexBuffer(ID3D11Buffer *buffer,
     }
 
     return false;
-}
-
-// Vertex buffer is invalidated outside this function.
-angle::Result StateManager11::updateVertexOffsetsForPointSpritesEmulation(
-    const gl::Context *context,
-    GLint startVertex,
-    GLsizei emulatedInstanceId)
-{
-    size_t reservedBuffers = GetReservedBufferCount(true);
-    for (size_t attribIndex = 0; attribIndex < mCurrentAttributes.size(); ++attribIndex)
-    {
-        const auto &attrib = *mCurrentAttributes[attribIndex];
-        size_t bufferIndex = reservedBuffers + attribIndex;
-
-        if (attrib.divisor > 0)
-        {
-            unsigned int offset = 0;
-            ANGLE_TRY(attrib.computeOffset(context, startVertex, &offset));
-            offset += (attrib.stride * (emulatedInstanceId / attrib.divisor));
-            if (offset != mCurrentVertexOffsets[bufferIndex])
-            {
-                invalidateInputLayout();
-                mDirtyVertexBufferRange.extend(static_cast<unsigned int>(bufferIndex));
-                mCurrentVertexOffsets[bufferIndex] = offset;
-            }
-        }
-    }
-
-    applyVertexBufferChanges();
-    return angle::Result::Continue;
 }
 
 angle::Result StateManager11::generateSwizzle(const gl::Context *context, gl::Texture *texture)

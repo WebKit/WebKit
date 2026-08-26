@@ -25,10 +25,11 @@
     void drawArraysIndirect(PrimitiveMode modePacked, const void *indirect);                       \
     void drawElementsIndirect(PrimitiveMode modePacked, DrawElementsType typePacked,               \
                               const void *indirect);                                               \
-    void framebufferParameteri(GLenum target, GLenum pname, GLint param);                          \
+    void framebufferParameteri(GLenum target, FramebufferParameter pnamePacked, GLint param);      \
     void genProgramPipelines(GLsizei n, ProgramPipelineID *pipelinesPacked);                       \
     void getBooleani_v(GLenum target, GLuint index, GLboolean *data);                              \
-    void getFramebufferParameteriv(GLenum target, GLenum pname, GLint *params);                    \
+    void getFramebufferParameteriv(GLenum target, FramebufferParameter pnamePacked,                \
+                                   GLint *params);                                                 \
     void getMultisamplefv(GLenum pname, GLuint index, GLfloat *val);                               \
     void getProgramInterfaceiv(ShaderProgramID programPacked, GLenum programInterface,             \
                                GLenum pname, GLint *params);                                       \

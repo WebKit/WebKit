@@ -1463,10 +1463,6 @@ TEST_P(FramebufferTest_ES3, ClearNonexistentDepthStencil)
 // Test that clearing a color attachment that has been deleted doesn't crash.
 TEST_P(FramebufferTest_ES3, ClearDeletedAttachment)
 {
-    // An INVALID_FRAMEBUFFER_OPERATION error was seen in this test on Mac, not sure where it might
-    // be originating from. http://anglebug.com/42261536
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
-
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 

@@ -21,12 +21,6 @@ class HLSLOutputTest : public MatchOutputCodeTest
     HLSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_HLSL_4_1_OUTPUT) {}
 };
 
-class HLSL30VertexOutputTest : public MatchOutputCodeTest
-{
-  public:
-    HLSL30VertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_HLSL_3_0_OUTPUT) {}
-};
-
 class HLSL41VertexOutputTest : public MatchOutputCodeTest
 {
   public:
@@ -51,7 +45,7 @@ TEST_F(HLSLOutputTest, DynamicIndexingOfVectorOnRightSideOfLogicalOr)
 
 // Test that rewriting else blocks in a function that returns a struct doesn't use the struct name
 // without a prefix.
-TEST_F(HLSL30VertexOutputTest, RewriteElseBlockReturningStruct)
+TEST_F(HLSL41VertexOutputTest, RewriteElseBlockReturningStruct)
 {
     const std::string &shaderString =
         "struct foo\n"

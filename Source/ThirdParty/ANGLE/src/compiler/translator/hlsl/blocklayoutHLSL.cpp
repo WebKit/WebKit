@@ -15,8 +15,7 @@
 namespace sh
 {
 
-HLSLBlockEncoder::HLSLBlockEncoder(HLSLBlockEncoderStrategy strategy, bool transposeMatrices)
-    : mEncoderStrategy(strategy), mTransposeMatrices(transposeMatrices)
+HLSLBlockEncoder::HLSLBlockEncoder(bool transposeMatrices) : mTransposeMatrices(transposeMatrices)
 {}
 
 void HLSLBlockEncoder::enterAggregateType(const ShaderVariable &structVar)
@@ -41,10 +40,8 @@ void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
     int matrixStride = 0;
     int arrayStride  = 0;
 
-    // if variables are not to be packed, or we're about to
-    // pack a matrix or array, skip to the start of the next
-    // register
-    if (!isPacked() || gl::IsMatrixType(type) || !arraySizes.empty())
+    // If we're about to pack a matrix or array, skip to the start of the next register.
+    if (gl::IsMatrixType(type) || !arraySizes.empty())
     {
         align(kComponentsPerRegister);
     }
@@ -63,7 +60,7 @@ void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
     {
         arrayStride = kComponentsPerRegister;
     }
-    else if (isPacked())
+    else
     {
         int numComponents = gl::VariableComponentCount(type);
         if ((numComponents + (mCurrentOffset % kComponentsPerRegister)) > kComponentsPerRegister)
@@ -102,34 +99,15 @@ void HLSLBlockEncoder::advanceOffset(GLenum typeIn,
         mCurrentOffset += kComponentsPerRegister * (numRegisters - 1);
         mCurrentOffset += numComponents;
     }
-    else if (isPacked())
-    {
-        mCurrentOffset += gl::VariableComponentCount(type);
-    }
     else
     {
-        mCurrentOffset += kComponentsPerRegister;
+        mCurrentOffset += gl::VariableComponentCount(type);
     }
 }
 
 void HLSLBlockEncoder::skipRegisters(unsigned int numRegisters)
 {
     mCurrentOffset += (numRegisters * kComponentsPerRegister);
-}
-
-HLSLBlockEncoder::HLSLBlockEncoderStrategy HLSLBlockEncoder::GetStrategyFor(
-    ShShaderOutput outputType)
-{
-    switch (outputType)
-    {
-        case SH_HLSL_3_0_OUTPUT:
-            return ENCODE_LOOSE;
-        case SH_HLSL_4_1_OUTPUT:
-            return ENCODE_PACKED;
-        default:
-            UNREACHABLE();
-            return ENCODE_PACKED;
-    }
 }
 
 template <class ShaderVarType>
@@ -157,9 +135,9 @@ void HLSLVariableRegisterCount(const ShaderVarType &variable, HLSLBlockEncoder *
     }
 }
 
-unsigned int HLSLVariableRegisterCount(const ShaderVariable &variable, ShShaderOutput outputType)
+unsigned int HLSLVariableRegisterCount(const ShaderVariable &variable)
 {
-    HLSLBlockEncoder encoder(HLSLBlockEncoder::GetStrategyFor(outputType), true);
+    HLSLBlockEncoder encoder(true);
     HLSLVariableRegisterCount(variable, &encoder);
 
     const size_t registerBytes = (encoder.kBytesPerComponent * encoder.kComponentsPerRegister);

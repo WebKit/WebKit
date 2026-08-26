@@ -173,7 +173,7 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
 %token <lex> USAMPLER2D USAMPLER3D USAMPLERCUBE USAMPLER2DARRAY
 %token <lex> SAMPLER2DMS ISAMPLER2DMS USAMPLER2DMS
 %token <lex> SAMPLER2DMSARRAY ISAMPLER2DMSARRAY USAMPLER2DMSARRAY
-%token <lex> SAMPLER3D SAMPLER3DRECT SAMPLER2DSHADOW SAMPLERCUBESHADOW SAMPLER2DARRAYSHADOW SAMPLERVIDEOWEBGL
+%token <lex> SAMPLER3D SAMPLER3DRECT SAMPLER2DSHADOW SAMPLERCUBESHADOW SAMPLER2DARRAYSHADOW
 %token <lex> SAMPLERCUBEARRAYOES SAMPLERCUBEARRAYSHADOWOES ISAMPLERCUBEARRAYOES USAMPLERCUBEARRAYOES
 %token <lex> SAMPLERCUBEARRAYEXT SAMPLERCUBEARRAYSHADOWEXT ISAMPLERCUBEARRAYEXT USAMPLERCUBEARRAYEXT
 %token <lex> SAMPLERBUFFER ISAMPLERBUFFER USAMPLERBUFFER
@@ -1289,13 +1289,6 @@ type_specifier_nonarray
         }
         $$.initialize(EbtSamplerCubeArrayShadow, @1);
     }
-    | SAMPLERVIDEOWEBGL {
-        if (!context->checkCanUseExtension(@1, TExtension::WEBGL_video_texture))
-        {
-            context->error(@1, "unsupported type", "samplerVideoWEBGL");
-        }
-        $$.initialize(EbtSamplerVideoWEBGL, @1);
-    }
     | SAMPLER_EXTERNAL_OES {
         constexpr std::array<TExtension, 3u> extensions{ { TExtension::NV_EGL_stream_consumer_external,
                                                            TExtension::OES_EGL_image_external_essl3,
@@ -1466,7 +1459,7 @@ type_specifier_nonarray
         const TStructure *structure = static_cast<const TStructure*>($1.symbol);
         // Temporary check until VK and Metal backends support type name like gl_DepthRangeParameters.
         context->checkIsNotReserved(@1, ImmutableString($1.string));
-        $$.initializeStruct(structure, false, @1);
+        $$.initializeStruct(structure, false, false, @1);
     }
     ;
 

@@ -1105,7 +1105,6 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
     // http://anglebug.com/42263564
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsMac());
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNexus5X());
 
     constexpr char kVS[] =

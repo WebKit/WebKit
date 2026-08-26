@@ -660,9 +660,6 @@ struct Extensions
     // GL_OES_vertex_type_10_10_10_2
     bool vertexType1010102OES = false;
 
-    // GL_WEBGL_video_texture
-    bool videoTextureWEBGL = false;
-
     // GL_EXT_YUV_target
     bool YUVTargetEXT = false;
 
@@ -707,6 +704,9 @@ struct Extensions
 
     // GL_ANGLE_copy_texture_3d
     bool copyTexture3dANGLE = false;
+
+    // GL_ANGLE_explicit_context
+    bool explicitContextANGLE = false;
 
     // GL_WEBKIT_explicit_resolve_target
     bool explicitResolveTargetWEBKIT = false;

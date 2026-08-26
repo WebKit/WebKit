@@ -256,7 +256,6 @@ enum TOperator : uint16_t
     EOpTexture2DGradEXT,
     EOpTexture2DProjGradEXT,
     EOpTextureCubeGradEXT,
-    EOpTextureVideoWEBGL,
 
     // Group TextureFirstVersionsBias
     EOpTexture2DBias,

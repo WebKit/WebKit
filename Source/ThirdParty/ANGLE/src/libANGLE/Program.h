@@ -188,6 +188,12 @@ class ProgramBindings final : angle::NonCopyable
     angle::HashMap<std::string, GLuint> mBindings;
 };
 
+enum class BindLocationPolicy
+{
+    AcceptIndexing,
+    IgnoreIndexing,
+};
+
 // Uniforms and Fragment Outputs require special treatment due to array notation (e.g., "[0]")
 class ProgramAliasedBindings final : angle::NonCopyable
 {
@@ -195,7 +201,7 @@ class ProgramAliasedBindings final : angle::NonCopyable
     ProgramAliasedBindings();
     ~ProgramAliasedBindings();
 
-    void bindLocation(GLuint index, const std::string &name);
+    void bindLocation(GLuint index, const std::string &name, BindLocationPolicy policy);
     int getBindingByName(const std::string &name) const;
     int getBindingByLocation(GLuint location) const;
     template <typename T>

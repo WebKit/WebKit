@@ -9,6 +9,7 @@
 //   Contains the GetLoadFunctionsMap for texture_format_util.h
 //
 
+#include "common/debug.h"
 #include "libANGLE/renderer/load_functions_table.h"
 
 #include "image_util/copyimage.h"
@@ -41,7 +42,7 @@ void UnimplementedLoadFunction(const ImageLoadContext &context,
                                size_t outputRowPitch,
                                size_t outputDepthPitch)
 {
-    UNIMPLEMENTED();
+    FATAL() << "UNIMPLEMENTED load function.";
 }
 
 void UnreachableLoadFunction(const ImageLoadContext &context,
@@ -55,7 +56,7 @@ void UnreachableLoadFunction(const ImageLoadContext &context,
                              size_t outputRowPitch,
                              size_t outputDepthPitch)
 {
-    UNREACHABLE();
+    FATAL() << "UNREACHABLE load function.";
 }
 
 LoadImageFunctionInfo A1RGB5_ANGLEX_to_A1R5G5B5_UNORM(GLenum type)

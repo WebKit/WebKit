@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 412
+#define ANGLE_SH_VERSION 417
 
 enum ShShaderSpec
 {
@@ -59,8 +59,7 @@ enum ShShaderOutput
     SH_GLSL_440_CORE_OUTPUT,
     SH_GLSL_450_CORE_OUTPUT,
 
-    // Prefer using these to specify HLSL output type:
-    SH_HLSL_3_0_OUTPUT,  // D3D 9
+    // Prefer using this to specify HLSL output type:
     SH_HLSL_4_1_OUTPUT,  // D3D 11
 
     // Output SPIR-V for the Vulkan backend.
@@ -180,10 +179,8 @@ struct ShCompileOptions
     // If requested, validates the AST after every transformation.  Useful for debugging.
     uint64_t validateAST : 1;
 
-    // Validates loop and indexing in the shader to ensure that they do not exceed the minimum
-    // functionality mandated in GLSL 1.0 spec, Appendix A, Section 4 and 5.  There is no need to
-    // specify this parameter when compiling for WebGL - it is implied.
-    uint64_t validateLoopIndexing : 1;
+    // placeholder bit for removed validateLoopIndexing option.
+    uint64_t unused3 : 1;
 
     // Emits #line directives in HLSL.
     uint64_t lineDirectives : 1;
@@ -239,8 +236,7 @@ struct ShCompileOptions
     // Linux/Mac driver bugs.
     uint64_t scalarizeVecAndMatConstructorArgs : 1;
 
-    // This flag overwrites a struct name with a unique prefix.  It is intended as a workaround for
-    // drivers that do not handle struct scopes correctly, including all Mac drivers and Linux AMD.
+    // This flag is a no-op and will be removed once chromium code no longer references it.
     uint64_t regenerateStructNames : 1;
 
     // This flag works around a bug in the HLSL compiler optimizer that folds certain constant pow
@@ -352,8 +348,7 @@ struct ShCompileOptions
     // Workaround for a driver bug with nested switches.
     uint64_t wrapSwitchInIfTrue : 1;
 
-    // This flag controls how to translate WEBGL_video_texture sampling function.
-    uint64_t takeVideoTextureAsExternalOES : 1;
+    uint64_t unused4 : 1;
 
     // This flag works around a inconsistent behavior in Mac AMD driver where gl_VertexID doesn't
     // include base vertex value. It replaces gl_VertexID with (gl_VertexID + angle_BaseVertex) when
@@ -552,7 +547,6 @@ struct ShBuiltInResources
     int ANGLE_multi_draw;
     // TODO(http://anglebug.com/40096583) remove after chromium side removal to pass compilation
     int ANGLE_base_vertex_base_instance;
-    int WEBGL_video_texture;
     int APPLE_clip_distance;
     int OES_texture_cube_map_array;
     int EXT_texture_cube_map_array;
@@ -614,7 +608,18 @@ struct ShBuiltInResources
     // User defined variables are prefixed with '_' and UserVariableNamePrefix. If UserVariableName
     // is the null character, no prefixing is done and collisions between user variables and
     // variables introduced during translation is possible.
+    //
+    // Can't prefix with just _ because then we might introduce a double underscore, which is not
+    // safe in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are
+    // reserved for use by the underlying implementation).
+    //
+    // Defaults to 'u' for user-defined.
     char UserVariableNamePrefix;
+    // To avoid collision with structs of the same name, block names are prefixed instead with '_'
+    // and UserBlockNamePrefix.
+    //
+    // Default to 'b' for block.
+    char UserBlockNamePrefix;
 
     // The maximum complexity an expression can be when limitExpressionComplexity is turned on.
     int MaxExpressionComplexity;
@@ -816,7 +821,7 @@ const std::string &GetBuiltInResourcesString(const ShHandle handle);
 // type: Specifies the type of shader - GL_FRAGMENT_SHADER or GL_VERTEX_SHADER.
 // spec: Specifies the language spec the compiler must conform to - SH_GLES2_SPEC or SH_WEBGL_SPEC.
 // output: Specifies the output code type - for example SH_ESSL_OUTPUT, SH_GLSL_OUTPUT,
-//         SH_HLSL_3_0_OUTPUT or SH_HLSL_4_1_OUTPUT. Note: Each output type may only
+//         or SH_HLSL_4_1_OUTPUT. Note: Each output type may only
 //         be supported in some configurations.
 // resources: Specifies the built-in resources.
 ShHandle ConstructCompiler(sh::GLenum type,
@@ -971,11 +976,6 @@ inline bool IsWebGLBasedSpec(ShShaderSpec spec)
 {
     return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC);
 }
-
-// Can't prefix with just _ because then we might introduce a double underscore, which is not safe
-// in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
-// use by the underlying implementation). u is short for user-defined.
-extern const char kUserDefinedNamePrefix;
 
 enum class MetadataFlags
 {

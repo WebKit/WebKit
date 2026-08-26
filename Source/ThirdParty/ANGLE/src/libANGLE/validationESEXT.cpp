@@ -2901,13 +2901,27 @@ bool ValidatePolygonModeANGLE(const PrivateState &state,
                               GLenum face,
                               PolygonMode modePacked)
 {
-    if (face != GL_FRONT_AND_BACK)
+    if (ANGLE_UNLIKELY(face != GL_FRONT_AND_BACK))
     {
-        errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCullMode);
+        errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPolygonFace);
         return false;
     }
 
-    if (modePacked == PolygonMode::Point || modePacked == PolygonMode::InvalidEnum)
+    bool isModeSupported = false;
+    switch (modePacked)
+    {
+        case PolygonMode::Point:
+            isModeSupported = state.getExtensions().polygonModeNV;
+            break;
+        case PolygonMode::Line:
+        case PolygonMode::Fill:
+            isModeSupported = true;
+            break;
+        default:
+            break;
+    }
+
+    if (ANGLE_UNLIKELY(!isModeSupported))
     {
         errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPolygonMode);
         return false;
@@ -2923,19 +2937,7 @@ bool ValidatePolygonModeNV(const PrivateState &state,
                            GLenum face,
                            PolygonMode modePacked)
 {
-    if (face != GL_FRONT_AND_BACK)
-    {
-        errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCullMode);
-        return false;
-    }
-
-    if (modePacked == PolygonMode::InvalidEnum)
-    {
-        errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPolygonMode);
-        return false;
-    }
-
-    return true;
+    return ValidatePolygonModeANGLE(state, errors, entryPoint, face, modePacked);
 }
 
 // GL_OES_texture_storage_multisample_2d_array
@@ -3069,6 +3071,12 @@ bool ValidateProgramUniform1uiEXT(const Context *context,
                                   UniformLocation locationPacked,
                                   GLuint v0)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform1uiBase(context, entryPoint, programPacked, locationPacked, v0);
 }
 
@@ -3079,6 +3087,12 @@ bool ValidateProgramUniform1uivEXT(const Context *context,
                                    GLsizei count,
                                    const GLuint *value)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform1uivBase(context, entryPoint, programPacked, locationPacked, count,
                                           value);
 }
@@ -3132,6 +3146,12 @@ bool ValidateProgramUniform2uiEXT(const Context *context,
                                   GLuint v0,
                                   GLuint v1)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform2uiBase(context, entryPoint, programPacked, locationPacked, v0,
                                          v1);
 }
@@ -3143,6 +3163,12 @@ bool ValidateProgramUniform2uivEXT(const Context *context,
                                    GLsizei count,
                                    const GLuint *value)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform2uivBase(context, entryPoint, programPacked, locationPacked, count,
                                           value);
 }
@@ -3201,6 +3227,12 @@ bool ValidateProgramUniform3uiEXT(const Context *context,
                                   GLuint v1,
                                   GLuint v2)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform3uiBase(context, entryPoint, programPacked, locationPacked, v0, v1,
                                          v2);
 }
@@ -3212,6 +3244,12 @@ bool ValidateProgramUniform3uivEXT(const Context *context,
                                    GLsizei count,
                                    const GLuint *value)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform3uivBase(context, entryPoint, programPacked, locationPacked, count,
                                           value);
 }
@@ -3273,6 +3311,12 @@ bool ValidateProgramUniform4uiEXT(const Context *context,
                                   GLuint v2,
                                   GLuint v3)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform4uiBase(context, entryPoint, programPacked, locationPacked, v0, v1,
                                          v2, v3);
 }
@@ -3284,6 +3328,12 @@ bool ValidateProgramUniform4uivEXT(const Context *context,
                                    GLsizei count,
                                    const GLuint *value)
 {
+    if (context->getClientVersion() < ES_3_0)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+        return false;
+    }
+
     return ValidateProgramUniform4uivBase(context, entryPoint, programPacked, locationPacked, count,
                                           value);
 }
@@ -3614,29 +3664,19 @@ bool ValidateReleaseTexturesANGLE(const Context *context,
 bool ValidateFramebufferParameteriMESA(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        GLenum target,
-                                       GLenum pname,
+                                       FramebufferParameter pnamePacked,
                                        GLint param)
 {
-    if (pname != GL_FRAMEBUFFER_FLIP_Y_MESA)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidPname);
-        return false;
-    }
-    return ValidateFramebufferParameteriBase(context, entryPoint, target, pname, param);
+    return ValidateFramebufferParameteriBase(context, entryPoint, target, pnamePacked, param);
 }
 
 bool ValidateGetFramebufferParameterivMESA(const Context *context,
                                            angle::EntryPoint entryPoint,
                                            GLenum target,
-                                           GLenum pname,
+                                           FramebufferParameter pnamePacked,
                                            const GLint *params)
 {
-    if (pname != GL_FRAMEBUFFER_FLIP_Y_MESA)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidPname);
-        return false;
-    }
-    return ValidateGetFramebufferParameterivBase(context, entryPoint, target, pname, params);
+    return ValidateGetFramebufferParameterivBase(context, entryPoint, target, pnamePacked, params);
 }
 
 // GL_AMD_performance_monitor

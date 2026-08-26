@@ -224,7 +224,7 @@ void main() {
     }
     else
     {
-        verifyIsInTranslation(GL_VERTEX_SHADER, "_uout1 = _uMyS(");
+        verifyIsInTranslation(GL_VERTEX_SHADER, "_uout1 = _uMyS_0(");
     }
 }
 

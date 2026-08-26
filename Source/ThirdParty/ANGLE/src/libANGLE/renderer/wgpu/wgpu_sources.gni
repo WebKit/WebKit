@@ -87,3 +87,10 @@ if (angle_use_x11) {
     "linux/x11/WindowSurfaceWgpuX11.h",
   ]
 }
+
+if (angle_use_wayland) {
+  wgpu_backend_sources += [
+    "linux/wayland/WindowSurfaceWgpuWayland.cpp",
+    "linux/wayland/WindowSurfaceWgpuWayland.h",
+  ]
+}
