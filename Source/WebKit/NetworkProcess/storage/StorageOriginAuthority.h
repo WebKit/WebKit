@@ -29,6 +29,8 @@
 #include "Untrusted.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOrigin.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
@@ -60,9 +62,27 @@ public:
     {
     }
 
+    // A bare origin has no top origin to partition by, so it stands as its own site.
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOrigin& origin) const
+    {
+        return checkUntrustedDomain(WebCore::RegistrableDomain { origin.data() });
+    }
+
+    // The URL in a cache-storage retrieval names the record being looked for, not the site the
+    // lookup is performed as.
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL&) const
+    {
+        return IPC::unvalidated(IPC::UnvalidatedReason::RequestTarget);
+    }
+
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin& origin) const
     {
-        auto domain = WebCore::RegistrableDomain { origin.topOrigin };
+        return checkUntrustedDomain(WebCore::RegistrableDomain { origin.topOrigin });
+    }
+
+private:
+    std::optional<IPC::ValidationFailure> checkUntrustedDomain(const WebCore::RegistrableDomain& domain) const
+    {
         bool allowed = m_scope == StoragePolicyScope::WebStorage
             ? m_manager->canConnectionAccessSiteForWebStorage(m_connection, domain)
             : m_manager->isSiteAllowedForConnection(m_connection->uniqueID(), domain);
@@ -71,7 +91,6 @@ public:
         return std::nullopt;
     }
 
-private:
     Ref<const NetworkStorageManager> m_manager;
     Ref<IPC::Connection> m_connection;
     StoragePolicyScope m_scope;

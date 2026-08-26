@@ -29,6 +29,7 @@
 #include "WebSWServerConnection.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 #include <wtf/URL.h>
@@ -55,6 +56,11 @@ public:
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::ClientOrigin& origin) const
     {
         return checkUntrustedTopOrigin(origin.topOrigin);
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOrigin& origin) const
+    {
+        return checkUntrustedTopOrigin(origin.data());
     }
 
 private:

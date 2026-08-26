@@ -67,6 +67,13 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
 namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
@@ -423,28 +430,25 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedRegistrationKey, WorkerFetchResult&& result)
 {
-    auto registrationKey = WTF::move(untrustedRegistrationKey).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(registrationKey, untrustedRegistrationKey, ServiceWorkerClientOriginAuthority { *this });
     SWServer::Connection::finishFetchingScriptInServer(jobDataIdentifier, registrationKey, WTF::move(result));
 }
 
 void WebSWServerConnection::didResolveRegistrationPromise(IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedKey)
 {
-    auto key = WTF::move(untrustedKey).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(key, untrustedKey, ServiceWorkerClientOriginAuthority { *this });
     SWServer::Connection::didResolveRegistrationPromise(key);
 }
 
 void WebSWServerConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<RetrieveRecordsOptions>&& untrustedOptions, MatchBackgroundFetchCallback&& callback)
 {
-    auto options = WTF::move(untrustedOptions).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK(options, untrustedOptions, ServiceWorkerClientOriginAuthority { *this });
     SWServer::Connection::matchBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(options), WTF::move(callback));
 }
 
 void WebSWServerConnection::scheduleJobInServer(IPC::Untrusted<ServiceWorkerJobData>&& untrustedJobData)
 {
-    auto jobData = WTF::move(untrustedJobData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    if (!checkTopOrigin(jobData.topOrigin))
-        return;
-
+    EXTRACT_WITH_MESSAGE_CHECK(jobData, untrustedJobData, ServiceWorkerClientOriginAuthority { *this });
     ASSERT(!jobData.scopeURL.isNull());
     if (jobData.scopeURL.isNull()) {
         rejectJobInClient(jobData.identifier().jobIdentifier, ExceptionData { ExceptionCode::InvalidStateError, "Scope URL is empty"_s });
@@ -1133,3 +1137,5 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef SWSERVERCONNECTION_RELEASE_LOG
 #undef SWSERVERCONNECTION_RELEASE_LOG_ERROR
+
+#undef EXTRACT_WITH_MESSAGE_CHECK
