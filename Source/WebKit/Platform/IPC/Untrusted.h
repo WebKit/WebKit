@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "UntrustedValueVisitor.h"
 #include <concepts>
 #include <optional>
+#include <wtf/Assertions.h>
 #include <wtf/Expected.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -120,15 +122,46 @@ template<typename T> struct ArgumentCoder<Untrusted<T>> {
     }
 };
 
+// Records that a value needs no check in this context. The reason is not used at runtime; it
+// exists so the claim is stated positively and can be audited alongside
+// Untrusted::unsafeExtractWithoutValidation.
+inline std::optional<ValidationFailure> unvalidated(UnvalidatedReason)
+{
+    return std::nullopt;
+}
+
 template<typename> struct IsStdOptional : std::false_type { };
 template<typename T> struct IsStdOptional<std::optional<T>> : std::true_type { };
 
+template<typename Validator, typename T>
+constexpr bool checksUntrustedKind(OptionSet<UntrustedValueKind> kinds, UntrustedValueKind kind)
+{
+    if (!kinds.contains(kind))
+        return true;
+    return requires (const Validator& validator, const T& value) { validator.checkUntrusted(value); };
+}
+
+// True if the validator states a disposition for every kind of untrusted value the struct can
+// actually carry. Kinds the struct cannot contain are not required, so an authority is never
+// pushed into claiming something about a value it will never be shown.
+template<typename Validator>
+constexpr bool checksUntrustedKinds(OptionSet<UntrustedValueKind> kinds)
+{
+    return checksUntrustedKind<Validator, URL>(kinds, UntrustedValueKind::URL)
+        && checksUntrustedKind<Validator, WebCore::ClientOrigin>(kinds, UntrustedValueKind::ClientOrigin)
+        && checksUntrustedKind<Validator, WebCore::RegistrableDomain>(kinds, UntrustedValueKind::RegistrableDomain)
+        && checksUntrustedKind<Validator, WebCore::SecurityOrigin>(kinds, UntrustedValueKind::SecurityOrigin)
+        && checksUntrustedKind<Validator, WebCore::SecurityOriginData>(kinds, UntrustedValueKind::SecurityOriginData)
+        && checksUntrustedKind<Validator, WebCore::Site>(kinds, UntrustedValueKind::Site);
+}
+
 // An authority states its procedure once, as a check on a single value, and this mixin derives
-// the forms Untrusted<T> needs: the value-returning validateUntrusted, and the lift over
-// optionals and sets.
+// the forms Untrusted<T> needs: the value-returning validateUntrusted, the lift over optionals
+// and sets, and the lift over any serialized struct that carries such values.
 //
 // The procedure is a check rather than a transform so that nothing has to be copied, which lets
-// an authority check a non-copyable WebCore::SecurityOrigin.
+// an authority check a non-copyable WebCore::SecurityOrigin and lets the same procedure be
+// applied to a struct's fields in place.
 template<typename Derived>
 class UntrustedValidation {
 public:
@@ -150,6 +183,14 @@ public:
             if (!value)
                 return std::nullopt;
             return checkAnyUntrusted(*value);
+        } else if constexpr (CarriesUntrustedValues<T>) {
+            static_assert(checksUntrustedKinds<Derived>(ArgumentCoder<T>::untrustedValueKinds),
+                "This validator does not say what it does with every kind of untrusted value this struct carries. "
+                "Add a checkUntrusted overload for the missing one, returning IPC::unvalidated() with a reason if "
+                "it needs no check here.");
+            StructVisitor visitor { *this };
+            ArgumentCoder<T>::visitUntrustedValues(value, visitor);
+            return visitor.failure();
         } else {
             for (auto& item : value) {
                 if (auto failure = checkAnyUntrusted(item))
@@ -158,6 +199,41 @@ public:
             return std::nullopt;
         }
     }
+
+private:
+    class StructVisitor final : public UntrustedValueVisitor {
+    public:
+        explicit StructVisitor(const UntrustedValidation& validation)
+            : m_validation(validation)
+        {
+        }
+
+        std::optional<ValidationFailure> failure() const { return m_failure; }
+
+        void visitUntrusted(const URL& value) final { check(value); }
+        void visitUntrusted(const WebCore::ClientOrigin& value) final { check(value); }
+        void visitUntrusted(const WebCore::RegistrableDomain& value) final { check(value); }
+        void visitUntrusted(const WebCore::SecurityOrigin& value) final { check(value); }
+        void visitUntrusted(const WebCore::SecurityOriginData& value) final { check(value); }
+        void visitUntrusted(const WebCore::Site& value) final { check(value); }
+
+    private:
+        template<typename T> void check(const T& value)
+        {
+            // Unreachable for a kind outside untrustedValueKinds, which checkAnyUntrusted has
+            // already required a disposition for. Asserting rather than ignoring the value keeps
+            // a generator bug from turning into a silently skipped check.
+            if constexpr (requires (const Derived& validator) { validator.checkUntrusted(value); }) {
+                if (m_failure)
+                    return;
+                m_failure = m_validation.checkAnyUntrusted(value);
+            } else
+                RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        const UntrustedValidation& m_validation;
+        std::optional<ValidationFailure> m_failure;
+    };
 };
 
 template<typename Validator, typename T>
@@ -166,6 +242,13 @@ struct IsPreordainedValidator<Validator, std::optional<T>> : IsPreordainedValida
 // HashSet's last template parameter is a non-type parameter, so it must be spelled out.
 template<typename Validator, typename T, typename HashArg, typename TraitsArg, typename TableTraitsArg, WTF::ShouldValidateKey shouldValidateKey>
 struct IsPreordainedValidator<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>> : IsPreordainedValidator<Validator, T> { };
+
+// Any authority can validate a struct that carries untrusted values, because the generated
+// visitor presents them one at a time and UntrustedValidation applies the authority's own
+// procedure to each. What confines this is UntrustedValidation itself: deriving from it is
+// only permitted in the headers listed in Scripts/webkit/untrusted_origins.py.
+template<typename Validator, typename T> requires CarriesUntrustedValues<T>
+struct IsPreordainedValidator<Validator, T> : std::is_base_of<UntrustedValidation<Validator>, Validator> { };
 
 } // namespace IPC
 
