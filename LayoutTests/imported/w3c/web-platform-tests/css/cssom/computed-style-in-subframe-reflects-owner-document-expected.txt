@@ -1,0 +1,5 @@
+
+
+PASS Hiding an ancestor of the frame is reflected in a resolved value read from inside it
+PASS Displaying an ancestor of the frame is reflected in a resolved value read from inside it
+

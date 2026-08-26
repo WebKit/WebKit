@@ -1,0 +1,5 @@
+
+
+PASS isContentEditable is true inside a display:none iframe
+PASS isContentEditable does not change as the frame is hidden and shown
+

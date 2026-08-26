@@ -185,6 +185,9 @@ bool Extractor::updateStyleIfNeededForProperty(Element& element, CSSPropertyID p
 {
     Ref document = element.document();
 
+    if (RefPtr owner = document->ownerElement(); owner && !owner->renderer())
+        protect(owner->document())->updateStyleIfNeeded();
+
     document->styleScope().flushPendingUpdate();
 
     auto hasValidStyle = [&] {

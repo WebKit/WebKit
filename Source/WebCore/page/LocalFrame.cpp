@@ -702,6 +702,7 @@ void LocalFrame::setPrinting(bool printing, FloatSize pageSize, FloatSize origin
     Frame::setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize, notifyUIProcess);
 
     RefPtr document = m_doc;
+    document->updateRenderTreeForOwnerElementBox();
     // In setting printing, we should not validate resources already cached for the document.
     // See https://bugs.webkit.org/show_bug.cgi?id=43704
     ResourceCacheValidationSuppressor validationSuppressor(document->cachedResourceLoader());

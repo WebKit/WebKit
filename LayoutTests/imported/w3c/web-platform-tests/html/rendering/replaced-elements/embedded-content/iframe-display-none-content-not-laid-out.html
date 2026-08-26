@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Content of a display:none iframe is not laid out until the frame is displayed</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#replaced-elements">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+#hidden {
+  display: none;
+  width: 300px;
+}
+#hidden iframe {
+  width: 0;
+  height: 0;
+  border: 0;
+}
+</style>
+<body>
+<div id="hidden">
+  <iframe id="frame" srcdoc="<!doctype html><body style='margin: 0'><div id='box' style='font: 20px/1 Ahem; width: 100px; height: 40px'>X</div></body>"></iframe>
+</div>
+<script>
+function boxRect() {
+  const contentDocument = document.getElementById("frame").contentDocument;
+  return contentDocument.getElementById("box").getBoundingClientRect();
+}
+
+promise_test(async () => {
+  await new Promise(resolve => addEventListener("load", resolve));
+
+  const whileHidden = boxRect();
+  assert_equals(whileHidden.width, 0, "width while the ancestor is display:none");
+  assert_equals(whileHidden.height, 0, "height while the ancestor is display:none");
+
+  document.getElementById("hidden").style.display = "block";
+
+  const whenShown = boxRect();
+  assert_equals(whenShown.width, 100, "width once the ancestor is displayed");
+  assert_equals(whenShown.height, 40, "height once the ancestor is displayed");
+}, "Subframe content inside a display:none ancestor reports no geometry until displayed");
+</script>
+</body>

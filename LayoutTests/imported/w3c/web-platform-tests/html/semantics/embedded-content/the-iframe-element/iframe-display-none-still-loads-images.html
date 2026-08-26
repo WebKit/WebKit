@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Images inside a display:none iframe still load</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/images.html#updating-the-image-data">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<!--
+  A display:none iframe's content is not rendered, but the document is still the active document of its
+  navigable, so its images load and their load events fire. Chrome and Firefox both load an image inside a
+  display:none iframe while it is still hidden, and an <img> inside a display:none element loads in every
+  engine, so declining would be observable to script without the frame ever being shown.
+-->
+<div id="hidden" style="display: none"><iframe id="frame"></iframe></div>
+<div id="hiddenThenShown" style="display: none"><iframe id="shownFrame"></iframe></div>
+<div><iframe id="controlFrame"></iframe></div>
+
+<script>
+const imageURL = "/images/green.png";
+
+function loadFrame(frame, markup) {
+    return new Promise(resolve => {
+        frame.addEventListener("load", resolve, { once: true });
+        frame.srcdoc = markup;
+    });
+}
+
+// Creates an img and sets its src with nothing in between, so that the src is set in whatever state the
+// document is in right now. Resolves however the load turns out, so the assertions below report the state
+// rather than the test timing out.
+function appendImageAndWait(test, contentDocument) {
+    const image = contentDocument.createElement("img");
+    contentDocument.body.appendChild(image);
+    image.src = imageURL;
+
+    if (image.complete)
+        return Promise.resolve(image);
+
+    return new Promise(resolve => {
+        image.addEventListener("load", () => resolve(image), { once: true });
+        image.addEventListener("error", () => resolve(image), { once: true });
+        test.step_timeout(() => resolve(image), 2000);
+    });
+}
+
+promise_test(async () => {
+    const frame = document.getElementById("frame");
+    await loadFrame(frame, "<img id='image' src='" + imageURL + "'>");
+
+    const image = frame.contentDocument.getElementById("image");
+    if (!image.complete)
+        await new Promise((resolve, reject) => {
+            image.addEventListener("load", resolve, { once: true });
+            image.addEventListener("error", () => reject(new Error("image failed to load")), { once: true });
+        });
+
+    assert_true(image.complete, "image should have loaded while the frame is display:none");
+    assert_greater_than(image.naturalWidth, 0, "naturalWidth");
+}, "An image in a display:none iframe loads and reports its natural size");
+
+// Control for the test below: the same image, created and given a src the same way, in a frame that was
+// never hidden. If this one fails then the resource or the technique is at fault, not the display change.
+promise_test(async t => {
+    const frame = document.getElementById("controlFrame");
+    await loadFrame(frame, "<body></body>");
+
+    const image = await appendImageAndWait(t, frame.contentDocument);
+
+    assert_true(image.complete, "image should have loaded");
+    assert_greater_than(image.naturalWidth, 0, "naturalWidth");
+}, "An image set in a rendered iframe loads");
+
+promise_test(async t => {
+    const wrapper = document.getElementById("hiddenThenShown");
+    const frame = document.getElementById("shownFrame");
+    await loadFrame(frame, "<body></body>");
+
+    // No layout or style read between showing the frame and setting the src, so the owner document still
+    // has style pending for the iframe at the moment the image data is updated.
+    wrapper.style.display = "block";
+    const image = await appendImageAndWait(t, frame.contentDocument);
+
+    assert_true(image.complete, "image should have loaded");
+    assert_greater_than(image.naturalWidth, 0, "naturalWidth");
+}, "An image set immediately after a display:none iframe is shown loads");
+</script>
+</body>

@@ -1,0 +1,4 @@
+
+PASS Subframe content is not laid out when the frame's own display animates to none
+PASS Subframe content is not laid out when an ancestor's display animates to none
+

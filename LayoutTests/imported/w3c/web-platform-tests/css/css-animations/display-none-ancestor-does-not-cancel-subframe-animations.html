@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Changing an ancestor's display does not restart animations inside a subframe</title>
+<link rel="help" href="https://drafts.csswg.org/css-animations/#animations">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.wrapper {
+  display: block;
+  width: 320px;
+}
+iframe {
+  width: 300px;
+  height: 70px;
+  border: 0;
+}
+</style>
+<body>
+<!--
+  A subframe's content lives in its own document, so its animations are not applied to a descendant of
+  anything in this document. Changing the display of an ancestor here must not terminate them, whether
+  the ancestor merely changes display type or is hidden outright. Compare
+  display-none-prevents-starting-in-subtree.html, which covers the same rule within one document.
+-->
+<div class="wrapper" id="displayTypeWrapper">
+  <iframe id="displayTypeFrame" srcdoc="
+    <style>
+      @keyframes slide {
+        from { transform: translateX(0px) }
+        to { transform: translateX(240px) }
+      }
+      #animated {
+        width: 50px;
+        height: 50px;
+        background: green;
+        animation: slide 10s linear infinite;
+      }
+      body { margin: 0 }
+    </style>
+    <div id='animated'></div>
+  "></iframe>
+</div>
+
+<div class="wrapper" id="hiddenWrapper">
+  <iframe id="hiddenFrame" srcdoc="
+    <style>
+      @keyframes slide {
+        from { transform: translateX(0px) }
+        to { transform: translateX(240px) }
+      }
+      #animated {
+        width: 50px;
+        height: 50px;
+        background: green;
+        animation: slide 10s linear infinite;
+      }
+      body { margin: 0 }
+    </style>
+    <div id='animated'></div>
+  "></iframe>
+</div>
+
+<script>
+const loaded = new Promise(resolve => addEventListener("load", resolve));
+
+// Seek far enough into the animation that a restart is unmistakable.
+const seekTime = 500;
+
+function seekAnimationIn(frameId) {
+  const contentDocument = document.getElementById(frameId).contentDocument;
+  const animations = contentDocument.getAnimations();
+  assert_equals(animations.length, 1, "subframe should have exactly one animation");
+  animations[0].currentTime = seekTime;
+  return animations[0];
+}
+
+// Reading a layout property flushes style and the render tree update, which is where a subframe's
+// render tree would be torn down.
+function flushRenderTreeUpdate() {
+  document.body.offsetHeight;
+}
+
+promise_test(async () => {
+  await loaded;
+  const animation = seekAnimationIn("displayTypeFrame");
+
+  document.getElementById("displayTypeWrapper").style.display = "inline-block";
+  flushRenderTreeUpdate();
+
+  assert_not_equals(animation.playState, "idle", "animation must not be canceled");
+  assert_greater_than_equal(animation.currentTime, seekTime, "animation must not restart");
+}, "Changing an ancestor's display type does not restart animations inside a subframe");
+
+promise_test(async () => {
+  await loaded;
+  const animation = seekAnimationIn("hiddenFrame");
+
+  const wrapper = document.getElementById("hiddenWrapper");
+  wrapper.style.display = "none";
+  flushRenderTreeUpdate();
+  wrapper.style.display = "block";
+  flushRenderTreeUpdate();
+
+  assert_not_equals(animation.playState, "idle", "animation must not be canceled");
+  assert_greater_than_equal(animation.currentTime, seekTime, "animation must not restart");
+}, "Hiding and showing an ancestor does not restart animations inside a subframe");
+</script>
+</body>

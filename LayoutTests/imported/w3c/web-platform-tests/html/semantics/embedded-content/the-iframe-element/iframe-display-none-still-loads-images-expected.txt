@@ -1,0 +1,7 @@
+
+
+
+PASS An image in a display:none iframe loads and reports its natural size
+PASS An image set in a rendered iframe loads
+PASS An image set immediately after a display:none iframe is shown loads
+

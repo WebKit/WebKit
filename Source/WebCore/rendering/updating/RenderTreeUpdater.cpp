@@ -741,6 +741,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
     tearDownRenderers(root, TeardownType::Full);
 }
 
+void RenderTreeUpdater::tearDownRenderersForDisplayNoneFrame(Element& root)
+{
+    tearDownRenderers(root, TeardownType::RendererUpdate);
+}
+
 void RenderTreeUpdater::tearDownRenderersForShadowRootInsertion(Element& host)
 {
     ASSERT(!host.shadowRoot());

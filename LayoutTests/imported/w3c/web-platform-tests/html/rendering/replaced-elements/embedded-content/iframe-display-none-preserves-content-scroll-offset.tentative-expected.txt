@@ -1,0 +1,6 @@
+
+
+
+PASS Hiding and showing an ancestor preserves a subframe's scroll offset
+PASS Reading a subframe's scroll offset while an ancestor is hidden does not reset it
+

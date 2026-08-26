@@ -54,6 +54,7 @@ public:
     void commit(std::unique_ptr<Style::Update>);
 
     static void tearDownRenderers(Element&);
+    static void tearDownRenderersForDisplayNoneFrame(Element&);
     static void tearDownRenderersForShadowRootInsertion(Element&);
     static void tearDownRenderersAfterSlotChange(Element& host);
     static void tearDownRenderer(Text&);

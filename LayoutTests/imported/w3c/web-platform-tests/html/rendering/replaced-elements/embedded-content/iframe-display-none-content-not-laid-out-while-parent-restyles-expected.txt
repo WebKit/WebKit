@@ -1,0 +1,6 @@
+no relation to any of the frames
+
+PASS A display:none iframe loaded with the parent settled does not lay out its contents
+PASS srcdoc set while the parent has an unrelated pending restyle does not lay out the contents
+PASS srcdoc set while the parent is kept pending throughout the load does not lay out the contents
+
