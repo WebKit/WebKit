@@ -278,10 +278,22 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
     ASSERT(box.establishesFormattingContext() || box.isBlockLevelBox());
 
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
+
+    auto isOrthogonalBlockLevelBox = [&] {
+        if (!box.isBlockLevelBox())
+            return false;
+        CheckedPtr containingBlock = renderer->containingBlock();
+        return containingBlock && containingBlock->writingMode().isOrthogonal(renderer->writingMode());
+    };
+
     switch (logicalWidthType) {
     case LogicalWidthType::MaxContentContribution:
+        if (isOrthogonalBlockLevelBox())
+            return renderer->computeIntrinsicLogicalHeight();
         return renderer->maxContentLogicalWidthContribution();
     case LogicalWidthType::MinContentContribution:
+        if (isOrthogonalBlockLevelBox())
+            return renderer->computeIntrinsicLogicalHeight();
         return renderer->minContentLogicalWidthContribution();
     case LogicalWidthType::MaxContent:
     case LogicalWidthType::MinContent: {
