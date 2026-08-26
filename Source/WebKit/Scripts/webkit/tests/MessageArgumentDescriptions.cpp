@@ -638,6 +638,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::WebTransportSessionIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,
         "WebKit::WebUndoStepID"_s,
+        "WebKit::XRDeviceIdentifier"_s,
     };
 }
 

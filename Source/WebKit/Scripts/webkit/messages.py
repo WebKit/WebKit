@@ -572,6 +572,7 @@ def serialized_identifiers():
         'WebKit::WebTransportSessionIdentifier',
         'WebKit::WebURLSchemeHandlerIdentifier',
         'WebKit::WebUndoStepID',
+        'WebKit::XRDeviceIdentifier',
     ]
 
 
