@@ -948,6 +948,9 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -ivfsoverlay")
     list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc ${_vfs_overlay}")
 
+    # Importer flags contributed by the Platform*.cmake file (included above).
+    list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS ${WebKit_PLATFORM_SWIFT_CLANG_FLAG_PAIRS})
+
     foreach (_pair IN LISTS WebKit_SWIFT_CLANG_FLAG_PAIRS)
         target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${_pair}>")
     endforeach ()

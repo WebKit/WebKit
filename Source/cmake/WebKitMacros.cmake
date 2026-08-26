@@ -1134,6 +1134,10 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
     list(APPEND _clang_cmd ${_cxx_defs})
     # -fsanitize=* drives ASAN_ENABLED etc; keep this preprocess in sync with C++.
     list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
+    if (WIN32 AND COMPILER_IS_CLANG_CL)
+        # See explanation in generate-platform-args
+        list(APPEND _clang_cmd -include version)
+    endif ()
     list(APPEND _clang_cmd "${_empty_input}")
 
     set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
@@ -1144,6 +1148,7 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
             --cmake
             --output "${_resp_path}"
             --cmakeconfig "${CMAKE_BINARY_DIR}/cmakeconfig.h"
+            ${_stl_feature_macros_arg}
             --
             ${_clang_cmd}
         DEPFILE "${_depfile}"
