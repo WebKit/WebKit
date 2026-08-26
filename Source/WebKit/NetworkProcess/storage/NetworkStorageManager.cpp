@@ -50,6 +50,7 @@
 #include "StorageAreaBase.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageAreaRegistry.h"
+#include "StorageOriginAuthority.h"
 #include "TimeBasedEvictionMode.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
@@ -90,6 +91,22 @@
         return completion; \
     } \
 } while (0)
+
+#define EXTRACT_WITH_STORAGE_MESSAGE_CHECK(name, untrusted, connection, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    STORAGE_MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated), connection); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
+
+#define EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(name, untrusted, connection, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    STORAGE_MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(name##Validated), connection, completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -870,10 +887,10 @@ bool NetworkStorageManager::persistedInternal(const WebCore::ClientOrigin& origi
     return FileSystem::fileExists(persistedFile);
 }
 
-void NetworkStorageManager::persisted(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkStorageManager::persisted(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(false));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(false), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     completionHandler(persistedInternal(origin));
 }
@@ -926,10 +943,10 @@ bool NetworkStorageManager::persistOrigin(const WebCore::ClientOrigin& origin)
     return !!FileSystem::overwriteEntireFile(persistedFilePath(origin), std::span<uint8_t> { });
 }
 
-void NetworkStorageManager::persist(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkStorageManager::persist(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(false));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(false), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     if (origin.topOrigin != origin.clientOrigin)
         return completionHandler(false);
@@ -947,10 +964,10 @@ void NetworkStorageManager::persist(IPC::Connection& connection, const WebCore::
     });
 }
 
-void NetworkStorageManager::estimate(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)
+void NetworkStorageManager::estimate(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(std::nullopt), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     completionHandler(originStorageManager(origin)->estimate());
 }
@@ -1075,10 +1092,10 @@ void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, Quo
     });
 }
 
-void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, WebCore::ClientOrigin&& origin, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     Ref fileSystemStorageManager = originStorageManager(origin, ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime::Yes)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
     auto result = fileSystemStorageManager->getDirectory(connection.uniqueID());
@@ -1321,28 +1338,28 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
     completionHandler(std::optional { result.value() });
 }
 
-void NetworkStorageManager::addGlobalIdentifierReference(IPC::Connection& connection, WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
+void NetworkStorageManager::addGlobalIdentifierReference(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
     fileSystemStorageManager->addGlobalIdentifierReference(globalIdentifier);
 }
 
-void NetworkStorageManager::removeGlobalIdentifierReferences(IPC::Connection& connection, WebCore::ClientOrigin&& origin, Vector<WebCore::FileSystemHandleGlobalIdentifier>&& globalIdentifiers)
+void NetworkStorageManager::removeGlobalIdentifierReferences(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, Vector<WebCore::FileSystemHandleGlobalIdentifier>&& globalIdentifiers)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
     fileSystemStorageManager->removeGlobalIdentifierReferences(globalIdentifiers.span());
 }
 
-void NetworkStorageManager::resolveGlobalIdentifier(IPC::Connection& connection, WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, CompletionHandler<void(std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::resolveGlobalIdentifier(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, CompletionHandler<void(std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
     auto result = fileSystemStorageManager->resolveGlobalIdentifier(connection.uniqueID(), globalIdentifier);
@@ -1795,8 +1812,10 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
     });
 }
 
-void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&& origin)
+void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin)
 {
+    // A testing hook that only clears a quota bookkeeping flag.
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
     assertIsCurrent(workQueue());
 
     if (CheckedPtr manager = m_originStorageManagers.get(origin))
@@ -1934,10 +1953,10 @@ bool NetworkStorageManager::canConnectionAccessSiteForWebStorage(IPC::Connection
     return isSiteAllowedForConnection(connection.uniqueID(), site);
 }
 
-void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
+void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessSiteForWebStorage(connection, WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()), StorageOriginAuthority { *this, connection, StoragePolicyScope::WebStorage });
 
     MESSAGE_CHECK_COMPLETION(isStorageTypeEnabled(connection, type), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
 
@@ -1970,15 +1989,15 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
     return completionHandler(*resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 }
 
-void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
+void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
-    connectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, origin, WTF::move(completionHandler));
+    connectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, WTF::move(untrustedOrigin), WTF::move(completionHandler));
 }
 
-void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin)
+void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin)
 {
     assertIsCurrent(workQueue());
-    STORAGE_MESSAGE_CHECK(canConnectionAccessSiteForWebStorage(connection, WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::WebStorage });
 
     auto iterator = m_originStorageManagers.find(origin);
     if (iterator == m_originStorageManagers.end())
@@ -2394,9 +2413,9 @@ void NetworkStorageManager::iterateCursor(IPC::Connection& connection, const Web
         transaction->iterateCursor(requestData, cursorData);
 }
 
-void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::ClientOrigin& origin)
+void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin)
 {
-    STORAGE_MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
     MESSAGE_CHECK(requestIdentifier.connectionIdentifier(), connection);
 
     RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestIdentifier, *this);
@@ -2407,9 +2426,9 @@ void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& conn
     connectionToClient->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(result));
 }
 
-void NetworkStorageManager::cacheStorageOpenCache(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void NetworkStorageManager::cacheStorageOpenCache(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     protect(originStorageManager(origin, ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime::Yes)->cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()))->openCache(cacheName, WTF::move(callback));
 }
@@ -2430,9 +2449,9 @@ void NetworkStorageManager::cacheStorageRemoveCache(IPC::Connection& connection,
     cacheStorageManager->removeCache(cacheIdentifier, WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageAllCaches(IPC::Connection& connection, const WebCore::ClientOrigin& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
+void NetworkStorageManager::cacheStorageAllCaches(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
 {
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     protect(originStorageManager(origin)->cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()))->allCaches(updateCounter, WTF::move(callback));
 }
@@ -2469,16 +2488,16 @@ void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection,
     cacheStorageManager->dereference(connection.uniqueID(), cacheIdentifier);
 }
 
-void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
+void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin)
 {
-    STORAGE_MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     protect(originStorageManager(origin)->cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()))->lockStorage(connection.uniqueID());
 }
 
-void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
+void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin)
 {
-    STORAGE_MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK(origin, untrustedOrigin, connection, StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     if (RefPtr cacheStorageManager = originStorageManager(origin)->existingCacheStorageManager())
         cacheStorageManager->unlockStorage(connection.uniqueID());
@@ -2523,10 +2542,10 @@ void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, 
     cache->putRecords(WTF::move(records), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageClearMemoryRepresentation(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void()>&& callback)
+void NetworkStorageManager::cacheStorageClearMemoryRepresentation(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, CompletionHandler<void()>&& callback)
 {
     assertIsCurrent(workQueue());
-    STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, callback());
+    EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin, connection, callback(), StorageOriginAuthority { *this, connection, StoragePolicyScope::Strict });
 
     auto iterator = m_originStorageManagers.find(origin);
     if (iterator != m_originStorageManagers.end())
@@ -2897,3 +2916,5 @@ void NetworkStorageManager::queryCacheStorage(WebCore::ClientOrigin&& origin, We
 
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
+#undef EXTRACT_WITH_STORAGE_MESSAGE_CHECK
+#undef EXTRACT_WITH_STORAGE_MESSAGE_CHECK_COMPLETION
