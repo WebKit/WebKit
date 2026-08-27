@@ -111,13 +111,14 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     auto stepUpKeyIdentifier = isHorizontal ? "Up"_s : "Right"_s;
     auto stepDownKeyIdentifier = isHorizontal ? "Down"_s : "Left"_s;
 
-    if (key == previousKeyIdentifier && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
+    RefPtr fieldOwner = m_fieldOwner;
+    if (key == previousKeyIdentifier && fieldOwner && fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
     if ((key == nextKeyIdentifier || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
-        && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
+        && fieldOwner && fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
@@ -147,19 +148,20 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
 
 bool DateTimeFieldElement::isFieldOwnerDisabled() const
 {
-    return m_fieldOwner && m_fieldOwner->isFieldOwnerDisabled();
+    RefPtr fieldOwner = m_fieldOwner;
+    return fieldOwner && fieldOwner->isFieldOwnerDisabled();
 }
 
 bool DateTimeFieldElement::isFieldOwnerReadOnly() const
 {
-    return m_fieldOwner && m_fieldOwner->isFieldOwnerReadOnly();
+    RefPtr fieldOwner = m_fieldOwner;
+    return fieldOwner && fieldOwner->isFieldOwnerReadOnly();
 }
 
 bool DateTimeFieldElement::isFieldOwnerHorizontal() const
 {
-    if (m_fieldOwner)
-        return m_fieldOwner->isFieldOwnerHorizontal();
-    return true;
+    RefPtr fieldOwner = m_fieldOwner;
+    return !fieldOwner || fieldOwner->isFieldOwnerHorizontal();
 }
 
 bool DateTimeFieldElement::isFocusable() const
@@ -171,8 +173,8 @@ bool DateTimeFieldElement::isFocusable() const
 
 void DateTimeFieldElement::handleBlurEvent(Event& event)
 {
-    if (m_fieldOwner)
-        m_fieldOwner->didBlurFromField(event);
+    if (RefPtr fieldOwner = m_fieldOwner)
+        fieldOwner->didBlurFromField(event);
 }
 
 Locale& DateTimeFieldElement::localeForOwner() const
@@ -182,7 +184,8 @@ Locale& DateTimeFieldElement::localeForOwner() const
 
 AtomString DateTimeFieldElement::localeIdentifier() const
 {
-    return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom();
+    RefPtr fieldOwner = m_fieldOwner;
+    return fieldOwner ? fieldOwner->localeIdentifier() : nullAtom();
 }
 
 String DateTimeFieldElement::visibleValue() const
@@ -208,8 +211,10 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
         invalidateStyle();
     }
 
-    if (eventBehavior == DispatchInputAndChangeEvents && m_fieldOwner)
-        m_fieldOwner->fieldValueChanged();
+    if (eventBehavior == DispatchInputAndChangeEvents) {
+        if (RefPtr fieldOwner = m_fieldOwner)
+            fieldOwner->fieldValueChanged();
+    }
 }
 
 bool DateTimeFieldElement::supportsFocus() const
@@ -219,13 +224,14 @@ bool DateTimeFieldElement::supportsFocus() const
 
 bool DateTimeFieldElement::transferredFocusToPicker() const
 {
-    return m_fieldOwner && m_fieldOwner->didFieldOwnerTransferFocusToPicker();
+    RefPtr fieldOwner = m_fieldOwner;
+    return fieldOwner && fieldOwner->didFieldOwnerTransferFocusToPicker();
 }
 
 void DateTimeFieldElement::didSuppressBlurDueToPickerFocusTransfer()
 {
-    if (m_fieldOwner)
-        m_fieldOwner->didSuppressBlurDueToPickerFocusTransfer();
+    if (RefPtr fieldOwner = m_fieldOwner)
+        fieldOwner->didSuppressBlurDueToPickerFocusTransfer();
 }
 
 } // namespace WebCore

@@ -66,6 +66,10 @@ public:
     static Ref<DateTimeEditElement> create(Document&, DateTimeEditElementEditControlOwner&);
 
     virtual ~DateTimeEditElement();
+
+    void ref() const final { HTMLDivElement::ref(); }
+    void deref() const final { HTMLDivElement::deref(); }
+
     void addField(Ref<DateTimeFieldElement>);
     Element& NODELETE fieldsWrapperElement() const;
     void focusByOwner();
