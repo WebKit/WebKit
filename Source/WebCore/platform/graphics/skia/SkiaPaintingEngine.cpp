@@ -73,7 +73,7 @@ static bool canPerformAcceleratedRendering()
 SkiaPaintingEngine::SkiaPaintingEngine(sk_sp<GrContextThreadSafeProxy>&& threadSafeGrContext)
     : m_threadSafeGrContext(WTF::move(threadSafeGrContext))
 {
-    if (canPerformAcceleratedRendering() && !canUseDDL()) {
+    if (canPerformAcceleratedRendering() && !m_threadSafeGrContext) {
         if (auto numberOfGPUThreads = numberOfGPUPaintingThreads())
             m_paintingWorkerPool = WorkerPool::create("SkiaGPUWorker"_s, numberOfGPUThreads);
 
@@ -113,7 +113,7 @@ void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, Gr
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode renderingMode, const IntSize& size, bool contentsOpaque) const
 {
     if (renderingMode == RenderingMode::Accelerated) {
-        if (canUseDDL())
+        if (m_threadSafeGrContext)
             return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
 
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
@@ -148,7 +148,7 @@ RefPtr<SkiaGPUAtlas> SkiaPaintingEngine::createAtlas(const SkiaImageAtlasLayout&
         isDMABufBackedTexture = true;
 #endif
 
-    auto atlas = SkiaGPUAtlas::create(layout, WTF::move(texture), Ref { uploadCondition }, canUseDDL() ? m_threadSafeGrContext : nullptr);
+    auto atlas = SkiaGPUAtlas::create(layout, WTF::move(texture), Ref { uploadCondition }, m_threadSafeGrContext);
     if (!atlas)
         return nullptr;
 
@@ -192,7 +192,7 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
     SkRTreeFactory rtreeFactory;
     auto* recordingCanvas = pictureRecorder.beginRecording(recordRect.width(), recordRect.height(), dirtyTilesCount > 1 ? &rtreeFactory : nullptr);
     GraphicsContextSkia recordingContext(*recordingCanvas, renderingMode, RenderingPurpose::LayerBacking);
-    recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Tile, canUseDDL() ? m_threadSafeGrContext : nullptr);
+    recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Tile, m_threadSafeGrContext);
     paintIntoGraphicsContext(layer, recordingContext, recordRect, contentsOpaque, contentsScale);
     auto recordingData = recordingContext.endRecording();
 
@@ -249,15 +249,12 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
     Ref platformLayer = layer.coordinatedPlatformLayer();
     platformLayer->willPaintTile();
 
-    sk_sp<GrContextThreadSafeProxy> threadSafeGrContext;
-    if (canUseDDL())
-        threadSafeGrContext = m_threadSafeGrContext;
     auto renderingMode = recording->renderingMode();
-    auto bufferSize = renderingMode == RenderingMode::Accelerated && threadSafeGrContext ? tileRect.size() : dirtyRect.size();
+    auto bufferSize = renderingMode == RenderingMode::Accelerated && m_threadSafeGrContext ? tileRect.size() : dirtyRect.size();
     auto buffer = createBuffer(renderingMode, bufferSize, recording->contentsOpaque());
     buffer->beginPainting();
 
-    m_paintingWorkerPool->postTask([platformLayer = WTF::move(platformLayer), buffer = Ref { buffer }, tileRect, dirtyRect, recording = WTF::move(recording), threadSafeGrContext = WTF::move(threadSafeGrContext)]() mutable {
+    m_paintingWorkerPool->postTask([platformLayer = WTF::move(platformLayer), buffer = Ref { buffer }, tileRect, dirtyRect, recording = WTF::move(recording), threadSafeGrContext = m_threadSafeGrContext]() mutable {
         if (auto* canvas = buffer->canvas()) {
             auto replayPicture = [](const sk_sp<SkPicture>& picture, SkCanvas* canvas, const IntRect& recordRect, const IntRect& tileRect, const IntRect& dirtyRect, bool isDDLBuffer) {
                 canvas->save();
@@ -390,27 +387,6 @@ bool SkiaPaintingEngine::shouldUseVivanteSuperTiledTileTextures()
     });
 
     return shouldUseVivanteSuperTiledTextures;
-}
-
-bool SkiaPaintingEngine::isDDLEnabled()
-{
-    static std::once_flag onceFlag;
-    static bool isDDLEnabled = true;
-
-    std::call_once(onceFlag, [] {
-        if (const char* envString = getenv("WEBKIT_SKIA_ENABLE_DDL")) {
-            auto envStringView = StringView::fromLatin1(envString);
-            if (envStringView == "0"_s)
-                isDDLEnabled = false;
-        }
-    });
-
-    return isDDLEnabled;
-}
-
-bool SkiaPaintingEngine::canUseDDL() const
-{
-    return m_threadSafeGrContext && isDDLEnabled();
 }
 
 } // namespace WebCore

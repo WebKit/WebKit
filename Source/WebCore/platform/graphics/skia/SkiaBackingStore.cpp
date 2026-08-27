@@ -252,20 +252,6 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
                 m_surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kYes, characterization.imageInfo(), characterization.sampleCount(), characterization.origin(), &characterization.surfaceProps());
 
             skgpu::ganesh::DrawDDL(m_surface.get(), displayList);
-        } else if (auto texture = acceleratedBuffer.texture()) {
-            ASSERT(!m_surface);
-
-            if (dirtyRect.size() == tileRect.size()) {
-                // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
-                if (m_texture)
-                    m_texture->swapTexture(*texture);
-                else
-                    m_texture = WTF::move(texture);
-                m_cachedImage = nullptr;
-            } else {
-                ensureTexture(tileRect.size(), buffer);
-                m_texture->copyFromExternalTexture(texture->id(), dirtyRect, { });
-            }
         }
     } else {
         auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
