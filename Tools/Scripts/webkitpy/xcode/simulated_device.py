@@ -73,7 +73,7 @@ class SimulatedDeviceManager(object):
     SIMULATOR_BOOT_TIMEOUT = 600
 
     MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 2 * (1024 ** 3)  # 2GB a simulator.
-    CPU_ESTIMATE_PER_SIMULATOR_INSTANCE = 2
+    CPU_ESTIMATE_PER_SIMULATOR_INSTANCE = 1
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
 
     # Testing on iMac Pros has indicated that more than 12 simulators, even if we seem to have enough resources for them,
