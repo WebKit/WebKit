@@ -4773,7 +4773,6 @@ imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-flex-008.html
 imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-flex-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-scroll-vw-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-values/attr-pseudo-element-placeholder.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-import-cross-origin-anonymous.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-import-cross-origin-use-credentials.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-svg-filter-cross-origin-anonymous.sub.html [ ImageOnlyFailure ]
