@@ -51,7 +51,7 @@ void SecurityFlagsController::initialize()
 SecurityFlagsController::SecurityFlagsController()
     : m_persistentlyDisabledNames(platformPersistentlyDisabledFlagNames())
 {
-    SecurityFlags::update(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
+    SecurityFlags::Storage::update(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
 
     for (auto& name : m_persistentlyDisabledNames) {
         UNUSED_VARIABLE(name);
@@ -59,9 +59,9 @@ SecurityFlagsController::SecurityFlagsController()
     }
 }
 
-SecurityFlags SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
+SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
 {
-    SecurityFlags flags;
+    SecurityFlags::Storage flags;
     size_t unknownNameCount = 0;
 
     for (auto& name : names) {
@@ -91,9 +91,9 @@ void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<Strin
     apply(flagsWithNamesDisabled(names, IncludePersistentNames::No));
 }
 
-void SecurityFlagsController::apply(SecurityFlags&& newFlags)
+void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
 {
-    if (SecurityFlags::update(WTF::move(newFlags)))
+    if (SecurityFlags::Storage::update(WTF::move(newFlags)))
         propagateToChildProcesses();
 }
 

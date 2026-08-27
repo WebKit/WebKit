@@ -31,31 +31,24 @@
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
-namespace WebKit {
+namespace WebKit::SecurityFlags {
 
-SecurityFlags SecurityFlags::s_flagsForProcess;
+Storage Storage::s_forProcess;
 
-const SecurityFlags& securityFlags()
-{
-    ASSERT(!isInWebProcess());
-
-    return SecurityFlags::s_flagsForProcess;
-}
-
-bool SecurityFlags::update(SecurityFlags&& flags)
+bool Storage::update(Storage&& flags)
 {
     // Release-assert on the write side: a write there would disable flags, where a read answers the secure default.
     RELEASE_ASSERT(!isInWebProcess());
     ASSERT(RunLoop::isMain());
 
-    if (flags == s_flagsForProcess)
+    if (flags == s_forProcess)
         return false;
 
-    s_flagsForProcess.replaceWith(flags);
+    s_forProcess.replaceWith(flags);
     return true;
 }
 
-bool SecurityFlags::disableFlagNamed(StringView name)
+bool Storage::disableFlagNamed(StringView name)
 {
 <% @securityFlags.each do |flag| -%>
 <%- if flag.condition -%>
@@ -72,7 +65,7 @@ bool SecurityFlags::disableFlagNamed(StringView name)
     return false;
 }
 
-std::optional<bool> SecurityFlags::isFlagEnabledNamedForTesting(StringView name) const
+std::optional<bool> Storage::isFlagEnabledNamedForTesting(StringView name) const
 {
 <% @securityFlags.each do |flag| -%>
 <%- if flag.condition -%>
@@ -87,7 +80,7 @@ std::optional<bool> SecurityFlags::isFlagEnabledNamedForTesting(StringView name)
     return std::nullopt;
 }
 
-void SecurityFlags::replaceWith(const SecurityFlags& other)
+void Storage::replaceWith(const Storage& other)
 {
     for (size_t index = 0; index < flagCount; ++index) {
         if (other.m_disabledFlags.get(index))
@@ -97,4 +90,4 @@ void SecurityFlags::replaceWith(const SecurityFlags& other)
     }
 }
 
-} // namespace WebKit
+} // namespace WebKit::SecurityFlags
