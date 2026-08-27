@@ -25,14 +25,40 @@
 
 #pragma once
 
+#include <WebCore/QuirkBehavior.h>
 #include <WebCore/QuirkNames.h>
 #include <initializer_list>
+#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct QuirksData {
-    QuirkBitSet activeQuirks;
+    Vector<QuirkBehavior> behaviors;
     QuirkSiteBitSet sites;
+
+    template<typename BehaviorType>
+    void forEachBehavior(NOESCAPE const Invocable<void(const BehaviorType&)> auto& callback) const
+    {
+        for (auto& behavior : behaviors) {
+            if (auto* payload = std::get_if<BehaviorType>(&behavior))
+                callback(*payload);
+        }
+    }
+
+    String scriptsToEvaluateBeforeRunningScript(const URL& scriptURL) const
+    {
+        StringBuilder builder;
+        forEachBehavior<ParameterizedQuirk::EvaluateScriptBeforeRunningScript>([&](auto& behavior) {
+            if (!behavior.appliesTo(scriptURL))
+                return;
+            if (!builder.isEmpty())
+                builder.append("\n;\n"_s);
+            builder.append(behavior.script);
+        });
+        return builder.toString();
+    }
 
     inline bool isSite(QuirkSite candidate) const
     {
@@ -44,9 +70,12 @@ struct QuirksData {
         sites.set(static_cast<size_t>(site));
     }
 
-    inline bool quirkIsEnabled(SiteSpecificQuirk quirk) const
+    inline bool quirkIsEnabled(SiteSpecificQuirk candidate) const
     {
-        return activeQuirks.get(static_cast<size_t>(quirk));
+        return behaviors.containsIf([&](auto& behavior) {
+            auto* quirk = std::get_if<SiteSpecificQuirk>(&behavior);
+            return quirk && *quirk == candidate;
+        });
     }
 
     inline void enableQuirks()
@@ -54,27 +83,41 @@ struct QuirksData {
         // No-op to support macro expansions
     }
 
-    constexpr void enableQuirks(std::initializer_list<SiteSpecificQuirk> quirks)
+    void enableQuirks(std::initializer_list<SiteSpecificQuirk> quirks)
     {
         for (auto quirk : quirks)
-            activeQuirks.set(static_cast<size_t>(quirk));
+            enableQuirk(quirk);
     }
 
     inline void enableQuirk(SiteSpecificQuirk quirk)
     {
-        return activeQuirks.set(static_cast<size_t>(quirk));
+        if (!quirkIsEnabled(quirk))
+            behaviors.append(quirk);
     }
 
     inline void setQuirkState(SiteSpecificQuirk quirk, bool state)
     {
-        return activeQuirks.set(static_cast<size_t>(quirk), state);
+        if (state) {
+            enableQuirk(quirk);
+            return;
+        }
+
+        behaviors.removeAllMatching([&](auto& behavior) {
+            auto* candidate = std::get_if<SiteSpecificQuirk>(&behavior);
+            return candidate && *candidate == quirk;
+        });
     }
 
-    constexpr void merge(const QuirksData& other)
+    void merge(QuirksData&& other)
     {
-        auto& [otherActiveQuirks, otherSites] = other;
-        activeQuirks.merge(otherActiveQuirks);
-        sites.merge(otherSites);
+        sites.merge(other.sites);
+
+        for (auto& behavior : other.behaviors) {
+            if (auto* quirk = std::get_if<SiteSpecificQuirk>(&behavior))
+                enableQuirk(*quirk);
+            else
+                behaviors.append(WTF::move(behavior));
+        }
     }
 };
 

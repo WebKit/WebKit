@@ -25,32 +25,51 @@
 
 #pragma once
 
-#include <WebCore/QuirkBehavior.h>
 #include <WebCore/QuirkMatch.h>
 #include <WebCore/QuirkNames.h>
-#include <WebCore/QuirksData.h>
+#include <concepts>
 #include <optional>
-#include <wtf/Vector.h>
+#include <wtf/Assertions.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/Variant.h>
+#include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-enum class IsTopDocument : bool { No, Yes };
+namespace ParameterizedQuirk {
 
-struct Quirk {
-    std::optional<QuirkMatch> topMatch { };
-    std::optional<QuirkMatch> documentMatch { };
-    Vector<QuirkBehavior> behaviors { };
-    std::optional<QuirkSite> site { };
+struct EvaluateScriptBeforeRunningScript {
+    static constexpr auto name = "EvaluateScriptBeforeRunningScript"_s;
 
-    constexpr bool namesAURL() const { return topMatch || documentMatch; }
+    ASCIILiteral script;
+    std::optional<QuirkMatch> gate;
 
-    bool matches(const QuirkMatchContext& page, const std::optional<QuirkMatchContext>& embeddedDocument) const;
+    bool appliesTo(const URL& scriptURL) const { return !gate || gate->matches(scriptURL); }
 
-    void apply(QuirksData&) const;
+    static EvaluateScriptBeforeRunningScript create(ASCIILiteral script, std::optional<QuirkMatch> gate = std::nullopt)
+    {
+        RELEASE_ASSERT(!script.isNull());
+        return { script, gate };
+    }
 };
 
-WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
+} // namespace ParameterizedQuirk
 
-WEBCORE_EXPORT void validateQuirkTable();
+template<typename T> concept IsParameterizedQuirk = requires {
+    { T::name } -> std::convertible_to<ASCIILiteral>;
+};
+
+using QuirkBehavior = Variant<
+    SiteSpecificQuirk,
+    ParameterizedQuirk::EvaluateScriptBeforeRunningScript
+>;
+
+inline StringView quirkBehaviorName(const QuirkBehavior& behavior)
+{
+    return WTF::switchOn(behavior,
+        [](SiteSpecificQuirk quirk) -> StringView { return WTF::enumName(quirk); },
+        [](const IsParameterizedQuirk auto& payload) -> StringView { return payload.name; });
+}
 
 } // namespace WebCore

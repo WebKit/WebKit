@@ -42,7 +42,7 @@ https://www.codepen.io/
 https://www.bankofamerica.com/
     MaybeBypassBackForwardCache
 https://www.bestbuy.com/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.bing.com/
     MaybeBypassBackForwardCache
     NeedsMediaRewriteRangeRequestQuirk
@@ -72,8 +72,8 @@ https://www.t-mobile.com/
 https://www.descript.com/
     ShouldDisableDOMAudioSession
 https://www.dictionary.com/
+    EvaluateScriptBeforeRunningScript
     NeedsAnchorToBeMouseFocusableQuirk
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.disneyplus.com/
     ShouldHideCoarsePointerCharacteristicsQuirk
 https://www.ea.com/
@@ -117,9 +117,9 @@ https://docs.google.com/
     MaybeBypassBackForwardCache
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk
 https://translate.google.com/
+    EvaluateScriptBeforeRunningScript
     MaybeBypassBackForwardCache
     NeedsGoogleTranslateScrollingQuirk
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://mail.google.com/
     MaybeBypassBackForwardCache
     NeedsGMailOverflowScrollQuirk
@@ -172,7 +172,7 @@ https://www.hulu.com/
 https://www.icloud.com/
     (none)
 https://www.iheart.com/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
     NeedsZeroMaxTouchPointsQuirk
@@ -181,7 +181,7 @@ https://www.instagram.com/
     ShouldDisableElementFullscreenQuirk
     ShouldSendFakeTouchForceChangeEvent
 https://invideo.io/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.linkedin.com/
     (none)
 https://outlook.live.com/
@@ -226,7 +226,7 @@ https://www.netflix.com/
     NeedsNetflixVolumeSliderQuirk
     NeedsSeekingSupportDisabledQuirk
 https://www.nba.com/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
     ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
 https://www.nfl.com/
     ShouldSuppressHLSSubtitles
@@ -273,16 +273,16 @@ https://open.spotify.com/
 https://www.spotify.com/
     (none)
 https://ceac.state.gov/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://sub.ceac.state.gov/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.state.gov/
     (none)
 https://www.theguardian.com/
     ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk
 https://www.thesaurus.com/
+    EvaluateScriptBeforeRunningScript
     NeedsAnchorToBeMouseFocusableQuirk
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.tiktok.com/
     NeedsTikTokOverflowingContentQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
