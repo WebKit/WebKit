@@ -94,6 +94,37 @@ class ArchiveTest(unittest.TestCase):
             self.assertEqual(mock_urlopen.call_count, 4)
 
 
+class IsCachedTest(unittest.TestCase):
+    def setUp(self):
+        self.temp_directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp_directory.cleanup)
+
+        self.directory_patch = patch.object(AutoInstall, 'directory', self.temp_directory.name)
+        self.manifest_patch = patch.object(AutoInstall, 'manifest', {})
+
+        self.directory_patch.start()
+        self.manifest_patch.start()
+
+        self.addCleanup(self.directory_patch.stop)
+        self.addCleanup(self.manifest_patch.stop)
+
+    def test_is_cached_rejects_loose_version_match(self):
+        package = Package('example', version=Version(1, 2, 3))
+        AutoInstall.manifest[package.name] = {
+            'index': AutoInstall.index,
+            'version': '1.2',
+        }
+        self.assertFalse(package.is_cached())
+
+    def test_is_cached_accepts_exact_version_match(self):
+        package = Package('example', version=Version(1, 2, 3))
+        AutoInstall.manifest[package.name] = {
+            'index': AutoInstall.index,
+            'version': '1.2.3',
+        }
+        self.assertTrue(package.is_cached())
+
+
 class MergeMoveTest(unittest.TestCase):
     # Package._merge_move is what lets multiple distributions contribute to a
     # shared namespace package (e.g. 'backports') without clobbering each other.

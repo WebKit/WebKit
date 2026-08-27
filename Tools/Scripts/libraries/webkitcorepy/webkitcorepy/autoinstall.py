@@ -287,7 +287,7 @@ class Package(object):
             return False
         if not manifest.get('version'):
             return False
-        if self.version and Version(*manifest.get('version').split('.')) not in self.version:
+        if self.version and Version(*manifest.get('version').split('.')) != self.version:
             return False
         if not all(pkg.is_cached() for dep in self.implicit_deps for pkg in AutoInstall.packages[dep]):
             return False
