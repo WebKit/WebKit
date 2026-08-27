@@ -153,7 +153,7 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
         return simplifiedMinimumWidth(formattingContextRoot());
 
     if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
         return computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
     }
 
@@ -172,11 +172,11 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
         if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(formattingContextRoot(), inlineItemList())) {
             maximumContentSize = *m_maximumContentWidthBetweenLineBreaks;
 #ifndef NDEBUG
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
             ASSERT(std::abs(maximumContentSize - computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::No)) < 1);
 #endif
         } else {
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilerRoot(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
             maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, mayCacheLayoutResult);
         }
     } else {
@@ -350,7 +350,7 @@ const ElementBox& IntrinsicWidthHandler::formattingContextRoot() const
     return m_inlineFormattingContext.root();
 }
 
-const ElementBox& IntrinsicWidthHandler::lineBuilerRoot() const
+const ElementBox& IntrinsicWidthHandler::lineBuilderRoot() const
 {
     if (!m_inlineItemRange.startIndex())
         return formattingContextRoot();

@@ -709,7 +709,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
     return lineContent;
 }
 
-InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(const LineCandidate& lineCandidate) const
+InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandidate(const LineCandidate& lineCandidate) const
 {
     auto& inlineContent = lineCandidate.inlineContent;
     auto firstTextRunIndex = inlineContent.firstTextRunIndex();
@@ -741,7 +741,7 @@ InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(const LineC
     return TextUtil::hangablePunctuationStartWidth(*inlineTextItem, style);
 }
 
-InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandiate(const LineCandidate& lineCandidate, size_t startIndexAfterCandidateContent,  size_t layoutRangeEnd) const
+InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandidate(const LineCandidate& lineCandidate, size_t startIndexAfterCandidateContent,  size_t layoutRangeEnd) const
 {
     auto& inlineContent = lineCandidate.inlineContent;
     auto lastTextRunIndex = inlineContent.lastTextRunIndex();
@@ -1144,8 +1144,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
             auto hangingContentWidth = inlineContent.continuousContent().hangingContentWidth();
             // Do not even try to check for trailing punctuation when the candidate content already has whitespace type of hanging content.
             if (!hangingContentWidth)
-                hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(lineCandidate, startEndIndex.second, layoutRange.endIndex());
-            hangingContentWidth += leadingPunctuationWidthForLineCandiate(lineCandidate);
+                hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandidate(lineCandidate, startEndIndex.second, layoutRange.endIndex());
+            hangingContentWidth += leadingPunctuationWidthForLineCandidate(lineCandidate);
             if (hangingContentWidth)
                 lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);
         };

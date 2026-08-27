@@ -97,7 +97,7 @@ private:
     const ConstraintsForInlineContent& m_constraints;
     const LineBox& m_lineBox;
     const InlineDisplay::Line& m_displayLine;
-    IntSize m_initialContaingBlockSize;
+    IntSize m_initialContainingBlockSize;
     // FIXME: This should take DisplayLine::isFullyTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };

@@ -79,7 +79,7 @@ public:
     static bool shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
-    void updateFormattingContexGeometries(LayoutUnit availableLogicalWidth);
+    void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
     void updateOverflow();
     static void updateStyle(const RenderObject&);
 

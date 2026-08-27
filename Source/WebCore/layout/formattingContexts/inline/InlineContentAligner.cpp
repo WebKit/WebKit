@@ -46,9 +46,9 @@ static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutU
         inlineFormattingContext.geometryForBox(displayBox.layoutBox()).moveHorizontally(LayoutUnit { offset });
 }
 
-static inline InlineLayoutUnit alignmentOffset(auto& latyoutBox, auto& alignmentOffsetList)
+static inline InlineLayoutUnit alignmentOffset(auto& layoutBox, auto& alignmentOffsetList)
 {
-    auto alignmentOffsetEntry = alignmentOffsetList.find(latyoutBox.ptr());
+    auto alignmentOffsetEntry = alignmentOffsetList.find(layoutBox.ptr());
     return alignmentOffsetEntry != alignmentOffsetList.end() ? alignmentOffsetEntry->value : 0.f;
 }
 

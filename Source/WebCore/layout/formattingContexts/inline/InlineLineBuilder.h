@@ -48,8 +48,8 @@ private:
     Vector<std::pair<size_t, size_t>> collectShapeRanges(const LineCandidate&) const;
     void applyShapingOnRunRange(LineCandidate&, std::pair<size_t, size_t> range) const;
     void shapePartialLineCandidate(LineCandidate&, size_t trailingRunIndex) const;
-    InlineLayoutUnit leadingPunctuationWidthForLineCandiate(const LineCandidate&) const;
-    InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandiate(const LineCandidate&, size_t startIndexAfterCandidateContent,  size_t layoutRangeEnd) const;
+    InlineLayoutUnit leadingPunctuationWidthForLineCandidate(const LineCandidate&) const;
+    InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandidate(const LineCandidate&, size_t startIndexAfterCandidateContent,  size_t layoutRangeEnd) const;
 
     struct Result {
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };

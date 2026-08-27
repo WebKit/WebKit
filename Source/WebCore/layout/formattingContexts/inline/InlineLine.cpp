@@ -832,11 +832,11 @@ Line::Run::Run(const InlineItem& inlineItem, const Style::ComputedStyle& style, 
 {
 }
 
-Line::Run::Run(const InlineItem& zeroWidhtInlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
-    : m_type(toLineRunType(zeroWidhtInlineItem))
+Line::Run::Run(const InlineItem& zeroWidthInlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
+    : m_type(toLineRunType(zeroWidthInlineItem))
     , m_logicalLeft(logicalLeft)
-    , m_bidiLevel(zeroWidhtInlineItem.bidiLevel())
-    , m_layoutBox(&zeroWidhtInlineItem.layoutBox())
+    , m_bidiLevel(zeroWidthInlineItem.bidiLevel())
+    , m_layoutBox(&zeroWidthInlineItem.layoutBox())
     , m_style(style)
 {
 }
