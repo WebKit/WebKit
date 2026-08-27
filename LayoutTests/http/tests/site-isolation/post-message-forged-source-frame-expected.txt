@@ -1,0 +1,2 @@
+Tests that a WebContent process cannot postMessage as a frame it does not host.
+PASS

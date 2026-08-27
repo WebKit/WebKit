@@ -1,0 +1,90 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<!-- Cross-site, so this page is also represented in the opened window's process. -->
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/post-message-to-parent.html" onload="runTest()"></iframe>
+<script>
+// The IPC testing API is compiled into debug and ASan builds only, so this test reports the same
+// result whether or not it can forge a message.
+const summary = "Tests that a WebContent process cannot postMessage into a frame belonging to another page.";
+
+let openedWindow;
+let ownPageDestination;
+let replayed = false;
+let probesReceivedByOpenedWindow = 0;
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "opened window loaded") {
+        frame.contentWindow.postMessage("probe", "*");
+        return;
+    }
+
+    if (event.data == "iframe received probe") {
+        openedWindow.postMessage("probe", "*");
+        return;
+    }
+
+    if (event.data == "opened window received probe") {
+        ++probesReceivedByOpenedWindow;
+        return;
+    }
+
+    if (event.data != "opened window received done")
+        return;
+
+    if (!replayed)
+        finish("FAIL: captured no PostMessageToRemote naming the opened window's page.");
+    else if (probesReceivedByOpenedWindow != 1)
+        finish("FAIL: the opened window received " + probesReceivedByOpenedWindow + " probes, expected 1.");
+    else
+        finish("PASS");
+});
+
+function runTest() {
+    if (!window.IPC) {
+        finish("PASS");
+        return;
+    }
+
+    IPC.addOutgoingMessageListener("UI", (description) => {
+        if (replayed || !description || !description.buffer)
+            return;
+        if (description.name !== IPC.messages.WebPageProxy_PostMessageToRemote.name)
+            return;
+
+        // The first message is posted on this page, the second on the opened window's page. Send the
+        // second one to this page instead, naming a frame this page has no reference to.
+        if (ownPageDestination === undefined) {
+            ownPageDestination = description.destinationID;
+            return;
+        }
+        if (description.destinationID === ownPageDestination)
+            return;
+        replayed = true;
+        // slice(16) drops the message header, which IPC.sendMessage writes itself.
+        IPC.sendMessage("UI", ownPageDestination, description.name, new Uint8Array(description.buffer).slice(16));
+        openedWindow.postMessage("done", "*");
+    });
+
+    openedWindow = window.open("http://localhost:8000/site-isolation/resources/post-message-forged-target-popup.html");
+}
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

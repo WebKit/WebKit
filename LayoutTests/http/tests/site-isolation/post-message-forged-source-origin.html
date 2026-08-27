@@ -1,0 +1,100 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<!-- Sandboxed and same-site, so this frame has an opaque origin and stays in this process. -->
+<iframe id="sandboxed" sandbox="allow-scripts" src="resources/post-message-forged-source-origin-sandboxed.html"></iframe>
+<!-- Cross-site, so it runs in another process and reports the origin it observes. -->
+<iframe id="victim" src="http://localhost:8000/site-isolation/resources/post-message-forged-source-origin-victim.html"></iframe>
+<script>
+// The IPC testing API is compiled into debug and ASan builds only, so this test reports the same
+// result whether or not it can forge a message.
+const summary = "Tests that an opaque-origin frame cannot be named as the source of a message claiming a real origin.";
+
+// A PostMessageToRemote body starts with the source FrameIdentifier, an ObjectIdentifier, followed
+// by sourceOrigin, whose leading variant index is 0 for a real origin and 1 for an opaque one.
+const sourceSize = 8;
+const originVariantIsOpaque = 1;
+
+let loaded = 0;
+let bodyClaimingThisOrigin;
+let opaqueSource;
+let replayed = false;
+let probesSeenByVictim = 0;
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "sandboxed loaded" || event.data == "victim loaded") {
+        if (++loaded == 2)
+            runTest();
+        return;
+    }
+
+    if (event.data == "victim got probe from http://127.0.0.1:8000") {
+        ++probesSeenByVictim;
+        return;
+    }
+
+    if (!event.data.startsWith("victim got done "))
+        return;
+
+    if (!replayed)
+        finish("FAIL: captured no pair of messages to splice.");
+    else if (probesSeenByVictim != 1)
+        finish("FAIL: the victim saw " + probesSeenByVictim + " probes, expected 1.");
+    else
+        finish("PASS");
+});
+
+function runTest() {
+    if (!window.IPC) {
+        finish("PASS");
+        return;
+    }
+
+    IPC.addOutgoingMessageListener("UI", (description) => {
+        if (replayed || !description || !description.buffer)
+            return;
+        if (description.name !== IPC.messages.WebPageProxy_PostMessageToRemote.name)
+            return;
+
+        // slice(16) drops the message header, which IPC.sendMessage writes itself.
+        const body = new Uint8Array(description.buffer).slice(16);
+        if (body[sourceSize] == originVariantIsOpaque)
+            opaqueSource = body.slice(0, sourceSize);
+        else
+            bodyClaimingThisOrigin = body;
+
+        if (!opaqueSource || !bodyClaimingThisOrigin)
+            return;
+
+        // Name the opaque-origin frame as the source of a message that claims this page's real
+        // origin. The victim would otherwise read that origin as event.origin.
+        bodyClaimingThisOrigin.set(opaqueSource, 0);
+        replayed = true;
+        IPC.sendMessage("UI", description.destinationID, description.name, bodyClaimingThisOrigin);
+        victim.contentWindow.postMessage("done", "*");
+    });
+
+    sandboxed.contentWindow.postMessage("post to victim", "*");
+    victim.contentWindow.postMessage("probe", "*");
+}
+
+victim.addEventListener("load", () => window.postMessage("victim loaded", "*"));
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>
