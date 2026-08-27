@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableCellElement.h"
+#include "KeyboardEvent.h"
 #include "LocalFrame.h"
 #include "MathMLNames.h"
 #include "MouseEvent.h"
@@ -298,7 +299,7 @@ bool MathMLElement::willRespondToMouseClickEventsWithEditability(Editability edi
 void MathMLElement::defaultEventHandler(Event& event)
 {
     if (isLink()) {
-        if (focused() && isEnterKeyKeydownEvent(event)) {
+        if (focused() && KeyboardEvent::isEnterKeyKeydownEvent(event)) {
             event.setDefaultHandled();
             dispatchSimulatedClick(&event);
             return;

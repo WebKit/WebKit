@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
+Click Me
 
+PASS Test MathMLAnchorElement _blank navigation via BroadcastChannel
 

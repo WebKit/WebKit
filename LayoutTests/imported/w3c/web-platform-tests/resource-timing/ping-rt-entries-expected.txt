@@ -1,4 +1,4 @@
 Link
 
-FAIL Hyperlink auditing (<a ping>) should have a resource timing entry assert_equals: expected "ping" but got "other"
+PASS Hyperlink auditing (<a ping>) should have a resource timing entry
 

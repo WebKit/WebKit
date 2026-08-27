@@ -1552,6 +1552,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackConfiguration.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
+    $(WebCore)/mathml/MathMLAnchorElement.idl \
     $(WebCore)/mathml/MathMLElement.idl \
     $(WebCore)/mathml/MathMLMathElement.idl \
     $(WebCore)/inspector/CommandLineAPIHost.idl \

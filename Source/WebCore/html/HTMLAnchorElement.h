@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <WebCore/AnchorElementUtils.h>
 #include <WebCore/Document.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLNames.h>
@@ -37,14 +38,6 @@ namespace WebCore {
 class DOMTokenList;
 
 enum class ReferrerPolicy : uint8_t;
-
-// Link relation bitmask values.
-enum class Relation : uint8_t {
-    NoReferrer = 1 << 0,
-    NoOpener = 1 << 1,
-    Opener = 1 << 2,
-};
-
 class HTMLAnchorElement : public HTMLElement, public URLDecomposition {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAnchorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAnchorElement);
@@ -71,7 +64,7 @@ public:
     bool hasActivationBehavior() const final;
 
     bool NODELETE hasRel(Relation) const;
-    
+
     inline SharedStringHash visitedLinkHash() const;
 
     WEBCORE_EXPORT DOMTokenList& relList();
@@ -110,8 +103,6 @@ private:
     bool isInteractiveContent() const final;
 
     AtomString effectiveTarget() const;
-
-    void sendPings(const URL& destinationURL);
 
     std::optional<URL> attributionDestinationURLForPCM() const;
     std::optional<RegistrableDomain> mainDocumentRegistrableDomainForPCM() const;
@@ -159,8 +150,6 @@ private:
 };
 
 // Functions shared with the other anchor elements (i.e., SVG).
-
-bool isEnterKeyKeydownEvent(Event&);
 bool shouldProhibitLinks(Element*);
 
 } // namespace WebCore
