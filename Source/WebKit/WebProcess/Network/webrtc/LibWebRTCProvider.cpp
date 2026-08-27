@@ -106,9 +106,13 @@ bool LibWebRTCProvider::isSupportingAV1HardwareDecoder() const
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
     WTF_MAKE_TZONE_ALLOCATED(RTCSocketFactory);
 public:
-    RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, RegistrableDomain&&);
+    RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&&);
 
-    void disableRelay() final { m_flags.isRelayDisabled = true; }
+    void disableRelay() final
+    {
+        if (!m_isRelayBypassDisabled)
+            m_flags.isRelayDisabled = true;
+    }
     void NODELETE enableServiceClass() { m_flags.enableServiceClass = true; }
 
 private:
@@ -127,15 +131,17 @@ private:
     ScriptExecutionContextIdentifier m_contextIdentifier;
     RTCSocketCreationFlags m_flags;
     RegistrableDomain m_domain;
+    bool m_isRelayBypassDisabled;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSocketFactory);
 
-RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain)
+RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&& domain)
     : m_pageIdentifier(pageIdentifier)
     , m_userAgent(WTF::move(userAgent))
     , m_contextIdentifier(identifier)
     , m_domain(WTF::move(domain))
+    , m_isRelayBypassDisabled(isRelayBypassDisabled)
 {
     m_flags.isFirstParty = isFirstParty;
 }
@@ -181,9 +187,9 @@ void LibWebRTCProvider::startedNetworkThread()
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain, bool enableServiceClass)
 {
     Ref webPage { m_webPage.get() };
-    auto factory = makeUnique<RTCSocketFactory>(webPage->webPageProxyIdentifier(), WTF::move(userAgent), identifier, isFirstParty, WTF::move(domain));
-
     RefPtr page = webPage->corePage();
+    auto factory = makeUnique<RTCSocketFactory>(webPage->webPageProxyIdentifier(), WTF::move(userAgent), identifier, isFirstParty, page && page->settings().webRTCRelayBypassDisabled(), WTF::move(domain));
+
     if (!page || !page->settings().webRTCSocketsProxyingEnabled())
         factory->disableRelay();
 

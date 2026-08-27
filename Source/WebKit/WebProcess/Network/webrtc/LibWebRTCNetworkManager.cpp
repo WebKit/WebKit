@@ -167,7 +167,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
                 RegistrableDomain domain { document->url() };
                 RTCSocketCreationFlags flags {
                     .isFirstParty = domain == RegistrableDomain(document->firstPartyForCookies()),
-                    .isRelayDisabled = true,
+                    .isRelayDisabled = !document->settings().webRTCRelayBypassDisabled(),
                     .enableServiceClass = false
                 };
                 WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkRTCProvider::GetInterfaceName { document->url(), webPage->webPageProxyIdentifier(), flags, WTF::move(domain) }, [weakThis = WeakPtr { *this }] (auto&& interfaceName) {

@@ -10665,6 +10665,21 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebCore:
       default: false
 
+WebRTCRelayBypassDisabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Disable WebRTC private relay bypass"
+  humanReadableDescription: "Disable WebRTC private relay bypass"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebRTCRemoteVideoFrameEnabled:
   type: bool
   status: internal
