@@ -6,11 +6,15 @@ Tests that Animation.startTracking and Animation.stopTracking trigger Animation.
 Animation.trackingStart
 PASS: Should have a timestamp when starting.
 Animation.trackingUpdate
-PASS: Should should have a timestamp number.
+PASS: Should have a timestamp number.
 PASS: Should have an event object.
 PASS: Event should have an animation tracking ID.
 PASS: Event should have an animation state.
 PASS: Event should have a node ID.
 PASS: Event should have the related CSS animation's name.
+PASS: Should have a node for the event's node ID.
+PASS: The animating node should be a <div>.
+PASS: The animating node should have the id "animating".
 Animation.trackingComplete
+PASS: Should have a timestamp when completing.
 
