@@ -183,10 +183,11 @@ public:
     WebCore::SecurityOriginData documentSecurityOriginData() const;
 
     const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
+    WebCore::CertificateInfo provisionalCertificateInfoFromNetworkProcess(const URL&) const;
 
     void commitCertificateInfo(const URL&, bool hasCertificateInfo);
     void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
-    void copyCertificateInfoForProcessSwapOnNavigationResponse(const URL&, const WebFrameProxy&);
+    void setCertificateInfoForProcessSwapOnNavigationResponse(const URL&, WebCore::CertificateInfo&&);
 
     bool canProvideSource() const;
 
@@ -347,8 +348,6 @@ private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
-    WebCore::CertificateInfo certificateInfoFromNetworkProcess(const URL&) const;
-
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
 
     enum class ForInitialization : bool { No, Yes };
