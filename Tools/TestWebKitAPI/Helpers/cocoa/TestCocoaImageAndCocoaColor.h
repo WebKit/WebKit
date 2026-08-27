@@ -37,9 +37,12 @@ using CocoaImage = UIImage;
 using CocoaColor = UIColor;
 #endif
 
+OBJC_CLASS NSData;
+
 namespace TestWebKitAPI::Util {
 
 CocoaColor *pixelColor(CocoaImage *, CGPoint = CGPointZero);
+NSData *makePDFData(CGSize, SEL colorSelector);
 CocoaColor *toSRGBColor(CocoaColor *);
 bool compareColors(CocoaColor *, CocoaColor *, float tolerance = 0.01);
 

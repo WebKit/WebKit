@@ -409,6 +409,116 @@ TEST(WKWebExtension, SVGIconViaIconsKeyLoads)
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
 }
 
+#if PLATFORM(MAC)
+
+TEST(WKWebExtension, PDFIconLoads)
+{
+    // PDF is a supported icon format on macOS, for both the `icons` key and an action's `default_icon`.
+    auto *iconPDF = Util::makePDFData(CGSizeMake(128, 128), @selector(blackColor));
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": @"icon-128.pdf" },
+        @"action": @{ @"default_icon": @{ @"128": @"action-icon-128.pdf" } }
+    };
+
+    auto *resources = @{
+        @"icon-128.pdf": iconPDF,
+        @"action-icon-128.pdf": iconPDF,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(128, 128)];
+    EXPECT_NOT_NULL(icon);
+    if (icon)
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor blackColor]));
+
+    EXPECT_NOT_NULL([testExtension actionIconForSize:CGSizeMake(128, 128)]);
+
+    EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
+TEST(WKWebExtension, MixedBitmapAndPDFIconsBothResolve)
+{
+    // A manifest mixing a vector format with a bitmap one, where neither may be handed back in place of
+    // the other. bestIconSize() picks the smallest size at or above the ideal pixel size, falling back to
+    // the largest, so these two requests select their formats at any screen scale.
+    auto *iconPDF = Util::makePDFData(CGSizeMake(16, 16), @selector(blackColor));
+    auto *iconPNG = Util::makePNGData(CGSizeMake(128, 128), @selector(whiteColor));
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"16": @"icon-16.pdf", @"128": @"icon-128.png" }
+    };
+
+    auto *resources = @{ @"icon-16.pdf": iconPDF, @"icon-128.png": iconPNG };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    // Nothing at or above this ideal size, so the largest entry wins: the bitmap.
+    auto *bitmapIcon = [testExtension iconForSize:CGSizeMake(128, 128)];
+    EXPECT_NOT_NULL(bitmapIcon);
+    if (bitmapIcon)
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(bitmapIcon), [CocoaColor whiteColor]));
+
+    auto *pdfIcon = [testExtension iconForSize:CGSizeMake(8, 8)];
+    EXPECT_NOT_NULL(pdfIcon);
+    if (pdfIcon)
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(pdfIcon), [CocoaColor blackColor]));
+
+    EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
+TEST(WKWebExtension, PDFActionIconAsStringLoads)
+{
+    // The Firefox string form of `default_icon`, rather than a size-to-path object. It resolves through
+    // populateActionPropertiesIfNeeded(), which calls iconForPath() directly rather than via bestIcon().
+    auto *iconPDF = Util::makePDFData(CGSizeMake(128, 128), @selector(blackColor));
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"action": @{ @"default_icon": @"action-icon.pdf" }
+    };
+
+    // No `icons` key, so the extension-icon fallback cannot mask a failure here.
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ @"action-icon.pdf": iconPDF }];
+
+    EXPECT_NOT_NULL([testExtension actionIconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
+TEST(WKWebExtension, MalformedPDFIconIsReported)
+{
+    // A PDF that cannot be rasterized must still be reported, matching the other formats.
+    auto *malformedPDF = [@"%PDF-1.7 truncated, no objects or trailer" dataUsingEncoding:NSUTF8StringEncoding];
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": @"icon-128.pdf" }
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ @"icon-128.pdf": malformedPDF }];
+
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
+#endif // PLATFORM(MAC)
+
+
 TEST(WKWebExtension, SymbolImageIcon)
 {
     auto *testManifestDictionary = @{

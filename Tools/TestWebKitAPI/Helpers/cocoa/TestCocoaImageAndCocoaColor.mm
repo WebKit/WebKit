@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace TestWebKitAPI::Util {
 
@@ -83,6 +85,27 @@ bool compareColors(CocoaColor *color1, CocoaColor *color2, float tolerance)
     [color2 getRed:&red2 green:&green2 blue:&blue2 alpha:&alpha2];
 
     return fabs(red1 - red2) < tolerance && fabs(green1 - green2) < tolerance && fabs(blue1 - blue2) < tolerance && fabs(alpha1 - alpha2) < tolerance;
+}
+
+NSData *makePDFData(CGSize size, SEL colorSelector)
+{
+    NSMutableData *data = [NSMutableData data];
+    RetainPtr consumer = adoptCF(CGDataConsumerCreateWithCFData((__bridge CFMutableDataRef)data));
+
+    auto mediaBox = CGRectMake(0, 0, size.width, size.height);
+    RetainPtr context = adoptCF(CGPDFContextCreate(consumer.get(), &mediaBox, nullptr));
+
+    NSDictionary *pageInfo = @{ bridge_cast(kCGPDFContextMediaBox): [NSData dataWithBytes:&mediaBox length:sizeof(mediaBox)] };
+    CGPDFContextBeginPage(context.get(), (__bridge CFDictionaryRef)pageInfo);
+
+    CocoaColor *color = [CocoaColor performSelector:colorSelector];
+    CGContextSetFillColorWithColor(context.get(), color.CGColor);
+    CGContextFillRect(context.get(), mediaBox);
+
+    CGPDFContextEndPage(context.get());
+    CGPDFContextClose(context.get());
+
+    return data;
 }
 
 } // namespace TestWebKitAPI::Util
