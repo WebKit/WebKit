@@ -1130,7 +1130,7 @@ bool contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+void NODELETE memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);

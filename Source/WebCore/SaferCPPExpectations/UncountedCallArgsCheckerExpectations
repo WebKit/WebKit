@@ -116,7 +116,6 @@ css/FontFaceSet.cpp
 css/SelectorCheckerTestFunctions.h
 css/ShorthandSerializer.cpp
 css/StyleAttributeMutationScope.h
-css/StyleProperties.h
 css/StyleRuleImport.h
 css/StyleSheetContents.cpp
 css/typedom/numeric/CSSMathValue.h

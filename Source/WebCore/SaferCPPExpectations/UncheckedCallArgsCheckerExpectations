@@ -99,7 +99,6 @@ editing/EditorCommand.cpp
 editing/FrameSelection.cpp
 editing/InsertIntoTextNodeCommand.cpp
 editing/MarkupAccumulator.cpp
-editing/ModifySelectionListLevel.cpp
 editing/RenderedPosition.cpp
 editing/ReplaceSelectionCommand.cpp
 editing/SimplifyMarkupCommand.cpp
@@ -305,7 +304,6 @@ rendering/LogicalSelectionOffsetCachesInlines.h
 rendering/MarkedText.cpp
 rendering/MarkedText.h
 rendering/MotionPath.cpp
-rendering/OrderIterator.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RegionContext.h
 rendering/RenderAttachment.cpp

@@ -35,14 +35,14 @@ enum class PixelFormat : uint8_t {
     RGBA8,
     BGRX8,
     BGRA8,
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    RGBA16F,
+#endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     RGB10,
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     RGB10A8,
-#endif
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    RGBA16F,
 #endif
 };
 
@@ -94,6 +94,20 @@ constexpr bool pixelFormatIsOpaque(PixelFormat format)
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+enum class PixelComponentOrder : uint8_t { RGB, BGR };
+
+constexpr PixelComponentOrder pixelComponentOrder(PixelFormat format)
+{
+    switch (format) {
+    case PixelFormat::BGRX8:
+    case PixelFormat::BGRA8:
+        return PixelComponentOrder::BGR;
+
+    default:
+        return PixelComponentOrder::RGB;
+    }
 }
 
 enum class AllowExtendedColorSpace : bool { No, Yes };
