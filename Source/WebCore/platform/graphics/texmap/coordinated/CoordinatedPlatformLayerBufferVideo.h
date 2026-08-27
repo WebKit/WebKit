@@ -30,28 +30,29 @@
 #include "GStreamerCommon.h"
 #include "VideoFrameGStreamer.h"
 
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
 namespace WebCore {
 
 using DMABufFormat = std::pair<uint32_t, uint64_t>;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>, const sk_sp<GrContextThreadSafeProxy>&);
+    CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>, const sk_sp<GrContextThreadSafeProxy>&);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
 
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-
-#if USE(SKIA)
     sk_sp<SkImage> skiaImage() override;
-#endif
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled, const sk_sp<GrContextThreadSafeProxy>&);
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory();
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory(const sk_sp<GrContextThreadSafeProxy>&);
 #endif
 #if USE(GSTREAMER_GL)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();

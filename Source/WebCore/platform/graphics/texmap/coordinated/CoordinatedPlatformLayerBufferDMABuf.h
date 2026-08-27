@@ -63,7 +63,6 @@ private:
 #endif
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf() const;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> importYUV() const;
 
     const Ref<DMABufBuffer> m_dmabuf;
     WTF::UnixFileDescriptor m_fenceFD;

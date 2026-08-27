@@ -128,6 +128,14 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
 }
 #endif
 
+#if USE(SKIA)
+sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayerBufferProxy::threadSafeGrContext() const
+{
+    RefPtr layer = m_layer;
+    return layer ? layer->threadSafeGrContext() : nullptr;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

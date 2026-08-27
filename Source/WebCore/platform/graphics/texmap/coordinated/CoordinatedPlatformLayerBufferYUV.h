@@ -43,6 +43,8 @@ public:
     CoordinatedPlatformLayerBufferYUV(Format, unsigned planeCount, Vector<RefPtr<BitmapTexture>, 4>&& textures, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace, TransferFunction, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     virtual ~CoordinatedPlatformLayerBufferYUV();
 
+    const RefPtr<BitmapTexture>& texture(size_t index) const { RELEASE_ASSERT(index < m_planeCount); return m_textures[index]; }
+
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 

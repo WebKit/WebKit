@@ -51,17 +51,17 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     auto size = frame->presentationSize();
-    return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
+    return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags, threadSafeGrContext);
 }
 
-CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
     : CoordinatedPlatformLayerBuffer(Type::Video, WTF::move(size), flags, nullptr)
     , m_videoFrame(WTF::move(frame))
     , m_videoDecoderPlatform(videoDecoderPlatform)
-    , m_buffer(createBufferIfNeeded(gstGLEnabled))
+    , m_buffer(createBufferIfNeeded(gstGLEnabled, threadSafeGrContext))
 {
 }
 
@@ -103,7 +103,7 @@ static std::pair<CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, Coordina
 }
 #endif
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     const auto& sample = m_videoFrame->sample();
     auto buffer = gst_sample_get_buffer(sample.get());
@@ -129,7 +129,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
 #if GST_CHECK_VERSION(1, 24, 0)
     if (gst_is_dmabuf_memory(memory))
-        return createBufferFromDMABufMemory();
+        return createBufferFromDMABufMemory(threadSafeGrContext);
 #endif // GST_CHECK_VERSION(1, 24, 0)
 #endif // USE(GBM)
 
@@ -157,7 +157,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 }
 
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory()
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     auto videoInfo = m_videoFrame->info();
     if (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo))
@@ -165,7 +165,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
     auto dmabuf = m_videoFrame->getDMABuf();
     RELEASE_ASSERT(dmabuf);
-    return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr);
+    return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr, threadSafeGrContext);
 }
 #endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
 
