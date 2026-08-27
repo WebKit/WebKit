@@ -3121,6 +3121,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/line/TrailingObjects.h
 
     rendering/shapes/LayoutShape.h
+    rendering/shapes/PathLayoutShape.h
     rendering/shapes/PolygonLayoutShape.h
     rendering/shapes/ShapeInterval.h
     rendering/shapes/ShapeOutsideInfo.h

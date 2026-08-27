@@ -27,6 +27,7 @@
 #include "PathUtilities.h"
 
 #include "AffineTransform.h"
+#include "BezierUtilities.h"
 #include "FloatPointGraph.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
@@ -117,6 +118,54 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, c
     for (auto& rect : rects)
         path.addRoundedRect(FloatRoundedRect { rect, radii });
     return path;
+}
+
+Vector<Vector<FloatPoint>> flattenPathToPolylines(const Path& path, float deviceScaleFactor, float tolerance)
+{
+    Vector<Vector<FloatPoint>> polylines;
+    Vector<FloatPoint> current;
+    FloatPoint currentPoint;
+
+    auto finishCurrent = [&] {
+        if (current.size() > 1) {
+            if (current.first() != current.last())
+                current.append(current.first());
+            polylines.append(WTF::move(current));
+        }
+        current = { };
+    };
+
+    path.applyElements([&](const PathElement& element) {
+        switch (element.type) {
+        case PathElement::Type::MoveToPoint:
+            finishCurrent();
+            currentPoint = element.points[0];
+            current.append(currentPoint);
+            break;
+
+        case PathElement::Type::AddLineToPoint:
+            currentPoint = element.points[0];
+            current.append(currentPoint);
+            break;
+
+        case PathElement::Type::AddQuadCurveToPoint:
+            appendFlattenedBezier(current, cubicForQuadratic(currentPoint, element.points[0], element.points[1]), deviceScaleFactor, tolerance);
+            currentPoint = element.points[1];
+            break;
+
+        case PathElement::Type::AddCurveToPoint:
+            appendFlattenedBezier(current, { currentPoint, element.points[0], element.points[1], element.points[2] }, deviceScaleFactor, tolerance);
+            currentPoint = element.points[2];
+            break;
+
+        case PathElement::Type::CloseSubpath:
+            finishCurrent();
+            break;
+        }
+    });
+
+    finishCurrent();
+    return polylines;
 }
 
 } // namespace WebCore

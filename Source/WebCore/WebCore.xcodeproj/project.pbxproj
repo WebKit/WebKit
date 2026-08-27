@@ -945,6 +945,7 @@
 		2156F76D3D2F5A9607AF69D9 /* UnifiedSource39-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F76CD991B87ADACC0F2F37E /* UnifiedSource39-header-RenderStyleGetters.cpp */; };
 		22441CD42FEB275500BD3B41 /* CornerShapeUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 22441CD32FEB273C00BD3B41 /* CornerShapeUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		225A16B50D5C11E900090295 /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 225A16B30D5C11E900090295 /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		228726D6303CBCD300AA830D /* PathLayoutShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 228726D5303CBCD300AA830D /* PathLayoutShape.h */; };
 		228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */ = {isa = PBXBuildFile; fileRef = 228C284410D82500009D0D0E /* ScriptWrappable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		22F021A02FFF3E3500B13642 /* BezierUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE21E01000000000000000B1 /* BezierUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23CED0538221E00106965803 /* Play.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = DC8EA0C37B0638710AE9B150 /* Play.svg */; platformFilters = (macos, ); };
@@ -10170,6 +10171,7 @@
 		22441CD32FEB273C00BD3B41 /* CornerShapeUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CornerShapeUtilities.h; sourceTree = "<group>"; };
 		225A16B30D5C11E900090295 /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventRegion.h; sourceTree = "<group>"; };
 		225A16B40D5C11E900090295 /* WebEventRegion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEventRegion.mm; sourceTree = "<group>"; };
+		228726D5303CBCD300AA830D /* PathLayoutShape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathLayoutShape.h; sourceTree = "<group>"; };
 		228C284410D82500009D0D0E /* ScriptWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappable.h; sourceTree = "<group>"; };
 		24318795E4EEC2337746A550 /* OpenID4VPSignedRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenID4VPSignedRequest.h; sourceTree = "<group>"; };
 		2442BBF81194C9D300D49469 /* HashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashChangeEvent.h; sourceTree = "<group>"; };
@@ -43598,6 +43600,7 @@
 				6ED8C378183BFF8C009E53BD /* BoxLayoutShape.h */,
 				FD08A87E175D3926002CD360 /* LayoutShape.cpp */,
 				FD08A87F175D3926002CD360 /* LayoutShape.h */,
+				228726D5303CBCD300AA830D /* PathLayoutShape.h */,
 				FD08A87A175D3926002CD360 /* PolygonLayoutShape.cpp */,
 				FD08A87B175D3926002CD360 /* PolygonLayoutShape.h */,
 				6E84E9DE17668BAD00815B68 /* RasterLayoutShape.cpp */,
@@ -47945,6 +47948,7 @@
 				0318396A0000000000000013 /* PathCurveSubdivision.h in Headers */,
 				7246F02B2A1541A000FD74F1 /* PathElement.h in Headers */,
 				7246F0302A15508000FD74F1 /* PathImpl.h in Headers */,
+				228726D6303CBCD300AA830D /* PathLayoutShape.h in Headers */,
 				FB92DF4B15FED08700994433 /* PathOperation.h in Headers */,
 				7246F02C2A1541B200FD74F1 /* PathSegment.h in Headers */,
 				72BDF25F2A2B670D00260319 /* PathSegmentData.h in Headers */,

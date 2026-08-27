@@ -1077,11 +1077,7 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, CSS::PropertyPa
     // <'shape-outside'> = none | [ <basic-shape> || <shape-box> ] | <image>
     // https://drafts.csswg.org/css-shapes-1/#propdef-shape-outside
 
-    // FIXME: Add support for `path()` and `shape()` functions in `shape-outside`.
-    constexpr auto options = OptionSet<BasicShapeParsingOptions> {
-        BasicShapeParsingOptions::RejectPathFunction,
-        BasicShapeParsingOptions::RejectShapeFunction
-    };
+    constexpr auto options = OptionSet<BasicShapeParsingOptions> { };
 
     if (auto imageOrNoneValue = consumeImageOrNone(range, state))
         return imageOrNoneValue;

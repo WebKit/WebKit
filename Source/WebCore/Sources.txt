@@ -3159,6 +3159,7 @@ rendering/mathml/RenderMathMLUnderOver.cpp @header:RenderStyleGetters
 rendering/mathml/MathVariant.cpp
 rendering/shapes/BoxLayoutShape.cpp @header:RenderStyleGetters
 rendering/shapes/LayoutShape.cpp
+rendering/shapes/PathLayoutShape.cpp
 rendering/shapes/PolygonLayoutShape.cpp
 rendering/shapes/RasterLayoutShape.cpp
 rendering/shapes/RectangleLayoutShape.cpp

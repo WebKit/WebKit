@@ -137,12 +137,6 @@ auto CSSValueConversion<ShapeOutside>::operator()(BuilderState& state, const CSS
         processSingleValue(value);
 
     if (shape) {
-        // FIXME: Add support for `path()` and `shape()` functions in `shape-outside`.
-        if (WTF::holdsAlternative<PathFunction>(*shape) || WTF::holdsAlternative<ShapeFunction>(*shape)) {
-            state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CSS::Keyword::None { };
-        }
-
         if (referenceBox != CSSBoxType::BoxMissing)
             return ShapeOutside::ShapeAndShapeBox { WTF::move(*shape), referenceBox };
         return ShapeOutside::Shape { WTF::move(*shape) };
