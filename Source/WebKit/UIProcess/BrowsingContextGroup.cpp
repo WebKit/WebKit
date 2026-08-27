@@ -48,9 +48,9 @@ BrowsingContextGroup::BrowsingContextGroup() = default;
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;
 
-static bool isLoopbackOrLocalNetworkSite(const Site& site)
+static bool isLoopbackOrLocalNetworkSite(const Site& site, bool localNetworkAccessEnabled)
 {
-    if (determineIPAddressSpace(site) != IPAddressSpace::Public)
+    if (localNetworkAccessEnabled && determineIPAddressSpace(site) != IPAddressSpace::Public)
         return true;
     return SecurityOrigin::isLocalHostOrLoopbackIPAddress(site.domain().string());
 }
@@ -64,7 +64,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     if (site.isEmpty() || m_processMap.contains(site))
         return completionHandler(nullptr);
 
-    if (isLoopbackOrLocalNetworkSite(site))
+    if (isLoopbackOrLocalNetworkSite(site, preferences.localNetworkAccessEnabled()))
         return completionHandler(nullptr);
 
     if (!m_sharedProcessSites.contains(site)) {
