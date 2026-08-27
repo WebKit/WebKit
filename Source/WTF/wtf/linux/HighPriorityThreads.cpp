@@ -57,7 +57,9 @@ HighPriorityThreads& HighPriorityThreads::singleton()
 HighPriorityThreads::HighPriorityThreads()
     : m_threadGroup(ThreadGroup::create())
 #if USE(GLIB)
-    , m_discardRealTimeKitProxyTimer(RunLoop::mainSingleton(), "HighPriorityThreads::DiscardRealTimeKitProxyTimer"_s, this, &HighPriorityThreads::discardRealTimeKitProxyTimerFired)
+    , m_discardRealTimeKitProxyTimer(RunLoop::mainSingleton(), "HighPriorityThreads::DiscardRealTimeKitProxyTimer"_s, [] {
+        singleton().discardRealTimeKitProxyTimerFired();
+    })
 #endif
 {
 #if USE(GLIB)
