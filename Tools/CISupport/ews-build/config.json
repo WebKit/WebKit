@@ -312,7 +312,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-26",
       "configuration": "release",
       "triggered_by": ["ios-26-sim-build-ews"],
-      "additionalArguments": ["--child-processes=5", "--exclude-tests", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["--exclude-tests", "imported/w3c/web-platform-tests"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
@@ -320,7 +320,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-26",
       "configuration": "release",
       "triggered_by": ["ios-26-sim-build-ews"],
-      "additionalArguments": ["--child-processes=4", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["imported/w3c/web-platform-tests"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198", "ews162", "ews145", "ews120", "ews103", "ews117", "ews116"]
     },
     {
@@ -521,7 +521,6 @@
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-26-sim-build-ews"],
-      "additionalArguments": ["--child-processes=3"],
       "workernames": ["ews156", "ews157", "ews158", "ews159", "ews160", "ews183", "ews254", "ews255", "ews256", "ews257", "ews258", "ews259"]
     },
     {
