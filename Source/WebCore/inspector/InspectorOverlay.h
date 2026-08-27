@@ -163,7 +163,7 @@ public:
     // The frame the overlay draws in, or null for the page overlay. See frameForGeometry().
     virtual LocalFrame* NODELETE overlayOwnerFrame() const { return nullptr; }
 
-    // Flex line-wrap positions for line separators; empty for a frame owner, which has no cache yet.
+    // Flex line-wrap positions for line separators, from the owning DOM agent's cache.
     virtual Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const { return { }; }
 };
 
