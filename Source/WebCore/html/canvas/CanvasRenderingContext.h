@@ -49,6 +49,7 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
+class NativeImage;
 class SVGImageElement;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
@@ -98,6 +99,10 @@ public:
 
     // Draws the source buffer to the canvasBase().buffer().
     virtual RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) = 0;
+    // Returns the contents of the source buffer as an image. The image is immutable, so it stays
+    // valid after the context is drawn to again. Returns nullptr only if no image can be produced,
+    // for example because the canvas has no contents or an allocation failed.
+    virtual RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) = 0;
     virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const = 0;
     bool NODELETE delegatesDisplay() const;
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();

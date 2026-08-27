@@ -68,6 +68,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include "PaintRenderingContext2D.h"
 #include "Path2D.h"
@@ -290,6 +291,17 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::surfaceBufferToImageBuffer(Sur
     return buffer();
 }
 
+RefPtr<NativeImage> CanvasRenderingContext2DBase::surfaceBufferToNativeImage(SurfaceBuffer)
+{
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = this->buffer();
+    if (!buffer)
+        return nullptr;
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
+}
+
 bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
 {
     // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
@@ -337,6 +349,7 @@ void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChange
         restore();
     m_stateStack.first() = State();
     m_path.clear();
+    m_bufferNativeImage = nullptr;
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
@@ -1831,8 +1844,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     Ref protectedCanvas { sourceCanvas };
     checkOrigin(&sourceCanvas);
 
-    RefPtr buffer = sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
-    if (!buffer)
+    RefPtr image = sourceCanvas.copyNativeImage();
+    if (!image)
         return { };
 
     auto shouldUseDrawOptionsWithoutPostProcessing = sourceCanvas.renderingContext() && sourceCanvas.renderingContext()->is2d() && !sourceCanvas.havePendingCanvasNoiseInjection();
@@ -1840,25 +1853,26 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        fullCanvasCompositedDrawImage(*buffer, normalizedDstRect, normalizedSrcRect, state().globalComposite);
+        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, state().globalComposite);
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         if (&sourceCanvas == &canvasBase()) {
             if (auto copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size())) {
-                copy->context().drawImageBuffer(*buffer, -normalizedSrcRect.location());
+                copy->context().drawNativeImage(*image, { -normalizedSrcRect.location(), FloatSize { image->size() } }, { { }, FloatSize { image->size() } });
                 clearCanvas();
-                c->drawImageBuffer(*copy, normalizedDstRect, { { }, normalizedSrcRect.size() }, { state().globalComposite, state().globalBlend });
+                if (RefPtr copyImage = ImageBuffer::sinkIntoNativeImage(copy.releaseNonNull()))
+                    c->drawNativeImage(*copyImage, normalizedDstRect, { { }, normalizedSrcRect.size() }, { state().globalComposite, state().globalBlend });
             }
         } else {
             clearCanvas();
-            c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+            c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
         }
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
     }
 
     return { };
@@ -2062,6 +2076,11 @@ static void drawImageToContext(Image& image, GraphicsContext& context, const Flo
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
 {
     context.drawImageBuffer(imageBuffer, dest, src, options);
+}
+
+static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+{
+    context.drawNativeImage(image, dest, src, options);
 }
 
 template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
@@ -2380,6 +2399,7 @@ void CanvasRenderingContext2DBase::willUpdateEntireContents(OptionSet<WillUpdate
 
 void CanvasRenderingContext2DBase::willUpdateContents(std::optional<FloatRect> rect, OptionSet<WillUpdateContentsOption> options)
 {
+    m_bufferNativeImage = nullptr;
     if (!options.contains(WillUpdateContentsOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
 
