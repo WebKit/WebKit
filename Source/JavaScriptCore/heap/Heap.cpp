@@ -840,6 +840,9 @@ void Heap::reconcileWeakReferencesAtGCEnd()
 #endif
 
     vm().reconcileWeakReferencesAtGCEnd();
+
+    if (auto* clientData = vm().clientData)
+        clientData->reconcileWeakReferencesAtGCEnd(vm(), collectionScope);
 }
 
 void Heap::willStartIterating()

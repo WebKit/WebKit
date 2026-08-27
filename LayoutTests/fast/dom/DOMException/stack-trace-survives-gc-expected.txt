@@ -1,0 +1,12 @@
+A DOMException captures a stack trace whose frames point at the functions that were on the stack, and the GC does not trace those pointers. When one of those functions dies the trace must be turned into strings, or reading .stack afterwards reads cells that have been freed and handed out again. That requires the GC to reconcile weak references in the DOMException subspace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS exceptions.length is 1000
+PASS exceptions[0] instanceof DOMException is true
+PASS brokenTraces is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

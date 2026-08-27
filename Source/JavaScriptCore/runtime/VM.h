@@ -248,6 +248,11 @@ public:
 
         JS_EXPORT_PRIVATE virtual String overrideSourceURL(const StackFrame&, const String& originalSourceURL) const = 0;
 
+        // Called after marking and before sweeping, alongside the cell types the Heap reconciles
+        // itself. The client owns the subspaces for its own cell types, so it has to visit the
+        // marked cells of those that hold weak references and settle them.
+        virtual void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope) { }
+
         virtual bool isWebCoreJSClientData() const { return false; }
     };
 

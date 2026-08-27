@@ -126,6 +126,17 @@ JSHeapData::JSHeapData(Heap& heap)
 {
 }
 
+void JSHeapData::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope collectionScope)
+{
+    for (auto& [space, reconcileCell] : m_weakReconciliationSpaces) {
+        space->forEachMarkedCell(
+            [&] (HeapCell* cell, HeapCell::Kind kind) {
+                RELEASE_ASSERT(kind == HeapCell::Kind::JSCell);
+                reconcileCell(cell, vm, collectionScope);
+            });
+    }
+}
+
 JSHeapData* JSHeapData::ensureHeapData(Heap& heap)
 {
     if (!Options::useGlobalGC())
