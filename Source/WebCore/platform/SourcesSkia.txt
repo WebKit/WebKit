@@ -58,7 +58,7 @@ platform/graphics/skia/PathSkia.cpp
 platform/graphics/skia/PatternSkia.cpp
 platform/graphics/skia/PlatformDisplaySkia.cpp @no-unify
 platform/graphics/skia/ShareableBitmapSkia.cpp
-platform/graphics/skia/SkiaBackingStore.cpp
+platform/graphics/skia/SkiaBackingStore.cpp @no-unify
 platform/graphics/skia/SkiaCompositingLayer.cpp
 platform/graphics/skia/SkiaCompositingLayer3DRenderingContext.cpp
 platform/graphics/skia/SkiaCompositingLayerFilters.cpp
@@ -76,6 +76,6 @@ platform/graphics/skia/SkiaReplayCanvas.cpp
 platform/graphics/skia/SkiaSerializedImageBuffer.cpp
 platform/graphics/skia/SkiaSystemFallbackFontCache.cpp
 platform/graphics/skia/SkiaTextureAtlasPacker.cpp
-platform/graphics/skia/SkiaUtilities.cpp
+platform/graphics/skia/SkiaUtilities.cpp @no-unify
 
 platform/skia/SharedBufferSkia.cpp

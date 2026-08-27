@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
-
 #include "BitmapTexture.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Lock.h>
@@ -95,5 +93,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(TEXTURE_MAPPER)

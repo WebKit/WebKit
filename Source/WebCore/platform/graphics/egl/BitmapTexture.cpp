@@ -1,28 +1,26 @@
 /*
- Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- Copyright (C) 2012, 2025 Igalia S.L.
- Copyright (C) 2012 Adobe Systems Incorporated
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Library General Public
- License as published by the Free Software Foundation; either
- version 2 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Library General Public License for more details.
-
- You should have received a copy of the GNU Library General Public License
- along with this library; see the file COPYING.LIB.  If not, write to
- the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- Boston, MA 02110-1301, USA.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012, 2025, 2026 Igalia S.L.
+ * Copyright (C) 2012 Adobe Systems Incorporated
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #include "config.h"
 #include "BitmapTexture.h"
-
-#if USE(TEXTURE_MAPPER)
 
 #include "GLContext.h"
 #include "GraphicsContext.h"
@@ -30,9 +28,7 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "PlatformDisplay.h"
-#include "TextureMapper.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperShaderProgram.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -53,6 +49,29 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win port
 #include <skia/core/SkPixmap.h>
 #include <skia/core/SkSurface.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+#ifndef GL_BGRA
+#define GL_BGRA 0x80E1
+#endif
+
+#ifndef GL_UNPACK_ROW_LENGTH
+#define GL_UNPACK_ROW_LENGTH 0x0CF2
+#endif
+
+#ifndef GL_UNPACK_SKIP_ROWS
+#define GL_UNPACK_SKIP_ROWS 0x0CF3
+#endif
+
+#ifndef GL_UNPACK_SKIP_PIXELS
+#define GL_UNPACK_SKIP_PIXELS 0x0CF4
+#endif
 #endif
 
 #if OS(DARWIN)
@@ -85,12 +104,12 @@ void BitmapTexture::determineRenderTargetAndBinding()
     m_renderTarget = GL_TEXTURE_2D;
 }
 
-GLenum BitmapTexture::textureFormat() const
+unsigned BitmapTexture::textureFormat() const
 {
     return m_flags.contains(Flags::UseBGRALayout) ? GL_BGRA : GL_RGBA;
 }
 
-GLenum depthBufferFormat()
+static GLenum depthBufferFormat()
 {
     auto* glContext = GLContext::current();
     if (glContext->version() >= 300 || glContext->glExtensions().OES_packed_depth_stencil)
@@ -594,5 +613,3 @@ sk_sp<SkSurface> BitmapTexture::createSkiaSurface(GrDirectContext* grContext, Gr
 #endif
 
 } // namespace WebCore
-
-#endif // USE(TEXTURE_MAPPER)

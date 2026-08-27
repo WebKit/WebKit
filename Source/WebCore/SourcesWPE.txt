@@ -76,6 +76,8 @@ platform/graphics/glib/SystemFontDatabaseGLib.cpp
 platform/graphics/android/GraphicsContextGLTextureMapperAndroid.cpp @no-unify
 platform/graphics/android/PlatformDisplayAndroid.cpp @no-unify
 
+platform/graphics/egl/BitmapTexture.cpp @no-unify
+platform/graphics/egl/BitmapTexturePool.cpp @no-unify
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
 platform/graphics/egl/GLContextWrapper.cpp @no-unify

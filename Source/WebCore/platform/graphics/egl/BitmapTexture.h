@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "PixelFormat.h"
-#include "TextureMapperGLHeaders.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -57,7 +56,6 @@ namespace WebCore {
 
 class GraphicsLayer;
 class NativeImage;
-class TextureMapper;
 enum class TextureMapperFlags : uint16_t;
 
 class BitmapTexture final : public ThreadSafeRefCounted<BitmapTexture> {
@@ -111,7 +109,7 @@ public:
 
     ClipStack& clipStack() LIFETIME_BOUND { return m_clipStack; }
 
-    void copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset);
+    void copyFromExternalTexture(unsigned sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset);
 
     OptionSet<TextureMapperFlags> colorConvertFlags() const;
 
@@ -138,7 +136,7 @@ private:
 
     void determineRenderTargetAndBinding();
 
-    GLenum textureFormat() const;
+    unsigned textureFormat() const;
     void createTexture();
     void allocateTexture();
 #if USE(GBM)
@@ -147,12 +145,12 @@ private:
 
     OptionSet<Flags> m_flags;
     IntSize m_size;
-    GLuint m_id { 0 };
-    GLenum m_renderTarget { GL_TEXTURE_2D };
-    GLenum m_binding { GL_TEXTURE_BINDING_2D };
-    GLuint m_fbo { 0 };
-    GLuint m_depthBufferObject { 0 };
-    GLuint m_stencilBufferObject { 0 };
+    unsigned m_id { 0 };
+    unsigned m_renderTarget { 0 };
+    unsigned m_binding { 0 };
+    unsigned m_fbo { 0 };
+    unsigned m_depthBufferObject { 0 };
+    unsigned m_stencilBufferObject { 0 };
     bool m_stencilBound { false };
     bool m_shouldClear { true };
     ClipStack m_clipStack;

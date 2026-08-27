@@ -27,7 +27,6 @@
 #include "config.h"
 #include "BitmapTexturePool.h"
 
-#if USE(TEXTURE_MAPPER)
 #include "GLContext.h"
 #include "GLContextWrapper.h"
 #include "PlatformDisplay.h"
@@ -216,5 +215,3 @@ void BitmapTexturePool::exitLimitExceededModeIfNeeded()
 }
 
 } // namespace WebCore
-
-#endif // USE(TEXTURE_MAPPER)
