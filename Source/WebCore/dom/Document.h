@@ -1583,6 +1583,14 @@ public:
     bool mayHaveElementsWithNonAutoTouchAction() const { return m_mayHaveElementsWithNonAutoTouchAction; }
     void setMayHaveElementsWithNonAutoTouchAction() { m_mayHaveElementsWithNonAutoTouchAction = true; }
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    bool hasTouchTrackingElements() const { return !m_touchTrackingElements.isEmptyIgnoringNullReferences(); }
+    void didAddTouchTrackingElement(Node&);
+    void didRemoveTouchTrackingElement(Node&);
+    void removeTouchTrackingElementsForDocument(Document&);
+
+    bool mayHaveTouchTrackingElements() const { return m_mayHaveTouchTrackingElements; }
+#endif
 #if ENABLE(EDITABLE_REGION)
     bool mayHaveEditableElements() const { return m_mayHaveEditableElements; }
     void setMayHaveEditableElements() { m_mayHaveEditableElements = true; }
@@ -2539,6 +2547,10 @@ private:
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     EventTargetSet m_touchEventTargets;
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    EventTargetSet m_touchTrackingElements;
+    bool m_mayHaveTouchTrackingElements { false };
 #endif
 
     EventTargetSet m_wheelEventTargets;

@@ -39,6 +39,8 @@ class HTMLImageLoader;
 class HTMLOptionElement;
 class Icon;
 class InputType;
+class LayoutPoint;
+class RenderObject;
 class ListAttributeTargetObserver;
 class RadioButtonGroups;
 class StepRange;
@@ -357,10 +359,22 @@ public:
     float switchAnimationHeldProgress() const;
     bool NODELETE isSwitchHeld() const;
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    bool usesTouchTracking() const;
+    bool contributesTouchTrackingRegion(const RenderObject&) const;
+    WEBCORE_EXPORT void touchTrackingDidBegin(LayoutPoint absoluteLocation);
+    WEBCORE_EXPORT void touchTrackingDidUpdate(LayoutPoint absoluteLocation);
+    WEBCORE_EXPORT void touchTrackingDidEnd(bool committed);
+#endif
+
     void initializeInputTypeAfterParsingOrCloning();
 
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventHandler();
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    void updateTouchTracking();
 #endif
 
 private:
@@ -498,6 +512,9 @@ private:
     bool m_canReceiveDroppedFiles : 1 { false };
 #if ENABLE(TOUCH_EVENTS)
     bool m_hasTouchEventHandler : 1 { false };
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    bool m_usesTouchTracking : 1 { false };
 #endif
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
     bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };

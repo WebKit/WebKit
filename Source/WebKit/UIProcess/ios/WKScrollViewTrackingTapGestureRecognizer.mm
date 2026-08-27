@@ -50,4 +50,28 @@
 
 @end
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+
+@implementation WKScrollViewTrackingPanGestureRecognizer
+
+- (void)reset
+{
+    [super reset];
+
+    _lastTouchedScrollView = nil;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+
+    // Assigned even when there is no scroll view: -reset only runs once the gesture has begun or
+    // failed, so one that stays possible would otherwise answer for an earlier touch.
+    _lastTouchedScrollView = WebKit::scrollViewForTouches(touches);
+}
+
+@end
+
+#endif
+
 #endif // PLATFORM(IOS_FAMILY)

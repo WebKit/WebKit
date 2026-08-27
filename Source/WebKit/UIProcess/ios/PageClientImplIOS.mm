@@ -1299,6 +1299,13 @@ bool PageClientImpl::isSimulatingCompatibilityPointerTouches() const
     return [webView() _isSimulatingCompatibilityPointerTouches];
 }
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+bool PageClientImpl::controlOwnsTouch() const
+{
+    return [contentView() controlOwnsTouch];
+}
+#endif
+
 void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callback)
 {
     [contentView() runModalJavaScriptDialog:WTF::move(callback)];

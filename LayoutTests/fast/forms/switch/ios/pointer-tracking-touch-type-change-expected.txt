@@ -1,0 +1,11 @@
+The click a commit dispatches can change the type, which must not use freed memory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clicks is 1
+PASS input.type is "text"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

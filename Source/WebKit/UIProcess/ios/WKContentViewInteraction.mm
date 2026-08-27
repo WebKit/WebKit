@@ -1426,6 +1426,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (protect(_page)->preferences().controlTouchTrackingEnabled()) {
+        _touchTrackingPanGestureRecognizer = adoptNS([[WKScrollViewTrackingPanGestureRecognizer alloc] initWithTarget:self action:@selector(_touchTrackingPanGestureRecognized:)]);
+        [_touchTrackingPanGestureRecognizer setMinimumNumberOfTouches:1];
+        [_touchTrackingPanGestureRecognizer setMaximumNumberOfTouches:1];
+        [_touchTrackingPanGestureRecognizer setDelegate:self];
+        [self addGestureRecognizer:_touchTrackingPanGestureRecognizer.get()];
+    }
+#endif
+
     _nonBlockingDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_nonBlockingDoubleTapRecognized:)]);
     [_nonBlockingDoubleTapGestureRecognizer setNumberOfTapsRequired:2];
     [_nonBlockingDoubleTapGestureRecognizer setDelegate:self];
@@ -1639,6 +1649,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self removeGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (_touchTrackingPanGestureRecognizer) {
+        [_touchTrackingPanGestureRecognizer setDelegate:nil];
+        [self removeGestureRecognizer:_touchTrackingPanGestureRecognizer.get()];
+    }
+    [self _discardTouchTrackingState];
+#endif
+
     [_highlightLongPressGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
@@ -1770,6 +1788,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(MODEL_PROCESS)
     [self removeGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (_touchTrackingPanGestureRecognizer) {
+        [self removeGestureRecognizer:_touchTrackingPanGestureRecognizer.get()];
+        [self _discardTouchTrackingState];
+    }
+#endif
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeInteraction:_mouseInteraction.get()];
 #endif
@@ -1798,6 +1822,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if ENABLE(MODEL_PROCESS)
     [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (_touchTrackingPanGestureRecognizer)
+        [self addGestureRecognizer:_touchTrackingPanGestureRecognizer.get()];
 #endif
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addInteraction:_mouseInteraction.get()];
@@ -2268,6 +2296,29 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 
 #if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (lastTouchEvent.type == WebKit::WKTouchEventType::Begin && self._touchTrackingEnabled) {
+        _touchTrackingTarget = WebKit::touchTrackingTargetForPoint(self, WebCore::roundedIntPoint(lastTouchEvent.locationInRootViewCoordinates));
+        ++_touchTrackingGeneration;
+        _touchTrackingPreventedByPage = NO;
+        _controlOwnedTouch = NO;
+        _touchTrackingDecided = NO;
+        _controlOwnsTouch = NO;
+        _potentialTapStartedOnTrackingControl = !!_touchTrackingTarget;
+        if (_touchTrackingTarget) {
+            _touchTrackingStartLocation = lastTouchEvent.locationInRootViewCoordinates;
+            [self _startTouchTrackingScrollDetectionWindow];
+        }
+    }
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (self._touchTrackingEnabled) {
+        _touchTrackingLatestLocation = lastTouchEvent.locationInRootViewCoordinates;
+        if (lastTouchEvent.type == WebKit::WKTouchEventType::Change)
+            [self _updateTouchTrackingAtLocation:_touchTrackingLatestLocation];
+    }
+#endif
+
     WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, [_touchEventGestureRecognizer modifierFlags] };
     nativeWebTouchEvent.setCanPreventNativeGestures(_touchEventsCanPreventNativeGestures || [_touchEventGestureRecognizer isDefaultPrevented]);
 
@@ -2284,6 +2335,15 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (nativeWebTouchEvent.allTouchPointsAreReleased()) {
         _touchEventsCanPreventNativeGestures = YES;
         _touchStartedNearSelectionHandle = NO;
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+        if (auto target = std::exchange(_activeTouchTrackingTarget, std::nullopt))
+            protect(_page)->touchTrackingDidEnd(*target, lastTouchEvent.type != WebKit::WKTouchEventType::Cancel);
+
+        _touchTrackingTarget = std::nullopt;
+        _touchTrackingDecided = NO;
+        _controlOwnsTouch = NO;
+#endif
 
         if (!_page->isScrollingOrZooming())
             [self _resetPanningPreventionFlags];
@@ -2571,11 +2631,19 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
         if (_failedTouchStartDeferringGestures && !preventNativeGestures)
             _failedTouchStartDeferringGestures->add(gestureRecognizer);
     }
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    [self _touchTrackingPageDidAnswerPreventingGestures:preventNativeGestures];
+#endif
 }
 
 - (void)_doneDeferringTouchMove:(BOOL)preventNativeGestures
 {
     [_touchMoveDeferringGestureRecognizer endDeferralShouldPreventGestures:preventNativeGestures];
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    [self _touchTrackingPageDidAnswerPreventingGestures:preventNativeGestures];
+#endif
 }
 
 - (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
@@ -2764,6 +2832,14 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     ASSERT(preferences->fasterClicksEnabled());
     if (!_potentialTapInProgress)
         return;
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (_potentialTapStartedOnTrackingControl) {
+        RELEASE_LOG(ViewGestures, "Potential tap started on a tracking control. Trigger click. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
+        [self _setDoubleTapGesturesEnabled:NO];
+        return;
+    }
+#endif
 
     // We check both the system preference and the page preference, because we only want this
     // to apply in "desktop" mode.
@@ -3118,6 +3194,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (gestureRecognizer == _touchTrackingPanGestureRecognizer && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer))
+        return YES;
+    if (otherGestureRecognizer == _touchTrackingPanGestureRecognizer && isBuiltInScrollViewPanGestureRecognizer(gestureRecognizer))
+        return YES;
+#endif
+
 #if ENABLE(GAMEPAD)
     if (gestureRecognizer == _gamepadInteractionGestureRecognizer || otherGestureRecognizer == _gamepadInteractionGestureRecognizer) {
         if (WebKit::UIGamepadProvider::singleton().platformWebPageProxyForGamepadInput() == _page)
@@ -3230,6 +3313,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _touchEventGestureRecognizer && [self _touchEventsMustRequireGestureRecognizerToFail:otherGestureRecognizer])
         return YES;
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (otherGestureRecognizer == _touchTrackingPanGestureRecognizer && [self _isSuppressedByTouchTracking:gestureRecognizer] && [self _hasTouchTrackingTargetForGesture:gestureRecognizer])
+        return YES;
+#endif
+
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
@@ -3238,6 +3326,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (gestureRecognizer == _touchTrackingPanGestureRecognizer && [self _isSuppressedByTouchTracking:otherGestureRecognizer] && [self _hasTouchTrackingTargetForGesture:otherGestureRecognizer])
+        return YES;
+#endif
+
 #if ENABLE(GAMEPAD)
     if (gestureRecognizer == _gamepadInteractionGestureRecognizer || otherGestureRecognizer == _gamepadInteractionGestureRecognizer) {
         if (WebKit::UIGamepadProvider::singleton().platformWebPageProxyForGamepadInput() == _page)
@@ -3542,6 +3635,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     if (gestureRecognizer == _singleTapGestureRecognizer) {
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+        // The control had this touch and committed it. A press that never moved is still a potential
+        // tap, so the tap would toggle it a second time.
+        if (_controlOwnedTouch)
+            return NO;
+#endif
         switch (ignoreTapGestureReason(_singleTapGestureRecognizer.get())) {
         case WebKit::IgnoreTapGestureReason::ToggleEditMenu:
             protect(_page)->clearSelectionAfterTappingSelectionHighlightIfNeeded(point);
@@ -3552,6 +3651,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return YES;
         }
     }
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (gestureRecognizer == _touchTrackingPanGestureRecognizer)
+        return !!_touchTrackingTarget && self._touchTrackingEnabled;
+
+    if ([self _isSuppressedByTouchTracking:gestureRecognizer] && [self _hasTouchTrackingTargetForGesture:gestureRecognizer])
+        return NO;
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     if (gestureRecognizer == _modelInteractionPanGestureRecognizer) {
@@ -3762,6 +3869,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)textInteractionGesture:(WKBEGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (self._touchTrackingEnabled && WebKit::touchTrackingTargetForPoint(self, WebCore::roundedIntPoint(point)))
+        return NO;
+#endif
+
 #if USE(BROWSERENGINEKIT)
     if (gesture == WKBEGestureTypeForceTouch)
         return [self hasSelectablePositionAtPoint:point];
@@ -3951,6 +4063,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RELEASE_LOG(ViewGestures, "Ending potential tap. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
 
     _potentialTapInProgress = NO;
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    _potentialTapStartedOnTrackingControl = NO;
+#endif
 }
 
 - (BOOL)isPotentialTapInProgress
@@ -4069,6 +4184,212 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_gamepadInteractionGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     // This space intentionally left blank.
+}
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+- (BOOL)_touchTrackingEnabled
+{
+    return _touchTrackingPanGestureRecognizer && protect(_page)->preferences().controlTouchTrackingEnabled();
+}
+
+- (void)_discardTouchTrackingState
+{
+    // Whatever the reason for giving up, the web process must not be left tracking.
+    if (auto target = std::exchange(_activeTouchTrackingTarget, std::nullopt); target && _page)
+        protect(_page)->touchTrackingDidEnd(*target, false);
+
+    _touchTrackingTarget = std::nullopt;
+
+    _touchTrackingDecided = NO;
+    _controlOwnsTouch = NO;
+}
+
+- (BOOL)_hasTouchTrackingTargetForGesture:(UIGestureRecognizer *)gestureRecognizer
+{
+    // Failure relationships are evaluated when the touch reaches the recognizers, which can be
+    // before it reaches -_touchEventsRecognized, so the cached target is not reliable here.
+    if (_touchTrackingTarget)
+        return YES;
+
+    if (!self._touchTrackingEnabled)
+        return NO;
+
+    return !!WebKit::touchTrackingTargetForPoint(self, WebCore::roundedIntPoint([gestureRecognizer locationInView:self]));
+}
+
+- (BOOL)_isSuppressedByTouchTracking:(UIGestureRecognizer *)gestureRecognizer
+{
+    // Selection and long press would otherwise run on top of the drag, and the loupe cancels it.
+    return gestureRecognizer._wk_isTextInteractionLoupeGesture
+        || gestureRecognizer._wk_isTapAndAHalf
+        || gestureRecognizer == _highlightLongPressGestureRecognizer
+        || gestureRecognizer == _longPressGestureRecognizer;
+}
+
+- (void)_startTouchTrackingScrollDetectionWindow
+{
+    // MIN_SELECT_TOUCH_TIME: UIScrollView defers touches to its content for this long to detect a
+    // scroll, and a native control cannot recognize until that deferral fails. So the scroller decides.
+    constexpr Seconds scrollDetectionWindow = 150_ms;
+    [self _startTouchTrackingScrollDetectionWindowWithDelay:scrollDetectionWindow];
+}
+
+- (void)_startTouchTrackingScrollDetectionWindowWithDelay:(Seconds)delay
+{
+    if (!_touchTrackingTarget)
+        return;
+
+    WorkQueue::mainSingleton().dispatchAfter(delay, [weakSelf = WeakObjCPtr<WKContentView>(self), generation = _touchTrackingGeneration] {
+        RetainPtr view = weakSelf.get();
+        if (view)
+            [view _touchTrackingScrollDetectionWindowLapsedForGeneration:generation];
+    });
+}
+
+- (BOOL)controlOwnsTouch
+{
+    return _controlOwnsTouch;
+}
+
+- (void)_touchTrackingScrollDetectionWindowLapsedForGeneration:(uint64_t)generation
+{
+    if (generation == _touchTrackingGeneration)
+        [self _touchTrackingScrollDetectionWindowDidClose];
+}
+
+- (void)_touchTrackingPageDidAnswerPreventingGestures:(BOOL)preventNativeGestures
+{
+    if (preventNativeGestures)
+        _touchTrackingPreventedByPage = YES;
+
+    if (std::exchange(_touchTrackingWindowLapsedWaitingForPageGeneration, 0) != _touchTrackingGeneration || preventNativeGestures)
+        return;
+
+    // A deferred scroller cannot claim the touch until it gets a touch update, so it needs a few.
+    constexpr Seconds scrollDetectionGraceAfterDeferral = 50_ms;
+    [self _startTouchTrackingScrollDetectionWindowWithDelay:scrollDetectionGraceAfterDeferral];
+}
+
+- (UIScrollView *)_touchTrackingStartScrollView
+{
+    // From the touch itself, since that is what UIKit routes scrolling by. An overflow scroll area
+    // containing the control is the scroller with first refusal, and hit testing views misses it.
+    return [_touchTrackingPanGestureRecognizer lastTouchedScrollView];
+}
+
+- (BOOL)_isScrollViewOrAncestorUsingTheTouch:(UIScrollView *)scrollView
+{
+    // Unlike -_isPanningScrollViewOrAncestor:, an ended pan does not count: it belongs to the touch before.
+    return [self _hasEnclosingScrollView:scrollView matchingCriteria:[](UIScrollView *scrollView) {
+        if (scrollView.dragging || scrollView.decelerating)
+            return YES;
+
+        auto state = scrollView.panGestureRecognizer.state;
+        return state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged;
+    }];
+}
+
+- (BOOL)_touchTrackingDragIsAlongAnUnscrollableAxis
+{
+    // UIScrollViewDelayedTouchesBeganGestureRecognizer sends the delayed touches to the control early
+    // once they pass the scroller's hysteresis along an axis it cannot use. Our pan recognizing is that.
+    auto state = [_touchTrackingPanGestureRecognizer state];
+    if (state != UIGestureRecognizerStateBegan && state != UIGestureRecognizerStateChanged)
+        return NO;
+
+    RetainPtr scrollView = [self _touchTrackingStartScrollView];
+    auto translation = [_touchTrackingPanGestureRecognizer translationInView:self];
+    auto axis = std::abs(translation.x) > std::abs(translation.y) ? UIAxisHorizontal : UIAxisVertical;
+    return ![self _hasEnclosingScrollView:scrollView.get() matchingCriteria:[axis](UIScrollView *scrollView) {
+        return axis == UIAxisHorizontal ? scrollView._wk_canScrollHorizontallyWithoutBouncing : scrollView._wk_canScrollVerticallyWithoutBouncing;
+    }];
+}
+
+- (void)_touchTrackingScrollDetectionWindowDidClose
+{
+    [self _touchTrackingTakeTouchGivingScrollerFirstRefusal:YES];
+}
+
+- (void)_touchTrackingTakeTouchGivingScrollerFirstRefusal:(BOOL)firstRefusal
+{
+    if (_touchTrackingDecided || !_touchTrackingTarget || !self._touchTrackingEnabled)
+        return;
+
+    // Only the page preventing default keeps the control out. Not the pan recognizer's state: any
+    // gesture that beats it in arbitration fails it, a touch shortly after a tap being one.
+    if (_touchTrackingPreventedByPage)
+        return;
+
+    // The page may not have had its say yet. Each answer in flight arrives once, so waiting for it
+    // restarts the window a bounded number of times rather than polling.
+    RefPtr page = _page;
+    if (page->isHandlingPreventableTouchStart() || page->isHandlingPreventableTouchMove()) {
+        _touchTrackingWindowLapsedWaitingForPageGeneration = _touchTrackingGeneration;
+        return;
+    }
+
+    _touchTrackingDecided = YES;
+
+    if (firstRefusal && [self _isScrollViewOrAncestorUsingTheTouch:[self _touchTrackingStartScrollView]]) {
+        // A scroll started inside the window, so the control stays out of this touch entirely.
+        return;
+    }
+
+    // The control has the touch, so every scroller stays out for the rest of it. These are consulted
+    // on every pan update by WKBaseScrollView.
+    _controlOwnsTouch = YES;
+    _controlOwnedTouch = YES;
+    _preventsPanningInXAxis = YES;
+    _preventsPanningInYAxis = YES;
+
+    // These recognizers are not ours to arbitrate, so cancel them for this touch: on a native control
+    // they never run. Tap and a half recognizes at touch down, so clear what it already selected.
+    bool cancelledASuppressedGesture = false;
+    for (UIGestureRecognizer *gesture in self.gestureRecognizers) {
+        if (![self _isSuppressedByTouchTracking:gesture])
+            continue;
+        cancelledASuppressedGesture |= gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged;
+        [gesture _wk_cancel];
+    }
+
+    if (cancelledASuppressedGesture)
+        page->clearSelection();
+
+    // Pressed state and tracking start together, so the thumb follows the very next movement.
+    [self _updateTouchTrackingAtLocation:_touchTrackingLatestLocation];
+}
+
+- (void)_updateTouchTrackingAtLocation:(CGPoint)location
+{
+    if (!_controlOwnsTouch || !_touchTrackingTarget)
+        return;
+
+    if (!_activeTouchTrackingTarget) {
+        _activeTouchTrackingTarget = _touchTrackingTarget;
+        // Track from where the finger went down rather than from wherever it has reached.
+        protect(_page)->touchTrackingDidBegin(*_activeTouchTrackingTarget, WebCore::roundedIntPoint(_touchTrackingStartLocation));
+    }
+
+    protect(_page)->touchTrackingDidUpdate(*_activeTouchTrackingTarget, WebCore::roundedIntPoint(location));
+}
+
+- (void)_touchTrackingPanGestureRecognized:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(gestureRecognizer == _touchTrackingPanGestureRecognizer);
+
+    if (!self._touchTrackingEnabled) {
+        [self _discardTouchTrackingState];
+        return;
+    }
+
+    // The recognizer's only remaining job is telling us the drag has passed a scroller's hysteresis
+    // along an axis that scroller cannot use. Tracking itself begins, updates and ends with the touch.
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan && gestureRecognizer.state != UIGestureRecognizerStateChanged)
+        return;
+
+    if ([self _touchTrackingDragIsAlongAnUnscrollableAxis])
+        [self _touchTrackingTakeTouchGivingScrollerFirstRefusal:NO];
 }
 #endif
 

@@ -1,0 +1,43 @@
+The scroller gets first refusal on a touch that starts on a switch: it takes drags it can scroll, and the switch takes the rest. Holding first hands the touch to the switch either way.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A tap, which activates the switch exactly once:
+PASS input.checked is true
+PASS clicks is 1
+A drag right after a tap, which works the switch rather than selecting text:
+PASS input.checked is true
+PASS input.checked is false
+PASS clicks is 2
+PASS getSelection().isCollapsed is true
+A drag towards on, which the page cannot scroll sideways:
+PASS input.checked is true
+PASS clicks is 1
+PASS Math.round(scrollY) is 0
+An up drag on the same switch, which the page can scroll:
+PASS input.checked is false
+PASS clicks is 0
+PASS scrollY > 0 is true
+An up drag on a vertical switch, which the page can also scroll:
+PASS input.checked is false
+PASS clicks is 0
+PASS scrollY > 0 is true
+A drag towards on after holding, which hands the touch to the switch:
+PASS input.checked is true
+PASS clicks is 1
+PASS scrollY < 10 is true
+With the page preventing default, the switch takes no part in the touch:
+PASS input.checked is false
+PASS clicks is 0
+PASS Math.round(scrollY) is 0
+PASS input.checked is false
+PASS scrollY < 10 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

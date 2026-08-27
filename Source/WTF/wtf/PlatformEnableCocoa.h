@@ -934,6 +934,11 @@
 #define ENABLE_TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO 1
 #endif
 
+// The regions are only ever consulted from the iOS touch event path.
+#if !defined(ENABLE_TOUCH_TRACKING_REGIONS) && ENABLE(IOS_TOUCH_EVENTS)
+#define ENABLE_TOUCH_TRACKING_REGIONS 1
+#endif
+
 #if !defined(ENABLE_UI_SIDE_COMPOSITING)
 #define ENABLE_UI_SIDE_COMPOSITING 1
 #endif

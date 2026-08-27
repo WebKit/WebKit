@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#scroller { overflow: scroll; height: 150px; width: 200px; }
+#vertical { writing-mode: vertical-lr; }
+</style>
+<div id="scroller">
+<p><input type=checkbox switch id=horizontal></p>
+<p><input type=checkbox switch id=vertical></p>
+<div style="height: 400px"></div>
+</div>
+<script>
+description("A switch inside an overflow scroll area: that scroller gets first refusal, and once the switch has the touch the scroller stays out of it.");
+jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+const horizontal = document.getElementById("horizontal");
+const vertical = document.getElementById("vertical");
+let input = horizontal;
+let clicks = 0;
+
+for (const element of [horizontal, vertical])
+    element.addEventListener("click", () => ++clicks);
+
+function center()
+{
+    const rect = input.getBoundingClientRect();
+    return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) };
+}
+
+// Bounded, so a change in behaviour fails rather than times out. The page itself never scrolls here.
+async function settle()
+{
+    // A touch landing while a scroller decelerates stops it instead of becoming a touch start.
+    let stable = 0;
+    let previous = -1;
+    for (let i = 0; i < 100 && stable < 4; ++i) {
+        stable = previous === scroller.scrollTop ? stable + 1 : 0;
+        previous = scroller.scrollTop;
+        await UIHelper.delayFor(50);
+    }
+    await UIHelper.ensurePresentationUpdate();
+}
+
+async function drag(deltaX, deltaY, holdFirst)
+{
+    const { x, y } = center();
+    const stream = new UIHelper.EventStreamBuilder().begin(x, y);
+    if (holdFirst)
+        stream.wait(0.3);
+    await UIHelper.sendEventStream(stream.move(x + deltaX, y + deltaY, 0.25).end().takeResult());
+    await settle();
+}
+
+async function reset()
+{
+    scroller.scrollTop = 0;
+    input.checked = false;
+    // A selection left by an earlier case brings up selection UI, which captures later touches.
+    if (!getSelection().isCollapsed) {
+        debug("NOTE a selection was left behind by the previous case");
+        getSelection().removeAllRanges();
+    }
+    await settle();
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    debug("An up drag, which the area can scroll:");
+    await reset();
+    await drag(0, -100, false);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scroller.scrollTop > 0");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A drag towards on, which the area cannot scroll sideways:");
+    await reset();
+    await drag(2 * input.offsetWidth, 0, false);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBeTrue("scroller.scrollTop < 10");
+
+    debug("A drag the area could scroll, after holding, which hands the touch to the switch:");
+    input = vertical;
+    await reset();
+    await drag(0, 2 * input.offsetHeight, true);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBeTrue("scroller.scrollTop < 10");
+
+    finishJSTest();
+})();
+</script>
+</html>

@@ -250,6 +250,12 @@
         return UIAxisNeither;
 
     auto panGestureRecognizer = scrollView.panGestureRecognizer;
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (scrollingTreeNodeDelegate->controlOwnsTouch())
+        return UIAxisHorizontal | UIAxisVertical;
+#endif
+
     scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
 
     auto touchActions = scrollingTreeNodeDelegate->activeTouchActions();
@@ -610,6 +616,20 @@ bool ScrollingTreeScrollingNodeDelegateIOS::shouldAllowPanGestureRecognizerToRec
 
     return true;
 }
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+bool ScrollingTreeScrollingNodeDelegateIOS::controlOwnsTouch() const
+{
+    WeakPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
+    if (!scrollingCoordinatorProxy)
+        return false;
+
+    if (RefPtr pageClient = protect(scrollingCoordinatorProxy->webPageProxy())->pageClient())
+        return pageClient->controlOwnsTouch();
+
+    return false;
+}
+#endif
 
 void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {

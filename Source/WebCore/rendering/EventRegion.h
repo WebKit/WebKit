@@ -42,6 +42,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#include <WebCore/FrameIdentifier.h>
+#endif
+
 namespace WebCore {
 
 class EventRegion;
@@ -91,6 +95,24 @@ private:
 #endif
 };
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+struct TouchTrackingTarget {
+    NodeIdentifier nodeIdentifier;
+    FrameIdentifier frameIdentifier;
+
+    bool operator==(const TouchTrackingTarget&) const = default;
+};
+
+struct TouchTrackingRegion {
+    Region region;
+    TouchTrackingTarget target;
+
+    bool operator==(const TouchTrackingRegion&) const = default;
+};
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const TouchTrackingRegion&);
+#endif
+
 #if ENABLE(TOUCH_EVENT_REGIONS)
 struct TouchEventListenerRegion {
     bool operator==(const TouchEventListenerRegion&) const = default;
@@ -122,6 +144,9 @@ public:
 #endif
 #if ENABLE(EDITABLE_REGION)
     , std::optional<WebCore::Region>
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    , Vector<WebCore::TouchTrackingRegion>
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion>
@@ -159,6 +184,10 @@ public:
     const Region& NODELETE eventListenerRegionForType(EventListenerRegionType) const LIFETIME_BOUND;
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    WEBCORE_EXPORT std::optional<TouchTrackingTarget> touchTrackingTargetForPoint(const IntPoint&) const;
+#endif
+
 #if ENABLE(EDITABLE_REGION)
     void ensureEditableRegion();
     bool hasEditableRegion() const { return m_editableRegion.has_value(); }
@@ -181,6 +210,9 @@ private:
     void subtractAutoFromTouchActions(const Region&);
 #endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    void uniteTouchTrackingRegion(const Region&, const RenderObject&);
+#endif
 
     Region m_region;
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -195,6 +227,9 @@ private:
 #endif
 #if ENABLE(EDITABLE_REGION)
     std::optional<Region> m_editableRegion;
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    Vector<TouchTrackingRegion> m_touchTrackingRegions;
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;

@@ -319,7 +319,7 @@ public:
     void resumeActiveDOMObjectsAndAnimations();
     bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
-    enum class InvalidateContentEventRegionsReason { Layout, EventHandlerChange };
+    enum class InvalidateContentEventRegionsReason { Layout, EventHandlerChange, TouchTrackingChange };
     void invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason);
 
     WEBCORE_EXPORT FloatSize screenSize() const;

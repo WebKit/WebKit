@@ -67,6 +67,10 @@
 #include "TouchEvent.h"
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#include "Settings.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CheckboxInputType);
@@ -179,6 +183,11 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
     ASSERT(element());
     Ref element = *this->element();
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (element->document().settings().controlTouchTrackingEnabled())
+        return;
+#endif
+
     if (!event.isTrusted() || !isSwitch() || element->isDisabledFormControl() || !element->renderer()) {
         stopSwitchPointerTracking();
         return;
@@ -193,11 +202,13 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
         RefPtr touch = targetTouches->item(0);
 
         m_switchPointerTrackingTouchIdentifier = touch->identifier();
+        m_switchTouchStartLocation = { static_cast<float>(touch->pageX()), static_cast<float>(touch->pageY()) };
         if (!m_switchHeldTimer) {
-            m_switchHeldTimer = makeUnique<Timer>([protectedThis = Ref { *this }, touch] {
-                if (!protectedThis->isSwitch() || !protectedThis->element() || !protectedThis->element()->renderer())
+            m_switchHeldTimer = makeUnique<Timer>([weakThis = WeakPtr { *this }] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || !protectedThis->isSwitch() || !protectedThis->element() || !protectedThis->element()->renderer())
                     return;
-                protectedThis->startSwitchPointerTracking({ static_cast<float>(touch->pageX()), static_cast<float>(touch->pageY()) });
+                protectedThis->startSwitchPointerTracking(protectedThis->m_switchTouchStartLocation);
                 protectedThis->setIsSwitchHeld(true);
             });
         }
@@ -226,6 +237,70 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
             performSwitchAnimation(SwitchAnimationType::Held);
         element->dispatchSimulatedClick(&event, SendNoEvents);
     }
+}
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+bool CheckboxInputType::usesTouchTracking() const
+{
+    ASSERT(element());
+    return isSwitch() && !protect(element())->isDisabledFormControl();
+}
+
+bool CheckboxInputType::contributesTouchTrackingRegion(const RenderObject& renderer) const
+{
+    return usesTouchTracking() && renderer.node() == element() && renderer.style().hasUsedAppearance();
+}
+
+void CheckboxInputType::touchTrackingDidBegin(LayoutPoint absoluteLocation)
+{
+    ASSERT(element());
+    Ref element = *this->element();
+    if (!isSwitch() || element->isDisabledFormControl() || !element->renderer())
+        return;
+
+    // Only sent once the control has the touch, so the pressed state is immediate as it is natively.
+    setIsSwitchHeld(true);
+    startSwitchPointerTracking(absoluteLocation);
+}
+
+void CheckboxInputType::touchTrackingDidUpdate(LayoutPoint absoluteLocation)
+{
+    if (!isSwitchPointerTracking())
+        return;
+
+    ASSERT(element());
+    if (!isSwitch() || !element()->renderer()) {
+        stopSwitchPointerTracking();
+        return;
+    }
+
+    updateIsSwitchVisuallyOnFromAbsoluteLocation(absoluteLocation);
+}
+
+void CheckboxInputType::touchTrackingDidEnd(bool committed)
+{
+    ASSERT(element());
+    Ref element = *this->element();
+    bool wasHeld = std::exchange(m_isSwitchHeld, false);
+
+    if (!isSwitch() || !element->renderer()) {
+        stopSwitchPointerTracking();
+        return;
+    }
+
+    if (!committed || element->isDisabledFormControl()) {
+        stopSwitchPointerTracking();
+        protect(element->renderer())->repaint();
+    } else if (isSwitchPointerTracking()) {
+        // Dragged across or not, a native control commits the toggle it armed at touch down.
+        // willDispatchClick() decides what the click does, so a drag there and back still does nothing.
+        element->dispatchSimulatedClick(nullptr, SendNoEvents);
+    }
+
+    // The click above runs script, which may have changed the type or torn down the renderer.
+    if (wasHeld && isSwitch() && element->renderer())
+        performSwitchAnimation(SwitchAnimationType::Held);
 }
 #endif
 
@@ -328,6 +403,9 @@ void CheckboxInputType::disabledStateChanged()
 #if ENABLE(TOUCH_EVENTS)
     if (isSwitch())
         protect(element())->updateTouchEventHandler();
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    protect(element())->updateTouchTracking();
 #endif
 }
 

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<p><input type=checkbox switch id=input></p>
+<script>
+description("The click a commit dispatches can change the type, which must not use freed memory.");
+jsTestIsAsync = true;
+
+const input = document.getElementById("input");
+let clicks = 0;
+input.addEventListener("click", () => ++clicks);
+input.addEventListener("click", () => input.type = "text", { once: true });
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    // A drag along the inline axis hands the touch to the switch, since the page cannot scroll sideways.
+    const rect = input.getBoundingClientRect();
+    const x = Math.round(rect.left + rect.width / 2);
+    const y = Math.round(rect.top + rect.height / 2);
+    const stream = new UIHelper.EventStreamBuilder().begin(x, y).move(x + 2 * input.offsetWidth, y, 0.25).end();
+    await UIHelper.sendEventStream(stream.takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBe("clicks", "1");
+    shouldBeEqualToString("input.type", "text");
+    finishJSTest();
+})();
+</script>
+</html>

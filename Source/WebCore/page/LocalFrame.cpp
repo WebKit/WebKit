@@ -417,6 +417,7 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
     bool needsUpdateForTouchActionElements = false;
     bool needsUpdateForEditableElements = false;
     bool needsUpdateForInteractionRegions = false;
+    bool needsUpdateForTouchTrackingElements = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
     needsUpdateForWheelEventHandlers = protect(m_doc)->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
@@ -440,8 +441,12 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     needsUpdateForInteractionRegions = page()->shouldBuildInteractionRegions();
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    needsUpdateForTouchTrackingElements = m_doc->settings().controlTouchTrackingEnabled()
+        && (m_doc->hasTouchTrackingElements() || reason == InvalidateContentEventRegionsReason::TouchTrackingChange);
+#endif
 
-    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions && !needsUpdateForTouchEventHandlers)
+    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions && !needsUpdateForTouchEventHandlers && !needsUpdateForTouchTrackingElements)
         return;
 
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())

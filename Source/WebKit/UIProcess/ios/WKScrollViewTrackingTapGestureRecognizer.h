@@ -35,4 +35,14 @@
 
 @end
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+
+@interface WKScrollViewTrackingPanGestureRecognizer : UIPanGestureRecognizer
+
+@property (nonatomic, readonly, weak) UIScrollView *lastTouchedScrollView;
+
+@end
+
+#endif
+
 #endif // PLATFORM(IOS_FAMILY)

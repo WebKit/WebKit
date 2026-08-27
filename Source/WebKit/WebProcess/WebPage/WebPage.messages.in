@@ -409,6 +409,12 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DragCancelled()
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    TouchTrackingDidBegin(WebCore::NodeIdentifier nodeID, WebCore::IntPoint clientPosition)
+    TouchTrackingDidUpdate(WebCore::NodeIdentifier nodeID, WebCore::IntPoint clientPosition)
+    TouchTrackingDidEnd(WebCore::NodeIdentifier nodeID, bool committed)
+#endif
+
 #if ENABLE(MODEL_PROCESS)
     RequestInteractiveModelElementAtPoint(WebCore::IntPoint clientPosition)
     StageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier> nodeID, WebCore::TransformationMatrix transform)

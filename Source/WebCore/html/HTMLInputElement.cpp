@@ -167,6 +167,11 @@ HTMLInputElement::~HTMLInputElement()
 #endif
     }
 #endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (m_usesTouchTracking)
+        document().didRemoveTouchTrackingElement(*this);
+#endif
 }
 
 const AtomString& HTMLInputElement::name() const
@@ -624,6 +629,9 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
 #if ENABLE(TOUCH_EVENTS)
     updateTouchEventHandler();
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    updateTouchTracking();
+#endif
 
     if (isPasswordField())
         m_hasEverBeenPasswordField = true;
@@ -872,6 +880,9 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             m_hasSwitchAttribute = hasSwitchAttribute;
 #if ENABLE(TOUCH_EVENTS)
             updateTouchEventHandler();
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+            updateTouchTracking();
 #endif
             if (attributeModificationReason != AttributeModificationReason::Directly)
                 return; // updateUserAgentShadowTree will take care of this.
@@ -1846,6 +1857,13 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
     }
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (m_usesTouchTracking) {
+        oldDocument.didRemoveTouchTrackingElement(*this);
+        newDocument.didAddTouchTrackingElement(*this);
+    }
+#endif
+
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -2446,5 +2464,32 @@ bool HTMLInputElement::isSwitchHeld() const
     ASSERT(isSwitch());
     return downcast<CheckboxInputType>(*m_inputType).isSwitchHeld();
 }
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+bool HTMLInputElement::usesTouchTracking() const
+{
+    return m_inputType->usesTouchTracking();
+}
+
+bool HTMLInputElement::contributesTouchTrackingRegion(const RenderObject& renderer) const
+{
+    return m_inputType->contributesTouchTrackingRegion(renderer);
+}
+
+void HTMLInputElement::touchTrackingDidBegin(LayoutPoint absoluteLocation)
+{
+    protect(m_inputType)->touchTrackingDidBegin(absoluteLocation);
+}
+
+void HTMLInputElement::touchTrackingDidUpdate(LayoutPoint absoluteLocation)
+{
+    protect(m_inputType)->touchTrackingDidUpdate(absoluteLocation);
+}
+
+void HTMLInputElement::touchTrackingDidEnd(bool committed)
+{
+    protect(m_inputType)->touchTrackingDidEnd(committed);
+}
+#endif
 
 } // namespace

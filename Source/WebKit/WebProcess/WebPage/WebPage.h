@@ -1474,6 +1474,12 @@ public:
     void stageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier>);
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    void touchTrackingDidBegin(WebCore::NodeIdentifier, WebCore::IntPoint clientPosition);
+    void touchTrackingDidUpdate(WebCore::NodeIdentifier, WebCore::IntPoint clientPosition);
+    void touchTrackingDidEnd(WebCore::NodeIdentifier, bool committed);
+#endif
+
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
     void beginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo) { beginPrinting(frameID, printInfo); }
     void endPrinting(CompletionHandler<void()>&& = [] { });

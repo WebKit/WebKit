@@ -3772,6 +3772,11 @@ void Document::willBeRemovedFromFrame()
     if (!m_wheelEventTargets.isEmptyIgnoringNullReferences() && parentDocument())
         protect(parentDocument())->didRemoveEventTargetNode(*this);
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    if (hasTouchTrackingElements() && parentDocument())
+        protect(parentDocument())->removeTouchTrackingElementsForDocument(*this);
+#endif
+
     if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
         mediaQueryMatcher->documentDestroyed();
 
@@ -9595,6 +9600,46 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
     UNUSED_PARAM(removalMode);
 #endif
 }
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+void Document::didAddTouchTrackingElement(Node& element)
+{
+    bool wasEmpty = !hasTouchTrackingElements();
+    m_touchTrackingElements.add(element);
+    m_mayHaveTouchTrackingElements = true;
+
+    // One entry per child document, so a detached subtree cannot leave a stale ancestor count.
+    if (RefPtr parent = wasEmpty ? parentDocument() : nullptr)
+        parent->didAddTouchTrackingElement(*this);
+
+    if (RefPtr frame = this->frame())
+        frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::TouchTrackingChange);
+}
+
+void Document::removeTouchTrackingElementsForDocument(Document& document)
+{
+    if (!m_touchTrackingElements.removeAll(document))
+        return;
+
+    if (RefPtr parent = hasTouchTrackingElements() ? nullptr : parentDocument())
+        parent->removeTouchTrackingElementsForDocument(*this);
+
+    if (RefPtr frame = this->frame())
+        frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::TouchTrackingChange);
+}
+
+void Document::didRemoveTouchTrackingElement(Node& element)
+{
+    if (!removeHandlerFromSet(m_touchTrackingElements, element, EventHandlerRemoval::One))
+        return;
+
+    if (RefPtr parent = hasTouchTrackingElements() ? nullptr : parentDocument())
+        parent->removeTouchTrackingElementsForDocument(*this);
+
+    if (RefPtr frame = this->frame())
+        frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::TouchTrackingChange);
+}
+#endif
 
 void Document::didRemoveEventTargetNode(Node& handler)
 {

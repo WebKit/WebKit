@@ -2321,6 +2321,21 @@ ContextMenuQRCodeDetectionEnabled:
     WebCore:
       default: false
 
+ControlTouchTrackingEnabled:
+  type: bool
+  status: stable
+  category: html
+  humanReadableName: "UI process touch tracking"
+  humanReadableDescription: "Let the UI process perform touch tracking for controls, so scrolling gestures work properly"
+  condition: ENABLE(TOUCH_TRACKING_REGIONS)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
   type: bool
