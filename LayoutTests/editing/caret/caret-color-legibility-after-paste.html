@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="source" style="background-color: rgb(255, 255, 255);"><span style="color: rgb(68, 68, 68);">Copied text here</span></div>
+<div id="nobg"><span style="color: rgb(68, 68, 68);">No background source</span></div>
+<div id="wrapping" style="background-color: rgb(255, 255, 255);"><span style="color: rgb(68, 68, 68);">Text long enough that it has to wrap onto more than one line inside a narrow editor</span></div>
+<div id="authored" style="background-color: rgb(255, 255, 255);"><span style="color: rgb(68, 68, 68); caret-color: rgb(255, 0, 0);">Authored caret color</span></div>
+<div id="editor" contenteditable="true" style="background-color: rgb(50, 50, 50); color: rgb(253, 253, 253);"><br></div>
+<div id="narrow" contenteditable="true" style="width: 200px; background-color: rgb(50, 50, 50); color: rgb(253, 253, 253);"><br></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const minimumContrastRatio = 3;
+const editorSurface = [50, 50, 50];
+const pastedSurface = [255, 255, 255];
+const editor = document.getElementById("editor");
+const narrow = document.getElementById("narrow");
+const out = [];
+
+function parseColor(text)
+{
+    const parts = text.match(/\d+/g);
+    return parts ? parts.slice(0, 3).map(Number) : null;
+}
+
+function relativeLuminance([r, g, b])
+{
+    const channel = value => {
+        const v = value / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+function contrastRatio(a, b)
+{
+    const la = relativeLuminance(a);
+    const lb = relativeLuminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+function copyFrom(id)
+{
+    const node = document.getElementById(id).firstChild;
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+    document.execCommand("Copy");
+}
+
+function pasteInto(target)
+{
+    target.focus();
+    getSelection().selectAllChildren(target);
+    document.execCommand("Paste");
+}
+
+function collapseInto(span, offset)
+{
+    if (!span || !span.firstChild) {
+        out.push("FAIL: expected a pasted span to collapse into");
+        return false;
+    }
+    const range = document.createRange();
+    range.setStart(span.firstChild, offset === "end" ? span.firstChild.length : offset);
+    range.collapse(true);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+    return true;
+}
+
+function reportLegibility(label, surface)
+{
+    if (!window.internals) {
+        out.push(label + ": needs internals");
+        return;
+    }
+    const caret = parseColor(internals.paintedCaretColor());
+    if (!caret) {
+        out.push(label + ": FAIL, could not parse caret color");
+        return;
+    }
+    const ratio = contrastRatio(caret, surface);
+    out.push(label + ": " + (ratio >= minimumContrastRatio ? "legible" : "FAIL, contrast " + ratio.toFixed(2)));
+}
+
+copyFrom("source");
+pasteInto(editor);
+reportLegibility("1 right after paste, against the editor surface", editorSurface);
+
+document.execCommand("InsertParagraph");
+reportLegibility("2 after inserting a paragraph, against the editor surface", editorSurface);
+
+document.execCommand("InsertText", false, "x");
+reportLegibility("3 after typing a character, against the editor surface", editorSurface);
+
+if (collapseInto(editor.querySelector("span"), 2))
+    reportLegibility("4 mid-run, against the pasted surface", pastedSurface);
+
+copyFrom("wrapping");
+pasteInto(narrow);
+if (collapseInto(narrow.querySelector("span"), "end"))
+    reportLegibility("5 end of a wrapped run, against the editor surface", editorSurface);
+
+copyFrom("nobg");
+pasteInto(editor);
+reportLegibility("6 source with no declared background, against the editor surface", editorSurface);
+
+copyFrom("authored");
+pasteInto(editor);
+const authoredSpan = editor.querySelector("span[style*='caret-color']");
+out.push("7 authored caret-color survives the paste: " + (authoredSpan ? getComputedStyle(authoredSpan).caretColor : "FAIL, no span carrying caret-color"));
+
+document.getElementById("log").textContent = out.join("\n");
+</script>
+</body>
+</html>

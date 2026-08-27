@@ -648,6 +648,8 @@ enum ContentsFormat {
 
     DOMString documentBackgroundColor();
 
+    DOMString paintedCaretColor();
+
     boolean displayP3Available();
 
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);

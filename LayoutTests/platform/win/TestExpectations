@@ -565,6 +565,8 @@ css3/masking/clip-path-border-radius-fill-box-001.html [ ImageOnlyFailure ]
 css3/masking/clip-path-border-radius-padding-box-001.html [ ImageOnlyFailure ]
 css3/masking/clip-path-inset.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+# The caret-color legibility adjustment is only built where HAVE(REDESIGNED_TEXT_CURSOR) is enabled.
+editing/caret/caret-color-legibility-after-paste.html [ Skip ]
 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]

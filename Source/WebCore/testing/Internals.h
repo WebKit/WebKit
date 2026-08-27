@@ -420,6 +420,8 @@ public:
 
     ExceptionOr<String> documentBackgroundColor();
 
+    ExceptionOr<String> paintedCaretColor();
+
     ExceptionOr<bool> displayP3Available()
     {
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)

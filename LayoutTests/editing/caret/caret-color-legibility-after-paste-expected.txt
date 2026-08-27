@@ -1,0 +1,13 @@
+Copied text here
+No background source
+Text long enough that it has to wrap onto more than one line inside a narrow editor
+Authored caret color
+Authored caret color
+Text long enough that it has to wrap onto more than one line inside a narrow editor
+1 right after paste, against the editor surface: legible
+2 after inserting a paragraph, against the editor surface: legible
+3 after typing a character, against the editor surface: legible
+4 mid-run, against the pasted surface: legible
+5 end of a wrapped run, against the editor surface: legible
+6 source with no declared background, against the editor surface: legible
+7 authored caret-color survives the paste: rgb(255, 0, 0)

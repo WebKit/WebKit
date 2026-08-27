@@ -32,6 +32,7 @@
 #include "CaretAnimator.h"
 #include "CharacterData.h"
 #include "ColorBlending.h"
+#include "ColorLuminance.h"
 #include "ContainerNodeInlines.h"
 #include "DeleteSelectionCommand.h"
 #include "DictationCaretAnimator.h"
@@ -62,6 +63,8 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
 #include "LocalDOMWindow.h"
@@ -76,6 +79,8 @@
 #include "PositionInlines.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
+#include "RenderBoxModelObject.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderText.h"
@@ -1992,11 +1997,69 @@ void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& pai
         CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
 }
 
-Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, const Node* node)
+#if !(PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)) && HAVE(REDESIGNED_TEXT_CURSOR)
+static LayoutSize inFlowPositionOffsetToCaretPainter(const RenderInline& inlineRenderer, const RenderBlock& caretPainter)
+{
+    LayoutSize offset;
+    for (CheckedPtr<const RenderElement> ancestor = &inlineRenderer; ancestor && ancestor != &caretPainter; ancestor = ancestor->parent()) {
+        CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(ancestor.get());
+        if (modelObject && modelObject->isInFlowPositioned())
+            offset += modelObject->offsetForInFlowPosition();
+    }
+    return offset;
+}
+
+static bool backgroundPaintsUnderCaret(const RenderInline& inlineRenderer, const RenderBlock& caretPainter, const LayoutRect& caretRect)
+{
+    if (inlineRenderer.containingBlock() != &caretPainter)
+        return true;
+
+    auto isHorizontal = caretPainter.isHorizontalWritingMode();
+    auto caretMiddleAlongInlineAxis = isHorizontal ? caretRect.x() + caretRect.width() / 2 : caretRect.y() + caretRect.height() / 2;
+    auto inFlowOffset = inFlowPositionOffsetToCaretPainter(inlineRenderer, caretPainter);
+
+    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(inlineRenderer); box; box.traverseInlineBoxLineRightward()) {
+        auto boxRect = LayoutRect { box->visualRectIgnoringBlockDirection() };
+        boxRect.move(inFlowOffset);
+        if (!boxRect.intersects(caretRect))
+            continue;
+        auto start = isHorizontal ? boxRect.x() : boxRect.y();
+        auto end = isHorizontal ? boxRect.maxX() : boxRect.maxY();
+        if (caretMiddleAlongInlineAxis >= start && caretMiddleAlongInlineAxis < end)
+            return true;
+    }
+
+    return false;
+}
+
+static CheckedPtr<const RenderElement> rendererSkippingInlinesNotPaintingUnderCaret(const Node& node, const LayoutRect& caretRect)
+{
+    CheckedPtr caretPainter = rendererForCaretPainting(&node);
+    if (!caretPainter)
+        return { };
+
+    CheckedPtr<const RenderElement> outermostSkipped;
+    for (CheckedPtr renderer = node.renderer(); renderer && renderer != caretPainter; renderer = renderer->parent()) {
+        CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get());
+        if (!inlineRenderer)
+            continue;
+        if (!inlineRenderer->style().visitedDependentBackgroundColorApplyingColorFilter().isOpaque())
+            continue;
+        if (backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, caretRect))
+            return { };
+        outermostSkipped = inlineRenderer->parent();
+    }
+
+    return outermostSkipped;
+}
+#endif
+
+Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, const Node* node, std::optional<LayoutRect> caretRectInPainterSpace)
 {
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
+    UNUSED_PARAM(caretRectInPainterSpace);
     if (elementStyle.caretColor().isAuto())
         return { };
     return elementStyle.caretColorResolvingCurrentColor();
@@ -2007,7 +2070,7 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     auto appUsesCustomAccentColor = false;
 #endif
 
-    if (elementStyle.caretColor().isAuto() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor)) {
+    auto systemAccentCaretColor = [&] {
 #if PLATFORM(MAC)
         auto cssColorValue = CSSValueAppleSystemControlAccent;
 #else
@@ -2018,10 +2081,50 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
 
         Style::ColorResolver colorResolver { elementStyle };
         return colorResolver.colorApplyingColorFilter(systemAccentColor);
+    };
+
+    if (elementStyle.caretColor().isAuto() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor))
+        return systemAccentCaretColor();
+
+    auto caretColor = elementStyle.visitedDependentCaretColorApplyingColorFilter();
+    if (!elementStyle.caretColor().isAuto() || !node || !caretColor.isVisible())
+        return caretColor;
+
+    if (caretRectInPainterSpace) {
+        if (CheckedPtr rendererToUse = rendererSkippingInlinesNotPaintingUnderCaret(*node, *caretRectInPainterSpace))
+            return rendererToUse->style().visitedDependentCaretColorApplyingColorFilter();
     }
 
-    return elementStyle.visitedDependentCaretColorApplyingColorFilter();
+    Color surface;
+    CheckedPtr caretPainter = rendererForCaretPainting(node);
+    CheckedPtr firstRenderer = node->renderer();
+    if (is<RenderText>(firstRenderer.get()))
+        firstRenderer = firstRenderer->parent();
+    for (CheckedPtr renderer = firstRenderer; renderer && !surface.isOpaque(); renderer = renderer->parent()) {
+        if (CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get())) {
+            if (!caretPainter || !caretRectInPainterSpace || !backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, *caretRectInPainterSpace))
+                continue;
+        }
+        surface = blendSourceOver(renderer->style().visitedDependentBackgroundColorApplyingColorFilter(), surface);
+    }
+
+    static constexpr auto minimumContrastRatio = 3.0;
+    if (!surface.isOpaque() || contrastRatio(caretColor, surface) >= minimumContrastRatio)
+        return caretColor;
+
+    if (caretPainter) {
+        auto painterCaretColor = caretPainter->style().visitedDependentCaretColorApplyingColorFilter();
+        if (painterCaretColor.isVisible() && contrastRatio(painterCaretColor, surface) >= minimumContrastRatio)
+            return painterCaretColor;
+    }
+
+    auto accentColor = systemAccentCaretColor();
+    if (contrastRatio(accentColor, surface) >= minimumContrastRatio)
+        return accentColor;
+
+    return surface.luminance() > 0.5 ? Color::black : Color::white;
 #else
+    UNUSED_PARAM(caretRectInPainterSpace);
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
@@ -2034,6 +2137,36 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     }
     return elementStyle.visitedDependentCaretColorApplyingColorFilter();
 #endif
+}
+
+static Color caretColorForNode(const Node& node, const LayoutRect& caretRectInPainterSpace)
+{
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
+        element = node.parentElement();
+    if (!element || !element->renderer())
+        return { };
+
+    std::optional<LayoutRect> rectForGeometry;
+    if (!caretRectInPainterSpace.isEmpty())
+        rectForGeometry = caretRectInPainterSpace;
+
+    return CaretBase::computeCaretColor(element->renderer()->style(), &node, rectForGeometry);
+}
+
+Color FrameSelection::paintedCaretColor()
+{
+    RefPtr node = m_selection.start().deprecatedNode();
+    if (!node)
+        return { };
+
+    recomputeCaretRect();
+
+    auto caretColor = caretColorForNode(*node, localCaretRectWithoutUpdate());
+    if (!caretColor.isValid())
+        caretColor = Color::black;
+
+    return caretColor;
 }
 
 void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, CaretAnimator* caretAnimator) const
@@ -2050,12 +2183,9 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
     if (caret.isEmpty())
         return;
 
-    Color caretColor = Color::black;
-    RefPtr element = dynamicDowncast<Element>(node);
-    if (!element)
-        element = node.parentElement();
-    if (element && element->renderer())
-        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
+    auto caretColor = caretColorForNode(node, localCaretRectWithoutUpdate());
+    if (!caretColor.isValid())
+        caretColor = Color::black;
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
     if (caretAnimator)

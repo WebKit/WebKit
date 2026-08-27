@@ -1610,6 +1610,8 @@ editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
 # These tests are intended to exercise Smart Lists support specific to Apple ports.
 editing/smart-lists/ [ Skip ]
 
+# The caret-color legibility adjustment is only built where HAVE(REDESIGNED_TEXT_CURSOR) is enabled.
+editing/caret/caret-color-legibility-after-paste.html [ Skip ]
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 
 webkit.org/b/178441 editing/deleting/delete-ligature-001.html [ Failure ]

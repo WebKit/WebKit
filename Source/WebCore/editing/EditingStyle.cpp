@@ -1348,6 +1348,11 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
         // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
         wrappingStyle->collapseTextDecorationProperties();
 
+        if (CheckedPtr contextStyle = context.computedStyle(); contextStyle && contextStyle->caretColor().isAuto()) {
+            if (RefPtr wrappingMutableStyle = wrappingStyle->style())
+                wrappingMutableStyle->removeProperty(CSSPropertyCaretColor);
+        }
+
         return wrappingStyle;
     }
 
