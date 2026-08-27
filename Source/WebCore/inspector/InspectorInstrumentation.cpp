@@ -46,6 +46,7 @@
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
 #include "GPUCanvasContext.h"
+#include "HitTestResult.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -393,8 +394,22 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
 
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
+    // Unlike the other element-selection hooks, this one is reached with the page's agents (via
+    // Chrome::mouseDidMoveOverElement), so the frame agent has to be resolved from the hit-tested
+    // frame rather than from `instrumentingAgents`. Both are notified: each tracks the hovered node
+    // for its own overlay, and whichever target the frontend has the picker enabled on draws.
+    if (RefPtr frame = result.innerNodeFrame()) {
+        if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
+            frameDOMAgent->mouseDidMoveOverElement(result, modifiers);
+    }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->mouseDidMoveOverElement(result, modifiers);
+}
+
+void InspectorInstrumentation::mouseDidMoveOverRemoteFrameImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->mouseDidMoveOverRemoteFrame();
 }
 
 void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingAgents)
@@ -405,6 +420,12 @@ void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingA
 
 bool InspectorInstrumentation::handleTouchEventImpl(InstrumentingAgents& instrumentingAgents, Node& node)
 {
+    // A frame target owns element selection for its own frame, so give it the tap first. Only one
+    // agent may consume the tap: both would call inspect() and the frontend would select twice.
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent()) {
+        if (frameDOMAgent->handleTouchEvent(node))
+            return true;
+    }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         return domAgent->handleTouchEvent(node);
     return false;

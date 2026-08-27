@@ -53,18 +53,6 @@ Inspector::CommandResult<void> FrameDOMAgent::removeBreakpointForEventListener(i
 }
 
 #if PLATFORM(IOS_FAMILY)
-Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-#else
-Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-#endif
-
-#if PLATFORM(IOS_FAMILY)
 Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);

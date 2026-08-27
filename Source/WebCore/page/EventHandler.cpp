@@ -2301,6 +2301,11 @@ HandleUserInputEventResult EventHandler::mouseMoved(const PlatformMouseEvent& ev
     hitTestResult.setToNonUserAgentShadowAncestor();
     if (!result.remoteUserInputEventData())
         page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifiers());
+    else {
+        // The hover is headed for an out-of-process frame, so the inspector's page-level agent is not
+        // told what is under the cursor and would keep drawing whatever it saw last.
+        InspectorInstrumentation::mouseDidMoveOverRemoteFrame(*page);
+    }
 
 #if ENABLE(IMAGE_ANALYSIS)
     if (event.syntheticClickType() == SyntheticClickType::NoTap && m_textRecognitionHoverTimer.isActive())

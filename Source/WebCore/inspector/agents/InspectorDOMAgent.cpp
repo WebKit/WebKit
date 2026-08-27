@@ -66,7 +66,9 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameDOMAgent.h"
 #include "FrameInlines.h"
+#include "FrameInspectorController.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -1220,10 +1222,47 @@ bool InspectorDOMAgent::handleMousePress()
         return false;
 
     if (RefPtr node = overlay().highlightedNode()) {
+        // The innermost target owns element selection. When the click lands on a frame owner whose
+        // frame has its own picker enabled, cede so that frame selects the node the user actually
+        // hovered rather than this agent selecting the owner element.
+        //
+        // handleMousePressEvent() runs this hook before it hands the event to the subframe, and it
+        // returns early once an agent claims the click -- so claiming here would stop the event
+        // before the frame agent ever sees it. Both the same-process recursion through
+        // passMousePressEventToSubframe() and the cross-process re-dispatch for a RemoteFrame
+        // depend on this returning false.
+        if (frameOwnerNodeOwnsElementSelection(*node))
+            return false;
+
         inspect(node.get());
         return true;
     }
     return false;
+}
+
+bool InspectorDOMAgent::frameOwnerNodeOwnsElementSelection(Node& node)
+{
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node);
+    if (!frameOwner)
+        return false;
+
+    RefPtr contentFrame = frameOwner->contentFrame();
+    if (!contentFrame)
+        return false;
+
+    // A cross-origin frame is a RemoteFrame here, so its FrameDOMAgent lives in another process and
+    // there is no channel to ask whether it is searching. Assume it owns the click: the frontend
+    // enables the picker on every target at once, so whenever this agent is searching that frame's
+    // agent is too. Ceding costs nothing if it is not -- the event is re-dispatched into that process
+    // and simply goes unconsumed -- whereas claiming would select the <iframe> element instead of the
+    // node the user hovered inside it.
+    if (!is<LocalFrame>(*contentFrame))
+        return true;
+
+    // A same-origin frame has no FrameDOMAgent unless Site Isolation is on, so this returns false
+    // and leaves ordinary same-origin iframe picking untouched.
+    CheckedPtr frameDOMAgent = downcast<LocalFrame>(*contentFrame).inspectorController().instrumentingAgents().persistentFrameDOMAgent();
+    return frameDOMAgent && frameDOMAgent->searchingForNode();
 }
 
 bool InspectorDOMAgent::handleTouchEvent(Node& node)
@@ -1286,6 +1325,21 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, Opt
     highlightMousedOverNode();
 }
 
+void InspectorDOMAgent::mouseDidMoveOverRemoteFrame()
+{
+    // The cursor is over an out-of-process frame, so this agent will receive no further hover until
+    // it comes back: EventHandler hands the event to that frame instead of calling
+    // mouseDidMoveOverElement(). Without this, m_mousedOverNode stays latched on whatever was under
+    // the cursor last -- the owner <iframe> element, crossed on the way in -- and its highlight stays
+    // drawn underneath the one the frame's own agent is drawing.
+    m_mousedOverNode = nullptr;
+
+    if (!m_searchingForNode)
+        return;
+
+    std::ignore = hideHighlight();
+}
+
 void InspectorDOMAgent::highlightMousedOverNode()
 {
     RefPtr node = m_mousedOverNode.get();
@@ -1294,8 +1348,29 @@ void InspectorDOMAgent::highlightMousedOverNode()
     if (!node)
         return;
 
-    if (m_inspectModeHighlightConfig)
-        protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+    if (!m_inspectModeHighlightConfig)
+        return;
+
+    // Highlight state is per-target, so the target that draws clears the others -- the same rule the
+    // frontend applies with `exceptTargets`. Only same-process frames are reachable from here; an
+    // out-of-process frame is handled by mouseDidMoveOverRemoteFrame() instead.
+    clearFrameTargetNodeHighlights();
+
+    protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+}
+
+void InspectorDOMAgent::clearFrameTargetNodeHighlights()
+{
+    // Every local frame in the page may own a FrameDOMAgent with its own overlay. Only same-process
+    // frames are reachable; a cross-origin frame's agent lives elsewhere and clears itself when its
+    // own hover moves (and when it draws, it clears this agent).
+    for (RefPtr<Frame> frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (CheckedPtr frameDOMAgent = localFrame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
+            std::ignore = frameDOMAgent->hideHighlight();
+    }
 }
 
 void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, bool showRulers)

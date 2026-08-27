@@ -47,6 +47,7 @@ class Document;
 class Element;
 class EventListener;
 class EventTarget;
+class HitTestResult;
 class InspectorHistory;
 class LocalFrame;
 class Node;
@@ -54,6 +55,8 @@ class PseudoElement;
 class RegisteredEventListener;
 class RenderObject;
 class ShadowRoot;
+
+enum class PlatformEventModifier : uint8_t;
 
 // FrameDOMAgent is the per-frame DOM agent for Site Isolation.
 class FrameDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler, public CanMakeCheckedPtr<FrameDOMAgent> {
@@ -151,6 +154,9 @@ public:
     bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void flexibleBoxRendererBeganLayout(const RenderObject&);
     void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
+    bool handleMousePress();
+    bool handleTouchEvent(Node&);
+    void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
 
     // Public accessors
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
@@ -158,6 +164,7 @@ public:
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
     InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
     Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&) const;
+    bool searchingForNode() const { return m_searchingForNode; }
 
 private:
     Inspector::Protocol::DOM::NodeId bind(Node&);
@@ -192,6 +199,11 @@ private:
     void innerHighlightQuad(std::unique_ptr<FloatQuad>, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
     Inspector::CommandResult<void> innerHighlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
     Inspector::CommandResult<void> innerHighlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+
+    void setSearchingForNode(Inspector::Protocol::ErrorString&, bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, bool showRulers);
+    void highlightMousedOverNode();
+    void inspect(Node*);
+    void focusNode();
 
     InspectorOverlay& overlay() const { return m_overlay.get(); }
 
@@ -243,6 +255,12 @@ private:
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
     RefPtr<Node> m_inspectedNode;
+    RefPtr<Node> m_mousedOverNode;
+    RefPtr<Node> m_nodeToFocus;
+
+    std::unique_ptr<InspectorOverlay::Highlight::Config> m_inspectModeHighlightConfig;
+    std::optional<InspectorOverlay::Grid::Config> m_inspectModeGridOverlayConfig;
+    std::optional<InspectorOverlay::Flex::Config> m_inspectModeFlexOverlayConfig;
 
     SingleThreadWeakHashMap<RenderObject, Vector<size_t>> m_flexibleBoxRendererCachedItemsAtStartOfLine;
 
@@ -262,6 +280,8 @@ private:
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };
     bool m_allowEditingUserAgentShadowTrees { false };
+    bool m_searchingForNode { false };
+    bool m_inspectModeShowRulers { false };
 };
 
 } // namespace WebCore

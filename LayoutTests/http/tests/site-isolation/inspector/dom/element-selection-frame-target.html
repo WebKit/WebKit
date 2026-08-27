@@ -1,0 +1,182 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameElementSelection");
+
+    // Element selection (the element picker) is per-target: each DOM agent tracks its own hovered
+    // node and draws through its own overlay. Under Site Isolation a cross-origin iframe is a
+    // separate frame target, so the picker has to be enabled on frame targets too.
+    //
+    // The click that ends selection is deliberately not driven here. Reaching
+    // InspectorDOMAgent::handleMousePress() needs a real PlatformMouseEvent, and no inspector layout
+    // test drives eventSender -- there is no page-path picker test either. So these cases cover the
+    // protocol surface and the state machine (idempotence, teardown, config validation), not the
+    // click arbitration in handleMousePress(), which is exercised only by manual testing.
+
+    async function frameTargetFor(resourceName) {
+        let target = await frameTargetForURLContaining(resourceName);
+        InspectorTest.expectNotNull(target, "Should find the frame target for " + resourceName + ".");
+
+        if (target.isProvisional) {
+            let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            target = committedEvent.data.target;
+        }
+        await target.ensureTargetExecutionContext();
+
+        return target;
+    }
+
+    function highlightConfigs() {
+        return {
+            highlightConfig: {
+                showInfo: true,
+                contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+                paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+                borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+                marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+            },
+        };
+    }
+
+    // Resolves to an error, or null when the command succeeded.
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    suite.addTestCase({
+        name: "SetInspectModeEnabled",
+        description: "DOM.setInspectModeEnabled should be accepted by a frame target.",
+        async test() {
+            let target = await frameTargetFor("highlight-frame.html");
+
+            let enableError = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()}));
+            InspectorTest.expectNull(enableError, "Enabling inspect mode should be accepted by the frame target.");
+
+            let disableError = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: false}));
+            InspectorTest.expectNull(disableError, "Disabling inspect mode should be accepted by the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RedundantEnableIsIdempotent",
+        description: "Enabling or disabling twice should not error.",
+        async test() {
+            let target = await frameTargetFor("highlight-frame.html");
+
+            // setSearchingForNode() early-returns when the state already matches, so the second call
+            // is a no-op rather than a re-parse of the configs.
+            let first = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()}));
+            InspectorTest.expectNull(first, "First enable should be accepted.");
+
+            let second = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()}));
+            InspectorTest.expectNull(second, "Redundant enable should be accepted.");
+
+            await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: false}));
+
+            let redundantDisable = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: false}));
+            InspectorTest.expectNull(redundantDisable, "Redundant disable should be accepted.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DisableWithoutConfigSucceeds",
+        description: "Disabling should not require a highlight config.",
+        async test() {
+            let target = await frameTargetFor("highlight-frame.html");
+
+            await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()}));
+
+            // The config is only parsed when enabling, so tearing down must work with no config at
+            // all -- which is how the frontend disables the picker.
+            let error = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: false}));
+            InspectorTest.expectNull(error, "Disabling without a highlight config should be accepted.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "EnableWithoutHighlightConfigShouldError",
+        description: "Enabling without a highlight config should report an error.",
+        async test() {
+            let target = await frameTargetFor("highlight-frame.html");
+
+            let error = await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: true}));
+            InspectorTest.expectNotNull(error, "Enabling without a highlight config should report an error.");
+
+            // The agent flipped m_searchingForNode before rejecting the config, matching the page
+            // agent. Put it back so later cases start from a known state.
+            await errorFrom(target.DOMAgent.setInspectModeEnabled.invoke({enabled: false}));
+        }
+    });
+
+    suite.addTestCase({
+        name: "BothTargetsSupportInspectMode",
+        description: "The page target and the frame target should both expose the command.",
+        async test() {
+            let frameTarget = await frameTargetFor("highlight-frame.html");
+            let pageTarget = WI.assumingMainTarget();
+
+            InspectorTest.expectThat(pageTarget !== frameTarget, "Page and frame targets should be distinct.");
+            InspectorTest.expectThat(pageTarget.hasCommand("DOM.setInspectModeEnabled"), "Page target should support DOM.setInspectModeEnabled.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOM.setInspectModeEnabled"), "Frame target should support DOM.setInspectModeEnabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "FrontendEnablesOnEveryTarget",
+        description: "WI.domManager.inspectModeEnabled should fan out to frame targets, not just the main target.",
+        async test() {
+            await frameTargetFor("highlight-frame.html");
+
+            let expected = WI.targets.filter((target) => target.hasCommand("DOM.setInspectModeEnabled"));
+            InspectorTest.expectGreaterThan(expected.length, 1, "More than one target should support the command.");
+
+            // Record which targets the frontend actually sends the command to. Enabling it only on
+            // the main target is what left cross-origin frames unhighlightable.
+            let invokedOn = new Set;
+            let restores = expected.map((target) => {
+                let agent = target.DOMAgent;
+                let original = agent.setInspectModeEnabled;
+                agent.setInspectModeEnabled = {
+                    invoke(commandArguments) {
+                        invokedOn.add(target);
+                        return original.invoke(commandArguments);
+                    },
+                };
+                return () => { agent.setInspectModeEnabled = original; };
+            });
+
+            try {
+                WI.domManager.inspectModeEnabled = true;
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.InspectModeStateChanged);
+
+                InspectorTest.expectEqual(invokedOn.size, expected.length, "Every supporting target should receive DOM.setInspectModeEnabled.");
+                InspectorTest.expectThat(WI.domManager.inspectModeEnabled, "The frontend should report inspect mode as enabled.");
+            } finally {
+                for (let restore of restores)
+                    restore();
+            }
+
+            // Disable through the frontend so its cached state matches the backend; going straight to
+            // the agents would leave WI.domManager.inspectModeEnabled stuck true and make a later
+            // enable a no-op.
+            WI.domManager.inspectModeEnabled = false;
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.InspectModeStateChanged);
+            InspectorTest.expectFalse(WI.domManager.inspectModeEnabled, "The frontend should report inspect mode as disabled.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that a cross-origin iframe's FrameDOMAgent supports the element selection picker.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-frame.html" width="300" height="200"></iframe>
+</body>

@@ -1,0 +1,37 @@
+Tests that a cross-origin iframe's FrameDOMAgent supports the element selection picker.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameElementSelection
+-- Running test case: SetInspectModeEnabled
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Enabling inspect mode should be accepted by the frame target.
+PASS: Disabling inspect mode should be accepted by the frame target.
+
+-- Running test case: RedundantEnableIsIdempotent
+PASS: Should find the frame target for highlight-frame.html.
+PASS: First enable should be accepted.
+PASS: Redundant enable should be accepted.
+PASS: Redundant disable should be accepted.
+
+-- Running test case: DisableWithoutConfigSucceeds
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Disabling without a highlight config should be accepted.
+
+-- Running test case: EnableWithoutHighlightConfigShouldError
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Enabling without a highlight config should report an error.
+
+-- Running test case: BothTargetsSupportInspectMode
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Page and frame targets should be distinct.
+PASS: Page target should support DOM.setInspectModeEnabled.
+PASS: Frame target should support DOM.setInspectModeEnabled.
+
+-- Running test case: FrontendEnablesOnEveryTarget
+PASS: Should find the frame target for highlight-frame.html.
+PASS: More than one target should support the command.
+PASS: Every supporting target should receive DOM.setInspectModeEnabled.
+PASS: The frontend should report inspect mode as enabled.
+PASS: The frontend should report inspect mode as disabled.
+
