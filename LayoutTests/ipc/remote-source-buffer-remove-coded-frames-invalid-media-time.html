@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true MediaContainmentEnabled=false ] -->
+<html><body>
+<p>This test passes if it does not crash the GPU process.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+window.onerror = () => testRunner?.notifyDone();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// RemoteSourceBufferProxy::RemoveCodedFrames with an invalid MediaTime end argument
+// produced an inverted iterator range in TrackBuffer::removeCodedFrames, which
+// std::minmax_element walked past end(). MediaContainmentEnabled=false ensures the
+// SourceBufferPrivate / TrackBuffer live in the GPU process.
+async function main() {
+    if (!window.IPC)
+        return;
+
+    // Populate a GPU-side TrackBuffer via vanilla MSE.
+    const buf = await (await fetch('../media/media-source/content/test-fragmented-video.mp4')).arrayBuffer();
+    const init = buf.slice(0, 721);
+    const seg0 = buf.slice(721, 721 + 53533);
+    const seg1 = buf.slice(54254, 54254 + 56293);
+
+    const v = document.createElement('video');
+    v.disableRemotePlayback = true;
+    document.body.appendChild(v);
+    const ms = new MediaSource();
+    v.src = URL.createObjectURL(ms);
+    await new Promise(r => ms.addEventListener('sourceopen', r, { once: true }));
+
+    const sb = ms.addSourceBuffer('video/mp4; codecs="avc1.4d281e"');
+    const upd = () => new Promise(r => sb.addEventListener('updateend', r, { once: true }));
+    sb.appendBuffer(init); await upd();
+    sb.appendBuffer(seg0); await upd();
+    sb.appendBuffer(seg1); await upd();
+
+    // start = mid-range valid, end = invalid (timeFlags == 0), currentTime = valid zero.
+    // MediaTime is encoded as { int64_t timeValue, uint32_t timeScale, uint8_t timeFlags }.
+    const args = [
+        { type: 'int64_t', value: 1000000 }, { type: 'uint32_t', value: 1000000 }, { type: 'uint8_t', value: 1 },
+        { type: 'int64_t', value: 0 }, { type: 'uint32_t', value: 1 }, { type: 'uint8_t', value: 0 },
+        { type: 'int64_t', value: 0 }, { type: 'uint32_t', value: 1 }, { type: 'uint8_t', value: 1 },
+    ];
+
+    // The RemoteSourceBufferIdentifier is a small GPU-allocated counter; sweep a generous range.
+    // ignoreInvalidMessageForTesting drops messages to non-existent receivers.
+    const conn = IPC.connectionForProcessTarget('GPU');
+    for (let i = 1; i <= 200; i++)
+        conn.sendWithAsyncReply(i, IPC.messages.RemoteSourceBufferProxy_RemoveCodedFrames.name, args, () => { });
+
+    await sleep(2000);
+}
+
+setTimeout(() => main().finally(() => testRunner?.notifyDone()), 0);
+setTimeout(() => testRunner?.notifyDone(), 30000);
+</script>
+</body></html>
