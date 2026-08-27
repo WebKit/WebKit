@@ -495,7 +495,6 @@ workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerNotificationClient.cpp
 workers/WorkerOrWorkletGlobalScope.cpp
-workers/WorkerOrWorkletScriptController.cpp
 workers/WorkerRunLoop.cpp
 workers/WorkerThread.cpp
 workers/shared/context/SharedWorkerThreadProxy.cpp

@@ -65,14 +65,14 @@ class WTF_CAPABILITY_LOCK Lock {
 public:
     constexpr Lock() = default;
 
-    void lock() WTF_ACQUIRES_LOCK()
+    SUPPRESS_NODELETE void NODELETE lock() WTF_ACQUIRES_LOCK()
     {
         if (!DefaultLockAlgorithm::lockFastAssumingZero(m_byte)) [[unlikely]]
             lockSlow();
         TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
 
-    bool tryLock() WTF_ACQUIRES_LOCK_IF(true) // NOLINT: Intentional deviation to support std::scoped_lock.
+    SUPPRESS_NODELETE bool NODELETE tryLock() WTF_ACQUIRES_LOCK_IF(true) // NOLINT: Intentional deviation to support std::scoped_lock.
     {
         bool success = DefaultLockAlgorithm::tryLock(m_byte);
         if (success)
@@ -96,7 +96,7 @@ public:
     // we check if the last time that we did a fair unlock was more than roughly 1ms ago; if so, we
     // unlock fairly. Fairness matters most for long critical sections, and this virtually
     // guarantees that long critical sections always get a fair lock.
-    void unlock() WTF_RELEASES_LOCK()
+    SUPPRESS_NODELETE void NODELETE unlock() WTF_RELEASES_LOCK()
     {
         TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (!DefaultLockAlgorithm::unlockFastAssumingZero(m_byte)) [[unlikely]]
@@ -108,14 +108,14 @@ public:
     // to be fair anyway. However, if you plan to relock the lock right after unlocking and you want
     // to ensure that some other thread runs in the meantime, this is probably the function you
     // want.
-    void unlockFairly() WTF_RELEASES_LOCK()
+    SUPPRESS_NODELETE void NODELETE unlockFairly() WTF_RELEASES_LOCK()
     {
         TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (!DefaultLockAlgorithm::unlockFastAssumingZero(m_byte)) [[unlikely]]
             unlockFairlySlow();
     }
     
-    void safepoint()
+    SUPPRESS_NODELETE void NODELETE safepoint()
     {
         if (!DefaultLockAlgorithm::safepointFast(m_byte)) [[unlikely]]
             safepointSlow();
@@ -165,17 +165,17 @@ inline void assertIsHeld(const Lock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASS
 class WTF_CAPABILITY_LOCK UnfairLock {
     WTF_MAKE_NONCOPYABLE(UnfairLock);
 public:
-    void lock() WTF_ACQUIRES_LOCK()
+    SUPPRESS_NODELETE void NODELETE lock() WTF_ACQUIRES_LOCK()
     {
         os_unfair_lock_lock(&m_lock);
         TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
-    void unlock() WTF_RELEASES_LOCK()
+    SUPPRESS_NODELETE void NODELETE unlock() WTF_RELEASES_LOCK()
     {
         TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         os_unfair_lock_unlock(&m_lock);
     }
-    void assertIsOwner() const
+    SUPPRESS_NODELETE void NODELETE assertIsOwner() const
     {
         os_unfair_lock_assert_owner(&m_lock);
     }

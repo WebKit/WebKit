@@ -53,7 +53,7 @@ class WTF_CAPABILITY_LOCK WordLock final {
 public:
     constexpr WordLock() = default;
 
-    void lock() WTF_ACQUIRES_LOCK()
+    SUPPRESS_NODELETE void NODELETE lock() WTF_ACQUIRES_LOCK()
     {
         if (m_word.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire)) [[likely]] {
             // WordLock acquired!
@@ -65,7 +65,7 @@ public:
         TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
 
-    void unlock() WTF_RELEASES_LOCK()
+    SUPPRESS_NODELETE void NODELETE unlock() WTF_RELEASES_LOCK()
     {
         TSAN_ANNOTATE_HAPPENS_BEFORE(this);
         if (m_word.compareExchangeWeak(isLockedBit, 0, std::memory_order_release)) [[likely]] {
