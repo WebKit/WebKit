@@ -90,7 +90,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'layout-tests',
             'set-build-summary'
         ],
-        'iOS-26-Build-EWS': [
+        'iOS-27-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -108,7 +108,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'iOS-26-Simulator-Build-EWS': [
+        'iOS-27-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -126,7 +126,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'iOS-26-Simulator-WK2-Tests-EWS': [
+        'iOS-27-Simulator-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -152,7 +152,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'iOS-26-Simulator-WPT-WK2-Tests-EWS': [
+        'iOS-27-Simulator-WPT-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -178,7 +178,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Tahoe-Debug-Build-EWS': [
+        'macOS-Golden-Gate-Debug-Build-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -198,7 +198,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'macOS-Tahoe-Debug-API-Tests-EWS': [
+        'macOS-Golden-Gate-Debug-API-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -219,7 +219,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'run-api-tests',
             'set-build-summary'
         ],
-        'macOS-Tahoe-Debug-WK2-Tests-EWS': [
+        'macOS-Golden-Gate-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -430,7 +430,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'visionOS-26-Build-EWS': [
+        'visionOS-27-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -448,7 +448,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'visionOS-26-Simulator-Build-EWS': [
+        'visionOS-27-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -466,7 +466,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'visionOS-26-Simulator-WK2-Tests-EWS': [
+        'visionOS-27-Simulator-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -492,7 +492,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'watchOS-26-Build-EWS': [
+        'watchOS-27-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -510,7 +510,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'watchOS-26-Simulator-Build-EWS': [
+        'watchOS-27-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -528,7 +528,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'tvOS-26-Build-EWS': [
+        'tvOS-27-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -546,7 +546,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'tvOS-26-Simulator-Build-EWS': [
+        'tvOS-27-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
