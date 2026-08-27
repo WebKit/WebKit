@@ -189,9 +189,11 @@ public:
     void setSpecifiedName(const String& name) { m_frameName = name; }
     WebCore::SecurityOriginData documentSecurityOriginData() const;
 
+    WebCore::CertificateInfo provisionalCertificateInfoFromNetworkProcess(const URL&) const;
+
     void commitCertificateInfo(const URL&, bool hasCertificateInfo);
     void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
-    void copyCertificateInfoForProcessSwapOnNavigationResponse(const URL&, const WebFrameProxy&);
+    void setCertificateInfoForProcessSwapOnNavigationResponse(const URL&, WebCore::CertificateInfo&&);
 
     bool canProvideSource() const;
 
@@ -352,8 +354,6 @@ private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
-    WebCore::CertificateInfo certificateInfoFromNetworkProcess(const URL&) const;
-
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
     void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
 

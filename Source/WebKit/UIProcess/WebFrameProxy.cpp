@@ -1262,7 +1262,7 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInit
     m_documentSecurityOrigin = SecurityOrigin::create(url());
 }
 
-WebCore::CertificateInfo WebFrameProxy::certificateInfoFromNetworkProcess(const URL& url) const
+WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkProcess(const URL& url) const
 {
     String hostAndPort = url.hostAndPort();
     if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
@@ -1294,7 +1294,7 @@ WebCore::CertificateInfo WebFrameProxy::certificateInfoFromNetworkProcess(const 
 
 void WebFrameProxy::commitCertificateInfo(const URL& url, bool hasCertificateInfo)
 {
-    m_certificateInfo = hasCertificateInfo ? certificateInfoFromNetworkProcess(url) : CertificateInfo();
+    m_certificateInfo = hasCertificateInfo ? provisionalCertificateInfoFromNetworkProcess(url) : CertificateInfo();
 }
 
 void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
@@ -1306,13 +1306,13 @@ void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hos
         m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
 }
 
-void WebFrameProxy::copyCertificateInfoForProcessSwapOnNavigationResponse(const URL& url, const WebFrameProxy& oldMainFrame)
+void WebFrameProxy::setCertificateInfoForProcessSwapOnNavigationResponse(const URL& url, WebCore::CertificateInfo&& certificateInfo)
 {
     ASSERT(isMainFrame());
-    ASSERT(oldMainFrame.isMainFrame());
+    ASSERT(!certificateInfo.isEmpty());
     ASSERT(m_hostAndPortToCertificateInfo.isEmpty());
 
-    m_hostAndPortToCertificateInfo.set(url.hostAndPort(), oldMainFrame.certificateInfoFromNetworkProcess(url));
+    m_hostAndPortToCertificateInfo.set(url.hostAndPort(), WTF::move(certificateInfo));
 }
 
 } // namespace WebKit

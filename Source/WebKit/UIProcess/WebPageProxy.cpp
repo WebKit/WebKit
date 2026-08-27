@@ -6249,20 +6249,32 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         newProcess->addPreviouslyApprovedFileURLsFromFrameStateTree(targetFrameState.get());
     }
 
+    Ref preferences = m_preferences;
+    bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
+    bool canReuseMainFrame = preferences->siteIsolationEnabled() && (openedByDOM() || hasPageOpenedByMainFrame());
+    bool shouldInitializeCertificate = isProcessSwappingOnNavigationResponse && !canReuseMainFrame;
+
+    WebCore::CertificateInfo certificateInfo;
     if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && frame.isMainFrame()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID=%" PRIu64 ", navigationID=%" PRIu64 ")", m_provisionalPage->navigationID().toUInt64(), navigation.navigationID().toUInt64());
-        if (provisionalPage->navigationID() != navigation.navigationID())
+        if (provisionalPage->navigationID() == navigation.navigationID()) {
+            if (shouldInitializeCertificate) {
+                if (RefPtr provisionalMainFrame = provisionalPage->mainFrame())
+                    certificateInfo = provisionalMainFrame->provisionalCertificateInfoFromNetworkProcess(navigation.currentRequest().url());
+            }
+        } else
             provisionalPage->cancel();
         m_provisionalPage = nullptr;
     }
 
+    if (shouldInitializeCertificate && mainFrame() && certificateInfo.isEmpty())
+        certificateInfo = protect(mainFrame())->provisionalCertificateInfoFromNetworkProcess(navigation.currentRequest().url());
+
     RefPtr websitePolicies = navigation.websitePolicies();
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
-    bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
     bool shouldInheritOriginFromInitiator = navigation.currentRequest().url().isAboutBlank() && navigation.originatingFrameInfo();
     Site navigationSite { shouldInheritOriginFromInitiator ? Site { navigation.originatingFrameInfo()->securityOrigin } : Site { navigation.currentRequest().url() } };
 
-    Ref preferences = m_preferences;
     if (preferences->siteIsolationEnabled() && (!frame.isMainFrame() || newProcess->coreProcessIdentifier() == frame.process().coreProcessIdentifier())) {
         // about:blank frames should inherit the origin of the which originated navigation.
         // If the two frames share origins, they should share the same process.
@@ -6352,7 +6364,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
     m_provisionalPage = nullptr;
-    Ref provisionalPage = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), browsingContextGroup, WTF::move(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
+    Ref provisionalPage = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), browsingContextGroup, WTF::move(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, WTF::move(certificateInfo), websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
     m_provisionalPage = provisionalPage.copyRef();
 
     // FIXME: This should be a CompletionHandler, but http/tests/inspector/target/provisional-load-cancels-previous-load.html doesn't call it.
