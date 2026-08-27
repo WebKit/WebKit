@@ -211,8 +211,10 @@ void initialize()
 #if CPU(ARM64E)
 
 #if ENABLE(JIT_CAGE)
-    if (Options::useJITCage())
+    if (Options::useJITCage()) {
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::jitCagePtr)] = jitCagePtrThunk().code().taggedPtr();
+        JSC_JIT_CAGE_PROBE(removeCodePtrTag<void*>(jitCageProbeThunk().code().taggedPtr()));
+    }
 #endif
 
 #if ENABLE(JIT)
