@@ -607,7 +607,9 @@ void FetchResponse::cancelStream()
 
 void FetchResponse::feedStream()
 {
-    ASSERT(m_readableStreamSource);
+    if (!m_readableStreamSource)
+        return;
+
     bool shouldCloseStream = !m_loader;
 
     CheckedRef consumer = body().consumer();
