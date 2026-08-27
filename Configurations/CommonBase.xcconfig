@@ -137,7 +137,7 @@ WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS[sdk=*26.3*] = ;
 // rdar://168992837 requires us to tell swiftc to tell clang how to set version macros
 // when interpreting C++ headers as clang modules, so that we get identical feature
 // enablement to C++ interpretation of those headers (otherwise we get mismatched data members etc.)
-WK_SWIFT_CLANG_DEPLOYMENT_TARGET = $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET_$(WK_PLATFORM_NAME);
+WK_SWIFT_CLANG_DEPLOYMENT_TARGET = $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET_$(WK_PLATFORM_NAME));
 WK_SWIFT_CLANG_DEPLOYMENT_TARGET_macosx = -clang-target $(CURRENT_ARCH)-apple-macos$(MACOSX_DEPLOYMENT_TARGET);
 
 // rdar://170129992: remove -track-system-dependencies when resolved
