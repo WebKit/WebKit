@@ -235,6 +235,17 @@ export default class WebKitBot {
                         });
                         return;
                     }
+                    if (usingGitWebkit) {
+                        let match = stderr.match(/Could not find "([^"]*)"(?::\s*(.*))?/);
+                        if (match) {
+                            let detail = match[2] ? ` ${escapeForSlackText(match[2].trim())}` : "";
+                            await this.postMessage({
+                                channel: event.channel,
+                                text: `<@${event.user}> Could not find commit \`${escapeForSlackText(match[1])}\`.${detail}`,
+                            });
+                            return;
+                        }
+                    }
                     // webkit-patch: merge conflict
                     {
                         let index = stderr.indexOf("Failed to apply reverse diff for revision");

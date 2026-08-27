@@ -62,6 +62,12 @@ function extractRevision(text)
         // Accept identifiers pasted as commits.webkit.org links, which is what webkitbot itself posts.
         candidate = candidate.replace(/^https?:\/\/commits\.webkit\.org\//, "");
 
+        // Strip trailing sentence punctuation (e.g. "319904@main.") so it isn't captured as part
+        // of the identifier or branch name, along with a leading "(" or "[" left unbalanced by
+        // that strip (e.g. "(319904@main)" or "(319904@main.").
+        candidate = candidate.replace(/[.;!?)\]]+$/, "");
+        candidate = candidate.replace(/^[(\[]+/, "");
+
         let match = candidate.match(/^r?(\d{5,6}|\d+@[^:\s]+|[0-9a-f]{6,40}):?$/);
         if (!match)
             return null;
