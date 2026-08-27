@@ -896,12 +896,10 @@ void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
 
 [[nodiscard]] PartialResult BBQJIT::addTableSize(unsigned tableIndex, Value& result)
 {
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(tableIndex)
-    };
     result = topValue(m_info.table(tableIndex).addressType().asWasmTypeKind());
-    emitCCall(&operationGetWasmTableSize, arguments, result);
+    Location resultLocation = allocate(result);
+    m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)), wasmScratchGPR);
+    m_jit.load32(Address(wasmScratchGPR, Table::offsetOfLength()), resultLocation.asGPR());
 
     LOG_INSTRUCTION("TableSize", tableIndex, RESULT(result));
     return { };

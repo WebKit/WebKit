@@ -1838,10 +1838,18 @@ auto OMGIRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
 
 auto OMGIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
 {
-    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = push(callWasmOperation(m_currentBlock, toB3Type(m_info.table(tableIndex).addressType().asWasmType()), operationGetWasmTableSize,
-        instanceValue(), constant(Int32, tableIndex)));
+    auto* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)));
+    m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_tables[tableIndex], table);
+    table->setReadsMutability(B3::Mutability::Immutable);
+    table->setControlDependent(false);
 
+    auto* length32 = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), table, safeCast<int32_t>(Table::offsetOfLength()));
+    m_heaps.decorateMemory(&m_heaps.WasmTable_length, length32);
+
+    if (m_info.table(tableIndex).addressType().is64Bit())
+        result = push(m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), length32));
+    else
+        result = push(length32);
     return { };
 }
 
