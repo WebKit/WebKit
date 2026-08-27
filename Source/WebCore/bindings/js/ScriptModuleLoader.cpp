@@ -504,15 +504,34 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         ModuleType type = ModuleType::Invalid;
         auto mimeType = cachedScript->response().mimeType();
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
-            type = ModuleType::JavaScript;
+        auto requestedType = loader.parameters() ? loader.parameters()->type() : JSC::ScriptFetchParameters::Type::None;
+
+        switch (requestedType) {
+        case JSC::ScriptFetchParameters::Type::JSON:
+            if (MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)) {
+                type = ModuleType::JSON;
+                break;
+            }
+
+            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', cachedScript->response().mimeType(), "' is not a valid JSON MIME type for module script '"_s, sourceURL.string(), "'."_s));
+            return;
+
+        // FIXME: figure out if we need to harden checks for these types too.
+        case JSC::ScriptFetchParameters::Type::JavaScript:
+        case JSC::ScriptFetchParameters::Type::WebAssembly:
+        case JSC::ScriptFetchParameters::Type::None:
 #if ENABLE(WEBASSEMBLY)
-        else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
-            type = ModuleType::WebAssembly;
+            if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType)) {
+                type = ModuleType::WebAssembly;
+                break;
+            }
 #endif
-        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
-            type = ModuleType::JSON;
-        else {
+
+            if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)) {
+                type = ModuleType::JavaScript;
+                break;
+            }
+
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
@@ -574,15 +593,33 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         ModuleType type = ModuleType::Invalid;
         auto mimeType = loader.responseMIMEType();
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
-            type = ModuleType::JavaScript;
+        auto requestedType = loader.parameters() ? loader.parameters()->type() : JSC::ScriptFetchParameters::Type::None;
+
+        switch (requestedType) {
+        case JSC::ScriptFetchParameters::Type::JSON:
+            if (MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)) {
+                type = ModuleType::JSON;
+                break;
+            }
+
+            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', loader.responseMIMEType(), "' is not a valid JSON MIME type for module script '"_s, sourceURL.string(), "'."_s));
+            return;
+
+        case JSC::ScriptFetchParameters::Type::JavaScript:
+        case JSC::ScriptFetchParameters::Type::WebAssembly:
+        case JSC::ScriptFetchParameters::Type::None:
 #if ENABLE(WEBASSEMBLY)
-        else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
-            type = ModuleType::WebAssembly;
+            if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType)) {
+                type = ModuleType::WebAssembly;
+                break;
+            }
 #endif
-        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
-            type = ModuleType::JSON;
-        else {
+
+            if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)) {
+                type = ModuleType::JavaScript;
+                break;
+            }
+
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
