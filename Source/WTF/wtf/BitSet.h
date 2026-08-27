@@ -127,6 +127,7 @@ public:
     constexpr void setAndClear(BitSet&);
 
     void setEachNthBit(size_t n, size_t start = 0, size_t end = bitSetSize);
+    void clearEachNthBit(size_t n, size_t start = 0, size_t end = bitSetSize);
 
     constexpr bool operator==(const BitSet&) const;
 
@@ -476,6 +477,39 @@ inline void BitSet<bitSetSize, WordType>::setEachNthBit(size_t n, size_t start, 
     }
 
     cleanseLastWord();
+}
+
+template<size_t bitSetSize, typename WordType>
+inline void BitSet<bitSetSize, WordType>::clearEachNthBit(size_t n, size_t start, size_t end)
+{
+    ASSERT(start <= end);
+    ASSERT(end <= bitSetSize);
+
+    size_t wordIndex = start / wordSize;
+    size_t endWordIndex = end / wordSize;
+    size_t index = start - wordIndex * wordSize;
+    while (wordIndex < endWordIndex) {
+        if (index < wordSize) {
+            WordType word = bits[wordIndex];
+            do {
+                word &= ~(one << index);
+                index += n;
+            } while (index < wordSize);
+            bits[wordIndex] = word;
+        }
+        index -= wordSize;
+        wordIndex++;
+    }
+
+    size_t endIndex = end - endWordIndex * wordSize;
+    if (index < endIndex) {
+        WordType word = bits[wordIndex];
+        do {
+            word &= ~(one << index);
+            index += n;
+        } while (index < endIndex);
+        bits[wordIndex] = word;
+    }
 }
 
 template<size_t bitSetSize, typename WordType>

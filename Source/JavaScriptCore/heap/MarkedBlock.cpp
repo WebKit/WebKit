@@ -162,13 +162,19 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
     blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
     blockHeader().m_newlyAllocated.setEachNthBit(m_atomsPerCell, m_startAtom, endAtom);
 
-    freeList.forEach(
-        [&] (HeapCell* cell) {
-            if constexpr (MarkedBlockInternal::verbose)
-                dataLog("Free cell: ", RawPointer(cell), "\n");
-            if (m_attributes.destruction != DoesNotNeedDestruction)
-                cell->zap(HeapCell::StopAllocating);
-            block().clearNewlyAllocated(cell);
+    ASSERT(freeList.cellSize() == m_atomsPerCell * atomSize);
+    bool needsZapping = m_attributes.destruction != DoesNotNeedDestruction;
+    freeList.forEachInterval(
+        [&](char* intervalStart, char* intervalEnd) {
+            if (needsZapping || MarkedBlockInternal::verbose) {
+                for (char* cell = intervalStart; cell < intervalEnd; cell += freeList.cellSize()) {
+                    if constexpr (MarkedBlockInternal::verbose)
+                        dataLog("Free cell: ", RawPointer(cell), "\n");
+                    if (needsZapping)
+                        std::bit_cast<HeapCell*>(cell)->zap(HeapCell::StopAllocating);
+                }
+            }
+            blockHeader().m_newlyAllocated.clearEachNthBit(m_atomsPerCell, block().candidateAtomNumber(intervalStart), block().candidateAtomNumber(intervalEnd));
         });
     
     m_isFreeListed = false;

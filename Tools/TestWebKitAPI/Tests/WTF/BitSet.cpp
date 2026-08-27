@@ -1120,6 +1120,65 @@ void testBitSetSetEachNthBit()
     testBitSetSetEachNthBitImpl(smallSize, wordSize, smallBitSetZeroes, smallBitSetOnes);
 }
 
+template<typename BitSet>
+void testBitSetClearEachNthBitImpl(size_t size, size_t wordSize, const BitSet& zeroes, const BitSet& ones)
+{
+    BitSet temp;
+
+    temp.setAll();
+    EXPECT_TRUE(temp == ones);
+    temp.clearEachNthBit(1);
+    EXPECT_TRUE(temp == zeroes);
+
+    size_t nValues[] = { 1, 2, wordSize / 2, wordSize - 1, wordSize, size / 2, size - 1, size };
+    size_t nValuesCount = sizeof(nValues) / sizeof(nValues[0]);
+
+    size_t startEndValues[] = { 0, 1, 2, wordSize / 2, wordSize - 1, wordSize, size / 2, size - 1, size };
+    constexpr size_t numberOfStartEndValues = sizeof(startEndValues) / sizeof(startEndValues[0]);
+
+    for (size_t start = 0; start < numberOfStartEndValues; ++start) {
+        for (size_t end = start; end < numberOfStartEndValues; ++end) {
+            size_t startIndex = startEndValues[start];
+            size_t endIndex = startEndValues[end];
+            if (endIndex < startIndex)
+                continue;
+            if (startIndex > size)
+                continue;
+            if (endIndex > size)
+                continue;
+
+            for (size_t j = 0; j < nValuesCount; ++j) {
+                size_t n = nValues[j];
+                temp.setAll();
+                temp.clearEachNthBit(n, startIndex, endIndex);
+
+                for (size_t i = 0; i < startIndex; ++i)
+                    EXPECT_TRUE(temp.get(i));
+
+                size_t count = 0;
+                for (size_t i = startIndex; i < endIndex; ++i) {
+                    bool expectedToStaySet = !!count;
+                    EXPECT_TRUE(temp.get(i) == expectedToStaySet);
+                    count++;
+                    count = count % n;
+                }
+
+                for (size_t i = endIndex; i < size; ++i)
+                    EXPECT_TRUE(temp.get(i));
+            }
+        }
+    }
+}
+
+template<typename WordType>
+void testBitSetClearEachNthBit()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    constexpr size_t wordSize = sizeof(WordType) * 8;
+    testBitSetClearEachNthBitImpl(size, wordSize, bitSetZeroes, bitSetOnes);
+    testBitSetClearEachNthBitImpl(smallSize, wordSize, smallBitSetZeroes, smallBitSetOnes);
+}
+
 template<typename WordType>
 void testBitSetOperatorEqual()
 {
@@ -1483,6 +1542,7 @@ TEST(WTF_BitSet, Iteration_uint32_t) { testBitSetIteration<uint32_t>(); }
 TEST(WTF_BitSet, MergeAndClear_uint32_t) { testBitSetMergeAndClear<uint32_t>(); }
 TEST(WTF_BitSet, SetAndClear_uint32_t) { testBitSetSetAndClear<uint32_t>(); }
 TEST(WTF_BitSet, SetEachNthBit_uint32_t) { testBitSetSetEachNthBit<uint32_t>(); }
+TEST(WTF_BitSet, ClearEachNthBit_uint32_t) { testBitSetClearEachNthBit<uint32_t>(); }
 TEST(WTF_BitSet, OperatorEqualAccess_uint32_t) { testBitSetOperatorEqual<uint32_t>(); }
 TEST(WTF_BitSet, OperatorNotEqualAccess_uint32_t) { testBitSetOperatorNotEqual<uint32_t>(); }
 TEST(WTF_BitSet, OperatorAssignment_uint32_t) { testBitSetOperatorAssignment<uint32_t>(); }
@@ -1520,6 +1580,7 @@ TEST(WTF_BitSet, Iteration_uint64_t) { testBitSetIteration<uint64_t>(); }
 TEST(WTF_BitSet, MergeAndClear_uint64_t) { testBitSetMergeAndClear<uint64_t>(); }
 TEST(WTF_BitSet, SetAndClear_uint64_t) { testBitSetSetAndClear<uint64_t>(); }
 TEST(WTF_BitSet, SetEachNthBit_uint64_t) { testBitSetSetEachNthBit<uint64_t>(); }
+TEST(WTF_BitSet, ClearEachNthBit_uint64_t) { testBitSetClearEachNthBit<uint64_t>(); }
 TEST(WTF_BitSet, OperatorEqualAccess_uint64_t) { testBitSetOperatorEqual<uint64_t>(); }
 TEST(WTF_BitSet, OperatorNotEqualAccess_uint64_t) { testBitSetOperatorNotEqual<uint64_t>(); }
 TEST(WTF_BitSet, OperatorAssignment_uint64_t) { testBitSetOperatorAssignment<uint64_t>(); }
