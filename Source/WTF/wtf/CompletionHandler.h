@@ -26,9 +26,11 @@
 #pragma once
 
 #include <memory>
+#include <new>
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <wtf/AlignedStorage.h>
 #include <wtf/Compiler.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
@@ -39,7 +41,7 @@ namespace WTF {
 
 // The C ABI a Swift closure reduces to, used by the `CxxCompletionHandler` Swift protocol to build a
 // CompletionHandler out of a Swift closure.
-using SwiftClosureInvoke = void (* WTF_NONNULL)(void* WTF_NONNULL context, const void* WTF_NULLABLE argument);
+using SwiftClosureInvoke = void (* WTF_NONNULL)(void* WTF_NONNULL context, void* WTF_NULLABLE argument);
 using SwiftClosureDestroy = void (* WTF_NONNULL)(void* WTF_NONNULL context);
 
 template<typename> class CompletionHandler;
@@ -60,11 +62,6 @@ public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
     using Impl = typename Function<Out(In...)>::Impl;
-
-#if !COMPILER(MSVC)
-    // Used by Swift's `CxxCompletionHandlerBase` protocol.
-    using Argument = std::tuple_element_t<0, std::tuple<In..., void>>;
-#endif
 
     CompletionHandler() = default;
 
@@ -91,18 +88,14 @@ public:
     }
 
 #ifdef __swift__
-    // This should only be called within the initializers of the `CxxCompletionHandler` protocol.
+    // This should only be called within the initializers of the `CxxCompletionHandler` protocols.
     CompletionHandler(SwiftClosureInvoke invoke, SwiftClosureDestroy destroy, void* WTF_NONNULL context) SWIFT_NAME(init(invoke:destroy:context:))
         : CompletionHandler([invoke, owner = std::unique_ptr<void, SwiftClosureDestroy> { context, destroy }](In... arguments) -> Out {
-            static_assert(std::is_void_v<Out>, "Swift closures can only be used with completion handlers that return void.");
-            static_assert(sizeof...(In) <= 1, "Swift closures can only be used with completion handlers that take at most one argument.");
-
-            if constexpr (!sizeof...(In))
-                invoke(owner.get(), nullptr);
-            else
-                invoke(owner.get(), std::addressof(arguments)...);
+            passArgumentToSwift(invoke, owner.get(), std::forward<In>(arguments)...);
         })
     {
+        static_assert(std::is_void_v<Out>, "Swift closures can only be used with completion handlers that return void.");
+        static_assert(sizeof...(In) <= 1, "Swift closures can only be used with completion handlers that take at most one argument.");
     }
 #endif
 
@@ -118,6 +111,33 @@ public:
     }
 
 private:
+#ifdef __swift__
+    static void passArgumentToSwift(SwiftClosureInvoke invoke, void* WTF_NONNULL context, In... arguments)
+    {
+        if constexpr (!sizeof...(In))
+            invoke(context, nullptr);
+        else {
+            using DeclaredArgument = std::tuple_element_t<0, std::tuple<In...>>;
+            using ArgumentType = std::remove_cvref_t<DeclaredArgument>;
+
+            static_assert(!std::is_lvalue_reference_v<DeclaredArgument>);
+
+            if constexpr (std::is_copy_constructible_v<ArgumentType>) {
+                static_assert(!std::is_rvalue_reference_v<DeclaredArgument>);
+
+                invoke(context, std::addressof(arguments)...);
+            } else {
+                static_assert(std::is_rvalue_reference_v<DeclaredArgument>);
+                static_assert(!std::is_trivially_destructible_v<ArgumentType>);
+
+                AlignedStorage<ArgumentType> storage;
+                new (storage.get()) ArgumentType(std::forward<In>(arguments)...);
+                invoke(context, storage.get());
+            }
+        }
+    }
+#endif
+
     Function<Out(In...)> m_function;
     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_callThread;
 };
