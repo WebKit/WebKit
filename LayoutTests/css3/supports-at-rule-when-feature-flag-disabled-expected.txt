@@ -1,0 +1,3 @@
+
+PASS @supports at-rule(@function) is false when CSSFunctionAtRuleEnabled feature flag is disabled
+
