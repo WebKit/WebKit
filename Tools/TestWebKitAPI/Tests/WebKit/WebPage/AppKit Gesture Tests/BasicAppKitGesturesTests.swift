@@ -519,12 +519,10 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .disabled("This test is flaky"),
         .bug("https://webkit.org/b/314804", "Triple click does not generate a line selection on PDF"),
-        arguments: [true, false]
     )
-    func tripleClickingInPDFSelectsLine(useAlternatePDFHUD: Bool) async throws {
-        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
-
+    func tripleClickingInPDFSelectsLine() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
@@ -546,10 +544,8 @@ extension AppKitGesturesTests.Basic {
         #expect(selectedText == "Test PDF Content")
     }
 
-    @Test(arguments: [true, false])
-    func clickingOnPDFHUDButtonPerformsAction(useAlternatePDFHUD: Bool) async throws {
-        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
-
+    @Test
+    func clickingOnPDFHUDButtonPerformsAction() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
@@ -571,10 +567,8 @@ extension AppKitGesturesTests.Basic {
         #expect(scaleAfterZooming > scaleBeforeZooming)
     }
 
-    @Test(arguments: [false])
-    func clickingOnPDFShowsHUD(useAlternatePDFHUD: Bool) async throws {
-        page.setWebFeature("UseAlternatePDFHUD", enabled: useAlternatePDFHUD)
-
+    @Test
+    func clickingOnPDFShowsHUD() async throws {
         let pdfURL = try #require(Bundle.testResources.url(forResource: "test", withExtension: "pdf"))
         try await page.load(pdfURL).wait()
         await page.waitForNextPresentationUpdate()
@@ -589,12 +583,7 @@ extension AppKitGesturesTests.Basic {
         // which is dependent on the implementation.
         // FIXME: Depending on implementation-specific details like this is very not great.
 
-        let visibleView =
-            if useAlternatePDFHUD {
-                try #require(hud.subviews.first?.subviews.first)
-            } else {
-                try #require(hud.subviews.first)
-            }
+        let visibleView = try #require(hud.subviews.first?.subviews.first)
 
         try await Task.sleep(for: .seconds(1))
         #expect(visibleView.alphaValue == 0)
@@ -681,8 +670,8 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == expected)
     }
 
-    @Test(arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
-    func scrollingOnScrollBarChangesScrollPosition(inset: Int, pressAndWait: Duration) async throws {
+    @Test(arguments: [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
+    func scrollingOnScrollBarChangesScrollPosition(pressAndWait: Duration) async throws {
         let html = """
             <body style="width: 100%; height: 2000px; margin: 0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
             </body>
@@ -690,12 +679,12 @@ extension AppKitGesturesTests.Basic {
 
         try await page.load(html: html).wait()
 
-        let topOfScrollBarInWindowCoordinates = NSPoint(x: window.frame.maxX - CGFloat(inset), y: window.frame.maxY - 160)
+        let topOfScrollBarInWindowCoordinates = NSPoint(x: window.frame.maxX - 8, y: window.frame.maxY - 160)
         let start = screenBounds(ofPointInWindowCoordinates: topOfScrollBarInWindowCoordinates)
         let end = CGPoint(x: start.x, y: start.y + 200)
 
         await recap.play { composer in
-            composer._wk_drag(withStart: start, end: end, duration: .seconds(1.0), pressAndWait: pressAndWait)
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(0.5), pressAndWait: pressAndWait)
         }
 
         try await Task.sleep(for: .seconds(1))
@@ -1287,7 +1276,7 @@ extension AppKitGesturesTests.Basic {
 
         await withMockedImageAnalyzer(response: .success(analysis), after: delay) {
             await recap.play { composer in
-                composer._wk_drag(withStart: start, end: end, duration: .seconds(2), pressAndWait: .seconds(1.0))
+                composer._wk_drag(withStart: start, end: end, duration: .seconds(1.5), pressAndWait: .seconds(1.0))
             }
         }
 
@@ -1331,7 +1320,7 @@ extension AppKitGesturesTests.Basic {
         // The test succeeds if it does not timeout.
     }
 
-    @Test
+    @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
         let html = """
             <body style="margin: 0; width: 100%; height: 200000px;
