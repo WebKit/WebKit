@@ -58,6 +58,7 @@ public:
         Vector<Connection> connections;
         Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
         String lastRequestCookies;
+        bool sawAuthorizationHeader { false };
     };
 
     enum class Protocol : uint8_t {
@@ -90,6 +91,7 @@ public:
     size_t totalConnections() const;
     size_t totalRequests() const;
     String lastRequestCookies() const;
+    bool sawAuthorizationHeader() const;
     void startListening(CompletionHandler<void()>&&);
     void cancel(CompletionHandler<void()>&&);
     void cancel();
@@ -101,6 +103,7 @@ public:
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
     static String parseCookies(const Vector<char>& request);
+    static String parseAuthorization(const Vector<char>& request);
     static String parsePath(const Vector<char>& request);
     static String parseBody(const Vector<char>&);
     static Vector<uint8_t> testPrivateKey();

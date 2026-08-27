@@ -6493,6 +6493,10 @@
 		57597EC021818BE20037F924 /* CtapHidDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CtapHidDriver.cpp; sourceTree = "<group>"; };
 		5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinator.h; sourceTree = "<group>"; };
 		5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
+		A11E0C012F0A0001000A0001 /* RelatedOriginsValidator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RelatedOriginsValidator.cpp; sourceTree = "<group>"; };
+		A11E0E022F0C0002000C0002 /* WellKnownResourceFetcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WellKnownResourceFetcher.cpp; sourceTree = "<group>"; };
+		A11E0E012F0C0001000C0001 /* WellKnownResourceFetcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WellKnownResourceFetcher.h; sourceTree = "<group>"; };
+		A11E0C022F0A0002000A0002 /* RelatedOriginsValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RelatedOriginsValidator.h; sourceTree = "<group>"; };
 		57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorProxy.h; sourceTree = "<group>"; };
 		57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorProxy.cpp; sourceTree = "<group>"; };
 		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
@@ -14793,6 +14797,8 @@
 				57DCED842147363A0016B847 /* AuthenticatorManager.h */,
 				57DCED9921489F4D0016B847 /* AuthenticatorTransportService.cpp */,
 				57DCED8A214853130016B847 /* AuthenticatorTransportService.h */,
+				A11E0C012F0A0001000A0001 /* RelatedOriginsValidator.cpp */,
+				A11E0C022F0A0002000A0002 /* RelatedOriginsValidator.h */,
 				57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */,
 				57C3E8AC242490D5001E2209 /* WebAuthenticationRequestData.cpp */,
 				57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */,
@@ -16407,6 +16413,8 @@
 				51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */,
 				51D124271E6D3F1F002B2820 /* WebURLSchemeTask.h */,
 				572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */,
+				A11E0E022F0C0002000C0002 /* WellKnownResourceFetcher.cpp */,
+				A11E0E012F0C0001000C0001 /* WellKnownResourceFetcher.h */,
 				2D922D8A26E990FC00EC1A59 /* WindowKind.h */,
 				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,
 				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,

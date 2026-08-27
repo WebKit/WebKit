@@ -489,6 +489,7 @@ UIProcess/WebProcessProxy.cpp @cost:8
 UIProcess/WebScreenOrientationManagerProxy.cpp
 UIProcess/WebURLSchemeHandler.cpp
 UIProcess/WebURLSchemeTask.cpp @cost:3
+UIProcess/WellKnownResourceFetcher.cpp
 
 UIProcess/API/APIAttachment.cpp
 UIProcess/API/APIContentRuleList.cpp
@@ -675,6 +676,7 @@ UIProcess/WebAuthentication/Mock/MockHidService.cpp
 
 UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
+UIProcess/WebAuthentication/RelatedOriginsValidator.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
 

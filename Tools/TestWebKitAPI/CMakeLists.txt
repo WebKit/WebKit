@@ -281,6 +281,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/URLPatternTests.cpp
         Tests/WebCore/WebTransportHeaderValidation.cpp
+        Tests/WebCore/WellKnownOriginList.cpp
         Tests/WebCore/WritingModeTests.cpp
         Tests/WebCore/XRCompositionLayer.cpp
     )

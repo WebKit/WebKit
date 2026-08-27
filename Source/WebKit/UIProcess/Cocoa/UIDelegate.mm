@@ -223,6 +223,7 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
 #if ENABLE(WEB_AUTHN)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:)];
+    m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:relatedOrigins:completionHandler:)];
 #endif
     
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
@@ -1841,21 +1842,39 @@ void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy& page, API::We
     }).get()];
 }
 
-void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(const WTF::String& username, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(const WTF::String& username, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
         return completionHandler(std::nullopt);
 
-    if (!uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler)
+    if (!uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler && !uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler)
         return completionHandler(std::nullopt);
 
     RetainPtr delegate = uiDelegatePrivate();
     if (!delegate)
         return completionHandler(std::nullopt);
 
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL result) mutable {
+    if (uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler) {
+        auto nsOrigins = createNSArray(relatedOrigins, [](const String& origin) -> RetainPtr<WKSecurityOrigin> {
+            URL url { origin };
+            if (!url.isValid())
+                return nil;
+            return wrapper(API::SecurityOrigin::create(WebCore::SecurityOriginData::fromURL(url)));
+        });
+
+        Ref checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:relatedOrigins:completionHandler:));
+        [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username.createNSString().get() relatedOrigins:nsOrigins.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler(result);
+        }).get()];
+        return;
+    }
+
+    Ref checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
+    [delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

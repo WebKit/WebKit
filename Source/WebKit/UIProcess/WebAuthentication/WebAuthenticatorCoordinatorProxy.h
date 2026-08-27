@@ -139,6 +139,7 @@ private:
 #endif
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
+    void performRequestWithValidatedRelyingPartyIdentifier(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
