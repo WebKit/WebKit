@@ -32,7 +32,6 @@
 
 #include "AudioBus.h"
 
-#include "DenormalDisabler.h"
 #include "SincResampler.h"
 #include "VectorMath.h"
 #include <algorithm>

@@ -26,6 +26,7 @@
 #define AudioUtilities_h
 
 #include <cmath>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -65,6 +66,18 @@ inline float decibelsToLinear(float decibels)
 }
 
 void applyNoise(std::span<float> values, float standardDeviation);
+
+// A nop on x86, where SSE arithmetic historically produced no denormals to flush because
+// the audio rendering path disabled them in hardware.
+inline float flushDenormalFloatToZero(float f)
+{
+// FIXME: Do any current ports fail this check?
+#if (COMPILER(GCC_COMPATIBLE) && defined(__SSE__)) || (OS(WINDOWS) && COMPILER(MSVC) && defined(_M_IX86_FP) && _M_IX86_FP)
+    return f;
+#else
+    return (std::abs(f) < FLT_MIN) ? 0.0f : f;
+#endif
+}
 
 } // AudioUtilites
 
