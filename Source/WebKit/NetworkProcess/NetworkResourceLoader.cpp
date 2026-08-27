@@ -865,6 +865,15 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
     return false;
 }
 
+// https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
+// For the response paths that do not go through didReceiveResponse().
+std::optional<ResourceError> NetworkResourceLoader::doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(const ResourceResponse& response)
+{
+    if (!isMainResource() || !shouldInterruptNavigationForCrossOriginEmbedderPolicy(response))
+        return std::nullopt;
+    return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Navigation was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl };
+}
+
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6)
 std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingOfResponse(const ResourceResponse& response)
 {

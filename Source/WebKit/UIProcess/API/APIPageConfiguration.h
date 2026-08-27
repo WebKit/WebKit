@@ -171,8 +171,16 @@ public:
     WebKit::WebPreferences& preferences() const;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
+    // A client's related page is only a process-sharing hint. createNewPage()'s own uses are a hard
+    // same-process requirement (a blob: URL resolves only in its creator), so they need the group too.
+    enum class RelatedPageUse : bool { ProcessHintOnly, SameBrowsingContextGroup };
     WebKit::WebPageProxy* NODELETE relatedPage() const;
-    void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&& relatedPage) { m_data.relatedPage = WTF::move(relatedPage); }
+    RelatedPageUse relatedPageUse() const { return m_data.relatedPageUse; }
+    void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&& relatedPage, RelatedPageUse relatedPageUse = RelatedPageUse::ProcessHintOnly)
+    {
+        m_data.relatedPage = WTF::move(relatedPage);
+        m_data.relatedPageUse = relatedPageUse;
+    }
 
     WebKit::WebPageProxy* NODELETE pageToCloneSessionStorageFrom() const;
     void NODELETE setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
@@ -472,6 +480,8 @@ public:
 
     WebKit::BrowsingContextGroup* preferredBrowsingContextGroup() const;
 
+    WebCore::CrossOriginMode crossOriginMode() const;
+
 #if PLATFORM(VISION)
 
 #if ENABLE(GAMEPAD)
@@ -539,6 +549,7 @@ private:
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
+        RelatedPageUse relatedPageUse { RelatedPageUse::ProcessHintOnly };
         Box<std::optional<OpenerInfo>> openerInfo;
         WebCore::Site openedSite;
         bool processInheritedFromOpener { false };

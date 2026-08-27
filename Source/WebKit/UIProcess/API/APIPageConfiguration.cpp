@@ -263,11 +263,20 @@ BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
         return opener->browsingContextGroup.ptr();
 
     if (auto relatedPage = this->relatedPage()) {
-        if (!relatedPage->isClosed())
-            return &relatedPage->browsingContextGroup();
+        if (relatedPage->isClosed())
+            return nullptr;
+        if (relatedPageUse() == RelatedPageUse::ProcessHintOnly && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Isolated)
+            return nullptr;
+        return &relatedPage->browsingContextGroup();
     }
 
     return nullptr;
+}
+
+WebCore::CrossOriginMode PageConfiguration::crossOriginMode() const
+{
+    RefPtr group = preferredBrowsingContextGroup();
+    return group ? group->crossOriginMode() : WebCore::CrossOriginMode::Shared;
 }
 
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const

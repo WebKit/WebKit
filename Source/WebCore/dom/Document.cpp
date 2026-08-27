@@ -8723,10 +8723,8 @@ bool Document::isSecureContext() const
 
 bool Document::crossOriginIsolated() const
 {
-    RefPtr mainDocument = mainFrameDocument();
-    if (!mainDocument)
-        return false;
-    return mainDocument->crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
+    // Not mainFrameDocument(): it is null when the main frame is remote.
+    return crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
 }
 
 String Document::agentClusterID() const
