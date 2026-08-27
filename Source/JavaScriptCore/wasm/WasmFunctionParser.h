@@ -3855,13 +3855,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.shrink(m_currentStackBegin);
             m_expressionStack.append(data.elseBlockStack.span());
         }
-        // When ending an 'if'/'else', including a synthetic 'else' added right above,
-        // the spec requires the output type of 'if' to be the type from the signature.
-        const bool shouldForceSignature = ControlType::isElse(data.controlData);
+
         // FIXME: endBlock may modify the expressionStack slice for the result of the block.
         // That's a little too effectful but we don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, shouldForceSignature));
+
+        // The spec requires the output type of a structured control instruction to be
+        // the result type from its signature, even when the fallthrough value is a subtype.
+        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, true));
 
         const uint32_t parentBegin = parentEntryBegin();
         auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
