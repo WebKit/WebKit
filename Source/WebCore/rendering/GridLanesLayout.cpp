@@ -35,8 +35,7 @@
 namespace WebCore {
 
 GridLanesLayout::GridLanesLayout(RenderGrid& renderGrid, unsigned gridAxisTracksCount, Style::GridTrackSizingDirection stackingAxisDirection)
-    : m_gridAxisTracksCount(gridAxisTracksCount)
-    , m_runningPositions(gridAxisTracksCount)
+    : m_runningPositions(gridAxisTracksCount)
     , m_renderGrid(renderGrid)
     , m_stackingAxisGridGap(renderGrid.gridGap(stackingAxisDirection))
     , m_stackingAxisDirection(stackingAxisDirection)
@@ -54,7 +53,7 @@ void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& 
 
 void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
-    if (!m_gridAxisTracksCount)
+    if (!gridAxisTracksCount())
         return;
 
     auto& grid = m_renderGrid->currentGrid();
@@ -140,7 +139,7 @@ void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm
     setItemContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
     updateRunningPositions(gridItem, area);
-    m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % m_gridAxisTracksCount;
+    m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % gridAxisTracksCount();
 }
 
 LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridItem)
@@ -196,8 +195,8 @@ LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsign
 
 GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item, ResolvedFitTolerance fitTolerance)
 {
-    auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), m_gridAxisTracksCount);
-    auto gridAxisLines = m_gridAxisTracksCount + 1;
+    auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), gridAxisTracksCount());
+    auto gridAxisLines = gridAxisTracksCount() + 1;
 
     if (WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance)) {
         // Infinite tolerance: place items strictly in order without considering track lengths
@@ -205,7 +204,7 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
         auto startingLine = m_autoFlowNextCursor;
 
         // If the item doesn't fit at the cursor position, wrap to the beginning
-        if (startingLine + itemSpanLength > m_gridAxisTracksCount)
+        if (startingLine + itemSpanLength > gridAxisTracksCount())
             startingLine = 0;
 
         auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength);
