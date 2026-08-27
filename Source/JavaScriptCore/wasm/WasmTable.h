@@ -127,6 +127,8 @@ public:
     void fill(VM&, JSValue);
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
+    static constexpr ptrdiff_t offsetOfJSValues() { return OBJECT_OFFSETOF(ExternOrAnyRefTable, m_jsValues); }
+
 private:
     ExternOrAnyRefTable(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType);
 
