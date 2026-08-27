@@ -1,0 +1,90 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-no-streaming-toggle-at-end</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var streamingEvents = 0;
+    var endedEvents = 0;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            video.disableRemotePlayback = true;
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+
+            await waitFor(source, 'sourceopen');
+            await waitFor(source, 'startstreaming');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            run('source.duration = sourceBuffer.buffered.end(0)');
+            await waitFor(video, 'durationchange');
+
+            const endStreaming = waitFor(source, 'endstreaming');
+            run('source.endOfStream()');
+            await endStreaming;
+            testExpected('source.streaming', false);
+
+            // Seeking to the end of an ended source puts the element in ended playback.
+            source.addEventListener('startstreaming', () => { streamingEvents++; });
+            source.addEventListener('endstreaming', () => { streamingEvents++; });
+            video.addEventListener('ended', () => { endedEvents++; });
+
+            const ended = waitFor(video, 'ended');
+            run('video.currentTime = video.duration');
+            await waitFor(video, 'seeked');
+            await ended;
+
+            // Further seeks to that position change nothing: neither the streaming state nor 'ended'
+            // may fire again.
+            for (let i = 0; i < 10; i++) {
+                video.currentTime = video.duration;
+                await once(video, 'seeked');
+            }
+
+            testExpected('video.currentTime == video.duration', true);
+            testExpected('source.streaming', false);
+            testExpected('streamingEvents', 0);
+            testExpected('endedEvents', 1);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
