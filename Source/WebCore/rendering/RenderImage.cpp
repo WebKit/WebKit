@@ -366,12 +366,15 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 
 void RenderImage::updateInnerContentRect()
 {
-    // Propagate container size to image resource.
-    IntSize containerSize = isDimensionlessSVG()
-        ? flooredIntSize(contentBoxRect().size())
-        : flooredIntSize(replacedContentRect().size());
+    // Propagate container size to image resource. It is deliberately not rounded: an SVG image has
+    // to be laid out at the exact size it is asked to fill, or preserveAspectRatio letterboxes it
+    // inside its own rect.
+    LayoutSize containerSize = isDimensionlessSVG()
+        ? contentBoxRect().size()
+        : replacedContentRect().size();
 
-    if (!containerSize.isEmpty()) {
+    // The container is less than a pixel wide or tall.
+    if (!flooredIntSize(containerSize).isEmpty()) {
         URL imageSourceURL;
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
             imageSourceURL = imageElement->currentURL();

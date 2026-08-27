@@ -40,7 +40,7 @@ FloatSize SVGImageForContainer::size(ImageOrientation) const
 {
     FloatSize scaledContainerSize(m_containerSize);
     scaledContainerSize.scale(m_containerZoom);
-    return FloatSize(roundedIntSize(scaledContainerSize));
+    return scaledContainerSize;
 }
 
 ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
