@@ -3399,23 +3399,18 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 ### TESTS TO BE SKIPPED
 
 # Specific to Cocoa-ports.
-ipc/networksessioncocoa-empty-resource-request.html [ Skip ]
-ipc/send-invalid-message.html [ Skip ]
 ipc/pasteboard-write-custom-data.html [ Skip ]
-ipc/remotedisplaylistrecorder-drawcontrolpart-slidertrackpart-crash.html [ Skip ]
-ipc/nested-display-list-draw-control-part-crash.html [ Skip ]
-ipc/move-to-image-buffer-cross-thread-font-crash.html [ Skip ]
 ipc/media-containment-bypass-create-player.html [ Skip ]
 http/tests/ipc/gpu-load-error-empty-user-info-crssh.html [ Skip ]
 http/tests/ipc/webpageproxy-didfailload-failingurl-message-check.html [ Skip ]
-ipc/usermedia-capture-start-producing-data-race.html [ Skip ]
-ipc/LocalSampleBufferDisplayLayer-flushAndRemoveImage-cross-thread-uaf.html [ Skip ]
-ipc/indexed-colorspace-null-inner-crash.html [ Skip ]
 # Hardcodes Cocoa's WebCore::CertificateInfo::trust field in the IPC payload; SOUP's
 # CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
 http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]
 
-# These tests are specific to Cocoa's definition of WebCore::PlatformColorSpace which is different from Skia's.
+# Generic regressions whose IPC payload needs porting to Skia's colorspace format.
+ipc/nested-display-list-draw-control-part-crash.html [ Skip ]
+ipc/move-to-image-buffer-cross-thread-font-crash.html [ Skip ]
+ipc/remotedisplaylistrecorder-drawcontrolpart-slidertrackpart-crash.html [ Skip ]
 ipc/decode-feConvolveMatrix-kernelSize-overflow.html [ Skip ]
 ipc/fecolormatrix-type-values-mismatch-crash.html [ Skip ]
 ipc/insufficient-svgfilter-inputs-crash.html [ Skip ]
@@ -3423,13 +3418,12 @@ ipc/invalid-feConvolveMatrix-crash.html [ Skip ]
 ipc/invalid-svgfilter-expression-crash.html [ Skip ]
 ipc/mark-surfaces-volatile-during-prepare-for-display.html [ Skip ]
 ipc/restore-empty-stack-crash.html [ Skip ]
+ipc/convert-to-luminance-mask-float16.html [ Skip ]
+ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 
 # ATTACHMENT_ELEMENT is disabled in glib ports.
 ipc/restrictedendpoints/allow-access-attachmentElement.html [ Skip ]
 ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
-
-# libwebrtc-specific.
-ipc/videoEncode.html [ Skip ]
 
 # WebAuthn not enabled
 ipc/web-authenticator-get-assertion.html [ Skip ]
@@ -5233,8 +5227,6 @@ imported/w3c/web-platform-tests/workers/postMessage_block.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker-postMessage-happens-in-parallel.https.html [ Skip ]
 ipc/serialized-type-info.html [ Skip ]
 ipc/stream-sync-reply-shared-memory.html [ Skip ]
-ipc/convert-to-luminance-mask-float16.html [ Skip ]
-ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 webkit.org/b/297737 ipc/send-gradient.html [ Skip ]
 webkit.org/b/297737 ipc/send-filter.html [ Skip ]
 

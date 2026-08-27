@@ -90,6 +90,7 @@ model-element/immersive [ Pass ]
 model-element/model-element-animations-loop.html [ Slow ]
 model-element/model-element-lazy-loading-unloading.html [ Slow ]
 model-element/model-element-suspend-before-ready.html [ Slow ]
+ipc/cocoa [ Pass ]
 ipc/dynamic-content-scaling-display-list-during-prepare-for-display.html [ Pass ]
 
 imported/w3c/web-platform-tests/webxr [ Pass ]

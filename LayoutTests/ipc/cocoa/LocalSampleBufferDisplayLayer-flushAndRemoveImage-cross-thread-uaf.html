@@ -17,7 +17,7 @@ async function doTest()
     if (!window.IPC)
         return;
 
-    const { CoreIPC } = await import("./coreipc.js");
+    const { CoreIPC } = await import("../coreipc.js");
     const NLAYERS = 16;
     const NFLUSHES = 8;
     for (let i = 1; i <= NLAYERS; i++) {

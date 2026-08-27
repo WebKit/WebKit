@@ -9,7 +9,7 @@
     if (!window.IPC)
       return window.testRunner?.notifyDone();
 
-    const { CoreIPC } = await import('./coreipc.js');
+    const { CoreIPC } = await import('../coreipc.js');
 
     const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
     const streamConnection = CoreIPC.newStreamConnection();

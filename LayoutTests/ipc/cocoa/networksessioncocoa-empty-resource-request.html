@@ -8,7 +8,7 @@ setTimeout(async () => {
     if (!window.IPC)
         return testRunner?.notifyDone();
 
-    const { CoreIPC } = await import('./coreipc.js');
+    const { CoreIPC } = await import('../coreipc.js');
     CoreIPC.Networking.NetworkConnectionToWebProcess.CreateSocketChannel(
       0, {
       request: {
