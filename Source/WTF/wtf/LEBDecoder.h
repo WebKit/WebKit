@@ -137,4 +137,43 @@ template<typename T>
     return decodeInt<int64_t>(bytes, offset, result);
 }
 
+// For streams this process encoded itself, where a malformed number is a bug rather than input.
+template<typename T>
+inline T decodeUIntOrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    T result = 0;
+    bool success = decodeUInt<T>(bytes, offset, result);
+    RELEASE_ASSERT(success);
+    return result;
+}
+
+template<typename T>
+inline T decodeIntOrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    T result = 0;
+    bool success = decodeInt<T>(bytes, offset, result);
+    RELEASE_ASSERT(success);
+    return result;
+}
+
+inline uint32_t decodeUInt32OrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    return decodeUIntOrCrash<uint32_t>(bytes, offset);
+}
+
+inline uint64_t decodeUInt64OrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    return decodeUIntOrCrash<uint64_t>(bytes, offset);
+}
+
+inline int32_t decodeInt32OrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    return decodeIntOrCrash<int32_t>(bytes, offset);
+}
+
+inline int64_t decodeInt64OrCrash(std::span<const uint8_t> bytes, size_t& offset)
+{
+    return decodeIntOrCrash<int64_t>(bytes, offset);
+}
+
 } } // WTF::LEBDecoder

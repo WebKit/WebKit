@@ -351,6 +351,7 @@
 		DD3DC88727A4BF8E007E5B61 /* CrossThreadTaskHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 517F82D61FD22F2F00DA3DEA /* CrossThreadTaskHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88827A4BF8E007E5B61 /* LoggingHashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30BA8F1E78708E002CA847 /* LoggingHashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB0621D55284200C82EF7 /* LEBDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5301A2E52EE0C1A4009B4C3D /* LEBEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301A2E42EE0C1A4009B4C3D /* LEBEncoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FC151A825B004123FF /* WeakRandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88B27A4BF8E007E5B61 /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1455,6 +1456,7 @@
 		53534F291EC0E10E00141B2F /* MachExceptions.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = MachExceptions.defs; sourceTree = "<group>"; };
 		5363861E2CFE391C0034E883 /* AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		539EB0621D55284200C82EF7 /* LEBDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEBDecoder.h; sourceTree = "<group>"; };
+		5301A2E42EE0C1A4009B4C3D /* LEBEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEBEncoder.h; sourceTree = "<group>"; };
 		53CAC0622C6FBD8200B1A77C /* ScopedPrintStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedPrintStream.h; sourceTree = "<group>"; };
 		53EC253C1E95AD30000831B9 /* PriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityQueue.h; sourceTree = "<group>"; };
 		53F08A1BA39D49A8BAD369A1 /* StdSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdSet.h; sourceTree = "<group>"; };
@@ -2586,6 +2588,7 @@
 				E32AB4FF2B5CE35D00B9FAAE /* LazyRef.h */,
 				E32AB5002B5CE35D00B9FAAE /* LazyUniqueRef.h */,
 				539EB0621D55284200C82EF7 /* LEBDecoder.h */,
+				5301A2E42EE0C1A4009B4C3D /* LEBEncoder.h */,
 				337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */,
 				337B2D6926546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.h */,
 				A70DA0831799F04D00529A9B /* ListDump.h */,
@@ -3766,6 +3769,7 @@
 				E32AB5012B5CE35D00B9FAAE /* LazyRef.h in Headers */,
 				E32AB5022B5CE35D00B9FAAE /* LazyUniqueRef.h in Headers */,
 				DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */,
+				5301A2E52EE0C1A4009B4C3D /* LEBEncoder.h in Headers */,
 				07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */,
 				6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */,
 				DD3DC8B427A4BF8E007E5B61 /* LikelyDenseUnsignedIntegerSet.h in Headers */,

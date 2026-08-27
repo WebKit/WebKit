@@ -31,6 +31,7 @@
 #include "DFGVariableEvent.h"
 #include "Operands.h"
 #include "ValueRecovery.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
@@ -41,18 +42,36 @@ struct UndefinedOperandSpan {
     unsigned numberOfRegisters;
 };
 
+// Stores the VariableEvents as a byte stream; a stream index is a byte offset into it.
+// Each event is a tag byte followed by an optional payload:
+//
+//   tag = VariableEventKind in the low 4 bits; MovHintEvent and SetLocalEvent carry the
+//         OperandKind of their bytecode operand in the high 4 bits
+//
+//   Reset                     -
+//   Birth, Death              ULEB128 MinifiedID
+//   BirthToFill, Fill         ULEB128 MinifiedID, DataFormat, register (FPR when the
+//                             format is DataFormatDouble, GPR otherwise)
+//   BirthToSpill, Spill       ULEB128 MinifiedID, DataFormat, SLEB128 virtual register
+//   MovHintEvent              ULEB128 MinifiedID, SLEB128 operand
+//   SetLocalEvent             SLEB128 machine register, DataFormat, SLEB128 operand
 class VariableEventStream {
 public:
     VariableEventStream() = default;
-    VariableEventStream(Vector<VariableEvent>&& stream)
-        : m_stream(WTF::move(stream))
+    VariableEventStream(Vector<uint8_t>&& bytes, Vector<unsigned>&& resetOffsets)
+        : m_bytes(WTF::move(bytes))
+        , m_resetOffsets(WTF::move(resetOffsets))
     {
     }
 
     unsigned reconstruct(CodeBlock*, CodeOrigin, MinifiedGraph&, unsigned index, Operands<ValueRecovery>&) const;
     unsigned reconstruct(CodeBlock*, CodeOrigin, MinifiedGraph&, unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 
+    static void encode(Vector<uint8_t>&, const VariableEvent&);
+
 private:
+    static VariableEvent decode(std::span<const uint8_t>, size_t& offset);
+
     enum class ReconstructionStyle {
         Combined,
         Separated
@@ -62,7 +81,8 @@ private:
         CodeBlock*, CodeOrigin, MinifiedGraph&,
         unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 
-    FixedVector<VariableEvent> m_stream;
+    FixedVector<uint8_t> m_bytes;
+    FixedVector<unsigned> m_resetOffsets;
 };
 
 class VariableEventStreamBuilder {
@@ -72,24 +92,27 @@ public:
 
     VariableEventStreamBuilder()
     {
-        m_stream.reserveInitialCapacity(128);
+        m_bytes.reserveInitialCapacity(1024);
     }
 
     void appendAndLog(const VariableEvent& event)
     {
         if (verbose)
             logEvent(event);
-        m_stream.append(event);
+        if (event.kind() == Reset)
+            m_resetOffsets.append(m_bytes.size());
+        VariableEventStream::encode(m_bytes, event);
     }
 
-    unsigned size() const { return m_stream.size(); }
+    unsigned size() const { return m_bytes.size(); }
 
-    Vector<VariableEvent> finalize() { return WTF::move(m_stream); }
+    VariableEventStream finalize() { return { WTF::move(m_bytes), WTF::move(m_resetOffsets) }; }
 
 private:
     void logEvent(const VariableEvent&);
 
-    Vector<VariableEvent> m_stream;
+    Vector<uint8_t> m_bytes;
+    Vector<unsigned> m_resetOffsets;
 };
 
 } } // namespace JSC::DFG

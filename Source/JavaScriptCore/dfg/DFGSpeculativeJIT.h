@@ -146,7 +146,7 @@ public:
     
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
-    Vector<VariableEvent> finalizeEventStream() { return m_stream.finalize(); }
+    VariableEventStream finalizeEventStream() { return m_stream.finalize(); }
 
     BasicBlock* nextBlock()
     {

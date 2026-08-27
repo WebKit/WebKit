@@ -75,7 +75,7 @@ class JITCode;
 //
 //   0x00-0x3F  (tag + 1) consecutive dead values
 //   0x40-0x43  InJSStack / AsInt32 / AsInt52 / AsDouble, flushed to the operand's own virtual register
-//   0x44-0x47  the same, flushed to another virtual register: zigzag LEB128 register offset follows
+//   0x44-0x47  the same, flushed to another virtual register: SLEB128 register offset follows
 //   0x48       Constant: LEB128 index into JITCode::osrExitConstants follows
 //   0x49       MaterializeNewObject: LEB128 index into OSRExitDescriptor::m_materializations follows
 //   0x4A       Argument: DataFormat byte and LEB128 stackmap index follow

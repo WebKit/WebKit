@@ -34,6 +34,7 @@
 #include "FTLState.h"
 #include "JSCJSValueInlines.h"
 #include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
 
 namespace JSC { namespace FTL {
 
@@ -54,23 +55,6 @@ static_assert(ExitValueInJSStackAsInt52 == ExitValueInJSStack + 2);
 static_assert(ExitValueInJSStackAsDouble == ExitValueInJSStack + 3);
 static_assert(inJSStackAtOwnRegisterTag + 4 == inJSStackTag);
 static_assert(inJSStackTag + 4 == constantTag);
-
-void appendLEB(Vector<uint8_t, 128>& bytes, uint32_t value)
-{
-    while (value >= 0x80) {
-        bytes.append(static_cast<uint8_t>(value | 0x80));
-        value >>= 7;
-    }
-    bytes.append(static_cast<uint8_t>(value));
-}
-
-uint32_t readLEB(std::span<const uint8_t> bytes, size_t& offset)
-{
-    uint32_t result = 0;
-    bool success = WTF::LEBDecoder::decodeUInt32(bytes, offset, result);
-    RELEASE_ASSERT(success);
-    return result;
-}
 
 ExitValueKind inJSStackKind(uint8_t tag, uint8_t baseTag)
 {
@@ -118,8 +102,7 @@ void OSRExitValues::encode(const Operands<ExitValue>& values, const Bag<ExitTime
                 break;
             }
             bytes.append(inJSStackTag + (value.kind() - ExitValueInJSStack));
-            int32_t offset = reg.offset();
-            appendLEB(bytes, (static_cast<uint32_t>(offset) << 1) ^ static_cast<uint32_t>(offset >> 31));
+            WTF::LEBEncoder::encodeInt32(bytes, reg.offset());
             break;
         }
         case ExitValueConstant: {
@@ -130,20 +113,20 @@ void OSRExitValues::encode(const Operands<ExitValue>& values, const Bag<ExitTime
                 constantIndex = constants.size();
                 constants.append(constant);
             }
-            appendLEB(bytes, constantIndex);
+            WTF::LEBEncoder::encodeUInt32(bytes, constantIndex);
             break;
         }
         case ExitValueMaterializeNewObject: {
             bytes.append(materializationTag);
             size_t materializationIndex = materializations.find(value.objectMaterialization());
             ASSERT(materializationIndex != notFound);
-            appendLEB(bytes, materializationIndex);
+            WTF::LEBEncoder::encodeUInt32(bytes, materializationIndex);
             break;
         }
         case ExitValueArgument:
             bytes.append(argumentTag);
             bytes.append(static_cast<uint8_t>(value.exitArgument().format()));
-            appendLEB(bytes, value.exitArgument().argument());
+            WTF::LEBEncoder::encodeUInt32(bytes, value.exitArgument().argument());
             break;
         case InvalidExitValue:
             RELEASE_ASSERT_NOT_REACHED();
@@ -172,23 +155,21 @@ FixedOperands<ExitValue> OSRExitValues::decode(const JITCode& jitCode, const Bag
             VirtualRegister reg;
             if (atOwnRegister)
                 reg = values.operandForIndex(index).virtualRegister();
-            else {
-                uint32_t zigzag = readLEB(bytes, offset);
-                reg = VirtualRegister(static_cast<int32_t>(zigzag >> 1) ^ -static_cast<int32_t>(zigzag & 1));
-            }
+            else
+                reg = VirtualRegister(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset));
             values[index] = ExitValue::inJSStack(inJSStackKind(tag, atOwnRegister ? inJSStackAtOwnRegisterTag : inJSStackTag), reg).withLocalsOffset(localsOffset);
             continue;
         }
         switch (tag) {
         case constantTag:
-            values[index] = ExitValue::constant(JSValue::decode(jitCode.osrExitConstants[readLEB(bytes, offset)]));
+            values[index] = ExitValue::constant(JSValue::decode(jitCode.osrExitConstants[WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)]));
             break;
         case materializationTag:
-            values[index] = ExitValue::materializeNewObject(materializations[readLEB(bytes, offset)]);
+            values[index] = ExitValue::materializeNewObject(materializations[WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)]);
             break;
         case argumentTag: {
             DataFormat format = static_cast<DataFormat>(bytes[offset++]);
-            values[index] = ExitValue::exitArgument(ExitArgument(format, readLEB(bytes, offset)));
+            values[index] = ExitValue::exitArgument(ExitArgument(format, WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)));
             break;
         }
         default:

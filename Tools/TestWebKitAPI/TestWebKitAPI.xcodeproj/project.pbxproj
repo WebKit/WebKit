@@ -1259,6 +1259,7 @@
 				WTF/LazyRef.cpp,
 				WTF/LazyUniqueRef.cpp,
 				WTF/LEBDecoder.cpp,
+				WTF/LEBEncoder.cpp,
 				WTF/LifecycleLogger.cpp,
 				WTF/LineEnding.cpp,
 				WTF/ListHashSet.cpp,

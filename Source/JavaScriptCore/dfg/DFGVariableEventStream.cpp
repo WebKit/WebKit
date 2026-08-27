@@ -35,14 +35,114 @@
 #include "OperandsInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
+#include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
 
 namespace JSC { namespace DFG {
 
 void VariableEventStreamBuilder::logEvent(const VariableEvent& event)
 {
-    dataLog("seq#", static_cast<unsigned>(m_stream.size()), ":");
+    dataLog("offset#", static_cast<unsigned>(m_bytes.size()), ":");
     event.dump(WTF::dataFile());
     dataLogLn(" ");
+}
+
+namespace {
+
+constexpr unsigned operandKindShift = 4;
+constexpr uint8_t eventKindMask = (1 << operandKindShift) - 1;
+
+static_assert(InvalidEventKind <= eventKindMask);
+static_assert(static_cast<unsigned>(lastOperandKind) < (1 << (CHAR_BIT - operandKindShift)));
+static_assert(sizeof(MacroAssembler::RegisterID) == 1);
+static_assert(sizeof(MacroAssembler::FPRegisterID) == 1);
+static_assert(sizeof(DataFormat) == 1);
+
+} // anonymous namespace
+
+void VariableEventStream::encode(Vector<uint8_t>& bytes, const VariableEvent& event)
+{
+    VariableEventKind kind = event.kind();
+    uint8_t tag = kind;
+    if (kind == MovHintEvent || kind == SetLocalEvent)
+        tag |= static_cast<uint8_t>(event.operand().kind()) << operandKindShift;
+    bytes.append(tag);
+    switch (kind) {
+    case Reset:
+        return;
+    case Birth:
+    case Death:
+        WTF::LEBEncoder::encodeUInt32(bytes, event.id().bits());
+        return;
+    case BirthToFill:
+    case Fill:
+        WTF::LEBEncoder::encodeUInt32(bytes, event.id().bits());
+        bytes.append(event.dataFormat());
+        if (event.dataFormat() == DataFormatDouble)
+            bytes.append(event.fpr());
+        else
+            bytes.append(event.gpr());
+        return;
+    case BirthToSpill:
+    case Spill:
+        WTF::LEBEncoder::encodeUInt32(bytes, event.id().bits());
+        bytes.append(event.dataFormat());
+        WTF::LEBEncoder::encodeInt32(bytes, event.spillRegister().offset());
+        return;
+    case MovHintEvent:
+        WTF::LEBEncoder::encodeUInt32(bytes, event.id().bits());
+        WTF::LEBEncoder::encodeInt32(bytes, event.operand().value());
+        return;
+    case SetLocalEvent:
+        WTF::LEBEncoder::encodeInt32(bytes, event.machineRegister().offset());
+        bytes.append(event.dataFormat());
+        WTF::LEBEncoder::encodeInt32(bytes, event.operand().value());
+        return;
+    case InvalidEventKind:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+VariableEvent VariableEventStream::decode(std::span<const uint8_t> bytes, size_t& offset)
+{
+    uint8_t tag = bytes[offset++];
+    VariableEventKind kind = static_cast<VariableEventKind>(tag & eventKindMask);
+    OperandKind operandKind = static_cast<OperandKind>(tag >> operandKindShift);
+    switch (kind) {
+    case Reset:
+        return VariableEvent::reset();
+    case Birth:
+        return VariableEvent::birth(MinifiedID::fromBits(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)));
+    case Death:
+        return VariableEvent::death(MinifiedID::fromBits(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)));
+    case BirthToFill:
+    case Fill: {
+        MinifiedID id = MinifiedID::fromBits(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+        DataFormat format = static_cast<DataFormat>(bytes[offset++]);
+        if (format == DataFormatDouble)
+            return VariableEvent::fillFPR(kind, id, static_cast<MacroAssembler::FPRegisterID>(bytes[offset++]));
+        return VariableEvent::fillGPR(kind, id, static_cast<MacroAssembler::RegisterID>(bytes[offset++]), format);
+    }
+    case BirthToSpill:
+    case Spill: {
+        MinifiedID id = MinifiedID::fromBits(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+        DataFormat format = static_cast<DataFormat>(bytes[offset++]);
+        return VariableEvent::spill(kind, id, VirtualRegister(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)), format);
+    }
+    case MovHintEvent: {
+        MinifiedID id = MinifiedID::fromBits(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+        return VariableEvent::movHint(id, Operand(operandKind, WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)));
+    }
+    case SetLocalEvent: {
+        VirtualRegister machineRegister(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset));
+        DataFormat format = static_cast<DataFormat>(bytes[offset++]);
+        return VariableEvent::setLocal(Operand(operandKind, WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)), machineRegister, format);
+    }
+    case InvalidEventKind:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 namespace {
@@ -172,18 +272,19 @@ unsigned VariableEventStream::reconstruct(
         return numVariables;
     }
     
-    // Step 1: Find the last checkpoint, and figure out the number of virtual registers as we go.
-    unsigned startIndex = index - 1;
-    while (m_stream.at(startIndex).kind() != Reset)
-        startIndex--;
-    
+    // Step 1: Find the last checkpoint.
+    auto nextReset = std::lower_bound(m_resetOffsets.begin(), m_resetOffsets.end(), index);
+    RELEASE_ASSERT(nextReset != m_resetOffsets.begin());
+    size_t offset = *std::prev(nextReset);
+
     // Step 2: Create a mock-up of the DFG's state and execute the events.
     Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables, numTmps);
     for (unsigned i = operandSources.size(); i--;)
         operandSources[i] = ValueSource(SourceIsDead);
     UncheckedKeyHashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
-    for (unsigned i = startIndex; i < index; ++i) {
-        const VariableEvent& event = m_stream.at(i);
+    std::span<const uint8_t> bytes = m_bytes.span();
+    while (offset < index) {
+        VariableEvent event = decode(bytes, offset);
         dataLogLnIf(verbose, "Processing event ", event);
         switch (event.kind()) {
         case Reset:
@@ -218,6 +319,7 @@ unsigned VariableEventStream::reconstruct(
             break;
         }
     }
+    RELEASE_ASSERT(offset == index);
 
     dataLogLnIf(verbose, "Operand sources: ", operandSources);
     
