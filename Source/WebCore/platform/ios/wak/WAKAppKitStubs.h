@@ -92,9 +92,18 @@
 
 #else
 
+// IntRect.h and IntSize.h define NSRect and NSSize as macros on iOS, so an unguarded
+// typedef here expands to a second declaration of CGRect or CGSize that Swift cannot
+// disambiguate from same types in CoreFoundation. The CGPoint guard is defensive.
+#ifndef NSPoint
 typedef CGPoint NSPoint;
+#endif
+#ifndef NSRect
 typedef CGRect NSRect;
+#endif
+#ifndef NSSize
 typedef CGSize NSSize;
+#endif
 
 #ifndef NSZeroPoint
 #define NSZeroPoint CGPointZero
