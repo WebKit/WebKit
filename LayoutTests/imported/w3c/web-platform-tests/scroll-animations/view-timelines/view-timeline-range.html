@@ -179,12 +179,52 @@
     });
 
     await runTimelineRangeTest(t, {
+      rangeStart: "contain calc(sign(1000px - 1px) * 20px)",
+      rangeEnd: "contain calc(100%)",
+      startOffset: 720,
+      endOffset: 800
+    });
+
+    await runTimelineRangeTest(t, {
       rangeStart: "contain calc(0% + 20px)",
       rangeEnd: "contain calc(100% - 10px)",
       startOffset: 720,
       endOffset: 790
     });
 
+    await runTimelineRangeTest(t, {
+      rangeStart: "exit 20px",
+      rangeEnd: "exit 80px",
+      startOffset: 820,
+      endOffset: 880
+    });
   }, 'View timeline with range as strings.');
+
+  promise_test(async t => {
+    const timeline = new ViewTimeline({subject: target, axis: 'block'});
+    assert_throws_js(TypeError, () => {
+      let anim = target.animate(
+        null,
+        {
+          timeline: timeline,
+          rangeStart: "exit 2em",
+          rangeEnd: "exit 8em",
+        },
+      );
+      t.add_cleanup(() => { anim?.cancel(); });
+    }, 'Invalid font-relative units');
+
+    assert_throws_js(TypeError, () => {
+      let anim = target.animate(
+        null,
+        {
+          timeline: timeline,
+          rangeStart: "cover 2vh",
+          rangeEnd: "cover calc(100% - 2vw)",
+        },
+      );
+      t.add_cleanup(() => { anim?.cancel(); });
+    }, 'Invalid viewport units');
+  }, 'View timeline with range as strings with relative units.');
 
 </script>

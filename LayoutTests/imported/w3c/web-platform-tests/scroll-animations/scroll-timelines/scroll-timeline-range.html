@@ -108,6 +108,37 @@
     });
   }, 'Scroll timeline with calculated range [JavaScript API]');
 
+  promise_test(async t => {
+    t.add_cleanup(() => {
+      target.style.fontSize = '';
+    });
+
+    const timeline = new ScrollTimeline({source: scroller, axis: 'block'});
+    assert_throws_js(TypeError, () => {
+      let anim = target.animate(
+        null,
+        {
+          timeline: timeline,
+          rangeStart: "5em",
+          rangeEnd: "calc(100% - 5em)",
+        },
+      );
+      t.add_cleanup(() => { anim?.cancel(); });
+    }, 'Invalid font-relative units');
+
+    assert_throws_js(TypeError, () => {
+      let anim = target.animate(
+        null,
+        {
+          timeline: timeline,
+          rangeStart: "2vh",
+          rangeEnd: "calc(100% - 2vw)",
+        },
+      );
+      t.add_cleanup(() => { anim?.cancel(); });
+    }, 'Invalid viewport units');
+  }, 'Scroll timeline with relative units range [JavaScript API]');
+
   // Test via CSS.
   async function test_range_css(t, options) {
     t.add_cleanup(() => {
@@ -149,7 +180,7 @@
     });
   }, 'Scroll timeline with calculated range [CSS]');
 
-promise_test(async t => {
+  promise_test(async t => {
     t.add_cleanup(() => {
       target.style.fontSize = '';
     });

@@ -1,4 +1,4 @@
 
 PASS Animation with animation-timeline:none holds current time at zero
-PASS Animation with unknown timeline name holds current time at zero
+FAIL Animation with unknown timeline name produces no effect assert_equals: expected "0px" but got "100px"
 

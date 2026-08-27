@@ -12,6 +12,7 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/change-timeline-from-finite-to-monotonic-crash-002.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/change-timeline-from-finite-to-monotonic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/clip-path-with-view-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/crashtests/effect-target-set-to-null.html

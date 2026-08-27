@@ -2,6 +2,7 @@
 PASS Scroll timeline with percentage range [JavaScript API]
 PASS Scroll timeline with px range [JavaScript API]
 PASS Scroll timeline with calculated range [JavaScript API]
+PASS Scroll timeline with relative units range [JavaScript API]
 PASS Scroll timeline with percentage range [CSS]
 PASS Scroll timeline with px range [CSS]
 PASS Scroll timeline with calculated range [CSS]

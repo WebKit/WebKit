@@ -52,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-animation-initial-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-reuse.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-quirks-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-scrollable-body-quirks-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-anonymous-source-scrollable-body.html
@@ -104,6 +105,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-hidden-subject.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-with-document-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-with-scroll-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-offset-keyframes-zero-length-attachment-range.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-range-name-offset-in-keyframes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-scope-all.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/timeline-scope-computed.html
@@ -132,6 +134,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-bounds-update.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-in-shadow-root-with-timeline-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-unresolved-current-time-at-effect-end.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-used-values.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-with-delay-and-range.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-with-transform-on-subject.html

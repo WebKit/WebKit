@@ -48,5 +48,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-source.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-block.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-subpixel-adjustment.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-subject-size-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/zero-intrinsic-iteration-duration.tentative.html

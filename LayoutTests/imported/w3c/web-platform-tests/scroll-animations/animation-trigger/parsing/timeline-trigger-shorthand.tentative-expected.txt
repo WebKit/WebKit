@@ -83,6 +83,13 @@ FAIL e.style['timeline-trigger'] = "--my-trigger --my-timeline" should set timel
 FAIL e.style['timeline-trigger'] = "--my-trigger --my-timeline" should set timeline-trigger-name assert_equals: timeline-trigger-name should be canonical expected "--my-trigger" but got ""
 FAIL e.style['timeline-trigger'] = "--my-trigger --my-timeline" should set timeline-trigger-source assert_equals: timeline-trigger-source should be canonical expected "--my-timeline" but got ""
 FAIL e.style['timeline-trigger'] = "--my-trigger --my-timeline" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-activation-range-end assert_equals: timeline-trigger-activation-range-end should be canonical expected "normal" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-activation-range-start assert_equals: timeline-trigger-activation-range-start should be canonical expected "normal" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-active-range-start assert_equals: timeline-trigger-active-range-start should be canonical expected "auto" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-name assert_equals: timeline-trigger-name should be canonical expected "--my-trigger" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set timeline-trigger-source assert_equals: timeline-trigger-source should be canonical expected "none" but got ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should not set unrelated longhands assert_true: expected true got false
 FAIL e.style['timeline-trigger'] = "--my-trigger1, --my-trigger2" should set timeline-trigger-activation-range-end assert_equals: timeline-trigger-activation-range-end should be canonical expected "normal, normal" but got ""
 FAIL e.style['timeline-trigger'] = "--my-trigger1, --my-trigger2" should set timeline-trigger-activation-range-start assert_equals: timeline-trigger-activation-range-start should be canonical expected "normal, normal" but got ""
 FAIL e.style['timeline-trigger'] = "--my-trigger1, --my-trigger2" should set timeline-trigger-active-range-end assert_equals: timeline-trigger-active-range-end should be canonical expected "auto, auto" but got ""
@@ -153,8 +160,10 @@ FAIL Property timeline-trigger value '--my-trigger view() contain 20% contain 80
 FAIL Property timeline-trigger value '--my-trigger view() contain 0% contain 100%' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value 'view()' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value '--my-trigger --my-timeline' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger value '--my-trigger none' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value '--trigger1, --trigger2' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value '--trigger1 view(), --trigger2 scroll()' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger value '--trigger1 none, --trigger2 view()' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value '--my-trigger --my-timeline normal / contain' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL Property timeline-trigger value '--my-trigger --my-timeline / contain' assert_true: timeline-trigger doesn't seem to be supported in the computed style expected true got false
 FAIL e.style['timeline-trigger'] = "--my-trigger view() contain 0% contain 100% / cover 0% cover 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
@@ -164,8 +173,10 @@ FAIL e.style['timeline-trigger'] = "--my-trigger view() contain 20% contain 80% 
 FAIL e.style['timeline-trigger'] = "--my-trigger view() contain 0% contain 100%" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "view()" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--my-trigger --my-timeline" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger'] = "--my-trigger none" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--trigger1, --trigger2" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--trigger1 view(), --trigger2 scroll()" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger'] = "--trigger1 none, --trigger2 view()" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--my-trigger view() normal normal / auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--my-trigger view() normal normal / normal auto" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['timeline-trigger'] = "--my-trigger view() normal normal / cover auto" should set the property value assert_not_equals: property should be set got disallowed value ""

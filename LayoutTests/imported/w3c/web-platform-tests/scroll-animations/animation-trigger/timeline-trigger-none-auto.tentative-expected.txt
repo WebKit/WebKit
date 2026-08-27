@@ -1,0 +1,3 @@
+
+FAIL timeline-trigger-source: none does not trigger animation; auto does assert_equals: animation should be paused when trigger source is none expected "paused" but got "running"
+

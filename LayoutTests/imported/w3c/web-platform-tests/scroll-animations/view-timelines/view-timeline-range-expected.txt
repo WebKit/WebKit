@@ -4,4 +4,5 @@ PASS View timeline with range and inferred name or offset.
 PASS View timeline with range as <name> <px> pair.
 PASS View timeline with range as <name> <percent+px> pair.
 PASS View timeline with range as strings.
+PASS View timeline with range as strings with relative units.
 

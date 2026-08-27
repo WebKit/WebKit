@@ -1,5 +1,5 @@
 
-PASS timeline-scope:all scopes all names (basic)
-PASS timeline-scope:all scopes all names (multiple)
+FAIL timeline-scope:all scopes all names (basic) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.timeline')"
+FAIL timeline-scope:all scopes all names (multiple) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim1.timeline')"
 PASS Inner scope is isolated from outer scope
 

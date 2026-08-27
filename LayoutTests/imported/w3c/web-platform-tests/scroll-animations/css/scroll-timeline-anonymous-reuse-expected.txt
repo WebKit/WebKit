@@ -1,0 +1,10 @@
+
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-play-state
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-composition
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-timing-function
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-duration
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-iteration-count
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-direction
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-delay
+PASS Anonymous scroll timeline does not get reconstructed when modifying animation-fill-mode
+
