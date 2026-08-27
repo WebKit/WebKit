@@ -5566,14 +5566,16 @@ void WebPageProxy::handleTouchEvent(IPC::Connection*, const NativeWebTouchEvent&
 
     if (event.type() == WebEventType::TouchMove && !internals().touchEventQueue.isEmpty()) {
         QueuedTouchEvents& lastEvent = internals().touchEventQueue.last();
-        if (lastEvent.forwardedEvent.type() == WebEventType::TouchMove)
+        if (lastEvent.forwardedEvent.type() == WebEventType::TouchMove) {
             lastEvent.deferredTouchEvents.append(event);
-    } else {
-        internals().touchEventQueue.append(event);
-
-        if (internals().touchEventQueue.size() == 1)
-            processNextQueuedTouchEvent();
+            return;
+        }
     }
+
+    internals().touchEventQueue.append(event);
+
+    if (internals().touchEventQueue.size() == 1)
+        processNextQueuedTouchEvent();
 }
 #elif ENABLE(TOUCH_EVENTS)
 void WebPageProxy::touchEventHandlingCompleted(IPC::Connection* connection, std::optional<WebEventType> eventType, bool handled)

@@ -1,0 +1,10 @@
+Tests that a touch move dispatched before the preceding touch start has been processed is still delivered to the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS receivedEvents.join(' ') is "touchstart touchmove touchend"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
