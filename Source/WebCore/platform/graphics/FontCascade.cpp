@@ -1374,6 +1374,10 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
         auto characters = textRun.span16();
         U16_GET(characters, 0, static_cast<unsigned>(offsetInString.value()), characters.size(), baseCharacter);
     }
+    // Draw underlines through pictographic characters instead of skipping their ink (webkit.org/b/322735).
+    if (isEmojiGroupCandidate(baseCharacter))
+        return GlyphUnderlineType::DrawOverGlyph;
+
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
     UBlockCode blockCode = ublock_getCode(baseCharacter);
