@@ -67,7 +67,7 @@ typedef struct {
     uint8_t enabled;
 
     struct {
-        uint8_t retag_on_scavenge : 1;
+        uint8_t retag_on_free : 1;
         uint8_t log_on_tag : 1;
         uint8_t log_on_purify : 1;
         uint8_t log_page_alloc : 1;
@@ -75,6 +75,8 @@ typedef struct {
         uint8_t adjacent_tag_exclusion : 1;
         uint8_t assert_adjacent_tags_are_disjoint : 1;
         uint8_t check_tag_on_dealloc : 1;
+        uint8_t large_object_delegation : 1;
+        uint8_t previous_tag_exclusion : 1;
     } mode_bits;
 
     bool is_lockdown_mode;

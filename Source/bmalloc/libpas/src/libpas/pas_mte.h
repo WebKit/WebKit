@@ -44,7 +44,6 @@
 #include "unistd.h"
 #endif
 
-#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #if PAS_ENABLE_MTE
 
 #include "pas_utils.h"
@@ -291,14 +290,14 @@ PAS_IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 inline __attribute__((always_inline)) void pas_mte_tag_st2g_loop(uint8_t* begin, size_t size)
 {
     uint8_t* end = begin + size;
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging initial 16 bytes %p to %p\n", begin, begin + 16);
     PAS_MTE_SET_TAG(begin);
 
     // Ensure begin is a multiple of 32 bytes from the end.
     begin += size % 32;
 
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG) && begin < end)
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag) && begin < end)
         printf("[MTE]\t    Doing ST2G loop from %p to %p\n", begin, end);
     while (begin < end)
         PAS_MTE_SET_TAG_PAIR_POSTINDEX(begin);
@@ -307,20 +306,20 @@ inline __attribute__((always_inline)) void pas_mte_tag_st2g_loop(uint8_t* begin,
 inline __attribute__((always_inline)) void pas_mte_tag_st2g_switching(uint8_t* begin, size_t size)
 {
     uint8_t* end = begin + size;
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging initial 16 bytes %p to %p\n", begin, begin + 16);
     PAS_MTE_SET_TAG(begin);
 
     // Ensure begin is a multiple of 32 bytes from the end.
     begin += size % 32;
 
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Doing ST2G loop from %p to %p\n", begin, end);
     while (begin < end) {
         uintptr_t num_granules_to_st2g = (uintptr_t)(end - begin) / (uintptr_t)32 & 15;
         if (!num_granules_to_st2g)
             num_granules_to_st2g = 16;
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG)) {
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag)) {
             size_t tagged_size = num_granules_to_st2g * 32;
             printf("[MTE]\t        Tagging %zu bytes from %p to %p\n", tagged_size, begin, begin + tagged_size);
         }
@@ -351,7 +350,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_loop(uint8_t* begi
 {
     /* Get the small-object case out of the way. */
     if (size <= 48) {
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
             printf("[MTE]\t    Tagging small object with size %zu from %p to %p\n", size, begin, begin + size);
         PAS_MTE_SET_TAG(begin);
         if (size <= 16)
@@ -364,7 +363,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_loop(uint8_t* begi
 
     /* Now that we know the size is at least 64 bytes, we can use DC GVA. */
     /* First, we handle the first 64 bytes, which may not be aligned to 64 bytes. */
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging initial 64 bytes from %p to %p\n", begin, begin + 64);
     PAS_MTE_SET_TAG_PAIR(begin);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(begin, 32);
@@ -376,7 +375,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_loop(uint8_t* begi
         begin = (uint8_t*)((uintptr_t)begin + DC_GVA_GRANULE_SIZE - 1 & (uintptr_t)-DC_GVA_GRANULE_SIZE);
         uint8_t* end_aligned = (uint8_t*)((uintptr_t)end & (uintptr_t)-DC_GVA_GRANULE_SIZE);
 
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
             printf("[MTE]\t    Doing aligned DC GVA loop from %p to %p\n", begin, end_aligned);
         while (begin < end_aligned) {
             PAS_MTE_SET_TAGS_USING_DC_GVA(begin);
@@ -386,7 +385,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_loop(uint8_t* begi
 
     /* Handle the last 64 bytes, covering the unaligned remainder we may have */
     /* missed in our DC GVA loop. */
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging final 64 bytes from %p to %p\n", end - 64, end);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(end, -64);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(end, -32);
@@ -412,7 +411,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_switching(uint8_t*
 {
     /* Get the small-object case out of the way. */
     if (size <= 48) {
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
             printf("[MTE]\t    Tagging small object with size %zu from %p to %p\n", size, begin, begin + size);
         PAS_MTE_SET_TAG(begin);
         if (size <= 16)
@@ -425,7 +424,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_switching(uint8_t*
 
     /* Now that we know the size is at least 64 bytes, we can use DC GVA. */
     /* First, we handle the first 64 bytes, which may not be aligned to 64 bytes. */
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging initial 64 bytes from %p to %p\n", begin, begin + 64);
     PAS_MTE_SET_TAG_PAIR(begin);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(begin, 32);
@@ -437,13 +436,13 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_switching(uint8_t*
         begin = (uint8_t*)((uintptr_t)begin + 63 & (uintptr_t)-64);
         uint8_t* end_aligned = (uint8_t*)((uintptr_t)end & (uintptr_t)-64);
 
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
             printf("[MTE]\t    Doing aligned DC GVA loop from %p to %p\n", begin, end_aligned);
         while (begin < end_aligned) {
             uintptr_t num_granules_to_gva = (uintptr_t)(end_aligned - begin) / (uintptr_t)DC_GVA_GRANULE_SIZE % 16;
             if (!num_granules_to_gva)
                 num_granules_to_gva = 16;
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG)) {
+            if (pas_mte_use_feature(pas_mte_feature_log_on_tag)) {
                 size_t tagged_size = num_granules_to_gva * DC_GVA_GRANULE_SIZE;
                 printf("[MTE]\t        Tagging %zu bytes from %p to %p\n", tagged_size, begin, begin + tagged_size);
             }
@@ -472,7 +471,7 @@ inline __attribute__((always_inline)) void pas_mte_tag_dc_gva_switching(uint8_t*
 
     /* Handle the last 64 bytes, covering the unaligned remainder we may have */
     /* missed in our DC GVA loop. */
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
         printf("[MTE]\t    Tagging final 64 bytes from %p to %p\n", end - 64, end);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(end, -64);
     PAS_MTE_SET_TAG_PAIR_WITH_OFFSET(end, -32);
@@ -503,7 +502,7 @@ pas_mte_tag_region_from_pointer(
     bool is_known_medium)
 {
     uint8_t* ptr = (uint8_t*)(begin);
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG)) {
+    if (pas_mte_use_feature(pas_mte_feature_log_on_tag)) {
         void* purified_ptr = ptr;
         PAS_MTE_GET_MTAG(purified_ptr);
         printf("[MTE]\tTagging %zu bytes from %p to %p (old tag is %p)\n", size, ptr, ptr + size, purified_ptr);
@@ -521,11 +520,11 @@ pas_mte_tag_region_from_pointer(
  * and need to modify memory at that new address, such as page headers.
  */
 #define PAS_MTE_PURIFY(a) do { \
-        if (PAS_USE_MTE) { \
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_PURIFY)) \
+        if (pas_use_mte()) { \
+            if (pas_mte_use_feature(pas_mte_feature_log_on_purify)) \
                 printf("[MTE]\tPurified %p", (void*)(a)); \
             PAS_MTE_GET_MTAG(a); \
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_PURIFY)) \
+            if (pas_mte_use_feature(pas_mte_feature_log_on_purify)) \
                 printf(" to %p\n", (void*)(a)); \
         } \
     } while (0)
@@ -561,7 +560,7 @@ pas_mte_generate_random_tag(
     uintptr_t begin,
     pas_mte_tag_constraint constraint)
 {
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ZERO_TAG_ALL))
+    if (pas_mte_use_feature(pas_mte_feature_zero_tag_all))
         return begin & ~PAS_MTE_TAG_MASK;
     __asm__ volatile( \
         ".arch_extension memtag\n\t"
@@ -594,11 +593,11 @@ pas_mte_generate_tag_and_tag_region(
         begin &= ~PAS_MTE_TAG_MASK;
     else {
         pas_mte_tag_constraint valid_tags;
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION))
+        if (pas_mte_use_feature(pas_mte_feature_adjacent_tag_exclusion))
             valid_tags = pas_mte_compute_valid_tags_under_adjacent_tag_exclusion(begin, size, homogeneity, is_known_medium);
         else
             valid_tags = pas_mte_any_nonzero_tag;
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_PREVIOUS_TAG_EXCLUSION)) {
+        if (pas_mte_use_feature(pas_mte_feature_previous_tag_exclusion)) {
             /*
              * The LDG this incurs tends to be expensive, and could be avoided
              * for initial allocations at the cost of an extra branch. If this
@@ -615,8 +614,8 @@ pas_mte_generate_tag_and_tag_region(
     }
     if (mode != pas_always_compact_allocation_mode) {
         pas_mte_tag_region_from_pointer(begin, size, is_known_medium);
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
-            && PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)) {
+        if (pas_mte_use_feature(pas_mte_feature_adjacent_tag_exclusion)
+            && pas_mte_use_feature(pas_mte_feature_assert_adjacent_tags_are_disjoint)) {
             pas_mte_assert_prior_tag_is_disjoint(begin);
             pas_mte_assert_prior_tag_is_disjoint(begin + size);
         }
@@ -627,7 +626,7 @@ pas_mte_generate_tag_and_tag_region(
 static PAS_ALWAYS_INLINE void
 pas_mte_check_tag_for_deallocation(uintptr_t ptr)
 {
-    if (!PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_CHECK_TAG_ON_DEALLOC))
+    if (!pas_mte_use_feature(pas_mte_feature_check_tag_on_dealloc))
         return;
     // We want to execute this load purely for its side-effects,
     // i.e. the tag-check and, on mismatch, subsequent tag-check-fault.
@@ -710,10 +709,12 @@ pas_mte_retag_freed_region_if_tagged(
  * when set, will force tag-on-alloc, as in the 'Tag-on-Alloc/Free' policy
  * described above.
  *
- * N.b.: the current implementation (as the name RETAG_ON_SCAVENGE
- * implies) does not retag-on-free, but on scavenge. This somewhat weakens
- * the ability of this approach to catch use-after-frees, but otherwise does
- * not break the validity of the tag/no-tag orderings above.
+ * N.b.: despite the name pas_mte_feature_retag_on_free, the current
+ * implementation for segregated heaps does not retag on free, but on scavenge.
+ * This weakens the ability of this approach to catch use-after-frees, but
+ * otherwise does not break the validity of the tag/no-tag orderings above.
+ * In practice we avoid this issue by not allocating MTE objects from
+ * segregated heaps.
  *
  * the point of view of the orderings mentioned above, as scavenging always
  * happens at some point before a subsequent allocation.
@@ -727,16 +728,16 @@ pas_mte_maybe_tag_allocated_region(
     pas_allocation_initiality initiality,
     bool is_known_medium)
 {
-    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE)
+    if (pas_mte_use_feature(pas_mte_feature_retag_on_free)
         && !PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC
         && initiality == pas_non_initial_allocation
         && mode == pas_non_compact_allocation_mode) {
         /* can assume: size >= 16 && begin % 16 == 0 */
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag))
             printf("[MTE]\tSkipping alloc-tagging %zu bytes from %p to %p\n", size, (uint8_t*)begin, (uint8_t*)begin + size);
         PAS_MTE_PURIFY(begin);
     } else {
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG) && initiality != pas_non_initial_allocation) {
+        if (pas_mte_use_feature(pas_mte_feature_log_on_tag) && initiality != pas_non_initial_allocation) {
             const char* qualifier = (initiality == pas_initial_allocation) ? "First" : "Maybe first";
             printf("[MTE]\t%s time tagging region: alloc-tagging %zu bytes from %p to %p\n", qualifier, size, (uint8_t*)begin, (uint8_t*)begin + size);
         }
@@ -752,7 +753,7 @@ pas_mte_retag_freed_region_if_tagged(
     pas_page_base_config page_config,
     pas_allocator_homogeneity homogeneity)
 {
-    if (!PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE))
+    if (!pas_mte_use_feature(pas_mte_feature_retag_on_free))
         return begin;
     uintptr_t tag = begin;
     PAS_MTE_GET_MTAG(tag);
@@ -780,7 +781,7 @@ pas_mte_retag_freed_region_if_tagged(
 
 #define PAS_MTE_ZERO_FILL_PAGE(ptr, size, flags, tag) do { \
         (void)flags; \
-        if (PAS_USE_MTE) { \
+        if (pas_use_mte()) { \
             const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT; \
             const bool copy = false; \
             /* FIXME: use mach_vm_behavior_set instead rdar://160813532 */ \
@@ -827,10 +828,10 @@ pas_mte_retag_freed_region_if_tagged(
 
 // Used to restore the correct tag when reallocating something to a new address before copying it.
 #define PAS_MTE_HANDLE_TRY_REALLOCATE_AND_COPY(ptr, old_ptr, size) do { \
-        if (PAS_USE_MTE) { \
-            PAS_MTE_CHECK_TAG_AND_SET_TCO(ptr); \
+        if (pas_use_mte()) { \
+            pas_mte_check_tag_and_set_tco((const void*)ptr); \
             memcpy((void*)ptr, old_ptr, size); \
-            PAS_MTE_CLEAR_TCO; \
+            pas_mte_clear_tco(); \
             if (verbose) { \
                 pas_log("\t...done copying size %zu from %p to %p\n", size, old_ptr, (void*)ptr); \
             } \
@@ -924,7 +925,7 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
 
 // Used to set up whether a local allocator should tag its allocations.
 #define PAS_MTE_HANDLE_SET_UP_LOCAL_ALLOCATOR(page_config, segregated_heap, allocator) do { \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_SEGREGATED_HEAP(segregated_heap)) { \
+        if (pas_use_mte() && PAS_MTE_SHOULD_TAG_SEGREGATED_HEAP(segregated_heap)) { \
             allocator->is_mte_tagged = PAS_MTE_SHOULD_TAG_PAGE(page_config); \
             allocator->is_small = (page_config).base.page_config_size_category == pas_page_config_size_category_small; \
         } else \
@@ -945,7 +946,7 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
 
 // Used to tag bitfit allocations.
 #define PAS_MTE_HANDLE_BITFIT_ALLOCATION(page_config, ptr, size, mode) do { \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
+        if (pas_use_mte() && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
             ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, mode, pas_mte_nonhomogeneous_allocator, pas_maybe_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
     } while (false)
 
@@ -1004,7 +1005,7 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 // the inevitable overhead of enabling PAS_MTE, but we don't want to burden non-PAS_MTE hardware with
 // this cost, so we inject this early return.
 #define PAS_MTE_HANDLE_MEGAPAGES_ALLOCATION(heap, size, alignment, heap_config) do { \
-        if (!PAS_USE_MTE) { \
+        if (!pas_use_mte()) { \
             return pas_large_heap_try_allocate_and_forget( \
                 &heap->large_heap, size, alignment, pas_non_compact_allocation_mode, \
                 heap_config, transaction); \
@@ -1013,21 +1014,21 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 
 // Used to redirect small megapage allocations when PAS_MTE is not enabled to the respective untagged megapage cache.
 #define PAS_MTE_HANDLE_SMALL_EXCLUSIVE_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
+        if (!pas_use_mte() || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->small_compact_exclusive_segregated_megapage_cache; \
     } while (false)
 #define PAS_MTE_HANDLE_SMALL_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
+        if (!pas_use_mte() || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->small_compact_other_megapage_cache; \
     } while (false)
 
 // Used to redirect medium megapage allocations when medium object tagging is not enabled to the respective untagged megapage cache.
 #define PAS_MTE_HANDLE_MEDIUM_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
+        if (!pas_use_mte() || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->medium_compact_megapage_cache; \
     } while (false)
 #define PAS_MTE_HANDLE_MEDIUM_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
+        if (!pas_use_mte() || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->medium_compact_megapage_cache; \
     } while (false)
 
@@ -1041,7 +1042,7 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
         (void)page_config; \
         (void)ptr; \
         (void)size; \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) { \
+        if (pas_use_mte() && PAS_MTE_SHOULD_TAG_PAGE(page_config)) { \
             pas_mte_check_tag_for_deallocation(ptr); \
             ptr = pas_mte_retag_freed_region_if_tagged((uintptr_t)ptr, (size_t)size, page_config.base, pas_mte_nonhomogeneous_allocator); \
         } \
@@ -1052,20 +1053,16 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
         (void)page_config; \
         (void)ptr; \
         (void)size; \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) { \
+        if (pas_use_mte() && PAS_MTE_SHOULD_TAG_PAGE(page_config)) { \
             pas_mte_check_tag_for_deallocation(ptr); \
             ptr = pas_mte_retag_freed_region_if_tagged((uintptr_t)ptr, (size_t)size, page_config.base, pas_mte_homogeneous_allocator); \
         } \
     } while (false)
 
-#define PAS_MTE_HANDLE_SCAVENGER_THREAD_MAIN(data) do { \
-        pas_mte_ensure_initialized(); \
-    } while (false)
-
 #if PAS_OS(DARWIN)
 #define PAS_MTE_HANDLE_PAGE_ALLOCATION(size, may_contain_small_or_medium, tag) do { \
         pas_mte_ensure_initialized(); \
-        if (PAS_USE_MTE && (may_contain_small_or_medium)) { \
+        if (pas_use_mte() && (may_contain_small_or_medium)) { \
             const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT; \
             const bool copy = false; \
             const vm_prot_t protections = VM_PROT_WRITE | VM_PROT_READ; \
@@ -1074,11 +1071,11 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
                 PAS_RECORD_STAT(page_alloc_counts, size, may_contain_small_or_medium, true); \
             else { \
                 errno = 0; \
-                if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_PAGE_ALLOC)) \
+                if (pas_mte_use_feature(pas_mte_feature_log_page_alloc)) \
                     printf("[MTE]\tFailed to map %zu bytes with VM_FLAGS_MTE.\n", (size_t)(size)); \
                 return NULL; \
             } \
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_PAGE_ALLOC)) \
+            if (pas_mte_use_feature(pas_mte_feature_log_page_alloc)) \
                 printf("[MTE]\tMapped %zu bytes from %p to %p with VM_FLAGS_MTE.\n", (size_t)(size), (void*)(mmap_result), (uint8_t*)(mmap_result) + (size)); \
             return mmap_result; \
         } \
@@ -1098,7 +1095,5 @@ PAS_IGNORE_WARNINGS_END
 #else // !PAS_ENABLE_MTE
 #define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
 #endif // PAS_ENABLE_MTE
-#else // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
-#define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
-#endif // PAS_ENABLE_MTE
+
 #endif // PAS_MTE_H

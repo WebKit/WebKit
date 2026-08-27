@@ -221,8 +221,7 @@ static void* scavenger_thread_main(void* arg)
     pthread_set_qos_class_self_np(configured_qos_class, 0);
 #endif
 
-    PAS_PROFILE(SCAVENGER_THREAD_MAIN, data);
-    PAS_MTE_HANDLE(SCAVENGER_THREAD_MAIN, data);
+    pas_mte_ensure_initialized();
 
     for (;;) {
         pas_page_sharing_pool_scavenge_result scavenge_result;

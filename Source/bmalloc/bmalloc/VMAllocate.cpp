@@ -63,7 +63,7 @@ bool isMadvZeroSupported()
 #if BENABLE(MTE) && BOS(DARWIN)
 bool tryVmZeroAndPurgeMTECase(void* p, size_t vmSize, VMTag usage)
 {
-    if (!BMALLOC_USE_MTE)
+    if (!pas_use_mte())
         return false;
     const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT;
     const bool copy = false;

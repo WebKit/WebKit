@@ -39,12 +39,12 @@ static PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
      * MTE systems perform poorly when zeroing large chunks
      * of memory, so we set TCO when applicable to avoid that overhead.
      */
-    if (PAS_USE_MTE)
-        PAS_MTE_CHECK_TAG_AND_SET_TCO(memory);
+    if (pas_use_mte())
+        pas_mte_check_tag_and_set_tco(memory);
     PAS_PROFILE(ZERO_MEMORY, memory, size);
     memset(memory, 0, size);
-    if (PAS_USE_MTE)
-        PAS_MTE_CLEAR_TCO;
+    if (pas_use_mte())
+        pas_mte_clear_tco();
     PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 

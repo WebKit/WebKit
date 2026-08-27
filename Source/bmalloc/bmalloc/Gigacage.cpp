@@ -180,7 +180,7 @@ void ensureGigacage()
             BPROFILE_ALLOCATION(INITIAL_GIGACAGE, totalSize);
 #if BENABLE(MTE)
             pas_mte_ensure_initialized();
-            if (BMALLOC_USE_MTE) {
+            if (pas_use_mte()) {
                 for (Kind kind : shuffledKinds) {
                     void* base = g_gigacageConfig.allocBasePtr(kind);
                     size_t size = g_gigacageConfig.allocSize(kind);
