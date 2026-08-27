@@ -539,7 +539,10 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
                         returncode=0,
-                        stdout='\n'.join(['{} {}'.format(key, value) for key, value in self.config().items() if key.startswith(args[3])])
+                        stdout='\n'.join([
+                            f'{key} {value}' for key, value in self.config().items()
+                            if re.match(args[3], key)
+                        ])
                     ),
             ), mocks.Subprocess.Route(
                 self.executable, 'config', LIST_OPTION, '--file', re.compile(r'.+'),
@@ -992,6 +995,20 @@ nothing to commit, working tree clean
             return mocks.ProcessCompletion(returncode=0, stdout='Updated 1 path from the index')
 
         commit = self.find(source)
+        if create and source != something:
+            if not commit or (something in self.commits and not force):
+                return False
+
+            # Copy source's commits and append the new one
+            self.commits[something] = (self.commits[source][:] if source in self.commits else [])
+            self.commits[something].append(Commit.from_json(Commit.Encoder().default(commit)))
+
+            self.head = self.commits[something][-1]
+            setattr(self.head, 'bridge_commit', True)
+            self.head.branch = something
+            self.detached = False
+            return True
+
         if commit and source in self.commits:
             self.commits[something] = self.commits[source]
 
@@ -1009,9 +1026,6 @@ nothing to commit, working tree clean
                         return True
                 else:
                     return False
-            elif source != something:
-                # Source was explicitly provided but doesn't exist: fail
-                return False
             self.commits[something] = [Commit.from_json(Commit.Encoder().default(self.head))]
             # Copy one more to create a bridge commit
             self.commits[something].append(Commit.from_json(Commit.Encoder().default(self.head)))
@@ -1677,7 +1691,6 @@ nothing to commit, working tree clean
             self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
         return mocks.ProcessCompletion(returncode=0)
 
-
     def add_remote(self, name):
         for existing in list(self.remotes.keys()):
             remote, branch = existing.split('/', 1)
@@ -1709,7 +1722,7 @@ nothing to commit, working tree clean
                     (
                         fnmatch.translate(pattern),
                         re.escape(pattern) + r'\Z',
-                        re.escape(pattern) + '/',
+                        re.escape(pattern.rstrip('/')) + '/',
                     )
                     for pattern in patterns
                 )
