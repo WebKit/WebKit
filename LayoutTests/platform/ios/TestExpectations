@@ -8868,8 +8868,6 @@ webkit.org/b/318157 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-lar
 
 webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/318258 [ Debug ] ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ]
-
 # rdar://179251021
 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
 
