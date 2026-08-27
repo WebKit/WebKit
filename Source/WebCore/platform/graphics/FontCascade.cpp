@@ -316,7 +316,12 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
             glyphOverflow = nullptr;
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     auto* cacheEntry = fonts()->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
+#else
+    Ref fonts = *this->fonts();
+    auto* cacheEntry = fonts->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
+#endif // RC_REMOVE_SEC_ACCEL_3
     bool callerNeedsFallbackFonts = fallbackFonts;
     bool canUseFallbackFontCacheEntry = !callerNeedsFallbackFonts && !run.rtl();
 
