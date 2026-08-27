@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include <WebCore/QuirksData.h>
 #include <array>
-#include <initializer_list>
 #include <optional>
 #include <span>
 #include <wtf/Assertions.h>
@@ -365,31 +363,5 @@ private:
     RefinementSet m_refinements;
     std::optional<RefinementSet> m_exception;
 };
-
-class QuirkBehaviors {
-public:
-    constexpr QuirkBehaviors() = default;
-
-    consteval QuirkBehaviors(std::initializer_list<QuirksData::SiteSpecificQuirk> quirks)
-    {
-        for (auto quirk : quirks)
-            m_bits.set(static_cast<size_t>(quirk));
-    }
-
-    constexpr const QuirksData::QuirkBitSet& bits() const LIFETIME_BOUND { return m_bits; }
-
-private:
-    QuirksData::QuirkBitSet m_bits;
-};
-
-struct Quirk {
-    QuirkMatch match;
-    QuirkBehaviors behaviors { };
-    std::optional<QuirkSite> site { };
-
-    void apply(QuirksData&) const;
-};
-
-WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const QuirkMatchContext&);
 
 } // namespace WebCore

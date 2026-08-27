@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include <WebCore/QuirkMatch.h>
+#include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>

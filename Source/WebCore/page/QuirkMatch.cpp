@@ -121,12 +121,4 @@ bool QuirkMatch::matches(const QuirkMatchContext& context) const
     return true;
 }
 
-void Quirk::apply(QuirksData& quirksData) const
-{
-    quirksData.activeQuirks.merge(behaviors.bits());
-
-    if (site)
-        quirksData.addSite(*site);
-}
-
 } // namespace WebCore
