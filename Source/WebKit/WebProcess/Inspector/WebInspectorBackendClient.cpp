@@ -87,8 +87,7 @@ WebInspectorBackendClient::~WebInspectorBackendClient()
     auto paintRectOverlays = std::exchange(m_paintRectOverlays, { });
     auto frameHighlightOverlays = std::exchange(m_frameHighlightOverlays, { });
 
-    // Paint-rect buckets own graphics layers, so detach those even if the page is already gone.
-    // Highlight overlays hold no layers of their own, so they have nothing to do here.
+    // Only paint-rect buckets own graphics layers, so only those need detaching here.
     for (auto entry : paintRectOverlays) {
         auto& bucket = entry.value;
         for (auto& layer : bucket.layers)
@@ -96,7 +95,6 @@ WebInspectorBackendClient::~WebInspectorBackendClient()
         bucket.layers.clear();
     }
 
-    // Uninstalling needs the page; if it is gone, its overlay controller went with it.
     if (!corePage)
         return;
 
@@ -176,12 +174,12 @@ void WebInspectorBackendClient::highlight()
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    if (RefPtr highlightOverlay = m_highlightOverlay.get()) {
+    if (RefPtr highlightOverlay = m_pageHighlightOverlay.get()) {
         highlightOverlay->stopFadeOutAnimation();
         highlightOverlay->setNeedsDisplay();
     } else {
         Ref newHighlightOverlay = PageOverlay::create(*this);
-        m_highlightOverlay = newHighlightOverlay.ptr();
+        m_pageHighlightOverlay = newHighlightOverlay.ptr();
         page->corePage()->pageOverlayController().installPageOverlay(newHighlightOverlay.copyRef(), PageOverlay::FadeMode::Fade);
         newHighlightOverlay->setNeedsDisplay();
     }
@@ -209,7 +207,7 @@ void WebInspectorBackendClient::hideHighlight()
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    if (RefPtr highlightOverlay = m_highlightOverlay.get())
+    if (RefPtr highlightOverlay = m_pageHighlightOverlay.get())
         page->corePage()->pageOverlayController().uninstallPageOverlay(*highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     page->hideInspectorHighlight();
@@ -224,9 +222,8 @@ RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(Lo
         return nullptr;
 
     auto& overlay = m_frameHighlightOverlays.ensure(frame, [&] -> RefPtr<PageOverlay> {
-        // FIXME: <rdar://116202544> Should be OverlayType::View, which needs a per-frame view-overlay
-        // root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the main frame.
         // DoNotFade matches hideHighlightForFrame(): a Fade uninstall defers the real uninstall.
+        // FIXME: <rdar://116202544> Should be OverlayType::View, which needs a per-frame overlay layer.
         Ref newOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
         newOverlay->setAssociatedFrame(&frame);
         corePage->pageOverlayController().installPageOverlay(newOverlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
@@ -280,7 +277,6 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
         return;
 
 #if !PLATFORM(IOS_FAMILY)
-    // Only uninstall an overlay this client installed; otherwise this is the page path.
     if (!m_frameHighlightOverlays.contains(frame)) {
         hideHighlight();
         return;
@@ -557,9 +553,8 @@ void WebInspectorBackendClient::willMoveToPage(PageOverlay& overlay, Page* page)
     if (page)
         return;
 
-    // Clear only the overlay this call is about; this client serves several.
-    if (m_highlightOverlay.get() == &overlay) {
-        m_highlightOverlay = nullptr;
+    if (m_pageHighlightOverlay.get() == &overlay) {
+        m_pageHighlightOverlay = nullptr;
         return;
     }
 
@@ -580,8 +575,8 @@ void WebInspectorBackendClient::drawRect(PageOverlay& overlay, WebCore::Graphics
     if (!corePage)
         return;
 
-    // Map the PageOverlay back to the InspectorOverlay holding its state. Membership, not just
-    // associatedFrame(): paint-rect overlays set one too. Never paint a frame surface with page state.
+    // Membership, not just associatedFrame(): paint-rect overlays set one too, and a frame surface
+    // must never be painted with page state.
     if (RefPtr frame = overlay.associatedFrame(); frame && m_frameHighlightOverlays.contains(*frame)) {
         Ref frameController = frame->inspectorController();
         if (frameController->hasOverlayContentToDraw())

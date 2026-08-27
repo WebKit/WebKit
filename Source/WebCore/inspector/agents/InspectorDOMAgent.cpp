@@ -1306,20 +1306,27 @@ void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& er
     m_searchingForNode = enabled;
 
     if (m_searchingForNode) {
-        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
-        if (!m_inspectModeHighlightConfig)
+        auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
+        if (!highlightConfig) {
+            errorString = highlightConfig.error();
             return;
+        }
 
-        bool providedGridOverlayConfig = gridOverlayInspectorObject;
-        m_inspectModeGridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-        if (providedGridOverlayConfig && !m_inspectModeGridOverlayConfig)
+        auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+        if (!gridOverlayConfig) {
+            errorString = gridOverlayConfig.error();
             return;
+        }
 
-        bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-        m_inspectModeFlexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-        if (providedFlexOverlayConfig && !m_inspectModeFlexOverlayConfig)
+        auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+        if (!flexOverlayConfig) {
+            errorString = flexOverlayConfig.error();
             return;
+        }
 
+        m_inspectModeHighlightConfig = WTF::move(*highlightConfig);
+        m_inspectModeGridOverlayConfig = WTF::move(*gridOverlayConfig);
+        m_inspectModeFlexOverlayConfig = WTF::move(*flexOverlayConfig);
         m_inspectModeShowRulers = showRulers;
 
         highlightMousedOverNode();
@@ -1380,8 +1387,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JS
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
-    highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+    highlightConfig->content = parseInspectorOverlayConfigColor(WTF::move(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseInspectorOverlayConfigColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     protect(overlay())->highlightQuad(WTF::move(quad), *highlightConfig);
 }
@@ -1399,19 +1406,17 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
     if (!highlightConfig)
-        return makeUnexpected(errorString);
+        return makeUnexpected(highlightConfig.error());
 
-    bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-    if (providedGridOverlayConfig && !gridOverlayConfig)
-        return makeUnexpected(errorString);
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!gridOverlayConfig)
+        return makeUnexpected(gridOverlayConfig.error());
 
-    bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-    if (providedFlexOverlayConfig && !flexOverlayConfig)
-        return makeUnexpected(errorString);
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!flexOverlayConfig)
+        return makeUnexpected(flexOverlayConfig.error());
 
     RefPtr<Document> document;
 
@@ -1484,7 +1489,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
         }
     }
 
-    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodeList)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodeList)), **highlightConfig, WTF::move(*gridOverlayConfig), WTF::move(*flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1514,21 +1519,19 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::o
     if (!node)
         return makeUnexpected(errorString);
 
-    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
     if (!highlightConfig)
-        return makeUnexpected(errorString);
+        return makeUnexpected(highlightConfig.error());
 
-    bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-    if (providedGridOverlayConfig && !gridOverlayConfig)
-        return makeUnexpected(errorString);
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!gridOverlayConfig)
+        return makeUnexpected(gridOverlayConfig.error());
 
-    bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-    if (providedFlexOverlayConfig && !flexOverlayConfig)
-        return makeUnexpected(errorString);
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!flexOverlayConfig)
+        return makeUnexpected(flexOverlayConfig.error());
 
-    protect(overlay())->highlightNode(node.get(), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+    protect(overlay())->highlightNode(node.get(), **highlightConfig, WTF::move(*gridOverlayConfig), WTF::move(*flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1544,8 +1547,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Re
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
-    Inspector::Protocol::ErrorString errorString;
-
     Vector<Ref<Node>> nodes;
     for (auto& nodeIdValue : nodeIds.get()) {
         auto nodeId = nodeIdValue->asInteger();
@@ -1564,21 +1565,19 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Re
         nodes.append(*node);
     }
 
-    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
     if (!highlightConfig)
-        return makeUnexpected(errorString);
+        return makeUnexpected(highlightConfig.error());
 
-    bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-    if (providedGridOverlayConfig && !gridOverlayConfig)
-        return makeUnexpected(errorString);
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!gridOverlayConfig)
+        return makeUnexpected(gridOverlayConfig.error());
 
-    bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-    if (providedFlexOverlayConfig && !flexOverlayConfig)
-        return makeUnexpected(errorString);
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!flexOverlayConfig)
+        return makeUnexpected(flexOverlayConfig.error());
 
-    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodes)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodes)), **highlightConfig, WTF::move(*gridOverlayConfig), WTF::move(*flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1594,8 +1593,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
     if (RefPtr ownerElement = frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
-        highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+        highlightConfig->content = parseInspectorOverlayConfigColor(WTF::move(color)).value_or(Color::transparentBlack);
+        highlightConfig->contentOutline = parseInspectorOverlayConfigColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
         protect(overlay())->highlightNode(ownerElement.get(), *highlightConfig);
     }
 
@@ -1616,11 +1615,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
     if (!node)
         return makeUnexpected(errorString);
 
-    auto config = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
+    auto config = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
     if (!config)
-        return makeUnexpected(errorString);
+        return makeUnexpected(config.error());
 
-    std::ignore = protect(overlay())->setGridOverlayForNode(*node, *config);
+    std::ignore = protect(overlay())->setGridOverlayForNode(*node, **config);
 
     return { };
 }
@@ -1648,11 +1647,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Insp
     if (!node)
         return makeUnexpected(errorString);
 
-    auto config = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
+    auto config = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
     if (!config)
-        return makeUnexpected(errorString);
+        return makeUnexpected(config.error());
 
-    std::ignore = protect(overlay())->setFlexOverlayForNode(*node, *config);
+    std::ignore = protect(overlay())->setFlexOverlayForNode(*node, **config);
 
     return { };
 }

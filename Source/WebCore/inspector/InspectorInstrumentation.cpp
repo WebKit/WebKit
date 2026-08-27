@@ -718,14 +718,19 @@ void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instr
         pageAgent->applyEmulatedMedia(media);
 }
 
+// Both agents are notified because either may own the overlay that later reads the cache.
 void InspectorInstrumentation::flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer)
 {
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
+        frameDOMAgent->flexibleBoxRendererBeganLayout(renderer);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->flexibleBoxRendererBeganLayout(renderer);
 }
 
 void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer, size_t lineStartItemIndex)
 {
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
+        frameDOMAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
 }

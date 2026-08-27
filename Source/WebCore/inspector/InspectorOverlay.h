@@ -144,9 +144,8 @@ struct InspectorOverlayHighlight {
     using Bounds = FloatRect;
 };
 
-// Owner of an InspectorOverlay: a PageInspectorController (page overlay) or, under Site Isolation,
-// a LocalFrame's FrameInspectorController (frame overlay). ref()/deref() pin the owner, not the
-// overlay, which is not RefCounted; AbstractCanMakeCheckedPtr lets the overlay hold a CheckedRef.
+// Owner of an InspectorOverlay: a PageInspectorController, or a FrameInspectorController under Site
+// Isolation. ref()/deref() pin the owner, since the overlay itself is not RefCounted.
 class InspectorOverlayOwner : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~InspectorOverlayOwner() = default;
@@ -163,7 +162,7 @@ public:
     // The frame the overlay draws in, or null for the page overlay. See frameForGeometry().
     virtual LocalFrame* NODELETE overlayOwnerFrame() const { return nullptr; }
 
-    // Flex line-wrap positions for line separators; empty for a frame owner, which has no cache yet.
+    // Flex line-wrap positions for line separators, from the owning DOM agent's cache.
     virtual Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const { return { }; }
 };
 
@@ -278,8 +277,8 @@ private:
     bool removeGridOverlayForNode(Node&);
     bool removeFlexOverlayForNode(Node&);
 
-    // Null once the owner is detached from its page; every geometry path must tolerate that.
-    Page* NODELETE page() const;
+    // The owner's page. Null once the owner is detached from it; every geometry path must tolerate that.
+    Page* NODELETE overlayOwnerPage() const;
 
     // The frame this overlay draws in: the owner's frame, else the page's local main frame.
     LocalFrame* NODELETE frameForGeometry() const;

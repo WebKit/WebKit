@@ -66,6 +66,7 @@
 #include "NodeList.h"
 #include "PseudoElement.h"
 #include "RegisteredEventListener.h"
+#include "RenderObject.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
@@ -93,10 +94,8 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameDOMAgent);
 
-// FIXME: <https://webkit.org/b/298980> Extract shared tree-building and node-binding logic into a base class shared with InspectorDOMAgent.
-// The highlight commands below (innerHighlightNode, innerHighlightNodeList, innerHighlightQuad,
-// highlightRect, highlightQuad) are also near-verbatim clones of the page agent's, and belong in that
-// same base class. The config parsing they share already moved to InspectorOverlayConfigParser.
+// Config parsing is shared with InspectorDOMAgent, but the agents don't share command implementations.
+// FIXME: <https://webkit.org/b/298980> Extract shared tree-building and node-binding logic into a base class.
 
 static const size_t frameMaxTextSize = 10000;
 static const char16_t frameHorizontalEllipsisUTF16[] = { horizontalEllipsis, 0 };
@@ -184,11 +183,25 @@ void FrameDOMAgent::didCreateFrontendAndBackend()
     RefPtr frame = m_inspectedFrame.get();
     if (frame)
         m_document = frame->document();
+
+    // The flex line-start cache is only filled by layouts that run while a frontend is attached, so
+    // without forcing one here a frame laid out before inspection reports no line starts.
+    relayoutDocument();
 }
 
-// Deliberately does not touch the overlay. InspectorDOMAgent does `Ref overlay = m_overlay.get()` here,
-// which on the frame path would ref a LocalFrame whose refcount has already reached zero -- the frame
-// destructor is what calls into this controller.
+void FrameDOMAgent::relayoutDocument()
+{
+    RefPtr document = m_document;
+    if (!document)
+        return;
+
+    m_overlayOwnerFlexLineStartsByRenderer.clear();
+
+    document->updateLayout();
+}
+
+// Deliberately does not touch the overlay: unlike the page agent, refing it here would ref a
+// LocalFrame whose refcount has already reached zero, since the frame destructor calls into this.
 void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_domEditor.reset();
@@ -541,6 +554,9 @@ void FrameDOMAgent::setDocument(Document* document)
 
     reset();
     m_document = document;
+
+    // Clears the flex line-start cache and re-seeds it, as the page agent does.
+    relayoutDocument();
 
     if (!m_documentRequested)
         return;
@@ -1135,6 +1151,24 @@ bool FrameDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomStrin
     return false;
 }
 
+// Cleared per-renderer at the start of every flex layout, so no explicit invalidation is needed.
+void FrameDOMAgent::flexibleBoxRendererBeganLayout(const RenderObject& renderer)
+{
+    m_overlayOwnerFlexLineStartsByRenderer.remove(renderer);
+}
+
+void FrameDOMAgent::flexibleBoxRendererWrappedToNextLine(const RenderObject& renderer, size_t lineStartItemIndex)
+{
+    m_overlayOwnerFlexLineStartsByRenderer.ensure(renderer, [] {
+        return Vector<size_t>();
+    }).iterator->value.append(lineStartItemIndex);
+}
+
+Vector<size_t> FrameDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject& renderer) const
+{
+    return m_overlayOwnerFlexLineStartsByRenderer.get(renderer);
+}
+
 Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventListener(const Ref<RegisteredEventListener>& registeredEventListener, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled)
 {
     Ref<EventListener> eventListener = registeredEventListener->callback();
@@ -1579,8 +1613,8 @@ Inspector::CommandResult<void> FrameDOMAgent::setInspectedNode(int nodeId)
 void FrameDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
-    highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+    highlightConfig->content = parseInspectorOverlayConfigColor(WTF::move(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseInspectorOverlayConfigColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     protect(overlay())->highlightQuad(WTF::move(quad), *highlightConfig);
 }
@@ -1637,21 +1671,19 @@ Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNode(std::optional<i
     if (!node)
         return makeUnexpected(errorString);
 
-    auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
     if (!highlightConfig)
-        return makeUnexpected(errorString);
+        return makeUnexpected(highlightConfig.error());
 
-    bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-    if (providedGridOverlayConfig && !gridOverlayConfig)
-        return makeUnexpected(errorString);
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!gridOverlayConfig)
+        return makeUnexpected(gridOverlayConfig.error());
 
-    bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-    if (providedFlexOverlayConfig && !flexOverlayConfig)
-        return makeUnexpected(errorString);
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!flexOverlayConfig)
+        return makeUnexpected(flexOverlayConfig.error());
 
-    protect(overlay())->highlightNode(node.get(), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+    protect(overlay())->highlightNode(node.get(), **highlightConfig, WTF::move(*gridOverlayConfig), WTF::move(*flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1674,8 +1706,6 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightNodeList(Ref<JSON::Array>
 
 Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
-    Inspector::Protocol::ErrorString errorString;
-
     Vector<Ref<Node>> nodes;
     for (auto& nodeIdValue : nodeIds.get()) {
         auto nodeId = nodeIdValue->asInteger();
@@ -1692,21 +1722,19 @@ Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNodeList(Ref<JSON::A
         nodes.append(*node);
     }
 
-    auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(WTF::move(highlightInspectorObject));
     if (!highlightConfig)
-        return makeUnexpected(errorString);
+        return makeUnexpected(highlightConfig.error());
 
-    bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
-    if (providedGridOverlayConfig && !gridOverlayConfig)
-        return makeUnexpected(errorString);
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!gridOverlayConfig)
+        return makeUnexpected(gridOverlayConfig.error());
 
-    bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
-    if (providedFlexOverlayConfig && !flexOverlayConfig)
-        return makeUnexpected(errorString);
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!flexOverlayConfig)
+        return makeUnexpected(flexOverlayConfig.error());
 
-    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodes)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodes)), **highlightConfig, WTF::move(*gridOverlayConfig), WTF::move(*flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1714,6 +1742,72 @@ Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNodeList(Ref<JSON::A
 Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
 {
     protect(overlay())->hideHighlight();
+
+    return { };
+}
+
+// MARK: - Layout Overlays
+
+Inspector::CommandResult<void> FrameDOMAgent::showGridOverlay(int nodeId, Ref<JSON::Object>&& gridOverlayInspectorObject)
+{
+    Inspector::Protocol::ErrorString errorString;
+    RefPtr node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    auto config = gridOverlayConfigFromInspectorObject(WTF::move(gridOverlayInspectorObject));
+    if (!config)
+        return makeUnexpected(config.error());
+
+    std::ignore = protect(overlay())->setGridOverlayForNode(*node, **config);
+
+    return { };
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::hideGridOverlay(std::optional<int>&& nodeId)
+{
+    if (nodeId) {
+        Inspector::Protocol::ErrorString errorString;
+        RefPtr node = assertNode(errorString, *nodeId);
+        if (!node)
+            return makeUnexpected(errorString);
+
+        return protect(overlay())->clearGridOverlayForNode(*node);
+    }
+
+    protect(overlay())->clearAllGridOverlays();
+
+    return { };
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::showFlexOverlay(int nodeId, Ref<JSON::Object>&& flexOverlayInspectorObject)
+{
+    Inspector::Protocol::ErrorString errorString;
+    RefPtr node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    auto config = flexOverlayConfigFromInspectorObject(WTF::move(flexOverlayInspectorObject));
+    if (!config)
+        return makeUnexpected(config.error());
+
+    std::ignore = protect(overlay())->setFlexOverlayForNode(*node, **config);
+
+    return { };
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::hideFlexOverlay(std::optional<int>&& nodeId)
+{
+    if (nodeId) {
+        Inspector::Protocol::ErrorString errorString;
+        RefPtr node = assertNode(errorString, *nodeId);
+        if (!node)
+            return makeUnexpected(errorString);
+
+        return protect(overlay())->clearFlexOverlayForNode(*node);
+    }
+
+    protect(overlay())->clearAllFlexOverlays();
 
     return { };
 }

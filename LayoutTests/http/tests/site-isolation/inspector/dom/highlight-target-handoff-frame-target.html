@@ -5,9 +5,8 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlightTargetHandoff");
 
-    // Highlight state is per-target. Highlighting a node in one target must clear the others, or the
-    // page target keeps highlighting the owner iframe element while the frame target highlights the
-    // inner node, and both draw at once.
+    // Highlight state is per-target, so highlighting in one target must clear the others -- otherwise
+    // the page keeps highlighting the owner iframe while the frame highlights the inner node.
 
     let frameTarget = null;
     let frameContainerNode = null;
@@ -77,9 +76,7 @@ function test() {
         name: "BothTargetsAcceptHideHighlight",
         description: "Highlighting an inner node must be clearable on both targets, or both keep drawing.",
         async test() {
-            // Observed through the protocol rather than the backend overlay, which no Internals hook
-            // exposes per frame: hideHighlight must reach the page target when an inner node is
-            // highlighted, otherwise the page keeps drawing the owner iframe element too.
+            // Observed through the protocol: no Internals hook exposes the backend overlay per frame.
             let pageTarget = WI.assumingMainTarget();
             InspectorTest.expectThat(pageTarget !== frameTarget, "Page and frame targets should be distinct.");
             InspectorTest.expectThat(pageTarget.hasCommand("DOM.hideHighlight"), "Page target should support DOM.hideHighlight.");

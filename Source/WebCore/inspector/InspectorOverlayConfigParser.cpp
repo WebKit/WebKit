@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-std::optional<Color> parseInspectorColor(RefPtr<JSON::Object>&& colorObject)
+std::optional<Color> parseInspectorOverlayConfigColor(RefPtr<JSON::Object>&& colorObject)
 {
     if (!colorObject)
         return std::nullopt;
@@ -51,7 +51,7 @@ std::optional<Color> parseInspectorColor(RefPtr<JSON::Object>&& colorObject)
 
 static std::optional<Color> parseRequiredConfigColor(const String& fieldName, JSON::Object& configObject)
 {
-    return parseInspectorColor(configObject.getObject(fieldName));
+    return parseInspectorOverlayConfigColor(configObject.getObject(fieldName));
 }
 
 static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& configObject)
@@ -78,12 +78,10 @@ bool parseInspectorQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
     return true;
 }
 
-std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
+Inspector::CommandResult<std::unique_ptr<InspectorOverlay::Highlight::Config>> highlightConfigFromInspectorObject(RefPtr<JSON::Object>&& highlightInspectorObject)
 {
-    if (!highlightInspectorObject) {
-        errorString = "Internal error: highlight configuration parameter is missing"_s;
-        return nullptr;
-    }
+    if (!highlightInspectorObject)
+        return makeUnexpected("Internal error: highlight configuration parameter is missing"_s);
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
     highlightConfig->showInfo = highlightInspectorObject->getBoolean("showInfo"_s).value_or(false);
@@ -94,16 +92,14 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspecto
     return highlightConfig;
 }
 
-std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& gridOverlayInspectorObject)
+Inspector::CommandResult<std::optional<InspectorOverlay::Grid::Config>> gridOverlayConfigFromInspectorObject(RefPtr<JSON::Object>&& gridOverlayInspectorObject)
 {
     if (!gridOverlayInspectorObject)
-        return std::nullopt;
+        return { std::nullopt };
 
     auto gridColor = parseRequiredConfigColor("gridColor"_s, *gridOverlayInspectorObject);
-    if (!gridColor) {
-        errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_s;
-        return std::nullopt;
-    }
+    if (!gridColor)
+        return makeUnexpected("Internal error: grid color property of grid overlay configuration parameter is missing"_s);
 
     InspectorOverlay::Grid::Config gridOverlayConfig;
     gridOverlayConfig.gridColor = *gridColor;
@@ -113,24 +109,22 @@ std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObje
     gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_s).value_or(false);
     gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_s).value_or(false);
     gridOverlayConfig.showOrderNumbers = gridOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
-    return gridOverlayConfig;
+    return { WTF::move(gridOverlayConfig) };
 }
 
-std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
+Inspector::CommandResult<std::optional<InspectorOverlay::Flex::Config>> flexOverlayConfigFromInspectorObject(RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
     if (!flexOverlayInspectorObject)
-        return std::nullopt;
+        return { std::nullopt };
 
     auto flexColor = parseRequiredConfigColor("flexColor"_s, *flexOverlayInspectorObject);
-    if (!flexColor) {
-        errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_s;
-        return std::nullopt;
-    }
+    if (!flexColor)
+        return makeUnexpected("Internal error: flex color property of flex overlay configuration parameter is missing"_s);
 
     InspectorOverlay::Flex::Config flexOverlayConfig;
     flexOverlayConfig.flexColor = *flexColor;
     flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
-    return flexOverlayConfig;
+    return { WTF::move(flexOverlayConfig) };
 }
 
 } // namespace WebCore

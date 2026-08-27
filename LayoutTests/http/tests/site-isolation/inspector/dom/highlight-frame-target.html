@@ -5,15 +5,11 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlight");
 
-    // Geometry is deliberately not asserted. internals.inspectorHighlightRects() reads the PAGE
-    // controller's overlay (Internals.cpp: page()->inspectorController()), so it cannot observe a
-    // frame overlay's quads. These cases assert that each command is dispatched to the frame target
-    // and accepted rather than erroring, which is what this patch changes.
-    // FIXME: The contents-to-root-view translation in InspectorOverlay::paint() is not covered here,
-    // and a getHighlight()-style accessor would not cover it either -- getHighlight() builds quads
-    // without a GraphicsContext, so it never sees that CTM. Observing it needs paint() driven into a
-    // recording context, e.g. an Internals hook using DisplayList::RecorderImpl the way
-    // Internals::displayListForElement does.
+    // Geometry is deliberately not asserted: internals.inspectorHighlightRects() reads the page
+    // controller's overlay, so it cannot observe a frame overlay's quads. These cases assert that each
+    // command is dispatched to the frame target and accepted rather than erroring.
+    // FIXME: a coverage gap in the test, not a known bug -- the contents-to-root-view translation in
+    // InspectorOverlay::paint() is not verifiable from a layout test today.
 
     async function containerNodeForFrame(resourceName) {
         let target = await frameTargetForURLContaining(resourceName);
@@ -38,8 +34,7 @@ function test() {
         InspectorTest.expectNotNull(bodyNode, "Frame document should have a BODY.");
         await new Promise((resolve) => bodyNode.getChildNodes(resolve));
 
-        // Bind the container's children so nodes that querySelector returns below are already in the
-        // frontend -- an unbound nodeId resolves to null.
+        // Bind the container's children first; an unbound nodeId resolves to null.
         let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
         InspectorTest.expectNotNull(containerNode, "Frame document should have #container.");
         await new Promise((resolve) => containerNode.getChildNodes(resolve));
@@ -57,7 +52,6 @@ function test() {
         };
     }
 
-    // Resolves to an error, or null when the command succeeded.
     async function errorFrom(promise) {
         try {
             await promise;
@@ -90,8 +84,7 @@ function test() {
         async test() {
             let {target, containerNode} = await containerNodeForFrame("highlight-frame.html");
 
-            // The overlay surface is contents-sized and offset by the scroll position, so a scrolled
-            // frame is the case the paint() translation exists for.
+            // A scrolled frame is the case the paint() translation exists for.
             await target.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 300)"});
 
             try {
@@ -186,9 +179,8 @@ function test() {
         async test() {
             let {target} = await containerNodeForFrame("highlight-frame.html");
 
-            // Unlike the other highlight commands, highlightSelector resolves a frameId through the
-            // page-level identifier registry, so it is still targetTypes ["page"] and still a stub.
-            // Asserted so that implementing it has to update this expectation deliberately.
+            // highlightSelector resolves a frameId through the page-level identifier registry, so it
+            // is still page-only. Asserted so implementing it must update this expectation.
             InspectorTest.expectFalse(target.hasCommand("DOM.highlightSelector"), "Frame target should not expose DOM.highlightSelector.");
         }
     });

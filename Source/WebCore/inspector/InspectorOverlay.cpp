@@ -117,8 +117,7 @@ static void truncateWithEllipsis(String& string, size_t length)
 
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const LocalFrameView& view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    // contentsToRootView() stops at this process's local root, which is the space a frame overlay
-    // draws in; convertToRootViewAcrossIsolatedFrames() would map to page space instead.
+    // contentsToRootView() stops at this process's local root, the space a frame overlay draws in.
     quad.setP1(view.contentsToRootView(quad.p1()));
     quad.setP2(view.contentsToRootView(quad.p2()));
     quad.setP3(view.contentsToRootView(quad.p3()));
@@ -332,7 +331,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     if (!containingView)
         return;
 
-    // See buildRendererHighlight(): only read under CoordinateSystem::View, which frames never reach.
+    // See buildRendererHighlight().
     RefPtr containingPage = containingFrame->page();
     RefPtr mainView = containingPage ? containingPage->mainFrame().virtualView() : nullptr;
 
@@ -420,19 +419,18 @@ void InspectorOverlay::deref() const
     m_owner->overlayOwnerDeref();
 }
 
-Page* InspectorOverlay::page() const
+Page* InspectorOverlay::overlayOwnerPage() const
 {
     return m_owner->overlayOwnerPage();
 }
 
 LocalFrame* InspectorOverlay::frameForGeometry() const
 {
-    // localMainFrame(), not localMainOrRootFrame(): the page overlay must not draw against a
-    // subframe's geometry, matching PageOverlay::frameForGeometry() that this is named after.
+    // localMainFrame(), not localMainOrRootFrame(): the page overlay must not draw against a subframe.
     if (LocalFrame* ownerFrame = m_owner->overlayOwnerFrame())
         return ownerFrame;
 
-    RefPtr page = this->page();
+    RefPtr page = this->overlayOwnerPage();
     return page ? page->localMainFrame() : nullptr;
 }
 
@@ -441,7 +439,6 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-    // Null when the frame has no view, or this process's main frame is remote.
     RefPtr geometryFrame = frameForGeometry();
     RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
     if (!pageView)
@@ -449,15 +446,9 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
     auto viewportSize = pageView->sizeForVisibleContent();
 
-    // Everything below emits root-view coordinates, but a frame overlay paints into an
-    // OverlayType::Document surface positioned at the contents origin, so it receives contents
-    // coordinates. Undo contentsToView(), which subtracts documentScrollPositionRelativeToViewOrigin()
-    // -- and is a no-op when scrolling is delegated, so this must be too. PageOverlay::drawRect() has
-    // already translated by scrollOrigin(), which is part of that same conversion and must not be
-    // re-applied here. Must precede the clearRect below, which is also viewport-relative.
-    // FIXME: <rdar://116202544> Remove once frame overlays can use OverlayType::View, which needs a
-    // per-frame view-overlay root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the
-    // main frame.
+    // A frame overlay paints into a Document surface at the contents origin, so undo contentsToView()
+    // -- before the viewport-relative clearRect below.
+    // FIXME: <rdar://116202544> Remove once frame overlays can use OverlayType::View.
     GraphicsContextStateSaver documentSurfaceStateSaver(context);
     if (isFrameScoped() && !pageView->delegatesScrollingToNativeView())
         context.translate(pageView->documentScrollPositionRelativeToViewOrigin() - pageView->scrollOrigin());
@@ -731,7 +722,7 @@ void InspectorOverlay::update()
         return;
     }
 
-    // Scoped to the geometry frame: the old main-frame check blocked painting in subframe processes.
+    // Scoped to the geometry frame, so a subframe process can paint.
     if (!geometryFrame || !geometryFrame->virtualView())
         return;
 
@@ -992,11 +983,10 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     constexpr auto lightRulerColor = Color::black.colorWithAlphaByte(51);
     constexpr auto darkRulerColor = Color::black.colorWithAlphaByte(128);
 
-    // Rulers are page-wide. Every caller gates on shouldDrawRulers(), which is false when frame scoped.
     ASSERT(!isFrameScoped());
 
     IntPoint scrollOffset;
-    RefPtr page = this->page();
+    RefPtr page = this->overlayOwnerPage();
     RefPtr localMainFrame = page ? page->localMainFrame() : nullptr;
     if (!localMainFrame)
         return;
@@ -1361,10 +1351,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
     }
 
-    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
-    // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
-    // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
-    // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.
+    // FIXME: <rdar://116202544> For a frame overlay these clamps are against the frame's own viewport,
+    // so a tooltip near an iframe edge is confined to the iframe instead of the window.
 
     auto expectedLabelSize = InspectorOverlayLabel::expectedSize(labelContents, InspectorOverlayLabel::Arrow::Direction::Up);
     auto boundsCenterX = bounds.center().x();

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InspectorOverlay.h"
+#include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -33,11 +34,14 @@ namespace WebCore {
 // Shared by InspectorDOMAgent and FrameDOMAgent: converting the protocol's highlight configuration
 // objects into the overlay's config structs. Depends on InspectorOverlay.h, so WebCore-internal.
 
-std::optional<Color> parseInspectorColor(RefPtr<JSON::Object>&&);
+std::optional<Color> parseInspectorOverlayConfigColor(RefPtr<JSON::Object>&&);
 bool parseInspectorQuad(Ref<JSON::Array>&&, FloatQuad*);
 
-std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
-std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
-std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&&);
+Inspector::CommandResult<std::unique_ptr<InspectorOverlay::Highlight::Config>> highlightConfigFromInspectorObject(RefPtr<JSON::Object>&&);
+
+// A null configuration object is not an error: the protocol parameter is optional, so it yields an
+// engaged result holding std::nullopt. Only a malformed object produces an error.
+Inspector::CommandResult<std::optional<InspectorOverlay::Grid::Config>> gridOverlayConfigFromInspectorObject(RefPtr<JSON::Object>&&);
+Inspector::CommandResult<std::optional<InspectorOverlay::Flex::Config>> flexOverlayConfigFromInspectorObject(RefPtr<JSON::Object>&&);
 
 } // namespace WebCore

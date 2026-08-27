@@ -99,8 +99,7 @@ private:
 
     WeakPtr<WebPage> m_page;
 
-    // The page-level highlight overlay. Kept separate from the per-frame map: it is no frame's overlay.
-    WeakPtr<WebCore::PageOverlay> m_highlightOverlay;
+    WeakPtr<WebCore::PageOverlay> m_pageHighlightOverlay;
 
     // Frame-scoped highlight overlays, keyed by local root. Separate lifetimes from m_paintRectOverlays.
     WeakHashMap<WebCore::LocalFrame, RefPtr<WebCore::PageOverlay>> m_frameHighlightOverlays;

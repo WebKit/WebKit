@@ -52,6 +52,7 @@ class FrontendRouter;
 
 namespace WebCore {
 
+class FrameDOMAgent;
 class GraphicsContext;
 class InspectorBackendClient;
 class InspectorController;
@@ -60,6 +61,7 @@ class InspectorInstrumentation;
 class InstrumentingAgents;
 class LocalFrame;
 class PageInspectorController;
+class RenderObject;
 class WebInjectedScriptManager;
 struct FrameAgentContext;
 
@@ -76,16 +78,16 @@ public:
     WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
-    // InspectorOverlayOwner. Anchors on the frame, which owns this controller and so the overlay.
+    // InspectorOverlayOwner
     void overlayOwnerRef() const final { ref(); }
     void overlayOwnerDeref() const final { deref(); }
     Page* NODELETE overlayOwnerPage() const final;
     LocalFrame* NODELETE overlayOwnerFrame() const final;
     InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final;
+    Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
 
-    // True when this frame's own overlay holds the highlight state, not the page overlay.
     WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
@@ -120,7 +122,6 @@ private:
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
 
-    // This frame's own overlay, distinct from the page overlay owned by PageInspectorController.
     const UniqueRef<InspectorOverlay> m_overlay;
 
     const Ref<WTF::Stopwatch> m_executionStopwatch;
@@ -130,6 +131,9 @@ private:
     bool m_didCreateConsoleAgent { false };
     bool m_didCreateLazyAgents { false };
     WeakPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+
+    // Non-owning, so the overlay can reach the flex line-start cache; the agent is owned by m_agents.
+    CheckedPtr<FrameDOMAgent> m_domAgent;
 };
 
 } // namespace WebCore
