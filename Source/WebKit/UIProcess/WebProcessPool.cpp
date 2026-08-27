@@ -2219,10 +2219,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     bool isMainFrameNavigation = frame.isMainFrame();
     Ref sourceProcess = frame.process();
-    if (siteIsolationEnabled && !isMainFrameNavigation && page.didLoadWebArchive()) {
-        ASSERT(sourceProcess.ptr() == &protect(page.mainFrame())->process());
-        return completionHandler(sourceProcess.copyRef(), nullptr, "Navigation is treated as same-site (archive load)"_s);
-    }
 
     if (siteIsolationEnabled) {
         if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame()) {

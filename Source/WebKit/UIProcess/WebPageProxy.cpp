@@ -6117,6 +6117,14 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         receivedPolicyDecision(policyAction, navigation.ptr(), websitePoliciesAndProcess(navigation->websitePolicies(), processNavigatingTo), WTF::move(navigationAction), WillContinueLoadInNewProcess::No, WTF::move(optionalHandle), WTF::move(message), WTF::move(completionHandler));
     };
 
+
+    // Every frame of a page displaying a web archive must stay in the archive's process so its subresources
+    // remain reachable.
+    if (preferences->siteIsolationEnabled() && !frame.isMainFrame() && didLoadWebArchive()) {
+        ASSERT(&frame.process() == &protect(mainFrame())->process());
+        return continueWithProcessForNavigation(Ref { frame.process() }, nullptr, "Navigation is treated as same-site (archive load)"_s);
+    }
+
     browsingContextGroup->sharedProcessForSite(websiteDataStore, policies.get(), preferences, site, mainFrameSite, lockdownMode, enhancedSecurity, protect(m_configuration), frame.isMainFrame() ? IsMainFrame::Yes : IsMainFrame::No, [
         this,
         protectedThis = Ref { *this },
