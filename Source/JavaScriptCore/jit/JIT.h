@@ -218,9 +218,6 @@ namespace JSC {
         void loadPtrFromMetadata(const Bytecode&, size_t offset, GPRReg);
 
         template <typename Bytecode>
-        void loadPairPtrFromMetadata(const Bytecode&, size_t offset, GPRReg, GPRReg);
-
-        template <typename Bytecode>
         void load32FromMetadata(const Bytecode&, size_t offset, GPRReg);
 
         template <typename Bytecode>
