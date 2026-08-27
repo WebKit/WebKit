@@ -242,7 +242,7 @@ struct FeatureList : TableBase {
     const FeatureTable* findFeature(OpenType::Tag tag, const SharedBuffer& buffer) const
     {
         for (uint16_t i = 0; i < featureCount; ++i) {
-            if (isValidEnd(buffer, &features[i]) && features[i].featureTag == tag)
+            if (isValidEnd(buffer, &features[i + 1]) && features[i].featureTag == tag)
                 return validateOffset<FeatureTable>(buffer, features[i].featureOffset);
         }
         return 0;
