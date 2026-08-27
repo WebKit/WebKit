@@ -123,6 +123,11 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     } }, WebCore::SandboxFlags { }, WebCore::ReferrerPolicy::EmptyString };
 
     Ref page = WebCore::Page::create(WTF::move(pageConfiguration));
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+    WebPage::setHasLaunchedWebContentProcess();
+#endif
+
     if (m_preferencesStore) {
         WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
         page->settings().setStorageBlockingPolicy(static_cast<WebCore::StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
