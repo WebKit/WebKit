@@ -223,8 +223,8 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, textOverflow);
 
-    LOG_IF_DIFFERENT_WITH_CAST(UserDrag, objectFit);
-    LOG_IF_DIFFERENT_WITH_CAST(ObjectFit, textOverflow);
+    LOG_IF_DIFFERENT_WITH_CAST(UserDrag, userDrag);
+    LOG_IF_DIFFERENT_WITH_CAST(ObjectFit, objectFit);
     LOG_IF_DIFFERENT_WITH_CAST(Resize, resize);
 }
 #endif // !LOG_DISABLED
