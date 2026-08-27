@@ -2914,6 +2914,9 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
+    ASSERT(!isParentTargetFrameName(frameName) && !isTopTargetFrameName(frameName));
+    bool shouldReturnNull = noopener && (created == CreatedNewPage::Yes || !isSelfTargetFrameName(frameName));
+
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-navigable
     // Consume user activation when a new browsing context is created.
     if (created == CreatedNewPage::Yes)
@@ -2935,7 +2938,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
 
     RefPtr window = newFrame->window();
     if (window && window->isInsecureScriptAccess(activeWindow, completedURL))
-        return noopener ? RefPtr<Frame> { nullptr } : newFrame;
+        return shouldReturnNull ? RefPtr<Frame> { nullptr } : newFrame;
 
     RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
     if (prepareDialogFunction && localNewFrame)
@@ -2956,7 +2959,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (!newFrame->page())
         return RefPtr<Frame> { nullptr };
 
-    return noopener ? RefPtr<Frame> { nullptr } : newFrame;
+    return shouldReturnNull ? RefPtr<Frame> { nullptr } : newFrame;
 }
 
 #if PLATFORM(IOS_FAMILY)

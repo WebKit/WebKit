@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN noopener window.open targeting _self
+PASS noopener window.open targeting _self
 
