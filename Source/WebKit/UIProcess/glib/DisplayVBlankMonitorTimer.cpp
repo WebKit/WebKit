@@ -26,25 +26,24 @@
 #include "config.h"
 #include "DisplayVBlankMonitorTimer.h"
 
-#include <WebCore/AnimationFrameRate.h>
 #include <chrono>
 #include <thread>
 
 namespace WebKit {
 
-std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorTimer::create()
+std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorTimer::create(unsigned refreshRate)
 {
-    return makeUnique<DisplayVBlankMonitorTimer>();
+    return makeUnique<DisplayVBlankMonitorTimer>(refreshRate);
 }
 
-DisplayVBlankMonitorTimer::DisplayVBlankMonitorTimer()
-    : DisplayVBlankMonitorThreaded(WebCore::FullSpeedFramesPerSecond)
+DisplayVBlankMonitorTimer::DisplayVBlankMonitorTimer(unsigned refreshRate)
+    : DisplayVBlankMonitorThreaded(refreshRate)
 {
 }
 
 bool DisplayVBlankMonitorTimer::waitForVBlank() const
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_refreshRate));
+    std::this_thread::sleep_for(std::chrono::duration<double>(1. / m_refreshRate));
     return true;
 }
 

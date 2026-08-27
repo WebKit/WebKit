@@ -28,8 +28,15 @@
 
 #include "DisplayVBlankMonitorTimer.h"
 #include "Logging.h"
+#include <WebCore/AnimationFrameRate.h>
+#include <algorithm>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+
+#if PLATFORM(GTK)
+#include "ScreenManager.h"
+#include <gtk/gtk.h>
+#endif
 
 #if USE(LIBDRM)
 #include "DisplayVBlankMonitorDRM.h"
@@ -44,12 +51,37 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayVBlankMonitor);
 
+#if PLATFORM(GTK)
+static unsigned refreshRateForDisplay(PlatformDisplayID displayID)
+{
+    auto* monitor = ScreenManager::singleton().screen(displayID);
+    if (!monitor)
+        return WebCore::FullSpeedFramesPerSecond;
+
+    int refreshRate = gdk_monitor_get_refresh_rate(monitor);
+    if (refreshRate <= 0)
+        return WebCore::FullSpeedFramesPerSecond;
+
+    return std::max((refreshRate + 500) / 1000, 1);
+}
+#endif
+
+static std::unique_ptr<DisplayVBlankMonitor> createTimerMonitor(PlatformDisplayID displayID)
+{
+#if PLATFORM(GTK)
+    return DisplayVBlankMonitorTimer::create(refreshRateForDisplay(displayID));
+#else
+    UNUSED_PARAM(displayID);
+    return DisplayVBlankMonitorTimer::create(WebCore::FullSpeedFramesPerSecond);
+#endif
+}
+
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDisplayID displayID)
 {
     static const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
-    if (!displayID || (forceTimer && strcmp(forceTimer, "0")))
-        return DisplayVBlankMonitorTimer::create();
+    if (!displayID || (forceTimer && strcmp(forceTimer, "0"))) // NOLINT
+        return createTimerMonitor(displayID);
 
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {
@@ -57,7 +89,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
             return monitor;
 
         RELEASE_LOG_FAULT(DisplayLink, "Failed to create WPE vblank monitor, falling back to timer");
-        return DisplayVBlankMonitorTimer::create();
+        return createTimerMonitor(displayID);
     }
 #endif
 
@@ -67,7 +99,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
     RELEASE_LOG_FAULT(DisplayLink, "Failed to create DRM vblank monitor, falling back to timer");
 #endif
 
-    return DisplayVBlankMonitorTimer::create();
+    return createTimerMonitor(displayID);
 }
 IGNORE_CLANG_WARNINGS_END
 
