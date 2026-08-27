@@ -84,6 +84,9 @@ public:
     void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
     bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
 
+    void setContentMayHaveInkOverflow(bool mayHaveInkOverflow) { m_contentMayHaveInkOverflow |= mayHaveInkOverflow; }
+    bool contentMayHaveInkOverflow() const { return m_contentMayHaveInkOverflow; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
@@ -98,6 +101,7 @@ private:
     HashMap<CheckedRef<const ElementBox>, LayoutUnit> m_nestedListMarkerOffsets;
     Vector<AscentAndDescent> m_excludedMarkerLayoutBounds;
     AvailableLineWidthOverride m_availableLineWidthOverride;
+    bool m_contentMayHaveInkOverflow { false };
     bool m_shouldNotSynthesizeInlineBlockBaseline { false };
     bool m_inStandardsMode { false };
     bool m_shouldShapeTextAcrossInlineBoxes { false };

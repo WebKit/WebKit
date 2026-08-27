@@ -136,7 +136,9 @@ struct Box {
     void expandVertically(float delta);
     void expandHorizontally(float delta);
 
-    void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
+    void setInkOverflow(const FloatRect& inkOverflow) { m_inkOverflow = inkOverflow; }
+    FloatBoxExtent glyphOverflow() const { return { static_cast<float>(m_glyphOverflowTop), 0.f, static_cast<float>(m_glyphOverflowBottom), 0.f }; }
+    void setGlyphOverflow(uint8_t top, uint8_t bottom) { m_glyphOverflowTop = top; m_glyphOverflowBottom = bottom; }
     void setLeft(float physicalLeft);
     void setRight(float physicalRight);
     void setTop(float physicalTop);
@@ -194,6 +196,9 @@ private:
     bool m_isFullyTruncated : 1 { false };
     bool m_isInGlyphDisplayListCache : 1 { false };
     bool m_isFirstFormattedLine : 1 { false };
+    // FIXME: Move this to Box::Text when there's enough bit in there.
+    uint8_t m_glyphOverflowTop : 5 { 0 };
+    uint8_t m_glyphOverflowBottom : 3 { 0 };
 
     Text m_text;
 };
