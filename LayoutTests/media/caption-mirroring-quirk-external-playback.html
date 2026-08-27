@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+<title>Test caption mirroring during external playback for websites with caption quirk enabled</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+if (window.internals)
+    internals.setTopDocumentURLForQuirks("https://www.cnn.com/videos/some-video");
+
+function nextExternalPlaybackChange(video)
+{
+    return new Promise(resolve => {
+        video.addEventListener("webkitexternalplaybackchanged", resolve, { once: true });
+    });
+}
+
+function addVideo()
+{
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    return video;
+}
+
+function mirrorTrack(video)
+{
+    return Array.from(video.textTracks).findLast(track => track.label === "CNN Captions");
+}
+
+promise_test(async function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const video = addVideo();
+    assert_false(video.webkitIsInExternalPlayback, "should start out not in external playback");
+
+    const entered = nextExternalPlaybackChange(video);
+    internals.setVideoInExternalPlayback(video, true);
+    await entered;
+    assert_true(video.webkitIsInExternalPlayback,
+        "should report external playback once the platform has taken the video out of the page");
+
+    const exited = nextExternalPlaybackChange(video);
+    internals.setVideoInExternalPlayback(video, false);
+    await exited;
+    assert_false(video.webkitIsInExternalPlayback,
+        "should report inline again after external playback ends");
+}, "webkitexternalplaybackchanged fires and webkitIsInExternalPlayback tracks external playback");
+
+promise_test(async function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const video = addVideo();
+    const track = mirrorTrack(video);
+    assert_not_equals(track, undefined, "the quirk should have added a mirror text track");
+    assert_equals(track.mode, "hidden", "mirror track should not be showing while inline");
+
+    const entered = nextExternalPlaybackChange(video);
+    internals.setVideoInExternalPlayback(video, true);
+    await entered;
+    assert_equals(track.mode, "showing",
+        "mirror track should show once the video is presented outside the page");
+
+    const exited = nextExternalPlaybackChange(video);
+    internals.setVideoInExternalPlayback(video, false);
+    await exited;
+    assert_equals(track.mode, "hidden",
+        "mirror track should stop showing once the video is back in the page");
+}, "the caption mirror track follows external playback");
+
+promise_test(async function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const video = addVideo();
+    const entered = nextExternalPlaybackChange(video);
+    internals.setVideoInExternalPlayback(video, true);
+    await entered;
+
+    assert_false(video.webkitDisplayingFullscreen,
+        "external playback must not report the video as displaying fullscreen");
+}, "external playback does not change the video fullscreen mode");
+</script>
+</body>
+</html>

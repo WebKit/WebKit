@@ -59,6 +59,7 @@
 
             this._onPresentationModeChanged = () => this._handlePresentationModeChanged();
             this._video.addEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+            this._video.addEventListener('webkitexternalplaybackchanged', this._onPresentationModeChanged);
 
             this._onEmptied = () => this._handleResourceChanged();
             this._video.addEventListener('emptied', this._onEmptied);
@@ -82,6 +83,7 @@
             this._player.removeEventListener('onCaptionsTrackListChanged', this._onCaptionsTrackListChanged);
             this._player.removeEventListener('captionschanged', this._onCaptionsChanged);
             this._video.removeEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+            this._video.removeEventListener('webkitexternalplaybackchanged', this._onPresentationModeChanged);
             this._video.removeEventListener('emptied', this._onEmptied);
         }
 
@@ -209,6 +211,8 @@
         }
 
         _getIsInline() {
+            if (this._video.webkitIsInExternalPlayback)
+                return false;
             if (typeof this._video.webkitPresentationMode === 'undefined')
                 return !this._video.webkitDisplayingFullscreen;
             return this._video.webkitPresentationMode == 'inline';

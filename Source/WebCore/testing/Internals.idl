@@ -1062,6 +1062,11 @@ enum ContentsFormat {
 
     [Conditional=VIDEO] undefined enterViewerMode(HTMLVideoElement element);
 
+    // Simulates the platform presenting a video outside the page, e.g. visionOS Spatial Browsing
+    // viewer mode. Does nothing unless ENABLE(LINEAR_MEDIA_PLAYER) is on, so tests that depend on
+    // the resulting state must be limited to visionOS via TestExpectations.
+    [Conditional=VIDEO] undefined setVideoInExternalPlayback(HTMLVideoElement element, boolean inExternalPlayback);
+
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA] undefined initializeMockCDM();

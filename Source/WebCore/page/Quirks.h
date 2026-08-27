@@ -126,6 +126,8 @@ public:
 
     WEBCORE_EXPORT bool needsCNNCaptionQuirk() const;
 
+    WEBCORE_EXPORT bool needsCaptionMirroringQuirk() const;
+
     WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);

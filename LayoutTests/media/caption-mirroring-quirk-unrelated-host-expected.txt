@@ -1,0 +1,4 @@
+
+PASS webkitIsInExternalPlayback is not exposed on unrelated hosts
+PASS webkitexternalplaybackchanged has no event handler attribute
+

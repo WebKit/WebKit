@@ -1,0 +1,6 @@
+
+
+PASS webkitexternalplaybackchanged fires and webkitIsInExternalPlayback tracks external playback
+PASS the caption mirror track follows external playback
+PASS external playback does not change the video fullscreen mode
+

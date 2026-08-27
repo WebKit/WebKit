@@ -63,6 +63,7 @@
 
             this._onPresentationModeChanged = () => this._handlePresentationModeChanged();
             this._video.addEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+            this._video.addEventListener('webkitexternalplaybackchanged', this._onPresentationModeChanged);
 
             if (this._player)
                 this._attachOverlayObserver();
@@ -79,6 +80,7 @@
             }
             this._mirrorTrack.mode = 'disabled';
             this._video.removeEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+            this._video.removeEventListener('webkitexternalplaybackchanged', this._onPresentationModeChanged);
         }
 
         // Private methods:
@@ -147,12 +149,16 @@
             this._syncCues(overlayRoot);
         }
 
+        _getIsInline() {
+            if (this._video.webkitIsInExternalPlayback)
+                return false;
+            if (typeof this._video.webkitPresentationMode === 'undefined')
+                return !this._video.webkitDisplayingFullscreen;
+            return this._video.webkitPresentationMode == 'inline';
+        }
+
         _handlePresentationModeChanged() {
-            if (this._video.webkitPresentationMode == 'inline') {
-                this._mirrorTrack.mode = 'hidden';
-                return;
-            }
-            this._mirrorTrack.mode = 'showing';
+            this._mirrorTrack.mode = this._getIsInline() ? 'hidden' : 'showing';
         }
     }
 

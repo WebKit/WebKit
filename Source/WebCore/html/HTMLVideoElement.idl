@@ -65,6 +65,9 @@
     [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
     [ImplementedAs=webkitPresentationModeForBindings, Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] readonly attribute VideoPresentationMode webkitPresentationMode;
     [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] undefined webkitSetPresentationMode(VideoPresentationMode mode);
+
+    // Non-standard: whether the video is being presented outside the page by the platform.
+    [ImplementedAs=isInExternalPlayback, EnabledByQuirk=needsCaptionMirroring] readonly attribute boolean webkitIsInExternalPlayback;
 };
 
 [Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture" };
