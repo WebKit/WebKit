@@ -1617,26 +1617,6 @@ if (USE_INSPECTOR_SOCKET_SERVER)
     )
 endif ()
 
-# The corpse memory-analysis support is built on Mach task and corpse APIs, so
-# its headers have no content off Darwin and there is nothing to build or export.
-if (APPLE)
-    list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${JAVASCRIPTCORE_DIR}/corpse"
-    )
-    list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
-        corpse/CorpseAddress.h
-        corpse/CorpseByteParser.h
-        corpse/CorpseClient.h
-        corpse/CorpseError.h
-        corpse/CorpseExportsTrie.h
-        corpse/CorpseProcess.h
-        corpse/CorpseRegion.h
-        corpse/CorpseSnapshot.h
-        corpse/CorpseSymbol.h
-        corpse/CorpseThread.h
-    )
-endif ()
-
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${JavaScriptCore_DERIVED_SOURCES_DIR}/Lexer.lut.h)
 
@@ -1889,14 +1869,6 @@ endif ()
 add_custom_target(JavaScriptCoreSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore JavaScriptCoreSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 add_dependencies(JavaScriptCoreSharedScripts JSCBuiltins)
-
-# The corpse code is part of JavaScriptCoreTools, which ships as a static library used
-# only by tools for assisting in the development of JavaScriptCore and WebKit. This code
-# is not needed for JavaScriptCore and WebKit functionality as a browser engine. The
-# corpse code rely on Mach APIs which are only available on Apple platforms.
-if (APPLE)
-  add_subdirectory(corpse)
-endif ()
 
 if (ENABLE_JAVASCRIPT_SHELL)
   add_subdirectory(shell)

@@ -3586,8 +3586,6 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.binaryFailures.append('testdfg')
         if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
-        if jsc_results.get('allLibJSCToolsTestsPassed') is False:
-            self.binaryFailures.append('testLibJSCTools')
         self.flaky = jsc_results.get('flakyAndPassed')
         if self.flaky:
             self.setProperty(self.prefix + 'flaky_and_passed', self.flaky)
