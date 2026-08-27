@@ -27163,11 +27163,7 @@ IGNORE_CLANG_WARNINGS_END
                 }
             }
         }
-        return &m_ftlState.jitCode->osrExitDescriptors.alloc(
-            lowValue.format(), profile,
-            availabilityMap().m_locals.numberOfArguments(),
-            availabilityMap().m_locals.numberOfLocals(),
-            availabilityMap().m_locals.numberOfTmps());
+        return &m_ftlState.jitCode->osrExitDescriptors.alloc(lowValue.format(), profile);
     }
 
     void appendOSRExit(
@@ -27307,8 +27303,9 @@ IGNORE_CLANG_WARNINGS_END
                 }
             });
 
-        for (unsigned i = 0; i < exitDescriptor->m_values.size(); ++i) {
-            Operand operand = exitDescriptor->m_values.operandForIndex(i);
+        Operands<ExitValue> exitValues(OperandsLike, availabilityMap.m_locals);
+        for (unsigned i = 0; i < exitValues.size(); ++i) {
+            Operand operand = exitValues.operandForIndex(i);
 
             Availability availability = availabilityMap.m_locals[i];
 
@@ -27322,8 +27319,9 @@ IGNORE_CLANG_WARNINGS_END
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
             if (exitValue.hasIndexInStackmapLocations())
                 exitValue.adjustStackmapLocationsIndexByOffset(offsetOfExitArgumentsInStackmapLocations);
-            exitDescriptor->m_values[i] = exitValue;
+            exitValues[i] = exitValue;
         }
+        exitDescriptor->m_values.encode(exitValues, exitDescriptor->m_materializations, *m_ftlState.jitCode);
 
         for (auto& heapPair : availabilityMap.m_heap) {
             Node* node = heapPair.key.base();
@@ -27341,7 +27339,7 @@ IGNORE_CLANG_WARNINGS_END
 
         if (verboseCompilationEnabled()) [[unlikely]] {
             WTF::dataFile().atomically([&](auto&) {
-                dataLogLn("        Exit values: ", exitDescriptor->m_values);
+                dataLogLn("        Exit values: ", exitValues);
                 if (!exitDescriptor->m_materializations.isEmpty()) {
                     dataLogLn("        Materializations:");
                     for (ExitTimeObjectMaterialization* materialization : exitDescriptor->m_materializations)
