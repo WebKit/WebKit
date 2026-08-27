@@ -29,15 +29,15 @@
 
 #if OS(MACOS) || USE(APPLE_INTERNAL_SDK)
 
-#include "tests/CorpseAddressTest.h"
-#include "tests/CorpseByteParserTest.h"
-#include "tests/CorpseExportsTrieTest.h"
-#include "tests/CorpseProcessTest.h"
-#include "tests/CorpseRegionTest.h"
-#include "tests/CorpseSnapshotTest.h"
-#include "tests/CorpseSymbolTest.h"
-#include "tests/CorpseThreadTest.h"
-#include "tests/LibJSCToolsTestUtilities.h"
+#include "CorpseAddressTest.h"
+#include "CorpseByteParserTest.h"
+#include "CorpseExportsTrieTest.h"
+#include "CorpseProcessTest.h"
+#include "CorpseRegionTest.h"
+#include "CorpseSnapshotTest.h"
+#include "CorpseSymbolTest.h"
+#include "CorpseThreadTest.h"
+#include "LibJSCToolsTestUtilities.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -107,7 +107,7 @@ if (DEVELOPER_MODE)
     # The tools library and its tests are only relevant for Apple platforms.
     if (APPLE)
         set(testLibJSCTools_SOURCES
-            ../corpse/testLibJSCTools.cpp
+            ../corpse/tests/testLibJSCTools.cpp
 
             ../corpse/tests/CorpseAddressTest.cpp
             ../corpse/tests/CorpseByteParserTest.cpp

@@ -23,6 +23,17 @@
 
 #include "TestExecutable.xcconfig"
 
-// Simulator platforms are deliberately omitted; libJavaScriptCoreTools, which this links,
-// is not built for them.
-SUPPORTED_PLATFORMS = macosx iphoneos appletvos watchos xros;
+// Not supported for simulator or Catalyst builds. Just use a stub in that case.
+WK_CORPSE_TOOLS_SIMULATOR = NO;
+WK_CORPSE_TOOLS_SIMULATOR[sdk=*simulator*] = YES;
+WK_CORPSE_TOOLS_UNSUPPORTED = $(WK_OR_$(WK_CORPSE_TOOLS_SIMULATOR)_$(WK_CHECK_CATALYST));
+
+EXCLUDED_SOURCE_FILE_NAMES = $(WK_CORPSE_TOOLS_EXCLUDED_$(WK_CORPSE_TOOLS_UNSUPPORTED));
+WK_CORPSE_TOOLS_EXCLUDED_YES = *;
+INCLUDED_SOURCE_FILE_NAMES = $(WK_CORPSE_TOOLS_INCLUDED_$(WK_CORPSE_TOOLS_UNSUPPORTED));
+WK_CORPSE_TOOLS_INCLUDED_YES = NoopMain.cpp;
+
+// Where supported, installation stays governed by TestExecutable.xcconfig's FORCE_TOOL_INSTALL gate.
+SKIP_INSTALL = $(WK_CORPSE_TOOLS_SKIP_INSTALL_$(WK_CORPSE_TOOLS_UNSUPPORTED));
+WK_CORPSE_TOOLS_SKIP_INSTALL_YES = YES;
+WK_CORPSE_TOOLS_SKIP_INSTALL_NO = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
