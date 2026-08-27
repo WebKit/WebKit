@@ -1569,7 +1569,7 @@ editing/FontShadow.cpp
 editing/FormatBlockCommand.cpp
 editing/FrameSelection.cpp @header:RenderStyleGetters
 editing/HTMLInterchange.cpp @header:RenderStyleGetters
-editing/ICUSearcher.cpp
+editing/TextMatcher.cpp
 editing/IndentOutdentCommand.cpp
 editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp @header:RenderStyleGetters

@@ -42,7 +42,6 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLVideoElement.h"
-#include "ICUSearcher.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "Position.h"
@@ -50,6 +49,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
+#include "TextMatcher.h"
 
 namespace WebCore {
 

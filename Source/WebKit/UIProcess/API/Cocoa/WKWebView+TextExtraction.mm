@@ -53,11 +53,11 @@
 #endif
 #import <WebCore/DataDetectorType.h>
 #import <WebCore/ElementTargetingTypes.h>
-#import <WebCore/ICUSearcher.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/SharedMemory.h>
 #import <WebCore/TextExtractionTypes.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/TextMatcher.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>

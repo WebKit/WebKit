@@ -27,17 +27,17 @@
 #include "TextExtractionToStringConversion.h"
 
 #include <WebCore/HTMLNames.h>
-#include <WebCore/ICUSearcher.h>
 #include <WebCore/TextExtractionTypes.h>
+#include <WebCore/TextMatcher.h>
+#include <unicode/ubrk.h>
+#include <unicode/uchar.h>
+#include <unicode/unorm2.h>
+#include <unicode/utf16.h>
 #include <wtf/EnumSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <unicode/ubrk.h>
-#include <unicode/uchar.h>
-#include <unicode/unorm2.h>
-#include <unicode/utf16.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>

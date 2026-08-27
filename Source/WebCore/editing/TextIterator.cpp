@@ -52,7 +52,6 @@
 #include "HTMLSlotElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
-#include "ICUSearcher.h"
 #include "ImageOverlay.h"
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
@@ -70,6 +69,7 @@
 #include "ShadowRoot.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
+#include "TextMatcher.h"
 #include "TextPlaceholderElement.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
@@ -123,20 +123,13 @@ public:
 #if !UCONFIG_NO_COLLATION
 
 private:
-    const String m_target;
-    const StringView::UpconvertedCharacters m_targetCharacters;
-    FindOptions m_options;
-
     Vector<char16_t> m_buffer;
     size_t m_overlap;
     size_t m_prefixLength;
     bool m_atBreak;
     bool m_needsMoreContext;
 
-    const bool m_targetRequiresKanaWorkaround;
-    Vector<char16_t> m_normalizedTarget;
-    mutable Vector<char16_t> m_normalizedMatch;
-    ICUSearcher m_ICUSearcher;
+    TextMatcher m_matcher;
 
 #else
 
@@ -1866,28 +1859,17 @@ StringView WordAwareIterator::text() const LIFETIME_BOUND
 constexpr size_t minimumSearchBufferSize = 8192;
 
 inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
-    : m_target(foldQuoteMarks(target))
-    , m_targetCharacters(StringView(m_target).upconvertedCharacters())
-    , m_options(options)
-    , m_prefixLength(0)
+    : m_prefixLength(0)
     , m_atBreak(true)
-    , m_needsMoreContext(options.contains(FindOption::AtWordStarts))
-    , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
-    , m_ICUSearcher(m_target, m_options)
+    , m_matcher(target, options)
 {
-    ASSERT(!m_target.isEmpty());
+    ASSERT(!target.isEmpty());
 
-    size_t targetLength = m_target.length();
+    size_t targetLength = target.length();
     m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
-    m_needsMoreContext = m_options.contains(FindOption::AtWordStarts);
-
-    m_ICUSearcher.setPattern(m_targetCharacters.span());
-
-    // The kana workaround requires a normalized copy of the target string.
-    if (m_targetRequiresKanaWorkaround)
-        normalizeCharacters(m_targetCharacters, targetLength, m_normalizedTarget);
+    m_needsMoreContext = m_matcher.options().contains(FindOption::AtWordStarts);
 }
 
 inline size_t SearchBuffer::append(StringView text)
@@ -1974,50 +1956,49 @@ inline size_t SearchBuffer::search(size_t& start)
             return 0;
     }
 
-    m_ICUSearcher.setText(m_buffer.span().first(size));
-    m_ICUSearcher.setOffset(m_prefixLength);
-    std::optional matchStart = m_ICUSearcher.next();
+    size_t matchedLength = 0;
 
-nextMatch:
-    if (!matchStart || *matchStart >= size)
-        return 0;
+    m_matcher.forEachCandidate(m_buffer.span().first(size), m_prefixLength, [&](CharacterRange candidate) {
+        size_t matchStart = static_cast<size_t>(candidate.location);
+        if (matchStart >= size)
+            return IterationStatus::Done;
 
-    // Matches that start in the overlap area are only tentative.
-    // The same match may appear later, matching more characters,
-    // possibly including a combining character that's not yet in the buffer.
-    if (!m_atBreak && *matchStart >= size - m_overlap) {
-        size_t overlap = m_overlap;
-        if (m_options.contains(FindOption::AtWordStarts)) {
-            // Ensure that there is sufficient context before matchStart the next time around for
-            // determining if it is at a word boundary.
-            size_t wordBoundaryContextStart = *matchStart;
-            U16_BACK_1(m_buffer.span(), 0, wordBoundaryContextStart);
-            wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.subspan(0, wordBoundaryContextStart));
-            overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
+        // Matches that start in the overlap area are only tentative.
+        // The same match may appear later, matching more characters,
+        // possibly including a combining character that's not yet in the buffer.
+        if (!m_atBreak && matchStart >= size - m_overlap) {
+            size_t overlap = m_overlap;
+            if (m_matcher.options().contains(FindOption::AtWordStarts)) {
+                // Ensure that there is sufficient context before matchStart the next time around for
+                // determining if it is at a word boundary.
+                size_t wordBoundaryContextStart = matchStart;
+                U16_BACK_1(m_buffer.span(), 0, wordBoundaryContextStart);
+                wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.subspan(0, wordBoundaryContextStart));
+                overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
+            }
+            memcpySpan(m_buffer.mutableSpan(), m_buffer.span().last(overlap));
+            m_prefixLength -= std::min(m_prefixLength, size - overlap);
+            m_buffer.shrink(overlap);
+            return IterationStatus::Done;
         }
-        memcpySpan(m_buffer.mutableSpan(), m_buffer.span().last(overlap));
-        m_prefixLength -= std::min(m_prefixLength, size - overlap);
-        m_buffer.shrink(overlap);
-        return 0;
-    }
 
-    size_t matchedLength = m_ICUSearcher.matchedLength();
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(*matchStart + matchedLength <= size);
+        size_t candidateLength = static_cast<size_t>(candidate.length);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(matchStart + candidateLength <= size);
 
-    // If this match is "bad", move on to the next match.
-    if ((m_targetRequiresKanaWorkaround && isBadMatch(m_buffer.subspan(*matchStart, matchedLength), m_normalizedTarget.span(), m_normalizedMatch))
-        || (m_options.contains(FindOption::AtWordStarts) && !isWordStartMatch(m_buffer, *matchStart, matchedLength, m_options))
-        || (m_options.contains(FindOption::AtWordEnds) && !isWordEndMatch(m_buffer, *matchStart, matchedLength, m_options))) {
-        matchStart = m_ICUSearcher.next();
-        goto nextMatch;
-    }
+        // If this match is "bad", move on to the next match.
+        if (!m_matcher.isAcceptableMatch(m_buffer.span().first(size), candidate))
+            return IterationStatus::Continue;
 
-    size_t newSize = size - (*matchStart + 1);
-    memmoveSpan(m_buffer.mutableSpan(), m_buffer.subspan(*matchStart + 1, newSize));
-    m_prefixLength -= std::min<size_t>(m_prefixLength, *matchStart + 1);
-    m_buffer.shrink(newSize);
+        size_t newSize = size - (matchStart + 1);
+        memmoveSpan(m_buffer.mutableSpan(), m_buffer.subspan(matchStart + 1, newSize));
+        m_prefixLength -= std::min<size_t>(m_prefixLength, matchStart + 1);
+        m_buffer.shrink(newSize);
 
-    start = size - *matchStart;
+        start = size - matchStart;
+        matchedLength = candidateLength;
+        return IterationStatus::Done;
+    });
+
     return matchedLength;
 }
 

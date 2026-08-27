@@ -27,12 +27,12 @@
 #include "CachedMatchFinder.h"
 
 #include "Document.h"
-#include "ICUSearcher.h"
 #include "NodeInlines.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
 #include "TextIterator.h"
 #include "TextIteratorBehavior.h"
+#include "TextMatcher.h"
 #include "dom/BoundaryPoint.h"
 #include <wtf/Expected.h>
 #include <wtf/StdLibExtras.h>
@@ -64,93 +64,6 @@ CachedMatchFinder::CachedMatchFinder(Document& document)
 {
 }
 
-void CachedMatchFinder::performSearch(StringView buffer, unsigned startOffset, const String& target, FindOptions options, NOESCAPE const Function<SearchShouldContinue(size_t, size_t)>& callback)
-{
-    if (buffer.isEmpty() || target.isEmpty())
-        return;
-
-    String foldedTarget = foldQuoteMarks(target);
-    bool targetRequiresKanaWorkaround = containsKanaLetters(foldedTarget);
-
-    Vector<char16_t> normalizedTarget;
-    if (targetRequiresKanaWorkaround) {
-        StringView::UpconvertedCharacters upconverted(foldedTarget);
-        normalizeCharacters(upconverted, foldedTarget.length(), normalizedTarget);
-    }
-
-    StringView::UpconvertedCharacters targetChars(foldedTarget);
-
-    ICUSearcher icuSearcher { foldedTarget, options };
-    icuSearcher.setPattern(targetChars.span());
-    StringView::UpconvertedCharacters upconverted(buffer);
-    auto bufferSpan = upconverted.span();
-    icuSearcher.setText(bufferSpan);
-
-    bool backwards = options.contains(FindOption::Backwards);
-
-    Vector<char16_t> scratchBuffer;
-
-    auto isMatch = [&](int matchStart, size_t matchLength) -> bool {
-        if (targetRequiresKanaWorkaround && isBadMatch(bufferSpan.subspan(matchStart, matchLength), normalizedTarget.span(), scratchBuffer))
-            return false;
-        if (options.contains(FindOption::AtWordStarts) && !isWordStartMatch(bufferSpan, matchStart, matchLength, options))
-            return false;
-        if (options.contains(FindOption::AtWordEnds) && !isWordEndMatch(bufferSpan, matchStart, matchLength, options))
-            return false;
-        return true;
-    };
-
-    if (backwards) {
-#if !PLATFORM(PLAYSTATION)
-        icuSearcher.setOffset(startOffset);
-        while (true) {
-            std::optional<size_t> matchStartCandidate = icuSearcher.previous();
-            if (!matchStartCandidate)
-                break;
-            size_t matchLength = static_cast<size_t>(icuSearcher.matchedLength());
-            if (!matchLength)
-                break;
-            if (!isMatch(*matchStartCandidate, matchLength))
-                continue;
-            if (callback(*matchStartCandidate, *matchStartCandidate + matchLength) == SearchShouldContinue::No)
-                break;
-        }
-#else
-        icuSearcher.setOffset(0);
-        Vector<std::pair<size_t, size_t>> matches;
-        while (true) {
-            std::optional<size_t> matchStartCandidate = icuSearcher.next();
-            if (!matchStartCandidate || *matchStartCandidate >= startOffset)
-                break;
-            size_t matchLength = static_cast<size_t>(icuSearcher.matchedLength());
-            if (!matchLength)
-                break;
-            if (!isMatch(*matchStartCandidate, matchLength))
-                continue;
-            matches.append({ *matchStartCandidate, *matchStartCandidate + matchLength });
-        }
-        for (auto [start, end] : matches | std::views::reverse) {
-            if (callback(start, end) == SearchShouldContinue::No)
-                break;
-        }
-#endif
-    } else {
-        icuSearcher.setOffset(startOffset);
-        while (true) {
-            std::optional<size_t> matchStartCandidate = icuSearcher.next();
-            if (!matchStartCandidate)
-                break;
-            size_t matchLength = icuSearcher.matchedLength();
-            if (!matchLength)
-                break;
-            if (!isMatch(*matchStartCandidate, matchLength))
-                continue;
-            if (callback(*matchStartCandidate, *matchStartCandidate + matchLength) == SearchShouldContinue::No)
-                break;
-        }
-    }
-}
-
 static bool matchIsWithinSingleScope(const SimpleRange& range)
 {
     return &range.start.container->rootNode() == &range.end.container->rootNode();
@@ -159,14 +72,15 @@ static bool matchIsWithinSingleScope(const SimpleRange& range)
 std::optional<SimpleRange> CachedMatchFinder::findNextMatch(StringView buffer, const Vector<TextRun>& runs, unsigned startOffset, const String& target, FindOptions options, const std::optional<SimpleRange>& excludeRange)
 {
     std::optional<SimpleRange> result;
-    performSearch(buffer, startOffset, target, options, [&](size_t start, size_t end) {
-        auto matchRange = bufferRangeToSimpleRange(runs, start, end);
+    TextMatcher matcher { target, options };
+    matcher.forEachMatch(buffer, startOffset, [&](CharacterRange match) {
+        auto matchRange = bufferRangeToSimpleRange(runs, match.location, match.location + match.length);
         if (excludeRange && matchRange == *excludeRange)
-            return SearchShouldContinue::Yes;
+            return IterationStatus::Continue;
         if (!matchIsWithinSingleScope(matchRange))
-            return SearchShouldContinue::Yes;
+            return IterationStatus::Continue;
         result = matchRange;
-        return SearchShouldContinue::No;
+        return IterationStatus::Done;
     });
     return result;
 }
@@ -265,9 +179,10 @@ Expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinde
 
     unsigned startOffset = searchRange ? bufferOffsetForBoundaryPoint(cached.text, cached.runs, searchRange->start, options) : 0;
     Vector<SimpleRange> results;
-    performSearch(cached.text, startOffset, target, options, [&](size_t start, size_t end) {
-        results.append(bufferRangeToSimpleRange(cached.runs, start, end));
-        return !limit || results.size() < *limit ? SearchShouldContinue::Yes : SearchShouldContinue::No;
+    TextMatcher matcher { target, options };
+    matcher.forEachMatch(cached.text, startOffset, [&](CharacterRange match) {
+        results.append(bufferRangeToSimpleRange(cached.runs, match.location, match.location + match.length));
+        return !limit || results.size() < *limit ? IterationStatus::Continue : IterationStatus::Done;
     });
 
     m_matchCache = results;
@@ -293,9 +208,10 @@ Expected<unsigned, CachedMatchFinder::CacheUnusable> CachedMatchFinder::countMat
 
     unsigned count { 0 };
     unsigned startOffset = searchRange ? bufferOffsetForBoundaryPoint(cached.text, cached.runs, searchRange->start, options) : 0;
-    performSearch(cached.text, startOffset, target, options, [&](size_t, size_t) {
+    TextMatcher matcher { target, options };
+    matcher.forEachMatch(cached.text, startOffset, [&](CharacterRange) {
         ++count;
-        return !limit || count < *limit ? SearchShouldContinue::Yes : SearchShouldContinue::No;
+        return !limit || count < *limit ? IterationStatus::Continue : IterationStatus::Done;
     });
 
     m_countCache = count;

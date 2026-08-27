@@ -79,9 +79,7 @@ private:
     TextRunCache& bufferForOptions(FindOptions);
     bool isSearchResultCacheValid(const String&, FindOptions, std::optional<unsigned> limit) const;
     static std::optional<std::pair<String, Vector<TextRun>>> textForScope(ContainerNode&, FindOptions);
-    enum class SearchShouldContinue : bool { No, Yes };
     Expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> findNextMatchInShadowIncludingAncestorTree(ShadowRoot&, const SimpleRange&, const String& target, FindOptions);
-    static void performSearch(StringView, unsigned startOffset, const String& target, FindOptions, NOESCAPE const Function<SearchShouldContinue(size_t, size_t)>&);
     static std::optional<SimpleRange> findNextMatch(StringView, const Vector<TextRun>&, unsigned startOffset, const String& target, FindOptions, const std::optional<SimpleRange>& excludeRange = std::nullopt);
     static unsigned bufferOffsetForBoundaryPoint(StringView, const Vector<TextRun>&, const BoundaryPoint&, FindOptions);
     static unsigned startingOffsetForSelection(StringView, const Vector<TextRun>&, const SimpleRange&, FindOptions);

@@ -174,7 +174,6 @@
 #import <WebCore/ElementContext.h>
 #import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/ExceptionCode.h>
-#import <WebCore/ICUSearcher.h>
 #import <WebCore/ImageUtilities.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
@@ -194,6 +193,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/TextManipulationItem.h>
+#import <WebCore/TextMatcher.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCorePersistentCoders.h>

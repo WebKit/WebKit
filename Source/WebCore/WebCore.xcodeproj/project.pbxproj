@@ -6271,7 +6271,7 @@
 		D3F3D36E1A69B7E00059FC2B /* WebGL2RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D3F3D35C1A69A5060059FC2B /* WebGL2RenderingContext.h */; };
 		D4729C709180E3A094B1EDEF /* UnifiedSource63-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7295D020E0F0C07C868B904C /* UnifiedSource63-header-RenderStyleGetters.cpp */; };
 		D5E6F7081920A1B2C3D4E5F6 /* SharedTimebaseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* SharedTimebaseHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		D6022D882F5A48AE007BC32C /* ICUSearcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D6022D862F5A489D007BC32C /* ICUSearcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		D6022D882F5A48AE007BC32C /* TextMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D6022D862F5A489D007BC32C /* TextMatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D61496E32E428EDB00BAF335 /* UserAgentStringParser.h in Headers */ = {isa = PBXBuildFile; fileRef = D61496E12E428EDB00BAF335 /* UserAgentStringParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D619A306144E00BE004BC302 /* ChildListMutationScope.h */; };
 		D640B2462E30461D00EB6C49 /* NavigatorUAData.h in Headers */ = {isa = PBXBuildFile; fileRef = D640B2422E2F09F900EB6C49 /* NavigatorUAData.h */; };
@@ -21874,8 +21874,8 @@
 		D482513BF8F4914090F55B14 /* UnifiedSource27-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource27-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		D4F72C653A64807A83E76FB8 /* MathMLOperatorDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLOperatorDictionary.cpp; sourceTree = "<group>"; };
 		D508C53D5BA52394A72A6606 /* UnifiedSource13-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource13-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
-		D6022D862F5A489D007BC32C /* ICUSearcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICUSearcher.h; sourceTree = "<group>"; };
-		D6022D872F5A48A5007BC32C /* ICUSearcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUSearcher.cpp; sourceTree = "<group>"; };
+		D6022D862F5A489D007BC32C /* TextMatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextMatcher.h; sourceTree = "<group>"; };
+		D6022D872F5A48A5007BC32C /* TextMatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextMatcher.cpp; sourceTree = "<group>"; };
 		D61496E12E428EDB00BAF335 /* UserAgentStringParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserAgentStringParser.h; sourceTree = "<group>"; };
 		D61496E22E428EEE00BAF335 /* UserAgentStringParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStringParser.cpp; sourceTree = "<group>"; };
 		D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildListMutationScope.cpp; sourceTree = "<group>"; };
@@ -33071,8 +33071,6 @@
 				93309DBF099E64910056E581 /* FrameSelection.h */,
 				93309D96099E64910056E581 /* HTMLInterchange.cpp */,
 				93309D97099E64910056E581 /* HTMLInterchange.h */,
-				D6022D872F5A48A5007BC32C /* ICUSearcher.cpp */,
-				D6022D862F5A489D007BC32C /* ICUSearcher.h */,
 				DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */,
 				DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */,
 				E4D33F39252AEECC00837D05 /* InlineRunAndOffset.h */,
@@ -33154,6 +33152,8 @@
 				86AA52702937ADB40065399E /* TextManipulationItem.h */,
 				86D196DC29ACE0920083B077 /* TextManipulationItemIdentifier.h */,
 				86AA527B2937BD610065399E /* TextManipulationToken.h */,
+				D6022D872F5A48A5007BC32C /* TextMatcher.cpp */,
+				D6022D862F5A489D007BC32C /* TextMatcher.h */,
 				93309DCA099E64910056E581 /* TypingCommand.cpp */,
 				93309DCB099E64910056E581 /* TypingCommand.h */,
 				9B2D8A7814997CCF00ECEF3E /* UndoStep.h */,
@@ -46136,7 +46136,6 @@
 				5EBB89331C77782900C65D41 /* IceCandidate.h in Headers */,
 				B275356E0B053814002CE64F /* Icon.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
-				D6022D882F5A48AE007BC32C /* ICUSearcher.h in Headers */,
 				51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */,
 				CD1DE17C2E69036D0097B710 /* IDBActiveDOMObjectInlines.h in Headers */,
 				51BA4ACC1BBC5BDD00DF3D6D /* IDBBackingStore.h in Headers */,
@@ -49756,6 +49755,7 @@
 				86AA52712937ADB50065399E /* TextManipulationItem.h in Headers */,
 				86D196DD29ACE0930083B077 /* TextManipulationItemIdentifier.h in Headers */,
 				86AA527C2937BD620065399E /* TextManipulationToken.h in Headers */,
+				D6022D882F5A48AE007BC32C /* TextMatcher.h in Headers */,
 				1411DCB1164C39A800D49BC1 /* TextMeasurementCache.h in Headers */,
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
 				E4D988B417BFD1F60084FB88 /* TextNodeTraversal.h in Headers */,

@@ -1501,7 +1501,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/FontShadow.h
     editing/FrameSelection.h
     editing/HTMLInterchange.h
-    editing/ICUSearcher.h
+    editing/TextMatcher.h
     editing/InlineRunAndOffset.h
     editing/MarkupExclusionRule.h
     editing/SelectionGeometryGatherer.h
