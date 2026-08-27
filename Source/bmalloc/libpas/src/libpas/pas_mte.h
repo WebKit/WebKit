@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Apple Inc. All rights reserved.
+ * Copyright (c) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,33 +37,44 @@
 #include <mach/vm_statistics.h>
 #endif // PAS_USE_APPLE_INTERNAL_SDK
 #endif // PAS_OS(DARWIN)
+#include "pas_allocation_mode.h"
+#include "pas_internal_config.h"
+#include "pas_page_base_config.h"
+#include "pas_stats.h"
+#include "pas_utils.h"
 #include "stdint.h"
 #include "stdio.h"
 #include "stdlib.h"
 #if !PAS_OS(WINDOWS)
 #include "unistd.h"
 #endif
+#if __has_include(<malloc_private.h>)
+#include <malloc_private.h>
+#endif
 
-#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
-#if PAS_ENABLE_MTE
-
-#include "pas_utils.h"
-#include "pas_page_base_config.h"
-#include "pas_allocation_mode.h"
-#include "pas_internal_config.h"
-#include "pas_stats.h"
-
-PAS_IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #define PAS_MTE_TAG_SHIFT 56
 #define PAS_MTE_TAG_MASK (0x0full << PAS_MTE_TAG_SHIFT)
 #define PAS_MTE_CANONICAL_MASK ((0x1ull << 48) - 1)
-
 #define PAS_MTE_GRANULE_SIZE 16
 
-#if __has_include(<malloc_private.h>)
-#include <malloc_private.h>
-#endif
+/*
+ * Clear is used to canonicalize (zero out) the tag bits of a pointer.
+ * We generally use this when we want to treat the address itself as
+ * an integer or key, and don't intend to load from it directly.
+ * We don't check for PAS_MTE enablement in these cases, since on non-PAS_MTE
+ * hardware, the tag should be zero anyway, and masking off the bits
+ * should be faster than branching on g_config.
+ */
+#define PAS_MTE_CLEAR(a) do { \
+        a &= ~PAS_MTE_TAG_MASK; \
+    } while (0)
+
+#define PAS_MTE_CLEAR_PAIR(a, b) do { \
+        a &= ~PAS_MTE_TAG_MASK; \
+        b &= ~PAS_MTE_TAG_MASK; \
+    } while (0)
 
 #define PAS_MTE_SMALL_PAGE_NO_MASK (0x0000ffffffffffffull & ~((1ull << PAS_SMALL_PAGE_DEFAULT_SHIFT) - 1ull))
 #define PAS_MTE_MEDIUM_SEGREGATED_PAGE_NO_MASK (0x0000ffffffffffffull & ~((1ull << PAS_MEDIUM_PAGE_DEFAULT_SHIFT) - 1ull))
@@ -71,6 +82,8 @@ PAS_IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
 #define PAS_MTE_SMALL_PAGE_NO(ptr) (((uintptr_t)ptr) & PAS_MTE_SMALL_PAGE_NO_MASK)
 #define PAS_MTE_MEDIUM_SEGREGATED_PAGE_NO(ptr) (((uintptr_t)ptr) & PAS_MTE_MEDIUM_SEGREGATED_PAGE_NO_MASK)
 #define PAS_MTE_MEDIUM_BITFIT_PAGE_NO(ptr) (((uintptr_t)ptr) & PAS_MTE_MEDIUM_BITFIT_PAGE_NO_MASK)
+
+#if PAS_ENABLE_MTE
 
 #define PAS_MTE_GET_MTAG(ptr) do { \
         __asm__ volatile( \
@@ -530,23 +543,6 @@ pas_mte_tag_region_from_pointer(
         } \
     } while (0)
 
-/*
- * Clear is used to canonicalize (zero out) the tag bits of a pointer.
- * We generally use this when we want to treat the address itself as
- * an integer or key, and don't intend to load from it directly.
- * We don't check for PAS_MTE enablement in these cases, since on non-PAS_MTE
- * hardware, the tag should be zero anyway, and masking off the bits
- * should be faster than branching on g_config.
- */
-#define PAS_MTE_CLEAR(a) do { \
-        a &= ~PAS_MTE_TAG_MASK; \
-    } while (0)
-
-#define PAS_MTE_CLEAR_PAIR(a, b) do { \
-        a &= ~PAS_MTE_TAG_MASK; \
-        b &= ~PAS_MTE_TAG_MASK; \
-    } while (0)
-
 #define PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator) (allocator)->is_mte_tagged
 #define PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category) \
     (size_category == pas_page_config_size_category_small || size_category == pas_page_config_size_category_medium)
@@ -811,16 +807,9 @@ pas_mte_retag_freed_region_if_tagged(
       } while (false)
 #endif // PAS_OS(DARWIN)
 
-// This is no longer needed as the pointer is already tagged in preparation for
-// being returned to the caller of the allocation function.
-#define PAS_MTE_HANDLE_ZERO_ALLOCATION_RESULT(a) do { (void)a; } while (false)
-
 // Used to zero an existing page allocation without clearing the tagged-memory
 // bit in its page-table entries.
 #define PAS_MTE_HANDLE_ZERO_FILL_PAGE(ptr, size, flags, tag) PAS_MTE_ZERO_FILL_PAGE(ptr, size, flags, tag)
-
-// Used to clear the tag before we look up the address in the megapage table when reallocating.
-#define PAS_MTE_HANDLE_REALLOCATE(a) PAS_MTE_CLEAR(a)
 
 // Used to restore the correct tag on the pointer when realloc reuses the existing allocation.
 #define PAS_MTE_HANDLE_REALLOCATE_IN_PLACE(a) PAS_MTE_PURIFY(a)
@@ -840,24 +829,10 @@ pas_mte_retag_freed_region_if_tagged(
         } \
     } while (false)
 
-// Used to clear the tag from a pointer into a page, since the page header should
-// be zero-tagged.
+// Get the right tag for a pointer to a page header.
+// Currently this just clears any stray tag, since page headers are always
+// zero-tagged.
 #define PAS_MTE_HANDLE_PAGE_BASE_FROM_BOUNDARY(a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits before looking it up in the page header table.
-#define PAS_MTE_HANDLE_PAGE_HEADER_TABLE_GET(a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits before adding it to the page header table.
-#define PAS_MTE_HANDLE_PAGE_HEADER_TABLE_ADD(a) PAS_MTE_CLEAR(a)
-
-// Used to clear key tag bits before looking up a pointer in the large map.
-#define PAS_MTE_HANDLE_LARGE_MAP_FIND(a) PAS_MTE_CLEAR(a)
-
-// Used to clear key tag bits before inserting a pointer range into the large map.
-#define PAS_MTE_HANDLE_LARGE_MAP_ADD(a, b) PAS_MTE_CLEAR(a)
-
-// Used to clear key tag bits before taking a pointer from the large map.
-#define PAS_MTE_HANDLE_LARGE_MAP_TAKE(a) PAS_MTE_CLEAR(a)
 
 // Used to restore the correct tag of a large map entry key after looking it up.
 // Takes a pas_heap_config*
@@ -866,31 +841,6 @@ pas_mte_retag_freed_region_if_tagged(
 // Used to restore the correct tag of a large map entry key after taking it from the map.
 // Takes a pas_heap_config*
 #define PAS_MTE_HANDLE_LARGE_MAP_TOOK_ENTRY(config, a, b) PAS_MTE_PURIFY(a)
-
-// Used to clear pointer tag bits before taking a pointer from the large map.
-// Takes a pas_heap_config*
-#define PAS_MTE_HANDLE_PGM_ALLOCATE(config, a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits before taking a pointer from the large map.
-#define PAS_MTE_HANDLE_PGM_DEALLOCATE(a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits before putting a pointer to the megapage table.
-#define PAS_MTE_HANDLE_MEGAPAGE_SET(a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits before getting a pointer from the megapage table.
-#define PAS_MTE_HANDLE_MEGAPAGE_GET(a) PAS_MTE_CLEAR(a)
-
-// Used to clear pointer tag bits freeing a range in the large sharing pool.
-#define PAS_MTE_HANDLE_LARGE_SHARING_POOL_BOOT_FREE(a, b) PAS_MTE_CLEAR_PAIR(a, b)
-
-// Used to clear pointer tag bits freeing a range in the large sharing pool.
-#define PAS_MTE_HANDLE_LARGE_SHARING_POOL_FREE(a, b) PAS_MTE_CLEAR_PAIR(a, b)
-
-// Used to clear pointer tag bits allocating a range in the large sharing pool.
-#define PAS_MTE_HANDLE_LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT(a, b) PAS_MTE_CLEAR_PAIR(a, b)
-
-// Used to clear pointer tag bits when summarizing a range in the large sharing pool.
-#define PAS_MTE_HANDLE_LARGE_SHARING_POOL_COMPUTE_SUMMARY(a, b) PAS_MTE_CLEAR_PAIR(a, b)
 
 struct __pas_heap;
 
@@ -1093,12 +1043,10 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 #define PAS_MTE_HANDLE(kind, ...) \
     PAS_MTE_HANDLE_ ## kind(__VA_ARGS__)
 
-PAS_IGNORE_WARNINGS_END
-
 #else // !PAS_ENABLE_MTE
 #define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
 #endif // PAS_ENABLE_MTE
-#else // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
-#define PAS_MTE_HANDLE(kind, ...) PAS_UNUSED_V(__VA_ARGS__)
-#endif // PAS_ENABLE_MTE
+
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #endif // PAS_MTE_H

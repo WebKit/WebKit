@@ -78,7 +78,7 @@ pas_large_map_entry pas_large_map_find(uintptr_t begin)
     unsigned variant_index;
 
     PAS_PROFILE(LARGE_MAP_FIND, begin);
-    PAS_MTE_HANDLE(LARGE_MAP_FIND, begin);
+    PAS_MTE_CLEAR(begin);
 
     pas_heap_lock_assert_held();
 
@@ -99,7 +99,7 @@ void pas_large_map_add(pas_large_map* map, pas_large_map_entry entry)
     pas_heap_lock_assert_held();
 
     PAS_PROFILE(LARGE_MAP_ADD, entry.begin, entry.end);
-    PAS_MTE_HANDLE(LARGE_MAP_ADD, entry.begin, entry.end);
+    PAS_MTE_CLEAR(entry.begin);
 
     if (verbose)
         pas_log("large map adding %p...%p, heap = %p.\n", (void*)entry.begin, (void*)entry.end, entry.heap);
@@ -227,7 +227,7 @@ pas_large_map_entry pas_large_map_take(uintptr_t begin)
     unsigned variant_index;
 
     PAS_PROFILE(LARGE_MAP_TAKE, begin);
-    PAS_MTE_HANDLE(LARGE_MAP_TAKE, begin);
+    PAS_MTE_CLEAR(begin);
 
     pas_heap_lock_assert_held();
 

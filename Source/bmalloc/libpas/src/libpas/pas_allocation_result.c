@@ -40,9 +40,6 @@ pas_allocation_result pas_allocation_result_zero_large_slow(pas_allocation_resul
     uintptr_t page_aligned_begin;
     uintptr_t page_aligned_end;
 
-    PAS_PROFILE(ZERO_ALLOCATION_RESULT, result.begin);
-    PAS_MTE_HANDLE(ZERO_ALLOCATION_RESULT, result.begin);
-
     page_size = pas_page_malloc_alignment();
     begin = result.begin;
     end = begin + size;

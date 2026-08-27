@@ -121,7 +121,7 @@ static pas_aligned_allocation_result megapage_cache_allocate_aligned(size_t size
     
     begin = (uintptr_t)base_before_exclusion;
     PAS_PROFILE(MEGAPAGE_SET, begin);
-    PAS_MTE_HANDLE(MEGAPAGE_SET, begin);
+    PAS_MTE_CLEAR(begin);
 
     end = begin + new_size;
 

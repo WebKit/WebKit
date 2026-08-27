@@ -211,7 +211,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
 #endif
 
     PAS_PROFILE(PGM_ALLOCATE, heap_config, key);
-    PAS_MTE_HANDLE(PGM_ALLOCATE, heap_config, key);
+    PAS_MTE_CLEAR(key);
 
     /* create struct to hold hash map value */
     pas_pgm_storage* value = pas_utility_heap_try_allocate(sizeof(pas_pgm_storage), "pas_pgm_hash_map_VALUE");
@@ -262,7 +262,7 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
 
     uintptr_t key = (uintptr_t)mem;
     PAS_PROFILE(PGM_DEALLOCATE, key);
-    PAS_MTE_HANDLE(PGM_DEALLOCATE, key);
+    PAS_MTE_CLEAR(key);
 
     pas_ptr_hash_map_entry* entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void*)key);
     if (!entry || !entry->value)
