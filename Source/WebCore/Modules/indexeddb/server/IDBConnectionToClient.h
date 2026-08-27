@@ -84,8 +84,8 @@ public:
     bool isClosed() { return m_isClosed; }
     void clearDelegate() { m_delegate = nullptr; }
 
-    WEBCORE_EXPORT void setClientProcessSuspended(bool);
-    bool isClientProcessSuspended() const { return m_isClientProcessSuspended; }
+    WEBCORE_EXPORT void setClientSuspended(bool);
+    bool isClientSuspended() const { return m_isClientSuspended; }
 
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
@@ -93,7 +93,7 @@ private:
     CheckedPtr<IDBConnectionToClientDelegate> m_delegate;
     WeakHashSet<UniqueIDBDatabaseConnection> m_databaseConnections;
     bool m_isClosed { false };
-    bool m_isClientProcessSuspended { false };
+    bool m_isClientSuspended { false };
 };
 
 } // namespace IDBServer
