@@ -826,6 +826,9 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
         imageIntrinsicSize = positioningAreaSize;
 
     auto handleKeyword = [&](auto keyword) -> LayoutSize {
+        if (image && !image->imageHasNaturalAspectRatio())
+            return positioningAreaSize;
+
         // Scale computation needs higher precision than what LayoutUnit can offer.
         FloatSize localImageIntrinsicSize = imageIntrinsicSize;
         FloatSize localPositioningAreaSize = positioningAreaSize;
@@ -875,9 +878,13 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
                 if (hasNaturalAspectRatio && imageIntrinsicSize.height())
                     tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
+                else
+                    tileSize.setWidth(imageIntrinsicSize.width());
             } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
                 if (hasNaturalAspectRatio && imageIntrinsicSize.width())
                     tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
+                else
+                    tileSize.setHeight(imageIntrinsicSize.height());
             } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, use the image's intrinsic size.
                 tileSize = imageIntrinsicSize;
