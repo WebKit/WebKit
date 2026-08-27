@@ -23,6 +23,7 @@ PACKAGES=(
     intltool
     itstool
     lcms2
+    libbacktrace
     libevent
     libjpeg-turbo
     libjxl

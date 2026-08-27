@@ -86,6 +86,7 @@ PACKAGES=(
     $(aptIfExists libsoup-3.0-dev)
     $(aptIfExists libsysprof-capture-4-dev)
     $(aptIfExists libyuv-dev)
+    $(aptIfExists libbacktrace-dev)
 
     # These are dependencies necessary for running tests.
     apache2
