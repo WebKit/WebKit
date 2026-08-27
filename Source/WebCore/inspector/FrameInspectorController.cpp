@@ -113,6 +113,15 @@ InspectorBackendClient* FrameInspectorController::overlayOwnerBackendClient() co
     return page ? page->inspectorController().inspectorBackendClient() : nullptr;
 }
 
+Vector<size_t> FrameInspectorController::overlayOwnerFlexLineStarts(const RenderObject& renderer) const
+{
+    // Deliberately does not create the DOM agent: with no agent there is nothing cached to report.
+    CheckedPtr domAgent = m_domAgent;
+    if (!domAgent)
+        return { };
+    return domAgent->flexibleBoxRendererCachedItemsAtStartOfLine(renderer);
+}
+
 void FrameInspectorController::drawHighlight(GraphicsContext& context) const
 {
     m_overlay->paint(context);
@@ -179,7 +188,11 @@ void FrameInspectorController::createLazyAgents()
 
     auto context = frameAgentContext();
     m_agents.append(makeUniqueRef<FrameDebuggerAgent>(context));
-    m_agents.append(makeUniqueRef<FrameDOMAgent>(context, m_overlay.get()));
+
+    auto domAgent = makeUniqueRef<FrameDOMAgent>(context, m_overlay.get());
+    m_domAgent = domAgent.ptr();
+    m_agents.append(WTF::move(domAgent));
+
     m_agents.append(makeUniqueRef<FrameDOMStorageAgent>(context));
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));

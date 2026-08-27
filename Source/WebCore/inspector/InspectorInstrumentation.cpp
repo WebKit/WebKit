@@ -718,14 +718,26 @@ void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instr
         pageAgent->applyEmulatedMedia(media);
 }
 
+// These resolve through renderer.frame(), so `instrumentingAgents` is the *frame's*. Both agents are
+// notified, because either may own the overlay that later reads the cache: a frame overlay reads its own
+// FrameDOMAgent, while a node highlighted from the page target draws through the page overlay and reads
+// InspectorDOMAgent. Under Site Isolation even the main frame has a FrameDOMAgent, so notifying only the
+// first match would starve the page agent's cache and silently drop main-frame flex line separators.
+// Both getters walk the frame->page fallback chain, but only the agent that owns a slot ever populates
+// it, so each call resolves to the agent that will be asked for this renderer. The caches are weak and
+// keyed by renderer, so notifying both is harmless.
 void InspectorInstrumentation::flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer)
 {
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
+        frameDOMAgent->flexibleBoxRendererBeganLayout(renderer);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->flexibleBoxRendererBeganLayout(renderer);
 }
 
 void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer, size_t lineStartItemIndex)
 {
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
+        frameDOMAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
 }
