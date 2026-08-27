@@ -316,9 +316,7 @@
 		1C4FADA228FC71B900FFE212 /* cdef.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = cdef.S; sourceTree = "<group>"; };
 		1C4FADA328FC71B900FFE212 /* msac.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = msac.S; sourceTree = "<group>"; };
 		1C4FADA428FC71B900FFE212 /* cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
-		1C4FADA528FC71B900FFE212 /* refmvs_init.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = refmvs_init.c; sourceTree = "<group>"; };
 		1C4FADA628FC71B900FFE212 /* asm.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = asm.S; sourceTree = "<group>"; };
-		1C4FADA728FC71B900FFE212 /* loopfilter_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loopfilter_init_tmpl.c; sourceTree = "<group>"; };
 		1C4FADA928FC71B900FFE212 /* refmvs.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = refmvs.S; sourceTree = "<group>"; };
 		1C4FADAA28FC71B900FFE212 /* looprestoration_common.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = looprestoration_common.S; sourceTree = "<group>"; };
 		1C4FADAB28FC71B900FFE212 /* mc.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc.S; sourceTree = "<group>"; };
@@ -335,21 +333,13 @@
 		1C4FADB628FC71B900FFE212 /* looprestoration.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = looprestoration.S; sourceTree = "<group>"; };
 		1C4FADB728FC71B900FFE212 /* util.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = util.S; sourceTree = "<group>"; };
 		1C4FADB828FC71B900FFE212 /* mc16.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc16.S; sourceTree = "<group>"; };
-		DA71D0000000000000000101 /* mc_dotprod.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc_dotprod.S; sourceTree = "<group>"; };
-		DA71D0000000000000000102 /* mc16_sve.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc16_sve.S; sourceTree = "<group>"; };
 		1C4FADB928FC71B900FFE212 /* loopfilter.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = loopfilter.S; sourceTree = "<group>"; };
 		1C4FADBA28FC71B900FFE212 /* ipred16.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = ipred16.S; sourceTree = "<group>"; };
 		1C4FADBB28FC71B900FFE212 /* cdef.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = cdef.S; sourceTree = "<group>"; };
 		1C4FADBC28FC71B900FFE212 /* msac.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = msac.S; sourceTree = "<group>"; };
 		1C4FADBD28FC71B900FFE212 /* cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
-		1C4FADBE28FC71B900FFE212 /* filmgrain_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = filmgrain_init_tmpl.c; sourceTree = "<group>"; };
-		1C4FADBF28FC71B900FFE212 /* itx_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = itx_init_tmpl.c; sourceTree = "<group>"; };
-		1C4FADC028FC71B900FFE212 /* mc_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mc_init_tmpl.c; sourceTree = "<group>"; };
-		1C4FADC128FC71B900FFE212 /* looprestoration_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = looprestoration_init_tmpl.c; sourceTree = "<group>"; };
-		1C4FADC228FC71B900FFE212 /* ipred_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ipred_init_tmpl.c; sourceTree = "<group>"; };
 		1C4FADC328FC71B900FFE212 /* asm-offsets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "asm-offsets.h"; sourceTree = "<group>"; };
 		1C4FADC428FC71B900FFE212 /* msac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msac.h; sourceTree = "<group>"; };
-		1C4FADC528FC71B900FFE212 /* cdef_init_tmpl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cdef_init_tmpl.c; sourceTree = "<group>"; };
 		1C4FADC728FC71B900FFE212 /* thread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = thread.c; sourceTree = "<group>"; };
 		1C4FADC828FC71B900FFE212 /* data.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = data.c; sourceTree = "<group>"; };
 		1C4FADC928FC71B900FFE212 /* loopfilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loopfilter.h; sourceTree = "<group>"; };
@@ -438,6 +428,8 @@
 		444A6F112AEB1D1C005FE121 /* dav1d_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dav1d_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		444A6F1E2AEB2051005FE121 /* dav1d_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = dav1d_fuzzer.xcconfig; sourceTree = "<group>"; };
 		444A6F1F2AEB2051005FE121 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		DA71D0000000000000000101 /* mc_dotprod.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc_dotprod.S; sourceTree = "<group>"; };
+		DA71D0000000000000000102 /* mc16_sve.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = mc16_sve.S; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -811,17 +803,9 @@
 				1C4FADA828FC71B900FFE212 /* 64 */,
 				1C4FADC328FC71B900FFE212 /* asm-offsets.h */,
 				1C4FADA628FC71B900FFE212 /* asm.S */,
-				1C4FADC528FC71B900FFE212 /* cdef_init_tmpl.c */,
 				1C4FADA428FC71B900FFE212 /* cpu.c */,
 				1C4FADBD28FC71B900FFE212 /* cpu.h */,
-				1C4FADBE28FC71B900FFE212 /* filmgrain_init_tmpl.c */,
-				1C4FADC228FC71B900FFE212 /* ipred_init_tmpl.c */,
-				1C4FADBF28FC71B900FFE212 /* itx_init_tmpl.c */,
-				1C4FADA728FC71B900FFE212 /* loopfilter_init_tmpl.c */,
-				1C4FADC128FC71B900FFE212 /* looprestoration_init_tmpl.c */,
-				1C4FADC028FC71B900FFE212 /* mc_init_tmpl.c */,
 				1C4FADC428FC71B900FFE212 /* msac.h */,
-				1C4FADA528FC71B900FFE212 /* refmvs_init.c */,
 			);
 			path = arm;
 			sourceTree = "<group>";

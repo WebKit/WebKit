@@ -1,6 +1,6 @@
 /*
- * Copyright © 2018, VideoLAN and dav1d authors
- * Copyright © 2018, Two Orioles, LLC
+ * Copyright © 2026, VideoLAN and dav1d authors
+ * Copyright © 2026, Mohd Zaid
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,21 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef DAV1D_SRC_RISCV_64_FILMGRAIN_H
+#define DAV1D_SRC_RISCV_64_FILMGRAIN_H
+
 #include "src/cpu.h"
-#include "src/loopfilter.h"
+#include "src/filmgrain.h"
 
-decl_loopfilter_sb_fn(BF(dav1d_lpf_h_sb_y, neon));
-decl_loopfilter_sb_fn(BF(dav1d_lpf_v_sb_y, neon));
-decl_loopfilter_sb_fn(BF(dav1d_lpf_h_sb_uv, neon));
-decl_loopfilter_sb_fn(BF(dav1d_lpf_v_sb_uv, neon));
+decl_generate_grain_y_fn(BF(dav1d_generate_grain_y, rvv));
 
-COLD void bitfn(dav1d_loop_filter_dsp_init_arm)(Dav1dLoopFilterDSPContext *const c) {
+static ALWAYS_INLINE void film_grain_dsp_init_riscv(Dav1dFilmGrainDSPContext *const c){
     const unsigned flags = dav1d_get_cpu_flags();
 
-    if (!(flags & DAV1D_ARM_CPU_FLAG_NEON)) return;
+    if (!(flags & DAV1D_RISCV_CPU_FLAG_V)) return;
 
-    c->loop_filter_sb[0][0] = BF(dav1d_lpf_h_sb_y, neon);
-    c->loop_filter_sb[0][1] = BF(dav1d_lpf_v_sb_y, neon);
-    c->loop_filter_sb[1][0] = BF(dav1d_lpf_h_sb_uv, neon);
-    c->loop_filter_sb[1][1] = BF(dav1d_lpf_v_sb_uv, neon);
+#if BITDEPTH == 8
+    c->generate_grain_y = dav1d_generate_grain_y_8bpc_rvv;
+#elif BITDEPTH == 16
+    c->generate_grain_y = dav1d_generate_grain_y_16bpc_rvv;
+#endif
 }
+
+#endif /* DAV1D_SRC_RISCV_FILMGRAIN_H */

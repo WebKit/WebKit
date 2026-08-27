@@ -117,9 +117,8 @@ function save_tmvs_neon, export=1
         movi            v30.8b,  #0
         ld1             {v31.8b}, [x3]
         movrel          x8,  save_tmvs_tbl
-        movrel          x16, mask_mult
+        ldrel           d29, x16, mask_mult
         movrel          x13, mv_tbls
-        ld1             {v29.8b}, [x16]
         ext             v31.8b,  v30.8b,  v31.8b,  #7 // [0, ref_sign]
         mov             w15, #5
         mov             w14, #12*2

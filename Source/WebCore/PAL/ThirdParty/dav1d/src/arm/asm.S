@@ -297,7 +297,7 @@ EXTERN\name:
 \name:
 #if ARCH_AARCH64
     .if \export
-         AARCH64_VALID_CALL_TARGET
+        AARCH64_VALID_CALL_TARGET
     .endif
 #endif
 .endm
@@ -339,11 +339,11 @@ EXTERN\name:
 // for reference. (LLVM can create such relocations, but checking for _WIN32
 // for simplicity, as execute-only memory isn't relevant on Windows at the
 // moment.)
-        function \name
+        function        \name
 #else
 // For other platforms, write jump tables in a const data section, to allow
 // working in environments where executable memory isn't readable.
-        const \name
+        const           \name
 #endif
 .endm
 

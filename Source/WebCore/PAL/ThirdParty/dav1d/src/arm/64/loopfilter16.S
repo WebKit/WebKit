@@ -836,9 +836,8 @@ function lpf_\dir\()_sb_\type\()_16bpc_neon, export=1
         cmp             x16, #0
         b.eq            7f                        // if (!L) continue;
         neg             v5.8b,   v5.8b            // -sharp[0]
-        movrel          x16, word_12
+        ldrel           d16, x16, word_12
         ushr            v12.8b,  v1.8b,   #4      // H
-        ld1             {v16.2s}, [x16]
         sshl            v3.8b,   v1.8b,   v5.8b   // L >> sharp[0]
 .ifc \type, y
         cmtst           v15.2s,  v15.2s,  v16.2s  // if (vmask[2] & bits)
@@ -920,6 +919,6 @@ lpf_func h, y
 lpf_func v, uv
 lpf_func h, uv
 
-const word_12
+const word_12, align=3
         .word 1, 2
 endconst
