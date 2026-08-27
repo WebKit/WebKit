@@ -2507,10 +2507,12 @@ CharacterRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
 }
 
 // Given an indexed character, the line number of the text associated with this accessibility
-// object that contains the character.
+// object that contains the character. The index one past the last character is accepted too: that
+// is where the caret sits at the end of a field, and it is a position AXInsertionPointLineNumber
+// already answers for.
 unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 {
-    return lineForPosition(visiblePositionForIndex(index, false));
+    return lineForPosition(visiblePositionForIndex(index, /* lastIndexOK */ true));
 }
 
 void AccessibilityObject::updateBackingStore()

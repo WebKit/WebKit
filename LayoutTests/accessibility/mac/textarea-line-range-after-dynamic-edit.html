@@ -43,7 +43,7 @@ var cases = [
 ];
 
 // expect() evaluates its expressions in its own scope, so the values it reads are globals.
-var axField, caret, lineRange, lineEnd, webArea, lastLine, indexPastEnd;
+var axField, caret, lineRange, lineEnd, webArea, lastLine, indexPastEnd, indexBeyondEnd;
 
 // The id of the text control the document's accessibility selection currently sits in, or null.
 function idOfFieldHoldingAccessibilitySelection() {
@@ -120,9 +120,13 @@ async function checkCase(testCase) {
         output += expect("lineEnd.isEqual(caret)", "true");
     if (testCase.lastLineRange) {
         lastLine = testCase.lastLine;
+        // The caret at the end of the value sits at this index, so it belongs to the last line.
+        // Only the index after it is out of range.
         indexPastEnd = testCase.value.length;
+        indexBeyondEnd = indexPastEnd + 1;
         output += expect("axField.rangeForLine(lastLine)", JSON.stringify(testCase.lastLineRange));
-        output += expect("axField.lineForIndex(indexPastEnd)", "-1");
+        output += expect("axField.lineForIndex(indexPastEnd)", `${testCase.lastLine}`);
+        output += expect("axField.lineForIndex(indexBeyondEnd)", "-1");
     }
     output += "\n";
 }

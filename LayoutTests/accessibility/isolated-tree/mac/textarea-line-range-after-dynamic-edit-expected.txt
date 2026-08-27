@@ -8,14 +8,16 @@ PASS: axField.stringForTextMarkerRange(lineRange) === ""
 PASS: axField.textMarkerRangeLength(lineRange) === 0
 PASS: lineEnd.isEqual(caret) === true
 PASS: axField.rangeForLine(lastLine) === "{9, 0}"
-PASS: axField.lineForIndex(indexPastEnd) === -1
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
 
 inserted through AXReplaceRangeWithText, caret at the end: value "one two \nthree", caret at 14
 PASS: axField.numberOfCharacters === 14
 PASS: axField.stringForTextMarkerRange(lineRange) === "three"
 PASS: axField.textMarkerRangeLength(lineRange) === 5
 PASS: axField.rangeForLine(lastLine) === "{9, 5}"
-PASS: axField.lineForIndex(indexPastEnd) === -1
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
 
 
 PASS successfullyParsed is true
