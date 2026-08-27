@@ -64,6 +64,7 @@
 #include "JSNode.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NativeImage.h"
 #include "Node.h"
 #include "PageInspectorController.h"
 #include "ScriptableDocumentParser.h"
@@ -431,8 +432,8 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
         } else if (RefPtr imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-                if (RefPtr imageBuffer = imageBitmap->buffer())
-                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+                if (RefPtr bitmap = imageBitmap->bitmap())
+                    dataURL = encodeDataURL(bitmap, "image/png"_s);
             }
         } else if (RefPtr context = canvasRenderingContext(vm, possibleTarget)) {
             target = possibleTarget;

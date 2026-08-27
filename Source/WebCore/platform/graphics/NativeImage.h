@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT const std::optional<GainMap>& gainMap() const;
     WEBCORE_EXPORT virtual IntSize size() const;
     WEBCORE_EXPORT virtual bool hasAlpha() const;
-    WEBCORE_EXPORT size_t sizeInBytes() const;
+    WEBCORE_EXPORT virtual size_t sizeInBytes() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT virtual ColorSpace colorSpace() const;
     WEBCORE_EXPORT bool hasHDRContent() const;

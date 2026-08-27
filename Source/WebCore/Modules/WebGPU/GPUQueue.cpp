@@ -40,8 +40,10 @@
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "ImageUtilities.h"
 #include "JSDOMConvertNull.h"
 #include "JSDOMPromiseDeferred.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 #include "PredefinedColorSpace.h"
@@ -402,6 +404,23 @@ static void getImageBytesFromImageBuffer(const RefPtr<ImageBuffer>& imageBuffer,
     callback(pixelBuffer->bytes(), size.width(), size.height());
 }
 
+static void getImageBytesFromNativeImage(const RefPtr<NativeImage>& image, bool& needsPremultipliedAlpha, NOESCAPE const ImageDataCallback& callback)
+{
+    UNUSED_PARAM(needsPremultipliedAlpha);
+    if (!image)
+        return callback({ }, 0, 0);
+
+    auto size = image->size();
+    if (!size.width() || !size.height())
+        return callback({ }, 0, 0);
+
+    auto pixelBuffer = getPixelBuffer(*image, { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() }, { { }, size });
+    if (!pixelBuffer)
+        return callback({ }, 0, 0);
+
+    callback(pixelBuffer->bytes(), size.width(), size.height());
+}
+
 #if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
 static void clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, WebGPU::IntegerCoordinate minValue)
 {
@@ -496,7 +515,7 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
     using ResultType = void;
     return WTF::switchOn(source,
         [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
-            return getImageBytesFromImageBuffer(imageBitmap->buffer(), needsPremultipliedAlpha, callback);
+            return getImageBytesFromNativeImage(imageBitmap->bitmap(), needsPremultipliedAlpha, callback);
         },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
         [&](const Ref<ImageData>& imageData) -> ResultType {
@@ -737,6 +756,37 @@ struct GPUResidentSource {
     bool isGPUResident() const { return imageBuffer || videoSource; }
 };
 
+#if HAVE(IOSURFACE)
+// An ImageBitmap holds a NativeImage, whose pixels are not necessarily in an IOSurface, so they have
+// to be drawn into an accelerated buffer before Metal can read them.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=322807 Skip this draw for the bitmaps which already
+// wrap an IOSurface.
+static GPUResidentSource gpuResidentSourceForImageBitmap(ScriptExecutionContext& context, const ImageBitmap& imageBitmap)
+{
+    RefPtr bitmap = imageBitmap.bitmap();
+    if (!bitmap)
+        return { };
+
+    FloatRect rect { { }, bitmap->size() };
+    if (rect.isEmpty())
+        return { };
+
+    // The bitmap's own colour space is kept, so that the draw below does not convert the channels.
+    // The checks in imageBufferForSource() reject the spaces the backing queue cannot handle.
+    auto colorSpace = bitmap->colorSpace();
+    if (!colorSpace.supportsOutput())
+        colorSpace = ColorSpace::SRGB();
+    RefPtr imageBuffer = ImageBitmap::createImageBuffer(context, rect.size(), colorSpace);
+    if (!imageBuffer)
+        return { };
+
+    // Compositing over the buffer's transparent black leaves the bitmap's channels untouched, so a
+    // bitmap which holds unpremultiplied channels stays unpremultiplied in the buffer.
+    imageBuffer->context().drawNativeImage(*bitmap, rect, rect, { CompositeOperator::Copy });
+    return { WTF::move(imageBuffer), imageBitmap.premultiplyAlpha() };
+}
+#endif // HAVE(IOSURFACE)
+
 #if HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
 // A video's current frame is decoded in the GPU process, so the copy only has to name it: either by
 // the media player which owns it, or - for a WebCodecs frame, which has no player - by the frame
@@ -819,7 +869,7 @@ static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionCo
     using ResultType = GPUResidentSource;
     auto result = WTF::switchOn(source,
         [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
-            return { imageBitmap->buffer(), imageBitmap->premultiplyAlpha() };
+            return gpuResidentSourceForImageBitmap(context, imageBitmap);
         },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
         [&](const Ref<ImageData>& imageData) -> ResultType {
@@ -970,7 +1020,7 @@ static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& o
 
     return WTF::switchOn(source,
         [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
-            if (!imageBitmap->buffer()) {
+            if (!imageBitmap->bitmap()) {
                 errorCode = ExceptionCode::InvalidStateError;
                 return false;
             }
