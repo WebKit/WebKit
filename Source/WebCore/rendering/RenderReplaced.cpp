@@ -844,10 +844,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(IsComputingIntrinsicSize 
                 // keywords constrain the width.
                 auto& style = this->style();
                 if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
-                    // Still respect min-width, but ignore max-width if it's an intrinsic keyword.
                     auto& logicalMinWidth = style.logicalMinWidth();
+                    auto& logicalMaxWidth = style.logicalMaxWidth();
                     auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
-                    return std::max(minLogicalWidth, constrainedLogicalWidth);
+                    auto maxLogicalWidth = logicalMaxWidth.isIntrinsic() || logicalMaxWidth.isNone() ? constrainedLogicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
+                    return std::max(minLogicalWidth, std::min(constrainedLogicalWidth, maxLogicalWidth));
                 }
 
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, IsComputingIntrinsicSize::No);

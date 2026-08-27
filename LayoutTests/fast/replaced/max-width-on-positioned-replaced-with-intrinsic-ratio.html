@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>max-width on an out-of-flow positioned replaced element that has an intrinsic ratio but no intrinsic inline size</title>
+<style>
+#bench { position: absolute; left: -20000px; top: 0; }
+.containingBlock { position: relative; width: 600px; height: 400px; }
+</style>
+</head>
+<body>
+<pre id="results"></pre>
+<script>
+// https://webkit.org/b/322612: the used inline size of an out-of-flow positioned replaced box whose only
+// intrinsic sizing information is an aspect ratio, with width:auto, an indefinite block size and
+// both inline-axis insets set, comes from the constraint equation for block-level non-replaced
+// elements (CSS 2.1 10.3.2). max-width must still clamp that result unless it is an intrinsic
+// sizing keyword, which is treated as its initial value in this configuration.
+
+const svgNamespace = "http://www.w3.org/2000/svg";
+const viewBoxWidth = 136.49992;
+const viewBoxHeight = 117.01795;
+const tolerance = 0.5;
+
+// An SVG resource with a viewBox and no width/height attributes: an intrinsic ratio, no
+// intrinsic dimensions. This is the <img> analogue of the inline <svg> below.
+const ratioOnlySVGURI = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + viewBoxWidth + " " + viewBoxHeight + '">'
+    + '<rect width="100%" height="100%" fill="#f1680d"/></svg>');
+
+function svgWithViewBoxOnly()
+{
+    const target = document.createElementNS(svgNamespace, "svg");
+    target.setAttribute("viewBox", "0 0 " + viewBoxWidth + " " + viewBoxHeight);
+    return target;
+}
+
+function imgOfSVGWithViewBoxOnly()
+{
+    const target = document.createElement("img");
+    target.setAttribute("src", ratioOnlySVGURI);
+    return target;
+}
+
+const tests = [
+    // max-width is a length, a percentage or a calc(): it must clamp the used inline size.
+    { name: "inline svg, left:0 right:0, max-width:220px, auto inline margins",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px;margin-left:auto;margin-right:auto",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, left:0 right:0, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px",
+      width: 219.98, height: 188.59 },
+    { name: "img of a viewBox-only svg, left:0 right:0, max-width:220px",
+      create: imgOfSVGWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, all four insets 0, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;top:0;bottom:0;left:0;right:0;max-width:220px",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, left:50px right:50px, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:50px;right:50px;max-width:220px",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, left:0 right:0, max-width:220px, box-sizing:border-box, padding:10px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px;box-sizing:border-box;padding:10px",
+      width: 219.98, height: 191.45 },
+    { name: "inline svg, left:0 right:0, max-width:50%",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:50%",
+      width: 299.98, height: 257.17 },
+    { name: "inline svg, position:fixed, left:0 right:0, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:fixed;left:0;right:0;max-width:220px",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, left:0 right:0, max-width:220px, zero inline margins",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px;margin-left:0;margin-right:0",
+      width: 219.98, height: 188.59 },
+    { name: "inline svg, left:0 right:0, max-width:220px, direction:rtl",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px;direction:rtl",
+      width: 219.98, height: 188.59 },
+
+    // Controls: none of these may change. The first three are the unclamped stretch itself, which
+    // both engines agree on; max-content is the intrinsic sizing keyword the carve-out is for.
+    { name: "control: inline svg, left:0 right:0, no max-width",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0",
+      width: 599.98, height: 514.36 },
+    { name: "control: img of a viewBox-only svg, left:0 right:0, no max-width",
+      create: imgOfSVGWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0",
+      width: 599.98, height: 514.36 },
+    { name: "control: inline svg, left:0 right:0, max-width:max-content",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:max-content",
+      width: 599.98, height: 514.36 },
+    { name: "control: inline svg, left:0 right:0, min-width:800px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;min-width:800px",
+      width: 800, height: 685.81 },
+    { name: "control: inline svg, left:0 right:0, min-width:800px, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;min-width:800px;max-width:220px",
+      width: 800, height: 685.81 },
+    { name: "control: inline svg, left:0 right:0, max-width:220px, writing-mode:vertical-rl",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-width:220px;writing-mode:vertical-rl",
+      width: 220, height: 188.59 },
+    { name: "control: inline svg, left:0 only, width:100%, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;width:100%;max-width:220px",
+      width: 220, height: 188.59 },
+    { name: "control: inline svg, left:0 right:0, width:100%, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;width:100%;max-width:220px",
+      width: 220, height: 188.59 },
+    { name: "control: inline svg, left:0 right:0, height:100px, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;height:100px;max-width:220px",
+      width: 116.64, height: 100 },
+    { name: "control: inline svg, left:0 right:0, max-height:100px",
+      create: svgWithViewBoxOnly,
+      style: "position:absolute;left:0;right:0;max-height:100px",
+      width: 116.64, height: 100 },
+    { name: "control: inline svg, static, width:100%, max-width:220px",
+      create: svgWithViewBoxOnly,
+      style: "position:static;width:100%;max-width:220px",
+      width: 220, height: 188.59 },
+];
+
+function roundToHundredths(value)
+{
+    return Math.round(value * 100) / 100;
+}
+
+async function measure(bench, test)
+{
+    const containingBlock = document.createElement("div");
+    containingBlock.className = "containingBlock";
+    const target = test.create();
+    target.setAttribute("style", test.style);
+    containingBlock.appendChild(target);
+    bench.appendChild(containingBlock);
+
+    if (target.localName == "img" && !target.complete) {
+        await new Promise(resolve => {
+            target.addEventListener("load", resolve);
+            target.addEventListener("error", resolve);
+        });
+    }
+
+    const rect = target.getBoundingClientRect();
+    containingBlock.remove();
+    return rect;
+}
+
+async function runTests()
+{
+    const lines = [
+        "max-width must clamp the used inline size of an out-of-flow positioned replaced element",
+        "that has an intrinsic ratio but no intrinsic inline size. Expected values were measured in",
+        "another engine on this same markup; the tolerance is " + tolerance + "px.",
+        "",
+    ];
+
+    // The measured elements live in a container that is removed again, so that the text dump
+    // contains nothing but the results below.
+    const bench = document.createElement("div");
+    bench.id = "bench";
+    document.body.appendChild(bench);
+
+    for (const test of tests) {
+        const rect = await measure(bench, test);
+        const expected = test.width + " x " + test.height;
+        if (Math.abs(rect.width - test.width) <= tolerance && Math.abs(rect.height - test.height) <= tolerance)
+            lines.push("PASS " + test.name + " is within " + tolerance + " of " + expected);
+        else
+            lines.push("FAIL " + test.name + " should be within " + tolerance + " of " + expected + ". Was " + roundToHundredths(rect.width) + " x " + roundToHundredths(rect.height) + ".");
+    }
+
+    bench.remove();
+    document.getElementById("results").textContent = lines.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+runTests();
+</script>
+</body>
+</html>
