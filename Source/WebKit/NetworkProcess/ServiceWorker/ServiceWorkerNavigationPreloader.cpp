@@ -121,27 +121,25 @@ void ServiceWorkerNavigationPreloader::cancel()
 void ServiceWorkerNavigationPreloader::loadWithCacheEntry(NetworkCache::Entry& entry)
 {
     didReceiveResponse(ResourceResponse { entry.response() }, PrivateRelayed::No, [body = RefPtr { entry.buffer() }, weakThis = WeakPtr { *this }](auto) mutable {
-        if (!weakThis || weakThis->m_isCancelled)
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis || protectedThis->m_isCancelled)
             return;
 
-        if (body) {
-            weakThis->didReceiveBuffer(body.releaseNonNull());
-            if (!weakThis)
-                return;
-        }
+        if (body)
+            protectedThis->didReceiveBuffer(body.releaseNonNull());
 
         NetworkLoadMetrics networkLoadMetrics;
         networkLoadMetrics.markComplete();
         networkLoadMetrics.responseBodyBytesReceived = 0;
         networkLoadMetrics.responseBodyDecodedSize = 0;
-        if (weakThis->shouldCaptureExtraNetworkLoadMetrics()) {
+        if (protectedThis->shouldCaptureExtraNetworkLoadMetrics()) {
             auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
             additionalMetrics->requestHeaderBytesSent = 0;
             additionalMetrics->requestBodyBytesSent = 0;
             additionalMetrics->responseHeaderBytesReceived = 0;
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTF::move(additionalMetrics);
         }
-        weakThis->didFinishLoading(networkLoadMetrics);
+        protectedThis->didFinishLoading(networkLoadMetrics);
     });
     didComplete();
 }
@@ -163,8 +161,8 @@ void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest
 {
     didReceiveResponse(WTF::move(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](auto) mutable {
         completionHandler({ });
-        if (weakThis)
-            weakThis->didComplete();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didComplete();
     });
 }
 

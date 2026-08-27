@@ -34,8 +34,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteStatementAutoResetScope);
 
-SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatement *statement)
-    : m_statement(statement)
+SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope() = default;
+
+SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(CheckedPtr<SQLiteStatement>&& statement)
+    : m_statement(WTF::move(statement))
 {
 }
 

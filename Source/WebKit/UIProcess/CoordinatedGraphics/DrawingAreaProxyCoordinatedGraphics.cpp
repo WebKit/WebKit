@@ -290,9 +290,8 @@ void DrawingAreaProxyCoordinatedGraphics::sendUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = true;
 
     sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(size()), [weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->didUpdateGeometry();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didUpdateGeometry();
     });
 }
 

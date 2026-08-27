@@ -109,7 +109,7 @@ Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::create(Node& node)
 }
 
 InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node& node)
-    : ActiveDOMObject(node.document())
+    : ActiveDOMObject(protect(node.document()))
     , m_node(&node)
 {
 }
@@ -230,7 +230,7 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
         paintingRect = snappedIntRect(renderer->subtreePaintRootRect(topLevelRect));
     }
 
-    return imageForRect(frameView.get(), m_node.get(), paintingRect, bitmapWidth, options);
+    return imageForRect(frameView.get(), protect(m_node), paintingRect, bitmapWidth, options);
 }
 
 RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()

@@ -215,9 +215,8 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 
     willSendUpdateGeometry();
     sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(size(), true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->didUpdateGeometry();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didUpdateGeometry();
     });
 }
 

@@ -156,7 +156,7 @@ WebExtensionAPIEvent& WebExtensionAPITest::onTestFinished()
 JSValueRef WebExtensionAPITest::runWithUserGesture(WebFrame& frame, JSContextRef context, JSValueRef function)
 {
     RefPtr coreFrame = frame.coreLocalFrame();
-    WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
+    WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
 
     return callObjectWithArguments<0>(function, context, { });
 }

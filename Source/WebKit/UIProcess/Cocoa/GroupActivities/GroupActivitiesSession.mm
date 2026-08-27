@@ -43,18 +43,24 @@ Ref<GroupActivitiesSession> GroupActivitiesSession::create(RetainPtr<WKGroupSess
 GroupActivitiesSession::GroupActivitiesSession(RetainPtr<WKGroupSession>&& session)
     : m_groupSession(WTF::move(session))
 {
-    m_groupSession.get().newActivityCallback = [this] (WKURLActivity *activity) {
-        m_fallbackURLObservers.forEach([this, activity] (auto& observer) {
-            observer(*this, activity.fallbackURL);
+    m_groupSession.get().newActivityCallback = [weakThis = WeakPtr { *this }](WKURLActivity *activity) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->m_fallbackURLObservers.forEach([protectedThis, activity] (auto& observer) {
+            observer(*protectedThis, activity.fallbackURL);
         });
     };
 
-    m_groupSession.get().stateChangedCallback = [this] (WKGroupSessionState state) {
+    m_groupSession.get().stateChangedCallback = [weakThis = WeakPtr { *this }](WKGroupSessionState state) {
         static_assert(static_cast<size_t>(State::Waiting) == static_cast<size_t>(WKGroupSessionStateWaiting), "MediaSessionCoordinatorState::Waiting != WKGroupSessionStateWaiting");
         static_assert(static_cast<size_t>(State::Joined) == static_cast<size_t>(WKGroupSessionStateJoined), "MediaSessionCoordinatorState::Joined != WKGroupSessionStateJoined");
         static_assert(static_cast<size_t>(State::Invalidated) == static_cast<size_t>(WKGroupSessionStateInvalidated), "MediaSessionCoordinatorState::Closed != WKGroupSessionStateInvalidated");
-        m_stateChangeObservers.forEach([this, state] (auto& observer) {
-            observer(*this, static_cast<State>(state));
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->m_stateChangeObservers.forEach([protectedThis, state] (auto& observer) {
+            observer(*protectedThis, static_cast<State>(state));
         });
     };
 }

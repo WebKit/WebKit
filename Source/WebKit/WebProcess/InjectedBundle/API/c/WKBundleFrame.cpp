@@ -290,7 +290,7 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return;
 
-    coreFrame->page()->focusController().setFocusedFrame(coreFrame.get());
+    protect(coreFrame->page()->focusController())->setFocusedFrame(coreFrame.get());
 }
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)

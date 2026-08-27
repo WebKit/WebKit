@@ -88,11 +88,12 @@ AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID,
     ASSERT(responseMaxStaleness);
     m_timer.startOneShot(*responseMaxStaleness + (lifetime - age));
 
-    SpeculativeLoad::RevalidationCompletionHandler loadRevalidationCompletionHandler = [this, key, revalidationRequest](auto&& revalidatedEntry) {
+    SpeculativeLoad::RevalidationCompletionHandler loadRevalidationCompletionHandler = [weakThis = WeakPtr { *this }, key, revalidationRequest](auto&& revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
-        if (m_completionHandler)
-            m_completionHandler(revalidatedEntry ? Result::Success : Result::Failure);
+        RefPtr protectedThis = weakThis;
+        if (protectedThis && protectedThis->m_completionHandler)
+            protectedThis->m_completionHandler(revalidatedEntry ? Result::Success : Result::Failure);
     };
     lazyInitialize(m_load, SpeculativeLoad::create(cache, frameID, WTF::move(revalidationRequest), WTF::move(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTF::move(loadRevalidationCompletionHandler)));
 }

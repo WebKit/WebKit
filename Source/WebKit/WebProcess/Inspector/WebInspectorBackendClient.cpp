@@ -436,7 +436,7 @@ void WebInspectorBackendClient::didMoveToPage(PageOverlay&, Page*)
 void WebInspectorBackendClient::drawRect(PageOverlay&, WebCore::GraphicsContext& context, const WebCore::IntRect& /*dirtyRect*/)
 {
     if (RefPtr page = m_page.get())
-        page->corePage()->inspectorController().drawHighlight(context);
+        protect(page->corePage()->inspectorController())->drawHighlight(context);
 }
 
 bool WebInspectorBackendClient::mouseEvent(PageOverlay&, const PlatformMouseEvent&)

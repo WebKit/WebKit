@@ -213,53 +213,51 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
     m_pathNormalizedMainThread = FileSystem::lexicallyNormal(path);
     m_customIDBStoragePathNormalizedMainThread = FileSystem::lexicallyNormal(customIDBStoragePath);
 
-    workQueue().dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, originQuotaRatio, totalQuotaRatio, standardVolumeCapacity, volumeCapacityOverride, level, storageSiteValidationEnabled, timeBasedEvictionMode, timeBasedEvictionThreshold, lastModificationTimeUpdateIntervalOverride, timeBasedEvictionIntervalOverride]() mutable {
-        assertIsCurrent(workQueue());
-
-        auto protectedThis = weakThis.get();
+    workQueue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, originQuotaRatio, totalQuotaRatio, standardVolumeCapacity, volumeCapacityOverride, level, storageSiteValidationEnabled, timeBasedEvictionMode, timeBasedEvictionThreshold, lastModificationTimeUpdateIntervalOverride, timeBasedEvictionIntervalOverride]() mutable {
+        RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
 
-        m_defaultOriginQuota = defaultOriginQuota;
-        m_originQuotaRatio = originQuotaRatio;
-        m_totalQuotaRatio = totalQuotaRatio;
-        m_standardVolumeCapacity = standardVolumeCapacity;
-        m_volumeCapacityOverride = volumeCapacityOverride;
-        m_lastModificationTimeUpdateIntervalOverride = lastModificationTimeUpdateIntervalOverride;
+        assertIsCurrent(protectedThis->workQueue());
+        protectedThis->m_defaultOriginQuota = defaultOriginQuota;
+        protectedThis->m_originQuotaRatio = originQuotaRatio;
+        protectedThis->m_totalQuotaRatio = totalQuotaRatio;
+        protectedThis->m_standardVolumeCapacity = standardVolumeCapacity;
+        protectedThis->m_volumeCapacityOverride = volumeCapacityOverride;
+        protectedThis->m_lastModificationTimeUpdateIntervalOverride = lastModificationTimeUpdateIntervalOverride;
 #if PLATFORM(IOS_FAMILY)
-        m_backupExclusionPeriod = defaultBackupExclusionPeriod;
+        protectedThis->m_backupExclusionPeriod = defaultBackupExclusionPeriod;
 #endif
-        setStorageSiteValidationEnabledInternal(storageSiteValidationEnabled);
-        m_fileSystemStorageHandleRegistry = FileSystemStorageHandleRegistry::create();
-        lazyInitialize(m_storageAreaRegistry, makeUnique<StorageAreaRegistry>());
-        lazyInitialize(m_idbStorageRegistry, makeUnique<IDBStorageRegistry>(*this));
-        lazyInitialize(m_cacheStorageRegistry, CacheStorageRegistry::create());
-        m_unifiedOriginStorageLevel = level;
-        m_path = path;
-        m_customLocalStoragePath = customLocalStoragePath;
-        m_customIDBStoragePath = customIDBStoragePath;
-        m_customCacheStoragePath = customCacheStoragePath;
-        m_customServiceWorkerStoragePath = customServiceWorkerStoragePath;
-        if (!m_path.isEmpty()) {
-            auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt"_s);
-            m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
+        protectedThis->setStorageSiteValidationEnabledInternal(storageSiteValidationEnabled);
+        protectedThis->m_fileSystemStorageHandleRegistry = FileSystemStorageHandleRegistry::create();
+        lazyInitialize(protectedThis->m_storageAreaRegistry, makeUnique<StorageAreaRegistry>());
+        lazyInitialize(protectedThis->m_idbStorageRegistry, makeUnique<IDBStorageRegistry>(*protectedThis));
+        lazyInitialize(protectedThis->m_cacheStorageRegistry, CacheStorageRegistry::create());
+        protectedThis->m_unifiedOriginStorageLevel = level;
+        protectedThis->m_path = path;
+        protectedThis->m_customLocalStoragePath = customLocalStoragePath;
+        protectedThis->m_customIDBStoragePath = customIDBStoragePath;
+        protectedThis->m_customCacheStoragePath = customCacheStoragePath;
+        protectedThis->m_customServiceWorkerStoragePath = customServiceWorkerStoragePath;
+        if (!protectedThis->m_path.isEmpty()) {
+            auto saltPath = FileSystem::pathByAppendingComponent(protectedThis->m_path, "salt"_s);
+            protectedThis->m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
         }
-        if (shouldManageServiceWorkerRegistrationsByOrigin())
-            migrateServiceWorkerRegistrationsToOrigins();
+        if (protectedThis->shouldManageServiceWorkerRegistrationsByOrigin())
+            protectedThis->migrateServiceWorkerRegistrationsToOrigins();
         else
-            m_sharedServiceWorkerStorageManager = makeUnique<ServiceWorkerStorageManager>(m_customServiceWorkerStoragePath);
+            protectedThis->m_sharedServiceWorkerStorageManager = makeUnique<ServiceWorkerStorageManager>(protectedThis->m_customServiceWorkerStoragePath);
 #if PLATFORM(IOS_FAMILY)
         // Exclude LocalStorage directory to reduce backup traffic. See https://webkit.org/b/168388.
-        if (m_unifiedOriginStorageLevel == UnifiedOriginStorageLevel::None  && !m_customLocalStoragePath.isEmpty()) {
-            FileSystem::makeAllDirectories(m_customLocalStoragePath);
-            FileSystem::setExcludedFromBackup(m_customLocalStoragePath, true);
+        if (protectedThis->m_unifiedOriginStorageLevel == UnifiedOriginStorageLevel::None  && !protectedThis->m_customLocalStoragePath.isEmpty()) {
+            FileSystem::makeAllDirectories(protectedThis->m_customLocalStoragePath);
+            FileSystem::setExcludedFromBackup(protectedThis->m_customLocalStoragePath, true);
         }
 #endif
 
-        IDBStorageManager::createVersionDirectoryIfNeeded(m_customIDBStoragePath);
+        IDBStorageManager::createVersionDirectoryIfNeeded(protectedThis->m_customIDBStoragePath);
         if (timeBasedEvictionMode != TimeBasedEvictionMode::Disabled)
-            performTimeBasedEviction(timeBasedEvictionMode, timeBasedEvictionThreshold, timeBasedEvictionIntervalOverride);
-        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis)] { });
+            protectedThis->performTimeBasedEviction(timeBasedEvictionMode, timeBasedEvictionThreshold, timeBasedEvictionIntervalOverride);
     });
 }
 

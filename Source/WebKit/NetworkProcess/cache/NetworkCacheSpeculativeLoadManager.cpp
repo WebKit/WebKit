@@ -40,7 +40,7 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -168,7 +168,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculativeLoadManager::PreloadedEntry);
 
-class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
+class SpeculativeLoadManager::PendingFrameLoad : public RefCountedAndCanMakeWeakPtr<PendingFrameLoad> {
 public:
     static Ref<PendingFrameLoad> create(Storage& storage, const Key& mainResourceKey, WTF::Function<void()>&& loadCompletionHandler)
     {
@@ -226,8 +226,12 @@ private:
         : m_storage(storage)
         , m_mainResourceKey(mainResourceKey)
         , m_loadCompletionHandler(WTF::move(loadCompletionHandler))
-        , m_loadHysteresisActivity([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) markLoadAsCompleted(); })
+        , m_loadHysteresisActivity([weakThis = WeakPtr { *this }](PAL::HysteresisState state) {
+            if (RefPtr protectedThis = weakThis; protectedThis && state == PAL::HysteresisState::Stopped)
+                protectedThis->markLoadAsCompleted();
+        })
     {
+        relaxAdoptionRequirement();
         m_loadHysteresisActivity.impulse();
     }
 
@@ -421,9 +425,9 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
         auto preloadedEntry = checkedThis->m_preloadedEntries.take(key);
         ASSERT(preloadedEntry);
         if (preloadedEntry->wasRevalidated())
-            logSpeculativeLoadingDiagnosticMessage(checkedThis->m_cache->networkProcess(), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey());
+            logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey());
         else
-            logSpeculativeLoadingDiagnosticMessage(checkedThis->m_cache->networkProcess(), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
+            logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
     }));
 }
 
@@ -541,7 +545,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
 
         if (checkedThis->satisfyPendingRequests(key, revalidatedEntry.get())) {
             if (revalidatedEntry)
-                logSpeculativeLoadingDiagnosticMessage(checkedThis->m_cache->networkProcess(), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
+                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
             return;
         }
 
@@ -604,7 +608,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
 
         if (checkedThis->satisfyPendingRequests(key, entry.get())) {
             if (entry)
-                logSpeculativeLoadingDiagnosticMessage(checkedThis->m_cache->networkProcess(), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
+                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
             return;
         }
         
@@ -631,7 +635,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
                 CheckedPtr checkedThis = weakThis.get();
                 if (!checkedThis)
                     return;
-                logSpeculativeLoadingDiagnosticMessage(checkedThis->m_cache->networkProcess(), frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
+                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
                 checkedThis->m_notPreloadedEntries.remove(key);
             }));
         }

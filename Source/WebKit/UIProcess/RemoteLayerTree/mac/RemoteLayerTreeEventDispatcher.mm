@@ -113,7 +113,10 @@ RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCo
     , m_processPool(scrollingCoordinator.webPageProxy().configuration().processPool())
     , m_wheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_displayLinkClient(makeUnique<RemoteLayerTreeEventDispatcherDisplayLinkClient>(*this))
-    , m_wheelEventActivityHysteresis([this](PAL::HysteresisState state) { wheelEventHysteresisUpdated(state); }, wheelEventHysteresisDuration)
+    , m_wheelEventActivityHysteresis([weakThis = ThreadSafeWeakPtr { *this }](PAL::HysteresisState state) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->wheelEventHysteresisUpdated(state);
+    }, wheelEventHysteresisDuration)
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     , m_momentumEventDispatcher(WTF::makeUnique<MomentumEventDispatcher>(*this))
 #endif

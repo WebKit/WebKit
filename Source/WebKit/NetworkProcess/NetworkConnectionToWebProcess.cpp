@@ -145,7 +145,10 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     : m_connection(IPC::Connection::createServerConnection(WTF::move(connectionIdentifier)))
     , m_networkProcess(networkProcess)
     , m_sessionID(sessionID)
-    , m_networkResourceLoaders([this](bool hasUpload) { hasUploadStateChanged(hasUpload); })
+    , m_networkResourceLoaders([weakThis = WeakPtr { *this }](bool hasUpload) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->hasUploadStateChanged(hasUpload);
+    })
 #if ENABLE(WEB_RTC)
     , m_mdnsRegister(*this)
 #endif
@@ -1959,7 +1962,8 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
 
     auto registrableDomain = RegistrableDomain(scopeURL);
     session->notificationManager().subscribeToPushService(WTF::move(scopeURL), WTF::move(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), registrableDomain = WTF::move(registrableDomain)](auto&& result) mutable {
-        if (RefPtr resourceLoadStatistics = weakThis && weakThis->networkSession() ? weakThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
+        RefPtr protectedThis = weakThis;
+        if (RefPtr resourceLoadStatistics = protectedThis && protectedThis->networkSession() ? protectedThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTF::move(registrableDomain), [result = WTF::move(result), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(WTF::move(result));
             });

@@ -346,9 +346,8 @@ void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeUpdateReply()
         return;
 
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }]() {
-        if (!weakThis)
-            return;
-        weakThis->sendScrollingTreeNodeUpdate();
+        if (CheckedPtr checkedThis = weakThis)
+            checkedThis->sendScrollingTreeNodeUpdate();
     });
 }
 

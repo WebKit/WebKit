@@ -81,6 +81,7 @@
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -115,7 +116,7 @@ class WebPageProxy;
 
 static constexpr Seconds unloadEventsExpirationDelay { 1_s };
 
-class FrameProcessRefWithExpiration : public RefCounted<FrameProcessRefWithExpiration> {
+class FrameProcessRefWithExpiration : public RefCountedAndCanMakeWeakPtr<FrameProcessRefWithExpiration> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FrameProcessRefWithExpiration);
 public:
     static Ref<FrameProcessRefWithExpiration> create(Ref<FrameProcess>&& frameProcess, Seconds expirationDelay)
@@ -127,7 +128,11 @@ public:
 private:
     FrameProcessRefWithExpiration(Ref<FrameProcess>&& frameProcess, Seconds expirationDelay)
         : m_frameProcess(WTF::move(frameProcess))
-        , m_expirationTimer(RunLoop::mainSingleton(), "FrameProcessRefWithExpiration::ExpirationTimer"_s, [this] { m_frameProcess = nullptr; }) {
+        , m_expirationTimer(RunLoop::mainSingleton(), "FrameProcessRefWithExpiration::ExpirationTimer"_s, [weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->m_frameProcess = nullptr;
+        })
+    {
         m_expirationTimer.startOneShot(expirationDelay);
     }
 

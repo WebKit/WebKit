@@ -473,7 +473,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
     };
 
     auto isProcessingUserGesture = forceUserGesture ? std::optional { WebCore::IsProcessingUserGesture::Yes } : std::nullopt;
-    WebCore::UserGestureIndicator gestureIndicator { isProcessingUserGesture, frame->coreLocalFrame()->document() };
+    WebCore::UserGestureIndicator gestureIndicator { isProcessingUserGesture, protect(frame->coreLocalFrame()->document()) };
     callPropertyFunction(context, scriptObject, "evaluateJavaScriptFunction"_s, std::size(functionArguments), functionArguments, &exception);
 
     if (!exception)
@@ -543,7 +543,7 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
 
-    WebCore::UserGestureIndicator gestureIndicator { std::nullopt, frame->coreLocalFrame()->document() };
+    WebCore::UserGestureIndicator gestureIndicator { std::nullopt, protect(frame->coreLocalFrame()->document()) };
     callPropertyFunction(context, scriptObject, "evaluateBidiScript"_s, std::size(functionArguments), functionArguments, &exception);
 
     if (!exception)
@@ -729,7 +729,7 @@ void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, std::
     // closing and it's not possible to focus the frame.
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!coreFrame || !coreFrame->page(), WindowNotFound);
 
-    coreFrame->page()->focusController().setFocusedFrame(coreFrame.get());
+    protect(coreFrame->page()->focusController())->setFocusedFrame(coreFrame.get());
 
     callback({ });
 }

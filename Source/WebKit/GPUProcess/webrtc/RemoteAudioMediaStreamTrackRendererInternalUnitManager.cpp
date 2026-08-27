@@ -204,17 +204,17 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
     , m_canUseCaptureUnit(deviceID == WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID())
 {
     ASSERT(isMainRunLoop());
-    protect(m_localUnit)->retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTF::move(callback)](auto&& description) mutable {
-        RefPtr protectedThis = weakThis.get();
+    protect(m_localUnit)->retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, callback = WTF::move(callback)](auto&& description) mutable {
+        RefPtr protectedThis = weakThis;
         if (!protectedThis || !description) {
             RELEASE_LOG_IF(!description, WebRTC, "RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit unable to get format description");
             callback(std::nullopt, 0);
             return;
         }
         size_t tenMsSampleSize = description->sampleRate() * 10 / 1000;
-        m_description = *description;
-        m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, tenMsSampleSize);
-        callback(*description, m_frameChunkSize);
+        protectedThis->m_description = *description;
+        protectedThis->m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, tenMsSampleSize);
+        callback(*description, protectedThis->m_frameChunkSize);
     });
 }
 

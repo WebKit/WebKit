@@ -52,6 +52,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     , m_request(request.internalRequest)
     , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
 {
+    relaxAdoptionRequirement();
     if (!m_request.url().protocolIsInHTTPFamily()) {
         didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
         return;
@@ -64,16 +65,17 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     if (request.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { *request.cspResponseHeaders });
 
-    m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [this, weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
-        if (!weakThis)
+    m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
             return;
-        WTF::switchOn(result, [this] (ResourceError& error) {
-            this->didFinish(error);
+        WTF::switchOn(result, [&] (ResourceError& error) {
+            protectedThis->didFinish(error);
         }, [] (NetworkLoadChecker::RedirectionTriplet& triplet) {
             // We should never send a synthetic redirect for BackgroundFetchLoads.
             ASSERT_NOT_REACHED();
         }, [&] (ResourceRequest& request) {
-            this->loadRequest(networkProcess, WTF::move(request));
+            protectedThis->loadRequest(networkProcess, WTF::move(request));
         });
     });
 }

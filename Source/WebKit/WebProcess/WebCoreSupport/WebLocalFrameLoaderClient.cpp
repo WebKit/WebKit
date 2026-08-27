@@ -1556,9 +1556,8 @@ void WebLocalFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForTopFrameDomain(documentURLWithoutFragmentOrQueries), [weakDocument = WeakPtr { *document }](Vector<RegistrableDomain>&& domains) {
         if (!domains.size())
             return;
-        if (!weakDocument)
-            return;
-        weakDocument->quirks().setSubFrameDomainsForStorageAccessQuirk(WTF::move(domains));
+        if (RefPtr document = weakDocument)
+            document->quirks().setSubFrameDomainsForStorageAccessQuirk(WTF::move(domains));
     });
 }
 
@@ -2051,7 +2050,7 @@ Ref<FrameNetworkingContext> WebLocalFrameLoaderClient::createNetworkingContext()
 void WebLocalFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&& unblockHandler)
 {
     if (!unblockHandler.needsUIProcess()) {
-        m_localFrame->loader().policyChecker().setContentFilterUnblockHandler(WTF::move(unblockHandler));
+        protect(m_localFrame->loader().policyChecker())->setContentFilterUnblockHandler(WTF::move(unblockHandler));
         return;
     }
 

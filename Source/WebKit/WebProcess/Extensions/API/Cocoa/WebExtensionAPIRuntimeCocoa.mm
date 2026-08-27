@@ -691,7 +691,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
         std::optional<WebCore::UserGestureIndicator> gestureIndicator;
         if (userGesture) {
             RefPtr coreFrame = frame.coreLocalFrame();
-            gestureIndicator.emplace(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
+            gestureIndicator.emplace(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
         }
 
         for (auto& listener : listeners) {
@@ -784,7 +784,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         std::optional<WebCore::UserGestureIndicator> gestureIndicator;
         if (userGesture) {
             RefPtr coreFrame = frame.coreLocalFrame();
-            gestureIndicator.emplace(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
+            gestureIndicator.emplace(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
         }
 
         auto globalContext = frame.jsContextForWorld(toDOMWrapperWorld(contentWorldType));

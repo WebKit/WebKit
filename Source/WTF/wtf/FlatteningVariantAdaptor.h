@@ -93,7 +93,7 @@ public:
     }
 
     // Switches on the flattened list of types.
-    template<typename... F> decltype(auto) switchOn(F&&... functors) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... functors) const
     {
         return WTF::switchOn(m_value, std::forward<F>(functors)...);
     }

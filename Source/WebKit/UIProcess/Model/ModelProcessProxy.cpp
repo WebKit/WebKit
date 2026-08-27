@@ -292,7 +292,7 @@ void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Conne
     }
 
 #if PLATFORM(COCOA)
-    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
+    if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
 #endif
 

@@ -1018,8 +1018,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
 
 #if PLATFORM(COCOA)
-    m_activityStateChangeDispatcher = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::ActivityStateChange, [this] {
-        protect(*this)->dispatchActivityStateChange();
+    m_activityStateChangeDispatcher = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::ActivityStateChange, [weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->dispatchActivityStateChange();
     });
 #endif
 
@@ -2387,23 +2388,23 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 #endif
 
     maybeInitializeSandboxExtensionHandle(process, url, pageLoadState->resourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, loadParameters = WTF::move(loadParameters), url, navigation = protect(navigation), webPageID, shouldTreatAsContinuingLoad] (std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle) mutable {
-        RefPtr protectedProcess = weakProcess.get();
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedProcess || !protectedThis)
+        RefPtr process = weakProcess;
+        RefPtr protectedThis = weakThis;
+        if (!process || !protectedThis)
             return;
         if (sandboxExtensionHandle)
             loadParameters.sandboxExtensionHandle = WTF::move(*sandboxExtensionHandle);
-        protectedThis->prepareToLoadWebPage(*weakProcess, loadParameters);
+        protectedThis->prepareToLoadWebPage(*process, loadParameters);
 
         if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
             protectedThis->preconnectTo(ResourceRequest { loadParameters.request });
 
         navigation->setIsLoadedWithNavigationShared(true);
-        if (!protectedProcess->isLaunching() || !url.protocolIsFile())
-            protectedProcess->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageID);
+        if (!process->isLaunching() || !url.protocolIsFile())
+            process->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageID);
         else
-            protectedProcess->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTF::move(loadParameters), protectedThis->pageLoadState().resourceDirectoryURL(), protectedThis->identifier(), true), webPageID);
-        protectedProcess->startResponsivenessTimer();
+            process->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTF::move(loadParameters), protectedThis->pageLoadState().resourceDirectoryURL(), protectedThis->identifier(), true), webPageID);
+        process->startResponsivenessTimer();
     });
 }
 
@@ -4304,7 +4305,7 @@ IntRect WebPageProxy::currentDragCaretEditableElementRect() const
 void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName)
 {
 #if PLATFORM(COCOA)
-    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_legacyMainFrameProcess.get(), dragStorageName);
+    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(protect(m_legacyMainFrameProcess), dragStorageName);
 #endif
     launchInitialProcessIfNecessary();
     performDragControllerAction(DragControllerAction::Entered, dragData);
@@ -4313,7 +4314,7 @@ void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName
 void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
 {
 #if PLATFORM(COCOA)
-    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_legacyMainFrameProcess.get(), dragStorageName);
+    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(protect(m_legacyMainFrameProcess), dragStorageName);
 #endif
     performDragControllerAction(DragControllerAction::Updated, dragData);
 }
@@ -6063,7 +6064,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             // If re-using the same process for navigation and the site is changing, call ensureProcessForSite for the new site, but don't InjectBrowsingContextIntoProcess
             // since BrowsingContextGroup is already keeping track of the process under the previous site.
             if (frameProcessSite != site)
-                frame->setProcess(protect(this->browsingContextGroup())->ensureProcessForSite(site, mainFrameSite, frame->frameProcess().process(), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
+                frame->setProcess(protect(this->browsingContextGroup())->ensureProcessForSite(site, mainFrameSite, protect(frame->frameProcess().process()), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
         }
 
         if (loadContinuingInNonInitiatingProcess) {
@@ -6214,7 +6215,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
 
     std::optional<WebsitePoliciesData> websitePoliciesData;
     if (websitePoliciesAndProcess)
-        websitePoliciesData = protect(websitePoliciesAndProcess->first)->dataForProcess(websitePoliciesAndProcess->second);
+        websitePoliciesData = protect(websitePoliciesAndProcess->first)->dataForProcess(protect(websitePoliciesAndProcess->second));
     auto isSafeBrowsingCheckOngoing = SafeBrowsingCheckOngoing::No;
     if (navigation)
         isSafeBrowsingCheckOngoing = navigation->safeBrowsingCheckOngoing() ? SafeBrowsingCheckOngoing::Yes : SafeBrowsingCheckOngoing::No;
@@ -9437,7 +9438,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     if (!frame)
         return;
 
-    MESSAGE_CHECK_URL(m_legacyMainFrameProcess, url);
+    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrame: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), std::to_underlying(navigationType));
 
@@ -10881,7 +10882,7 @@ void WebPageProxy::didUpdateHistoryTitle(IPC::Connection& connection, String&& t
         return;
 
     MESSAGE_CHECK_BASE(frame->page() == this, connection);
-    MESSAGE_CHECK_URL(m_legacyMainFrameProcess, url);
+    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
 
     if (frame->isMainFrame())
         m_historyClient->didUpdateHistoryTitle(*this, title, url);
@@ -14354,7 +14355,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     }
 
 #if PLATFORM(COCOA)
-    WebPasteboardProxy::singleton().revokeAccess(m_legacyMainFrameProcess.get());
+    WebPasteboardProxy::singleton().revokeAccess(protect(m_legacyMainFrameProcess));
 #endif
 
     auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;
@@ -19619,12 +19620,9 @@ void WebPageProxy::sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifie
     if (!scrollingCoordinatorProxy)
         return;
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), [weakThis = WeakPtr { *scrollingCoordinatorProxy }, isLastUpdate] {
-        if (!weakThis)
-            return;
-
-        if (isLastUpdate)
-            weakThis->receivedLastScrollingTreeNodeUpdateReply();
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), [weakScrollingCoordinatorProxy = WeakPtr { *scrollingCoordinatorProxy }, isLastUpdate] {
+        if (isLastUpdate && weakScrollingCoordinatorProxy)
+            protect(weakScrollingCoordinatorProxy)->receivedLastScrollingTreeNodeUpdateReply();
     });
 }
 #endif

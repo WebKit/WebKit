@@ -237,9 +237,8 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 
     m_isWaitingForDidUpdateGeometry = true;
     sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(size(), false /* flushSynchronously */, MachSendRight()), [weakThis = WeakPtr { this }] {
-        if (!weakThis)
-            return;
-        weakThis->didUpdateGeometry();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didUpdateGeometry();
     });
 }
 

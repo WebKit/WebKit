@@ -48,7 +48,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     if (RefPtr extension = m_sandboxExtension)
         extension->consume();
 
-    CheckedPtr networkSession = m_downloadManager->client().networkSession(m_sessionID);
+    CheckedPtr networkSession = protect(m_downloadManager->client())->networkSession(m_sessionID);
     if (!networkSession) {
         DOWNLOAD_RELEASE_LOG("resume: Could not find network session with given session ID");
         return;

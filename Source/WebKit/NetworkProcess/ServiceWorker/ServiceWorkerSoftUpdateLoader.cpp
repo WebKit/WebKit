@@ -54,6 +54,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
     , m_jobData(WTF::move(jobData))
     , m_session(session)
 {
+    relaxAdoptionRequirement();
     ASSERT(!request.isConditional());
 
     if (RefPtr cache = session.cache()) {
@@ -62,31 +63,32 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
 
         OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
         bool allowPrivacyProxy { true };
-        cache->retrieve(request, std::nullopt, NavigatingToAppBoundDomain::No, allowPrivacyProxy, advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }, request, shouldRefreshCache](auto&& entry, auto&&) mutable {
-            if (!weakThis)
+        cache->retrieve(request, std::nullopt, NavigatingToAppBoundDomain::No, allowPrivacyProxy, advancedPrivacyProtections, [weakThis = WeakPtr { *this }, request, shouldRefreshCache](auto&& entry, auto&&) mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
-            if (!m_session) {
-                fail(ResourceError { ResourceError::Type::Cancellation });
+            if (!protectedThis->m_session) {
+                protectedThis->fail(ResourceError { ResourceError::Type::Cancellation });
                 return;
             }
             if (!shouldRefreshCache && entry && !entry->needsValidation()) {
-                loadWithCacheEntry(*entry);
+                protectedThis->loadWithCacheEntry(*entry);
                 return;
             }
 
             request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
             if (entry) {
-                m_cacheEntry = WTF::move(entry);
+                protectedThis->m_cacheEntry = WTF::move(entry);
 
-                String eTag = m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
+                String eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
                 if (!eTag.isEmpty())
                     request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
 
-                String lastModified = m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
+                String lastModified = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
                 if (!lastModified.isEmpty())
                     request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
-            loadFromNetwork(CheckedRef { *m_session }.get(), WTF::move(request));
+            protectedThis->loadFromNetwork(CheckedRef { *protectedThis->m_session }.get(), WTF::move(request));
         });
         return;
     }

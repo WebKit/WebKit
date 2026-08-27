@@ -649,7 +649,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     }
 
 #if PLATFORM(COCOA)
-    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
+    if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
 #endif
 
@@ -663,9 +663,8 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         if (!isPowerLoggingInTaskMode())
             return;
         RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis)] () {
-            if (!weakThis)
-                return;
-            weakThis->enablePowerLogging();
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->enablePowerLogging();
         });
     }).get());
 #endif

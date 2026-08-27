@@ -2108,7 +2108,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
     if (!frame)
         return;
 
-    UserGestureIndicator gestureIndicator { options.processingUserGesture ? IsProcessingUserGesture::Yes : IsProcessingUserGesture::No, frame->document() };
+    UserGestureIndicator gestureIndicator { options.processingUserGesture ? IsProcessingUserGesture::Yes : IsProcessingUserGesture::No, protect(frame->document()) };
     std::optional<UserTypingGestureIndicator> userTypingGestureIndicator;
     if (options.processingUserGesture)
         userTypingGestureIndicator.emplace(*frame);
@@ -2681,7 +2681,7 @@ void WebPage::updateFocusBeforeSelectingTextAtLocation(std::optional<WebCore::Fr
         return;
 
     RefPtr frame = result.innerNodeFrame();
-    m_page->focusController().setFocusedFrame(frame.get());
+    protect(m_page->focusController())->setFocusedFrame(frame.get());
 
     if (!result.isOverWidget())
         return;
@@ -3275,14 +3275,14 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     auto reportFailedTap = [&] {
         if (localRootFrame) {
             if (RefPtr focusedFrame = m_page->focusController().focusedFrame(); focusedFrame && focusedFrame->frameType() == WebCore::Frame::FrameType::Remote) {
-                m_page->focusController().setFocusedFrame(localRootFrame.get());
+                protect(m_page->focusController())->setFocusedFrame(localRootFrame.get());
                 if (m_isClosed)
                     return;
             }
         }
 #if ENABLE(FOCUS_ADJUSTMENT_IN_SYNTHETIC_CLICK)
         if (localRootFrame) {
-            m_page->focusController().setFocusedElement(nullptr, localRootFrame.get(), { .trigger = FocusTrigger::Click });
+            protect(m_page->focusController())->setFocusedElement(nullptr, localRootFrame.get(), { .trigger = FocusTrigger::Click });
 
             // Clearing the focused element can run script that closes the page.
             if (m_isClosed)

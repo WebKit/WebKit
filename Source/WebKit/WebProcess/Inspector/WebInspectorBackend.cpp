@@ -160,7 +160,7 @@ void WebInspectorBackend::show(CompletionHandler<void(bool success)>&& completio
         return;
     }
 
-    m_page->corePage()->inspectorController().show();
+    protect(m_page->corePage()->inspectorController())->show();
     completionHandler(true);
 }
 
@@ -181,7 +181,7 @@ void WebInspectorBackend::evaluateScriptForTest(const String& script)
     if (!m_page->corePage())
         return;
 
-    m_page->corePage()->inspectorController().evaluateForTestInFrontend(script);
+    protect(m_page->corePage()->inspectorController())->evaluateForTestInFrontend(script);
 }
 
 void WebInspectorBackend::showConsole()
@@ -213,7 +213,7 @@ void WebInspectorBackend::showMainResourceForFrame(WebCore::FrameIdentifier fram
     if (!m_page->corePage())
         return;
 
-    String inspectorFrameIdentifier = CheckedRef { m_page->corePage()->inspectorController().ensurePageAgent() }->frameId(protect(frame->coreLocalFrame()).get());
+    String inspectorFrameIdentifier = protect(protect(m_page->corePage()->inspectorController())->ensurePageAgent())->frameId(protect(frame->coreLocalFrame()).get());
 
     whenFrontendConnectionEstablished([inspectorFrameIdentifier](auto& frontendConnection) {
         frontendConnection.send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);

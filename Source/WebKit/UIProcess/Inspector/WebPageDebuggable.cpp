@@ -125,7 +125,7 @@ void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
 void WebPageDebuggable::setIndicating(bool indicating)
 {
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, indicating] {
-        if (RefPtr page = m_page.get())
+        if (RefPtr page = m_page)
             page->inspectorController().setIndicating(indicating);
     });
 }

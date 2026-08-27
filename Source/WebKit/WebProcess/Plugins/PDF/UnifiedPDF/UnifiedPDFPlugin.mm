@@ -501,12 +501,12 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 
     Ref passwordForm = PDFPluginPasswordForm::create(this);
     m_passwordForm = passwordForm.ptr();
-    passwordForm->attach(m_annotationContainer.get());
+    passwordForm->attach(protect(m_annotationContainer));
 
     if (supportsForms()) {
         Ref passwordField = PDFPluginPasswordField::create(this);
         m_passwordField = passwordField.ptr();
-        passwordField->attach(m_annotationContainer.get());
+        passwordField->attach(protect(m_annotationContainer));
     }
 }
 
@@ -4287,7 +4287,7 @@ void UnifiedPDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActive
             }
 
             RefPtr newActiveAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
-            newActiveAnnotation->attach(m_annotationContainer.get());
+            newActiveAnnotation->attach(protect(m_annotationContainer));
             m_activeAnnotation = WTF::move(newActiveAnnotation);
             revealAnnotation(protect(protect(activeAnnotation())->annotation()).get());
         } else

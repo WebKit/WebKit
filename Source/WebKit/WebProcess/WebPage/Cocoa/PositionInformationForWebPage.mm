@@ -596,7 +596,7 @@ static CursorContext cursorContext(const WebCore::HitTestResult& hitTestResult, 
     };
 
     const auto& deepPosition = position.deepEquivalent();
-    context.shouldNotUseIBeamInEditableContent = nodeShouldNotUseIBeam(node) || nodeShouldNotUseIBeam(deepPosition.computeNodeBeforePosition()) || nodeShouldNotUseIBeam(deepPosition.computeNodeAfterPosition());
+    context.shouldNotUseIBeamInEditableContent = nodeShouldNotUseIBeam(node) || nodeShouldNotUseIBeam(protect(deepPosition.computeNodeBeforePosition())) || nodeShouldNotUseIBeam(protect(deepPosition.computeNodeAfterPosition()));
     return context;
 }
 

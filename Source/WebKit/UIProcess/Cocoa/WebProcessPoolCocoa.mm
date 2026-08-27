@@ -295,19 +295,20 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
     dispatch_async(mediaAccessibilityQueue.get().get(), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }] mutable {
         auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
         auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
-        callOnMainRunLoop([weakThis = WTF::move(weakThis), weakProcess, captionDisplayMode, preferredLanguages = crossThreadCopy(WTF::move(preferredLanguages))] {
+        callOnMainRunLoop([weakThis = WTF::move(weakThis), weakProcess = WTF::move(weakProcess), captionDisplayMode, preferredLanguages = crossThreadCopy(WTF::move(preferredLanguages))] {
             RefPtr protectedThis = weakThis.get();
-            if (!protectedThis || !weakProcess)
+            RefPtr process = weakProcess;
+            if (!protectedThis || !process)
                 return;
 
             if (captionDisplayMode != protectedThis->m_captionDisplayMode) {
                 protectedThis->m_captionDisplayMode = captionDisplayMode;
-                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode), 0);
+                process->send(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode), 0);
             }
 
             if (preferredLanguages != protectedThis->m_preferredLanguages) {
                 protectedThis->m_preferredLanguages = preferredLanguages;
-                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages), 0);
+                process->send(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages), 0);
             }
         });
     });
@@ -1681,8 +1682,8 @@ void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
                     protectedThis->m_assetFontURLs->append(WTF::move(fontURL));
                 }
             }
-            if (weakProcess)
-                weakProcess->send(Messages::WebProcess::RegisterAdditionalFonts(AdditionalFonts::additionalFonts({ *protectedThis->m_assetFontURLs }, weakProcess->auditToken())), 0);
+            if (RefPtr process = weakProcess)
+                process->send(Messages::WebProcess::RegisterAdditionalFonts(AdditionalFonts::additionalFonts({ *protectedThis->m_assetFontURLs }, process->auditToken())), 0);
         });
         return true;
     });

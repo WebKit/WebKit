@@ -670,7 +670,7 @@ void PDFPlugin::createPasswordEntryForm()
 
     auto passwordField = PDFPluginPasswordField::create(this);
     m_passwordField = passwordField.ptr();
-    passwordField->attach(m_annotationContainer.get());
+    passwordField->attach(protect(m_annotationContainer));
 }
 
 void PDFPlugin::teardownPasswordEntryForm()
@@ -1227,7 +1227,7 @@ void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotat
 
             auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
             m_activeAnnotation = activeAnnotation.get();
-            activeAnnotation->attach(m_annotationContainer.get());
+            activeAnnotation->attach(protect(m_annotationContainer));
         } else
             m_activeAnnotation = nullptr;
     });

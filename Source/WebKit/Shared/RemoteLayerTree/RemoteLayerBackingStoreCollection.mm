@@ -154,7 +154,7 @@ bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
     }
 
     for (auto& backingStore : newlyUnreachableBackingStore)
-        backingStoreBecameUnreachable(*backingStore);
+        backingStoreBecameUnreachable(protect(*backingStore));
 
     return !newlyUnreachableBackingStore.isEmpty();
 }
