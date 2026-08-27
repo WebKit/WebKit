@@ -293,6 +293,20 @@ index 05e8751..0bf3c85 100644
 
         self.assertEqual(captured.stderr.getvalue(), 'Please commit your changes or stash them before you revert commit: d8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
+    def test_unresolvable_commit(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []):
+
+            result = program.main(
+                args=('revert', '319904@main.', '-v', '--no-pr'),
+                path=self.path,
+            )
+            self.assertEqual(1, result)
+
+        self.assertTrue(captured.stderr.getvalue().startswith('Could not find "319904@main."'))
+        self.assertNotIn('Traceback', captured.stderr.getvalue())
+
     def test_update(self):
         with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
