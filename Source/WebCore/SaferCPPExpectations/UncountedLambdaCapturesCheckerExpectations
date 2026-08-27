@@ -10,6 +10,7 @@ Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioEncoder.cpp
 Modules/webcodecs/WebCodecsBase.cpp
+Modules/webcodecs/WebCodecsControlMessageQueue.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webdatabase/DatabaseThread.cpp

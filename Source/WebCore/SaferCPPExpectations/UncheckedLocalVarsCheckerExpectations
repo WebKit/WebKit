@@ -24,6 +24,7 @@ layout/formattingContexts/table/TableFormattingContext.cpp
 layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
+layout/integration/inline/LayoutIntegrationLineLayout.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
