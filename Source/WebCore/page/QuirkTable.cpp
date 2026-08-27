@@ -47,7 +47,7 @@ static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
 #endif
 
 namespace SiteSpecificQuirks {
-using enum QuirksData::SiteSpecificQuirk;
+using enum SiteSpecificQuirk;
 using namespace QuirkRefinement;
 
 static constexpr Quirk table[] = {

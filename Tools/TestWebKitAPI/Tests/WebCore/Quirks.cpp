@@ -53,7 +53,7 @@ static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
 {
-    using SiteSpecificQuirk = WebCore::QuirksData::SiteSpecificQuirk;
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
 
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsAirIndiaExpressLayeringQuirk));
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));

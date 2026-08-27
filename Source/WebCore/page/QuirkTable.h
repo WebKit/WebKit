@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/QuirkMatch.h>
+#include <WebCore/QuirkNames.h>
 #include <WebCore/QuirksData.h>
 #include <initializer_list>
 #include <optional>
@@ -36,16 +37,16 @@ class QuirkBehaviors {
 public:
     constexpr QuirkBehaviors() = default;
 
-    consteval QuirkBehaviors(std::initializer_list<QuirksData::SiteSpecificQuirk> quirks)
+    consteval QuirkBehaviors(std::initializer_list<SiteSpecificQuirk> quirks)
     {
         for (auto quirk : quirks)
             m_bits.set(static_cast<size_t>(quirk));
     }
 
-    constexpr const QuirksData::QuirkBitSet& bits() const LIFETIME_BOUND { return m_bits; }
+    constexpr const QuirkBitSet& bits() const LIFETIME_BOUND { return m_bits; }
 
 private:
-    QuirksData::QuirkBitSet m_bits;
+    QuirkBitSet m_bits;
 };
 
 struct Quirk {
