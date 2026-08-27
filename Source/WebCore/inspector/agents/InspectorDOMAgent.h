@@ -226,6 +226,7 @@ public:
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
+    void mouseDidMoveOverRemoteFrame();
     void inspect(Node*);
     void focusNode();
 
@@ -247,6 +248,8 @@ private:
 #endif
 
     void highlightMousedOverNode();
+    void clearFrameTargetNodeHighlights();
+    bool frameOwnerNodeOwnsElementSelection(Node&);
     void setSearchingForNode(Inspector::Protocol::ErrorString&, bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, bool showRulers);
 
     // Node-related methods.

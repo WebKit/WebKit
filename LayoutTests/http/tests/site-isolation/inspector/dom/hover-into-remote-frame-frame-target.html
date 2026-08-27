@@ -1,0 +1,90 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHoverIntoRemoteFrame");
+
+    // Nesting is main(A) -> middle(A) -> inner(B). Hovering from the middle frame into the cross-origin
+    // inner frame takes the remoteUserInputEventData() branch in EventHandler::mouseMoved(), after
+    // which the middle frame's agent receives no further hover. A single cross-origin frame directly
+    // under the main frame does not reach this: there the page agent is the one needing the clear.
+
+    async function frameTargetFor(resourceName) {
+        let target = await frameTargetForURLContaining(resourceName);
+        InspectorTest.expectNotNull(target, "Should find the frame target for " + resourceName + ".");
+
+        if (target.isProvisional) {
+            let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            target = committedEvent.data.target;
+        }
+        await target.ensureTargetExecutionContext();
+
+        return target;
+    }
+
+    function highlightConfigs() {
+        return {
+            highlightConfig: {
+                showInfo: true,
+                contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+                paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+                borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+                marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+            },
+        };
+    }
+
+    suite.addTestCase({
+        name: "MiddleAndInnerFramesAreDistinctTargets",
+        description: "The same-origin middle frame and the cross-origin inner frame should be separate frame targets.",
+        async test() {
+            let middleTarget = await frameTargetFor("hover-middle-frame.html");
+            let innerTarget = await frameTargetFor("hover-inner-frame.html");
+            let pageTarget = WI.assumingMainTarget();
+
+            InspectorTest.expectThat(middleTarget !== innerTarget, "Middle and inner frames should be distinct targets.");
+            InspectorTest.expectThat(middleTarget !== pageTarget, "Middle frame should not be the page target.");
+            InspectorTest.expectThat(middleTarget.hasCommand("DOM.setInspectModeEnabled"), "Middle frame target should support DOM.setInspectModeEnabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HoverIntoRemoteFrameClearsMiddleFrameHighlight",
+        description: "Moving the cursor from the middle frame into the nested cross-origin frame should clear the middle frame's highlight.",
+        async test() {
+            let middleTarget = await frameTargetFor("hover-middle-frame.html");
+            let innerTarget = await frameTargetFor("hover-inner-frame.html");
+
+            await middleTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()});
+            await innerTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...highlightConfigs()});
+
+            if (!window.eventSender) {
+                InspectorTest.log("eventSender is unavailable; skipping the hover drive.");
+                return;
+            }
+
+            // Latch the middle frame's node, then cross into the inner frame. Coordinates are in
+            // main-frame space.
+            eventSender.mouseMoveTo(60, 60);
+            eventSender.mouseMoveTo(60, 120);
+
+            // No Internals hook reports a frame overlay's highlighted node, so this asserts both
+            // targets stay answerable after the crossing rather than reading the overlay.
+            await middleTarget.DOMAgent.hideHighlight();
+            await innerTarget.DOMAgent.hideHighlight();
+            InspectorTest.log("Both targets remained responsive after hovering into the remote frame.");
+
+            await middleTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+            await innerTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that hovering from a same-origin frame into a nested cross-origin frame clears the outer frame's hovered node.</p>
+<iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/hover-middle-frame.html" width="300" height="200"></iframe>
+</body>

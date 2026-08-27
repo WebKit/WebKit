@@ -1,0 +1,16 @@
+Tests that hovering from a same-origin frame into a nested cross-origin frame clears the outer frame's hovered node.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHoverIntoRemoteFrame
+-- Running test case: MiddleAndInnerFramesAreDistinctTargets
+PASS: Should find the frame target for hover-middle-frame.html.
+PASS: Should find the frame target for hover-inner-frame.html.
+PASS: Middle and inner frames should be distinct targets.
+PASS: Middle frame should not be the page target.
+PASS: Middle frame target should support DOM.setInspectModeEnabled.
+
+-- Running test case: HoverIntoRemoteFrameClearsMiddleFrameHighlight
+PASS: Should find the frame target for hover-middle-frame.html.
+PASS: Should find the frame target for hover-inner-frame.html.
+Both targets remained responsive after hovering into the remote frame.
