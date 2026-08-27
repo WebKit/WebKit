@@ -15996,6 +15996,12 @@ void SpeculativeJIT::compileArraySortCompact(Node* node)
     jump().linkTo(loop, this);
 
     holes.link(this);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // The scratch won't be barriered, so need to undo the writes.
+    // Without this, we could have an unremembered old/black cell referencing new/white cells.
+    emitFillStorageWithJSEmpty(scratchGPR, JSCellButterfly::offsetOfData(), sortScratchSlotCount, counterGPR);
+    storePtr(scratchGPR, &vm().m_cachedSortScratch);
+#endif
     move(TrustedImmPtr(std::bit_cast<void*>(vm().m_sortScratchSentinel.get())), scratchGPR);
 
     done.link(this);
