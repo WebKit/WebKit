@@ -138,9 +138,11 @@ public:
 
     class Observer {
     public:
-        virtual ~Observer() = default;
+        virtual ~Observer() { assertIsNotRegistered(); }
         // Can be called on any thread.
         virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, std::optional<WTFLogLocation>, Vector<JSONLogValue>&&) = 0;
+
+        WTF_EXPORT_PRIVATE void assertIsNotRegistered() const;
     };
 
     class MessageHandlerObserver {
