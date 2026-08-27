@@ -96,6 +96,7 @@ public:
 
     RefPtr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
     void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
+    void fetchTaskReceivedMainResourceResponse(std::optional<WebCore::ServiceWorkerIdentifier>, const WebCore::ResourceResponse&, WebCore::FrameIdentifier);
 
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
