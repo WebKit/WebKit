@@ -1253,6 +1253,7 @@ webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure
 webkit.org/b/181479 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.html [ Pass Failure ]
+webkit.org/b/181494 accessibility/isolated-tree/mac/aria-multiple-liveregions-notification.html [ Pass Failure ]
 
 webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
 

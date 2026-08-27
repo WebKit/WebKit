@@ -1,0 +1,63 @@
+This test ensures we return the right attributed string for text marker ranges that span multiple elements.
+
+"Attributes in range {0, 17}:
+AXFont: {
+    AXFontFamily = Helvetica;
+    AXFontName = Helvetica;
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {17, 17}:
+AXFont: {
+    AXFontFamily = Monaco;
+    AXFontName = Monaco;
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is a test.
+
+Second paragraph."
+
+
+Final attributed string:
+
+Attributes in range {0, 17}:
+AXFont: {
+    AXFontFamily = Helvetica;
+    AXFontName = Helvetica;
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {17, 19}:
+AXFont: {
+    AXFontFamily = Monaco;
+    AXFontName = Monaco;
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Attributes in range {36, 16}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is a test.
+
+Second paragraph.
+
+Third paragraph.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a test.
+
+Second paragraph.
+
+Third paragraph.

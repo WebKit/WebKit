@@ -1,0 +1,25 @@
+Tests that announcements are released to the platform in the order they were produced, even when translations come back out of order.
+
+Received announcement request:
+AnnouncementKey: First_translated_to_fr
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: fr
+
+Received announcement request:
+AnnouncementKey: Second_translated_to_fr
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: fr
+
+Received announcement request:
+AnnouncementKey: Third_translated_to_fr
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: fr
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+This test ensures we include the AXAttachment attribute in attributed strings created from ranges that include images.
+
+Attributes in range {0, 1}:
+AXAttachment: {present}
+Attributes in range {1, 3}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+[ATTACHMENT]xyz
+PASS successfullyParsed is true
+
+TEST COMPLETE
+xyz

@@ -854,6 +854,7 @@ webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass Ima
 webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash ]
 
 webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
+webkit.org/b/207962 accessibility/isolated-tree/mac/aria-menu-item-selected-notification.html [ Slow ]
 [ Debug ] accessibility/mac/line-index-for-textmarker.html [ Slow ]
 
 webkit.org/b/208062 http/wpt/fetch/disable-speculative-for-reload.html [ Pass Failure ]
@@ -1105,6 +1106,7 @@ webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure 
 webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Pass Timeout ]
 
 webkit.org/b/230518 [ Release ]  accessibility/mac/button-shouldnot-have-axvalue.html [ Pass Crash ]
+webkit.org/b/230518 [ Release ]  accessibility/isolated-tree/mac/button-shouldnot-have-axvalue.html [ Pass Crash ]
 
 webkit.org/b/231083 imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Pass Failure ]
 

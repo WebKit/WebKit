@@ -1,0 +1,15 @@
+This test ensures we compute the correct size and isEnabled state for br elements, especially in the context of text navigation.
+
+[x], height and width are valid, isEnabled is valid: true
+[newline], height and width are valid, isEnabled is valid: true
+[newline], height and width are valid, isEnabled is valid: true
+[newline], height and width are valid, isEnabled is valid: true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+x
+
+
+
+y

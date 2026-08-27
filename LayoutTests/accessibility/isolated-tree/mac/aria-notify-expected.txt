@@ -1,0 +1,19 @@
+Tests that ariaNotify properly sends notifications.
+
+Received announcement request:
+AnnouncementKey: Hello
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+Received announcement request:
+AnnouncementKey: World
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press Me

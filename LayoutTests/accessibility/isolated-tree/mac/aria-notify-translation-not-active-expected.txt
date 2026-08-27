@@ -1,0 +1,13 @@
+Tests that announcements are left alone when the page is not being presented as a machine translation, even with a translation client available.
+
+Received announcement request:
+AnnouncementKey: San Francisco
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+This tests that aria-label works on area elements.
+
+PASS: accessibilityController.accessibleElementById('btn_prev').description === 'AXDescription: Previous'
+PASS: accessibilityController.accessibleElementById('btn_next').description === 'AXDescription: Next'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
