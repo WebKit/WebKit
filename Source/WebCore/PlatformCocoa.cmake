@@ -1055,6 +1055,8 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/angle/ANGLEHeaders.h
 
+    platform/graphics/egl/BitmapTexture.h
+    platform/graphics/egl/BitmapTexturePool.h
     platform/graphics/egl/GLContext.h
     platform/graphics/egl/GLContextWrapper.h
     platform/graphics/egl/GLDisplay.h
