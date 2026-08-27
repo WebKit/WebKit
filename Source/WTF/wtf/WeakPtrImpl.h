@@ -89,6 +89,12 @@ public:
         : WeakPtrImplBase<DefaultWeakPtrImpl>(ptr)
     {
     }
+
+    // DefaultWeakPtrImpl is an implementation detail of WeakPtr.
+    // Deleting this object does not logically result in destruction of a user object.
+    SUPPRESS_NODELETE void NODELETE deref() const {
+        WeakPtrImplBase<DefaultWeakPtrImpl>::deref();
+    }
 };
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
