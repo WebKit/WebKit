@@ -39,6 +39,7 @@
 #import "NetworkProcess.h"
 #import "NetworkProcessProxyMessages.h"
 #import "NetworkSessionCreationParameters.h"
+#import "NetworkStorageSession.h"
 #import "PrivateRelayed.h"
 #import "WKURLSessionTaskDelegate.h"
 #import "WebErrors.h"
@@ -50,7 +51,6 @@
 #import <WebCore/FormDataStreamCocoa.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/HTTPStatusCodes.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>

@@ -28,10 +28,10 @@
 
 #include "NetworkProcess.h"
 #include "NetworkSessionCreationParameters.h"
+#include "NetworkStorageSession.h"
 #include "WebCookieManager.h"
 #include "WebSocketTaskSoup.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>

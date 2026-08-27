@@ -32,6 +32,7 @@ GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
+NetworkProcess/Cookies/soup/CookieStorageSoup.cpp
 NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
 NetworkProcess/NetworkDataTaskDataURL.cpp
@@ -48,6 +49,7 @@ NetworkProcess/soup/NetworkDataTaskSoup.cpp
 NetworkProcess/soup/NetworkProcessMainSoup.cpp
 NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
+NetworkProcess/soup/NetworkStorageSessionSoup.cpp
 NetworkProcess/soup/WebKitDirectoryInputStream.cpp
 NetworkProcess/soup/WebSocketTaskSoup.cpp
 

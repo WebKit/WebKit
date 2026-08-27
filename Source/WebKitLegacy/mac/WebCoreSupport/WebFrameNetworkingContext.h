@@ -27,6 +27,10 @@
 
 #include <WebCore/FrameNetworkingContext.h>
 
+namespace WebCore {
+class CookieStorageSession;
+}
+
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
     static Ref<WebFrameNetworkingContext> create(WebCore::LocalFrame* frame)
@@ -34,7 +38,7 @@ public:
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
 
-    static WebCore::NetworkStorageSession& ensurePrivateBrowsingSession();
+    static WebCore::CookieStorageSession& ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
 private:
@@ -49,5 +53,5 @@ private:
     RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
     String sourceApplicationIdentifier() const override;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
-    WebCore::NetworkStorageSession* storageSession() const override;
+    WebCore::CookieStorageSession* storageSession() const override;
 };

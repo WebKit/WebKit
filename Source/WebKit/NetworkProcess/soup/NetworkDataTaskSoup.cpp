@@ -32,6 +32,7 @@
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionSoup.h"
+#include "NetworkStorageSession.h"
 #include "PrivateRelayed.h"
 #include "WebErrors.h"
 #include "WebKitDirectoryInputStream.h"
@@ -39,7 +40,6 @@
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/SharedBuffer.h>

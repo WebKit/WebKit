@@ -29,9 +29,9 @@
 #import "Logging.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
+#import "NetworkStorageSession.h"
 #import "WebPrivacyHelpers.h"
 #import <WebCore/DNS.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -100,7 +100,7 @@ static RetainPtr<NSArray<NSHTTPCookie *>> cookiesByCappingExpiry(NSArray<NSHTTPC
 {
     RetainPtr cappedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
     for (NSHTTPCookie *cookie in cookies)
-        [cappedCookies addObject:WebCore::NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCap).get()];
+        [cappedCookies addObject:NetworkStorageSession::capExpiryOfPersistentCookie(cookie, ageCap).get()];
     return cappedCookies;
 }
 
@@ -109,7 +109,7 @@ static RetainPtr<NSArray<NSHTTPCookie *>> cookiesBySettingPartition(NSArray<NSHT
 {
     RetainPtr<NSMutableArray> partitionedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
     for (NSHTTPCookie *cookie in cookies) {
-        RetainPtr partitionedCookie = WebCore::NetworkStorageSession::setCookiePartition(cookie, partition);
+        RetainPtr partitionedCookie = NetworkStorageSession::setCookiePartition(cookie, partition);
         if (partitionedCookie)
             [partitionedCookies addObject:partitionedCookie.get()];
     }

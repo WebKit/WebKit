@@ -55,8 +55,9 @@ namespace WebKit {
 using namespace WebCore;
 
 class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
-    // NetworkStorageSessions are accessed only in the NetworkProcess.
-    WebCore::NetworkStorageSession* storageSession() const final { return nullptr; }
+    // Modern WebKit handles page cookie access through IPC and its WebProcess cookie cache rather
+    // than exposing a WebCore in-process StorageSession.
+    WebCore::CookieStorageSession* storageSession() const final { return nullptr; }
 };
 
 WebCookieJar::WebCookieJar()
@@ -279,7 +280,7 @@ void WebCookieJar::remoteCookiesEnabled(const Document& document, CompletionHand
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CookiesEnabled(document.firstPartyForCookies(), cookieURL, frameID, page->identifier(), page->webPageProxyIdentifier()), WTF::move(completionHandler));
 }
 
-std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, WebCore::IncludeSecureCookies) const
+std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL&, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const
 {
     // Unreachable in WebKit2: only Web Inspector's WebSocket handshake reporting calls this, and both channels discard it.
     ASSERT_NOT_REACHED();

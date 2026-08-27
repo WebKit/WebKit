@@ -29,8 +29,8 @@
 #include "NetworkCache.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkSessionCurl.h"
+#include "NetworkStorageSession.h"
 #include <WebCore/CurlContext.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/CallbackAggregator.h>
 

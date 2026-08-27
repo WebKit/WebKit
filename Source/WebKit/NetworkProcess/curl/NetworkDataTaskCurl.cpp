@@ -32,13 +32,13 @@
 #include "Download.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
+#include "NetworkStorageSession.h"
 #include "PrivateRelayed.h"
 #include "WebErrors.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/CurlRequest.h>
 #include <WebCore/NetworkLoadMetrics.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/ResourceError.h>

@@ -30,6 +30,7 @@
 #import "WebPreferencesInternal.h"
 
 #import "NetworkStorageSessionMap.h"
+#import <WebCore/CookieStorageSession.h>
 #import "WebFeature.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebKitLogging.h"
@@ -42,7 +43,6 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/AudioSession.h>
 #import <WebCore/MediaPlayerEnums.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreMainThread.h>

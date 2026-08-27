@@ -26,50 +26,23 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
-#include "ClientOrigin.h"
-#include "Cookie.h"
-#include "CookieJar.h"
-#include "HTTPCookieAcceptPolicy.h"
 #include "Logging.h"
-#include "NotImplemented.h"
-#include "PublicSuffixStore.h"
-#include "ResourceRequest.h"
-#include "ShouldPartitionCookie.h"
-#include "Site.h"
-#include <algorithm>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ProcessPrivilege.h>
-#include <wtf/RunLoop.h>
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/Cookie.h>
+#include <WebCore/CookieJar.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <WebCore/NotImplemented.h>
+#include <WebCore/PublicSuffixStore.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ShouldPartitionCookie.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore {
+namespace WebKit {
+using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkStorageSession);
-
-static HashSet<OrganizationStorageAccessPromptQuirk>& NODELETE updatableStorageAccessPromptQuirks()
-{
-    ASSERT(RunLoop::isMain());
-    // FIXME: Move this isn't an instance of a class, probably as a member of NetworkStorageSession.
-    static MainThreadNeverDestroyed<HashSet<OrganizationStorageAccessPromptQuirk>> set;
-    return set.get();
-}
-
-bool NetworkStorageSession::m_processMayUseCookieAPI = false;
-
-bool NetworkStorageSession::processMayUseCookieAPI()
-{
-    return m_processMayUseCookieAPI;
-}
-
-void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
-{
-    m_processMayUseCookieAPI = value;
-    if (m_processMayUseCookieAPI)
-        addProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
-    else
-        removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
-}
 
 #if !PLATFORM(COCOA) && !USE(SOUP)
 Vector<Cookie> NetworkStorageSession::domCookiesForHost(const URL&)
@@ -242,11 +215,6 @@ bool NetworkStorageSession::shouldExemptDomainPairFromThirdPartyCookieBlocking(c
     return topFrameDomain == resourceDomain || (m_appBoundDomains.contains(topFrameDomain) && m_appBoundDomains.contains(resourceDomain));
 }
 
-String NetworkStorageSession::cookiePartitionIdentifier(const URL& firstPartyForCookies)
-{
-    return Site { firstPartyForCookies }.toString();
-}
-
 String NetworkStorageSession::cookiePartitionIdentifier(const ResourceRequest& request)
 {
     return cookiePartitionIdentifier(request.firstPartyForCookies());
@@ -314,7 +282,7 @@ void NetworkStorageSession::grantCrossPageStorageAccess(const TopFrameDomain& to
         }).iterator->value.add(resourceDomain);
 
     // Some sites have quirks where multiple login domains require storage access.
-    if (auto additionalLoginDomain = findAdditionalLoginDomain(topFrameDomain, resourceDomain)) {
+    if (auto additionalLoginDomain = WebCore::findAdditionalLoginDomain(topFrameDomain, resourceDomain)) {
         m_pairsGrantedCrossPageStorageAccess.ensure(topFrameDomain, [] { return HashSet<RegistrableDomain> { };
             }).iterator->value.add(*additionalLoginDomain);
     }
@@ -359,10 +327,10 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     }
     return entries;
 }
-    
+
 void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID)
 {
-    if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, resourceDomain)) {
+    if (WebCore::loginDomainMatchesRequestingDomain(firstPartyDomain, resourceDomain)) {
         grantCrossPageStorageAccess(firstPartyDomain, resourceDomain);
         return;
     }
@@ -427,7 +395,7 @@ void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds secon
 {
     m_cacheMaxAgeCapForPrevalentResources = seconds;
 }
-    
+
 void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
     m_cacheMaxAgeCapForPrevalentResources = std::nullopt;
@@ -516,90 +484,6 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
 #endif
 }
 
-const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
-{
-    static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
-        HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s),
-            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s), HashSet {
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"_s), HashSet {
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_s) });
-        return map;
-    }();
-    return map.get();
-}
-
-void NetworkStorageSession::updateStorageAccessPromptQuirks(Vector<OrganizationStorageAccessPromptQuirk>&& organizationStorageAccessPromptQuirks)
-{
-    auto& quirks = updatableStorageAccessPromptQuirks();
-    quirks.clear();
-    for (auto&& quirk : organizationStorageAccessPromptQuirks)
-        quirks.add(quirk);
-}
-
-bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
-{
-    auto loginDomains = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(topFrameDomain);
-    return (loginDomains && loginDomains.value().contains(resourceDomain)) || !!storageAccessQuirkForDomainPair(topFrameDomain, resourceDomain);
-}
-
-bool NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
-{
-    ASSERT(RunLoop::isMain());
-    return loginDomainMatchesRequestingDomain(topFrameDomain, resourceDomain);
-}
-
-std::optional<HashSet<RegistrableDomain>> NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain& topFrameDomain)
-{
-    auto it = storageAccessQuirks().find(topFrameDomain);
-    if (it != storageAccessQuirks().end())
-        return it->value;
-    return std::nullopt;
-}
-
-std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomain(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
-{
-    if (subDomain.string() == "sony.com"_s && topDomain.string() == "playstation.com"_s)
-        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s);
-
-    if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
-        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
-
-    return std::nullopt;
-}
-
-Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const URL& topFrameURL)
-{
-    for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
-        if (!quirk.triggerPages.isEmpty() && !quirk.triggerPages.contains(topFrameURL))
-            continue;
-
-        auto quirkDomains = quirk.quirkDomains;
-        auto entry = quirkDomains.find(RegistrableDomain { topFrameURL });
-        if (entry == quirkDomains.end())
-            continue;
-        return entry->value;
-    }
-    return { };
-}
-
-std::optional<OrganizationStorageAccessPromptQuirk> NetworkStorageSession::storageAccessQuirkForDomainPair(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
-{
-    for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
-        auto& quirkDomains = quirk.quirkDomains;
-        auto entry = quirkDomains.find(topDomain);
-        if (entry == quirkDomains.end())
-            continue;
-        if (std::ranges::none_of(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
-            break;
-        return quirk;
-    }
-    return std::nullopt;
-}
-
 void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {
     deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTF::move(completionHandler));
@@ -643,7 +527,7 @@ void NetworkStorageSession::setCookiesVersion(uint64_t version)
     if (version <= m_cookiesVersion)
         return;
 
-    RELEASE_LOG(Loading, "%p - NetworkStorageSession::setCookiesVersion session=%" PRIu64 ", version=%" PRIu64, this, m_sessionID.toUInt64(), version);
+    RELEASE_LOG(Loading, "%p - NetworkStorageSession::setCookiesVersion session=%" PRIu64 ", version=%" PRIu64, this, sessionID().toUInt64(), version);
     m_cookiesVersion = version;
     auto cookiesVersionChangeCallbacks = std::exchange(m_cookiesVersionChangeCallbacks, { });
     while (!cookiesVersionChangeCallbacks.isEmpty()) {
@@ -670,4 +554,4 @@ void NetworkStorageSession::clearCookiesVersionChangeCallbacks()
     }
 }
 
-}
+} // namespace WebKit

@@ -32,30 +32,30 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/TZoneMallocInlines.h>
 
-@interface WebNSHTTPCookieStorageDummyForInternalAccess : NSObject {
+@interface WKNSHTTPCookieStorageDummyForInternalAccess : NSObject {
 @public
     RetainPtr<NSHTTPCookieStorageInternal> _internal;
 }
 @end
 
-@implementation WebNSHTTPCookieStorageDummyForInternalAccess
+@implementation WKNSHTTPCookieStorageDummyForInternalAccess
 @end
 
 @interface NSHTTPCookieStorageInternal : NSObject
 - (void)registerForPostingNotificationsWithContext:(NSHTTPCookieStorage *)context;
 @end
 
-@interface WebCookieObserverAdapter : NSObject {
-    WeakPtr<WebCore::CookieStorageObserver> observer;
+@interface WKCookieObserverAdapter : NSObject {
+    WeakPtr<WebKit::CookieStorageObserver> observer;
 }
-- (instancetype)initWithObserver:(WebCore::CookieStorageObserver&)theObserver;
+- (instancetype)initWithObserver:(WebKit::CookieStorageObserver&)theObserver;
 - (void)cookiesChangedNotificationHandler:(NSNotification *)notification;
 
 @end
 
-@implementation WebCookieObserverAdapter
+@implementation WKCookieObserverAdapter
 
-- (instancetype)initWithObserver:(WebCore::CookieStorageObserver&)theObserver
+- (instancetype)initWithObserver:(WebKit::CookieStorageObserver&)theObserver
 {
     self = [super init];
     if (!self)
@@ -77,21 +77,21 @@
 
 @end
 
-namespace WebCore {
+namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieStorageObserver);
 
 CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)
     : m_cookieStorage(cookieStorage)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_cookieStorage);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 }
 
 CookieStorageObserver::~CookieStorageObserver()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (m_cookieChangeCallback) {
         ASSERT(m_observerAdapter);
@@ -101,13 +101,13 @@ CookieStorageObserver::~CookieStorageObserver()
 
 void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(!m_cookieChangeCallback);
     ASSERT(!m_observerAdapter);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     m_cookieChangeCallback = WTF::move(callback);
-    m_observerAdapter = adoptNS([[WebCookieObserverAdapter alloc] initWithObserver:*this]);
+    m_observerAdapter = adoptNS([[WKCookieObserverAdapter alloc] initWithObserver:*this]);
 
     if (!m_hasRegisteredInternalsForNotifications) {
         registerInternalsForNotifications(false);
@@ -120,21 +120,21 @@ void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
 void CookieStorageObserver::registerInternalsForNotifications(bool isReregistering)
 {
     // FIXME: rdar://168454473 (Remove workaround in CookieStorageObserver once CFNetwork bug is resolved)
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     if (isReregistering && !m_hasRegisteredInternalsForNotifications)
         return;
 
     if (m_cookieStorage.get() != [NSHTTPCookieStorage sharedHTTPCookieStorage]) {
-        RetainPtr internalObject = (static_cast<WebNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
+        RetainPtr internalObject = (static_cast<WKNSHTTPCookieStorageDummyForInternalAccess *>(m_cookieStorage.get()))->_internal;
         [internalObject registerForPostingNotificationsWithContext:m_cookieStorage.get()];
     }
 }
 
 void CookieStorageObserver::stopObserving()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_cookieChangeCallback);
     ASSERT(m_observerAdapter);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -147,9 +147,9 @@ void CookieStorageObserver::stopObserving()
 
 void CookieStorageObserver::cookiesDidChange()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (m_cookieChangeCallback)
         m_cookieChangeCallback();
 }
 
-} // namespace WebCore
+} // namespace WebKit

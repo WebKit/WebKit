@@ -27,8 +27,8 @@
 #include "WebCookieCache.h"
 
 #include "NetworkProcessConnection.h"
+#include "NetworkStorageSession.h"
 #include "WebProcess.h"
-#include <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
 

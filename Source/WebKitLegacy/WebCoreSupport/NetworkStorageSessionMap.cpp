@@ -25,7 +25,7 @@
 
 #include "NetworkStorageSessionMap.h"
 
-#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/CookieStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/ProcessID.h>
@@ -33,30 +33,30 @@
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
-static std::unique_ptr<WebCore::NetworkStorageSession>& defaultNetworkStorageSession()
+static std::unique_ptr<WebCore::CookieStorageSession>& defaultNetworkStorageSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<WebCore::NetworkStorageSession>> session;
+    static NeverDestroyed<std::unique_ptr<WebCore::CookieStorageSession>> session;
     return session;
 }
 
-static HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>& NODELETE globalSessionMap()
+static HashMap<PAL::SessionID, std::unique_ptr<WebCore::CookieStorageSession>>& NODELETE globalSessionMap()
 {
-    static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>> map;
+    static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<WebCore::CookieStorageSession>>> map;
     return map;
 }
 
-WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(PAL::SessionID sessionID)
+WebCore::CookieStorageSession* NetworkStorageSessionMap::storageSession(PAL::SessionID sessionID)
 {
     if (sessionID == PAL::SessionID::defaultSessionID())
         return &defaultStorageSession();
     return globalSessionMap().get(sessionID);
 }
 
-WebCore::NetworkStorageSession& NetworkStorageSessionMap::defaultStorageSession()
+WebCore::CookieStorageSession& NetworkStorageSessionMap::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+        defaultNetworkStorageSession() = makeUnique<WebCore::CookieStorageSession>(PAL::SessionID::defaultSessionID());
     return *defaultNetworkStorageSession();
 }
 
@@ -67,13 +67,13 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
     auto session = WebCore::createPrivateStorageSession(makeString("WebKit Test-"_s, getCurrentProcessID()).createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
-    if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
+    if (WebCore::CookieStorageSession::processMayUseCookieAPI()) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
         if (session)
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
     }
 
-    defaultNetworkStorageSession() = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTF::move(session), WTF::move(cookieStorage));
+    defaultNetworkStorageSession() = makeUnique<WebCore::CookieStorageSession>(PAL::SessionID::defaultSessionID(), WTF::move(session), WTF::move(cookieStorage));
 #endif
 }
 
@@ -90,16 +90,16 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     if (sessionID.isEphemeral())
         storageSession = WebCore::createPrivateStorageSession(identifier.get());
     else
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get());
+        storageSession = WebCore::CookieStorageSession::createCFStorageSessionForIdentifier(identifier.get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
-    if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
+    if (WebCore::CookieStorageSession::processMayUseCookieAPI()) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
         if (storageSession)
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     }
 
-    addResult.iterator->value = makeUnique<WebCore::NetworkStorageSession>(sessionID, WTF::move(storageSession), WTF::move(cookieStorage));
+    addResult.iterator->value = makeUnique<WebCore::CookieStorageSession>(sessionID, WTF::move(storageSession), WTF::move(cookieStorage));
 #endif
 }
 

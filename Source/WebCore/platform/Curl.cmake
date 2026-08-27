@@ -6,7 +6,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/AuthenticationChallengeCurl.cpp
     platform/network/curl/CertificateInfoCurl.cpp
     platform/network/curl/CookieJarDB.cpp
-    platform/network/curl/CookieStorageCurl.cpp
     platform/network/curl/CookieUtil.cpp
     platform/network/curl/CurlContext.cpp
     platform/network/curl/CurlFormDataStream.cpp
@@ -19,7 +18,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlStream.cpp
     platform/network/curl/CurlStreamScheduler.cpp
     platform/network/curl/DNSResolveQueueCurl.cpp
-    platform/network/curl/NetworkStorageSessionCurl.cpp
     platform/network/curl/OpenSSLHelper.cpp
     platform/network/curl/ProtectionSpaceCurl.cpp
     platform/network/curl/PublicSuffixStoreCurl.cpp

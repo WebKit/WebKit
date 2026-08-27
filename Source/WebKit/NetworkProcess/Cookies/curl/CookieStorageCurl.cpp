@@ -28,9 +28,9 @@
 
 #if USE(CURL)
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
-namespace WebCore {
+namespace WebKit {
 
 void startObservingCookieChanges(NetworkStorageSession&, Function<void()>&&)
 {
@@ -42,6 +42,6 @@ void stopObservingCookieChanges(NetworkStorageSession&)
     notImplemented();
 }
 
-}
+} // namespace WebKit
 
 #endif

@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkContentRuleListManager.h"
+#include "NetworkStorageSession.h"
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "SecurityFlags.h"
 #include "SharedPreferencesForWebProcess.h"
@@ -91,7 +92,6 @@ namespace WebCore {
 class CertificateInfo;
 class CurlProxySettings;
 class ProtectionSpace;
-class NetworkStorageSession;
 struct NotificationData;
 class ResourceError;
 class UserContentURLPattern;
@@ -210,9 +210,9 @@ public:
 
     void forEachNetworkSession(NOESCAPE const Function<void(NetworkSession&)>&);
 
-    void forEachNetworkStorageSession(NOESCAPE const Function<void(WebCore::NetworkStorageSession&)>&);
-    WebCore::NetworkStorageSession* NODELETE storageSession(PAL::SessionID) const;
-    std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(PAL::SessionID);
+    void forEachNetworkStorageSession(NOESCAPE const Function<void(NetworkStorageSession&)>&);
+    NetworkStorageSession* NODELETE storageSession(PAL::SessionID) const;
+    std::unique_ptr<NetworkStorageSession> newTestingSession(PAL::SessionID);
     void addStorageSession(PAL::SessionID, const WebsiteDataStoreParameters&);
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
@@ -655,7 +655,7 @@ private:
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
-    HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
+    HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>> m_networkStorageSessions;
     HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };

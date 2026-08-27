@@ -29,11 +29,11 @@
 
 namespace WebCore {
 
-class NetworkStorageSession;
+class CookieStorageSession;
 
 class StorageSessionProvider : public ThreadSafeRefCounted<StorageSessionProvider> {
 public:
-    virtual NetworkStorageSession* storageSession() const = 0;
+    virtual CookieStorageSession* storageSession() const = 0;
 
     virtual ~StorageSessionProvider() { }
 };

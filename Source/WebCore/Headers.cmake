@@ -2947,8 +2947,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/BlobResourceHandleBase.h
     platform/network/CacheValidation.h
     platform/network/CertificateSummary.h
+    platform/network/CookieChangeObserver.h
     platform/network/CookieRequestHeaderFieldProxy.h
-    platform/network/CookieStorage.h
+    platform/network/CookieStorageSession.h
     platform/network/Credential.h
     platform/network/CredentialBase.h
     platform/network/CredentialStorage.h
@@ -2965,7 +2966,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkLoadInformation.h
     platform/network/NetworkLoadMetrics.h
     platform/network/NetworkStateNotifier.h
-    platform/network/NetworkStorageSession.h
     platform/network/NetworkingContext.h
     platform/network/OrganizationStorageAccessPromptQuirk.h
     platform/network/ParsedContentRange.h
@@ -2986,9 +2986,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/ShouldPartitionCookie.h
     platform/network/ShouldRelaxThirdPartyCookieBlocking.h
     platform/network/SocketStreamError.h
+    platform/network/StorageAccessQuirks.h
     platform/network/StorageSessionProvider.h
     platform/network/StoredCredentialsPolicy.h
+    platform/network/ThirdPartyCookieBlockingMode.h
     platform/network/TimingAllowOrigin.h
+    platform/network/TrackingPreventionTypes.h
 
     platform/sql/SQLValue.h
     platform/sql/SQLiteDatabase.h

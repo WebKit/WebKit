@@ -30,6 +30,7 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkNotificationManager.h"
 #include "NetworkResourceLoadIdentifier.h"
+#include "NetworkStorageSession.h"
 #include "PrefetchCache.h"
 #include "PrivateClickMeasurementManagerInterface.h"
 #include "SandboxExtension.h"
@@ -39,7 +40,6 @@
 #include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/DNS.h>
 #include <WebCore/FetchIdentifier.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SWServerDelegate.h>
@@ -60,7 +60,6 @@
 
 namespace WebCore {
 class CertificateInfo;
-class NetworkStorageSession;
 class ResourceMonitorThrottlerHolder;
 class ResourceRequest;
 class ResourceError;
@@ -134,7 +133,7 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkProcess& networkProcess() { return m_networkProcess; }
-    WebCore::NetworkStorageSession* NODELETE networkStorageSession() const;
+    NetworkStorageSession* NODELETE networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);
     void unregisterNetworkDataTask(NetworkDataTask&);

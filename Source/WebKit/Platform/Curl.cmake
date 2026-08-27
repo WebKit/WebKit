@@ -1,4 +1,5 @@
 list(APPEND WebKit_SOURCES
+    NetworkProcess/Cookies/curl/CookieStorageCurl.cpp
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
     NetworkProcess/cache/NetworkCacheDataCurl.cpp
@@ -8,6 +9,7 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/curl/NetworkProcessCurl.cpp
     NetworkProcess/curl/NetworkProcessMainCurl.cpp
     NetworkProcess/curl/NetworkSessionCurl.cpp
+    NetworkProcess/curl/NetworkStorageSessionCurl.cpp
     NetworkProcess/curl/WebSocketTaskCurl.cpp
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp

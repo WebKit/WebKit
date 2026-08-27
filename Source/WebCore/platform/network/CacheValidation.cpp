@@ -28,7 +28,6 @@
 
 #include "CookieJar.h"
 #include "HTTPHeaderMap.h"
-#include "NetworkStorageSession.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -392,13 +391,6 @@ static String encodeCookieHeaderDigestForVary(const std::optional<SHA1::Digest>&
     return base64EncodeToString(*digest);
 }
 
-// Each helper is used on both sides of its own collect/verify pair, so the two need not agree.
-static String cookieRequestHeaderFieldValueForVary(const NetworkStorageSession& session, const ResourceRequest& request)
-{
-    auto cookieHeader = session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, CookieJar::shouldIncludeSecureCookies(request.url()), ApplyTrackingPrevention::Yes, ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No).first;
-    return encodeCookieHeaderDigestForVary(computeCookieHeaderDigestForVary(cookieHeader));
-}
-
 static String cookieRequestHeaderFieldValueForVary(const CookieJar* cookieJar, const ResourceRequest& request)
 {
     if (!cookieJar)
@@ -432,17 +424,6 @@ static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(co
     return headers;
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)
-{
-    if (!storageSession)
-        return { };
-    return collectVaryingRequestHeadersInternal(response, [&] (StringView headerName) {
-        return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValueForVary(*storageSession, request);
-        });
-    });
-}
-
 Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* cookieJar, const ResourceRequest& request, const ResourceResponse& response)
 {
     return collectVaryingRequestHeadersInternal(response, [&] (StringView headerName) {
@@ -462,17 +443,6 @@ static bool verifyVaryingRequestHeadersInternal(const Vector<std::pair<String, S
             return false;
     }
     return true;
-}
-
-bool verifyVaryingRequestHeaders(NetworkStorageSession* storageSession, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
-{
-    if (!storageSession)
-        return false;
-    return verifyVaryingRequestHeadersInternal(varyingRequestHeaders, [&] (const String& headerName) {
-        return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValueForVary(*storageSession, request);
-        });
-    });
 }
 
 bool verifyVaryingRequestHeaders(const CookieJar* cookieJar, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)

@@ -3551,6 +3551,7 @@ enum class WebCore::PrivacyStance : uint8_t {
     FailedUnreachable,
 };
 
+header: <WebCore/ThirdPartyCookieBlockingMode.h>
 enum class WebCore::ThirdPartyCookieBlockingMode : uint8_t {
     All,
     AllExceptBetweenAppBoundDomains,
@@ -3562,6 +3563,7 @@ enum class WebCore::ThirdPartyCookieBlockingMode : uint8_t {
     OnlyAccordingToPerDomainPolicy
 };
 
+header: <WebCore/TrackingPreventionTypes.h>
 enum class WebCore::FirstPartyWebsiteDataRemovalMode : uint8_t {
     AllButCookies,
     None,

@@ -29,7 +29,7 @@
 
 #include "SocketStreamHandleClient.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
-#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/CookieStorageSession.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <wtf/Function.h>
 
@@ -78,12 +78,12 @@ static std::span<const uint8_t> NODELETE removeTerminationCharacters(std::span<c
     return data.first(data.size() - 2);
 }
 
-static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const NetworkStorageSession* networkStorageSession, const CookieRequestHeaderFieldProxy& headerFieldProxy)
+static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const CookieStorageSession* networkStorageSession, const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
     if (!networkStorageSession)
         return std::nullopt;
     
-    auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy);
+    auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy, ThirdPartyCookieBlockingDecision::None, String { });
     if (cookieDataString.isEmpty())
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 

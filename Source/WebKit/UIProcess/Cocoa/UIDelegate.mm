@@ -71,6 +71,7 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/StorageAccessQuirks.h>
 #import <WebCore/XRGPUProjectionLayerInit.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -516,7 +517,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
     }
 
     // Some sites have quirks where multiple login domains require storage access.
-    auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain);
+    auto additionalLoginDomain = WebCore::findAdditionalLoginDomain(currentDomain, requestingDomain);
 
     if (organizationStorageAccessPromptQuirk || additionalLoginDomain) {
         if (uiDelegate->m_delegateMethods.webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler) {

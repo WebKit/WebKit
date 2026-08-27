@@ -26,15 +26,15 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
+#include "CookieStorage.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
+#include "NetworkStorageSession.h"
 #include "WebCookieManagerMessages.h"
 #include <WebCore/Cookie.h>
-#include <WebCore/CookieStorage.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -152,7 +152,7 @@ void WebCookieManager::notifyCookiesDidChange(PAL::SessionID sessionID)
 void WebCookieManager::startObservingCookieChanges(PAL::SessionID sessionID)
 {
     if (CheckedPtr storageSession = m_process->storageSession(sessionID)) {
-        WebCore::startObservingCookieChanges(*storageSession, [weakThis = WeakPtr { *this }, sessionID] {
+        WebKit::startObservingCookieChanges(*storageSession, [weakThis = WeakPtr { *this }, sessionID] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->notifyCookiesDidChange(sessionID);
         });
@@ -162,7 +162,7 @@ void WebCookieManager::startObservingCookieChanges(PAL::SessionID sessionID)
 void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 {
     if (CheckedPtr storageSession = m_process->storageSession(sessionID))
-        WebCore::stopObservingCookieChanges(*storageSession);
+        WebKit::stopObservingCookieChanges(*storageSession);
 }
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(PAL::SessionID sessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)

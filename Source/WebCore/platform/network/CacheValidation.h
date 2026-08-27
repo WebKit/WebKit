@@ -35,7 +35,6 @@ namespace WebCore {
 
 class CookieJar;
 class HTTPHeaderMap;
-class NetworkStorageSession;
 class ResourceRequest;
 class ResourceResponse;
 struct ResourceLoaderOptions;
@@ -87,9 +86,7 @@ WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHead
 // std::nullopt means there was no Cookie header, which is distinct from an empty one.
 WEBCORE_EXPORT std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(const String& cookieHeader, uint64_t salt = 0);
 
-WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession*, const ResourceRequest&, const ResourceResponse&);
 WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar*, const ResourceRequest&, const ResourceResponse&);
-WEBCORE_EXPORT bool verifyVaryingRequestHeaders(NetworkStorageSession*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
 WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const CookieJar*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
 
 WEBCORE_EXPORT bool NODELETE isStatusCodeCacheableByDefault(int statusCode);

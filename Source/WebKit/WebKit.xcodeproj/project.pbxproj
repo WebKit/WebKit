@@ -1786,6 +1786,10 @@
 		7E70A07B501701FB501FB516 /* GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E70A07B501701FB501FB517 /* GeneratedSerializersSharedWebCoreArgumentCodersPayment.mm */; };
 		7E70A07B501701FB501FB518 /* GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E70A07B501701FB501FB519 /* GeneratedSerializersSharedWebCoreArgumentCodersStorage.mm */; };
 		7EB6760501701FB501FB7E05 /* GeneratedSerializersSharedWebGPU.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7EB6760501701FB501FB7E06 /* GeneratedSerializersSharedWebGPU.mm */; };
+		5CB1C0021234567890ABCDEF /* NetworkCacheValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB1C0011234567890ABCDEF /* NetworkCacheValidation.h */; };
+		5CB1C0051234567890ABCDEF /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB1C0041234567890ABCDEF /* CookieStorage.h */; };
+		5CD1E0071234567890ABCDEF /* CookieStorageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD1E0061234567890ABCDEF /* CookieStorageObserver.h */; };
+		5CD1E0021234567890ABCDEF /* NetworkStorageSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD1E0011234567890ABCDEF /* NetworkStorageSession.h */; };
 		8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */; };
 		8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8313F7E91F7DAE0300B944EB /* SharedStringHashStore.h */; };
 		8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */; };
@@ -7315,6 +7319,15 @@
 		7EB6760501701FB501FB7E06 /* GeneratedSerializersSharedWebGPU.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersSharedWebGPU.mm; sourceTree = "<group>"; };
 		7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessCocoa.mm; sourceTree = "<group>"; };
 		816C18758ACB9F66D87FBE39 /* WKImmersiveEnvironmentInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKImmersiveEnvironmentInternal.h; sourceTree = "<group>"; };
+		5CB1C0011234567890ABCDEF /* NetworkCacheValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheValidation.h; sourceTree = "<group>"; };
+		5CB1C0031234567890ABCDEF /* NetworkCacheValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheValidation.cpp; sourceTree = "<group>"; };
+		5CB1C0041234567890ABCDEF /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
+		5CB1C0061234567890ABCDEF /* CookieStorageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageCocoa.mm; sourceTree = "<group>"; };
+		5CD1E0061234567890ABCDEF /* CookieStorageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorageObserver.h; sourceTree = "<group>"; };
+		5CD1E0081234567890ABCDEF /* CookieStorageObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageObserver.mm; sourceTree = "<group>"; };
+		5CD1E0011234567890ABCDEF /* NetworkStorageSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageSession.h; sourceTree = "<group>"; };
+		5CD1E0031234567890ABCDEF /* NetworkStorageSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageSession.cpp; sourceTree = "<group>"; };
+		5CD1E0051234567890ABCDEF /* NetworkStorageSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStorageSessionCocoa.mm; sourceTree = "<group>"; };
 		831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSubresourcesEntry.h; sourceTree = "<group>"; };
 		8310428A1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSubresourcesEntry.cpp; sourceTree = "<group>"; };
 		8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedStringHashTable.h; sourceTree = "<group>"; };
@@ -10508,6 +10521,8 @@
 				86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */,
 				86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */,
 				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,
+				5CD1E0031234567890ABCDEF /* NetworkStorageSession.cpp */,
+				5CD1E0011234567890ABCDEF /* NetworkStorageSession.h */,
 				FA45FA392E4545E500057B45 /* NodeHitTestResult.h */,
 				FA45FA3B2E45462200057B45 /* NodeHitTestResult.serialization.in */,
 				8657EE3928EDB8C500FF9B40 /* Pasteboard.serialization.in */,
@@ -12775,7 +12790,9 @@
 		3309344B1315B93A0097A7BC /* Cookies */ = {
 			isa = PBXGroup;
 			children = (
+				5CB1C0071234567890ABCDEF /* cocoa */,
 				F638955A133BF57D008941D5 /* mac */,
+				5CB1C0041234567890ABCDEF /* CookieStorage.h */,
 				3309344C1315B94D0097A7BC /* WebCookieManager.cpp */,
 				3309344D1315B94D0097A7BC /* WebCookieManager.h */,
 				3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */,
@@ -15273,6 +15290,7 @@
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
 				FA5AAE992E6A217A00FE693D /* NetworkSoftLink.h */,
 				FA5AAE9A2E6A217A00FE693D /* NetworkSoftLink.mm */,
+				5CD1E0051234567890ABCDEF /* NetworkStorageSessionCocoa.mm */,
 				D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */,
 				D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */,
 				FA745C47302EA40D007231F3 /* SecuritySoftLink.h */,
@@ -17798,6 +17816,8 @@
 				E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */,
 				8310428A1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp */,
 				831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */,
+				5CB1C0031234567890ABCDEF /* NetworkCacheValidation.cpp */,
+				5CB1C0011234567890ABCDEF /* NetworkCacheValidation.h */,
 				AAB145E5223F931200E489D8 /* PrefetchCache.cpp */,
 				AAB145E4223F931200E489D8 /* PrefetchCache.h */,
 			);
@@ -17882,6 +17902,16 @@
 				E88885662DC914C400C572B8 /* WKISO18013Request.h */,
 			);
 			path = IdentityDocumentServices;
+			sourceTree = "<group>";
+		};
+		5CB1C0071234567890ABCDEF /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5CB1C0061234567890ABCDEF /* CookieStorageCocoa.mm */,
+				5CD1E0061234567890ABCDEF /* CookieStorageObserver.h */,
+				5CD1E0081234567890ABCDEF /* CookieStorageObserver.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		F638955A133BF57D008941D5 /* mac */ = {
@@ -18347,6 +18377,8 @@
 				CA05397923EE324400A553DC /* ContentAsStringIncludesChildFrames.h in Headers */,
 				5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */,
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
+				5CB1C0051234567890ABCDEF /* CookieStorage.h in Headers */,
+				5CD1E0071234567890ABCDEF /* CookieStorageObserver.h in Headers */,
 				5197FAEB2AFD33CF009180C5 /* CoreIPCArray.h in Headers */,
 				FA39AE682B23972B008F93CD /* CoreIPCAuditToken.h in Headers */,
 				F4B24AA82D5ED4DE00725993 /* CoreIPCAVOutputContext.h in Headers */,
@@ -18676,6 +18708,7 @@
 				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */,
 				E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */,
 				8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */,
+				5CB1C0021234567890ABCDEF /* NetworkCacheValidation.h in Headers */,
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,
 				51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */,
 				46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */,
@@ -18711,6 +18744,7 @@
 				FA5AAE9B2E6A217A00FE693D /* NetworkSoftLink.h in Headers */,
 				93085DE026E5BCFD000EC6A7 /* NetworkStorageManager.h in Headers */,
 				93085DE126E5BD13000EC6A7 /* NetworkStorageManagerMessages.h in Headers */,
+				5CD1E0021234567890ABCDEF /* NetworkStorageSession.h in Headers */,
 				D2E2FE6E29C8C30D00023E6B /* NetworkTaskCocoa.h in Headers */,
 				570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */,
 				570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */,

@@ -86,7 +86,6 @@
 #include "NavigationRequester.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
-#include "NetworkStorageSession.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "Performance.h"
@@ -103,6 +102,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
+#include "StorageAccessQuirks.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
@@ -950,7 +950,7 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
         Ref document = *frame->document();
         if (Quirks::isMicrosoftTeamsRedirectURL(response.url())) {
             auto firstPartyDomain = RegistrableDomain(response.url());
-            if (auto loginDomains = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain)) {
+            if (auto loginDomains = subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain)) {
                 if (!Quirks::hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
                     protect(frame->navigationScheduler())->scheduleRedirect(document, 0, microsoftTeamsRedirectURL(), IsMetaRefresh::No);
                     completionHandler();

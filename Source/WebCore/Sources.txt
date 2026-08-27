@@ -2939,6 +2939,7 @@ platform/network/BlobResourceHandle.cpp
 platform/network/BlobResourceHandleBase.cpp
 platform/network/CacheValidation.cpp
 platform/network/Cookie.cpp
+platform/network/CookieStorageSession.cpp
 platform/network/CredentialBase.cpp
 platform/network/CredentialStorage.cpp
 platform/network/DNS.cpp
@@ -2952,7 +2953,6 @@ platform/network/HTTPParsers.cpp
 platform/network/MIMEHeader.cpp
 platform/network/NetworkLoadMetrics.cpp
 platform/network/NetworkStateNotifier.cpp
-platform/network/NetworkStorageSession.cpp
 platform/network/ParsedContentRange.cpp
 platform/network/ParsedContentType.cpp
 platform/network/PendingStreamState.cpp
@@ -2965,6 +2965,7 @@ platform/network/ResourceHandleClient.cpp
 platform/network/ResourceRequestBase.cpp
 platform/network/ResourceResponseBase.cpp
 platform/network/SameSiteInfo.cpp
+platform/network/StorageAccessQuirks.cpp
 platform/network/SynchronousLoaderClient.cpp
 platform/network/TimingAllowOrigin.cpp
 platform/sql/SQLiteAuthorizer.cpp

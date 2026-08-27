@@ -29,11 +29,11 @@
 #include "AuthenticationManager.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionCreationParameters.h"
+#include "NetworkStorageSession.h"
 #include "WebCookieManager.h"
 #include "WebSocketTaskCurl.h"
 #include <WebCore/CookieJarDB.h>
 #include <WebCore/CurlContext.h>
-#include <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
 

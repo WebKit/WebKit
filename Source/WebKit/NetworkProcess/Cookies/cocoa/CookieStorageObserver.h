@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,39 @@
 
 #pragma once
 
+#include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
-namespace WebCore {
+OBJC_CLASS NSHTTPCookieStorage;
+OBJC_CLASS WKCookieObserverAdapter;
 
-class NetworkStorageSession;
+namespace WebKit {
 
-WEBCORE_EXPORT void startObservingCookieChanges(NetworkStorageSession&, Function<void()>&&);
-WEBCORE_EXPORT void stopObservingCookieChanges(NetworkStorageSession&);
+// Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on a non-main thread.
+class CookieStorageObserver final : public CanMakeWeakPtr<CookieStorageObserver, WeakPtrFactoryInitialization::Eager>, public CanMakeCheckedPtr<CookieStorageObserver> {
+    WTF_MAKE_TZONE_ALLOCATED(CookieStorageObserver);
+    WTF_MAKE_NONCOPYABLE(CookieStorageObserver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CookieStorageObserver);
+public:
+    explicit CookieStorageObserver(NSHTTPCookieStorage *);
+    ~CookieStorageObserver();
 
-}
+    void startObserving(Function<void()>&& callback);
+    void stopObserving();
 
+    void cookiesDidChange();
+
+    void registerInternalsForNotifications(bool isReregistering);
+
+private:
+    RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
+    bool m_hasRegisteredInternalsForNotifications { false };
+    RetainPtr<WKCookieObserverAdapter> m_observerAdapter;
+    Function<void()> m_cookieChangeCallback;
+};
+
+} // namespace WebKit

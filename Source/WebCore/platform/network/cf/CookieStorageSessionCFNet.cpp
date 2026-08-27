@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,15 @@
  */
 
 #include "config.h"
-#include "NetworkStorageSession.h"
+#include "CookieStorageSession.h"
 
-#include "PublicSuffixStore.h"
-#include "ResourceRequest.h"
-#include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
 namespace WebCore {
 
-RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionForIdentifier(CFStringRef identifier, ShouldDisableCFURLCache shouldDisableCFURLCache)
+RetainPtr<CFURLStorageSessionRef> CookieStorageSession::createCFStorageSessionForIdentifier(CFStringRef identifier, ShouldDisableCFURLCache shouldDisableCFURLCache)
 {
-    auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, nullptr));
+    RetainPtr<CFURLStorageSessionRef> storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, nullptr));
 
     if (!storageSession)
         return nullptr;
@@ -46,22 +41,22 @@ RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionF
         _CFURLStorageSessionDisableCache(storageSession.get());
 
     if (shouldDisableCFURLCache == ShouldDisableCFURLCache::No) {
-        auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
+        RetainPtr<CFURLCacheRef> cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
         if (!cache)
             return nullptr;
 
         CFURLCacheSetDiskCapacity(cache.get(), 0);
 
-        auto sharedCache = adoptCF(CFURLCacheCopySharedURLCache());
+        RetainPtr<CFURLCacheRef> sharedCache = adoptCF(CFURLCacheCopySharedURLCache());
         CFURLCacheSetMemoryCapacity(cache.get(), CFURLCacheMemoryCapacity(sharedCache.get()));
     }
 
-    if (!NetworkStorageSession::processMayUseCookieAPI())
+    if (!processMayUseCookieAPI())
         return storageSession;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     if (!cookieStorage)
         return nullptr;
 
@@ -72,7 +67,7 @@ RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionF
     return storageSession;
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage, IsInMemoryCookieStore isInMemoryCookieStore)
+CookieStorageSession::CookieStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage, IsInMemoryCookieStore isInMemoryCookieStore)
     : m_sessionID(sessionID)
     , m_isInMemoryCookieStore(isInMemoryCookieStore == IsInMemoryCookieStore::Yes)
     , m_platformSession(WTF::move(platformSession))
@@ -81,12 +76,7 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr
     m_platformCookieStorage = platformCookieStorage ? WTF::move(platformCookieStorage) : cookieStorage();
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
-    : m_sessionID(sessionID)
-{
-}
-
-RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
+RetainPtr<CFHTTPCookieStorageRef> CookieStorageSession::cookieStorage() const
 {
     if (!processMayUseCookieAPI() && !m_isInMemoryCookieStore)
         return nullptr;

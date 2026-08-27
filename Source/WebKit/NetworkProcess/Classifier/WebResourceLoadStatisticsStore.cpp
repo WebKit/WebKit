@@ -32,6 +32,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
+#include "NetworkStorageSession.h"
 #include "PrivateClickMeasurementManager.h"
 #include "ResourceLoadStatisticsStore.h"
 #include "ShouldGrandfatherStatistics.h"
@@ -48,12 +49,12 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/IsLoggedIn.h>
 #include <WebCore/LoginStatus.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
@@ -366,8 +367,8 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(RegistrableDomain&& subFra
 
     CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction { CanRequestStorageAccessWithoutUserInteraction::No };
     if (CheckedPtr networkSession = m_networkSession.get()) {
-        if (CheckedPtr storageSession = networkSession->networkStorageSession())
-            canRequestStorageAccessWithoutUserInteraction = storageSession->canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
+        if (networkSession->networkStorageSession())
+            canRequestStorageAccessWithoutUserInteraction = WebCore::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
     }
 
     postTask([subFrameDomain = WTF::move(subFrameDomain).isolatedCopy(), topFrameDomain = WTF::move(topFrameDomain).isolatedCopy(), frameID, pageID, canRequestStorageAccessWithoutUserInteraction, completionHandler = WTF::move(completionHandler)](auto& store) mutable {
@@ -444,9 +445,9 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
     CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction { CanRequestStorageAccessWithoutUserInteraction::No };
     std::optional<OrganizationStorageAccessPromptQuirk> storageAccessQuirk;
     if (CheckedPtr networkSession = m_networkSession.get()) {
-        if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
-            canRequestStorageAccessWithoutUserInteraction = storageSession->canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
-            storageAccessQuirk = storageSession->storageAccessQuirkForDomainPair(topFrameDomain, subFrameDomain);
+        if (networkSession->networkStorageSession()) {
+            canRequestStorageAccessWithoutUserInteraction = WebCore::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
+            storageAccessQuirk = WebCore::storageAccessQuirkForDomainPair(topFrameDomain, subFrameDomain);
         }
     }
     
@@ -595,8 +596,8 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(Registrable
 
     CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction { CanRequestStorageAccessWithoutUserInteraction::No };
     if (CheckedPtr networkSession = m_networkSession.get()) {
-        if (CheckedPtr storageSession = networkSession->networkStorageSession())
-            canRequestStorageAccessWithoutUserInteraction = storageSession->canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(domainInNeedOfStorageAccess, openerDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
+        if (networkSession->networkStorageSession())
+            canRequestStorageAccessWithoutUserInteraction = WebCore::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(domainInNeedOfStorageAccess, openerDomain) ? CanRequestStorageAccessWithoutUserInteraction::Yes : CanRequestStorageAccessWithoutUserInteraction::No;
     }
 
     // It is safe to move the strings to the background queue without isolated copy here because they are r-value references
@@ -1442,7 +1443,7 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
         HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
         for (auto& [firstPartyDomain, requestingDomains] : domainsToBlock.domainsWithStorageAccess) {
             for (auto& requestingDomain : requestingDomains) {
-                if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
+                if (WebCore::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
                     domainsWithStorageAccessQuirk.add(firstPartyDomain, Vector<SubResourceDomain> { }).iterator->value.append(requestingDomain);
             }
         }

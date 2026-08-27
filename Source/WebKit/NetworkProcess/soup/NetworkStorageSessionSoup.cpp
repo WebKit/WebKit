@@ -31,13 +31,13 @@
 
 #if USE(SOUP)
 
-#include "Cookie.h"
-#include "CookieRequestHeaderFieldProxy.h"
-#include "CookieStoreGetOptions.h"
-#include "GUniquePtrSoup.h"
-#include "HTTPCookieAcceptPolicy.h"
-#include "SoupNetworkSession.h"
-#include "URLSoup.h"
+#include <WebCore/Cookie.h>
+#include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/CookieStoreGetOptions.h>
+#include <WebCore/GUniquePtrSoup.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <WebCore/SoupNetworkSession.h>
+#include <WebCore/URLSoup.h>
 #include <libsoup/soup.h>
 #include <optional>
 #include <wtf/DateMath.h>
@@ -58,7 +58,8 @@ WTF_DEFINE_GREF_TRAITS_INLINE(SecretValue, secret_value_ref, secret_value_unref)
 }
 #endif
 
-namespace WebCore {
+namespace WebKit {
+using namespace WebCore;
 
 enum class ForHTTPHeader : bool { No, Yes };
 
@@ -70,8 +71,7 @@ struct Deleter {
 using CookieList = std::unique_ptr<GSList, Deleter<GSList, soup_cookies_free>>;
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, IsInMemoryCookieStore isInMemoryCookieStore)
-    : m_sessionID(sessionID)
-    , m_isInMemoryCookieStore(isInMemoryCookieStore == IsInMemoryCookieStore::Yes)
+    : WebCore::CookieStorageSession(sessionID, isInMemoryCookieStore)
     , m_cookieAcceptPolicy(HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
     , m_cookieStorage(adoptGRef(soup_cookie_jar_new()))
 {
@@ -150,7 +150,7 @@ void NetworkStorageSession::cookiesDidChange(NetworkStorageSession* session, Sou
 
 void NetworkStorageSession::setCookieStorage(GRefPtr<SoupCookieJar>&& jar)
 {
-    ASSERT(!m_isInMemoryCookieStore);
+    ASSERT(!isInMemoryCookieStore());
 
     g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(m_cookieStorage.get()));
@@ -241,10 +241,10 @@ struct SecretServiceSearchData {
 
 void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionSpace& protectionSpace, GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
 {
-    ASSERT(!m_isInMemoryCookieStore);
+    ASSERT(!isInMemoryCookieStore());
 
 #if USE(LIBSECRET)
-    if (m_sessionID.isEphemeral()) {
+    if (sessionID().isEphemeral()) {
         completionHandler({ });
         return;
     }
@@ -302,10 +302,10 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
 
 void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSpace& protectionSpace, const Credential& credential)
 {
-    ASSERT(!m_isInMemoryCookieStore);
+    ASSERT(!isInMemoryCookieStore());
 
 #if USE(LIBSECRET)
-    if (m_sessionID.isEphemeral())
+    if (sessionID().isEphemeral())
         return;
 
     if (credential.isEmpty())
@@ -391,12 +391,11 @@ void NetworkStorageSession::setTrackingPreventionEnabled(bool enabled)
     }
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name, const gchar* path)
 {
     for (const GSList* iter = cookies; iter; iter = g_slist_next(iter)) {
         SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
-        if (!strcmp(soup_cookie_get_name(cookie), name) 
+        if (!g_strcmp0(soup_cookie_get_name(cookie), name)
             && !g_strcmp0(soup_cookie_get_path(cookie), path)) {
             if (soup_cookie_get_http_only(cookie))
                 return true;
@@ -405,7 +404,6 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
     }
     return false;
 }
-IGNORE_CLANG_WARNINGS_END
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, const String& value, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
@@ -513,7 +511,7 @@ void NetworkStorageSession::setCookie(const Cookie& cookie, const URL&, const UR
 
 void NetworkStorageSession::replaceCookies(const Vector<Cookie>& cookies)
 {
-    ASSERT(!m_isInMemoryCookieStore);
+    ASSERT(!isInMemoryCookieStore());
 
     SoupCookieJar* jar = cookieStorage();
 
@@ -895,6 +893,6 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
 }
 #endif
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(SOUP)

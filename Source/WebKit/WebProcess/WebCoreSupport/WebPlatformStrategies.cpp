@@ -52,7 +52,6 @@
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/MediaStrategy.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PagePasteboardContext.h>

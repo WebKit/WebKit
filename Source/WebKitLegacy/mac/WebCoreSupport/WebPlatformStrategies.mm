@@ -34,7 +34,6 @@
 #import <WebCore/Color.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MediaStrategy.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformPasteboard.h>

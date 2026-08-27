@@ -41,11 +41,11 @@
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
 #include <WebCore/Timer.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <pal/HysteresisActivity.h>

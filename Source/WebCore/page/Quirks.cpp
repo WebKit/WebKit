@@ -64,7 +64,6 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MouseEvent.h"
-#include "NetworkStorageSession.h"
 #include "NodeRenderStyle.h"
 #include "OrganizationStorageAccessPromptQuirk.h"
 #include "Page.h"
@@ -83,6 +82,7 @@
 #include "Settings.h"
 #include "SpaceSplitString.h"
 #include "StaticNodeList.h"
+#include "StorageAccessQuirks.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TrustedFonts.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -1398,7 +1398,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 {
     RefPtr document = m_document.get();
     auto firstPartyDomain = RegistrableDomain(topDocumentURL());
-    auto domainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
+    auto domainsInNeedOfStorageAccess = subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
         completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;

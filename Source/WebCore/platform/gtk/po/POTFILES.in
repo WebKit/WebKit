@@ -1,9 +1,9 @@
 # List of source files which contain translatable strings.
 LocalizedStringsGtk.cpp
 ../LocalizedStrings.cpp
-../network/soup/NetworkStorageSessionSoup.cpp
 ../../editing/EditAction.cpp
 ../../../JavaScriptCore/API/glib/JSCOptions.cpp
+../../../WebKit/NetworkProcess/soup/NetworkStorageSessionSoup.cpp
 ../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp
 ../../../WebKit/Shared/WebErrors.cpp
 ../../../WebKit/Shared/gtk/WebErrorsGtk.cpp

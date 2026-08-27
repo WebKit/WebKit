@@ -207,6 +207,7 @@ NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp @cost:3
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp @cost:4
 NetworkProcess/cache/NetworkCacheStorage.cpp
 NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp
+NetworkProcess/cache/NetworkCacheValidation.cpp
 NetworkProcess/cache/PrefetchCache.cpp
 
 NetworkProcess/webrtc/NetworkMDNSRegister.cpp @cost:4
@@ -235,6 +236,7 @@ Shared/IPCTesterReceiver.cpp
 Shared/JavaScriptEvaluationResult.cpp
 Shared/JSHandleInfo.cpp
 Shared/KeyEventInterpretationContext.cpp
+Shared/NetworkStorageSession.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
