@@ -200,7 +200,7 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
     });
 }
 
-JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
+JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, const String& referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
 {
     JSC::VM& vm = jsGlobalObject->vm();
 
@@ -229,6 +229,16 @@ JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, J
         return jsPromise;
     }
 
+    // The referrer is the referring script's base URL, the same URL resolve() resolved the specifier
+    // against: a descendant fetch is handed the importing module's key, which the map turns into its
+    // response URL, while import() is handed its calling script's base URL, already a response URL and
+    // not a key in the map, so it comes back unchanged. An empty referrer means the referring script has
+    // no URL of its own (an inline module), and a null one that there is no referring script at all — a
+    // script element or worker top-level fetch — which uses the fetch client's referrer.
+    URL referrerURL;
+    if (!referrer.isNull())
+        referrerURL = referrer.isEmpty() ? baseURLForScriptWithoutURL() : responseURLFromRequestURL(referrer);
+
     if (m_ownerType == OwnerType::Document) {
         Ref loader = CachedModuleScriptLoader::create(*this, deferred.get(), *downcast<CachedScriptFetcher>(scriptFetcher.get()), WTF::move(parameters));
         m_loaders.add(loader.copyRef());
@@ -236,7 +246,7 @@ JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, J
         // Prevent non-normal worlds from loading with a service worker.
         auto serviceWorkersMode = currentWorld(*jsGlobalObject).isNormal() ? ServiceWorkersMode::All : ServiceWorkersMode::None;
 
-        if (!loader->load(protect(downcast<Document>(*m_context)), WTF::move(completedURL), serviceWorkersMode)) {
+        if (!loader->load(protect(downcast<Document>(*m_context)), WTF::move(completedURL), serviceWorkersMode, referrerURL)) {
             loader->clearClient();
             m_loaders.remove(WTF::move(loader));
             rejectToPropagateNetworkError(*protect(m_context), WTF::move(deferred), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
@@ -245,7 +255,7 @@ JSC::JSPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, J
     } else {
         Ref loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *downcast<WorkerScriptFetcher>(scriptFetcher.get()), WTF::move(parameters));
         m_loaders.add(loader.copyRef());
-        loader->load(*protect(m_context), WTF::move(completedURL));
+        loader->load(*protect(m_context), WTF::move(completedURL), referrerURL);
     }
 
     return jsPromise;
@@ -265,18 +275,27 @@ URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalO
     JSC::VM& vm = jsGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (isRootModule(moduleKeyValue)) {
-        if (!m_context)
-            return URL();
-        if (m_ownerType == OwnerType::Document)
-            return downcast<Document>(*m_context).baseURL();
-        return protect(m_context)->url();
-    }
+    if (isRootModule(moduleKeyValue))
+        return baseURLForScriptWithoutURL();
 
-    ASSERT(!isRootModule(moduleKeyValue));
     ASSERT(moduleKeyValue.isString());
     String requestURL = asString(moduleKeyValue)->value(&jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
+    return responseURLFromRequestURL(requestURL);
+}
+
+// The base URL of a script that has no URL of its own, i.e. an inline module script.
+URL ScriptModuleLoader::baseURLForScriptWithoutURL()
+{
+    if (!m_context)
+        return URL();
+    if (m_ownerType == OwnerType::Document)
+        return downcast<Document>(*m_context).baseURL();
+    return protect(m_context)->url();
+}
+
+URL ScriptModuleLoader::responseURLFromRequestURL(const String& requestURL)
+{
     ASSERT_WITH_MESSAGE(URL(requestURL).isValid(), "Invalid module referrer never starts importing dependent modules.");
 
     auto iterator = m_requestURLToResponseURLMap.find(requestURL);

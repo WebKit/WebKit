@@ -1851,3 +1851,41 @@ TEST(URLSchemeHandler, Redirect302FromHTTPToHandledScheme)
 {
     runRedirectToHandledSchemeTest(302);
 }
+
+TEST(URLSchemeHandler, ModuleDescendantFetchDoesNotSendReferrer)
+{
+    __block RetainPtr<NSString> dependencyReferrer;
+    __block bool fetchedDependency = false;
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSString *mimeType = @"text/javascript";
+        NSString *body = @"";
+        if ([path isEqualToString:@"/index.html"]) {
+            mimeType = @"text/html";
+            body = @"<meta name='referrer' content='no-referrer'><script type='module' src='/importer.js'></script>";
+        } else if ([path isEqualToString:@"/importer.js"])
+            body = @"import '/dependency.js';";
+        else {
+            EXPECT_WK_STREQ("/dependency.js", path);
+            dependencyReferrer = [task.request valueForHTTPHeaderField:@"Referer"];
+            fetchedDependency = true;
+        }
+
+        NSData *data = [body dataUsingEncoding:NSUTF8StringEncoding];
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"module-referrer"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"module-referrer://webkit.org/index.html"]]];
+    TestWebKitAPI::Util::run(&fetchedDependency);
+
+    // The descendant fetch of a module script sends the importing script's URL as its referrer, but only
+    // an HTTP(S) fetch gets a Referer header, and only those have the referrer policy applied to them.
+    EXPECT_NULL(dependencyReferrer.get());
+}

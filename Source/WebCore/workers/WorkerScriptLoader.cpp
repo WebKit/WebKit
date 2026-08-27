@@ -130,7 +130,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     return std::nullopt;
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, String&& referrer)
 {
     m_client = client;
     m_url = scriptRequest.url();
@@ -182,7 +182,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
-    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, *this, WTF::move(*request), options, { }, WTF::move(taskMode));
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, *this, WTF::move(*request), options, WTF::move(referrer), WTF::move(taskMode));
 }
 
 const URL& WorkerScriptLoader::responseURL() const

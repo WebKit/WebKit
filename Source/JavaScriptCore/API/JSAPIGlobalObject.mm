@@ -161,7 +161,7 @@ JSPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObj
     return result;
 }
 
-JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>)
+JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, const String&, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

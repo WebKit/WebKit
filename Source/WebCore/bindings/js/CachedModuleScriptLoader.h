@@ -55,7 +55,7 @@ public:
     void ref() const final { ModuleScriptLoader::ref(); }
     void deref() const final { ModuleScriptLoader::deref(); }
 
-    bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>);
+    bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>, const URL& referrer);
 
     CachedScript* cachedScript() { return m_cachedScript.get(); }
     CachedScriptFetcher& scriptFetcher() { return static_cast<CachedScriptFetcher&>(ModuleScriptLoader::scriptFetcher()); }

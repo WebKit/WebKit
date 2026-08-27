@@ -41,12 +41,12 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
     return adoptRef(*new CachedScriptFetcher(charset));
 }
 
-CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode) const
+CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
-    return requestScriptWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode);
+    return requestScriptWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode, referrer);
 }
 
-RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode) const
+RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
     if (!document.settings().isScriptEnabled())
         return nullptr;
@@ -68,6 +68,11 @@ RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& docum
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
     request.setPriority(WTF::move(resourceLoadPriority));
+    // Only an HTTP(S) fetch appends a Referer header, and CachedResourceLoader applies the referrer
+    // policy to the request only for those. Setting it for any other scheme would send the importing
+    // script's URL unfiltered, e.g. to a URL scheme handler.
+    if (!referrer.isEmpty() && request.resourceRequest().url().protocolIsInHTTPFamily())
+        request.resourceRequest().setHTTPReferrer(referrer.strippedForUseAsReferrer().string);
     if (!m_initiatorType.isNull())
         request.setInitiatorType(m_initiatorType);
 

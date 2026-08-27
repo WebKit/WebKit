@@ -60,7 +60,7 @@ WorkerModuleScriptLoader::~WorkerModuleScriptLoader()
     m_scriptLoader->cancel();
 }
 
-void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL)
+void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL, const URL& referrer)
 {
     m_sourceURL = WTF::move(sourceURL);
 
@@ -127,7 +127,11 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     }
 
-    m_scriptLoader->loadAsynchronously(context, WTF::move(request), WorkerScriptLoader::Source::ModuleScript, WTF::move(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
+    String referrerForRequest;
+    if (!referrer.isEmpty())
+        referrerForRequest = referrer.strippedForUseAsReferrer().string;
+
+    m_scriptLoader->loadAsynchronously(context, WTF::move(request), WorkerScriptLoader::Source::ModuleScript, WTF::move(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode(), std::nullopt, WTF::move(referrerForRequest));
 }
 
 ReferrerPolicy WorkerModuleScriptLoader::referrerPolicy()

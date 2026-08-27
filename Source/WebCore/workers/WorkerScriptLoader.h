@@ -68,7 +68,7 @@ public:
     enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
 
     std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt);
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt, String&& referrer = { });
 
     void notifyError(std::optional<ScriptExecutionContextIdentifier>);
 
