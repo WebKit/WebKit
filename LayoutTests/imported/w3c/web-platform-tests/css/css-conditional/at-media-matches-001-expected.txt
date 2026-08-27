@@ -1,0 +1,4 @@
+
+PASS "@media all" always matches
+PASS "@media not all" never matches
+

@@ -24,7 +24,9 @@
 #include "CSSMediaRule.h"
 
 #include "CSSStyleSheet.h"
+#include "Document.h"
 #include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
@@ -80,6 +82,17 @@ MediaList& CSSMediaRule::media() const
     if (!m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSMediaRule*>(this));
     return *m_mediaCSSOMWrapper;
+}
+
+bool CSSMediaRule::matches(const Document& document) const
+{
+    const auto mediaQueries = this->mediaQueries();
+
+    MQ::MediaQueryEvaluator evaluator { document.printing() ? printAtom() : screenAtom(), document };
+
+    // FIXME: maybe cache this so we don't have to re-evaluate
+    // (have to invalidate when viewport changes)
+    return evaluator.evaluate(mediaQueries);
 }
 
 } // namespace WebCore

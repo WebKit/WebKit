@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class Document;
 class MediaList;
 class StyleRuleMedia;
 
@@ -40,6 +41,7 @@ public:
     virtual ~CSSMediaRule();
 
     WEBCORE_EXPORT MediaList& media() const;
+    bool matches(const Document&) const;
 
 private:
     friend class MediaList;

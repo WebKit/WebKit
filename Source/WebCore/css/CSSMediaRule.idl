@@ -24,6 +24,5 @@
     Exposed=Window
 ] interface CSSMediaRule : CSSConditionRule {
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
-    // FIXME: Add support for `matches`.
-    // readonly attribute boolean matches;
+    [CallWith=CurrentDocument] readonly attribute boolean matches;
 };
