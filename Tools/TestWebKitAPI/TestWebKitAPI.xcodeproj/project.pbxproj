@@ -994,6 +994,7 @@
 				WebKit/WKWebView/ios/FullscreenTouchSecheuristicTests.cpp,
 				WebKit/WKWebView/ios/GestureRecognizerTests.mm,
 				WebKit/WKWebView/ios/GrantAccessToMobileAssets.mm,
+				WebKit/WKWebView/ios/InteractiveWidget.mm,
 				WebKit/WKWebView/ios/KeyboardInputTestsIOS.mm,
 				WebKit/WKWebView/ios/ModalDialogDuringOverlappingFocus.mm,
 				WebKit/WKWebView/ios/OverflowScrollViewTests.mm,

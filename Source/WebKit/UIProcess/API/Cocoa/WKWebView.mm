@@ -2150,10 +2150,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 #if PLATFORM(IOS_FAMILY)
     if (_overriddenLayoutParameters)
         return;
-#endif
 
+    [self _dispatchSetMinimumUnobscuredSize:minimumUnobscuredSize];
+    [self _dispatchSetMaximumUnobscuredSize:maximumUnobscuredSize];
+#else
     _page->setMinimumUnobscuredSize(minimumUnobscuredSize);
     _page->setMaximumUnobscuredSize(maximumUnobscuredSize);
+#endif
 }
 
 #if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
