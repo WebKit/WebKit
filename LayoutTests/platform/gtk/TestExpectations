@@ -1311,7 +1311,6 @@ webkit.org/b/322629 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/322630 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/322631 [ Release ] media/media-controller-playbackrate.html [ Pass Failure ]
 webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html [ Pass Crash ]
-webkit.org/b/322633 [ Debug ] webrtc/msection-recycling.html [ Pass Crash ]
 webkit.org/b/322635 [ Debug ] fast/mediastream/play-newly-added-audio-track.html [ Pass Timeout ]
 webkit.org/b/322636 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Pass Timeout ]
 webkit.org/b/322638 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
