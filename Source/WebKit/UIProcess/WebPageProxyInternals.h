@@ -259,6 +259,7 @@ public:
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::FloatSize minimumUnobscuredSize;
     Deque<Ref<NativeWebMouseEvent>> mouseEventQueue;
+    std::optional<WebCore::FrameIdentifier> lastFrameHandlingMouseMove;
     Vector<Ref<WebMouseEvent>> coalescedMouseEvents;
     RunLoop::Timer remoteFrameMouseEventTimeoutTimer;
     WebCore::MediaProducerMutedStateFlags mutedState;

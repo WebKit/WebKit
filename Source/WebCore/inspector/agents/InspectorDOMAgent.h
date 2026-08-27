@@ -227,6 +227,7 @@ public:
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
+    void mouseDidMoveOverRemoteFrame();
     void inspect(Node*);
     void focusNode();
 

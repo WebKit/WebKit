@@ -176,12 +176,12 @@ void WebInspectorBackendClient::highlight()
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    if (RefPtr highlightOverlay = m_highlightOverlay.get()) {
+    if (RefPtr highlightOverlay = m_pageHighlightOverlay.get()) {
         highlightOverlay->stopFadeOutAnimation();
         highlightOverlay->setNeedsDisplay();
     } else {
         Ref newHighlightOverlay = PageOverlay::create(*this);
-        m_highlightOverlay = newHighlightOverlay.ptr();
+        m_pageHighlightOverlay = newHighlightOverlay.ptr();
         page->corePage()->pageOverlayController().installPageOverlay(newHighlightOverlay.copyRef(), PageOverlay::FadeMode::Fade);
         newHighlightOverlay->setNeedsDisplay();
     }
@@ -209,7 +209,7 @@ void WebInspectorBackendClient::hideHighlight()
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    if (RefPtr highlightOverlay = m_highlightOverlay.get())
+    if (RefPtr highlightOverlay = m_pageHighlightOverlay.get())
         page->corePage()->pageOverlayController().uninstallPageOverlay(*highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     page->hideInspectorHighlight();
@@ -245,7 +245,7 @@ void WebInspectorBackendClient::highlightFrame(LocalFrame& frame)
 
     // Only a local root hosts its own compositing tree; a local subframe draws via the page overlay.
     // FIXME: a nested local subframe's state lives on its own overlay, which nothing consults.
-    if (&frame != corePage->localMainOrRootFrame()) {
+    if (!frame.isRootFrame()) {
         highlight();
         return;
     }
@@ -559,8 +559,8 @@ void WebInspectorBackendClient::willMoveToPage(PageOverlay& overlay, Page* page)
         return;
 
     // Clear only the overlay this call is about; this client serves several.
-    if (m_highlightOverlay.get() == &overlay) {
-        m_highlightOverlay = nullptr;
+    if (m_pageHighlightOverlay.get() == &overlay) {
+        m_pageHighlightOverlay = nullptr;
         return;
     }
 

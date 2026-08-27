@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+async function hoverTo(x, y) {
+    await eventSender.asyncMouseMoveTo(x, y);
+    TestPage.dispatchEventToFrontend("Hovered");
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.HoverIntoRemoteFrameClearsPageHighlight");
+
+    // Nesting is main(A) -> middle(A) -> inner(B). Hovering into the inner frame takes the
+    // remoteUserInputEventData() branch in EventHandler::mouseMoved(), so no further hover is
+    // dispatched and the page agent stays latched on the owner <iframe> without the clear.
+
+    let middleTarget = null;
+    let innerTarget = null;
+
+    async function pageHighlightRectCount() {
+        let value = await InspectorTest.evaluateInPage("JSON.stringify(Array.from(window.internals.inspectorHighlightRects()))");
+        return JSON.parse(value).length;
+    }
+
+    async function hoverInPage(x, y) {
+        await Promise.all([
+            InspectorTest.awaitEvent("Hovered"),
+            InspectorTest.evaluateInPage(`hoverTo(${x}, ${y})`),
+        ]);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Wait until both nested frame targets have attached.",
+        async test() {
+            middleTarget = await waitForFrameTargetForURLContaining("hover-middle-frame.html");
+            innerTarget = await waitForFrameTargetForURLContaining("hover-inner-frame.html");
+
+            InspectorTest.expectNotNull(middleTarget, "Should find the frame target for hover-middle-frame.html.");
+            InspectorTest.expectNotNull(innerTarget, "Should find the frame target for hover-inner-frame.html.");
+            InspectorTest.expectThat(middleTarget !== innerTarget, "Middle and inner frames should be distinct targets.");
+            InspectorTest.expectThat(middleTarget !== WI.assumingMainTarget(), "Middle frame should not be the page target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HoverIntoRemoteFrameClearsPageHighlight",
+        description: "Crossing from the middle frame into the nested cross-origin frame should clear the page target's highlight.",
+        async test() {
+            let pageTarget = WI.assumingMainTarget();
+
+            await pageTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...WI.DOMManager.buildHighlightConfigs()});
+            await middleTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...WI.DOMManager.buildHighlightConfigs()});
+            await innerTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: true, ...WI.DOMManager.buildHighlightConfigs()});
+
+            InspectorTest.expectEqual(await pageHighlightRectCount(), 0, "Should not be a highlight yet.");
+
+            InspectorTest.log("Hovering the main frame.");
+            await hoverInPage(60, 260);
+            InspectorTest.expectGreaterThan(await pageHighlightRectCount(), 0, "Page target should draw its own frame's node.");
+
+            InspectorTest.log("Hovering into the nested cross-origin frame.");
+            await hoverInPage(60, 80);
+            InspectorTest.expectEqual(await pageHighlightRectCount(), 0, "Page target should clear its highlight.");
+
+            InspectorTest.log("Hovering the middle frame.");
+            await hoverInPage(60, 30);
+            InspectorTest.expectGreaterThan(await pageHighlightRectCount(), 0, "Page target should draw the middle frame's node.");
+
+            await pageTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+            await middleTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+            await innerTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that hovering into a nested cross-origin frame clears the page target's highlight.</p>
+<iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/hover-middle-frame.html" style="width:300px; height:200px; border:0; top:0px; left:0px; position:absolute"></iframe>
+<div id="main-target" style="width:300px; height:60px; top:240px; left:0px; position:absolute"></div>
+</body>

@@ -11,17 +11,8 @@ function test() {
     // Unlike element highlight, layout overlays are persistent, so the cases below also cover the
     // state that persistence introduces: several overlays live at once across separate processes,
     // survival across scroll, and teardown on navigation.
-    // FIXME: buildGridOverlay()/buildFlexOverlay() emit many more coordinate-dependent elements than a
-    // highlight box (track lines, gap shading, area names, line numbers, flex line separators), and
-    // none of that geometry is verifiable from a layout test today. Covering it needs paint() driven
-    // into a recording context, e.g. an Internals hook using DisplayList::RecorderImpl the way
-    // Internals::displayListForElement does.
-    // FIXME: a same-origin frame nested inside a cross-origin root is not covered, and could not pass
-    // yet: only a local root hosts its own compositing tree, so WebInspectorBackendClient::highlightFrame()
-    // falls back to the page-wide highlight for a local subframe and never consults that frame's own
-    // overlay -- see the FIXME at WebInspectorBackendClient.cpp:246. The cross-origin root case below does
-    // read the per-frame flex line-start cache (InspectorOverlay.cpp:2240 via
-    // FrameInspectorController::overlayOwnerFlexLineStarts), but only for the frame that owns the overlay.
+    // A same-origin frame nested inside a cross-origin root is not covered: its overlay is not drawn
+    // yet (see WebInspectorBackendClient::highlightFrame()).
 
     async function containerNodeForFrame(resourceName) {
         let target = await frameTargetForURLContaining(resourceName);

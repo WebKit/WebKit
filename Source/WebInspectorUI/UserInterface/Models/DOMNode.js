@@ -676,7 +676,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         // Each target holds its own highlight state, so clear the others. Otherwise highlighting a
         // node inside a frame leaves the page target still highlighting the owner iframe element,
         // and both draw at once.
-        WI.domManager.hideDOMNodeHighlight({exceptTargets: new Set([target])});
+        WI.domManager.hideDOMNodeHighlight({excludedTargets: new Set([target])});
 
         target.DOMAgent.highlightNode.invoke({
             nodeId: this.backendNodeId,

@@ -46,6 +46,7 @@
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
 #include "GPUCanvasContext.h"
+#include "HitTestResult.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -391,10 +392,39 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
+static void clearMousedOverNodes(LocalFrame& localRoot, const LocalFrame* hoveredFrame = nullptr)
+{
+    for (RefPtr<Frame> frame = &localRoot; frame; frame = frame->tree().traverseNext(&localRoot)) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame || localFrame == hoveredFrame || &localFrame->rootFrame() != &localRoot)
+            continue;
+        if (CheckedPtr frameDOMAgent = localFrame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
+            frameDOMAgent->mouseDidLeaveFrame();
+    }
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
+    // This hook arrives with the page's agents, so resolve the frame agent from the hit-tested frame.
+    if (RefPtr frame = result.innerNodeFrame()) {
+        clearMousedOverNodes(protect(frame->rootFrame()), frame.get());
+        if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
+            frameDOMAgent->mouseDidMoveOverElement(result, modifiers);
+    }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->mouseDidMoveOverElement(result, modifiers);
+}
+
+void InspectorInstrumentation::mouseDidMoveOverRemoteFrameImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
+{
+    clearMousedOverNodes(protect(frame.rootFrame()));
+    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->mouseDidMoveOverRemoteFrame();
+}
+
+void InspectorInstrumentation::mouseDidLeaveLocalRootImpl(LocalFrame& localRoot)
+{
+    clearMousedOverNodes(localRoot);
 }
 
 void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingAgents)
@@ -403,15 +433,31 @@ void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingA
         pageAgent->didScroll();
 }
 
-bool InspectorInstrumentation::handleTouchEventImpl(InstrumentingAgents& instrumentingAgents, Node& node)
+bool InspectorInstrumentation::handleTouchEventImpl(Node& node)
 {
-    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+    // The tap's hit test descends into subframes, so use the agents of the frame the node is in.
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return false;
+    Ref instrumentingAgents = InspectorInstrumentation::instrumentingAgents(*frame);
+
+    // A frame target owns element selection for its own frame, so give it the tap first. Only one
+    // agent may consume the tap: both would call inspect() and the frontend would select twice.
+    if (CheckedPtr frameDOMAgent = instrumentingAgents->persistentFrameDOMAgent()) {
+        if (frameDOMAgent->handleTouchEvent(node))
+            return true;
+    }
+    if (CheckedPtr domAgent = instrumentingAgents->persistentDOMAgent())
         return domAgent->handleTouchEvent(node);
     return false;
 }
 
 bool InspectorInstrumentation::handleMousePressImpl(InstrumentingAgents& instrumentingAgents)
 {
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent()) {
+        if (frameDOMAgent->handleMousePress())
+            return true;
+    }
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         return domAgent->handleMousePress();
     return false;

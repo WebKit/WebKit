@@ -46,4 +46,20 @@ window.frameTargetForURLContaining = async function frameTargetForURLContaining(
     return null;
 };
 
+// Wait for the frame target whose document URL contains `substring`, resolving a provisional target
+// to the committed one. Polls because a same-process frame keeps its target when its URL changes.
+window.waitForFrameTargetForURLContaining = async function waitForFrameTargetForURLContaining(substring, maxAttempts = 50) {
+    for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+        let target = await frameTargetForURLContaining(substring);
+        if (target) {
+            if (target.isProvisional)
+                target = (await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget)).data.target;
+            await target.ensureTargetExecutionContext();
+            return target;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return null;
+};
+
 });

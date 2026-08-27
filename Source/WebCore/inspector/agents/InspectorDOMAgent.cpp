@@ -66,7 +66,9 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameDOMAgent.h"
 #include "FrameInlines.h"
+#include "FrameInspectorController.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -1214,12 +1216,44 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::discardSearchResults
     return { };
 }
 
+static bool frameOwnsElementSelection(const LocalFrame* frame)
+{
+    if (!frame)
+        return false;
+    CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent();
+    return frameDOMAgent && frameDOMAgent->ownsElementSelection();
+}
+
+static bool frameOwnerNodeOwnsElementSelection(Node& node)
+{
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node);
+    if (!frameOwner)
+        return false;
+
+    RefPtr contentFrame = frameOwner->contentFrame();
+    if (!contentFrame)
+        return false;
+
+    // FIXME: A remote frame's agent can't be asked whether it is searching. If it isn't, the click
+    // reaches page content while the picker is on.
+    RefPtr localContentFrame = dynamicDowncast<LocalFrame>(*contentFrame);
+    if (!localContentFrame)
+        return true;
+
+    return frameOwnsElementSelection(localContentFrame.get());
+}
+
 bool InspectorDOMAgent::handleMousePress()
 {
     if (!m_searchingForNode)
         return false;
 
     if (RefPtr node = overlay().highlightedNode()) {
+        // Let the event reach the subframe so its agent selects the node under the cursor, not the
+        // owner element.
+        if (frameOwnerNodeOwnsElementSelection(*node))
+            return false;
+
         inspect(node.get());
         return true;
     }
@@ -1278,12 +1312,29 @@ void InspectorDOMAgent::focusNode()
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier>)
 {
+    if (RefPtr frame = result.innerNodeFrame(); frameOwnsElementSelection(frame.get())) {
+        if (std::exchange(m_mousedOverNode, nullptr) && m_searchingForNode)
+            std::ignore = hideHighlight();
+        return;
+    }
+
     m_mousedOverNode = result.innerNode();
 
     if (!m_searchingForNode)
         return;
 
     highlightMousedOverNode();
+}
+
+void InspectorDOMAgent::mouseDidMoveOverRemoteFrame()
+{
+    // No further hover arrives while the cursor is over an out-of-process frame.
+    m_mousedOverNode = nullptr;
+
+    if (!m_searchingForNode)
+        return;
+
+    std::ignore = hideHighlight();
 }
 
 void InspectorDOMAgent::highlightMousedOverNode()
@@ -1294,8 +1345,10 @@ void InspectorDOMAgent::highlightMousedOverNode()
     if (!node)
         return;
 
-    if (m_inspectModeHighlightConfig)
-        protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+    if (!m_inspectModeHighlightConfig)
+        return;
+
+    protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
 }
 
 void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, bool showRulers)

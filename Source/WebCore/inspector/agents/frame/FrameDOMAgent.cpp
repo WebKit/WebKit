@@ -51,6 +51,7 @@
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
+#include "HitTestResult.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
@@ -214,6 +215,14 @@ void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
     m_history.reset();
 
     m_inspectedNode = nullptr;
+    m_nodeToFocus = nullptr;
+    m_mousedOverNode = nullptr;
+
+    m_searchingForNode = false;
+    m_inspectModeHighlightConfig = nullptr;
+    m_inspectModeGridOverlayConfig = std::nullopt;
+    m_inspectModeFlexOverlayConfig = std::nullopt;
+    m_inspectModeShowRulers = false;
 
     Ref { m_instrumentingAgents.get() }->setPersistentFrameDOMAgent(nullptr);
     m_documentRequested = false;
@@ -559,6 +568,14 @@ void FrameDOMAgent::setDocument(Document* document)
     // Properties sidebar don't point at a stale node across a frame load.
     if (m_inspectedNode && &m_inspectedNode->document() == m_document.get())
         m_inspectedNode = nullptr;
+
+    // Likewise for the element-selection state, which holds strong references to nodes in the
+    // outgoing document.
+    if (m_nodeToFocus && &m_nodeToFocus->document() == m_document.get())
+        m_nodeToFocus = nullptr;
+
+    if (m_mousedOverNode && &m_mousedOverNode->document() == m_document.get())
+        m_mousedOverNode = nullptr;
 
     reset();
     m_document = document;
@@ -1758,6 +1775,188 @@ Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
     protect(overlay())->hideHighlight();
 
     return { };
+}
+
+// MARK: - Element Selection
+
+#if PLATFORM(IOS_FAMILY)
+
+Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    setSearchingForNode(errorString, enabled, WTF::move(highlightConfig), WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), false);
+
+    if (!!errorString)
+        return makeUnexpected(errorString);
+
+    return { };
+}
+
+#else
+
+Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    setSearchingForNode(errorString, enabled, WTF::move(highlightConfig), WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers.value_or(false));
+
+    if (!!errorString)
+        return makeUnexpected(errorString);
+
+    return { };
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+void FrameDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, bool showRulers)
+{
+    if (m_searchingForNode == enabled)
+        return;
+
+    if (enabled) {
+        auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
+        if (!highlightConfig)
+            return;
+
+        bool providedGridOverlayConfig = gridOverlayInspectorObject;
+        auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
+        if (providedGridOverlayConfig && !gridOverlayConfig)
+            return;
+
+        bool providedFlexOverlayConfig = flexOverlayInspectorObject;
+        auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
+        if (providedFlexOverlayConfig && !flexOverlayConfig)
+            return;
+
+        m_inspectModeHighlightConfig = WTF::move(highlightConfig);
+        m_inspectModeGridOverlayConfig = WTF::move(gridOverlayConfig);
+        m_inspectModeFlexOverlayConfig = WTF::move(flexOverlayConfig);
+        m_inspectModeShowRulers = showRulers;
+    }
+
+    m_searchingForNode = enabled;
+
+    if (m_searchingForNode)
+        highlightMousedOverNode();
+    else
+        std::ignore = hideHighlight();
+
+    protect(overlay())->didSetSearchingForNode(m_searchingForNode);
+
+    // Unlike the page agent, the backend client is not notified here. elementSelectionChanged() is a
+    // page-wide UI state, and every frame target sharing this page would otherwise fight over it as
+    // the frontend enables the picker on each target in turn.
+}
+
+bool FrameDOMAgent::ownsElementSelection() const
+{
+    // The main frame belongs to the page target.
+    // FIXME: A nested local subframe's overlay is not hosted by any compositor, so the page agent
+    // keeps it too.
+    RefPtr frame = m_inspectedFrame.get();
+    return m_searchingForNode && frame && frame->isRootFrame() && !frame->isMainFrame();
+}
+
+void FrameDOMAgent::highlightMousedOverNode()
+{
+    RefPtr node = m_mousedOverNode;
+    if (node && node->isTextNode())
+        node = node->parentNode();
+    if (!node)
+        return;
+
+    if (!m_inspectModeHighlightConfig)
+        return;
+
+    if (!ownsElementSelection())
+        return;
+
+    protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+}
+
+void FrameDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier>)
+{
+    m_mousedOverNode = result.innerNode();
+
+    if (!m_searchingForNode)
+        return;
+
+    highlightMousedOverNode();
+}
+
+void FrameDOMAgent::mouseDidLeaveFrame()
+{
+    if (!std::exchange(m_mousedOverNode, nullptr))
+        return;
+
+    if (!m_searchingForNode)
+        return;
+
+    std::ignore = hideHighlight();
+}
+
+bool FrameDOMAgent::handleTouchEvent(Node& node)
+{
+    if (!ownsElementSelection())
+        return false;
+
+    if (m_inspectModeHighlightConfig) {
+        protect(overlay())->highlightNode(&node, *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+        inspect(node);
+        return true;
+    }
+
+    return false;
+}
+
+bool FrameDOMAgent::handleMousePress()
+{
+    if (!ownsElementSelection())
+        return false;
+
+    if (RefPtr node = protect(overlay())->highlightedNode()) {
+        inspect(*node);
+        return true;
+    }
+
+    return false;
+}
+
+void FrameDOMAgent::inspect(Node& inspectedNode)
+{
+    Inspector::Protocol::ErrorString ignored;
+    RefPtr node = &inspectedNode;
+    setSearchingForNode(ignored, false, nullptr, nullptr, nullptr, false);
+
+    if (!node->isElementNode() && !node->isDocumentNode())
+        node = node->parentNode();
+    m_nodeToFocus = node;
+
+    if (!m_nodeToFocus)
+        return;
+
+    focusNode();
+}
+
+void FrameDOMAgent::focusNode()
+{
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
+    if (!m_documentRequested)
+        return;
+
+    ASSERT(m_nodeToFocus);
+    auto node = std::exchange(m_nodeToFocus, nullptr);
+    RefPtr frame = node->document().frame();
+    if (!frame)
+        return;
+
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
+    if (injectedScript.hasNoValue())
+        return;
+
+    injectedScript.inspectObject(InspectorDOMAgent::nodeAsScriptValue(globalObject, node.get()));
 }
 
 // MARK: - Layout Overlays

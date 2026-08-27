@@ -3474,6 +3474,7 @@ private:
 
     void mouseEventHandlingCompleted(bool handled, std::optional<WebCore::RemoteUserInputEventData>);
     void remoteFrameMouseEventTimedOut();
+    void mouseMoveWasHandledInFrame(WebCore::FrameIdentifier);
     void keyEventHandlingCompleted(bool handled);
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEventHandlingCompleted(std::optional<WebEventType>, bool handled, std::optional<WebCore::RemoteUserInputEventData>);

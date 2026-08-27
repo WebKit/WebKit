@@ -4701,7 +4701,7 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
 
     auto eventType = event->type();
     Ref sentEvent = event;
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, WTF::move(event), WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType, sentEvent = WTF::move(sentEvent)] (IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, WTF::move(event), WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType, sentEvent = WTF::move(sentEvent), frameID] (IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -4728,9 +4728,20 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
 
         if (eventType != WebEventType::MouseMove)
             WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
+        else if (!remoteUserInputEventData)
+            protectedThis->mouseMoveWasHandledInFrame(frameID);
 
         protectedThis->mouseEventHandlingCompleted(handled, WTF::move(remoteUserInputEventData));
     });
+}
+
+void WebPageProxy::mouseMoveWasHandledInFrame(FrameIdentifier frameID)
+{
+    auto previousFrameID = std::exchange(internals().lastFrameHandlingMouseMove, frameID);
+    if (!previousFrameID || *previousFrameID == frameID || !WebFrameProxy::webFrame(*previousFrameID))
+        return;
+
+    sendToProcessContainingFrame(*previousFrameID, Messages::WebPage::MouseDidLeaveLocalRoot(*previousFrameID));
 }
 
 void WebPageProxy::recordUIProcessUserActivation(const WebEvent& event)
@@ -14709,6 +14720,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().mouseEventQueue.clear();
     internals().coalescedMouseEvents.clear();
     internals().remoteFrameMouseEventTimeoutTimer.stop();
+    internals().lastFrameHandlingMouseMove = std::nullopt;
     internals().keyEventQueue.clear();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();

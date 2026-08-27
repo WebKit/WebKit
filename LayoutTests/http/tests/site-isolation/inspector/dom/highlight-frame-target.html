@@ -5,15 +5,8 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlight");
 
-    // Geometry is deliberately not asserted. internals.inspectorHighlightRects() reads the PAGE
-    // controller's overlay (Internals.cpp: page()->inspectorController()), so it cannot observe a
-    // frame overlay's quads. These cases assert that each command is dispatched to the frame target
-    // and accepted rather than erroring, which is what this patch changes.
-    // FIXME: The contents-to-root-view translation in InspectorOverlay::paint() is not covered here,
-    // and a getHighlight()-style accessor would not cover it either -- getHighlight() builds quads
-    // without a GraphicsContext, so it never sees that CTM. Observing it needs paint() driven into a
-    // recording context, e.g. an Internals hook using DisplayList::RecorderImpl the way
-    // Internals::displayListForElement does.
+    // Geometry is not asserted: internals.inspectorHighlightRects() only reads the page overlay, so
+    // these cases check that each command reaches the frame target and is accepted.
 
     async function containerNodeForFrame(resourceName) {
         let target = await frameTargetForURLContaining(resourceName);
