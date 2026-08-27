@@ -53,6 +53,7 @@ class ImageData;
 class ImageBuffer;
 class IntRect;
 class IntSize;
+class NativeImage;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
@@ -122,13 +123,13 @@ public:
 
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, DestinationColorSpace);
     static Ref<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);
-    static Ref<ImageBitmap> create(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
+    static Ref<ImageBitmap> create(Ref<NativeImage>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
 
     ~ImageBitmap();
 
-    ImageBuffer* NODELETE buffer() const;
+    NativeImage* NODELETE bitmap() const;
 
-    RefPtr<ImageBuffer> takeImageBuffer();
+    RefPtr<NativeImage> takeBitmap();
 
     unsigned width() const;
     unsigned height() const;
@@ -137,7 +138,7 @@ public:
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
     bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
 
-    std::optional<DetachedImageBitmap> detach();
+    std::optional<DetachedImageBitmap> detach(ScriptExecutionContext&);
     bool isDetached() const { return !m_bitmap; }
     void close();
 
@@ -145,8 +146,11 @@ public:
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
-    ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
+    ImageBitmap(Ref<NativeImage>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
     static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
+    // Creates the ImageBitmap out of the drawn contents, or a blank ImageBitmap in case the
+    // contents cannot be obtained.
+    static Ref<ImageBitmap> createOrBlank(ScriptExecutionContext&, RefPtr<ImageBuffer>&&, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
 
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, Ref<SVGImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
@@ -168,7 +172,7 @@ private:
     static void createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 
-    RefPtr<ImageBuffer> m_bitmap;
+    RefPtr<NativeImage> m_bitmap;
     std::atomic<size_t> m_memoryCost { 0 }; // Atomic, accessed from arbitrary thread by GC.
     const bool m_originClean : 1 { false };
     const bool m_premultiplyAlpha : 1 { false };

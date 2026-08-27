@@ -115,7 +115,7 @@ void CanvasRenderingContext::setContentsToLayer(GraphicsLayer& layer)
     layer.setContentsDisplayDelegate(layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
-RefPtr<ImageBuffer> CanvasRenderingContext::transferToImageBuffer()
+RefPtr<NativeImage> CanvasRenderingContext::transferToNativeImage()
 {
     ASSERT_NOT_REACHED(); // Implemented and called only for offscreen capable contexts.
     return nullptr;

@@ -69,6 +69,7 @@
 #include "JSPredefinedColorSpace.h"
 #include "JSWebGL2RenderingContext.h"
 #include "JSWebGLRenderingContext.h"
+#include "NativeImage.h"
 #include "Path2D.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
@@ -911,7 +912,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&](Ref<CanvasPattern>& canvasPattern) { item = buildArrayForCanvasPattern(canvasPattern); },
         [&](Ref<ImageData>& imageData) { item = buildArrayForImageData(imageData); },
         [&](Ref<ImageBitmap>& imageBitmap) {
-            index = indexForData(encodeDataURL(imageBitmap->buffer(), "image/png"_s));
+            index = indexForData(encodeDataURL(RefPtr { imageBitmap->bitmap() }, "image/png"_s));
         },
         [&](Ref<ScriptCallStack>& scriptCallStack) {
             auto stackTrace = JSON::ArrayOf<JSON::Value>::create();

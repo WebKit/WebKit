@@ -898,29 +898,24 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 }
 #endif
 
-RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
+RefPtr<NativeImage> WebGLRenderingContextBase::transferToNativeImage()
 {
     if (isContextLost())
-        return nullptr;
-    RefPtr scriptExecutionContext = this->scriptExecutionContext();
-    if (!scriptExecutionContext)
         return nullptr;
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
-    RefPtr buffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
-    if (!buffer)
-        return nullptr;
     if (compositingResultsNeedUpdating())
         prepareForDisplay();
     RefPtr image = protect(graphicsContextGL())->copyNativeImage(GraphicsContextGL::SurfaceBuffer::DisplayBuffer);
-    if (image)
-        GraphicsContextGL::paintToCanvas(*image, buffer->backendSize(), buffer->context());
     // Any draw or read sees cleared drawing buffer.
     m_defaultFramebuffer->markAllBuffersDirty();
     // Next transfer uses the cleared drawing buffer.
     m_compositingResultsNeedUpdating = true;
-    return buffer;
+    // A failed read is transparent black.
+    if (!image)
+        image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+    return image;
 }
 
 void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
@@ -3271,12 +3266,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceImageBitmap, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    RefPtr buffer = source.buffer();
-    if (!buffer)
-        return { };
-
     // Fallback pure SW path.
-    RefPtr image = BitmapImage::create(buffer->createNativeImageReference());
+    RefPtr image = BitmapImage::create(RefPtr { source.bitmap() });
     if (!image)
         return { };
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.

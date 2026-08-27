@@ -52,7 +52,7 @@ public:
 private:
     OffscreenCanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&);
     void drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
-    RefPtr<ImageBuffer> transferToImageBuffer() final;
+    RefPtr<NativeImage> transferToNativeImage() final;
     const FontProxy* fontProxy() final;
 };
 

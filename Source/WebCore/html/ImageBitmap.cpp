@@ -51,6 +51,7 @@
 #include "JSImageBitmap.h"
 #include "LayoutSize.h"
 #include "LocalFrameView.h"
+#include "NativeImage.h"
 #include "RenderElement.h"
 #include "SVGImageElement.h"
 #include "ScriptExecutionContextInlines.h"
@@ -119,20 +120,22 @@ static inline RenderingMode NODELETE bufferRenderingMode(ScriptExecutionContext&
 
 RefPtr<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, const IntSize& size, DestinationColorSpace colorSpace)
 {
-    auto buffer = createImageBuffer(scriptExecutionContext, size, bufferRenderingMode(scriptExecutionContext), colorSpace);
-    if (!buffer)
+    RefPtr bitmap = ImageBuffer::sinkIntoNativeImage(createImageBuffer(scriptExecutionContext, size, bufferRenderingMode(scriptExecutionContext), colorSpace));
+    if (!bitmap)
         return nullptr;
-    return create(buffer.releaseNonNull(), false);
+    return create(bitmap.releaseNonNull(), false);
 }
 
 Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, DetachedImageBitmap detached)
 {
     auto buffer = SerializedImageBuffer::sinkIntoImageBuffer(detached.m_bitmap.moveToUniquePtr(), scriptExecutionContext.graphicsClient());
     RELEASE_ASSERT(buffer);
-    return create(buffer.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha);
+    RefPtr bitmap = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+    RELEASE_ASSERT(bitmap);
+    return create(bitmap.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha);
 }
 
-Ref<ImageBitmap> ImageBitmap::create(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+Ref<ImageBitmap> ImageBitmap::create(Ref<NativeImage> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
 {
     return adoptRef(*new ImageBitmap(WTF::move(bitmap), originClean, premultiplyAlpha, forciblyPremultiplyAlpha));
 }
@@ -177,27 +180,32 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
     return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode(scriptExecutionContext), colorSpace, resolutionScale);
 }
 
-ImageBuffer* ImageBitmap::buffer() const
+NativeImage* ImageBitmap::bitmap() const
 {
     return m_bitmap.get();
 }
 
-std::optional<DetachedImageBitmap> ImageBitmap::detach()
+std::optional<DetachedImageBitmap> ImageBitmap::detach(ScriptExecutionContext& scriptExecutionContext)
 {
-    if (!m_bitmap)
+    RefPtr bitmap = m_bitmap;
+    if (!bitmap)
         return std::nullopt;
-    RefPtr bitmap = takeImageBuffer();
-    if (!bitmap->hasOneRef())
-        bitmap = bitmap->clone();
-    std::unique_ptr serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(bitmap));
+    // DetachedImageBitmap transfers the contents as an ImageBuffer, so draw the bitmap to one.
+    RefPtr buffer = createImageBuffer(scriptExecutionContext, bitmap->size(), bufferRenderingMode(scriptExecutionContext), bitmap->colorSpace());
+    if (!buffer)
+        return std::nullopt;
+    FloatRect bitmapRect { FloatPoint(), bitmap->size() };
+    buffer->context().drawNativeImage(*bitmap, bitmapRect, bitmapRect, { CompositeOperator::Copy });
+    std::unique_ptr serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(buffer));
     if (!serializedBitmap)
         return std::nullopt;
+    close();
     return DetachedImageBitmap { makeUniqueRefFromNonNullUniquePtr(WTF::move(serializedBitmap)), originClean(), premultiplyAlpha(), forciblyPremultiplyAlpha() };
 }
 
 void ImageBitmap::close()
 {
-    takeImageBuffer();
+    takeBitmap();
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, int sx, int sy, int sw, int sh, ImageBitmap::Promise&& promise)
@@ -326,14 +334,22 @@ Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scr
     // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
     // Resolve Promise with a blank 1x1 ImageBitmap.
     auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), bufferRenderingMode(scriptExecutionContext), DestinationColorSpace::SRGB());
-    RELEASE_ASSERT(bitmapData);
+    RefPtr bitmap = ImageBuffer::sinkIntoNativeImage(WTF::move(bitmapData));
+    RELEASE_ASSERT(bitmap);
     // 7. Create a new ImageBitmap object.
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
-    return create(bitmapData.releaseNonNull(), originClean);
+    return create(bitmap.releaseNonNull(), originClean);
+}
+
+Ref<ImageBitmap> ImageBitmap::createOrBlank(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageBuffer>&& bitmapData, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+{
+    if (RefPtr bitmap = ImageBuffer::sinkIntoNativeImage(WTF::move(bitmapData)))
+        return create(bitmap.releaseNonNull(), originClean, premultiplyAlpha, forciblyPremultiplyAlpha);
+    return createBlankImageBuffer(scriptExecutionContext, originClean);
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
@@ -480,7 +496,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
@@ -537,7 +553,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawVideoFrame(*internalFrame, destRect, ImageOrientation::Orientation::None, true);
 
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean);
     completionHandler(WTF::move(imageBitmap));
 }
 #endif
@@ -584,7 +600,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 3. Create a new ImageBitmap object.
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same value as
     //    the origin-clean flag of the canvas element's bitmap.
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -663,7 +679,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //      settings object's origin, then set the origin-clean flag of
     //      image's bitmap to false.
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
 
     // 6.4.1. Resolve p with imageBitmap.
     completionHandler(WTF::move(imageBitmap));
@@ -679,35 +695,30 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 {
     // 2. If image's [[Detached]] internal slot value is true, return a promise
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
-    if (existingImageBitmap->isDetached() || !existingImageBitmap->buffer()) {
+    RefPtr existingBitmap = existingImageBitmap->bitmap();
+    if (!existingBitmap) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s });
         return;
     }
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the image argument's
     //    bitmap data, cropped to the source rectangle with formatting.
-    auto sourceRectangle = croppedSourceRectangleWithFormatting(protect(existingImageBitmap->buffer())->truncatedLogicalSize(), options, WTF::move(rect));
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(existingBitmap->size(), options, WTF::move(rect));
     if (sourceRectangle.hasException()) {
         completionHandler(Exception { sourceRectangle.releaseException() });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), protect(existingImageBitmap->buffer())->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), existingBitmap->colorSpace());
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
         return;
     }
 
-    RefPtr imageForRender = BitmapImage::create(protect(existingImageBitmap->buffer())->copyNativeImage());
-    if (!imageForRender) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
-        return;
-    }
-
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    bitmapData->context().drawNativeImage(*existingBitmap, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     const bool originClean = existingImageBitmap->originClean();
     bool forciblyPremultiplyAlpha = false;
@@ -722,7 +733,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 3. Create a new ImageBitmap object.
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
     //    value as the origin-clean flag of the bitmap of the image argument.
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, forciblyPremultiplyAlpha, forciblyPremultiplyAlpha);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, forciblyPremultiplyAlpha, forciblyPremultiplyAlpha);
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -887,7 +898,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
 
     const bool originClean = true;
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
 
     completionHandler(WTF::move(imageBitmap));
 }
@@ -933,7 +944,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation != ImageBitmapOptions::Orientation::FlipY) {
         bitmapData->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
 
-        auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+        auto imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
         completionHandler(WTF::move(imageBitmap));
         return;
     }
@@ -950,15 +961,15 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
-    Ref imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    Ref imageBitmap = createOrBlank(scriptExecutionContext, WTF::move(bitmapData), originClean, premultiplyAlpha);
 
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
     completionHandler(WTF::move(imageBitmap));
 }
 
-ImageBitmap::ImageBitmap(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+ImageBitmap::ImageBitmap(Ref<NativeImage> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
     : m_bitmap(WTF::move(bitmap))
-    , m_memoryCost(m_bitmap->memoryCost())
+    , m_memoryCost(m_bitmap->sizeInBytes())
     , m_originClean(originClean)
     , m_premultiplyAlpha(premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
@@ -967,7 +978,7 @@ ImageBitmap::ImageBitmap(Ref<ImageBuffer> bitmap, bool originClean, bool premult
 
 ImageBitmap::~ImageBitmap() = default;
 
-RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
+RefPtr<NativeImage> ImageBitmap::takeBitmap()
 {
     m_memoryCost.store(0, std::memory_order_relaxed);
     return std::exchange(m_bitmap, nullptr);
@@ -975,12 +986,12 @@ RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
 
 unsigned ImageBitmap::width() const
 {
-    return m_bitmap ? protect(m_bitmap)->truncatedLogicalSize().width() : 0;
+    return m_bitmap ? protect(m_bitmap)->size().width() : 0;
 }
 
 unsigned ImageBitmap::height() const
 {
-    return m_bitmap ? protect(m_bitmap)->truncatedLogicalSize().height() : 0;
+    return m_bitmap ? protect(m_bitmap)->size().height() : 0;
 }
 
 size_t ImageBitmap::memoryCost() const

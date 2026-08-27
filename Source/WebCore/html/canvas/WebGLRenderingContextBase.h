@@ -452,7 +452,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
 #endif
-    RefPtr<ImageBuffer> transferToImageBuffer() final;
+    RefPtr<NativeImage> transferToNativeImage() final;
 
     void removeSharedObject(WebGLObject&);
     void removeContextObject(WebGLObject&);

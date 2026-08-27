@@ -39,6 +39,7 @@
 #include "JSImageBitmap.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageData.h"
+#include "NativeImage.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -234,8 +235,8 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
         } else if (RefPtr imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-                if (RefPtr imageBuffer = imageBitmap->buffer())
-                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+                if (RefPtr bitmap = imageBitmap->bitmap())
+                    dataURL = encodeDataURL(bitmap, "image/png"_s);
             }
         } else if (RefPtr context = canvasRenderingContext(vm, possibleTarget)) {
             target = possibleTarget;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBitmapRenderingContext.h"
 
+#include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
@@ -67,14 +68,14 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
 
 ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<ImageBitmap> imageBitmap)
 {
-    RefPtr<ImageBuffer> newBuffer;
+    RefPtr<NativeImage> newBitmap;
     bool originClean = true;
     if (imageBitmap) {
         if (imageBitmap->isDetached())
             return Exception { ExceptionCode::InvalidStateError };
         originClean = imageBitmap->originClean();
-        newBuffer = imageBitmap->takeImageBuffer();
-    } else if (!m_buffer)
+        newBitmap = imageBitmap->takeBitmap();
+    } else if (!m_bitmap)
         return { };
 
     Ref canvasBase = this->canvasBase();
@@ -83,54 +84,65 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
         canvasBase->setOriginClean();
     else
         canvasBase->setOriginTainted();
-    if (newBuffer) {
-        IntSize newSize = newBuffer->truncatedLogicalSize();
-        updateMemoryCost(newBuffer->memoryCost());
-        m_buffer = newBuffer.releaseNonNull();
-        canvasBase->setSizeForControllingContext(newSize);
-    } else {
-        m_buffer = nullptr;
-        updateMemoryCost(0);
-    }
-    m_bufferNativeImage = nullptr;
+    m_buffer = nullptr;
+    m_bitmap = WTF::move(newBitmap);
+    updateMemoryCost();
+    if (RefPtr bitmap = m_bitmap)
+        canvasBase->setSizeForControllingContext(bitmap->size());
     return { };
 }
 
-RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
+RefPtr<NativeImage> ImageBitmapRenderingContext::transferToNativeImage()
 {
     Ref canvasBase = this->canvasBase();
     auto size = canvasBase->size();
-    if (!m_buffer)
-        return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!m_bitmap)
+        return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
     canvasBase->willUpdateContents(FloatRect { { }, size });
-    RefPtr result = std::exchange(m_buffer, { });
-    m_bufferNativeImage = nullptr;
-    updateMemoryCost(0);
+    RefPtr result = WTF::move(m_bitmap);
+    m_buffer = nullptr;
+    updateMemoryCost();
     canvasBase->setOriginClean();
     return result;
 }
 
 RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
-    if (!m_buffer) {
-        RefPtr buffer = ImageBuffer::create(canvasBase().size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-        if (buffer) {
-            updateMemoryCost(buffer->memoryCost());
-            m_buffer = WTF::move(buffer);
-        }
+    if (m_buffer)
+        return m_buffer;
+    auto size = canvasBase().size();
+    RefPtr bitmap = m_bitmap;
+    auto colorSpace = bitmap ? bitmap->colorSpace() : DestinationColorSpace::SRGB();
+    if (!colorSpace.supportsOutput())
+        colorSpace = DestinationColorSpace::SRGB();
+    RefPtr buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    if (!buffer)
+        return nullptr;
+    if (bitmap) {
+        FloatRect bitmapRect { { }, bitmap->size() };
+        buffer->context().drawNativeImage(*bitmap, FloatRect { { }, size }, bitmapRect, { CompositeOperator::Copy });
     }
+    m_buffer = WTF::move(buffer);
+    updateMemoryCost();
     return m_buffer;
 }
 
-RefPtr<NativeImage> ImageBitmapRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer sourceBuffer)
+RefPtr<NativeImage> ImageBitmapRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer)
 {
-    if (m_bufferNativeImage)
-        return m_bufferNativeImage;
-    RefPtr buffer = surfaceBufferToImageBuffer(sourceBuffer);
-    if (!buffer)
-        return nullptr;
-    m_bufferNativeImage = buffer->copyNativeImage();
-    return m_bufferNativeImage;
+    if (m_bitmap)
+        return m_bitmap;
+    // A canvas without contents is transparent black.
+    return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(canvasBase().size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+}
+
+void ImageBitmapRenderingContext::updateMemoryCost() const
+{
+    size_t newMemoryCost = 0;
+    if (RefPtr bitmap = m_bitmap)
+        newMemoryCost += bitmap->sizeInBytes();
+    if (m_buffer)
+        newMemoryCost += m_buffer->memoryCost();
+    CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }
 
 }
