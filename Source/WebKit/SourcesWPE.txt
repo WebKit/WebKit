@@ -343,7 +343,7 @@ WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphicsGLib.cpp
 WebProcess/WebPage/CoordinatedGraphics/FrameRenderer.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
-WebProcess/WebPage/CoordinatedGraphics/NonCompositedFrameRenderer.cpp
+WebProcess/WebPage/CoordinatedGraphics/NonCompositedFrameRenderer.cpp @no-unify
 WebProcess/WebPage/CoordinatedGraphics/ScrollbarsControllerCoordinated.cpp
 WebProcess/WebPage/CoordinatedGraphics/ScrollingCoordinatorCoordinated.cpp
 WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp

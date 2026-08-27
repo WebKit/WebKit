@@ -334,7 +334,7 @@ void NonCompositedFrameRenderer::resetDamageHistoryForTesting()
     m_frameDamageHistoryForTesting = std::make_optional<Vector<WebCore::Region>>();
 }
 
-void NonCompositedFrameRenderer::foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&& callback) const
+void NonCompositedFrameRenderer::foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&& callback) const
 {
     if (m_frameDamageHistoryForTesting) {
         for (const auto& region : *m_frameDamageHistoryForTesting)
