@@ -322,6 +322,11 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         return;
     }
 
+    if (loader->isMainResource()) {
+        if (RefPtr swServerConnection = m_swServerConnection.get())
+            swServerConnection->fetchTaskReceivedMainResourceResponse(m_serviceWorkerIdentifier, response, loader->frameID());
+    }
+
     if (shouldSetSource == ShouldSetSource::Yes)
         response.setSource(ResourceResponse::Source::ServiceWorker);
     loader->sendDidReceiveResponseWithPotentialProcessSwap(response, PrivateRelayed::No, needsContinueDidReceiveResponseMessage);
