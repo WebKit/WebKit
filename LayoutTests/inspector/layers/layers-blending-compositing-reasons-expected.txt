@@ -1,18 +1,10 @@
 
-=== Enable the LayerTree agent ===
-
-PASS
-
-=== Get the Document ===
-
-PASS
-
-=== Get the layer tree ===
-
-PASS
-
-=== Check layers' reasons for compositing ===
-
-PASS: <div id="isolating"> is composition due to isolating compositing descendants having CSS blending applied.
-PASS: <div id="blending"> is composited due having CSS blending applied and composited descendants.
+== Running test suite: LayerTree.reasonsForCompositingLayer.Blending
+-- Running test case: LayerTree.reasonsForCompositingLayer.Blending
+PASS: Should have a node for #blending.
+PASS: Should have a layer for #blending.
+PASS: #blending should be composited due to having CSS blending applied and composited descendants.
+PASS: Should have a node for #isolating.
+PASS: Should have a layer for #isolating.
+PASS: #isolating should be composited due to isolating composited descendants that have CSS blending applied.
 

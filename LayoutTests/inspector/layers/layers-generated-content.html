@@ -1,147 +1,58 @@
 <html>
 <head>
-<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/layer-utilities.js"></script>
 <script>
 
 function test()
 {
+    let suite = InspectorTest.createAsyncSuite("LayerTree.layersForNode.GeneratedContentLayers");
 
-    var nodes;
- 
-    InspectorProtocol.eventHandler["DOM.setChildNodes"] = setChildNodes;
+    suite.addTestCase({
+        name: "LayerTree.layersForNode.GeneratedContentLayers",
+        description: "Layers for generated content should share their generating element's node id but have distinct pseudo-element ids.",
+        async test() {
+            let {documentNode, layers} = await getDocumentAndLayers();
 
-    enableLayerTreeAgent();
-    
-    function enableLayerTreeAgent(result)
-    {
-        step({
-            name: "Enable the LayerTree agent",
-            command: "LayerTree.enable",
-            parameters: {},
-            callback: getDocument
-        });
-    };
-
-    function getDocument()
-    {
-        // We must first get the document so that later on we may get sensible nodeIds.
-        step({
-            name: "Get the Document",
-            command: "DOM.getDocument",
-            parameters: {},
-            callback: getLayerTree
-        });
-    };
-
-    function getLayerTree(result)
-    {
-        step({
-            name: "Get the layer tree",
-            command: "LayerTree.layersForNode",
-            parameters: {"nodeId": result.root.nodeId},
-            callback: gotLayerTree
-        });
-    };
-
-    function gotLayerTree(result)
-    {
-        var beforeLayers = [];
-        var afterLayers = [];
-        result.layers.forEach(function (layer) {
-            if (!layer.isGeneratedContent)
-                return;
-
-            if (layer.pseudoElement === "before")
-                beforeLayers.push(layer);
-            if (layer.pseudoElement === "after")
-                afterLayers.push(layer);
-        });
-
-        logTestName("Check layers");
-
-        assert("Expected number of ::before layers", beforeLayers.length, 1);
-        assert("The sole ::before layer has a pseudo element", beforeLayers[0].pseudoElementId !== "", true);
-
-        assert("Expected number of ::after layers", afterLayers.length, 2);
-        assert("The first ::after layer has a pseudo element", afterLayers[0].pseudoElementId !== "", true);
-        assert("The second ::after layer has a pseudo element", afterLayers[1].pseudoElementId !== "", true);
-        assert("The second ::after layer is a reflection", afterLayers[1].isReflection, true);
-        assert("The two ::after layers have the same node id", afterLayers[0].nodeId, afterLayers[1].nodeId);
-        assert("The two ::after layers have the same pseudo element id", afterLayers[0].pseudoElementId, afterLayers[1].pseudoElementId);
-
-        assert("The non-reflection generated generated layers have the same node id", beforeLayers[0].nodeId, afterLayers[0].nodeId);
-        assert("The non-reflection generated layers have different pseudo element ids", beforeLayers[0].pseudoElementId !== afterLayers[0].pseudoElementId, true);
-
-        var node;
-        var nodeId = beforeLayers[0].nodeId;
-        for (var i = 0, count = nodes.length; i < count; ++i) {
-            if (nodes[i].nodeId === nodeId) {
-                node = nodes[i];
-                break;
-            }
-        }
-
-        logTestName("Check generating node");
-        
-        assert("Generating node was found", !!node, true);
-        assert("Generating node has expected localName", node.localName, "div");
-        assert("Generating node has id", node.attributes[0], "id");
-        assert("Generating node has expected id", node.attributes[1], "generator");
-        
-        ProtocolTest.completeTest();
-    };
-
-    function setChildNodes (messageObject) {
-        nodes = messageObject.params.nodes;
-    };
-
-    function step(test)
-    {
-        if (test.callback)
-            logTestName(test.name);
-        runCommand(test);
-    };
-
-    function logTestName(name)
-    {
-        ProtocolTest.log("\n=== " + name + " ===\n");
-    };
-
-    function runCommand(command)
-    {
-        InspectorProtocol.sendCommand(command.command, command.parameters, function(messageObject) {
-            if (messageObject.hasOwnProperty("error")) {
-                ProtocolTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
-                ProtocolTest.completeTest();
-                return;
+            let beforeLayers = [];
+            let afterLayers = [];
+            for (let layer of layers) {
+                if (!layer.isGeneratedContent)
+                    continue;
+                if (layer.pseudoElement === "before")
+                    beforeLayers.push(layer);
+                else if (layer.pseudoElement === "after")
+                    afterLayers.push(layer);
             }
 
-            if (command.name)
-                ProtocolTest.log("PASS");
+            InspectorTest.expectEqual(beforeLayers.length, 1, "Should have exactly one ::before layer.");
+            InspectorTest.expectNotEqual(beforeLayers[0].pseudoElementId, "", "The ::before layer should have a pseudo-element id.");
 
-            if (command.callback)
-                command.callback(messageObject.result);
-        });
-    };
+            // The second ::after layer is the reflection of the first, generated by `-webkit-box-reflect`.
+            InspectorTest.expectEqual(afterLayers.length, 2, "Should have exactly two ::after layers.");
+            InspectorTest.expectNotEqual(afterLayers[0].pseudoElementId, "", "The first ::after layer should have a pseudo-element id.");
+            InspectorTest.expectNotEqual(afterLayers[1].pseudoElementId, "", "The second ::after layer should have a pseudo-element id.");
+            InspectorTest.expectTrue(afterLayers[1].isReflection, "The second ::after layer should be a reflection.");
+            InspectorTest.expectEqual(afterLayers[0].nodeId, afterLayers[1].nodeId, "Both ::after layers should have the same node id.");
+            InspectorTest.expectEqual(afterLayers[0].pseudoElementId, afterLayers[1].pseudoElementId, "Both ::after layers should have the same pseudo-element id.");
 
-    function assert(name, actual, expected)
-    {
-        if (expected === actual)
-            ProtocolTest.log("PASS: " + name + ".");
-        else
-            ProtocolTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
-    };
+            InspectorTest.expectEqual(beforeLayers[0].nodeId, afterLayers[0].nodeId, "The ::before and ::after layers should have the same node id.");
+            InspectorTest.expectNotEqual(beforeLayers[0].pseudoElementId, afterLayers[0].pseudoElementId, "The ::before and ::after layers should have different pseudo-element ids.");
 
+            let node = await getNodeForSelector(documentNode, "#generator");
+            InspectorTest.expectNotNull(node, "Should have a node for #generator.");
+            InspectorTest.expectEqual(beforeLayers[0].nodeId, node.id, "The generated content should be generated by #generator.");
+            InspectorTest.expectEqual(node.localName(), "div", "The generating node should be a <div>.");
+            InspectorTest.expectEqual(node.getAttribute("id"), "generator", "The generating node should have the id \"generator\".");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
 };
-
-window.addEventListener("DOMContentLoaded", function()
-{
-    runTest();
-}, false);
 
 </script>
 <style type="text/css">
-      
+
     #generator::before,
     #generator::after {
         position: absolute;
@@ -158,7 +69,7 @@ window.addEventListener("DOMContentLoaded", function()
 
 </style>
 </head>
-<body>
+<body onload="runTest()">
 
     <div id="generator"></div>
 
