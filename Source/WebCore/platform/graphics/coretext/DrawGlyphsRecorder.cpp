@@ -154,9 +154,7 @@ void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingM
     m_originalFont = font;
     m_smoothingMode = smoothingMode;
 
-    m_originalTextMatrix = computeOverallTextMatrix(font);
-    if (font.platformData().orientation() == FontOrientation::Vertical)
-        m_originalTextMatrix = computeVerticalTextMatrix(font, m_originalTextMatrix);
+    m_originalTextMatrix = computeTextMatrix(font);
 
     auto& contextState = m_owner.state();
     populateInternalState(contextState);
@@ -521,6 +519,7 @@ void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLine
 
     prepareInternalContext(Font::create(FontPlatformData(font, fontSize)), FontSmoothingMode::SubpixelAntialiased);
     RetainPtr context = m_internalContext->platformContext();
+    CGContextSetTextMatrix(context.get(), CGAffineTransformIdentity);
     CGContextSetTextPosition(context.get(), 0, 0);
     CTLineDraw(line, context.get());
     concludeInternalContext();
