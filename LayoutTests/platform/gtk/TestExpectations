@@ -1293,7 +1293,6 @@ webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html 
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
 
 webkit.org/b/321278 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214.html [ ImageOnlyFailure Pass ]
-webkit.org/b/321281 [ Debug ] webrtc/video-disabled-black.html [ Crash Pass ]
 webkit.org/b/320649 [ Debug ] webrtc/disable-encryption.html [ Crash Pass ]
 webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]
 
@@ -1322,6 +1321,6 @@ webkit.org/b/322644 [ Debug ] inspector/dom-debugger/event-interval-breakpoints.
 webkit.org/b/322645 [ Debug ] js/weakref-finalizationregistry.html [ Pass Timeout ]
 webkit.org/b/322647 [ Debug ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
 webkit.org/b/322648 [ Debug ] navigation-api/navigation-api-rate-limit-history-api.html [ Pass Failure ]
-webkit.org/b/322650 [ Debug ] webrtc/video-h264.html [ Pass Crash Failure ]
-webkit.org/b/322651 [ Debug ] webrtc/video-remote-mute.html [ Pass Crash Failure ]
+webkit.org/b/322650 [ Debug ] webrtc/video-h264.html [ Pass Failure ]
+webkit.org/b/322651 [ Debug ] webrtc/video-remote-mute.html [ Pass Failure ]
 webkit.org/b/322652 [ Debug ] workers/btoa-oom.html [ Pass Timeout ]
