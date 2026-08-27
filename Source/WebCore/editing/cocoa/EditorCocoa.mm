@@ -222,12 +222,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     if (!pasteboard.isStatic()) {
         if (!document->isTextDocument()) {
             content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-            LegacyWebArchive::ArchiveOptions options {
-                LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
-                LegacyWebArchive::ShouldArchiveSubframes::No
-            };
             HashMap<FrameIdentifier, AttributedString> remoteFrameContent;
-            if (document->settings().siteIsolationEnabled()) {
+            if (RefPtr page = document->page(); page && page->hasRemoteFrames()) {
+                LegacyWebArchive::ArchiveOptions options {
+                    LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
+                    LegacyWebArchive::ShouldArchiveSubframes::No
+                };
                 content.webArchive = LegacyWebArchive::createFromSelection(protect(document->frame()), WTF::move(options));
                 RefPtr localFrame = document->frame();
                 if (content.webArchive && localFrame) {

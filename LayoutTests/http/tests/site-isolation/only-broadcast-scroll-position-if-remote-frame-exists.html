@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<div style="height: 3000px"></div>
+<script>
+
+let broadcastCount = 0;
+
+// Since multiple frame geometry updates share this IPC, we calculate the number of these IPCs sent
+// on an idle rendering update vs. a scrolling rendering update, and use the difference to figure
+// out if a scroll position IPC was sent.
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("UI", message => {
+        if (message.description === "WebPageProxy_BroadcastFrameTreeSyncData")
+            broadcastCount++;
+    });
+}
+
+async function settle()
+{
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function countBroadcastsFor(action)
+{
+    await settle();
+    broadcastCount = 0;
+    action();
+    await settle();
+    return broadcastCount;
+}
+
+function addIframe(url)
+{
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        iframe.onload = () => resolve(iframe);
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    });
+}
+
+promise_test(async t => {
+    // IPC interception only works in debug builds.
+    if (!window.IPC)
+        return;
+
+    t.add_cleanup(() => {
+        document.querySelectorAll("iframe").forEach(iframe => iframe.remove());
+        window.scrollTo(0, 0);
+    });
+
+    const sameSiteIframe = await addIframe("http://127.0.0.1:8000/site-isolation/resources/frame-with-text.html");
+
+    let idleCount = await countBroadcastsFor(() => {});
+    let scrollCount = await countBroadcastsFor(() => window.scrollTo(0, 100));
+    assert_equals(scrollCount, idleCount,
+        "a page with a fully local frame tree must not broadcast its scroll position");
+
+    const crossSiteIframe = await addIframe("http://localhost:8000/site-isolation/resources/frame-with-text.html");
+
+    idleCount = await countBroadcastsFor(() => {});
+    scrollCount = await countBroadcastsFor(() => window.scrollTo(0, 200));
+    assert_greater_than(scrollCount, idleCount,
+        "a page with a remote frame must broadcast its scroll position");
+
+    const sameScrollPositionCount = await countBroadcastsFor(() => window.scrollTo(0, 200));
+    assert_equals(sameScrollPositionCount, idleCount,
+        "scrolling to the current scroll position must not broadcast");
+
+    crossSiteIframe.remove();
+
+    idleCount = await countBroadcastsFor(() => {});
+    scrollCount = await countBroadcastsFor(() => window.scrollTo(0, 300));
+    assert_equals(scrollCount, idleCount,
+        "a page must stop broadcasting its scroll position once its last remote frame is gone");
+}, "The scroll position is only broadcast to other processes when the frame tree has a remote frame");
+</script>

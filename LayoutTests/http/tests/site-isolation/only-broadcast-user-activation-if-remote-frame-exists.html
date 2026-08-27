@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<script>
+
+let messageCounts = new Map();
+
+const observedMessages = [
+    "WebPageProxy_DidNotifyUserActivation",
+    "WebPageProxy_DidConsumeUserActivation",
+];
+
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("UI", message => {
+        if (observedMessages.includes(message.description))
+            messageCounts.set(message.description, (messageCounts.get(message.description) ?? 0) + 1);
+    });
+}
+
+async function settle()
+{
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function countBroadcastsForInteraction()
+{
+    await settle();
+    messageCounts = new Map();
+
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    await settle();
+
+    // window.open() consumes a transient activation.
+    const openedWindow = window.open("about:blank");
+    if (openedWindow)
+        openedWindow.close();
+    await settle();
+
+    return messageCounts;
+}
+
+function addIframe(url)
+{
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        iframe.onload = () => resolve(iframe);
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    });
+}
+
+promise_test(async t => {
+    // IPC interception only works in debug builds.
+    if (!window.IPC)
+        return;
+
+    t.add_cleanup(() => document.querySelectorAll("iframe").forEach(iframe => iframe.remove()));
+
+    const sameSiteIframe = await addIframe("http://127.0.0.1:8000/site-isolation/resources/frame-with-text.html");
+
+    let counts = await countBroadcastsForInteraction();
+    assert_equals(counts.get("WebPageProxy_DidNotifyUserActivation") ?? 0, 0,
+        "a page with a fully local frame tree must not broadcast user activation");
+    assert_equals(counts.get("WebPageProxy_DidConsumeUserActivation") ?? 0, 0,
+        "a page with a fully local frame tree must not broadcast activation consumption");
+
+    const crossSiteIframe = await addIframe("http://localhost:8000/site-isolation/resources/frame-with-text.html");
+
+    counts = await countBroadcastsForInteraction();
+    assert_greater_than(counts.get("WebPageProxy_DidNotifyUserActivation") ?? 0, 0,
+        "a page with a remote frame must broadcast user activation");
+    assert_greater_than(counts.get("WebPageProxy_DidConsumeUserActivation") ?? 0, 0,
+        "a page with a remote frame must broadcast activation consumption");
+
+    crossSiteIframe.remove();
+
+    counts = await countBroadcastsForInteraction();
+    assert_equals(counts.get("WebPageProxy_DidNotifyUserActivation") ?? 0, 0,
+        "a page must stop broadcasting user activation once its last remote frame is gone");
+    assert_equals(counts.get("WebPageProxy_DidConsumeUserActivation") ?? 0, 0,
+        "a page must stop broadcasting activation consumption once its last remote frame is gone");
+}, "User activation is only broadcast to other processes when the frame tree has a remote frame");
+</script>

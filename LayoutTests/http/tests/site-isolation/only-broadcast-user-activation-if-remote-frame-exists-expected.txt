@@ -1,0 +1,3 @@
+
+PASS User activation is only broadcast to other processes when the frame tree has a remote frame
+

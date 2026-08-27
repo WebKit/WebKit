@@ -3821,8 +3821,10 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
             m_frame->editor().renderLayerDidScroll(*layer);
     }
 
-    if (m_frame->settings().siteIsolationEnabled() && oldPosition != newPosition)
-        static_cast<Frame&>(m_frame).loaderClient().broadcastFrameScrollPositionToOtherProcesses(newPosition);
+    if (oldPosition != newPosition) {
+        if (RefPtr page = m_frame->page(); page && page->hasRemoteFrames())
+            static_cast<Frame&>(m_frame).loaderClient().broadcastFrameScrollPositionToOtherProcesses(newPosition);
+    }
 }
 
 void LocalFrameView::applyRecursivelyWithVisibleRect(NOESCAPE const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
