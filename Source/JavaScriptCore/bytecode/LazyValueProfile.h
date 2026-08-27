@@ -39,7 +39,7 @@ class CompressedLazyValueProfileHolder {
 public:
     CompressedLazyValueProfileHolder() = default;
 
-    void computeUpdatedPredictions(const ConcurrentJSLocker&, CodeBlock*);
+    void computeUpdatedPredictions(CodeBlock*);
 
     LazyOperandValueProfile* addOperandValueProfile(const LazyOperandValueProfileKey&);
     JSValue* addSpeculationFailureValueProfile(BytecodeIndex);
@@ -69,7 +69,7 @@ public:
 
     LazyOperandValueProfile* NODELETE getIfPresent(const LazyOperandValueProfileKey& key) const;
 
-    SpeculatedType prediction(const ConcurrentJSLocker&, const LazyOperandValueProfileKey&) const;
+    SpeculatedType prediction(const LazyOperandValueProfileKey&) const;
 private:
     UncheckedKeyHashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };
