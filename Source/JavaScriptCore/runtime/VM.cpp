@@ -1860,6 +1860,11 @@ void VM::finalizeUnconditionally()
     m_syncResumeCallCache->finalizeUnconditionally(*this);
 }
 
+void VM::clearMicrotaskCallCaches()
+{
+    m_syncResumeCallCache->clear();
+}
+
 template<typename Visitor>
 void VM::visitAggregateImpl(Visitor& visitor)
 {

@@ -1148,6 +1148,10 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
                 });
         });
 
+    // MicrotaskCallCache lives outside any CodeBlock and keys its cached entry points on the callee's
+    // executable, so after the code is detached above its callee check would still hit and call into it.
+    vm.clearMicrotaskCallCaches();
+
 #if ENABLE(WEBASSEMBLY)
     {
         // We must ensure that we clear the JS call ICs from Wasm. Otherwise, Wasm will
