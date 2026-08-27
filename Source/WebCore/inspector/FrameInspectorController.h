@@ -52,6 +52,7 @@ class FrontendRouter;
 
 namespace WebCore {
 
+class FrameDOMAgent;
 class GraphicsContext;
 class InspectorBackendClient;
 class InspectorController;
@@ -60,6 +61,7 @@ class InspectorInstrumentation;
 class InstrumentingAgents;
 class LocalFrame;
 class PageInspectorController;
+class RenderObject;
 class WebInjectedScriptManager;
 struct FrameAgentContext;
 
@@ -82,6 +84,7 @@ public:
     Page* NODELETE overlayOwnerPage() const final;
     LocalFrame* NODELETE overlayOwnerFrame() const final;
     InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final;
+    Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
 
@@ -130,6 +133,9 @@ private:
     bool m_didCreateConsoleAgent { false };
     bool m_didCreateLazyAgents { false };
     WeakPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+
+    // Non-owning; the agent is owned by m_agents. Kept so the overlay can reach the flex line-start cache.
+    CheckedPtr<FrameDOMAgent> m_domAgent;
 };
 
 } // namespace WebCore

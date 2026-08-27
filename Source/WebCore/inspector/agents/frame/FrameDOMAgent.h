@@ -52,6 +52,7 @@ class LocalFrame;
 class Node;
 class PseudoElement;
 class RegisteredEventListener;
+class RenderObject;
 class ShadowRoot;
 
 // FrameDOMAgent is the per-frame DOM agent for Site Isolation.
@@ -148,12 +149,15 @@ public:
     void pseudoElementDestroyed(PseudoElement&);
     void frameDocumentUpdated(LocalFrame&);
     bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    void flexibleBoxRendererBeganLayout(const RenderObject&);
+    void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
 
     // Public accessors
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
     InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
+    Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&) const;
 
 private:
     Inspector::Protocol::DOM::NodeId bind(Node&);
@@ -179,6 +183,7 @@ private:
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Inspector::Protocol::ErrorString&, Node*);
 
     void setDocument(Document*);
+    void relayoutDocument();
     void reset();
     void destroyedNodesTimerFired();
 
@@ -238,6 +243,8 @@ private:
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
     RefPtr<Node> m_inspectedNode;
+
+    SingleThreadWeakHashMap<RenderObject, Vector<size_t>> m_flexibleBoxRendererCachedItemsAtStartOfLine;
 
     Vector<Inspector::Protocol::DOM::NodeId> m_destroyedDetachedNodeIdentifiers;
     Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;
