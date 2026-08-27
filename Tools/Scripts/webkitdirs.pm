@@ -548,6 +548,19 @@ sub determineNativeArchitecture($)
     $nativeArchitectureMap{@{$remotes}} = $output;
 }
 
+sub defaultArchitectureForXcodeSDK
+{
+    my $arch = nativeArchitecture([]);
+    if (isAppleCocoaWebKit() && $arch eq "arm64") {
+        determineXcodeSDK();
+        if ($xcodeSDK =~ /\.internal$/ && $xcodeSDK !~ /simulator/) {
+            # Device SDKs (macosx.internal, iphoneos.internal, etc.) default to arm64e.
+            $arch = "arm64e";
+        }
+    }
+    return $arch;
+}
+
 sub determineArchitecture
 {
     return if defined $architecture;
@@ -560,14 +573,7 @@ sub determineArchitecture
         return;
     }
 
-    $architecture = nativeArchitecture([]);
-    if (isAppleCocoaWebKit() && $architecture eq "arm64") {
-        determineXcodeSDK();
-        if ($xcodeSDK =~ /\.internal$/ && $xcodeSDK !~ /simulator/) {
-            # Device SDKs (macosx.internal, iphoneos.internal, etc.) default to arm64e.
-            $architecture = "arm64e";
-        }
-    }
+    $architecture = defaultArchitectureForXcodeSDK();
 
     if (isCMakeBuild()) {
         if (isCrossCompilation()) {
@@ -630,7 +636,7 @@ sub determineXcodeDestination
     # Use a generic destination ("Any Mac", etc.) when there are multiple architectures, or when building to
     # a device.
 
-    my @architectures = split(' ', $architecture);
+    my @architectures = split(' ', xcodeArchitecture());
     my $generic = $xcodeSDKPlatformName =~ /os$/ || (scalar @architectures) > 1;
 
     if (willUseIOSDeviceSDK()) {
@@ -1564,6 +1570,14 @@ sub architecture()
 {
     determineArchitecture();
     return $architecture;
+}
+
+# Not architecture(): that reports what a cmake-mac tree builds, and xcodebuild must target the SDK's slice regardless.
+sub xcodeArchitecture()
+{
+    determineArchitecture();
+    return $architecture if $didUserSpecifyArchitecture;
+    return defaultArchitectureForXcodeSDK();
 }
 
 sub xcodeDestination()

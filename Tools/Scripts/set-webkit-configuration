@@ -93,15 +93,16 @@ if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV
 }
 
 my $baseProductDir = baseProductDir();
-if (isAppleCocoaWebKit() && !isCMakeBuild()) {
+if (isAppleCocoaWebKit()) {
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
-    if ($workspace) {
-        open WORKSPACE, ">", "$baseProductDir/Workspace";
-        print WORKSPACE realpath($workspace);
-        close WORKSPACE;
-    }
 } else {
     make_path($baseProductDir);
+}
+
+if ($workspace) {
+    open WORKSPACE, ">", "$baseProductDir/Workspace";
+    print WORKSPACE realpath($workspace);
+    close WORKSPACE;
 }
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
