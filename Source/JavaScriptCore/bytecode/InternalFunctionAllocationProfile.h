@@ -54,8 +54,12 @@ inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFr
     // https://bugs.webkit.org/show_bug.cgi?id=177318
     if (prototype == baseStructure->storedPrototype())
         structure = baseStructure;
-    else
-        structure = baseGlobalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseStructure);
+    else {
+        // A structure already here means this profile keeps rotating between bases, so our own
+        // memoization is not working for this function and only the global cache bounds the churn.
+        auto shouldCacheStructure = m_structureID ? StructureCache::ShouldCacheStructure::Yes : StructureCache::ShouldCacheStructure::No;
+        structure = baseGlobalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseStructure, shouldCacheStructure);
+    }
 
     // Ensure that if another thread sees the structure, it will see it properly created.
     WTF::storeStoreFence();

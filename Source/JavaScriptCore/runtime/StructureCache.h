@@ -46,10 +46,12 @@ public:
     inline explicit StructureCache(VM&); // Defined in StructureInlines.h.
     inline ~StructureCache(); // Defined in StructureInlines.h.
 
+    enum class ShouldCacheStructure : bool { No, Yes };
+
     JS_EXPORT_PRIVATE void clear();
 
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false, FunctionExecutable* = nullptr);
-    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
+    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*, ShouldCacheStructure = ShouldCacheStructure::Yes);
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureConcurrently(JSObject* prototype, unsigned inlineCapacity);
 
     template<typename Func>
@@ -60,7 +62,7 @@ public:
     }
 
 private:
-    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*);
+    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*, ShouldCacheStructure);
 
     WeakGCMap<PrototypeKey, Structure> m_structures;
     Lock m_lock;

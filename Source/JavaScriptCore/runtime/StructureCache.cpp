@@ -37,22 +37,31 @@ void StructureCache::clear()
     m_structures.clear();
 }
 
-inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
+inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable, ShouldCacheStructure shouldCacheStructure)
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the UncheckedKeyHashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
+    ASSERT_IMPLIES(makePolyProtoStructure, shouldCacheStructure == ShouldCacheStructure::Yes); // Poly proto structures are keyed by executable rather than by prototype, so sharing them is the point.
 
     // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
     VM& vm = globalObject->vm();
+
+    // Every mono-proto entry was inserted right after didBecomePrototype() set that bit on its
+    // prototype, and the bit is never cleared. So an object that has never been anyone's prototype
+    // cannot be in the table and looking it up can only miss.
+    bool mayBeInCache = makePolyProtoStructure || prototype->mayBePrototype();
+
     PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo };
-    if (Structure* structure = m_structures.get(key)) {
-        if (makePolyProtoStructure) {
-            prototype->didBecomePrototype(vm);
-            RELEASE_ASSERT(structure->hasPolyProto());
-        } else
-            RELEASE_ASSERT(structure->hasMonoProto());
-        ASSERT(prototype->mayBePrototype());
-        return structure;
+    if (mayBeInCache) {
+        if (Structure* structure = m_structures.get(key)) {
+            if (makePolyProtoStructure) {
+                prototype->didBecomePrototype(vm);
+                RELEASE_ASSERT(structure->hasPolyProto());
+            } else
+                RELEASE_ASSERT(structure->hasMonoProto());
+            ASSERT(prototype->mayBePrototype());
+            return structure;
+        }
     }
 
     prototype->didBecomePrototype(vm);
@@ -65,8 +74,10 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
         structure = Structure::create(
             vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     }
-    Locker locker { m_lock };
-    m_structures.set(key, structure);
+    if (shouldCacheStructure == ShouldCacheStructure::Yes) {
+        Locker locker { m_lock };
+        m_structures.set(key, structure);
+    }
     return structure;
 }
 
@@ -83,19 +94,19 @@ Structure* StructureCache::emptyObjectStructureConcurrently(JSObject* prototype,
     return nullptr;
 }
 
-Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
+Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure, ShouldCacheStructure shouldCacheStructure)
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
     IndexingType indexingType = baseStructure->indexingType();
     if (prototype->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
-    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfoForCells(), indexingType, 0, false, nullptr);
+    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfoForCells(), indexingType, 0, false, nullptr, shouldCacheStructure);
 }
 
 Structure* StructureCache::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
 {
-    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure, executable);
+    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure, executable, ShouldCacheStructure::Yes);
 }
 
 } // namespace JSC
