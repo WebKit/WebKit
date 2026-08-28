@@ -34,13 +34,14 @@
 
 #import "APIInspectorExtension.h"
 #import "JavaScriptEvaluationResult.h"
+#import "RunJavaScriptResult.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
 #import <WebCore/ExceptionDetails.h>
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(Expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 

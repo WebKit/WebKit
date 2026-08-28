@@ -32,6 +32,7 @@
 #include "APIURL.h"
 #include "JavaScriptEvaluationResult.h"
 #include "MessageSenderInlines.h"
+#include "RunJavaScriptResult.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
 #include "WebInspectorUIExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
@@ -170,7 +171,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
             return;
         }
 
-        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTF::move(completionHandler)](Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>&& result, const std::optional<Inspector::ExtensionError> error) mutable {
+        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTF::move(completionHandler)](RunJavaScriptResult&& result, const std::optional<Inspector::ExtensionError> error) mutable {
             if (error)
                 return completionHandler(makeUnexpected(error.value()));
 
@@ -232,7 +233,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
             return;
         }
 
-        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTF::move(completionHandler)](Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>&& result, const std::optional<Inspector::ExtensionError>& error) mutable {
+        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTF::move(completionHandler)](RunJavaScriptResult&& result, const std::optional<Inspector::ExtensionError>& error) mutable {
             if (error)
                 return completionHandler(makeUnexpected(error.value()));
             completionHandler(WTF::move(result));

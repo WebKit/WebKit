@@ -59,6 +59,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module RunJavaScriptResult {
+        requires cplusplus20
+        header "../../Shared/RunJavaScriptResult.h"
+        export *
+    }
+
     module MessageReceiver {
         requires cplusplus20
         header "../../Platform/IPC/MessageReceiver.h"

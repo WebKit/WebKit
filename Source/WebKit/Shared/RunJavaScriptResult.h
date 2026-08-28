@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,14 @@
 
 #pragma once
 
-#include "RunJavaScriptResult.h"
-#include <wtf/Forward.h>
+#include <WebCore/ExceptionDetails.h>
+#include <expected>
+#include <optional>
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
+namespace WebKit {
 
-namespace Inspector {
-enum class ExtensionError : uint8_t;
+class JavaScriptEvaluationResult;
 
-using ExtensionTabID = WTF::String;
-using ExtensionID = WTF::String;
-using ExtensionVoidResult = Expected<void, ExtensionError>;
-using ExtensionEvaluationResult = Expected<WebKit::RunJavaScriptResult, ExtensionError>;
+using RunJavaScriptResult = std::expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>;
 
-enum class ExtensionAppearance : bool {
-    Light,
-    Dark
-};
-
-enum class ExtensionError : uint8_t {
-    ContextDestroyed,
-    InternalError,
-    InvalidRequest,
-    RegistrationFailed,
-    NotImplemented,
-};
-
-WTF::String extensionErrorToString(ExtensionError);
-
-} // namespace Inspector
-
-#endif // ENABLE(INSPECTOR_EXTENSIONS)
+}

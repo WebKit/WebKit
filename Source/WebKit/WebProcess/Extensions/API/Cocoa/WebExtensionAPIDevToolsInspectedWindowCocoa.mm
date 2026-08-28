@@ -37,6 +37,7 @@
 #import "JSWebExtensionWrapper.h"
 #import "JavaScriptEvaluationResult.h"
 #import "MessageSenderInlines.h"
+#import "RunJavaScriptResult.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
@@ -67,7 +68,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
         }
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(webPageProxyIdentifier, expression, frameURL), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DevToolsInspectedWindowEval(webPageProxyIdentifier, expression, frameURL), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<RunJavaScriptResult, WebExtensionError>&& result) mutable {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
