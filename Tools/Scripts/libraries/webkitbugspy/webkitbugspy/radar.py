@@ -612,6 +612,61 @@ class Tracker(GenericTracker):
         return None
 
     @handle_access_exception
+    def remove_relationship(self, issue, issue2, relationship):
+        if relationship not in self.RELATIONSHIP_TYPES:
+            sys.stderr.write(f'{relationship} is not a valid relationship type.')
+            return None
+        if relationship in (
+            self.radarclient().Relationship.TYPE_DUPLICATE_OF,
+            self.radarclient().Relationship.TYPE_ORIGINAL_OF,
+        ):
+            raise NotImplementedError(f'Cannot remove a {relationship} relationship')
+
+        radar = self.client.radar_for_id(issue.id)
+        if not radar:
+            sys.stderr.write(f"Failed to fetch '{issue.link}'\n")
+            return None
+
+        # 'delete_relationship' only accepts a relationship the radar already has
+        existing = next((
+            candidate for candidate in radar.relationships() or []
+            if candidate.type == relationship and candidate.related_radar_id == issue2.id
+        ), None)
+        if not existing:
+            return issue
+
+        radar.delete_relationship(existing)
+        radar.commit_changes()
+
+        if not issue._related:
+            self.populate(issue, 'related')
+        else:
+            issue._related[relationship] = [
+                candidate for candidate in issue._related[relationship] if candidate.id != issue2.id
+            ]
+        return issue
+
+    @handle_access_exception
+    def unrelate(self, issue, related_to=None, blocked_by=None, blocking=None, parent_of=None, subtask_of=None,
+                 cause_of=None, caused_by=None, duplicate_of=None, original_of=None, **relations):
+        if relations:
+            raise TypeError(f"'{list(relations.keys())[0]}' is an invalid relation")
+
+        for related, relationship in (
+            (related_to, self.radarclient().Relationship.TYPE_RELATED_TO),
+            (blocked_by, self.radarclient().Relationship.TYPE_BLOCKED_BY),
+            (blocking, self.radarclient().Relationship.TYPE_BLOCKING),
+            (parent_of, self.radarclient().Relationship.TYPE_PARENT_OF),
+            (subtask_of, self.radarclient().Relationship.TYPE_SUBTASK_OF),
+            (cause_of, self.radarclient().Relationship.TYPE_CAUSE_OF),
+            (caused_by, self.radarclient().Relationship.TYPE_CAUSED_BY),
+            (duplicate_of, self.radarclient().Relationship.TYPE_DUPLICATE_OF),
+            (original_of, self.radarclient().Relationship.TYPE_ORIGINAL_OF),
+        ):
+            if related:
+                self.remove_relationship(issue, related, relationship)
+        return issue
+
     def relate(self, issue, related_to=None, blocked_by=None, blocking=None, parent_of=None, subtask_of=None,
                cause_of=None, caused_by=None, duplicate_of=None, original_of=None, **relations):
         if relations:

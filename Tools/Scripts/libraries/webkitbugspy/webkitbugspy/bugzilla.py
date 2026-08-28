@@ -596,54 +596,57 @@ class Tracker(GenericTracker):
 
         return result
 
+    RELATIONS = ('depends_on', 'blocks', 'regressed_by', 'regressions')
+
     def related_issue_id(self, issue):
         if isinstance(issue.tracker, Tracker):
             return issue.id
         else:
             raise TypeError('Cannot relate issues of different types.')
 
-    def relate(self, issue, depends_on=None, blocks=None, regressed_by=None, regressions=None, **relations):
-        if relations:
-            raise TypeError("'{}' is an invalid relation".format(list(relations.keys())[0]))
+    def _modify_relations(self, issue, action, relations):
+        if invalid := [relation for relation in relations if relation not in self.RELATIONS]:
+            raise TypeError(f"'{invalid[0]}' is an invalid relation")
 
-        update_dict = dict()
-        update_dict['ids'] = [issue.id]
-        if depends_on:
-            update_dict['depends_on'] = {'add': [self.related_issue_id(depends_on)]}
-        if blocks:
-            update_dict['blocks'] = {'add': [self.related_issue_id(blocks)]}
-        if regressed_by:
-            update_dict['regressed_by'] = {'add': [self.related_issue_id(regressed_by)]}
-        if regressions:
-            update_dict['regressions'] = {'add': [self.related_issue_id(regressions)]}
+        update_dict = {'ids': [issue.id]}
+        for relation, related in relations.items():
+            if related:
+                update_dict[relation] = {action: [self.related_issue_id(related)]}
 
         response = None
         try:
             response = self.session.put(
-                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                f'{self.url}/rest/bug/{issue.id}{self._login_arguments(required=True)}',
                 json=update_dict,
                 timeout=self.timeout,
             )
         except requests.exceptions.RequestException as e:
-            sys.stderr.write('Request Error: {}\n'.format(e))
+            sys.stderr.write(f'Request Error: {e}\n')
         if response is not None and response.status_code // 100 == 4 and self._logins_left:
             self._logins_left -= 1
         if response is None or response.status_code // 100 != 2:
-            sys.stderr.write("Failed to modify '{}'\n".format(issue))
+            sys.stderr.write(f"Failed to modify '{issue}'\n")
             return None
 
         if not issue._related:
             self.populate(issue, 'related')
-        else:
-            if depends_on:
-                issue._related['depends_on'].append(depends_on)
-            if blocks:
-                issue._related['blocks'].append(blocks)
-            if regressed_by:
-                issue._related['regressed_by'].append(regressed_by)
-            if regressions:
-                issue._related['regressions'].append(regressions)
+            return issue
+
+        for relation, related in relations.items():
+            if not related:
+                continue
+            existing = issue._related.setdefault(relation, [])
+            if action == 'add' and related not in existing:
+                existing.append(related)
+            elif action == 'remove' and related in existing:
+                existing.remove(related)
         return issue
+
+    def relate(self, issue, **relations):
+        return self._modify_relations(issue, 'add', relations)
+
+    def unrelate(self, issue, **relations):
+        return self._modify_relations(issue, 'remove', relations)
 
     @property
     @webkitcorepy.decorators.Memoize()

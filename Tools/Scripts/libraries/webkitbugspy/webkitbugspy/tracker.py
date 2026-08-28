@@ -183,6 +183,9 @@ class Tracker(object):
     def relate(self, issue, **relations):
         raise NotImplementedError()
 
+    def unrelate(self, issue, **relations):
+        raise NotImplementedError()
+
     def add_comment(self, issue, text):
         raise NotImplementedError()
 

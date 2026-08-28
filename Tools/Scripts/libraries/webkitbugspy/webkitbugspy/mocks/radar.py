@@ -176,6 +176,7 @@ class RadarModel(object):
             self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.duplicateOfProblemID = issue['original']['id'] if issue.get('original', None) else None
         self.related = list()
+        self.unrelated = list()
         if issue.get('substate'):
             self.substate = issue['substate']
         else:
@@ -288,6 +289,17 @@ class RadarModel(object):
                 self.client.parent.issues[r.related_radar_id]['related'] = list()
             self.client.parent.issues[r.related_radar_id]['related'].append(inverse_r_dict)
 
+        for r in list(self.unrelated):
+            r_dict = {'relationship': r.type, 'related_radar': r.related_radar_id}
+            entries = self.client.parent.issues[self.id].get('related') or []
+            if r_dict in entries:
+                entries.remove(r_dict)
+
+            inverse_r_dict = {'relationship': Radar.Relationship.inverse_map[r.type], 'related_radar': self.id}
+            entries = self.client.parent.issues[r.related_radar_id].get('related') or []
+            if inverse_r_dict in entries:
+                entries.remove(inverse_r_dict)
+
         if getattr(self, 'sourceChanges', None):
             self.client.parent.issues[self.id]['sourceChanges'] = self.sourceChanges
 
@@ -313,6 +325,9 @@ class RadarModel(object):
 
     def add_relationship(self, relationship):
         self.related.append(relationship)
+
+    def delete_relationship(self, relationship):
+        self.unrelated.append(relationship)
 
     def remove_keyword(self, keyword):
         if keyword.name in self._issue.get('keywords') or []:

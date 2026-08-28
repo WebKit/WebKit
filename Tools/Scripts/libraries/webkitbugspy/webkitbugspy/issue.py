@@ -206,6 +206,9 @@ class Issue(object):
     def relate(self, **relations):
         return self.tracker.relate(self, **relations)
 
+    def unrelate(self, **relations):
+        return self.tracker.unrelate(self, **relations)
+
     @property
     def assignee(self):
         if self._assignee is None:
