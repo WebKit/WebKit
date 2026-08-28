@@ -5712,7 +5712,7 @@ bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
     bool wasIgnoringPinnedState = gestureController->shouldIgnorePinnedState();
     gestureController->setShouldIgnorePinnedState(ignoringPinnedState);
 
-    Ref webEvent = NativeWebWheelEvent::create(event, m_view.getAutoreleased());
+    Ref webEvent = NativeWebWheelEvent::create(event, m_view.get());
     bool handledEvent = gestureController->handleScrollWheelEvent(webEvent);
 
     gestureController->setShouldIgnorePinnedState(wasIgnoringPinnedState);
@@ -5742,7 +5742,7 @@ void WebViewImpl::scrollWheel(NSEvent *event)
     updateRefreshControllerForWheelEvent(event);
 #endif
 
-    Ref webEvent = NativeWebWheelEvent::create(event, m_view.getAutoreleased());
+    Ref webEvent = NativeWebWheelEvent::create(event, m_view.get());
 
     if (m_allowsBackForwardNavigationGestures && protect(ensureGestureController())->handleScrollWheelEvent(webEvent)) {
         RELEASE_LOG(MouseHandling, "[pageProxyID=%lld] WebViewImpl::scrollWheel: Gesture controller handled wheel event", m_page->identifier().toUInt64());
@@ -6888,7 +6888,7 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
             if (handled)
                 LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
             else {
-                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased(), inputSource, canInitiateDrag);
+                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.get(), inputSource, canInitiateDrag);
                 weakThis->m_page->handleMouseEvent(WTF::move(webEvent));
             }
         }];
