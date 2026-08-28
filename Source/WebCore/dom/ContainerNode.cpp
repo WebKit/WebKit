@@ -312,6 +312,49 @@ static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& con
     };
 }
 
+static ContainerNode::ChildChange makeChildChangeForMoveRemoval(Node& child)
+{
+    auto changeType = [&] {
+        if (is<Element>(child))
+            return ContainerNode::ChildChange::Type::ElementMovedFrom;
+        if (is<Text>(child))
+            return ContainerNode::ChildChange::Type::TextMovedFrom;
+        return ContainerNode::ChildChange::Type::NonContentsChildMovedFrom;
+    }();
+
+    return {
+        changeType,
+        nullptr,
+        dynamicDowncast<Element>(child),
+        ElementTraversal::previousSibling(child),
+        ElementTraversal::nextSibling(child),
+        ContainerNode::ChildChange::Source::API,
+        changeType == ContainerNode::ChildChange::Type::ElementMovedFrom ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No
+    };
+}
+
+static ContainerNode::ChildChange makeChildChangeForMoveInsertion(ContainerNode& containerNode, Node& child, Node* beforeChild)
+{
+    auto changeType = [&] {
+        if (is<Element>(child))
+            return ContainerNode::ChildChange::Type::ElementMovedInto;
+        if (is<Text>(child))
+            return ContainerNode::ChildChange::Type::TextMovedInto;
+        return ContainerNode::ChildChange::Type::NonContentsChildMovedInto;
+    }();
+
+    auto* beforeChildElement = dynamicDowncast<Element>(beforeChild);
+    return {
+        changeType,
+        nullptr,
+        dynamicDowncast<Element>(child),
+        beforeChild ? ElementTraversal::previousSibling(*beforeChild) : ElementTraversal::lastChild(containerNode),
+        !beforeChild || beforeChildElement ? beforeChildElement : ElementTraversal::nextSibling(*beforeChild),
+        ContainerNode::ChildChange::Source::API,
+        changeType == ContainerNode::ChildChange::Type::ElementMovedInto ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No
+    };
+}
+
 static ContainerNode::ChildChange NODELETE makeChildChangeForInsertion(ContainerNode& containerNode, NodeVector& children, Node* beforeChild, ContainerNode::ChildChange::Source source, ReplacedAllChildren replacedAllChildren)
 {
     using Type = ContainerNode::ChildChange::Type;
@@ -1504,7 +1547,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
     RefPtr oldPreviousSibling = node.previousSibling();
     RefPtr oldNextSibling = node.nextSibling();
 
-    auto removalChildChange = makeChildChangeForRemoval(node, ChildChange::Source::API);
+    auto removalChildChange = makeChildChangeForMoveRemoval(node);
 
     {
         Ref nodeDocument = node.document();
@@ -1552,10 +1595,8 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
 
     runMovingStepsForShadowIncludingInclusiveDescendants(node, node, *oldParent, newParentIsConnected);
 
-    // FIXME: Add a new type for ChildChange.
-
     oldParent->childrenChanged(removalChildChange);
-    childrenChanged(makeChildChangeForInsertion(*this, node, refChild, ChildChange::Source::API, ReplacedAllChildren::No));
+    childrenChanged(makeChildChangeForMoveInsertion(*this, node, refChild));
 
     return { };
 }

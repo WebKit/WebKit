@@ -3767,7 +3767,10 @@ void Element::childrenChanged(const ChildChange& change)
         switch (change.type) {
         case ChildChange::Type::ElementInserted:
         case ChildChange::Type::ElementRemoved:
+        case ChildChange::Type::ElementMovedFrom:
+        case ChildChange::Type::ElementMovedInto:
             // For elements, we notify shadowRoot in Element::insertionSteps and Element::removingSteps.
+            // FIXME(321178): Need to notify shadowRoot when elements are moved.
             break;
         case ChildChange::Type::AllChildrenRemoved:
         case ChildChange::Type::AllChildrenReplaced:
@@ -3777,10 +3780,14 @@ void Element::childrenChanged(const ChildChange& change)
         case ChildChange::Type::TextInserted:
         case ChildChange::Type::TextRemoved:
         case ChildChange::Type::TextChanged:
+        case ChildChange::Type::TextMovedFrom:
+        case ChildChange::Type::TextMovedInto:
             shadowRoot->didMutateTextNodesOfShadowHost();
             break;
         case ChildChange::Type::NonContentsChildInserted:
         case ChildChange::Type::NonContentsChildRemoved:
+        case ChildChange::Type::NonContentsChildMovedFrom:
+        case ChildChange::Type::NonContentsChildMovedInto:
             break;
         }
     }
