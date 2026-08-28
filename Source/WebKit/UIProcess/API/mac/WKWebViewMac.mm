@@ -1882,7 +1882,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     _impl->updateTopScrollPocketStyle();
-    _impl->updateScrollPocketVisibilityWhenScrolledToTop();
+    _impl->updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
     _impl->updateTopScrollPocketCaptureColor();
 #endif
 }

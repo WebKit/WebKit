@@ -2589,7 +2589,7 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollOffset)
 
     if (pageIsScrolledToTopDidChange) {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-        updateScrollPocketVisibilityWhenScrolledToTop();
+        updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
         updatePrefersSolidColorHardPocket();
 #endif
         [protect(view()) didChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
@@ -2605,10 +2605,10 @@ void WebViewImpl::didEndSyntheticMomentumScrolling()
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
-void WebViewImpl::updateScrollPocketVisibilityWhenScrolledToTop()
+void WebViewImpl::updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable()
 {
     RetainPtr view = m_view.get();
-    if ([view _usesAutomaticContentInsetBackgroundFill] && pageIsScrolledToTop())
+    if ([view _usesAutomaticContentInsetBackgroundFill] && pageIsScrolledToTop() && !m_page->isEditable())
         [view _addReasonToHideTopScrollPocket:HideScrollPocketReason::ScrolledToTop];
     else
         [view _removeReasonToHideTopScrollPocket:HideScrollPocketReason::ScrolledToTop];
@@ -8078,7 +8078,7 @@ void WebViewImpl::updateScrollPocket()
         [view addSubview:m_topScrollPocket.get()];
         for (NSView *pocketContainer in m_viewsAboveScrollPocket.get())
             [m_topScrollPocket addElementContainer:pocketContainer];
-        updateScrollPocketVisibilityWhenScrolledToTop();
+        updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
         updatePrefersSolidColorHardPocket();
     } else
         captureView = [m_topScrollPocket captureView];
