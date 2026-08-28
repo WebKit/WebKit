@@ -158,7 +158,8 @@ void HTMLVideoElement::acceleratedRenderingStateChanged()
 
 bool HTMLVideoElement::supportsAcceleratedRendering() const
 {
-    return RefPtr { player() } && protect(player())->supportsAcceleratedRendering();
+    RefPtr player = this->player();
+    return player && player->supportsAcceleratedRendering();
 }
 
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
@@ -251,21 +252,22 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
 {
-    if (!player())
+    RefPtr player = this->player();
+    if (!player)
         return false;
-    
+
     if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
         if (!mediaSession().allowsPictureInPicture())
             return false;
-        if (!protect(player())->supportsPictureInPicture())
+        if (!player->supportsPictureInPicture())
             return false;
     }
 
     RefPtr page = document().page();
-    if (!page) 
+    if (!page)
         return false;
 
-    if (!protect(player())->supportsFullscreen())
+    if (!player->supportsFullscreen())
         return false;
 
 #if HAVE(AVEXPERIENCECONTROLLER)
@@ -289,7 +291,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
         return true;
 #endif
 
-    if (!protect(player())->hasVideo())
+    if (!player->hasVideo())
         return false;
 
     return page->chrome().client().supportsVideoFullscreen(videoFullscreenMode);
@@ -306,16 +308,18 @@ void HTMLVideoElement::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPro
 
 unsigned HTMLVideoElement::videoWidth() const
 {
-    if (!player())
+    RefPtr player = this->player();
+    if (!player)
         return 0;
-    return clampToUnsigned(protect(player())->naturalSize().width());
+    return clampToUnsigned(player->naturalSize().width());
 }
 
 unsigned HTMLVideoElement::videoHeight() const
 {
-    if (!player())
+    RefPtr player = this->player();
+    if (!player)
         return 0;
-    return clampToUnsigned(protect(player())->naturalSize().height());
+    return clampToUnsigned(player->naturalSize().height());
 }
 
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)
@@ -516,18 +520,20 @@ void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument, Document& new
 #if ENABLE(MEDIA_STATISTICS)
 unsigned HTMLVideoElement::webkitDecodedFrameCount() const
 {
-    if (!player())
+    RefPtr player = this->player();
+    if (!player)
         return 0;
 
-    return player()->decodedFrameCount();
+    return player->decodedFrameCount();
 }
 
 unsigned HTMLVideoElement::webkitDroppedFrameCount() const
 {
-    if (!player())
+    RefPtr player = this->player();
+    if (!player)
         return 0;
 
-    return player()->droppedFrameCount();
+    return player->droppedFrameCount();
 }
 #endif
 
