@@ -2008,7 +2008,7 @@ static ASCIILiteral nameForPrimitiveKind(Types::Primitive::Kind primitiveKind)
     case Types::Primitive::Sampler:
         return "sampler"_s;
     case Types::Primitive::SamplerComparison:
-        return "sampler_comparion"_s;
+        return "sampler_comparison"_s;
     case Types::Primitive::TextureExternal:
         return "texture_external"_s;
     case Types::Primitive::AccessMode:
