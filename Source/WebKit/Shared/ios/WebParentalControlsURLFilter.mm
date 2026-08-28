@@ -94,9 +94,16 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isM
         RetainPtr filter = ensureWebContentFilter();
 #if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
 #if __has_include(<WebKitAdditions/BEKAdditions.h>)
-    if (WebCore::DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()) {
-        MAYBE_EVALUATE_URL_WITH_TRANSITIVE_TRUST
-    }
+        if (WebCore::DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()) {
+            BOOL isMainFrameForEvaluation = (isMainFrame == WebCore::IsMainFrameLoad::Yes);
+            if ([filter respondsToSelector:@selector(evaluateURL:mainFrameURL:isMainFrame:completionHandler:)]) {
+                [filter evaluateURL:url.createNSURL().get() mainFrameURL:mainDocumentURL.createNSURL().get() isMainFrame:isMainFrameForEvaluation completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+                    if (completionHandler)
+                        completionHandler(!shouldBlock, replacementData);
+                }).get()];
+                return;
+            }
+        }
 #endif
 #endif
         [filter evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
@@ -154,11 +161,43 @@ void WebParentalControlsURLFilter::requestPermissionForURL(const URL& url, const
             });
             return;
         }
-        auto filter = ensureWebContentFilter();
+        RetainPtr filter = ensureWebContentFilter();
 #if __has_include(<WebKitAdditions/BEKAdditions.h>)
-        RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL starts execution");
-        MAYBE_REQUEST_PERMISSION_ASK_TO
+        if ([filter respondsToSelector:@selector(requestPermissionForURL:referrerURL:presentingView:completionHandler:)]) {
+            auto permissionDecisionCompletionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)](BEWebContentFilterPermissionDecision result, NSError *) mutable {
+                switch (result) {
+                case BEWebContentFilterPermissionDecisionError:
+                    RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL result is error");
+                    break;
+                case BEWebContentFilterPermissionDecisionAllowed:
+                    RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL result is allowed");
+                    break;
+                case BEWebContentFilterPermissionDecisionDenied:
+                    RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL result is denied");
+                    break;
+                case BEWebContentFilterPermissionDecisionPending:
+                    RELEASE_LOG(Loading, "WebParentalControlsURLFilter::requestPermissionForURL result is pending");
+                    break;
+                default:
+                    RELEASE_LOG_ERROR(Loading, "WebParentalControlsURLFilter::requestPermissionForURL result is invalid, result:%ld", (long)result);
+                    break;
+                }
+
+                bool didAllow = (result == BEWebContentFilterPermissionDecisionAllowed);
+                callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
+                    if (completionHandler)
+                        completionHandler(didAllow);
+                });
+            });
+            [filter requestPermissionForURL:url.createNSURL().get() referrerURL:referrerURL.createNSURL().get() presentingView:presentingViewAsUIView completionHandler:permissionDecisionCompletionHandler.get()];
+            return;
+        }
 #endif
+        RELEASE_LOG_ERROR(Loading, "WebParentalControlsURLFilter::requestPermissionForURL is running an unsupported configuration - default to denying permission");
+        callOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
+            if (completionHandler)
+                completionHandler(false);
+        });
     });
 }
 #endif
