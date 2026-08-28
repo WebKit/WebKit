@@ -1024,7 +1024,7 @@ private:
 
     // These "internal" functions do not check user gesture restrictions.
     void playInternal();
-    void pauseInternal();
+    void pauseInternal(bool dispatchPauseEvent = true);
     void completePlayInternal();
 
     enum class IsExplicitLoad : bool { No, Yes };

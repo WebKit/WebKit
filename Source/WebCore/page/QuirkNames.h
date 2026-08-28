@@ -125,7 +125,7 @@ enum class SiteSpecificQuirk {
     NeedsNavigatorUserAgentDataQuirk,
     NeedsNowPlayingFullscreenSwapQuirk,
 #if PLATFORM(IOS_FAMILY)
-    NeedsPauseBeforeFullscreenExitQuirk,
+    NeedsSuppressedPauseEventOnFullscreenExitQuirk,
     NeedsPreloadAutoQuirk,
 #endif
 #if PLATFORM(MAC)

@@ -4769,12 +4769,14 @@ void HTMLMediaElement::pause()
     if (processingUserGestureForMedia())
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::RequireUserGestureToControlControlsManager);
 
-    pauseInternal();
+    bool suppressPauseEvent = m_videoFullscreenMode == VideoFullscreenModeStandard && protect(document())->quirks().needsSuppressedPauseEventOnFullscreenExitQuirk();
+
+    pauseInternal(!suppressPauseEvent);
     // If we have a pending seek, ensure playback doesn't resume.
     m_wasPlayingBeforeSeeking = false;
 }
 
-void HTMLMediaElement::pauseInternal()
+void HTMLMediaElement::pauseInternal(bool dispatchPauseEvent)
 {
     HTMLMEDIAELEMENT_RELEASE_LOG(PauseInternal);
 
@@ -4819,7 +4821,8 @@ void HTMLMediaElement::pauseInternal()
     if (!m_paused && !m_pausedInternal) {
         setPaused(true);
         scheduleTimeupdateEvent(false);
-        scheduleEvent(eventNames().pauseEvent);
+        if (dispatchPauseEvent)
+            scheduleEvent(eventNames().pauseEvent);
         if (!hadInFlightPlayRequest || !m_playPromiseSettlementGuaranteed)
             scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
@@ -7997,9 +8000,11 @@ void HTMLMediaElement::exitFullscreen()
     if (!videoElement)
         return;
 
+    bool suppressPauseEvent = protect(document())->quirks().needsSuppressedPauseEventOnFullscreenExitQuirk();
+
     if (!paused() && protect(mediaSession())->requiresFullscreenForVideoPlayback()) {
         if (!document().settings().allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback())
-            pauseInternal();
+            pauseInternal(!suppressPauseEvent);
         else {
             // Allow inline playback, but set a flag so pausing and starting again (e.g. when scrubbing or looping) won't go back to fullscreen.
             // Also set the controls attribute so the user will be able to control playback.
@@ -8020,9 +8025,6 @@ void HTMLMediaElement::exitFullscreen()
         }
 
         setChangingVideoFullscreenMode(true);
-
-        if (!paused() && protect(document())->quirks().needsPauseBeforeFullscreenExitQuirk())
-            pauseInternal();
 
         if (isInWindowOrStandardFullscreen(oldVideoFullscreenMode)) {
             setFullscreenMode(VideoFullscreenModeNone);

@@ -257,8 +257,8 @@ static constexpr Quirk table[] = {
     { .match = QuirkMatch::domain("espn.com"_s),
         .behaviors = {
 #if PLATFORM(IOS)
-            // espn.com rdar://154903596
-            NeedsPauseBeforeFullscreenExitQuirk,
+            // espn.com rdar://184169028
+            NeedsSuppressedPauseEventOnFullscreenExitQuirk,
 #endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
             // espn.com rdar://problem/95651814

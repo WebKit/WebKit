@@ -1069,13 +1069,13 @@ bool Quirks::needsPreloadAutoQuirk() const
 #endif
 }
 
-// espn.com rdar://154903596
-bool Quirks::needsPauseBeforeFullscreenExitQuirk() const
+// espn.com rdar://184169028
+bool Quirks::needsSuppressedPauseEventOnFullscreenExitQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsPauseBeforeFullscreenExitQuirk);
+    return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsSuppressedPauseEventOnFullscreenExitQuirk);
 #else
     return false;
 #endif

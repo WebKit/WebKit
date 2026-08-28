@@ -167,7 +167,7 @@ public:
 
     bool NODELETE needsPreloadAutoQuirk() const;
 
-    bool NODELETE needsPauseBeforeFullscreenExitQuirk() const;
+    bool NODELETE needsSuppressedPauseEventOnFullscreenExitQuirk() const;
 
     bool shouldBypassBackForwardCache() const;
     bool shouldBypassAsyncScriptDeferring() const;
