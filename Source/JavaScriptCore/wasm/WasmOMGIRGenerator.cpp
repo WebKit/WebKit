@@ -1328,6 +1328,9 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
 
     m_proc.pinRegister(GPRInfo::wasmContextInstancePointer);
     m_proc.pinRegister(GPRInfo::wasmBaseMemoryPointer);
+    // FIXME: The wasm ABI effectively has to assume this is a caller save when getting
+    // called by wasm, so there's no point in saving and restoring it if B3 chooses to
+    // use it. We actively don't restore this register in many cases anyway e.g. tail calls.
     if (mode == MemoryMode::BoundsChecking)
         m_proc.pinRegister(GPRInfo::wasmBoundsCheckingSizeRegister);
 
@@ -5841,6 +5844,11 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     entries.reserveInitialCapacity(calleeSaves.registerCount() + functionSignature.argumentCount() + 1);
 
     for (const auto& regAtOffset : calleeSaves) {
+        // Don't restore wasmBoundsCheckingSizeRegister since we may have set it when checking for
+        // a cross-instance call. It's not a normal callee save independent of whether we used
+        // it or not.
+        if (regAtOffset.reg() == GPRInfo::wasmBoundsCheckingSizeRegister)
+            continue;
         ShuffleEntry entry;
         entry.src = ShuffleLocation::fromStack(fpOffsetToSPOffset(regAtOffset.offset()));
         if (regAtOffset.reg().isGPR()) {
