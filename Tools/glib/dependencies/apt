@@ -98,6 +98,9 @@ PACKAGES=(
     hyphen-en-us
     gdb
     libcgi-pm-perl
+    $(aptIfExists monado-cli)
+    $(aptIfExists monado-service)
+    $(aptIfExists libopenxr1-monado)
     psmisc
     $(aptIfExists python3-legacy-cgi)
     pulseaudio-utils
