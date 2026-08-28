@@ -1,5 +1,5 @@
 
-FAIL WebAssembly modules should export shared mutable globals with correct initial values assert_equals: expected (number) 100 but got (object) object "[object WebAssembly.Global]"
+PASS WebAssembly modules should export shared mutable globals with correct initial values
 PASS Wasm-to-Wasm mutable global sharing is live
 PASS Multiple JavaScript imports return the same WebAssembly module instance
 PASS v128 globals should work correctly in WebAssembly-to-WebAssembly imports
