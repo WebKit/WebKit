@@ -1254,6 +1254,47 @@ extension AppKitGesturesTests.Basic {
         #expect(page.backForwardList.backList.count == 1)
     }
 
+    @Test(
+        .bug("https://webkit.org/b/322776", "Swiping at pinned state should trigger page navigation")
+    )
+    func swipingAtPinnedStateShouldTriggerPageNavigation() async throws {
+        // Establish a back-forward history entry so that a swiping would have somewhere to navigate to.
+        try await page.load(URL(string: "about:blank?1")).wait()
+        let firstPageURL = page.url
+
+        let testURL = try #require(Bundle.testResources.url(forResource: "red", withExtension: "html"))
+        try await page.load(testURL).wait()
+        await page.waitForNextPresentationUpdate()
+        let secondPageURL = page.url
+
+        #expect(page.backForwardList.backList.count == 1)
+
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 4, y: window.frame.height / 2))
+        let end = screenBounds(ofPointInWindowCoordinates: CGPoint(x: 3 * window.frame.width / 4, y: window.frame.height / 2))
+
+        // Swipe right, back navigation.
+        await recap.play { composer in
+            composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.5))
+        }
+
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(page.url == firstPageURL)
+        #expect(page.backForwardList.backList.count == 0)
+        #expect(page.backForwardList.forwardList.count == 1)
+
+        // Swipe left, forward navigation.
+        await recap.play { composer in
+            composer._wk_scroll(withStart: end, end: start, duration: .seconds(0.5))
+        }
+
+        try await Task.sleep(for: .seconds(1))
+
+        #expect(page.url == secondPageURL)
+        #expect(page.backForwardList.backList.count == 1)
+        #expect(page.backForwardList.forwardList.count == 0)
+    }
+
     @Test(arguments: [Duration.zero, .seconds(1)])
     func longPressAndDragOnImageSelectsEntireText(delay: Duration) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
