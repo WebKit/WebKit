@@ -46,6 +46,7 @@
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringCommon.h>
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyModuleCustomSections);
@@ -89,8 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
 
     const auto& customSections = module->moduleInformation().customSections;
     for (const Wasm::CustomSection& section : customSections) {
-        // FIXME: Add a function that compares a String with a span<char8_t> so we don't need to make a string.
-        if (WTF::makeString(section.name) == sectionNameString) {
+        if (equal(sectionNameString, section.name.span())) {
             auto buffer = ArrayBuffer::tryCreate(section.payload.span());
             if (!buffer)
                 return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
