@@ -36,28 +36,57 @@ namespace Style {
 
 using namespace CSS::Literals;
 
-float TextDecorationInset::resolvedStart(const Style::ComputedStyle& style, float autoValue) const
+bool TextDecorationInset::hasPercentage() const
+{
+    auto pair = tryValue();
+    return pair && (pair->first().isPercentOrCalculated() || pair->second().isPercentOrCalculated());
+}
+
+bool TextDecorationInset::hasNegativePercentage() const
+{
+    auto pair = tryValue();
+    if (!pair)
+        return false;
+    auto isNegativePercentage = [](const auto& endpoint) {
+        return endpoint.isPercentOrCalculated() && endpoint.isPossiblyNegative();
+    };
+    return isNegativePercentage(pair->first()) || isNegativePercentage(pair->second());
+}
+
+float TextDecorationInset::resolvedStart(const Style::ComputedStyle& style, float autoValue, float percentageBasis) const
 {
     if (auto pair = tryValue())
-        return Style::evaluate<float>(pair->first(), style.usedZoomForLength());
+        return Style::evaluate<float>(pair->first(), percentageBasis, style.usedZoomForLength());
     return autoValue;
 }
 
-float TextDecorationInset::resolvedEnd(const Style::ComputedStyle& style, float autoValue) const
+float TextDecorationInset::resolvedEnd(const Style::ComputedStyle& style, float autoValue, float percentageBasis) const
 {
     if (auto pair = tryValue())
-        return Style::evaluate<float>(pair->second(), style.usedZoomForLength());
+        return Style::evaluate<float>(pair->second(), percentageBasis, style.usedZoomForLength());
     return autoValue;
+}
+
+float TextDecorationInset::outwardExtent(const Style::ComputedStyle& style, float percentageBasis) const
+{
+    auto pair = tryValue();
+    if (!pair)
+        return 0.f; // 'auto' only ever trims inward.
+
+    auto outwardExtent = [&](const auto& endpoint) {
+        return std::max(0.f, -Style::evaluate<float>(endpoint, percentageBasis, style.usedZoomForLength()));
+    };
+    return std::max(outwardExtent(pair->first()), outwardExtent(pair->second()));
 }
 
 // MARK: - Conversion
 
 auto CSSValueConversion<TextDecorationInsetPair>::operator()(BuilderState& state, const CSSValue& value) -> TextDecorationInsetPair
 {
-    using Length = Style::Length<>;
+    using LengthPercentage = Style::LengthPercentage<>;
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        auto length = toStyleFromCSSValue<Length>(state, *primitiveValue);
+        auto length = toStyleFromCSSValue<LengthPercentage>(state, *primitiveValue);
         return { length, length };
     }
 
@@ -66,8 +95,8 @@ auto CSSValueConversion<TextDecorationInsetPair>::operator()(BuilderState& state
         return { 0_css_px, 0_css_px };
 
     return {
-        toStyleFromCSSValue<Length>(state, pair->first),
-        toStyleFromCSSValue<Length>(state, pair->second),
+        toStyleFromCSSValue<LengthPercentage>(state, pair->first),
+        toStyleFromCSSValue<LengthPercentage>(state, pair->second),
     };
 }
 

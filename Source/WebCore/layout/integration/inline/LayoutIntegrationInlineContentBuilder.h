@@ -46,6 +46,8 @@ public:
 
 private:
     void adjustDisplayLines(InlineContent&, size_t startIndex) const;
+    using DecoratingBoxes = HashSet<CheckedRef<const Layout::Box>>;
+    void adjustInkOverflowForPercentageTextDecorationInsets(InlineContent&, size_t startIndex, const DecoratingBoxes&) const;
     void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;
     FloatRect handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
 

@@ -4874,9 +4874,9 @@ webkit.org/b/244813 imported/w3c/web-platform-tests/css/css-text-decor/text-deco
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-length-rounding-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-length-rounding-002.html [ ImageOnlyFailure ]
 
-# fractional-position endpoint rounds up to a device pixel
-webkit.org/b/244813 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-009.html [ ImageOnlyFailure ]
-webkit.org/b/244813 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-014.html [ ImageOnlyFailure ]
+# Not a text-decoration-inset bug: the test sets unprefixed 'box-decoration-break', which WebKit does not support (only -webkit-box-decoration-break), so the box is sliced rather than cloned.
+# The test passes once the declaration is prefixed.
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-029.html [ ImageOnlyFailure ]
 
 # Not a text-decoration-inset bug: a pre-existing ~1px vertical decoration-position difference in a
 # columns:2 multicol context with inline vertical borders. Reproduces with the feature disabled.

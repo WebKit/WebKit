@@ -127,6 +127,11 @@ public:
             if (isAlignedForUnder(a) || isAlignedForUnder(b))
                 return true;
 
+            // A percentage value resolves against the decorating box size, which is not known here,
+            // so two different percentages would compare equal below at inkOverflowForDecorations where percent values are resolved against 0.
+            if (a.textDecorationInset() != b.textDecorationInset() && (a.textDecorationInset().hasPercentage() || b.textDecorationInset().hasPercentage()))
+                return true;
+
             if (inkOverflowForDecorations(a) != inkOverflowForDecorations(b))
                 return true;
         }

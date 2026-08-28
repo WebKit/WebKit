@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "HTMLAnchorElement.h"
 #include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineTextBoxStyle.h"
@@ -993,6 +994,23 @@ static float autoTextDecorationInset(const Style::ComputedStyle& style)
     return style.computedFontSize() / 8;
 }
 
+struct DecoratingBoxFragmentInlineSizes {
+    float preceding { 0.f };
+    float current { 0.f };
+    float following { 0.f };
+
+    float total() const { return preceding + current + following; }
+};
+static DecoratingBoxFragmentInlineSizes decoratingBoxFragmentInlineSizes(const InlineIterator::InlineBox& decoratingInlineBox)
+{
+    auto inlineSizes = DecoratingBoxFragmentInlineSizes { .current = decoratingInlineBox.logicalWidth() };
+    for (auto fragment = decoratingInlineBox.nextInlineBoxLineLeftward(); fragment; fragment.traverseInlineBoxLineLeftward())
+        inlineSizes.preceding += fragment->logicalWidth();
+    for (auto fragment = decoratingInlineBox.nextInlineBoxLineRightward(); fragment; fragment.traverseInlineBoxLineRightward())
+        inlineSizes.following += fragment->logicalWidth();
+    return inlineSizes;
+}
+
 std::pair<FloatPoint, float> TextBoxPainter::insetAdjustedDecorationLocationAndWidth(const DecoratingBox& decoratingBox, const StyledMarkedText& markedText) const
 {
     auto boxOrigin = decoratingBox.location;
@@ -1008,55 +1026,54 @@ std::pair<FloatPoint, float> TextBoxPainter::insetAdjustedDecorationLocationAndW
     auto& inset = *insetStyles.inset;
 
     auto& style = decoratingBox.style.get();
-    auto autoValue = inset.isAuto() ? autoTextDecorationInset(style) : 0.f;
-    auto startInset = inset.resolvedStart(style, autoValue);
-    auto endInset = inset.resolvedEnd(style, autoValue);
-    if (!startInset && !endInset)
-        return { boxOrigin, width };
-
     auto writingMode = style.writingMode();
     auto decoratingInlineBox = decoratingBox.inlineBox;
+    auto isSliced = insetStyles.boxDecorationBreak != BoxDecorationBreak::Clone;
+
+    auto fragmentInlineSizes = isSliced ? decoratingBoxFragmentInlineSizes(*decoratingInlineBox) : DecoratingBoxFragmentInlineSizes { .current = decoratingInlineBox->logicalWidth() };
+    auto autoValue = inset.isAuto() ? autoTextDecorationInset(style) : 0.f;
+    auto percentageBasis = fragmentInlineSizes.total();
+    auto startInset = inset.resolvedStart(style, autoValue, percentageBasis);
+    auto endInset = inset.resolvedEnd(style, autoValue, percentageBasis);
+    if (!startInset && !endInset)
+        return { boxOrigin, width };
 
     // box-decoration-break: the start inset applies only to the first fragment's start edge and the
     // end inset only to the last fragment's end edge; for box-decoration-break: clone every fragment is
     // a complete box, so both endpoints are inset on every line.
-    auto closedEdges = [&]() -> RectEdges<bool> {
-        if (!decoratingInlineBox)
-            return { true };
-        if (insetStyles.boxDecorationBreak == BoxDecorationBreak::Clone)
-            return { true };
-        return decoratingInlineBox->closedEdges();
-    }();
+    auto closedEdges = isSliced ? decoratingInlineBox->closedEdges() : RectEdges<bool>(true);
+    auto hasLogicalStartEdge = closedEdges.start(writingMode);
+    auto hasLogicalEndEdge = closedEdges.end(writingMode);
+
+    auto insetForFragment = [](float inset, float inlineSizeToBoxEdge, bool ownsEdge) {
+        if (inset > 0)
+            return std::max(0.f, inset - inlineSizeToBoxEdge);
+        return ownsEdge ? inset : 0.f;
+    };
+    startInset = insetForFragment(startInset, fragmentInlineSizes.preceding, hasLogicalStartEdge);
+    endInset = insetForFragment(endInset, fragmentInlineSizes.following, hasLogicalEndEdge);
+    auto startEdgeOnFragment = hasLogicalStartEdge || startInset > 0;
+    auto endEdgeOnFragment = hasLogicalEndEdge || endInset > 0;
 
     bool isLTR = writingMode.isBidiLTR();
 
-    // A decorating box can span several leaf boxes on a line (its bidi runs), each split into marked-text
-    // sub-ranges. Map the logical start/end insets onto the decoration's visual left/right edges;
-    // displacements below are measured rightward (a positive inset trims inward, a negative one extends
-    // outward). box-decoration-break decides which of the decoration's edges live on this line fragment,
-    // and firstLeafBox/lastLeafBox + the marked-text offsets decide which painted piece actually reaches
-    // that visual edge.
     auto textBox = makeIterator();
     bool ownsLineLeftEdge = !decoratingInlineBox || textBox == decoratingInlineBox->firstLeafBox();
     bool ownsLineRightEdge = !decoratingInlineBox || textBox == decoratingInlineBox->lastLeafBox();
     bool ownsLogicalStart = !markedText.startOffset;
     bool ownsLogicalEnd = markedText.endOffset == m_paintTextRun.length();
 
-    float visualLeftInset = isLTR ? startInset : endInset;
-    float visualRightInset = isLTR ? endInset : startInset;
-    bool leftEdgeOnFragment = isLTR ? closedEdges.start(writingMode) : closedEdges.end(writingMode);
-    bool rightEdgeOnFragment = isLTR ? closedEdges.end(writingMode) : closedEdges.start(writingMode);
+    auto visualLeftInset = isLTR ? startInset : endInset;
+    auto visualRightInset = isLTR ? endInset : startInset;
+    auto leftEdgeOnFragment = isLTR ? startEdgeOnFragment : endEdgeOnFragment;
+    auto rightEdgeOnFragment = isLTR ? endEdgeOnFragment : startEdgeOnFragment;
     float leftEdgeMove = leftEdgeOnFragment ? visualLeftInset : 0.f;
     float rightEdgeMove = rightEdgeOnFragment ? -visualRightInset : 0.f;
 
-    // When the whole decoration lives on this fragment, the part of the inset that moves both visual
-    // edges the same way is an inline-axis shift of the decoration as a whole. Applying that shift to
-    // every painted piece keeps a symmetric inset a rigid shift of the decoration - including the seam
-    // between bidi runs - instead of pinning that interior seam. The remaining per-edge movement is the
-    // extend/trim overhang, applied only at the piece that actually reaches that visual edge; interior
-    // pieces (e.g. superscripts/subscripts at other baselines) get only the whole-decoration shift, so
-    // they stay put for a pure extend/trim. (skip-ink needs no adjustment: its gaps are measured relative
-    // to the underline's bounding box, which already tracks boxOrigin.)
+    // The part of the inset that moves both visual edges the same way is a shift of the whole decoration,
+    // so every painted piece gets it and a symmetric inset stays rigid across bidi runs.
+    // The rest is the extend/trim overhang, which only the piece reaching that visual edge gets, leaving
+    // interior pieces (e.g. a superscript at another baseline) where they are for a pure extend/trim.
     float decorationInlineShift = (leftEdgeOnFragment && rightEdgeOnFragment) ? (leftEdgeMove + rightEdgeMove) / 2.f : 0.f;
     bool reachesVisualLeft = leftEdgeOnFragment && ownsLineLeftEdge && (isLTR ? ownsLogicalStart : ownsLogicalEnd);
     bool reachesVisualRight = rightEdgeOnFragment && ownsLineRightEdge && (isLTR ? ownsLogicalEnd : ownsLogicalStart);

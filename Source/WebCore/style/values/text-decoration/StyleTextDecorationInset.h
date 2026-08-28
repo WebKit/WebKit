@@ -29,25 +29,35 @@
 
 namespace WebCore {
 namespace Style {
-using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<Length<>>;
+using TextDecorationInsetPair = MinimallySerializingSpaceSeparatedPair<LengthPercentage<>>;
 }
 }
 
-// text-decoration-inset stores 'auto' or a length pair, so ValueOrKeyword needs a Markable
-// representation of the pair; the pair is empty exactly when its first length is empty.
+// text-decoration-inset stores 'auto' or a length-percentage pair, so ValueOrKeyword needs a Markable
+// representation of the pair; the pair is empty exactly when its first component holds the empty
+// <length> sentinel.
 namespace WTF {
 template<> struct MarkableTraits<WebCore::Style::TextDecorationInsetPair> {
     using Pair = WebCore::Style::TextDecorationInsetPair;
+    using LengthPercentage = WebCore::Style::LengthPercentage<>;
     using Length = WebCore::Style::Length<>;
-    static bool isEmptyValue(const Pair& value) { return MarkableTraits<Length>::isEmptyValue(value.first()); }
-    static Pair emptyValue() { return { MarkableTraits<Length>::emptyValue(), MarkableTraits<Length>::emptyValue() }; }
+
+    static bool isEmptyValue(const Pair& value)
+    {
+        auto length = value.first().tryDimension();
+        return length && MarkableTraits<Length>::isEmptyValue(*length);
+    }
+    static Pair emptyValue()
+    {
+        return { LengthPercentage { MarkableTraits<Length>::emptyValue() }, LengthPercentage { MarkableTraits<Length>::emptyValue() } };
+    }
 };
 }
 
 namespace WebCore {
 namespace Style {
 
-// <'text-decoration-inset'> = auto | <length>{1,2}
+// <'text-decoration-inset'> = auto | <length-percentage>{1,2}
 // The first value applies to the start endpoint, the second to the end endpoint of the line
 // decorations; a single value applies to both. Positive values move an endpoint inward (trimming
 // the decoration), negative values move it outward (extending it). 'auto' lets the UA choose an
@@ -58,16 +68,24 @@ struct TextDecorationInset : ValueOrKeyword<TextDecorationInsetPair, CSS::Keywor
     using Base::Base;
 
     TextDecorationInset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
-        : Base(Value { Length<> { literal }, Length<> { literal } })
+        : Base(Value { LengthPercentage<> { literal }, LengthPercentage<> { literal } })
     {
     }
 
     bool isAuto() const { return isKeyword(); }
+    bool hasPercentage() const;
+    bool hasNegativePercentage() const;
 
     // Resolves the start/end inset to used CSS pixels. For 'auto', returns the UA-chosen autoValue
-    // supplied by the caller (which depends on the decorating box's font).
-    float resolvedStart(const Style::ComputedStyle&, float autoValue) const;
-    float resolvedEnd(const Style::ComputedStyle&, float autoValue) const;
+    // supplied by the caller (which depends on the decorating box's font). Percentages resolve
+    // against percentageBasis, the inline size of the decorating box (for box-decoration-break: slice)
+    // or of the individual box fragment (for clone).
+    float resolvedStart(const Style::ComputedStyle&, float autoValue, float percentageBasis) const;
+    float resolvedEnd(const Style::ComputedStyle&, float autoValue, float percentageBasis) const;
+
+    // How far a negative (extending) inset pushes the decoration past the text box, i.e. the outward
+    // overhang that has to be included in ink overflow. Returns 0 for 'auto' and for insets that only trim inward.
+    float outwardExtent(const Style::ComputedStyle&, float percentageBasis) const;
 };
 
 // MARK: - Conversion

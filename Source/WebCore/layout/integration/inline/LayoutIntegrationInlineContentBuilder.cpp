@@ -141,6 +141,7 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
 
     auto blockScrollableOverflowRect = FloatRect { };
     auto blockInkOverflowRect = FloatRect { };
+    auto decoratingBoxesWithNegativePercentageInset = DecoratingBoxes { };
 
     for (size_t lineIndex = 0; lineIndex < startIndex; ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -188,6 +189,13 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
         auto lastTextBoxIndex = std::optional<size_t> { };
         for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
             auto& box = boxes[boxIndex];
+
+            if (box.isInlineBox()) {
+                CheckedRef decoratingBoxStyle = box.style();
+                if (decoratingBoxStyle->textDecorationLineInEffect() && decoratingBoxStyle->textDecorationInset().hasNegativePercentage())
+                    decoratingBoxesWithNegativePercentageInset.add(CheckedRef { box.layoutBox() });
+            }
+
             if (box.isRootInlineBox() || box.isEllipsis() || box.isLineBreak())
                 continue;
 
@@ -255,6 +263,86 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
         }
     }
     inlineContent.setScrollableOverflow(blockScrollableOverflowRect);
+    inlineContent.setInkOverflow(blockInkOverflowRect);
+
+    if (!decoratingBoxesWithNegativePercentageInset.isEmpty())
+        adjustInkOverflowForPercentageTextDecorationInsets(inlineContent, startIndex, decoratingBoxesWithNegativePercentageInset);
+}
+
+void InlineContentBuilder::adjustInkOverflowForPercentageTextDecorationInsets(InlineContent& inlineContent, size_t startIndex, const DecoratingBoxes& decoratingBoxes) const
+{
+    // A negative 'text-decoration-inset' extends the decoration past the text box, and that overhang has to be in the ink overflow or it gets clipped.
+    // When the inset is a percentage it resolves against the inline size of the whole decorating box (for box-decoration-break: slice), which spans every fragment
+    // of that box and so is only known once all the lines are built.
+    auto& lines = inlineContent.displayContent().lines;
+    auto& boxes = inlineContent.displayContent().boxes;
+    auto isHorizontalWritingMode = m_blockFlow.writingMode().isHorizontal();
+
+    auto inlineSizeForEachDecoratingBox = [&] {
+        auto inlineSizes = HashMap<CheckedRef<const Layout::Box>, float> { };
+        for (auto& box : boxes) {
+            if (!box.isNonRootInlineBox())
+                continue;
+            CheckedRef layoutBox { box.layoutBox() };
+            if (!decoratingBoxes.contains(layoutBox))
+                continue;
+            inlineSizes.add(layoutBox, 0.f).iterator->value += isHorizontalWritingMode ? box.width() : box.height();
+        }
+        return inlineSizes;
+    };
+
+    auto outwardInsetForEachDecoratingBox = [&] {
+        auto inlineSizes = inlineSizeForEachDecoratingBox();
+        auto outwardInsets = HashMap<CheckedRef<const Layout::Box>, float> { };
+        for (auto& decoratingBox : decoratingBoxes) {
+            auto inlineSize = [&] {
+                if (decoratingBox->isInlineBox())
+                    return inlineSizes.getOptional(decoratingBox).value_or(0.f);
+                auto blockContainerInlineSize = 0.f;
+                for (auto& line : lines)
+                    blockContainerInlineSize += line.contentLogicalWidth();
+                return blockContainerInlineSize;
+            }();
+
+            CheckedRef style = decoratingBox->style();
+            if (auto outwardInset = style->textDecorationInset().outwardExtent(style, inlineSize))
+                outwardInsets.add(decoratingBox, outwardInset);
+        }
+        return outwardInsets;
+    };
+    auto outwardInsets = outwardInsetForEachDecoratingBox();
+    if (outwardInsets.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto blockInkOverflowRect = inlineContent.inkOverflow();
+    auto boxIndex = !startIndex ? 0 : lines[startIndex - 1].lastBoxIndex() + 1;
+    for (size_t lineIndex = startIndex; lineIndex < lines.size(); ++lineIndex) {
+        auto& line = lines[lineIndex];
+
+        auto outwardInsetOnLine = [&] {
+            auto largestOutwardInset = 0.f;
+            for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
+                auto& box = boxes[boxIndex];
+                if (!box.isInlineBox())
+                    continue;
+                if (auto outwardInset = outwardInsets.getOptional(CheckedRef { box.layoutBox() }))
+                    largestOutwardInset = std::max(largestOutwardInset, *outwardInset);
+            }
+            return largestOutwardInset;
+        };
+
+        auto outwardInset = outwardInsetOnLine();
+        if (!outwardInset)
+            continue;
+
+        auto lineInkOverflowRect = line.inkOverflow();
+        auto expansion = ceilf(outwardInset);
+        isHorizontalWritingMode ? lineInkOverflowRect.inflate(expansion, 0.f, expansion, 0.f) : lineInkOverflowRect.inflate(0.f, expansion, 0.f, expansion);
+        line.setInkOverflow(lineInkOverflowRect);
+        blockInkOverflowRect.unite(lineInkOverflowRect);
+    }
     inlineContent.setInkOverflow(blockInkOverflowRect);
 }
 
