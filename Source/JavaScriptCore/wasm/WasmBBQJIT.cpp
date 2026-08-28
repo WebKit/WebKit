@@ -3215,16 +3215,27 @@ PartialResult BBQJIT::addI32Extend8S(Value operand, Value& result)
 
 [[nodiscard]] PartialResult BBQJIT::addRefFunc(FunctionSpaceIndex index, Value& result)
 {
-    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    TypeKind returnType = TypeKind::Ref;
+    GPRReg resultGPR;
+    {
+        ScratchScope<1, 0> scratches(*this);
+        resultGPR = scratches.gpr(0);
 
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(index)
-    };
-    result = topValue(returnType);
-    emitCCall(&operationWasmRefFunc, arguments, result);
+        m_jit.load64(Address(GPRInfo::wasmContextInstancePointer, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfFunctionWrapper(m_info, index))), resultGPR);
 
+        JumpList slowPath = m_jit.branchTest64(ResultCondition::Zero, resultGPR);
+        MacroAssembler::Label done(m_jit);
+        m_slowPaths.append({ origin(), WTF::move(slowPath), WTF::move(done), copyBindings(), [index, resultGPR](BBQJIT&, CCallHelpers& jit) {
+            jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+            jit.setupArguments<decltype(operationWasmRefFunc)>(GPRInfo::wasmContextInstancePointer, TrustedImm32(static_cast<uint32_t>(index)));
+            jit.callOperation<OperationPtrTag>(operationWasmRefFunc);
+            jit.move(GPRInfo::returnValueGPR, resultGPR);
+        } });
+    }
+
+    result = topValue(TypeKind::Ref);
+    bind(result, Location::fromGPR(resultGPR));
+
+    LOG_INSTRUCTION("RefFunc", index, RESULT(result));
     return { };
 }
 

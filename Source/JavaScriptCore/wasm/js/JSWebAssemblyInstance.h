@@ -73,7 +73,7 @@ class BaselineData;
 }
 
 // The layout of a JSWebAssemblyInstance is
-//     { struct JSWebAssemblyInstance }[ WasmMemoryBaseAndSize ][ WasmOrJSImportableFunctionCallLinkInfo ][ Wasm::Table* ][ Global::Value ][ Wasm::BaselineData* ][ WebAssemblyGCStructure* ][ Allocator* ]
+//     { struct JSWebAssemblyInstance }[ WasmMemoryBaseAndSize ][ WasmOrJSImportableFunctionCallLinkInfo ][ Wasm::Table* ][ Global::Value ][ Wasm::BaselineData* ][ WebAssemblyGCStructure* ][ Allocator* ][ WriteBarrier<Unknown> function wrappers ]
 // in a compound TrailingArray-like format.
 class JSWebAssemblyInstance final : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;
@@ -181,8 +181,6 @@ public:
     static constexpr ptrdiff_t offsetOfJSModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_jsModule); }
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
     static constexpr ptrdiff_t offsetOfModuleRecord() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_moduleRecord); }
-
-    using FunctionWrapperMap = UncheckedKeyHashMap<uint32_t, WriteBarrier<Unknown>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
     static constexpr ptrdiff_t offsetOfSoftStackLimit() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_stackMirror) + StackManager::Mirror::offsetOfSoftStackLimit(); }
 
@@ -308,7 +306,6 @@ public:
     const BitVector& globalsToMark() LIFETIME_BOUND { return m_globalsToMark; }
     const BitVector& globalsToBinding() LIFETIME_BOUND { return m_globalsToBinding; }
     JSValue getFunctionWrapper(unsigned) const;
-    typename FunctionWrapperMap::ValuesConstIteratorRange functionWrappers() const { return m_functionWrappers.values(); }
     void setFunctionWrapper(unsigned, JSValue);
     JSValue ensureFunctionWrapper(Wasm::FunctionSpaceIndex);
     void setBuiltinCalleeBits(uint32_t builtinID, CalleeBits calleeBits) { m_builtinCalleeBits[builtinID] = calleeBits; }
@@ -378,6 +375,14 @@ public:
         return roundUpToMultipleOf<alignof(Allocator)>(offsetOfGCObjectStructureID(info, info.typeCount())) + sizeof(Allocator) * index;
     }
 
+    static ptrdiff_t offsetOfFunctionWrapper(const Wasm::ModuleInformation& info, unsigned index)
+    {
+        ptrdiff_t base = info.hasGCObjectTypes()
+            ? offsetOfAllocatorForGCObject(info, MarkedSpace::numSizeClasses)
+            : offsetOfBaselineData(info, info.internalFunctionCount());
+        return roundUpToMultipleOf<alignof(WriteBarrier<Unknown>)>(base) + sizeof(WriteBarrier<Unknown>) * index;
+    }
+
     static size_t offsetOfTargetInstance(const Wasm::ModuleInformation& info, size_t importFunctionNum) { return offsetOfImportFunctionInfo(info, importFunctionNum) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunctionCallLinkInfo, targetInstance); }
     static size_t offsetOfEntrypointLoadLocation(const Wasm::ModuleInformation& info, size_t importFunctionNum) { return offsetOfImportFunctionInfo(info, importFunctionNum) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunctionCallLinkInfo, entrypointLoadLocation); }
     static size_t offsetOfBoxedCallee(const Wasm::ModuleInformation& info, size_t importFunctionNum) { return offsetOfImportFunctionInfo(info, importFunctionNum) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunctionCallLinkInfo, boxedCallee); }
@@ -418,6 +423,16 @@ public:
     std::span<Allocator, MarkedSpace::numSizeClasses> allocators()
     {
         return unsafeMakeSpan<Allocator, MarkedSpace::numSizeClasses>(std::bit_cast<Allocator*>(std::bit_cast<uint8_t*>(this) + offsetOfAllocatorForGCObject(m_moduleInformation, 0)), MarkedSpace::numSizeClasses);
+    }
+
+    std::span<WriteBarrier<Unknown>> functionWrappers()
+    {
+        return std::span { std::bit_cast<WriteBarrier<Unknown>*>(std::bit_cast<uint8_t*>(this) + offsetOfFunctionWrapper(m_moduleInformation, 0)), m_moduleInformation->functionIndexSpaceSize() };
+    }
+
+    std::span<const WriteBarrier<Unknown>> functionWrappers() const
+    {
+        return std::span { std::bit_cast<const WriteBarrier<Unknown>*>(std::bit_cast<const uint8_t*>(this) + offsetOfFunctionWrapper(m_moduleInformation, 0)), m_moduleInformation->functionIndexSpaceSize() };
     }
 
     unsigned numImportFunctions() const { return m_numImportFunctions; }
@@ -485,7 +500,6 @@ private:
 
     RefPtr<Wasm::Memory> m_wasmMemory;
     Wasm::Global::Value* m_globals { nullptr };
-    FunctionWrapperMap m_functionWrappers;
 
     using ConstantExpressionValueMap = UncheckedKeyHashMap<uint64_t, WriteBarrier<Unknown>, IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     ConstantExpressionValueMap m_constantExpressionValues;

@@ -136,6 +136,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     }
 
     memset(reinterpret_cast<uint8_t*>(baselineDatas().data()), 0, baselineDatas().size_bytes());
+    zeroSpan(asMutableByteSpan(functionWrappers()));
     if (m_moduleInformation->hasGCObjectTypes()) {
         memset(reinterpret_cast<uint8_t*>(gcObjectStructureIDs().data()), 0, gcObjectStructureIDs().size_bytes());
         CompleteSubspace* subspace = JSWebAssemblyArray::subspaceFor<JSWebAssemblyArray, SubspaceAccess::OnMainThread>(vm);
@@ -222,9 +223,9 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.append(thisObject->gcObjectStructureID(i));
     }
 
-    Locker locker { cell->cellLock() };
     for (auto& wrapper : thisObject->functionWrappers())
-        visitor.appendUnbarriered(wrapper.get());
+        visitor.append(wrapper);
+    Locker locker { cell->cellLock() };
     for (auto& entry : thisObject->m_constantExpressionValues)
         visitor.append(entry.value);
     for (auto& entry : thisObject->m_tagWrappers)
@@ -308,9 +309,7 @@ Identifier JSWebAssemblyInstance::createPrivateModuleKey()
 
 size_t JSWebAssemblyInstance::allocationSize(const Wasm::ModuleInformation& info)
 {
-    if (info.hasGCObjectTypes())
-        return offsetOfAllocatorForGCObject(info, MarkedSpace::numSizeClasses);
-    return offsetOfBaselineData(info, info.internalFunctionCount());
+    return offsetOfFunctionWrapper(info, info.functionIndexSpaceSize());
 }
 
 
@@ -445,18 +444,17 @@ void JSWebAssemblyInstance::setGlobal(unsigned i, JSValue value)
 
 JSValue JSWebAssemblyInstance::getFunctionWrapper(unsigned i) const
 {
-    JSValue value = m_functionWrappers.get(i).get();
-    if (value.isEmpty())
-        return jsNull();
-    return value;
+    ASSERT(i < functionWrappers().size());
+    JSValue value = functionWrappers()[i].get();
+    return value ? value : jsNull();
 }
 
 void JSWebAssemblyInstance::setFunctionWrapper(unsigned i, JSValue value)
 {
+    ASSERT(i < functionWrappers().size());
     ASSERT(value.isCallable());
-    ASSERT(!m_functionWrappers.contains(i));
-    Locker locker { cellLock() };
-    m_functionWrappers.set(i, WriteBarrier<Unknown>(vm(), this, value));
+    ASSERT(!functionWrappers()[i].get());
+    functionWrappers()[i].set(vm(), this, value);
     ASSERT(getFunctionWrapper(i) == value);
 }
 

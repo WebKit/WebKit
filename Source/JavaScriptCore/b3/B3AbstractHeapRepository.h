@@ -270,6 +270,7 @@ namespace JSC::B3 {
     macro(JSWebAssemblyInstance_gcObjectStructureIDs) \
     macro(JSWebAssemblyInstance_importFunctionStubs) \
     macro(JSWebAssemblyInstance_tables) \
+    macro(JSWebAssemblyInstance_functionWrappers) \
 
 // This class is meant to be cacheable between compilations, but it doesn't have to be.
 // Doing so saves on creation of nodes. But clearing it will save memory.

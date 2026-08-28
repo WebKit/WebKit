@@ -1786,9 +1786,28 @@ auto OMGIRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, Expr
 
 auto OMGIRGenerator::addRefFunc(FunctionSpaceIndex index, ExpressionType& result) -> PartialResult
 {
-    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = push(callWasmOperation(m_currentBlock, wasmRefType(), operationWasmRefFunc,
-        instanceValue(), constant(toB3Type(Types::I32), index)));
+    auto* loaded = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, wasmRefType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfFunctionWrapper(m_info, index)));
+    m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_functionWrappers[index], loaded);
+
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+    auto* phi = continuation->appendNew<Value>(m_proc, Phi, wasmRefType(), origin());
+
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), loaded, phi);
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), loaded,
+        FrequentedBlock(continuation), FrequentedBlock(slowPath, FrequencyClass::Rare));
+    slowPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    auto* called = callWasmOperation(m_currentBlock, wasmRefType(), operationWasmRefFunc,
+        instanceValue(), constant(Int32, index));
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), called, phi);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
+    result = push(phi);
     TRACE_VALUE(Wasm::Types::Funcref, get(result), "ref_func ", index);
     return { };
 }
