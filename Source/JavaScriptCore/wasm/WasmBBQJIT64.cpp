@@ -1611,22 +1611,6 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
 [[nodiscard]] PartialResult BBQJIT::addArrayNewDefault(TypeSignatureIndex typeIndex, ExpressionType size, ExpressionType& result)
 {
     StorageType elementType = getArrayElementType(typeIndex);
-    // FIXME: We don't have a good way to fill V128s yet so just make a call.
-    if (elementType.unpacked().isV128()) {
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            Value::fromI32(typeIndex.rawIndex()),
-            size,
-        };
-        result = topValue(TypeKind::Arrayref);
-        emitCCall(operationWasmArrayNewEmpty, arguments, result);
-
-        Location resultLocation = loadIfNecessary(result);
-        emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
-
-        LOG_INSTRUCTION("ArrayNewDefault", typeIndex, size, RESULT(result));
-        return { };
-    }
 
     GPRReg resultGPR;
     {
@@ -1639,7 +1623,13 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         JIT_COMMENT(m_jit, "Array allocation done do initialization");
         std::optional<ScratchScope<1, 0>> sizeScratch;
         Location sizeLocation = materializeToGPR(size, sizeScratch);
-        Value initValue = Value::fromI64(Wasm::isRefType(elementType.unpacked()) ? JSValue::encode(jsNull()) : 0);
+        Value initValue;
+        if (elementType.unpacked().isV128()) {
+            // FIXME: We should have V128 Constant.
+            materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
+            initValue = Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR));
+        } else
+            initValue = Value::fromI64(Wasm::isRefType(elementType.unpacked()) ? JSValue::encode(jsNull()) : 0);
 
         emitArrayGetPayload(elementType, resultGPR, scratchGPR);
 
