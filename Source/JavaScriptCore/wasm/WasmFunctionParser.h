@@ -254,6 +254,7 @@ private:
     };
 
     [[nodiscard]] PartialResult checkBlockFallthrough(const ControlType&, FallThroughStateTag);
+    [[nodiscard]] PartialResult endBlockAndCheckResultTypes(ControlEntry&);
 
     enum BranchConditionalityTag {
         Unconditional,
@@ -1923,6 +1924,22 @@ auto FunctionParser<Context>::checkBlockFallthrough(const ControlType& controlDa
             m_expressionStack[m_currentStackBegin + i].setType(expectedType);
     }
 
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::endBlockAndCheckResultTypes(ControlEntry& entry) -> PartialResult
+{
+    // Widen each result to the block signature type before ending the block.
+    // FIXME: mutating the expression stack for the block result is effectful, but there's no
+    // better API yet. See https://bugs.webkit.org/show_bug.cgi?id=164353
+    WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(entry.controlData, MergePoint));
+    const uint32_t parentBegin = parentEntryBegin();
+    auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+    // We should avoid adding other callsites of endBlock. Since a new block is a sign of a
+    // merge point and it would be a security bug to fail to widen the types.
+    WASM_TRY_ADD_TO_CONTEXT(endBlock(entry, enclosedStack));
+    m_currentStackBegin = parentBegin;
     return { };
 }
 
@@ -3724,13 +3741,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(targetData) && !ControlType::isTopLevel(targetData), "delegate target isn't a try or the top level block");
 
         WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
-
-        const uint32_t parentBegin = parentEntryBegin();
-        auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, enclosedStack));
-
-        m_currentStackBegin = parentBegin;
+        // Unlike the sibling catch/catch_all arms, delegate ends the try block, so it widens results.
+        WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(controlEntry));
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
     }
@@ -3865,16 +3877,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.shrink(m_currentStackBegin);
             m_expressionStack.append(data.elseBlockStack.span());
         }
-        // FIXME: endBlock may modify the expressionStack slice for the result of the block.
-        // That's a little too effectful but we don't have a better API right now.
-        // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
-
-        const uint32_t parentBegin = parentEntryBegin();
-        auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(data, enclosedStack));
-
-        m_currentStackBegin = parentBegin;
+        WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(data));
         if (!ControlType::isTopLevel(data.controlData))
             resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
@@ -4070,12 +4073,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack.shrink(m_currentStackBegin);
                 m_expressionStack.append(data.elseBlockStack.span());
-                WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
-
-                // Reachable End handling: the combined enclosedStack now lives in
-                // m_expressionStack[parentBegin..end].
-                auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
-                WASM_TRY_ADD_TO_CONTEXT(endBlock(data, enclosedStack));
+                WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(data));
             } else {
                 m_expressionStack.shrink(m_currentStackBegin);
                 const auto& sig = data.controlData.signature();
