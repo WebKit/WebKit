@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring is not clipped by a composited ancestor's mask when focus arrives after compositing has already settled</title>
+<link rel="match" href="focus-ring-not-clipped-when-focus-arrives-after-compositing-settles-expected.html">
+<!-- #child only gets outline:auto via :focus-visible, so the initial (unfocused) frame commits compositing geometry with no ring before focus() runs, exercising RenderElement::styleDidChange's compositing dirty-bit propagation for the outline-only style change. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;          /* enforced via m_childContainmentLayer since this layer is composited */
+        transform: translateZ(0);  /* force compositing */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        background: #eee;
+    }
+    #child:focus-visible {
+        outline: auto;             /* platform focus ring, only once focused */
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="child" tabindex="0"></div></div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.onload = () => {
+            // Let the unfocused state fully commit (layout + paint + compositing) before focusing.
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                child.focus();
+                // Let the focused state's repaint + compositing geometry update commit before the snapshot.
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }));
+            }));
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring (outline-style:auto) is not clipped by an ancestor's overflow:hidden</title>
+<link rel="match" href="focus-ring-not-clipped-by-overflow-hidden-ancestor-expected.html">
+<!-- The outline-style:auto platform focus ring must not be sheared when a self-painting-layer element is flush to the right edge of an overflow:hidden ancestor; author outlines remain clipped, only the auto focus ring is protected. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;          /* folds into the child layer's clip; must not shear the focus ring */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        overflow: hidden;          /* self-painting layer -> paints via PaintPhase::SelfOutline */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="child"></div></div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>outline-style:auto clip outsets leave a rounded composited ancestor clip alone</title>
+<style>
+    body { margin: 0; }
+    #composited {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        transform: translateZ(0);   /* #child's compositing ancestor, above #ancestor */
+    }
+    #ancestor {
+        position: absolute; left: 0; top: 0;
+        width: 200px; height: 200px;
+        overflow: hidden;
+        border-radius: 20px;        /* contributes a rounded clip to the ancestor clipping stack */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 40px; top: 80px;
+        right: 0;                   /* flush to #ancestor's right edge, so its ring would need outsets */
+        height: 40px;
+        transform: translateZ(0);   /* composited, so its clip comes from the ancestor clipping stack */
+        background: #eee;
+    }
+    #child:focus { outline: auto; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.addEventListener('load', () => {
+        document.getElementById('child').focus();
+        if (window.internals)
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+    }, false);
+</script>
+</head>
+<body>
+    <p>Outsetting only widens a rect, so it is refused for a rounded clip: widening one while keeping its radii
+       describes a shape that no longer follows the border. The clipping layer's bounds below must stay at
+       #ancestor's own 200x200, not grow by the ring's extent.</p>
+    <div id="composited">
+        <div id="ancestor"><div id="child" tabindex="0"></div></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

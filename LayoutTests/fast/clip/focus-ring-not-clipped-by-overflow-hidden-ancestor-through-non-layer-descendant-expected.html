@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: platform focus ring fully painted</title>
+<style>
+    body { margin: 0; }
+    #ancestor {
+        box-sizing: border-box;
+        position: relative; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        padding-top: 40px;
+        overflow: visible;         /* reference: nothing clips the focus ring */
+        background: #ddd;
+    }
+    #wrapper {
+        margin: 0 0 0 90px;
+    }
+    #child {
+        overflow: hidden;
+        outline: auto;
+        height: 100px;
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="wrapper"><div id="child"></div></div></div>
+</body>
+</html>

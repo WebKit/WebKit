@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>outline-style:auto repaint issues nothing extra when the focused element is scrolled entirely out of its clip</title>
+<script src="resources/text-based-repaint.js"></script>
+<!-- The ring's extent is added as outsets after the clipping walk. With #target scrolled out of view the walk
+     collapses its rect to an empty one at the origin, and expanding that would invalidate a bogus square there.
+     #sentinel repaints as well, so the expected output is non-empty: this test fails if the bogus square appears
+     *and* if the repaint machinery quietly stops working. -->
+<style>
+    body { margin: 0; }
+    #scroller {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 100px;
+        overflow: hidden;
+        background: #ddd;
+    }
+    #spacer { height: 600px; }
+    #target {
+        width: 160px; height: 40px;
+        background: #eee;
+    }
+    #target:focus { outline: auto; }
+    #sentinel {
+        position: absolute; left: 400px; top: 400px;
+        width: 50px; height: 50px;
+        background: #c00;
+    }
+</style>
+<script>
+function repaintTest() {
+    // Blurring repaints a rect the clipping walk collapses; the sentinel gives the dump something to contain.
+    document.getElementById('target').blur();
+    document.getElementById('sentinel').style.backgroundColor = 'green';
+}
+onload = () => {
+    document.getElementById('target').focus();
+    document.getElementById('scroller').scrollTop = 600;
+    runRepaintTest();
+};
+</script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="target" tabindex="0"></div>
+        <div id="spacer"></div>
+    </div>
+    <div id="sentinel"></div>
+</body>
+</html>

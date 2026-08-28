@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not-reference: full ring and full sibling content (must differ from the clipped test)</title>
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: visible;         /* full ring and full #sibling drawn -- the test must NOT look like this */
+        transform: translateZ(0);
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;
+        right: 0;
+        height: 100px;
+        transform: translateZ(0);
+        outline: auto;
+        background: #eee;
+    }
+    #sibling {
+        position: absolute;
+        left: 190px; top: 150px;
+        width: 40px; height: 40px;
+        background: red;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if no red is visible past the box's edge, and the box's right edge is NOT fully outlined.</p>
+    <div id="ancestor"><div id="child"></div><div id="sibling"></div></div>
+</body>
+</html>

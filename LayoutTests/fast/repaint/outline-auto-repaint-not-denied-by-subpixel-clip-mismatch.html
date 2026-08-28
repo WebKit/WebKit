@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>outline-style:auto repaint rect is not denied outsets by a sub-pixel clip-rect mismatch between the paint and repaint paths</title>
+<script src="resources/text-based-repaint.js"></script>
+<!-- #clipper's fractional width makes the repaint path's cachedSizeForOverflowClip()-derived clip narrower than
+     the paint path's, so #filler looks like content the outsets would expose; the leak check must tolerate that
+     sub-pixel overhang or the rect comes out 163 instead of 166. The ring outset is platform-specific,
+     so these numbers are for a 3px ring; see the platform/glib baseline. -->
+<style>
+    body { margin: 0; }
+    #clipper {
+        position: absolute; left: 50px; top: 50px;
+        /* Fractional on purpose: an integral width makes both paths agree and the bug disappears. */
+        width: 200.46875px;
+        height: 100px;
+        overflow: hidden;
+        background: #ddd;
+    }
+    #filler {
+        /* Spans the clip exactly, putting otherContentBounds right at the true clip edge. */
+        position: absolute; left: 0; top: 0; right: 0;
+        height: 24px;
+        background: #bbb;
+    }
+    #target {
+        position: absolute;
+        left: 40px; top: 40px;     /* inset from #clipper on left/top/bottom */
+        right: 0;                  /* flush to #clipper's right edge */
+        height: 40px;
+        overflow: hidden;
+        background: #eee;
+    }
+    #target:focus {
+        outline: auto;
+    }
+</style>
+<script>
+function repaintTest() {
+    // No cache poisoning needed here: this is the leak check refusing outsets on a fresh computation, not a
+    // stale outsets (that case is covered by outline-auto-repaint-not-clipped-by-stale-clip-outsets.html).
+    document.getElementById('target').focus();
+}
+onload = runRepaintTest;
+</script>
+</head>
+<body>
+    <div id="clipper">
+        <div id="filler"></div>
+        <div id="target" tabindex="0"></div>
+    </div>
+</body>
+</html>

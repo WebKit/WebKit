@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -56,6 +56,7 @@
 #include "PlatformRenderTheme.h"
 #include "PseudoElement.h"
 #include "ReferencedSVGResources.h"
+#include "RenderBox.h"
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
@@ -484,6 +485,22 @@ RenderLayer* RenderObject::enclosingLayer() const
             return renderer.layer();
     }
     return nullptr;
+}
+
+void RenderObject::updateOutlineAutoClipOutsetsOnAncestors(OutlineAutoRingChain chain) const
+{
+    bool onChain = chain == OutlineAutoRingChain::OnChain;
+
+    if (onChain) {
+        CheckedPtr box = dynamicDowncast<RenderBox>(*this);
+        view().setFocusRingRenderer(box.get(), box ? box->outlineAutoRingBounds() : LayoutRect { });
+    } else if (view().focusRingRenderer() == this)
+        view().setFocusRingRenderer(nullptr, { });
+
+    for (CheckedPtr layer = enclosingLayer(); layer; layer = layer->parent()) {
+        layer->clearOutlineAutoClipOutsetsCache();
+        layer->setIsOutlineAutoClipOutsetsAncestor(onChain);
+    }
 }
 
 RenderBox& RenderObject::enclosingBox() const
@@ -1039,7 +1056,10 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 
     if (partialRepaintRect) {
         repaintRect = computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer.get());
-        if (additionalRepaintOutsets)
+        // Only expand a rect that survived the walk. LayoutRect::intersect() collapses a non-intersecting result to
+        // an empty rect at the origin, and expanding that would turn something repaintUsingContainer() drops into a
+        // bogus invalidation next to the origin.
+        if (additionalRepaintOutsets && !repaintRect.isEmpty())
             repaintRect.expand(*additionalRepaintOutsets);
     } else
         repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer.get());

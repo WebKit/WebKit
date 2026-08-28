@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring (outline-style:auto) is not clipped by a non-composited overflow:hidden ancestor in the compositing ancestor-clipping-stack</title>
+<link rel="match" href="focus-ring-not-clipped-by-ancestor-clipping-stack-expected.html">
+<!-- #ancestor is deliberately NOT composited, so its clip is enforced via the compositing ancestor-clipping stack rather than m_childContainmentLayer or the software paint-time clip rect. -->
+<style>
+    body { margin: 0; }
+    #grandparent {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        transform: translateZ(0);  /* nearest composited ancestor of #child */
+        background: #ccc;
+    }
+    #ancestor {
+        position: absolute; left: 0; top: 0;
+        width: 200px; height: 200px;
+        overflow: hidden;          /* not composited: enforced via the ancestor clipping stack */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="grandparent"><div id="ancestor"><div id="child" tabindex="0"></div></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

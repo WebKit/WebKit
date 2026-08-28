@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring is not clipped by a non-composited overflow:hidden ancestor reached through a non-layer descendant</title>
+<link rel="match" href="focus-ring-not-clipped-by-overflow-hidden-ancestor-through-non-layer-descendant-expected.html">
+<!-- Unlike the direct-parent case (focus-ring-not-clipped-by-overflow-hidden-ancestor.html), here #child's own RenderLayer is reached from #ancestor's RenderLayer through #wrapper, a plain block with no RenderLayer of its own. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        box-sizing: border-box;
+        position: relative; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        padding-top: 40px;         /* padding never collapses with a child's margin, unlike the margin-top this replaces */
+        overflow: hidden;          /* non-composited: enforced solely via the cached ClipRects chain */
+        background: #ddd;
+    }
+    #wrapper {
+        margin: 0 0 0 90px;        /* inset from ancestor on left; establishes no RenderLayer of its own */
+    }
+    #child {
+        overflow: hidden;          /* gives #child its own RenderLayer even though position is static */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        height: 100px;
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="wrapper"><div id="child" tabindex="0"></div></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

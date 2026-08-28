@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<title>Platform focus ring (outline-style:auto) is not clipped by a composited scroll container's own mask</title>
+<link rel="match" href="focus-ring-not-clipped-by-composited-scroll-container-expected.html">
+<!-- With no border-radius, a composited overflow:auto/scroll box has no m_childContainmentLayer, so the overflow clip is enforced solely by m_scrollContainerLayer's own masksToBounds. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: auto;            /* composited scrolling with no border-radius: enforced via m_scrollContainerLayer only */
+        background: #ddd;
+    }
+    #ancestor::-webkit-scrollbar { display: none; } /* scrollbar painting isn't what's under test; avoid diffs against the ref */
+    #spacer {
+        height: 400px;             /* gives #ancestor scrollable overflow so it qualifies for composited scrolling */
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        width: 110px;              /* flush to the ancestor's right edge; explicit so a scrollbar gutter can't shift it */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="child" tabindex="0"></div><div id="spacer"></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

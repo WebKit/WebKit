@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -395,6 +395,10 @@ public:
 #endif
 
     WEBCORE_EXPORT RenderLayer* NODELETE enclosingLayer() const;
+
+    enum class OutlineAutoRingChain : bool { NotOnChain, OnChain };
+
+    void updateOutlineAutoClipOutsetsOnAncestors(OutlineAutoRingChain) const;
 
     WEBCORE_EXPORT RenderBox& NODELETE enclosingBox() const;
     RenderBoxModelObject& NODELETE enclosingBoxModelObject() const;

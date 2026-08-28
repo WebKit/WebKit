@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Focus ring stays clipped when relieving it would also expose a sibling's content</title>
+<link rel="mismatch" href="focus-ring-clipped-when-sibling-content-would-leak-expected-mismatch.html">
+<!-- Widening #ancestor's compositing clip mask to reveal #child's focus ring would also reveal #sibling's content, so the outsets must be refused and both must stay clipped; this must NOT match a reference where #ancestor's clip is removed. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;
+        transform: translateZ(0);  /* force compositing: enforced via m_childContainmentLayer */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;
+        background: #eee;
+    }
+    #sibling {
+        position: absolute;
+        left: 190px; top: 150px;
+        width: 40px; height: 40px; /* pokes past #ancestor's right edge (x=200), well beyond ring width alone */
+        background: red;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if no red is visible past the box's edge, and the box's right edge is NOT fully outlined.</p>
+    <div id="ancestor"><div id="child" tabindex="0"></div><div id="sibling"></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

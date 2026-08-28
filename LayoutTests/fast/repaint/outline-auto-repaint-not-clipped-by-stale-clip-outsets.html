@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>outline-style:auto repaint rect covers the ring's full extent through a focus transition</title>
+<script src="resources/text-based-repaint.js"></script>
+<!-- The repaint rect must cover the ring's full extent (166 wide), not stop at #clipper's border box (163).
+     Pins OutlineAutoRingTransitionScope; it does NOT pin styleDidChange()'s outsets-cache clear, since style
+     recalc always runs before the first clip query here. -->
+<style>
+    body { margin: 0; }
+    #clipper {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 100px;
+        overflow: hidden;          /* clips the ring unless outsets widen this clip */
+        background: #ddd;
+    }
+    #poisoner {
+        position: absolute; left: 0; top: 0;
+        width: 20px; height: 20px;
+        background: #bbb;
+    }
+    #target {
+        position: absolute;
+        left: 40px; top: 20px;     /* inset from #clipper on left/top/bottom */
+        right: 0;                  /* flush to #clipper's right edge */
+        height: 40px;
+        overflow: hidden;          /* own layer, and clips its own descendants */
+        background: #eee;
+    }
+    #target:focus {
+        outline: auto;             /* platform focus ring, only once focused */
+    }
+</style>
+<script>
+function repaintTest() {
+    // Schedules the :focus restyle that makes outline:auto live. The ring does not exist yet here.
+    document.getElementById('target').focus();
+
+    // Issued earlier in the same recalc pass, so it caches outsets computed with no live ring.
+    document.getElementById('poisoner').style.backgroundColor = 'green';
+}
+onload = runRepaintTest;
+</script>
+</head>
+<body>
+    <div id="clipper">
+        <div id="poisoner"></div>
+        <div id="target" tabindex="0"></div>
+    </div>
+</body>
+</html>

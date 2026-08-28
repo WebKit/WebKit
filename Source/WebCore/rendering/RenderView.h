@@ -237,6 +237,15 @@ public:
     void removeViewTransitionGroup(const AtomString&);
     RenderBox* NODELETE viewTransitionGroupForName(const AtomString&);
 
+    // The renderer with a live outline-style:auto ring, with bounds in its own coordinates. Null when no ring is live.
+    const RenderElement* focusRingRenderer() const { return m_focusRingRenderer.get(); }
+    const LayoutRect& focusRingBounds() const { return m_focusRingBounds; }
+    void setFocusRingRenderer(const RenderElement* renderer, const LayoutRect& ringBounds)
+    {
+        m_focusRingRenderer = renderer;
+        m_focusRingBounds = ringBounds;
+    }
+
 protected:
     void willBeDestroyed() override;
 
@@ -268,6 +277,9 @@ private:
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
+
+    CheckedPtr<const RenderElement> m_focusRingRenderer;
+    LayoutRect m_focusRingBounds;
 
     // Note that currently RenderView::layoutBox(), if it exists, is a child of m_initialContainingBlock.
     const UniqueRef<Layout::InitialContainingBlock> m_initialContainingBlock;

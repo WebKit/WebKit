@@ -1,0 +1,34 @@
+Outsetting only widens a rect, so it is refused for a rounded clip: widening one while keeping its radii describes a shape that no longer follows the border. The clipping layer's bounds below must stay at #ancestor's own 200x200, not grow by the ring's extent.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 50.00 50.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=-2 height=-2)
+                  (position 38.00 78.00)
+                  (bounds 164.00 44.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

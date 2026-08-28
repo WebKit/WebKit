@@ -3699,6 +3699,11 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
             clipRect.setHeight(renderableInfiniteRect.height());
         }
 
+        // Outset again as RingOnly: the SharedPaintClip pass in backgroundClipRect() above refuses a
+        // self-painting layer because paintOutlineForFragments() gives it room, which cannot reach a clip that
+        // crops the composited layer's output. Applying the outsets twice is idempotent.
+        clipRect = clippingRoot.outsetOutlineAutoClipRect(clipRect, RenderLayer::OutsetContext::RingOnly);
+
         auto offset = layer.convertToLayerCoords(&clippingRoot, { }, RenderLayer::AdjustForColumns);
         clipRect.moveBy(-offset);
 
@@ -3739,6 +3744,10 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 }
 
                 auto clipRoundedRect = parentRelativeScrollableRect(ancestorLayer, &ancestorLayer);
+                // Outsets only widen the rect, so a rounded clip would keep radii that no longer follow its
+                // corners. Leave those clipped.
+                if (!clipRoundedRect.hasNonZeroRadii())
+                    clipRoundedRect.setRect(ancestorLayer.outsetOutlineAutoClipRect(clipRoundedRect.rect(), RenderLayer::OutsetContext::RingOnly));
                 auto offset = layer.convertToLayerCoords(&ancestorLayer, { }, RenderLayer::AdjustForColumns);
                 clipRoundedRect.moveBy(-offset);
 
@@ -3754,10 +3763,10 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 auto borderShape = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect());
                 auto clipRoundedRect = borderShape.deprecatedInnerRoundedRect();
 
+                // No outsets: this branch is only reached for a border-radius clip, and widening the rect while
+                // keeping the radii would describe a shape that no longer follows the border.
                 auto offset = layer.convertToLayerCoords(&ancestorLayer, { }, RenderLayer::AdjustForColumns);
-                auto rect = clipRoundedRect.rect();
-                rect.moveBy(-offset);
-                clipRoundedRect.setRect(rect);
+                clipRoundedRect.moveBy(-offset);
 
                 CompositedClipData clipData { const_cast<RenderLayer*>(&ancestorLayer), clipRoundedRect, false };
                 newStack.insert(0, WTF::move(clipData));

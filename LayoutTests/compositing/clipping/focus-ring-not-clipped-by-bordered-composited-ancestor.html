@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring is not clipped by a bordered composited ancestor's child-containment mask</title>
+<link rel="match" href="focus-ring-not-clipped-by-bordered-composited-ancestor-expected.html">
+<!-- As focus-ring-not-clipped-by-composited-child-containment-layer.html, but #ancestor has a border, so its clip
+     sits at (5,5) in its own coordinates rather than at the layer origin, and #sibling supplies other content
+     entirely inside that clip. Outset accumulators that cannot represent "nothing found" anchor both the ring and
+     the other-content bounds at (0,0), so #sibling reads as content the widening would expose and outsets are
+     denied. Both layers are composited, so m_childContainmentLayer enforces the clip and
+     paintOutlineForFragments()'s software inflation cannot rescue the ring. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        border: 5px solid #999;    /* clip is the padding box, not the layer origin */
+        overflow: hidden;          /* enforced via m_childContainmentLayer since this layer is composited */
+        transform: translateZ(0);  /* force compositing */
+        background: #ddd;
+    }
+    #sibling {
+        position: absolute;
+        left: 20px; top: 20px;
+        width: 40px; height: 40px; /* entirely inside the clip: nothing here can legitimately leak */
+        background: #bbb;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the padding box's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="sibling"></div><div id="child" tabindex="0"></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (c) 2020 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
@@ -385,7 +385,20 @@ public:
     void setChildrenNeedCompositingGeometryUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::ChildrenNeedGeometryUpdate>(); }
     void setDescendantsNeedUpdateBackingAndHierarchyTraversal() { setBackingAndHierarchyTraversalDirtyBit<Compositing::DescendantsNeedBackingAndHierarchyTraversal>(); }
 
-    void setNeedsCompositingGeometryUpdateOnAncestors() { setAncestorsHaveCompositingDirtyFlag(Compositing::NeedsGeometryUpdate); }
+    bool isOutlineAutoClipOutsetsAncestor() const { return m_isOutlineAutoClipOutsetsAncestor; }
+    void setIsOutlineAutoClipOutsetsAncestor(bool value) { m_isOutlineAutoClipOutsetsAncestor = value; }
+
+    void setNeedsCompositingGeometryUpdateOnAncestors()
+    {
+        setAncestorsHaveCompositingDirtyFlag(Compositing::NeedsGeometryUpdate);
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
+    }
+
+    void setNeedsCompositingConfigurationUpdateOnAncestors()
+    {
+        setAncestorsHaveCompositingDirtyFlag(Compositing::NeedsConfigurationUpdate);
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
+    }
 
     bool needsCompositingRequirementsTraversal() const { return m_compositingDirtyBits.containsAny(computeCompositingRequirementsFlags()); }
     void clearCompositingRequirementsTraversalState()
@@ -817,7 +830,35 @@ public:
 
     // Can pass offsetFromRoot if known.
     LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, OptionSet<CalculateLayerBoundsFlag> = defaultCalculateLayerBoundsFlags()) const;
-    
+
+    // How far a descendant's focus ring extends past its border box, versus the bounds of all other content in
+    // this layer's subtree, in local coordinates.
+    // std::nullopt means "nothing found", which a default LayoutRect cannot express: uniteEvenIfEmpty() takes
+    // min/max unconditionally, so an empty accumulator would drag in the layer origin.
+    struct OutlineAutoClipOutsets {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(OutlineAutoClipOutsets);
+
+        std::optional<LayoutRect> ringOnlyBounds;
+        std::optional<LayoutRect> otherContentBounds;
+    };
+
+    // 'focusRingBox' is the one box in this subtree painting a live focus ring. There is only ever one,
+    // so the walk compares pointers instead of re-deriving the answer for every box it visits.
+    OutlineAutoClipOutsets collectOutlineAutoClipOutsets(const RenderBox* focusRingBox) const;
+
+    enum class OutsetContext : bool { SharedPaintClip, RingOnly };
+
+    LayoutRect outsetOutlineAutoClipRect(const LayoutRect& originalClipRect, OutsetContext context = OutsetContext::RingOnly) const
+    {
+        if (!m_isOutlineAutoClipOutsetsAncestor)
+            return originalClipRect;
+        return outsetOutlineAutoClipRectSlowCase(originalClipRect, context);
+    }
+    LayoutRect outsetOutlineAutoClipRectSlowCase(const LayoutRect& originalClipRect, OutsetContext) const;
+
+    // Discards the cached OutlineAutoClipOutsets, and the cached ClipRects it was baked into by calculateClipRects().
+    void clearOutlineAutoClipOutsetsCache();
+
     LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
     void NODELETE setRepaintStatus(RepaintStatus);
@@ -1128,6 +1169,11 @@ private:
     void NODELETE clearRepaintRects();
 
     LayoutRect clipRectRelativeToAncestor(const RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect, bool temporaryClipRects = false) const;
+
+    void accumulateOutlineAutoClipOutsets(const LayoutSize& offsetFromAncestor, OutlineAutoClipOutsets&, const RenderBox* focusRingBox) const;
+
+    // Ring extent taken straight from the box the caller resolved, so the common case needs no subtree walk.
+    LayoutRect knownFocusRingBounds(const RenderLayer& focusRingLayer, const RenderBox& focusRingBox) const;
 
     void clipToRect(GraphicsContext&, GraphicsContextStateSaver&, RegionContextStateSaver&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, const ClipRect&, BorderRadiusClippingRule = IncludeSelfForBorderRadius);
     void applyAncestorClippingForBorderRadius(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, BorderRadiusClippingRule = IncludeSelfForBorderRadius);
@@ -1487,6 +1533,10 @@ private:
     bool m_wasOmittedFromZOrderTree : 1 { false };
     bool m_suppressAncestorClippingInsideFilter : 1 { false };
 
+    // Set on every layer from the layer of a box painting a live outline-auto focus ring up to the root, so
+    // outsetOutlineAutoClipRect() can reject cheaply. Approximate by design; see the note there.
+    bool m_isOutlineAutoClipOutsetsAncestor : 1 { false };
+
     const CheckedRef<RenderLayerModelObject> m_renderer;
 
     InlineWeakPtr<RenderLayer> m_parent;
@@ -1522,6 +1572,10 @@ private:
     IntSize m_layerSize;
 
     std::unique_ptr<ClipRectsCache> m_clipRectsCache;
+
+    // Cache for collectOutlineAutoClipOutsets()'s O(subtree) walk. Out of line so it costs a pointer rather than
+    // two rects on every layer. Cleared with the ClipRects it gets baked into.
+    mutable std::unique_ptr<OutlineAutoClipOutsets> m_outlineAutoClipOutsets;
 
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_boxScrollingScope;
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>outline-style:auto outsets are denied when a transformed sibling's real bounds reach the ring's band</title>
+<script src="resources/text-based-repaint.js"></script>
+<!-- #leaker's rotated bounds cross #ancestor's right edge while its unrotated box stays well inside it, so
+     outsets must be denied. That needs the walk to measure it through its transform; an untransformed box at a
+     translated offset keeps it inside the clip, sees no leak, and grants outsets. Note the box is tall and
+     narrow on purpose: rotating a wide thin one by 45deg makes it narrower in x, not wider, and would test
+     nothing. A repaint test rather than a reftest because it reads the outset decision directly. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;
+        background: #ddd;
+    }
+    #leaker {
+        position: absolute;
+        left: 160px; top: 60px;
+        width: 20px; height: 100px;  /* tall and narrow, so rotating widens its x extent */
+        transform: rotate(45deg);    /* unrotated right edge 230; rotated ~262, past #ancestor's 250 */
+        background: #c00;
+    }
+    #target {
+        position: absolute;
+        left: 40px; top: 120px;
+        right: 0;                   /* flush to #ancestor's right edge, so its ring needs outsets */
+        height: 40px;
+        background: #eee;
+    }
+    #target:focus { outline: auto; }
+</style>
+<script>
+function repaintTest() {
+    document.getElementById('target').focus();
+}
+onload = runRepaintTest;
+</script>
+</head>
+<body>
+    <div id="ancestor">
+        <div id="leaker"></div>
+        <div id="target" tabindex="0"></div>
+    </div>
+</body>
+</html>

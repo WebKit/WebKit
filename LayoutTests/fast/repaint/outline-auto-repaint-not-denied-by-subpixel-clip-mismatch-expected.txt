@@ -1,0 +1,5 @@
+(repaint rects
+  (rect 87 87 166 46)
+  (rect 87 87 166 46)
+)
+

@@ -180,6 +180,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RenderLayer::OutlineAutoClipOutsets);
+
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipRects);
 public:
@@ -1185,6 +1187,20 @@ void RenderLayer::updateLayerPositionsAfterLayout(bool didFullRepaint, bool envi
     willUpdateLayerPositions();
 
     recursiveUpdateLayerPositions(updateLayerPositionFlags(didFullRepaint, environmentChanged));
+
+    // Layout may have moved anything on the focused element's ancestor chain. Only mark the chain when
+    // a ring is actually live.
+    if (RefPtr focusedElement = renderer().document().focusedElement()) {
+        if (CheckedPtr focusedRenderer = focusedElement->renderer()) {
+            bool hasOutlineAuto = focusedRenderer->outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
+            // Nothing to mark and nothing marked means no walk. The marking loop always runs to the root, so the
+            // root layer's bit says whether any chain is marked -- unlike the view's cached focus ring renderer, which
+            // willBeDestroyed() nulls without clearing the layer bits.
+            CheckedPtr rootLayer = renderer().view().layer();
+            if (hasOutlineAuto || (rootLayer && rootLayer->isOutlineAutoClipOutsetsAncestor()))
+                focusedRenderer->updateOutlineAutoClipOutsetsOnAncestors(hasOutlineAuto ? RenderObject::OutlineAutoRingChain::OnChain : RenderObject::OutlineAutoRingChain::NotOnChain);
+        }
+    }
 
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout - after", this);
 #if ASSERT_ENABLED
@@ -4361,17 +4377,31 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
 void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo,
     OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
+    // Widen the clip for a platform focus ring flush to an overflow:hidden ancestor's edge. Unlike the outset
+    // path in outsetOutlineAutoClipRect() this is not focus-gated, so it also covers an unfocused static
+    // outline-style:auto.
+    auto& style = renderer().style();
+    LayoutUnit outlineExtent;
+    if (style.outlineStyle() == OutlineStyle::Auto)
+        outlineExtent = LayoutUnit { std::ceil(style.usedOutlineSize(style.usedZoomForLength(), style.deviceScaleFactor())) };
+
     for (const auto& fragment : layerFragments) {
         if (fragment.dirtyBackgroundRect().isEmpty())
             continue;
 
+        auto outlineClipRect = fragment.dirtyBackgroundRect();
+        if (outlineExtent > 0_lu) {
+            outlineClipRect.inflate(outlineExtent);
+            outlineClipRect.intersect(fragment.paintDirtyRect());
+        }
+
         // Paint our own outline
-        PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        PaintInfo paintInfo(context, outlineClipRect.rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
 
         GraphicsContextStateSaver stateSaver(context, false);
         RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
-        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.dirtyBackgroundRect(), DoNotIncludeSelfForBorderRadius);
+        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, outlineClipRect, DoNotIncludeSelfForBorderRadius);
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
@@ -5124,6 +5154,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
     ASSERT(clipRectsType < NumCachedClipRectsTypes);
     ASSERT(!clipRectsContext.options.contains(ClipRectsOption::Temporary));
     ASSERT(!clipRectsContext.options.contains(ClipRectsOption::OutsideFilter));
+
     if (m_clipRectsCache) {
         if (auto* clipRects = m_clipRectsCache->getClipRects(clipRectsContext)) {
             ASSERT(clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
@@ -5216,7 +5247,11 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             offset -= toLayoutSize(renderer().view().frameView().scrollPositionForFixedPosition());
 
         if (renderer().hasNonVisibleOverflow()) {
-            ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers({ }, clipRectsContext.overlayScrollbarSizeRelevancy());
+            // This clip propagates to every descendant layer's clip rects, so a nested ring needs outsets here too.
+            // Painting only: outsetting RootRelativeClipRects would let hit testing hit the ring's band, and
+            // outsetting AbsoluteClipRects would change compositing overlap results.
+            auto childClip = rendererOverflowClipRectForChildLayers({ }, clipRectsContext.overlayScrollbarSizeRelevancy());
+            ClipRect newOverflowClip = clipRectsContext.clipRectsType == PaintingClipRects ? outsetOutlineAutoClipRect(childClip, OutsetContext::SharedPaintClip) : childClip;
             if (needsTransform)
                 newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
             newOverflowClip.moveBy(offset);
@@ -5364,7 +5399,12 @@ ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsC
 
     // This layer establishes a clip of some kind.
     if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip()) {
-        auto overflowClipRect = rendererOverflowClipRect(toLayoutPoint(offsetFromRoot), clipRectsContext.overlayScrollbarSizeRelevancy());
+        // Non-self-painting descendants are painted inline as part of this layer's foreground clip, so this is the
+        // clip that needs outsets if one of them paints the live focus ring -- paintOutlineForFragments()'s
+        // inflation only covers a box that paints its own outline.
+        auto localOverflowClipRect = rendererOverflowClipRect({ }, clipRectsContext.overlayScrollbarSizeRelevancy());
+        auto overflowClipRect = clipRectsContext.clipRectsType == PaintingClipRects ? outsetOutlineAutoClipRect(localOverflowClipRect, OutsetContext::SharedPaintClip) : localOverflowClipRect;
+        overflowClipRect.move(offsetFromRoot);
         foregroundRect.intersect(overflowClipRect);
         foregroundRect.setAffectedByRadius(true);
         return foregroundRect;
@@ -5736,10 +5776,224 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     return unionBounds;
 }
 
+// Unites into an optional accumulator; a std::nullopt target takes the rect as-is rather than uniting it with
+// a default LayoutRect, which would anchor the result at the layer origin.
+static void uniteOutsetBounds(std::optional<LayoutRect>& target, const LayoutRect& rect)
+{
+    if (target)
+        target->uniteEvenIfEmpty(rect);
+    else
+        target = rect;
+}
+
+static void uniteOutsetBounds(std::optional<LayoutRect>& target, const std::optional<LayoutRect>& rect)
+{
+    if (rect)
+        uniteOutsetBounds(target, *rect);
+}
+
+LayoutRect RenderLayer::knownFocusRingBounds(const RenderLayer& focusRingLayer, const RenderBox& focusRingBox) const
+{
+    // Cached bounds cover the steady state; a chain marked for another box derives them.
+    auto bounds = renderer().view().focusRingRenderer() == &focusRingBox
+        ? renderer().view().focusRingBounds()
+        : focusRingBox.outlineAutoRingBounds();
+
+    bounds.move(focusRingLayer.offsetFromAncestor(this));
+    return bounds;
+}
+
+void RenderLayer::accumulateOutlineAutoClipOutsets(const LayoutSize& offsetFromAncestor, OutlineAutoClipOutsets& outsets, const RenderBox* focusRingBox) const
+{
+    // Non-self-painting and composited layers both still contribute geometry: either can paint the focus ring
+    // or contain content that must not leak.
+    CheckedPtr box = renderBox();
+    bool paintsFocusRing = box && box.get() == focusRingBox;
+
+    // Mirrors calculateLayerBounds()'s IncludeSelfTransform. A rotated or scaled layer's content occupies its
+    // transformed bounds, and under-reporting otherContentBounds is what would grant outsets that reveal it.
+    auto inAncestorCoords = [&](LayoutRect rect) {
+        if (paintsWithTransform(PaintBehavior::Normal) && transform())
+            rect = transform()->mapRect(rect);
+        rect.move(offsetFromAncestor);
+        return rect;
+    };
+
+    // The raw layer tree, not the z-order lists: those omit a stacking-context layer from a non-stacking-context
+    // parent's list.
+    auto recurseIntoChildren = [&](OutlineAutoClipOutsets& target, auto&& perChild) {
+#if ASSERT_ENABLED
+        LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
+#endif
+        for (CheckedPtr childLayer = firstChild(); childLayer; childLayer = childLayer->nextSibling()) {
+            if (isReflectionLayer(*childLayer))
+                continue;
+            OutlineAutoClipOutsets childOutsets;
+            childLayer->accumulateOutlineAutoClipOutsets(offsetFromAncestor + childLayer->offsetFromAncestor(this), childOutsets, focusRingBox);
+            perChild(*childLayer, childOutsets);
+            uniteOutsetBounds(target.ringOnlyBounds, childOutsets.ringOnlyBounds);
+            uniteOutsetBounds(target.otherContentBounds, childOutsets.otherContentBounds);
+        }
+    };
+    auto ignoreChild = [](RenderLayer&, const OutlineAutoClipOutsets&) { };
+
+    if (paintsFocusRing) {
+        uniteOutsetBounds(outsets.ringOnlyBounds, inAncestorCoords(box->outlineAutoRingBounds()));
+    } else if (box) {
+        // A layer-tree child can sit many non-layer-owning RenderBoxes below this box, so walk the render-tree
+        // path explicitly to find which descendants' ring inflation is already folded into ownBounds.
+        auto descendantRingIsFoldedIntoOwnBounds = [&](RenderBox& descendantBox) {
+            for (CheckedPtr current = &descendantBox; current && current != box; ) {
+                CheckedPtr parent = current->parentBox();
+                // Mirrors addOverflowWithRendererOffset(): a contained box never folds in a child's overflow.
+                if (!parent || parent->paintContainmentApplies() || parent->childPaintsVisualOverflowIndependently(*current))
+                    return false;
+                current = parent;
+            }
+            return true;
+        };
+
+        OutlineAutoClipOutsets descendantOutsets;
+        std::optional<LayoutRect> explainedByFoldedRings;
+        if (!box->hasNonVisibleOverflow()) {
+            recurseIntoChildren(descendantOutsets, [&](RenderLayer& childLayer, const OutlineAutoClipOutsets& childOutsets) {
+                // Test the optional first: it is nullopt for every child but the one chain holding the ring, and
+                // descendantRingIsFoldedIntoOwnBounds() is an O(render-tree-depth) walk.
+                if (!childOutsets.ringOnlyBounds)
+                    return;
+                if (CheckedPtr childBox = childLayer.renderBox(); childBox && descendantRingIsFoldedIntoOwnBounds(*childBox))
+                    uniteOutsetBounds(explainedByFoldedRings, childOutsets.ringOnlyBounds);
+            });
+        } else {
+            // A live ring must propagate past intermediate clipping boxes, but non-ring content really is
+            // contained by this box's clip, so only ringOnlyBounds propagates upward.
+            OutlineAutoClipOutsets clippedDescendantOutsets;
+            recurseIntoChildren(clippedDescendantOutsets, ignoreChild);
+            descendantOutsets.ringOnlyBounds = clippedDescendantOutsets.ringOnlyBounds;
+        }
+
+        LayoutRect ownBounds = inAncestorCoords(localBoundingBox());
+        LayoutRect selfOnlyBounds = inAncestorCoords(box->applyVisualEffectOverflow(box->borderBoxRect()));
+
+        LayoutRect explainedByDescendantRings = selfOnlyBounds;
+        if (explainedByFoldedRings)
+            explainedByDescendantRings.uniteEvenIfEmpty(*explainedByFoldedRings);
+        uniteOutsetBounds(outsets.otherContentBounds, explainedByDescendantRings.contains(ownBounds) ? selfOnlyBounds : ownBounds);
+
+        uniteOutsetBounds(outsets.ringOnlyBounds, descendantOutsets.ringOnlyBounds);
+        uniteOutsetBounds(outsets.otherContentBounds, descendantOutsets.otherContentBounds);
+        return;
+    }
+
+    // Descendants below a box that clips them are its own concern, not this ancestor's.
+    if (box && box->hasNonVisibleOverflow())
+        return;
+
+    recurseIntoChildren(outsets, ignoreChild);
+}
+
+RenderLayer::OutlineAutoClipOutsets RenderLayer::collectOutlineAutoClipOutsets(const RenderBox* focusRingBox) const
+{
+    OutlineAutoClipOutsets outsets;
+
+    // The walk below only checks for the focus ring on layers visited as a child, so check this layer's own box too.
+    CheckedPtr ownBox = renderBox();
+    if (ownBox && ownBox.get() == focusRingBox)
+        uniteOutsetBounds(outsets.ringOnlyBounds, ownBox->outlineAutoRingBounds());
+
+#if ASSERT_ENABLED
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
+#endif
+
+    for (CheckedPtr childLayer = firstChild(); childLayer; childLayer = childLayer->nextSibling()) {
+        if (isReflectionLayer(*childLayer))
+            continue;
+        childLayer->accumulateOutlineAutoClipOutsets(childLayer->offsetFromAncestor(this), outsets, focusRingBox);
+    }
+
+    return outsets;
+}
+
+void RenderLayer::clearOutlineAutoClipOutsetsCache()
+{
+    if (!m_outlineAutoClipOutsets)
+        return;
+
+    // Outsets are only ever folded into PaintingClipRects.
+    clearClipRects(PaintingClipRects);
+}
+
+// Reached when m_isOutlineAutoClipOutsetsAncestor marks a live outline-style:auto ring somewhere below this
+// layer. That mark is a hint: it is written on focus change and after layout, so it can be stale while the
+// render tree is in flux, so we re-derive it.
+LayoutRect RenderLayer::outsetOutlineAutoClipRectSlowCase(const LayoutRect& originalClipRect, OutsetContext context) const
+{
+    CheckedPtr<const RenderElement> focusedRenderer = renderer().view().focusRingRenderer();
+    if (!focusedRenderer) {
+        if (RefPtr focusedElement = renderer().document().focusedElement())
+            focusedRenderer = focusedElement->renderer();
+    }
+
+    CheckedPtr focusRingLayer = focusedRenderer ? focusedRenderer->enclosingLayer() : nullptr;
+    if (!focusRingLayer || !focusRingLayer->isDescendantOf(*this))
+        return originalClipRect;
+
+    // Our own ring paints outside our border box, past this clip entirely, so widening it would only let our own
+    // content into the border band. On the renderer, not the layer: a box with no layer of its own shares ours,
+    // and its ring really is clipped by our foreground clip.
+    if (focusedRenderer.get() == &renderer())
+        return originalClipRect;
+
+    // Such a layer already has its room from paintOutlineForFragments(), so widening a clip that other content
+    // paints through would only reveal that content.
+    if (context == OutsetContext::SharedPaintClip && focusRingLayer->isSelfPaintingLayer())
+        return originalClipRect;
+
+    CheckedPtr focusRingBox = focusRingLayer->renderBox();
+    bool hasLiveFocusRing = focusRingBox && (renderer().view().focusRingRenderer() == focusRingBox.get() || focusRingBox->outlineAutoIsOnlyVisualOverflow());
+    if (!hasLiveFocusRing)
+        return originalClipRect;
+
+    // Skip the O(subtree) walk whenever the ring already fits inside this clip, which is the common case.
+    auto knownRingBounds = knownFocusRingBounds(*focusRingLayer, *focusRingBox);
+    LayoutRect knownCandidate = originalClipRect;
+    knownCandidate.uniteEvenIfEmpty(knownRingBounds);
+    if (knownCandidate == originalClipRect)
+        return originalClipRect;
+
+    if (!m_outlineAutoClipOutsets)
+        m_outlineAutoClipOutsets = makeUnique<OutlineAutoClipOutsets>(collectOutlineAutoClipOutsets(focusRingBox.get()));
+    auto& outsets = *m_outlineAutoClipOutsets;
+
+    if (!outsets.ringOnlyBounds)
+        return originalClipRect;
+
+    LayoutRect candidateRect = originalClipRect;
+    candidateRect.uniteEvenIfEmpty(*outsets.ringOnlyBounds);
+    if (candidateRect == originalClipRect)
+        return originalClipRect;
+
+    // The two callers describe this clip differently (border box at the origin during repaint, padding box
+    // at the border offset from calculateClipRects) so it can make already-clipped content look like a leak.
+    // Only the max edges need tolerance; at the min edges the repaint rect already starts earlier. They
+    // differ by less than a pixel, so a pixel is the tight bound.
+    // FIXME: reconciling the two clip rects would remove the need for this.
+    auto leakAllowance = originalClipRect;
+    leakAllowance.expand(1_lu, 1_lu);
+
+    bool granted = !outsets.otherContentBounds || leakAllowance.contains(intersection(*outsets.otherContentBounds, candidateRect));
+    if (!granted)
+        return originalClipRect;
+
+    return candidateRect;
+}
+
 void RenderLayer::clearClipRectsIncludingDescendants(ClipRectsType typeToClear)
 {
     // FIXME: it's not clear how this layer not having clip rects guarantees that no descendants have any.
-    if (!m_clipRectsCache)
+    // Outsets are tested as well: the repaint walk can populate them on a layer that has no ClipRectsCache, so
+    // stopping on the clip rects alone would skip a descendant that holds outsets.
+    if (!m_clipRectsCache && !m_outlineAutoClipOutsets)
         return;
 
     clearClipRects(typeToClear);
@@ -5750,6 +6004,10 @@ void RenderLayer::clearClipRectsIncludingDescendants(ClipRectsType typeToClear)
 
 void RenderLayer::clearClipRects(ClipRectsType typeToClear)
 {
+    // calculateClipRects() bakes the outsets into the cached ClipRects, so they must never outlive them. Clearing
+    // here also covers invalidations that happen without a layout, notably scrolling a descendant scroller.
+    m_outlineAutoClipOutsets = nullptr;
+
     if (typeToClear == AllClipRectTypes)
         m_clipRectsCache = nullptr;
     else if (m_clipRectsCache) {

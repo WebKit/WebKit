@@ -1067,6 +1067,11 @@ inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const S
     rendererStyleChangedSlowCase(renderer, oldStyle, newStyle);
 }
 
+static float usedOutlineSizeForOutlineAuto(const Style::ComputedStyle& style, float deviceScaleFactor)
+{
+    return style.usedOutlineSize(style.usedZoomForLength(), deviceScaleFactor);
+}
+
 void RenderElement::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RefPtr protectedElement = element();
@@ -1142,8 +1147,12 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
     bool hasOutlineAuto = outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
-        auto deviceScaleFactor = style().deviceScaleFactor();
-        issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().usedOutlineSize(outlineStyleForRepaint().usedZoomForLength(), deviceScaleFactor) : oldStyle->usedOutlineSize(oldStyle->usedZoomForLength(), deviceScaleFactor));
+        // Discard outsets cached between Element::setFocus() and this restyle landing, when outline:auto was not
+        // yet live. Reachable from user interaction but not from script, which flushes the pending restyle first.
+        updateOutlineAutoClipOutsetsOnAncestors(hasOutlineAuto ? OutlineAutoRingChain::OnChain : OutlineAutoRingChain::NotOnChain);
+
+        issueRepaintForOutlineAuto(usedOutlineSizeForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint() : *oldStyle, style().deviceScaleFactor()));
+        invalidateCompositedClipsForOutlineAutoChange();
     }
 
     auto isLayoutDiff = [](Style::Difference diff) {
@@ -1237,6 +1246,13 @@ void RenderElement::insertedIntoTree()
 
 void RenderElement::willBeRemovedFromTree()
 {
+    // Blur cannot clear the chain once the renderer is gone, since Element::setFocus() needs one to reach it, so
+    // clear it here while the ancestors are still reachable.
+    if (CheckedPtr focusedElement = document().focusedElement(); focusedElement && focusedElement.get() == element()) {
+        if (outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto)
+            updateOutlineAutoClipOutsetsOnAncestors(OutlineAutoRingChain::NotOnChain);
+    }
+
     if (isLegend()) {
         if (CheckedPtr fieldset = dynamicDowncast<RenderBlock>(parent()); fieldset && fieldset->isFieldset())
             fieldset->setIntrinsicBorderForFieldset({ });
@@ -1281,6 +1297,9 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
 
 void RenderElement::willBeDestroyed()
 {
+    if (view().focusRingRenderer() == this)
+        view().setFocusRingRenderer(nullptr, { });
+
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (!renderTreeBeingDestroyed() && element())
         protect(document())->contentChangeObserver().rendererWillBeDestroyed(protect(*element()));
@@ -2230,16 +2249,58 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     OutlinePainter { paintInfo }.paintOutline(*this, paintRect);
 }
 
+// An outline-only change marks no other compositing dirty bits, so a composited ancestor's overflow-clip mask
+// geometry could go stale. Only an ancestor that actually clips can be affected.
+void RenderElement::invalidateCompositedClipsForOutlineAutoChange()
+{
+    CheckedPtr layer = enclosingLayer();
+    if (!layer)
+        return;
+
+    // Nothing to invalidate unless some ancestor actually clips.
+    bool hasClippingAncestor = false;
+    for (CheckedPtr ancestor = layer->parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->renderer().hasNonVisibleOverflow()) {
+            hasClippingAncestor = true;
+            break;
+        }
+    }
+
+    if (!hasClippingAncestor)
+        return;
+
+    // Set these once after walking the ancestors to avoid redundant walks at each iteration.
+    layer->setNeedsCompositingGeometryUpdateOnAncestors();
+    layer->setNeedsCompositingConfigurationUpdateOnAncestors();
+}
+
 void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 {
     auto focusRingRects = OutlinePainter::collectFocusRingRects(*this, LayoutPoint(), containerForRepaint().renderer.get());
 
     LayoutRect repaintRect;
-    for (auto rect : focusRingRects) {
-        rect.inflate(outlineSize);
+    for (auto rect : focusRingRects)
         repaintRect.unite(rect);
-    }
-    repaintRectangle(repaintRect);
+
+    // The ring's extent goes in as outsets, which issueRepaint() applies after the clipping walk rather than
+    // before. Inflating first would just have the clip shave the band off again, since mid-transition no ancestor
+    // clip can recognize the ring: on focus the layout has not grown to include it, on blur the style has lost it.
+    // With nothing clipping, the two orders agree.
+    auto ringOutsets = LayoutBoxExtent { LayoutUnit(outlineSize), LayoutUnit(outlineSize), LayoutUnit(outlineSize), LayoutUnit(outlineSize) };
+    repaintRectangle(repaintRect, ClipRepaintToLayer::Yes, ForceRepaint::No, ringOutsets);
+}
+
+void RenderElement::outlineAutoLiveFocusChanged(bool isFocused)
+{
+    bool hasOutlineAuto = outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
+    updateOutlineAutoClipOutsetsOnAncestors(isFocused && hasOutlineAuto ? OutlineAutoRingChain::OnChain : OutlineAutoRingChain::NotOnChain);
+
+    if (!hasOutlineAuto)
+        return;
+
+    // Nothing else invalidates the ring's area on a plain focus move.
+    issueRepaintForOutlineAuto(usedOutlineSizeForOutlineAuto(outlineStyleForRepaint(), style().deviceScaleFactor()));
+    invalidateCompositedClipsForOutlineAutoChange();
 }
 
 void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)

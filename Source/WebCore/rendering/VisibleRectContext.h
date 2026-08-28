@@ -40,6 +40,7 @@ struct VisibleRectContext {
         ApplyCompositedContainerScrolls     = 1 << 2,
         ApplyContainerClip                  = 1 << 3,
         CalculateAccurateRepaintRect        = 1 << 4,
+        AllowOutlineAutoClipOutsets          = 1 << 5,
     };
 
     OptionSet<Option> options { };
