@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: pixel version of inline-box-ink-overflow-shrink.html. Moving the underline up has to
+     erase it from where it was, so this fails if the in place ink overflow adjustment repaints only the new
+     (smaller) area. Paints before mutating. -->
+<style>
+div {
+ font-family: Ahem;
+  height: 200px;
+}
+span {
+  text-decoration: underline;
+  text-underline-offset: 100px;
+}
+</style>
+<!-- PASS if there's only one underline visible. Ahem-only text, so the rects are the same on every port. -->
+<div><span id=foobar>XXXXXXXXXXXX</span></div>
+<script src="resources/repaint.js" type="text/javascript"></script>
+<script>
+repaintTest = function() {
+  foobar.style.textUnderlineOffset = "30px";
+};
+onload = runRepaintTest;
+</script>

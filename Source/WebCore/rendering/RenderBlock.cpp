@@ -787,6 +787,10 @@ bool RenderBlock::simplifiedLayout()
     if (!canPerformSimplifiedLayout())
         return false;
 
+    // Out-of-flow movements issue their own repaints.
+    auto checkForRepaint = !needsSimplifiedNormalFlowLayout() ? std::optional { LayoutRepainter::CheckForRepaint::No } : std::nullopt;
+    auto repainter = LayoutRepainter { *this, checkForRepaint };
+
     LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
     bool didOutOfFlowMovement = false;
     if (needsOutOfFlowMovementLayout()) {
@@ -830,6 +834,7 @@ bool RenderBlock::simplifiedLayout()
         RelayoutScopeForScrollbarChange relayoutScope { *this, InOverflowRelayout::No };
     }
     clearNeedsLayout();
+    repainter.repaintAfterLayout();
     return true;
 }
 

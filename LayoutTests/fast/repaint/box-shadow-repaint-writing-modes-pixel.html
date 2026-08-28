@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: pixel version of box-shadow-repaint-writing-modes.html. A box-shadow colour change
+     on a block in vertical-rl and horizontal-bt. Paints before mutating. -->
+<html>
+<head>
+    <style>
+        .container {
+            margin: 20px;
+            border: 1px solid black;
+            width: 400px;
+            height: 250px;
+        }
+
+        .box {
+            margin: 25px;
+            width: 150px;
+            height: 100px;
+            background-color: green;
+            box-shadow: -10px -10px 0 10px red;
+        }
+
+        body.changed .box {
+            box-shadow: -10px -10px 0 10px green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="writing-mode: vertical-rl">
+        <div class="box"></div>
+    </div>
+
+    <div class="container" style="writing-mode: horizontal-bt">
+        <div class="box"></div>
+    </div>
+
+    <script src="resources/repaint.js"></script>
+    <script>
+        repaintTest = function() {
+            document.body.classList.add('changed');
+        };
+        onload = runRepaintTest;
+    </script>
+</body>
+</html>

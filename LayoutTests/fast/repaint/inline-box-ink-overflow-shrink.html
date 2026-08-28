@@ -8,7 +8,8 @@ span {
   text-underline-offset: 100px;
 }
 </style>
-<div><span id=foobar>PASS if there's only one underline visible.</span></div>
+<!-- PASS if there's only one underline visible. Ahem-only text, so the rects are the same on every port. -->
+<div><span id=foobar>XXXXXXXXXXXX</span></div>
 <script src="resources/text-based-repaint.js" type="text/javascript"></script>
 <script>
   repaintTest = function() {

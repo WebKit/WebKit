@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: the shrink direction. The under underline sits well below the text box, so a repaint
+     that only covers the new (smaller) ink overflow would leave it on screen. -->
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'none';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+#container { width: 800px; font: 16px/20px monospace; }
+.a { text-decoration: underline; text-underline-position: under; color: black; }
+.tall { font-size: 2em; }
+</style>
+<div id="container">
+  <a id="target" class="a" href=".">the link</a><span class="tall">X</span>
+</div>

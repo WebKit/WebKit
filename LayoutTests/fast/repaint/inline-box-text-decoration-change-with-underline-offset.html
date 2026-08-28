@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: faithful port of the bug's attachment 481146, with the :hover style change
+     driven from script instead of the mouse. -->
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+  body {
+      /* Ahem, and text made only of characters it covers, so the rects are the same on every port. */
+      font: 16px/20px Ahem;
+      margin: 0;
+  }
+  #container {
+      display: inline-block;
+      width: 300px;
+      height: 300px;
+  }
+  .a {
+      text-underline-offset: 0.3em;
+      text-decoration: none;
+  }
+</style>
+
+<div id=container>
+  <a class=a id=target href=.>XXXX XXXX</a>
+</div>

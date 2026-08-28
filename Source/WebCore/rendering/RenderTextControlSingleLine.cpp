@@ -90,6 +90,9 @@ void RenderTextControlSingleLine::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
+    if (simplifiedLayout())
+        return;
+
     // FIXME: We should remove the height-related hacks in layout() and
     // styleDidChange(). We need them because we want to:
     // - Center the inner elements vertically if the input height is taller than
