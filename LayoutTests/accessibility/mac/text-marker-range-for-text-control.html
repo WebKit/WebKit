@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A native text control's value lives in its shadow inner text element, so the host has no light
+     DOM children whose contents a range could cover. AXObjectCache::rangeForNodeContents therefore
+     answered with a range over the control as a single replaced object, whose string is one object
+     replacement character (U+FFFC) and whose endpoints carry no useful index. VoiceOver measures a
+     field's line span with this attribute, so the bogus answer dropped it onto a fallback path. The
+     isolated tree builds the same range from its text runs, which descend into the shadow text, and
+     was already correct. -->
+<textarea id="textarea" style="width: 200px; height: 60px">alpha
+bravo
+</textarea>
+<input id="input" type="text" value="alpha bravo">
+<input id="search" type="search" value="alpha bravo">
+<div id="contenteditable" contenteditable style="width: 200px">alpha<br>bravo<br></div>
+<img id="image" src="resources/cake.png" alt="A cake">
+
+<script>
+var output = "Asserts that AXTextMarkerRangeForUIElement covers a text control's value rather than the\n"
+    + "control as a single replaced object. A genuinely replaced element still answers with itself.\n\n";
+
+// `string` is the expected AXStringForTextMarkerRange of the element's text marker range. U+FFFC,
+// the object replacement character, is what a range over a replaced object stringifies to, and is
+// correct only for the image. A text control with no value keeps pointing at itself, so it answers
+// with U+FFFC too; that case is left out here because the two trees disagree about it.
+var cases = [
+    { id: "textarea", label: "textarea", string: "alpha\nbravo\n" },
+    { id: "input", label: "text input", string: "alpha bravo" },
+    { id: "search", label: "search input", string: "alpha bravo" },
+    { id: "contenteditable", label: "contenteditable", string: "alpha\nbravo\n" },
+    { id: "image", label: "image", string: "\uFFFC" },
+];
+
+// expect() evaluates its expressions in its own scope, so the values it reads are globals.
+var webArea, axElement, range;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        for (var testCase of cases) {
+            axElement = await waitForElementById(testCase.id);
+            if (!axElement) {
+                output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n\n`;
+                continue;
+            }
+
+            // VoiceOver asks the web area, and the handler answers about the element it is passed,
+            // so the receiver does not matter; matching VoiceOver's usage keeps this faithful.
+            range = webArea.textMarkerRangeForElement(axElement);
+            output += `${testCase.label}:\n`;
+            output += expect("webArea.stringForTextMarkerRange(range)", JSON.stringify(testCase.string));
+            output += expect("webArea.textMarkerRangeLength(range)", `${testCase.string.length}`);
+            output += "\n";
+        }
+
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

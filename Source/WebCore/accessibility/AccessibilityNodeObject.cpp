@@ -1107,15 +1107,6 @@ static bool NODELETE isFlowContent(Node& node)
     return text && !text->data().containsOnly<isASCIIWhitespace>();
 }
 
-bool AccessibilityNodeObject::isNativeTextControl() const
-{
-    if (is<HTMLTextAreaElement>(node()))
-        return true;
-
-    auto* input = dynamicDowncast<HTMLInputElement>(node());
-    return input && (input->isText() || input->isNumberField());
-}
-
 bool AccessibilityNodeObject::isSearchField() const
 {
     RefPtr node = this->node();
@@ -4135,9 +4126,9 @@ String AccessibilityNodeObject::text() const
     if (!isTextControl())
         return { };
 
+    if (RefPtr textControl = nativeTextControl())
+        return textControl->value();
     RefPtr element = dynamicDowncast<Element>(node());
-    if (RefPtr formControl = dynamicDowncast<HTMLTextFormControlElement>(element); formControl && isNativeTextControl())
-        return formControl->value();
     return element ? element->innerText() : String();
 }
 

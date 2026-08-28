@@ -2053,13 +2053,8 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     // else branch below would fail because contains<ComposedTree> returns
     // false for cross-document positions, clamping the selection to the web
     // area start.
-    RefPtr<HTMLTextFormControlElement> textControl;
-    if (isNativeTextControl()) {
-        // isNativeTextControl returns true only for HTMLTextAreaElement or HTMLInputElement,
-        // both of which derive from HTMLTextFormControlElement.
-        ASSERT(is<HTMLTextFormControlElement>(node()));
-        textControl = downcast<HTMLTextFormControlElement>(node());
-    } else
+    RefPtr textControl = nativeTextControl();
+    if (!textControl)
         textControl = enclosingTextFormControl(range.start.deepEquivalent());
 
     if (textControl) {
