@@ -30,6 +30,7 @@
 #include <WebCore/InlineLine.h>
 #include <WebCore/LayoutUnits.h>
 #include <WebCore/TextSpacing.h>
+#include <wtf/EnumSet.h>
 #include <wtf/Range.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -56,6 +57,15 @@ class InlineTextItem;
 
 class TextUtil {
 public:
+    enum class WordBreakRule : uint8_t {
+        AtArbitraryPositionWithinWords,
+        AtArbitraryPosition,
+        AtHyphenationOpportunities
+    };
+    enum class IsMinimumInIntrinsicWidthMode : bool { No, Yes };
+    enum class HyphenationIsDisabled : bool { No, Yes };
+    static EnumSet<WordBreakRule> wordBreakBehavior(const Style::ComputedStyle&, bool hasWrapOpportunityAtPreviousPosition, IsMinimumInIntrinsicWidthMode, HyphenationIsDisabled);
+
     enum class UseTrailingWhitespaceMeasuringOptimization : bool { No, Yes };
     static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, InlineLayoutUnit contentLogicalLeft);
     static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization = UseTrailingWhitespaceMeasuringOptimization::Yes, TextSpacing::SpacingState spacingState = { }, GlyphOverflow* = nullptr);

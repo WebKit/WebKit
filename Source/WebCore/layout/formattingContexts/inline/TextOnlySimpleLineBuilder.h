@@ -45,6 +45,10 @@ public:
     static bool isEligibleForSimplifiedInlineLayoutByStyle(const Box&);
     static bool isEligibleForSimplifiedDisplayBuild(const ElementBox& rootBlockContainer);
 
+    static bool isAtContentEnd(std::span<const InlineItem>, size_t nextItemIndex, const InlineItemRange&);
+    static bool isAtSoftWrapOpportunityOrContentEnd(const InlineTextItem&, std::span<const InlineItem>, size_t nextItemIndex, const InlineItemRange&, const Style::ComputedStyle& rootStyle);
+    static InlineLayoutUnit measuredInlineTextItem(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit contentLogicalLeft);
+
 private:
     InlineItemPosition placeInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
     InlineItemPosition placeNonWrappingInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
