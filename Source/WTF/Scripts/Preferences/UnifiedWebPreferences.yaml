@@ -5373,6 +5373,7 @@ LocalNetworkAccessEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 LocalStorageEnabled:
   type: bool

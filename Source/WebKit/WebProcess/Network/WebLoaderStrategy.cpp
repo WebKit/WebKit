@@ -405,6 +405,8 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         parameters.isClearSiteDataExecutionContextEnabled = document->settings().clearSiteDataExecutionContextsSupportEnabled();
         parameters.mayBlockNetworkRequest = !isMainFrameNavigation && document->settings().scriptTrackingPrivacyNetworkRequestBlockingEnabled();
         parameters.globalPrivacyControlEnabled = document->settings().globalPrivacyControlEnabled().value_or(false);
+        parameters.clientAddressSpace = document->ipAddressSpace();
+        parameters.clientIsSecureContext = document->isSecureContext();
     }
 
     if (RefPtr page = frame->page()) {

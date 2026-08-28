@@ -37,6 +37,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/BlobRegistryImpl.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DNS.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -60,6 +61,7 @@
 
 namespace WebCore {
 class CertificateInfo;
+enum class IPAddressSpace : uint8_t;
 class NetworkStorageSession;
 class ResourceMonitorThrottlerHolder;
 class ResourceRequest;
@@ -68,6 +70,7 @@ class SWServer;
 class SecurityOriginData;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class IncludeHttpOnlyCookies : bool;
+enum class PermissionState : uint8_t;
 enum class ShouldSample : bool;
 enum class IsInitiatedByDedicatedWorker : bool;
 struct ClientOrigin;
@@ -166,6 +169,8 @@ public:
     std::optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
+
+    WebCore::PermissionState requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, bool canPrompt);
     
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool hasAppBoundSession() const { return false; }
@@ -414,6 +419,10 @@ protected:
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
+    // Keyed on the origin pair as well as the space, so a grant does not follow the same origin embedded
+    // in an unrelated site. Nothing writes it yet; the grant and revocation paths land with the
+    // permission store. See https://bugs.webkit.org/show_bug.cgi?id=319907
+    HashMap<std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>, WebCore::PermissionState> m_localNetworkAccessPermissions;
 
     Vector<WebCore::SecurityOriginData> m_mockPushSubscriptionOriginsForTesting;
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)

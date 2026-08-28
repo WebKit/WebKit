@@ -186,6 +186,7 @@ Modules/fetch/FetchRequest.cpp @cost:3
 Modules/fetch/FetchResponse.cpp @cost:4
 Modules/fetch/FormDataConsumer.cpp
 Modules/fetch/IPAddressSpace.cpp
+Modules/fetch/LocalNetworkAccess.cpp
 Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp @cost:3
 Modules/filesystem/FileSystemDirectoryHandle.cpp
 Modules/filesystem/FileSystemFileHandle.cpp

@@ -75,6 +75,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/LinkRelAttribute.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -85,6 +86,7 @@
 #include <WebCore/SWServer.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
@@ -894,6 +896,38 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
     return std::nullopt;
 }
 
+// FIXME: Main resources are skipped entirely. Top-level navigations are exempt per the spec, but an
+// iframe navigation is in scope and has to be judged against its initiator rather than the document
+// being navigated away from. That needs NavigationRequester to carry the initiator's address space and
+// permissions-policy state. See https://bugs.webkit.org/show_bug.cgi?id=319908
+void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, CompletionHandler<void(std::optional<ResourceError>)>&& completionHandler)
+{
+    if (!WebCore::canDetermineConnectionAddressSpace() || !connectionToWebProcess().localNetworkAccessEnabled() || isMainResource())
+        return completionHandler(std::nullopt);
+
+    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
+    if (!networkSession)
+        return completionHandler(std::nullopt);
+
+    auto sourceOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->data() : SecurityOriginData { };
+    auto topOrigin = m_parameters.topOrigin ? m_parameters.topOrigin->data() : SecurityOriginData { };
+
+    // FIXME: The permissions-policy features are not plumbed yet, so both are treated as allowed, which
+    // is their default. See https://bugs.webkit.org/show_bug.cgi?id=319908
+    performLocalNetworkAccessCheck(request, currentURL, connectionAddressSpace, m_parameters.clientAddressSpace,
+        m_parameters.clientIsSecureContext, ClientOrigin { topOrigin, sourceOrigin }, true, true,
+        [networkSession](const ClientOrigin& origin, IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& permissionHandler) {
+            permissionHandler(networkSession->requestLocalNetworkAccessPermission(origin, addressSpace, true));
+        }, [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
+            // A rejected fetch surfaces as a bare TypeError, so the reason would otherwise be invisible.
+            if (error) {
+                send(Messages::WebPage::AddConsoleMessage { frameID(), MessageSource::Security, MessageLevel::Error,
+                    makeString("Blocked a local network request to '"_s, url.stringCenterEllipsizedToLength(), "' because "_s, error->localizedDescription(), "."_s), coreIdentifier() }, pageID());
+            }
+            completionHandler(WTF::move(error));
+        });
+}
+
 void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_parameters.isClearSiteDataHeaderEnabled)
@@ -1161,6 +1195,21 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     initializeReportingEndpoints(m_response);
 
+    checkLocalNetworkAccess(m_parameters.request, m_networkLoad ? m_networkLoad->currentRequest().url() : m_response.url(), m_response.ipAddressSpace(), [this, protectedThis = Ref { *this }, privateRelayed, resourceLoadInfo = WTF::move(resourceLoadInfo), completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> localNetworkAccessError) mutable {
+        if (localNetworkAccessError) {
+            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Blocked by Local Network Access check");
+            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTF::move(*localNetworkAccessError)] {
+                if (protectedThis->m_networkLoad)
+                    protectedThis->didFailLoading(error);
+            });
+            return completionHandler(PolicyAction::Ignore);
+        }
+        continueDidReceiveResponseAfterLocalNetworkAccessCheck(privateRelayed, WTF::move(resourceLoadInfo), WTF::move(completionHandler));
+    });
+}
+
+void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed privateRelayed, ResourceLoadInfo&& resourceLoadInfo, ResponseCompletionHandler&& completionHandler)
+{
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting main resource load due to CSP frame-ancestors or X-Frame-Options");
         auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
@@ -1528,6 +1577,20 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
 }
 
 void NetworkResourceLoader::continueWillSendRedirectedRequestAfterContentFiltering(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+{
+    // A redirect never reaches didReceiveResponse, so this hop needs its own check, judged against the
+    // connection that served the 302 rather than the one the request started on.
+    checkLocalNetworkAccess(redirectRequest, redirectRequest.url(), redirectResponse.ipAddressSpace(), [this, protectedThis = Ref { *this }, request = WTF::move(request), redirectRequest = WTF::move(redirectRequest), redirectResponse = WTF::move(redirectResponse), isFromServiceWorker, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> localNetworkAccessError) mutable {
+        if (localNetworkAccessError) {
+            LOADER_RELEASE_LOG_ERROR("willSendRedirectedRequest: Blocked by Local Network Access check");
+            didFailLoading(*localNetworkAccessError);
+            return completionHandler({ });
+        }
+        continueWillSendRedirectedRequestAfterLocalNetworkAccessCheck(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), isFromServiceWorker, WTF::move(completionHandler));
+    });
+}
+
+void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAccessCheck(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     std::optional<WebCore::PCM::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
@@ -2083,6 +2146,21 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         didReceiveMainResourceResponse(response);
 
     initializeReportingEndpoints(response);
+
+    // A cache hit resolved to a real address when the entry was stored, so it needs the same check.
+    checkLocalNetworkAccess(originalRequest(), response.url(), response.ipAddressSpace(), [this, protectedThis = Ref { *this }, entry = WTF::move(entry)](std::optional<ResourceError> localNetworkAccessError) mutable {
+        if (localNetworkAccessError) {
+            LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Blocked by Local Network Access check");
+            didFailLoading(*localNetworkAccessError);
+            return;
+        }
+        continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(WTF::move(entry));
+    });
+}
+
+void NetworkResourceLoader::continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry> entry)
+{
+    auto response = entry->response();
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Stopping load due to CSP Frame-Ancestors or X-Frame-Options");
