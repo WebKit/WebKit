@@ -91,10 +91,10 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IPC messages.
-    void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
-    void sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
-    void suspendForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
-    void resumeForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
+    void requestSharedWorker(IPC::Untrusted<WebCore::SharedWorkerKey>&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
+    void sharedWorkerObjectIsGoingAway(IPC::Untrusted<WebCore::SharedWorkerKey>&&, WebCore::SharedWorkerObjectIdentifier);
+    void suspendForBackForwardCache(IPC::Untrusted<WebCore::SharedWorkerKey>&&, WebCore::SharedWorkerObjectIdentifier);
+    void resumeForBackForwardCache(IPC::Untrusted<WebCore::SharedWorkerKey>&&, WebCore::SharedWorkerObjectIdentifier);
 
     const Ref<IPC::Connection> m_contentConnection;
     const Ref<NetworkProcess> m_networkProcess;
