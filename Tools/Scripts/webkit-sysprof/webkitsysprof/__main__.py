@@ -2,19 +2,38 @@ import argparse
 import logging
 import os
 import sys
-from typing import Optional, Sequence
+from typing import Any, Callable, Optional, Sequence
 
 from .analyze import analyze
 from .dump import dump
 from .histogram import delta_histogram
 from .summary import summary
+from .utils import UsageError
+
+TIMESPAN_HELP = (
+    'Window of the capture to read, as "<begin>-<end>" in milliseconds from its'
+    ' start, e.g. 0-5000. Either side may be left out: "500-" and "500" both mean'
+    ' from 500ms to the end, "-500" the first 500ms. Anything else is an error.'
+)
+
+
+def _add_subcommand(
+    subparsers: Any,
+    name: str,
+    help_text: str,
+    func: Callable[[argparse.Namespace], None],
+) -> argparse.ArgumentParser:
+    """Add a subcommand that knows its own parser, for reporting usage errors."""
+    command_parser = subparsers.add_parser(name, help=help_text)
+    command_parser.set_defaults(func=func, command_parser=command_parser)
+    return command_parser
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="webkit-sysprof")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    dump_parser = subparsers.add_parser("dump", help="Dump capture data as CSV")
+    dump_parser = _add_subcommand(subparsers, "dump", "Dump capture data as CSV", dump)
     dump_group = dump_parser.add_mutually_exclusive_group()
     dump_group.add_argument("--marks", action="store_true", help="Dump marks (default)")
     dump_group.add_argument("--counters", action="store_true", help="Dump counters")
@@ -28,17 +47,15 @@ def build_parser() -> argparse.ArgumentParser:
         default="csv",
         help="Format to be printed to STDOUT",
     )
-    dump_parser.set_defaults(func=dump)
 
-    summary_parser = subparsers.add_parser(
-        "summary", help="Print a summary of a capture"
+    summary_parser = _add_subcommand(
+        subparsers, "summary", "Print a summary of a capture", summary
     )
     summary_parser.add_argument(
         "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
     )
-    summary_parser.set_defaults(func=summary)
 
-    analyze_parser = subparsers.add_parser("analyze", help="Analyze capture")
+    analyze_parser = _add_subcommand(subparsers, "analyze", "Analyze capture", analyze)
     analyze_parser.add_argument(
         "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
     )
@@ -54,12 +71,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--timespan",
         type=str,
         default="-",
-        help="Timespan in milliseconds e.g. 0-5000",
+        help=TIMESPAN_HELP,
     )
-    analyze_parser.set_defaults(func=analyze)
+    analyze_parser.add_argument(
+        "-e",
+        "--explain",
+        action="store_true",
+        help="Explain how to read the report, alongside the report itself"
+        " (text format only)",
+    )
 
-    histogram_parser = subparsers.add_parser(
-        "delta-histogram", help="Generate histogram from capture"
+    histogram_parser = _add_subcommand(
+        subparsers,
+        "delta-histogram",
+        "Generate histogram from capture",
+        delta_histogram,
     )
     histogram_parser.add_argument(
         "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
@@ -74,9 +100,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--timespan",
         type=str,
         default="-",
-        help="Timespan in milliseconds e.g. 0-5000",
+        help=TIMESPAN_HELP,
     )
-    histogram_parser.set_defaults(func=delta_histogram)
 
     return parser
 
@@ -90,6 +115,8 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     args = parser.parse_args(argv)
     try:
         args.func(args)
+    except UsageError as error:
+        args.command_parser.error(str(error))
     except BrokenPipeError:
         devnull = os.open(os.devnull, os.O_WRONLY)
         os.dup2(devnull, sys.stdout.fileno())

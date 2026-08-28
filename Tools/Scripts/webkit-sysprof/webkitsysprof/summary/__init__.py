@@ -20,8 +20,8 @@ def _print_document_summary(capture_file: str, document: Dict[str, Any]) -> None
     print(f"Subtitle: {document['subtitle']}")
     print(
         "Timespan: {:.4f} - {:.4f} [s]".format(
-            abs(nsec_to_sec(document["timespan"][0])),
-            abs(nsec_to_sec(document["timespan"][1])),
+            nsec_to_sec(document["timespan"][0]),
+            nsec_to_sec(document["timespan"][1]),
         )
     )
     print()

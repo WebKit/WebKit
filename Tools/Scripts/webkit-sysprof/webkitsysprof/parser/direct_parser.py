@@ -112,6 +112,10 @@ def _index_frames(data: mmap.mmap) -> List[Tuple[int, int, int, int]]:
 def _parse_mark(
     data: mmap.mmap, offset: int, length: int, duration: int, end_time: int
 ) -> Dict[str, Any]:
+    # The frame header is len, cpu, pid, time, so the process that emitted the mark
+    # is four bytes in. The group names its kind, e.g. "WebKit (Web)", which two
+    # processes of one kind share.
+    (pid,) = struct.unpack_from("<i", data, offset + 4)
     group = _read_cstring(data, offset + 32, 24) or ""
     name = _read_cstring(data, offset + 56, 40) or ""
     message = _read_cstring(data, offset + 96, length - 96) or ""
@@ -121,6 +125,7 @@ def _parse_mark(
         "duration": duration,
         "end_time": end_time,
         "group": group,
+        "pid": pid,
     }
 
 

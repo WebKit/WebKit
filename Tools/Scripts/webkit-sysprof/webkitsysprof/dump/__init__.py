@@ -3,6 +3,7 @@ import json
 from typing import Any, Dict, List
 
 from ..parser import parse
+from ..utils import mark_begin, mark_pid
 
 
 def dump(args: argparse.Namespace) -> None:
@@ -12,7 +13,7 @@ def dump(args: argparse.Namespace) -> None:
         headers = ["category", "name", "description", "time", "offset", "value"]
         rows = _counters_to_rows(data["counters"])
     else:
-        headers = ["group", "name", "message", "time", "duration", "end_time"]
+        headers = ["group", "pid", "name", "message", "time", "duration", "end_time"]
         rows = _marks_to_rows(data["marks"])
 
     if args.format == "json":
@@ -25,9 +26,10 @@ def _marks_to_rows(marks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return [
         {
             "group": mark["group"],
+            "pid": mark_pid(mark),
             "name": mark["name"],
             "message": mark["message"],
-            "time": mark["end_time"] - mark["duration"],
+            "time": mark_begin(mark),
             "duration": mark["duration"],
             "end_time": mark["end_time"],
         }

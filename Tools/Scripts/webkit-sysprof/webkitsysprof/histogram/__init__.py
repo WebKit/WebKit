@@ -1,24 +1,31 @@
 import argparse
 import math
-import statistics
 from typing import Any, Dict, List
 
 from ..parser import parse
 from ..utils import (
     MSEC_PER_SEC,
-    nsec_to_msec,
+    check_timespan_holds_data,
+    intervals_between_marks,
+    marks_by_process,
+    marks_in_time_order,
+    percentiles,
+    sample_statistics,
     parse_timespan_argument,
-    trim_sysprof_data_to_timespan,
+    sysprof_data_with_marks_by_name,
+    trim_marks_by_name_to_timespan,
 )
 
 
 def delta_histogram(args: argparse.Namespace) -> None:
     timespan_begin, timespan_end = parse_timespan_argument(args.timespan)
     parsed_data = parse(args.capture_file, marks=True, counters=False)
-    trimmed_data = trim_sysprof_data_to_timespan(
-        parsed_data, timespan_begin, timespan_end
+    capture_begin, capture_end = parsed_data["document"]["timespan"]
+    check_timespan_holds_data(capture_begin, capture_end, timespan_begin, timespan_end)
+    trimmed_data = trim_marks_by_name_to_timespan(
+        sysprof_data_with_marks_by_name(parsed_data), timespan_begin, timespan_end
     )
-    deltas_ms = _calculate_delta_times_ms(trimmed_data["marks"], args.mark_type)
+    deltas_ms = _delta_times_ms(trimmed_data, args.mark_type)
 
     if not deltas_ms:
         print(f"No data available for mark: {args.mark_type}")
@@ -27,27 +34,25 @@ def delta_histogram(args: argparse.Namespace) -> None:
     _plot_delta_time_distribution(args.mark_type, deltas_ms)
 
 
-def _calculate_delta_times_ms(
-    marks: List[Dict[str, Any]], mark_name: str
-) -> List[float]:
-    end_times = sorted(mark["end_time"] for mark in marks if mark["name"] == mark_name)
-    if len(end_times) < 2:
-        return []
+def _delta_times_ms(sysprof_data: Dict[str, Any], mark_name: str) -> List[float]:
+    """Times between consecutive marks of that name, in milliseconds."""
     return [
-        nsec_to_msec(end_times[i] - end_times[i - 1]) for i in range(1, len(end_times))
+        delta
+        for marks in marks_by_process(
+            marks_in_time_order(sysprof_data, mark_name)
+        ).values()
+        for delta in intervals_between_marks(marks)
     ]
 
 
 def _calculate_optimal_bins(deltas_ms: List[float]) -> int:
     # Freedman-Diaconis rule, falling back to Sturges' rule for a tiny IQR.
-    if len(deltas_ms) < 2:
+    low, high = 25, 75
+    quartiles = percentiles(deltas_ms, [low, high], method="exclusive")
+    if not quartiles:
+        # Too few deltas for a quartile, so there is no spread to bin by.
         return 10
-
-    q25, q75 = (
-        statistics.quantiles(deltas_ms, n=4)[0],
-        statistics.quantiles(deltas_ms, n=4)[2],
-    )
-    iqr = q75 - q25
+    iqr = quartiles[str(high)] - quartiles[str(low)]
 
     if iqr > 0:
         n = len(deltas_ms)
@@ -62,17 +67,20 @@ def _calculate_optimal_bins(deltas_ms: List[float]) -> int:
 def _plot_delta_time_distribution(mark_name: str, deltas_ms: List[float]) -> None:
     import matplotlib.pyplot as plt
 
-    mean_val = statistics.mean(deltas_ms)
-    median_val = statistics.median(deltas_ms)
-    min_val = min(deltas_ms)
-    max_val = max(deltas_ms)
-    std_val = statistics.stdev(deltas_ms) if len(deltas_ms) > 1 else 0.0
+    stats = sample_statistics(deltas_ms)
+    mean_val = stats["mean"]
+    median_val = stats["median"]
+    min_val = stats["min"]
+    max_val = stats["max"]
+    std_val = stats["stddev"]
     n_bins = _calculate_optimal_bins(deltas_ms)
 
+    # Marks sharing a timestamp are no time apart, and no frequency either.
+    frequency = f"{MSEC_PER_SEC / mean_val:.1f} Hz" if mean_val else "-"
     stats_text = (
         f"Sample Size: {len(deltas_ms):,}\n"
         f"Std Dev: {std_val:.2f} ms\n"
-        f"Frequency: {MSEC_PER_SEC / mean_val:.1f} Hz"
+        f"Frequency: {frequency}"
     )
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 12), gridspec_kw={"hspace": 0.15})

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "webkitsysprof"
 version = "1.0.0"
 description = "WebKit-specific sysprof capture processing toolkit"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = ["matplotlib"]
 
 [project.scripts]
