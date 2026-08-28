@@ -40,6 +40,7 @@
 #include "ScrollTimeline.h"
 #include "Settings.h"
 #include "StyleableInlines.h"
+#include "StyleScope.h"
 #include "ViewTimeline.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
@@ -125,7 +126,20 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
     return nullptr;
 }
 
-ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(const Vector<Ref<ScrollTimeline>>& timelines, const Styleable& styleable, const Element* timelineScopeElement)
+static bool timelineIsInScopeForTarget(const Ref<ScrollTimeline>& timeline, Element& targetElement, Style::ScopeOrdinal animationTimelineNameScopeOrdinal)
+{
+    if (!targetElement.isConnected())
+        return false;
+    RefPtr timelineOriginatingElement { originatingElement(timeline).element() };
+    ASSERT(timelineOriginatingElement);
+    CheckedPtr scrollTimelineNameStyleScope = Style::Scope::forOrdinal(*timelineOriginatingElement, timeline->name().scopeOrdinal);
+    ASSERT(scrollTimelineNameStyleScope);
+    return Style::resolveTreeScopedReference(targetElement, { timeline->name().name, animationTimelineNameScopeOrdinal }, [&](const Style::Scope& scope, const Style::ScopedName&) {
+        return scrollTimelineNameStyleScope == &scope;
+    });
+}
+
+ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(const Vector<Ref<ScrollTimeline>>& timelines, const Styleable& styleable, Style::ScopeOrdinal targetTimelineScopeOrdinal, const Element* timelineScopeElement)
 {
     // https://drafts.csswg.org/scroll-animations-1/#timeline-scoping
     // A named scroll progress timeline or view progress timeline is referenceable by:
@@ -138,6 +152,9 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(
     for (auto& timeline : timelines) {
         auto styleableForTimeline = originatingStyleableIncludingTimelineScope(timeline).styleable();
         if (!styleableForTimeline)
+            continue;
+        Ref targetElement { styleable.element };
+        if (!timelineIsInScopeForTarget(timeline, targetElement.get(), targetTimelineScopeOrdinal))
             continue;
         Ref protectedElementForTimeline { styleableForTimeline->element };
         if (&styleableForTimeline->element == &styleable.element || styleable.element.isComposedTreeDescendantOf(protectedElementForTimeline.get()))
@@ -385,7 +402,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
             protectedAnimation->setTimeline(nullptr);
     } else {
         auto& timelines = it->value;
-        RefPtr timeline = determineTimelineForElement(timelines, *target, relevantTimelineScopeElement.get());
+        RefPtr timeline = determineTimelineForElement(timelines, *target, timelineName->scopeOrdinal, relevantTimelineScopeElement.get());
         LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::attachAnimation: " << timelineName->name << " styleable: " << *target << " attaching to timeline of element: " << originatingElement(*timeline));
         // A deferred inactive timeline means there was a conflict with multiple timelines existing within
         // a parent element with a "timeline-scope" property. In that case, we must reconsider timeline attachment

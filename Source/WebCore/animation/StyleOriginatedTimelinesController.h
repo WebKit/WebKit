@@ -84,7 +84,7 @@ private:
 
     enum class AllowsDeferral : bool { No, Yes };
     void attachAnimation(CSSAnimation&, AllowsDeferral);
-    ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Element*);
+    ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, Style::ScopeOrdinal targetTimelineScopeOrdinal, const Element*);
     ScrollTimeline* determineTreeOrder(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Element*);
     ScrollTimeline& inactiveNamedTimeline(const AtomString&);
 
