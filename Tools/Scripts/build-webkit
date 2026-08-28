@@ -55,6 +55,9 @@ setConfiguration();
 
 if (shouldBuildForCrossTarget()) {
     print("Enabling cross-build for target machine: '". getCrossTargetName() . "'\n");
+    # This has to be done before entering into the cross-toolchain environment, because its
+    # setup script uses the value of CC and CXX to select the compiler from the toolchain.
+    determineDefaultCompiler();
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
     runInCrossTargetEnvironment(@command);
 }
@@ -296,6 +299,10 @@ if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
     if (isAppleCocoaWebKit()) {
         $noExperimentalFeatures = 1;
     }
+
+    # This has to happen before removeCMakeCache() below, because it sets CC and CXX,
+    # and a change on those variables forces a reconfiguration of the build directory.
+    determineDefaultCompiler(@cmakeArgs);
 
     # We remove CMakeCache to avoid the bots reusing cached flags when
     # we enable new features. This forces a reconfiguration.

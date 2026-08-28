@@ -660,7 +660,8 @@ class YoctoCrossBuilder():
             fw.write('export PS1="(WKCrossDevShell:{target}) ${{PS1}}"\n'.format(target=self._target))
         assert (os.path.isfile(custom_rc_file))
         _log.info('Entering into cross dev shell')
-        return self._run_cmd('/bin/bash --rcfile "{custom_rc_file}"'.format(custom_rc_file=custom_rc_file))
+        env_prefix = '' if any(e in os.environ for e in ('CC', 'CXX')) else '/usr/bin/env CC=clang CXX=clang++ '
+        return self._run_cmd(f'{env_prefix}/bin/bash --rcfile "{custom_rc_file}"')
 
     def execute_cmd_inside_cross_toolchain_env(self, command):
         # The command to be executed is a string with the arguments quoted if needed (arguments with spaces).

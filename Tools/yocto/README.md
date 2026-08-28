@@ -79,21 +79,32 @@ WEBKIT_CROSS_VERSION=f2cc6d37723215008044c87e69046019
 WEBKIT_CROSS_TARGET=rpi4-64bits-mesa
 ```
 
-### Using Clang
+### Using Clang or GCC
 
-It is possible to use Clang to build webkit via script `build-webkit` when
-using `cross-toolchain-helper`, or inside the `cross-dev-shell`.
-For that simply set on your environment `CC=clang` and `CXX=clang++` before
-starting the webkit build or before executing `cross-dev-shell`
+When building WebKit with the script `build-webkit` and the `--cross-target` flag,
+the Clang compiler is used by default.
+
+To build with GCC, set `CC` and `CXX` in the environment before starting the build.
 
 Example:
 
 ```
-  CC=clang CXX=clang++ Tools/Scripts/build-webkit --cross-target=rpi4-64bits-mesa --wpe --release
-  CC=clang CXX=clang++ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev-shell
+# Uses Clang
+Tools/Scripts/build-webkit --cross-target=rpi4-64bits-mesa --wpe --release
+# Uses GCC
+CC=gcc CXX=g++ Tools/Scripts/build-webkit --cross-target=rpi4-64bits-mesa --wpe --release
 ```
 
-To use GCC simply unset CC or CXX (is the default).
+Inside the `cross-dev-shell` the default is also Clang, and the compiler is selected
+by setting `CC` and `CXX` in the environment before starting the shell.
+Example:
+
+```
+# Uses Clang
+Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev-shell
+# Uses GCC
+CC=gcc CXX=g++ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev-shell
+```
 
 ### Using the bitbake-dev-shell
 
