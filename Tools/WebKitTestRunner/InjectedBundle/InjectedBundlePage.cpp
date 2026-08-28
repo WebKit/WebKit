@@ -386,7 +386,7 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
     if (testRunner->shouldDumpFrameLoadCallbacks())
         dumpLoadEvent(frame, "didStartProvisionalLoadForFrame"_s);
 
-    if (!injectedBundle.topLoadingFrame())
+    if (!injectedBundle.topLoadingFrame() || (injectedBundle.page() == this && WKBundleFrameIsMainFrame(frame)))
         injectedBundle.setTopLoadingFrame(frame);
 
     if (testRunner->shouldStopProvisionalFrameLoads())
