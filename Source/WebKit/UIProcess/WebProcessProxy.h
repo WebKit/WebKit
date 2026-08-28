@@ -377,8 +377,8 @@ public:
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
-    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
-    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
 
     void enableSuddenTermination();
     void disableSuddenTermination();

@@ -120,8 +120,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
     WasmDebugServerReady()
 #endif
 
-    DidPostMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply)
-    DidPostLegacySynchronousMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply) Synchronous
+    DidPostMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct IPC::Untrusted<WebKit::FrameInfoData> frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, IPC::Untrusted<WebKit::JavaScriptEvaluationResult> message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply)
+    DidPostLegacySynchronousMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct IPC::Untrusted<WebKit::FrameInfoData> frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, IPC::Untrusted<WebKit::JavaScriptEvaluationResult> message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply) Synchronous
 
 #if ENABLE(IPC_TESTING_API)
     TakeInvalidMessageStringForTesting() -> (String error) Synchronous

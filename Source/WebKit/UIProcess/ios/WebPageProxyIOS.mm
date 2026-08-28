@@ -910,8 +910,9 @@ void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContex
         client->didProgrammaticallyClearFocusedElement(WTF::move(context));
 }
 
-void WebPageProxy::elementDidFocus(IPC::Connection& connection, const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
+void WebPageProxy::elementDidFocus(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
+    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     m_pendingInputModeChange = std::nullopt;
     m_focusedElementProcessID = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
 
@@ -947,8 +948,9 @@ void WebPageProxy::elementDidBlur(IPC::Connection& connection)
         pageClient->elementDidBlur();
 }
 
-void WebPageProxy::updateFocusedElementInformation(const FocusedElementInformation& information)
+void WebPageProxy::updateFocusedElementInformation(IPC::Untrusted<FocusedElementInformation>&& untrustedInformation)
 {
+    auto information = WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     convertFocusedElementInformationRectsToMainFrameCoordinates(information,
         [weakThis = WeakPtr { *this }](FocusedElementInformation convertedInfo) {
             RefPtr protectedThis = weakThis.get();

@@ -78,8 +78,9 @@ std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::
     return webPageProxy ? webPageProxy->legacyMainFrameProcess().sharedPreferencesForWebProcess() : std::nullopt;
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
@@ -101,8 +102,9 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connectio
     handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, std::nullopt }, WTF::move(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     // The handler walks the frame's ancestor chain, which is stronger than domain authority.
     auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr webPageProxy = m_webPageProxy.get();

@@ -3624,8 +3624,10 @@ void WebProcessProxy::clearSandboxExtensions()
     m_fileSandboxExtensions.clear();
 }
 
-void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ScriptMessageHandlerIdentifier handlerID, IPC::Untrusted<JavaScriptEvaluationResult>&& untrustedMessage, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
+    auto message = WTF::move(untrustedMessage).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
         return completionHandler(makeUnexpected(String()));
@@ -3637,9 +3639,9 @@ void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentC
     controller->didPostMessage(*page, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
 }
 
-void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ScriptMessageHandlerIdentifier handlerID, IPC::Untrusted<JavaScriptEvaluationResult>&& untrustedMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
-    didPostMessage(pageID, identifier, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
+    didPostMessage(pageID, identifier, WTF::move(untrustedFrameInfo), handlerID, WTF::move(untrustedMessage), WTF::move(completionHandler));
 }
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

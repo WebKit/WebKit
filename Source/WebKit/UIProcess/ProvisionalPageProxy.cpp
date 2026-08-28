@@ -275,7 +275,7 @@ void ProvisionalPageProxy::cancel()
         mainFrame->processID(),
         mainFrame->isFocused(),
     };
-    didFailProvisionalLoadForFrame(WTF::move(frameInfo), ResourceRequest { m_request }, m_navigationID, String { m_provisionalLoadURL.string() }, WTF::move(error), WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No); // Will delete |this|.
+    didFailProvisionalLoadForFrame(IPC::Untrusted<FrameInfoData> { WTF::move(frameInfo) }, ResourceRequest { m_request }, m_navigationID, String { m_provisionalLoadURL.string() }, WTF::move(error), WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies, bool isRestoringFromBFCache)
@@ -453,8 +453,9 @@ void ProvisionalPageProxy::didPerformClientRedirect(String&& sourceURLString, St
         page->didPerformClientRedirectShared(protect(process()), WTF::move(sourceURLString), WTF::move(destinationURLString), frameID);
 }
 
-void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<URL>&& untrustedUnreachableURL, const UserData& userData, WallTime timestamp)
+void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, IPC::Untrusted<URL>&& untrustedURL, IPC::Untrusted<URL>&& untrustedUnreachableURL, const UserData& userData, WallTime timestamp)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     // A provisional navigation target is legitimately not the sending process's own
     // origin; file-URL access is checked by MESSAGE_CHECK_URL in the shared handler.
     auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
@@ -482,8 +483,9 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     page->didStartProvisionalLoadForFrameShared(protect(process()), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
 }
 
-void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
+void ProvisionalPageProxy::didFailProvisionalLoadForFrame(IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!validateInput(frameInfo.frameID, navigationID))
         return;
 
@@ -513,8 +515,9 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
     page->didFailProvisionalLoadForFrameShared(protect(process()), *frame, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure); // May delete |this|.
 }
 
-void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
+void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     // Re-wrapped by commitProvisionalPage() and validated by WebPageProxy::didCommitLoadForFrame.
     auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOrigins).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     if (!validateInput(frameID, navigationID))
@@ -565,19 +568,21 @@ void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frame
         page->didChangeProvisionalURLForFrameShared(protect(process()), frameID, navigationID, WTF::move(url));
 }
 
-void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection& connection, NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection& connection, IPC::Untrusted<NavigationActionData>&& untrustedData, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!validateInput(data.frameInfo.frameID, data.navigationID))
         return completionHandler({ });
 
     if (RefPtr page = m_page.get())
-        page->decidePolicyForNavigationActionAsync(connection, WTF::move(data), WTF::move(completionHandler));
+        page->decidePolicyForNavigationActionAsync(connection, IPC::Untrusted<NavigationActionData> { WTF::move(data) }, WTF::move(completionHandler));
     else
         completionHandler({ });
 }
 
-void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void ProvisionalPageProxy::decidePolicyForResponse(IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (!validateInput(frameInfo.frameID, navigationID))
         return completionHandler({ });
 
@@ -605,8 +610,9 @@ void ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(Fr
         page->didReceiveServerRedirectForProvisionalLoadForFrameShared(protect(process()), frameID, navigationID, WTF::move(request), userData);
 }
 
-void ProvisionalPageProxy::startURLSchemeTask(IPC::Connection& connection, URLSchemeTaskParameters&& parameters)
+void ProvisionalPageProxy::startURLSchemeTask(IPC::Connection& connection, IPC::Untrusted<URLSchemeTaskParameters>&& untrustedParameters)
 {
+    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     if (RefPtr page = m_page.get())
         page->startURLSchemeTaskShared(connection, protect(process()), m_webPageID, WTF::move(parameters));
 }
@@ -617,8 +623,9 @@ void ProvisionalPageProxy::backForwardGoToItem(WebCore::BackForwardItemIdentifie
         page->backForwardGoToItemShared(identifier);
 }
 
-void ProvisionalPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connection, NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& reply)
+void ProvisionalPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connection, IPC::Untrusted<NavigationActionData>&& untrustedData, CompletionHandler<void(PolicyDecision&&)>&& reply)
 {
+    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto& frameInfo = data.frameInfo;
     auto navigationID = data.navigationID;
     if (!frameInfo.isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameInfo.frameID) || navigationID != m_navigationID) {
@@ -629,7 +636,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& 
     ASSERT(m_mainFrame);
 
     if (RefPtr page = m_page.get())
-        page->decidePolicyForNavigationActionSync(connection, WTF::move(data), WTF::move(reply));
+        page->decidePolicyForNavigationActionSync(connection, IPC::Untrusted<NavigationActionData> { WTF::move(data) }, WTF::move(reply));
     else
         reply({ });
 }
