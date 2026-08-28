@@ -28,6 +28,7 @@
 
 #include "FloatRect.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -76,6 +77,37 @@ std::optional<FloatRect> RemoteFrameLayoutInfo::mapParentContentsToChildWindow(c
     if (m_usedZoom > 0)
         ownerLocal.scale(1.0f / m_usedZoom);
     return ownerLocal;
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, FrameOwnerElementAppearance appearance)
+{
+    switch (appearance) {
+    case FrameOwnerElementAppearance::IsDark:
+        ts << "IsDark"_s;
+        break;
+    case FrameOwnerElementAppearance::ExplicitlySet:
+        ts << "ExplicitlySet"_s;
+        break;
+    }
+    return ts;
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const RemoteFrameLayoutInfo& info)
+{
+    WTF::TextStream::GroupScope scope(ts);
+    ts << "RemoteFrameLayoutInfo"_s;
+    ts.dumpProperty("windowClipRectInParent"_s, info.windowClipRectInParent());
+    ts.dumpProperty("visibleRectInParent"_s, info.visibleRectInParent());
+#if PLATFORM(IOS_FAMILY)
+    ts.dumpProperty("exposedContentRectInParent"_s, info.exposedContentRectInParent());
+#endif
+    ts.dumpProperty("ownerHasRenderer"_s, info.ownerHasRenderer());
+    ts.dumpProperty("childFrameOwnerToRootContentTransform"_s, info.childFrameOwnerToRootContentTransform());
+    ts.dumpProperty("absoluteToChildFrameOwnerLocalTransform"_s, info.absoluteToChildFrameOwnerLocalTransform());
+    ts.dumpProperty("usedZoom"_s, info.usedZoom());
+    ts.dumpProperty("contentBoxLocation"_s, info.contentBoxLocation());
+    ts.dumpProperty("ownerElementAppearance"_s, info.ownerElementAppearance());
+    return ts;
 }
 
 } // namespace WebCore

@@ -74,17 +74,17 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
 
 LayoutRect RemoteFrameView::layoutViewportRect() const
 {
-    return m_frame->frameTreeSyncData().frameLayoutViewportRect;
+    return m_frame->frameTreeSyncData().frameGeometry.layoutViewportRect;
 }
 
 IntSize RemoteFrameView::contentsSize() const
 {
-    return m_frame->frameTreeSyncData().frameContentsSize;
+    return m_frame->frameTreeSyncData().frameGeometry.contentsSize;
 }
 
 std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child) const
 {
-    if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->visibleRectInParent();
 
     return std::nullopt;
@@ -92,7 +92,7 @@ std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child
 
 OptionSet<FrameOwnerElementAppearance> RemoteFrameView::appearanceOfOwnerElementOfChildFrame(const Frame& child) const
 {
-    if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->ownerElementAppearance();
 
     return { };
@@ -100,7 +100,7 @@ OptionSet<FrameOwnerElementAppearance> RemoteFrameView::appearanceOfOwnerElement
 
 LayoutPoint RemoteFrameView::childFrameOwnerContentBoxLocation(const Frame& child) const
 {
-    if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->contentBoxLocation();
 
     return { };
@@ -108,7 +108,7 @@ LayoutPoint RemoteFrameView::childFrameOwnerContentBoxLocation(const Frame& chil
 
 TransformationMatrix RemoteFrameView::childFrameOwnerToRootContentTransform(const Frame& child) const
 {
-    if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->childFrameOwnerToRootContentTransform();
 
     return { };
@@ -116,7 +116,7 @@ TransformationMatrix RemoteFrameView::childFrameOwnerToRootContentTransform(cons
 
 TransformationMatrix RemoteFrameView::absoluteToChildFrameOwnerLocalTransform(const Frame& child) const
 {
-    if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->absoluteToChildFrameOwnerLocalTransform();
 
     return { };

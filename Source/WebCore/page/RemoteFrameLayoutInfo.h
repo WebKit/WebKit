@@ -120,4 +120,7 @@ private:
     OptionSet<FrameOwnerElementAppearance> m_ownerElementAppearance;
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FrameOwnerElementAppearance);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const RemoteFrameLayoutInfo&);
+
 };

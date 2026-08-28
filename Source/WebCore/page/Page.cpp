@@ -2272,9 +2272,6 @@ void Page::syncLocalFrameInfoToRemote()
     forEachLocalFrame([] (LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
 
-        frameView->updateLayoutViewportRect();
-        frameView->updateContentsSizeForRemoteFrames();
-
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
         auto windowClipRectInContentCoordinates = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
             if (!rect)
@@ -2318,7 +2315,11 @@ void Page::syncLocalFrameInfoToRemote()
             ));
         }
 
-        frame.loader().client().broadcastChildrenFrameLayoutInfoToOtherProcesses(childrenFrameLayoutInfo);
+        frame.loader().client().broadcastFrameGeometryToOtherProcesses({
+            frameView->layoutViewportRect(),
+            frameView->contentsSize(),
+            WTF::move(childrenFrameLayoutInfo)
+        });
     });
 }
 

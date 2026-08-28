@@ -2026,6 +2026,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameConsoleClient.h
     page/FrameDestructionObserver.h
     page/FrameDestructionObserverInlines.h
+    page/FrameGeometrySyncData.h
     page/FrameIdentifier.h
     page/FrameInlines.h
     page/FrameSnapshotting.h

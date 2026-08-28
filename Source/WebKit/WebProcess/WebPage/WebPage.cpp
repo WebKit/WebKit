@@ -1453,7 +1453,7 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
             view->scrollTo(coreFrame->frameTreeSyncData().frameScrollPosition);
         break;
 
-    case FrameTreeSyncDataType::ChildrenFrameLayoutInfo:
+    case FrameTreeSyncDataType::FrameGeometry:
         updateChildFrameVisibleRectsFromParent(*coreFrame);
         break;
 
@@ -1465,8 +1465,7 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
     switch (dataType) {
     case FrameTreeSyncDataType::FrameRect:
     case FrameTreeSyncDataType::FrameScrollPosition:
-    case FrameTreeSyncDataType::FrameLayoutViewportRect:
-    case FrameTreeSyncDataType::ChildrenFrameLayoutInfo:
+    case FrameTreeSyncDataType::FrameGeometry:
         updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
         break;
     default:
@@ -1495,7 +1494,7 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
     if (!m_page || !m_page->settings().siteIsolationEnabled())
         return;
 
-    auto& childrenInfo = parentCoreFrame.frameTreeSyncData().childrenFrameLayoutInfo;
+    auto& childrenInfo = parentCoreFrame.frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo;
     if (childrenInfo.isEmpty())
         return;
 

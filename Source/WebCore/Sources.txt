@@ -2290,6 +2290,7 @@ page/FocusController.cpp
 page/Frame.cpp
 page/FrameConsoleClient.cpp
 page/FrameDestructionObserver.cpp
+page/FrameGeometrySyncData.cpp
 page/FrameIdentifier.cpp
 page/FrameSnapshotting.cpp @header:RenderStyleGetters @cost:6
 page/FrameTree.cpp

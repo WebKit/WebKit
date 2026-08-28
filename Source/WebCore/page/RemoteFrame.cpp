@@ -257,7 +257,7 @@ ColorSchemePreference RemoteFrame::colorSchemePreference() const
 
 float RemoteFrame::usedZoomForChild(const Frame& child) const
 {
-    if (RefPtr info = frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+    if (RefPtr info = frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->usedZoom();
 
     return 1.0;

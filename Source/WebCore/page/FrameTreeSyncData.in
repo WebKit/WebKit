@@ -36,9 +36,4 @@ FrameScrollPosition : WebCore::ScrollPosition [Headers=<WebCore/ScrollTypes.h>]
 
 ## Layout information for Intersection Observer
 
-FrameLayoutViewportRect : WebCore::LayoutRect [Headers=<WebCore/LayoutRect.h>]
-
-FrameContentsSize : WebCore::IntSize [Headers=<WebCore/IntSize.h>]
-
-# Collection of layout info regarding children frames of this frame.
-ChildrenFrameLayoutInfo : HashMap<WebCore::FrameIdentifier, Ref<WebCore::RemoteFrameLayoutInfo>> [Headers=<WebCore/FrameIdentifier.h>,<WebCore/RemoteFrameLayoutInfo.h>]
+FrameGeometry : WebCore::FrameGeometrySyncData [Headers=<WebCore/FrameGeometrySyncData.h>]
