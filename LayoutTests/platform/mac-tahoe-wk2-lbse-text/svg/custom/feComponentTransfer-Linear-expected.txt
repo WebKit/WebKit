@@ -34,11 +34,11 @@ layer at (0,0) size 450x300 backgroundClip at (0.50,0.50) size 649x419
       RenderSVGText {text} at (19,353) size 606x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 606x19
           chunk 1 text run 1 at (20.00,370.00) startOffset 0 endOffset 79 width 605.80: "type: linear slope=0.5 intercept=0.25 -- Result should be less extreme gradient"
-layer at (20,10) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+layer at (20,10) size 580x40
   RenderSVGRect {rect} at (19,9) size 580x40 [fill={[type=SOLID] [color=#00000000]}] [x=20.00] [y=10.00] [width=580.00] [height=40.00]
-layer at (20,110) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+layer at (20,110) size 580x40
   RenderSVGRect {rect} at (19,109) size 580x40 [fill={[type=SOLID] [color=#00000000]}] [x=20.00] [y=110.00] [width=580.00] [height=40.00]
-layer at (20,210) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+layer at (20,210) size 580x40
   RenderSVGRect {rect} at (19,209) size 580x40 [fill={[type=SOLID] [color=#00000000]}] [x=20.00] [y=210.00] [width=580.00] [height=40.00]
-layer at (20,310) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+layer at (20,310) size 580x40
   RenderSVGRect {rect} at (19,309) size 580x40 [fill={[type=SOLID] [color=#00000000]}] [x=20.00] [y=310.00] [width=580.00] [height=40.00]

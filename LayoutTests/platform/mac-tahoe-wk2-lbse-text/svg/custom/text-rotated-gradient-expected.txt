@@ -35,7 +35,7 @@ layer at (50,21) size 77x37
     RenderSVGText {text} at (0,0) size 77x37 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 77x37
         chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 4 width 76.44: "TEST"
-layer at (0,0) size 800x600 backgroundClip at (0,121.14) size 374.33x80 clip at (0,0) size 466.67x400
+layer at (0,0) size 800x600 backgroundClip at (0,121.14) size 374.33x80
   RenderSVGViewportContainer {svg} at (0,0) size 800x600
 layer at (100,71.33) size 77x37
   RenderSVGTransformableContainer {g} at (100,71.33) size 76.44x36.67

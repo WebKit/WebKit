@@ -1214,12 +1214,12 @@ private:
         return { };
     }
 
-    LayoutRect rendererOverflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) const
+    LayoutRect rendererOverflowClipRectForPainting(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) const
     {
         if (auto* box = dynamicDowncast<RenderBox>(renderer()))
             return box->overflowClipRect(location, relevancy);
         if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(renderer()))
-            return svgModelObject->overflowClipRect(location, relevancy);
+            return svgModelObject->overflowClipRectForPainting(location, relevancy);
         return { };
     }
 

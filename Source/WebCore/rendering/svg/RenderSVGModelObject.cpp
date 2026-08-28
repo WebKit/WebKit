@@ -77,7 +77,7 @@ bool RenderSVGModelObject::requiresLayer() const
         return true;
     if (requiresLayerForSVGIntrinsicReasons())
         return true;
-    if ((hasClipPath() || hasMask()) && isRenderSVGContainer())
+    if (clipsSubtree(*this) && isRenderSVGContainer())
         return true;
     // Other renderers inside a resource container are not composited, so the transformed-container rule
     // below (which exists only to expose the induced transform to RenderLayerCompositor) is unneeded.
@@ -117,6 +117,23 @@ LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, OverlayScr
 {
     ASSERT_NOT_REACHED();
     return LayoutRect();
+}
+
+LayoutRect RenderSVGModelObject::overflowClipRectForPainting(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy, PaintPhase phase) const
+{
+    auto clipRect = overflowClipRect(location, relevancy, phase);
+    if (clipRect.isEmpty() || clipRect.isInfinite())
+        return clipRect;
+
+    if (!m_cachedVisualOverflowRect)
+        updateCachedVisualOverflowRect();
+
+    auto contentRect = m_cachedVisualOverflowRect->repaintBoundingBox;
+    contentRect.moveBy(location);
+    if (clipRect.contains(contentRect))
+        return LayoutRect::infiniteRect();
+
+    return clipRect;
 }
 
 auto RenderSVGModelObject::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects

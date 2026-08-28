@@ -6,7 +6,7 @@ layer at (0,0) size 400x400
       RenderSVGHiddenContainer {defs} at (0,0) size 400x400
         RenderSVGHiddenContainer {symbol} at (0,0) size 1x1
           RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
-layer at (0,0) size 400x400 clip at (0,0) size 2x2
+layer at (0,0) size 400x400
   RenderSVGViewportContainer {svg} at (0,0) size 400x400
 layer at (0,0) size 1x1
   RenderSVGTransformableContainer {use} at (0,0) size 1x1
@@ -15,7 +15,7 @@ layer at (0,0) size 1x1
     RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
 layer at (0,0) size 400x400
   RenderSVGTransformableContainer {use} at (0,0) size 400x400
-layer at (0,0) size 400x400 clip at (0,0) size 2x2
+layer at (0,0) size 400x400
   RenderSVGViewportContainer {svg} at (0,0) size 400x400
 layer at (0,0) size 1x1
   RenderSVGTransformableContainer {g} at (0,0) size 1x1

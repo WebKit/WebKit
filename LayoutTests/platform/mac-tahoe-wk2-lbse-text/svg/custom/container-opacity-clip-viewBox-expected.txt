@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer {svg} at (0,0) size 800x600 [opacity=0.90]
 layer at (0,0) size 200x200
   RenderSVGTransformableContainer {g} at (0,0) size 200x200
-layer at (0,0) size 200x200 backgroundClip at (0,0) size 83x64 clip at (0,0) size 117x116
+layer at (0,0) size 200x200 backgroundClip at (0,0) size 83x64
   RenderSVGViewportContainer {svg} at (0,0) size 200x200
     RenderSVGRect {rect} at (-83,-84) size 166x148 [fill={[type=SOLID] [color=#008000]}] [x=-83.00] [y=-84.00] [width=166.00] [height=148.00]
 layer at (0,-14) size 368x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

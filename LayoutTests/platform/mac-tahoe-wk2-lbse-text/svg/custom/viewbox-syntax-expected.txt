@@ -27,7 +27,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (0,83.33) size 50x99.98 clip at (0,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -38,7 +38,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (83.33,83.33) size 49.98x99.98 clip at (83.33,83.33) size 49.98x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -49,7 +49,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (166.66,83.33) size 50x99.98 clip at (166.66,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -60,7 +60,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (250,83.33) size 50x99.98 clip at (250,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -71,7 +71,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (333.33,83.33) size 50x99.98 clip at (333.33,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -82,7 +82,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (416.66,83.33) size 50x99.98 clip at (416.66,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -93,7 +93,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (500,83.33) size 50x99.98 clip at (500,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -104,7 +104,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (583.33,83.33) size 50x99.98 clip at (583.33,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -115,7 +115,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (666.66,83.33) size 50x99.98 clip at (666.66,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -126,7 +126,7 @@ layer at (0,0) size 30x60
 layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (750,83.33) size 50x99.98 clip at (750,83.33) size 50x99.98
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -134,10 +134,10 @@ layer at (5,5) size 20x20 backgroundClip at (750,83.33) size 50x99.98 clip at (7
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (0,333.33) size 50x100 clip at (0,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -145,10 +145,10 @@ layer at (5,5) size 20x20 backgroundClip at (0,333.33) size 50x100 clip at (0,33
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (83.33,333.33) size 49.98x100 clip at (83.33,333.33) size 49.98x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -156,10 +156,10 @@ layer at (5,5) size 20x20 backgroundClip at (83.33,333.33) size 49.98x100 clip a
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (166.66,333.33) size 50x100 clip at (166.66,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -167,10 +167,10 @@ layer at (5,5) size 20x20 backgroundClip at (166.66,333.33) size 50x100 clip at 
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (250,333.33) size 50x100 clip at (250,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -189,10 +189,10 @@ layer at (5,5) size 20x20 backgroundClip at (333.33,333.33) size 50x100 clip at 
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (416.66,333.33) size 50x100 clip at (416.66,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -200,10 +200,10 @@ layer at (5,5) size 20x20 backgroundClip at (416.66,333.33) size 50x100 clip at 
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (500,333.33) size 50x100 clip at (500,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
@@ -211,10 +211,10 @@ layer at (5,5) size 20x20 backgroundClip at (500,333.33) size 50x100 clip at (50
     RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60
-layer at (0,0) size 30x60 clip at (0,0) size 30x40
+layer at (0,0) size 30x60
   RenderSVGViewportContainer {svg} at (0,0) size 30x60
     RenderSVGRect {rect} at (0.50,0.50) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
-layer at (5,5) size 20x20 backgroundClip at (583.33,333.33) size 50x100 clip at (583.33,333.33) size 50x100
+layer at (5,5) size 20x20
   RenderSVGTransformableContainer {g} at (5,5) size 20x20
     RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
     RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]

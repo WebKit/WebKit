@@ -433,10 +433,10 @@ bool RenderLayer::appendChildrenInDOMOrderForSVG(RenderElement& parent, LayoutSi
             continue;
         }
 
-        // Paint a non-layer child that has a clip-path or a mask together with its whole subtree as one
-        // unit, so the clip or mask covers all of it. Splitting the container apart would move its
-        // descendants into the parent's z-order list and paint them outside the clip or mask.
-        if (child->hasClipPath() || child->hasMask()) {
+        // Paint a non-layer child that clips its subtree together with that subtree as one unit, so the
+        // clip covers all of it. Splitting it apart would move its descendants into the parent's
+        // z-order list and paint them outside the clip.
+        if (RenderSVGModelObject::clipsSubtree(child.get())) {
             allChildren.append(SVGPaintOrderLayerItem::makeAtomic(child.get(), ancestorOffset));
             hasIndependentlyPaintedDescendant = true;
             continue;
@@ -493,6 +493,7 @@ bool RenderLayer::appendChildrenInDOMOrderForSVG(RenderElement& parent, LayoutSi
         size_t startIndex = allChildren.size();
         bool subtreeHasIndependentlyPaintedDescendant = appendChildrenInDOMOrderForSVG(child.get(), childOffset, anyNonZeroZIndex);
         if (subtreeHasIndependentlyPaintedDescendant) {
+            ASSERT(!RenderSVGModelObject::clipsSubtree(child.get()));
             allChildren.append(SVGPaintOrderLayerItem::makeOutlineOnly(child.get(), ancestorOffset));
             hasIndependentlyPaintedDescendant = true;
         } else {

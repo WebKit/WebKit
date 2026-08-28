@@ -44,7 +44,8 @@ public:
         OverrideBoxWithFilterBox            = 1 << 7, /* WebKit extension - internal    */
         OverrideBoxWithFilterBoxForChildren = 1 << 8, /* WebKit extension - internal    */
         CalculateFastRepaintRect            = 1 << 9, /* WebKit extension - internal    */
-        UseFilterBoxOnEmptyRect             = 1 << 10  /* WebKit extension - internal    */
+        UseFilterBoxOnEmptyRect             = 1 << 10, /* WebKit extension - internal    */
+        IgnoreViewportClip                  = 1 << 11  /* WebKit extension - internal    */
     };
 
     using DecorationOptions = OptionSet<DecorationOption>;
@@ -74,6 +75,7 @@ public:
     }
 
     static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject&);
+    static LayoutRect computeVisualOverflowRectIgnoringViewportClip(const RenderLayerModelObject&);
 
     // Recompute the transform-dependent bounding boxes shared by RenderSVGContainer and
     // RenderSVGRoot after a descendant transform changed outside layout. Pass objectBoundingBoxValid

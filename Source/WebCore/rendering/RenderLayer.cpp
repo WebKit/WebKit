@@ -5217,15 +5217,18 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 
         if (renderer().hasNonVisibleOverflow()) {
             ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers({ }, clipRectsContext.overlayScrollbarSizeRelevancy());
-            if (needsTransform)
-                newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
-            newOverflowClip.moveBy(offset);
-            newOverflowClip.setAffectedByRadius(renderer().style().border().hasBorderRadius());
-            clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
-            if (renderer().canContainAbsolutelyPositionedObjects())
-                clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
-            if (renderer().canContainFixedPositionObjects())
-                clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
+
+            if (!newOverflowClip.isInfinite()) {
+                if (needsTransform)
+                    newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
+                newOverflowClip.moveBy(offset);
+                newOverflowClip.setAffectedByRadius(renderer().style().border().hasBorderRadius());
+                clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
+                if (renderer().canContainAbsolutelyPositionedObjects())
+                    clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
+                if (renderer().canContainFixedPositionObjects())
+                    clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
+            }
         }
         if (renderer().hasClip()) {
             if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer())) {
@@ -5364,9 +5367,11 @@ ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsC
 
     // This layer establishes a clip of some kind.
     if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip()) {
-        auto overflowClipRect = rendererOverflowClipRect(toLayoutPoint(offsetFromRoot), clipRectsContext.overlayScrollbarSizeRelevancy());
-        foregroundRect.intersect(overflowClipRect);
-        foregroundRect.setAffectedByRadius(true);
+        auto overflowClipRect = rendererOverflowClipRectForPainting(toLayoutPoint(offsetFromRoot), clipRectsContext.overlayScrollbarSizeRelevancy());
+        if (!overflowClipRect.isInfinite()) {
+            foregroundRect.intersect(overflowClipRect);
+            foregroundRect.setAffectedByRadius(true);
+        }
         return foregroundRect;
     }
 
