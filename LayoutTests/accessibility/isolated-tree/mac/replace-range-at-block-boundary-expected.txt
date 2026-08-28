@@ -1,0 +1,100 @@
+Asserts that AXReplaceRangeWithText writes at the character index it is given, including the
+index that starts a block, and clamps a range running past the end of the value to the end
+rather than writing at the current selection.
+
+block ending in <br>, index starting the next block: value "alpha\nbravo\n\n", replacing {12, 0}
+PASS: axField.replaceTextInRange("Y", 12, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+block without a trailing <br>: value "alpha\nbravo\n\n", replacing {12, 0}
+PASS: axField.replaceTextInRange("Y", 12, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+<br>-separated lines: value "alpha\nbravo\n\n", replacing {12, 0}
+PASS: axField.replaceTextInRange("Y", 12, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+one line, index starting the blank second line: value "alpha\n\n", replacing {6, 0}
+PASS: axField.replaceTextInRange("Y", 6, 0) === true
+PASS: textOf(field) === "alpha\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+two blocks ending in <br>: value "alpha\nbravo\ncharlie\n\n", replacing {20, 0}
+PASS: axField.replaceTextInRange("Y", 20, 0) === true
+PASS: textOf(field) === "alpha\nbravo\ncharlie\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+interior index: value "alpha\nbravo\n\n", replacing {6, 0}
+PASS: axField.replaceTextInRange("Y", 6, 0) === true
+PASS: textOf(field) === "alpha\nYbravo\n\n"
+PASS: textOf(bystander) === "bystander"
+
+replacing a run of characters: value "alpha\nbravo\n\n", replacing {6, 5}
+PASS: axField.replaceTextInRange("Y", 6, 5) === true
+PASS: textOf(field) === "alpha\nY\n\n"
+PASS: textOf(bystander) === "bystander"
+
+field with no text: value "", replacing {0, 0}
+PASS: axField.replaceTextInRange("Y", 0, 0) === true
+PASS: textOf(field) === "Y"
+PASS: textOf(bystander) === "bystander"
+
+textarea, index starting the blank final line: value "alpha\nbravo\n", replacing {12, 0}
+PASS: axField.replaceTextInRange("Y", 12, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY"
+PASS: textOf(bystander) === "bystander"
+
+location one past the end of the value: value "alpha\nbravo\n\n", replacing {14, 0}
+PASS: axField.replaceTextInRange("Y", 14, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+location far past the end of the value: value "alpha\nbravo\n\n", replacing {99, 0}
+PASS: axField.replaceTextInRange("Y", 99, 0) === true
+PASS: textOf(field) === "alpha\nbravo\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+length running past the end of the value: value "alpha\nbravo\n\n", replacing {6, 99}
+PASS: axField.replaceTextInRange("Y", 6, 99) === true
+PASS: textOf(field) === "alpha\nY\n"
+PASS: textOf(bystander) === "bystander"
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+alpha
+bravo
+Y
+alpha
+bravo
+Y
+alpha
+bravo
+Y
+alpha
+Y
+alpha
+bravo
+charlie
+Y
+alpha
+bravo
+Y
+alpha
+bravo
+Y
+alpha
+Y
+alpha
+Ybravo
+
+alpha
+Y
+
+Y
+
+bystander

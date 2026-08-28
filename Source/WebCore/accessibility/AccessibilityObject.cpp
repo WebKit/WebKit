@@ -2961,7 +2961,19 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     // Also only do this when the field is in editing mode.
     Ref frame = renderer()->frame();
     if (element->shouldUseInputMethod()) {
-        frame->selection().setSelectedRange(rangeForCharacterRange(range), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
+        uint64_t textLength = getLengthForTextRange();
+        uint64_t startIndex = std::min(range.location, textLength);
+        uint64_t endIndex = startIndex + std::min(range.length, textLength - startIndex);
+
+        auto start = visiblePositionForIndex(static_cast<int>(startIndex));
+        std::optional insertionRange = makeSimpleRange(start, endIndex == startIndex ? start : visiblePositionForIndex(static_cast<int>(endIndex)));
+        if (!insertionRange)
+            return false;
+
+        // Fail if the selection can't be set, otherwise the wrong text would be replaced.
+        if (!frame->selection().setSelectedRange(*insertionRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
+            return false;
+
         protect(frame->editor())->replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
         return true;
     }
