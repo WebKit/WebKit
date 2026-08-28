@@ -198,7 +198,7 @@ struct WKWebViewState {
     BOOL _savedContentInsetAdjustmentBehaviorWasExternallyOverridden = NO;
 #endif
     UIScrollViewContentInsetAdjustmentBehavior _savedContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
-    CGPoint _savedContentOffset = CGPointZero;
+    std::optional<CGPoint> _savedContentOffset;
     BOOL _savedBouncesZoom = NO;
     BOOL _savedForceAlwaysUserScalable = NO;
     CGFloat _savedMinimumEffectiveDeviceWidth = baseMinimumEffectiveDeviceWidth;
@@ -224,7 +224,8 @@ struct WKWebViewState {
         else
             [scrollView _resetContentInset];
 
-        scrollView.get().contentOffset = _savedContentOffset;
+        if (_savedContentOffset)
+            scrollView.get().contentOffset = *_savedContentOffset;
         scrollView.get().scrollIndicatorInsets = _savedScrollIndicatorInsets;
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -1210,7 +1211,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
         [webView _setForcesInitialScaleFactor:YES];
-        [webView _resetContentOffset];
         [_window insertSubview:webView.get() atIndex:0];
         WebKit::WKWebViewState().applyTo(webView.get());
         [webView setNeedsLayout];
