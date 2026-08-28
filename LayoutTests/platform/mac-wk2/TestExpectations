@@ -2472,3 +2472,16 @@ webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-inte
 [ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.https.html [ Failure ]
 
 webkit.org/b/321323 [ Tahoe+ ] http/tests/websocket/tests/hybi/inspector/before-load.html [ Failure ]
+
+# webkit.org/b/322840 REGRESSION(318498@main): [Tahoe] 11 imported/w3c/web-platform-tests/encrypted-media/drm-mp4 tests are a constant CRASH
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-playduration.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.https.html [ Failure Crash ]
+[ Tahoe Debug ] imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.html [ Failure Crash ]
