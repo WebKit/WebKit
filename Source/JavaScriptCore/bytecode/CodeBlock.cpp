@@ -1221,6 +1221,14 @@ void CodeBlock::visitChildren(Visitor& visitor)
 
     stronglyVisitStrongReferences(locker, visitor);
     stronglyVisitWeakReferences(locker, visitor);
+
+    // Update profiles from concurrent markers to reduce the cost of update at the GC end phase as its execution is serialized.
+    if constexpr (std::is_same_v<Visitor, SlotVisitor>) {
+        if (visitor.isFirstVisit() && JITCode::isBaselineCode(jitType())) {
+            updateAllNonLazyValueProfilePredictions();
+            updateAllLazyValueProfilePredictions();
+        }
+    }
     
     Heap::CodeBlockSpaceAndSet::setFor(*subspace()).add(this);
 }
@@ -3102,7 +3110,7 @@ void CodeBlock::updateAllArrayAllocationProfilePredictions()
 
 // Folds each profile's sampled value into a pointer-free SpeculatedType and clears the sample.
 // The samples are untraced JSValues and StructureIDs, so this only runs while they are still
-// readable: after marking, before sweep.
+// readable, which means any time from marking up to the sweep that would free them.
 void CodeBlock::updateAllPredictions()
 {
     updateAllNonLazyValueProfilePredictions();
