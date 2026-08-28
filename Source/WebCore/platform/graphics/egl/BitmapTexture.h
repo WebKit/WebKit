@@ -62,15 +62,14 @@ class BitmapTexture final : public ThreadSafeRefCounted<BitmapTexture> {
 public:
     enum class Flags : uint8_t {
         SupportsAlpha = 1 << 0,
-        DepthBuffer = 1 << 1,
 #if USE(GBM)
-        BackedByDMABuf = 1 << 2,
-        ForceLinearBuffer = 1 << 3,
-        ForceVivanteSuperTiledBuffer = 1 << 4,
+        BackedByDMABuf = 1 << 1,
+        ForceLinearBuffer = 1 << 2,
+        ForceVivanteSuperTiledBuffer = 1 << 3,
 #endif
-        UseBGRALayout = 1 << 5,
-        NearestFiltering = 1 << 6,
-        ExternalOESRenderTarget = 1 << 7,
+        UseBGRALayout = 1 << 4,
+        NearestFiltering = 1 << 5,
+        ExternalOESRenderTarget = 1 << 6,
     };
 
     static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { })
@@ -94,7 +93,6 @@ public:
 
     void bindAsSurface();
     void initializeStencil();
-    void initializeDepthBuffer();
     uint32_t id() const { return m_id; }
 
     void updateContents(NativeImage*, const IntRect&, const IntPoint& offset);
@@ -149,7 +147,6 @@ private:
     unsigned m_renderTarget { 0 };
     unsigned m_binding { 0 };
     unsigned m_fbo { 0 };
-    unsigned m_depthBufferObject { 0 };
     unsigned m_stencilBufferObject { 0 };
     bool m_stencilBound { false };
     bool m_shouldClear { true };

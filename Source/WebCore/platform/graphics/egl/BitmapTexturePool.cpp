@@ -80,7 +80,6 @@ Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Option
             && entry.texture->flags().contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer) == flags.contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer)
 #endif
             && entry.texture->flags().contains(BitmapTexture::Flags::UseBGRALayout) == flags.contains(BitmapTexture::Flags::UseBGRALayout)
-            && entry.texture->flags().contains(BitmapTexture::Flags::DepthBuffer) == flags.contains(BitmapTexture::Flags::DepthBuffer)
             && entry.texture->flags().contains(BitmapTexture::Flags::NearestFiltering) == flags.contains(BitmapTexture::Flags::NearestFiltering);
     });
 

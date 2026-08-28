@@ -109,15 +109,6 @@ unsigned BitmapTexture::textureFormat() const
     return m_flags.contains(Flags::UseBGRALayout) ? GL_BGRA : GL_RGBA;
 }
 
-static GLenum depthBufferFormat()
-{
-    auto* glContext = GLContext::current();
-    if (glContext->version() >= 300 || glContext->glExtensions().OES_packed_depth_stencil)
-        return GL_DEPTH24_STENCIL8;
-
-    return GL_DEPTH_COMPONENT16;
-}
-
 BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags)
     : m_flags(flags)
     , m_size(size)
@@ -241,8 +232,6 @@ BitmapTexture::BitmapTexture(EGLImage image, const IntSize& size, OptionSet<Flag
 void BitmapTexture::swapTexture(BitmapTexture& other)
 {
     RELEASE_ASSERT(m_size == other.m_size);
-    RELEASE_ASSERT(!m_flags.contains(Flags::DepthBuffer));
-    RELEASE_ASSERT(!other.m_flags.contains(Flags::DepthBuffer));
 
 #if USE(GBM)
     std::swap(m_memoryMappedGPUBuffer, other.m_memoryMappedGPUBuffer);
@@ -271,25 +260,18 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
     m_pixelFormat = flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
     m_filterOperation = nullptr;
 
-    if (!flags.contains(Flags::DepthBuffer)) {
-        if (m_fbo) {
-            glDeleteFramebuffers(1, &m_fbo);
-            m_fbo = 0;
-        }
-
-        if (m_depthBufferObject) {
-            glDeleteRenderbuffers(1, &m_depthBufferObject);
-            m_depthBufferObject = 0;
-        }
-
-        if (m_stencilBufferObject) {
-            glDeleteRenderbuffers(1, &m_stencilBufferObject);
-            m_stencilBufferObject = 0;
-        }
-
-        m_stencilBound = false;
-        m_clipStack = { };
+    if (m_fbo) {
+        glDeleteFramebuffers(1, &m_fbo);
+        m_fbo = 0;
     }
+
+    if (m_stencilBufferObject) {
+        glDeleteRenderbuffers(1, &m_stencilBufferObject);
+        m_stencilBufferObject = 0;
+    }
+
+    m_stencilBound = false;
+    m_clipStack = { };
 
     if (m_size == size)
         return;
@@ -446,19 +428,6 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 
 void BitmapTexture::initializeStencil()
 {
-    if (m_flags.contains(Flags::DepthBuffer)) {
-        // We have a depth buffer and we're asked to have a stencil buffer as well. This is only
-        // possible if packed depth stencil is available. If that's the case, just bind the depth
-        // buffer as the stencil one if haven't done so. If packed depth stencil is not available
-        // don't do anything, which will cause stencil clips on this surface to fail.
-        if (depthBufferFormat() == GL_DEPTH24_STENCIL8 && !m_stencilBound) {
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
-            m_stencilBound = true;
-        }
-        return;
-    }
-
-    // We don't have a depth buffer. Use a stencil only buffer.
     if (m_stencilBufferObject)
         return;
 
@@ -469,18 +438,6 @@ void BitmapTexture::initializeStencil()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBufferObject);
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
-}
-
-void BitmapTexture::initializeDepthBuffer()
-{
-    if (m_depthBufferObject)
-        return;
-
-    glGenRenderbuffers(1, &m_depthBufferObject);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
-    glRenderbufferStorage(GL_RENDERBUFFER, depthBufferFormat(), m_size.width(), m_size.height());
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
 }
 
 void BitmapTexture::clearIfNeeded()
@@ -504,8 +461,6 @@ void BitmapTexture::createFboIfNeeded()
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderTarget, id(), 0);
-    if (m_flags.contains(Flags::DepthBuffer))
-        initializeDepthBuffer();
     m_shouldClear = true;
 }
 
@@ -515,10 +470,6 @@ void BitmapTexture::bindAsSurface()
     createFboIfNeeded();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_size.width(), m_size.height());
-    if (m_flags.contains(Flags::DepthBuffer))
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
     clearIfNeeded();
     m_clipStack.apply();
 }
@@ -529,9 +480,6 @@ BitmapTexture::~BitmapTexture()
 
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
-
-    if (m_depthBufferObject)
-        glDeleteRenderbuffers(1, &m_depthBufferObject);
 
     if (m_stencilBufferObject)
         glDeleteRenderbuffers(1, &m_stencilBufferObject);
