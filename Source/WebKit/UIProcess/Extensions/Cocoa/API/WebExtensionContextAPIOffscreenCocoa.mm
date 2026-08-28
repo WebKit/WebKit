@@ -54,7 +54,7 @@ static UIWindowScene *windowScene()
 {
     for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
         if ([scene isKindOfClass:UIWindowScene.class] && (scene.activationState == UISceneActivationStateForegroundActive || scene.activationState == UISceneActivationStateForegroundInactive))
-            return (UIWindowScene *)scene;
+            return dynamic_objc_cast<UIWindowScene>(scene);
     }
     return nil;
 }
