@@ -1147,15 +1147,6 @@ TextStream& operator<<(TextStream& ts, TextJustify justify)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextOverflow overflow)
-{
-    switch (overflow) {
-    case TextOverflow::Clip: ts << "clip"_s; break;
-    case TextOverflow::Ellipsis: ts << "ellipsis"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, TextSecurity textSecurity)
 {
     switch (textSecurity) {

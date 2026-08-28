@@ -141,7 +141,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
 
     if (isStrongPasswordTextField(shadowHost())) {
         newStyle->setFlexShrink(0);
-        newStyle->setTextOverflow(TextOverflow::Clip);
+        newStyle->setTextOverflow(CSS::Keyword::Clip { });
         newStyle->setOverflowX(Overflow::Hidden);
         newStyle->setOverflowY(Overflow::Hidden);
 
@@ -241,7 +241,10 @@ std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCust
     styleStyle->setDisplay(controlElement->isPlaceholderVisible() ? Style::DisplayType::BlockFlow : Style::DisplayType::None);
 
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
-        styleStyle->setTextOverflow(inputElement->shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
+        if (inputElement->shouldTruncateText(*shadowHostStyle))
+            styleStyle->setTextOverflow(CSS::Keyword::Ellipsis { });
+        else
+            styleStyle->setTextOverflow(CSS::Keyword::Clip { });
         styleStyle->setPaddingTop(0_css_px);
         styleStyle->setPaddingBottom(0_css_px);
     }

@@ -60,11 +60,11 @@ NonInheritedMiscData::NonInheritedMiscData()
     , objectPosition(ComputedStyle::initialObjectPosition())
     , objectViewBox(ComputedStyle::initialObjectViewBox())
     , order(ComputedStyle::initialOrder())
+    , textOverflow(ComputedStyle::initialTextOverflow())
     , tableLayout(static_cast<unsigned>(ComputedStyle::initialTableLayout()))
     , appearance(static_cast<unsigned>(ComputedStyle::initialAppearance()))
     , usedAppearance(static_cast<unsigned>(ComputedStyle::initialAppearance()))
     , userSelect(static_cast<unsigned>(ComputedStyle::initialUserSelect()))
-    , textOverflow(static_cast<unsigned>(ComputedStyle::initialTextOverflow()))
     , userDrag(static_cast<unsigned>(ComputedStyle::initialUserDrag()))
     , objectFit(static_cast<unsigned>(ComputedStyle::initialObjectFit()))
     , resize(static_cast<unsigned>(ComputedStyle::initialResize()))
@@ -95,6 +95,7 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , objectPosition(o.objectPosition)
     , objectViewBox(o.objectViewBox)
     , order(o.order)
+    , textOverflow(o.textOverflow)
     , hasAttrContent(o.hasAttrContent)
     , hasDisplayAffectedByAnimations(o.hasDisplayAffectedByAnimations)
 #if ENABLE(DARK_MODE_CSS)
@@ -108,7 +109,6 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , appearance(o.appearance)
     , usedAppearance(o.usedAppearance)
     , userSelect(o.userSelect)
-    , textOverflow(o.textOverflow)
     , userDrag(o.userDrag)
     , objectFit(o.objectFit)
     , resize(o.resize)
@@ -146,6 +146,7 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && objectPosition == o.objectPosition
         && objectViewBox == o.objectViewBox
         && order == o.order
+        && textOverflow == o.textOverflow
         && hasAttrContent == o.hasAttrContent
         && hasDisplayAffectedByAnimations == o.hasDisplayAffectedByAnimations
 #if ENABLE(DARK_MODE_CSS)
@@ -159,7 +160,6 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && appearance == o.appearance
         && usedAppearance == o.usedAppearance
         && userSelect == o.userSelect
-        && textOverflow == o.textOverflow
         && userDrag == o.userDrag
         && objectFit == o.objectFit
         && resize == o.resize;
@@ -202,6 +202,7 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
     LOG_IF_DIFFERENT(objectPosition);
     LOG_IF_DIFFERENT(objectViewBox);
     LOG_IF_DIFFERENT(order);
+    LOG_IF_DIFFERENT(textOverflow);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAttrContent);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasDisplayAffectedByAnimations);
@@ -220,9 +221,6 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
     LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, usedAppearance);
 
     LOG_IF_DIFFERENT_WITH_CAST(UserSelect, userSelect);
-
-    LOG_IF_DIFFERENT_WITH_CAST(bool, textOverflow);
-
     LOG_IF_DIFFERENT_WITH_CAST(UserDrag, userDrag);
     LOG_IF_DIFFERENT_WITH_CAST(ObjectFit, objectFit);
     LOG_IF_DIFFERENT_WITH_CAST(Resize, resize);

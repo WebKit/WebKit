@@ -8696,9 +8696,9 @@
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData"],
-                "computed-style-storage-kind": "enum",
-                "computed-style-type": "TextOverflow",
-                "parser-grammar": "<<values>>"
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::TextOverflow",
+                "parser-grammar": "clip | ellipsis | <string>"
             },
             "specification": {
                 "category": "css-overflow",

@@ -1438,12 +1438,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#define TYPE TextOverflow
-#define FOR_EACH(CASE) CASE(Clip) CASE(Ellipsis)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
 constexpr CSSValueID toCSSValueID(TextWrapMode wrap)
 {
     switch (wrap) {

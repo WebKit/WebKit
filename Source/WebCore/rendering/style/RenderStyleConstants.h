@@ -812,11 +812,6 @@ enum class TextEmphasisMark : uint8_t {
     Sesame
 };
 
-enum class TextOverflow : bool {
-    Clip,
-    Ellipsis
-};
-
 enum class TextWrapMode : bool {
     Wrap,
     NoWrap
@@ -1247,7 +1242,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisFill);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisMark);
 WTF::TextStream& operator<<(WTF::TextStream&, TextGroupAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, TextJustify);
-WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapStyle);

@@ -55,7 +55,11 @@ public:
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return lineEllipsis().visualRect; }
-    TextRun ellipsisText() const { return TextRun { lineEllipsis().text.string() }; }
+    TextRun ellipsisText() const
+    {
+        return TextRun { lineEllipsis().text.string(), 0, 0, ExpansionBehavior::defaultBehavior(),
+            line().isLeftToRightInlineDirection() ? TextDirection::LTR : TextDirection::RTL };
+    }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {

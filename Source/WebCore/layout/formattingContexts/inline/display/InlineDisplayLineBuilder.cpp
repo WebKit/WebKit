@@ -494,7 +494,20 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
         return { };
 
     auto ellipsisText = [&] -> AtomString {
-        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || isLegacyLineClamp) {
+        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection) {
+            return WTF::switchOn(displayBoxes[0].layoutBox().style().textOverflow(),
+                [&](const CSS::Keyword::Clip&) -> AtomString {
+                    return nullAtom();
+                },
+                [&](const CSS::Keyword::Ellipsis&) -> AtomString {
+                    return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
+                },
+                [&](const Style::String& string) -> AtomString {
+                    return AtomString { string.value };
+                }
+            );
+        }
+        if (isLegacyLineClamp) {
             // Legacy line clamp always uses ...
             return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
         }

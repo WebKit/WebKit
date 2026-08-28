@@ -130,7 +130,11 @@ unsigned TextAutoSizingHashTranslator::hash(const Style::ComputedStyle& style)
     hash ^= std::to_underlying(style.rtlOrdering());
     hash ^= std::to_underlying(style.position());
     hash ^= std::to_underlying(style.floating());
-    hash ^= std::to_underlying(style.textOverflow());
+    hash ^= style.textOverflow().switchOn(
+        [](const CSS::Keyword::Clip&) -> unsigned { return computeHash(0); },
+        [](const CSS::Keyword::Ellipsis&) -> unsigned { return computeHash(1); },
+        [](const Style::String& string) -> unsigned { return computeHash(2, string.value); }
+    );
     return hash;
 }
 

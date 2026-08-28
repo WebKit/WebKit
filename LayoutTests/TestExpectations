@@ -4312,7 +4312,6 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-fixe
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-fixed-pos-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-004.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-text-overflow-string-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-036.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-040.html [ ImageOnlyFailure ]
@@ -5429,15 +5428,8 @@ webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-shape-block
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-shape-block-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-shape-underscore-001.html [ ImageOnlyFailure ]
 
-# Missing text-overflow: <string>
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-001.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-002.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-003.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-004.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-005.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-006.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-007.html [ ImageOnlyFailure ]
-webkit.org/b/27545 imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-008.html [ ImageOnlyFailure ]
+# text-overflow should take in account unicode-bidi to determine ellipsis position.
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-string-008.html
 
 webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 

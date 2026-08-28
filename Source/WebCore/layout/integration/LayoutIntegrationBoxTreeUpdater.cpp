@@ -190,7 +190,7 @@ void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, Style::C
                 CheckedRef anonBlockParentStyle = renderer.parent()->style();
                 // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
                 // e.g. <div style="overflow: hidden; text-overflow: ellipsis; width: 100px; white-space: pre;">this text should have ellipsis<div></div></div>
-                styleToAdjust.setTextOverflow(anonBlockParentStyle->textOverflow());
+                styleToAdjust.setTextOverflow(Style::TextOverflow { anonBlockParentStyle->textOverflow() });
                 styleToAdjust.setOverflowX(anonBlockParentStyle->overflowX());
                 styleToAdjust.setOverflowY(anonBlockParentStyle->overflowY());
             }

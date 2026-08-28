@@ -43,6 +43,7 @@
 #include <WebCore/StyleOpacity.h>
 #include <WebCore/StyleOrder.h>
 #include <WebCore/StyleResize.h>
+#include <WebCore/StyleTextOverflow.h>
 #include <WebCore/StyleTransitions.h>
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
@@ -101,6 +102,7 @@ public:
     ObjectPosition objectPosition;
     ObjectViewBox objectViewBox;
     Order order;
+    TextOverflow textOverflow;
 
     PREFERRED_TYPE(bool) unsigned hasAttrContent : 1 { false };
     PREFERRED_TYPE(bool) unsigned hasDisplayAffectedByAnimations : 1 { false };
@@ -115,7 +117,6 @@ public:
     PREFERRED_TYPE(StyleAppearance) unsigned appearance : appearanceBitWidth;
     PREFERRED_TYPE(StyleAppearance) unsigned usedAppearance : appearanceBitWidth;
     PREFERRED_TYPE(UserSelect) unsigned userSelect : 2;
-    PREFERRED_TYPE(bool) unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     PREFERRED_TYPE(UserDrag) unsigned userDrag : 2;
     PREFERRED_TYPE(ObjectFit) unsigned objectFit : 3;
     PREFERRED_TYPE(Resize) unsigned resize : 3;

@@ -2269,7 +2269,7 @@ bool HTMLInputElement::shouldTruncateText(const Style::ComputedStyle& style) con
 {
     if (!isTextField())
         return false;
-    return document().focusedElement() != this && style.textOverflow() == TextOverflow::Ellipsis;
+    return document().focusedElement() != this && style.textOverflow().isEllipsis();
 }
 
 void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
@@ -2277,7 +2277,7 @@ void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
     if (!isTextField())
         return;
     // Focus change may affect the result of shouldTruncateText().
-    if (CheckedPtr style = renderStyle(); style && style->textOverflow() == TextOverflow::Ellipsis)
+    if (CheckedPtr style = renderStyle(); style && style->textOverflow().isEllipsis())
         invalidateStyleForSubtree();
 }
 
@@ -2368,7 +2368,10 @@ Style::ComputedStyle HTMLInputElement::createInnerTextStyle(const Style::Compute
     textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
     textBlockStyle.setOverflowX(Overflow::Hidden);
     textBlockStyle.setOverflowY(Overflow::Hidden);
-    textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflow::Ellipsis : TextOverflow::Clip);
+    if (shouldTruncateText(style))
+        textBlockStyle.setTextOverflow(CSS::Keyword::Ellipsis { });
+    else
+        textBlockStyle.setTextOverflow(CSS::Keyword::Clip { });
 
     textBlockStyle.setDisplay(Style::DisplayType::BlockFlow);
 
@@ -2376,7 +2379,7 @@ Style::ComputedStyle HTMLInputElement::createInnerTextStyle(const Style::Compute
         textBlockStyle.setDisplay(Style::DisplayType::InlineFlowRoot);
         textBlockStyle.setLogicalMaxWidth(100_css_percentage);
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
-        textBlockStyle.setTextOverflow(TextOverflow::Clip);
+        textBlockStyle.setTextOverflow(CSS::Keyword::Clip { });
         textBlockStyle.setMaskLayers(Style::MaskLayer { autoFillStrongPasswordMaskImage() });
         // A stacking context is needed for the mask.
         if (textBlockStyle.usedZIndex().isAuto())
