@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!-- An animated PNG carrying an ICC profile must colour-convert only the pixels its animation frame
+     covers. Its frame sits in the right half of row 0, so a conversion counted from the canvas
+     origin overruns into row 1, which the frame does not cover. The animation declares a single
+     play, so it stops on that frame and this renders as the reference still image. -->
+<style>
+body { margin: 0; }
+img { display: block; image-rendering: pixelated; }
+</style>
+<img id="image" src="resources/apng-icc-frame-right-half.png">
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    // The frames are 10ms apart, so let the single play finish before the snapshot.
+    window.addEventListener("load", function () {
+        setTimeout(function () { window.testRunner.notifyDone(); }, 300);
+    });
+}
+</script>
