@@ -110,7 +110,8 @@ class FindInterpolantsTraverser : public TIntermTraverser
             TIntermTyped *correctedOffset = TIntermAggregate::CreateFunctionCall(
                 *getFlipFunction(), new TIntermSequence{offsetNode});
 
-            queueReplacementWithParent(node, offsetNode, correctedOffset, OriginalNode::IS_DROPPED);
+            queueReplacementWithParent(node, offsetNode, correctedOffset,
+                                       OriginalNode::BECOMES_CHILD);
         }
 
         return true;
