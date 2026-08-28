@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +60,7 @@ class SharedBufferReference;
 namespace WebCore {
 class BlobDataFileReference;
 class ContentFilter;
+class ContentSecurityPolicy;
 class FormData;
 class LinkHeader;
 class NetworkStorageSession;
@@ -69,7 +71,6 @@ class ResourceRequest;
 
 namespace WebKit {
 
-class EarlyHintsResourceLoader;
 class NetworkConnectionToWebProcess;
 class NetworkLoad;
 class NetworkLoadChecker;
@@ -293,6 +294,11 @@ private:
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) final;
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEventInit&&) final;
 
+    // HTTP 103 Early Hints.
+    void handleEarlyHintsResponse(WebCore::ResourceResponse&&);
+    WebCore::ResourceRequest constructPreconnectRequest(const WebCore::ResourceRequest&, const URL&);
+    void startPreconnectTask(const URL& baseURL, const WebCore::LinkHeader&, const WebCore::ContentSecurityPolicy&);
+
     void logSlowCacheRetrieveIfNeeded(const NetworkCache::Cache::RetrieveInfo&);
 
     std::optional<Seconds> validateCacheEntryForMaxAgeCapValidation(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse&);
@@ -398,7 +404,7 @@ private:
 
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
-    std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
+    bool m_hasReceivedEarlyHints { false };
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 #include "NetworkResourceLoader.h"
 
 #include "ArgumentCoders.h"
-#include "EarlyHintsResourceLoader.h"
 #include "FormDataReference.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
@@ -38,6 +38,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkLoadChecker.h"
+#include "NetworkLoadParameters.h"
 #include "NetworkOriginAccessPatterns.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
@@ -45,6 +46,7 @@
 #include "NetworkSchemeRegistry.h"
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
+#include "PreconnectTask.h"
 #include "PrivateRelayed.h"
 #include "QualifiedServerTrustFetch.h"
 #include "ResourceLoadInfo.h"
@@ -79,6 +81,7 @@
 #include <WebCore/PendingStreamState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ReportingScope.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/SWServer.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
@@ -953,12 +956,94 @@ static BrowsingContextGroupSwitchDecision NODELETE toBrowsingContextGroupSwitchD
 
 void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& response)
 {
-    if (response.httpStatusCode() != httpStatus103EarlyHints)
+    if (response.httpStatusCode() == httpStatus103EarlyHints)
+        handleEarlyHintsResponse(WTF::move(response));
+}
+
+void NetworkResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response)
+{
+    // For consistency with other browsers, only process early hints for top-level navigation from
+    // secure origins using HTTP/2 or later.
+    if (!isMainFrameLoad() || response.url().protocol() != "https"_s || response.httpVersion().startsWith("HTTP/1"_s))
         return;
 
-    if (!m_earlyHintsResourceLoader)
-        m_earlyHintsResourceLoader = WTF::makeUnique<EarlyHintsResourceLoader>(*this);
-    m_earlyHintsResourceLoader->handleEarlyHintsResponse(WTF::move(response));
+    // Only the first early hint response served during the navigation is handled.
+    // FIXME: discard hints on cross-origin redirect once we support early hint preloads.
+    if (m_hasReceivedEarlyHints)
+        return;
+    m_hasReceivedEarlyHints = true;
+
+    auto headerValue = response.httpHeaderField(HTTPHeaderName::Link);
+    if (headerValue.isEmpty())
+        return;
+
+    auto url = response.url();
+    ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, nullptr };
+    contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
+
+    LinkHeaderSet headerSet(headerValue);
+    for (const auto& header : headerSet) {
+        if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty() || header.isViewportDependent())
+            continue;
+
+        if (equalLettersIgnoringASCIICase(header.rel(), "preconnect"_s))
+            startPreconnectTask(url, header, contentSecurityPolicy);
+    }
+}
+
+ResourceRequest NetworkResourceLoader::constructPreconnectRequest(const ResourceRequest& originalRequest, const URL& url)
+{
+    ResourceRequest request { URL { url } };
+
+    // firstPartyForCookies and user agent are part of the HTTP socket pool keys in CFNetwork: rdar://59434166
+    auto firstPartyForCookies = originalRequest.firstPartyForCookies();
+    if (firstPartyForCookies.isValid())
+        request.setFirstPartyForCookies(firstPartyForCookies);
+
+    auto userAgent = originalRequest.httpUserAgent();
+    if (!userAgent.isEmpty())
+        request.setHTTPUserAgent(userAgent);
+
+    return request;
+}
+
+void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHeader& header, const ContentSecurityPolicy& contentSecurityPolicy)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    if (!parameters().linkPreconnectEarlyHintsEnabled)
+        return;
+
+    URL url(baseURL, header.url());
+    if (!url.isValid() || url.protocol() != "https"_s)
+        return;
+
+    if (!contentSecurityPolicy.allowConnectToSource(url, { }, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest().url()))
+        return;
+
+    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
+    if (!networkSession)
+        return;
+
+    NetworkLoadParameters parameters;
+    auto globalFrameID = this->globalFrameID();
+    parameters.webPageProxyID = globalFrameID.webPageProxyID;
+    parameters.webPageID = globalFrameID.webPageID;
+    parameters.webFrameID = globalFrameID.frameID;
+    parameters.storedCredentialsPolicy = equalLettersIgnoringASCIICase(header.crossOrigin(), "anonymous"_s) ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
+    parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+    parameters.request = constructPreconnectRequest(originalRequest(), url);
+    parameters.isNavigatingToAppBoundDomain = this->parameters().isNavigatingToAppBoundDomain;
+    Ref preconnectTask = PreconnectTask::create(*networkSession, WTF::move(parameters));
+    preconnectTask->start();
+
+    addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString("Preconnecting to "_s, url.string(), " due to early hint"_s));
+#else
+    UNUSED_PARAM(baseURL);
+    UNUSED_PARAM(header);
+    UNUSED_PARAM(contentSecurityPolicy);
+#endif
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)

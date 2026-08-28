@@ -104,7 +104,6 @@ ModelProcess/ModelProcessModelPlayerManagerProxy.cpp
 
 NetworkProcess/BackgroundFetchLoad.cpp @cost:4
 NetworkProcess/DatabaseUtilities.cpp @cost:3
-NetworkProcess/EarlyHintsResourceLoader.cpp @cost:6
 NetworkProcess/NetworkActivityTracker.cpp
 NetworkProcess/NetworkBroadcastChannelRegistry.cpp @cost:4
 NetworkProcess/NetworkCORSPreflightChecker.cpp @cost:4

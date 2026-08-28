@@ -382,7 +382,7 @@ void NetworkLoad::setTimingAllowFailedFlag()
 
 String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 {
-    if (auto* task = m_task.get())
+    if (RefPtr task = m_task)
         return task->attributedBundleIdentifier(pageID);
     return { };
 }
