@@ -427,7 +427,11 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     GSList* existingCookies = soup_cookie_jar_get_cookie_list(jar, origin.get(), TRUE);
 
     for (auto& cookieString : value.split('\n')) {
-        GUniquePtr<SoupCookie> cookie(soup_cookie_parse(cookieString.utf8().data(), origin.get()));
+        // FIXME: Remove this once libsoup's cookie-date parser accepts a date that writes the month
+        // before the day of the month. RFC 6265 section 5.1.1 accepts either ordering.
+        auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString);
+        auto utf8CookieString = (dayFirst ? *dayFirst : cookieString).utf8();
+        GUniquePtr<SoupCookie> cookie(soup_cookie_parse(utf8CookieString.data(), origin.get()));
 
         if (!cookie)
             continue;

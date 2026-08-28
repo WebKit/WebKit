@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Joseph Pecoraro. All rights reserved.
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,10 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__
@@ -126,6 +127,8 @@ struct Cookie {
 namespace CookieUtil {
 
 WEBCORE_EXPORT String defaultPathForURL(const URL&);
+
+std::optional<String> cookieStringWithDayFirstExpires(StringView);
 
 } // namespace CookieUtil
 

@@ -15020,6 +15020,7 @@
 		7AEAD8AD290289C9008B5675 /* ScrollingTreeOverflowScrollProxyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeOverflowScrollProxyNode.cpp; sourceTree = "<group>"; };
 		7AEAD8AE290289E1008B5675 /* ScrollingTreeOverflowScrollProxyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollProxyNode.h; sourceTree = "<group>"; };
 		7AEFEA122D52A89D007B21AC /* DocumentEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentEnums.h; sourceTree = "<group>"; };
+		7AF0423D303F4F8F006FB27D /* Cookie.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cookie.cpp; sourceTree = "<group>"; };
 		7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTRegion.cpp; sourceTree = "<group>"; };
 		7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTRegion.h; sourceTree = "<group>"; };
 		7AF9B1FE18CFB2DF00C64BEF /* VTTRegion.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VTTRegion.idl; sourceTree = "<group>"; };
@@ -31006,6 +31007,7 @@
 				E43AF8E41AC5B7DD00CA717E /* CacheValidation.cpp */,
 				E43AF8E51AC5B7DD00CA717E /* CacheValidation.h */,
 				91B8F0B321953D65000C2B00 /* CertificateSummary.h */,
+				7AF0423D303F4F8F006FB27D /* Cookie.cpp */,
 				7A56996E2086C618000E0433 /* CookieRequestHeaderFieldProxy.h */,
 				E13F01EA1270E10D00DFBA71 /* CookieStorage.h */,
 				514C76590CE923A1007EF3CD /* Credential.h */,

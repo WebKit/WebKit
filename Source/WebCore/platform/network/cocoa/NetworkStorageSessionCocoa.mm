@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/StringView.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 @interface NSURL ()
@@ -521,6 +522,11 @@ static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookie
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     cookieString = cookieString.contains('=') ? cookieString : makeString(cookieString, '=');
+
+    // FIXME: <rdar://185837942> Remove this once CFNetwork's cookie-date parser accepts a date that
+    // writes the month before the day of the month. RFC 6265 section 5.1.1 accepts either ordering.
+    if (auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString))
+        cookieString = WTF::move(*dayFirst);
 
     return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
 }
