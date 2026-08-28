@@ -2846,7 +2846,7 @@ imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-w
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-maxFramerate.https.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html [ Skip ] # Timeout
 webrtc/getDisplayMedia-odd-size.html [ Skip ] # Timeout
-webrtc/video-rotation.html [ Failure ]
+webkit.org/b/322821 webrtc/video-rotation.html [ Failure Pass Timeout ]
 webrtc/video-maxBitrate-vp8.html [ Skip ] # Timeout
 webrtc/video-maxBitrate.html [ Skip ] # Timeout
 
@@ -5395,6 +5395,10 @@ webkit.org/b/322625 [ Release ] ipc/send-gpu-GetShareableBitmap-RemoteRenderingB
 webkit.org/b/322641 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/start-time-compat.html [ Pass Failure ]
 webkit.org/b/322642 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Pass Failure ]
 webkit.org/b/322646 [ Debug ] media/track/track-readiness-state.html [ Pass Failure ]
+
+webkit.org/b/322814 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Crash Failure Pass ]
+webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html [ Pass Timeout ]
+webkit.org/b/322816 imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
