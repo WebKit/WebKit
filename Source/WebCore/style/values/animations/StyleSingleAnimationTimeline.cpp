@@ -59,7 +59,7 @@ auto CSSValueConversion<SingleAnimationTimeline>::operator()(BuilderState& state
     if (RefPtr viewValue = dynamicDowncast<CSSViewValue>(value))
         return toStyleFromCSSValue<ViewFunction>(state, *viewValue);
 
-    return toStyleFromCSSValue<CustomIdent>(state, value);
+    return toStyleFromCSSValue<ScopedName>(state, value);
 }
 
 } // namespace Style

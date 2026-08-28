@@ -28,6 +28,7 @@
 #include <WebCore/AnimationTimeline.h>
 #include <WebCore/Element.h>
 #include <WebCore/RenderStyleConstants.h>
+#include <WebCore/ScopedName.h>
 #include <WebCore/ScrollAxis.h>
 #include <WebCore/ScrollTimelineOptions.h>
 #include <WebCore/StyleScrollFunction.h>
@@ -51,7 +52,7 @@ class ComputedStyle;
 class ScrollTimeline : public AnimationTimeline {
 public:
     static Ref<ScrollTimeline> create(Document&, ScrollTimelineOptions&& = { });
-    static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
+    static Ref<ScrollTimeline> create(const Style::ScopedName&, ScrollAxis);
     static Ref<ScrollTimeline> create(Scroller, ScrollAxis);
     static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(const AtomString& name);
 
@@ -64,8 +65,8 @@ public:
     ScrollAxis axis() const { return m_axis; }
     void setAxis(ScrollAxis axis) { m_axis = axis; }
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
-    void setName(const AtomString& name) { m_name = name; }
+    const Style::ScopedName& name() const LIFETIME_BOUND { return m_name; }
+    void setName(const Style::ScopedName& name) { m_name = name; }
 
     bool isInactiveStyleOriginatedTimeline() const { return m_isInactiveStyleOriginatedTimeline; }
 
@@ -98,7 +99,7 @@ public:
 #endif
 
 protected:
-    explicit ScrollTimeline(const AtomString&, ScrollAxis);
+    explicit ScrollTimeline(const Style::ScopedName&, ScrollAxis);
 
     struct Data {
         float scrollOffset { 0 };
@@ -140,7 +141,7 @@ private:
 
     WeakStyleable m_source;
     ScrollAxis m_axis { ScrollAxis::Block };
-    AtomString m_name;
+    Style::ScopedName m_name;
     Scroller m_scroller { Scroller::Self };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_timelineScopeElement;
     CurrentTimeData m_cachedCurrentTimeData { };

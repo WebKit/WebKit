@@ -183,11 +183,11 @@ void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Re
     }
 }
 
-void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const AtomString& name, const Styleable& source, ScrollAxis axis)
+void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const Style::ScopedName& scopedName, const Styleable& source, ScrollAxis axis)
 {
-    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::registerNamedScrollTimeline: " << name << " source: " << source);
+    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::registerNamedScrollTimeline: " << scopedName.name << " source: " << source);
 
-    auto& timelines = timelinesForName(name);
+    auto& timelines = timelinesForName(scopedName.name);
 
     auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
         return !is<ViewTimeline>(timeline) && timeline->sourceStyleable() == source;
@@ -197,11 +197,11 @@ void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const AtomS
         auto& existingScrollTimeline = timelines[existingTimelineIndex].get();
         existingScrollTimeline.setAxis(axis);
     } else {
-        auto newScrollTimeline = ScrollTimeline::create(name, axis);
+        auto newScrollTimeline = ScrollTimeline::create(scopedName, axis);
         newScrollTimeline->setSource(source);
-        updateTimelineForTimelineScope(newScrollTimeline, name);
+        updateTimelineForTimelineScope(newScrollTimeline, scopedName.name);
         timelines.append(WTF::move(newScrollTimeline));
-        updateCSSAnimationsAssociatedWithNamedTimeline(name);
+        updateCSSAnimationsAssociatedWithNamedTimeline(scopedName.name);
     }
 }
 
@@ -216,8 +216,8 @@ void StyleOriginatedTimelinesController::updateCSSAnimationsAssociatedWithNamedT
             if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get())) {
                 if (!cssAnimation->owningElement())
                     continue;
-                if (auto timelineName = cssAnimation->backingStyleAnimation().timeline().tryCustomIdent()) {
-                    if (timelineName->value == name)
+                if (auto timelineName = cssAnimation->backingStyleAnimation().timeline().tryScopedName()) {
+                    if (timelineName->name == name)
                         cssAnimationsWithMatchingTimelineName.add(*cssAnimation);
                 }
             }
@@ -255,11 +255,11 @@ void StyleOriginatedTimelinesController::documentDidResolveStyle()
     m_removedTimelines.clear();
 }
 
-void StyleOriginatedTimelinesController::registerNamedViewTimeline(const AtomString& name, const Styleable& subject, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
+void StyleOriginatedTimelinesController::registerNamedViewTimeline(const Style::ScopedName& scopedName, const Styleable& subject, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
 {
-    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::registerNamedViewTimeline: " << name << " subject: " << subject);
+    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::registerNamedViewTimeline: " << scopedName.name << " subject: " << subject);
 
-    auto& timelines = timelinesForName(name);
+    auto& timelines = timelinesForName(scopedName.name);
 
     auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
         if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(timeline))
@@ -274,14 +274,14 @@ void StyleOriginatedTimelinesController::registerNamedViewTimeline(const AtomStr
         existingViewTimeline->setAxis(axis);
         existingViewTimeline->setInsets(ResolvableViewTimelineInsets { insets, usedZoomForLength });
     } else {
-        auto newViewTimeline = ViewTimeline::create(name, axis, insets, usedZoomForLength);
+        auto newViewTimeline = ViewTimeline::create(scopedName, axis, insets, usedZoomForLength);
         newViewTimeline->setSubject(subject);
-        updateTimelineForTimelineScope(newViewTimeline, name);
+        updateTimelineForTimelineScope(newViewTimeline, scopedName.name);
         timelines.append(WTF::move(newViewTimeline));
     }
 
     if (!hasExistingTimeline)
-        updateCSSAnimationsAssociatedWithNamedTimeline(name);
+        updateCSSAnimationsAssociatedWithNamedTimeline(scopedName.name);
 }
 
 void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomString& name, const Styleable& styleable)
@@ -336,14 +336,14 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
     if (!target)
         return;
 
-    auto timelineName = protectedAnimation->backingStyleAnimation().timeline().tryCustomIdent();
+    auto timelineName = protectedAnimation->backingStyleAnimation().timeline().tryScopedName();
     if (!timelineName)
         return;
 
-    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::attachAnimation: " << timelineName->value << " target: " << *target);
+    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::attachAnimation: " << timelineName->name << " target: " << *target);
 
     auto relevantTimelineScopeElement = [&] -> RefPtr<Element> {
-        auto timelineScopeElements = relatedTimelineScopeElements(*timelineName);
+        auto timelineScopeElements = relatedTimelineScopeElements(Style::CustomIdent { timelineName->name });
         if (timelineScopeElements.isEmpty())
             return nullptr;
         // Find the nearest parent within timelineScopeElements.
@@ -356,7 +356,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         return nullptr;
     }();
 
-    auto it = m_nameToTimelineMap.find(timelineName->value);
+    auto it = m_nameToTimelineMap.find(timelineName->name);
     auto hasNamedTimeline = it != m_nameToTimelineMap.end() && it->value.containsIf([&](auto& timeline) {
         auto timelineScope = timeline->timelineScopeDeclaredElement();
         if (timelineScope && timelineScope.get() != relevantTimelineScopeElement.get())
@@ -380,13 +380,13 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         //        scroll timeline, or,
         //     2. the name is not within scope and the timeline is null.
         if (relevantTimelineScopeElement)
-            protectedAnimation->setTimeline(&inactiveNamedTimeline(timelineName->value));
+            protectedAnimation->setTimeline(&inactiveNamedTimeline(timelineName->name));
         else
             protectedAnimation->setTimeline(nullptr);
     } else {
         auto& timelines = it->value;
         RefPtr timeline = determineTimelineForElement(timelines, *target, relevantTimelineScopeElement.get());
-        LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::attachAnimation: " << timelineName->value << " styleable: " << *target << " attaching to timeline of element: " << originatingElement(*timeline));
+        LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::attachAnimation: " << timelineName->name << " styleable: " << *target << " attaching to timeline of element: " << originatingElement(*timeline));
         // A deferred inactive timeline means there was a conflict with multiple timelines existing within
         // a parent element with a "timeline-scope" property. In that case, we must reconsider timeline attachment
         // once style resolution completes as further updates may occur that would yield a different timeline
@@ -441,7 +441,7 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
         // We need to unregister all timelines that are no longer within this scope.
         for (auto& timeline : namedTimelinesToUnregister) {
             if (auto associatedElement = originatingElement(timeline).styleable())
-                unregisterNamedTimeline(timeline->name(), *associatedElement);
+                unregisterNamedTimeline(timeline->name().name, *associatedElement);
         }
         break;
     }

@@ -58,7 +58,7 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     if (!insets)
         return Exception { ExceptionCode::TypeError };
 
-    auto viewTimeline = ViewTimeline::create(nullAtom(), options.axis, WTF::move(*insets), Style::ZoomFactor::none());
+    auto viewTimeline = ViewTimeline::create({ nullAtom() }, options.axis, WTF::move(*insets), Style::ZoomFactor::none());
 
     viewTimeline->setSubject(options.subject.get());
     if (auto subject = options.subject)
@@ -68,13 +68,13 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     return viewTimeline;
 }
 
-Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
+Ref<ViewTimeline> ViewTimeline::create(const Style::ScopedName& scopedName, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
 {
-    return adoptRef(*new ViewTimeline(name, axis, insets, usedZoomForLength));
+    return adoptRef(*new ViewTimeline(scopedName, axis, insets, usedZoomForLength));
 }
 
-ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
-    : ScrollTimeline(name, axis)
+ViewTimeline::ViewTimeline(const Style::ScopedName& scopedName, ScrollAxis axis, const Style::ViewTimelineInsetItem& insets, const Style::ZoomFactor& usedZoomForLength)
+    : ScrollTimeline(scopedName, axis)
     , m_insets({ .insets = insets, .zoom = usedZoomForLength })
 {
 }
@@ -552,7 +552,7 @@ Ref<CSSNumericValue> ViewTimeline::endOffset() const
 bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Style::ZoomFactor& usedZoomForLength, const Styleable& subject) const
 {
     return isStyleOriginated()
-        && name().isEmpty()
+        && name().name.isEmpty()
         && m_insets.insets == viewFunction->insets
         && m_insets.zoom == usedZoomForLength
         && axis() == viewFunction->axis

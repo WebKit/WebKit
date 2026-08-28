@@ -28,6 +28,7 @@
 #include <WebCore/CSSNumericValue.h>
 #include <WebCore/CSSPrimitiveValue.h>
 #include <WebCore/ResolvableViewTimelineInsets.h>
+#include <WebCore/ScopedName.h>
 #include <WebCore/ScrollTimeline.h>
 #include <WebCore/StyleViewFunction.h>
 #include <WebCore/Styleable.h>
@@ -72,7 +73,7 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&&);
-    static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
+    static Ref<ViewTimeline> create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     const Element* NODELETE subject() const;
     const WeakStyleable subjectStyleable() const { return m_subject; }
@@ -102,7 +103,7 @@ public:
     WebAnimationTime NODELETE epsilon() const;
 
 private:
-    ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
+    ViewTimeline(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;
     std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, Style::SingleAnimationRangeName) const;

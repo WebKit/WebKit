@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleCustomIdent.h>
+#include <WebCore/ScopedName.h>
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
@@ -32,7 +32,7 @@ namespace Style {
 
 // <single-progress-timeline-name> = none | <dashed-ident>
 // https://drafts.csswg.org/scroll-animations/#propdef-scroll-timeline-name
-struct ProgressTimelineName : ValueOrKeyword<CustomIdent, CSS::Keyword::None> {
+struct ProgressTimelineName : ValueOrKeyword<ScopedName, CSS::Keyword::None> {
     using Base::Base;
 
     bool isNone() const { return isKeyword(); }

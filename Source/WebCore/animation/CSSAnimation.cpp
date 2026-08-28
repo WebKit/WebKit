@@ -217,7 +217,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
         [&](const CSS::Keyword::None&) {
             setTimeline(nullptr);
         },
-        [&](const Style::CustomIdent&) {
+        [&](const Style::ScopedName&) {
             CheckedRef styleOriginatedTimelinesController = document->ensureStyleOriginatedTimelinesController();
             styleOriginatedTimelinesController->attachAnimation(*this);
         },
@@ -235,7 +235,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
                 if (existingViewTimeline->matchesAnonymousViewFunctionForSubject(viewFunction, m_backingStyleZoomForLength, *owningElement()))
                     return;
             }
-            auto viewTimeline = ViewTimeline::create(nullAtom(), viewFunction->axis, viewFunction->insets, m_backingStyleZoomForLength);
+            auto viewTimeline = ViewTimeline::create({ nullAtom() }, viewFunction->axis, viewFunction->insets, m_backingStyleZoomForLength);
             viewTimeline->setSubject(*owningElement());
             setTimeline(WTF::move(viewTimeline));
         }
@@ -243,7 +243,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
 
     // If we're not dealing with a named timeline, we should make sure we have no
     // pending attachment operation for this timeline name.
-    if (!m_backingStyleAnimation.timeline().isCustomIdent()) {
+    if (!m_backingStyleAnimation.timeline().isScopedName()) {
         CheckedRef styleOriginatedTimelinesController = document->ensureStyleOriginatedTimelinesController();
         styleOriginatedTimelinesController->removePendingOperationsForCSSAnimation(*this);
     }
