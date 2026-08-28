@@ -322,13 +322,6 @@ selectors = [
 ]
 requires = ["ENABLE_AIRPLAY_PICKER", "ENABLE_WIRELESS_PLAYBACK_MEDIA_PLAYER"]
 
-[[staging]]
-request = "rdar://161102071"
-selectors = [
-    { name = "setAllowsTypeSelect:", class = "UIContextMenuConfiguration" },
-]
-requires = ["HAVE_UICONTEXTMENUCONFIGURATION_ALLOWTYPESELECT_SUPPORT"]
-
 [[not-web-essential]]
 request = "rdar://171940190"
 selectors = [
