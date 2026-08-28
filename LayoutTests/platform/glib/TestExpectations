@@ -5221,7 +5221,6 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.crossOriginIsolated.
 imported/w3c/web-platform-tests/workers/Worker-creation-happens-in-parallel.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/postMessage_block.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker-postMessage-happens-in-parallel.https.html [ Skip ]
-ipc/serialized-type-info.html [ Skip ]
 ipc/stream-sync-reply-shared-memory.html [ Skip ]
 webkit.org/b/297737 ipc/send-gradient.html [ Skip ]
 webkit.org/b/297737 ipc/send-filter.html [ Skip ]

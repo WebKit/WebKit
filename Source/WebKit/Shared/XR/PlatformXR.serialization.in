@@ -151,7 +151,7 @@ header: <WebCore/PlatformXR.h>
     bool isSharedTexture;
 #endif
 #if !PLATFORM(COCOA)
-    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<UnixFileDescriptor> fds;
     Vector<uint32_t> strides;
     Vector<uint32_t> offsets;
     uint32_t fourcc;
@@ -333,7 +333,7 @@ header: <WebCore/PlatformXR.h>
     PlatformXR::LayerHandle handle;
     bool visible;
     Vector<PlatformXR::DeviceLayer::LayerView> views;
-    WTF::UnixFileDescriptor fenceFD;
+    UnixFileDescriptor fenceFD;
 #if ENABLE(WEBXR_LAYERS)
     bool blendTextureSourceAlpha;
     bool forceMonoPresentation;

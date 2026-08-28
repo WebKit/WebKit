@@ -188,6 +188,9 @@
                         result.push("WKDDActionContext");
                     }
                 }
+            } else {
+                result.push("UnixFileDescriptor");
+                result.push("GTlsCertificateFlags");
             }
         }
         return result.sort();

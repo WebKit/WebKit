@@ -30,7 +30,7 @@ header: "CoreIPCGUnixFDList.h"
 additional_forward_declaration: typedef struct _GUnixFDList GUnixFDList
 
 [GRefPtrWrapped=GUnixFDList] class WebKit::CoreIPCGUnixFDList {
-    Vector<WTF::UnixFileDescriptor> fileDescriptors();
+    Vector<UnixFileDescriptor> fileDescriptors();
 }
 
 #endif

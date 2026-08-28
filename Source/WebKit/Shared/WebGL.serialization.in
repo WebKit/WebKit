@@ -106,7 +106,7 @@ using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight,
 #if OS(ANDROID)
     RefPtr<AHardwareBuffer> hardwareBuffer;
 #else
-    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<UnixFileDescriptor> fds;
     Vector<uint32_t> strides;
     Vector<uint32_t> offsets;
     uint32_t fourcc;
