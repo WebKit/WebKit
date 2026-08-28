@@ -50,6 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-beforetoggle-change-type-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-beforetoggle-opening-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-change-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-checkbox-backdrop-expected.html
@@ -71,6 +72,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inert-invoker.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inside-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inside-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-invoker-inside-popover.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-overflow-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-previous-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-slotted.html
@@ -83,6 +85,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-hierarchy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-loseinterest-show-child.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-reentrant-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-iframe-backdrop-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-iframe-backdrop.html

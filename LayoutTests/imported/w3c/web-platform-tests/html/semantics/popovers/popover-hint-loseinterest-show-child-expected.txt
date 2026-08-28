@@ -1,0 +1,4 @@
+Hover me
+
+FAIL Showing a child hint popover in loseinterest should function promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForRender"
+

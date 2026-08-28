@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-user-select
+None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/WEB_FEATURES.yml
@@ -228,6 +228,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-static-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-static.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-removal-invalidates-ua-styles.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-remove-popover-attribute-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-remove-popover-attribute-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-remove-popover-attribute.html

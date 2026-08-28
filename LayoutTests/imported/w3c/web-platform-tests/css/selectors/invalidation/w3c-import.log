@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/WEB_FEATURES.yml
@@ -50,6 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-nested-pseudo-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-nested-pseudo-003-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudo-element-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudo-element-subject-child-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudo-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudoclass-only.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-sibling-insertion-removal.html

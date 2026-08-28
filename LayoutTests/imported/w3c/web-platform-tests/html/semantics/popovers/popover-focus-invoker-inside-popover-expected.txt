@@ -1,0 +1,4 @@
+Click me first Close  Click me second, THEN press tab After
+
+FAIL Popover with an internal tabindex=-1 invoker does not cause infinite recursion assert_equals: focus should remain on before button expected Element node <button id="before" popovertarget="p" popovertargetaction... but got Element node <body><button id="before" popovertarget="p" popovertarget...
+
