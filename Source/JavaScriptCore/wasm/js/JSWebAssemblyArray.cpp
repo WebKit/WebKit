@@ -69,9 +69,9 @@ void JSWebAssemblyArray::fill(VM& vm, uint32_t offset, uint64_t value, uint32_t 
 {
     // Handle ref types separately to ensure write barriers are in effect.
     if (elementsAreRefTypes()) {
-        // FIXME: We should have a GCSafeMemfill.
-        for (size_t i = 0; i < size; i++)
-            set(vm, offset + i, value);
+        for (size_t i = 0; i < size; ++i)
+            setWithoutWriteBarrier(offset + i, value);
+        vm.writeBarrier(this);
         return;
     }
 

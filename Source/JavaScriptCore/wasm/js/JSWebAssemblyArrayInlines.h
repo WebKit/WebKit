@@ -142,13 +142,18 @@ v128_t JSWebAssemblyArray::getVector(uint32_t index)
     return span<v128_t>()[index];
 }
 
-void JSWebAssemblyArray::set(VM& vm, uint32_t index, uint64_t value)
+void JSWebAssemblyArray::setWithoutWriteBarrier(uint32_t index, uint64_t value)
 {
     visitSpanNonVector([&]<typename T>(std::span<T> span) ALWAYS_INLINE_LAMBDA {
         span[index] = static_cast<T>(value);
-        if (elementsAreRefTypes())
-            vm.writeBarrier(this);
     });
+}
+
+void JSWebAssemblyArray::set(VM& vm, uint32_t index, uint64_t value)
+{
+    setWithoutWriteBarrier(index, value);
+    if (elementsAreRefTypes())
+        vm.writeBarrier(this);
 }
 
 void JSWebAssemblyArray::set(VM&, uint32_t index, v128_t value)

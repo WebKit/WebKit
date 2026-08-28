@@ -132,6 +132,7 @@ public:
 
 private:
     friend class LLIntOffsetsExtractor;
+    inline void setWithoutWriteBarrier(uint32_t index, uint64_t value);
     inline std::span<uint8_t> bytes();
 
     // NB: It's *HIGHLY* recommended that you don't use these directly since you'll have to remember to clean up the alignment for v128.
