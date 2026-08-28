@@ -4,4 +4,7 @@ PASS Property baseline-shift value '20%'
 PASS Property baseline-shift value 'calc(10px - 0.5em)'
 PASS Property baseline-shift value 'sub'
 PASS Property baseline-shift value 'super'
+FAIL Property baseline-shift value 'bottom' assert_true: 'bottom' is a supported value for baseline-shift. expected true got false
+FAIL Property baseline-shift value 'center' assert_true: 'center' is a supported value for baseline-shift. expected true got false
+FAIL Property baseline-shift value 'top' assert_true: 'top' is a supported value for baseline-shift. expected true got false
 

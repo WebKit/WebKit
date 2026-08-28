@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-valid.html

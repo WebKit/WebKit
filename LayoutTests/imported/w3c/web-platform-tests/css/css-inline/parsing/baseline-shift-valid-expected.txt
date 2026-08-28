@@ -5,4 +5,7 @@ PASS e.style['baseline-shift'] = "calc(2em + 3ex)" should set the property value
 PASS e.style['baseline-shift'] = "0" should set the property value
 PASS e.style['baseline-shift'] = "sub" should set the property value
 PASS e.style['baseline-shift'] = "super" should set the property value
+FAIL e.style['baseline-shift'] = "bottom" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['baseline-shift'] = "center" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['baseline-shift'] = "top" should set the property value assert_not_equals: property should be set got disallowed value ""
 
