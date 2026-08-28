@@ -602,9 +602,17 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
                 if (type.isNullable())
                     isNull.link(&jit);
+            } else if (Wasm::isI31ref(type)) {
+                jit.loadValue(jsParam, scratchJSR);
+                auto isNull = jit.branchIfNull(scratchJSR);
+                if (!type.isNullable())
+                    slowPath.append(isNull);
+                slowPath.append(jit.branchIfNotInt32(scratchJSR, DoNotHaveTagRegisters));
+                slowPath.append(jit.branch32(CCallHelpers::GreaterThan, scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::maxI31ref)));
+                slowPath.append(jit.branch32(CCallHelpers::LessThan, scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::minI31ref)));
+                if (type.isNullable())
+                    isNull.link(&jit);
             } else if (!Wasm::isExternref(type)) {
-                // FIXME: this should implement some fast paths for, e.g., i31refs and other
-                // types that can be easily handled.
                 slowPath.append(jit.jump());
             }
 
