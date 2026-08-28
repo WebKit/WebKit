@@ -113,6 +113,10 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://soundcloud.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.apple.com/");
 
+#if ENABLE(THUNDER)
+    assertUserAgentForURLHasChromeBrowserQuirk("http://www.primevideo.com/");
+#endif
+
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.bilibili.com/");
 

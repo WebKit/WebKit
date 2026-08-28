@@ -70,6 +70,11 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
     if (domain == "www.apple.com"_s)
         return true;
 
+#if ENABLE(THUNDER)
+    if (baseDomain == "primevideo.com"_s)
+        return true;
+#endif
+
     return false;
 }
 
