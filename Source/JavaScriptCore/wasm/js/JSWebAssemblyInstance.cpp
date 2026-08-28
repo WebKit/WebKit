@@ -348,14 +348,33 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
             return exception(createTypeError(globalObject, "can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports"_s));
     }
 
+    auto isReservedESMName = [](const Wasm::Name& name) {
+        return startsWith(name.span(), "wasm:"_s) || startsWith(name.span(), "wasm-js:"_s);
+    };
+
+    if (creationMode == CreationMode::FromModuleLoader) {
+        for (auto& exp : moduleInformation.exports) {
+            if (isReservedESMName(exp.field))
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Export name '"_s, makeString(exp.field), "' is reserved"_s)));
+        }
+    }
+
     // For each import i in module.imports:
     {
         IdentifierSet specifiers;
         for (auto& import : moduleInformation.imports) {
             auto moduleName = Identifier::fromString(vm, makeAtomString(import.module));
             auto fieldName = Identifier::fromString(vm, makeAtomString(import.field));
+            if (creationMode == CreationMode::FromModuleLoader) {
+                if (isReservedESMName(import.field))
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import name '"_s, StringView(fieldName.impl()), "' is reserved"_s)));
+                if (startsWith(import.module.span(), "wasm-js:"_s))
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import module '"_s, StringView(moduleName.impl()), "' is reserved"_s)));
+            }
+            bool skipRequestedModule = creationMode == CreationMode::FromModuleLoader
+                && (moduleInformation.importedStringConstantsEquals(import.module) || moduleInformation.builtinSetsInclude(import.module));
             auto result = specifiers.add(moduleName.impl());
-            if (result.isNewEntry)
+            if (result.isNewEntry && !skipRequestedModule)
                 moduleRecord->appendRequestedModule(moduleName, nullptr);
             moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
                 WebAssemblyModuleRecord::ImportEntryType::Single,
