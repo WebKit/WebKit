@@ -429,7 +429,7 @@ static const LengthSchema& heightFeatureSchema()
         [](auto& context) {
             auto height = protect(context.document->view())->layoutHeight();
             if (CheckedPtr renderView = context.document->renderView())
-                height = Style::adjustForAbsoluteZoom(height, *renderView);
+                height = Style::unapplyingZoom<int>(height, *renderView);
             return height;
         }
     };
@@ -729,7 +729,7 @@ static const LengthSchema& widthFeatureSchema()
         [](auto& context) {
             auto width = protect(context.document->view())->layoutWidth();
             if (CheckedPtr renderView = context.document->renderView())
-                width = Style::adjustForAbsoluteZoom(width, *renderView);
+                width = Style::unapplyingZoom<int>(width, *renderView);
             return width;
         }
     };

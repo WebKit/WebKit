@@ -535,12 +535,12 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
             if (box->style().logicalContainIntrinsicWidth().hasAuto()) {
-                auto adjustedWidth = LayoutUnit { Style::applyZoom(contentBoxSize->inlineSize(), box->style()) };
+                auto adjustedWidth = LayoutUnit { Style::applyingZoom<float>(contentBoxSize->inlineSize(), box->style()) };
                 target->setLastRememberedLogicalWidth(adjustedWidth);
             }
 
             if (box->style().logicalContainIntrinsicHeight().hasAuto()) {
-                auto adjustedHeight = LayoutUnit { Style::applyZoom(contentBoxSize->blockSize(), box->style()) };
+                auto adjustedHeight = LayoutUnit { Style::applyingZoom<float>(contentBoxSize->blockSize(), box->style()) };
                 target->setLastRememberedLogicalHeight(adjustedHeight);
             }
         }

@@ -1195,8 +1195,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     String elementHeight;
     if (is<RenderBoxModelObject>(renderer)) {
         CheckedPtr modelObject = downcast<RenderBoxModelObject>(renderer.get());
-        elementWidth = String::number(Style::adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject));
-        elementHeight = String::number(Style::adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject));
+        elementWidth = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetWidth()), *modelObject));
+        elementHeight = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
         RefPtr containingView = node.document().frame()->view();
         IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,65 +29,50 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
 #include "StyleZoomPrimitives.h"
+#include <concepts>
 
 namespace WebCore {
 namespace Style {
 
-inline int adjustForAbsoluteZoom(int value, const ComputedStyle& style)
-{
-    double zoomFactor = style.usedZoom();
-    if (zoomFactor == 1)
-        return value;
-    // Needed because resolveAsLength<int> truncates (rather than rounds) when scaling up.
-    if (zoomFactor > 1) {
-        if (value < 0)
-            value--;
-        else
-            value++;
-    }
-
-    return roundForImpreciseConversion<int>(value / zoomFactor);
-}
-
-inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)
-{
-    return adjustForAbsoluteZoom(value, renderer.style());
-}
-
-inline float adjustFloatForAbsoluteZoom(float value, const ComputedStyle& style)
-{
-    return value / style.usedZoom();
-}
-
-inline float adjustFloatForAbsoluteZoom(float value, const RenderElement& renderer)
-{
-    return adjustFloatForAbsoluteZoom(value, renderer.style());
-}
-
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const ComputedStyle& style)
-{
-    return LayoutUnit(value / style.usedZoom());
-}
-
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderElement& renderer)
-{
-    return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
-}
-
-inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const ComputedStyle& style)
+template<typename T>
+T unapplyingZoom(T value, const ComputedStyle& style)
 {
     auto zoom = style.usedZoom();
-    return { size.width() / zoom, size.height() / zoom };
+
+    if constexpr (std::integral<T>) {
+        if (zoom == 1)
+            return value;
+        // Needed to match historical `CSSPrimitiveValue::resolveAsLength<int>` behavior which truncated (rather than rounding) when scaling up.
+        if (zoom > 1) {
+            if (value < 0)
+                value--;
+            else
+                value++;
+        }
+        return roundForImpreciseConversion<int>(value / zoom);
+    } else if constexpr (std::floating_point<T> || std::same_as<T, LayoutUnit>) {
+        return T(value / zoom);
+    } else if constexpr (std::same_as<T, LayoutSize>) {
+        return T(value.width() / zoom, value.height() / zoom);
+    }
 }
 
-inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderElement& renderer)
+template<typename T>
+T unapplyingZoom(T value, const RenderElement& renderer)
 {
-    return adjustLayoutSizeForAbsoluteZoom(size, renderer.style());
+    return Style::unapplyingZoom<T>(value, renderer.style());
 }
 
-inline float applyZoom(float value, const ComputedStyle& style)
+template<typename T>
+inline T applyingZoom(T value, const ComputedStyle& style)
 {
     return value * style.usedZoom();
+}
+
+template<typename T>
+inline T applyingZoom(T value, const RenderElement& renderer)
+{
+    return Style::applyingZoom<T>(value, renderer.style());
 }
 
 } // namespace Style

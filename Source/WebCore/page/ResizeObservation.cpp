@@ -81,9 +81,9 @@ auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
             if (box->isSkippedContent())
                 return std::nullopt;
             return { {
-                Style::adjustLayoutSizeForAbsoluteZoom(box->contentBoxSize(), *box),
-                Style::adjustLayoutSizeForAbsoluteZoom(box->contentBoxLogicalSize(), *box),
-                Style::adjustLayoutSizeForAbsoluteZoom(box->logicalSize(), *box)
+                Style::unapplyingZoom<LayoutSize>(box->contentBoxSize(), *box),
+                Style::unapplyingZoom<LayoutSize>(box->contentBoxLogicalSize(), *box),
+                Style::unapplyingZoom<LayoutSize>(box->logicalSize(), *box)
             } };
         }
     }

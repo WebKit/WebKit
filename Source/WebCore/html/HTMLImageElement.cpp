@@ -677,7 +677,7 @@ unsigned HTMLImageElement::width()
     if (!box)
         return 0;
     LayoutRect contentRect = box->contentBoxRect();
-    return Style::adjustLayoutUnitForAbsoluteZoom(contentRect.width(), *box).round();
+    return Style::unapplyingZoom<LayoutUnit>(contentRect.width(), *box).round();
 }
 
 unsigned HTMLImageElement::height()
@@ -700,7 +700,7 @@ unsigned HTMLImageElement::height()
     if (!box)
         return 0;
     LayoutRect contentRect = box->contentBoxRect();
-    return Style::adjustLayoutUnitForAbsoluteZoom(contentRect.height(), *box).round();
+    return Style::unapplyingZoom<LayoutUnit>(contentRect.height(), *box).round();
 }
 
 unsigned HTMLImageElement::naturalWidth() const

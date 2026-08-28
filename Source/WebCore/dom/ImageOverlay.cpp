@@ -565,8 +565,8 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             FloatSize sizeBeforeTransform;
             if (CheckedPtr renderer = textContainer->renderBoxModelObject()) {
                 sizeBeforeTransform = {
-                    Style::adjustLayoutUnitForAbsoluteZoom(renderer->offsetWidth(), *renderer).toFloat(),
-                    Style::adjustLayoutUnitForAbsoluteZoom(renderer->offsetHeight(), *renderer).toFloat(),
+                    Style::unapplyingZoom<LayoutUnit>(renderer->offsetWidth(), *renderer).toFloat(),
+                    Style::unapplyingZoom<LayoutUnit>(renderer->offsetHeight(), *renderer).toFloat(),
                 };
             }
 
