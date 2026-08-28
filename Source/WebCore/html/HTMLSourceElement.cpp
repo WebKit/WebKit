@@ -124,11 +124,11 @@ void HTMLSourceElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
-void HTMLSourceElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+void HTMLSourceElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(isSubtreeRoot, oldParent);
 
-    if (!isSubtreeRoot)
+    if (isSubtreeRoot == IsSubtreeRoot::No)
         return;
 
     RefPtr oldParentPicture = dynamicDowncast<HTMLPictureElement>(oldParent);

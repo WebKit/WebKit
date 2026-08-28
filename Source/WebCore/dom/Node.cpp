@@ -1518,7 +1518,7 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
     }
 }
 
-void Node::movingSteps(bool, ContainerNode&)
+void Node::movingSteps(IsSubtreeRoot, ContainerNode&)
 {
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 }

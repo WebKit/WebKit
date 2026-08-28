@@ -211,11 +211,11 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
-void HTMLOptionElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+void HTMLOptionElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(isSubtreeRoot, oldParent);
 
-    if (!isSubtreeRoot)
+    if (isSubtreeRoot == IsSubtreeRoot::No)
         return;
 
     if (!document().settings().htmlEnhancedSelectParsingEnabled())

@@ -631,11 +631,11 @@ void HTMLImageElement::removingSteps(RemovalType removalType, ContainerNode& old
     FormAssociatedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
-void HTMLImageElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+void HTMLImageElement::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(isSubtreeRoot, oldParent);
 
-    if (!isSubtreeRoot)
+    if (isSubtreeRoot == IsSubtreeRoot::No)
         return;
 
     if (RefPtr parentPicture = dynamicDowncast<HTMLPictureElement>(parentElement())) {

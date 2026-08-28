@@ -1449,7 +1449,7 @@ static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Nod
     for (RefPtr inclusiveDescendant = &root; inclusiveDescendant; inclusiveDescendant = NodeTraversal::next(*inclusiveDescendant, &root)) {
         bool isSubtreeRoot = inclusiveDescendant.get() == &movedNode;
 
-        inclusiveDescendant->movingSteps(isSubtreeRoot, oldParent);
+        inclusiveDescendant->movingSteps(isSubtreeRoot ? Node::IsSubtreeRoot::Yes : Node::IsSubtreeRoot::No, oldParent);
 
         if (newParentIsConnected) {
             if (RefPtr element = dynamicDowncast<Element>(*inclusiveDescendant); element && element->isDefinedCustomElement())

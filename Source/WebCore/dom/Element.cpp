@@ -3325,7 +3325,7 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
     }
 }
 
-void Element::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+void Element::movingSteps(IsSubtreeRoot isSubtreeRoot, ContainerNode& oldParent)
 {
     ContainerNode::movingSteps(isSubtreeRoot, oldParent);
 
@@ -3359,7 +3359,7 @@ void Element::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
 
     updateEffectiveLangState();
 
-    if (!isSubtreeRoot || !hasFocusWithin())
+    if (isSubtreeRoot == IsSubtreeRoot::No || !hasFocusWithin())
         return;
 
     if (RefPtr oldParentElement = dynamicDowncast<Element>(oldParent))
