@@ -49,6 +49,17 @@ bool WebExtensionContext::isOffscreenMessageAllowed(IPC::Decoder& message)
     return false;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static UIWindowScene *windowScene()
+{
+    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        if ([scene isKindOfClass:UIWindowScene.class] && (scene.activationState == UISceneActivationStateForegroundActive || scene.activationState == UISceneActivationStateForegroundInactive))
+            return (UIWindowScene *)scene;
+    }
+    return nil;
+}
+#endif
+
 void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDocumentParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static constexpr auto apiName = "offscreen.createDocument()"_s;
@@ -92,7 +103,7 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
     m_offscreenWebViewWindow = adoptNS([[NSWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [m_offscreenWebViewWindow.get().contentView addSubview:m_offscreenWebView.get()];
 #elif PLATFORM(IOS_FAMILY)
-    m_offscreenWebViewWindow = adoptNS([[UIWindow alloc] initWithFrame:CGRectZero]);
+    m_offscreenWebViewWindow = adoptNS([[UIWindow alloc] initWithWindowScene:windowScene()]);
     [m_offscreenWebViewWindow.get() addSubview:m_offscreenWebView.get()];
 #endif
 
