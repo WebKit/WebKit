@@ -29,6 +29,7 @@
 #include "ComputePassEncoder.h"
 #include "IsValidToUseWith.h"
 #include "RenderPassEncoder.h"
+#include <WebGPU/WGPUTextureImpl.h>
 #include <span>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
@@ -71,6 +72,15 @@ inline bool isValidToUseWith(const WebGPU::TextureOrTextureView& texture, const 
 
 // FIXME: rdar://138415945
 inline bool areBuffersEqual(const WebGPU::Buffer& a, const WebGPU::Buffer& b)
+{
+    return &a == &b;
+}
+
+// FIXME: rdar://130765784
+// Swift's built-in === rejects foreign reference types, and comparing them in
+// Swift otherwise requires unsafeBitCast to a raw pointer. Doing the identity
+// comparison here keeps the Swift side free of `unsafe`.
+inline bool areTexturesEqual(const WGPUTextureImpl& a, const WGPUTextureImpl& b)
 {
     return &a == &b;
 }

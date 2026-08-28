@@ -37,22 +37,67 @@
 
 namespace WTF {
 
-// WTF's byte views for Swift interop.
+// Byte spans for Swift interop. In order of preference:
 //
-// Where possible, use SpanUInt8 or MutableSpanUInt8 -- in C++ these are simply
-// std::span<const uint8_t> and std::span<uint8_t>.
-// On the Swift side these materialise as Span<UInt8> and MutableSpan<UInt8>, which are
-// non-escapable. That means Swift will ensure at compile-time that the data is not
-// stashed anywhere, but is used or copied before control returns to the C++ caller.
+//   SpanUInt8 / MutableSpanUInt8 (plain std::span). A C++ accessor returning one, marked
+//   LIFETIME_BOUND, imports into Swift as a Span whose lifetime Swift tracks. Use these
+//   whenever Swift is calling a C++ function.
+//   (You _can_ use these in Swift functions that need to be called from C++, but they
+//   import as unsafe without the special magic that turns them into safe Swift Span
+//   types, so avoid.)
 //
-// However, some Swift APIs are not compatible with non-escapable types. In these cases,
-// use EscapableByteSpan which adds a small runtime overhead to ensure Swift
-// relinquishes its view of the data before it falls out of C++ scope.
+//   ByteSpan / MutableByteSpan. Non-escapable in Swift, so Swift cannot store one, and
+//   subspan() narrows without naming a pointer. Use these when C++ calls a Swift
+//   function: such a function cannot take or return Swift's own Span or MutableSpan,
+//   and a std::span parameter arrives in Swift as an unsafe type.
+//
+//   EscapableByteSpan. Escapable, for Swift APIs that reject
+//   non-escapable types, such as anything taking DataProtocol. They cost a copy count
+//   and turn misuse into a runtime crash rather than a compile error, so prefer the
+//   others.
 
 // Common byte-buffer specializations, named so they can be referenced from Swift.
 using SpanUInt8 = std::span<const uint8_t>;
 using MutableSpanUInt8 = std::span<uint8_t>;
 using VectorUInt8 = Vector<uint8_t>;
+
+// Non-escapable wrapper for std::span, for Swift function signatures exposed to C++
+// (because std::span/Span cannot safely be used in that context.)
+//
+// Safe to template only because Swift never extends these: a Swift extension on a
+// template specialization emits unparseable .swiftinterface names. span() is hidden from
+// Swift so Swift never holds an unsafe span, and because a lifetimebound member returning
+// a dependent span crashes the compiler (rdar://187391842).
+template<typename T> class SWIFT_NONESCAPABLE ByteSpanView final {
+public:
+    ByteSpanView() = default;
+
+    static ByteSpanView create(std::span<T> bytes LIFETIME_BOUND) { return ByteSpanView(bytes); }
+
+    size_t size() const { return m_span.size(); }
+
+    ByteSpanView subspan(size_t offset, size_t count) const LIFETIME_BOUND
+    {
+        RELEASE_ASSERT(offset <= m_span.size() && count <= m_span.size() - offset);
+        return ByteSpanView(m_span.subspan(offset, count));
+    }
+
+    // See above for why ifndef __swift__
+#ifndef __swift__
+    std::span<T> span() const { return m_span; }
+#endif
+
+private:
+    explicit ByteSpanView(std::span<T> bytes LIFETIME_BOUND)
+        : m_span(bytes)
+    {
+    }
+
+    std::span<T> m_span;
+};
+
+using ByteSpan = ByteSpanView<const uint8_t>;
+using MutableByteSpan = ByteSpanView<uint8_t>;
 
 // EscapableByteSpan is a stack-only control block over a span of bytes owned elsewhere
 // (typically a Vector on the C++ stack). It lets Swift borrow C++ bytes with no copy
@@ -156,5 +201,7 @@ inline EscapableByteSpan escapableSpan(SpanUInt8 bytes LIFETIME_BOUND)
 
 } // namespace WTF
 
+using WTF::ByteSpan;
 using WTF::EscapableByteSpan;
+using WTF::MutableByteSpan;
 using WTF::escapableSpan;
