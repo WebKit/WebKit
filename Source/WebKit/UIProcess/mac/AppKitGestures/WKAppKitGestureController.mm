@@ -571,7 +571,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     }
 
 #if HAVE(NSREFRESHCONTROLLER)
-    impl->updateRefreshControllerForPanGesture([gesture state]);
+    impl->updateRefreshControllerForPanGesture([gesture state], [self refreshControllerEligibility:_panGestureRecognizer]);
 #endif
 
     [self sendWheelEventForGesture:_panGestureRecognizer];

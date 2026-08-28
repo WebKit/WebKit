@@ -253,6 +253,10 @@ enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class UndoOrRedo : bool;
 enum class WebEventPhase : uint8_t;
 
+#if HAVE(NSREFRESHCONTROLLER)
+enum class RefreshControllerEligibility : bool { Ineligible, Eligible };
+#endif
+
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
@@ -906,7 +910,7 @@ public:
     bool refreshControllerIsTracking() const { return m_refreshControllerIsTracking; }
     void clearRefreshControllerTracking() { m_refreshControllerIsTracking = false; }
     void updateRefreshControllerForWheelEvent(NSEvent *);
-    void updateRefreshControllerForPanGesture(NSGestureRecognizerState);
+    void updateRefreshControllerForPanGesture(NSGestureRecognizerState, RefreshControllerEligibility);
     void updateRefreshControllerFrame();
     void topScrollStretchDidChange(CGFloat topScrollStretch);
 #endif
