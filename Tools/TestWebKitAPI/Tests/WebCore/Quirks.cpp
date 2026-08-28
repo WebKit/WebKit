@@ -27,6 +27,7 @@
 
 #include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
+#include <array>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -48,8 +49,84 @@ static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 {
-    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes });
+    return WebCore::resolveSiteSpecificQuirks(URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes);
 }
+
+static bool matchesTopURL(const WebCore::QuirkURLMatch& match, ASCIILiteral urlString)
+{
+    return match.matches(WebCore::URLMatchContext { URL { urlString } }, WebCore::URLMatchContext { URL { urlString } }, WebCore::IsTopDocument::Yes);
+}
+
+static bool matchesEmbeddedDocument(const WebCore::QuirkURLMatch& match, ASCIILiteral topURLString, ASCIILiteral documentURLString)
+{
+    return match.matches(WebCore::URLMatchContext { URL { topURLString } }, WebCore::URLMatchContext { URL { documentURLString } }, WebCore::IsTopDocument::No);
+}
+
+static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
+
+TEST_F(QuirksTest, TopURLMatchIgnoresTheDocumentURL)
+{
+    WebCore::QuirkURLMatch match = WebCore::URLMatch::domain("theguardian.com"_s);
+
+    EXPECT_TRUE(matchesTopURL(match, "https://www.theguardian.com/film"_s));
+
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s));
+
+    EXPECT_FALSE(matchesEmbeddedDocument(match, "https://www.youtube.com/"_s, "https://www.theguardian.com/film"_s));
+}
+
+TEST_F(QuirksTest, EmbeddedDocumentMatchesTheDocumentURLNotTheTopURL)
+{
+    auto match = WebCore::QuirkURLMatch::embeddedDocument(WebCore::URLMatch::domain(youTubeEmbedDomains));
+
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s));
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.example.com/"_s, "https://www.youtube-nocookie.com/embed/abc"_s));
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.example.com/"_s, "https://foo.bar.youtube.com/embed/abc"_s));
+
+    EXPECT_FALSE(matchesEmbeddedDocument(match, "https://www.example.com/"_s, "https://vimeo.com/12345"_s));
+
+    EXPECT_FALSE(matchesEmbeddedDocument(match, "https://www.youtube.com/watch?v=abc"_s, "https://vimeo.com/12345"_s));
+
+    EXPECT_FALSE(matchesTopURL(match, "https://www.youtube.com/watch?v=abc"_s));
+}
+
+TEST_F(QuirksTest, EmbeddedDocumentInTopMatchRequiresBothURLsToMatch)
+{
+    auto match = WebCore::QuirkURLMatch::embeddedDocumentInTopMatch(WebCore::URLMatch::anyTopLevelDomain("theguardian"_s), WebCore::URLMatch::domain(youTubeEmbedDomains));
+
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s));
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.theguardian.co.uk/film"_s, "https://www.youtube-nocookie.com/embed/abc"_s));
+
+    EXPECT_FALSE(matchesEmbeddedDocument(match, "https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s));
+    EXPECT_FALSE(matchesEmbeddedDocument(match, "https://www.theguardian.com/film"_s, "https://vimeo.com/12345"_s));
+    EXPECT_FALSE(matchesTopURL(match, "https://www.theguardian.com/film"_s));
+}
+
+TEST_F(QuirksTest, EmbeddedMatchesNeverApplyToTheTopDocument)
+{
+    auto match = WebCore::QuirkURLMatch::embeddedDocumentInTopMatch(WebCore::URLMatch::anyURL(), WebCore::URLMatch::domain("youtube.com"_s));
+
+    EXPECT_TRUE(matchesEmbeddedDocument(match, "https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s));
+    EXPECT_FALSE(matchesTopURL(match, "https://www.youtube.com/watch?v=abc"_s));
+}
+
+#if PLATFORM(COCOA)
+static WebCore::QuirksData resolveQuirksForEmbeddedDocument(ASCIILiteral topURLString, ASCIILiteral documentURLString)
+{
+    return WebCore::resolveSiteSpecificQuirks(URL { topURLString }, URL { documentURLString }, WebCore::IsTopDocument::No);
+}
+
+TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+}
+#endif
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
 {

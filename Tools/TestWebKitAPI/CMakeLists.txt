@@ -350,8 +350,8 @@ if (ENABLE_WEBKIT)
     set(TestWebKit_SOURCES
         Helpers/Utilities.cpp
 
-        Tests/WebCore/QuirkMatch.cpp
         Tests/WebCore/Quirks.cpp
+        Tests/WebCore/URLMatch.cpp
 
         Tests/WebKit/WKPage/AboutBlankLoad.cpp
         Tests/WebKit/WKPage/CanHandleRequest.cpp

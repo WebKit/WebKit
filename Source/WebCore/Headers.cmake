@@ -2082,7 +2082,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PrewarmInformation.h
     page/PrintContext.h
     page/ProcessWarming.h
-    page/QuirkMatch.h
     page/QuirkNames.h
     page/QuirkTable.h
     page/Quirks.h
@@ -2118,6 +2117,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/TextAnimationTypes.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
+    page/URLMatch.h
     page/TranslationContextMenuInfo.h
     page/UADataValues.h
     page/UALowEntropyJSON.h

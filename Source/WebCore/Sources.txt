@@ -2357,7 +2357,6 @@ page/PointerCaptureController.cpp
 page/PointerLockController.cpp
 page/PrintContext.cpp @header:RenderStyleGetters @cost:7
 page/ProcessWarming.cpp
-page/QuirkMatch.cpp
 page/QuirkTable.cpp
 page/Quirks.cpp @header:RenderStyleGetters @cost:11
 page/RemoteDOMWindow.cpp
@@ -2382,6 +2381,7 @@ page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp @header:RenderStyleGetters @cost:6
 page/TextIndicator.cpp @header:RenderStyleGetters @cost:6
+page/URLMatch.cpp
 page/UndoItem.cpp
 page/UndoManager.cpp
 page/UserContentController.cpp

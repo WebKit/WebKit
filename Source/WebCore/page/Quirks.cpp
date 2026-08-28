@@ -103,10 +103,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include <pal/system/ios/UserInterfaceIdiom.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -2825,33 +2821,6 @@ void Quirks::setTopDocumentURLForTesting(URL&& url)
     determineRelevantQuirks();
 }
 
-bool evaluateQuirkEnvironment(QuirkEnvironment environment)
-{
-    switch (environment) {
-    case QuirkEnvironment::SmallScreen:
-#if PLATFORM(IOS_FAMILY)
-        return PAL::currentUserInterfaceIdiomIsSmallScreen();
-#else
-        return false;
-#endif
-    case QuirkEnvironment::TubularApp:
-#if PLATFORM(IOS_FAMILY)
-        return WTF::IOSApplication::isTubular();
-#else
-        return false;
-#endif
-    case QuirkEnvironment::LensApp:
-#if PLATFORM(IOS_FAMILY)
-        return WTF::IOSApplication::isLensApp();
-#else
-        return false;
-#endif
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void Quirks::determineRelevantQuirks()
 {
     RELEASE_ASSERT(m_document);
@@ -2884,7 +2853,7 @@ void Quirks::determineRelevantQuirks()
         return;
 
     Ref document = *protect(m_document);
-    m_quirksData.merge(resolveSiteSpecificQuirks({ quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No }));
+    m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460
