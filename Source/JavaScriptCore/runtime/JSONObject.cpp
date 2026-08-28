@@ -698,11 +698,16 @@ enum class FailureReason : uint8_t {
     Unknown,
 };
 
+struct FastStringifyFailure {
+    FailureReason reason { FailureReason::Unknown };
+    unsigned length { 0 };
+};
+
 template<typename CharType, BufferMode bufferMode>
 class FastStringifier {
 public:
     // Returns null string if the fast case fails.
-    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, std::optional<FailureReason>&);
+    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, FastStringifyFailure&);
 
     static constexpr unsigned staticBufferSize = bufferMode == BufferMode::StaticBuffer ? 8192 : 8;
     static constexpr unsigned dynamicBufferInlineCapacity = bufferMode == BufferMode::StaticBuffer ? 0 : 1024;
@@ -710,7 +715,7 @@ public:
     static constexpr bool useShortCopyTier = bufferMode == BufferMode::DynamicBuffer;
 
 private:
-    explicit FastStringifier(JSGlobalObject&);
+    FastStringifier(JSGlobalObject&, unsigned previousAttemptLength);
     template<HasGap hasGap> void append(JSValue);
     void appendInt32(int32_t);
     template<HasGap hasGap> void appendInt32Array(JSArray&);
@@ -900,15 +905,17 @@ inline unsigned FastStringifier<CharType, bufferMode>::usableBufferSize(unsigned
 }
 
 template<typename CharType, BufferMode bufferMode>
-inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& globalObject)
+inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& globalObject, unsigned previousAttemptLength)
     : m_globalObject(globalObject)
     , m_vm(globalObject.vm())
 {
     if constexpr (bufferMode == BufferMode::StaticBuffer)
         m_capacity = m_length + usableBufferSize(staticBufferSize);
     else {
-        m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
-        m_capacity = dynamicBufferInlineCapacity;
+        size_t initialCapacity = std::max<size_t>(dynamicBufferInlineCapacity, static_cast<size_t>(previousAttemptLength) + (previousAttemptLength >> 2));
+        if (!StringImpl::isValidLength<CharType>(initialCapacity) || !m_dynamicBuffer.tryGrow(initialCapacity))
+            m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
+        m_capacity = m_dynamicBuffer.size();
         m_stackLimit = std::bit_cast<uint8_t*>(m_vm.softStackLimit());
     }
 }
@@ -922,8 +929,7 @@ inline bool FastStringifier<CharType, bufferMode>::haveFailure() const
 template<typename CharType, BufferMode bufferMode>
 inline String FastStringifier<CharType, bufferMode>::result()
 {
-    if (haveFailure())
-        return { };
+    ASSERT(!haveFailure());
 #if FAST_STRINGIFY_LOG_USAGE
     static std::atomic<unsigned> maxSizeSeen;
     if (m_length > maxSizeSeen) {
@@ -1469,10 +1475,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                 // It's possible the UTF-16 string is actually Latin-1. We try to avoid that but bailing out here is _way_ more expensive if it does sometimes happen.
                 bool success = WTF::appendEscapedJSONStringContent(output, string.data.span16());
                 if (!success) [[unlikely]] {
-                    if constexpr (bufferMode == BufferMode::DynamicBuffer)
-                        recordFailure(FailureReason::Unknown, "16-bit string, "_s);
-                    else
-                        recordFailure(m_length < (m_capacity / 2) ? FailureReason::Found16BitEarly : FailureReason::Found16BitLate, "16-bit string, "_s);
+                    recordFailure(bufferMode == BufferMode::StaticBuffer && m_length < (m_capacity / 2) ? FailureReason::Found16BitEarly : FailureReason::Found16BitLate, "16-bit string, "_s);
                     return;
                 }
             }
@@ -1822,13 +1825,13 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendInt32Array(JSArra
 }
 
 template<typename CharType, BufferMode bufferMode>
-inline String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, std::optional<FailureReason>& failureReason)
+inline String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, FastStringifyFailure& failure)
 {
     if (replacer.isObject()) {
         logOutcome("replacer"_s);
         return { };
     }
-    FastStringifier stringifier(globalObject);
+    FastStringifier stringifier(globalObject, failure.length);
     if (!space.isUndefined()) {
         if (!stringifier.setGap(space)) [[unlikely]] {
             logOutcome("space"_s);
@@ -1839,7 +1842,10 @@ inline String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& g
         stringifier.append<HasGap::Yes>(value);
     else
         stringifier.append<HasGap::No>(value);
-    failureReason = stringifier.m_failureReason;
+    if (stringifier.haveFailure()) [[unlikely]] {
+        failure = { *stringifier.m_failureReason, stringifier.m_length };
+        return { };
+    }
     return stringifier.result();
 }
 
@@ -1848,23 +1854,21 @@ static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value
     VM& vm = globalObject.vm();
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
     if (std::bit_cast<uint8_t*>(currentStackPointer()) >= stackLimit) [[likely]] {
-        std::optional<FailureReason> failureReason;
-        failureReason = std::nullopt;
-        if (String result = FastStringifier<Latin1Character, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+        FastStringifyFailure failure;
+        if (String result = FastStringifier<Latin1Character, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failure); !result.isNull())
             return result;
-        if (failureReason == FailureReason::Found16BitEarly) {
-            failureReason = std::nullopt;
-            if (String result = FastStringifier<char16_t, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+        bool retryWith16BitDynamicBuffer = failure.reason == FailureReason::Found16BitLate;
+        if (failure.reason == FailureReason::Found16BitEarly) {
+            if (String result = FastStringifier<char16_t, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failure); !result.isNull())
                 return result;
-
-            if (failureReason == FailureReason::BufferFull) {
-                failureReason = std::nullopt;
-                if (String result = FastStringifier<char16_t, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
-                    return result;
-            }
-        } else if (failureReason == FailureReason::BufferFull) {
-            failureReason = std::nullopt;
-            if (String result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+            retryWith16BitDynamicBuffer = failure.reason == FailureReason::BufferFull;
+        } else if (failure.reason == FailureReason::BufferFull) {
+            if (String result = FastStringifier<Latin1Character, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failure); !result.isNull())
+                return result;
+            retryWith16BitDynamicBuffer = failure.reason == FailureReason::Found16BitLate;
+        }
+        if (retryWith16BitDynamicBuffer) {
+            if (String result = FastStringifier<char16_t, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failure); !result.isNull())
                 return result;
         }
     }
