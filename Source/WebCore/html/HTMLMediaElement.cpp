@@ -2923,12 +2923,13 @@ bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIf
         return false;
     }
 
-    if (!portAllowed(url) || isIPAddressDisallowed(url)) {
+    bool ipAddressDisallowed = isIPAddressDisallowed(url);
+    if (ipAddressDisallowed || !portAllowed(url)) {
         if (actionIfInvalid == InvalidURLAction::Complain) {
             if (frame)
                 FrameLoader::reportBlockedLoadFailed(*frame, url);
             if (shouldLog) {
-                if (isIPAddressDisallowed(url))
+                if (ipAddressDisallowed)
                     ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the address not allowed");
                 else
                     ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the port is not allowed");
