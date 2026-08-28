@@ -189,3 +189,10 @@ cleanup = "rdar://170480216"
 symbols = [
     "CTFontHasComplexColorFormatForGlyph",
 ]
+
+[[temporary-usage]]
+request = "rdar://161716119"
+cleanup = "rdar://161716159"
+symbols = [
+    "CGImageIsSubimage",
+]

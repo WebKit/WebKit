@@ -808,6 +808,7 @@
 				WebCore/MIMETypeRegistry.cpp,
 				WebCore/MixedContentChecker.cpp,
 				WebCore/MonospaceFontTests.cpp,
+				WebCore/NativeImagePixelAccessTests.cpp,
 				WebCore/NowPlayingInfoTests.cpp,
 				WebCore/ParsedContentRange.cpp,
 				WebCore/ParsedContentType.cpp,
