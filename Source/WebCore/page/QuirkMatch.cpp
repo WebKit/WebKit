@@ -31,36 +31,35 @@
 
 namespace WebCore {
 
-const String& QuirkMatchContext::topRegistrableDomain() const
+const String& QuirkMatchContext::registrableDomain() const
 {
-    if (!m_topRegistrableDomain)
-        m_topRegistrableDomain = RegistrableDomain { m_topURL }.string();
-    return *m_topRegistrableDomain;
+    if (!m_registrableDomain)
+        m_registrableDomain = RegistrableDomain { m_url }.string();
+    return *m_registrableDomain;
 }
 
-const String& QuirkMatchContext::topDomainWithoutPublicSuffix() const
+const String& QuirkMatchContext::domainWithoutPublicSuffix() const
 {
-    if (!m_topDomainWithoutPublicSuffix)
-        m_topDomainWithoutPublicSuffix = PublicSuffixStore::singleton().domainWithoutPublicSuffix(topRegistrableDomain());
-    return *m_topDomainWithoutPublicSuffix;
+    if (!m_domainWithoutPublicSuffix)
+        m_domainWithoutPublicSuffix = PublicSuffixStore::singleton().domainWithoutPublicSuffix(registrableDomain());
+    return *m_domainWithoutPublicSuffix;
 }
 
-const String& QuirkMatchContext::documentRegistrableDomain() const
-{
-    if (!m_documentRegistrableDomain)
-        m_documentRegistrableDomain = RegistrableDomain { m_documentURL }.string();
-    return *m_documentRegistrableDomain;
-}
-
-bool QuirkMatch::RefinementSet::matchesPathPattern(const URL& topURL) const
+bool QuirkMatch::RefinementSet::matchesPathPattern(const URL& url) const
 {
     switch (pathComparison) {
     case PathComparison::PathContains:
-        return topURL.path().contains(pathPattern);
+        return url.path().contains(pathPattern);
     case PathComparison::PathStartsWith:
-        return startsWithLettersIgnoringASCIICase(topURL.path(), pathPattern);
+        return startsWithLettersIgnoringASCIICase(url.path(), pathPattern);
     case PathComparison::PathOrFragmentContains:
-        return topURL.path().contains(pathPattern) || topURL.fragmentIdentifier().contains(pathPattern);
+        return url.path().contains(pathPattern) || url.fragmentIdentifier().contains(pathPattern);
+    case PathComparison::LastPathComponentIs:
+        return url.lastPathComponent() == pathPattern;
+    case PathComparison::LastPathComponentStartsWith:
+        return url.lastPathComponent().startsWith(pathPattern);
+    case PathComparison::LastPathComponentEndsWith:
+        return url.lastPathComponent().endsWith(pathPattern);
     }
 
     ASSERT_NOT_REACHED();
@@ -69,38 +68,32 @@ bool QuirkMatch::RefinementSet::matchesPathPattern(const URL& topURL) const
 
 bool QuirkMatch::RefinementSet::matches(const QuirkMatchContext& context) const
 {
-    if (!pathPattern.isNull() && !matchesPathPattern(context.topURL()))
+    if (!pathPattern.isNull() && !matchesPathPattern(context.url()))
+        return false;
+
+    if (!hosts.isEmpty() && !hosts.contains(context.host()))
         return false;
 
     if (environment && !evaluateQuirkEnvironment(*environment))
         return false;
 
-    if (requiresEmbeddedDocument && context.isTopDocument())
-        return false;
-
-    if (!documentDomains.isEmpty() && !documentDomains.contains(context.documentRegistrableDomain()))
-        return false;
-
-    if (!hosts.isEmpty() && !hosts.contains(context.topHost()))
-        return false;
-
     return true;
 }
 
-bool QuirkMatch::matchesSite(const QuirkMatchContext& context) const
+bool QuirkMatch::matchesIdentity(const QuirkMatchContext& context) const
 {
     switch (m_kind) {
     case Kind::Domain:
-        return m_patterns.contains(context.topRegistrableDomain());
+        return m_patterns.contains(context.registrableDomain());
     case Kind::Host:
-        return m_patterns.contains(context.topHost());
+        return m_patterns.contains(context.host());
     case Kind::HostOrSubdomainOf:
-        return m_patterns.containsMatching([&](ASCIILiteral pattern) { return context.topURL().isMatchingDomain(pattern); });
+        return m_patterns.containsMatching([&](ASCIILiteral pattern) { return context.url().isMatchingDomain(pattern); });
     case Kind::AnyTopLevelDomain:
-        return m_patterns.contains(context.topDomainWithoutPublicSuffix());
-    case Kind::AnySite:
+        return m_patterns.contains(context.domainWithoutPublicSuffix());
+    case Kind::Any:
         // about:, data:, and other URLs without a host are not sites.
-        return !context.topHost().isEmpty();
+        return !context.host().isEmpty();
     }
 
     ASSERT_NOT_REACHED();
@@ -109,7 +102,7 @@ bool QuirkMatch::matchesSite(const QuirkMatchContext& context) const
 
 bool QuirkMatch::matches(const QuirkMatchContext& context) const
 {
-    if (!matchesSite(context)) [[likely]]
+    if (!matchesIdentity(context)) [[likely]]
         return false;
 
     if (!m_refinements.matches(context))

@@ -48,7 +48,27 @@ static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 {
-    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes });
+    return WebCore::resolveSiteSpecificQuirks(URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes);
+}
+
+static WebCore::QuirksData resolveQuirksForEmbeddedDocument(ASCIILiteral topURLString, ASCIILiteral documentURLString)
+{
+    return WebCore::resolveSiteSpecificQuirks(URL { topURLString }, URL { documentURLString }, WebCore::IsTopDocument::No);
+}
+
+static std::optional<WebCore::ParameterizedQuirk::EvaluateScriptBeforeRunningScript> firstScriptBehavior(const WebCore::QuirksData& quirksData)
+{
+    std::optional<WebCore::ParameterizedQuirk::EvaluateScriptBeforeRunningScript> result;
+    quirksData.forEachBehavior<WebCore::ParameterizedQuirk::EvaluateScriptBeforeRunningScript>([&](auto& behavior) {
+        if (!result)
+            result = behavior;
+    });
+    return result;
+}
+
+TEST_F(QuirksTest, TheQuirkTableIsWellFormed)
+{
+    WebCore::validateQuirkTable();
 }
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
@@ -58,11 +78,171 @@ TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsAirIndiaExpressLayeringQuirk));
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
 
-    EXPECT_TRUE(resolveQuirksForTopURL("https://www.iheart.com/"_s).isSite(WebCore::QuirkSite::IHeart));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.linkedin.com/"_s).isSite(WebCore::QuirkSite::LinkedIn));
 
     auto unrelatedSiteQuirks = resolveQuirksForTopURL("https://www.example.com/"_s);
-    EXPECT_TRUE(unrelatedSiteQuirks.activeQuirks.isEmpty());
-    EXPECT_FALSE(unrelatedSiteQuirks.isSite(WebCore::QuirkSite::IHeart));
+    EXPECT_TRUE(unrelatedSiteQuirks.behaviors.isEmpty());
+    EXPECT_FALSE(unrelatedSiteQuirks.isSite(WebCore::QuirkSite::LinkedIn));
+}
+
+TEST_F(QuirksTest, ParameterizedQuirksCarryTheirPayloadInTheTable)
+{
+    auto iHeartScript = firstScriptBehavior(resolveQuirksForTopURL("https://www.iheart.com/"_s));
+    ASSERT_TRUE(iHeartScript);
+    EXPECT_STREQ(iHeartScript->script.characters(), "document.cookie = 'app=listen:60; path=/; domain=.iheart.com';");
+
+    auto inVideoScript = firstScriptBehavior(resolveQuirksForTopURL("https://www.invideo.io/"_s));
+    ASSERT_TRUE(inVideoScript);
+    EXPECT_STREQ(inVideoScript->script.characters(), "if(!window.chrome)window.chrome={};");
+
+    auto unparameterizedQuirks = resolveQuirksForTopURL("https://www.example.com/"_s);
+    EXPECT_TRUE(unparameterizedQuirks.behaviors.isEmpty());
+}
+
+TEST_F(QuirksTest, ParameterizedQuirksResolveToAPayloadAndNothingElse)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+    using EvaluateScriptBeforeRunningScript = WebCore::ParameterizedQuirk::EvaluateScriptBeforeRunningScript;
+
+    for (auto url : { "https://www.iheart.com/"_s, "https://www.invideo.io/"_s }) {
+        auto quirks = resolveQuirksForTopURL(url);
+        ASSERT_EQ(quirks.behaviors.size(), 1u);
+        EXPECT_TRUE(std::holds_alternative<EvaluateScriptBeforeRunningScript>(quirks.behaviors[0]));
+    }
+
+    auto unparameterized = resolveQuirksForTopURL("https://www.scribd.com/"_s);
+    EXPECT_TRUE(unparameterized.quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
+    EXPECT_FALSE(firstScriptBehavior(unparameterized));
+}
+
+TEST_F(QuirksTest, UngatedScriptParameterAppliesToEveryScriptURL)
+{
+    auto script = firstScriptBehavior(resolveQuirksForTopURL("https://www.iheart.com/"_s));
+    ASSERT_TRUE(script);
+
+    EXPECT_TRUE(script->appliesTo(URL { "https://www.iheart.com/anything.js"_s }));
+    EXPECT_TRUE(script->appliesTo(URL { "https://cdn.example.com/other.js"_s }));
+}
+
+TEST_F(QuirksTest, GatedScriptParameterAppliesOnlyToMatchingScriptURLs)
+{
+    auto script = firstScriptBehavior(resolveQuirksForTopURL("https://ceac.state.gov/"_s));
+    ASSERT_TRUE(script);
+
+    EXPECT_TRUE(script->appliesTo(URL { "https://ceac.state.gov/js/CheckBrowserClose.js"_s }));
+    EXPECT_TRUE(script->appliesTo(URL { "https://cdn.example.com/CheckBrowserClose.js"_s }));
+
+    EXPECT_FALSE(script->appliesTo(URL { "https://ceac.state.gov/js/CheckBrowserClose.js.map"_s }));
+    EXPECT_FALSE(script->appliesTo(URL { "https://ceac.state.gov/CheckBrowserClose.js/inner.js"_s }));
+    EXPECT_FALSE(script->appliesTo(URL { "https://ceac.state.gov/js/other.js"_s }));
+}
+
+
+static WebCore::QuirkBehavior scriptBehavior(ASCIILiteral script, std::optional<WebCore::QuirkMatch> gate = std::nullopt)
+{
+    return WebCore::ParameterizedQuirk::EvaluateScriptBeforeRunningScript::create(script, gate);
+}
+
+TEST_F(QuirksTest, EveryBehaviorNamesItself)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    auto bareQuirk = WebCore::QuirkBehavior { SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk };
+    EXPECT_STREQ(WebCore::quirkBehaviorName(bareQuirk).utf8().data(), "NeedsReuseLiveRangeForSelectionUpdateQuirk");
+    EXPECT_STREQ(WebCore::quirkBehaviorName(scriptBehavior("first();"_s)).utf8().data(), "EvaluateScriptBeforeRunningScript");
+}
+
+TEST_F(QuirksTest, EnablingABareQuirkIsIdempotentButPayloadsAccumulate)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    WebCore::QuirksData data;
+    data.enableQuirk(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk);
+    data.enableQuirk(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk);
+
+    EXPECT_EQ(data.behaviors.size(), 1u);
+    EXPECT_TRUE(data.quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
+
+    data.behaviors.append(scriptBehavior("first();"_s));
+    data.behaviors.append(scriptBehavior("second();"_s));
+    EXPECT_EQ(data.behaviors.size(), 3u);
+}
+
+TEST_F(QuirksTest, ClearingAQuirkStateRemovesItFromTheBehaviorList)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    WebCore::QuirksData data;
+    data.setQuirkState(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk, true);
+    data.behaviors.append(scriptBehavior("first();"_s));
+
+    data.setQuirkState(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk, false);
+
+    EXPECT_FALSE(data.quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
+    EXPECT_EQ(data.behaviors.size(), 1u);
+    EXPECT_TRUE(firstScriptBehavior(data));
+}
+
+TEST_F(QuirksTest, ASingleScriptIsReturnedVerbatim)
+{
+    WebCore::QuirksData data;
+    data.behaviors.append(scriptBehavior("first();"_s));
+
+    EXPECT_STREQ(data.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/a.js"_s }).utf8().data(), "first();");
+}
+
+TEST_F(QuirksTest, TwoMatchingScriptsAreConcatenatedInTableOrder)
+{
+    WebCore::QuirksData data;
+    data.behaviors.append(scriptBehavior("first();"_s));
+    data.behaviors.append(scriptBehavior("second();"_s));
+
+    EXPECT_STREQ(data.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/a.js"_s }).utf8().data(), "first();\n;\nsecond();");
+}
+
+TEST_F(QuirksTest, ConcatenationSkipsScriptsWhoseGateDoesNotMatch)
+{
+    using namespace WebCore::QuirkRefinement;
+
+    WebCore::QuirksData data;
+    data.behaviors.append(scriptBehavior("ungated();"_s));
+    data.behaviors.append(scriptBehavior("gated();"_s, WebCore::QuirkMatch::anyURL().when(lastPathComponentIs("wanted.js"_s))));
+
+    EXPECT_STREQ(data.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/other.js"_s }).utf8().data(), "ungated();");
+    EXPECT_STREQ(data.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/wanted.js"_s }).utf8().data(), "ungated();\n;\ngated();");
+}
+
+TEST_F(QuirksTest, NoMatchingScriptYieldsAnEmptyString)
+{
+    using namespace WebCore::QuirkRefinement;
+
+    WebCore::QuirksData data;
+    data.behaviors.append(scriptBehavior("gated();"_s, WebCore::QuirkMatch::anyURL().when(lastPathComponentIs("wanted.js"_s))));
+
+    EXPECT_TRUE(data.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/other.js"_s }).isEmpty());
+    EXPECT_TRUE(WebCore::QuirksData { }.scriptsToEvaluateBeforeRunningScript(URL { "https://example.com/a.js"_s }).isEmpty());
+}
+
+TEST_F(QuirksTest, ARealTableEntryResolvesToItsScriptAloneWithNoSeparator)
+{
+    auto script = resolveQuirksForTopURL("https://www.iheart.com/"_s).scriptsToEvaluateBeforeRunningScript(URL { "https://www.iheart.com/a.js"_s });
+    EXPECT_STREQ(script.utf8().data(), "document.cookie = 'app=listen:60; path=/; domain=.iheart.com';");
+}
+
+TEST_F(QuirksTest, ScriptGatesCanRequireBothAHostAndAFileName)
+{
+    auto script = firstScriptBehavior(resolveQuirksForTopURL("https://www.dictionary.com/"_s));
+
+#if PLATFORM(IOS_FAMILY)
+    ASSERT_TRUE(script);
+
+    EXPECT_TRUE(script->appliesTo(URL { "https://player.anyclip.com/foo-lre.js"_s }));
+
+    EXPECT_FALSE(script->appliesTo(URL { "https://player.anyclip.com/foo.js"_s }));
+    EXPECT_FALSE(script->appliesTo(URL { "https://cdn.example.com/foo-lre.js"_s }));
+#else
+    EXPECT_FALSE(script);
+#endif
 }
 
 TEST_F(QuirksTest, NeedsIPadMiniUserAgent)
@@ -181,5 +361,51 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideAmazonPrimeVideo)
     EXPECT_FALSE(customUserAgentFor("https://www.amazon.com/gp/video/storefront"_s).has_value());
 }
 #endif // PLATFORM(IOS)
+
+TEST_F(QuirksTest, ADocumentMatchAppliesToAnEmbedRegardlessOfTheEmbeddingPage)
+{
+#if PLATFORM(IOS_FAMILY)
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.theguardian.com/film"_s, "https://x.com/i/status/123"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::ShouldDisableElementFullscreenQuirk));
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://platform.x.com/embed/Tweet.html"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::ShouldDisableElementFullscreenQuirk));
+
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::ShouldDisableElementFullscreenQuirk));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://x.com/i/status/123"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::ShouldDisableElementFullscreenQuirk));
+#endif
+}
+
+TEST_F(QuirksTest, NamingBothURLsRequiresBothToMatch)
+{
+#if PLATFORM(IOS_FAMILY)
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeEmbedAutoplayQuirk));
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.theguardian.co.uk/film"_s, "https://www.youtube-nocookie.com/embed/abc"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeEmbedAutoplayQuirk));
+
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeEmbedAutoplayQuirk));
+
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.theguardian.com/film"_s, "https://vimeo.com/12345"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeEmbedAutoplayQuirk));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.theguardian.com/film"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeEmbedAutoplayQuirk));
+#endif
+}
+
+TEST_F(QuirksTest, APageMatchStillAppliesInsideAnEmbeddedDocument)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.airindiaexpress.com/"_s, "https://ads.example.com/frame.html"_s)
+        .quirkIsEnabled(SiteSpecificQuirk::NeedsAirIndiaExpressLayeringQuirk));
+}
 
 } // namespace TestWebKitAPI

@@ -33,18 +33,13 @@ namespace WebCore {
 enum class QuirkSite : uint8_t {
     Amazon,
     BankOfAmerica,
-    BestBuy,
     Bing,
     CBSSports,
-    CEAC,
-    Dictionary,
     EA,
     Facebook,
     GoogleDocs,
     GoogleProperty,
     GoogleMaps,
-    IHeart,
-    InVideo,
     LinkedIn,
     MyBinder,
     NBA,
@@ -52,11 +47,9 @@ enum class QuirkSite : uint8_t {
     Outlook,
     Reddit,
     SoundCloud,
-    Thesaurus,
     TikTok,
     Vimeo,
     Walmart,
-    WebEx,
 
     NumberOfSites
 };
@@ -133,7 +126,6 @@ enum class SiteSpecificQuirk {
 #endif
     NeedsResettingTransitionCancelsRunningTransitionQuirk,
     NeedsReuseLiveRangeForSelectionUpdateQuirk,
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
     NeedsScrollbarWidthThinDisabledQuirk,
     NeedsSeekingSupportDisabledQuirk,
 #if ENABLE(MEDIA_SOURCE)

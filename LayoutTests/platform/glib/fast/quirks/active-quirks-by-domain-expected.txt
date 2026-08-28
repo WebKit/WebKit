@@ -41,7 +41,7 @@ https://www.codepen.io/
 https://www.bankofamerica.com/
     MaybeBypassBackForwardCache
 https://www.bestbuy.com/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.bing.com/
     MaybeBypassBackForwardCache
     NeedsMediaRewriteRangeRequestQuirk
@@ -157,14 +157,14 @@ https://www.hulu.com/
 https://www.icloud.com/
     (none)
 https://www.iheart.com/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
     NeedsZeroMaxTouchPointsQuirk
 https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk
 https://invideo.io/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.linkedin.com/
     (none)
 https://outlook.live.com/
@@ -247,9 +247,9 @@ https://open.spotify.com/
 https://www.spotify.com/
     (none)
 https://ceac.state.gov/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://sub.ceac.state.gov/
-    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    EvaluateScriptBeforeRunningScript
 https://www.state.gov/
     (none)
 https://www.theguardian.com/

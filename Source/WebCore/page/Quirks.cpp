@@ -126,55 +126,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
 
-#if PLATFORM(IOS_FAMILY)
-static constexpr auto chromeUserAgentScript = "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();"_s;
-
-// nba.com rdar://147429596
-static constexpr auto nbaSeekBarFixScript = R"js(if (!window.__nbaSeekFix) {
-    window.__nbaSeekFix = true;
-    document.addEventListener('touchmove', function({ target, touches }) {
-        if (!target?.getAttribute
-            || target.getAttribute('data-id') !== 'video-player:scrub-bar:controls'
-            || !touches?.[0])
-            return;
-        const touch = touches[0];
-        const rect = target.getBoundingClientRect();
-        const event = new MouseEvent('mousemove', {
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            screenX: touch.screenX,
-            screenY: touch.screenY,
-            bubbles: true,
-            cancelable: true
-        });
-        Object.defineProperty(event, 'offsetX', { value: touch.clientX - rect.left, configurable: true });
-        Object.defineProperty(event, 'offsetY', { value: touch.clientY - rect.top, configurable: true });
-        target.dispatchEvent(event);
-    }, false);
-})js"_s;
-#endif
-
-// ceac.state.gov rdar://170258502
-static constexpr auto ceacBeforeUnloadFixScript = R"js((function() {
-    if (window.__ceacBeforeUnloadFix) return;
-    window.__ceacBeforeUnloadFix = true;
-    var origAEL = window.addEventListener;
-    window.addEventListener = function(type, fn, opts) {
-        if (type === 'beforeunload') {
-            return origAEL.call(this, type, function(e) {
-                var ae = document.activeElement;
-                if (ae && ae.tagName === 'INPUT') {
-                    var t = (ae.type || '').toLowerCase();
-                    if (t === 'radio' || t === 'checkbox' || t === 'submit' || t === 'button')
-                        return;
-                }
-                if (typeof fn === 'function') fn.call(this, e);
-            }, opts);
-        }
-        return origAEL.apply(this, arguments);
-    };
-})();)js"_s;
-
 static inline OptionSet<AutoplayQuirk> NODELETE allowedAutoplayQuirks(Document& document)
 {
     auto* loader = document.loader();
@@ -2118,49 +2069,10 @@ String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE({ });
 
-    if (!m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk))
-        return { };
-
     if (scriptURL.isEmpty())
         return { };
 
-    // iheart.com rdar://171198911
-    if (m_quirksData.isSite(QuirkSite::IHeart))
-        return "document.cookie = 'app=listen:60; path=/; domain=.iheart.com';"_s;
-
-    // bestbuy.com rdar://136235936
-    if (m_quirksData.isSite(QuirkSite::BestBuy)) [[unlikely]]
-        return "Object.defineProperty(navigator,'language',{get:function(){return'en-US'}});Object.defineProperty(navigator,'languages',{get:function(){return['en-US','en']}});"_s;
-
-#if PLATFORM(IOS_FAMILY)
-    // player.anyclip.com rdar://138789765
-    if ((m_quirksData.isSite(QuirkSite::Dictionary) || m_quirksData.isSite(QuirkSite::Thesaurus)) && scriptURL.lastPathComponent().endsWith("lre.js"_s)) [[unlikely]] {
-        if (scriptURL.host() == "player.anyclip.com"_s)
-            return chromeUserAgentScript;
-    }
-
-    if (m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsGoogleTranslateScrollingQuirk)) [[unlikely]]
-        return chromeUserAgentScript;
-
-    // nba.com rdar://147429596
-    if (m_quirksData.isSite(QuirkSite::NBA) && !scriptURL.isEmpty()) [[unlikely]]
-        return nbaSeekBarFixScript;
-
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
-    if (m_quirksData.isSite(QuirkSite::WebEx) && scriptURL.lastPathComponent().startsWith("pushdownload."_s)) [[unlikely]]
-        return "Object.defineProperty(window, 'Touch', { get: () => undefined });"_s;
-#endif
-#endif
-
-    // ceac.state.gov rdar://170258502
-    if (m_quirksData.isSite(QuirkSite::CEAC) && scriptURL.lastPathComponent() == "CheckBrowserClose.js"_s) [[unlikely]]
-        return ceacBeforeUnloadFixScript;
-
-    // invideo.io https://webkit.org/b/311602
-    if (m_quirksData.isSite(QuirkSite::InVideo)) [[unlikely]]
-        return "if(!window.chrome)window.chrome={};"_s;
-
-    return { };
+    return m_quirksData.scriptsToEvaluateBeforeRunningScript(scriptURL);
 }
 
 // disneyplus: rdar://137613110
@@ -2884,7 +2796,7 @@ void Quirks::determineRelevantQuirks()
         return;
 
     Ref document = *protect(m_document);
-    m_quirksData.merge(resolveSiteSpecificQuirks({ quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No }));
+    m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460
@@ -2913,10 +2825,9 @@ void Quirks::logQuirksToConsoleIfNecessary() const
 
 Vector<String> Quirks::activeQuirks() const
 {
-    Vector<String> result;
-
-    for (auto quirk : m_quirksData.activeQuirks)
-        result.append(String { WTF::enumName(static_cast<SiteSpecificQuirk>(quirk)) });
+    auto result = m_quirksData.behaviors.map([](auto& behavior) {
+        return quirkBehaviorName(behavior).toString();
+    });
 
     std::ranges::sort(result, codePointCompareLessThan);
     return result;
@@ -2924,7 +2835,7 @@ Vector<String> Quirks::activeQuirks() const
 
 bool Quirks::hasRelevantQuirks() const
 {
-    return !m_quirksData.activeQuirks.isEmpty();
+    return !m_quirksData.behaviors.isEmpty();
 }
 
 }
