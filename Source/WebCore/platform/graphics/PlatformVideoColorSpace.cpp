@@ -169,6 +169,37 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PlatformVideoTransferCharacteri
     return ts;
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, PlatformVideoChromaLocation chromaLocation)
+{
+    switch (chromaLocation) {
+    case PlatformVideoChromaLocation::Left:
+        ts << "left"_s;
+        break;
+    case PlatformVideoChromaLocation::Center:
+        ts << "center"_s;
+        break;
+    case PlatformVideoChromaLocation::TopLeft:
+        ts << "top-left"_s;
+        break;
+    case PlatformVideoChromaLocation::Top:
+        ts << "top"_s;
+        break;
+    case PlatformVideoChromaLocation::BottomLeft:
+        ts << "bottom-left"_s;
+        break;
+    case PlatformVideoChromaLocation::Bottom:
+        ts << "bottom"_s;
+        break;
+    case PlatformVideoChromaLocation::Dv420:
+        ts << "dv420"_s;
+        break;
+    case PlatformVideoChromaLocation::Unspecified:
+        ts << "unspecified"_s;
+        break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, PlatformVideoColorSpace colorSpace)
 {
     ts.dumpProperty("primaries"_s, colorSpace.primaries);
@@ -176,6 +207,8 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PlatformVideoColorSpace colorSp
     ts.dumpProperty("matrix"_s, colorSpace.matrix);
     if (colorSpace.fullRange)
         ts.dumpProperty("full-range"_s, *colorSpace.fullRange);
+    if (colorSpace.chromaLocation)
+        ts.dumpProperty("chroma-location"_s, *colorSpace.chromaLocation);
     return ts;
 }
 
@@ -191,6 +224,8 @@ void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace& colorSpace, const 
         colorSpace.matrix = colorSpaceOverride->matrix;
     if (colorSpaceOverride->fullRange)
         colorSpace.fullRange = colorSpaceOverride->fullRange;
+    if (colorSpaceOverride->chromaLocation)
+        colorSpace.chromaLocation = colorSpaceOverride->chromaLocation;
 }
 
 }

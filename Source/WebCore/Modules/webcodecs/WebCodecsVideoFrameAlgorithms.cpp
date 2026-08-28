@@ -268,9 +268,9 @@ VideoColorSpaceInit videoFramePickColorSpace(const std::optional<VideoColorSpace
         return *overrideColorSpace;
 
     if (isRGBVideoPixelFormat(format))
-        return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true };
+        return { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true };
 
-    return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
+    return { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = false };
 }
 
 // https://w3c.github.io/webcodecs/#validate-videoframeinit

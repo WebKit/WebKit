@@ -165,7 +165,67 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
     if (RetainPtr fullRange = dynamic_cf_cast<CFBooleanRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_FullRangeVideo)))
         colorSpace.fullRange = CFBooleanGetValue(fullRange.get());
 
+    // Progressive content carries the same location in both fields. There is no default to fall
+    // back on: an absent key means the decoder picks its own siting.
+    RetainPtr chromaLocation = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, kCVImageBufferChromaLocationTopFieldKey));
+    if (!chromaLocation)
+        chromaLocation = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, kCVImageBufferChromaLocationBottomFieldKey));
+
+    if (chromaLocation) {
+        if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_Left))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::Left;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_Center))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::Center;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_TopLeft))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::TopLeft;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_Top))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::Top;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_BottomLeft))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::BottomLeft;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_Bottom))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::Bottom;
+        else if (safeCFEqual(chromaLocation.get(), kCVImageBufferChromaLocation_DV420))
+            colorSpace.chromaLocation = PlatformVideoChromaLocation::Dv420;
+    }
+
     return colorSpace;
+}
+
+std::optional<uint8_t> fieldCountFromFormatDescription(CMFormatDescriptionRef formatDescription)
+{
+    if (!formatDescription)
+        return { };
+
+    RetainPtr fieldCount = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, kCVImageBufferFieldCountKey));
+    if (!fieldCount)
+        return { };
+
+    int value = 0;
+    if (!CFNumberGetValue(fieldCount.get(), kCFNumberIntType, &value) || value < 1 || value > 2)
+        return { };
+
+    return static_cast<uint8_t>(value);
+}
+
+std::optional<PlatformVideoFieldDetail> fieldDetailFromFormatDescription(CMFormatDescriptionRef formatDescription)
+{
+    if (!formatDescription)
+        return { };
+
+    RetainPtr fieldDetail = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, kCVImageBufferFieldDetailKey));
+    if (!fieldDetail)
+        return { };
+
+    if (safeCFEqual(fieldDetail.get(), kCVImageBufferFieldDetailTemporalTopFirst))
+        return PlatformVideoFieldDetail::TemporalTopFirst;
+    if (safeCFEqual(fieldDetail.get(), kCVImageBufferFieldDetailTemporalBottomFirst))
+        return PlatformVideoFieldDetail::TemporalBottomFirst;
+    if (safeCFEqual(fieldDetail.get(), kCVImageBufferFieldDetailSpatialFirstLineEarly))
+        return PlatformVideoFieldDetail::SpatialFirstLineEarly;
+    if (safeCFEqual(fieldDetail.get(), kCVImageBufferFieldDetailSpatialFirstLineLate))
+        return PlatformVideoFieldDetail::SpatialFirstLineLate;
+
+    return { };
 }
 
 String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)

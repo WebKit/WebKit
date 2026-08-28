@@ -263,7 +263,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (!pixelBuffer)
         return Exception { ExceptionCode::InvalidStateError,  "Buffer has no frame"_s };
 
-    auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
+    auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true });
 
     if (!videoFrame)
         return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };

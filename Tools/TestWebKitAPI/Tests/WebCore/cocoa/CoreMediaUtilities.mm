@@ -28,9 +28,11 @@
 #if USE(AVFOUNDATION)
 
 #import <CoreMedia/CMFormatDescription.h>
+#import <CoreVideo/CVImageBuffer.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebCore/CMUtilities.h>
 #import <WebCore/FormatDescriptionUtilities.h>
+#import <WebCore/PlatformVideoChromaLocation.h>
 #import <WebCore/PlatformVideoColorPrimaries.h>
 #import <WebCore/PlatformVideoColorSpace.h>
 #import <WebCore/PlatformVideoMatrixCoefficients.h>
@@ -653,6 +655,208 @@ TEST(CMUtilities, ExtensionAtomsRoundTripPreservesMultipleSameFourCC)
     EXPECT_EQ(span1[0], 0x03);
     EXPECT_EQ(span1[1], 0x04);
     EXPECT_EQ(span1[2], 0x05);
+}
+
+// ---- Chroma Location ----
+
+TEST(CMUtilities, ChromaLocationRoundTrip)
+{
+    using C = WebCore::PlatformVideoChromaLocation;
+
+    // The exhaustive switch (no default) ensures the compiler warns when new
+    // PlatformVideoChromaLocation values are added without updating this test.
+    // std::nullopt means the value has no CoreVideo mapping and is not tested.
+    auto testChromaLocation = [&](C input) {
+        std::optional<C> expected;
+        switch (input) {
+        case C::Left:        expected = C::Left;       break;
+        case C::Center:      expected = C::Center;     break;
+        case C::TopLeft:     expected = C::TopLeft;    break;
+        case C::Top:         expected = C::Top;        break;
+        case C::BottomLeft:  expected = C::BottomLeft; break;
+        case C::Bottom:      expected = C::Bottom;     break;
+        case C::Dv420:       expected = C::Dv420;      break;
+        case C::Unspecified: /* no CV mapping */       break;
+        }
+        if (!expected)
+            return;
+        auto cs = baselineColorSpace();
+        cs.chromaLocation = input;
+        auto desc = makeColorSpaceFormatDescription(cs);
+        ASSERT_TRUE(desc) << "createFormatDescriptionFromTrackInfo returned null for chroma location " << (int)input;
+        auto result = WebCore::colorSpaceFromFormatDescription(desc.get());
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(result->chromaLocation, expected);
+    };
+
+    testChromaLocation(C::Left);
+    testChromaLocation(C::Center);
+    testChromaLocation(C::TopLeft);
+    testChromaLocation(C::Top);
+    testChromaLocation(C::BottomLeft);
+    testChromaLocation(C::Bottom);
+    testChromaLocation(C::Dv420);
+    testChromaLocation(C::Unspecified);
+}
+
+// A CMFormatDescription with no chroma location extension must not be given one,
+// so that the decoder keeps applying its own default siting.
+TEST(CMUtilities, AbsentChromaLocationStaysAbsent)
+{
+    NSDictionary *extensions = @{
+        (__bridge NSString *)kCVImageBufferColorPrimariesKey: (__bridge NSString *)kCVImageBufferColorPrimaries_ITU_R_709_2,
+        (__bridge NSString *)kCVImageBufferTransferFunctionKey: (__bridge NSString *)kCVImageBufferTransferFunction_ITU_R_709_2,
+        (__bridge NSString *)kCVImageBufferYCbCrMatrixKey: (__bridge NSString *)kCVImageBufferYCbCrMatrix_ITU_R_709_2,
+    };
+    CMFormatDescriptionRef rawDesc = nullptr;
+    PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_H264, 640, 480, (__bridge CFDictionaryRef)extensions, &rawDesc);
+    RetainPtr desc = adoptCF(rawDesc);
+    ASSERT_TRUE(desc);
+
+    auto colorSpace = WebCore::colorSpaceFromFormatDescription(desc.get());
+    ASSERT_TRUE(colorSpace.has_value());
+    EXPECT_FALSE(colorSpace->chromaLocation.has_value());
+
+    RefPtr videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+    RetainPtr reconstructed = WebCore::createFormatDescriptionFromTrackInfo(*videoInfo);
+    ASSERT_TRUE(reconstructed);
+    RetainPtr topField = PAL::CMFormatDescriptionGetExtension(reconstructed.get(), kCVImageBufferChromaLocationTopFieldKey);
+    EXPECT_FALSE(topField);
+    RetainPtr bottomField = PAL::CMFormatDescriptionGetExtension(reconstructed.get(), kCVImageBufferChromaLocationBottomFieldKey);
+    EXPECT_FALSE(bottomField);
+}
+
+// Verifies the WebContent -> GPU-process round trip preserves a non-default chroma
+// siting. H.264 content signalling chroma_sample_loc_type 1 (Center) reaches the GPU
+// process as a rebuilt CMFormatDescription; without the chroma location extension
+// VideoToolbox would fall back to Left siting.
+TEST(CMUtilities, ChromaLocationSurvivesFormatDescriptionRoundTrip)
+{
+    NSDictionary *extensions = @{
+        (__bridge NSString *)kCVImageBufferChromaLocationTopFieldKey: (__bridge NSString *)kCVImageBufferChromaLocation_Center,
+        (__bridge NSString *)kCVImageBufferChromaLocationBottomFieldKey: (__bridge NSString *)kCVImageBufferChromaLocation_Center,
+        (__bridge NSString *)kCVImageBufferColorPrimariesKey: (__bridge NSString *)kCVImageBufferColorPrimaries_SMPTE_C,
+        (__bridge NSString *)kCVImageBufferTransferFunctionKey: (__bridge NSString *)kCVImageBufferTransferFunction_ITU_R_709_2,
+        (__bridge NSString *)kCVImageBufferYCbCrMatrixKey: (__bridge NSString *)kCVImageBufferYCbCrMatrix_ITU_R_601_4,
+    };
+    CMFormatDescriptionRef rawDesc = nullptr;
+    PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_H264, 480, 360, (__bridge CFDictionaryRef)extensions, &rawDesc);
+    RetainPtr desc = adoptCF(rawDesc);
+    ASSERT_TRUE(desc);
+
+    RefPtr videoInfo = WebCore::createVideoInfoFromFormatDescription(desc.get());
+    ASSERT_TRUE(videoInfo);
+    EXPECT_EQ(videoInfo->colorSpace().chromaLocation, WebCore::PlatformVideoChromaLocation::Center);
+
+    RetainPtr reconstructed = WebCore::createFormatDescriptionFromTrackInfo(*videoInfo);
+    ASSERT_TRUE(reconstructed);
+
+    RetainPtr topField = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(reconstructed.get(), kCVImageBufferChromaLocationTopFieldKey));
+    ASSERT_TRUE(topField);
+    EXPECT_TRUE(CFEqual(topField.get(), kCVImageBufferChromaLocation_Center));
+
+    RetainPtr bottomField = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(reconstructed.get(), kCVImageBufferChromaLocationBottomFieldKey));
+    ASSERT_TRUE(bottomField);
+    EXPECT_TRUE(CFEqual(bottomField.get(), kCVImageBufferChromaLocation_Center));
+}
+
+// ---- Field Count and Field Detail ----
+
+TEST(CMUtilities, FieldCountAndDetailRoundTrip)
+{
+    using F = WebCore::PlatformVideoFieldDetail;
+
+    auto testFieldDetail = [&](uint8_t fieldCount, F input) {
+        auto videoInfo = WebCore::VideoInfo::create({
+            { .codecName = WebCore::FourCC('avc1') }, {
+                .size = { 640, 480 },
+                .displaySize = { 640, 480 },
+                .fieldCount = fieldCount,
+                .fieldDetail = input,
+            }
+        });
+        RetainPtr desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+        ASSERT_TRUE(desc) << "createFormatDescriptionFromTrackInfo returned null for field detail " << (int)input;
+        EXPECT_EQ(WebCore::fieldCountFromFormatDescription(desc.get()), fieldCount);
+        EXPECT_EQ(WebCore::fieldDetailFromFormatDescription(desc.get()), input);
+    };
+
+    testFieldDetail(2, F::TemporalTopFirst);
+    testFieldDetail(2, F::TemporalBottomFirst);
+    testFieldDetail(2, F::SpatialFirstLineEarly);
+    testFieldDetail(2, F::SpatialFirstLineLate);
+    testFieldDetail(1, F::TemporalTopFirst);
+}
+
+TEST(CMUtilities, AbsentFieldInfoStaysAbsent)
+{
+    auto videoInfo = WebCore::VideoInfo::create({
+        { .codecName = WebCore::FourCC('avc1') }, {
+            .size = { 640, 480 },
+            .displaySize = { 640, 480 },
+        }
+    });
+    RetainPtr desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+    EXPECT_FALSE(WebCore::fieldCountFromFormatDescription(desc.get()).has_value());
+    EXPECT_FALSE(WebCore::fieldDetailFromFormatDescription(desc.get()).has_value());
+}
+
+// ---- Pixel Aspect Ratio ----
+
+// The two pixel-aspect-ratio spacings form a single fraction, as stored in the `pasp` box.
+// A non-square ratio must be emitted as an exact reduced integer pair rather than as the two
+// fractional quotients displaySize / size.
+TEST(CMUtilities, PixelAspectRatioUsesIntegerSpacings)
+{
+    // 720x480 displayed at 16:9 gives a 32:27 pixel aspect ratio.
+    auto videoInfo = WebCore::VideoInfo::create({
+        { .codecName = WebCore::FourCC('avc1') }, {
+            .size = { 720, 480 },
+            .displaySize = { 853.3333333, 480 },
+        }
+    });
+    RetainPtr desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+
+    RetainPtr pixelAspectRatio = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(desc.get(), kCVImageBufferPixelAspectRatioKey));
+    ASSERT_TRUE(pixelAspectRatio);
+
+    RetainPtr horizontal = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(pixelAspectRatio.get(), kCVImageBufferPixelAspectRatioHorizontalSpacingKey));
+    ASSERT_TRUE(horizontal);
+    EXPECT_FALSE(CFNumberIsFloatType(horizontal.get()));
+
+    RetainPtr vertical = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(pixelAspectRatio.get(), kCVImageBufferPixelAspectRatioVerticalSpacingKey));
+    ASSERT_TRUE(vertical);
+    EXPECT_FALSE(CFNumberIsFloatType(vertical.get()));
+
+    int64_t horizontalSpacing = 0;
+    int64_t verticalSpacing = 0;
+    ASSERT_TRUE(CFNumberGetValue(horizontal.get(), kCFNumberSInt64Type, &horizontalSpacing));
+    ASSERT_TRUE(CFNumberGetValue(vertical.get(), kCFNumberSInt64Type, &verticalSpacing));
+    EXPECT_EQ(horizontalSpacing, 32);
+    EXPECT_EQ(verticalSpacing, 27);
+
+    // The emitted ratio must still make the presentation dimensions match displaySize.
+    auto presentationSize = PAL::CMVideoFormatDescriptionGetPresentationDimensions(desc.get(), true, true);
+    EXPECT_NEAR(presentationSize.width, videoInfo->displaySize().width(), 1);
+    EXPECT_EQ(presentationSize.height, videoInfo->displaySize().height());
+}
+
+// A square pixel aspect ratio carries no extension, matching CoreVideo's default.
+TEST(CMUtilities, SquarePixelAspectRatioEmitsNoExtension)
+{
+    auto videoInfo = WebCore::VideoInfo::create({
+        { .codecName = WebCore::FourCC('avc1') }, {
+            .size = { 480, 360 },
+            .displaySize = { 480, 360 },
+        }
+    });
+    RetainPtr desc = WebCore::createFormatDescriptionFromTrackInfo(videoInfo);
+    ASSERT_TRUE(desc);
+    RetainPtr pixelAspectRatio = PAL::CMFormatDescriptionGetExtension(desc.get(), kCVImageBufferPixelAspectRatioKey);
+    EXPECT_FALSE(pixelAspectRatio);
 }
 
 } // namespace TestWebKitAPI

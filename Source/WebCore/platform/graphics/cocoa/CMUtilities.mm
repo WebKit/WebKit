@@ -39,6 +39,8 @@
 #import "SharedBuffer.h"
 #import "WebMAudioUtilitiesCocoa.h"
 #import <CoreMedia/CMFormatDescription.h>
+#import <cmath>
+#import <numeric>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/cf/CoreAudioExtras.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
@@ -239,11 +241,15 @@ static RetainPtr<CFMutableDictionaryRef> createExtensionsDictionary(const TrackI
 #endif
     }
 
+    // A sizing hint only; exceeding it costs a rehash. The video counts include the keys
+    // createFormatDescriptionFromTrackInfo() goes on to add: FullRangeVideo, BitsPerComponent,
+    // ColorPrimaries, TransferFunction, GammaLevel, YCbCrMatrix, both ChromaLocation fields,
+    // FieldCount, FieldDetail and PixelAspectRatio.
     size_t maxNumberOfElements = [&] {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        return info.isAudio() ? 5 : 9;
+        return info.isAudio() ? 5 : 15;
 #else
-        return 5;
+        return info.isAudio() ? 5 : 12;
 #endif
     }();
     RetainPtr extensions = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, maxNumberOfElements, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -378,6 +384,44 @@ static CFStringRef convertToCMYCbCRMatrix(PlatformVideoMatrixCoefficients coeffi
     }
 }
 
+static CFStringRef convertToCMChromaLocation(PlatformVideoChromaLocation chromaLocation)
+{
+    switch (chromaLocation) {
+    case PlatformVideoChromaLocation::Left:
+        return kCVImageBufferChromaLocation_Left;
+    case PlatformVideoChromaLocation::Center:
+        return kCVImageBufferChromaLocation_Center;
+    case PlatformVideoChromaLocation::TopLeft:
+        return kCVImageBufferChromaLocation_TopLeft;
+    case PlatformVideoChromaLocation::Top:
+        return kCVImageBufferChromaLocation_Top;
+    case PlatformVideoChromaLocation::BottomLeft:
+        return kCVImageBufferChromaLocation_BottomLeft;
+    case PlatformVideoChromaLocation::Bottom:
+        return kCVImageBufferChromaLocation_Bottom;
+    case PlatformVideoChromaLocation::Dv420:
+        return kCVImageBufferChromaLocation_DV420;
+    default:
+        return nullptr;
+    }
+}
+
+static CFStringRef convertToCMFieldDetail(PlatformVideoFieldDetail fieldDetail)
+{
+    switch (fieldDetail) {
+    case PlatformVideoFieldDetail::TemporalTopFirst:
+        return kCVImageBufferFieldDetailTemporalTopFirst;
+    case PlatformVideoFieldDetail::TemporalBottomFirst:
+        return kCVImageBufferFieldDetailTemporalBottomFirst;
+    case PlatformVideoFieldDetail::SpatialFirstLineEarly:
+        return kCVImageBufferFieldDetailSpatialFirstLineEarly;
+    case PlatformVideoFieldDetail::SpatialFirstLineLate:
+        return kCVImageBufferFieldDetailSpatialFirstLineLate;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo& info)
 {
     ASSERT(info.isVideo() || info.isAudio());
@@ -439,13 +483,37 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
         if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace().matrix))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferYCbCrMatrixKey, cmMatrix.get());
     }
-    if (videoInfo.size() != videoInfo.displaySize()) {
-        double horizontalRatio = videoInfo.displaySize().width() / videoInfo.size().width();
-        double verticalRatio = videoInfo.displaySize().height() / videoInfo.size().height();
-        CFDictionaryAddValue(extensions.get(), kCVImageBufferPixelAspectRatioKey, @{
-            (__bridge NSString*)kCVImageBufferPixelAspectRatioHorizontalSpacingKey : @(horizontalRatio),
-            (__bridge NSString*)kCVImageBufferPixelAspectRatioVerticalSpacingKey : @(verticalRatio)
-        });
+
+    if (videoInfo.colorSpace().chromaLocation) {
+        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*videoInfo.colorSpace().chromaLocation)) {
+            CFDictionaryAddValue(extensions.get(), kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get());
+            CFDictionaryAddValue(extensions.get(), kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get());
+        }
+    }
+
+    if (videoInfo.fieldCount())
+        CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldCountKey, (__bridge CFTypeRef)@(*videoInfo.fieldCount()));
+
+    if (videoInfo.fieldDetail()) {
+        if (RetainPtr cmFieldDetail = convertToCMFieldDetail(*videoInfo.fieldDetail()))
+            CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldDetailKey, cmFieldDetail.get());
+    }
+
+    if (!videoInfo.size().isEmpty() && !videoInfo.displaySize().isEmpty() && videoInfo.size() != videoInfo.displaySize()) {
+        // The two spacings are the numerator and denominator of a single fraction, as stored in
+        // the `pasp` box. Emit them as an exact integer pair rather than as the two quotients
+        // displaySize / size, which only approximate the ratio.
+        auto horizontalSpacing = std::llround(videoInfo.displaySize().width() * videoInfo.size().height());
+        auto verticalSpacing = std::llround(videoInfo.displaySize().height() * videoInfo.size().width());
+        if (horizontalSpacing > 0 && verticalSpacing > 0) {
+            auto divisor = std::gcd(horizontalSpacing, verticalSpacing);
+            horizontalSpacing /= divisor;
+            verticalSpacing /= divisor;
+            CFDictionaryAddValue(extensions.get(), kCVImageBufferPixelAspectRatioKey, @{
+                (__bridge NSString*)kCVImageBufferPixelAspectRatioHorizontalSpacingKey : @(horizontalSpacing),
+                (__bridge NSString*)kCVImageBufferPixelAspectRatioVerticalSpacingKey : @(verticalSpacing)
+            });
+        }
     }
 
 #if PLATFORM(VISION)
@@ -534,6 +602,8 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
             .displaySize = presentationSizeFromFormatDescription(description),
             .bitDepth = static_cast<uint8_t>(bitDepth),
             .colorSpace = colorSpaceFromFormatDescription(description).value_or(PlatformVideoColorSpace { }),
+            .fieldCount = fieldCountFromFormatDescription(description),
+            .fieldDetail = fieldDetailFromFormatDescription(description),
             .extensionAtoms = WTF::move(extensionAtoms),
 #if PLATFORM(VISION)
             .immersiveVideoMetadata = immersiveVideoMetadataFromFormatDescription(description)
@@ -733,6 +803,12 @@ void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CV
     }
     if (colorSpace.matrix)
         CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, convertToCMYCbCRMatrix(*colorSpace.matrix), kCVAttachmentMode_ShouldPropagate);
+    if (colorSpace.chromaLocation) {
+        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*colorSpace.chromaLocation)) {
+            CVBufferSetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get(), kCVAttachmentMode_ShouldPropagate);
+            CVBufferSetAttachment(pixelBuffer, kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get(), kCVAttachmentMode_ShouldPropagate);
+        }
+    }
 }
 
 PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer)
@@ -799,7 +875,26 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer
     // FIXME: We should do a more comprehensive check.
     bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
 
-    return { primaries, transfer, matrix, isFullRange };
+    std::optional<PlatformVideoChromaLocation> chromaLocation;
+    RetainPtr pixelChromaLocation = CVBufferGetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, nil);
+    if (!pixelChromaLocation)
+        pixelChromaLocation = CVBufferGetAttachment(pixelBuffer, kCVImageBufferChromaLocationBottomFieldKey, nil);
+    if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_Left))
+        chromaLocation = PlatformVideoChromaLocation::Left;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_Center))
+        chromaLocation = PlatformVideoChromaLocation::Center;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_TopLeft))
+        chromaLocation = PlatformVideoChromaLocation::TopLeft;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_Top))
+        chromaLocation = PlatformVideoChromaLocation::Top;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_BottomLeft))
+        chromaLocation = PlatformVideoChromaLocation::BottomLeft;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_Bottom))
+        chromaLocation = PlatformVideoChromaLocation::Bottom;
+    else if (safeCFEqual(pixelChromaLocation.get(), kCVImageBufferChromaLocation_DV420))
+        chromaLocation = PlatformVideoChromaLocation::Dv420;
+
+    return { .primaries = primaries, .transfer = transfer, .matrix = matrix, .fullRange = isFullRange, .chromaLocation = chromaLocation };
 }
 
 PacketDurationParser::PacketDurationParser(const AudioInfo& info)

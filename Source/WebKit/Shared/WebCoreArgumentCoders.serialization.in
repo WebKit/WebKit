@@ -3873,11 +3873,23 @@ enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
     Unspecified,
 };
 
+enum class WebCore::PlatformVideoChromaLocation : uint8_t {
+    Left,
+    Center,
+    TopLeft,
+    Top,
+    BottomLeft,
+    Bottom,
+    Dv420,
+    Unspecified,
+};
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PlatformVideoColorSpace {
     std::optional<WebCore::PlatformVideoColorPrimaries> primaries;
     std::optional<WebCore::PlatformVideoTransferCharacteristics> transfer;
     std::optional<WebCore::PlatformVideoMatrixCoefficients> matrix;
     std::optional<bool> fullRange;
+    std::optional<WebCore::PlatformVideoChromaLocation> chromaLocation;
 };
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -6933,6 +6945,14 @@ enum class WebCore::EncryptionBoxType : uint8_t {
     TransportStreamEncryptionInitData
 };
 
+header: <WebCore/TrackInfo.h>
+enum class WebCore::PlatformVideoFieldDetail : uint8_t {
+    TemporalTopFirst,
+    TemporalBottomFirst,
+    SpatialFirstLineEarly,
+    SpatialFirstLineLate
+};
+
 using WebCore::TrackInfoAtomData = std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>;
 
 header: <WebCore/TrackInfo.h>
@@ -6968,6 +6988,8 @@ header: <WebCore/TrackInfo.h>
     WebCore::FloatSize displaySize;
     uint8_t bitDepth;
     WebCore::PlatformVideoColorSpace colorSpace;
+    std::optional<uint8_t> fieldCount;
+    std::optional<WebCore::PlatformVideoFieldDetail> fieldDetail;
     Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
 
 #if PLATFORM(VISION)

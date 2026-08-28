@@ -77,7 +77,7 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
     auto colorSpace = [&] {
         if (auto pixelFormat = convertVideoFramePixelFormat(videoFrame.pixelFormat(), true)) {
             if (isRGBVideoPixelFormat(*pixelFormat))
-                return PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
+                return PlatformVideoColorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = false };
         }
         return videoFrame.colorSpace();
     }();

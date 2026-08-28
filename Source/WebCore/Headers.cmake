@@ -2685,6 +2685,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformTextTrack.h
     platform/graphics/PlatformTimeRanges.h
     platform/graphics/PlatformTrackConfiguration.h
+    platform/graphics/PlatformVideoChromaLocation.h
     platform/graphics/PlatformVideoColorPrimaries.h
     platform/graphics/PlatformVideoColorSpace.h
     platform/graphics/PlatformVideoMatrixCoefficients.h

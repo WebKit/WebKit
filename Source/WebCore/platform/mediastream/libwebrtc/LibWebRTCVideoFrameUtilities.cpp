@@ -183,7 +183,7 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromLibWebRTCColorSpace(const w
         break;
     };
 
-    return PlatformVideoColorSpace { primaries, transfer, matrix, fullRange };
+    return PlatformVideoColorSpace { .primaries = primaries, .transfer = transfer, .matrix = matrix, .fullRange = fullRange };
 }
 
 std::optional<PlatformVideoColorSpace> colorSpaceFromLibWebRTCVideoFrame(const webrtc::VideoFrame& frame)

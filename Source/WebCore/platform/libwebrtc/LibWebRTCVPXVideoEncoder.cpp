@@ -281,7 +281,7 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true)) {
         if (isRGBVideoPixelFormat(*pixelFormat)) {
             // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
-            colorSpace = { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
+            colorSpace = { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = false };
             buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
         }
     }
@@ -343,7 +343,7 @@ webrtc::EncodedImageCallback::Result LibWebRTCVPXInternalVideoEncoder::OnEncoded
     if (m_shouldCallDescriptionCallback) {
         m_shouldCallDescriptionCallback = false;
         VideoEncoder::ActiveConfiguration configuration;
-        configuration.colorSpace = m_currentColorSpace.value_or(PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false });
+        configuration.colorSpace = m_currentColorSpace.value_or(PlatformVideoColorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = false });
         m_descriptionCallback(WTF::move(configuration));
     }
     m_outputCallback({ WTF::move(encodedFrame) });

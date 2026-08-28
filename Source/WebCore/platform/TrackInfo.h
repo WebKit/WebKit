@@ -60,6 +60,15 @@ enum class EncryptionBoxType : uint8_t {
     TransportStreamEncryptionInitData
 };
 
+// Ordering of the two fields of an interlaced frame, both temporally and within
+// the frame buffer.
+enum class PlatformVideoFieldDetail : uint8_t {
+    TemporalTopFirst,
+    TemporalBottomFirst,
+    SpatialFirstLineEarly,
+    SpatialFirstLineLate
+};
+
 using TrackInfoAtomData = std::pair<FourCC, Ref<SharedBuffer>>;
 #if ENABLE(ENCRYPTED_MEDIA)
 using TrackInfoEncryptionData = std::pair<EncryptionBoxType, Ref<SharedBuffer>>;
@@ -147,6 +156,9 @@ struct VideoSpecificInfoData {
     FloatSize displaySize { };
     uint8_t bitDepth { 8 };
     PlatformVideoColorSpace colorSpace { };
+    // Number of fields per frame: 1 for progressive content, 2 for interlaced.
+    std::optional<uint8_t> fieldCount { };
+    std::optional<PlatformVideoFieldDetail> fieldDetail { };
     Vector<TrackInfo::AtomData> extensionAtoms { };
 
 #if PLATFORM(VISION)
@@ -168,6 +180,8 @@ public:
     const FloatSize& displaySize() const LIFETIME_BOUND { return m_data.displaySize; }
     uint8_t bitDepth() const { return m_data.bitDepth; }
     const PlatformVideoColorSpace& colorSpace() const LIFETIME_BOUND { return m_data.colorSpace; }
+    std::optional<uint8_t> fieldCount() const { return m_data.fieldCount; }
+    std::optional<PlatformVideoFieldDetail> fieldDetail() const { return m_data.fieldDetail; }
 
     const Vector<AtomData>& extensionAtoms() const LIFETIME_BOUND { return m_data.extensionAtoms; }
 

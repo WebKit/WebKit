@@ -5938,6 +5938,7 @@
 		CD1A22672B080A5C0038923E /* AV1UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD1A225C2B075A6D0038923E /* AV1UtilitiesCocoa.mm */; };
 		CD1A9315297EFFF40080AF3B /* JSDOMPromiseDeferredForward.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1A9314297EFFF40080AF3B /* JSDOMPromiseDeferredForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1DE17C2E69036D0097B710 /* IDBActiveDOMObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DE17B2E6903600097B710 /* IDBActiveDOMObjectInlines.h */; };
+		4A7C1E0B2D0000010012AB02 /* PlatformVideoChromaLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A7C1E0A2D0000010012AB01 /* PlatformVideoChromaLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B01270020B700617EB6 /* PlatformVideoColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9AFA26FD385900617EB6 /* PlatformVideoColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B022700323D00617EB6 /* PlatformVideoColorPrimaries.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9AFB26FD38C900617EB6 /* PlatformVideoColorPrimaries.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B032700323D00617EB6 /* PlatformVideoMatrixCoefficients.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9AFD26FD38CB00617EB6 /* PlatformVideoMatrixCoefficients.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21204,6 +21205,7 @@
 		CD1F9AF526FD215600617EB6 /* VideoColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoColorSpace.h; sourceTree = "<group>"; };
 		CD1F9AF726FD2CAD00617EB6 /* VideoTransferCharacteristics.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoTransferCharacteristics.idl; sourceTree = "<group>"; };
 		CD1F9AF826FD2CAD00617EB6 /* VideoTransferCharacteristics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoTransferCharacteristics.h; sourceTree = "<group>"; };
+		4A7C1E0A2D0000010012AB01 /* PlatformVideoChromaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformVideoChromaLocation.h; sourceTree = "<group>"; };
 		CD1F9AFA26FD385900617EB6 /* PlatformVideoColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformVideoColorSpace.h; sourceTree = "<group>"; };
 		CD1F9AFB26FD38C900617EB6 /* PlatformVideoColorPrimaries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformVideoColorPrimaries.h; sourceTree = "<group>"; };
 		CD1F9AFC26FD38CA00617EB6 /* PlatformVideoTransferCharacteristics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformVideoTransferCharacteristics.h; sourceTree = "<group>"; };
@@ -37148,6 +37150,7 @@
 				074E82B818A69F0E007EF54C /* PlatformTimeRanges.cpp */,
 				074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */,
 				CDD08ABC277E542600EA3755 /* PlatformTrackConfiguration.h */,
+				4A7C1E0A2D0000010012AB01 /* PlatformVideoChromaLocation.h */,
 				CD1F9AFB26FD38C900617EB6 /* PlatformVideoColorPrimaries.h */,
 				7BCBCD982EF559D0005B0ACE /* PlatformVideoColorSpace.cpp */,
 				CD1F9AFA26FD385900617EB6 /* PlatformVideoColorSpace.h */,
@@ -48159,6 +48162,7 @@
 				0F7D07331884C56C00B4AF86 /* PlatformTextTrack.h in Headers */,
 				074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */,
 				CDD08ABD277E542600EA3755 /* PlatformTrackConfiguration.h in Headers */,
+				4A7C1E0B2D0000010012AB02 /* PlatformVideoChromaLocation.h in Headers */,
 				CD1F9B022700323D00617EB6 /* PlatformVideoColorPrimaries.h in Headers */,
 				CD1F9B01270020B700617EB6 /* PlatformVideoColorSpace.h in Headers */,
 				CD1F9B032700323D00617EB6 /* PlatformVideoMatrixCoefficients.h in Headers */,

@@ -368,7 +368,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
     });
     auto newConfigurationBlock = makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size) {
         // Current encoders are limited to this configuration. We might want in the future to let encoders notify which colorSpace they are selecting.
-        PlatformVideoColorSpace colorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Bt709, true };
+        PlatformVideoColorSpace colorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = true };
         connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, unsafeMakeSpan(buffer, size), colorSpace }, 0);
     });
 

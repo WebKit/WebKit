@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,25 @@
 
 #pragma once
 
-#include <WebCore/TrackInfo.h>
-#include <optional>
 #include <wtf/Forward.h>
-
-typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
-class FloatSize;
-struct ImmersiveVideoMetadata;
-struct PlatformVideoColorSpace;
+// Where a chroma sample sits relative to the luma samples it is shared with. The
+// comments give the matching ISO/IEC 23091-2 chroma_sample_loc_type value.
+enum class PlatformVideoChromaLocation : uint8_t {
+    Left, // 0, the MPEG-2 and H.264 default
+    Center, // 1, as used by MPEG-1 and JPEG
+    TopLeft, // 2
+    Top, // 3
+    BottomLeft, // 4
+    Bottom, // 5
+    // Cr and Cb alternately co-sited with the left luma samples of the same field.
+    // DV only, no ISO/IEC 23091-2 equivalent.
+    Dv420,
+    Unspecified,
+};
 
-TrackInfoTrackType typeFromFormatDescription(CMFormatDescriptionRef);
-FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<uint8_t> fieldCountFromFormatDescription(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<PlatformVideoFieldDetail> fieldDetailFromFormatDescription(CMFormatDescriptionRef);
-String codecFromFormatDescription(CMFormatDescriptionRef);
-bool formatDescriptionIsProtected(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<ImmersiveVideoMetadata> immersiveVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
-#if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)
-RetainPtr<CFDictionaryRef> extractImmersiveVideoMetadata(CMFormatDescriptionRef);
-WEBCORE_EXPORT RetainPtr<CFDictionaryRef> formatDescriptionDictionaryFromImmersiveVideoMetadata(const ImmersiveVideoMetadata&);
-#endif
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoChromaLocation);
+
 } // namespace WebCore
