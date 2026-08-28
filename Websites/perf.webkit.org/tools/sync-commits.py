@@ -19,7 +19,7 @@ from urllib.request import urlopen
 
 # There are some buggy commit messages:
 # Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
-REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@(?P<branch_name>[\w\.\-]+))\n', flags=re.MULTILINE)
+REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical-link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@(?P<branch_name>[\w\.\-]+))\n', flags=re.MULTILINE)
 REVISION_IN_MSG_RE = re.compile(r'^git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n', flags=re.MULTILINE)
 HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
@@ -266,7 +266,16 @@ class GitRepository(Repository):
 
         revision_identifier = None
         if self._report_revision_identifier_in_commit_msg:
-            for revision_identifier_match in REVISION_IDENTIFIER_IN_MSG_RE.finditer(message):
+            trailer_output = subprocess.check_output(
+                ['git', '-C', self._git_checkout,
+                 '-c', 'trailer.Canonical-link.key=Canonical-link',
+                 '-c', 'trailer.Identifier.key=Identifier',
+                 '-c', 'trailer.git-svn-id.key=git-svn-id',
+                 'interpret-trailers', '--parse', '--no-divider'],
+                input=message.replace('\nCanonical link:', '\nCanonical-link:'),
+                encoding='utf-8',
+            )
+            for revision_identifier_match in REVISION_IDENTIFIER_IN_MSG_RE.finditer(trailer_output):
                 if self._git_branch and revision_identifier_match.group('branch_name') != self._git_branch:
                     continue
                 revision_identifier = revision_identifier_match.group('revision_identifier')
