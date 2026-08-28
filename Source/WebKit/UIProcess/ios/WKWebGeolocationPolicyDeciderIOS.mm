@@ -132,7 +132,7 @@ struct PermissionRequest {
     if (!self)
         return nil;
 
-    _diskDispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
+    _diskDispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", serialQueueWithAutoreleasePoolAttrSingleton()));
 
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, protect(CLAppResetChangedNotification), NULL, CFNotificationSuspensionBehaviorCoalesce);
 

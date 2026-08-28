@@ -36,6 +36,7 @@
 #import <WebCore/PlatformXRPose.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/DispatchOSObject.h>
 
 #import <pal/cocoa/ARKitSoftLink.h>
@@ -396,7 +397,7 @@ id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPr
 {
     self = [super init];
     if (self) {
-        _accessQueue = adoptOSObject(dispatch_queue_create("com.apple.WebContent._WKTransientGestureRecognizer.AccessQueue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL));
+        _accessQueue = adoptOSObject(dispatch_queue_create("com.apple.WebContent._WKTransientGestureRecognizer.AccessQueue", serialQueueWithAutoreleasePoolAttrSingleton()));
         _session = session;
         _transientActions = adoptNS([NSMutableDictionary new]);
     }

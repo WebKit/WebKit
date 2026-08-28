@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import <pal/cocoa/ARKitSoftLink.h>
 
@@ -101,7 +102,7 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     if (!(self = [super init]))
         return nil;
 
-    _accessQueue = dispatch_queue_create("com.apple.WebContent.WKXRTrackingManager.AccessQueue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL);
+    _accessQueue = dispatch_queue_create("com.apple.WebContent.WKXRTrackingManager.AccessQueue", serialQueueWithAutoreleasePoolAttrSingleton());
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     _handTrackingEnabled = handTrackingEnabled;
 #else

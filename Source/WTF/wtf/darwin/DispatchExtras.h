@@ -39,7 +39,19 @@ inline dispatch_queue_main_t mainDispatchQueueSingleton()
     return dispatch_get_main_queue(); // NOLINT
 }
 
+inline dispatch_queue_attr_t serialQueueWithAutoreleasePoolAttrSingleton()
+{
+    return DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL; // NOLINT
+}
+
+inline dispatch_queue_attr_t concurrentQueueWithAutoreleasePoolAttrSingleton()
+{
+    return DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL; // NOLINT
+}
+
 } // namespace WTF
 
+using WTF::concurrentQueueWithAutoreleasePoolAttrSingleton;
 using WTF::globalDispatchQueueSingleton;
 using WTF::mainDispatchQueueSingleton;
+using WTF::serialQueueWithAutoreleasePoolAttrSingleton;

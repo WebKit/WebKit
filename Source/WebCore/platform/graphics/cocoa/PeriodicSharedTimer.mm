@@ -29,13 +29,14 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PeriodicSharedTimer);
 
 PeriodicSharedTimer::PeriodicSharedTimer(Seconds interval)
-    : m_queue(adoptOSObject(dispatch_queue_create("WebCore PeriodicSharedTimer", DISPATCH_QUEUE_SERIAL)))
+    : m_queue(adoptOSObject(dispatch_queue_create("WebCore PeriodicSharedTimer", serialQueueWithAutoreleasePoolAttrSingleton())))
     , m_timer(adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_queue.get())))
 {
     auto intervalNs = interval.nanosecondsAs<uint64_t>();

@@ -127,7 +127,7 @@ RemoteInspector& RemoteInspector::singleton()
 }
 
 RemoteInspector::RemoteInspector()
-    : m_xpcQueue(adoptOSObject(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc", DISPATCH_QUEUE_SERIAL)))
+    : m_xpcQueue(adoptOSObject(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc", serialQueueWithAutoreleasePoolAttrSingleton())))
 {
 }
 

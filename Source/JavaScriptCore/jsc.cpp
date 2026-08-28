@@ -128,6 +128,7 @@
 #include <wtf/OSObjectPtr.h>
 #include <wtf/cocoa/CrashReporter.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -4648,7 +4649,7 @@ int jscmain(int argc, char** argv)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     {
         // FIXME: This is a false positive. rdar://160931336
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", serialQueueWithAutoreleasePoolAttrSingleton()));
         memoryPressureHandler.setDispatchQueue(WTF::move(queue));
     }
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);

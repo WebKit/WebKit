@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/darwin/DispatchExtras.h>
 #include <wtf/darwin/DispatchOSObject.h>
 
 #if __has_feature(objc_arc) && !defined(NDEBUG)
@@ -45,7 +46,7 @@ namespace TestWebKitAPI {
 
 TEST(OS_OBJECT_PTR_TEST_NAME, AdoptOSObject)
 {
-    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, serialQueueWithAutoreleasePoolAttrSingleton()));
     uintptr_t fooPtr;
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
         fooPtr = reinterpret_cast<uintptr_t>(foo.get());
@@ -55,7 +56,7 @@ TEST(OS_OBJECT_PTR_TEST_NAME, AdoptOSObject)
 
 TEST(OS_OBJECT_PTR_TEST_NAME, RetainRelease)
 {
-    dispatch_queue_t foo = dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t foo = dispatch_queue_create(0, serialQueueWithAutoreleasePoolAttrSingleton());
     auto fooPtr = reinterpret_cast<uintptr_t>(foo);
     EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 
@@ -74,7 +75,7 @@ TEST(OS_OBJECT_PTR_TEST_NAME, RetainRelease)
 
 TEST(OS_OBJECT_PTR_TEST_NAME, LeakRef)
 {
-    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, serialQueueWithAutoreleasePoolAttrSingleton()));
     uintptr_t fooPtr;
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
         fooPtr = reinterpret_cast<uintptr_t>(foo.get());

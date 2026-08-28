@@ -56,6 +56,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/DispatchOSObject.h>
 
 
@@ -119,7 +120,7 @@ struct WebPreferencesPrivate
 public:
     WebPreferencesPrivate()
 #if PLATFORM(IOS_FAMILY)
-        : readWriteQueue { adoptOSObject(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
+        : readWriteQueue { adoptOSObject(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", concurrentQueueWithAutoreleasePoolAttrSingleton())) }
 #endif
     {
     }

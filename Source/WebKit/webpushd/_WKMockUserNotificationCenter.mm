@@ -28,6 +28,7 @@
 
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/DispatchOSObject.h>
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
@@ -60,7 +61,7 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
     if (!self)
         return nil;
 
-    m_queue = adoptOSObject(dispatch_queue_create(nullptr, OSObjectPtr { DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL }.get()));
+    m_queue = adoptOSObject(dispatch_queue_create(nullptr, serialQueueWithAutoreleasePoolAttrSingleton()));
     m_bundleIdentifier = bundleIdentifier;
     m_notifications = adoptNS([[NSMutableArray alloc] init]);
 

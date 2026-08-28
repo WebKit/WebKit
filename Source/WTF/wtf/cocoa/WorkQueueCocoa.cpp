@@ -82,7 +82,7 @@ WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
 
 void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
 {
-    dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
+    dispatch_queue_attr_t attr = type == Type::Concurrent ? concurrentQueueWithAutoreleasePoolAttrSingleton() : serialQueueWithAutoreleasePoolAttrSingleton();
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
     // FIXME: This is a false positive. rdar://160931336
     SUPPRESS_RETAINPTR_CTOR_ADOPT lazyInitialize(m_dispatchQueue, adoptOSObject(dispatch_queue_create(name, attr)));

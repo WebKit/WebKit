@@ -263,7 +263,7 @@ static NSArray *playerKVOProperties();
 
 static dispatch_queue_t globalLoaderDelegateQueue()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL));
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebCoreAVFLoaderDelegate queue", serialQueueWithAutoreleasePoolAttrSingleton()));
     return globalQueue.get().get();
 }
 

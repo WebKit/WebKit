@@ -4502,6 +4502,18 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
         error(line_number, 'runtime/dispatch_set_target_queue', 5,
               'Never use dispatch_set_target_queue.  Use dispatch_queue_create_with_target instead.')
 
+    matched = search(r'\bDISPATCH_QUEUE_(SERIAL|CONCURRENT)\b', line)
+    if matched:
+        error(line_number, 'runtime/dispatch_queue_autorelease_pool', 5,
+              'Use %sQueueWithAutoreleasePoolAttrSingleton() instead of %s so that each work item runs with its '
+              'own autorelease pool.' % (matched.group(1).lower(), matched.group(0)))
+
+    matched = search(r'\bDISPATCH_QUEUE_(SERIAL|CONCURRENT)_WITH_AUTORELEASE_POOL\b', line)
+    if matched:
+        error(line_number, 'runtime/dispatch_queue_autorelease_pool', 5,
+              'Use %sQueueWithAutoreleasePoolAttrSingleton() instead of %s so that static analysis knows the '
+              'attribute does not need to be retained.' % (matched.group(1).lower(), matched.group(0)))
+
     matched = search(r'\b(RetainPtr<.*)', line)
     if matched:
         match_line = matched.group(1)
@@ -5345,6 +5357,7 @@ class CppChecker(object):
         'runtime/callonmainthread',
         'runtime/casting',
         'runtime/ctype_function',
+        'runtime/dispatch_queue_autorelease_pool',
         'runtime/dispatch_set_target_queue',
         'runtime/enum_bitfields',
         'runtime/explicit',

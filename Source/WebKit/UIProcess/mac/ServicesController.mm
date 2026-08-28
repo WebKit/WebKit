@@ -46,7 +46,7 @@ ServicesController& ServicesController::singleton()
 }
 
 ServicesController::ServicesController()
-    : m_refreshQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.ServicesController", DISPATCH_QUEUE_SERIAL)))
+    : m_refreshQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.ServicesController", serialQueueWithAutoreleasePoolAttrSingleton())))
     , m_hasPendingRefresh(false)
     , m_hasImageServices(false)
     , m_hasSelectionServices(false)

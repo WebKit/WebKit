@@ -1868,11 +1868,36 @@ class CppStyleTest(CppStyleTestBase):
     def test_dispatch_set_target_queue(self):
         self.assert_lint(
             '''\
-            globalQueue = dispatch_queue_create("My Serial Queue", DISPATCH_QUEUE_SERIAL);
+            globalQueue = dispatch_queue_create("My Serial Queue", serialQueueWithAutoreleasePoolAttrSingleton());
             dispatch_set_target_queue(globalQueue, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0));''',
             'Never use dispatch_set_target_queue.  Use dispatch_queue_create_with_target instead.'
             '  [runtime/dispatch_set_target_queue] [5]')
-        self.assert_lint('globalQueue = dispatch_queue_create_with_target("My Serial Queue", DISPATCH_QUEUE_SERIAL, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0));', '')
+        self.assert_lint('globalQueue = dispatch_queue_create_with_target("My Serial Queue", serialQueueWithAutoreleasePoolAttrSingleton(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0));', '')
+
+    def test_dispatch_queue_autorelease_pool(self):
+        self.assert_lint(
+            'globalQueue = dispatch_queue_create("My Serial Queue", DISPATCH_QUEUE_SERIAL);',
+            'Use serialQueueWithAutoreleasePoolAttrSingleton() instead of DISPATCH_QUEUE_SERIAL so that each work '
+            'item runs with its own autorelease pool.'
+            '  [runtime/dispatch_queue_autorelease_pool] [5]')
+        self.assert_lint(
+            'globalQueue = dispatch_queue_create("My Concurrent Queue", DISPATCH_QUEUE_CONCURRENT);',
+            'Use concurrentQueueWithAutoreleasePoolAttrSingleton() instead of DISPATCH_QUEUE_CONCURRENT so that '
+            'each work item runs with its own autorelease pool.'
+            '  [runtime/dispatch_queue_autorelease_pool] [5]')
+        self.assert_lint(
+            'globalQueue = dispatch_queue_create("My Serial Queue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL);',
+            'Use serialQueueWithAutoreleasePoolAttrSingleton() instead of DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL '
+            'so that static analysis knows the attribute does not need to be retained.'
+            '  [runtime/dispatch_queue_autorelease_pool] [5]')
+        self.assert_lint(
+            'globalQueue = dispatch_queue_create("My Concurrent Queue", DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL);',
+            'Use concurrentQueueWithAutoreleasePoolAttrSingleton() instead of '
+            'DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL so that static analysis knows the attribute does not '
+            'need to be retained.'
+            '  [runtime/dispatch_queue_autorelease_pool] [5]')
+        self.assert_lint('globalQueue = dispatch_queue_create("My Serial Queue", serialQueueWithAutoreleasePoolAttrSingleton());', '')
+        self.assert_lint('globalQueue = dispatch_queue_create("My Concurrent Queue", concurrentQueueWithAutoreleasePoolAttrSingleton());', '')
 
     def test_retainptr_pointer(self):
         self.assert_lint(
@@ -6213,7 +6238,7 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/auto_with_adopt] [4]",
             'foo.cpp')
         self.assert_lint(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", serialQueueWithAutoreleasePoolAttrSingleton()));',
             "Use 'OSObjectPtr' instead of 'auto' with 'adoptOSObject()'."
             "  [runtime/auto_with_adopt] [4]",
             'foo.cpp')
@@ -6526,16 +6551,16 @@ class WebKitStyleTest(CppStyleTestBase):
 
     def test_wtf_os_object_ptr(self):
         self.assert_lint(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", serialQueueWithAutoreleasePoolAttrSingleton()));',
             "Use 'OSObjectPtr' instead of 'auto' with 'adoptOSObject()'."
             "  [runtime/auto_with_adopt] [4]",
             'foo.cpp')
         self.assert_lint(
-            'OSObjectPtr queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            'OSObjectPtr queue = adoptOSObject(dispatch_queue_create("foo", serialQueueWithAutoreleasePoolAttrSingleton()));',
             '',
             'foo.cpp')
         self.assert_lint(
-            'OSObjectPtr<dispatch_queue_t> queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            'OSObjectPtr<dispatch_queue_t> queue = adoptOSObject(dispatch_queue_create("foo", serialQueueWithAutoreleasePoolAttrSingleton()));',
             '',
             'foo.cpp')
         self.assert_lint(
@@ -6564,7 +6589,7 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_os_object_ptr] [4]",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
-            'auto queue = adoptNS(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            'auto queue = adoptNS(dispatch_queue_create("foo", serialQueueWithAutoreleasePoolAttrSingleton()));',
             r"Use 'adoptOSObject\(\)' instead of 'adoptNS\(\)' for dispatch objects.",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
@@ -6572,19 +6597,19 @@ class WebKitStyleTest(CppStyleTestBase):
             r"Use 'adoptOSObject\(\)' instead of 'adoptNS\(\)' for dispatch objects.",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_CONCURRENT }.get()));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL }.get()));',
             r"Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects.",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_SERIAL }.get()));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL }.get()));',
             r"Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects.",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_CONCURRENT).get()));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL).get()));',
             r"Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects.",
             'foo.mm')
         self.assert_lint_one_of_many_errors_re(
-            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_SERIAL).get()));',
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL).get()));',
             r"Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects.",
             'foo.mm')
 

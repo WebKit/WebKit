@@ -44,6 +44,7 @@
 #import <wtf/URL.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/threads/BinarySemaphore.h>
 
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
@@ -70,7 +71,7 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
 {
     ASSERT(!m_queue);
     ASSERT(!m_neFilterSource);
-    m_queue = adoptOSObject(dispatch_queue_create("WebKit NetworkExtension Filtering", DISPATCH_QUEUE_SERIAL));
+    m_queue = adoptOSObject(dispatch_queue_create("WebKit NetworkExtension Filtering", serialQueueWithAutoreleasePoolAttrSingleton()));
     ASSERT_UNUSED(url, !url);
     m_neFilterSource = adoptNS([[NEFilterSource alloc] initWithDecisionQueue:m_queue.get()]);
     [m_neFilterSource setSourceAppIdentifier:applicationBundleIdentifier().createNSString().get()];

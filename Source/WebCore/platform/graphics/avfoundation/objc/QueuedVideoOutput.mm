@@ -32,6 +32,7 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cocoa/AVFoundationSPI.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/darwin/DispatchExtras.h>
 #include <wtf/darwin/DispatchOSObject.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -120,7 +121,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(QueuedVideoOutput);
 
 static dispatch_queue_t globalOutputDelegateQueue()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebQueuedVideoOutputDelegate queue", DISPATCH_QUEUE_SERIAL));
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebQueuedVideoOutputDelegate queue", serialQueueWithAutoreleasePoolAttrSingleton()));
     return globalQueue.get().get();
 }
 
