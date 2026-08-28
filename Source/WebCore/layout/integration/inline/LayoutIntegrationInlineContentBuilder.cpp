@@ -340,11 +340,6 @@ void InlineContentBuilder::updateInkOverflowForInlineBoxes(std::span<InlineDispl
     }
 }
 
-void InlineContentBuilder::updateLineOverflow(InlineContent& inlineContent) const
-{
-    computeOverflowFromBoxes(inlineContent, 0);
-}
-
 void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent, size_t startIndex) const
 {
     auto& lines = inlineContent.displayContent().lines;

@@ -1,0 +1,8 @@
+XXXX XXXX
+XXXX XXXXX
+XXXX XXXX
+(repaint rects
+  (rect 0 27 144 16)
+  (rect 0 27 144 19)
+)
+

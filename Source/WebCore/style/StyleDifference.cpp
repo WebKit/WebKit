@@ -459,10 +459,6 @@ public:
             }
         }
 
-        // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
-        if (changeAffectsVisualOverflow(a, b))
-            return true;
-
         if (&a.nonInheritedData() != &b.nonInheritedData()) {
             SUPPRESS_UNCOUNTED_ARG if (a.nonInheritedData().miscData.ptr() != b.nonInheritedData().miscData.ptr()
                 && miscDataChangeRequiresLayout(*a.nonInheritedData().miscData, *b.nonInheritedData().miscData, changedContextSensitiveProperties))
@@ -1026,6 +1022,9 @@ public:
 
         if (changeRequiresLayout(a, b, changedContextSensitiveProperties))
             return { DifferenceResult::Layout, changedContextSensitiveProperties };
+
+        if (changeAffectsVisualOverflow(a, b))
+            return { DifferenceResult::Overflow, changedContextSensitiveProperties };
 
         if (changeRequiresOutOfFlowMovementLayoutOnly(a, b, changedContextSensitiveProperties))
             return { DifferenceResult::LayoutOutOfFlowMovementOnly, changedContextSensitiveProperties };

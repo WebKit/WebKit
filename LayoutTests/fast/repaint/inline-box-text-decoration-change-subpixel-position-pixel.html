@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: subpixel version of the same check, mirroring
+     fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html.
+     Paints before mutating, so an underline the tight repaint fails to cover shows up against the reference. -->
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecoration = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { font-family: monospace; font-size: 10px; }
+div { padding-top: 0.1px; }
+.no-decoration { text-decoration: none; }
+</style>
+<div><div><a class=no-decoration id=target href="#">foobar</a></div></div>

@@ -1109,26 +1109,17 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
         return;
     }
 
-    bool shouldUpdateOverflow = false;
     for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
-        RenderObject& renderer = *walker.current();
-        if (auto* box = dynamicDowncast<RenderBox>(renderer)) {
-            if (!box->isOutOfFlowPositioned() && box->needsLayout()) {
-                box->layout();
-                shouldUpdateOverflow = true;
-            }
-            continue;
-        }
-        if (isAnyOf<RenderText, RenderInline>(renderer))
-            renderer.clearNeedsLayout();
+        CheckedPtr renderer = walker.current();
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && box->needsLayout() && !box->isOutOfFlowPositioned())
+            box->layout();
+        else if (isAnyOf<RenderText, RenderInline, RenderLineBreak>(renderer))
+            renderer->clearNeedsLayout();
     }
 
-    if (!shouldUpdateOverflow)
-        return;
-
     if (auto* lineLayout = inlineLayout()) {
-        lineLayout->updateOverflow();
-        return;
+        if (auto damageRect = lineLayout->updateOverflow())
+            repaintRectangle(*damageRect);
     }
 }
 

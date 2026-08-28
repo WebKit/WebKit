@@ -81,7 +81,9 @@ public:
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
     void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
-    void updateOverflow();
+
+    std::optional<LayoutRect> updateOverflow();
+
     static void updateStyle(const RenderObject&);
 
     // Partial invalidation.
