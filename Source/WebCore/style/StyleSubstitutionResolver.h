@@ -116,11 +116,20 @@ private:
     Builder& m_styleBuilder;
     const CSSRegisteredCustomProperty* m_registration { nullptr };
     RefPtr<const CSSSubstitutionValue> m_substitutionValue;
+    // The scope to look up a <dashed-function> name in, while resolving the parameter defaults of a
+    // custom function: names there refer to the scope the function was defined in, not the calling
+    // element's.
+    std::optional<ScopeOrdinal> m_dashedFunctionLookupScope;
+    // Parameters of the custom functions whose arguments are currently being resolved, innermost last.
+    // A parameter appears once resolved, so a default can reference an earlier one. A null value is the
+    // guaranteed-invalid value. Present names shadow the calling element's custom properties.
+    using ParameterValues = HashMap<AtomString, RefPtr<const CustomProperty>>;
+    Vector<ParameterValues> m_parameterValues;
     Vector<WTF::String> m_intermediateTokenStrings;
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;
     unsigned m_urlContextDepth { 0 };
     unsigned m_randomItemAutoIndex { 0 };
-    bool m_isAttrTainted { false };
+    IsAttrTainted m_isAttrTainted { IsAttrTainted::No };
     bool m_hasTaintedURL { false };
 };
 

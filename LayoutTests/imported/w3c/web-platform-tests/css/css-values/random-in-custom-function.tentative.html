@@ -67,6 +67,29 @@
     @function --g-number() returns <number> {
         result: random(--foo property-index-scoped, 1, 1e6);
     }
+
+    /* random(fixed <number>) bypasses the random cache name entirely, so the
+       cases below test only whether a value is produced at all, independent of
+       how cache names are scoped inside custom functions. Each resolves to 50. */
+    @function --fixed-untyped(--x) {
+        result: var(--x);
+    }
+    @function --fixed-typed-argument(--x <number>) returns <number> {
+        result: var(--x);
+    }
+    @function --fixed-untyped-argument-typed-result(--x) returns <number> {
+        result: var(--x);
+    }
+    @function --fixed-untyped-local-typed-result() returns <number> {
+        --x: random(fixed 0.5, 0, 100);
+        result: var(--x);
+    }
+    @function --fixed-typed-default(--x <number>: random(fixed 0.5, 0, 100)) returns <number> {
+        result: var(--x);
+    }
+    @function --fixed-typed-result() returns <number> {
+        result: random(fixed 0.5, 0, 100);
+    }
 </style>
 <script>
 // Since actual and expected values are generated randomly, `assert_equals()`
@@ -266,4 +289,37 @@ test(() => {
     document.body.removeChild(holder);
   }
 }, `random() in function argument`);
+
+// random(fixed <number>) has a fixed random base value and ignores the random
+// cache name, so these cases are deterministic and independent of how cache
+// names are scoped inside a custom function.
+function test_fixed_random(value, description) {
+  test(() => {
+    const holder = document.createElement('div');
+    document.body.appendChild(holder);
+    try {
+      const el = document.createElement('div');
+      el.style.setProperty('--number', value);
+      holder.appendChild(el);
+      assert_equals(getComputedStyle(el).getPropertyValue('--number'), '50');
+    } finally {
+      document.body.removeChild(holder);
+    }
+  }, description);
+}
+
+test_fixed_random('random(fixed 0.5, 0, 100)',
+  'random(fixed) outside a function');
+test_fixed_random('--fixed-untyped(random(fixed 0.5, 0, 100))',
+  'random(fixed) through an untyped argument');
+test_fixed_random('--fixed-typed-argument(random(fixed 0.5, 0, 100))',
+  'random(fixed) through a typed argument');
+test_fixed_random('--fixed-untyped-argument-typed-result(random(fixed 0.5, 0, 100))',
+  'random(fixed) through an untyped argument into a typed result');
+test_fixed_random('--fixed-untyped-local-typed-result()',
+  'random(fixed) in an untyped local substituted into a typed result');
+test_fixed_random('--fixed-typed-default()',
+  'random(fixed) in a typed parameter default');
+test_fixed_random('--fixed-typed-result()',
+  'random(fixed) written in a typed result');
 </script>

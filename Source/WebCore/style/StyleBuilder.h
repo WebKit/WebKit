@@ -32,7 +32,9 @@
 namespace WebCore {
 
 class CSSCustomPropertyValue;
+class CSSVariableData;
 enum class CSSWideKeyword : uint8_t;
+struct CSSCustomPropertySyntax;
 struct CSSRegisteredCustomProperty;
 
 namespace Style {
@@ -63,6 +65,7 @@ public:
 
     RefPtr<const CustomProperty> resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue&);
     std::optional<CustomPropertyOrKeyword> resolveFunctionResult();
+    std::optional<CustomPropertyOrKeyword> computeCustomPropertyValueForSyntax(const AtomString&, const CSSCustomPropertySyntax&, const CSSVariableData&);
 
     BuilderState& state() { return m_state; }
     const MatchResult& matchResult() const { return m_cascade.matchResult(); }

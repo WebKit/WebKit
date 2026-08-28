@@ -7,4 +7,11 @@ PASS random() in same registered function same locals different positions
 FAIL random() in different function same default locals assert_true: expected true got false
 FAIL random() in function in local overrides argument assert_false: Random values should not be equal expected false got true
 PASS random() in function argument
+PASS random(fixed) outside a function
+PASS random(fixed) through an untyped argument
+PASS random(fixed) through a typed argument
+FAIL random(fixed) through an untyped argument into a typed result assert_equals: expected "50" but got "0"
+FAIL random(fixed) in an untyped local substituted into a typed result assert_equals: expected "50" but got "0"
+FAIL random(fixed) in a typed parameter default assert_equals: expected "50" but got "0"
+PASS random(fixed) written in a typed result
 
