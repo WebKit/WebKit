@@ -6,8 +6,9 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 75x18
         text run at (0,0) width 75: "Test result: "
       RenderMenuList {SELECT} at (74,0) size 54x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
+layer at (88,12) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"

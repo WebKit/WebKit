@@ -12,14 +12,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 22x18
           text run at (0,0) width 22: "foo"
         RenderMenuList {SELECT} at (21,0) size 32x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 19x14
-            RenderText {#text} at (0,-1) size 6x15
-              text run at (0,0) width 6: "1"
       RenderBlock {DIV} at (0,72) size 784x21
         RenderText {#text} at (0,0) size 22x18
           text run at (0,0) width 22: "foo"
         RenderMenuList {SELECT} at (21,0) size 32x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 19x14
-            RenderText {#text} at (0,-1) size 6x15
-              text run at (0,0) width 6: "1"
+layer at (35,64) size 19x13
+  RenderBlock {DIV} at (6,3) size 19x14
+    RenderText {#text} at (0,-1) size 6x15
+      text run at (0,0) width 6: "1"
+layer at (35,84) size 19x13
+  RenderBlock {DIV} at (6,3) size 19x14
+    RenderText {#text} at (0,-1) size 6x15
+      text run at (0,0) width 6: "1"
 caret: position 3 of child 1 {SELECT} of child 4 {DIV} of body

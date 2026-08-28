@@ -74,9 +74,6 @@ layer at (0,0) size 785x775
           RenderText {#text} at (0,0) size 640x16
             text run at (0,0) width 640: "How does your browser fare on this test?"
           RenderMenuList {SELECT} at (0,16) size 307x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (1,1) size 305x28
-              RenderText {#text} at (5,5) size 182x18
-                text run at (5,5) width 182: "The test renders correctly."
           RenderText {#text} at (307,23) size 16x17
             text run at (307,23) width 16: " "
           RenderInline {LABEL} at (323,23) size 336x17
@@ -122,6 +119,10 @@ layer at (0,0) size 785x775
       RenderBlock {P} at (0,721) size 769x17
         RenderText {#text} at (0,0) size 432x16
           text run at (0,0) width 432: "Last updated in March 1999."
+layer at (9,568) size 305x28
+  RenderBlock {DIV} at (1,1) size 305x28
+    RenderText {#text} at (5,5) size 182x18
+      text run at (5,5) width 182: "The test renders correctly."
 layer at (478,573) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (8,613) size 769x2 clip at (0,0) size 0x0

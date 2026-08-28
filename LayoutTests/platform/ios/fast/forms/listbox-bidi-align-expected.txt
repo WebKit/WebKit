@@ -14,35 +14,17 @@ layer at (0,0) size 800x261
           RenderTableRow {TR} at (0,2) size 666x23
             RenderTableCell {TD} at (2,2) size 160x23 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 158x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 146x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
             RenderTableCell {TD} at (164,2) size 168x23 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 166x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 154x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
             RenderTableCell {TD} at (334,2) size 160x23 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 158x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 146x14
-                  RenderText {#text} at (12,-1) size 0x15
-                    text run at (12,0) width 0 RTL: " "
             RenderTableCell {TD} at (496,2) size 168x23 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 166x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 154x14
-                  RenderText {#text} at (12,-1) size 0x15
-                    text run at (12,0) width 0 RTL: " "
           RenderTableRow {TR} at (0,26) size 666x23
             RenderTableCell {TD} at (2,26) size 160x23 [r=1 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 158x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 146x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
             RenderTableCell {TD} at (164,26) size 168x23 [r=1 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 166x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 154x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
       RenderBlock (anonymous) at (0,86) size 784x19
         RenderText {#text} at (0,0) size 447x18
           text run at (0,0) width 447: "All the items in the following select elements should be right-aligned."
@@ -51,35 +33,17 @@ layer at (0,0) size 800x261
           RenderTableRow {TR} at (0,2) size 652x23
             RenderTableCell {TD} at (2,2) size 167x23 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 165x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 153x14
-                  RenderText {#text} at (153,-1) size 0x15
-                    text run at (153,0) width 0 RTL: " "
             RenderTableCell {TD} at (171,2) size 154x23 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 152x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 140x14
-                  RenderText {#text} at (140,-1) size 0x15
-                    text run at (140,0) width 0 RTL: " "
             RenderTableCell {TD} at (327,2) size 167x23 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 165x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 153x14
-                  RenderText {#text} at (153,-1) size 0x15
-                    text run at (153,0) width 0 RTL: " "
             RenderTableCell {TD} at (496,2) size 154x23 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 152x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 140x14
-                  RenderText {#text} at (140,-1) size 0x15
-                    text run at (140,0) width 0 RTL: " "
           RenderTableRow {TR} at (0,26) size 652x23
             RenderTableCell {TD} at (2,26) size 167x23 [r=1 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 165x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 153x14
-                  RenderText {#text} at (141,-1) size 0x15
-                    text run at (141,0) width 0: " "
             RenderTableCell {TD} at (171,26) size 154x23 [r=1 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 152x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 140x14
-                  RenderText {#text} at (128,-1) size 0x15
-                    text run at (128,0) width 0: " "
       RenderBlock (anonymous) at (0,155) size 784x19
         RenderText {#text} at (0,0) size 456x18
           text run at (0,0) width 456: "All the items in the following select elements should be center-aligned."
@@ -88,24 +52,12 @@ layer at (0,0) size 800x261
           RenderTableRow {TR} at (0,2) size 696x23
             RenderTableCell {TD} at (2,2) size 177x23 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 175x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 163x14
-                  RenderText {#text} at (87,-1) size 1x15
-                    text run at (87,0) width 1 RTL: " "
             RenderTableCell {TD} at (181,2) size 166x23 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 164x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 152x14
-                  RenderText {#text} at (82,-1) size 0x15
-                    text run at (82,0) width 0 RTL: " "
             RenderTableCell {TD} at (349,2) size 177x23 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 175x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 163x14
-                  RenderText {#text} at (75,-1) size 1x15
-                    text run at (75,0) width 1: " "
             RenderTableCell {TD} at (528,2) size 166x23 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 164x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 152x14
-                  RenderText {#text} at (70,-1) size 0x15
-                    text run at (70,0) width 0: " "
       RenderBlock (anonymous) at (0,200) size 784x19
         RenderText {#text} at (0,0) size 296x18
           text run at (0,0) width 296: "The following tables check mixed alignments."
@@ -114,21 +66,89 @@ layer at (0,0) size 800x261
           RenderTableRow {TR} at (0,2) size 744x23
             RenderTableCell {TD} at (2,2) size 172x23 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 170x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 158x14
-                  RenderText {#text} at (158,-1) size 0x15
-                    text run at (158,0) width 0 RTL: " "
             RenderTableCell {TD} at (176,2) size 172x23 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 170x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 158x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
             RenderTableCell {TD} at (350,2) size 195x23 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 193x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 181x14
-                  RenderText {#text} at (181,-1) size 0x15
-                    text run at (181,0) width 0 RTL: " "
             RenderTableCell {TD} at (547,2) size 195x23 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 193x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                RenderBlock {DIV} at (6,3) size 181x14
-                  RenderText {#text} at (0,-1) size 0x15
-                    text run at (0,0) width 0: " "
+layer at (17,51) size 146x13
+  RenderBlock {DIV} at (6,3) size 146x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (179,51) size 154x13
+  RenderBlock {DIV} at (6,3) size 154x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (349,51) size 146x13
+  RenderBlock {DIV} at (6,3) size 146x14
+    RenderText {#text} at (12,-1) size 0x15
+      text run at (12,0) width 0 RTL: " "
+layer at (511,51) size 154x13
+  RenderBlock {DIV} at (6,3) size 154x14
+    RenderText {#text} at (12,-1) size 0x15
+      text run at (12,0) width 0 RTL: " "
+layer at (17,75) size 146x13
+  RenderBlock {DIV} at (6,3) size 146x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (179,75) size 154x13
+  RenderBlock {DIV} at (6,3) size 154x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (17,120) size 153x13
+  RenderBlock {DIV} at (6,3) size 153x14
+    RenderText {#text} at (153,-1) size 0x15
+      text run at (153,0) width 0 RTL: " "
+layer at (186,120) size 140x13
+  RenderBlock {DIV} at (6,3) size 140x14
+    RenderText {#text} at (140,-1) size 0x15
+      text run at (140,0) width 0 RTL: " "
+layer at (342,120) size 153x13
+  RenderBlock {DIV} at (6,3) size 153x14
+    RenderText {#text} at (153,-1) size 0x15
+      text run at (153,0) width 0 RTL: " "
+layer at (511,120) size 140x13
+  RenderBlock {DIV} at (6,3) size 140x14
+    RenderText {#text} at (140,-1) size 0x15
+      text run at (140,0) width 0 RTL: " "
+layer at (17,144) size 153x13
+  RenderBlock {DIV} at (6,3) size 153x14
+    RenderText {#text} at (141,-1) size 0x15
+      text run at (141,0) width 0: " "
+layer at (186,144) size 140x13
+  RenderBlock {DIV} at (6,3) size 140x14
+    RenderText {#text} at (128,-1) size 0x15
+      text run at (128,0) width 0: " "
+layer at (17,189) size 163x13
+  RenderBlock {DIV} at (6,3) size 163x14
+    RenderText {#text} at (87,-1) size 1x15
+      text run at (87,0) width 1 RTL: " "
+layer at (196,189) size 152x13
+  RenderBlock {DIV} at (6,3) size 152x14
+    RenderText {#text} at (82,-1) size 0x15
+      text run at (82,0) width 0 RTL: " "
+layer at (364,189) size 163x13
+  RenderBlock {DIV} at (6,3) size 163x14
+    RenderText {#text} at (75,-1) size 1x15
+      text run at (75,0) width 1: " "
+layer at (543,189) size 152x13
+  RenderBlock {DIV} at (6,3) size 152x14
+    RenderText {#text} at (70,-1) size 0x15
+      text run at (70,0) width 0: " "
+layer at (17,233) size 158x13
+  RenderBlock {DIV} at (6,3) size 158x14
+    RenderText {#text} at (158,-1) size 0x15
+      text run at (158,0) width 0 RTL: " "
+layer at (191,233) size 158x13
+  RenderBlock {DIV} at (6,3) size 158x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (365,233) size 181x13
+  RenderBlock {DIV} at (6,3) size 181x14
+    RenderText {#text} at (181,-1) size 0x15
+      text run at (181,0) width 0 RTL: " "
+layer at (562,233) size 181x13
+  RenderBlock {DIV} at (6,3) size 181x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
