@@ -1,0 +1,54 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// JavaScriptCoreTools is a tools library that is for implementing tools to assist
+// in JavaScriptCore and WebKit development. It builds on JavaScriptCore, but does
+// not contain any functionality that is part of core JSC, and it is not needed for
+// implementing browser engines.
+//
+// JavaScriptCoreTools is packaged as a static library, and meant only to be linked
+// by tools that need it. Its headers are included as private headers of JavaScriptCore.
+// This allows JavaScriptCore and JavaScriptCoreTools to be revision locked, and
+// built in tandem to prevent bit rot from creeping in.
+#include "BaseTarget.xcconfig"
+
+PRODUCT_NAME = JavaScriptCoreTools;
+
+// Not built for simulator or Catalyst builds.
+WK_LIB_JSC_TOOLS_SIMULATOR = NO;
+WK_LIB_JSC_TOOLS_SIMULATOR[sdk=*simulator*] = YES;
+WK_LIB_JSC_TOOLS_UNSUPPORTED = $(WK_OR_$(WK_LIB_JSC_TOOLS_SIMULATOR)_$(WK_CHECK_CATALYST));
+
+EXCLUDED_SOURCE_FILE_NAMES = $(WK_LIB_JSC_TOOLS_EXCLUDED_$(WK_LIB_JSC_TOOLS_UNSUPPORTED));
+WK_LIB_JSC_TOOLS_EXCLUDED_YES = *;
+
+// Installed to /usr/local/lib, alongside libWTF.a and libbmalloc.a.
+INSTALL_PATH = $(WK_LIBRARY_INSTALL_PATH);
+SKIP_INSTALL = $(WK_LIB_JSC_TOOLS_SKIP_INSTALL_$(WK_LIB_JSC_TOOLS_UNSUPPORTED));
+WK_LIB_JSC_TOOLS_SKIP_INSTALL_YES = YES;
+WK_LIB_JSC_TOOLS_SKIP_INSTALL_NO = NO;
+STRIP_INSTALLED_PRODUCT = NO;
+
+// The sources include "config.h" and their own headers from the source tree,
+// plus JavaScriptCore's generated and private headers.
+HEADER_SEARCH_PATHS = $(SRCROOT) $(SRCROOT)/corpse "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
