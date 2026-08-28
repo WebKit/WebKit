@@ -37,6 +37,7 @@ namespace WebCore {
 #define CUBIC_BEZIER_SPLINE_SAMPLES 11
 
         static constexpr double kBezierEpsilon = 1e-7;
+        static constexpr double kBisectionEpsilon = 1e-10;
         static constexpr int kMaxNewtonIterations = 4;
 
         UnitBezier(double p1x, double p1y, double p2x, double p2y)
@@ -144,9 +145,10 @@ namespace WebCore {
                 return t2;
 
             // Fall back to the bisection method for reliability.
+            double bisectionEpsilon = std::max(kBisectionEpsilon, epsilon);
             while (t0 < t1) {
                 x2 = sampleCurveX(t2);
-                if (std::abs(x2 - x) < epsilon)
+                if (std::abs(x2 - x) < bisectionEpsilon)
                     return t2;
                 if (x > x2)
                     t0 = t2;
