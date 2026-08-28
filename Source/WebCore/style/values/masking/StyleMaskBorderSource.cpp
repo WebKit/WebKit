@@ -92,9 +92,9 @@ auto CSSValueCreation<MaskBorderSource>::operator()(CSSValuePool&, const Style::
 
 // MARK: - Blending
 
-auto Blending<MaskBorderSource>::canBlend(const MaskBorderSource& a, const MaskBorderSource& b) -> bool
+auto Blending<MaskBorderSource>::canBlend(const MaskBorderSource&, const MaskBorderSource&) -> bool
 {
-    return !a.isNone() && !b.isNone();
+    return false;
 }
 
 auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBorderSource& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> MaskBorderSource

@@ -57,9 +57,9 @@ auto CSSValueConversion<ImageOrNone>::operator()(BuilderState& state, const CSSV
 
 // MARK: - Blending
 
-auto Blending<ImageOrNone>::canBlend(const ImageOrNone& a, const ImageOrNone& b) -> bool
+auto Blending<ImageOrNone>::canBlend(const ImageOrNone&, const ImageOrNone&) -> bool
 {
-    return !a.isNone() && !b.isNone();
+    return false;
 }
 
 auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> ImageOrNone
