@@ -1223,20 +1223,34 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(std::span
         if (!displayBox.isText())
             continue;
 
-        CheckedRef parentStyle = displayBox.layoutBox().parent().style();
-        auto textDecorations = parentStyle->textDecorationLineInEffect();
-        if (!textDecorations)
-            continue;
-
+        // Note that decoration properties are not inherited but propagated
         auto decorationOverflow = [&] {
-            if (!textDecorations.hasUnderline())
-                return inkOverflowForDecorations(parentStyle);
+            auto overflowForDecoratingBox = [&](auto& decoratingBoxStyle) {
+                if (!decoratingBoxStyle.textDecorationLineInEffect().hasUnderline())
+                    return inkOverflowForDecorations(decoratingBoxStyle);
 
-            if (!logicalBottomForTextDecoration)
-                logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
-            auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
-            auto textRunLogicalHeight = isHorizontalWritingMode ? displayBox.height() : displayBox.width();
-            return inkOverflowForDecorations(parentStyle, { textRunLogicalHeight, textRunLogicalOffsetFromLineBottom });
+                if (!logicalBottomForTextDecoration)
+                    logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
+                auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
+                auto textRunLogicalHeight = isHorizontalWritingMode ? displayBox.height() : displayBox.width();
+                return inkOverflowForDecorations(decoratingBoxStyle, { textRunLogicalHeight, textRunLogicalOffsetFromLineBottom });
+            };
+
+            // Several ancestors may each decorate this text box, which then has to accommodate whichever of them overflows it the most on each side.
+            auto maximumOverflow = InkOverflowForDecorations { };
+            for (CheckedPtr box = &displayBox.layoutBox().parent(); box; box = &box->parent()) {
+                CheckedRef style = isFirstFormattedLine() ? box->firstLineStyle() : box->style();
+                if (style->textDecorationLine()) {
+                    auto overflow = overflowForDecoratingBox(style.get());
+                    maximumOverflow.top() = std::max(maximumOverflow.top(), overflow.top());
+                    maximumOverflow.right() = std::max(maximumOverflow.right(), overflow.right());
+                    maximumOverflow.bottom() = std::max(maximumOverflow.bottom(), overflow.bottom());
+                    maximumOverflow.left() = std::max(maximumOverflow.left(), overflow.left());
+                }
+                if (box == &root())
+                    break;
+            }
+            return maximumOverflow;
         }();
 
         if (!decorationOverflow.isZero()) {
