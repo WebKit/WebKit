@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><body><script>
+// Removing this frame from the parent document detaches this document's XML parser while
+// XMLDocumentParser::end() is still running.
+document.onreadystatechange = function () {
+    parent.postMessage("readystatechange", "*");
+    parent.document.querySelector("iframe").remove();
+};
+</script></body></html>
