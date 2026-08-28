@@ -300,10 +300,10 @@ private:
     // Message handlers.
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
-    void scheduleResourceLoad(NetworkResourceLoadParameters&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
-    void performSynchronousLoad(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
+    void scheduleResourceLoad(IPC::Untrusted<NetworkResourceLoadParameters>&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
+    void performSynchronousLoad(IPC::Untrusted<NetworkResourceLoadParameters>&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
-    void loadPing(NetworkResourceLoadParameters&&);
+    void loadPing(IPC::Untrusted<NetworkResourceLoadParameters>&&);
     void prefetchDNS(const String&);
     void sendH2Ping(IPC::Untrusted<URL>&&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, std::optional<NavigatingToAppBoundDomain>, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void preconnectTo(PreconnectRequest&&);
@@ -411,14 +411,14 @@ private:
     void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebCore::PageIdentifier);
 
     void logUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain>&&);
-    void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
+    void resourceLoadStatisticsUpdated(IPC::Untrusted<Vector<WebCore::ResourceLoadStatistics>>&&, CompletionHandler<void()>&&);
     void hasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     void queryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain>&& subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain>&& topFrameDomain, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(WebCore::PermissionState)>&&);
     void storageAccessQuirkForTopFrameDomain(IPC::Untrusted<URL>&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&&);
     void requestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain>&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, IPC::Untrusted<WebCore::RegistrableDomain>&& openerDomain);
 
-    void setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&&, WebCore::IsLoggedIn, std::optional<WebCore::LoginStatus>&&, CompletionHandler<void()>&&);
+    void setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&&, WebCore::IsLoggedIn, IPC::Untrusted<std::optional<WebCore::LoginStatus>>&&, CompletionHandler<void()>&&);
     void isLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain>&&, CompletionHandler<void(bool)>&&);
     void dropNonSerializableInProcessCache(WebCore::ProcessIdentifier, WebCore::NonSerializedDataIdentifier);
     bool isLoginStatusAPIRequiresWebAuthnEnabled() const { return m_sharedPreferencesForWebProcess.loginStatusAPIRequiresWebAuthnEnabled; }

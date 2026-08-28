@@ -126,7 +126,13 @@ private:
     void notifyClientsOfControllerChange(const HashSet<WebCore::ScriptExecutionContextIdentifier>& contextIdentifiers, const std::optional<WebCore::ServiceWorkerData>& newController);
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&) final;
 
-    void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
+    void scheduleJobInServer(IPC::Untrusted<WebCore::ServiceWorkerJobData>&&);
+
+    // These hide the same-named methods on WebCore::SWServer::Connection, which cannot take an
+    // IPC type. They unwrap and call the base.
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&, WebCore::WorkerFetchResult&&);
+    void didResolveRegistrationPromise(IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&);
+    void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&&, MatchBackgroundFetchCallback&&);
 
     using UnregisterJobResult = std::expected<bool, WebCore::ExceptionData>;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&&);

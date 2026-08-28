@@ -24,7 +24,7 @@ import itertools
 
 from collections import Counter, defaultdict
 from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
-from .untrusted_origins import conveys_untrusted_value, is_privileged_receiver, unwrap_if_untrusted, unwrap_untrusted
+from .untrusted_origins import conveys_untrusted_value, is_privileged_receiver, struct_types_carrying_untrusted_origins, unwrap_if_untrusted, unwrap_untrusted
 
 BUILTIN_ATTRIBUTE = "Builtin"
 MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
@@ -89,9 +89,10 @@ class MessageReceiver(object):
         """
         if not is_privileged_receiver(self):
             return
+        carriers = struct_types_carrying_untrusted_origins()
         for message in self.messages:
             for parameter in message.parameters:
-                untrusted_type = conveys_untrusted_value(parameter.type)
+                untrusted_type = conveys_untrusted_value(parameter.type, extra_types=carriers)
                 if untrusted_type is None or unwrap_untrusted(parameter.type):
                     continue
                 raise Exception(

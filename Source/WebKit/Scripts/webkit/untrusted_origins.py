@@ -71,6 +71,73 @@ PRIVILEGED_PROCESSES = {
 
 UNTRUSTED_WRAPPER = "IPC::Untrusted"
 
+# Kinds of untrusted value that name an authority a process may or may not hold. A URL is not
+# one of them: it is usually a request target rather than a claim, so the structs that carry
+# only URLs are held back from enforcement for now.
+ORIGIN_VALUE_KINDS = {
+    "ClientOrigin",
+    "RegistrableDomain",
+    "SecurityOrigin",
+    "SecurityOriginData",
+    "Site",
+}
+
+
+def _load_serializer_generator():
+    """Loads generate-serializers.py as a module.
+
+    The set of structs messages.py demands a wrapper for has to be the same set the visitor is
+    generated for, or one of the two has a hole. Reusing that script's parser rather than
+    writing a second one is what makes them the same set by construction. The import is done
+    here rather than at module scope because generate-serializers.py imports this module.
+    """
+    import importlib.util
+    path = os.path.join(os.path.dirname(__file__), '..', 'generate-serializers.py')
+    spec = importlib.util.spec_from_file_location('generate_serializers', os.path.normpath(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_struct_carriers = None
+
+
+def struct_types_carrying_untrusted_origins():
+    """Serialized struct types that transitively carry an origin, site or domain.
+
+    Wrapping an origin in IPC::Untrusted<T> is only worth anything if putting the same origin
+    in a struct field is not a way around it, so these types are enforced the same way. A type
+    reachable only through a URL field is excluded; see ORIGIN_VALUE_KINDS.
+
+    The .serialization.in files are found by walking the tree rather than taken from the build,
+    so this can name a type the current configuration does not build. That over-approximates,
+    which is safe: a message parameter can only have a type the configuration serializes.
+    """
+    global _struct_carriers
+    if _struct_carriers is not None:
+        return _struct_carriers
+
+    generator = _load_serializer_generator()
+    source_root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+    serialized_types = []
+    for directory, _, filenames in os.walk(source_root):
+        # Holds deliberately malformed inputs for the generators' own negative tests.
+        if directory.endswith(os.path.join('Scripts', 'webkit', 'tests')):
+            continue
+        for filename in filenames:
+            if not filename.endswith('.serialization.in'):
+                continue
+            path = os.path.join(directory, filename)
+            with open(path, 'r', errors='replace') as source_file:
+                types, _, _, _, _, _ = generator.parse_serialized_types(source_file)
+            serialized_types.extend(types)
+
+    serialized_types = generator.resolve_inheritance(serialized_types)
+    context = generator.UntrustedValueContext(serialized_types)
+    _struct_carriers = {name for name, kinds in context.kinds.items() if kinds & ORIGIN_VALUE_KINDS}
+    return _struct_carriers
+
+
 # Files permitted to declare a designated validation procedure, either by specializing
 # IPC::IsValidationProcedureFor or by deriving from IPC::CanValidateUntrusted. Confining these
 # keeps the set of ways to recover a trusted value from an Untrusted<T> small and reviewable.

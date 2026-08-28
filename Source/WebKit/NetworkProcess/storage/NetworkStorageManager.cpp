@@ -2120,8 +2120,9 @@ void NetworkStorageManager::registerFileSystemHandleRecordsForOrigin(const WebCo
     fileSystemStorageManager->registerPersistedHandlesAndAddReferences(records);
 }
 
-void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
+void NetworkStorageManager::openDatabase(IPC::Connection& connection, IPC::Untrusted<WebCore::IDBOpenRequestData>&& untrustedRequestData)
 {
+    auto requestData = WTF::move(untrustedRequestData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto origin = requestData.databaseIdentifier().origin();
     MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
     MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
@@ -2133,16 +2134,18 @@ void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebC
     protect(idbStorageManagerForOrigin(origin))->openDatabase(*connectionToClient, requestData);
 }
 
-void NetworkStorageManager::openDBRequestCancelled(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
+void NetworkStorageManager::openDBRequestCancelled(IPC::Connection& connection, IPC::Untrusted<WebCore::IDBOpenRequestData>&& untrustedRequestData)
 {
+    auto requestData = WTF::move(untrustedRequestData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto origin = requestData.databaseIdentifier().origin();
     STORAGE_MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
 
     protect(idbStorageManagerForOrigin(origin))->openDBRequestCancelled(requestData);
 }
 
-void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
+void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, IPC::Untrusted<WebCore::IDBOpenRequestData>&& untrustedRequestData)
 {
+    auto requestData = WTF::move(untrustedRequestData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto origin = requestData.databaseIdentifier().origin();
     STORAGE_MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
     MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
@@ -2503,8 +2506,9 @@ void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, IPC:
         cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
-void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&& untrustedOptions, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
+    auto options = WTF::move(untrustedOptions).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));

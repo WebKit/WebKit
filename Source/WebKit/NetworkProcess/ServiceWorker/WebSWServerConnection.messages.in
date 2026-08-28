@@ -27,10 +27,10 @@
 ]
 messages -> WebSWServerConnection {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
-    [EnabledBy=ServiceWorkersEnabled] ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
+    [EnabledBy=ServiceWorkersEnabled] ScheduleJobInServer(struct IPC::Untrusted<WebCore::ServiceWorkerJobData> jobData)
     [EnabledBy=ServiceWorkersEnabled] ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (std::expected<bool, WebCore::ExceptionData> result)
 
-    [EnabledBy=ServiceWorkersEnabled] FinishFetchingScriptInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, struct WebCore::WorkerFetchResult result)
+    [EnabledBy=ServiceWorkersEnabled] FinishFetchingScriptInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey> registrationKey, struct WebCore::WorkerFetchResult result)
     [EnabledBy=ServiceWorkersEnabled] AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
     [EnabledBy=ServiceWorkersEnabled] RemoveServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 
@@ -39,7 +39,7 @@ messages -> WebSWServerConnection {
 
     [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source)
 
-    [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
+    [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey> key)
 
     [EnabledBy=ServiceWorkersEnabled] MatchRegistration(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, IPC::Untrusted<URL> clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
     [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData> topOrigin, IPC::Untrusted<URL> clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
@@ -68,7 +68,7 @@ messages -> WebSWServerConnection {
     [EnabledBy=BackgroundFetchAPIEnabled] BackgroundFetchIdentifiers(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier) -> (Vector<String> result)
 
     [EnabledBy=BackgroundFetchAPIEnabled] AbortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (bool result)
-    [EnabledBy=BackgroundFetchAPIEnabled] MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
+    [EnabledBy=BackgroundFetchAPIEnabled] MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct IPC::Untrusted<WebCore::RetrieveRecordsOptions> options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
     [EnabledBy=BackgroundFetchAPIEnabled] RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (std::expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
     [EnabledBy=BackgroundFetchAPIEnabled] RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
 

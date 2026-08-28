@@ -237,9 +237,9 @@ private:
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
     // Message handlers for IndexedDB.
-    void openDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
-    void openDBRequestCancelled(IPC::Connection&, const WebCore::IDBOpenRequestData&);
-    void deleteDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
+    void openDatabase(IPC::Connection&, IPC::Untrusted<WebCore::IDBOpenRequestData>&&);
+    void openDBRequestCancelled(IPC::Connection&, IPC::Untrusted<WebCore::IDBOpenRequestData>&&);
+    void deleteDatabase(IPC::Connection&, IPC::Untrusted<WebCore::IDBOpenRequestData>&&);
     void establishTransaction(IPC::Connection&, WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
     void databaseConnectionPendingClose(IPC::Connection&, WebCore::IDBDatabaseConnectionIdentifier);
     void databaseConnectionClosed(IPC::Connection&, WebCore::IDBDatabaseConnectionIdentifier);
@@ -275,7 +275,7 @@ private:
     void cacheStorageDereference(IPC::Connection&, WebCore::DOMCacheIdentifier);
     void lockCacheStorage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&);
     void unlockCacheStorage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&);
-    void cacheStorageRetrieveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
+    void cacheStorageRetrieveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
     void cacheStorageRemoveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void cacheStoragePutRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void cacheStorageClearMemoryRepresentation(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, CompletionHandler<void()>&&);

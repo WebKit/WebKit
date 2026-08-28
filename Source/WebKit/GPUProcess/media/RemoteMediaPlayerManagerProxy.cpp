@@ -89,8 +89,9 @@ void RemoteMediaPlayerManagerProxy::clear()
         proxy->invalidate();
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, IPC::Untrusted<RemoteMediaPlayerProxyConfiguration>&& untrustedProxyConfiguration)
 {
+    auto proxyConfiguration = WTF::move(untrustedProxyConfiguration).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return;

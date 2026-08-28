@@ -606,8 +606,9 @@ RefPtr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(Ne
     return swConnection ? swConnection->createFetchTask(loader, request) : nullptr;
 }
 
-void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
+void NetworkConnectionToWebProcess::scheduleResourceLoad(IPC::Untrusted<NetworkResourceLoadParameters>&& untrustedLoadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
 {
+    auto loadParameters = WTF::move(untrustedLoadParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) [[unlikely]]
         RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8().data(), loadParameters.request.url().string().utf8().data());
@@ -625,7 +626,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
                 if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
                     return;
 
-                scheduleResourceLoad(WTF::move(loadParameters), existingLoaderToResume);
+                scheduleResourceLoad(IPC::Untrusted<NetworkResourceLoadParameters> { WTF::move(loadParameters) }, existingLoaderToResume);
             });
             return;
         }
@@ -661,8 +662,9 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     loader->startWithServiceWorker();
 }
 
-void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
+void NetworkConnectionToWebProcess::performSynchronousLoad(IPC::Untrusted<NetworkResourceLoadParameters>&& untrustedLoadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
 {
+    auto loadParameters = WTF::move(untrustedLoadParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
     CONNECTION_RELEASE_LOG(Loading, "performSynchronousLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
 
@@ -683,8 +685,9 @@ void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingFo
     reply(handled);
 }
 
-void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters)
+void NetworkConnectionToWebProcess::loadPing(IPC::Untrusted<NetworkResourceLoadParameters>&& untrustedLoadParameters)
 {
+    auto loadParameters = WTF::move(untrustedLoadParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
     CONNECTION_RELEASE_LOG(Loading, "loadPing: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
 
@@ -1457,8 +1460,9 @@ static bool resourceLoadStatisticsContainsOnlyObservableFields(const ResourceLoa
         && !statistics.timesAccessedAsFirstPartyDueToStorageAccessAPI;
 }
 
-void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(IPC::Untrusted<Vector<ResourceLoadStatistics>>&& untrustedStatistics, CompletionHandler<void()>&& completionHandler)
 {
+    auto statistics = WTF::move(untrustedStatistics).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     for (auto& statistic : statistics)
         MESSAGE_CHECK_COMPLETION(resourceLoadStatisticsContainsOnlyObservableFields(statistic), completionHandler());
 
@@ -1522,8 +1526,9 @@ void NetworkConnectionToWebProcess::queryStorageAccessPermission(IPC::Untrusted<
     completionHandler(PermissionState::Denied);
 }
 
-void NetworkConnectionToWebProcess::setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::setLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, IsLoggedIn loggedInStatus, IPC::Untrusted<std::optional<WebCore::LoginStatus>>&& untrustedLastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
+    auto lastAuthentication = WTF::move(untrustedLastAuthentication).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, FirstPartyForCookiesAuthority { m_networkProcess, m_webProcessIdentifier });
 
     if (isLoginStatusAPIRequiresWebAuthnEnabled() && !lastAuthentication) {

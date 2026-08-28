@@ -27,10 +27,10 @@
 ]
 messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
-    ScheduleResourceLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
-    PerformSynchronousLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
+    ScheduleResourceLoad(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
+    PerformSynchronousLoad(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
-    LoadPing(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters)
+    LoadPing(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters)
     RemoveLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     BrowsingContextRemoved(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
@@ -88,7 +88,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     [EnabledBy=StorageAccessAPIEnabled] RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
     LogUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain> domain)
-    ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> ()
+    ResourceLoadStatisticsUpdated(IPC::Untrusted<Vector<WebCore::ResourceLoadStatistics>> statistics) -> ()
     [EnabledBy=StorageAccessAPIEnabled] HasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)
     [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID, enum:bool WebCore::StorageAccessScope scope, enum:bool WebCore::HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired) -> (struct WebCore::RequestStorageAccessResult result)
     [EnabledBy=StorageAccessAPIEnabled] QueryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (enum:uint8_t WebCore::PermissionState permissionState)
@@ -153,7 +153,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
 
-    SetLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain> domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus> lastAuthentication) -> ()
+    SetLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain> domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, IPC::Untrusted<std::optional<WebCore::LoginStatus>> lastAuthentication) -> ()
     IsLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain> domain) -> (bool result)
 
     DropNonSerializableInProcessCache(WebCore::ProcessIdentifier originProcess, WebCore::NonSerializedDataIdentifier identifier)
