@@ -459,10 +459,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
 
-    auto screenProperties = WebCore::collectScreenProperties();
-    parameters.screenProperties = WTF::move(screenProperties);
 #if PLATFORM(MAC)
+    parameters.screenProperties = cachedScreenProperties();
     parameters.useOverlayScrollbars = ([NSScroller preferredScrollerStyle] == NSScrollerStyleOverlay);
+#else
+    parameters.screenProperties = WebCore::collectScreenProperties();
 #endif
 
 #if PLATFORM(VISION)
@@ -1302,16 +1303,32 @@ void WebProcessPool::screenPropertiesUpdateTimerFired()
 {
     m_lastScreenPropertiesUpdateTime = ApproximateTime::now();
 
-    auto screenProperties = WebCore::collectScreenProperties();
-#if HAVE(SUPPORT_HDR_DISPLAY)
-    if (m_suppressEDR) {
-        for (auto& properties : screenProperties.screenDataMap.values()) {
-            constexpr auto maxSuppressedHeadroom = 1.6f;
-            auto suppressedHeadroom = std::min(maxSuppressedHeadroom, properties.currentEDRHeadroom);
-            properties.currentEDRHeadroom = suppressedHeadroom;
-            properties.suppressEDR = true;
-        }
+    if (m_screenPropertiesState != ScreenPropertiesState::Idle) {
+        m_screenPropertiesState = ScreenPropertiesState::CollectingWithUpdatePending;
+        return;
     }
+
+    m_screenPropertiesState = ScreenPropertiesState::Collecting;
+    WebCore::collectScreenPropertiesAsync([weakThis = WeakPtr { *this }](WebCore::ScreenProperties&& screenProperties) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didCollectScreenProperties(WTF::move(screenProperties));
+    });
+}
+
+void WebProcessPool::didCollectScreenProperties(WebCore::ScreenProperties&& screenProperties)
+{
+    ASSERT(m_screenPropertiesState != ScreenPropertiesState::Idle);
+
+    // If we got a screen change notification while collecting screen properties, then we need to
+    // schedule another screen properties update to reflect the most recent state.
+    bool needsUpdate = m_screenPropertiesState == ScreenPropertiesState::CollectingWithUpdatePending;
+
+    m_screenPropertiesState = ScreenPropertiesState::Idle;
+
+    applyEDRSuppressionIfNeeded(screenProperties);
+
+#if PLATFORM(MAC)
+    m_cachedScreenProperties = screenProperties;
 #endif
 
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
@@ -1320,7 +1337,39 @@ void WebProcessPool::screenPropertiesUpdateTimerFired()
     if (RefPtr gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
 #endif
+
+    if (needsUpdate)
+        screenPropertiesChanged();
 }
+
+void WebProcessPool::applyEDRSuppressionIfNeeded(WebCore::ScreenProperties& screenProperties)
+{
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (!m_suppressEDR)
+        return;
+
+    for (auto& properties : screenProperties.screenDataMap.values()) {
+        constexpr auto maxSuppressedHeadroom = 1.6f;
+        properties.currentEDRHeadroom = std::min(maxSuppressedHeadroom, properties.currentEDRHeadroom);
+        properties.suppressEDR = true;
+    }
+#else
+    UNUSED_PARAM(screenProperties);
+#endif
+}
+
+#if PLATFORM(MAC)
+const WebCore::ScreenProperties& WebProcessPool::cachedScreenProperties()
+{
+    if (!m_cachedScreenProperties) {
+        auto screenProperties = WebCore::collectScreenProperties();
+        applyEDRSuppressionIfNeeded(screenProperties);
+        m_cachedScreenProperties = WTF::move(screenProperties);
+    }
+
+    return *m_cachedScreenProperties;
+}
+#endif
 
 void WebProcessPool::screenPropertiesChanged()
 {

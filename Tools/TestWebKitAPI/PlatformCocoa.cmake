@@ -190,6 +190,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebCore/TestPlatformStrategies.cpp
 
     Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
+    Tests/WebCore/cocoa/PlatformScreenTests.mm
 
     Tests/WebKit/WKWebView/WKBackForwardListTests.mm
 )

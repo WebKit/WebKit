@@ -64,6 +64,7 @@ OBJC_CLASS WKProcessPoolWeakObserver;
 
 #if PLATFORM(MAC)
 #include <WebCore/PowerObserverMac.h>
+#include <WebCore/ScreenProperties.h>
 #include <pal/system/SystemSleepListener.h>
 #endif
 
@@ -106,6 +107,7 @@ enum class GamepadHapticEffectType : uint8_t;
 enum class ProcessSwapDisposition : uint8_t;
 struct GamepadEffectParameters;
 struct MockMediaDevice;
+struct ScreenProperties;
 #if PLATFORM(COCOA)
 class PowerSourceNotifier;
 #endif
@@ -259,6 +261,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    const WebCore::ScreenProperties& cachedScreenProperties();
     void displayPropertiesChanged(WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
@@ -743,7 +746,15 @@ private:
     void clearAudibleActivity();
 
 #if PLATFORM(COCOA)
+    enum class ScreenPropertiesState : uint8_t {
+        Idle,
+        Collecting,
+        CollectingWithUpdatePending,
+    };
+
     void screenPropertiesUpdateTimerFired();
+    void didCollectScreenProperties(WebCore::ScreenProperties&&);
+    void applyEDRSuppressionIfNeeded(WebCore::ScreenProperties&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1027,6 +1038,11 @@ private:
 
     ApproximateTime m_lastScreenPropertiesUpdateTime;
     RunLoop::Timer m_screenPropertiesUpdateTimer;
+    ScreenPropertiesState m_screenPropertiesState { ScreenPropertiesState::Idle };
+#endif
+
+#if PLATFORM(MAC)
+    std::optional<WebCore::ScreenProperties> m_cachedScreenProperties;
 #endif
 
 #if ENABLE(IPC_TESTING_API)
