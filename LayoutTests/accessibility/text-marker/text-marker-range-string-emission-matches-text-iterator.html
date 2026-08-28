@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<!-- Replaced elements whose content is rendered from a user-agent shadow tree: the whole element is
+     represented by one object replacement character, and the shadow content is never emitted. -->
+<div role="group" id="textfield">x<input type="text" value="v">y</div>
+<div role="group" id="textarea">x<textarea>ta</textarea>y</div>
+<div role="group" id="select">x<select><option>o1</option><option>o2</option></select>y</div>
+<div role="group" id="file">x<input type="file">y</div>
+<div role="group" id="date">x<input type="date">y</div>
+<div role="group" id="submit">x<input type="submit" value="sub">y</div>
+<div role="group" id="progress">x<progress value="0.5"></progress>y</div>
+<div role="group" id="two-controls">x<input type="text" value="v">y<input type="checkbox">z</div>
+
+<!-- Replaced elements that render their content from the light DOM: the replacement character is
+     emitted in the element's place, and its text is emitted too. -->
+<div role="group" id="button">x<button>btn</button>y</div>
+<div role="group" id="block-button">x<button style="display: block">btn</button>y</div>
+<div role="group" id="output">x<output>out</output>y</div>
+<div role="group" id="fieldset">x<fieldset>in</fieldset>y</div>
+
+<!-- An image is replaced content too, and neither the string nor the attributed string emits its
+     alt text: both are built in IncludeImageAltText::No mode, so the image contributes one
+     replacement character like any other replaced element. -->
+<div role="group" id="image-with-alt">x<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="10" height="10" alt="alt text">y</div>
+
+<!-- Cells are tab-delimited, including cells with no text of their own. -->
+<table><tr id="three-cells"><th scope="row">a</th><td>b</td><td>c</td></tr></table>
+<table><tr id="empty-cell"><th scope="row">a</th><td></td><td>c</td></tr></table>
+<table><tr id="nested-cell-text"><th scope="row"><span>a</span></th><td><span>b</span></td></tr></table>
+<table><tr id="first-row"><th scope="row">a</th><td>b</td></tr><tr id="second-row"><th scope="row">c</th><td>d</td></tr></table>
+
+</div>
+
+<script>
+var output = "This test ensures the string for a text marker range emits the same characters for replaced\n" +
+             "elements and table cells as the main-thread (TextIterator-based) implementation does.\n\n";
+
+function rangeFor(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return null;
+    var range = element.textMarkerRangeForElement(element);
+    return range ? { element: element, range: range } : null;
+}
+
+function rangeStringFor(id) {
+    var target = rangeFor(id);
+    return target ? target.element.stringForTextMarkerRange(target.range) : "<no range>";
+}
+
+function rangeLengthFor(id) {
+    var target = rangeFor(id);
+    return target ? target.element.textMarkerRangeLength(target.range) : -1;
+}
+
+async function waitForImagesToLoad() {
+    // An image that hasn't loaded yet has no dimensions, and an alt-less image with no
+    // dimensions is ignored, which would change whether it emits a replacement character.
+    await Promise.all(Array.from(document.images).map((image) => {
+        return image.complete ? Promise.resolve() : new Promise((resolve) => {
+            image.addEventListener("load", resolve);
+            image.addEventListener("error", resolve);
+        });
+    }));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForImagesToLoad();
+
+        output += expect("rangeStringFor('textfield')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('textarea')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('select')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('file')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('date')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('submit')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('progress')", "'x\\ufffcy'");
+        output += expect("rangeStringFor('two-controls')", "'x\\ufffcy\\ufffcz'");
+        output += expect("rangeLengthFor('two-controls')", "5");
+
+        output += "\n";
+        output += expect("rangeStringFor('button')", "'x\\ufffcbtny'");
+        output += expect("rangeStringFor('block-button')", "'x\\ufffcbtn\\ny'");
+        output += expect("rangeStringFor('output')", "'x\\ufffcouty'");
+        output += expect("rangeStringFor('fieldset')", "'x\\ufffcin\\ny'");
+
+        output += "\n";
+        output += expect("rangeStringFor('image-with-alt')", "'x\\ufffcy'");
+
+        output += "\n";
+        output += expect("rangeStringFor('three-cells')", "'a\\tb\\tc'");
+        output += expect("rangeLengthFor('three-cells')", "5");
+        output += expect("rangeStringFor('empty-cell')", "'a\\t\\tc'");
+        output += expect("rangeStringFor('nested-cell-text')", "'a\\tb'");
+        output += expect("rangeStringFor('first-row')", "'a\\tb'");
+        output += expect("rangeStringFor('second-row')", "'c\\td'");
+
+        // Hide the test content so the output is just the assertions above, with no page text dump.
+        document.getElementById("content").hidden = true;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

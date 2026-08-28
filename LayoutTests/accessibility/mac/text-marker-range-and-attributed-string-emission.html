@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<!-- On macOS a <legend> inside a <fieldset> is ignored, because the fieldset uses it to generate its
+     own alternative text (see accessibilityPlatformIncludesObject in AccessibilityObjectMac.mm).
+     An ignored replaced element emits no replacement character of its own, but it still doesn't emit
+     a newline before itself the way a non-replaced block would. iOS has no such ignore rule, so the
+     legend emits its own replacement character there, which is why this case lives in mac/. -->
+<div role="group" id="fieldset-with-legend">x<fieldset><legend>leg</legend>in</fieldset>y</div>
+
+<div role="group" id="textfield">x<input type="text" value="v">y</div>
+<div role="group" id="image-with-alt">x<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="10" height="10" alt="alt text">y</div>
+<table><tr id="three-cells"><th scope="row">a</th><td>b</td><td>c</td></tr></table>
+
+</div>
+
+<script>
+var output = "This test ensures the attributed string for a text marker range emits the same characters as the\n" +
+             "plain string does, and that an ignored replaced element emits no replacement character.\n\n";
+
+function rangeFor(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return null;
+    var range = element.textMarkerRangeForElement(element);
+    return range ? { element: element, range: range } : null;
+}
+
+function rangeStringFor(id) {
+    var target = rangeFor(id);
+    return target ? target.element.stringForTextMarkerRange(target.range) : "<no range>";
+}
+
+// The attributed string is built by a separate traversal (AXTextMarkerRange::toAttributedString), so
+// verify it emits the same characters as the plain string. The mac test API dumps the attributes
+// first and the text last, hence endsWith; other platforms format the dump differently.
+function attributedStringEndsWith(id, expectedText) {
+    var target = rangeFor(id);
+    if (!target)
+        return false;
+    var attributedString = target.element.attributedStringForTextMarkerRange(target.range);
+    return typeof attributedString === "string" && attributedString.endsWith(expectedText);
+}
+
+async function waitForImagesToLoad() {
+    // An image that hasn't loaded yet has no dimensions, and an alt-less image with no
+    // dimensions is ignored, which would change whether it emits a replacement character.
+    await Promise.all(Array.from(document.images).map((image) => {
+        return image.complete ? Promise.resolve() : new Promise((resolve) => {
+            image.addEventListener("load", resolve);
+            image.addEventListener("error", resolve);
+        });
+    }));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForImagesToLoad();
+
+        output += expect("rangeStringFor('fieldset-with-legend')", "'x\\ufffcleg\\nin\\ny'");
+
+        output += "\n";
+        output += expect("attributedStringEndsWith('textfield', 'x\\ufffcy')", "true");
+        output += expect("attributedStringEndsWith('image-with-alt', 'x\\ufffcy')", "true");
+        output += expect("attributedStringEndsWith('three-cells', 'a\\tb\\tc')", "true");
+
+        // Hide the test content so the output is just the assertions above, with no page text dump.
+        document.getElementById("content").hidden = true;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

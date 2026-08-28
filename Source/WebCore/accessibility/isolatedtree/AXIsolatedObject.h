@@ -109,6 +109,8 @@ public:
         return runs && runs->size();
     }
     TextEmissionBehavior textEmissionBehavior() const final;
+    bool isReplacedElementForTextEmission() const final { return boolAttributeValue(AXProperty::IsReplacedElementForTextEmission); }
+    bool isInUserAgentShadowTree() const final { return boolAttributeValue(AXProperty::IsInUserAgentShadowTree); }
     AXTextRunLineID listMarkerLineID() const final { return propertyValue<AXTextRunLineID>(AXProperty::ListMarkerLineID); };
     String listMarkerText() const final { return stringAttributeValue(AXProperty::ListMarkerText); }
     FontOrientation fontOrientation() const final { return propertyValue<FontOrientation>(AXProperty::FontOrientation); }

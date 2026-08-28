@@ -1,0 +1,13 @@
+This test ensures the attributed string for a text marker range emits the same characters as the
+plain string does, and that an ignored replaced element emits no replacement character.
+
+PASS: rangeStringFor('fieldset-with-legend') === 'x\ufffcleg\nin\ny'
+
+PASS: attributedStringEndsWith('textfield', 'x\ufffcy') === true
+PASS: attributedStringEndsWith('image-with-alt', 'x\ufffcy') === true
+PASS: attributedStringEndsWith('three-cells', 'a\tb\tc') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

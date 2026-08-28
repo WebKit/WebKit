@@ -2193,6 +2193,8 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::TitleAttribute, object.titleAttribute().isolatedCopy());
 
         setProperty(AXProperty::TextRuns, WTF::makeUnique<AXTextRuns>(object.textRuns()));
+        setProperty(AXProperty::IsReplacedElementForTextEmission, object.isReplacedElementForTextEmission());
+        setProperty(AXProperty::IsInUserAgentShadowTree, object.isInUserAgentShadowTree());
         switch (object.textEmissionBehavior()) {
         case TextEmissionBehavior::DoubleNewline:
             propertyFlags.add(AXPropertyFlag::IsTextEmissionBehaviorDoubleNewline);
