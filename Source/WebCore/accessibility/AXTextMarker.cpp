@@ -829,21 +829,53 @@ static bool hasEmptyFinalLine(AXIsolatedObject& object, const AXTextRuns& textRu
     return previousRuns->toStringView().endsWith('\n');
 }
 
-// |lineRange| ending where the text control's value ends, rather than where its rendered text does.
-// A line that ends with the collapsed trailing newline is one character longer than the line of the
-// value it stands for, and for the empty final line that newline is the whole range. Marker walks are
-// left the unclamped range, so that empty final line remains enumerable as a line of its own.
-static AXTextMarkerRange lineRangeWithoutCollapsedTrailingNewline(const AXTextMarkerRange& lineRange)
+enum class LineRangeTrim : uint8_t {
+    // A text control's value ends before the newline its rendered text ends with.
+    // This option allows explicit trimming of this collapsed newline.
+    CollapsedTrailingNewline = 1 << 0,
+    // The text runs keep the space a line soft-wrapped at, appended to the wrapping line's run, so a
+    // range spanning the wrap reads "foo bar" rather than "foobar". This space renders on no line, so
+    // no line ends with it. This option denotes it should be trimmed.
+    SoftWrapSpace = 1 << 1,
+};
+
+static AXTextMarkerRange lineRangeWithout(const AXTextMarkerRange& lineRange, OptionSet<LineRangeTrim> trims)
 {
     auto endMarker = lineRange.end().toTextRunMarker();
     RefPtr endObject = endMarker.isolatedObject();
-    if (!endObject)
+    const auto* runs = endObject ? endObject->textRuns() : nullptr;
+    if (!runs)
         return lineRange;
 
-    auto indexOfCollapsedNewline = offsetOfCollapsedTrailingNewline(*endObject, endObject->textRuns());
-    if (!indexOfCollapsedNewline || endMarker.offset() <= *indexOfCollapsedNewline)
+    unsigned endOffset = endMarker.offset();
+    if (trims.contains(LineRangeTrim::CollapsedTrailingNewline)) {
+        std::optional offsetOfNewline = offsetOfCollapsedTrailingNewline(*endObject, runs);
+        if (offsetOfNewline && endOffset > *offsetOfNewline)
+            endOffset = *offsetOfNewline;
+    }
+
+    if (trims.contains(LineRangeTrim::SoftWrapSpace)) {
+        // Only a line that ended where this object wrapped has a wrap space, as its end
+        // sits at the end of a run that another follows.
+        //
+        // For example, in this text where _ is a wrap-space and | is the text position:
+        // aaa_|
+        // bbb
+        // We want to trim the space after "aaa" if this option is set.
+        size_t runIndex = runs->indexForOffset(endOffset, Affinity::Upstream);
+        bool endsWhereObjectWrapped = runIndex != notFound && runIndex != runs->lastRunIndex() && runs->runLengthSumTo(runIndex) == endOffset;
+        if (endsWhereObjectWrapped && endOffset && runs->toStringView()[endOffset - 1] == space)
+            --endOffset;
+    }
+
+    if (endOffset == endMarker.offset())
         return lineRange;
-    return { lineRange.start(), AXTextMarker { *endObject, *indexOfCollapsedNewline } };
+
+    if (lineRange.start().objectID() == endMarker.objectID() && lineRange.start().offset() > endOffset) {
+        // Trimming the range would move the end before the start, so early-exit.
+        return lineRange;
+    }
+    return { lineRange.start(), AXTextMarker { *endObject, endOffset } };
 }
 
 // Advances |lineRange| to the following line: the range from the start of the next line through
@@ -898,7 +930,7 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     // the preceding line's range), which is why only block-separated lines were affected.
     unsigned precedingLength = AXTextMarkerRange { textRunMarker, currentLineRange.start() }.length();
 
-    return CharacterRange(precedingLength, lineRangeWithoutCollapsedTrailingNewline(currentLineRange).length());
+    return CharacterRange(precedingLength, lineRangeWithout(currentLineRange, LineRangeTrim::CollapsedTrailingNewline).length());
 }
 
 AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) const
@@ -916,7 +948,7 @@ AXTextMarkerRange AXTextMarker::markerRangeForLineIndex(unsigned lineIndex) cons
         currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::No, std::nullopt);
         --lineIndex;
     }
-    return lineRangeWithoutCollapsedTrailingNewline(currentLineRange);
+    return lineRangeWithout(currentLineRange, { LineRangeTrim::CollapsedTrailingNewline, LineRangeTrim::SoftWrapSpace });
 }
 
 int AXTextMarker::lineNumberForIndex(unsigned index) const
@@ -938,7 +970,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     unsigned lineNumber = 0;
     auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
     while (currentLineRange) {
-        unsigned lineLength = lineRangeWithoutCollapsedTrailingNewline(currentLineRange).length();
+        unsigned lineLength = lineRangeWithout(currentLineRange, LineRangeTrim::CollapsedTrailingNewline).length();
         auto nextRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
         // A line occupies the index space up to the start of the next line, which is not the same as
         // the length of its own range: the newline synthesized at a block boundary belongs to no
@@ -1788,7 +1820,7 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type, IncludeTrailingLin
     if (type == LineRangeType::Current) {
         auto startMarker = atLineStart() ? *this : previousLineStart();
         auto endMarker = atLineEnd() ? *this : nextLineEnd(includeTrailingLineBreak);
-        return lineRangeWithoutCollapsedTrailingNewline({ startMarker, endMarker });
+        return lineRangeWithout({ startMarker, endMarker }, LineRangeTrim::CollapsedTrailingNewline);
     }
 
     if (type == LineRangeType::Left) {
@@ -1798,7 +1830,7 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type, IncludeTrailingLin
             startMarker = startMarker.previousLineStart();
 
         auto endMarker = startMarker.nextLineEnd(includeTrailingLineBreak);
-        return lineRangeWithoutCollapsedTrailingNewline({ WTF::move(startMarker), WTF::move(endMarker) });
+        return lineRangeWithout({ WTF::move(startMarker), WTF::move(endMarker) }, LineRangeTrim::CollapsedTrailingNewline);
     }
 
     AX_ASSERT(type == LineRangeType::Right);
@@ -1809,7 +1841,7 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type, IncludeTrailingLin
         startMarker = startMarker.previousLineStart();
 
     auto endMarker = startMarker.nextLineEnd(includeTrailingLineBreak);
-    return lineRangeWithoutCollapsedTrailingNewline({ WTF::move(startMarker), WTF::move(endMarker) });
+    return lineRangeWithout({ WTF::move(startMarker), WTF::move(endMarker) }, LineRangeTrim::CollapsedTrailingNewline);
 }
 
 AXTextMarkerRange AXTextMarker::wordRange(WordRangeType type) const

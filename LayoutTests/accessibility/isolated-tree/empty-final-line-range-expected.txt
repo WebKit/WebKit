@@ -1,0 +1,10 @@
+This test ensures the line at a text control's last text position is its empty final line.
+
+PASS: textarea.stringForTextMarkerRange(lineRange) === ''
+PASS: textarea.textMarkerRangeLength(lineRange) === 0
+PASS: lineStart.isEqual(lastMarker) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
