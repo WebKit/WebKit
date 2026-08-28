@@ -29,7 +29,11 @@
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Site.h>
+#include <WebCore/WebCorePersistentCoders.h>
 #include <wtf/URL.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace TestWebKitAPI {
 
@@ -457,6 +461,45 @@ TEST(IPAddressSpace, DoesNotOvermatchReservedNames)
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://localhost.example.com/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://mylocal/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://local.example.com/"_s)), WebCore::IPAddressSpace::Public);
+}
+
+// Both persistence coders are covered: ResourceResponseData is what the network cache stores, and
+// ResourceResponse is what other persistent callers encode.
+TEST(IPAddressSpace, SurvivesResponseDataPersistenceRoundTrip)
+{
+    for (auto space : { WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Unknown }) {
+        WebCore::ResourceResponse response { URL { "http://192.168.1.1/"_s }, "text/plain"_s, 5, "UTF-8"_s };
+        response.setIPAddressSpace(space);
+
+        auto data = response.getResponseData();
+        ASSERT_TRUE(data.has_value());
+
+        WTF::Persistence::Encoder encoder;
+        WTF::Persistence::Coder<WebCore::ResourceResponseData>::encodeForPersistence(encoder, *data);
+
+        WTF::Persistence::Decoder decoder(encoder.span());
+        auto decoded = WTF::Persistence::Coder<WebCore::ResourceResponseData>::decodeForPersistence(decoder);
+        ASSERT_TRUE(decoded.has_value());
+
+        EXPECT_EQ(decoded->ipAddressSpace, space);
+    }
+}
+
+TEST(IPAddressSpace, SurvivesResourceResponsePersistenceRoundTrip)
+{
+    for (auto space : { WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Unknown }) {
+        WebCore::ResourceResponse response { URL { "http://192.168.1.1/"_s }, "text/plain"_s, 5, "UTF-8"_s };
+        response.setIPAddressSpace(space);
+
+        WTF::Persistence::Encoder encoder;
+        WTF::Persistence::Coder<WebCore::ResourceResponse>::encodeForPersistence(encoder, response);
+
+        WTF::Persistence::Decoder decoder(encoder.span());
+        auto decoded = WTF::Persistence::Coder<WebCore::ResourceResponse>::decodeForPersistence(decoder);
+        ASSERT_TRUE(decoded.has_value());
+
+        EXPECT_EQ(decoded->ipAddressSpace(), space);
+    }
 }
 
 }

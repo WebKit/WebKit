@@ -699,6 +699,7 @@ void Coder<WebCore::ResourceResponse>::encodeForPersistence(Encoder& encoder, co
     WebCore::WasPrivateRelayed wasPrivateRelayed = instance.m_wasPrivateRelayed;
     encoder << wasPrivateRelayed;
     encoder << instance.m_isRangeRequested;
+    encoder << static_cast<WebCore::IPAddressSpace>(instance.m_ipAddressSpace);
 }
 
 std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decodeForPersistence(Decoder& decoder)
@@ -809,6 +810,12 @@ std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decod
     if (!isRangeRequested)
         return std::nullopt;
     response.m_isRangeRequested = WTF::move(*isRangeRequested);
+
+    std::optional<WebCore::IPAddressSpace> ipAddressSpace;
+    decoder >> ipAddressSpace;
+    if (!ipAddressSpace)
+        return std::nullopt;
+    response.m_ipAddressSpace = WTF::move(*ipAddressSpace);
 
     return { WTF::move(response) };
 }

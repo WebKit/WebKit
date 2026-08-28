@@ -131,7 +131,7 @@ public:
     size_t NODELETE approximateSize() const;
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
-    static const unsigned version = 17;
+    static const unsigned version = 18;
 
     String basePathIsolatedCopy() const;
     String versionPath() const;

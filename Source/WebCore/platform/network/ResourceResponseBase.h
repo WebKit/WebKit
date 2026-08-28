@@ -395,6 +395,16 @@ template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Source
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::IPAddressSpace> {
+    using values = EnumValues<
+        WebCore::IPAddressSpace,
+        WebCore::IPAddressSpace::Public,
+        WebCore::IPAddressSpace::Local,
+        WebCore::IPAddressSpace::Loopback,
+        WebCore::IPAddressSpace::Unknown
+    >;
+};
+
 namespace Persistence {
 
 class Decoder;

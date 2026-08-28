@@ -614,6 +614,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
 
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
+    response.setIPAddressSpace(validatingResponse.ipAddressSpace());
 
     auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();
