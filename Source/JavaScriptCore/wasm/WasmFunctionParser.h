@@ -247,7 +247,13 @@ private:
     [[nodiscard]] PartialResult parseUnreachableExpression();
     [[nodiscard]] PartialResult unifyControl(ArgumentList&, unsigned level);
     [[nodiscard]] PartialResult checkLocalInitialized(uint32_t);
-    [[nodiscard]] PartialResult checkExpressionStack(const ControlType&, bool forceSignature = false);
+
+    enum FallThroughStateTag {
+        NewSiblingBlock,
+        MergePoint,
+    };
+
+    [[nodiscard]] PartialResult checkBlockFallthrough(const ControlType&, FallThroughStateTag);
 
     enum BranchConditionalityTag {
         Unconditional,
@@ -1900,7 +1906,7 @@ auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialRe
 }
 
 template<typename Context>
-auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlData, bool forceSignature) -> PartialResult
+auto FunctionParser<Context>::checkBlockFallthrough(const ControlType& controlData, FallThroughStateTag fallthrough) -> PartialResult
 {
     const auto& blockSignature = controlData.signature();
     const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
@@ -1909,7 +1915,11 @@ auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlDat
         const auto actualType = m_expressionStack[m_currentStackBegin + i].type();
         const auto expectedType = blockSignature.returnType(i);
         WASM_VALIDATOR_FAIL_IF(!isSubtype(actualType, expectedType), "control flow returns with unexpected type. "_s, actualType, " is not a "_s, expectedType);
-        if (forceSignature)
+        // The spec requires the output type of a structured control instruction to be
+        // the result type from its signature, even when the fallthrough value is a subtype.
+        // FIXME: We should support some sort of abstract interpretation so this can be the
+        // least upper bound of the merging CFG.
+        if (fallthrough == MergePoint)
             m_expressionStack[m_currentStackBegin + i].setType(expectedType);
     }
 
@@ -3539,7 +3549,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
         auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, ifBranchResults));
         m_expressionStack.shrink(m_currentStackBegin);
@@ -3580,7 +3590,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlEntry& controlEntry = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
 
         ResultList results;
         auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
@@ -3606,7 +3616,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
 
         auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addCatchAll(preCatchStack, controlEntry.controlData));
@@ -3714,7 +3724,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(targetData) && !ControlType::isTopLevel(targetData), "delegate target isn't a try or the top level block");
 
         WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
 
         const uint32_t parentBegin = parentEntryBegin();
         auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
@@ -3849,20 +3859,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case End: {
         ControlEntry data = m_controlStack.takeLast();
         if (ControlType::isIf(data.controlData)) {
-            WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
+            WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, NewSiblingBlock));
             auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, ifBranchResults));
             m_expressionStack.shrink(m_currentStackBegin);
             m_expressionStack.append(data.elseBlockStack.span());
         }
-
         // FIXME: endBlock may modify the expressionStack slice for the result of the block.
         // That's a little too effectful but we don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-
-        // The spec requires the output type of a structured control instruction to be
-        // the result type from its signature, even when the fallthrough value is a subtype.
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, true));
+        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
 
         const uint32_t parentBegin = parentEntryBegin();
         auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
@@ -4064,7 +4070,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack.shrink(m_currentStackBegin);
                 m_expressionStack.append(data.elseBlockStack.span());
-                WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
+                WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, MergePoint));
 
                 // Reachable End handling: the combined enclosedStack now lives in
                 // m_expressionStack[parentBegin..end].
