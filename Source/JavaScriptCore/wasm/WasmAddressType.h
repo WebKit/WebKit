@@ -46,7 +46,7 @@ public:
     AddressType() = default;
     AddressType(TypeKind);
     AddressType(AddressType::Kind);
-#if !PLATFORM(PLAYSTATION)
+#if !PLATFORM(PLAYSTATION) && ENABLE(JIT)
     AddressType(B3::Type);
 #endif
     explicit AddressType(bool is64bit);

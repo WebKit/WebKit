@@ -28,6 +28,7 @@
 
 #include "BytecodeRewriter.h"
 #include "ExpressionInfoInlines.h"
+#include "IdentifierInlines.h"
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
 #include "PreciseJumpTargets.h"

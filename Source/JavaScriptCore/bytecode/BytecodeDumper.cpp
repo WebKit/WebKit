@@ -31,6 +31,7 @@
 #include "BytecodeGraph.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
+#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
