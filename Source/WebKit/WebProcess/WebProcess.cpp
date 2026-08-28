@@ -125,7 +125,6 @@
 #include <WebCore/MessagePort.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NavigatorGamepad.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Notification.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -148,6 +147,7 @@
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
 #include <WebCore/StorageNamespaceProvider.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <WebCore/WorkerGlobalScope.h>

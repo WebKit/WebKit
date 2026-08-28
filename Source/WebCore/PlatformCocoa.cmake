@@ -526,21 +526,19 @@ list(APPEND WebCore_SOURCES
     platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 
     platform/network/cf/CertificateInfoCFNet.cpp
+    platform/network/cf/CookieStorageSessionCFNet.cpp
     platform/network/cf/DNSResolveQueueCFNet.cpp
     platform/network/cf/FormDataStreamCFNet.mm
-    platform/network/cf/NetworkStorageSessionCFNet.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
 
     platform/network/cocoa/AuthenticationCocoa.mm
     platform/network/cocoa/BlobDataFileReferenceCocoa.mm
     platform/network/cocoa/CookieCocoa.mm
-    platform/network/cocoa/CookieStorageCocoa.mm
-    platform/network/cocoa/CookieStorageObserver.mm
+    platform/network/cocoa/CookieStorageSessionCocoa.mm
     platform/network/cocoa/CredentialCocoa.mm
     platform/network/cocoa/CredentialStorageCocoa.mm
     platform/network/cocoa/FormDataStreamCocoa.mm
     platform/network/cocoa/NetworkLoadMetrics.mm
-    platform/network/cocoa/NetworkStorageSessionCocoa.mm
     platform/network/cocoa/ProtectionSpaceCocoa.mm
     platform/network/cocoa/ResourceErrorCocoa.mm
     platform/network/cocoa/ResourceHandleCocoa.mm
@@ -1479,7 +1477,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/cf/ResourceResponse.h
 
     platform/network/cocoa/AuthenticationCocoa.h
-    platform/network/cocoa/CookieStorageObserver.h
     platform/network/cocoa/CredentialCocoa.h
     platform/network/cocoa/FormDataStreamCocoa.h
     platform/network/cocoa/HTTPCookieAcceptPolicyCocoa.h

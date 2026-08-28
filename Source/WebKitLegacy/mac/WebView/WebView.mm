@@ -38,6 +38,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "LegacyHistoryItemClient.h"
+#import <WebCore/CookieStorageSession.h>
 #import "LegacySocketProvider.h"
 #import "LegacyWebPageDebuggable.h"
 #import "LegacyWebPageInspectorController.h"
@@ -203,7 +204,6 @@
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NativeImage.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NodeDocument.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
@@ -5035,7 +5035,7 @@ IGNORE_WARNINGS_END
     WTF::RefCountDebuggerBase::enableThreadingChecksGlobally();
 
     WTF::setProcessPrivileges(allPrivileges());
-    WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+    WebCore::CookieStorageSession::permitProcessToUseCookieAPI(true);
 
 #if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];

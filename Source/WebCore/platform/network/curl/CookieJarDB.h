@@ -58,16 +58,16 @@ public:
     void setAcceptPolicy(CookieAcceptPolicy policy) { m_acceptPolicy = policy; }
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
-    HashSet<String> allDomains();
-    std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
-    Vector<Cookie> getAllCookies();
+    WEBCORE_EXPORT HashSet<String> allDomains();
+    WEBCORE_EXPORT std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
+    WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, std::optional<Seconds> cappedLifetime = std::nullopt);
-    bool setCookie(const Cookie&);
+    WEBCORE_EXPORT bool setCookie(const Cookie&);
 
-    bool deleteCookie(const String& url, const String& name);
+    WEBCORE_EXPORT bool deleteCookie(const String& url, const String& name);
     bool deleteCookies(const String& url);
-    bool deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies);
-    bool deleteAllCookies();
+    WEBCORE_EXPORT bool deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies);
+    WEBCORE_EXPORT bool deleteAllCookies();
 
     WEBCORE_EXPORT CookieJarDB(const String& databasePath);
     WEBCORE_EXPORT ~CookieJarDB();

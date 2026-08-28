@@ -151,6 +151,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/mac"
     "${WEBKIT_DIR}/GPUProcess/media/cocoa"
     "${WEBKIT_DIR}/GPUProcess/media/ios"
+    "${WEBKIT_DIR}/NetworkProcess/Cookies/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/Downloads/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/Daemon"
     "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement/cocoa"

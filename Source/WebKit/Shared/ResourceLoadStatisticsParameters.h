@@ -26,8 +26,10 @@
 #pragma once
 
 #include "SandboxExtension.h"
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
+#include <WebCore/TrackingPreventionTypes.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

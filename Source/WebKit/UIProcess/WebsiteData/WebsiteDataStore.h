@@ -43,6 +43,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>

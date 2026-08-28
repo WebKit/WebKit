@@ -40,10 +40,11 @@
 #import "WebProcessProxy.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/SecurityOriginData.h>
+#import <WebCore/ThirdPartyCookieBlockingMode.h>
+#import <WebCore/TrackingPreventionTypes.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/FileSystem.h>

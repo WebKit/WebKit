@@ -32,7 +32,6 @@
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include <WebCore/HTTPStatusCodes.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>

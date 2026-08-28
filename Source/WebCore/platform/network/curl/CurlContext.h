@@ -109,7 +109,7 @@ public:
     // Alt-Svc
     const String& alternativeServicesStorageFile() const LIFETIME_BOUND { return m_alternativeServicesStorageFile; }
     void setAlternativeServicesStorageFile(const String& cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
-    void clearAlternativeServicesStorageFile();
+    WEBCORE_EXPORT void clearAlternativeServicesStorageFile();
 
     // Proxy
     const CurlProxySettings& proxySettings() const LIFETIME_BOUND { return m_proxySettings; }

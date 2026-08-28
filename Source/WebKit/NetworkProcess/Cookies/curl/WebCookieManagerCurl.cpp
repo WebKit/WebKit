@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+#include "NetworkStorageSession.h"
 #include "WebCookieManager.h"
 
 #include "NetworkProcess.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
 

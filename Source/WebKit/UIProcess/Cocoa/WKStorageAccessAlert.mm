@@ -38,7 +38,6 @@
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
 #import <ranges>
 #import <wtf/BlockPtr.h>

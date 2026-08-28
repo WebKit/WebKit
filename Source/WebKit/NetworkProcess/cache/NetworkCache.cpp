@@ -31,14 +31,15 @@
 #include "NetworkCacheSpeculativeLoad.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStorage.h"
+#include "NetworkCacheValidation.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "NetworkStorageSession.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheValidation.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LowPowerModeNotifier.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -247,7 +248,7 @@ static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionI
     if (request.isConditional() && !entry.redirectRequest())
         return UseDecision::Validate;
 
-    if (!WebCore::verifyVaryingRequestHeaders(protect(networkProcess.storageSession(sessionID)), entry.varyingRequestHeaders(), request))
+    if (!verifyVaryingRequestHeaders(protect(networkProcess.storageSession(sessionID)), entry.varyingRequestHeaders(), request))
         return UseDecision::NoDueToVaryingHeaderMismatch;
 
     // We never revalidate in the case of a history navigation.
@@ -443,7 +444,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     info.speculativeLoadDecision = SpeculativeLoadDecision::NoDueToCannotUse;
     if (canUseSpeculativeRevalidation && speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
         speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
-            if (entry && WebCore::verifyVaryingRequestHeaders(protect(networkProcess->storageSession(sessionID)), entry->varyingRequestHeaders(), request)) {
+            if (entry && verifyVaryingRequestHeaders(protect(networkProcess->storageSession(sessionID)), entry->varyingRequestHeaders(), request)) {
                 info.speculativeLoadDecision = SpeculativeLoadDecision::Yes;
                 completeRetrieve(WTF::move(completionHandler), WTF::move(entry), info);
             } else {
@@ -528,14 +529,14 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
-    return makeUnique<Entry>(makeCacheKey(request), response, privateRelayed, WTF::move(responseData), WebCore::collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
     auto cachedRedirectRequest = redirectRequest;
     cachedRedirectRequest.clearHTTPAuthorization();
-    return makeUnique<Entry>(makeCacheKey(request), response, WTF::move(cachedRedirectRequest), WebCore::collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
@@ -615,7 +616,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
 
-    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), originalRequest, response));
+    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();
     bool storeBlobInMemoryCache = originalRequest.isTopSite();
 

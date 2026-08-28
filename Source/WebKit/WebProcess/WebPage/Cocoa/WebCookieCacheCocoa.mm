@@ -27,8 +27,8 @@
 #import "WebCookieCache.h"
 
 #import "NetworkProcessConnection.h"
+#import "NetworkStorageSession.h"
 #import "WebProcess.h"
-#import <WebCore/NetworkStorageSession.h>
 #import <wtf/text/MakeString.h>
 
 namespace WebKit {

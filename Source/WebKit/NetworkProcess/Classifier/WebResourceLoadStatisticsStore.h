@@ -33,10 +33,12 @@
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IsLoggedIn.h>
-#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/ResourceLoadObserver.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
+#include <WebCore/TrackingPreventionTypes.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/CrossThreadCopier.h>

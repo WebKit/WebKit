@@ -52,6 +52,7 @@
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkStorageManager.h"
+#include "NetworkStorageSession.h"
 #include "NetworkTransportSession.h"
 #include "NetworkTransportSessionMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
@@ -85,7 +86,6 @@
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/LoginStatus.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -94,6 +94,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/WebTransportHeaderValidation.h>
 #include <optional>
 #include <wtf/Borrow.h>
@@ -1458,7 +1459,7 @@ void NetworkConnectionToWebProcess::isLoggedIn(RegistrableDomain&& domain, Compl
 
 void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
 {
-    completionHandler(NetworkStorageSession::storageAccessQuirkForTopFrameDomain(topFrameURL));
+    completionHandler(WebCore::storageAccessQuirkForTopFrameDomain(topFrameURL));
 }
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)

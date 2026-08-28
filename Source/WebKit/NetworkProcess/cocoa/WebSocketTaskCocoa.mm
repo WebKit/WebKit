@@ -70,7 +70,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         thirdPartyCookieBlockingDecision = WebCore::ThirdPartyCookieBlockingDecision::All;
     else if (CheckedPtr session = networkSession(); CheckedPtr networkStorageSession = session ? session->networkStorageSession() : nullptr)
         thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request), m_isInitiatedByDedicatedWorker == IsInitiatedByDedicatedWorker::Yes);
-    if (WebCore::NetworkStorageSession::shouldBlockCookies(thirdPartyCookieBlockingDecision))
+    if (NetworkStorageSession::shouldBlockCookies(thirdPartyCookieBlockingDecision))
         blockCookies();
 
     readNextMessage();

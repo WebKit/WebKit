@@ -33,12 +33,12 @@
 
 #include "SocketStreamHandleClient.h"
 #include <CFNetwork/CFNetwork.h>
+#include <WebCore/CookieStorageSession.h>
 #include <WebCore/Credential.h>
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/Logging.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/StorageSessionProvider.h>

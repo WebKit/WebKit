@@ -50,7 +50,7 @@ public:
 private:
     WebFrameNetworkingContext(WebCore::LocalFrame*);
 
-    WebCore::NetworkStorageSession* storageSession() const override { return nullptr; }
+    WebCore::CookieStorageSession* storageSession() const override { return nullptr; }
 };
 
 }

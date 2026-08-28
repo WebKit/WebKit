@@ -38,7 +38,6 @@ typedef struct _SoupSession SoupSession;
 
 namespace WebCore {
 
-class NetworkStorageSession;
 class ResourceError;
 class ResourceRequest;
 

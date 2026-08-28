@@ -39,6 +39,7 @@
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Settings.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -482,7 +483,7 @@ void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFr
             }).iterator->value.add(subResourceDomain);
 
             // Some sites have quirks where multiple login domains require storage access.
-            if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(topDomain, subResourceDomain)) {
+            if (auto additionalLoginDomain = WebCore::findAdditionalLoginDomain(topDomain, subResourceDomain)) {
                 m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] {
                     return HashSet<RegistrableDomain> { };
                 }).iterator->value.add(*additionalLoginDomain);

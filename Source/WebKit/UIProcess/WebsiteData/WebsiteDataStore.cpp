@@ -63,7 +63,6 @@
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
@@ -74,6 +73,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 #include <WebCore/StorageUtilities.h>
+#include <WebCore/ThirdPartyCookieBlockingMode.h>
+#include <WebCore/TrackingPreventionTypes.h>
 #include <WebCore/WebLockRegistry.h>
 #include <algorithm>
 #include <wtf/Borrow.h>

@@ -45,7 +45,6 @@ struct Cookie;
 class CookieChangeListener;
 struct CookieRequestHeaderFieldProxy;
 struct CookieStoreGetOptions;
-class NetworkStorageSession;
 class StorageSessionProvider;
 struct SameSiteInfo;
 enum class ShouldPartitionCookie : bool;
@@ -66,7 +65,7 @@ public:
 
     virtual bool cookiesEnabled(Document&);
     virtual void remoteCookiesEnabled(const Document&, CompletionHandler<void(bool)>&&) const;
-    virtual std::pair<String, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies) const;
+    virtual std::pair<String, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
     // Lets WebKit2 compare header values without sending the header to a web process.
     virtual std::optional<SHA1::Digest> cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
     virtual bool getRawCookies(Document&, const URL&, Vector<Cookie>&) const;

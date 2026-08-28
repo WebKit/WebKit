@@ -67,7 +67,6 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "ModalContainerTypes.h"
-#include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PaymentCoordinatorClient.h"
@@ -430,7 +429,7 @@ private:
     EmptyFrameNetworkingContext();
 
     bool NODELETE shouldClearReferrerOnHTTPSToHTTPRedirect() const { return true; }
-    NetworkStorageSession* NODELETE storageSession() const final { return nullptr; }
+    CookieStorageSession* NODELETE storageSession() const final { return nullptr; }
 
 #if PLATFORM(COCOA)
     bool NODELETE localFileContentSniffingEnabled() const { return false; }
@@ -1221,7 +1220,7 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorage
 }
 
 class EmptyStorageSessionProvider final : public StorageSessionProvider {
-    NetworkStorageSession* NODELETE storageSession() const final { return nullptr; }
+    CookieStorageSession* NODELETE storageSession() const final { return nullptr; }
 };
 
 class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {

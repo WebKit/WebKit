@@ -35,12 +35,6 @@ selectors = [
 requires = ["HAVE_WEBCONTENTRESTRICTIONS"]
 
 [[legacy]]
-selectors = [
-    { name = "_getCookiesForPartition:completionHandler:", class = "?" },
-]
-requires = ["HAVE_ALLOW_ONLY_PARTITIONED_COOKIES"]
-
-[[legacy]]
 symbols = [
     "CGImageGetContentAverageLightLevelNits",
     "kCGConstrainedDynamicRange",
@@ -222,14 +216,12 @@ selectors = [
     { name = "__openXPC_and_CBApplicationDidBecomeActive__", class = "?" },
     { name = "_accessibilityUnregister", class = "?" },
     { name = "_attributedStringForRange:", class = "?" },
-    { name = "_cf2nsCookies:", class = "?" },
     { name = "_classicMode", class = "?" },
     { name = "_cookieForSetCookieString:forURL:partition:", class = "?" },
     { name = "_cookieStorage", class = "?" },
     { name = "_didFinishScrollingOrZooming", class = "?" },
     { name = "_disambiguated_due_to_CIImage_colorWithCGColor:", class = "?" },
     { name = "_dispatchTileDidDraw:", class = "?" },
-    { name = "_getCookiesForDomain:", class = "?" },
     { name = "_getCookiesForURL:mainDocumentURL:partition:policyProperties:completionHandler:", class = "?" },
     { name = "_hardwareKeyboard", class = "?" },
     { name = "_htmlDocumentFragmentString:documentAttributes:subresources:", class = "?" },
@@ -245,12 +237,9 @@ selectors = [
     { name = "_propertyForKey:", class = "?" },
     { name = "_protocolClassForRequest:skipAppSSO:", class = "?" },
     { name = "_referenceBounds", class = "?" },
-    { name = "_saveCookies:", class = "?" },
     { name = "_scheduleRenderingUpdateForPendingTileCacheRepaint", class = "?" },
     { name = "_schemeWasUpgradedDueToDynamicHSTS", class = "?" },
     { name = "_setCookies:forURL:mainDocumentURL:policyProperties:", class = "?" },
-    { name = "_setCookiesChangedHandler:onQueue:", class = "?" },
-    { name = "_setCookiesRemovedHandler:onQueue:", class = "?" },
     { name = "_setIdleTimerDisabled:forReason:", class = "?" },
     { name = "_setIgnoreAppSupportedOrientations:", class = "?" },
     { name = "_setMIMEType:", class = "?" },
@@ -258,7 +247,6 @@ selectors = [
     { name = "_setPreventsSleepDuringVideoPlayback:", class = "?" },
     { name = "_setPrivacyProxyFailClosedForUnreachableNonMainHosts:", class = "?" },
     { name = "_setProperty:forKey:", class = "?" },
-    { name = "_setSubscribedDomainsForCookieChanges:", class = "?" },
     { name = "_setSuppressesAudioRendering:", class = "?" },
     { name = "_setUseEnhancedPrivacyMode:", class = "?" },
     { name = "_standardMarkerAttributesForAttributes:", class = "?" },
@@ -364,7 +352,6 @@ selectors = [
     { name = "receivedResponse:decisionHandler:", class = "?" },
     { name = "referrerIdentifier", class = "?" },
     { name = "regionBeingDrawn", class = "?" },
-    { name = "registerForPostingNotificationsWithContext:", class = "?" },
     { name = "reloadValueForKeyPath:", class = "?" },
     { name = "remediateWithDecisionHandler:", class = "?" },
     { name = "removeEntryForKey:", class = "?" },
@@ -504,7 +491,6 @@ symbols = [
     "CCRSAGetCRTComponentsSizes",
     "CCRSAGetKeyComponents",
     "CCRSAGetKeyType",
-    "CFHTTPCookieStorageCopyCookies",
     "CFHTTPCookieStorageDeleteAllCookies",
     "CFHTTPCookieStorageDeleteCookie",
     "CFHTTPCookieStorageGetCookieAcceptPolicy",

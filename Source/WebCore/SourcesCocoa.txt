@@ -698,21 +698,19 @@ platform/mock/MediaPlaybackTargetMock.cpp
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MockAudioDestinationCocoa.cpp
 platform/network/cf/CertificateInfoCFNet.cpp
+platform/network/cf/CookieStorageSessionCFNet.cpp
 platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.mm @nonARC
-platform/network/cf/NetworkStorageSessionCFNet.cpp
 platform/network/cf/ResourceRequestCFNet.cpp
 platform/network/cocoa/AuthenticationCocoa.mm @nonARC
 platform/network/cocoa/BlobDataFileReferenceCocoa.mm @nonARC
 platform/network/cocoa/CertificateInfoCocoa.mm @nonARC
 platform/network/cocoa/CookieCocoa.mm @nonARC
-platform/network/cocoa/CookieStorageCocoa.mm @nonARC
-platform/network/cocoa/CookieStorageObserver.mm @nonARC
+platform/network/cocoa/CookieStorageSessionCocoa.mm @nonARC
 platform/network/cocoa/CredentialCocoa.mm @nonARC
 platform/network/cocoa/CredentialStorageCocoa.mm @nonARC
 platform/network/cocoa/FormDataStreamCocoa.mm @nonARC
 platform/network/cocoa/NetworkLoadMetrics.mm @nonARC
-platform/network/cocoa/NetworkStorageSessionCocoa.mm @nonARC
 platform/network/cocoa/ProtectionSpaceCocoa.mm @nonARC
 platform/network/cocoa/RangeResponseGenerator.mm @nonARC
 platform/network/cocoa/ResourceRequestCocoa.mm @nonARC

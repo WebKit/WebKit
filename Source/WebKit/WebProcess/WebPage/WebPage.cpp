@@ -341,6 +341,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/StaticRange.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/StyleProperties.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubresourceLoader.h>
@@ -9294,7 +9295,7 @@ void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLe
     m_internals->domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(resourceDomain);
 
     // Some sites have quirks where multiple login domains require storage access.
-    if (auto additionalLoginDomain = NetworkStorageSession::findAdditionalLoginDomain(topLevelDomain, resourceDomain))
+    if (auto additionalLoginDomain = WebCore::findAdditionalLoginDomain(topLevelDomain, resourceDomain))
         m_internals->domainsWithPageLevelStorageAccess.add(topLevelDomain, HashSet<RegistrableDomain> { }).iterator->value.add(*additionalLoginDomain);
 }
 

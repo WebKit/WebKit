@@ -33,9 +33,9 @@
 #import "WKContentRuleListStoreInternal.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/TrackingPreventionTypes.h>
 #import <numeric>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>

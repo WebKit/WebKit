@@ -26,7 +26,7 @@
 #pragma once
 
 #include "NetworkStorageSessionMap.h"
-#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/CookieStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <wtf/WeakPtr.h>
@@ -35,7 +35,7 @@ class PageStorageSessionProvider final : public WebCore::StorageSessionProvider 
 public:
     static Ref<PageStorageSessionProvider> create() { return adoptRef(*new PageStorageSessionProvider); }
 
-    WebCore::NetworkStorageSession* storageSession() const
+    WebCore::CookieStorageSession* storageSession() const final
     {
         if (m_page)
             return NetworkStorageSessionMap::storageSession(m_page->sessionID());

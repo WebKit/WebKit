@@ -35,7 +35,6 @@
 #include "WebKitCachedResolver.h"
 #include "WebKitOverridingResolver.h"
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>

@@ -32,13 +32,12 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/CookieJar.h>
+#import <WebCore/CookieStorageSession.h>
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
 #import <WebCore/Document.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/NativeImage.h>
-#import <WebCore/NetworkStorageSession.h>
-#import <WebCore/StorageSessionProvider.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreMainThread.h>
 #import <wtf/MainThread.h>
@@ -51,13 +50,6 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreThreadRun.h>
 #endif
-
-class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
-    WebCore::NetworkStorageSession* storageSession() const final
-    {
-        return &NetworkStorageSessionMap::defaultStorageSession();
-    }
-};
 
 @implementation WebCache
 

@@ -55,6 +55,7 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "NetworkStorageManager.h"
+#include "NetworkStorageSession.h"
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementPersistentStore.h"
 #include "ProcessAssertion.h"
@@ -86,7 +87,6 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStateNotifier.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
@@ -95,6 +95,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <algorithm>
 #include <wtf/CallbackAggregator.h>
@@ -324,7 +325,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies, ProcessPrivilege::CanAccessCredentials });
 #endif
     WebCore::SQLiteDatabase::useFastMalloc();
-    WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+    NetworkStorageSession::permitProcessToUseCookieAPI(true);
     platformInitializeNetworkProcess(parameters);
 
     WTF::Thread::setCurrentThreadIsUserInitiated();
@@ -623,9 +624,9 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDa
     RetainPtr<CFURLStorageSessionRef> storageSession;
     auto cfIdentifier = makeString(identifierBase, ".PrivateBrowsing."_s, WTF::UUID::createVersion4()).createCFString();
     if (sessionID.isEphemeral())
-        storageSession = createPrivateStorageSession(cfIdentifier.get(), std::nullopt, WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
+        storageSession = WebCore::createPrivateStorageSession(cfIdentifier.get(), std::nullopt, NetworkStorageSession::ShouldDisableCFURLCache::Yes);
     else if (sessionID != PAL::SessionID::defaultSessionID())
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get(), WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
+        storageSession = NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get(), NetworkStorageSession::ShouldDisableCFURLCache::Yes);
 
     if (NetworkStorageSession::processMayUseCookieAPI()) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -684,20 +685,20 @@ void NetworkProcess::forEachNetworkSession(NOESCAPE const Function<void(NetworkS
         functor(*session);
 }
 
-std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSession(PAL::SessionID sessionID)
+std::unique_ptr<NetworkStorageSession> NetworkProcess::newTestingSession(PAL::SessionID sessionID)
 {
 #if PLATFORM(COCOA)
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
     auto session = WebCore::createPrivateStorageSession(makeString("WebKit Test-"_s, getCurrentProcessID()).createCFString().get(), std::nullopt, NetworkStorageSession::ShouldDisableCFURLCache::Yes);
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
-    if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
+    if (NetworkStorageSession::processMayUseCookieAPI()) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
         if (session)
             cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
     }
-    return makeUnique<WebCore::NetworkStorageSession>(sessionID, WTF::move(session), WTF::move(cookieStorage));
+    return makeUnique<NetworkStorageSession>(sessionID, WTF::move(session), WTF::move(cookieStorage));
 #elif USE(CURL) || USE(SOUP)
-    return makeUnique<WebCore::NetworkStorageSession>(sessionID);
+    return makeUnique<NetworkStorageSession>(sessionID);
 #endif
 }
 
@@ -707,12 +708,12 @@ void NetworkProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
         connection->cookieAcceptPolicyChanged(newPolicy);
 }
 
-WebCore::NetworkStorageSession* NetworkProcess::storageSession(PAL::SessionID sessionID) const
+NetworkStorageSession* NetworkProcess::storageSession(PAL::SessionID sessionID) const
 {
     return m_networkStorageSessions.get(sessionID);
 }
 
-void NetworkProcess::forEachNetworkStorageSession(NOESCAPE const Function<void(WebCore::NetworkStorageSession&)>& functor)
+void NetworkProcess::forEachNetworkStorageSession(NOESCAPE const Function<void(NetworkStorageSession&)>& functor)
 {
     for (auto& storageSession : m_networkStorageSessions.values())
         functor(*storageSession);
@@ -1415,7 +1416,7 @@ void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool
 
 void NetworkProcess::updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& organizationStorageAccessPromptQuirks)
 {
-    NetworkStorageSession::updateStorageAccessPromptQuirks(WTF::move(organizationStorageAccessPromptQuirks));
+    WebCore::updateStorageAccessPromptQuirks(WTF::move(organizationStorageAccessPromptQuirks));
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)

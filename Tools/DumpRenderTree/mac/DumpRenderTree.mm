@@ -64,8 +64,8 @@
 #import <JavaScriptCore/JSCConfig.h>
 #import <JavaScriptCore/Options.h>
 #import <JavaScriptCore/TestRunnerUtils.h>
+#import <WebCore/CookieStorageSession.h>
 #import <WebCore/LogInitialization.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/WebCoreMainThread.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
@@ -1304,7 +1304,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     atexit(atexitFunction);
 
     WTF::setProcessPrivileges(allPrivileges());
-    WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+    WebCore::CookieStorageSession::permitProcessToUseCookieAPI(true);
     WebCoreTestSupport::setLinkedOnOrAfterEverythingForTesting();
 
 #if PLATFORM(IOS_FAMILY)

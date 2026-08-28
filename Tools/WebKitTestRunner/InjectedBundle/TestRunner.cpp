@@ -34,7 +34,6 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebKit/WKBase.h>
 #include <WebKit/WKBundle.h>

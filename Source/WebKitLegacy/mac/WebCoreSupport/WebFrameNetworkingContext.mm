@@ -25,6 +25,7 @@
 
 #import "WebFrameNetworkingContext.h"
 
+#import <WebCore/CookieStorageSession.h>
 #import "NetworkStorageSessionMap.h"
 #import "WebFrameInternal.h"
 #import "WebResourceLoadScheduler.h"
@@ -33,7 +34,6 @@
 #import <WebCore/FrameInlines.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LocalFrameLoaderClient.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/Settings.h>
@@ -46,7 +46,7 @@
 #endif
 
 
-WebCore::NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
+WebCore::CookieStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
     NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
@@ -93,7 +93,7 @@ WebCore::ResourceError WebFrameNetworkingContext::blockedError(const WebCore::Re
     return WebResourceLoadScheduler::blockedErrorFromRequest(request);
 }
 
-WebCore::NetworkStorageSession* WebFrameNetworkingContext::storageSession() const
+WebCore::CookieStorageSession* WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
     if (frame() && frame()->page() && frame()->page()->sessionID().isEphemeral()) {

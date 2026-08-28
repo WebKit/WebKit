@@ -32,13 +32,13 @@ class SessionID;
 }
 
 namespace WebCore {
-class NetworkStorageSession;
+class CookieStorageSession;
 }
 
 class NetworkStorageSessionMap {
 public:
-    static WebCore::NetworkStorageSession* storageSession(PAL::SessionID);
-    static WebCore::NetworkStorageSession& defaultStorageSession();
+    static WebCore::CookieStorageSession* storageSession(PAL::SessionID);
+    static WebCore::CookieStorageSession& defaultStorageSession();
     static void switchToNewTestingSession();
     static void ensureSession(PAL::SessionID, const String& identifierBase = String());
     static void destroySession(PAL::SessionID);

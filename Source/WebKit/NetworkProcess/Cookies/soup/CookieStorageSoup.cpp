@@ -22,7 +22,7 @@
 #if USE(SOUP)
 #include "NetworkStorageSession.h"
 
-namespace WebCore {
+namespace WebKit {
 
 void startObservingCookieChanges(NetworkStorageSession& storageSession, Function<void()>&& callback)
 {
@@ -34,6 +34,6 @@ void stopObservingCookieChanges(NetworkStorageSession& storageSession)
     storageSession.setCookieObserverHandler(nullptr);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(SOUP)

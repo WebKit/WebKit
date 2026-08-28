@@ -55,6 +55,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "NetworkStorageSession.h"
 #include "OverrideLanguages.h"
 #include "PageLoadState.h"
 #include "PerActivityStateCPUUsageSampler.h"
@@ -101,7 +102,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <WebCore/GamepadProvider.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PlatformScreen.h>
@@ -303,7 +303,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     auto needsGlobalStaticInitialization = std::exchange(s_needsGlobalStaticInitialization, NeedsGlobalStaticInitialization::No);
     if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::Yes) {
         WTF::setProcessPrivileges(allPrivileges());
-        WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+        NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::Process::generateIdentifier());
     }
 

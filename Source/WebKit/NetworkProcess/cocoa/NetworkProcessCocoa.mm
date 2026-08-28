@@ -35,9 +35,9 @@
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
 #import "NetworkStorageManager.h"
+#import "NetworkStorageSession.h"
 #import "SandboxExtension.h"
 #import "WebCookieManager.h"
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffixStore.h>
 #import <WebCore/ResourceRequestCFNet.h>
 #import <WebCore/SecurityOrigin.h>

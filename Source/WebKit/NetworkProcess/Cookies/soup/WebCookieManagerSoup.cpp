@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
+#include "NetworkStorageSession.h"
 #include "WebCookieManager.h"
 
 #include "NetworkProcess.h"
 #include "NetworkSessionSoup.h"
 #include "SoupCookiePersistentStorageType.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 

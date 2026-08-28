@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "NetworkStorageSession.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/CookieChangeListener.h>
 #include <WebCore/CookieJar.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SameSiteInfo.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -76,7 +76,7 @@ public:
 private:
     WebCookieCache() = default;
 
-    WebCore::NetworkStorageSession& inMemoryStorageSession();
+    NetworkStorageSession& inMemoryStorageSession();
 
     void pruneCacheIfNecessary();
     bool NODELETE cacheMayBeOutOfSync() const;
@@ -86,7 +86,7 @@ private:
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) final;
 
     HashSet<String> m_hostsWithInMemoryStorage;
-    std::unique_ptr<WebCore::NetworkStorageSession> m_inMemoryStorageSession;
+    std::unique_ptr<NetworkStorageSession> m_inMemoryStorageSession;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool m_optInCookiePartitioningEnabled { false };
 #endif

@@ -28,12 +28,12 @@
 
 #if USE(CURL)
 
-#include "Cookie.h"
-#include "CookieJarDB.h"
-#include "CookieRequestHeaderFieldProxy.h"
-#include "CookieStoreGetOptions.h"
-#include "CurlContext.h"
-#include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/Cookie.h>
+#include <WebCore/CookieJarDB.h>
+#include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/CookieStoreGetOptions.h>
+#include <WebCore/CurlContext.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <optional>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
@@ -41,7 +41,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+namespace WebKit {
+using namespace WebCore;
 
 static String defaultCookieJarPath()
 {
@@ -88,7 +89,7 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
 }
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, const String& alternativeServicesDirectory)
-    : m_sessionID(sessionID)
+    : WebCore::CookieStorageSession(sessionID)
     // :memory: creates in-memory database, see https://www.sqlite.org/inmemorydb.html
     , m_cookieDatabase(makeUniqueRef<CookieJarDB>(sessionID.isEphemeral() ? ":memory:"_s : defaultCookieJarPath()))
 {
@@ -264,6 +265,6 @@ void NetworkStorageSession::clearAlternativeServices()
     CurlContext::singleton().clearAlternativeServicesStorageFile();
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(CURL)

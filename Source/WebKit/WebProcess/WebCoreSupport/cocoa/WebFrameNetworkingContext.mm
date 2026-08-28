@@ -35,7 +35,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameLoaderClient.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/Settings.h>

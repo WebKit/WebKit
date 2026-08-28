@@ -32,6 +32,7 @@
 #include "NetworkRTCProvider.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadMap.h"
+#include "NetworkStorageSession.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "SharedPreferencesForWebProcess.h"
@@ -48,7 +49,6 @@
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/NetworkLoadInformation.h>
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NonSerializedDataIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -288,7 +288,7 @@ private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
 
     void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, const WebCore::ResourceError&);
-    WebCore::NetworkStorageSession* NODELETE storageSession();
+    NetworkStorageSession* NODELETE storageSession();
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
