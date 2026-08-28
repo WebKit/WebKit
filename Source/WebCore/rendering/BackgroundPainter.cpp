@@ -833,6 +833,26 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
         FloatSize localImageIntrinsicSize = imageIntrinsicSize;
         FloatSize localPositioningAreaSize = positioningAreaSize;
 
+        if (image && localImageIntrinsicSize.isEmpty()) {
+            float intrinsicWidth = 0;
+            float intrinsicHeight = 0;
+            FloatSize intrinsicRatio;
+            image->computeIntrinsicDimensions(&renderer, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+            if (!intrinsicRatio.isEmpty()) {
+                float heightAtFullWidth = localPositioningAreaSize.width() * intrinsicRatio.height() / intrinsicRatio.width();
+                bool fitToWidth = keyword.value == CSSValueContain
+                    ? heightAtFullWidth <= localPositioningAreaSize.height()
+                    : heightAtFullWidth >= localPositioningAreaSize.height();
+                auto concreteSize = fitToWidth
+                    ? FloatSize(localPositioningAreaSize.width(), heightAtFullWidth)
+                    : FloatSize(localPositioningAreaSize.height() * intrinsicRatio.width() / intrinsicRatio.height(), localPositioningAreaSize.height());
+                LayoutSize tileSize(concreteSize);
+                if (tileSize.isEmpty())
+                    return { };
+                return tileSize.expandedTo({ devicePixelSize, devicePixelSize });
+            }
+        }
+
         float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
         float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
         float scaleFactor = keyword.value == CSSValueContain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
