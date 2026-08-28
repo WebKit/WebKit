@@ -54,7 +54,6 @@ ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSessio
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_startTime(MonotonicTime::now())
 {
-    relaxAdoptionRequirement();
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader %p", this);
     start();
 }

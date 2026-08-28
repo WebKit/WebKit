@@ -50,18 +50,11 @@ public:
     uint32_t refCount() const { return m_refCount.load(std::memory_order_relaxed); }
 
     // Debug APIs
-    void adopted() { m_refCountDebugger.adopted(); }
-    void relaxAdoptionRequirement() { m_refCountDebugger.relaxAdoptionRequirement(); }
     void disableThreadingChecks() { m_refCountDebugger.disableThreadingChecks(); }
     ThreadSafeRefCountDebugger& refCountDebugger() LIFETIME_BOUND { return m_refCountDebugger; }
 
 protected:
-    ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase()
-    {
-        // FIXME: Lots of subclasses violate our adoption requirements. Migrate
-        // this call into only those subclasses that need it.
-        m_refCountDebugger.relaxAdoptionRequirement();
-    }
+    ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase() = default;
 
     ~ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase()
     {
@@ -113,13 +106,6 @@ public:
             STATIC_ASSERT_NOT_REACHED_FOR_VALUE(destructionThread, "Unexpected destructionThread enumerator value");
     }
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
-
-inline void adopted(ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase* object)
-{
-    if (!object)
-        return;
-    object->adopted();
-}
 
 } // namespace WTF
 

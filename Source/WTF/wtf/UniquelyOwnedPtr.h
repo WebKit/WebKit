@@ -43,7 +43,6 @@ UniquelyOwnedPtr<U> makeUniquelyOwned(Args&&... args)
 {
     using T = typename U::RefCountedType;
     auto* object = RefCountedWithInlineWeakPtr<T>::template create<U>(std::forward<Args>(args)...);
-    adopted(object);
     return UniquelyOwnedPtr<U>(object);
 }
 

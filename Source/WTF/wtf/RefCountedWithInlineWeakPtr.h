@@ -193,16 +193,6 @@ private:
     RefCountHeader& header() const { return refCountHeader(object()); }
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
-template<typename U>
-    requires requires { typename U::RefCountedType; }
-inline void adopted(U* object)
-{
-    if (!object)
-        return;
-    using T = typename U::RefCountedType;
-    refCountHeader(static_cast<const T*>(object)).refCountDebugger().adopted();
-}
-
 template<typename U, typename... Args>
 Ref<U> createRefCountedWithInlineWeakPtr(Args&&... args)
 {

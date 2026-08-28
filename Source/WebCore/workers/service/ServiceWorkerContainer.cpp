@@ -609,7 +609,6 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());
     if (!m_swConnection || m_swConnection->isClosed()) {
-        // Using RefPtr here results in an m_adoptionIsRequired assert.
         if (RefPtr workerGlobal = dynamicDowncast<WorkerGlobalScope>(*scriptExecutionContext()))
             m_swConnection = workerGlobal->swClientConnection();
         else

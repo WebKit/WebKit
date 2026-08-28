@@ -397,7 +397,6 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
         BlobStreamSource(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
             : m_loader(FileReaderLoader::create(FileReaderLoader::ReadType::ReadAsBinaryChunks, this))
         {
-            relaxAdoptionRequirement();
             m_loader->start(&scriptExecutionContext, blob);
         }
 

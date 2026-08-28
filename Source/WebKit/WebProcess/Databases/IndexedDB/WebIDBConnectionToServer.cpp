@@ -59,7 +59,6 @@ Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(PAL::SessionID se
 
 WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
 {
-    relaxAdoptionRequirement();
     lazyInitialize(m_connectionToServer, IDBClient::IDBConnectionToServer::create(*this, sessionID));
 }
 

@@ -71,7 +71,6 @@ ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&
 {
     context.registerServiceWorker(*this);
 
-    relaxAdoptionRequirement();
     updatePendingActivityForEventDispatch();
 
     WORKER_RELEASE_LOG("serviceWorkerID=%" PRIu64 ", state=%hhu", identifier().toUInt64(), std::to_underlying(m_data.state));

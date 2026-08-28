@@ -60,7 +60,6 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
     , m_webPageProxyID(webPageProxyID)
 {
-    relaxAdoptionRequirement();
     if (!session)
         return;
 

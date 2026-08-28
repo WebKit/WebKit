@@ -48,8 +48,6 @@ AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderObject& renderer, 
 Ref<AccessibilityMenuList> AccessibilityMenuList::create(AXID axID, RenderObject& renderer, AXObjectCache& cache)
 {
     Ref menuList = adoptRef(*new AccessibilityMenuList(axID, renderer, cache));
-    // We have to do this setup here and not in the constructor to avoid an
-    // adoptionIsRequired ASSERT in RefCounted.h.
     menuList->m_popup->setParent(menuList.ptr());
     menuList->addChild(menuList->m_popup.get());
     menuList->m_childrenInitialized = true;

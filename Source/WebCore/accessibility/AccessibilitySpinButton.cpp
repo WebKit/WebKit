@@ -53,8 +53,6 @@ AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, SpinButtonElement& s
 Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID, SpinButtonElement& spinButtonElement, AXObjectCache& cache)
 {
     Ref spinButton = adoptRef(*new AccessibilitySpinButton(axID, spinButtonElement, cache));
-    // We have to do this setup here and not in the constructor to avoid an
-    // adoptionIsRequired ASSERT in RefCounted.h.
     spinButton->m_incrementor->setParent(spinButton.ptr());
     spinButton->m_decrementor->setParent(spinButton.ptr());
     spinButton->addChild(spinButton->m_incrementor.get());

@@ -126,7 +126,6 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_opener(opener)
     , m_frameTreeSyncData(WTF::move(frameTreeSyncData))
 {
-    relaxAdoptionRequirement();
     if (parent && addToFrameTree == AddToFrameTree::Yes)
         parent->tree().appendChild(*this);
 

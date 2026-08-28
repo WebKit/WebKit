@@ -139,8 +139,6 @@ auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext&
 NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler)
     : m_completionHandler(WTF::move(completionHandler))
 {
-    relaxAdoptionRequirement();
-
     ThreadableLoaderOptions options;
     options.mode = FetchOptions::Mode::Cors;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;

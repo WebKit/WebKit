@@ -123,7 +123,6 @@ struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
 public:
 #if ASSERT_ENABLED
     bool inRemovedLastRefFunction;
-    bool adoptionIsRequired;
     bool deletionHasBegun;
 #endif
     uint32_t refCountAndParentBit;
@@ -385,10 +384,7 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
     ASSERT(nodeType() == type);
     ASSERT(isMainThread());
 
-    // Allow code to ref the Document while it is being constructed to make our life easier.
-    if (isDocumentNode())
-        relaxAdoptionRequirement();
-    else
+    if (!isDocumentNode())
         document.incrementReferencingNodeCount();
 
 #if !defined(NDEBUG) || DUMP_NODE_STATISTICS
@@ -411,7 +407,6 @@ Node::~Node()
 {
     ASSERT(isMainThread());
     ASSERT(deletionHasBegun());
-    ASSERT(!m_adoptionIsRequired);
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
 

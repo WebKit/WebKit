@@ -39,8 +39,6 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
     , m_messageHandlers(messageHandlers)
     , m_userData(userData)
 {
-    relaxAdoptionRequirement();
-
     m_readBuffer.reserveInitialCapacity(defaultBufferSize);
     m_writeBuffer.reserveInitialCapacity(defaultBufferSize);
 

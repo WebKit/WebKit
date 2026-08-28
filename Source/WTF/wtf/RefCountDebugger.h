@@ -63,7 +63,6 @@ public:
     ~RefCountDebuggerImpl()
     {
         ASSERT(m_deletionHasBegun);
-        ASSERT(!m_adoptionIsRequired);
     }
 #else
     ~RefCountDebuggerImpl() = default;
@@ -73,25 +72,6 @@ public:
     {
         applyRefDerefThreadingCheck(refCount);
         applyRefDuringDestructionCheck();
-
-#if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_adoptionIsRequired);
-#endif
-    }
-
-    void adopted()
-    {
-#if CHECK_REF_COUNTED_LIFECYCLE
-        m_adoptionIsRequired = false;
-#endif
-    }
-
-    void relaxAdoptionRequirement()
-    {
-#if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT(m_adoptionIsRequired);
-        m_adoptionIsRequired = false;
-#endif
     }
 
     // Unsafe precondition: The caller must ensure thread-safe access to this object,
@@ -155,10 +135,6 @@ public:
     {
         applyRefDerefThreadingCheck(refCount);
 
-#if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_adoptionIsRequired);
-#endif
-
         ASSERT(refCount);
     }
 
@@ -185,7 +161,6 @@ private:
 #endif
 #if CHECK_REF_COUNTED_LIFECYCLE
     mutable std::atomic<bool> m_deletionHasBegun { false };
-    mutable bool m_adoptionIsRequired { true };
 #endif
 };
 

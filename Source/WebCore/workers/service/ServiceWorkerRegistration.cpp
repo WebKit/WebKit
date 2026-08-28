@@ -90,8 +90,6 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     REGISTRATION_RELEASE_LOG("ServiceWorkerRegistration: ID %" PRIu64 ", installing=%" PRIu64 ", waiting=%" PRIu64 ", active=%" PRIu64, identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
 
     m_container->addRegistration(*this);
-
-    relaxAdoptionRequirement();
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()

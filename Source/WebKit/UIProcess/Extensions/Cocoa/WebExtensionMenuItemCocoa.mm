@@ -100,8 +100,6 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     , m_enabled(parameters.enabled.value_or(true))
     , m_visible(parameters.visible.value_or(true))
 {
-    relaxAdoptionRequirement();
-
     if (parameters.parentIdentifier) {
         if (RefPtr parentMenuItem = extensionContext.menuItem(parameters.parentIdentifier.value()))
             parentMenuItem->addSubmenuItem(*this);

@@ -44,8 +44,6 @@ MessagePortChannel::MessagePortChannel(MessagePortChannelRegistry& registry, con
 {
     ASSERT(isMainThread());
 
-    relaxAdoptionRequirement();
-
     m_processes[0] = port1.processIdentifier;
     m_entangledToProcessProtectors[0] = this;
     m_processes[1] = port2.processIdentifier;

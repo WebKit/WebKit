@@ -65,7 +65,6 @@ WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnecti
     , m_crossOriginEmbedderPolicyValue(crossOriginEmbedderPolicy)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("WebSharedWorkerServerToContextConnection:");
-    relaxAdoptionRequirement();
     server.addContextConnection(*this);
 }
 

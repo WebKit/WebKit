@@ -130,7 +130,6 @@ RTCPeerConnection::RTCPeerConnection(Document& document)
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    relaxAdoptionRequirement();
 }
 
 RTCPeerConnection::~RTCPeerConnection()

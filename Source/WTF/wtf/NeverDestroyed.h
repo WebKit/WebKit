@@ -72,13 +72,13 @@ public:
     template<typename... Args> NeverDestroyed(Args&&... args)
     {
         AccessTraits::assertAccess();
-        MaybeRelax<T>(new (storagePointer()) T(std::forward<Args>(args)...));
+        new (storagePointer()) T(std::forward<Args>(args)...);
     }
 
     NeverDestroyed(NeverDestroyed&& other)
     {
         AccessTraits::assertAccess();
-        MaybeRelax<T>(new (storagePointer()) T(WTF::move(*other.storagePointer())));
+        new (storagePointer()) T(WTF::move(*other.storagePointer()));
     }
 
     operator T&() { return *storagePointer(); }
@@ -99,13 +99,6 @@ private:
         AccessTraits::assertAccess();
         return const_cast<PointerType>(m_storage.get());
     }
-
-    template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
-        explicit MaybeRelax(PtrType*) { }
-    };
-    template<typename PtrType> struct MaybeRelax<PtrType, true> {
-        explicit MaybeRelax(PtrType* ptr) { ptr->relaxAdoptionRequirement(); }
-    };
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
@@ -135,7 +128,7 @@ public:
 #if ASSERT_ENABLED
         m_isConstructed = true;
 #endif
-        MaybeRelax<T>(new (storagePointerWithoutAccessCheck()) T(std::forward<Args>(args)...));
+        new (storagePointerWithoutAccessCheck()) T(std::forward<Args>(args)...);
     }
 
     operator T&() { return *storagePointer(); }
@@ -166,13 +159,6 @@ private:
         AccessTraits::assertAccess();
         return storagePointerWithoutAccessCheck();
     }
-
-    template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
-        explicit MaybeRelax(PtrType*) { }
-    };
-    template<typename PtrType> struct MaybeRelax<PtrType, true> {
-        explicit MaybeRelax(PtrType* ptr) { ptr->relaxAdoptionRequirement(); }
-    };
 
 #if ASSERT_ENABLED
     // LazyNeverDestroyed objects are always static, so this variable is initialized to false.

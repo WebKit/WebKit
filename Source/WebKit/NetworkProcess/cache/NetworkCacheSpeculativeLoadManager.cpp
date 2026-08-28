@@ -231,7 +231,6 @@ private:
                 protectedThis->markLoadAsCompleted();
         })
     {
-        relaxAdoptionRequirement();
         m_loadHysteresisActivity.impulse();
     }
 

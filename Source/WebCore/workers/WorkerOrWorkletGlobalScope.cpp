@@ -56,7 +56,6 @@ WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PA
     , m_noiseInjectionHashSalt(noiseInjectionHashSalt)
     , m_advancedPrivacyProtections(advancedPrivacyProtections)
 {
-    relaxAdoptionRequirement();
 }
 
 WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope() = default;

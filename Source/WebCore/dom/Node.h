@@ -572,8 +572,6 @@ public:
     ALWAYS_INLINE unsigned refCount() const;
     void applyRefDuringDestructionCheck() const;
 
-    inline void relaxAdoptionRequirement();
-
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
@@ -812,10 +810,7 @@ private:
 
 #if ASSERT_ENABLED
     mutable bool m_inRemovedLastRefFunction { false };
-    bool m_adoptionIsRequired { true };
     bool m_deletionHasBegun { false };
-
-    friend inline void adopted(Node*);
 #endif
 
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
@@ -843,21 +838,9 @@ WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, 
 
 bool NODELETE isTouchRelatedEventType(const EventTypeInfo&, const EventTarget&);
 
-#if ASSERT_ENABLED
-
-inline void adopted(Node* node)
-{
-    if (!node)
-        return;
-    node->m_adoptionIsRequired = false;
-}
-
-#endif // ASSERT_ENABLED
-
 ALWAYS_INLINE void Node::ref() const
 {
     ASSERT(isMainThread());
-    ASSERT(!m_adoptionIsRequired);
     applyRefDuringDestructionCheck();
     m_refCountAndParentBit += s_refCountIncrement;
 }
@@ -874,7 +857,6 @@ inline void Node::applyRefDuringDestructionCheck() const
 ALWAYS_INLINE void Node::deref() const
 {
     ASSERT(isMainThread());
-    ASSERT(!m_adoptionIsRequired);
 
     ASSERT_WITH_SECURITY_IMPLICATION(refCount());
     auto updatedRefCount = m_refCountAndParentBit - s_refCountIncrement;

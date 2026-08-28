@@ -51,7 +51,6 @@ Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver>&& 
     , m_options(options)
 {
     m_observer->setSubscriber(*this);
-    relaxAdoptionRequirement();
     followSignal(m_signal);
     if (RefPtr signal = options.signal)
         followSignal(*signal);

@@ -54,7 +54,6 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
     , m_jobData(WTF::move(jobData))
     , m_session(session)
 {
-    relaxAdoptionRequirement();
     ASSERT(!request.isConditional());
 
     if (RefPtr cache = session.cache()) {

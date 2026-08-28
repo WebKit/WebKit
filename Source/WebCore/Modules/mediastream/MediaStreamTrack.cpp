@@ -93,7 +93,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     , m_muted(m_private->muted())
     , m_isCaptureTrack(is<Document>(context) && m_private->isCaptureTrack())
 {
-    relaxAdoptionRequirement();
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_private->addObserver(*this);

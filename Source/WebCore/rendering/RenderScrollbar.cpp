@@ -55,9 +55,6 @@ RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrient
 {
     ASSERT(ownerElement || owningFrame);
 
-    // FIXME: We need to do this because RenderScrollbar::styleChanged is called as soon as the scrollbar is created.
-    relaxAdoptionRequirement();
-
     // Update the scrollbar size.
     int width = 0;
     int height = 0;

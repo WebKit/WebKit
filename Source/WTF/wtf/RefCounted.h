@@ -39,8 +39,6 @@ public:
     uint32_t refCount() const { return m_refCount; }
 
     // Debug APIs
-    void adopted() { m_refCountDebugger.adopted(); }
-    void relaxAdoptionRequirement() { m_refCountDebugger.relaxAdoptionRequirement(); }
     void disableThreadingChecks() { m_refCountDebugger.disableThreadingChecks(); }
     RefCountDebugger& refCountDebugger() LIFETIME_BOUND { return m_refCountDebugger; }
 
@@ -87,13 +85,6 @@ protected:
     RefCounted() = default;
     ~RefCounted() = default;
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
-
-inline void adopted(RefCountedBase* object)
-{
-    if (!object)
-        return;
-    object->adopted();
-}
 
 } // namespace WTF
 

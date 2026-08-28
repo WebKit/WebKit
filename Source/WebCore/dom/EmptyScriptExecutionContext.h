@@ -100,7 +100,6 @@ private:
         , m_eventLoop(EmptyEventLoop::create(vm))
         , m_eventLoopTaskGroup(makeUniqueRef<EventLoopTaskGroup>(m_eventLoop))
     {
-        relaxAdoptionRequirement();
         m_eventLoop->addAssociatedContext(*this);
     }
 

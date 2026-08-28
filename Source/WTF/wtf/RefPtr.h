@@ -265,7 +265,6 @@ inline bool operator==(const RefPtr<T, U, V>& a, X* b)
 template<typename T, typename U, typename V>
 inline RefPtr<T, U, V> adoptRef(T* p)
 {
-    adopted(p);
     return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
 

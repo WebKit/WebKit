@@ -53,8 +53,6 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
     , m_fromDownloadAttribute(fromDownloadAttribute)
     , m_webProcessID(webProcessID)
 {
-    relaxAdoptionRequirement();
-
 #if ENABLE(CONTENT_FILTERING)
 #if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary();

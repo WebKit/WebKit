@@ -183,7 +183,6 @@ PushService::PushService(Ref<PushServiceConnection>&& pushServiceConnection, Ref
     , m_incomingPushMessageHandler(WTF::move(incomingPushMessageHandler))
 {
     RELEASE_ASSERT(m_incomingPushMessageHandler);
-    relaxAdoptionRequirement();
 
     Ref connection = m_connection;
     connection->startListeningForPublicToken([weakThis = WeakPtr { *this }](auto&& token) mutable {

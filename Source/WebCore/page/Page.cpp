@@ -367,7 +367,6 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
 
 GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::MainFrameCreationParameters&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {
-    page.relaxAdoptionRequirement();
     return switchOn(WTF::move(clientCreator), [&] (PageConfiguration::LocalMainFrameCreationParameters&& creationParameters) -> Ref<Frame> {
         return LocalFrame::createMainFrame(page, WTF::move(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, creationParameters.effectiveReferrerPolicy, mainFrameOpener.get(), WTF::move(frameTreeSyncData));
     }, [&] (CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>&& remoteFrameClientCreator) -> Ref<Frame> {

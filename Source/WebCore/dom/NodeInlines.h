@@ -238,15 +238,6 @@ inline NodeClass& Node::traverseToRootNodeInternal(const NodeClass& node)
     return *current;
 }
 
-inline void Node::relaxAdoptionRequirement()
-{
-#if ASSERT_ENABLED
-    ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
-    ASSERT(m_adoptionIsRequired);
-    m_adoptionIsRequired = false;
-#endif
-}
-
 inline IntRect Node::pixelSnappedAbsoluteBoundingRect(bool* isReplaced)
 {
     return snappedIntRect(absoluteBoundingRect(isReplaced));
