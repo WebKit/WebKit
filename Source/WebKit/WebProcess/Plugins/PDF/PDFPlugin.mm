@@ -1090,7 +1090,14 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    Ref event = WebMouseEvent::create({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, {
+        .button = WebMouseEventButton::Right,
+        .buttons = 0,
+        .position = contentsPoint,
+        .globalPosition = contentsPoint,
+        .clickCount = 1,
+        .force = WebCore::ForceAtClick,
+    });
     return handleContextMenuEvent(event);
 }
 

@@ -29,17 +29,33 @@
 #if ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutorepeat)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat))
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WPEEvent* event, const String& text, bool isAutorepeat)
 {
+    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat)));
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, MonotonicTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 0, 0, true, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange), false, false)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
+    return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
+        { WebEventType::KeyDown, { }, MonotonicTime::now() },
+        {
+            .text = text,
+            .key = "Unidentified"_s,
+            .code = "Unidentified"_s,
+            .keyIdentifier = "U+0000"_s,
+            .windowsVirtualKeyCode = 0,
+            .nativeVirtualKeyCode = 0,
+            .handledByInputMethod = true,
+            .preeditUnderlines = WTF::move(preeditUnderlines),
+            .preeditSelectionRange = WTF::move(preeditSelectionRange),
+            .isAutoRepeat = false,
+            .isKeypad = false,
+        }
+    }));
 }
 
 } // namespace WebKit

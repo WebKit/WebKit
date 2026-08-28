@@ -398,7 +398,7 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS) && ENABLE(DEVELOPER_MODE)
     if (wpeEventIsTouchForTesting(event)) {
-        page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, platformTouchPoints(wpeEventTouchPointsForTesting(event))));
+        page().handleTouchEvent(nullptr, NativeWebTouchEvent::create(event, platformTouchPoints(wpeEventTouchPointsForTesting(event))));
         return TRUE;
     }
 #endif
@@ -414,16 +414,16 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
     case WPE_EVENT_POINTER_MOVE:
     case WPE_EVENT_POINTER_ENTER:
     case WPE_EVENT_POINTER_LEAVE: {
-        WebKit::NativeWebMouseEvent mouseEvent(event);
+        Ref mouseEvent = WebKit::NativeWebMouseEvent::create(event);
 #if ENABLE(DRAG_SUPPORT)
         if (updateDrag(mouseEvent))
             return TRUE;
 #endif
-        page().handleMouseEvent(mouseEvent);
+        page().handleMouseEvent(WTF::move(mouseEvent));
         return TRUE;
     }
     case WPE_EVENT_SCROLL:
-        page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event));
+        page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(event));
         return TRUE;
     case WPE_EVENT_KEYBOARD_KEY_DOWN: {
         auto modifiers = wpe_event_get_modifiers(event);
@@ -435,20 +435,20 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         }
         auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
         if (!filterResult.handled)
-            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, filterResult.keyText, m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
+            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, filterResult.keyText, m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
         return TRUE;
     }
     case WPE_EVENT_KEYBOARD_KEY_UP: {
         m_keyAutoRepeatHandler.keyRelease();
         auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
         if (!filterResult.handled)
-            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
+            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, String(), false));
         return TRUE;
     }
     case WPE_EVENT_TOUCH_DOWN:
 #if ENABLE(TOUCH_EVENTS)
         m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
-        page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, touchPointsForEvent(event)));
+        page().handleTouchEvent(nullptr, NativeWebTouchEvent::create(event, touchPointsForEvent(event)));
 #endif
         return TRUE;
     case WPE_EVENT_TOUCH_UP:
@@ -457,14 +457,14 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
         auto points = touchPointsForEvent(event);
         m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
-        page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, WTF::move(points)));
+        page().handleTouchEvent(nullptr, NativeWebTouchEvent::create(event, WTF::move(points)));
 #endif
         return TRUE;
     }
     case WPE_EVENT_TOUCH_MOVE:
 #if ENABLE(TOUCH_EVENTS)
         m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
-        page().handleTouchEvent(nullptr, NativeWebTouchEvent(event, touchPointsForEvent(event)));
+        page().handleTouchEvent(nullptr, NativeWebTouchEvent::create(event, touchPointsForEvent(event)));
 #endif
         return TRUE;
     };
@@ -495,7 +495,7 @@ void ViewPlatform::handleGesture(WPEEvent* event)
                 GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
                     WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0
                 ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
             }
 
             // Mouse down on the point of the click.
@@ -503,7 +503,7 @@ void ViewPlatform::handleGesture(WPEEvent* event)
                 GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
                     WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, WPE_MODIFIER_POINTER_BUTTON1, 1, x, y, 1
                 ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
             }
 
             wpe_view_focus_in(m_wpeView.get());
@@ -513,7 +513,7 @@ void ViewPlatform::handleGesture(WPEEvent* event)
                 GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
                     WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y, 0
                 ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
             }
         }
         break;
@@ -532,14 +532,14 @@ void ViewPlatform::handleGesture(WPEEvent* event)
             GRefPtr<WPEEvent> simulatedScrollEvent = adoptGRef(wpe_event_scroll_new(
                 m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), dx, dy, TRUE, FALSE, x, y
             ));
-            page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(simulatedScrollEvent.get(), phase));
+            page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(simulatedScrollEvent.get(), phase));
         }
     }
 }
 
 void ViewPlatform::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(text, WTF::move(underlines), WTF::move(selectionRange)));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(text, WTF::move(underlines), WTF::move(selectionRange)));
 }
 
 void ViewPlatform::setCursor(const WebCore::Cursor& cursor)

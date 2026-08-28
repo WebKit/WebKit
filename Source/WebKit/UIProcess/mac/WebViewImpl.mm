@@ -1649,7 +1649,7 @@ bool WebViewImpl::becomeFirstResponder()
         RetainPtr<NSEvent> keyboardEvent;
         if ([event type] == NSEventTypeKeyDown || [event type] == NSEventTypeKeyUp)
             keyboardEvent = event;
-        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, NativeWebKeyboardEvent(keyboardEvent.get(), false, false, { }), [] { });
+        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, NativeWebKeyboardEvent::create(keyboardEvent.get(), false, false, { }), [] { });
     }
     return true;
 }
@@ -2530,8 +2530,8 @@ bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
         return false;
 
     auto previousEvent = setLastMouseDownEvent(event);
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
-    bool result = m_page->acceptsFirstMouse(event.eventNumber, mouseEvent);
+    Ref mouseEvent = WebMouseEvent::create(WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven));
+    bool result = m_page->acceptsFirstMouse(event.eventNumber, WTF::move(mouseEvent));
     setLastMouseDownEvent(previousEvent.get());
     return result;
 }
@@ -2559,8 +2559,8 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     }
 
     auto previousEvent = setLastMouseDownEvent(event);
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
-    bool result = m_page->shouldDelayWindowOrderingForEvent(mouseEvent);
+    Ref mouseEvent = WebMouseEvent::create(WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven));
+    bool result = m_page->shouldDelayWindowOrderingForEvent(WTF::move(mouseEvent));
     setLastMouseDownEvent(previousEvent.get());
     return result;
 }
@@ -2828,8 +2828,8 @@ void WebViewImpl::scheduleMouseDidMoveOverElement(NSEvent *flagsChangedEvent)
     RetainPtr fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
         context:nullptr eventNumber:0 clickCount:0 pressure:0];
-    NativeWebMouseEvent webEvent(fakeEvent.get(), m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
-    m_page->dispatchMouseDidMoveOverElementAsynchronously(webEvent);
+    Ref webEvent = NativeWebMouseEvent::create(fakeEvent.get(), m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
+    m_page->dispatchMouseDidMoveOverElementAsynchronously(WTF::move(webEvent));
 }
 
 WebCore::DestinationColorSpace WebViewImpl::colorSpace()
@@ -3032,8 +3032,8 @@ void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;
 
-    NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
-    m_page->handleMouseEvent(webEvent);
+    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
+    m_page->handleMouseEvent(WTF::move(webEvent));
 
     m_lastPressureEvent = event;
 }
@@ -5712,7 +5712,7 @@ bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
     bool wasIgnoringPinnedState = gestureController->shouldIgnorePinnedState();
     gestureController->setShouldIgnorePinnedState(ignoringPinnedState);
 
-    NativeWebWheelEvent webEvent { event, m_view.getAutoreleased() };
+    Ref webEvent = NativeWebWheelEvent::create(event, m_view.getAutoreleased());
     bool handledEvent = gestureController->handleScrollWheelEvent(webEvent);
 
     gestureController->setShouldIgnorePinnedState(wasIgnoringPinnedState);
@@ -5742,14 +5742,14 @@ void WebViewImpl::scrollWheel(NSEvent *event)
     updateRefreshControllerForWheelEvent(event);
 #endif
 
-    NativeWebWheelEvent webEvent { event, m_view.getAutoreleased() };
+    Ref webEvent = NativeWebWheelEvent::create(event, m_view.getAutoreleased());
 
     if (m_allowsBackForwardNavigationGestures && protect(ensureGestureController())->handleScrollWheelEvent(webEvent)) {
         RELEASE_LOG(MouseHandling, "[pageProxyID=%lld] WebViewImpl::scrollWheel: Gesture controller handled wheel event", m_page->identifier().toUInt64());
         return;
     }
 
-    m_page->handleNativeWheelEvent(webEvent);
+    m_page->handleNativeWheelEvent(WTF::move(webEvent));
 }
 
 void WebViewImpl::swipeWithEvent(NSEvent *event)
@@ -6783,7 +6783,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     if (m_view.getAutoreleased() == [m_view.get() window].firstResponder) {
         interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
             if (weakThis)
-                weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+                weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, false, commands));
         });
         return YES;
     }
@@ -6801,7 +6801,7 @@ void WebViewImpl::keyUp(NSEvent *event)
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -6824,7 +6824,7 @@ void WebViewImpl::keyDown(NSEvent *event)
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -6841,7 +6841,7 @@ void WebViewImpl::flagsChanged(NSEvent *event)
 
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
         if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, false, commands));
     });
 }
 
@@ -6888,14 +6888,14 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
             if (handled)
                 LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
             else {
-                NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased(), inputSource, canInitiateDrag);
-                weakThis->m_page->handleMouseEvent(webEvent);
+                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased(), inputSource, canInitiateDrag);
+                weakThis->m_page->handleMouseEvent(WTF::move(webEvent));
             }
         }];
         return;
     }
-    NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
-    m_page->handleMouseEvent(webEvent);
+    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
+    m_page->handleMouseEvent(WTF::move(webEvent));
 }
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)

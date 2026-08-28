@@ -1513,26 +1513,23 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto makeWheelEvent = [&](WebCore::FloatSize delta) {
         auto wheelTicks { delta.scaled(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep())) };
         auto unacceleratedScrollingDelta = delta;
-        return WebKit::NativeWebWheelEvent {
-            WebKit::WebWheelEvent {
-                { WebKit::WebEventType::Wheel, { }, timestamp, WTF::UUID::createVersion4() },
-                WebCore::IntPoint { position },
-                WebCore::IntPoint { globalPosition },
-                delta,
-                wheelTicks,
-                granularity,
-                directionInvertedFromDevice,
-                phase,
-                momentumPhase,
-                hasPreciseScrollingDeltas,
-                scrollCount,
-                unacceleratedScrollingDelta,
-                ioHIDEventTimestamp,
-                rawPlatformDelta,
-                momentumEndType,
-                WebKit::WebEventInputSource::Automation
-            }
-        };
+        return WebKit::NativeWebWheelEvent::create(WebKit::WebWheelEvent::create({ WebKit::WebEventType::Wheel, { }, timestamp }, {
+            .position = WebCore::IntPoint { position },
+            .globalPosition = WebCore::IntPoint { globalPosition },
+            .delta = delta,
+            .wheelTicks = wheelTicks,
+            .granularity = granularity,
+            .directionInvertedFromDevice = directionInvertedFromDevice,
+            .phase = phase,
+            .momentumPhase = momentumPhase,
+            .hasPreciseScrollingDeltas = hasPreciseScrollingDeltas,
+            .scrollCount = scrollCount,
+            .unacceleratedScrollingDelta = unacceleratedScrollingDelta,
+            .ioHIDEventTimestamp = ioHIDEventTimestamp,
+            .rawPlatformDelta = rawPlatformDelta,
+            .momentumEndType = momentumEndType,
+            .inputSource = WebKit::WebEventInputSource::Automation,
+        }));
     };
 
     CheckedPtr impl = [webView _impl];
@@ -1589,28 +1586,24 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WebCore::IntPoint position { [gesture locationInView:webView.get()] };
     auto globalPosition = WebCore::globalPoint([gesture locationInView:nil], [webView window]);
 
-    WebKit::WebWheelEvent momentumEvent {
-        { WebKit::WebEventType::Wheel, { }, timestamp, WTF::UUID::createVersion4() },
-        position,
-        WebCore::IntPoint { globalPosition },
-        WebCore::FloatSize { },
-        WebCore::FloatSize { },
-        WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
-        false,
-        WebKit::WebWheelEvent::Phase::None,
-        WebKit::WebWheelEvent::Phase::Began,
-        true,
-        1,
-        WebCore::FloatSize { },
-        timestamp,
-        std::nullopt,
-        WebKit::WebWheelEvent::MomentumEndType::Unknown,
-        WebKit::WebEventInputSource::Automation,
-        static_cast<float>(fastScrollMultiplier),
-    };
-    WebKit::NativeWebWheelEvent nativeMomentumEvent { momentumEvent };
+    Ref momentumEvent = WebKit::WebWheelEvent::create({ WebKit::WebEventType::Wheel, { }, timestamp }, {
+        .position = position,
+        .globalPosition = WebCore::IntPoint { globalPosition },
+        .granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
+        .directionInvertedFromDevice = false,
+        .phase = WebKit::WebWheelEvent::Phase::None,
+        .momentumPhase = WebKit::WebWheelEvent::Phase::Began,
+        .hasPreciseScrollingDeltas = true,
+        .scrollCount = 1,
+        .ioHIDEventTimestamp = timestamp,
+        .rawPlatformDelta = std::nullopt,
+        .momentumEndType = WebKit::WebWheelEvent::MomentumEndType::Unknown,
+        .inputSource = WebKit::WebEventInputSource::Automation,
+        .momentumFastScrollMultiplier = static_cast<float>(fastScrollMultiplier),
+    });
+    Ref nativeMomentumEvent = WebKit::NativeWebWheelEvent::create(momentumEvent);
 
-    nativeMomentumEvent.setRawPlatformDelta([&nativeMomentumEvent, velocity] {
+    nativeMomentumEvent->setRawPlatformDelta([&nativeMomentumEvent, velocity] {
         static constexpr WebCore::FramesPerSecond fallbackMomentumFrameRate { 60 };
         auto momentumFrameRate = WebKit::ScrollingAccelerationCurve::fromNativeWheelEvent(nativeMomentumEvent)
             .or_else([] {
@@ -1627,7 +1620,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     protect([webView _impl])->clearRefreshControllerTracking();
 #endif
 
-    [webView _protectedPage]->handleNativeWheelEvent(nativeMomentumEvent);
+    [webView _protectedPage]->handleNativeWheelEvent(WTF::move(nativeMomentumEvent));
     _isMomentumActive = true;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Started momentum scrolling with velocity %.2f pts/s", velocityMagnitude);

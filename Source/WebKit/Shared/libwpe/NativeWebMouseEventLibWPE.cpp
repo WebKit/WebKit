@@ -28,11 +28,19 @@
 
 #if USE(LIBWPE)
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor, syntheticClickType))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor, syntheticClickType)));
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init)
+    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
 {
 }
 

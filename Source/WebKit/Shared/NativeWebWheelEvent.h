@@ -58,25 +58,26 @@ struct wpe_input_axis_event;
 namespace WebKit {
 
 class NativeWebWheelEvent : public WebWheelEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebWheelEvent);
 public:
 #if USE(APPKIT)
-    NativeWebWheelEvent(NSEvent *, NSView *);
-    explicit NativeWebWheelEvent(const WebWheelEvent&);
+    static Ref<NativeWebWheelEvent> create(NSEvent *, NSView *);
+    static Ref<NativeWebWheelEvent> create(const WebWheelEvent&);
 #elif PLATFORM(GTK)
-    NativeWebWheelEvent(const NativeWebWheelEvent&);
-    NativeWebWheelEvent(GdkEvent*, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas = false);
+    static Ref<NativeWebWheelEvent> create(const NativeWebWheelEvent&);
+    static Ref<NativeWebWheelEvent> create(GdkEvent*, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas = false);
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)
-    NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    static Ref<NativeWebWheelEvent> create(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #endif
 #if ENABLE(WPE_PLATFORM)
-    explicit NativeWebWheelEvent(WPEEvent*);
-    NativeWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
+    static Ref<NativeWebWheelEvent> create(WPEEvent*);
+    static Ref<NativeWebWheelEvent> create(WPEEvent*, WebWheelEvent::Phase);
 #endif
 #elif PLATFORM(PLAYSTATION)
-    NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    static Ref<NativeWebWheelEvent> create(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #elif PLATFORM(WIN)
-    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
+    static Ref<NativeWebWheelEvent> create(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)
@@ -91,13 +92,23 @@ public:
 
 private:
 #if USE(APPKIT)
+    NativeWebWheelEvent(WebWheelEventInit&&, NSEvent *);
+
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
+    NativeWebWheelEvent(WebWheelEventInit&&, GdkEvent*);
+
     GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
+    NativeWebWheelEvent(WebWheelEventInit&&, GdkEvent*);
+
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
+    NativeWebWheelEvent(WebWheelEventInit&&, const MSG&);
+
     MSG m_nativeEvent;
+#else
+    explicit NativeWebWheelEvent(WebWheelEventInit&&);
 #endif
 };
 

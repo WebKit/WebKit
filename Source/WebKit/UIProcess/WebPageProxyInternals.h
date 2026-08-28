@@ -136,12 +136,12 @@ struct SpeechSynthesisData {
 #if ENABLE(TOUCH_EVENTS)
 
 struct QueuedTouchEvents {
-    QueuedTouchEvents(const NativeWebTouchEvent& event)
-        : forwardedEvent(event)
+    QueuedTouchEvents(Ref<NativeWebTouchEvent>&& event)
+        : forwardedEvent(WTF::move(event))
     {
     }
-    NativeWebTouchEvent forwardedEvent;
-    Vector<NativeWebTouchEvent> deferredTouchEvents;
+    Ref<NativeWebTouchEvent> forwardedEvent;
+    Vector<Ref<NativeWebTouchEvent>> deferredTouchEvents;
 };
 
 struct TouchEventTracking {
@@ -236,7 +236,7 @@ public:
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
-    Deque<NativeWebKeyboardEvent> keyEventQueue;
+    Deque<Ref<NativeWebKeyboardEvent>> keyEventQueue;
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
     WebCore::LayoutPoint maxStableLayoutViewportOrigin;
     WebCore::FloatSize maximumUnobscuredSize;
@@ -246,8 +246,8 @@ public:
     WebCore::LayoutPoint minStableLayoutViewportOrigin;
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::FloatSize minimumUnobscuredSize;
-    Deque<NativeWebMouseEvent> mouseEventQueue;
-    Vector<WebMouseEvent> coalescedMouseEvents;
+    Deque<Ref<NativeWebMouseEvent>> mouseEventQueue;
+    Vector<Ref<WebMouseEvent>> coalescedMouseEvents;
     WebCore::MediaProducerMutedStateFlags mutedState;
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
@@ -333,7 +333,7 @@ public:
     RefPtr<WebColorPicker> colorPicker;
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    Deque<NativeWebGestureEvent> gestureEventQueue;
+    Deque<Ref<NativeWebGestureEvent>> gestureEventQueue;
     unsigned droppedGestureEventCount { 0 };
 #endif
 

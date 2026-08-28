@@ -32,8 +32,11 @@
 #import "WebGestureEvent.h"
 #import <WebCore/IntPoint.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebGestureEvent);
 
 static inline std::optional<WebEventType> webEventTypeForPhase(WebEventPhase phase)
 {
@@ -73,31 +76,33 @@ static NativeWebGestureEvent::Init initForEvent(NSEvent *event)
     };
 }
 
-std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
+RefPtr<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
 {
     return create(initForEvent(event), view, event);
 }
 
-std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view)
+RefPtr<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view)
 {
     return create(init, view, nil);
 }
 
-std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view, NSEvent *event)
+RefPtr<NativeWebGestureEvent> NativeWebGestureEvent::create(const Init& init, NSView *view, NSEvent *event)
 {
-    return webEventTypeForPhase(init.phase).
-        and_then([&init, view = RetainPtr { view }, event = RetainPtr { event }](auto type) {
-            return std::optional { NativeWebGestureEvent { type, init, view, event } };
-        });
+    auto type = webEventTypeForPhase(init.phase);
+    if (!type)
+        return nullptr;
+    return adoptRef(*new NativeWebGestureEvent { *type, init, view, event });
 }
 
 NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, const Init& init, NSView *view, NSEvent *event)
     : WebGestureEvent {
-        { type, { }, init.timestamp },
-        positionInView(init.locationInWindow, view),
-        init.gestureScale,
-        init.gestureRotation,
-        init.phase }
+        WebEventData { type, { }, init.timestamp },
+        WebGestureEventData {
+            .position = positionInView(init.locationInWindow, view),
+            .gestureScale = init.gestureScale,
+            .gestureRotation = init.gestureRotation,
+            .phase = init.phase,
+        } }
     , m_allowsNativeZoom(init.allowsNativeZoom)
     , m_kind(init.kind)
     , m_nativeEvent(event)

@@ -70,9 +70,9 @@ void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCur
     m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
 }
 
-void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
+void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(Ref<WebWheelEvent>&& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
-    m_eventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
+    m_eventDispatcher->handleWheelEvent(WTF::move(wheelEvent), rubberBandableEdges);
 }
 
 void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)

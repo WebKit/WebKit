@@ -29,12 +29,13 @@
 #if ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(WPEEvent* event)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event))
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WPEEvent* event)
 {
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event)));
 }
 
 } // namespace WebKit

@@ -30,11 +30,19 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent()
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent())
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
+Ref<NativeWebTouchEvent> NativeWebTouchEvent::create()
+{
+    return adoptRef(*new NativeWebTouchEvent(WebEventFactory::createWebTouchEvent()));
+}
+
+NativeWebTouchEvent::NativeWebTouchEvent(WebTouchEventInit&& init)
+    : WebTouchEvent(WTF::move(init.event), WTF::move(init.touch))
 {
 }
 

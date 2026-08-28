@@ -25,60 +25,36 @@
 
 #include "config.h"
 #include "WebWheelEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity)
-    : WebEvent(WTF::move(event))
-    , m_position(position)
-    , m_globalPosition(globalPosition)
-    , m_delta(delta)
-    , m_wheelTicks(wheelTicks)
-    , m_granularity(granularity)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebWheelEvent);
+
+Ref<WebWheelEvent> WebWheelEvent::create(WebEventData&& eventData, WebWheelEventData&& wheelData)
 {
-    ASSERT(isWheelEventType(type()));
+    return adoptRef(*new WebWheelEvent(WTF::move(eventData), WTF::move(wheelData)));
 }
 
-#if PLATFORM(COCOA)
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType, WebEventInputSource inputSource, float momentumFastScrollMultiplier)
-    : WebEvent(WTF::move(event))
-    , m_position(position)
-    , m_globalPosition(globalPosition)
-    , m_delta(delta)
-    , m_wheelTicks(wheelTicks)
-    , m_granularity(granularity)
-    , m_phase(phase)
-    , m_momentumPhase(momentumPhase)
-    , m_momentumEndType(momentumEndType)
-    , m_directionInvertedFromDevice(directionInvertedFromDevice)
-    , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
-    , m_ioHIDEventTimestamp(ioHIDEventTimestamp)
-    , m_rawPlatformDelta(rawPlatformDelta)
-    , m_scrollCount(scrollCount)
-    , m_unacceleratedScrollingDelta(unacceleratedScrollingDelta)
-    , m_inputSource(inputSource)
-    , m_momentumFastScrollMultiplier(momentumFastScrollMultiplier)
+Ref<WebWheelEvent> WebWheelEvent::create(WebWheelEventInit&& init)
+{
+    return create(WTF::move(init.event), WTF::move(init.wheel));
+}
+
+Ref<WebWheelEvent> WebWheelEvent::copy() const
+{
+    return create(WebEventData { eventData() }, WebWheelEventData { m_data });
+}
+
+WebWheelEvent::WebWheelEvent(WebEventData&& eventData, WebWheelEventData&& wheelData)
+    : WebEvent(WTF::move(eventData))
+    , m_data(WTF::move(wheelData))
 {
     ASSERT(isWheelEventType(type()));
 }
-#elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas)
-    : WebEvent(WTF::move(event))
-    , m_position(position)
-    , m_globalPosition(globalPosition)
-    , m_delta(delta)
-    , m_wheelTicks(wheelTicks)
-    , m_granularity(granularity)
-    , m_phase(phase)
-    , m_momentumPhase(momentumPhase)
-    , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
-{
-    ASSERT(isWheelEventType(type()));
-}
-#endif
 
 bool WebWheelEvent::isWheelEventType(WebEventType type)
 {

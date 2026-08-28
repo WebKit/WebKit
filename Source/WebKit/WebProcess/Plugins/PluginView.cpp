@@ -725,7 +725,7 @@ void PluginView::handleEvent(Event& event)
     if (!shouldForwardToPlugin(event))
         return;
 
-    const CheckedPtr currentEvent = WebPage::currentEvent();
+    const RefPtr currentEvent = WebPage::currentEvent();
     if (!currentEvent)
         return;
 

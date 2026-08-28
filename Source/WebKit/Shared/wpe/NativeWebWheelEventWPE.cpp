@@ -29,17 +29,18 @@
 #if ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(WPEEvent* event)
 {
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event)));
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase))
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(WPEEvent* event, WebWheelEvent::Phase phase)
 {
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase)));
 }
 
 } // namespace WebKit

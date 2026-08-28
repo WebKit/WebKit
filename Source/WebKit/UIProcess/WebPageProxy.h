@@ -1100,7 +1100,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>&, CompletionHandler<void()>&&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, RefPtr<WebKeyboardEvent>&&, CompletionHandler<void()>&&);
     
     void clearSelection(std::optional<WebCore::FrameIdentifier> = std::nullopt);
     void restoreSelectionInFocusedEditableElement();
@@ -1375,7 +1375,7 @@ public:
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
-    bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
+    bool shouldDelayWindowOrderingForEvent(Ref<WebMouseEvent>&&);
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
 
 #if PLATFORM(MAC)
@@ -1470,10 +1470,10 @@ public:
 
     bool NODELETE isProcessingMouseEvents() const;
     void processNextQueuedMouseEvent();
-    void sendMouseEvent(WebCore::FrameIdentifier, const NativeWebMouseEvent&, std::optional<Vector<SandboxExtensionHandle>>&&);
-    void handleMouseEvent(const NativeWebMouseEvent&);
+    void sendMouseEvent(WebCore::FrameIdentifier, Ref<NativeWebMouseEvent>&&, std::optional<Vector<SandboxExtensionHandle>>&&);
+    void handleMouseEvent(Ref<NativeWebMouseEvent>&&);
     void recordUIProcessUserActivation(const WebEvent&);
-    void dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent&);
+    void dispatchMouseDidMoveOverElementAsynchronously(Ref<NativeWebMouseEvent>&&);
 
     void doAfterProcessingAllPendingMouseEvents(Function<void()>&&);
     void didFinishProcessingAllPendingMouseEvents();
@@ -1495,32 +1495,32 @@ public:
 #endif
 
     bool NODELETE isProcessingWheelEvents() const;
-    void handleNativeWheelEvent(const NativeWebWheelEvent&);
+    void handleNativeWheelEvent(Ref<NativeWebWheelEvent>&&);
     void interruptSyntheticMomentumScrolling();
-    void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
+    void continueWheelEventHandling(Ref<WebWheelEvent>&&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
     void wheelEventHandlingCompleted(bool wasHandled);
     void didEndSyntheticMomentumScrolling();
 
     bool NODELETE isProcessingKeyboardEvents() const;
-    void sendKeyEvent(const NativeWebKeyboardEvent&);
-    bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
+    void sendKeyEvent(Ref<NativeWebKeyboardEvent>&&);
+    bool handleKeyboardEvent(Ref<NativeWebKeyboardEvent>&&);
 #if PLATFORM(WIN)
     void dispatchPendingCharEvents(const NativeWebKeyboardEvent&);
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void sendGestureEvent(WebCore::FrameIdentifier, const NativeWebGestureEvent&);
-    void handleGestureEvent(const NativeWebGestureEvent&);
+    void sendGestureEvent(WebCore::FrameIdentifier, Ref<NativeWebGestureEvent>&&);
+    void handleGestureEvent(Ref<NativeWebGestureEvent>&&);
     void processNextQueuedGestureEvent();
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void didBeginTouchPoint(WebCore::FloatPoint locationInRootView);
     void handlePreventableTouchEvent(NativeWebTouchEvent&);
-    void handleUnpreventableTouchEvent(const NativeWebTouchEvent&);
+    void handleUnpreventableTouchEvent(NativeWebTouchEvent&);
 
 #elif ENABLE(TOUCH_EVENTS)
-    void handleTouchEvent(IPC::Connection*, const NativeWebTouchEvent&);
+    void handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&);
 #endif
 
 #if PLATFORM(MAC)
@@ -2636,14 +2636,14 @@ public:
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&);
 
-    bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
+    bool acceptsFirstMouse(int eventNumber, Ref<WebMouseEvent>&&);
 #endif
 
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
 
 #if PLATFORM(IOS_FAMILY)
-    void handleWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
-    void sendWheelEventWithoutScrolling(WebCore::FrameIdentifier, const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+    void handleWheelEventWithoutScrolling(Ref<WebWheelEvent>&&, CompletionHandler<void(bool)>&&);
+    void sendWheelEventWithoutScrolling(WebCore::FrameIdentifier, Ref<WebWheelEvent>&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS)
@@ -3502,8 +3502,8 @@ private:
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
-    void handleWheelEvent(const WebWheelEvent&);
-    void sendWheelEvent(WebCore::FrameIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling);
+    void handleWheelEvent(Ref<WebWheelEvent>&&);
+    void sendWheelEvent(WebCore::FrameIdentifier, Ref<WebWheelEvent>&&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling);
     void handleWheelEventReply(IPC::Connection*, const WebWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandledForScrolling, bool wasHandledByWebProcess);
 
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
@@ -3688,8 +3688,8 @@ private:
 
     template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
 
-    void sendPreventableTouchEvent(WebCore::FrameIdentifier, const WebTouchEvent&);
-    void sendUnpreventableTouchEvent(WebCore::FrameIdentifier, const WebTouchEvent&);
+    void sendPreventableTouchEvent(WebCore::FrameIdentifier, Ref<WebTouchEvent>&&);
+    void sendUnpreventableTouchEvent(WebCore::FrameIdentifier, Ref<WebTouchEvent>&&);
 
     void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, std::optional<WebCore::FrameIdentifier>&&);
 

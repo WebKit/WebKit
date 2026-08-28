@@ -29,10 +29,30 @@
 #if ENABLE(MAC_GESTURE_EVENTS)
 
 #include "ArgumentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-bool WebGestureEvent::isGestureEventType(WebEventType type) const
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGestureEvent);
+
+Ref<WebGestureEvent> WebGestureEvent::create(WebEventData&& eventData, WebGestureEventData&& gestureData)
+{
+    return adoptRef(*new WebGestureEvent(WTF::move(eventData), WTF::move(gestureData)));
+}
+
+Ref<WebGestureEvent> WebGestureEvent::create(WebGestureEventInit&& init)
+{
+    return create(WTF::move(init.event), WTF::move(init.gesture));
+}
+
+WebGestureEvent::WebGestureEvent(WebEventData&& eventData, WebGestureEventData&& gestureData)
+    : WebEvent(WTF::move(eventData))
+    , m_data(WTF::move(gestureData))
+{
+    ASSERT(isGestureEventType(type()));
+}
+
+bool WebGestureEvent::isGestureEventType(WebEventType type)
 {
     return type == WebEventType::GestureStart || type == WebEventType::GestureChange || type == WebEventType::GestureEnd;
 }

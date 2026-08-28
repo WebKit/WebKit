@@ -29,11 +29,17 @@
 #if ENABLE(TOUCH_EVENTS) && ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)))
+Ref<NativeWebTouchEvent> NativeWebTouchEvent::create(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
+{
+    return adoptRef(*new NativeWebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)), event));
+}
+
+NativeWebTouchEvent::NativeWebTouchEvent(WebTouchEventInit&& init, WPEEvent* event)
+    : WebTouchEvent(WTF::move(init.event), WTF::move(init.touch))
     , m_nativeEvent(event)
 {
 }

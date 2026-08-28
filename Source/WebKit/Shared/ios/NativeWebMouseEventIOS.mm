@@ -29,22 +29,70 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WebIOSEventFactory.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(::WebEvent *event)
-    : WebMouseEvent(WebIOSEventFactory::createWebMouseEvent(event))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(::WebEvent *event)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebIOSEventFactory::createWebMouseEvent(event), event));
+}
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, MonotonicTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit {
+        { type, modifiers, timestamp },
+        {
+            .button = button,
+            .buttons = buttons,
+            .position = position,
+            .globalPosition = globalPosition,
+            .deltaX = deltaX,
+            .deltaY = deltaY,
+            .deltaZ = deltaZ,
+            .clickCount = clickCount,
+            .force = force,
+            .inputSource = WebEventInputSource::UserDriven,
+            .canInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes,
+            .syntheticClickType = WebMouseEventSyntheticClickType::NoTap,
+            .pointerId = WebCore::mousePointerID,
+            .pointerType = pointerType,
+            .gestureWasCancelled = gestureWasCancelled,
+            .unadjustedMovementDelta = { deltaX, deltaY },
+        }
+    }, nil));
+}
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(const NativeWebMouseEvent& otherEvent, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit {
+        { otherEvent.type(), otherEvent.modifiers(), otherEvent.timestamp() },
+        {
+            .button = otherEvent.button(),
+            .buttons = otherEvent.buttons(),
+            .position = position,
+            .globalPosition = globalPosition,
+            .deltaX = deltaX,
+            .deltaY = deltaY,
+            .deltaZ = deltaZ,
+            .clickCount = otherEvent.clickCount(),
+            .force = otherEvent.force(),
+            .inputSource = otherEvent.inputSource(),
+            .canInitiateDrag = otherEvent.canInitiateDrag(),
+            .syntheticClickType = otherEvent.syntheticClickType(),
+            .pointerId = otherEvent.pointerId(),
+            .pointerType = otherEvent.pointerType(),
+            .gestureWasCancelled = otherEvent.gestureWasCancelled(),
+            .unadjustedMovementDelta = { deltaX, deltaY },
+        }
+    }, nil));
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init, ::WebEvent *event)
+    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
     , m_nativeEvent(event)
-{
-}
-
-NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, MonotonicTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
-    : WebMouseEvent({ type, modifiers, timestamp }, button, buttons, position, globalPosition, deltaX, deltaY, deltaZ, clickCount, force, WebEventInputSource::UserDriven, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes, WebMouseEventSyntheticClickType::NoTap, WebCore::mousePointerID, pointerType, gestureWasCancelled, { deltaX, deltaY })
-{
-}
-
-NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& otherEvent, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ)
-    : WebMouseEvent({ otherEvent.type(), otherEvent.modifiers(), otherEvent.timestamp() }, otherEvent.button(), otherEvent.buttons(), position, globalPosition, deltaX, deltaY, deltaZ, otherEvent.clickCount(), otherEvent.force(), otherEvent.inputSource(), otherEvent.canInitiateDrag(), otherEvent.syntheticClickType(), otherEvent.pointerId(), otherEvent.pointerType(), otherEvent.gestureWasCancelled(), { deltaX, deltaY })
 {
 }
 

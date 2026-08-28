@@ -30,18 +30,35 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/RemoteFrameGeometryTransformer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-#if !PLATFORM(IOS_FAMILY)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTouchEvent);
 
-WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& touchPoints, Vector<WebTouchEvent>&& coalescedEvents, Vector<WebTouchEvent>&& predictedEvents)
-    : WebEvent(WTF::move(event))
-    , m_touchPoints(WTF::move(touchPoints))
-    , m_coalescedEvents(WTF::move(coalescedEvents))
-    , m_predictedEvents(WTF::move(predictedEvents))
+Ref<WebTouchEvent> WebTouchEvent::create(WebEventData&& eventData, WebTouchEventData&& touchData)
+{
+    return adoptRef(*new WebTouchEvent(WTF::move(eventData), WTF::move(touchData)));
+}
+
+Ref<WebTouchEvent> WebTouchEvent::create(WebTouchEventInit&& init)
+{
+    return create(WTF::move(init.event), WTF::move(init.touch));
+}
+
+WebTouchEvent::WebTouchEvent(WebEventData&& eventData, WebTouchEventData&& touchData)
+    : WebEvent(WTF::move(eventData))
+    , m_data(WTF::move(touchData))
 {
     ASSERT(isTouchEventType(type()));
+}
+
+Ref<WebTouchEvent> WebTouchEvent::copy() const
+{
+    auto data = m_data;
+    data.coalescedEvents = WTF::map(m_data.coalescedEvents, [](auto& event) { return event->copy(); });
+    data.predictedEvents = WTF::map(m_data.predictedEvents, [](auto& event) { return event->copy(); });
+    return create(WebEventData { eventData() }, WTF::move(data));
 }
 
 bool WebTouchEvent::isTouchEventType(WebEventType type)
@@ -49,20 +66,19 @@ bool WebTouchEvent::isTouchEventType(WebEventType type)
     return type == WebEventType::TouchStart || type == WebEventType::TouchMove || type == WebEventType::TouchEnd || type == WebEventType::TouchCancel;
 }
 
-#endif // !PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 void WebTouchEvent::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)
 {
     ASSERT(!std::exchange(m_hasTransformedToRemoteFrameCoordinates, true));
 
-    m_position = transformer.transformRootViewPointToRemoteFrameCoordinates(m_position);
-    for (auto& touchPoint : m_touchPoints)
+    m_data.position = transformer.transformRootViewPointToRemoteFrameCoordinates(m_data.position);
+    for (auto& touchPoint : m_data.touchPoints)
         touchPoint.transformToRemoteFrameCoordinates(transformer);
-    for (auto& event : m_coalescedEvents)
-        event.transformToRemoteFrameCoordinates(transformer);
-    for (auto& event : m_predictedEvents)
-        event.transformToRemoteFrameCoordinates(transformer);
+    for (Ref event : m_data.coalescedEvents)
+        event->transformToRemoteFrameCoordinates(transformer);
+    for (Ref event : m_data.predictedEvents)
+        event->transformToRemoteFrameCoordinates(transformer);
 }
 
 void WebPlatformTouchPoint::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)

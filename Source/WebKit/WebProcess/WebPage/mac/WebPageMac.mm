@@ -594,8 +594,9 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 #endif
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::shouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent>&& eventRef, CompletionHandler<void(bool)>&& completionHandler)
 {
+    const auto& event = eventRef.get();
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return completionHandler({ });
@@ -610,8 +611,9 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     completionHandler(result);
 }
 
-void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
+void WebPage::requestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent>&& eventRef)
 {
+    const auto& event = eventRef.get();
     if (WebProcess::singleton().parentProcessConnection()->inSendSync()) {
         // In case we're already inside a sendSync message, it's possible that the page is in a
         // transitionary state, so any hit-testing could cause crashes  so we just return early in that case.

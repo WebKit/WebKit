@@ -28,12 +28,21 @@
 #include "NativeWebWheelEvent.h"
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(hwnd, message, wParam, lParam, deviceScaleFactor))
-    , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
+{
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(hwnd, message, wParam, lParam, deviceScaleFactor),
+        createNativeEvent(hwnd, message, wParam, lParam)));
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init, const MSG& nativeEvent)
+    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
+    , m_nativeEvent(nativeEvent)
 {
 }
 

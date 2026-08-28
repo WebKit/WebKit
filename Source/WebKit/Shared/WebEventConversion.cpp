@@ -294,10 +294,10 @@ public:
         m_clickCount = webEvent.clickCount();
         m_force = forceForEvent(webEvent);
         m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](const auto& event) {
-            return platform(event);
+            return platform(event.get());
         });
         m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](const auto& event) {
-            return platform(event);
+            return platform(event.get());
         });
         m_inputSource = platform(webEvent.inputSource());
         m_canInitiateDrag = webEvent.canInitiateDrag();
@@ -523,11 +523,11 @@ public:
         });
 
         m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](auto& event) {
-            return platform(event);
+            return platform(event.get());
         });
 
         m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](auto& event) {
-            return platform(event);
+            return platform(event.get());
         });
 
         m_gestureScale = webEvent.gestureScale();

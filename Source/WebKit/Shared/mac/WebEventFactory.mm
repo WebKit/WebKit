@@ -120,7 +120,7 @@ bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouse
     return (static_cast<NSMenuType>(event.menuTypeForEvent()) == NSMenuTypeContextMenu);
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *windowView, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
+WebMouseEventInit WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *windowView, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
 {
     NSPoint position = WebCore::pointForEvent(event, windowView);
     NSPoint globalPosition = WebCore::globalPointForEvent(event);
@@ -154,10 +154,30 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
 
     auto unadjustedMovementDelta = WebCore::unadjustedMovementForEvent(event);
 
-    return WebMouseEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::DoublePoint(position), WebCore::DoublePoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, inputSource, canInitiateDrag, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent, GestureWasCancelled::No, unadjustedMovementDelta);
+    return {
+        { type, modifiers, timestamp },
+        {
+            .button = button,
+            .buttons = buttons,
+            .position = WebCore::DoublePoint(position),
+            .globalPosition = WebCore::DoublePoint(globalPosition),
+            .deltaX = deltaX,
+            .deltaY = deltaY,
+            .deltaZ = deltaZ,
+            .clickCount = clickCount,
+            .force = force,
+            .inputSource = inputSource,
+            .canInitiateDrag = canInitiateDrag,
+            .syntheticClickType = WebMouseEventSyntheticClickType::NoTap,
+            .eventNumber = eventNumber,
+            .menuTypeForEvent = menuTypeForEvent,
+            .gestureWasCancelled = GestureWasCancelled::No,
+            .unadjustedMovementDelta = unadjustedMovementDelta,
+        }
+    };
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
+WebWheelEventInit WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
 {
     NSPoint position = WebCore::pointForEvent(event, windowView);
     NSPoint globalPosition = WebCore::globalPointForEvent(event);
@@ -240,12 +260,28 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         rawPlatformDelta = std::nullopt;
     }
 
-    return WebWheelEvent({ WebEventType::Wheel, modifiers, timestamp, WTF::UUID::createVersion4() }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
-        granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
-        scrollCount, unacceleratedScrollingDelta, ioHIDEventTimestamp, rawPlatformDelta, momentumEndType);
+    return {
+        { WebEventType::Wheel, modifiers, timestamp },
+        {
+            .position = WebCore::IntPoint(position),
+            .globalPosition = WebCore::IntPoint(globalPosition),
+            .delta = WebCore::FloatSize(deltaX, deltaY),
+            .wheelTicks = WebCore::FloatSize(wheelTicksX, wheelTicksY),
+            .granularity = granularity,
+            .directionInvertedFromDevice = directionInvertedFromDevice,
+            .phase = phase,
+            .momentumPhase = momentumPhase,
+            .hasPreciseScrollingDeltas = hasPreciseScrollingDeltas,
+            .scrollCount = scrollCount,
+            .unacceleratedScrollingDelta = unacceleratedScrollingDelta,
+            .ioHIDEventTimestamp = ioHIDEventTimestamp,
+            .rawPlatformDelta = rawPlatformDelta,
+            .momentumEndType = momentumEndType,
+        }
+    };
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
+WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
     WebEventType type = WebCore::isKeyUpEvent(event) ? WebEventType::KeyUp : WebEventType::KeyDown;
     String text = WebCore::textFromEvent(event, replacesSoftSpace);
@@ -280,7 +316,24 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
         unmodifiedText = text;
     }
 
-    return WebKeyboardEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey);
+    return {
+        { type, modifiers, timestamp },
+        {
+            .text = text,
+            .unmodifiedText = unmodifiedText,
+            .key = key,
+            .code = code,
+            .keyIdentifier = keyIdentifier,
+            .windowsVirtualKeyCode = windowsVirtualKeyCode,
+            .nativeVirtualKeyCode = nativeVirtualKeyCode,
+            .macCharCode = macCharCode,
+            .handledByInputMethod = handledByInputMethod,
+            .commands = commands,
+            .isAutoRepeat = autoRepeat,
+            .isKeypad = isKeypad,
+            .isSystemKey = isSystemKey,
+        }
+    };
 }
 
 NSEventModifierFlags WebEventFactory::toNSEventModifierFlags(OptionSet<WebKit::WebEventModifier> modifiers)

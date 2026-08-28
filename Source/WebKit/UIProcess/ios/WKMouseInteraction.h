@@ -33,7 +33,7 @@
 @class WKMouseInteraction;
 
 @protocol WKMouseInteractionDelegate<NSObject>
-- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(const WebKit::NativeWebMouseEvent&)event;
+- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(Ref<WebKit::NativeWebMouseEvent>&&)event;
 #if ENABLE(POINTER_LOCK)
 - (void)mouseInteractionDidLoseMouseDeviceDuringPointerLock:(WKMouseInteraction *)interaction;
 #endif

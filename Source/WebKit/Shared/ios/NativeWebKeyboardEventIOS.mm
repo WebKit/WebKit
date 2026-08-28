@@ -31,11 +31,19 @@
 #import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event, HandledByInputMethod handledByInputMethod)
-    : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event, handledByInputMethod == HandledByInputMethod::Yes))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(::WebEvent *event, HandledByInputMethod handledByInputMethod)
+{
+    return adoptRef(*new NativeWebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event, handledByInputMethod == HandledByInputMethod::Yes), event));
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init, ::WebEvent *event)
+    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
     , m_nativeEvent(event)
 {
 }

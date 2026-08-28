@@ -42,33 +42,42 @@ class Encoder;
 
 namespace WebKit {
 
+// Field order matches WebEvent.serialization.in.
+struct WebGestureEventData {
+    WebCore::IntPoint position;
+    float gestureScale { 0 };
+    float gestureRotation { 0 };
+    WebEventPhase phase { WebEventPhase::None };
+};
+
+struct WebGestureEventInit {
+    WebEventData event;
+    WebGestureEventData gesture;
+};
+
 class WebGestureEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebGestureEvent);
 public:
     using Phase = WebEventPhase;
 
-    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation, Phase phase)
-        : WebEvent(WTF::move(event))
-        , m_position(position)
-        , m_gestureScale(gestureScale)
-        , m_gestureRotation(gestureRotation)
-        , m_phase(phase)
-    {
-        ASSERT(isGestureEventType(type()));
-    }
+    static Ref<WebGestureEvent> create(WebEventData&&, WebGestureEventData&&);
+    static Ref<WebGestureEvent> create(WebGestureEventInit&&);
 
-    WebCore::IntPoint position() const { return m_position; }
+    WebCore::IntPoint position() const { return m_data.position; }
 
-    float gestureScale() const { return m_gestureScale; }
-    float gestureRotation() const { return m_gestureRotation; }
-    Phase phase() const { return m_phase; }
+    float gestureScale() const { return m_data.gestureScale; }
+    float gestureRotation() const { return m_data.gestureRotation; }
+    Phase phase() const { return m_data.phase; }
+
+    const WebGestureEventData& gestureData() const LIFETIME_BOUND { return m_data; }
+
+protected:
+    WebGestureEvent(WebEventData&&, WebGestureEventData&&);
 
 private:
-    bool isGestureEventType(WebEventType) const;
+    static bool isGestureEventType(WebEventType);
 
-    WebCore::IntPoint m_position;
-    float m_gestureScale;
-    float m_gestureRotation;
-    Phase m_phase;
+    WebGestureEventData m_data;
 };
 
 } // namespace WebKit

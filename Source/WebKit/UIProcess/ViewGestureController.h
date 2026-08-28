@@ -83,7 +83,9 @@ class Navigation;
 }
 
 #if PLATFORM(MAC)
-typedef WebKit::NativeWebWheelEvent PlatformScrollEvent;
+// A reference rather than a value: events are refcounted now, and this is only ever passed through,
+// never stored.
+typedef const WebKit::NativeWebWheelEvent& PlatformScrollEvent;
 #elif PLATFORM(GTK)
 typedef struct {
     WebCore::FloatSize delta;

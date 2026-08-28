@@ -29,18 +29,25 @@
 #if USE(APPKIT)
 
 #import "WebEventFactory.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(NSEvent *event, NSView *view)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, view))
-    , m_nativeEvent(event)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(NSEvent *event, NSView *view)
 {
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, view), event));
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(const WebWheelEvent& wheelEvent)
-    : WebWheelEvent(wheelEvent)
-    , m_nativeEvent(nil)
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(const WebWheelEvent& wheelEvent)
+{
+    return adoptRef(*new NativeWebWheelEvent(WebWheelEventInit { wheelEvent.eventData(), wheelEvent.wheelData() }, nil));
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init, NSEvent *event)
+    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
+    , m_nativeEvent(event)
 {
 }
 

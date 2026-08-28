@@ -28,6 +28,7 @@
 
 #include "GtkVersioning.h"
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GTK4)
 #define constructNativeEvent(event) event
@@ -37,15 +38,22 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, globalPosition, delta, wheelTicks, phase, momentumPhase, hasPreciseDeltas))
-    , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(GdkEvent* event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas)
 {
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, globalPosition, delta, wheelTicks, phase, momentumPhase, hasPreciseDeltas), event));
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(const NativeWebWheelEvent& event)
-    : WebWheelEvent(event)
-    , m_nativeEvent(event.nativeEvent() ? constructNativeEvent(event.nativeEvent()) : nullptr)
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(const NativeWebWheelEvent& event)
+{
+    return adoptRef(*new NativeWebWheelEvent(WebWheelEventInit { event.eventData(), event.wheelData() },
+        event.nativeEvent() ? const_cast<GdkEvent*>(event.nativeEvent()) : nullptr));
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init, GdkEvent* event)
+    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
+    , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)
 {
 }
 

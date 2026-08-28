@@ -56,48 +56,62 @@ struct WKTouchEvent;
 #if ENABLE(TOUCH_EVENTS)
 
 class NativeWebTouchEvent : public WebTouchEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebTouchEvent);
 public:
 #if PLATFORM(IOS_FAMILY)
 #if defined(__OBJC__)
-    explicit NativeWebTouchEvent(const WKTouchEvent&, UIKeyModifierFlags);
+    static Ref<NativeWebTouchEvent> create(const WKTouchEvent&, UIKeyModifierFlags);
 #endif
 #elif PLATFORM(GTK)
-    NativeWebTouchEvent(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
-    NativeWebTouchEvent(WebEventType, OptionSet<WebEventModifier>, Vector<WebPlatformTouchPoint>&&);
-    NativeWebTouchEvent(const NativeWebTouchEvent&);
+    static Ref<NativeWebTouchEvent> create(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
+    static Ref<NativeWebTouchEvent> create(WebEventType, OptionSet<WebEventModifier>, Vector<WebPlatformTouchPoint>&&);
+    static Ref<NativeWebTouchEvent> create(const NativeWebTouchEvent&);
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WPE)
     bool isNativeWebTouchEvent() const final { return true; }
 #if USE(LIBWPE)
-    NativeWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
+    static Ref<NativeWebTouchEvent> create(struct wpe_input_touch_event*, float deviceScaleFactor);
     const struct wpe_input_touch_event_raw* nativeFallbackTouchPoint() const { return &m_fallbackTouchPoint; }
 #endif
 #if ENABLE(WPE_PLATFORM)
-    NativeWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
+    static Ref<NativeWebTouchEvent> create(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
     WPEEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 #elif PLATFORM(WIN)
-    NativeWebTouchEvent();
+    static Ref<NativeWebTouchEvent> create();
 #endif
 
 private:
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
-    Vector<WebPlatformTouchPoint> extractWebTouchPoints(const WKTouchEvent&);
-    Vector<WebTouchEvent> extractCoalescedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
-    Vector<WebTouchEvent> extractPredictedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
+    explicit NativeWebTouchEvent(WebTouchEventInit&&);
+
+    static Vector<WebPlatformTouchPoint> extractWebTouchPoints(const WKTouchEvent&);
+    static Vector<Ref<WebTouchEvent>> extractCoalescedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
+    static Vector<Ref<WebTouchEvent>> extractPredictedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
 #endif
 
 #if PLATFORM(GTK) && USE(GTK4)
+    NativeWebTouchEvent(WebTouchEventInit&&, GdkEvent*);
+
     GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
+    NativeWebTouchEvent(WebTouchEventInit&&, GdkEvent*);
+
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)
+    NativeWebTouchEvent(WebTouchEventInit&&, struct wpe_input_touch_event*);
+
     struct wpe_input_touch_event_raw m_fallbackTouchPoint;
 #endif
 #if ENABLE(WPE_PLATFORM)
+    NativeWebTouchEvent(WebTouchEventInit&&, WPEEvent*);
+
     GRefPtr<WPEEvent> m_nativeEvent;
 #endif
+#elif PLATFORM(WIN)
+    // IOS_FAMILY declares this above, alongside the WKTouchEvent helpers.
+    explicit NativeWebTouchEvent(WebTouchEventInit&&);
 #endif
 };
 

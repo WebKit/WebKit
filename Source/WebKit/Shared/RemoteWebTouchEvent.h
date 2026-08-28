@@ -33,7 +33,7 @@ namespace WebKit {
 #if ENABLE(TOUCH_EVENTS)
 struct RemoteWebTouchEvent {
     WebCore::FrameIdentifier targetFrameID;
-    WebTouchEvent transformedEvent;
+    Ref<WebTouchEvent> transformedEvent;
 };
 #endif
 

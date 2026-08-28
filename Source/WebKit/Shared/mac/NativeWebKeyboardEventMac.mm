@@ -30,13 +30,21 @@
 
 #import "WebEventFactory.h"
 #import <WebCore/KeyboardEvent.h>
+#import <wtf/TZoneMallocInlines.h>
 
 
 namespace WebKit {
 using namespace WebCore;
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<KeypressCommand>& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, replacesSoftSpace, commands))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<KeypressCommand>& commands)
+{
+    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, replacesSoftSpace, commands), event));
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init, NSEvent *event)
+    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
     , m_nativeEvent(event)
 {
 }

@@ -30,6 +30,7 @@
 
 #include "GtkVersioning.h"
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -39,25 +40,64 @@ namespace WebKit {
 #define constructNativeEvent(event) gdk_event_copy(event)
 #endif
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, bool isAutoRepeat, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, false, std::nullopt, std::nullopt, WTF::move(commands)))
-    , m_nativeEvent(constructNativeEvent(event))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(GdkEvent* event, const String& text, bool isAutoRepeat, Vector<String>&& commands)
 {
+    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, false, std::nullopt, std::nullopt, WTF::move(commands)), event));
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, MonotonicTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange), { }, false, false)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
+    return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
+        { WebEventType::KeyDown, { }, MonotonicTime::now() },
+        {
+            .text = text,
+            .key = "Unidentified"_s,
+            .code = "Unidentified"_s,
+            .keyIdentifier = "U+0000"_s,
+            .windowsVirtualKeyCode = 229,
+            .nativeVirtualKeyCode = GDK_KEY_VoidSymbol,
+            .handledByInputMethod = true,
+            .preeditUnderlines = WTF::move(preeditUnderlines),
+            .preeditSelectionRange = WTF::move(preeditSelectionRange),
+            .commands = { },
+            .isAutoRepeat = false,
+            .isKeypad = false,
+        }
+    }, nullptr));
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebEventType type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier> modifiers)
-    : WebKeyboardEvent(WebEvent(type, modifiers, MonotonicTime::now()), text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, std::nullopt, std::nullopt, WTF::move(commands), isAutoRepeat, isKeypad)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WebEventType type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier> modifiers)
 {
+    return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
+        { type, modifiers, MonotonicTime::now() },
+        {
+            .text = text,
+            .key = key,
+            .code = code,
+            .keyIdentifier = keyIdentifier,
+            .windowsVirtualKeyCode = windowsVirtualKeyCode,
+            .nativeVirtualKeyCode = nativeVirtualKeyCode,
+            .handledByInputMethod = false,
+            .preeditUnderlines = std::nullopt,
+            .preeditSelectionRange = std::nullopt,
+            .commands = WTF::move(commands),
+            .isAutoRepeat = isAutoRepeat,
+            .isKeypad = isKeypad,
+        }
+    }, nullptr));
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(event)
-    , m_nativeEvent(event.nativeEvent() ? constructNativeEvent(event.nativeEvent()) : nullptr)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const NativeWebKeyboardEvent& event)
+{
+    return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit { event.eventData(), event.keyboardData() },
+        event.nativeEvent() ? const_cast<GdkEvent*>(event.nativeEvent()) : nullptr));
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init, GdkEvent* event)
+    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
+    , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)
 {
 }
 

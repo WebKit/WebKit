@@ -28,12 +28,21 @@
 #include "NativeWebMouseEvent.h"
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(hwnd, message, wParam, lParam, didActivateWebView, deviceScaleFactor))
-    , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(hwnd, message, wParam, lParam, didActivateWebView, deviceScaleFactor),
+        createNativeEvent(hwnd, message, wParam, lParam)));
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init, const MSG& nativeEvent)
+    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
+    , m_nativeEvent(nativeEvent)
 {
 }
 

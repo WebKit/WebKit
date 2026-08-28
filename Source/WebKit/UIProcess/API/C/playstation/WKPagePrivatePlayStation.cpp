@@ -90,7 +90,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
     std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
     std::optional<WebKit::EditingRange> preeditSelectionRange;
-    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, ""_s, false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
+    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(&wpeEvent, ""_s, false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
 }
 
 void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
@@ -141,7 +141,7 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
 
     const float deviceScaleFactor = 1;
 
-    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent(&wpeEvent, deviceScaleFactor));
+    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent::create(&wpeEvent, deviceScaleFactor));
 }
 
 void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
@@ -159,7 +159,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         1, static_cast<int32_t>(event.delta.width), 0
     };
 
-    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::None, WebWheelEvent::Phase::None));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent::create(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::None, WebWheelEvent::Phase::None));
 
     struct wpe_input_axis_event yEvent = {
         wpe_input_axis_event_type_motion,
@@ -167,7 +167,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         0, static_cast<int32_t>(event.delta.height), 0
     };
 
-    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::None, WebWheelEvent::Phase::None));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent::create(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::None, WebWheelEvent::Phase::None));
 }
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)

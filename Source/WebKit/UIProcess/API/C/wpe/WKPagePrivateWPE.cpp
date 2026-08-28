@@ -64,7 +64,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     if (auto* view = WebKit::toImpl(pageRef)->wpeView()) {
         GRefPtr<WPEEvent> wpeEvent = adoptGRef(wpe_event_keyboard_new(event.type == kWKEventKeyDown ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP,
             view, WPE_INPUT_SOURCE_KEYBOARD, 0, wkEventModifiersToWPE(event.modifiers), event.hardwareKeyCode, event.keyCode));
-        WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(wpeEvent.get(), unsafeMakeSpan(event.text, event.length), false));
+        WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(wpeEvent.get(), unsafeMakeSpan(event.text, event.length), false));
         return;
     }
 #endif
@@ -90,7 +90,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
     std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
     std::optional<WebKit::EditingRange> preeditSelectionRange;
-    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, unsafeMakeSpan(event.text, event.length), false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
+    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(&wpeEvent, unsafeMakeSpan(event.text, event.length), false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
 #endif
 }
 
@@ -130,7 +130,7 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
             break;
         }
 
-        WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent(wpeEvent.get()));
+        WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent::create(wpeEvent.get()));
         return;
     }
 #endif
@@ -180,6 +180,6 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
 
     const float deviceScaleFactor = 1;
 
-    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent(&wpeEvent, deviceScaleFactor));
+    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent::create(&wpeEvent, deviceScaleFactor));
 #endif
 }

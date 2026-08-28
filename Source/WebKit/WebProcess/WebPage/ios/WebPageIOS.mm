@@ -808,7 +808,7 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
     return [NSURLConnection canHandleRequest:nsRequest.get()];
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::shouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent>&&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
     completionHandler(false);
@@ -3926,12 +3926,15 @@ void WebPage::didEndUserTriggeredZooming()
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const Expected<bool, WebCore::RemoteFrameGeometryTransformer>& transformer, WebTouchEvent&& event)
+static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const Expected<bool, WebCore::RemoteFrameGeometryTransformer>& transformer, const WebTouchEvent& event)
 {
     if (transformer)
         return std::nullopt;
-    event.transformToRemoteFrameCoordinates(transformer.error());
-    return RemoteWebTouchEvent { transformer.error().remoteFrameID(), WTF::move(event) };
+    // A deep copy: transforming mutates the event and its coalesced/predicted children in place, and
+    // the event we were handed is shared with the queue and its completion handlers.
+    Ref transformedEvent = event.copy();
+    transformedEvent->transformToRemoteFrameCoordinates(transformer.error());
+    return RemoteWebTouchEvent { transformer.error().remoteFrameID(), WTF::move(transformedEvent) };
 }
 
 void WebPage::dispatchAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEventQueue>&& queue)
@@ -3947,7 +3950,7 @@ void WebPage::dispatchAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEv
             completionHandler(handled, std::nullopt);
 
         // The last handler corresponds to the event that was actually dispatched.
-        touchEventData.completionHandlers.last()(handled, transformEventIfNecessary(handleTouchEventResult, WTF::move(touchEventData.event)));
+        touchEventData.completionHandlers.last()(handled, transformEventIfNecessary(handleTouchEventResult, touchEventData.event));
     }
 }
 

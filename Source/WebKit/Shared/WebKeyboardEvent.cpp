@@ -27,115 +27,28 @@
 #include "WebKeyboardEvent.h"
 
 #include <WebCore/KeypressCommand.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-#if USE(APPKIT)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKeyboardEvent);
 
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands, bool isAutoRepeat, bool isKeypad, bool isSystemKey)
-    : WebEvent(WTF::move(event))
-    , m_text(text)
-    , m_unmodifiedText(unmodifiedText)
-    , m_key(key)
-    , m_code(code)
-    , m_keyIdentifier(keyIdentifier)
-    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-    , m_macCharCode(macCharCode)
-    , m_handledByInputMethod(handledByInputMethod)
-    , m_commands(commands)
-    , m_isAutoRepeat(isAutoRepeat)
-    , m_isKeypad(isKeypad)
-    , m_isSystemKey(isSystemKey)
+Ref<WebKeyboardEvent> WebKeyboardEvent::create(WebEventData&& eventData, WebKeyboardEventData&& keyboardData)
+{
+    return adoptRef(*new WebKeyboardEvent(WTF::move(eventData), WTF::move(keyboardData)));
+}
+
+Ref<WebKeyboardEvent> WebKeyboardEvent::create(WebKeyboardEventInit&& init)
+{
+    return create(WTF::move(init.event), WTF::move(init.keyboard));
+}
+
+WebKeyboardEvent::WebKeyboardEvent(WebEventData&& eventData, WebKeyboardEventData&& keyboardData)
+    : WebEvent(WTF::move(eventData))
+    , m_data(WTF::move(keyboardData))
 {
     ASSERT(isKeyboardEventType(type()));
 }
-
-#elif PLATFORM(GTK)
-
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad)
-    : WebEvent(WTF::move(event))
-    , m_text(text)
-    , m_unmodifiedText(text)
-    , m_key(key)
-    , m_code(code)
-    , m_keyIdentifier(keyIdentifier)
-    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-    , m_macCharCode(0)
-    , m_handledByInputMethod(handledByInputMethod)
-    , m_preeditUnderlines(WTF::move(preeditUnderlines))
-    , m_preeditSelectionRange(WTF::move(preeditSelectionRange))
-    , m_commands(WTF::move(commands))
-    , m_isAutoRepeat(isAutoRepeat)
-    , m_isKeypad(isKeypad)
-    , m_isSystemKey(false)
-{
-    ASSERT(isKeyboardEventType(type()));
-}
-
-#elif PLATFORM(IOS_FAMILY)
-
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey)
-    : WebEvent(WTF::move(event))
-    , m_text(text)
-    , m_unmodifiedText(unmodifiedText)
-    , m_key(key)
-    , m_code(code)
-    , m_keyIdentifier(keyIdentifier)
-    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-    , m_macCharCode(macCharCode)
-    , m_handledByInputMethod(handledByInputMethod)
-    , m_isAutoRepeat(isAutoRepeat)
-    , m_isKeypad(isKeypad)
-    , m_isSystemKey(isSystemKey)
-{
-    ASSERT(isKeyboardEventType(type()));
-}
-
-#elif USE(LIBWPE) || ENABLE(WPE_PLATFORM)
-
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, bool isAutoRepeat, bool isKeypad)
-    : WebEvent(WTF::move(event))
-    , m_text(text)
-    , m_unmodifiedText(text)
-    , m_key(key)
-    , m_code(code)
-    , m_keyIdentifier(keyIdentifier)
-    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-    , m_macCharCode(0)
-    , m_handledByInputMethod(handledByInputMethod)
-    , m_preeditUnderlines(WTF::move(preeditUnderlines))
-    , m_preeditSelectionRange(WTF::move(preeditSelectionRange))
-    , m_isAutoRepeat(isAutoRepeat)
-    , m_isKeypad(isKeypad)
-    , m_isSystemKey(false)
-{
-    ASSERT(isKeyboardEventType(type()));
-}
-
-#else
-
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey)
-    : WebEvent(WTF::move(event))
-    , m_text(text)
-    , m_unmodifiedText(unmodifiedText)
-    , m_key(key)
-    , m_code(code)
-    , m_keyIdentifier(keyIdentifier)
-    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
-    , m_macCharCode(macCharCode)
-    , m_isAutoRepeat(isAutoRepeat)
-    , m_isKeypad(isKeypad)
-    , m_isSystemKey(isSystemKey)
-{
-    ASSERT(isKeyboardEventType(type()));
-}
-
-#endif
 
 WebKeyboardEvent::~WebKeyboardEvent() = default;
 

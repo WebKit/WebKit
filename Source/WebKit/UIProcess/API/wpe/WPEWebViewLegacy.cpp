@@ -151,12 +151,12 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
             if (event->type == wpe_input_pointer_event_type_button && event->state == 1)
                 view.m_inputMethodFilter.cancelComposition();
             auto& page = view.page();
-            WebKit::NativeWebMouseEvent mouseEvent(event, page.deviceScaleFactor());
+            Ref mouseEvent = WebKit::NativeWebMouseEvent::create(event, page.deviceScaleFactor());
 #if ENABLE(DRAG_SUPPORT)
             if (view.updateDrag(mouseEvent))
                 return;
 #endif
-            page.handleMouseEvent(mouseEvent);
+            page.handleMouseEvent(WTF::move(mouseEvent));
         },
         // handle_axis_event
         [](void* data, struct wpe_input_axis_event* event)
@@ -185,7 +185,7 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
                     phase = WebWheelEvent::Phase::Ended;
 
                 auto& page = view.page();
-                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(event, page.deviceScaleFactor(), phase, momentumPhase));
                 return;
             }
 #endif
@@ -207,7 +207,7 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
 
             if (shouldDispatch) {
                 auto& page = view.page();
-                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(event, page.deviceScaleFactor(), phase, momentumPhase));
             }
         },
         // handle_touch_event
@@ -217,7 +217,7 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
             auto& view = *reinterpret_cast<ViewLegacy*>(data);
             auto& page = view.page();
 
-            WebKit::NativeWebTouchEvent touchEvent(event, page.deviceScaleFactor());
+            Ref touchEvent = WebKit::NativeWebTouchEvent::create(event, page.deviceScaleFactor());
 
             // If already gesturing axis events, short-cut directly to the controller,
             // avoiding the usual roundtrip.
@@ -225,7 +225,7 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
             if (touchGestureController.gesturedEvent() == TouchGestureController::GesturedEvent::Axis) {
                 bool handledThroughGestureController = false;
 
-                auto generatedEvent = touchGestureController.handleEvent(touchEvent.nativeFallbackTouchPoint());
+                auto generatedEvent = touchGestureController.handleEvent(touchEvent->nativeFallbackTouchPoint());
                 WTF::switchOn(generatedEvent,
                     [](TouchGestureController::NoEvent&) { },
                     [](TouchGestureController::ClickEvent&) { },
@@ -238,14 +238,14 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
                         auto* event = &axisEvent.event;
 #endif
                         if (event->type != wpe_input_axis_event_type_null) {
-                            page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
+                            page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(event, page.deviceScaleFactor(),
                                 axisEvent.phase, WebWheelEvent::Phase::None));
                             handledThroughGestureController = true;
                         }
                     });
             }
 
-            page.handleTouchEvent(nullptr, touchEvent);
+            page.handleTouchEvent(nullptr, WTF::move(touchEvent));
 #endif
         },
         // padding
@@ -347,7 +347,7 @@ void ViewLegacy::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
     if (filterResult.handled)
         return;
 
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), isAutoRepeat, NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, event->pressed ? filterResult.keyText : String(), isAutoRepeat, NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
 }
 
 void ViewLegacy::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
@@ -357,7 +357,7 @@ void ViewLegacy::synthesizeCompositionKeyPress(const String& text, std::optional
     // composition results. WPE doesn't have an equivalent, so we send VoidSymbol
     // here to WebCore. PlatformKeyEvent converts this code into VK_PROCESSKEY.
     static struct wpe_input_keyboard_event event = { 0, WPE_KEY_VoidSymbol, 0, true, 0 };
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(&event, text, false, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTF::move(underlines), WTF::move(selectionRange)));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(&event, text, false, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTF::move(underlines), WTF::move(selectionRange)));
 }
 
 #if ENABLE(FULLSCREEN_API)

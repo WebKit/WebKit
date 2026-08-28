@@ -30,6 +30,7 @@
 
 #include "GtkVersioning.h"
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebKit {
@@ -40,20 +41,30 @@ namespace WebKit {
 #define constructNativeEvent(event) gdk_event_copy(event)
 #endif
 
-NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)))
-    , m_nativeEvent(constructNativeEvent(event))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
+Ref<NativeWebTouchEvent> NativeWebTouchEvent::create(GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
+    return adoptRef(*new NativeWebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)), event));
 }
 
-NativeWebTouchEvent::NativeWebTouchEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, Vector<WebPlatformTouchPoint>&& touchPoints)
-    : WebTouchEvent({ type, modifiers, MonotonicTime::now() }, WTF::move(touchPoints), { }, { })
+Ref<NativeWebTouchEvent> NativeWebTouchEvent::create(WebEventType type, OptionSet<WebEventModifier> modifiers, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
+    return adoptRef(*new NativeWebTouchEvent(WebTouchEventInit {
+        { type, modifiers, MonotonicTime::now() },
+        { .touchPoints = WTF::move(touchPoints), .coalescedEvents = { }, .predictedEvents = { } }
+    }, nullptr));
 }
 
-NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
-    : WebTouchEvent(event)
-    , m_nativeEvent(constructNativeEvent(const_cast<GdkEvent*>(event.nativeEvent())))
+Ref<NativeWebTouchEvent> NativeWebTouchEvent::create(const NativeWebTouchEvent& event)
+{
+    return adoptRef(*new NativeWebTouchEvent(WebTouchEventInit { event.eventData(), event.touchData() },
+        const_cast<GdkEvent*>(event.nativeEvent())));
+}
+
+NativeWebTouchEvent::NativeWebTouchEvent(WebTouchEventInit&& init, GdkEvent* event)
+    : WebTouchEvent(WTF::move(init.event), WTF::move(init.touch))
+    , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)
 {
 }
 

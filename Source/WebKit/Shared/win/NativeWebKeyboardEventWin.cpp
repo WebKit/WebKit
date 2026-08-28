@@ -28,14 +28,23 @@
 #include "NativeWebKeyboardEvent.h"
 
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, Vector<MSG>&& pendingCharEvents)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam))
-    , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, Vector<MSG>&& pendingCharEvents)
+{
+    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam),
+        createNativeEvent(hwnd, message, wParam, lParam), WTF::move(pendingCharEvents)));
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init, const MSG& nativeEvent, Vector<MSG>&& pendingCharEvents)
+    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
+    , m_nativeEvent(nativeEvent)
     , m_pendingCharEvents(WTF::move(pendingCharEvents))
 {
 }

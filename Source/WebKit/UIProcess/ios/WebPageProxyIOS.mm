@@ -782,7 +782,7 @@ void WebPageProxy::executeSavedCommandBySelector(IPC::Connection&, const String&
     completionHandler(false);
 }
 
-bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent&)
+bool WebPageProxy::shouldDelayWindowOrderingForEvent(Ref<WebKit::WebMouseEvent>&&)
 {
     notImplemented();
     return false;

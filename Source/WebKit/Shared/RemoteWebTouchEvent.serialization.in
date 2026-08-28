@@ -23,6 +23,6 @@
 #if ENABLE(TOUCH_EVENTS)
 struct WebKit::RemoteWebTouchEvent {
     WebCore::FrameIdentifier targetFrameID;
-    WebKit::WebTouchEvent transformedEvent;
+    Ref<WebKit::WebTouchEvent> transformedEvent;
 };
 #endif

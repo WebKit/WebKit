@@ -51,21 +51,21 @@ namespace WebKit {
 class WebEventFactory {
 public:
 #if USE(LIBWPE)
-    static WebKeyboardEvent createWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
-    static WebMouseEvent createWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
-    static WebWheelEvent createWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    static WebKeyboardEventInit createWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static WebMouseEventInit createWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
+    static WebWheelEventInit createWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
+    static WebTouchEventInit createWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
 #endif
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    static WebMouseEvent createWebMouseEvent(WPEEvent*);
-    static WebWheelEvent createWebWheelEvent(WPEEvent*);
-    static WebWheelEvent createWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
-    static WebKeyboardEvent createWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
+    static WebMouseEventInit createWebMouseEvent(WPEEvent*);
+    static WebWheelEventInit createWebWheelEvent(WPEEvent*);
+    static WebWheelEventInit createWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
+    static WebKeyboardEventInit createWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
+    static WebTouchEventInit createWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif
 #endif
 };

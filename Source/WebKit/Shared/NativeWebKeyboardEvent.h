@@ -66,32 +66,33 @@ namespace WebKit {
 struct EditingRange;
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebKeyboardEvent);
 public:
 #if USE(APPKIT)
     // FIXME: Share iOS's HandledByInputMethod enum here instead of passing a boolean.
-    NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
+    static Ref<NativeWebKeyboardEvent> create(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
-    NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*, const String&, bool isAutoRepeat, Vector<String>&& commands);
-    NativeWebKeyboardEvent(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
-    NativeWebKeyboardEvent(WebEventType, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier>);
+    static Ref<NativeWebKeyboardEvent> create(const NativeWebKeyboardEvent&);
+    static Ref<NativeWebKeyboardEvent> create(GdkEvent*, const String&, bool isAutoRepeat, Vector<String>&& commands);
+    static Ref<NativeWebKeyboardEvent> create(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(WebEventType, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier>);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(::WebEvent *, HandledByInputMethod);
+    static Ref<NativeWebKeyboardEvent> create(::WebEvent *, HandledByInputMethod);
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)
     enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #endif
 #if ENABLE(WPE_PLATFORM)
-    NativeWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
-    NativeWebKeyboardEvent(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(WPEEvent*, const String&, bool isAutoRepeat);
+    static Ref<NativeWebKeyboardEvent> create(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #endif
 #elif PLATFORM(PLAYSTATION)
     enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+    static Ref<NativeWebKeyboardEvent> create(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
 #elif PLATFORM(WIN)
-    NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
+    static Ref<NativeWebKeyboardEvent> create(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
 #endif
 
 #if USE(APPKIT)
@@ -109,16 +110,28 @@ public:
 
 private:
 #if USE(APPKIT)
+    NativeWebKeyboardEvent(WebKeyboardEventInit&&, NSEvent *);
+
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
+    NativeWebKeyboardEvent(WebKeyboardEventInit&&, GdkEvent*);
+
     GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
+    NativeWebKeyboardEvent(WebKeyboardEventInit&&, GdkEvent*);
+
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(IOS_FAMILY)
+    NativeWebKeyboardEvent(WebKeyboardEventInit&&, ::WebEvent *);
+
     RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
+    NativeWebKeyboardEvent(WebKeyboardEventInit&&, const MSG&, Vector<MSG>&&);
+
     MSG m_nativeEvent;
     Vector<MSG> m_pendingCharEvents;
+#else
+    explicit NativeWebKeyboardEvent(WebKeyboardEventInit&&);
 #endif
 };
 

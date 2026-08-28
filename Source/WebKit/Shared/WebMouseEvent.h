@@ -62,74 +62,101 @@ enum class WebMouseEventSyntheticClickType : uint8_t {
 WebMouseEventSyntheticClickType NODELETE syntheticClickType(const WebCore::NavigationAction&);
 WebCore::SyntheticClickType NODELETE coreSyntheticClickType(WebMouseEventSyntheticClickType);
 
+class WebMouseEvent;
+
+// Field order matches WebEvent.serialization.in. Predicted events are deliberately absent because
+// they are not sent over IPC; WebMouseEvent stores them separately.
+struct WebMouseEventData {
+    WebMouseEventButton button { WebMouseEventButton::None };
+    unsigned short buttons { 0 };
+    WebCore::DoublePoint position; // Relative to the view.
+    WebCore::DoublePoint globalPosition;
+    float deltaX { 0 };
+    float deltaY { 0 };
+    float deltaZ { 0 };
+    int32_t clickCount { 0 };
+    double force { 0 };
+    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+    WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
+    WebMouseEventSyntheticClickType syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
+#if PLATFORM(MAC)
+    int32_t eventNumber { -1 };
+    int32_t menuTypeForEvent { 0 };
+#elif PLATFORM(GTK)
+    WebCore::PlatformMouseEvent::IsTouch isTouchEvent { WebCore::PlatformMouseEvent::IsTouch::No };
+#endif
+#if !PLATFORM(MAC)
+    WebCore::PointerID pointerId { WebCore::mousePointerID };
+    String pointerType { WebCore::mousePointerEventType() };
+#endif
+    GestureWasCancelled gestureWasCancelled { GestureWasCancelled::No };
+    WebCore::DoublePoint unadjustedMovementDelta;
+    Vector<Ref<WebMouseEvent>> coalescedEvents;
+};
+
+struct WebMouseEventInit {
+    WebEventData event;
+    WebMouseEventData mouse;
+};
+
 class WebMouseEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebMouseEvent);
 public:
+    static Ref<WebMouseEvent> create(WebEventData&&, WebMouseEventData&&);
+    static Ref<WebMouseEvent> create(WebMouseEventInit&&);
+
+    // Callers that mutate an event they did not create must copy first, since events are now shared
+    // rather than copied by value. Shallow: nothing mutates the coalesced or predicted events.
+    Ref<WebMouseEvent> copy() const;
+
+    WebMouseEventButton button() const { return m_data.button; }
+    unsigned short buttons() const { return m_data.buttons; }
+    const WebCore::DoublePoint& position() const LIFETIME_BOUND { return m_data.position; } // Relative to the view.
+    void setPosition(const WebCore::DoublePoint& position) { m_data.position = position; }
+    const WebCore::DoublePoint& globalPosition() const LIFETIME_BOUND { return m_data.globalPosition; }
+    float deltaX() const { return m_data.deltaX; }
+    float deltaY() const { return m_data.deltaY; }
+    float deltaZ() const { return m_data.deltaZ; }
+    int32_t clickCount() const { return m_data.clickCount; }
 #if PLATFORM(MAC)
-    WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& positionInView, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, int eventNumber = -1, int menuType = 0, GestureWasCancelled = GestureWasCancelled::No, const WebCore::DoublePoint& unadjustedMovementDelta = { }, const Vector<WebMouseEvent>& coalescedEvents = { }, const Vector<WebMouseEvent>& predictedEvents = { });
+    int32_t eventNumber() const { return m_data.eventNumber; }
+    int32_t menuTypeForEvent() const { return m_data.menuTypeForEvent; }
 #elif PLATFORM(GTK)
-    WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& positionInView, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, WebCore::PlatformMouseEvent::IsTouch m_isTouchEvent = WebCore::PlatformMouseEvent::IsTouch::No, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No, const WebCore::DoublePoint& unadjustedMovementDelta = { }, const Vector<WebMouseEvent>& coalescedEvents = { }, const Vector<WebMouseEvent>& predictedEvents = { });
+    WebCore::PlatformMouseEvent::IsTouch isTouchEvent() const { return m_data.isTouchEvent; }
+#endif
+    double force() const { return m_data.force; }
+    WebEventInputSource inputSource() const { return m_data.inputSource; }
+    WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag() const { return m_data.canInitiateDrag; }
+    WebMouseEventSyntheticClickType syntheticClickType() const { return m_data.syntheticClickType; }
+#if PLATFORM(MAC)
+    // No constructor on this platform takes these, so the defaults are the only possible values.
+    WebCore::PointerID pointerId() const { return WebCore::mousePointerID; }
+    const String& pointerType() const LIFETIME_BOUND { return WebCore::mousePointerEventType(); }
 #else
-    WebMouseEvent(WebEvent&&, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& positionInView, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No, const WebCore::DoublePoint& unadjustedMovementDelta = { }, const Vector<WebMouseEvent>& coalescedEvents = { }, const Vector<WebMouseEvent>& predictedEvents = { });
+    WebCore::PointerID pointerId() const { return m_data.pointerId; }
+    const String& pointerType() const LIFETIME_BOUND { return m_data.pointerType; }
 #endif
-
-    WebMouseEventButton button() const { return m_button; }
-    unsigned short buttons() const { return m_buttons; }
-    const WebCore::DoublePoint& position() const { return m_position; } // Relative to the view.
-    void setPosition(const WebCore::DoublePoint& position) { m_position = position; }
-    const WebCore::DoublePoint& globalPosition() const LIFETIME_BOUND { return m_globalPosition; }
-    float deltaX() const { return m_deltaX; }
-    float deltaY() const { return m_deltaY; }
-    float deltaZ() const { return m_deltaZ; }
-    int32_t clickCount() const { return m_clickCount; }
-#if PLATFORM(MAC)
-    int32_t eventNumber() const { return m_eventNumber; }
-    int32_t menuTypeForEvent() const { return m_menuTypeForEvent; }
-#elif PLATFORM(GTK)
-    WebCore::PlatformMouseEvent::IsTouch isTouchEvent() const { return m_isTouchEvent; }
-#endif
-    double force() const { return m_force; }
-    WebEventInputSource inputSource() const { return m_inputSource; }
-    WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag() const { return m_canInitiateDrag; }
-    WebMouseEventSyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
-    WebCore::PointerID pointerId() const { return m_pointerId; }
-    const String& pointerType() const LIFETIME_BOUND { return m_pointerType; }
-    GestureWasCancelled gestureWasCancelled() const { return m_gestureWasCancelled; }
+    GestureWasCancelled gestureWasCancelled() const { return m_data.gestureWasCancelled; }
     // Unaccelerated pointer movement
-    const WebCore::DoublePoint& unadjustedMovementDelta() const LIFETIME_BOUND { return m_unadjustedMovementDelta; }
+    const WebCore::DoublePoint& unadjustedMovementDelta() const LIFETIME_BOUND { return m_data.unadjustedMovementDelta; }
 
-    void setCoalescedEvents(const Vector<WebMouseEvent>& coalescedEvents) { m_coalescedEvents = coalescedEvents; }
-    Vector<WebMouseEvent> coalescedEvents() const { return m_coalescedEvents; }
+    void setCoalescedEvents(const Vector<Ref<WebMouseEvent>>& coalescedEvents) { m_data.coalescedEvents = coalescedEvents; }
+    const Vector<Ref<WebMouseEvent>>& coalescedEvents() const LIFETIME_BOUND { return m_data.coalescedEvents; }
 
-    void setPredictedEvents(const Vector<WebMouseEvent>& predictedEvents) { m_predictedEvents = predictedEvents; }
-    Vector<WebMouseEvent> predictedEvents() const { return m_predictedEvents; }
+    void setPredictedEvents(const Vector<Ref<WebMouseEvent>>& predictedEvents) { m_predictedEvents = predictedEvents; }
+    const Vector<Ref<WebMouseEvent>>& predictedEvents() const LIFETIME_BOUND { return m_predictedEvents; }
+
+    const WebMouseEventData& mouseData() const LIFETIME_BOUND { return m_data; }
 
     static bool NODELETE isMouseEventType(WebEventType);
 
+protected:
+    WebMouseEvent(WebEventData&&, WebMouseEventData&&);
+
 private:
-    WebMouseEventButton m_button { WebMouseEventButton::None };
-    unsigned short m_buttons { 0 };
-    WebCore::DoublePoint m_position; // Relative to the view.
-    WebCore::DoublePoint m_globalPosition;
-    float m_deltaX { 0 };
-    float m_deltaY { 0 };
-    float m_deltaZ { 0 };
-    WebCore::DoublePoint m_unadjustedMovementDelta;
-    int32_t m_clickCount { 0 };
-#if PLATFORM(MAC)
-    int32_t m_eventNumber { -1 };
-    int32_t m_menuTypeForEvent { 0 };
-#elif PLATFORM(GTK)
-    WebCore::PlatformMouseEvent::IsTouch m_isTouchEvent { WebCore::PlatformMouseEvent::IsTouch::No };
-#endif
-    double m_force { 0 };
-    WebEventInputSource m_inputSource { WebEventInputSource::UserDriven };
-    WebCore::PlatformMouseEvent::CanInitiateDrag m_canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
-    WebMouseEventSyntheticClickType m_syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
-    WebCore::PointerID m_pointerId { WebCore::mousePointerID };
-    String m_pointerType { WebCore::mousePointerEventType() };
-    GestureWasCancelled m_gestureWasCancelled { GestureWasCancelled::No };
-    Vector<WebMouseEvent> m_coalescedEvents;
-    Vector<WebMouseEvent> m_predictedEvents;
+    WebMouseEventData m_data;
+    // Not sent over IPC. See WebMouseEventData.
+    Vector<Ref<WebMouseEvent>> m_predictedEvents;
 };
 
 } // namespace WebKit

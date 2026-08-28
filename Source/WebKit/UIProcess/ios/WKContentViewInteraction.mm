@@ -2268,8 +2268,8 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, [_touchEventGestureRecognizer modifierFlags] };
-    nativeWebTouchEvent.setCanPreventNativeGestures(_touchEventsCanPreventNativeGestures || [_touchEventGestureRecognizer isDefaultPrevented]);
+    Ref nativeWebTouchEvent = WebKit::NativeWebTouchEvent::create(lastTouchEvent, [_touchEventGestureRecognizer modifierFlags]);
+    nativeWebTouchEvent->setCanPreventNativeGestures(_touchEventsCanPreventNativeGestures || [_touchEventGestureRecognizer isDefaultPrevented]);
 
     [self _handleTouchActionsForTouchEvent:nativeWebTouchEvent];
 
@@ -2281,14 +2281,14 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     else
         _page->handleUnpreventableTouchEvent(nativeWebTouchEvent);
 
-    if (nativeWebTouchEvent.allTouchPointsAreReleased()) {
+    if (nativeWebTouchEvent->allTouchPointsAreReleased()) {
         _touchEventsCanPreventNativeGestures = YES;
         _touchStartedNearSelectionHandle = NO;
 
         if (!_page->isScrollingOrZooming())
             [self _resetPanningPreventionFlags];
 
-        if (nativeWebTouchEvent.isPotentialTap() && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+        if (nativeWebTouchEvent->isPotentialTap() && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
             [self.window makeKeyWindow];
 
         auto stopDeferringNativeGesturesIfNeeded = [] (WKDeferringGestureRecognizer *gestureRecognizer) {
@@ -7782,7 +7782,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)_internalHandleKeyWebEvent:(::WebEvent *)theEvent
 {
-    protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, WebKit::NativeWebKeyboardEvent::HandledByInputMethod::No));
+    protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(theEvent, WebKit::NativeWebKeyboardEvent::HandledByInputMethod::No));
 }
 
 - (void)handleKeyWebEvent:(::WebEvent *)event withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
@@ -7851,11 +7851,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if ([self _deferKeyEventToInputMethodEditing:event]) {
         completionHandler(event, YES);
         _isDeferringKeyEventsToInputMethod = YES;
-        protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::Yes));
+        protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, HandledByInputMethod::Yes));
         return;
     }
 
-    if (protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::No)))
+    if (protect(_page)->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, HandledByInputMethod::No)))
         _keyWebEventHandlers.append({ event, makeBlockPtr(completionHandler) });
     else
         completionHandler(event, NO);
@@ -12433,8 +12433,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     [self _configureMouseGestureRecognizer];
 }
 
-- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(const WebKit::NativeWebMouseEvent&)event
+- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(Ref<WebKit::NativeWebMouseEvent>&&)eventRef
 {
+    const auto& event = eventRef.get();
     Ref page = *_page;
     if (!page->hasRunningProcess())
         return;
@@ -12451,7 +12452,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             [self.window makeKeyWindow];
     }
 
-    page->handleMouseEvent(event);
+    page->handleMouseEvent(WTF::move(eventRef));
 }
 
 #if ENABLE(POINTER_LOCK)

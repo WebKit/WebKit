@@ -28,12 +28,20 @@
 
 #if USE(LIBWPE)
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <cstdio>
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor, phase, momentumPhase))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
+Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+{
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor, phase, momentumPhase)));
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init)
+    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
 {
 }
 

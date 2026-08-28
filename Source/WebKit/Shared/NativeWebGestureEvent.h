@@ -35,6 +35,7 @@ OBJC_CLASS NSView;
 namespace WebKit {
 
 class NativeWebGestureEvent final : public WebGestureEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebGestureEvent);
 public:
     // Distinguishes magnify from rotate without needing a backing NSEvent.
     enum class Kind : uint8_t { Magnification, Rotation };
@@ -49,16 +50,17 @@ public:
         bool allowsNativeZoom { true };
     };
 
-    static std::optional<NativeWebGestureEvent> create(NSEvent *, NSView *);
-    static std::optional<NativeWebGestureEvent> create(const Init&, NSView *);
+    // Null when the gesture phase does not map to a WebEventType.
+    static RefPtr<NativeWebGestureEvent> create(NSEvent *, NSView *);
+    static RefPtr<NativeWebGestureEvent> create(const Init&, NSView *);
 
     bool allowsNativeZoom() const { return m_allowsNativeZoom; }
     Kind kind() const { return m_kind; }
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 
 private:
-    static std::optional<NativeWebGestureEvent> create(const Init&, NSView *, NSEvent *);
-    explicit NativeWebGestureEvent(WebEventType, const Init&, NSView *, NSEvent *);
+    static RefPtr<NativeWebGestureEvent> create(const Init&, NSView *, NSEvent *);
+    NativeWebGestureEvent(WebEventType, const Init&, NSView *, NSEvent *);
 
     bool m_allowsNativeZoom { true };
     Kind m_kind;

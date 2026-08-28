@@ -28,6 +28,7 @@
 
 #include "GtkVersioning.h"
 #include "WebEventFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -37,31 +38,59 @@ namespace WebKit {
 #define constructNativeEvent(event) gdk_event_copy(event)
 #endif
 
-NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, int eventClickCount, std::optional<WebCore::FloatSize> delta)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, eventClickCount, delta))
-    , m_nativeEvent(constructNativeEvent(event))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(GdkEvent* event, int eventClickCount, std::optional<WebCore::FloatSize> delta)
 {
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event, eventClickCount, delta), event));
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, const WebCore::DoublePoint& position, int eventClickCount, std::optional<WebCore::FloatSize> delta)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position, eventClickCount, delta))
-    , m_nativeEvent(constructNativeEvent(event))
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(GdkEvent* event, const WebCore::DoublePoint& position, int eventClickCount, std::optional<WebCore::FloatSize> delta)
 {
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event, position, eventClickCount, delta), event));
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::DoublePoint& position)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(position))
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(const WebCore::DoublePoint& position)
 {
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(position), nullptr));
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
-    : WebMouseEvent(WebEvent(type, modifiers, MonotonicTime::now()), button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, 0, WebEventInputSource::UserDriven, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes, WebMouseEventSyntheticClickType::NoTap, isTouchEvent, pointerId, pointerType)
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
 {
+    return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit {
+        { type, modifiers, MonotonicTime::now() },
+        {
+            .button = button,
+            .buttons = buttons,
+            .position = position,
+            .globalPosition = globalPosition,
+            .deltaX = delta.value_or(WebCore::FloatSize()).width(),
+            .deltaY = delta.value_or(WebCore::FloatSize()).height(),
+            .deltaZ = 0,
+            .clickCount = clickCount,
+            .force = 0,
+            .inputSource = WebEventInputSource::UserDriven,
+            .canInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes,
+            .syntheticClickType = WebMouseEventSyntheticClickType::NoTap,
+            .isTouchEvent = isTouchEvent,
+            .pointerId = pointerId,
+            .pointerType = pointerType,
+            .gestureWasCancelled = GestureWasCancelled::No,
+            .unadjustedMovementDelta = { },
+            .coalescedEvents = { },
+        }
+    }, nullptr));
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& event)
-    : WebMouseEvent(event)
-    , m_nativeEvent(event.nativeEvent() ? constructNativeEvent(const_cast<GdkEvent*>(event.nativeEvent())) : nullptr)
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(const NativeWebMouseEvent& event)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit { event.eventData(), event.mouseData() },
+        event.nativeEvent() ? const_cast<GdkEvent*>(event.nativeEvent()) : nullptr));
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init, GdkEvent* event)
+    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
+    , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)
 {
 }
 

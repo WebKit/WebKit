@@ -65,30 +65,31 @@ struct wpe_input_pointer_event;
 namespace WebKit {
 
 class NativeWebMouseEvent : public WebMouseEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebMouseEvent);
 public:
 #if USE(APPKIT)
-    NativeWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+    static Ref<NativeWebMouseEvent> create(NSEvent *, NSEvent *lastPressureEvent, NSView *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
 #elif PLATFORM(GTK)
-    NativeWebMouseEvent(const NativeWebMouseEvent&);
-    NativeWebMouseEvent(GdkEvent*, int, std::optional<WebCore::FloatSize>);
-    NativeWebMouseEvent(GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
-    NativeWebMouseEvent(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent);
-    explicit NativeWebMouseEvent(const WebCore::DoublePoint&);
+    static Ref<NativeWebMouseEvent> create(const NativeWebMouseEvent&);
+    static Ref<NativeWebMouseEvent> create(GdkEvent*, int, std::optional<WebCore::FloatSize>);
+    static Ref<NativeWebMouseEvent> create(GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
+    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent);
+    static Ref<NativeWebMouseEvent> create(const WebCore::DoublePoint&);
 #elif PLATFORM(IOS_FAMILY)
-    NativeWebMouseEvent(::WebEvent *);
-    NativeWebMouseEvent(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier>, MonotonicTime timestamp, double force, GestureWasCancelled, const String& pointerType);
-    NativeWebMouseEvent(const NativeWebMouseEvent&, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ);
+    static Ref<NativeWebMouseEvent> create(::WebEvent *);
+    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier>, MonotonicTime timestamp, double force, GestureWasCancelled, const String& pointerType);
+    static Ref<NativeWebMouseEvent> create(const NativeWebMouseEvent&, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ);
 #elif PLATFORM(WPE)
 #if USE(LIBWPE)
-    NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
+    static Ref<NativeWebMouseEvent> create(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
 #endif
 #if ENABLE(WPE_PLATFORM)
-    explicit NativeWebMouseEvent(WPEEvent*);
+    static Ref<NativeWebMouseEvent> create(WPEEvent*);
 #endif
 #elif PLATFORM(PLAYSTATION)
-    NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
+    static Ref<NativeWebMouseEvent> create(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
 #elif PLATFORM(WIN)
-    NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool, float deviceScaleFactor);
+    static Ref<NativeWebMouseEvent> create(HWND, UINT message, WPARAM, LPARAM, bool, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)
@@ -105,15 +106,27 @@ public:
 
 private:
 #if USE(APPKIT)
+    NativeWebMouseEvent(WebMouseEventInit&&, NSEvent *);
+
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)
+    NativeWebMouseEvent(WebMouseEventInit&&, GdkEvent*);
+
     GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
+    NativeWebMouseEvent(WebMouseEventInit&&, GdkEvent*);
+
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(IOS_FAMILY)
+    NativeWebMouseEvent(WebMouseEventInit&&, ::WebEvent *);
+
     RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
+    NativeWebMouseEvent(WebMouseEventInit&&, const MSG&);
+
     MSG m_nativeEvent;
+#else
+    explicit NativeWebMouseEvent(WebMouseEventInit&&);
 #endif
 };
 

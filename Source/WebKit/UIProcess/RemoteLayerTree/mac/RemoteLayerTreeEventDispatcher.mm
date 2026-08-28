@@ -219,30 +219,30 @@ void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(c
 #endif
 }
 
-void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const WebWheelEvent& wheelEvent)
+void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(Ref<WebWheelEvent>&& wheelEvent)
 {
     ASSERT(isMainRunLoop());
     
     m_wheelEventActivityHysteresis.impulse();
-    m_wheelEventsBeingProcessed.append(wheelEvent);
+    m_wheelEventsBeingProcessed.append(WTF::move(wheelEvent));
 }
 
-void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
+void RemoteLayerTreeEventDispatcher::handleWheelEvent(Ref<WebWheelEvent>&& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
     ASSERT(isMainRunLoop());
 
     auto scrollingTree = this->scrollingTree();
     if (scrollingTree && scrollingTree->scrollingPerformanceTestingEnabled()) {
-        if (wheelEvent.phase() == WebWheelEvent::Phase::Began)
+        if (wheelEvent->phase() == WebWheelEvent::Phase::Began)
             startFingerDownSignpostInterval();
 
-        if (wheelEvent.phase() == WebWheelEvent::Phase::Ended)
+        if (wheelEvent->phase() == WebWheelEvent::Phase::Ended)
             endFingerDownSignpostInterval();
     }
 
-    willHandleWheelEvent(wheelEvent);
+    willHandleWheelEvent(wheelEvent.copyRef());
 
-    ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
+    ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent = WTF::move(wheelEvent), rubberBandableEdges] {
         dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);
     });
 }
@@ -299,8 +299,8 @@ void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandli
 
     LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::continueWheelEventHandling - result " << handlingResult);
 
-    auto event = m_wheelEventsBeingProcessed.takeFirst();
-    scrollingCoordinator->continueWheelEventHandling(event, handlingResult);
+    Ref event = m_wheelEventsBeingProcessed.takeFirst();
+    scrollingCoordinator->continueWheelEventHandling(WTF::move(event), handlingResult);
 }
 
 OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWheelEventProcessing(const PlatformWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)

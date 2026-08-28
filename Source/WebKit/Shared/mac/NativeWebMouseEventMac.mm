@@ -29,11 +29,19 @@
 #if USE(APPKIT)
 
 #import "WebEventFactory.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *view, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, lastPressureEvent, view, inputSource, canInitiateDrag))
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(NSEvent *event, NSEvent *lastPressureEvent, NSView *view, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
+{
+    return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event, lastPressureEvent, view, inputSource, canInitiateDrag), event));
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init, NSEvent *event)
+    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
     , m_nativeEvent(event)
 {
 }
