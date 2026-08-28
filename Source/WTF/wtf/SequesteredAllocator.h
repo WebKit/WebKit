@@ -144,7 +144,9 @@ private:
                 }
                 m_allocHead = 0;
                 m_allocBound = 0;
-                return WTF::move(m_granules);
+                GranuleList all { m_granules };
+                m_granules.clear();
+                return all;
             }
 
             GranuleList tail { m_granules.splitAt(1) };
@@ -301,7 +303,7 @@ public:
 
     void* malloc(size_t bytes)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.allocate(bytes);
         registerSuccessfulAllocation(retval, bytes);
         return retval;
@@ -309,7 +311,7 @@ public:
 
     void* alignedMalloc(size_t alignment, size_t bytes)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.alignedAllocate(alignment, bytes);
         registerSuccessfulAllocation(retval, bytes);
         return retval;
@@ -318,7 +320,7 @@ public:
     void* zeroedMalloc(size_t bytes)
     {
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.allocate(bytes);
         std::memset(retval, 0, bytes);
         registerSuccessfulAllocation(retval, bytes);
@@ -328,7 +330,7 @@ public:
 
     void* tryMalloc(size_t bytes)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAllocate(bytes);
         if (retval) [[likely]]
             registerSuccessfulAllocation(retval, bytes);
@@ -337,7 +339,7 @@ public:
 
     void* tryAlignedMalloc(size_t alignment, size_t bytes)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAlignedAllocate(alignment, bytes);
         if (retval) [[likely]]
             registerSuccessfulAllocation(retval, bytes);
@@ -347,7 +349,7 @@ public:
     void* tryZeroedMalloc(size_t bytes)
     {
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAllocate(bytes);
         if (retval) [[likely]] {
             std::memset(retval, 0, bytes);
@@ -359,7 +361,7 @@ public:
 
     void free(void* p)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         ASSERT(m_liveAllocations > 0);
 
         registerSuccessfulFree(p);
@@ -369,7 +371,7 @@ public:
 
     void* realloc(void* p, size_t newSize)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         ASSERT(m_liveAllocations > 0);
 
         void* newP = m_genericSmallArena.allocate(newSize);
@@ -380,7 +382,7 @@ public:
 
     void* tryRealloc(void* p, size_t newSize)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
 
         void* newP = m_genericSmallArena.tryAllocate(newSize);
         if (!newP)
@@ -396,19 +398,23 @@ public:
     }
 
     // Since this is thread-local, we assume beginArenaLifetime and
-    // endArenaLifetime cannot race
-    void beginArenaLifetime()
+    // endArenaLifetime cannot race with each other. The lock acquisition
+    // is only necessary to synchronize with the scavenger.
+    void beginArenaLifetime() WTF_EXCLUDES_LOCK(m_arenaLock)
     {
-        ASSERT(!m_alive);
-        m_alive = true;
+        ASSERT(!isAliveOnOwningThread());
+        {
+            Locker locker { m_arenaLock };
+            m_alive = true;
+        }
         m_liveAllocations = 0;
         dataLogLnIf(verbose, "Allocator ", id(), " in thread ", currentThreadID(),
             ": starting lifetime");
     }
 
-    void endArenaLifetime()
+    void endArenaLifetime() WTF_EXCLUDES_LOCK(m_arenaLock)
     {
-        ASSERT(m_alive);
+        ASSERT(isAliveOnOwningThread());
         if constexpr (trackAllocationDebugInfo) {
             if (m_liveAllocations > 0) {
                 logLiveAllocationDebugInfos();
@@ -416,10 +422,19 @@ public:
             }
         } else
             RELEASE_ASSERT(!m_liveAllocations);
-        m_alive = false;
 
-        m_decommitQueue.concatenate(m_genericSmallArena.reset(Arena::TopGranulePolicy::Retain));
-        if constexpr (!eagerlyDecommit)
+        // Under memory pressure, stop caching the top granule so this thread's
+        // footprint drops without waiting for the scavenger to reach it.
+        auto policy = SequesteredImmortalHeap::instance().shouldReduceRetention()
+            ? Arena::TopGranulePolicy::DoNotRetain
+            : Arena::TopGranulePolicy::Retain;
+
+        {
+            Locker locker { m_arenaLock };
+            m_alive = false;
+            resetArenaAndQueueGranules(policy);
+        }
+        if constexpr (eagerlyDecommit)
             m_decommitQueue.decommit();
 
         dataLogLnIf(verbose, "Allocator ", id(), " in thread ",
@@ -429,9 +444,29 @@ public:
             m_totalAllocatedBytes = 0;
     }
 
+    // Used by the scavenger to reclaim cached granules from idle compiler
+    // threads. Holds m_arenaLock to ensure the thread doesn't begin executing
+    // while its granule is being stolen.
+    void reclaimRetainedGranuleIfIdle() WTF_EXCLUDES_LOCK(m_arenaLock)
+    {
+        Locker locker { m_arenaLock };
+        if (m_alive)
+            return;
+        resetArenaAndQueueGranules(Arena::TopGranulePolicy::DoNotRetain);
+    }
+
+    // Entry point for the scavenger's per-slot pass: optionally reclaim this
+    // thread's cached granule, then decommit everything queued.
+    void scavenge(bool reclaimIdleGranule) WTF_EXCLUDES_LOCK(m_arenaLock)
+    {
+        if (reclaimIdleGranule)
+            reclaimRetainedGranuleIfIdle();
+        m_decommitQueue.decommit();
+    }
+
     bool inArenaLifetime()
     {
-        return m_alive;
+        return isAliveOnOwningThread();
     }
 
     int id()
@@ -507,6 +542,19 @@ private:
 
     void logLiveAllocationDebugInfos();
 
+    void resetArenaAndQueueGranules(Arena::TopGranulePolicy policy) WTF_REQUIRES_LOCK(m_arenaLock)
+    {
+        m_decommitQueue.concatenate(m_genericSmallArena.reset(policy));
+    }
+
+    // The owning thread is the only writer of m_alive, so it may read the flag
+    // without taking m_arenaLock; the lock only exists so that the scavenger
+    // never observes m_alive while the arena's granules are in flux.
+    bool isAliveOnOwningThread() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    {
+        return m_alive;
+    }
+
     static SequesteredArenaAllocator& allocatorForArena(Arena& arena)
     {
         // This is legal since the existence of a valid Arena& implies the presence
@@ -554,7 +602,11 @@ private:
 
     ConcurrentDecommitQueue m_decommitQueue { };
     size_t m_liveAllocations { 0 };
-    bool m_alive { false };
+    // Guards m_alive and the arena's granule state against the scavenger. Only
+    // held briefly at arena-lifetime boundaries and during idle reclamation, so
+    // the per-allocation fast path stays lock-free.
+    Lock m_arenaLock;
+    bool m_alive WTF_GUARDED_BY_LOCK(m_arenaLock) { false };
 
     // m_genericSmallArena must be the first Arena member of this class
     // in order for debugIndexOfArena to work
