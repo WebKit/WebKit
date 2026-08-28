@@ -29,8 +29,12 @@
 #include "AsyncAudioDecoder.h"
 
 #include "AudioBuffer.h"
+#ifdef RC_REMOVE_SEC_ACCEL_3
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
+#else
+#include "SharedBuffer.h"
+#endif
 #include <wtf/NativePromise.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -49,7 +53,7 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
         RunLoop::currentSingleton().stop();
     });
 }
-
+#ifdef RC_REMOVE_SEC_ACCEL_3
 Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate)
 {
     return WTF::invokeAsync(m_runLoop, [audioData = WTF::move(audioData), sampleRate] () mutable {
@@ -61,6 +65,17 @@ Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audio
         return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull());
     });
 }
+#else
+Ref<DecodingTaskPromise> AsyncAudioDecoder::decodeAsync(Ref<SharedBuffer>&& audioData, float sampleRate)
+{
+    return WTF::invokeAsync(m_runLoop, [audioData = WTF::move(audioData), sampleRate] () mutable {
+        auto audioBuffer = AudioBuffer::createFromAudioFileData(audioData->span(), false, sampleRate);
+        if (!audioBuffer)
+            return DecodingTaskPromise::createAndReject(Exception { ExceptionCode::EncodingError, "Decoding failed"_s });
+        return DecodingTaskPromise::createAndResolve(audioBuffer.releaseNonNull());
+    });
+}
+#endif
 
 } // namespace WebCore
 
