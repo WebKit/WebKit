@@ -6132,17 +6132,15 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
     ](FrameProcess* sharedProcess) mutable {
         if (sharedProcess) {
-            navigation->setPendingSharedProcess(*sharedProcess);
             ASSERT(!sharedProcess->process().isInProcessCache());
             if (frame->isMainFrame()) {
-                Ref process { sharedProcess->process() };
-                auto shutdownPreventingScope = process->shutdownPreventingScope();
+                auto shutdownPreventingScope = sharedProcess->process().shutdownPreventingScope();
                 protect(websiteDataStore->networkProcess())->addAllowedFirstPartyForCookies(sharedProcess->process(), site.domain(), LoadedWebArchive::No, [
-                    process = WTF::move(process),
                     shutdownPreventingScope = WTF::move(shutdownPreventingScope),
+                    sharedProcess = Ref { *sharedProcess },
                     continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
                 ] mutable {
-                    continueWithProcessForNavigation(WTF::move(process), nullptr, "Uses shared Web process"_s);
+                    continueWithProcessForNavigation(Ref { sharedProcess->process() }, nullptr, "Uses shared Web process"_s);
                 });
             } else
                 continueWithProcessForNavigation(sharedProcess->process(), nullptr, "Uses shared Web process"_s);
