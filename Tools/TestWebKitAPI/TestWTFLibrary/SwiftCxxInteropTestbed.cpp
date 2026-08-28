@@ -119,6 +119,34 @@ void resetCopyCountingProbeCounts()
     copyCountingProbeCopies() = 0;
 }
 
+static int& liveCountingProbeErrors()
+{
+    static int count = 0;
+    return count;
+}
+
+CountingProbeError::CountingProbeError(ProbeError value)
+    : m_value(value)
+{
+    ++liveCountingProbeErrors();
+}
+
+CountingProbeError::CountingProbeError(const CountingProbeError& other)
+    : m_value(other.m_value)
+{
+    ++liveCountingProbeErrors();
+}
+
+CountingProbeError::~CountingProbeError()
+{
+    --liveCountingProbeErrors();
+}
+
+int liveCountingProbeErrorCount()
+{
+    return liveCountingProbeErrors();
+}
+
 int callIntBoolFunction(bool argument, IntBoolFunction&& function)
 {
     return function(argument);
@@ -261,6 +289,11 @@ int sharedProbeDerefCalls()
     return sharedProbeDerefs();
 }
 
+int sharedProbeRefCount()
+{
+    return sharedProbe().refCount();
+}
+
 void resetSharedProbe()
 {
     sharedProbeRefs() = 0;
@@ -291,6 +324,68 @@ SelfReferentialProbe::~SelfReferentialProbe()
 void callSelfReferentialProbeCompletionHandler(int argument, SelfReferentialProbeCompletionHandler&& completionHandler)
 {
     completionHandler(SelfReferentialProbe { argument });
+}
+
+IntExpected makeIntExpected(int value)
+{
+    return IntExpected { value };
+}
+
+IntExpected makeIntUnexpected(ProbeError error)
+{
+    return IntExpected { makeUnexpected(error) };
+}
+
+CopyCountingProbeExpected makeCopyCountingProbeExpected(int value)
+{
+    // In place, so that the probe the `Expected` holds is the only one this constructed: a test counting
+    // copies is measuring what Swift did, not what building the `Expected` did.
+    return CopyCountingProbeExpected { std::in_place, value };
+}
+
+CopyCountingProbeExpected makeCopyCountingProbeUnexpected(ProbeError error)
+{
+    return CopyCountingProbeExpected { makeUnexpected(error) };
+}
+
+SharedProbeHolderExpected makeSharedProbeHolderExpected()
+{
+    return SharedProbeHolderExpected { SharedProbeHolder { &sharedProbe() } };
+}
+
+SharedProbeHolderExpected makeSharedProbeHolderUnexpected(ProbeError error)
+{
+    return SharedProbeHolderExpected { makeUnexpected(error) };
+}
+
+MoveOnlyProbeExpected makeMoveOnlyProbeExpected(int value)
+{
+    return MoveOnlyProbeExpected { std::in_place, value };
+}
+
+MoveOnlyProbeExpected makeMoveOnlyProbeUnexpected(ProbeError error)
+{
+    return MoveOnlyProbeExpected { makeUnexpected(error) };
+}
+
+SelfReferentialProbeExpected makeSelfReferentialProbeExpected(int value)
+{
+    return SelfReferentialProbeExpected { std::in_place, value };
+}
+
+SelfReferentialProbeExpected makeSelfReferentialProbeUnexpected(ProbeError error)
+{
+    return SelfReferentialProbeExpected { makeUnexpected(error) };
+}
+
+CountedErrorExpected makeCountedErrorExpected(int value)
+{
+    return CountedErrorExpected { std::in_place, value };
+}
+
+CountedErrorExpected makeCountedErrorUnexpected(ProbeError error)
+{
+    return CountedErrorExpected { makeUnexpected(CountingProbeError { error }) };
 }
 
 };

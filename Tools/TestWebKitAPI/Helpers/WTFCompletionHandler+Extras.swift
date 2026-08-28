@@ -156,7 +156,9 @@ extension CxxCompletionHandler where Self: ~Copyable {
 
     /// Creates a `WTF::CompletionHandler` type from a Swift closure.
     ///
-    /// - Parameter body: The Swift closure to use.
+    /// - Parameters:
+    ///   - isolation: The current isolation.
+    ///   - body: The Swift closure to use.
     @safe
     public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping (Argument) -> Void) {
         self.init(box: SwiftCopyingClosureBox(isolation: isolation, body))

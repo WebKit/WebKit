@@ -65,6 +65,42 @@ extension Cxx.SelfReferentialProbeCompletionHandler: @unsafe TestWTFLibrary.CxxC
     public typealias Argument = SwiftCxxInteropTestbed.SelfReferentialProbe
 }
 
+// The simplest `Expected` shape, and the one ``CxxExpected``'s documentation uses as its example.
+extension Cxx.IntExpected: TestWTFLibrary.CxxExpected {}
+
+// Copyable but not trivially copyable: reading this value out has to run its copy constructor.
+extension Cxx.CopyCountingProbeExpected: TestWTFLibrary.CxxExpected {}
+
+// Trivially copyable in C++, but Swift imports the `probe` field as a managed reference, so reading the
+// value has to leave the C++ side's ownership alone.
+extension Cxx.SharedProbeHolderExpected: TestWTFLibrary.CxxExpected {}
+
+// `MoveOnlyProbe` is move-only in C++, so the `Expected` holding one is noncopyable too and its value can
+// only be moved out, which is what `CxxConsumingExpected` is for.
+extension Cxx.MoveOnlyProbeExpected: TestWTFLibrary.CxxConsumingExpected {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation, AlwaysUseLowerCamelCase, NoLeadingUnderscores
+    public static func __take(_ expected: consuming Self) -> Value {
+        Cxx.takeMoveOnlyProbeValue(consuming: expected)
+    }
+}
+
+// Noncopyable, and notices if the value is relocated byte-wise on its way out.
+extension Cxx.SelfReferentialProbeExpected: @unsafe TestWTFLibrary.CxxConsumingExpected {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation, AlwaysUseLowerCamelCase, NoLeadingUnderscores
+    public static func __take(_ expected: consuming Self) -> Value {
+        unsafe Cxx.takeSelfReferentialProbeValue(consuming: expected)
+    }
+}
+
+// An error that counts its own lifetime, so that the failure path -- which holds no value, and so moves
+// none of the counters above -- can be checked at all.
+extension Cxx.CountedErrorExpected: TestWTFLibrary.CxxConsumingExpected {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation, AlwaysUseLowerCamelCase, NoLeadingUnderscores
+    public static func __take(_ expected: consuming Self) -> Value {
+        Cxx.takeCountedErrorValue(consuming: expected)
+    }
+}
+
 // MARK: - Helpers
 
 /// Observed via a weak reference to prove the closure context was released.
@@ -304,6 +340,255 @@ struct SwiftCxxInteropTests {
             recorder.values == [1, 7],
             "a noncopyable argument must be relocated with its move constructor, not by copying its bytes"
         )
+    }
+
+    // MARK: Expected
+
+    @Test
+    func expectedExposesItsValue() async throws {
+        let value = try Cxx.makeIntExpected(3).value
+
+        #expect(value == 3)
+    }
+
+    @Test
+    func unexpectedThrowsItsError() async throws {
+        let unexpected = Cxx.makeIntUnexpected(.TooLarge)
+
+        #expect(!unexpected.has_value())
+
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unexpected.value
+        }
+        #expect(thrown.error == .TooLarge)
+    }
+
+    @Test
+    func readingTheValueLeavesTheExpectedAlone() async throws {
+        let expected = Cxx.makeIntExpected(7)
+
+        // `value` borrows rather than takes, so nothing here should be a one-shot read.
+        let first = try expected.value
+        let second = try expected.value
+
+        #expect(first == 7)
+        #expect(second == 7)
+        #expect(expected.has_value())
+    }
+
+    @Test
+    func readingAnUnexpectedLeavesTheErrorInPlace() async throws {
+        let unexpected = Cxx.makeIntUnexpected(.TooSmall)
+
+        // See readingTheValueLeavesTheExpectedAlone(): the failure path has to be repeatable too.
+        for _ in 0..<2 {
+            let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+                _ = try unexpected.value
+            }
+            #expect(thrown.error == .TooSmall)
+        }
+    }
+
+    // MARK: Copyable, non-trivially-copyable values
+
+    @Test
+    func readingACopyableValueCopiesItExactlyOnce() async throws {
+        Cxx.resetCopyCountingProbeCounts()
+
+        // Sampled rather than assumed to be zero. There is no way to reset a count of live objects, so a
+        // probe stranded by an earlier test would otherwise fail this one and point the reader here
+        // rather than at the leak.
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        do {
+            let expected = Cxx.makeCopyCountingProbeExpected(11)
+            let probe = try expected.value
+
+            // Sampled before the last use of either probe below, so neither can have been released early
+            // by the time these are read.
+            let copies = Cxx.copyCountingProbeCopyCount()
+            let live = Cxx.liveCopyCountingProbeCount() - baseline
+
+            #expect(probe.value() == 11, "Swift should see the value C++ stored")
+            #expect(expected.has_value(), "reading the value should not have emptied the expected")
+            #expect(copies == 1, "exactly one copy should be made for Swift")
+            #expect(live == 2, "the expected should still hold its own probe")
+        }
+
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
+    }
+
+    @Test
+    func theValueOutlivesTheExpectedItWasReadFrom() async throws {
+        Cxx.resetCopyCountingProbeCounts()
+
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        let probe: Cxx.CopyCountingProbe
+        do {
+            let expected = Cxx.makeCopyCountingProbeExpected(12)
+            probe = try expected.value
+        }
+
+        let live = Cxx.liveCopyCountingProbeCount() - baseline
+
+        // The expected -- and the probe it held -- are gone, so a `value` that handed Swift a pointer into
+        // the expected rather than a copy would be reading freed storage here.
+        #expect(probe.value() == 12)
+        #expect(live == 1, "only Swift's copy should still be alive")
+    }
+
+    @Test
+    func readingAnUnexpectedNeverTouchesTheValue() async throws {
+        Cxx.resetCopyCountingProbeCounts()
+
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveCopyCountingProbeCount()
+
+        do {
+            let unexpected = Cxx.makeCopyCountingProbeUnexpected(.TooSmall)
+
+            let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+                _ = try unexpected.value
+            }
+
+            #expect(thrown.error == .TooSmall)
+            #expect(Cxx.copyCountingProbeCopyCount() == 0, "an expected holding an error has no value to copy")
+        }
+
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
+    }
+
+    // MARK: Values holding a managed reference
+
+    @Test
+    func valueHoldingAManagedReferenceLeavesTheCallersCountAlone() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let holder = try Cxx.makeSharedProbeHolderExpected().value
+
+            // See readingACopyableValueCopiesItExactlyOnce(): sampled before the last use of `holder`, so
+            // its reference is certainly still held here.
+            let countWhileHeld = Cxx.sharedProbeRefCount()
+            withExtendedLifetime(holder) {}
+
+            #expect(countWhileHeld == 2, "Swift's copy of the value should hold a reference of its own")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "reading the value must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the read")
+    }
+
+    @Test
+    func readingAnUnexpectedNeverRetainsTheManagedReference() async throws {
+        Cxx.resetSharedProbe()
+
+        do {
+            let unexpected = Cxx.makeSharedProbeHolderUnexpected(.TooSmall)
+
+            let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+                _ = try unexpected.value
+            }
+
+            // A bridge that loaded the value union before checking has_value() would have retained the
+            // shared probe by now.
+            #expect(thrown.error == .TooSmall)
+            #expect(Cxx.sharedProbeRefCount() == 1, "an expected holding an error has no value to retain")
+        }
+
+        #expect(
+            Cxx.sharedProbeRefCalls() == Cxx.sharedProbeDerefCalls(),
+            "reading the error must balance every retain and release it causes"
+        )
+        #expect(Cxx.sharedProbeRefCount() == 1, "the C++ side's own reference must survive the read")
+    }
+
+    // MARK: Noncopyable values
+
+    @Test
+    func noncopyableValueCanBeConsumed() async throws {
+        // See readingACopyableValueCopiesItExactlyOnce().
+        let baseline = Cxx.liveMoveOnlyProbeCount()
+
+        do {
+            let probe = try Cxx.makeMoveOnlyProbeExpected(5).consume()
+
+            let live = Cxx.liveMoveOnlyProbeCount() - baseline
+
+            // A moved-from probe reports -1, so this also proves Swift was handed the destination of the
+            // move rather than its source.
+            #expect(probe.value() == 5)
+            #expect(live == 1, "only the consumed value should still be alive")
+        }
+
+        #expect(
+            Cxx.liveMoveOnlyProbeCount() == baseline,
+            "the consumed value should be destroyed exactly once"
+        )
+    }
+
+    @Test
+    func consumingAnUnexpectedThrowsItsError() async throws {
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try Cxx.makeMoveOnlyProbeUnexpected(.TooLarge).consume()
+        }
+
+        #expect(thrown.error == .TooLarge)
+    }
+
+    @Test
+    func consumingAnUnsafeUnexpectedThrowsItsError() async throws {
+        // consumingAnUnexpectedThrowsItsError() covers the failure path for a value Swift imports as
+        // safe; this covers it for one Swift imports as `@unsafe`.
+        let thrown = try #require(throws: CxxUnexpected<Cxx.ProbeError>.self) {
+            _ = try unsafe Cxx.makeSelfReferentialProbeUnexpected(.TooSmall).consume()
+        }
+
+        #expect(thrown.error == .TooSmall)
+    }
+
+    @Test
+    func consumingAnUnexpectedDestroysTheExpectedItConsumed() async throws {
+        // An expected holding an error holds no value, so none of the value-side counters can see what
+        // the failure path did with the expected it was handed. An error that counts its own lifetime
+        // can: this is what proves `consume()` neither leaks nor double-destroys on the way out.
+        let baseline = Cxx.liveCountingProbeErrorCount()
+
+        do {
+            let thrown = try #require(throws: CxxUnexpected<Cxx.CountingProbeError>.self) {
+                _ = try Cxx.makeCountedErrorUnexpected(.TooLarge).consume()
+            }
+
+            #expect(thrown.error.value() == .TooLarge)
+        }
+
+        #expect(
+            Cxx.liveCountingProbeErrorCount() == baseline,
+            "the failure path should destroy the expected it consumed, exactly once"
+        )
+    }
+
+    @Test
+    func consumedNoncopyableValueIsRelocatedWithItsMoveConstructor() async throws {
+        // The same property noncopyableArgumentIsRelocatedWithItsMoveConstructor() pins, on the way out of
+        // an expected rather than into a completion handler: taking the value has to run the C++ move
+        // constructor, or the probe's pointer into itself is left aimed at storage C++ has abandoned.
+        // takeSelfReferentialProbeValue()'s static assertion is what makes Swift do that.
+        let probe = try unsafe Cxx.makeSelfReferentialProbeExpected(7).consume()
+
+        let interiorPointerIsValid = unsafe probe.interiorPointerIsValid()
+        let valueThroughInteriorPointer = unsafe probe.valueThroughInteriorPointer()
+
+        #expect(
+            interiorPointerIsValid,
+            "a noncopyable value must be relocated with its move constructor, not by copying its bytes"
+        )
+        #expect(valueThroughInteriorPointer == 7)
     }
 }
 

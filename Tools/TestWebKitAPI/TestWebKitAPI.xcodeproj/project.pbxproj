@@ -652,6 +652,7 @@
 				mac/VirtualGamepad.mm,
 				mac/WebKitAgnosticTest.mm,
 				"WTFCompletionHandler+Extras.swift",
+				"WTFExpected+Extras.swift",
 			);
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 		};
@@ -661,6 +662,7 @@
 				cocoa/UtilitiesCocoa.mm,
 				Counters.cpp,
 				"WTFCompletionHandler+Extras.swift",
+				"WTFExpected+Extras.swift",
 			);
 			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
 		};

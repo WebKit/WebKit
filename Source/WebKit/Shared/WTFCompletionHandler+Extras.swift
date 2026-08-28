@@ -197,7 +197,9 @@ extension CxxVoidCompletionHandler where Self: ~Copyable {
 
     /// Creates a `WTF::CompletionHandler` type from a Swift closure.
     ///
-    /// - Parameter body: The Swift closure to use.
+    /// - Parameters:
+    ///   - isolation: The current isolation.
+    ///   - body: The Swift closure to use.
     @safe
     init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping () -> Void) {
         self.init(box: SwiftVoidClosureBox(isolation: isolation, body))
