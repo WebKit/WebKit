@@ -111,8 +111,8 @@ private:
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
     // Receivers.
-    void makeCredential(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PublicKeyCredentialCreationOptions&&, WebCore::MediationRequirement, RequestCompletionHandler&&);
-    void getAssertion(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&&, RequestCompletionHandler&&);
+    void makeCredential(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, WebCore::PublicKeyCredentialCreationOptions&&, WebCore::MediationRequirement, RequestCompletionHandler&&);
+    void getAssertion(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&&, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
     void isConditionalMediationAvailable(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
     void getClientCapabilities(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, CapabilitiesCompletionHandler&&);
