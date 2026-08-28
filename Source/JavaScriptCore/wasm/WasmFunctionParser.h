@@ -247,13 +247,8 @@ private:
     [[nodiscard]] PartialResult parseUnreachableExpression();
     [[nodiscard]] PartialResult unifyControl(ArgumentList&, unsigned level);
     [[nodiscard]] PartialResult checkLocalInitialized(uint32_t);
-
-    enum FallThroughStateTag {
-        NewSiblingBlock,
-        MergePoint,
-    };
-
-    [[nodiscard]] PartialResult checkBlockFallthrough(const ControlType&, FallThroughStateTag);
+    [[nodiscard]] PartialResult checkArgumentsAndWiden(const BlockSignature&);
+    [[nodiscard]] PartialResult checkResultsAndWiden(const BlockSignature&);
     [[nodiscard]] PartialResult endBlockAndCheckResultTypes(ControlEntry&);
 
     enum BranchConditionalityTag {
@@ -659,12 +654,9 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
             const uint32_t argumentCount = inlineSignature.argumentCount();
-            WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+            WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
             const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-            for (unsigned i = 0; i < argumentCount; ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
             auto args = m_expressionStack.mutableSpan().last(argumentCount);
             ControlType control;
@@ -729,12 +721,9 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
             const uint32_t argumentCount = inlineSignature.argumentCount();
-            WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+            WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
             const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-            for (unsigned i = 0; i < argumentCount; ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
             auto args = m_expressionStack.mutableSpan().last(argumentCount);
             ControlType control;
@@ -1907,21 +1896,40 @@ auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialRe
 }
 
 template<typename Context>
-auto FunctionParser<Context>::checkBlockFallthrough(const ControlType& controlData, FallThroughStateTag fallthrough) -> PartialResult
+auto FunctionParser<Context>::checkArgumentsAndWiden(const BlockSignature& blockSignature) -> PartialResult
 {
-    const auto& blockSignature = controlData.signature();
+    const uint32_t argumentCount = blockSignature.argumentCount();
+    const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+    WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for block. Block expects "_s, argumentCount, ", but only "_s, sliceSize, " were present. Block has signature: "_s, blockSignature);
+    const uint32_t offset = m_expressionStack.size() - argumentCount;
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        auto& slot = m_expressionStack[offset + i];
+        const auto expectedType = blockSignature.argumentType(i);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(slot.type(), expectedType), "Block expects the argument at index "_s, i, " to be "_s, expectedType, " but argument has type "_s, slot.type());
+        // Widen the operand to the block's declared parameter type, per the spec's
+        // push_ctrl(op, in, out) doing push_vals(in): the block body must be validated
+        // against its declared parameter types, not the narrower subtype that flowed in.
+        // https://webassembly.github.io/spec/core/bikeshed/#validation-of-opcode-sequences
+        slot.setType(expectedType);
+    }
+
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::checkResultsAndWiden(const BlockSignature& blockSignature) -> PartialResult
+{
     const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
     WASM_VALIDATOR_FAIL_IF(blockSignature.returnCount() != sliceSize, " block with type: "_s, blockSignature, " returns: "_s, blockSignature.returnCount(), " but stack has: "_s, sliceSize, " values"_s);
     for (unsigned i = 0; i < blockSignature.returnCount(); ++i) {
-        const auto actualType = m_expressionStack[m_currentStackBegin + i].type();
+        auto& slot = m_expressionStack[m_currentStackBegin + i];
         const auto expectedType = blockSignature.returnType(i);
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(actualType, expectedType), "control flow returns with unexpected type. "_s, actualType, " is not a "_s, expectedType);
-        // The spec requires the output type of a structured control instruction to be
-        // the result type from its signature, even when the fallthrough value is a subtype.
-        // FIXME: We should support some sort of abstract interpretation so this can be the
-        // least upper bound of the merging CFG.
-        if (fallthrough == MergePoint)
-            m_expressionStack[m_currentStackBegin + i].setType(expectedType);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(slot.type(), expectedType), "control flow returns with unexpected type. "_s, slot.type(), " is not a "_s, expectedType);
+        // Widen the operand to the block's declared result type, per the spec's
+        // end doing push_vals(frame.end_types): results leave the block as the
+        // declared type, not the narrower subtype that reached the end.
+        // https://webassembly.github.io/spec/core/bikeshed/#validation-of-opcode-sequences
+        slot.setType(expectedType);
     }
 
     return { };
@@ -1933,7 +1941,7 @@ auto FunctionParser<Context>::endBlockAndCheckResultTypes(ControlEntry& entry) -
     // Widen each result to the block signature type before ending the block.
     // FIXME: mutating the expression stack for the block result is effectful, but there's no
     // better API yet. See https://bugs.webkit.org/show_bug.cgi?id=164353
-    WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(entry.controlData, MergePoint));
+    WASM_FAIL_IF_HELPER_FAILS(checkResultsAndWiden(entry.controlData.signature()));
     const uint32_t parentBegin = parentEntryBegin();
     auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
     // We should avoid adding other callsites of endBlock. Since a new block is a sign of a
@@ -3491,15 +3499,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get block's signature"_s);
 
-        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
         const uint32_t argumentCount = inlineSignature.argumentCount();
-
-        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for block. Block expects ", argumentCount, ", but only ", sliceSize, " were present. Block has inlineSignature: ", inlineSignature);
-        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            Type type = m_expressionStack[parentStackHeight + i].type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
-        }
+        WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
 
         auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType block;
@@ -3512,15 +3513,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get loop's signature"_s);
 
-        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
         const uint32_t argumentCount = inlineSignature.argumentCount();
-
-        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for loop block. Loop expects ", argumentCount, ", but only ", sliceSize, " were present. Loop has inlineSignature: ", inlineSignature);
+        WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
         const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            Type type = m_expressionStack[parentStackHeight + i].type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
-        }
 
         auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType loop;
@@ -3539,13 +3534,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "if condition"_s);
 
         WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "if condition must be i32, got ", condition.type());
-        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
         const uint32_t argumentCount = inlineSignature.argumentCount();
-
-        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+        WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
         const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-        for (unsigned i = 0; i < argumentCount; ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
         auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType control;
@@ -3566,7 +3557,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
+        WASM_FAIL_IF_HELPER_FAILS(checkResultsAndWiden(controlEntry.controlData.signature()));
         auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, ifBranchResults));
         m_expressionStack.shrink(m_currentStackBegin);
@@ -3580,13 +3571,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try's signature"_s);
 
-        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
         const uint32_t argumentCount = inlineSignature.argumentCount();
-
-        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for try block. Try expects ", argumentCount, ", but only ", sliceSize, " were present. Try block has signature: ", inlineSignature);
+        WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
         const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-        for (unsigned i = 0; i < argumentCount; ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
         auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType control;
@@ -3607,7 +3594,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlEntry& controlEntry = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
+        WASM_FAIL_IF_HELPER_FAILS(checkResultsAndWiden(controlEntry.controlData.signature()));
 
         ResultList results;
         auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
@@ -3633,7 +3620,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry& controlEntry = m_controlStack.last();
 
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
-        WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(controlEntry.controlData, NewSiblingBlock));
+        WASM_FAIL_IF_HELPER_FAILS(checkResultsAndWiden(controlEntry.controlData.signature()));
 
         auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addCatchAll(preCatchStack, controlEntry.controlData));
@@ -3649,14 +3636,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature"_s);
 
-        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
         const uint32_t argumentCount = inlineSignature.argumentCount();
-        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for block. Block expects ", argumentCount, ", but only ", sliceSize, " were present. Block has inlineSignature: ", inlineSignature);
-        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            Type type = m_expressionStack[parentStackHeight + i].type();
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
-        }
+        WASM_FAIL_IF_HELPER_FAILS(checkArgumentsAndWiden(inlineSignature));
 
         uint32_t numberOfCatches;
         Vector<CatchHandler> targets;
@@ -3871,7 +3852,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case End: {
         ControlEntry data = m_controlStack.takeLast();
         if (ControlType::isIf(data.controlData)) {
-            WASM_FAIL_IF_HELPER_FAILS(checkBlockFallthrough(data.controlData, NewSiblingBlock));
+            WASM_FAIL_IF_HELPER_FAILS(checkResultsAndWiden(data.controlData.signature()));
             auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, ifBranchResults));
             m_expressionStack.shrink(m_currentStackBegin);
