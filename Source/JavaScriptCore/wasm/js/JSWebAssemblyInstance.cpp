@@ -87,7 +87,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     , m_vm(&vm)
     , m_jsModule(module, WriteBarrierEarlyInit)
     , m_moduleRecord(moduleRecord, WriteBarrierEarlyInit)
-    , m_memories(cachedMemoryBaseSizePairCount(module->module().moduleInformation()))
+    , m_memories(cachedMemoryCount(module->module().moduleInformation()))
     , m_tables(module->module().moduleInformation().tableCount())
     , m_module(module->module())
     , m_moduleInformation(module->moduleInformation())
@@ -102,7 +102,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) WasmOrJSImportableFunctionCallLinkInfo();
 
-    zeroSpan(cachedMemoryBaseSizePairs());
+    zeroSpan(cachedMemories());
 
     for (unsigned i = 0; i < m_moduleInformation->memoryCount(); ++i) {
         if (m_moduleInformation->memory(i).isMemory64())
