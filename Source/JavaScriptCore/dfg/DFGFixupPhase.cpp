@@ -1373,9 +1373,8 @@ private:
                         ArrayModes arrayModes = 0;
                         {
                             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                            ConcurrentJSLocker locker(profiledBlock->m_lock);
-                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
-                                arrayModes = arrayProfile->observedArrayModes(locker);
+                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex()))
+                                arrayModes = arrayProfile->observedArrayModes();
                         }
                         auto info = refineArrayModesForMultiGetByVal(node, arrayModes);
                         if (!info)
@@ -1564,9 +1563,8 @@ private:
                         ArrayModes arrayModes = 0;
                         {
                             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-                            ConcurrentJSLocker locker(profiledBlock->m_lock);
-                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex()))
-                                arrayModes = arrayProfile->observedArrayModes(locker);
+                            if (ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex()))
+                                arrayModes = arrayProfile->observedArrayModes();
                         }
                         if (auto result = refineArrayModesForMultiPutByVal(node, arrayModes)) {
                             if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
@@ -5175,11 +5173,10 @@ private:
         ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions, Array::Read);
         {
             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
-            ConcurrentJSLocker locker(profiledBlock->m_lock);
-            ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex());
-            if (arrayProfile) {
-                arrayProfile->computeUpdatedPrediction(profiledBlock);
-                arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
+            ArrayProfile* liveProfile = profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex());
+            if (liveProfile) {
+                liveProfile->computeUpdatedPrediction(profiledBlock);
+                arrayMode = ArrayMode::fromObserved(*liveProfile, Array::Read, false);
                 if (arrayMode.type() == Array::Unprofiled) {
                     // For normal array operations, it makes sense to treat Unprofiled
                     // accesses as ForceExit and get more data rather than using

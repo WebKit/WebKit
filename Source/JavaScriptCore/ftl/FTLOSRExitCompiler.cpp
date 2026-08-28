@@ -264,7 +264,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
-            if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(ConcurrentJSLocker(codeBlock->m_lock), codeOrigin.bytecodeIndex())) {
+            if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(codeOrigin.bytecodeIndex())) {
                 jit.move(CCallHelpers::TrustedImmPtr(arrayProfile), GPRInfo::regT3);
                 jit.load32(MacroAssembler::Address(GPRInfo::regT0, JSCell::structureIDOffset()), GPRInfo::regT1);
                 jit.store32(GPRInfo::regT1, CCallHelpers::Address(GPRInfo::regT3, ArrayProfile::offsetOfSpeculationFailureStructureID()));

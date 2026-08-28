@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/ConcurrentJSLock.h>
 #include <JavaScriptCore/Structure.h>
 #include <wtf/OptionSet.h>
 
@@ -228,9 +227,9 @@ public:
 
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
     void setMayBeLargeTypedArray() { m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray); }
-    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
+    bool mayBeLargeTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
 
-    bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
+    bool mayBeResizableOrGrowableSharedTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 
     StructureID* addressOfSpeculationFailureStructureID() LIFETIME_BOUND { return &m_speculationFailureStructureID; }
     ArrayModes* addressOfArrayModes() LIFETIME_BOUND { return &m_observedArrayModes; }
@@ -252,15 +251,15 @@ public:
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
     void NODELETE observeIndexedRead(JSCell*, unsigned index);
 
-    ArrayModes observedArrayModes(const ConcurrentJSLocker&) const { return m_observedArrayModes; }
-    bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses);; }
-    
-    bool mayStoreToHole(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole); }
-    bool outOfBounds(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds); }
-    
-    bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return !m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures); }
+    ArrayModes observedArrayModes() const { return m_observedArrayModes; }
+    bool mayInterceptIndexedAccesses() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses); }
 
-    bool mayBeRegExpMatchesArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeRegExpMatchesArray); }
+    bool mayStoreToHole() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole); }
+    bool outOfBounds() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds); }
+
+    bool usesOriginalArrayStructures() const { return !m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures); }
+
+    bool mayBeRegExpMatchesArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeRegExpMatchesArray); }
 
     CString briefDescription(CodeBlock*);
     CString briefDescriptionWithoutUpdating();

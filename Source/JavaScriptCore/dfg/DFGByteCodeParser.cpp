@@ -1340,34 +1340,26 @@ private:
     ArrayMode getArrayMode(Array::Action action)
     {
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeIndex(m_currentInstruction));
         if (!profile)
             return { };
-        return getArrayMode(locker, *profile, action);
+        return getArrayMode(*profile, action);
     }
 
-    ArrayMode getArrayMode(ArrayProfile& profile, Array::Action action)
+    ArrayMode getArrayMode(ArrayProfile& liveProfile, Array::Action action)
     {
-        ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-        return getArrayMode(locker, profile, action);
-    }
-
-    ArrayMode getArrayMode(const ConcurrentJSLocker& locker, ArrayProfile& profile, Array::Action action)
-    {
-        profile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
-        bool makeSafe = profile.outOfBounds(locker);
-        return ArrayMode::fromObserved(locker, &profile, action, makeSafe);
+        liveProfile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
+        ArrayProfile profile = liveProfile;
+        return ArrayMode::fromObserved(profile, action, profile.outOfBounds());
     }
 
     bool profiledArrayMayBeRegExpMatchesArray()
     {
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeIndex(m_currentInstruction));
         if (!profile)
             return false;
-        return profile->mayBeRegExpMatchesArray(locker);
+        return profile->mayBeRegExpMatchesArray();
     }
 
     Node* makeSafe(Node* node)

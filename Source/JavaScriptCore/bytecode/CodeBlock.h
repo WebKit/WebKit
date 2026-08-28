@@ -451,7 +451,7 @@ public:
 
     bool NODELETE couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
 
-    ArrayProfile* NODELETE getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex);
+    ArrayProfile* NODELETE getArrayProfile(BytecodeIndex);
 
     // Exception handling support
 

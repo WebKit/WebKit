@@ -209,7 +209,7 @@ public:
         return ArrayMode(word);
     }
     
-    static ArrayMode fromObserved(const ConcurrentJSLocker&, ArrayProfile*, Array::Action, bool makeSafe);
+    static ArrayMode fromObserved(ArrayProfile, Array::Action, bool makeSafe);
 
     ArrayMode withType(Array::Type type) const
     {
@@ -246,31 +246,31 @@ public:
         return ArrayMode(type(), arrayClass, speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
     }
 
-    static Array::Speculation speculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe)
+    static Array::Speculation speculationFromProfile(ArrayProfile profile, bool makeSafe)
     {
         if (makeSafe)
             return Array::OutOfBounds;
-        else if (profile->mayStoreToHole(locker))
+        else if (profile.mayStoreToHole())
             return Array::ToHole;
         else
             return Array::InBounds;
     }
 
-    ArrayMode withSpeculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withSpeculationFromProfile(ArrayProfile profile, bool makeSafe) const
     {
-        return withSpeculation(speculationFromProfile(locker, profile, makeSafe));
+        return withSpeculation(speculationFromProfile(profile, makeSafe));
     }
 
-    ArrayMode withProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withProfile(ArrayProfile profile, bool makeSafe) const
     {
         Array::Class myArrayClass;
         if (isJSArray()) {
-            if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
+            if (profile.usesOriginalArrayStructures() && benefitsFromOriginalArray()) {
                 switch (type()) {
                 case Array::Int32:
                 case Array::Double:
                 case Array::Contiguous: {
-                    ArrayModes arrayModes = profile->observedArrayModes(locker);
+                    ArrayModes arrayModes = profile.observedArrayModes();
                     if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
                         myArrayClass = Array::OriginalCopyOnWriteArray;
                     else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
@@ -293,11 +293,9 @@ public:
         } else
             myArrayClass = arrayClass();
 
-        Array::Speculation speculation = speculationFromProfile(locker, profile, makeSafe);
+        Array::Speculation speculation = speculationFromProfile(profile, makeSafe);
 
-        bool mayBeLargeTypedArray = profile->mayBeLargeTypedArray(locker);
-        bool mayBeResizableOrGrowableSharedTypedArray = profile->mayBeResizableOrGrowableSharedTypedArray(locker);
-        return withArrayClassAndSpeculation(myArrayClass, speculation, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray);
+        return withArrayClassAndSpeculation(myArrayClass, speculation, profile.mayBeLargeTypedArray(), profile.mayBeResizableOrGrowableSharedTypedArray());
     }
     
     static constexpr SpeculatedType unusedIndexSpeculatedType = SpecInt32Only;

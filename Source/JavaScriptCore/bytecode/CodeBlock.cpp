@@ -2922,7 +2922,7 @@ void CodeBlock::didFailFTLCompilation()
 
 #endif
 
-ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
+ArrayProfile* CodeBlock::getArrayProfile(BytecodeIndex bytecodeIndex)
 {
     auto instruction = instructions().at(bytecodeIndex);
 
