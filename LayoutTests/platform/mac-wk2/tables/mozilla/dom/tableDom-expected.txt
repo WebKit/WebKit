@@ -30,8 +30,7 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 25x13
               text run at (0,0) width 25: "Do It"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,37) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,37) size 0x18
       RenderTable {TABLE} at (0,55) size 63x52 [bgcolor=#FFA500] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 61x50
           RenderTableRow {TR} at (0,2) size 61x22
@@ -45,8 +44,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (31,26) size 28x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x18
                 text run at (2,2) width 24: "c22"
-      RenderBlock (anonymous) at (0,107) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,107) size 0x18
 layer at (162,12) size 37x13
   RenderBlock {DIV} at (7,4) size 37x13
     RenderText {#text} at (0,0) size 7x13

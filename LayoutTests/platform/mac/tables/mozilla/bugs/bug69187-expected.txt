@@ -12,9 +12,8 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 174: "Personal Friends"
           RenderTableRow {TR} at (0,55) size 249x91
             RenderTableCell {TD} at (2,55) size 187x91 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 183x0
-                RenderInline {FONT} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
+              RenderInline {FONT} at (2,2) size 0x0
+              RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (2,2) size 183x18
                 RenderText {#text} at (0,0) size 183x18
                   text run at (0,0) width 183: "Alisha - Password-Protected"

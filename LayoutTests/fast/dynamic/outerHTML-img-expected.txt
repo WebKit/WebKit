@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 517x18
           text run at (0,0) width 517: "If the test fails, you'll see a Mozilla logo; if it succeeds, you'll see an Apple logo."
-      RenderBlock (anonymous) at (0,68) size 784x64
-        RenderImage {IMG} at (0,0) size 52x64
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,68) size 52x64
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

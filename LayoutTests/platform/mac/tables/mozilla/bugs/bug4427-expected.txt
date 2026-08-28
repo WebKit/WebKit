@@ -3,10 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 781x36
-          text run at (0,0) width 781: "the following is not the bug but is related. Nav put's the images in the 2nd cell on the same line. Border widths of cells are"
-          text run at (0,18) width 83: "suspect here."
+      RenderText {#text} at (0,0) size 781x36
+        text run at (0,0) width 781: "the following is not the bug but is related. Nav put's the images in the 2nd cell on the same line. Border widths of cells are"
+        text run at (0,18) width 83: "suspect here."
       RenderTable {TABLE} at (0,36) size 28x6 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 26x4
           RenderTableRow {TR} at (0,0) size 26x4
@@ -15,10 +14,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (4,0) size 22x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 10x2
               RenderImage {IMG} at (11,1) size 10x2
-      RenderBlock (anonymous) at (0,42) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 665x18
-          text run at (0,18) width 665: "the following is related to the bug. Nav put's the images in the last cell of the last table on the same line."
+      RenderBR {BR} at (0,42) size 0x18
+      RenderText {#text} at (0,60) size 665x18
+        text run at (0,60) width 665: "the following is related to the bug. Nav put's the images in the last cell of the last table on the same line."
       RenderTable {TABLE} at (0,78) size 700x32
         RenderTableSection {TBODY} at (0,0) size 700x32
           RenderTableRow {TR} at (0,0) size 700x32
@@ -72,8 +70,7 @@ layer at (0,0) size 800x600
                       RenderImage {IMG} at (0,18) size 525x1
                       RenderBR {BR} at (525,5) size 0x18
                       RenderImage {IMG} at (0,19) size 525x2
-      RenderBlock (anonymous) at (0,110) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,110) size 0x18
       RenderTable {TABLE} at (0,128) size 427x199 [bgcolor=#CCCCCC] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 425x197
           RenderTableRow {TR} at (0,1) size 425x76

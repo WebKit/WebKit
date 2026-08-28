@@ -18,23 +18,21 @@ layer at (0,0) size 800x600
           RenderText {#text} at (630,0) size 18x18
             text run at (630,0) width 18 RTL: "ise"
         RenderBlock {DIV} at (25,43) size 694x47
-          RenderBlock (anonymous) at (0,0) size 694x29
-            RenderText {#text} at (0,11) size 30x18
-              text run at (0,11) width 30: "A W"
-            RenderInline {DIV} at (29,11) size 15x18
-              RenderText {#text} at (29,11) size 15x18
-                text run at (29,11) width 15: "or"
-            RenderText {#text} at (43,11) size 44x18
-              text run at (43,11) width 44: "d With"
-            RenderImage {IMG} at (86,0) size 26x25
-            RenderText {#text} at (111,11) size 64x18
-              text run at (111,11) width 64: "An Image"
+          RenderText {#text} at (0,11) size 30x18
+            text run at (0,11) width 30: "A W"
+          RenderInline {DIV} at (29,11) size 15x18
+            RenderText {#text} at (29,11) size 15x18
+              text run at (29,11) width 15: "or"
+          RenderText {#text} at (43,11) size 44x18
+            text run at (43,11) width 44: "d With"
+          RenderImage {IMG} at (86,0) size 26x25
+          RenderText {#text} at (111,11) size 64x18
+            text run at (111,11) width 64: "An Image"
           RenderBlock {DIV} at (0,29) size 694x0
-          RenderBlock (anonymous) at (0,29) size 694x18
-            RenderText {#text} at (0,0) size 36x18
-              text run at (0,0) width 36: "In Be"
-            RenderInline {SPAN} at (35,0) size 17x18
-              RenderText {#text} at (35,0) size 17x18
-                text run at (35,0) width 17: "tw"
-            RenderText {#text} at (51,0) size 23x18
-              text run at (51,0) width 23: "een"
+          RenderText {#text} at (0,29) size 36x18
+            text run at (0,29) width 36: "In Be"
+          RenderInline {SPAN} at (35,29) size 17x18
+            RenderText {#text} at (35,29) size 17x18
+              text run at (35,29) width 17: "tw"
+          RenderText {#text} at (51,29) size 23x18
+            text run at (51,29) width 23: "een"

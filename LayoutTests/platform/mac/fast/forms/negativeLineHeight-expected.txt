@@ -3,10 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 680x18
-          text run at (0,0) width 680: "The textarea below should have standard line-height because textareas should ignore negative line-heights"
-        RenderBR {BR} at (679,0) size 1x18
+      RenderText {#text} at (0,0) size 680x18
+        text run at (0,0) width 680: "The textarea below should have standard line-height because textareas should ignore negative line-heights"
+      RenderBR {BR} at (679,0) size 1x18
       RenderBlock {P} at (0,34) size 784x236
         RenderText {#text} at (0,0) size 84x18
           text run at (0,0) width 84: "TEXTAREA"

@@ -14,15 +14,13 @@ layer at (0,0) size 785x1360
           text run at (140,15) width 1: " "
           text run at (0,30) width 149: "TABLE {width: 50%;}"
           text run at (148,30) width 1: " "
-      RenderBlock (anonymous) at (0,102) size 769x50
-        RenderImage {IMG} at (0,0) size 50x50
-        RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,102) size 50x50
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,168) size 769x18
         RenderText {#text} at (0,0) size 291x18
           text run at (0,0) width 291: "The square above should be fifty pixels wide."
-      RenderBlock (anonymous) at (0,202) size 769x385
-        RenderImage {IMG} at (0,0) size 385x385
-        RenderText {#text} at (0,0) size 0x0
+      RenderImage {IMG} at (0,202) size 385x385
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,602) size 769x19
         RenderText {#text} at (0,0) size 683x18
           text run at (0,0) width 683: "The square above should be half as wide as the image's parent element (either the BODY or the table cell)."
@@ -51,15 +49,13 @@ layer at (0,0) size 785x1360
               RenderText {#text} at (4,268) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 371x556 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (4,4) size 363x50
-                RenderImage {IMG} at (0,0) size 50x50
-                RenderText {#text} at (0,0) size 0x0
+              RenderImage {IMG} at (4,4) size 50x50
+              RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,70) size 363x18
                 RenderText {#text} at (0,0) size 291x18
                   text run at (0,0) width 291: "The square above should be fifty pixels wide."
-              RenderBlock (anonymous) at (4,104) size 363x182
-                RenderImage {IMG} at (0,0) size 182x182
-                RenderText {#text} at (0,0) size 0x0
+              RenderImage {IMG} at (4,104) size 182x182
+              RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,301) size 363x37
                 RenderText {#text} at (0,0) size 353x36
                   text run at (0,0) width 353: "The square above should be half as wide as the image's"

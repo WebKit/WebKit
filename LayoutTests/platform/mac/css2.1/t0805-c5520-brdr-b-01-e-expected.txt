@@ -29,9 +29,8 @@ layer at (0,0) size 800x332
                     RenderTableCell {TD} at (2,2) size 64x28 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,4) size 62x19
                         text run at (1,4) width 62: "HERE \x{21E9}"
-              RenderBlock (anonymous) at (1,33) size 68x24
-                RenderText {#text} at (3,3) size 62x19
-                  text run at (3,3) width 62: "HERE \x{21E9}"
+              RenderText {#text} at (4,36) size 62x19
+                text run at (4,36) width 62: "HERE \x{21E9}"
       RenderBlock {UL} at (0,168) size 784x132
         RenderListItem {LI} at (40,0) size 744x80 [border: none (2px solid #0000FF) none]
           RenderListMarker at (-17,0) size 7x18: bullet
@@ -48,9 +47,8 @@ layer at (0,0) size 800x332
               RenderListMarker at (-17,0) size 7x18: white bullet
               RenderText {#text} at (0,0) size 77x18
                 text run at (0,0) width 77: "dummy text"
-          RenderBlock (anonymous) at (0,54) size 744x24
-            RenderText {#text} at (0,3) size 62x19
-              text run at (0,3) width 62: "HERE \x{21E9}"
+          RenderText {#text} at (0,57) size 62x19
+            text run at (0,57) width 62: "HERE \x{21E9}"
         RenderListItem {LI} at (40,80) size 744x26 [border: none (2px solid #0000FF) none]
           RenderListMarker at (-17,3) size 7x19: bullet
           RenderText {#text} at (0,3) size 62x19

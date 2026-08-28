@@ -1,13 +1,14 @@
 Hello
 
 PASS cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins
-FAIL cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 1 assert_array_equals: elementsFromPoint should get sequence [inner, outer, body, html] lengths differ, expected array [Element node <div id="inner" style="width:100px; height:100px; margin-..., Element node <div id="outer" style="background:yellow">
+FAIL cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 1 assert_array_equals: elementsFromPoint should get sequence [inner, outer, body, html] expected property 0 to be Element node <div id="inner" style="width:100px; height:100px; margin-... but got Element node <div id="outer" style="background:yellow">
+  <div id="inn... (expected array [Element node <div id="inner" style="width:100px; height:100px; margin-..., Element node <div id="outer" style="background:yellow">
   <div id="inn..., Element node <body>
 <div id="outer" style="background:yellow">
   <div ..., Element node <html><head><meta charset="utf-8">
-<title>cssom-view - el...] length 4, got [Element node <div id="outer" style="background:yellow">
-  <div id="inn..., Element node <div id="inner" style="width:100px; height:100px; margin-..., [...], Element node <body>
+<title>cssom-view - el...] got [Element node <div id="outer" style="background:yellow">
+  <div id="inn..., Element node <div id="inner" style="width:100px; height:100px; margin-..., Element node <body>
 <div id="outer" style="background:yellow">
   <div ..., Element node <html><head><meta charset="utf-8">
-<title>cssom-view - el...] length 5
+<title>cssom-view - el...])
 

@@ -29,10 +29,9 @@ layer at (0,0) size 800x555
                 RenderText {#text} at (19,-1) size 38x21
                   text run at (19,0) width 38: "links"
       RenderBlock {DIV} at (3,86) size 680x339
-        RenderBlock (anonymous) at (16,16) size 648x19
-          RenderText {#text} at (0,-1) size 510x21
-            text run at (0,0) width 227: "This text is not in the form. "
-            text run at (226,0) width 284: "The form should be indented 40px."
+        RenderText {#text} at (16,15) size 510x21
+          text run at (16,15) width 227: "This text is not in the form. "
+          text run at (242,15) width 284: "The form should be indented 40px."
         RenderBlock {FORM} at (96,35) size 568x288
           RenderBlock {P} at (0,0) size 568x64
             RenderText {#text} at (0,6) size 541x52

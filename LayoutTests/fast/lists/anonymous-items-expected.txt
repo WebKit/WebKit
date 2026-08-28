@@ -40,9 +40,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "one"
         RenderBlock {DIV} at (40,18) size 744x36
-          RenderBlock (anonymous) at (0,0) size 744x18
-            RenderText {#text} at (0,0) size 21x18
-              text run at (0,0) width 21: "div"
+          RenderText {#text} at (0,0) size 21x18
+            text run at (0,0) width 21: "div"
           RenderListItem at (0,18) size 744x18
             RenderListMarker at (-16,0) size 16x18: "2"
             RenderText at (0,0) size 37x18
@@ -61,9 +60,8 @@ layer at (0,0) size 800x600
             RenderListMarker at (-16,0) size 16x18: "2"
             RenderText at (0,0) size 37x18
               text run at (0,0) width 37: "TWO"
-          RenderBlock (anonymous) at (0,18) size 744x18
-            RenderText {#text} at (0,0) size 21x18
-              text run at (0,0) width 21: "div"
+          RenderText {#text} at (0,18) size 21x18
+            text run at (0,18) width 21: "div"
         RenderListItem {LI} at (40,54) size 744x18
           RenderListMarker at (-16,0) size 16x18: "3"
           RenderText {#text} at (0,0) size 32x18

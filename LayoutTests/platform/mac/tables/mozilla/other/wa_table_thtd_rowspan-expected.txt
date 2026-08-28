@@ -16,32 +16,31 @@ layer at (0,0) size 785x2358
             RenderText {#text} at (0,0) size 353x28
               text run at (0,0) width 353: "Table: <TH> & <TD> ROWSPAN"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,149) size 769x55
-        RenderText {#text} at (0,0) size 277x18
-          text run at (0,0) width 277: "This acceptance test case tests the optional "
-        RenderInline {B} at (276,0) size 43x18
-          RenderText {#text} at (276,0) size 43x18
-            text run at (276,0) width 43: "<TH>"
-        RenderText {#text} at (318,0) size 21x18
-          text run at (318,0) width 21: " & "
-        RenderInline {B} at (338,0) size 42x18
-          RenderText {#text} at (338,0) size 42x18
-            text run at (338,0) width 42: "<TD>"
-        RenderText {#text} at (379,0) size 28x18
-          text run at (379,0) width 28: " tag "
-        RenderInline {B} at (406,0) size 82x18
-          RenderText {#text} at (406,0) size 82x18
-            text run at (406,0) width 82: "ROWSPAN"
-        RenderText {#text} at (0,0) size 739x36
-          text run at (487,0) width 109: " attribute which, "
-          text run at (595,0) width 144: "when placed in a table"
-          text run at (0,18) width 563: "header or data tag, specifies how many rows the table header or data cell will span. The "
-        RenderInline {B} at (562,18) size 82x18
-          RenderText {#text} at (562,18) size 82x18
-            text run at (562,18) width 82: "ROWSPAN"
-        RenderText {#text} at (0,18) size 754x36
-          text run at (643,18) width 111: " attribute is set to"
-          text run at (0,36) width 494: "an integer value equal the number of rows the table header or data cell spans."
+      RenderText {#text} at (0,149) size 277x19
+        text run at (0,149) width 277: "This acceptance test case tests the optional "
+      RenderInline {B} at (276,149) size 43x19
+        RenderText {#text} at (276,149) size 43x19
+          text run at (276,149) width 43: "<TH>"
+      RenderText {#text} at (318,149) size 21x19
+        text run at (318,149) width 21: " & "
+      RenderInline {B} at (338,149) size 42x19
+        RenderText {#text} at (338,149) size 42x19
+          text run at (338,149) width 42: "<TD>"
+      RenderText {#text} at (379,149) size 28x19
+        text run at (379,149) width 28: " tag "
+      RenderInline {B} at (406,149) size 82x19
+        RenderText {#text} at (406,149) size 82x19
+          text run at (406,149) width 82: "ROWSPAN"
+      RenderText {#text} at (0,149) size 739x37
+        text run at (487,149) width 109: " attribute which, "
+        text run at (595,149) width 144: "when placed in a table"
+        text run at (0,167) width 563: "header or data tag, specifies how many rows the table header or data cell will span. The "
+      RenderInline {B} at (562,167) size 82x19
+        RenderText {#text} at (562,167) size 82x19
+          text run at (562,167) width 82: "ROWSPAN"
+      RenderText {#text} at (0,167) size 754x37
+        text run at (643,167) width 111: " attribute is set to"
+        text run at (0,185) width 494: "an integer value equal the number of rows the table header or data cell spans."
       RenderBlock {P} at (0,219) size 769x19
         RenderInline {B} at (0,0) size 120x18
           RenderText {#text} at (0,0) size 120x18
@@ -141,8 +140,7 @@ layer at (0,0) size 785x2358
                       text run at (11,29) width 61: "value> tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,608) size 769x137
-        RenderBlock (anonymous) at (0,0) size 769x18
-          RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,0) size 0x18
         RenderTable {TABLE} at (0,18) size 693x118 [bgcolor=#FFD700] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 691x116
             RenderTableRow {TR} at (0,2) size 691x112
@@ -500,8 +498,7 @@ layer at (0,0) size 785x2358
                       text run at (11,29) width 21: "tag)"
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1185) size 769x137
-        RenderBlock (anonymous) at (0,0) size 769x18
-          RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,0) size 0x18
         RenderTable {TABLE} at (0,18) size 693x118 [bgcolor=#FFD700] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 691x116
             RenderTableRow {TR} at (0,2) size 691x112
@@ -1313,14 +1310,13 @@ layer at (0,0) size 785x2358
                   text run at (2,2) width 20: "col"
                   text run at (2,20) width 8: "9"
       RenderBlock {P} at (0,2272) size 769x0
-      RenderBlock (anonymous) at (0,2282) size 769x19
-        RenderImage {IMG} at (0,1) size 13x13
-        RenderText {#text} at (13,0) size 131x18
-          text run at (13,0) width 131: " Created 9/19/96 by "
-        RenderInline {A} at (143,0) size 84x18 [color=#0000EE]
-          RenderText {#text} at (143,0) size 84x18
-            text run at (143,0) width 84: "Ronald Greti"
-        RenderBR {BR} at (226,0) size 1x18
+      RenderImage {IMG} at (0,2283) size 13x14
+      RenderText {#text} at (13,2282) size 131x19
+        text run at (13,2282) width 131: " Created 9/19/96 by "
+      RenderInline {A} at (143,2282) size 84x19 [color=#0000EE]
+        RenderText {#text} at (143,2282) size 84x19
+          text run at (143,2282) width 84: "Ronald Greti"
+      RenderBR {BR} at (226,2282) size 1x19
       RenderBlock {P} at (0,2316) size 769x19
         RenderBR {BR} at (0,0) size 0x18
 layer at (8,147) size 769x2 clip at (0,0) size 0x0

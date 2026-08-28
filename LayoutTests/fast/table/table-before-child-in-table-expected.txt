@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
                     RenderTableCell (anonymous) at (0,0) size 62x18 [r=0 c=0 rs=1 cs=1]
                       RenderText at (0,0) size 62x18
                         text run at (0,0) width 62: "BEFORE"
-              RenderBlock (anonymous) at (0,56) size 100x18
-                RenderInline {SPAN} at (0,0) size 75x18
-                  RenderText {#text} at (0,0) size 75x18
-                    text run at (0,0) width 75: "CONTENT"
+              RenderInline {SPAN} at (0,56) size 75x18
+                RenderText {#text} at (0,56) size 75x18
+                  text run at (0,56) width 75: "CONTENT"

@@ -23,8 +23,7 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (154,4) size 13x12
         RenderText {#text} at (168,0) size 27x18
           text run at (168,0) width 27: "One"
-      RenderBlock (anonymous) at (0,70) size 784x36
-        RenderText {#text} at (0,0) size 779x36
-          text run at (0,0) width 514: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
-          text run at (513,0) width 266: "The count in form 1 is 2, and the count in"
-          text run at (0,18) width 70: "form 2 is 4"
+      RenderText {#text} at (0,70) size 779x36
+        text run at (0,70) width 514: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
+        text run at (513,70) width 266: "The count in form 1 is 2, and the count in"
+        text run at (0,88) width 70: "form 2 is 4"

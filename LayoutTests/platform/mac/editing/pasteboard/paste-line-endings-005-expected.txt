@@ -45,7 +45,6 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 780x28
               RenderText {#text} at (0,0) size 77x28
                 text run at (0,0) width 77: "line one"
-            RenderBlock (anonymous) at (0,28) size 780x28
-              RenderText {#text} at (0,0) size 78x28
-                text run at (0,0) width 78: "line two"
+            RenderText {#text} at (0,28) size 78x28
+              text run at (0,28) width 78: "line two"
 caret: position 0 of child 1 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

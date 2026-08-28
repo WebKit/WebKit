@@ -3,20 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x198
   RenderBlock {HTML} at (0,0) size 800x198
     RenderBody {BODY} at (8,8) size 784x182
-      RenderBlock (anonymous) at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 580x18
-          text run at (0,0) width 580: "Each consecutive pair of lines should look exactly the same apart from the trailing ellipsis."
-        RenderBR {BR} at (579,0) size 1x18
-        RenderText {#text} at (0,18) size 543x18
-          text run at (0,18) width 543: "The ellipsis should appear on the left for the RTL case and on the right for LTR case."
-        RenderBR {BR} at (542,18) size 1x18
-        RenderBR {BR} at (0,36) size 0x18
-        RenderText {#text} at (0,54) size 62x18
-          text run at (0,54) width 62: "RTL text:"
-      RenderBlock (anonymous) at (0,108) size 784x37
-        RenderBR {BR} at (0,0) size 0x18
-        RenderText {#text} at (0,18) size 61x18
-          text run at (0,18) width 61: "LTR Text"
+      RenderText {#text} at (0,0) size 580x18
+        text run at (0,0) width 580: "Each consecutive pair of lines should look exactly the same apart from the trailing ellipsis."
+      RenderBR {BR} at (579,0) size 1x18
+      RenderText {#text} at (0,18) size 543x18
+        text run at (0,18) width 543: "The ellipsis should appear on the left for the RTL case and on the right for LTR case."
+      RenderBR {BR} at (542,18) size 1x18
+      RenderBR {BR} at (0,36) size 0x18
+      RenderText {#text} at (0,54) size 62x18
+        text run at (0,54) width 62: "RTL text:"
+      RenderBR {BR} at (0,108) size 0x19
+      RenderText {#text} at (0,126) size 61x19
+        text run at (0,126) width 61: "LTR Text"
 layer at (8,80) size 207x18 scrollX 97 scrollWidth 304
   RenderBlock {DIV} at (0,72) size 207x19
     RenderText {#text} at (-98,0) size 305x19

@@ -49,14 +49,12 @@ layer at (0,0) size 800x600
             text run at (115,0) width 49: "30px"
       RenderBlock {DIV} at (0,180) size 784x140
         RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 137x28
-              text run at (0,0) width 137: "There is a tide"
+          RenderText {#text} at (14,14) size 137x28
+            text run at (14,14) width 137: "There is a tide"
           RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
             RenderText {#text} at (14,14) size 196x28
               text run at (14,14) width 196: "In the affairs of men"
-          RenderBlock (anonymous) at (14,98) size 756x28
-            RenderText {#text} at (0,0) size 236x28
-              text run at (0,0) width 236: "Which taken at the flood"
+          RenderText {#text} at (14,98) size 236x28
+            text run at (14,98) width 236: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 21 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

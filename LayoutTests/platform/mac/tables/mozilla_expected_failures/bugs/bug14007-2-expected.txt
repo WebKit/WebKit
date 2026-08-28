@@ -4,10 +4,9 @@ layer at (0,0) size 785x1396
   RenderBlock {HTML} at (0,0) size 785x1396
     RenderBody {BODY} at (8,8) size 769x1372
       RenderBlock {CENTER} at (0,0) size 769x1372
-        RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (250,0) size 269x18
-            text run at (250,0) width 269: "Build 1999/10/27/08 Win95 - Daily Build"
-          RenderBR {BR} at (518,0) size 1x18
+        RenderText {#text} at (250,0) size 269x18
+          text run at (250,0) width 269: "Build 1999/10/27/08 Win95 - Daily Build"
+        RenderBR {BR} at (518,0) size 1x18
         RenderTable {TABLE} at (71,18) size 627x1212 [border: (10px outset #000000)]
           RenderBlock {CAPTION} at (0,0) size 626x18
             RenderText {#text} at (269,0) size 87x18
@@ -74,8 +73,7 @@ layer at (0,0) size 785x1396
                                     text run at (0,0) width 33: "Lock"
                                     text run at (0,18) width 52: "doors &"
                                     text run at (0,36) width 28: "hide"
-                RenderBlock (anonymous) at (2,410) size 88x18
-                  RenderBR {BR} at (0,0) size 0x18
+                RenderBR {BR} at (2,410) size 0x18
             RenderTableRow {TR} at (0,430) size 606x274
               RenderTableCell {TD} at (0,430) size 89x202 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #FFFFFF)] [r=1 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 85x180 [color=#000000]
@@ -103,8 +101,7 @@ layer at (0,0) size 785x1396
                                     text run at (0,0) width 22: "Eat"
                                     text run at (0,18) width 47: "reserve"
                                     text run at (0,36) width 30: "food"
-                RenderBlock (anonymous) at (2,182) size 85x18
-                  RenderBR {BR} at (0,0) size 0x18
+                RenderBR {BR} at (2,182) size 0x18
               RenderTableCell {TD} at (88,430) size 86x86 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #FFFFFF)] [r=1 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 81x82 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 81x82
@@ -297,8 +294,7 @@ layer at (0,0) size 785x1396
                                     text run at (0,0) width 22: "Eat"
                                     text run at (0,18) width 47: "reserve"
                                     text run at (0,36) width 30: "food"
-                RenderBlock (anonymous) at (2,342) size 85x18
-                  RenderBR {BR} at (0,0) size 0x18
+                RenderBR {BR} at (2,342) size 0x18
               RenderTableCell {TD} at (88,704) size 86x290 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #FFFFFF)] [r=2 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 81x286 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 81x286
@@ -500,11 +496,10 @@ layer at (0,0) size 785x1396
               RenderTableCell {TD} at (513,1152) size 93x22 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #FFFFFF)] [r=4 c=6 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 6x18
                   text run at (2,2) width 6: "-"
-        RenderBlock (anonymous) at (0,1230) size 769x54
-          RenderBR {BR} at (384,0) size 1x18
-          RenderText {#text} at (16,18) size 737x36
-            text run at (16,18) width 737: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under"
-            text run at (366,36) width 37: "them."
+        RenderBR {BR} at (384,1230) size 1x18
+        RenderText {#text} at (16,1248) size 737x36
+          text run at (16,1248) width 737: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under"
+          text run at (366,1266) width 37: "them."
         RenderBlock {P} at (0,1300) size 769x72
           RenderText {#text} at (1,0) size 767x72
             text run at (4,0) width 761: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"

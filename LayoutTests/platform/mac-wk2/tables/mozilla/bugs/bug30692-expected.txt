@@ -3,19 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 497x18
-          text run at (0,0) width 497: "BUG: Inside a cell, \"height:x%\" is ignored. It looks like 'auto' is used instead."
-        RenderBR {BR} at (496,0) size 1x18
+      RenderText {#text} at (0,0) size 497x18
+        text run at (0,0) width 497: "BUG: Inside a cell, \"height:x%\" is ignored. It looks like 'auto' is used instead."
+      RenderBR {BR} at (496,0) size 1x18
       RenderListItem {LI} at (0,18) size 784x18
         RenderListMarker at (-1,0) size 7x18: bullet
         RenderText {#text} at (14,0) size 265x18
           text run at (14,0) width 265: "Absolute units work correctly (eg. 50px)."
       RenderListItem {LI} at (0,36) size 784x490
-        RenderBlock (anonymous) at (0,0) size 784x18
-          RenderListMarker at (-1,0) size 7x18: bullet
-          RenderText {#text} at (14,0) size 183x18
-            text run at (14,0) width 183: "\"width:x%\" works correctly."
+        RenderListMarker at (-1,0) size 7x18: bullet
+        RenderText {#text} at (14,0) size 183x18
+          text run at (14,0) width 183: "\"width:x%\" works correctly."
         RenderTable {TABLE} at (0,36) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96

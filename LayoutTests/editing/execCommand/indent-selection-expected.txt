@@ -13,17 +13,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 368x18
           text run at (0,0) width 368: "This test uses the execCommand to indent the text below."
-      RenderBlock (anonymous) at (0,18) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,18) size 0x18
       RenderBlock {DIV} at (0,36) size 784x194
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x54
-          RenderBlock (anonymous) at (0,0) size 744x36
-            RenderInline {SPAN} at (0,0) size 43x18
-              RenderText {#text} at (0,0) size 43x18
-                text run at (0,0) width 43: "Lorem"
-              RenderBR {BR} at (42,0) size 1x18
-            RenderText {#text} at (0,18) size 85x18
-              text run at (0,18) width 85: "more Lorem!"
+          RenderInline {SPAN} at (0,0) size 43x18
+            RenderText {#text} at (0,0) size 43x18
+              text run at (0,0) width 43: "Lorem"
+            RenderBR {BR} at (42,0) size 1x18
+          RenderText {#text} at (0,18) size 85x18
+            text run at (0,18) width 85: "more Lorem!"
           RenderBlock {BLOCKQUOTE} at (40,36) size 704x18
             RenderText {#text} at (0,0) size 40x18
               text run at (0,0) width 40: "ipsum"
@@ -46,12 +44,11 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,0) size 704x18
             RenderText {#text} at (0,0) size 38x18
               text run at (0,0) width 38: "Dolor"
-          RenderBlock (anonymous) at (0,18) size 744x36
-            RenderText {#text} at (0,0) size 35x18
-              text run at (0,0) width 35: "Sum!"
-            RenderBR {BR} at (34,0) size 1x18
-            RenderInline {SPAN} at (0,18) size 39x18
-              RenderText {#text} at (0,18) size 39x18
-                text run at (0,18) width 39: "Thing"
+          RenderText {#text} at (0,18) size 35x18
+            text run at (0,18) width 35: "Sum!"
+          RenderBR {BR} at (34,18) size 1x18
+          RenderInline {SPAN} at (0,36) size 39x18
+            RenderText {#text} at (0,36) size 39x18
+              text run at (0,36) width 39: "Thing"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BLOCKQUOTE} of child 4 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of body

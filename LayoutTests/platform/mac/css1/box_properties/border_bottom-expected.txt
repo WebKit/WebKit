@@ -40,9 +40,8 @@ layer at (0,0) size 785x995
               RenderText {#text} at (2,16) size 54x19
                 text run at (2,2) width 54: "Cell one"
             RenderTableCell {TD} at (201,51) size 562x52 [border: (1px inset #000000) (2px solid #008000) (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 557x18
-                RenderText {#text} at (0,0) size 55x18
-                  text run at (0,0) width 55: "Cell two"
+              RenderText {#text} at (2,2) size 55x18
+                text run at (2,2) width 55: "Cell two"
               RenderTable {TABLE} at (2,20) size 166x29 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 164x27
                   RenderTableRow {TR} at (0,2) size 164x23
@@ -52,9 +51,8 @@ layer at (0,0) size 785x995
       RenderBlock {UL} at (0,382) size 769x135
         RenderListItem {LI} at (40,0) size 729x75 [border: none (3px solid #000000) none]
           RenderListMarker at (-17,0) size 7x18: bullet
-          RenderBlock (anonymous) at (0,0) size 729x18
-            RenderText {#text} at (0,0) size 123x18
-              text run at (0,0) width 123: "This is a list item..."
+          RenderText {#text} at (0,0) size 123x18
+            text run at (0,0) width 123: "This is a list item..."
           RenderBlock {UL} at (0,18) size 729x54
             RenderListItem {LI} at (40,0) size 689x18
               RenderListMarker at (-17,0) size 7x18: white bullet
@@ -118,9 +116,8 @@ layer at (0,0) size 785x995
                       RenderText {#text} at (2,16) size 54x19
                         text run at (2,2) width 54: "Cell one"
                     RenderTableCell {TD} at (195,51) size 546x52 [border: (1px inset #000000) (2px solid #008000) (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-                      RenderBlock (anonymous) at (2,2) size 541x18
-                        RenderText {#text} at (0,0) size 55x18
-                          text run at (0,0) width 55: "Cell two"
+                      RenderText {#text} at (2,2) size 55x18
+                        text run at (2,2) width 55: "Cell two"
                       RenderTable {TABLE} at (2,20) size 166x29 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 164x27
                           RenderTableRow {TR} at (0,2) size 164x23
@@ -130,9 +127,8 @@ layer at (0,0) size 785x995
               RenderBlock {UL} at (4,261) size 747x135
                 RenderListItem {LI} at (40,0) size 707x75 [border: none (3px solid #000000) none]
                   RenderListMarker at (-17,0) size 7x18: bullet
-                  RenderBlock (anonymous) at (0,0) size 707x18
-                    RenderText {#text} at (0,0) size 123x18
-                      text run at (0,0) width 123: "This is a list item..."
+                  RenderText {#text} at (0,0) size 123x18
+                    text run at (0,0) width 123: "This is a list item..."
                   RenderBlock {UL} at (0,18) size 707x54
                     RenderListItem {LI} at (40,0) size 667x18
                       RenderListMarker at (-17,0) size 7x18: white bullet

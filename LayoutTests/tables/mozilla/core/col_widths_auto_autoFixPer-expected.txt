@@ -34,8 +34,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (479,26) size 302x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 98x18
                 text run at (2,2) width 98: "foo foo foo foo"
-      RenderBlock (anonymous) at (0,52) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,52) size 0x18
       RenderTable {TABLE} at (0,70) size 273x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 271x26
           RenderTableRow {TR} at (0,2) size 271x22

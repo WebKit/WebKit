@@ -87,9 +87,8 @@ layer at (0,0) size 785x1432
               RenderText {#text} at (3,18) size 54x18
                 text run at (3,3) width 54: "Cell one"
             RenderTableCell {TD} at (202,52) size 561x54 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (3,3) size 554x18
-                RenderText {#text} at (0,0) size 55x18
-                  text run at (0,0) width 55: "Cell two"
+              RenderText {#text} at (3,3) size 55x18
+                text run at (3,3) width 55: "Cell two"
               RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 166x28
                   RenderTableRow {TR} at (0,2) size 166x24
@@ -173,9 +172,8 @@ layer at (0,0) size 785x1432
                       RenderText {#text} at (3,18) size 54x18
                         text run at (3,3) width 54: "Cell one"
                     RenderTableCell {TD} at (196,52) size 541x54 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
-                      RenderBlock (anonymous) at (3,3) size 534x18
-                        RenderText {#text} at (0,0) size 55x18
-                          text run at (0,0) width 55: "Cell two"
+                      RenderText {#text} at (3,3) size 55x18
+                        text run at (3,3) width 55: "Cell two"
                       RenderTable {TABLE} at (3,21) size 168x30 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 166x28
                           RenderTableRow {TR} at (0,2) size 166x24

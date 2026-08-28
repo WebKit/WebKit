@@ -77,9 +77,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 92x18
             text run at (0,0) width 92 RTL: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,352) size 784x18
-        RenderText {#text} at (0,0) size 255x18
-          text run at (0,0) width 255: "The following lines should be identical:"
+      RenderText {#text} at (0,352) size 255x18
+        text run at (0,352) width 255: "The following lines should be identical:"
       RenderBlock {P} at (0,386) size 784x20
         RenderText {#text} at (0,1) size 62x19
           text run at (0,1) width 62 RTL: "\x{5D3}\x{5D4}\x{5D5}([\x{202A}\x{202C}\x{5D0}\x{5D1}\x{5D2}"

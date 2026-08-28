@@ -94,9 +94,8 @@ layer at (0,0) size 800x2270
           RenderListMarker at (-18,40) size 18x18: "4"
           RenderBlock {DIV} at (16,16) size 596x42 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
-            RenderBlock (anonymous) at (0,24) size 596x18
-              RenderText {#text} at (0,0) size 5x18
-                text run at (0,0) width 5: "."
+            RenderText {#text} at (0,24) size 5x18
+              text run at (0,24) width 5: "."
           RenderBlock {PRE} at (16,71) size 596x118 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,6) size 219x106
               text run at (6,6) width 134: "div :last-child {"

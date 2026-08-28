@@ -14,5 +14,4 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (46,5) size 31x18 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 31x18
                 text run at (0,0) width 31: "Blah"
-      RenderBlock (anonymous) at (0,28) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,28) size 0x18

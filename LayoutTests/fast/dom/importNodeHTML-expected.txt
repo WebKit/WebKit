@@ -12,9 +12,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 119x18
             text run at (0,0) width 119: "The original node:"
         RenderBlock {DIV} at (0,70) size 784x48 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 778x18
-            RenderText {#text} at (0,0) size 58x18
-              text run at (0,0) width 58: "Outer bit"
+          RenderText {#text} at (3,3) size 58x18
+            text run at (3,3) width 58: "Outer bit"
           RenderBlock {DIV} at (6,24) size 772x18 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 59x18
               text run at (0,0) width 59: "Inner bit."
@@ -22,9 +21,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 176x18
             text run at (0,0) width 176: "Copied with importNode():"
         RenderBlock {DIV} at (0,136) size 784x48 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 778x18
-            RenderText {#text} at (0,0) size 58x18
-              text run at (0,0) width 58: "Outer bit"
+          RenderText {#text} at (3,3) size 58x18
+            text run at (3,3) width 58: "Outer bit"
           RenderBlock {DIV} at (6,24) size 772x18 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 59x18
               text run at (0,0) width 59: "Inner bit."
@@ -32,9 +30,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 168x18
             text run at (0,0) width 168: "Copied with cloneNode():"
         RenderBlock {DIV} at (0,202) size 784x48 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 778x18
-            RenderText {#text} at (0,0) size 58x18
-              text run at (0,0) width 58: "Outer bit"
+          RenderText {#text} at (3,3) size 58x18
+            text run at (3,3) width 58: "Outer bit"
           RenderBlock {DIV} at (6,24) size 772x18 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 59x18
               text run at (0,0) width 59: "Inner bit."

@@ -44,9 +44,8 @@ layer at (0,0) size 800x600
             text run at (0,140) width 336: "at the start of the fourth line (\"ur\")."
       RenderBlock {DIV} at (0,348) size 784x148
         RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x28
-            RenderText {#text} at (0,0) size 35x28
-              text run at (0,0) width 35: "one"
+          RenderText {#text} at (2,2) size 35x28
+            text run at (2,2) width 35: "one"
           RenderBlock {DIV} at (2,30) size 780x28
             RenderText {#text} at (0,0) size 36x28
               text run at (0,0) width 36: "two"

@@ -9,8 +9,7 @@ layer at (0,0) size 785x1376
       RenderBlock {PRE} at (0,58) size 769x16 [color=#FF0000]
         RenderText {#text} at (0,0) size 266x15
           text run at (0,0) width 266: "Resize document for maximum effect"
-      RenderBlock (anonymous) at (0,86) size 769x19
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,86) size 0x19
       RenderBlock {H2} at (0,124) size 769x29
         RenderText {#text} at (0,0) size 504x28
           text run at (0,0) width 504: "Auto-width tables with spans nested 8 levels deep"
@@ -196,8 +195,7 @@ layer at (0,0) size 785x1376
             RenderTableCell {TD} at (724,360) size 42x22 [border: (1px inset #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Cell"
-      RenderBlock (anonymous) at (0,558) size 769x19
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,558) size 0x19
       RenderBlock {H2} at (0,596) size 769x29
         RenderText {#text} at (0,0) size 396x28
           text run at (0,0) width 396: "100% width tables nested 6 levels deep"
@@ -441,9 +439,8 @@ layer at (0,0) size 785x1376
                                                             RenderTableCell {TD} at (134,98) size 29x22 [border: (1px inset #000000)] [r=4 c=4 rs=1 cs=1]
                                                               RenderText {#text} at (2,2) size 8x18
                                                                 text run at (2,2) width 8: "y"
-                                                      RenderBlock (anonymous) at (2,126) size 167x18
-                                                        RenderText {#text} at (0,0) size 4x18
-                                                          text run at (0,0) width 4: " "
+                                                      RenderText {#text} at (2,126) size 4x18
+                                                        text run at (2,126) width 4: " "
                                                     RenderTableCell {TD} at (228,112) size 26x22 [border: (1px inset #000000)] [r=2 c=3 rs=1 cs=1]
                                                       RenderText {#text} at (2,64) size 8x18
                                                         text run at (2,2) width 8: "n"
@@ -482,9 +479,8 @@ layer at (0,0) size 785x1376
                                                     RenderTableCell {TD} at (255,222) size 26x22 [border: (1px inset #000000)] [r=4 c=4 rs=1 cs=1]
                                                       RenderText {#text} at (2,2) size 8x18
                                                         text run at (2,2) width 8: "y"
-                                              RenderBlock (anonymous) at (2,250) size 285x18
-                                                RenderText {#text} at (0,0) size 4x18
-                                                  text run at (0,0) width 4: " "
+                                              RenderText {#text} at (2,250) size 4x18
+                                                text run at (2,250) width 4: " "
                                             RenderTableCell {TD} at (342,174) size 25x22 [border: (1px inset #000000)] [r=2 c=3 rs=1 cs=1]
                                               RenderText {#text} at (2,126) size 8x18
                                                 text run at (2,2) width 8: "n"
@@ -523,9 +519,8 @@ layer at (0,0) size 785x1376
                                             RenderTableCell {TD} at (368,346) size 24x22 [border: (1px inset #000000)] [r=4 c=4 rs=1 cs=1]
                                               RenderText {#text} at (2,2) size 8x18
                                                 text run at (2,2) width 8: "y"
-                                      RenderBlock (anonymous) at (2,374) size 396x18
-                                        RenderText {#text} at (0,0) size 4x18
-                                          text run at (0,0) width 4: " "
+                                      RenderText {#text} at (2,374) size 4x18
+                                        text run at (2,374) width 4: " "
                                     RenderTableCell {TD} at (452,212) size 23x22 [border: (1px inset #000000)] [r=1 c=3 rs=1 cs=1]
                                       RenderText {#text} at (2,188) size 8x18
                                         text run at (2,2) width 8: "9"
@@ -580,9 +575,8 @@ layer at (0,0) size 785x1376
                                     RenderTableCell {TD} at (476,470) size 23x22 [border: (1px inset #000000)] [r=4 c=4 rs=1 cs=1]
                                       RenderText {#text} at (2,2) size 8x18
                                         text run at (2,2) width 8: "o"
-                              RenderBlock (anonymous) at (2,498) size 503x18
-                                RenderText {#text} at (0,0) size 4x18
-                                  text run at (0,0) width 4: " "
+                              RenderText {#text} at (2,498) size 4x18
+                                text run at (2,498) width 4: " "
                             RenderTableCell {TD} at (534,250) size 23x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,250) size 8x18
                                 text run at (2,2) width 8: "3"
@@ -606,9 +600,8 @@ layer at (0,0) size 785x1376
                             RenderTableCell {TD} at (534,546) size 23x22 [border: (1px inset #000000)] [r=2 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 8x18
                                 text run at (2,2) width 8: "9"
-                      RenderBlock (anonymous) at (1,573) size 561x18
-                        RenderText {#text} at (0,0) size 4x18
-                          text run at (0,0) width 4: " "
+                      RenderText {#text} at (1,573) size 4x18
+                        text run at (1,573) width 4: " "
                     RenderTableCell {TD} at (585,310) size 19x20 [r=1 c=2 rs=1 cs=1]
                       RenderText {#text} at (1,287) size 8x18
                         text run at (1,1) width 8: "6"
@@ -622,9 +615,8 @@ layer at (0,0) size 785x1376
                     RenderTableCell {TD} at (585,618) size 19x20 [r=2 c=2 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 8x18
                         text run at (1,1) width 8: "9"
-              RenderBlock (anonymous) at (2,642) size 606x18
-                RenderText {#text} at (0,0) size 4x18
-                  text run at (0,0) width 4: " "
+              RenderText {#text} at (2,642) size 4x18
+                text run at (2,642) width 4: " "
             RenderTableCell {TD} at (613,370) size 76x22 [border: (1px inset #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,322) size 8x18
                 text run at (2,2) width 8: "8"

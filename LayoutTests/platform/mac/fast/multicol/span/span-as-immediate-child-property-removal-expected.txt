@@ -3,11 +3,10 @@ layer at (0,0) size 785x2427
 layer at (0,0) size 785x2427
   RenderBlock {HTML} at (0,0) size 785x2428
     RenderBody {BODY} at (8,8) size 769x2404
-      RenderBlock (anonymous) at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 725x36
-          text run at (0,0) width 725: "In this test, all of the spanning elements have their spans turned off dynamically, and so they should just be in the"
-          text run at (0,18) width 84: "column flow."
-        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 725x36
+        text run at (0,0) width 725: "In this test, all of the spanning elements have their spans turned off dynamically, and so they should just be in the"
+        text run at (0,18) width 84: "column flow."
+      RenderText {#text} at (0,0) size 0x0
 layer at (8,60) size 760x366
   RenderBlock {DIV} at (0,52) size 760x366 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x356

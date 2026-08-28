@@ -34,15 +34,13 @@ layer at (0,0) size 785x1490
         RenderText {#text} at (0,0) size 250x15
           text run at (0,0) width 250: "Prepending inline to table-cell:"
       RenderBlock {DIV} at (0,121) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow (anonymous) at (0,0) size 0x0
               RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,121) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow (anonymous) at (0,0) size 0x0
@@ -139,14 +137,12 @@ layer at (0,0) size 785x1490
         RenderText {#text} at (0,0) size 242x15
           text run at (0,0) width 242: "Prepending inline to table-row:"
       RenderBlock {DIV} at (0,408) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,408) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 0x0
             RenderTableRow {DIV} at (0,0) size 0x0
@@ -232,13 +228,11 @@ layer at (0,0) size 785x1490
         RenderText {#text} at (0,0) size 289x15
           text run at (0,0) width 289: "Prepending inline to table-row-group:"
       RenderBlock {DIV} at (0,695) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,695) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableSection {DIV} at (0,0) size 0x0
       RenderBlock {PRE} at (0,708) size 769x15
@@ -317,13 +311,11 @@ layer at (0,0) size 785x1490
         RenderText {#text} at (0,0) size 313x15
           text run at (0,0) width 313: "Prepending inline to table-column-group:"
       RenderBlock {DIV} at (0,982) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,982) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {PRE} at (0,995) size 769x15
@@ -402,13 +394,11 @@ layer at (0,0) size 785x1490
         RenderText {#text} at (0,0) size 274x15
           text run at (0,0) width 274: "Prepending inline to table-caption:"
       RenderBlock {DIV} at (0,1269) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,1269) size 769x0
-        RenderBlock (anonymous) at (0,0) size 769x0
-          RenderInline {DIV} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 0x0
       RenderBlock {PRE} at (0,1282) size 769x15

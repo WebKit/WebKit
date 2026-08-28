@@ -19,11 +19,10 @@ layer at (0,0) size 800x600
 layer at (13,60) size 126x126 clip at (16,63) size 105x120 scrollY 36 scrollHeight 156
   RenderBlock {DIV} at (5,52) size 126x126 [border: (3px solid #000000)]
     RenderBlock {DIV} at (13,13) size 85x100
-    RenderBlock (anonymous) at (13,113) size 85x36
-      RenderInline {SPAN} at (0,0) size 43x36
-        RenderText {#text} at (0,0) size 43x18
-          text run at (0,0) width 43: "Lorem"
-        RenderBR {BR} at (42,0) size 1x18
-        RenderText {#text} at (0,18) size 40x18
-          text run at (0,18) width 40: "ipsum"
-      RenderText {#text} at (0,0) size 0x0
+    RenderInline {SPAN} at (13,113) size 43x36
+      RenderText {#text} at (13,113) size 43x18
+        text run at (13,113) width 43: "Lorem"
+      RenderBR {BR} at (55,113) size 1x18
+      RenderText {#text} at (13,131) size 40x18
+        text run at (13,131) width 40: "ipsum"
+    RenderText {#text} at (0,0) size 0x0

@@ -3,9 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 201x18
-          text run at (0,0) width 201: "The simplified original testcase"
+      RenderText {#text} at (0,0) size 201x18
+        text run at (0,0) width 201: "The simplified original testcase"
       RenderBlock {P} at (0,34) size 784x92
         RenderTable {TABLE} at (0,0) size 640x92 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 638x90
@@ -19,9 +18,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (130,66) size 507x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock (anonymous) at (0,152) size 784x18
-        RenderText {#text} at (0,0) size 416x18
-          text run at (0,0) width 416: "The simplified original testcase with image size reduced to190px"
+      RenderText {#text} at (0,152) size 416x18
+        text run at (0,152) width 416: "The simplified original testcase with image size reduced to190px"
       RenderBlock {P} at (0,186) size 784x53
         RenderTable {TABLE} at (0,0) size 640x53 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 638x51
@@ -35,9 +33,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (130,26) size 507x23 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock (anonymous) at (0,264) size 784x19
-        RenderText {#text} at (0,0) size 150x18
-          text run at (0,0) width 150: "Testcase without image"
+      RenderText {#text} at (0,264) size 150x19
+        text run at (0,264) width 150: "Testcase without image"
       RenderBlock {P} at (0,298) size 784x71
         RenderTable {TABLE} at (0,0) size 640x70 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 638x68

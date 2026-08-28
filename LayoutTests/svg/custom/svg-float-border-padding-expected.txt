@@ -3,10 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x516
   RenderBlock {html} at (0,0) size 800x516
     RenderBody {body} at (8,8) size 784x492
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 645x18
-          text run at (0,0) width 245: "The two blocks should look identical. "
-          text run at (244,0) width 401: "One uses an SVG, and the other just uses a normal HTML div."
+      RenderText {#text} at (0,0) size 645x18
+        text run at (0,0) width 245: "The two blocks should look identical. "
+        text run at (244,0) width 401: "One uses an SVG, and the other just uses a normal HTML div."
       RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 360x18
           text run at (0,0) width 360: "There should be a red, white and blue pattern below this"

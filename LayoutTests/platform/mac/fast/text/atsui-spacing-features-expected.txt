@@ -15,9 +15,8 @@ layer at (0,0) size 800x372
             text run at (0,18) width 327: "justification not supported for ATSUI-rendered text"
         RenderText {#text} at (326,18) size 5x18
           text run at (326,18) width 5: "."
-      RenderBlock (anonymous) at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 517x18
-          text run at (0,0) width 517: "Each green box should be identical to the blue box it follows, except for accents."
+      RenderText {#text} at (0,52) size 517x18
+        text run at (0,52) width 517: "Each green box should be identical to the blue box it follows, except for accents."
       RenderTable {TABLE} at (0,88) size 620x260
         RenderTableSection {TBODY} at (0,0) size 620x260
           RenderTableRow {TR} at (0,2) size 620x20

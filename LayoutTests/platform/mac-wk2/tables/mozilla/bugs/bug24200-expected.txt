@@ -36,8 +36,7 @@ layer at (0,0) size 800x600
                             text run at (3,2) width 24: "text"
                       RenderTableRow {TR} at (0,80) size 136x50
                         RenderTableCell {TD} at (0,80) size 136x50 [border: (1px solid #00FF00)] [r=3 c=0 rs=1 cs=1]
-                          RenderBlock (anonymous) at (3,2) size 131x0
-                            RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (3,2) size 0x0
                           RenderTable {TABLE} at (3,2) size 131x47 [border: (1px solid #FF00FF)]
                             RenderTableSection {TBODY} at (1,1) size 128x44
                               RenderTableRow {TR} at (0,0) size 128x22

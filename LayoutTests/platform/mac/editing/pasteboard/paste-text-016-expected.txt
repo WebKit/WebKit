@@ -26,17 +26,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 99x18
-          text run at (0,0) width 99: "Fixes this bug: "
-        RenderInline {A} at (98,0) size 172x18 [color=#0000EE]
-          RenderText {#text} at (98,0) size 172x18
-            text run at (98,0) width 172: "<rdar://problem/3927554>"
-        RenderText {#text} at (269,0) size 390x18
-          text run at (269,0) width 390: " REGRESSION (Mail): Paste inserts content in wrong place "
-        RenderBR {BR} at (658,0) size 1x18
-        RenderText {#text} at (0,18) size 384x18
-          text run at (0,18) width 384: "***TEST*** line should be second, following the first line."
+      RenderText {#text} at (0,0) size 99x18
+        text run at (0,0) width 99: "Fixes this bug: "
+      RenderInline {A} at (98,0) size 172x18 [color=#0000EE]
+        RenderText {#text} at (98,0) size 172x18
+          text run at (98,0) width 172: "<rdar://problem/3927554>"
+      RenderText {#text} at (269,0) size 390x18
+        text run at (269,0) width 390: " REGRESSION (Mail): Paste inserts content in wrong place "
+      RenderBR {BR} at (658,0) size 1x18
+      RenderText {#text} at (0,18) size 384x18
+        text run at (0,18) width 384: "***TEST*** line should be second, following the first line."
       RenderBlock {DIV} at (0,36) size 784x12
       RenderBlock {DIV} at (0,48) size 784x224
         RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #FF0000)]
@@ -53,13 +52,11 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 127x28
               text run at (0,0) width 127: "Another line."
           RenderBlock {P} at (14,126) size 756x0
-          RenderBlock (anonymous) at (14,126) size 756x28
-            RenderText {#text} at (0,0) size 6x28
-              text run at (0,0) width 6: " "
+          RenderText {#text} at (14,126) size 6x28
+            text run at (14,126) width 6: " "
           RenderBlock {P} at (14,154) size 756x0
-          RenderBlock (anonymous) at (14,154) size 756x28
-            RenderText {#text} at (0,0) size 6x28
-              text run at (0,0) width 6: " "
+          RenderText {#text} at (14,154) size 6x28
+            text run at (14,154) width 6: " "
           RenderBlock {P} at (14,182) size 756x28
             RenderBR {BR} at (0,0) size 0x28
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 1 {DIV} of child 7 {DIV} of body

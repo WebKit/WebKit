@@ -12,8 +12,7 @@ layer at (0,0) size 785x1008
             RenderTableCell {TD} at (261,2) size 505x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "y"
-      RenderBlock (anonymous) at (0,28) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,28) size 0x18
       RenderTable {TABLE} at (0,46) size 769x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x26
           RenderTableRow {TR} at (0,2) size 767x22
@@ -23,8 +22,7 @@ layer at (0,0) size 785x1008
             RenderTableCell {TD} at (384,2) size 381x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "y"
-      RenderBlock (anonymous) at (0,74) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,74) size 0x18
       RenderTable {TABLE} at (0,92) size 859x610 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 857x608
           RenderTableRow {TR} at (0,2) size 857x604
@@ -37,8 +35,7 @@ layer at (0,0) size 785x1008
                 text run at (2,38) width 24: "just"
                 text run at (2,56) width 20: "get"
                 text run at (2,74) width 43: "along?"
-      RenderBlock (anonymous) at (0,702) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,702) size 0x18
       RenderTable {TABLE} at (0,720) size 769x46 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x44
           RenderTableRow {TR} at (0,2) size 767x40
@@ -52,8 +49,7 @@ layer at (0,0) size 785x1008
             RenderTableCell {TD} at (373,11) size 393x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,11) size 113x18
                 text run at (2,2) width 113: "I great, thank you"
-      RenderBlock (anonymous) at (0,766) size 769x18
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBR {BR} at (0,766) size 0x18
       RenderTable {TABLE} at (0,784) size 769x208 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x206
           RenderTableRow {TR} at (0,2) size 767x202

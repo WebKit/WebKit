@@ -31,28 +31,27 @@ layer at (0,0) size 800x576 isolatesBlending
             RenderListMarker at (-16,0) size 16x18: "6"
             RenderText {#text} at (0,0) size 639x18
               text run at (0,0) width 639: "Intermediate parent has overflow. Duck should be a vertical gradient inside, and overflow is hidden."
-        RenderBlock (anonymous) at (40,176) size 744x368
-          RenderBlock {DIV} at (0,0) size 180x180
-          RenderText {#text} at (180,166) size 4x18
-            text run at (180,166) width 4: " "
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (184,0) size 180x180
-          RenderText {#text} at (364,166) size 4x18
-            text run at (364,166) width 4: " "
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (368,0) size 180x180
-          RenderText {#text} at (548,166) size 4x18
-            text run at (548,166) width 4: " "
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (552,0) size 180x180
-          RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (0,184) size 180x180
-          RenderText {#text} at (180,350) size 4x18
-            text run at (180,350) width 4: " "
-          RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (184,184) size 180x180
-          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (40,176) size 180x180
+        RenderText {#text} at (220,342) size 4x18
+          text run at (220,342) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (224,176) size 180x180
+        RenderText {#text} at (404,342) size 4x18
+          text run at (404,342) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (408,176) size 180x180
+        RenderText {#text} at (588,342) size 4x18
+          text run at (588,342) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (592,176) size 180x180
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (40,360) size 180x180
+        RenderText {#text} at (220,526) size 4x18
+          text run at (220,526) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (224,360) size 180x180
+        RenderText {#text} at (0,0) size 0x0
 layer at (48,192) size 150x150
   RenderBlock (relative positioned) {DIV} at (0,0) size 150x150
 layer at (68,212) size 150x150

@@ -12,6 +12,5 @@ layer at (0,0) size 800x128
                 RenderTableCell (anonymous) at (0,0) size 128x32 [r=0 c=0 rs=1 cs=1]
                   RenderText at (0,0) size 128x32
                     text run at (0,0) width 128: "ABCD"
-          RenderBlock (anonymous) at (0,32) size 744x32
-            RenderText {#text} at (0,0) size 128x32
-              text run at (0,0) width 128: "EFGH"
+          RenderText {#text} at (0,32) size 128x32
+            text run at (0,32) width 128: "EFGH"

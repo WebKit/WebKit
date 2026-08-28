@@ -20,15 +20,17 @@
                       (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
+                          (position -42.00 0.00)
                           (anchor 0.00 0.00)
-                          (bounds 400.00 400.00)
+                          (bounds 442.00 400.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 400.00 400.00)
+                              (offsetFromRenderer width=-42 height=0)
+                              (bounds 442.00 400.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
-                                  (position 242.00 58.00)
+                                  (position 284.00 58.00)
                                   (bounds 100.00 100.00)
                                   (contentsOpaque 1)
                                 )
