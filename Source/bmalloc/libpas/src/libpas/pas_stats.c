@@ -243,18 +243,19 @@ static void pas_stats_setup_if_necessary(void)
  * }
  * ```
  */
+
+#define PAS_STATS_COUNT_ONE(name, type, dumper_sym) + 1
+#define PAS_STATS_NUM_COUNTERS (0 PAS_STATS_FOR_EACH_COUNTER(PAS_STATS_COUNT_ONE))
+
 static void pas_stats_log_all_enabled_stats(void)
 {
     pas_lock_assert_held(&g_pas_stats_data.log_lock);
 
     uint64_t log_time = current_time_ns() - g_pas_stats_data.start_time_ns;
 
-#define COUNT_ONE(name, type, dumper_sym) + 1
-    const unsigned pas_stats_count = 0 + PAS_STATS_FOR_EACH_COUNTER(COUNT_ONE);
-#undef COUNT_ONE
-    const char* names[pas_stats_count];
-    char* values[pas_stats_count];
-    size_t value_lens[pas_stats_count];
+    const char* names[PAS_STATS_NUM_COUNTERS];
+    char* values[PAS_STATS_NUM_COUNTERS];
+    size_t value_lens[PAS_STATS_NUM_COUNTERS];
     size_t n_used = 0;
 
     // Collect enabled stats and call their dumpers
@@ -274,6 +275,12 @@ static void pas_stats_log_all_enabled_stats(void)
 
     PAS_STATS_FOR_EACH_COUNTER(COLLECT_ONE)
 #undef COLLECT_ONE
+
+    // No stats are enabled, bail out.
+    // This happens the first time we attempt to log a stat, since stat-enablements
+    // are computed lazily only when we actually try to log something.
+    if (!n_used)
+        return;
 
     static const char* pid_header = "{\"pid\": ";
     static const char* timing_header = ", \"time_ns\": ";
@@ -307,13 +314,13 @@ static void pas_stats_log_all_enabled_stats(void)
     memcpy(cursor, pid_header, strlen(pid_header));
     cursor += strlen(pid_header);
     // +1 to account for null terminator, which we subsequently overwrite
-    snprintf(cursor, PAS_STATS_UINT64_MAX_STRING_LEN + 1, "%*llu", PAS_STATS_UINT64_MAX_STRING_LEN, g_pas_stats_data.pid);
+    snprintf(cursor, PAS_STATS_UINT64_MAX_STRING_LEN + 1, "%*llu", PAS_STATS_UINT64_MAX_STRING_LEN, (unsigned long long)g_pas_stats_data.pid);
     cursor += PAS_STATS_UINT64_MAX_STRING_LEN;
 
     memcpy(cursor, timing_header, strlen(timing_header));
     cursor += strlen(timing_header);
     // +1 to account for null terminator, which we subsequently overwrite
-    snprintf(cursor, PAS_STATS_UINT64_MAX_STRING_LEN + 1, "%*llu", PAS_STATS_UINT64_MAX_STRING_LEN, log_time);
+    snprintf(cursor, PAS_STATS_UINT64_MAX_STRING_LEN + 1, "%*llu", PAS_STATS_UINT64_MAX_STRING_LEN, (unsigned long long)log_time);
     cursor += PAS_STATS_UINT64_MAX_STRING_LEN;
 
     memcpy(cursor, per_stat_header, strlen(per_stat_header));
@@ -550,9 +557,9 @@ char* pas_stats_page_alloc_counts_dump_to_json(void* stat_v)
         "\"bytes_mapped_may_contain_small_or_medium\": %llu "
         "}",
         stat->base.name,
-        stat->total_bytes_mapped,
-        stat->bytes_mapped_mte_tagged,
-        stat->bytes_mapped_may_contain_small_or_medium);
+        (unsigned long long)stat->total_bytes_mapped,
+        (unsigned long long)stat->bytes_mapped_mte_tagged,
+        (unsigned long long)stat->bytes_mapped_may_contain_small_or_medium);
     PAS_ASSERT(n >= 0);
 
     return buf;
