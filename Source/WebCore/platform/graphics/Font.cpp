@@ -109,7 +109,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     platformGlyphInit();
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No) {
+    if (platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback()) {
         m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
@@ -193,8 +193,17 @@ void Font::platformGlyphInit()
     Glyph zeroGlyph = { 0 };
     if (RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
         zeroGlyph = page->glyphDataForCharacter('0').glyph;
-    if (zeroGlyph)
-        m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
+    if (zeroGlyph) {
+#if ENABLE(OPENTYPE_VERTICAL)
+        RefPtr<OpenTypeVerticalData> verticalData;
+        if (platformData().orientation() == FontOrientation::Vertical && !isTextOrientationFallback())
+            verticalData = FontCache::forCurrentThread().verticalData(platformData());
+        if (verticalData)
+            m_fontMetrics.setZeroWidth(verticalData->advanceHeight(this, zeroGlyph));
+        else
+#endif
+            m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
+    }
 
     // Use the width of the CJK water ideogram (U+6C34) as the
     // approximated width of ideograms in the font, as mentioned in
