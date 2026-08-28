@@ -10,7 +10,6 @@ dom/Position.cpp
 editing/Editing.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm
 [ macOS ] html/HTMLMediaElement.cpp
-html/canvas/CanvasRenderingContext2DBase.cpp
 inspector/InspectorOverlay.cpp
 inspector/agents/InspectorDOMAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
