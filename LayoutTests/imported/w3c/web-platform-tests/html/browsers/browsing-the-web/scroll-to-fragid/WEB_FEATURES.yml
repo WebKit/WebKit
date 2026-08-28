@@ -1,4 +1,3 @@
-features:
-- name: target
-  files:
-  - target-pseudo-after-reinsertion.html
+rules:
+- target-pseudo-after-adoption.html: [target]
+- target-pseudo-after-reinsertion.html: [target]

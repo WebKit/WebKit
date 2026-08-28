@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/autofocus-on-stable-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-nonexistent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-removed-target.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-top.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-reconnected.html

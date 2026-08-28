@@ -3293,9 +3293,6 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
         if (isInTopLayer()) [[unlikely]]
             removeFromTopLayer();
 
-        if (oldDocument->cssTarget() == this)
-            oldDocument->setCSSTarget(nullptr);
-
         if (isDefinedCustomElement()) [[unlikely]]
             CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
     }
