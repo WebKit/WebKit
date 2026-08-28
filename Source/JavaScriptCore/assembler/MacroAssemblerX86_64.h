@@ -5122,9 +5122,6 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID srcDest)
     {
-        if (!imm.m_value)
-            return;
-
         if (imm.m_value == 1)
             m_assembler.incq_r(srcDest);
         else
@@ -5133,9 +5130,6 @@ public:
 
     void add64(TrustedImm64 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-
         if (imm.m_value == 1)
             m_assembler.incq_r(dest);
         else {
@@ -5146,21 +5140,11 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
     void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         if (WTF::isRepresentableAs<int32_t>(imm.m_value))
             m_assembler.leaq_mr(imm.m_value, src, dest);
         else {
@@ -5801,9 +5785,6 @@ public:
 
     void sub64(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-
         if (imm.m_value == 1)
             m_assembler.decq_r(dest);
         else
@@ -5812,11 +5793,6 @@ public:
 
     void sub64(RegisterID a, TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(a, dest);
-            return;
-        }
-
         if (a == dest) {
             sub64(imm, dest);
             return;
@@ -5831,9 +5807,6 @@ public:
 
     void sub64(TrustedImm64 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-
         if (imm.m_value == 1)
             m_assembler.decq_r(dest);
         else {
@@ -5844,11 +5817,6 @@ public:
 
     void sub64(RegisterID src, TrustedImm64 imm, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         if (src == dest) {
             sub64(imm, dest);
             return;
