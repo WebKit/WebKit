@@ -361,6 +361,11 @@ std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxAVFData(std::span<con
     if (mimeType == "application/ogg"_s)
         mimeType = "audio/ogg"_s;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (mimeType == "audio/audible"_s || mimeType == "audio/vnd.audible.aax"_s)
+        return nullptr;
+#endif
+
     // Create a custom URL scheme for in-memory data
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"custom-audiofilereader://audio"]);
 
