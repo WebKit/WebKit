@@ -59,28 +59,10 @@ struct SameSizeAsComputedStyle : CanMakeCheckedPtr<SameSizeAsComputedStyle> {
     WTF_MAKE_TZONE_ALLOCATED(SameSizeAsComputedStyle);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsComputedStyle);
     struct NonInheritedFlags {
-        unsigned display : 5;
-        unsigned originalDisplay : 5;
-        unsigned overflowX : 3;
-        unsigned overflowY : 3;
-        unsigned clear : 3;
-        unsigned position : 3;
-        unsigned unicodeBidi : 3;
-        unsigned floating : 3;
-        bool usesViewportUnits : 1;
-        bool isContainerDependent : 1;
-        bool useTreeCountingFunctions : 1;
-        bool hasExplicitlyInheritedProperties : 1;
-        bool disallowsFastPathInheritance : 1;
-        bool firstChildState : 1;
-        bool lastChildState : 1;
-        bool isLink : 1;
-        unsigned pseudoElementType : 5;
-        unsigned pseudoBits : 19;
-        unsigned textDecorationLine : 5;
+        uint32_t m_bitfields[3];
     } m_nonInheritedFlags;
     struct InheritedFlags {
-        unsigned m_bitfields[2];
+        uint32_t m_bitfields[2];
     } m_inheritedFlags;
     void* nonInheritedDataRefs[1];
     void* inheritedDataRefs[2];
