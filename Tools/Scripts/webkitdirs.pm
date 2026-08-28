@@ -209,6 +209,7 @@ BEGIN {
        &willUseVisionSimulatorSDK
        &winVersion
        &wrapperPrefixIfNeeded
+       &xcodeDestination
        &xcodeSDK
        &xcodeSDKPlatformName
        &xcodeVersion
