@@ -37,6 +37,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
 namespace WebKit {
 
+static bool canPossiblyExposePath(const String& path)
+{
+    // The child process's /app and /usr will both be identical to the parent process's.
+    return !path.startsWith("/app"_s) && !path.startsWith("/usr"_s);
+}
+
 GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, GError** error)
 {
     ASSERT(launcher);
@@ -67,22 +73,28 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
         if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
             auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
-            GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
-            flatpakArgs.append(pathArg.get());
+            if (canPossiblyExposePath(parentDir)) {
+                GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
+                flatpakArgs.append(pathArg.get());
+            }
         }
 
         // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
         // permissions for its parent directory.
         if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
             auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
-            GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
-            flatpakArgs.append(pathArg.get());
+            if (canPossiblyExposePath(parentDir)) {
+                GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().data()));
+                flatpakArgs.append(pathArg.get());
+            }
         }
 
         for (const auto& pathAndPermission : launchOptions.extraSandboxPaths) {
-            const char* formatString = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro=%s": "--sandbox-expose-path=%s";
-            GUniquePtr<gchar> pathArg(g_strdup_printf(formatString, pathAndPermission.key.data()));
-            flatpakArgs.append(pathArg.get());
+            if (canPossiblyExposePath(String { pathAndPermission.key.span() })) {
+                const char* formatString = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro=%s": "--sandbox-expose-path=%s";
+                GUniquePtr<gchar> pathArg(g_strdup_printf(formatString, pathAndPermission.key.data()));
+                flatpakArgs.append(pathArg.get());
+            }
         }
 
 #if USE(ATSPI)
