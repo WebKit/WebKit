@@ -179,6 +179,7 @@ public:
     void setBackdrop(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     void notifyBackdropFiltersChanged() WTF_REQUIRES_LOCK(m_lock);
     void setBackdropRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
+    void setBackdropShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
     void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
 
     void setAnimations(const TextureMapperAnimations&) WTF_REQUIRES_LOCK(m_lock);
@@ -241,6 +242,7 @@ private:
         Backdrop,
         BackdropRect,
         BackdropRoot,
+        BackdropShapePath,
         BackfaceVisibility,
         BackgroundColor,
         BackingStore,
@@ -343,6 +345,7 @@ private:
     RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CoordinatedPlatformLayer> m_backdrop WTF_GUARDED_BY_LOCK(m_lock);
     FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
+    Path m_backdropShapePath WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
     TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
     ThreadSafeWeakPtr<CoordinatedPlatformLayer> m_parent WTF_GUARDED_BY_LOCK(m_lock);

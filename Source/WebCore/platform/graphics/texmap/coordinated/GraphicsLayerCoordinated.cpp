@@ -667,6 +667,15 @@ void GraphicsLayerCoordinated::setBackdropFiltersRect(const FloatRoundedRect& ba
     noteLayerPropertyChanged(Change::BackdropRect, ScheduleFlush::Yes);
 }
 
+void GraphicsLayerCoordinated::setBackdropFiltersShapePath(const Path& path)
+{
+    if (backdropFiltersShapePath().definitelyEqual(path))
+        return;
+
+    GraphicsLayer::setBackdropFiltersShapePath(path);
+    noteLayerPropertyChanged(Change::BackdropShapePath, ScheduleFlush::Yes);
+}
+
 void GraphicsLayerCoordinated::setIsBackdropRoot(bool isBackdropRoot)
 {
     if (m_isBackdropRoot == isBackdropRoot)
@@ -1199,6 +1208,9 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
     if (m_pendingChanges.contains(Change::BackdropRect))
         updateBackdropFiltersRect();
+
+    if (m_pendingChanges.contains(Change::BackdropShapePath))
+        m_platformLayer->setBackdropShapePath(backdropFiltersShapePath());
 
     if (m_pendingChanges.contains(Change::BackdropRoot))
         m_platformLayer->setIsBackdropRoot(m_isBackdropRoot);

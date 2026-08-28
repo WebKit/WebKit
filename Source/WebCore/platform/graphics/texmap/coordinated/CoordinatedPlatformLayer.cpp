@@ -727,6 +727,18 @@ void CoordinatedPlatformLayer::setBackdropRect(const FloatRoundedRect& backdropR
     notifyCompositionRequired();
 }
 
+void CoordinatedPlatformLayer::setBackdropShapePath(const Path& path)
+{
+    assertIsHeld(m_lock);
+    if (m_backdropShapePath.definitelyEqual(path))
+        return;
+
+    m_backdropShapePath = path;
+    m_pendingChanges.add(Change::BackdropShapePath);
+    damageWholeLayer();
+    notifyCompositionRequired();
+}
+
 void CoordinatedPlatformLayer::setIsBackdropRoot(bool isBackdropRoot)
 {
     assertIsHeld(m_lock);
@@ -1235,6 +1247,13 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
             m_pendingChanges.remove(Change::BackdropRect);
         }
 
+        // FIXME: clip the backdrop to the corner-shape contour here too. TextureMapper::beginClip()
+        // takes a ClipPath, a triangulated vertex buffer, so this needs a Path tessellation step that
+        // does not exist yet; until then a non-round corner shape on a backdrop filter is clipped only
+        // by the rounded rect above. The Skia compositor, which GTK and WPE use by default, clips to
+        // the contour.
+        m_pendingChanges.remove(Change::BackdropShapePath);
+
         if (m_pendingChanges.contains(Change::Animations)) {
             layer.setAnimations(m_animations);
             m_pendingChanges.remove(Change::Animations);
@@ -1438,6 +1457,17 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
         if (m_pendingChanges.contains(Change::BackdropRect)) {
             layer.setBackdropFiltersRect(m_backdropRect);
             m_pendingChanges.remove(Change::BackdropRect);
+        }
+
+        if (m_pendingChanges.contains(Change::BackdropShapePath)) {
+            if (m_backdropShapePath.isEmpty())
+                layer.setBackdropFiltersClipPath(std::nullopt);
+            else {
+                auto backdropClipPath = *m_backdropShapePath.platformPath();
+                backdropClipPath.setFillType(SkPathFillType::kWinding);
+                layer.setBackdropFiltersClipPath(WTF::move(backdropClipPath));
+            }
+            m_pendingChanges.remove(Change::BackdropShapePath);
         }
 
         if (m_pendingChanges.contains(Change::BackdropRoot)) {

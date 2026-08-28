@@ -96,6 +96,7 @@ public:
     void setFilters(const FilterOperations&);
     void setBackdropFilters(const FilterOperations&);
     void setBackdropFiltersRect(const FloatRoundedRect&);
+    void setBackdropFiltersClipPath(std::optional<SkPath>&& clipPath) { m_backdrop.clipPath = WTF::move(clipPath); }
     void setIsBackdropRoot(bool isBackdropRoot) { m_isBackdropRoot = isBackdropRoot; }
     void setChildren(Vector<Ref<SkiaCompositingLayer>>&&);
 
@@ -352,6 +353,7 @@ private:
     struct {
         sk_sp<SkImageFilter> filter;
         FloatRoundedRect clipRect;
+        std::optional<SkPath> clipPath;
     } m_backdrop;
     bool m_isBackdropRoot { false };
     bool m_shouldBlend { false };

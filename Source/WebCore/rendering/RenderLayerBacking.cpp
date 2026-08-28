@@ -903,12 +903,20 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
         auto roundedBoxRect = borderShape.deprecatedRoundedRect();
         roundedBoxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+
+        if (renderBox->style().border().hasNonRoundCornerShape()) {
+            auto shapePath = borderShape.pathForOuterShape(deviceScaleFactor());
+            shapePath.translate(FloatSize { contentOffsetInCompositingLayer() });
+            m_graphicsLayer->setBackdropFiltersShapePath(shapePath);
+        } else
+            m_graphicsLayer->setBackdropFiltersShapePath({ });
     } else {
         auto boxRect = renderBox->borderBoxRect();
         if (renderBox->hasClip())
             boxRect.intersect(renderBox->clipRect({ }));
         boxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = FloatRoundedRect(snapRectToDevicePixels(boxRect, deviceScaleFactor()));
+        m_graphicsLayer->setBackdropFiltersShapePath({ });
     }
 
     m_graphicsLayer->setBackdropFiltersRect(backdropFiltersRect);

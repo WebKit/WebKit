@@ -1189,7 +1189,10 @@ void SkiaCompositingLayer::paintBackdrop(SkCanvas& canvas, PaintContext& context
 
     SkAutoCanvasRestore autoRestore(&canvas, true);
     const auto clipTransform = combinedTransform(context);
-    clipRect(canvas, m_backdrop.clipRect, clipTransform);
+    if (m_backdrop.clipPath)
+        canvas.clipPath(m_backdrop.clipPath->makeTransform(SkM44(clipTransform).asM33()), true);
+    else
+        clipRect(canvas, m_backdrop.clipRect, clipTransform);
 
     // Paint the backdrop root's subtree into a fresh surface (spec step 1),
     // apply the backdrop filter (step 2), and composite via SrcOver so the

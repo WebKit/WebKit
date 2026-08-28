@@ -117,6 +117,7 @@ private:
     void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
     bool setBackdropFilters(const FilterOperations&) override;
     void setBackdropFiltersRect(const FloatRoundedRect&) override;
+    void setBackdropFiltersShapePath(const Path&) override;
     void setIsBackdropRoot(bool) override;
 
     bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
@@ -144,6 +145,7 @@ private:
         Backdrop,
         BackdropRect,
         BackdropRoot,
+        BackdropShapePath,
         BackgroundColor,
         BackfaceVisibility,
         BlendMode,
