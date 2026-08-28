@@ -1074,7 +1074,7 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
     if (!shouldPaintWithFilters())
         return false;
 
-    return m_filters && m_filters->hasFilterThatMovesPixels();
+    return renderer().style().filter().hasFilterThatMovesPixels();
 }
 
 OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLayerPositions(RenderLayer& startingLayer)
@@ -2519,18 +2519,19 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 }
 
 // FIXME: This needs a better name.
-void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
+void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, FilterOutsets outsets)
 {
     ASSERT(requiresFullLayerImageForFilters());
-    ASSERT(m_filters);
 
     if (rect.isEmpty())
         return;
     
     LayoutRect rectForRepaint = rect;
-    rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
+    if (outsets == FilterOutsets::Add)
+        rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
 
-    m_filters->expandDirtySourceRect(rectForRepaint);
+    if (m_filters)
+        m_filters->expandDirtySourceRect(rectForRepaint);
     
     RenderLayer* parentLayer = enclosingFilterRepaintLayer();
     ASSERT(parentLayer);
@@ -6503,10 +6504,7 @@ IntOutsets RenderLayer::filterOutsets() const
     if (m_filters)
         return m_filters->calculateOutsets(renderer(), localBoundingBox());
 
-    if (CheckedPtr boxRenderer = renderBox())
-        return boxRenderer->computeFilterOutsets();
-
-    return { };
+    return renderer().computeFilterOutsets();
 }
 
 void RenderLayer::clearFilters()

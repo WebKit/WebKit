@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .blurred {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 200px;
+        height: 200px;
+        filter: blur(10px);
+    }
+
+    .inner {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+
+    .inner.before {
+        background-color: red;
+    }
+</style>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+<script>
+function repaintTest()
+{
+    document.querySelector(".inner").classList.remove("before");
+}
+</script>
+</head>
+<body onload="runRepaintTest()">
+    <div class="blurred">
+        <div class="inner before"></div>
+    </div>
+</body>
+</html>

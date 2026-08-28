@@ -1,0 +1,7 @@
+(repaint rects
+  (rect 97 97 106 106)
+)
+(repaint rects
+  (rect 97 397 106 106)
+)
+
