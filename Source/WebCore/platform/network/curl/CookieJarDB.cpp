@@ -487,16 +487,18 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
     return statement.step() == SQLITE_ROW;
 }
 
-static bool checkSecureCookie(const Cookie& cookie)
+static bool checkCookieNamePrefix(const Cookie& cookie)
 {
-    if (cookie.name.startsWith("__Secure-"_s) && !cookie.secure)
-        return false;
+    using namespace CookieUtil;
 
-    // Cookies for __Host must have the Secure attribute, path explicitly set to "/", and no domain attribute
-    if (cookie.name.startsWith("__Host-"_s) && (!cookie.secure || cookie.path != "/"_s || !cookie.domain.isEmpty()))
-        return false;
+    // A cookie with an empty name serializes into the Cookie header as just its value, so a value
+    // carrying a prefix is indistinguishable from a prefixed name to the server.
+    if (cookie.name.isEmpty())
+        return cookieNamePrefix(cookie.value) == CookieNamePrefix::None;
 
-    return true;
+    // Unlike the script-facing paths, this store can honor HttpOnly, so it is passed through rather
+    // than forced to false.
+    return !cookieNamePrefixRequirementsViolated(cookieNamePrefix(cookie.name), cookie.secure, cookie.httpOnly, !cookie.domain.isEmpty(), cookie.path == "/"_s);
 }
 
 bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, const URL& url, CookieJarDB::Source source)
@@ -550,7 +552,7 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     if (!cookie || (cookie->name.isEmpty() && cookie->value.isEmpty()))
         return false;
 
-    if (!checkSecureCookie(*cookie))
+    if (!checkCookieNamePrefix(*cookie))
         return false;
 
     if (cookie->domain.isEmpty())

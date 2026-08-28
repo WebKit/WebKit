@@ -159,6 +159,92 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
         cookieString.substring(monthStart, monthEnd - monthStart), cookieString.substring(dayEnd));
 }
 
+CookieNamePrefix cookieNamePrefix(StringView name)
+{
+    // Every prefix starts with "__", so this rejects the overwhelmingly common case up front.
+    if (!name.startsWith("__"_s))
+        return CookieNamePrefix::None;
+
+    // "__Host-Http-" must be tested before "__Host-" and "__Http-", since it starts with the former.
+    if (name.startsWithIgnoringASCIICase("__Host-Http-"_s))
+        return CookieNamePrefix::HostHttp;
+    if (name.startsWithIgnoringASCIICase("__Host-"_s))
+        return CookieNamePrefix::Host;
+    if (name.startsWithIgnoringASCIICase("__Http-"_s))
+        return CookieNamePrefix::Http;
+    if (name.startsWithIgnoringASCIICase("__Secure-"_s))
+        return CookieNamePrefix::Secure;
+    return CookieNamePrefix::None;
+}
+
+DOMCookieFields parseDOMCookieFields(StringView cookieString)
+{
+    DOMCookieFields fields;
+
+    auto firstSemicolon = cookieString.find(';');
+    auto nameValuePair = firstSemicolon == notFound ? cookieString : cookieString.left(firstSemicolon);
+
+    // RFC 6265bis section 5.2 would treat a pair with no '=' as a value with an empty name, but the
+    // platform cookie stores do not: a name with no '=' becomes that name with an empty value. Match
+    // the store rather than the draft, so that the prefix this check sees is the prefix the store
+    // ends up applying. An explicitly empty name, as in "=value", carries no prefix at all.
+    auto equals = nameValuePair.find('=');
+    auto name = equals == notFound ? nameValuePair : nameValuePair.left(equals);
+    fields.prefix = cookieNamePrefix(name.trim(isTabOrSpace<char16_t>));
+
+    if (firstSemicolon == notFound)
+        return fields;
+
+    for (auto attribute : cookieString.substring(firstSemicolon + 1).split(';')) {
+        StringView attributeName;
+        StringView attributeValue;
+        if (auto equals = attribute.find('='); equals != notFound) {
+            attributeName = attribute.left(equals).trim(isTabOrSpace<char16_t>);
+            attributeValue = attribute.substring(equals + 1).trim(isTabOrSpace<char16_t>);
+        } else
+            attributeName = attribute.trim(isTabOrSpace<char16_t>);
+
+        if (equalLettersIgnoringASCIICase(attributeName, "secure"_s))
+            fields.isSecure = true;
+        else if (equalLettersIgnoringASCIICase(attributeName, "httponly"_s)) {
+            // "HttpOnly" is a valueless flag, but section 5.2 discards any value it is given rather
+            // than ignoring the attribute, so only the name is examined.
+            fields.hasHttpOnlyAttribute = true;
+        } else if (equalLettersIgnoringASCIICase(attributeName, "domain"_s)) {
+            // Section 5.2.3 ignores an empty Domain entirely, so it never enters the attribute list
+            // and cannot be used to clear an earlier one.
+            if (!attributeValue.isEmpty())
+                fields.hasDomain = true;
+        } else if (equalLettersIgnoringASCIICase(attributeName, "path"_s)) {
+            // Last Path wins. Only the literal "/" counts; see DOMCookieFields::hasRootPath.
+            fields.hasRootPath = attributeValue == "/"_s;
+        }
+    }
+
+    return fields;
+}
+
+bool cookieNamePrefixRequirementsViolated(CookieNamePrefix prefix, bool isSecure, bool httpOnly, bool hasDomain, bool hasRootPath)
+{
+    switch (prefix) {
+    case CookieNamePrefix::None:
+        return false;
+    case CookieNamePrefix::Secure:
+        return !isSecure;
+    case CookieNamePrefix::Host:
+        return !isSecure || hasDomain || !hasRootPath;
+    case CookieNamePrefix::Http:
+        return !isSecure || !httpOnly;
+    case CookieNamePrefix::HostHttp:
+        return !isSecure || !httpOnly || hasDomain || !hasRootPath;
+    }
+
+    // Fail closed: a prefix added to the enum without updating this switch must reject rather than
+    // silently gain an exemption.
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 } // namespace CookieUtil
 
 } // namespace WebCore

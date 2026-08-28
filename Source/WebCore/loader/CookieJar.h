@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,8 @@ public:
 
     virtual ~CookieJar();
 protected:
+    bool shouldRejectDOMCookieWrite(Document&, const String& cookieString);
+
     static SameSiteInfo sameSiteInfo(const Document&, IsForDOMCookieAccess = IsForDOMCookieAccess::No);
     CookieJar(Ref<StorageSessionProvider>&&);
 

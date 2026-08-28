@@ -1,6 +1,6 @@
 
-FAIL __Http: Does not set via DOM 'Path=/' assert_equals: `__Http-prefixtestcookie=foo1` in `document.cookie` expected false but got true
-FAIL __Http: Does not set via DOM 'Secure; Path=/' assert_equals: `__Http-prefixtestcookie=foo2` in `document.cookie` expected false but got true
+PASS __Http: Does not set via DOM 'Path=/'
+PASS __Http: Does not set via DOM 'Secure; Path=/'
 PASS __Http: Does not set via DOM 'Secure; Path=/; httponly'
 FAIL __Http: Does not set via HTTP with 'Path=/;' (without Secure) assert_equals: expected (undefined) undefined but got (string) "bar1"
 FAIL __Http: Does not set via HTTP with 'Secure; Path=/' assert_equals: expected (undefined) undefined but got (string) "bar2"

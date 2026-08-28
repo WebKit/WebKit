@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/cookies-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Setting a cookie with the HttpOnly attribute via document.cookie should be ignored and should log a console error.');
+
+clearAllCookies();
+
+shouldBeEqualToString("document.cookie", "");
+
+// Script is not allowed to set HttpOnly, so this cookie is ignored. A console error is expected
+// above, once per attempt.
+document.cookie = "httponly-from-script=1; HttpOnly";
+shouldBeEqualToString("document.cookie", "");
+
+// The attribute name is matched case-insensitively.
+document.cookie = "httponly-lowercase=1; httponly";
+shouldBeEqualToString("document.cookie", "");
+
+// A value given to the valueless attribute is discarded, so the flag still counts as present.
+document.cookie = "httponly-with-value=1; HttpOnly=false";
+shouldBeEqualToString("document.cookie", "");
+
+// Only the attribute list carries the flag: a cookie whose name or value merely contains the word
+// is set as usual, with no console error.
+document.cookie = "not-httponly=HttpOnly";
+shouldBeEqualToString("document.cookie", "not-httponly=HttpOnly");
+
+clearCookies();
+</script>
+<script src="resources/cookies-test-post.js"></script>
+</body>
+</html>

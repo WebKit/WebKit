@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "StorageSessionProvider.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/SystemTracing.h>
@@ -128,8 +129,46 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
     return { document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(url) };
 }
 
+// Returns why a script-written cookie must be rejected for its name prefix, or nullopt to accept.
+static std::optional<String> reasonToRejectDOMCookieNamePrefix(const CookieUtil::DOMCookieFields& fields)
+{
+    using CookieUtil::CookieNamePrefix;
+
+    if (fields.prefix == CookieNamePrefix::None)
+        return std::nullopt;
+
+    if (fields.prefix == CookieNamePrefix::Http || fields.prefix == CookieNamePrefix::HostHttp)
+        return "The cookie was ignored because its name begins with \"__Http-\" or \"__Host-Http-\", which requires the HttpOnly attribute, and script cannot set HttpOnly. Use the HTTP header Set-Cookie instead."_str;
+
+    if (CookieUtil::cookieNamePrefixRequirementsViolated(fields.prefix, fields.isSecure, false, fields.hasDomain, fields.hasRootPath))
+        return "The cookie was ignored because its name begins with a cookie name prefix whose requirements it does not meet. \"__Secure-\" requires the Secure attribute; \"__Host-\" additionally requires no Domain attribute and an explicit Path=/."_str;
+
+    return std::nullopt;
+}
+
+bool CookieJar::shouldRejectDOMCookieWrite(Document& document, const String& cookieString)
+{
+    auto fields = CookieUtil::parseDOMCookieFields(cookieString);
+
+    // Script is not allowed to set the HttpOnly attribute.
+    if (fields.hasHttpOnlyAttribute) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The cookie was ignored because it specified the HttpOnly attribute, which cannot be set from script. Use the HTTP header Set-Cookie instead."_s);
+        return true;
+    }
+
+    if (auto reason = reasonToRejectDOMCookieNamePrefix(fields)) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, *reason);
+        return true;
+    }
+
+    return false;
+}
+
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)
 {
+    if (shouldRejectDOMCookieWrite(document, cookieString))
+        return;
+
     auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
     if (auto* frame = document.frame())
