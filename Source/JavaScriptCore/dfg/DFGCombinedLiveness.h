@@ -35,6 +35,8 @@ namespace JSC { namespace DFG {
 // Returns the set of nodes live at head, both due to DFG and due to bytecode (i.e. OSR exit).
 NodeSet liveNodesAtHead(Graph&, BasicBlock*);
 
+NodeSet bytecodeLivenessAtTerminal(Graph&, BasicBlock*);
+
 // WARNING: This currently does not reason about the liveness of shadow values. The execution
 // semantics of DFG SSA are that an Upsilon stores to the shadow value of a Phi, and the Phi loads
 // from that shadow value. Hence, the shadow values are like variables, and have liveness. The normal
