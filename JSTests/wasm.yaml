@@ -53,6 +53,8 @@
   cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 - path: wasm/branch-hints
   cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/extended-const
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/threads-spec-tests
   cmd: runWebAssemblyThreadsSpecTest :normal
 

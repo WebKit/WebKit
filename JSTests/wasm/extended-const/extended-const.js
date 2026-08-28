@@ -309,8 +309,7 @@ async function testExtendedConstElement() {
     assert.eq(m.exports.t.get(43), null);
   }
 
-  // FIXME: this requires changing how element segment initialization vectors are parsed.
-  // Test element segment kind 6.with element init expression.
+  // Test element segment kind 6 with element init expression.
   /*
    * (module
    *   (global (import "m" "gi1") externref)
@@ -318,17 +317,17 @@ async function testExtendedConstElement() {
    *   (elem (table 0) (offset (i32.add (i32.const 1) (i32.const 42))) externref (global.get 0))
    *   )
    */
-  //{
-  //  let obj = "hello";
-  //  let m = new WebAssembly.Instance(
-  //    module("\x00\x61\x73\x6d\x01\x00\x00\x00\x02\x8a\x80\x80\x80\x00\x01\x01\x6d\x03\x67\x69\x31\x03\x6f\x00\x04\x84\x80\x80\x80\x00\x01\x6f\x00\x40\x07\x85\x80\x80\x80\x00\x01\x01\x74\x01\x00\x09\x8e\x80\x80\x80\x00\x01\x06\x00\x41\x01\x41\x2a\x6a\x0b\x6f\x01\x23\x00\x0b"),
-  //    { m: { gi1: obj } }
-  //  );
-  //  assert.eq(m.exports.t.get(0), null);
-  //  assert.eq(m.exports.t.get(42), null);
-  //  assert.eq(m.exports.t.get(43), obj);
-  //  assert.eq(m.exports.t.get(44), null);
-  //}
+  {
+    let obj = "hello";
+    let m = new WebAssembly.Instance(
+      module("\x00\x61\x73\x6d\x01\x00\x00\x00\x02\x8a\x80\x80\x80\x00\x01\x01\x6d\x03\x67\x69\x31\x03\x6f\x00\x04\x84\x80\x80\x80\x00\x01\x6f\x00\x40\x07\x85\x80\x80\x80\x00\x01\x01\x74\x01\x00\x09\x8e\x80\x80\x80\x00\x01\x06\x00\x41\x01\x41\x2a\x6a\x0b\x6f\x01\x23\x00\x0b"),
+      { m: { gi1: obj } }
+    );
+    assert.eq(m.exports.t.get(0), null);
+    assert.eq(m.exports.t.get(42), null);
+    assert.eq(m.exports.t.get(43), obj);
+    assert.eq(m.exports.t.get(44), null);
+  }
 }
 
 async function testExtendedConstData() {
