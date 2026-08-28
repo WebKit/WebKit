@@ -36,13 +36,15 @@ namespace Layout {
 class InlineLayoutState;
 class LineBox;
 
+enum class LineClampType { None, Legacy, Modern };
+
 class InlineDisplayLineBuilder {
 public:
     InlineDisplayLineBuilder(InlineFormattingContext&, const ConstraintsForInlineContent&);
 
     InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 
-    static std::optional<InlineDisplay::Line::Ellipsis> applyEllipsisIfNeeded(LineEndingTruncationPolicy, InlineDisplay::Line&, std::span<InlineDisplay::Box>, bool isLegacyLineClamp);
+    static std::optional<InlineDisplay::Line::Ellipsis> applyEllipsisIfNeeded(LineEndingTruncationPolicy, InlineDisplay::Line&, std::span<InlineDisplay::Box>, LineClampType);
     static void addLegacyLineClampTrailingLinkBoxIfApplicable(const InlineFormattingContext&, const InlineLayoutState&, InlineDisplay::Content&);
     static bool hasTrailingLineWithBlockContent(const InlineDisplay::Lines&);
 

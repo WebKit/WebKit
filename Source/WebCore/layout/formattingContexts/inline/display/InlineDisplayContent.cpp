@@ -122,6 +122,12 @@ std::optional<Line::Ellipsis> Content::lineEllipsis(size_t lineIndex) const
     return lineEllipses->at(lineIndex);
 }
 
+bool Content::hasLineEllipsisInBlockDirection(size_t lineIndex) const
+{
+    auto ellipsis = lineEllipsis(lineIndex);
+    return ellipsis && ellipsis->type == Line::Ellipsis::Type::Block;
+}
+
 void Content::moveLineInBlockDirection(size_t lineIndex, float offset)
 {
     if (!offset)

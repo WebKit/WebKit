@@ -456,12 +456,14 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto ellipsis = std::optional<InlineDisplay::Line::Ellipsis> { };
     // When a block line is clamped, its content gets clamped and not this line itself.
     if (!lineLayoutResult.isBlockContent()) {
-        auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
+        LineClampType lineClampType { LineClampType::None };
+        if (lineClamp)
+            lineClampType = lineClamp->isLegacy ? LineClampType::Legacy : LineClampType::Modern;
         auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed, lineLayoutResult.hasContentfulInFlowContent());
-        ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes.mutableSpan(), isLegacyLineClamp);
+        ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes.mutableSpan(), lineClampType);
         if (ellipsis) {
             displayLine.setHasEllipsis();
-            auto lineHasLegacyLineClamp = isLegacyLineClamp && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
+            auto lineHasLegacyLineClamp = lineClampType == LineClampType::Legacy && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
             if (lineHasLegacyLineClamp)
                 inlineLayoutState.setLegacyClampedLineIndex(lineBox.lineIndex());
         }
