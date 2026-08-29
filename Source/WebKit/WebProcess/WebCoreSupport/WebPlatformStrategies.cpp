@@ -552,7 +552,7 @@ void WebPlatformStrategies::windowSubscribeToPushService(const URL& scope, const
         callback(WTF::move(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorSubscribeToPushService(scope, applicationServerKey), WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorSubscribeToPushService(scope, applicationServerKey), WTF::move(completionHandler));
 }
 
 void WebPlatformStrategies::windowUnsubscribeFromPushService(const URL& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
@@ -565,7 +565,7 @@ void WebPlatformStrategies::windowUnsubscribeFromPushService(const URL& scope, s
         callback(WTF::move(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, *subscriptionIdentifier), WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, *subscriptionIdentifier), WTF::move(completionHandler));
 }
 
 void WebPlatformStrategies::windowGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&& callback)
@@ -578,7 +578,7 @@ void WebPlatformStrategies::windowGetPushSubscription(const URL& scope, GetPushS
         callback(WTF::move(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorGetPushSubscription(scope), WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorGetPushSubscription(scope), WTF::move(completionHandler));
 }
 
 void WebPlatformStrategies::windowGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&& callback)
@@ -589,7 +589,7 @@ void WebPlatformStrategies::windowGetPushPermissionState(const URL& scope, GetPu
         callback(static_cast<PushPermissionState>(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorGetPushPermissionState(scope), WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorGetPushPermissionState(scope), WTF::move(completionHandler));
 }
 
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)

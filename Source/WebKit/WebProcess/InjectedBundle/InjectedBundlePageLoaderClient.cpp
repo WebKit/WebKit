@@ -74,7 +74,7 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
         data = API::Data::createWithoutCopying(contiguousBufferSpan, [contiguousBuffer = WTF::move(contiguousBuffer)] { });
     }
 
-    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);
+    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string()), toAPI(userData), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
@@ -244,7 +244,7 @@ void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage& 
     if (!m_client.willPerformClientRedirectForFrame)
         return;
 
-    m_client.willPerformClientRedirectForFrame(toAPI(&page), toAPI(&frame), toURLRef(url.impl()), delay, date.secondsSinceEpoch().seconds(), m_client.base.clientInfo);
+    m_client.willPerformClientRedirectForFrame(toAPI(&page), toAPI(&frame), toURLRef(url), delay, date.secondsSinceEpoch().seconds(), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage& page, WebFrame& frame)

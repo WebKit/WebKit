@@ -72,7 +72,7 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
             return;
-        convertedCommandBuffers.append(*convertedCommandBuffer);
+        convertedCommandBuffers.append(protect(*convertedCommandBuffer));
     }
     protect(m_backing)->submit(WTF::move(convertedCommandBuffers));
 }
@@ -98,7 +98,7 @@ void RemoteQueue::writeBuffer(
         return;
     }
 
-    protect(m_backing)->writeBufferNoCopy(*convertedBuffer, bufferOffset, data ? data->mutableSpan() : std::span<uint8_t> { }, 0, std::nullopt);
+    protect(m_backing)->writeBufferNoCopy(protect(*convertedBuffer), bufferOffset, data ? data->mutableSpan() : std::span<uint8_t> { }, 0, std::nullopt);
     completionHandler(true);
 }
 
@@ -113,7 +113,7 @@ void RemoteQueue::writeBufferWithCopy(
     if (!convertedBuffer)
         return;
 
-    protect(m_backing)->writeBufferNoCopy(*convertedBuffer, bufferOffset, data.mutableSpan(), 0, std::nullopt);
+    protect(m_backing)->writeBufferNoCopy(protect(*convertedBuffer), bufferOffset, data.mutableSpan(), 0, std::nullopt);
 }
 
 void RemoteQueue::writeTexture(

@@ -549,7 +549,7 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::prepareToSeek(const MediaTime& t
 
             if (auto producer = std::exchange(protectedThis->m_prepareSeekPromise, std::nullopt))
                 producer->settle(WTF::move(result));
-        })->track(m_prepareSeekRequest);
+        })->track(protect(m_prepareSeekRequest));
 
         return promise;
     });
@@ -590,7 +590,7 @@ Ref<GenericPromise> AudioVideoRendererRemote::finishSeek(const MediaTime& time)
 
             if (auto producer = std::exchange(protectedThis->m_finishSeekPromise, std::nullopt))
                 producer->settle(WTF::move(result));
-        })->track(m_finishSeekRequest);
+        })->track(protect(m_finishSeekRequest));
 
         return promise;
     });
@@ -782,7 +782,7 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::notifyTimeReachedAndStall(const 
             protect(protectedThis->m_stallRequest)->complete();
             if (auto producer = std::exchange(protectedThis->m_stallProducer, std::nullopt))
                 producer->settle(WTF::move(result));
-        })->track(m_stallRequest);
+        })->track(protect(m_stallRequest));
         return promise;
     });
 }

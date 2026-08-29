@@ -49,7 +49,7 @@ Ref<WebSocketTask> WebSocketTask::create(NetworkSocketChannel& channel, WebPageP
 }
 
 WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
-    : NetworkTaskCocoa(*channel.session())
+    : NetworkTaskCocoa(protect(*channel.session()))
     , m_channel(channel)
     , m_task(WTF::move(task))
     , m_webProxyPageID(webProxyPageID)

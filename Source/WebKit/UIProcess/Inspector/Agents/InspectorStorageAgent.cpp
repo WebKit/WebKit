@@ -100,7 +100,7 @@ static Ref<JSON::ArrayOf<Cookie>> buildArrayForCookies(const Vector<WebCore::Coo
 
 InspectorStorageAgent::InspectorStorageAgent(WebPageAgentContext& context)
     : InspectorAgentBase("Storage"_s, context)
-    , m_backendDispatcher(Inspector::StorageBackendDispatcher::create(context.backendDispatcher.get(), this))
+    , m_backendDispatcher(Inspector::StorageBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
 {
 }

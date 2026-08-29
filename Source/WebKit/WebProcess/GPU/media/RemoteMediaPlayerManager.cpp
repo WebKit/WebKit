@@ -198,7 +198,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
 
     auto identifier = MediaPlayerIdentifier::generate();
     auto clientIdentifier = player.clientIdentifier();
-    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, clientIdentifier, remoteEngineIdentifier, proxyConfiguration), 0);
+    protect(gpuProcessConnection().connection())->send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, clientIdentifier, remoteEngineIdentifier, proxyConfiguration), 0);
 
     auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
     m_players.add(identifier, remotePlayer.get());
@@ -209,7 +209,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
 void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerIdentifier identifier)
 {
     m_players.remove(identifier);
-    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(identifier), 0);
+    protect(gpuProcessConnection().connection())->send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(identifier), 0);
 }
 
 std::optional<MediaPlayerIdentifier> RemoteMediaPlayerManager::findRemotePlayerId(const MediaPlayerPrivateInterface* player)

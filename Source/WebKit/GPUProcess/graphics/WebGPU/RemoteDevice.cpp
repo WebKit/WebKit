@@ -308,7 +308,7 @@ void RemoteDevice::createComputePipelineWithPipelineLayoutFromPipeline(const Web
     WeakPtr<WebCore::WebGPU::ComputePipeline> pipelineToReplace = objectHeap->convertComputePipelineFromBacking(pipelineToReplaceIdentifier);
     MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
 
-    m_backing->createComputePipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, *pipelineToReplace, [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline) mutable {
+    m_backing->createComputePipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, protect(*pipelineToReplace), [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline) mutable {
         if (!computePipeline) {
             completionHandler(false);
             return;
@@ -341,7 +341,7 @@ void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebG
     WeakPtr<WebCore::WebGPU::RenderPipeline> pipelineToReplace = objectHeap->convertRenderPipelineFromBacking(pipelineToReplaceIdentifier);
     MESSAGE_CHECK_COMPLETION(pipelineToReplace, completionHandler(false));
 
-    m_backing->createRenderPipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, *pipelineToReplace, [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+    m_backing->createRenderPipelineWithPipelineLayoutFromPipelineAsync(*convertedDescriptor, protect(*pipelineToReplace), [completionHandler = WTF::move(completionHandler), objectHeap, streamConnection = protect(m_streamConnection), gpu = protect(m_gpu), identifier](RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline) mutable {
         if (!renderPipeline) {
             completionHandler(false);
             return;

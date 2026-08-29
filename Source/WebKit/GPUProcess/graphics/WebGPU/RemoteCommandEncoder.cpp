@@ -113,7 +113,7 @@ void RemoteCommandEncoder::copyBufferToBuffer(
     if (!convertedSource || !convertedDestination)
         return;
 
-    protect(m_backing)->copyBufferToBuffer(*convertedSource, sourceOffset, *convertedDestination, destinationOffset, size);
+    protect(m_backing)->copyBufferToBuffer(protect(*convertedSource), sourceOffset, protect(*convertedDestination), destinationOffset, size);
 }
 
 void RemoteCommandEncoder::copyBufferToTexture(
@@ -177,7 +177,7 @@ void RemoteCommandEncoder::clearBuffer(
     if (!convertedBuffer)
         return;
 
-    protect(m_backing)->clearBuffer(*convertedBuffer, offset, size);
+    protect(m_backing)->clearBuffer(protect(*convertedBuffer), offset, size);
 }
 
 void RemoteCommandEncoder::pushDebugGroup(String&& groupLabel)
@@ -202,7 +202,7 @@ void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, WebCore::We
     if (!convertedQuerySet)
         return;
 
-    protect(m_backing)->writeTimestamp(*convertedQuerySet, queryIndex);
+    protect(m_backing)->writeTimestamp(protect(*convertedQuerySet), queryIndex);
 }
 
 void RemoteCommandEncoder::resolveQuerySet(
@@ -220,7 +220,7 @@ void RemoteCommandEncoder::resolveQuerySet(
     if (!convertedQuerySet || !convertedDestination)
         return;
 
-    protect(m_backing)->resolveQuerySet(*convertedQuerySet, firstQuery, queryCount, *convertedDestination, destinationOffset);
+    protect(m_backing)->resolveQuerySet(protect(*convertedQuerySet), firstQuery, queryCount, protect(*convertedDestination), destinationOffset);
 }
 
 void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUIdentifier identifier)

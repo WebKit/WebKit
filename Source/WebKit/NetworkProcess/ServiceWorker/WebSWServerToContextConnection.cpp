@@ -420,7 +420,7 @@ void WebSWServerToContextConnection::startPendingStreamUploadForwarding(WebCore:
 
     m_requestPendingStreamStates.add(fetchIdentifier, *state);
 
-    loader->connectionToWebProcess().connection().send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
+    protect(loader->connectionToWebProcess().connection())->send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
 
     state->setDataAvailableHandler([weakThis = WeakPtr { *this }, fetchIdentifier] {
         if (RefPtr protectedThis = weakThis)
@@ -474,7 +474,7 @@ void WebSWServerToContextConnection::pendingStreamUploadNeedData(WebCore::FetchI
     RefPtr loader = fetch->loader();
     if (!loader)
         return;
-    loader->connectionToWebProcess().connection().send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
+    protect(loader->connectionToWebProcess().connection())->send(Messages::WebResourceLoader::ServiceWorkerPendingStreamForwardingNeedData { }, loader->coreIdentifier());
 }
 
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)

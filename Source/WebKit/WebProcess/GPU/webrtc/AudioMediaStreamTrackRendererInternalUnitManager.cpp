@@ -151,7 +151,7 @@ AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRend
 AudioMediaStreamTrackRendererInternalUnitManagerProxy::~AudioMediaStreamTrackRendererInternalUnitManagerProxy()
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().remove(*this);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
 
     while (!m_descriptionCallbacks.isEmpty())
         m_descriptionCallbacks.takeFirst()(std::nullopt);
@@ -159,7 +159,7 @@ AudioMediaStreamTrackRendererInternalUnitManagerProxy::~AudioMediaStreamTrackRen
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::createRemoteUnit()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier(), m_deviceID }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier(), m_deviceID }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && description && frameChunkSize)
             protectedThis->initialize(*description, frameChunkSize);
     }, 0);
@@ -204,7 +204,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
     RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
     auto [ringBuffer, handle] = WTF::move(*result);
     m_ringBuffer = WTF::move(ringBuffer);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTF::move(handle), *m_semaphore }, 0);
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { identifier(), WTF::move(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
@@ -215,7 +215,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stop()
 {
     m_isPlaying = false;
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)
@@ -229,12 +229,12 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescri
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(const String& deviceID)
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::deleteUnitForTesting()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
+    protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stopThread()

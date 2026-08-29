@@ -316,7 +316,7 @@ InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay
     : InspectorAgentBase("DOM"_s, context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(makeUniqueRef<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
     , m_overlay(overlay)
     , m_destroyedNodesTimer(*this, &InspectorDOMAgent::destroyedNodesTimerFired)

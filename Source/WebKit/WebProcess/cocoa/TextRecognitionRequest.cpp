@@ -67,7 +67,8 @@ void TextRecognitionRequest::requestTextRecognitionFor(HTMLMediaElementIdentifie
     if (m_timer)
         m_timer->stop();
     m_identifier = identifier;
-    m_timer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "TextRecognitionRequest"_s, [page = m_page, manager = m_manager, identifier] {
+    m_timer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "TextRecognitionRequest"_s, [weakPage = m_page, manager = m_manager, identifier] {
+        RefPtr page = weakPage;
         if (!page)
             return;
         RefPtr element = dynamicDowncast<HTMLVideoElement>(manager->mediaElementWithContextId(identifier));
@@ -84,7 +85,7 @@ void TextRecognitionRequest::cancel()
         timer->stop();
 
     m_identifier.reset();
-    if (RefPtr page = m_page.get())
+    if (RefPtr page = m_page)
         page->cancelTextRecognitionForVideoInElementFullScreen();
 }
 

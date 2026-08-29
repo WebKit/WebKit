@@ -77,7 +77,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     }
 
 #if ENABLE(VIDEO)
-    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage))
+    if (CheckedPtr renderVideo = dynamicDowncast<RenderVideo>(renderImage))
         return protect(renderVideo->videoElement())->bitmapImageForCurrentTimeSync();
 #endif // ENABLE(VIDEO)
 
@@ -114,7 +114,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
 Ref<NativePromise<Ref<WebCore::ShareableBitmap>, void>> createShareableBitmapAsync(WebCore::RenderImage& renderImage, CreateShareableBitmapFromImageOptions&& options)
 {
 #if ENABLE(VIDEO)
-    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage))
+    if (CheckedPtr renderVideo = dynamicDowncast<RenderVideo>(renderImage))
         return protect(renderVideo->videoElement())->bitmapImageForCurrentTime();
 #endif
     if (RefPtr shareableBitmap = createShareableBitmap(renderImage, WTF::move(options)))

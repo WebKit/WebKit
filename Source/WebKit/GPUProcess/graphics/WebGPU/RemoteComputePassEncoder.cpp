@@ -70,7 +70,7 @@ void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
     if (!convertedComputePipeline)
         return;
 
-    protect(m_backing)->setPipeline(*convertedComputePipeline);
+    protect(m_backing)->setPipeline(protect(*convertedComputePipeline));
 }
 
 void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
@@ -85,7 +85,7 @@ void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer,
     if (!convertedIndirectBuffer)
         return;
 
-    protect(m_backing)->dispatchIndirect(*convertedIndirectBuffer, indirectOffset);
+    protect(m_backing)->dispatchIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
 void RemoteComputePassEncoder::end()

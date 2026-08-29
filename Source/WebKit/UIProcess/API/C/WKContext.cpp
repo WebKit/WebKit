@@ -128,7 +128,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             if (!m_client.didPerformClientRedirect)
                 return;
 
-            m_client.didPerformClientRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL.impl()), WebKit::toURLRef(destinationURL.impl()), WebKit::toAPI(&frame), m_client.base.clientInfo);
+            m_client.didPerformClientRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL), WebKit::toURLRef(destinationURL), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
         void didPerformServerRedirect(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebKit::WebFrameProxy& frame) override
@@ -136,7 +136,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             if (!m_client.didPerformServerRedirect)
                 return;
 
-            m_client.didPerformServerRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL.impl()), WebKit::toURLRef(destinationURL.impl()), WebKit::toAPI(&frame), m_client.base.clientInfo);
+            m_client.didPerformServerRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toURLRef(sourceURL), WebKit::toURLRef(destinationURL), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
         void didUpdateHistoryTitle(WebKit::WebProcessPool& processPool, WebKit::WebPageProxy& page, const String& title, const String& url, WebKit::WebFrameProxy& frame) override
@@ -144,7 +144,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             if (!m_client.didUpdateHistoryTitle)
                 return;
 
-            m_client.didUpdateHistoryTitle(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toAPI(title.impl()), WebKit::toURLRef(url.impl()), WebKit::toAPI(&frame), m_client.base.clientInfo);
+            m_client.didUpdateHistoryTitle(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toAPI(title.impl()), WebKit::toURLRef(url), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
         void populateVisitedLinks(WebKit::WebProcessPool& processPool) override
@@ -249,7 +249,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
         void willSendRequest(WebKit::DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
         {
             if (m_client.didReceiveServerRedirect)
-                m_client.didReceiveServerRedirect(m_context, WebKit::toAPI(&downloadProxy), WebKit::toURLRef(request.url().string().impl()), m_client.base.clientInfo);
+                m_client.didReceiveServerRedirect(m_context, WebKit::toAPI(&downloadProxy), WebKit::toURLRef(request.url().string()), m_client.base.clientInfo);
             completionHandler(WTF::move(request));
         }
         WKContextRef m_context;
@@ -282,12 +282,12 @@ void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
     if (visitedURLString.isEmpty())
         return;
 
-    WebKit::toImpl(contextRef)->visitedLinkStore().addVisitedLinkHash(WebCore::computeSharedStringHash(visitedURLString));
+    protect(WebKit::toImpl(contextRef)->visitedLinkStore())->addVisitedLinkHash(WebCore::computeSharedStringHash(visitedURLString));
 }
 
 void WKContextClearVisitedLinks(WKContextRef contextRef)
 {
-    WebKit::toImpl(contextRef)->visitedLinkStore().removeAll();
+    protect(WebKit::toImpl(contextRef)->visitedLinkStore())->removeAll();
 }
 
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)

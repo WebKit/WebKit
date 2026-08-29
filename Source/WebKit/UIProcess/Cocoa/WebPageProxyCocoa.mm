@@ -2012,12 +2012,13 @@ void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame,
     }
 
     for (auto& [process, frameIDs] : processFrames) {
-        protect(process)->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+        Ref protectedProcess = process;
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
             if (result.size() > frameIDs.size())
                 return;
 
             callbackAggregator->addResult(WTF::move(result));
-        }, webPageIDInProcess(process.get()));
+        }, webPageIDInProcess(protectedProcess));
     }
 }
 
@@ -2122,10 +2123,11 @@ void WebPageProxy::getAttributedStringsForRemoteFrames(IPC::Connection& connecti
 
     Ref aggregator = AttributedStringMapCallbackAggregator::create(WTF::move(completionHandler));
     for (auto& [process, frameIDs] : processFrames) {
-        protect(process)->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedStringForFrames(frameIDs), [frameIDs, aggregator](auto&& result) {
+        Ref protectedProcess = process;
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedStringForFrames(frameIDs), [frameIDs, aggregator](auto&& result) {
             if (result.size() <= frameIDs.size())
                 aggregator->addResult(WTF::move(result));
-        }, webPageIDInProcess(process.get()));
+        }, webPageIDInProcess(protectedProcess));
     }
 }
 

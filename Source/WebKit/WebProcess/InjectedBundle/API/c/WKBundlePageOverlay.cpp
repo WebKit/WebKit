@@ -151,7 +151,7 @@ private:
         if (!actionContext || !apiRange)
             return std::nullopt;
 
-        return { { actionContext, makeSimpleRange(WebKit::toImpl(apiRange)->coreRange()) } };
+        return { { actionContext, makeSimpleRange(protect(WebKit::toImpl(apiRange)->coreRange())) } };
     }
 
     void dataDetectorsDidPresentUI(WebKit::WebPageOverlay& pageOverlay) override

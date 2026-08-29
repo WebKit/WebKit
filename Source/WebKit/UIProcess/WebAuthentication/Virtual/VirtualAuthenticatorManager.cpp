@@ -100,7 +100,7 @@ void VirtualAuthenticatorManager::runPanel()
 
 void VirtualAuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&& completionHandler)
 {
-    completionHandler(responses[0].ptr());
+    completionHandler(protect(responses[0]).ptr());
 }
 
 void VirtualAuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler)

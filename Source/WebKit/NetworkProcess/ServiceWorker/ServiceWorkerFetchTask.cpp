@@ -177,7 +177,7 @@ RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
     Ref loader = *m_loader;
-    return loader->connectionToWebProcess().connection().send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
+    return protect(loader->connectionToWebProcess().connection())->send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)

@@ -463,7 +463,7 @@ bool WebChromeClient::testProcessIncomingSyncMessagesWhenWaitingForSyncReply()
 
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(m_page->webPageProxyIdentifier()), 0);
+    auto sendResult = protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendSync(Messages::NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(m_page->webPageProxyIdentifier()), 0);
     auto [handled] = sendResult.takeReplyOr(false);
     return handled;
 }
@@ -1378,7 +1378,7 @@ unsigned WebChromeClient::remoteImagesCountForTesting() const
 
 void WebChromeClient::registerBlobPathForTesting(const String& path, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTF::move(completionHandler));
 }
 
 

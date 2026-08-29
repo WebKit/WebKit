@@ -81,7 +81,7 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkRe
     if (m_requestLoadType == LoadType::MainFrame)
         m_origin = m_topOrigin;
 
-    m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
+    m_isSameOriginRequest = isSameOrigin(m_url, protect(m_origin));
     switch (options.credentials) {
     case FetchOptions::Credentials::Include:
         m_storedCredentialsPolicy = StoredCredentialsPolicy::Use;
@@ -150,7 +150,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     // FIXME: We should check that redirections are only HTTP(s) as per fetch spec.
     // See https://github.com/whatwg/fetch/issues/393
 
-    if (m_options.mode == FetchOptions::Mode::Cors && (!m_isSameOriginRequest || !isSameOrigin(request.url(), m_origin.get()))) {
+    if (m_options.mode == FetchOptions::Mode::Cors && (!m_isSameOriginRequest || !isSameOrigin(request.url(), protect(m_origin)))) {
         auto location = URL(redirectResponse.url(), redirectResponse.httpHeaderField(HTTPHeaderName::Location));
         if (m_schemeRegistry && !m_schemeRegistry->shouldTreatURLSchemeAsCORSEnabled(location.protocol())) {
             handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to "_s, redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme"_s)));
@@ -475,7 +475,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
         m_storedCredentialsPolicy = m_isSameOriginRequest && protect(origin())->canRequest(request.url(), originAccessPatterns()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
-    m_isSameOriginRequest = m_isSameOriginRequest && isSameOrigin(request.url(), m_origin.get());
+    m_isSameOriginRequest = m_isSameOriginRequest && isSameOrigin(request.url(), protect(m_origin));
 
     if (doesNotNeedCORSCheck(request.url())) {
         handler(WTF::move(request));

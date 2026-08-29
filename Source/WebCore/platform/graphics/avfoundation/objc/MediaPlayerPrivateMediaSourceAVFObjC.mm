@@ -830,7 +830,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::resetStallForTime(const MediaTime& ti
 
     auto stallAtTime = protect(m_mediaSourcePrivate)->nextStallTime(time);
     ALWAYS_LOG(LOGIDENTIFIER, "will stall playback at time: ", stallAtTime);
-    m_renderer->notifyTimeReachedAndStall(stallAtTime)->whenSettled(RunLoop::mainSingleton(), WTF::move(onStallReached))->track(m_stallRequest);
+    m_renderer->notifyTimeReachedAndStall(stallAtTime)->whenSettled(RunLoop::mainSingleton(), WTF::move(onStallReached))->track(protect(m_stallRequest));
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setLayerRequiresFlush()

@@ -160,7 +160,8 @@ void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t 
     }
 
     m_quotaCheckFunction(expectedSpace, [weakThis = WeakPtr { *this }, identifier, downloadTotal, uploadTotal, responseBodyIndexToClear, data = WTF::move(data), callback = WTF::move(callback)](bool result) mutable {
-        if (!weakThis) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis) {
             callback(StoreResult::InternalError);
             return;
         }
@@ -168,7 +169,7 @@ void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t 
             callback(StoreResult::QuotaError);
             return;
         }
-        weakThis->storeFetchAfterQuotaCheck(identifier, downloadTotal, uploadTotal, responseBodyIndexToClear, WTF::move(data), WTF::move(callback));
+        protectedThis->storeFetchAfterQuotaCheck(identifier, downloadTotal, uploadTotal, responseBodyIndexToClear, WTF::move(data), WTF::move(callback));
     });
 }
 

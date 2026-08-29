@@ -533,7 +533,7 @@ Ref<WebSWClientConnection::AddRoutePromise> WebSWClientConnection::addRoutes(Ser
             return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::TypeError, "Internal error"_s });
         }
     };
-    return WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithPromisedReply<PromiseConverter>(Messages::WebSWServerConnection::AddRoutes { identifier, routes });
+    return protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithPromisedReply<PromiseConverter>(Messages::WebSWServerConnection::AddRoutes { identifier, routes });
 }
 
 } // namespace WebKit

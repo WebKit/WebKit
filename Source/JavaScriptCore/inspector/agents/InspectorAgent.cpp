@@ -43,7 +43,7 @@ InspectorAgent::InspectorAgent(AgentContext& context)
     : InspectorAgentBase("Inspector"_s)
     , m_environment(context.environment)
     , m_frontendDispatcher(makeUniqueRef<InspectorFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(InspectorBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(InspectorBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
 }
 

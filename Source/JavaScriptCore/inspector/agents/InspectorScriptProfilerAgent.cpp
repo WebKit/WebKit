@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorScriptProfilerAgent);
 InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context)
     : InspectorAgentBase("ScriptProfiler"_s)
     , m_frontendDispatcher(makeUniqueRef<ScriptProfilerFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(ScriptProfilerBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(ScriptProfilerBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_environment(context.environment)
 {
 }

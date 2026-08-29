@@ -416,7 +416,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
                 return;
             }
 
-            auto clientKeys = protectedThis->service().connection().generateClientKeys();
+            auto clientKeys = protect(protectedThis->service().connection())->generateClientKeys();
             IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
             PushRecord record {
                 .subscriptionSetIdentifier = protectedThis->m_identifier,

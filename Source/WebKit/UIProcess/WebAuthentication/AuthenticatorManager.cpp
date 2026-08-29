@@ -256,9 +256,8 @@ void AuthenticatorManager::enableNativeSupport()
 void AuthenticatorManager::clearStateAsync()
 {
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->clearState();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->clearState();
     });
 }
 
@@ -638,9 +637,8 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
     RunLoop::mainSingleton().dispatch([weakPanel = WTF::move(weakPanel), call = WTF::move(call)] () {
-        if (!weakPanel)
-            return;
-        call(*weakPanel);
+        if (RefPtr panel = weakPanel)
+            call(*panel);
     });
 }
 

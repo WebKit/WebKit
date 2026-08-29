@@ -83,7 +83,7 @@ void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat color
 void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebGPUIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
-    auto projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
+    RefPtr projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;

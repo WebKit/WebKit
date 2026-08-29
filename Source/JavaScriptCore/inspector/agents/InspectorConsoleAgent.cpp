@@ -46,7 +46,7 @@ InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
     : InspectorAgentBase("Console"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(makeUniqueRef<ConsoleFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(ConsoleBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(ConsoleBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
 }
 

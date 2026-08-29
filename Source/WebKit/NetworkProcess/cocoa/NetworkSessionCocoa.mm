@@ -1727,8 +1727,8 @@ void NetworkSessionCocoa::removeWebSocketTask(SessionSet& sessionSet, WebSocketT
 void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
 {
     auto addResult1 = m_perParametersSessionSets.add(parameters, nullptr);
-    if (auto set = addResult1.iterator->value) {
-        m_perPageSessionSets.add(pageID, *set);
+    if (RefPtr set = addResult1.iterator->value) {
+        m_perPageSessionSets.add(pageID, set.releaseNonNull());
         return;
     }
 
@@ -1738,7 +1738,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 #if USE(APPLE_INTERNAL_SDK)
     configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier().createNSString().get();
 #endif
-    initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
+    initializeNSURLSessionsInSet(protect(addResult2.iterator->value), configuration.get());
     addResult1.iterator->value = addResult2.iterator->value.get();
 
     m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
@@ -2051,8 +2051,8 @@ void NetworkSessionCocoa::forEachSessionWrapper(NOESCAPE const Function<void(Ses
     for (auto& set : m_perPageSessionSets.values())
         sessionSetFunction(set);
 
-    for (auto& set : m_perParametersSessionSets.values()) {
-        if (set)
+    for (auto& weakSet : m_perParametersSessionSets.values()) {
+        if (RefPtr set = weakSet)
             sessionSetFunction(*set);
     }
 }

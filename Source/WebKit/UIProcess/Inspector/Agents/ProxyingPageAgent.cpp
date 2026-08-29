@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ProxyingPageAgent);
 ProxyingPageAgent::ProxyingPageAgent(WebPageAgentContext& context)
     : InspectorAgentBase("Page"_s, context)
     , m_frontendDispatcher(makeUniqueRef<PageFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(PageBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(PageBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
 {
 }

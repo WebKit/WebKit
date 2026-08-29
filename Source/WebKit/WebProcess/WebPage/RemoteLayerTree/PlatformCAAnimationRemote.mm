@@ -506,7 +506,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         }
 
         if (properties.timingFunctions.size())
-            [basicAnimation setTimingFunction:toCAMediaTimingFunction(properties.timingFunctions[0].get(), properties.reverseTimingFunctions).get()];
+            [basicAnimation setTimingFunction:toCAMediaTimingFunction(protect(properties.timingFunctions[0]), properties.reverseTimingFunctions).get()];
 
         caAnimation = WTF::move(basicAnimation);
         break;
@@ -697,7 +697,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
             ts.dumpProperty("time"_s, animation.keyTimes[i]);
 
         if (i < animation.timingFunctions.size())
-            ts.dumpProperty<const TimingFunction&>("timing function"_s, animation.timingFunctions[i]);
+            ts.dumpProperty<const TimingFunction&>("timing function"_s, protect(animation.timingFunctions[i]));
 
         if (i < animation.keyValues.size()) {
             ts.startGroup();

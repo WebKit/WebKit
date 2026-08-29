@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorBrowserAgent);
 InspectorBrowserAgent::InspectorBrowserAgent(WebPageAgentContext& context)
     : InspectorAgentBase("Browser"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::BrowserFrontendDispatcher>(context.frontendRouter.get()))
-    , m_backendDispatcher(Inspector::BrowserBackendDispatcher::create(context.backendDispatcher.get(), this))
+    , m_backendDispatcher(Inspector::BrowserBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
 {
 }

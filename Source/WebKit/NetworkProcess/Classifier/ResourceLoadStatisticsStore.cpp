@@ -419,23 +419,24 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
     RunLoop::mainSingleton().dispatch([store = Ref { m_store.get() }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTF::move(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
         store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTF::move(domainsToDeleteOrRestrictWebsiteDataFor), [completionHandler = WTF::move(completionHandler), weakThis = WTF::move(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(WTF::move(domainsWithDeletedWebsiteData)), completionHandler = WTF::move(completionHandler), weakThis = WTF::move(weakThis)] () mutable {
-                if (!weakThis) {
+                RefPtr protectedThis = weakThis;
+                if (!protectedThis) {
                     completionHandler();
                     return;
                 }
 
-                weakThis->incrementRecordsDeletedCountForDomains(WTF::move(domainsWithDeletedWebsiteData));
-                weakThis->setDataRecordsBeingRemoved(false);
+                protectedThis->incrementRecordsDeletedCountForDomains(WTF::move(domainsWithDeletedWebsiteData));
+                protectedThis->setDataRecordsBeingRemoved(false);
 
-                auto dataRecordRemovalCompletionHandlers = WTF::move(weakThis->m_dataRecordRemovalCompletionHandlers);
+                auto dataRecordRemovalCompletionHandlers = WTF::move(protectedThis->m_dataRecordRemovalCompletionHandlers);
                 completionHandler();
 
                 for (auto& dataRecordRemovalCompletionHandler : dataRecordRemovalCompletionHandlers)
                     dataRecordRemovalCompletionHandler();
 
-                if (weakThis->m_debugLoggingEnabled) [[unlikely]] {
+                if (protectedThis->m_debugLoggingEnabled) [[unlikely]] {
                     ITP_DEBUG_MODE_RELEASE_LOG("Done removing data records.");
-                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done removing data records"_s);
+                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done removing data records"_s);
                 }
             });
         });
@@ -451,7 +452,7 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords(CompletionHand
     
     removeDataRecords([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] () mutable {
         ASSERT(!RunLoop::isMain());
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
         if (!protectedThis) {
             completionHandler();
             return;
@@ -486,15 +487,16 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTF::move(callback), workQueue = m_workQueue, store = Ref { m_store.get() }] () mutable {
         store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), [weakThis = WTF::move(weakThis), callback = WTF::move(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
             workQueue->dispatch([weakThis = WTF::move(weakThis), domainsWithWebsiteData = crossThreadCopy(WTF::move(domainsWithWebsiteData)), callback = WTF::move(callback)] () mutable {
-                if (!weakThis) {
+                RefPtr protectedThis = weakThis;
+                if (!protectedThis) {
                     callback();
                     return;
                 }
 
-                weakThis->grandfatherDataForDomains(domainsWithWebsiteData);
-                weakThis->m_endOfGrandfatheringTimestamp = nowTime(weakThis->m_timeAdvanceForTesting) + weakThis->m_parameters.grandfatheringTime;
+                protectedThis->grandfatherDataForDomains(domainsWithWebsiteData);
+                protectedThis->m_endOfGrandfatheringTimestamp = nowTime(protectedThis->m_timeAdvanceForTesting) + protectedThis->m_parameters.grandfatheringTime;
                 callback();
-                weakThis->logTestingEvent("Grandfathered"_s);
+                protectedThis->logTestingEvent("Grandfathered"_s);
             });
         });
     });
@@ -549,7 +551,7 @@ void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary
 
     m_pendingStatisticsProcessingRequestIdentifier = ++m_lastStatisticsProcessingRequestIdentifier;
     m_workQueue->dispatchAfter(minimumStatisticsProcessingInterval, [weakThis = WeakPtr { *this }, statisticsProcessingRequestIdentifier = *m_pendingStatisticsProcessingRequestIdentifier] {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
 
@@ -1837,7 +1839,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
     auto transactionScope = beginTransactionIfNecessary();
 
     auto addGrant = [weakThis = WeakPtr { *this }, frameID, pageID, promptWasShown, scope] (SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler) mutable {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
 
         if (!protectedThis)
             return completionHandler(StorageAccessWasGranted::No);
@@ -2216,7 +2218,7 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
     ASSERT(!RunLoop::isMain());
     if (m_dataRecordsBeingRemoved) {
         m_dataRecordRemovalCompletionHandlers.append([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
-            RefPtr protectedThis = weakThis.get();
+            RefPtr protectedThis = weakThis;
             if (protectedThis)
                 protectedThis->dumpResourceLoadStatistics(WTF::move(completionHandler));
             else
@@ -2748,12 +2750,13 @@ void ResourceLoadStatisticsStore::updateCookieBlocking(CompletionHandler<void()>
             store->statisticsQueue().dispatch([weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler();
 
-                if (!weakThis)
+                RefPtr protectedThis = weakThis;
+                if (!protectedThis)
                     return;
 
-                if (weakThis->debugLoggingEnabled()) [[unlikely]] {
+                if (protectedThis->debugLoggingEnabled()) [[unlikely]] {
                     ITP_DEBUG_MODE_RELEASE_LOG("Done applying cross-site tracking restrictions.");
-                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done applying cross-site tracking restrictions."_s);
+                    protectedThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done applying cross-site tracking restrictions."_s);
                 }
             });
         });

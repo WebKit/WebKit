@@ -77,7 +77,7 @@ void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
     if (!convertedRenderPipeline)
         return;
 
-    protect(m_backing)->setPipeline(*convertedRenderPipeline);
+    protect(m_backing)->setPipeline(protect(*convertedRenderPipeline));
 }
 
 void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::WebGPU::IndexFormat indexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
@@ -87,7 +87,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore:
     if (!convertedBuffer)
         return;
 
-    protect(m_backing)->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
+    protect(m_backing)->setIndexBuffer(protect(*convertedBuffer), indexFormat, offset, size);
 }
 
 void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
@@ -126,7 +126,7 @@ void RemoteRenderBundleEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, We
     if (!convertedIndirectBuffer)
         return;
 
-    protect(m_backing)->drawIndirect(*convertedIndirectBuffer, indirectOffset);
+    protect(m_backing)->drawIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
 void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
@@ -136,7 +136,7 @@ void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuf
     if (!convertedIndirectBuffer)
         return;
 
-    protect(m_backing)->drawIndexedIndirect(*convertedIndirectBuffer, indirectOffset);
+    protect(m_backing)->drawIndexedIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
 void RemoteRenderBundleEncoder::setBindGroup(WebCore::WebGPU::Index32 index, std::optional<WebGPUIdentifier> bindGroup,

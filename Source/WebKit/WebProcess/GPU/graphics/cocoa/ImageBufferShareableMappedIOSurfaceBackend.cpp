@@ -59,7 +59,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), 0, creationContext.surfacePool.get() } };
+    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), 0, protect(creationContext.surfacePool) } };
 }
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)

@@ -48,7 +48,7 @@ InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(makeUniqueRef<HeapFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(HeapBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(HeapBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_environment(context.environment)
 {
 }

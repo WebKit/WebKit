@@ -665,10 +665,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     if (creationOptions.attestation == AttestationConveyancePreference::Enterprise) {
         auto callback = [credentialId = WTF::move(credentialId), weakThis = WeakPtr { *this }] (Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception) mutable {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
-                return;
-
-            weakThis->finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
         };
 
         performEnterpriseAttestation(creationOptions, WTF::move(authData), requestData().hash, WTF::move(callback));

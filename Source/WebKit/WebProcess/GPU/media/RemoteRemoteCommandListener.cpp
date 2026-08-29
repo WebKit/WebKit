@@ -95,7 +95,7 @@ void RemoteRemoteCommandListener::updateSupportedCommands()
     m_currentCommands = supportedCommands;
     m_currentSupportSeeking = supportsSeeking();
 
-    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, identifier());
+    protect(ensureGPUProcessConnection().connection())->send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, identifier());
 }
 
 }

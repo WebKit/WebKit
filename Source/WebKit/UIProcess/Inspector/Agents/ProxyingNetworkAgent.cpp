@@ -157,7 +157,7 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
     : InspectorAgentBase("Network"_s, context)
     , m_frontendDispatcher(makeUniqueRef<NetworkFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(NetworkBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(NetworkBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
 {
 }

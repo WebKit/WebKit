@@ -222,10 +222,8 @@ void WebProcessProxy::sendAudioComponentRegistrations()
             return;
         
         RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis), registrations = WTF::move(registrations)] () mutable {
-            if (!weakThis)
-                return;
-
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTF::move(registrations))), 0);
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTF::move(registrations))), 0);
         });
     });
 }

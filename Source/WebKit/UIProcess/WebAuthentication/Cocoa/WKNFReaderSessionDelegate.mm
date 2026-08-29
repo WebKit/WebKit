@@ -50,10 +50,9 @@
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::mainSingleton().dispatch([connection = _connection, tags = retainPtr(tags)] {
-        if (!connection)
-            return;
-        connection->didDetectTags(tags.get());
+    RunLoop::mainSingleton().dispatch([weakConnection = _connection, tags = retainPtr(tags)] {
+        if (RefPtr connection = weakConnection)
+            connection->didDetectTags(tags.get());
     });
 }
 

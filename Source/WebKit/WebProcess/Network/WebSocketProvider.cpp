@@ -51,7 +51,7 @@ RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Doc
 
 void WebSocketProvider::countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CountWebSocketChannelsForTesting { }, WTF::move(completionHandler));
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CountWebSocketChannelsForTesting { }, WTF::move(completionHandler));
 }
 
 WebSocketProvider::~WebSocketProvider() = default;

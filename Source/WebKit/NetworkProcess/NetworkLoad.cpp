@@ -267,8 +267,8 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLega
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_task && m_task->isDownload()) {
-        m_networkProcess->findPendingDownloadLocation(*m_task.get(), WTF::move(completionHandler), response);
+    if (RefPtr task = m_task; task && task->isDownload()) {
+        m_networkProcess->findPendingDownloadLocation(*task, WTF::move(completionHandler), response);
         return;
     }
 

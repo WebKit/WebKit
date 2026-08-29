@@ -187,15 +187,16 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
 #if !RELEASE_LOG_DISABLED
     auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : 0; };
 #endif
-    ALWAYS_LOG(LOGIDENTIFIER, "old element ", logIdentifierForElement(m_pipStandbyElement.get()), ", new element ", logIdentifierForElement(pipStandbyElement));
+    RefPtr previousPIPStandbyElement = m_pipStandbyElement;
+    ALWAYS_LOG(LOGIDENTIFIER, "old element ", logIdentifierForElement(previousPIPStandbyElement.get()), ", new element ", logIdentifierForElement(pipStandbyElement));
 
-    if (m_pipStandbyElement)
-        Ref { *m_pipStandbyElement }->setVideoFullscreenStandby(false);
+    if (previousPIPStandbyElement)
+        previousPIPStandbyElement->setVideoFullscreenStandby(false);
 
     m_pipStandbyElement = pipStandbyElement;
 
-    if (m_pipStandbyElement)
-        Ref { *m_pipStandbyElement }->setVideoFullscreenStandby(true);
+    if (pipStandbyElement)
+        pipStandbyElement->setVideoFullscreenStandby(true);
 #endif
 }
 

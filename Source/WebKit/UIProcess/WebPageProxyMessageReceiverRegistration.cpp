@@ -57,9 +57,10 @@ void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPa
 {
     ASSERT(!m_data);
     if (auto data = std::exchange(oldRegistration.m_data, std::nullopt)) {
-        protect(data->process)->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
-        protect(data->process)->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
-        startReceivingMessages(data->process, data->webPageID, newWebPageProxyReceiver, newBackForwardListReceiver);
+        Ref process = WTF::move(data->process);
+        process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        process->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
+        startReceivingMessages(process, data->webPageID, newWebPageProxyReceiver, newBackForwardListReceiver);
     } else {
         stopReceivingMessages();
         ASSERT_NOT_REACHED();

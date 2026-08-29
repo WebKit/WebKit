@@ -278,7 +278,7 @@ RemoteVideoEncoder::~RemoteVideoEncoder()
 Ref<RemoteVideoEncoder::EncodePromise> RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
     Ref codecs = WebProcess::singleton().libWebRTCCodecs();
-    return codecs->encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
+    return codecs->encodeFrame(m_internalEncoder, protect(rawFrame.frame), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
 }
 
 Ref<GenericPromise> RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate)

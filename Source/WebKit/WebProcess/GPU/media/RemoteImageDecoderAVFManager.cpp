@@ -50,7 +50,7 @@ std::optional<ImageDecoderIdentifier> RemoteImageDecoderAVFManager::createRemote
     if (!WebProcess::singleton().mediaPlaybackEnabled())
         return std::nullopt;
 
-    auto sendResult = ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
+    auto sendResult = protect(ensureGPUProcessConnection().connection())->sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
 
     auto [imageDecoderIdentifier] = sendResult.takeReplyOr(std::nullopt);
     return imageDecoderIdentifier;

@@ -244,9 +244,8 @@ void MockNfcService::receiveStopPolling()
 void MockNfcService::receiveStartPolling()
 {
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->detectTags();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->detectTags();
     });
 }
 

@@ -125,7 +125,7 @@ WK_ADD_API_MAPPING(WKWebArchiveResourceRef, API::WebArchiveResource)
 #endif
 
 template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>
-auto toAPI(T* t) -> APIType
+auto toAPI(T* t) -> APIType CLANG_POINTER_CONVERSION
 {
     return reinterpret_cast<APIType>(API::Object::wrap(t));
 }
@@ -137,7 +137,7 @@ auto toAPILeakingRef(RefPtr<T>&& t) -> APIType
 }
 
 template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>
-auto toAPI(T& t) -> APIType
+auto toAPI(T& t) -> APIType CLANG_POINTER_CONVERSION
 {
     SUPPRESS_UNCOUNTED_ARG return reinterpret_cast<APIType>(API::Object::wrap(&t));
 }
@@ -188,11 +188,11 @@ inline WKStringRef toCopiedAPI(const String& string)
     return toAPILeakingRef(API::String::create(string));
 }
 
-inline ProxyingRefPtr<API::URL> toURLRef(StringImpl* string)
+inline ProxyingRefPtr<API::URL> toURLRef(const String& string)
 {
     if (!string)
         return ProxyingRefPtr<API::URL>(nullptr);
-    return ProxyingRefPtr<API::URL>(API::URL::create(String(string)));
+    return ProxyingRefPtr<API::URL>(API::URL::create(string));
 }
 
 inline WKURLRef toCopiedURLAPI(const String& string)

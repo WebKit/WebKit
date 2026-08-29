@@ -1022,7 +1022,7 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
             if (RefPtr player = protectedThis->m_player.get())
                 player->timeChanged();
         });
-    })->track(m_stallRequest);
+    })->track(protect(m_stallRequest));
 
     m_duration = WTF::move(duration);
     ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, durationCopy = m_duration] {

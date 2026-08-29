@@ -573,7 +573,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
             if (!filter(pageRef, WKPageGetSessionBackForwardListItemValueType(), toAPI(&item), context))
                 return false;
 
-            if (!filter(pageRef, WKPageGetSessionHistoryURLValueType(), toURLRef(item.originalURL().impl()), context))
+            if (!filter(pageRef, WKPageGetSessionHistoryURLValueType(), toURLRef(item.originalURL()), context))
                 return false;
         }
 
@@ -2144,7 +2144,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             if (!m_client.saveDataToFileInDownloadsFolder)
                 return;
 
-            m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURL.string().impl()), toAPI(&data), m_client.base.clientInfo);
+            m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURL.string()), toAPI(&data), m_client.base.clientInfo);
         }
 
         void pinnedStateDidChange(WebPageProxy& page) final
@@ -2518,7 +2518,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             }
 
             if (!apiNotifications.isEmpty())
-                m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTF::move(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTF::move(apiNotifications)).ptr()), m_client.base.clientInfo);
+                m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string()), toAPI(API::Array::create(WTF::move(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTF::move(apiNotifications)).ptr()), m_client.base.clientInfo);
         }
 #endif
     };

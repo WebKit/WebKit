@@ -33,7 +33,7 @@
 namespace WebKit {
 
 TiledCoreAnimationScrollingCoordinator::TiledCoreAnimationScrollingCoordinator(WebPage* page)
-    : ScrollingCoordinatorMac(page->corePage())
+    : ScrollingCoordinatorMac(protect(page->corePage()))
     , m_page(page)
 {
 }

@@ -99,7 +99,7 @@ std::span<const uint8_t> SharedBufferReference::span() const LIFETIME_BOUND
     if (!m_buffer->isContiguous())
         m_buffer = protect(m_buffer)->makeContiguous();
 
-    return downcast<SharedBuffer>(m_buffer.get())->span().first(m_size);
+    return protect(downcast<SharedBuffer>(*m_buffer))->span().first(m_size);
 }
 
 RefPtr<WebCore::SharedMemory> SharedBufferReference::sharedCopy() const

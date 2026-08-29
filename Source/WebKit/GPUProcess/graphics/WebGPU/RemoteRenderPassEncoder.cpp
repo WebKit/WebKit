@@ -71,7 +71,7 @@ void RemoteRenderPassEncoder::setPipeline(WebGPUIdentifier renderPipeline)
     if (!convertedRenderPipeline)
         return;
 
-    protect(m_backing)->setPipeline(*convertedRenderPipeline);
+    protect(m_backing)->setPipeline(protect(*convertedRenderPipeline));
 }
 
 void RemoteRenderPassEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::WebGPU::IndexFormat indexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
@@ -81,7 +81,7 @@ void RemoteRenderPassEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::W
     if (!convertedBuffer)
         return;
 
-    protect(m_backing)->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
+    protect(m_backing)->setIndexBuffer(protect(*convertedBuffer), indexFormat, offset, size);
 }
 
 void RemoteRenderPassEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
@@ -121,7 +121,7 @@ void RemoteRenderPassEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, WebC
     if (!convertedIndirectBuffer)
         return;
 
-    protect(m_backing)->drawIndirect(*convertedIndirectBuffer, indirectOffset);
+    protect(m_backing)->drawIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
 void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
@@ -131,7 +131,7 @@ void RemoteRenderPassEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffe
     if (!convertedIndirectBuffer)
         return;
 
-    protect(m_backing)->drawIndexedIndirect(*convertedIndirectBuffer, indirectOffset);
+    protect(m_backing)->drawIndexedIndirect(protect(*convertedIndirectBuffer), indirectOffset);
 }
 
 void RemoteRenderPassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, std::optional<WebGPUIdentifier> bindGroup,
@@ -211,7 +211,7 @@ void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBu
         ASSERT(convertedBundle);
         if (!convertedBundle)
             return;
-        convertedBundles.append(*convertedBundle);
+        convertedBundles.append(protect(*convertedBundle));
     }
     protect(m_backing)->executeBundles(WTF::move(convertedBundles));
 }

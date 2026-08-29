@@ -911,12 +911,12 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer& layer, GraphicsContext
     };
 
     if (&layer == layerForHorizontalScrollbar()) {
-        paintScrollbar(m_horizontalScrollbar.get(), context);
+        paintScrollbar(protect(m_horizontalScrollbar), context);
         return;
     }
 
     if (&layer == layerForVerticalScrollbar()) {
-        paintScrollbar(m_verticalScrollbar.get(), context);
+        paintScrollbar(protect(m_verticalScrollbar), context);
         return;
     }
 

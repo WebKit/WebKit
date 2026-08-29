@@ -96,9 +96,9 @@ void BackgroundFetchStoreImpl::initializeFetches(const WebCore::ClientOrigin& or
     addResult.iterator->value.initializationCallbacks.append(WTF::move(callback));
 
     initializeFetchesInternal(origin, [origin, weakEngine = WeakPtr { protect(m_server)->backgroundFetchEngine() }, protectedThis = Ref { *this }, manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
-        if (weakEngine && manager) {
+        if (RefPtr engine = weakEngine; engine && manager) {
             for (auto& fetch : fetches) {
-                weakEngine->addFetchFromStore(Ref { *fetch.first }->span(), [&](auto& key, auto& identifier) {
+                engine->addFetchFromStore(Ref { *fetch.first }->span(), [&](auto& key, auto& identifier) {
                     if (identifier.isEmpty()) {
                         manager->dispatchTaskToBackgroundFetchManager(origin, [identifier = crossThreadCopy(WTF::move(fetch.second))](auto* backgroundFetchManager) {
                             if (backgroundFetchManager)

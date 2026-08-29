@@ -256,7 +256,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
 InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
     : InspectorAgentBase("Animation"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
     , m_animationBindingTimer(*this, &InspectorAnimationAgent::animationBindingTimerFired)

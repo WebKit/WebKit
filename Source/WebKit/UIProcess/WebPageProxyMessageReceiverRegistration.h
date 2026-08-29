@@ -45,7 +45,6 @@ private:
     struct Data {
         WebCore::PageIdentifier webPageID;
         Ref<WebProcessProxy> process;
-
     };
     std::optional<Data> m_data;
 };

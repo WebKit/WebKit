@@ -64,7 +64,7 @@ public:
         return adoptRef(*new BackgroundFetch(swServerRegistration, WTF::move(identifier), WTF::move(options), WTF::move(store), WTF::move(notificationCallback), pausedFlag));
     }
 
-    ~BackgroundFetch();
+    WEBCORE_EXPORT ~BackgroundFetch();
 
     static RefPtr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
@@ -88,7 +88,7 @@ public:
         void deref() const final { RefCounted::deref(); }
 
         static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTF::move(request), size)); }
-        ~Record();
+        WEBCORE_EXPORT ~Record();
 
         void complete(const CreateLoaderCallback&);
         void pause();

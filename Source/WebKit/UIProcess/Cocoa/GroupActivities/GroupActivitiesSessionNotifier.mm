@@ -65,7 +65,7 @@ GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier()
         auto session = GroupActivitiesSession::create(groupSession);
         session->addStateChangeObserver(protectedThis->m_stateChangeObserver);
 
-        for (auto& page : copyToVector(protectedThis->m_webPages)) {
+        for (RefPtr page : copyToVector(protectedThis->m_webPages)) {
             if (page->mainFrame() && page->mainFrame()->url() == session->fallbackURL()) {
                 auto coordinator = GroupActivitiesCoordinator::create(session);
                 page->createMediaSessionCoordinator(WTF::move(coordinator), [] (bool) { });

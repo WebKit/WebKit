@@ -1194,13 +1194,13 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
 
     auto updateRowPageContainerLayers = [&](const RowData& row, const FloatRect& rowBounds) {
         auto leftPageIndex = row.pages.pages[0];
-        updatePageContainerLayerBounds(row.leftPageContainerLayer.get(), leftPageIndex, rowBounds);
+        updatePageContainerLayerBounds(protect(row.leftPageContainerLayer), leftPageIndex, rowBounds);
 
         if (row.pages.numPages() == 1)
             return;
 
         auto rightPageIndex = row.pages.pages[1];
-        updatePageContainerLayerBounds(row.rightPageContainerLayer.get(), rightPageIndex, rowBounds);
+        updatePageContainerLayerBounds(protect(row.rightPageContainerLayer), rightPageIndex, rowBounds);
     };
 
     TransformationMatrix transform;

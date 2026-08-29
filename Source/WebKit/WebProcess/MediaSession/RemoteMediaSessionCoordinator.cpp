@@ -189,7 +189,7 @@ void RemoteMediaSessionCoordinator::trackIdentifierChanged(const String& identif
 void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, time);
-    if (auto coordinatorClient = client())
+    if (RefPtr coordinatorClient = client())
         coordinatorClient->seekSessionToTime(time, WTF::move((completionHandler)));
     else
         completionHandler(false);
@@ -198,7 +198,7 @@ void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHan
 void RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (auto coordinatorClient = client())
+    if (RefPtr coordinatorClient = client())
         coordinatorClient->playSession(WTF::move(atTime), WTF::move(hostTime), WTF::move((completionHandler)));
     else
         completionHandler(false);
@@ -207,7 +207,7 @@ void RemoteMediaSessionCoordinator::playSession(std::optional<double> atTime, st
 void RemoteMediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (auto coordinatorClient = client())
+    if (RefPtr coordinatorClient = client())
         coordinatorClient->pauseSession(WTF::move((completionHandler)));
     else
         completionHandler(false);
@@ -216,7 +216,7 @@ void RemoteMediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&&
 void RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackIdentifier);
-    if (auto coordinatorClient = client())
+    if (RefPtr coordinatorClient = client())
         coordinatorClient->setSessionTrack(trackIdentifier, WTF::move((completionHandler)));
     else
         completionHandler(false);
@@ -225,7 +225,7 @@ void RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifie
 void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    if (auto coordinatorClient = client())
+    if (RefPtr coordinatorClient = client())
         coordinatorClient->coordinatorStateChanged(state);
 }
 

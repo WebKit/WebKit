@@ -306,7 +306,7 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
             propagateSettingsToLayer(pageLayer);
             if (pageLayer->children().size())
-                propagateSettingsToLayer(pageLayer->children()[0]);
+                propagateSettingsToLayer(protect(pageLayer->children()[0]));
         }
     }
 

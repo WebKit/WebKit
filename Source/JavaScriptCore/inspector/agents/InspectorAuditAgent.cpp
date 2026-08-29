@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditAgent);
 
 InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
     : InspectorAgentBase("Audit"_s)
-    , m_backendDispatcher(AuditBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(AuditBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_debugger(CheckedRef { context.environment }->debugger())
 {

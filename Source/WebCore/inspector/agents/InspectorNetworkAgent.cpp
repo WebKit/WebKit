@@ -125,7 +125,7 @@ Ref<Inspector::Protocol::Network::WebSocketFrame> buildWebSocketMessage(const We
 InspectorNetworkAgent::InspectorNetworkAgent(WebAgentContext& context, const NetworkResourcesData::Settings& networkResourcesDataSettings)
     : Inspector::NetworkAgentInstrumentation(context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_resourcesData(makeUniqueRef<NetworkResourcesData>(networkResourcesDataSettings))
 {

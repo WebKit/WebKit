@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMemoryAgent);
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
     : InspectorAgentBase("Memory"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
 }
 

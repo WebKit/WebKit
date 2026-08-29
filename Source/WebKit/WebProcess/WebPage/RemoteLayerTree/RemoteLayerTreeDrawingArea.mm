@@ -572,10 +572,10 @@ bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
         if (displayDidRefreshIsPending())
             return true;
 
-        callOnMainRunLoop([self = WeakPtr { this }] () {
-            if (self) {
-                self->m_isScheduled = false;
-                self->triggerRenderingUpdate();
+        callOnMainRunLoop([weakThis = WeakPtr { *this }] () {
+            if (RefPtr protectedThis = weakThis) {
+                protectedThis->m_isScheduled = false;
+                protectedThis->triggerRenderingUpdate();
             }
         });
     } else

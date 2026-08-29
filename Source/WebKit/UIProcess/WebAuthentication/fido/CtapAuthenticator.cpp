@@ -161,12 +161,12 @@ void CtapAuthenticator::makeCredential()
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, m_batches[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
-            weakThis->continueSilentlyCheckCredentials(WTF::move(data), [weakThis = WTF::move(weakThis)] (bool foundMatch) mutable {
-                if (!weakThis)
-                    return;
-                weakThis->continueMakeCredentialAfterCheckExcludedCredentials(foundMatch);
+            protectedThis->continueSilentlyCheckCredentials(WTF::move(data), [weakThis = WTF::move(weakThis)] (bool foundMatch) mutable {
+                if (RefPtr protectedThis = weakThis)
+                    protectedThis->continueMakeCredentialAfterCheckExcludedCredentials(foundMatch);
             });
         });
     } else
@@ -216,9 +216,10 @@ void CtapAuthenticator::continueSilentlyCheckCredentials(Vector<uint8_t>&& data,
 
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Vector<uint8_t>&& data) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
             return completionHandler(false);
-        weakThis->continueSilentlyCheckCredentials(WTF::move(data), WTF::move(completionHandler));
+        protectedThis->continueSilentlyCheckCredentials(WTF::move(data), WTF::move(completionHandler));
     });
 }
 
@@ -284,9 +285,8 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
         CTAP_RELEASE_LOG("CtapAuthenticator::makeCredential cmdSize = %lu maxMsgSize = %u", cborCmd.size(), *m_info.maxMsgSize());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueMakeCredentialAfterResponseReceived(WTF::move(data));
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->continueMakeCredentialAfterResponseReceived(WTF::move(data));
     });
 }
 
@@ -373,14 +373,16 @@ void CtapAuthenticator::getAssertion()
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, m_batches[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
-            weakThis->continueSilentlyCheckCredentials(WTF::move(data), [weakThis = WTF::move(weakThis)] (bool foundCredentials) mutable {
-                if (!weakThis)
+            protectedThis->continueSilentlyCheckCredentials(WTF::move(data), [weakThis = WTF::move(weakThis)] (bool foundCredentials) mutable {
+                RefPtr protectedThis = weakThis;
+                if (!protectedThis)
                     return;
-                if (!foundCredentials && weakThis->tryDowngrade())
+                if (!foundCredentials && protectedThis->tryDowngrade())
                     return;
-                weakThis->continueGetAssertionAfterCheckAllowCredentials();
+                protectedThis->continueGetAssertionAfterCheckAllowCredentials();
             });
         });
     } else if (options.allowCredentials.size() == 1 && canDowngradeToU2f()) {
@@ -390,12 +392,13 @@ void CtapAuthenticator::getAssertion()
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, options.allowCredentials, pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
             auto error = getResponseCode(data);
-            if (error == CtapDeviceResponseCode::kCtap2ErrNoCredentials && weakThis->tryDowngrade())
+            if (error == CtapDeviceResponseCode::kCtap2ErrNoCredentials && protectedThis->tryDowngrade())
                 return;
-            weakThis->continueGetAssertionAfterCheckAllowCredentials();
+            protectedThis->continueGetAssertionAfterCheckAllowCredentials();
         });
     } else
         continueGetAssertionAfterCheckAllowCredentials();
@@ -453,9 +456,8 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
     CTAP_RELEASE_LOG("getAssertion: Sending %s", base64EncodeToString(cborCmd).utf8().data());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueGetAssertionAfterResponseReceived(WTF::move(data));
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->continueGetAssertionAfterResponseReceived(WTF::move(data));
     });
 }
 
@@ -516,9 +518,8 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     CTAP_RELEASE_LOG("continueGetAssertionAfterResponseReceived: Sending %s", base64EncodeToString(cborCmd).utf8().data());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
     });
 }
 
@@ -558,9 +559,8 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
     CTAP_RELEASE_LOG("continueGetNextAssertionAfterResponseReceived: Sending %s", base64EncodeToString(cborCmd).utf8().data());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-        weakThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
     });
 }
 
@@ -620,7 +620,7 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
             if (!protectedThis)
                 return;
             CTAP_RELEASE_LOG_WITH_THIS(protectedThis, "continueRequestPinAfterGetKeyAgreement: Got pin from observer.");
-            protectedThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
+            protectedThis->continueGetPinTokenAfterRequestPin(pin, protect(keyAgreement.peerKey));
         });
     }
 }
@@ -816,7 +816,7 @@ void CtapAuthenticator::continueSetupPinAfterGetKeyAgreement(Vector<uint8_t>&& d
         receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<uint8_t>(error)) });
         return;
     }
-    auto setPinRequest = pin::SetPinRequest::tryCreate(selectPinProtocol(), pin, keyAgreement->peerKey);
+    auto setPinRequest = pin::SetPinRequest::tryCreate(selectPinProtocol(), pin, protect(keyAgreement->peerKey));
     if (!setPinRequest) {
         receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Cannot create a SetPinRequest."_s });
         return;

@@ -767,11 +767,12 @@ bool WebProcessProxy::shouldSendPendingMessage(const IPC::Encoder& encoder)
             if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
                 auto url = loadParameters->request.url();
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), url, *resourceDirectoryURL,  *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTF::move(loadParameters)] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
-                    if (!weakThis)
+                    RefPtr protectedThis = weakThis;
+                    if (!protectedThis)
                         return;
                     if (sandboxExtension)
                         loadParameters->sandboxExtensionHandle = WTF::move(*sandboxExtension);
-                    weakThis->send(Messages::WebPage::LoadRequest(WTF::move(*loadParameters)), destinationID);
+                    protectedThis->send(Messages::WebPage::LoadRequest(WTF::move(*loadParameters)), destinationID);
                 });
             }
         } else
@@ -793,11 +794,12 @@ bool WebProcessProxy::shouldSendPendingMessage(const IPC::Encoder& encoder)
         auto destinationID = decoder->destinationID();
         auto frameState = parameters->frameState;
         auto completionHandler = [weakThis = WeakPtr { *this }, parameters = WTF::move(parameters), destinationID] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
             if (sandboxExtension)
                 parameters->sandboxExtensionHandle = WTF::move(*sandboxExtension);
-            weakThis->send(Messages::WebPage::GoToBackForwardItem(WTF::move(*parameters)), destinationID);
+            protectedThis->send(Messages::WebPage::GoToBackForwardItem(WTF::move(*parameters)), destinationID);
         };
         if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
             if (RefPtr item = WebBackForwardListItem::itemForID(*frameState->itemID))

@@ -770,8 +770,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    RunLoop::mainSingleton().dispatch([impl = _impl] {
-        if (impl)
+    RunLoop::mainSingleton().dispatch([weakImpl = _impl] {
+        if (CheckedPtr impl = weakImpl)
             impl->hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     });
 }
@@ -3529,10 +3529,8 @@ bool WebViewImpl::validateUserInterfaceItem(id<NSValidatedUserInterfaceItem> ite
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
         m_page->validateCommand(commandName, [weakThis = WeakPtr { *this }, commandName](bool isEnabled, int32_t state) {
-            if (!weakThis)
-                return;
-
-            weakThis->setUserInterfaceItemState(commandName.createNSString().get(), isEnabled, state);
+            if (CheckedPtr checkedThis = weakThis)
+                checkedThis->setUserInterfaceItemState(commandName.createNSString().get(), isEnabled, state);
         });
     }
 
@@ -3826,9 +3824,8 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     WeakPtr weakThis { *this };
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest.createNSString().get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         RunLoop::mainSingleton().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
-            if (!weakThis)
-                return;
-            weakThis->handleRequestedCandidates(sequenceNumber, candidates.get());
+            if (CheckedPtr checkedThis = weakThis)
+                checkedThis->handleRequestedCandidates(sequenceNumber, candidates.get());
         });
     }];
 }
@@ -6355,13 +6352,17 @@ void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHand
     }
 
     m_page->firstRectForCharacterRangeAsync(range, [weakThis = WeakPtr { *this }, completionHandler = makeBlockPtr(completionHandler)](const WebCore::IntRect& rect, const EditingRange& actualRange) {
-        if (!weakThis) {
-            LOG(TextInput, "    ...firstRectForCharacterRange failed (WebViewImpl was destroyed).");
-            completionHandler(NSZeroRect, NSMakeRange(NSNotFound, 0));
-            return;
-        }
+        NSRect resultRect;
+        {
+            CheckedPtr checkedThis = weakThis;
+            if (!checkedThis) {
+                LOG(TextInput, "    ...firstRectForCharacterRange failed (WebViewImpl was destroyed).");
+                completionHandler(NSZeroRect, NSMakeRange(NSNotFound, 0));
+                return;
+            }
 
-        auto resultRect = weakThis->convertFromViewToScreen(rect);
+            resultRect = checkedThis->convertFromViewToScreen(rect);
+        }
 
         LOG(TextInput, "    -> firstRectForCharacterRange returned (%f, %f, %f, %f)", resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
         completionHandler(resultRect, actualRange);
@@ -6660,7 +6661,8 @@ void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candid
         rect:offsetSelectionRect
         view:m_view.get().get()
         completionHandler:[weakThis](NSDictionary<NSString *, id> *resultDictionary) {
-        if (!weakThis)
+        CheckedPtr checkedThis = weakThis;
+        if (!checkedThis)
             return;
 
         RetainPtr<NSValue> softSpaceRangeValue = resultDictionary[NSTextCheckingSoftSpaceRangeKey];
@@ -6668,11 +6670,12 @@ void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candid
             return;
 
         NSRange absoluteSoftSpaceRange = softSpaceRangeValue.get().rangeValue;
-        weakThis->selectedRangeWithCompletionHandler([weakThis, absoluteSoftSpaceRange](NSRange absoluteSelectedRange) {
-            if (!weakThis)
+        checkedThis->selectedRangeWithCompletionHandler([weakThis, absoluteSoftSpaceRange](NSRange absoluteSelectedRange) {
+            CheckedPtr checkedThis = weakThis;
+            if (!checkedThis)
                 return;
 
-            auto postLayoutData = weakThis->postLayoutDataForContentEditable();
+            auto postLayoutData = checkedThis->postLayoutDataForContentEditable();
             if (!postLayoutData)
                 return;
 
@@ -6684,7 +6687,7 @@ void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candid
             NSUInteger offset = absoluteSelectedRange.location - relativeSelectedRange.location;
             NSRange relativeSoftSpaceRange = NSMakeRange(absoluteSoftSpaceRange.location - offset, absoluteSoftSpaceRange.length);
 
-            weakThis->m_softSpaceRange = relativeSoftSpaceRange;
+            checkedThis->m_softSpaceRange = relativeSoftSpaceRange;
         });
     }];
 }
@@ -6706,12 +6709,9 @@ void WebViewImpl::showInlinePredictionsForCandidates(NSArray<NSTextCheckingResul
 
     NSRange relativeSelectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
 
-    WeakPtr weakThis { *this };
-    selectedRangeWithCompletionHandler([weakThis, candidate, relativeSelectedRange](NSRange absoluteSelectedRange) {
-        if (!weakThis)
-            return;
-
-        weakThis->showInlinePredictionsForCandidate(candidate.get(), absoluteSelectedRange, relativeSelectedRange);
+    selectedRangeWithCompletionHandler([weakThis = WeakPtr { *this }, candidate, relativeSelectedRange](NSRange absoluteSelectedRange) {
+        if (CheckedPtr checkedThis = weakThis)
+            checkedThis->showInlinePredictionsForCandidate(candidate.get(), absoluteSelectedRange, relativeSelectedRange);
     });
 }
 #endif
@@ -6917,8 +6917,8 @@ void WebViewImpl::createFlagsChangedEventMonitor()
 
     WeakPtr weakThis { *this };
     m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:[weakThis] (NSEvent *flagsChangedEvent) {
-        if (weakThis)
-            weakThis->scheduleMouseDidMoveOverElement(flagsChangedEvent);
+        if (CheckedPtr checkedThis = weakThis)
+            checkedThis->scheduleMouseDidMoveOverElement(flagsChangedEvent);
         return flagsChangedEvent;
     }];
 }

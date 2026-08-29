@@ -77,7 +77,7 @@ private:
     std::unique_ptr<WebCore::IOSurface> m_surface;
     std::optional<WebCore::IOSurface::Locker<WebCore::IOSurface::AccessMode::ReadWrite>> m_lock;
     WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };
-    RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
+    const RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
 };
 
 } // namespace WebKit

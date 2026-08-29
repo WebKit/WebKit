@@ -201,7 +201,7 @@ static inline VideoFrame::Rotation NODELETE toVideoRotation(webrtc::VideoRotatio
 
 static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride, Function<void(bool)>&& callback)
 {
-    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride) }, WebProcess::singleton().libWebRTCCodecs().workQueue(), WTF::move(callback), 0);
+    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride) }, protect(WebProcess::singleton().libWebRTCCodecs().workQueue()), WTF::move(callback), 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -613,7 +613,7 @@ LibWebRTCCodecs::Encoder::PendingFrame::~PendingFrame() = default;
 
 static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connection& connection, const Vector<std::pair<String, String>>& parameters, Function<void(bool)>&& callback)
 {
-    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder.identifier, encoder.type, encoder.codec, parameters, encoder.isRealtime, encoder.useAnnexB, encoder.scalabilityMode }, WebProcess::singleton().libWebRTCCodecs().workQueue(), WTF::move(callback), 0);
+    connection.sendWithAsyncReplyOnDispatcher(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder.identifier, encoder.type, encoder.codec, parameters, encoder.isRealtime, encoder.useAnnexB, encoder.scalabilityMode }, protect(WebProcess::singleton().libWebRTCCodecs().workQueue()), WTF::move(callback), 0);
 }
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(WebCore::VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, Function<void(Encoder*)>&& callback)

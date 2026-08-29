@@ -589,10 +589,11 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
         || uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
         Ref securityOrigin = WebCore::SecurityOrigin::create(page.pageLoadState().activeURL());
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
-        auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), page = WeakPtr { page }] (WKPermissionDecision decision) mutable {
+        auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), weakPage = WeakPtr { page }] (WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
+            RefPtr page = weakPage;
             if (!page) {
                 completionHandler(false);
                 return;
@@ -1240,10 +1241,11 @@ void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::W
 
     RetainPtr delegate = uiDelegatePrivate();
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), page = WeakPtr { page }](WKPermissionDecision decision) mutable {
+    auto decisionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), weakPage = WeakPtr { page }](WKPermissionDecision decision) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
+        RefPtr page = weakPage;
         if (!page) {
             completionHandler(false);
             return;

@@ -105,7 +105,7 @@ void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdent
 
     WebCore::ScriptExecutionContext::postTaskTo(*remoteHandler.contextIdentifier, [weakHandler = remoteHandler.handler, function = WTF::move(function)](auto&) mutable {
         if (CheckedPtr handler = weakHandler)
-            function(*weakHandler);
+            function(*handler);
     });
 }
 

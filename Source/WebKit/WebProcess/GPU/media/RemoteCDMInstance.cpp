@@ -78,7 +78,7 @@ void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemC
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTF::move(callback), m_identifier);
+    protect(factory->gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTF::move(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
@@ -89,13 +89,13 @@ void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certif
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTF::move(certificate)), WTF::move(callback), m_identifier);
+    protect(factory->gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTF::move(certificate)), WTF::move(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
+        protect(factory->gpuProcessConnection().connection())->send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
 }
 
 RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
@@ -110,7 +110,7 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
         logIdentifier = reinterpret_cast<uint64_t>(client->logIdentifier());
 #endif
 
-    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
+    auto sendResult = protect(factory->gpuProcessConnection().connection())->sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;

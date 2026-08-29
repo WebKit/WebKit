@@ -167,7 +167,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     // First check to see if the bundle has a WKBundleInitialize function.
     if (initializeFunction) {
-        if (!decodeBundleParameters(parameters.bundleParameterData.get()))
+        if (!decodeBundleParameters(protect(parameters.bundleParameterData)))
             return false;
         initializeFunction(toAPI(this), toAPI(initializationUserData.get()));
         return true;
@@ -197,7 +197,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
         [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
 
-    if (!decodeBundleParameters(parameters.bundleParameterData.get())) {
+    if (!decodeBundleParameters(protect(parameters.bundleParameterData))) {
         RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - decodeBundleParameters returned false; %{public}s will not receive webProcessPlugIn:didCreateBrowserContextController: callbacks", class_getName(principalClass.get()));
         return false;
     }

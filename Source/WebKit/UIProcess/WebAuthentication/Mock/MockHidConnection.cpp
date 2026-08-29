@@ -86,15 +86,16 @@ void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback
     auto task = makeBlockPtr([weakThis = WeakPtr { *this }, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
         RunLoop::mainSingleton().dispatch([weakThis, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
-            if (!weakThis) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis) {
                 callback(DataSent::No);
                 return;
             }
 
-            weakThis->assembleRequest(WTF::move(data));
+            protectedThis->assembleRequest(WTF::move(data));
 
             auto sent = DataSent::Yes;
-            if (weakThis->stagesMatch() && weakThis->m_configuration.hid->error == Mock::HidError::DataNotSent)
+            if (protectedThis->stagesMatch() && protectedThis->m_configuration.hid->error == Mock::HidError::DataNotSent)
                 sent = DataSent::No;
             callback(sent);
         });
@@ -302,9 +303,8 @@ void MockHidConnection::feedReports()
             report = FidoHidContinuationPacket(m_currentChannel - 1, 0, { }).getSerializedData();
         // Packets are feed asynchronously to mimic actual data transmission.
         RunLoop::mainSingleton().dispatch([report = WTF::move(report), weakThis = WeakPtr { *this }]() mutable {
-            if (!weakThis)
-                return;
-            weakThis->receiveReport(WTF::move(report));
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->receiveReport(WTF::move(report));
         });
         isFirst = false;
     }
@@ -328,9 +328,8 @@ void MockHidConnection::continueFeedReports()
 {
     // Send actual response for the next run.
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
-            return;
-        weakThis->feedReports();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->feedReports();
     });
 }
 

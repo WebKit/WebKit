@@ -40,7 +40,7 @@ InspectorWorkerAgent::InspectorWorkerAgent(WebAgentContext& context)
     : InspectorAgentBase("Worker"_s, context)
     , m_pageChannel(PageChannel::create(*this))
     , m_frontendDispatcher(makeUniqueRef<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(protect(context.backendDispatcher), this))
 {
 }
 

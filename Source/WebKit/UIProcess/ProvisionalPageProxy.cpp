@@ -136,7 +136,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     } else {
         // Passing previous frame's url to restore the main frame's committed URL
         // as some clients may rely on it until the next load is committed.
-        Ref mainFrame = WebFrameProxy::create(page, m_frameProcess, generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), ReferrerPolicy::EmptyString, previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
+        Ref mainFrame = WebFrameProxy::create(page, protect(m_frameProcess), generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), ReferrerPolicy::EmptyString, previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
         m_mainFrame = mainFrame.copyRef();
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
     }
@@ -304,7 +304,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             } else
                 m_takenRemotePage = WTF::move(existingRemotePageProxy);
         }
-        m_browsingContextGroup->addFrameProcessAndInjectPageContextIf(m_frameProcess, [m_page = m_page](WebPageProxy& page) {
+        m_browsingContextGroup->addFrameProcessAndInjectPageContextIf(protect(m_frameProcess), [m_page = m_page](WebPageProxy& page) {
             return m_page != &page;
         });
     }

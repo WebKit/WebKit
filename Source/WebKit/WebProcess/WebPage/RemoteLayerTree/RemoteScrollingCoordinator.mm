@@ -59,7 +59,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinator);
 
 RemoteScrollingCoordinator::RemoteScrollingCoordinator(WebPage* page)
-    : AsyncScrollingCoordinator(page->corePage())
+    : AsyncScrollingCoordinator(protect(page->corePage()))
     , m_webPage(page)
     , m_pageIdentifier(page->identifier())
 {

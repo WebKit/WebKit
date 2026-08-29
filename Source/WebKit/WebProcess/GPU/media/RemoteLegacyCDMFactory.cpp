@@ -94,7 +94,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
     if (foundInCache != m_supportsKeySystemCache.end())
         return foundInCache->value;
 
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), { });
+    auto sendResult = protect(gpuProcessConnection().connection())->sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), { });
     auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemCache.set(keySystem, supported);
     return supported;
@@ -107,7 +107,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(const String& keySyste
     if (foundInCache != m_supportsKeySystemAndMimeTypeCache.end())
         return foundInCache->value;
 
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), { });
+    auto sendResult = protect(gpuProcessConnection().connection())->sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), { });
     auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemAndMimeTypeCache.set(key, supported);
     return supported;
@@ -141,7 +141,7 @@ void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier iden
 {
     ASSERT(m_sessions.contains(identifier));
     RefPtr session = m_sessions.get(identifier);
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTF::move(session)] {
+    protect(gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTF::move(session)] {
         ASSERT(protectedThis->m_sessions.contains(identifier));
         protectedThis->m_sessions.remove(identifier);
         protectedThis->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64());

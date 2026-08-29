@@ -301,10 +301,8 @@ void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSe
         if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
             return;
 
-        if (!weakWebPage)
-            return;
-
-        weakWebPage->addInitialTextAnimationForActiveWritingToolsSession();
+        if (RefPtr webPage = weakWebPage)
+            webPage->addInitialTextAnimationForActiveWritingToolsSession();
     });
 
     if (m_activeAnimation == sourceAnimationUUID) {

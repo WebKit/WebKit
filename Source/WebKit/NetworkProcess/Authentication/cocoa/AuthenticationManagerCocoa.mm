@@ -94,7 +94,11 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             RELEASE_ASSERT(isMainRunLoop());
 
             xpc_type_t type = xpc_get_type(event.get());
-            if (type == XPC_TYPE_ERROR || !weakThis)
+            if (type == XPC_TYPE_ERROR)
+                return;
+
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
 
             if (type != XPC_TYPE_DICTIONARY || xpcDictionaryGetString(event.get(), ClientCertificateAuthentication::XPCMessageNameKey) != ClientCertificateAuthentication::XPCMessageNameValue) {
@@ -112,11 +116,11 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             // CFNetwork owns the challenge's completion handler and never times out, so failing to complete it hangs the load forever.
             auto credential = credentialFromClientCertificateMessage(event.get());
             if (!credential) {
-                weakThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::PerformDefaultHandling, { });
+                protectedThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::PerformDefaultHandling, { });
                 return;
             }
 
-            weakThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::UseCredential, WTF::move(*credential));
+            protectedThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::UseCredential, WTF::move(*credential));
         });
     });
 }

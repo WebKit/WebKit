@@ -61,7 +61,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMDebuggerAgent);
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase("DOMDebugger"_s, context)
     , m_debuggerAgent(debuggerAgent)
-    , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
 {
     if (m_debuggerAgent)

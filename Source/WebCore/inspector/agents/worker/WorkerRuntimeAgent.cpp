@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerRuntimeAgent);
 
 WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
     : InspectorRuntimeAgent(context)
-    , m_backendDispatcher(RuntimeBackendDispatcher::create(context.backendDispatcher, this))
+    , m_backendDispatcher(RuntimeBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_globalScope(context.globalScope)
 {
     ASSERT(context.globalScope->isContextThread());

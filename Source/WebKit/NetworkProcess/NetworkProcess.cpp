@@ -1297,7 +1297,7 @@ void NetworkProcess::hasLocalStorageOrCookies(PAL::SessionID sessionID, const Re
             return completionHandler(true);
 
         if (session) {
-            session->storageManager().fetchData({ WebsiteDataType::LocalStorage }, NetworkStorageManager::ShouldComputeSize::No, [domain, completionHandler = WTF::move(completionHandler)](auto entries) mutable {
+            protect(session->storageManager())->fetchData({ WebsiteDataType::LocalStorage }, NetworkStorageManager::ShouldComputeSize::No, [domain, completionHandler = WTF::move(completionHandler)](auto entries) mutable {
                 completionHandler(std::ranges::any_of(entries, [&domain](auto& entry) {
                     return domain.matches(entry.origin);
                 }));

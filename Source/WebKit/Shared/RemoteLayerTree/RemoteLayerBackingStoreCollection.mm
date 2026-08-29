@@ -302,8 +302,10 @@ void RemoteLayerBackingStoreCollection::markBackingStoreVolatileAfterReachabilit
 
         sendMarkBuffersVolatile(WTF::move(identifiers), [weakThis = WeakPtr { *this }](bool succeeded) {
             LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::markBackingStoreVolatileAfterReachabilityChange - succeeded " << succeeded);
-            if (!succeeded && weakThis)
-                weakThis->scheduleVolatilityTimer();
+            if (!succeeded) {
+                if (RefPtr protectedThis = weakThis)
+                    protectedThis->scheduleVolatilityTimer();
+            }
         });
     } else {
         CheckedRef inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);

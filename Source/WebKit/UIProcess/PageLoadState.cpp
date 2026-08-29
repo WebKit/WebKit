@@ -483,9 +483,10 @@ void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
     Ref protectedPage { m_webPageProxy.get() };
 
-    for (auto& observer : copyToVector(m_observers)) {
+    for (auto& weakObserver : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)
         // but in practice - using only API - there will only ever be (1) observer.
+        RefPtr observer = weakObserver;
         if (!observer || !m_observers.contains(*observer))
             continue;
 

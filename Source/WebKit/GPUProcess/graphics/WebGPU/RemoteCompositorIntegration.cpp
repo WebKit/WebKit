@@ -82,7 +82,7 @@ void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, W
     auto convertedDevice = protect(m_objectHeap)->convertDeviceFromBacking(deviceIdentifier);
     MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
-    callback(protect(m_backing)->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, bufferCount, *convertedDevice));
+    callback(protect(m_backing)->recreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, bufferCount, protect(*convertedDevice)));
 }
 #endif
 

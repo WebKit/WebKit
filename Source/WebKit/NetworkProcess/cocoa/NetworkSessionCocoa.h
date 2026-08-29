@@ -210,7 +210,7 @@ private:
 
     bool isNetworkSessionCocoa() const final { return true; }
 
-    Ref<SessionSet> m_defaultSessionSet;
+    const Ref<SessionSet> m_defaultSessionSet;
     HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
     HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
 

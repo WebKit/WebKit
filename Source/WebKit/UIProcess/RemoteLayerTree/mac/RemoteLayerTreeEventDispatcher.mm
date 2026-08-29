@@ -110,7 +110,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
 RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, PageIdentifier pageIdentifier)
     : m_scrollingCoordinator(WeakPtr { scrollingCoordinator })
     , m_pageIdentifier(pageIdentifier)
-    , m_processPool(scrollingCoordinator.webPageProxy().configuration().processPool())
+    , m_processPool(protect(scrollingCoordinator.webPageProxy().configuration())->processPool())
     , m_wheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_displayLinkClient(makeUnique<RemoteLayerTreeEventDispatcherDisplayLinkClient>(*this))
     , m_wheelEventActivityHysteresis([weakThis = ThreadSafeWeakPtr { *this }](PAL::HysteresisState state) {
