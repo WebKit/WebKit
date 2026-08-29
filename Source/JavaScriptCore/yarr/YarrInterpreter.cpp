@@ -1729,6 +1729,13 @@ public:
         UNUSED_PARAM(term);
 
         if (term.dotAll()) {
+            // In dotAll mode, .* can match line terminators. A non-multiline ^ matches only if the
+            // search begins at the start of the input (offset 0). A multiline ^ needs to check
+            // every line and is never optimized to a DotStarEnclosure.
+            ASSERT(!(term.anchors.m_bol && term.multiline()));
+            if (startOffset && term.anchors.m_bol && !term.multiline())
+                return false;
+
             context->matchBegin = startOffset;
             context->matchEnd = input.end();
             return true;

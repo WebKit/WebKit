@@ -2599,7 +2599,15 @@ public:
                 startsWithBOL = true;
                 ++termIndex;
             }
-            
+
+            // In dotAll mode, .* can match line terminators. In multiline mode, ^ matches the
+            // beginning of every line (instead of in non-multiline mode, it only matches the start
+            // of input). So a ^.* in the combined dotAll and multiline is not checkable by
+            // adjusting the beginning and the end of the match, because the match might begin at a
+            // line after the wrapped expression. In this case ^.* is not optimized.
+            if (startsWithBOL && dotAll() && multiline())
+                return;
+
             PatternTerm& firstNonAnchorTerm = terms[termIndex];
             if (firstNonAnchorTerm.type != PatternTerm::Type::CharacterClass
                 || firstNonAnchorTerm.characterClass != dotCharacterClass

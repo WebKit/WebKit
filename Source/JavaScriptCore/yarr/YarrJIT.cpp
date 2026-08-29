@@ -3744,7 +3744,17 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::JumpList foundEndingNewLine;
 
         if (term->dotAll()) {
-            m_jit.move(MacroAssembler::TrustedImm32(0), matchPos);
+            ASSERT(m_pattern.m_saveInitialStartValue);
+            ASSERT(!m_pattern.m_body->m_hasFixedSize);
+            loadFromFrame(m_pattern.m_initialStartValueFrameLocation, matchPos);
+
+            // In dotAll mode, .* can match line terminators. A non-multiline ^ matches only if the
+            // search begins at the start of the input (offset 0). A multiline ^ needs to check
+            // every line and is never optimized to a DotStarEnclosure.
+            ASSERT(!(term->anchors.bolAnchor && term->multiline()));
+            if (!term->multiline() && term->anchors.bolAnchor)
+                op.m_jumps.append(m_jit.branchTest32(MacroAssembler::NonZero, matchPos));
+
             setMatchStart(matchPos);
             m_jit.move(m_regs.length, m_regs.index);
             return;
