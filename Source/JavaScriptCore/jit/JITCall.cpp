@@ -465,7 +465,6 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     genericCases.append(branchIfNotType(nextJSR.payloadGPR(), SentinelType));
 
     JumpList doneCases;
-#if CPU(ARM64) || CPU(X86_64)
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(bytecode.m_iterator, argumentGPR1);
     emitGetVirtualRegister(bytecode.m_iterable, argumentGPR2);
@@ -474,19 +473,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     emitPutVirtualRegister(bytecode.m_done, returnValueGPR);
     emitPutVirtualRegister(bytecode.m_value, returnValueGPR2);
     doneCases.append(branchIfEmpty(JSValueRegs { returnValueGPR2 }));
-    emitValueProfilingSite(bytecode, JSValueRegs { returnValueGPR2 });
-#else
-    auto* tryFastFunction = ([&] () {
-        switch (instruction->width()) {
-        case Narrow: return iterator_next_try_fast_narrow;
-        case Wide16: return iterator_next_try_fast_wide16;
-        case Wide32: return iterator_next_try_fast_wide32;
-        default: RELEASE_ASSERT_NOT_REACHED();
-        }
-    })();
-    JITSlowPathCall slowPathCall(this, tryFastFunction);
-    slowPathCall.call();
-#endif
+    emitValueProfilingSite(bytecode, m_bytecodeIndex.withCheckpoint(OpIteratorNext::getValue), JSValueRegs { returnValueGPR2 });
     doneCases.append(jump());
 
     genericCases.link(this);
