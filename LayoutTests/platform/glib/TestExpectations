@@ -1248,9 +1248,6 @@ accessibility/statictext-path.html [ Failure ]
 # aria-braille* attributes are not implemented:
 webkit.org/b/220719 accessibility/braille-label-role.html [ Failure ]
 
-# Key events for AX actions seems to not be not being emitted
-webkit.org/b/221022 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Timeout ]
-
 # Test requires WebKitTestRunner property 'standaloneWebApplicationURL', which is only implemented for Cocoa platforms.
 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Skip ]
 
@@ -2112,11 +2109,6 @@ http/tests/push-api [ Skip ]
 #webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
-
-# libsoup 3.6.6 mangles interior spaces in Content-Disposition filenames to '_'
-# (regressed by libsoup 9e1570c9, fixed upstream by db09564e). Remove once the
-# SDK ships a libsoup with that fix.
-http/tests/download/basic-ascii.html [ Failure ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
@@ -2997,7 +2989,6 @@ webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-currentTime.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/rtp-stats-lifetime.https.html?interop-2026 [ Failure ]
 
 # The last promise test here fails because webrtcbin doesn't rely on a singleton signaling thread.
 # See also comments in:
@@ -4006,8 +3997,6 @@ webkit.org/b/297178 media/media-source/media-source-paint-stereo-to-canvas.html 
 
 # Flaky failure
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
-# This test fails both invalid-chunked-encoding cases
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script.https.html [ Failure ]
 # This test requires the ServiceWorkerRegistration.showNotification
 webkit.org/b/175419 http/tests/workers/service/openwindow-from-notification-click.html [ Skip ]
 
@@ -4047,8 +4036,6 @@ webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ F
 imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html?wss [ Slow ]
 
 # Issues with WebSockets, many due to macOS/iOS and "glib" dealing with console messages differently
-webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html?default [ Failure ]
-webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html?wss [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/multi-globals/message-received.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/003.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/004.html?wss [ Failure Pass ]
@@ -4073,19 +4060,6 @@ imported/w3c/web-platform-tests/fetch/content-encoding/gzip/bad-gzip-body.any.ht
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip/bad-gzip-body.any.serviceworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip/bad-gzip-body.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip/bad-gzip-body.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/bad-zstd-body.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/bad-zstd-body.https.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/bad-zstd-body.https.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/bad-zstd-body.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/big-zstd-body.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/big-zstd-body.https.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/big-zstd-body.https.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/big-zstd-body.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/zstd-body.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/zstd-body.https.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/zstd-body.https.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/zstd-body.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/content-encoding/zstd/zstd-navigation.https.window.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/content-length/too-long.window.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.html [ Failure ]

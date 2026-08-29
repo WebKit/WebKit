@@ -5780,13 +5780,8 @@ webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/first-line-op
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/grammar-error-001.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-010.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-012.html [ ImageOnlyFailure ]
-webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-014.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-017.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-018.html [ ImageOnlyFailure ]
-# Inside ::marker content is laid out as an inline-block whose block-size drives the line box, so it
-# does not yet match the line metrics of a native inside marker (shared root cause with marker-content-012).
-webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-font-variant-numeric-default.html [ ImageOnlyFailure ]
-webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-font-variant-numeric-normal.html [ ImageOnlyFailure ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/marker-list-style-position.html [ ImageOnlyFailure ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/marker-unicode-bidi-normal.html [ ImageOnlyFailure ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/spelling-error-001.html [ ImageOnlyFailure ]
