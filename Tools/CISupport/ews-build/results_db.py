@@ -86,7 +86,7 @@ class ResultsDatabase(object):
     ]
 
     PRS_FOR_DIRTY_TREE_FLAKE = 2
-    AUTHORS_FOR_DIRTY_TREE_FLAKE = 1
+    AUTHORS_FOR_DIRTY_TREE_FLAKE = 2
     PRS_FOR_BETWEEN_BUILD_FLAKE = 3
     AUTHORS_FOR_BETWEEN_BUILD_FLAKE = 2
 
@@ -99,6 +99,11 @@ class ResultsDatabase(object):
     WITHIN_STEP_CLEAN_TREE = 'WithinStepCleanTree'
     WITHIN_STEP_DIRTY_TREE = 'WithinStepDirtyTree'
     BETWEEN_STEPS_DIRTY_TREE = 'BetweenStepsDirtyTree'
+
+    # What the read path concludes, which is what a caller decides to act on.
+    CLEAN_TREE_VERDICT = 'CleanTree'
+    DIRTY_TREE_VERDICT = 'DirtyTree'
+    BETWEEN_BUILDS_VERDICT = 'BetweenBuilds'
 
     @classmethod
     def platform_for_query(cls, platform):
@@ -313,12 +318,12 @@ class ResultsDatabase(object):
 
         if clean_tree := rows.get(cls.WITHIN_STEP_CLEAN_TREE):
             evidence = cls._evidence_in(clean_tree)
-            evidence.flaky_type = 'CleanTree'
+            evidence.flaky_type = cls.CLEAN_TREE_VERDICT
             return evidence
 
         with_change = rows.get(cls.WITHIN_STEP_DIRTY_TREE, []) + rows.get(cls.BETWEEN_STEPS_DIRTY_TREE, [])
         return cls._convict(
-            cls._evidence_in(with_change), 'DirtyTree',
+            cls._evidence_in(with_change), cls.DIRTY_TREE_VERDICT,
             cls.PRS_FOR_DIRTY_TREE_FLAKE, cls.AUTHORS_FOR_DIRTY_TREE_FLAKE,
         )
 
@@ -328,7 +333,7 @@ class ResultsDatabase(object):
         evidence = cls._evidence_in(rows)
 
         if verdict := cls._convict(
-            evidence, 'BetweenBuilds',
+            evidence, cls.BETWEEN_BUILDS_VERDICT,
             cls.PRS_FOR_BETWEEN_BUILD_FLAKE, cls.AUTHORS_FOR_BETWEEN_BUILD_FLAKE,
         ):
             return verdict

@@ -3949,7 +3949,11 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
     ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 60
-    SHOULD_IGNORE_FLAKY_TESTS = False
+    INCLUDED_FLAKY_VERDICTS = frozenset({
+        ResultsDatabase.CLEAN_TREE_VERDICT,
+        ResultsDatabase.DIRTY_TREE_VERDICT,
+        ResultsDatabase.BETWEEN_BUILDS_VERDICT,
+    })
     STRESS_MODE = False
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
@@ -4125,6 +4129,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         if flake_logs:
             yield self._addToLog(self.results_db_log_name, flake_logs)
 
+        ignored, shadowed = [], []
         for test in tests:
             data = pre_existing[test]
             flake = flakes.get(test, FlakyVerdict(request_failed=True))
@@ -4134,11 +4139,14 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 self.failing_tests_filtered.remove(test)
             elif flake.is_flaky:
                 self.flaky_failures_in_results_db[test] = flake.flaky_type
-                if flake.flaky_type == 'BetweenBuilds' and not flake.intra_build_evidence:
+                if flake.flaky_type == ResultsDatabase.BETWEEN_BUILDS_VERDICT and not flake.intra_build_evidence:
                     self.unsupported_flakes_in_results_db.append(test)
                 flake_summary = f'{flake.flaky_type}: {flake.evidence}'
-                if self.SHOULD_IGNORE_FLAKY_TESTS:
+                if flake.flaky_type in self.INCLUDED_FLAKY_VERDICTS:
+                    ignored.append(test)
                     self.failing_tests_filtered.remove(test)
+                else:
+                    shadowed.append(test)
             elif flake.request_failed:
                 self.unknown_flakes_in_results_db.append(test)
                 flake_summary = 'Unknown'
@@ -4151,13 +4159,12 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 f"pre-existing-flake={flake_summary}\n"
             )
 
-        if self.flaky_failures_in_results_db:
-            action = 'Ignored' if self.SHOULD_IGNORE_FLAKY_TESTS else 'Would have ignored'
-            yield self._addToLog(
-                self.results_db_log_name,
-                f"\n{action} {len(self.flaky_failures_in_results_db)} flaky "
-                f"test(s): {', '.join(sorted(self.flaky_failures_in_results_db))}\n",
-            )
+        for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
+            if acted_on:
+                yield self._addToLog(
+                    self.results_db_log_name,
+                    f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
+                )
 
     def results_db_ignore_message(self) -> str:
         parts = []

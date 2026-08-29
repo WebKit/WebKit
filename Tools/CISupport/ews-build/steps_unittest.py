@@ -30,6 +30,7 @@ import shutil
 import sys
 import tempfile
 import time
+from typing import Any, Generator
 from unittest import skip as skipTest
 from unittest.mock import call, create_autospec, patch
 
@@ -3359,8 +3360,7 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         )
 
     @defer.inlineCallbacks
-    def test_a_flaky_verdict_is_recorded_without_ignoring_the_failure(self):
-        # SHOULD_IGNORE_FLAKY_TESTS is False, so the verdict is recorded but the test is not removed.
+    def test_a_verdict_in_the_included_set_removes_the_failure(self) -> Generator[Any, Any, None]:
         step = self._configure(set())
         builds = [f'https://build.webkit.org/#/builders/1/builds/{number}' for number in (11, 12, 13)]
         self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
@@ -3373,10 +3373,27 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
 
         yield step.filter_failures_using_results_db(['real.html', 'flaky.html'])
 
-        self.assertEqual(step.failing_tests_filtered, ['real.html', 'flaky.html'])
+        self.assertEqual(step.failing_tests_filtered, ['real.html'])
         self.assertEqual(step.flaky_failures_in_results_db, {'flaky.html': 'DirtyTree'})
         self.assertEqual(step.preexisting_failures_in_results_db, [])
         self.assertEqual(step.results_db_ignore_message(), 'Ignored flaky tests: flaky.html based on results-db')
+
+    @defer.inlineCallbacks
+    def test_a_verdict_outside_the_included_set_is_recorded_without_ignoring_the_failure(self) -> Generator[Any, Any, None]:
+        step = self._configure(set())
+        step.INCLUDED_FLAKY_VERDICTS = frozenset({'CleanTree'})
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({
+                test: (
+                    FlakyVerdict(flaky_type='BetweenBuilds')
+                    if test == 'flaky.html' else FlakyVerdict()
+                ) for test in tests
+            }, ''))))
+
+        yield step.filter_failures_using_results_db(['real.html', 'flaky.html'])
+
+        self.assertEqual(step.failing_tests_filtered, ['real.html', 'flaky.html'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'flaky.html': 'BetweenBuilds'})
 
     @defer.inlineCallbacks
     def test_a_test_with_no_verdict_is_not_treated_as_sound(self):
@@ -3404,7 +3421,7 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
 
         yield step.filter_failures_using_results_db(['pre-existing.html', 'flaky.html'])
 
-        self.assertEqual(step.failing_tests_filtered, ['flaky.html'])
+        self.assertEqual(step.failing_tests_filtered, [])
         self.assertEqual(
             step.results_db_ignore_message(),
             'Ignored pre-existing failures: pre-existing.html; flaky tests: flaky.html based on results-db',
@@ -12585,6 +12602,18 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         rows = [
             self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=1, authors=['alice']),
             self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/2', authors=['bob']),
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_single_author_across_two_pull_requests_is_not_flaky(self) -> Generator[Any, Any, None]:
+        # A stack of pull requests is one author's work, so the parent commit's own regression must
+        # not excuse itself: a build's first run writes rows its own re-run then reads.
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n, authors=['alice'])
+            for n in range(1, 4)
         ]
         with self._mock(self._response(rows=rows), self._response()):
             verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
