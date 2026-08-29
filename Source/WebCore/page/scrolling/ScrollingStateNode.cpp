@@ -31,6 +31,7 @@
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateTree.h"
+#include <algorithm>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -167,6 +168,29 @@ void ScrollingStateNode::insertChild(Ref<ScrollingStateNode>&& childNode, size_t
     } else
         m_children.insert(index, WTF::move(childNode));
     
+    setPropertyChanged(Property::ChildNodes);
+}
+
+void ScrollingStateNode::moveChildToIndex(ScrollingStateNode& childNode, size_t index)
+{
+    size_t currentIndex = m_children.findIf([&](auto& child) {
+        return child.ptr() == &childNode;
+    });
+    if (currentIndex == notFound) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    index = std::min(index, m_children.size() - 1);
+    if (currentIndex == index)
+        return;
+
+    auto span = m_children.mutableSpan();
+    if (currentIndex < index)
+        std::rotate(span.begin() + currentIndex, span.begin() + currentIndex + 1, span.begin() + index + 1);
+    else
+        std::rotate(span.begin() + index, span.begin() + currentIndex, span.begin() + currentIndex + 1);
+
     setPropertyChanged(Property::ChildNodes);
 }
 

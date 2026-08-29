@@ -196,12 +196,7 @@ std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType 
             if (parent->childAtIndex(childIndex) == node)
                 return newNodeID;
 
-            parent->removeChild(*node);
-
-            if (childIndex == notFound)
-                parent->appendChild(node.releaseNonNull());
-            else
-                parent->insertChild(node.releaseNonNull(), childIndex);
+            parent->moveChildToIndex(*node, childIndex);
 
             return newNodeID;
         }
