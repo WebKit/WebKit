@@ -219,8 +219,9 @@ private:
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
     bool m_momentumEventDispatcherNeedsDisplayLink { false };
+    Lock m_momentumEventDispatcherLock;
+    std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher WTF_GUARDED_BY_LOCK(m_momentumEventDispatcherLock);
 #endif
 };
 
