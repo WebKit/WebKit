@@ -82,6 +82,11 @@ ScalableImageDecoderFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 
     decode(index, isAllDataReceived());
 
+    // decode() leaves the cache untouched when it bails out early, and m_frameCount comes from a
+    // demuxer that may since have rejected the file.
+    if (index >= m_frameBufferCache.size())
+        return nullptr;
+
     return &m_frameBufferCache[index];
 }
 
