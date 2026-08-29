@@ -88,8 +88,12 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
         return std::nullopt;
     }
 
-    auto q = mpiData(qMpi);
-    auto d = mpiData(dMpi);
+    // Zero-extend to the fixed 32-byte width these curves define. libgcrypt returns an
+    // arbitrary-precision integer, whose unsigned encoding is minimal-length: a component
+    // whose most significant byte is zero comes back as 31 bytes and would be discarded by
+    // the length check in platformGeneratePair.
+    auto q = mpiZeroPrefixedData(qMpi, 32);
+    auto d = mpiZeroPrefixedData(dMpi, 32);
     if (!q || !d) [[unlikely]]
         return std::nullopt;
     return std::make_pair(WTF::move(*q), WTF::move(*d));
@@ -100,7 +104,7 @@ static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerate
     // private key is just 32 random bytes
     PAL::GCrypt::Handle<gcry_mpi_t> mpi(gcry_mpi_new(256));
     gcry_mpi_randomize(mpi, 256, GCRY_STRONG_RANDOM);
-    auto d = mpiData(mpi);
+    auto d = mpiZeroPrefixedData(mpi, 32);
     if (!d) [[unlikely]]
         return std::nullopt;
 
