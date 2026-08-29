@@ -207,7 +207,7 @@ private:
         : m_premultiplyAlpha(premultiplyAlpha)
     {
         ASSERT(!size.isEmpty() && !isOverSize(size));
-        setSize(size);
+        RELEASE_ASSERT(setSize(size));
     }
 
     ImageBackingStore(const ImageBackingStore& other)

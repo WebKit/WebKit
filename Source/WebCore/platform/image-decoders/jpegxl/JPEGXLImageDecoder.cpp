@@ -131,6 +131,7 @@ void JPEGXLImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 
     // Unlike the png and gif cases, we can always try to clear frames before "clearBeforeFrame" because
     // the dependenciy to the previous frame is handled by libjxl.
+    clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size());
     const Vector<ScalableImageDecoderFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
 
     for (Vector<ScalableImageDecoderFrame>::iterator i(m_frameBufferCache.begin()); i != end; ++i) {

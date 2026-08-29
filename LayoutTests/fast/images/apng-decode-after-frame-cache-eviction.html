@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<p>Dropping decoded frames and then decoding again must not leave a frame reading a cleared frame's
+backing store. The test passes if the web process survives.</p>
+<pre id="log">PASS</pre>
+<img id="image" src="resources/apng-frame-cache-eviction.png">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function imageSettled()
+{
+    var image = document.getElementById("image");
+    if (window.internals) {
+        var count = internals.imageFrameCount(image);
+        for (var index = 0; index < count; ++index)
+            internals.forceDecodeImageFrameAtIndex(image, index);
+
+        // Drop every decoded frame, so the frames a later frame composites over are gone.
+        internals.destroyDecodedDataForAllImages();
+
+        for (var index = count; index > 0; --index)
+            internals.forceDecodeImageFrameAtIndex(image, index - 1);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var image = document.getElementById("image");
+image.onload = imageSettled;
+image.onerror = imageSettled;
+if (image.complete)
+    imageSettled();
+</script>
