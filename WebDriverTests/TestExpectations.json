@@ -4180,8 +4180,8 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_opened/handler.py": {
         "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288344"}},
         "subtests": {
-            "test_accept": {"expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/321148"}}},
-            "test_accept_and_notify": {"expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/321148"}}}
+            "test_accept": {"expected": {"all": {"status": ["PASS"] }}},
+            "test_accept_and_notify": {"expected": {"all": {"status": ["PASS"] }}}
         }
     },
 
@@ -5504,15 +5504,6 @@
             "test_subscribe_to_one_context": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
-            "test_close_context[tab]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/321148"}}
-            },
-            "test_close_context[window]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/321148"}}
-            },
-            "test_navigate": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/321148"}}
-            },
             "test_sandbox[evaluate]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
@@ -5740,7 +5731,7 @@
             "test_params_events_value_invalid_event_name[]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_events_value_invalid_event_name[foo.bar]": {"expected": {"all": {"status": ["PASS"]}}},
-            "test_params_events_value_valid_and_invalid_event_name": {"expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/321148"}}},
+            "test_params_events_value_valid_and_invalid_event_name": {"expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/282977"}}},
             "test_params_contexts_invalid_type[True]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_contexts_invalid_type[foo]": {"expected": {"all": {"status": ["PASS"]}}},
             "test_params_contexts_invalid_type[42]": {"expected": {"all": {"status": ["PASS"]}}},
