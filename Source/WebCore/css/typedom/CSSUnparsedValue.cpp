@@ -168,7 +168,8 @@ ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnpar
 
 RefPtr<CSSValue> CSSUnparsedValue::toCSSValue() const
 {
-    CSSTokenizer tokenizer(toString());
+    auto serialization = toString();
+    CSSTokenizer tokenizer(serialization);
     return CSSSubstitutionValue::create(tokenizer.tokenRange(), { }, strictCSSParserContext());
 }
 

@@ -382,7 +382,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
         .context = parserContext
     };
 
-    CSSTokenizer tokenizer(trimmedString.toString());
+    CSSTokenizer tokenizer(trimmedString);
     auto tokenRange = tokenizer.tokenRange();
 
     auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>, CSS::LengthPercentage<>>::consume(tokenRange, parserState, { });

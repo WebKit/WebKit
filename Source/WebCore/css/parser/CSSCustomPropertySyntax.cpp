@@ -80,7 +80,7 @@ auto CSSCustomPropertySyntax::parseComponent(std::span<const CharacterType> span
         ++buffer;
 
     auto ident = [&] {
-        auto tokenizer = CSSTokenizer::tryCreate(StringView(begin.first(buffer.position() - begin.data())).toStringWithoutCopying());
+        auto tokenizer = CSSTokenizer::tryCreate(StringView(begin.first(buffer.position() - begin.data())));
         if (!tokenizer)
             return nullAtom();
 

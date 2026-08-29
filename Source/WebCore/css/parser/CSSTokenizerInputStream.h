@@ -40,7 +40,7 @@ class CSSTokenizerInputStream {
     WTF_MAKE_NONCOPYABLE(CSSTokenizerInputStream);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream, CSSTokenizerInputStream);
 public:
-    explicit CSSTokenizerInputStream(const String& input);
+    explicit CSSTokenizerInputStream(StringView string LIFETIME_BOUND);
 
     // Gets the char in the stream. Will return (NUL) kEndOfFileMarker when at the
     // end of the stream.
@@ -48,7 +48,7 @@ public:
     {
         if (m_offset >= m_stringLength)
             return kEndOfFileMarker;
-        return (*m_string)[m_offset];
+        return m_string[m_offset];
     }
 
     // Gets the char at lookaheadOffset from the current stream position. Will
@@ -57,7 +57,7 @@ public:
     {
         if ((m_offset + lookaheadOffset) >= m_stringLength)
             return kEndOfFileMarker;
-        return (*m_string)[m_offset + lookaheadOffset];
+        return m_string[m_offset + lookaheadOffset];
     }
 
     void advance(unsigned offset = 1) { m_offset += offset; }
@@ -72,12 +72,12 @@ public:
     template<bool characterPredicate(char16_t)>
     unsigned skipWhilePredicate(unsigned offset)
     {
-        if (m_string->is8Bit()) {
-            auto characters8 = m_string->span8();
+        if (m_string.is8Bit()) {
+            auto characters8 = m_string.span8();
             while ((m_offset + offset) < m_stringLength && characterPredicate(characters8[m_offset + offset]))
                 ++offset;
         } else {
-            auto characters16 = m_string->span16();
+            auto characters16 = m_string.span16();
             while ((m_offset + offset) < m_stringLength && characterPredicate(characters16[m_offset + offset]))
                 ++offset;
         }
@@ -93,13 +93,13 @@ public:
     StringView rangeAt(unsigned start, unsigned length) const
     {
         ASSERT(start + length <= m_stringLength);
-        return StringView(m_string.get()).substring(start, length); // FIXME: Should make a constructor on StringView for this.
+        return m_string.substring(start, length);
     }
 
 private:
     size_t m_offset;
     const size_t m_stringLength;
-    RefPtr<StringImpl> m_string;
+    StringView m_string;
 };
 
 } // namespace WebCore

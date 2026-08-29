@@ -128,7 +128,7 @@ public:
 
     static RefPtr<StyleRuleNestedDeclarations> parseNestedDeclarations(const CSSParserContext&, const String&);
 
-    CSSTokenizer* tokenizer() const LIFETIME_BOUND { return m_tokenizer.get(); }
+    const CSSTokenizer* tokenizer() const LIFETIME_BOUND { return m_tokenizer.get(); }
 
 private:
     struct NestingContext {

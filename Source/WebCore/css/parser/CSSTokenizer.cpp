@@ -35,6 +35,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizerInputStream.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -42,19 +43,60 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizer);
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing
-String CSSTokenizer::preprocessString(const String& string)
+StringView CSSTokenizer::preprocessString(StringView string)
 {
     // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
     // we treat them all the same in the isCSSNewline() function from CSSParserIdioms.h.
-    StringImpl* oldImpl = string.impl();
-    String replaced = makeStringByReplacingAll(string, '\0', replacementCharacter);
-    replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(replaced));
-    if (replaced.impl() != oldImpl)
-        registerString(replaced);
-    return replaced;
+
+    auto preprocessSpan8 = [&](auto characters) -> StringView {
+        // Latin-1 strings only need to replace any null characters.
+
+        size_t indexOfNullCharacter = WTF::find(characters, '\0');
+        if (indexOfNullCharacter == notFound)
+            return string;
+
+        return registerString(String { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
+    };
+
+    auto preprocessSpan16 = [&](auto characters) -> StringView {
+        // UTF-16 string need to replace any null characters and any unpaired surrogates.
+
+        bool hasUnpairedSurrogate = [&] {
+            for (WTF::CodePointIterator<char16_t> iterator(characters); !iterator.atEnd(); ++iterator) {
+                if (U_IS_SURROGATE(*iterator))
+                    return true;
+            }
+            return false;
+        }();
+
+        if (!hasUnpairedSurrogate) {
+            // When there are no unpaired surrogates, we can treat this just like the Latin-1 case.
+
+            size_t indexOfNullCharacter = WTF::find(characters, '\0');
+            if (indexOfNullCharacter == notFound)
+                return string;
+
+            return registerString(String { StringImpl::createByReplacingInCharacters(characters, '\0', replacementCharacter, indexOfNullCharacter) });
+        } else {
+            StringBuilder result;
+            result.reserveCapacity(string.length());
+            for (WTF::CodePointIterator<char16_t> iterator(characters); !iterator.atEnd(); ++iterator) {
+                auto codePoint = *iterator;
+                if (!codePoint || U_IS_SURROGATE(codePoint))
+                    result.append(replacementCharacter);
+                else
+                    result.append(codePoint);
+            }
+            return registerString(result.toString());
+        }
+    };
+
+    if (string.is8Bit())
+        return preprocessSpan8(string.span8());
+    return preprocessSpan16(string.span16());
 }
 
-std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)
+std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(StringView string)
 {
     bool success = true;
     // We can't use makeUnique here because it does not have access to this private constructor.
@@ -64,7 +106,7 @@ std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)
     return tokenizer;
 }
 
-std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string, CSSParserObserverWrapper& wrapper)
+std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(StringView string, CSSParserObserverWrapper& wrapper)
 {
     bool success = true;
     // We can't use makeUnique here because it does not have access to this private constructor.
@@ -74,17 +116,17 @@ std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string, CSSP
     return tokenizer;
 }
 
-CSSTokenizer::CSSTokenizer(const String& string)
+CSSTokenizer::CSSTokenizer(StringView string)
     : CSSTokenizer(string, nullptr, nullptr)
 {
 }
 
-CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper& wrapper)
+CSSTokenizer::CSSTokenizer(StringView string, CSSParserObserverWrapper& wrapper)
     : CSSTokenizer(string, &wrapper, nullptr)
 {
 }
 
-CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper* wrapper, bool* constructionSuccessPtr)
+CSSTokenizer::CSSTokenizer(StringView string, CSSParserObserverWrapper* wrapper, bool* constructionSuccessPtr)
     : m_input(preprocessString(string))
 {
     if (constructionSuccessPtr)
@@ -134,7 +176,7 @@ CSSParserTokenRange CSSTokenizer::tokenRange() const LIFETIME_BOUND
     return m_tokens;
 }
 
-unsigned CSSTokenizer::tokenCount()
+unsigned CSSTokenizer::tokenCount() const
 {
     return m_tokens.size();
 }
@@ -863,6 +905,12 @@ bool CSSTokenizer::nextCharsAreIdentifier()
     bool areIdentifier = nextCharsAreIdentifier(first);
     reconsume(first);
     return areIdentifier;
+}
+
+StringView CSSTokenizer::registerString(String&& string)
+{
+    m_stringPool.append(WTF::move(string));
+    return m_stringPool.last();
 }
 
 StringView CSSTokenizer::registerString(const String& string)

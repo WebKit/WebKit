@@ -33,7 +33,6 @@
 #include <WebCore/CSSTokenizerInputStream.h>
 #include <climits>
 #include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -46,28 +45,28 @@ class CSSTokenizer {
     WTF_MAKE_NONCOPYABLE(CSSTokenizer);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizer, CSSTokenizer);
 public:
-    static std::unique_ptr<CSSTokenizer> tryCreate(const String&);
-    static std::unique_ptr<CSSTokenizer> tryCreate(const String&, CSSParserObserverWrapper&); // For the inspector
+    static std::unique_ptr<CSSTokenizer> tryCreate(StringView string LIFETIME_BOUND);
+    static std::unique_ptr<CSSTokenizer> tryCreate(StringView string LIFETIME_BOUND, CSSParserObserverWrapper&); // For the inspector
 
-    WEBCORE_EXPORT explicit CSSTokenizer(const String&);
-    CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
+    WEBCORE_EXPORT explicit CSSTokenizer(StringView string LIFETIME_BOUND);
+    CSSTokenizer(StringView string LIFETIME_BOUND, CSSParserObserverWrapper&); // For the inspector
 
     WEBCORE_EXPORT CSSParserTokenRange NODELETE tokenRange() const LIFETIME_BOUND;
-    unsigned NODELETE tokenCount();
+    unsigned NODELETE tokenCount() const;
 
     static bool NODELETE isWhitespace(CSSParserTokenType);
 
     Vector<String>&& escapedStringsForAdoption() { return WTF::move(m_stringPool); }
 
 private:
-    CSSTokenizer(const String&, CSSParserObserverWrapper*, bool* constructionSuccess);
+    CSSTokenizer(StringView string LIFETIME_BOUND, CSSParserObserverWrapper*, bool* constructionSuccess);
 
     CSSParserToken nextToken();
 
     char16_t NODELETE consume();
     void NODELETE reconsume(char16_t);
 
-    String preprocessString(const String&);
+    StringView preprocessString(StringView);
 
     CSSParserToken consumeNumericToken();
     CSSParserToken consumeIdentLikeToken();
@@ -122,6 +121,7 @@ private:
     CSSParserToken stringStart(char16_t);
     CSSParserToken endOfFile(char16_t);
 
+    StringView registerString(String&&);
     StringView registerString(const String&);
 
     using CodePoint = CSSParserToken (CSSTokenizer::*)(char16_t);
