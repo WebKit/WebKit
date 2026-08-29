@@ -42,7 +42,7 @@
 namespace WTF {
 
 // Requested nice value. rtkit clamps this to its own MinNiceLevel.
-static constexpr int s_highPriorityNiceLevel = -20;
+[[maybe_unused]] static constexpr int s_highPriorityNiceLevel = -20;
 
 HighPriorityThreads& HighPriorityThreads::singleton()
 {
