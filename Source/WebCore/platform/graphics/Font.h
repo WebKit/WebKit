@@ -275,6 +275,8 @@ private:
 
     void initCharWidths();
 
+    void initZeroWidth(Glyph);
+
     RefPtr<Font> createFontWithoutSynthesizableFeatures() const;
     RefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
     RefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
