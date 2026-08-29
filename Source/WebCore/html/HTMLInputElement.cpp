@@ -2269,7 +2269,7 @@ bool HTMLInputElement::shouldTruncateText(const Style::ComputedStyle& style) con
 {
     if (!isTextField())
         return false;
-    return document().focusedElement() != this && style.textOverflow().isEllipsis();
+    return document().focusedElement() != this && !style.textOverflow().isClip();
 }
 
 void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
@@ -2277,7 +2277,7 @@ void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
     if (!isTextField())
         return;
     // Focus change may affect the result of shouldTruncateText().
-    if (CheckedPtr style = renderStyle(); style && style->textOverflow().isEllipsis())
+    if (CheckedPtr style = renderStyle(); style && !style->textOverflow().isClip())
         invalidateStyleForSubtree();
 }
 
@@ -2369,7 +2369,7 @@ Style::ComputedStyle HTMLInputElement::createInnerTextStyle(const Style::Compute
     textBlockStyle.setOverflowX(Overflow::Hidden);
     textBlockStyle.setOverflowY(Overflow::Hidden);
     if (shouldTruncateText(style))
-        textBlockStyle.setTextOverflow(CSS::Keyword::Ellipsis { });
+        textBlockStyle.setTextOverflow(Style::TextOverflow { style.textOverflow() });
     else
         textBlockStyle.setTextOverflow(CSS::Keyword::Clip { });
 
