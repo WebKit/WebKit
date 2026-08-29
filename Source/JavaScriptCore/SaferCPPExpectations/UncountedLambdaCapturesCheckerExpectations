@@ -3,7 +3,6 @@ bytecode/InlineCacheCompiler.cpp
 bytecode/ObjectPropertyConditionSet.cpp
 bytecompiler/NodesCodegen.cpp
 debugger/Debugger.cpp
-dfg/DFGDesiredWatchpoints.h
 dfg/DFGLazyJSValue.cpp
 dfg/DFGObjectAllocationSinkingPhase.cpp
 ftl/FTLCompile.cpp
