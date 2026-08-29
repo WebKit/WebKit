@@ -1106,10 +1106,25 @@ ExceptionOr<void> Range::expand(const String& unit)
     return setEnd(endContainer.releaseNonNull(), end.deepEquivalent().computeOffsetInContainerNode());
 }
 
+static void updateLayoutForRangeBoundingRect(const SimpleRange& simpleRange)
+{
+    OptionSet<LayoutOptions> layoutOptions;
+    RefPtr<const Element> context;
+    if (RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(simpleRange)) {
+        context = dynamicDowncast<Element>(commonAncestor.get());
+        if (!context)
+            context = commonAncestor->parentElementInComposedTree();
+        if (context)
+            layoutOptions = { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible };
+    }
+    protect(simpleRange.start.document())->updateLayoutIgnorePendingStylesheets(layoutOptions, context.get());
+}
+
 Ref<DOMRectList> Range::getClientRects() const
 {
-    protect(startContainer().document())->updateLayout();
-    return DOMRectList::create(RenderObject::clientBorderAndTextRects(makeSimpleRange(*this)));
+    auto simpleRange = makeSimpleRange(*this);
+    updateLayoutForRangeBoundingRect(simpleRange);
+    return DOMRectList::create(RenderObject::clientBorderAndTextRects(simpleRange));
 }
 
 Ref<DOMRect> Range::getBoundingClientRect() const
@@ -1119,7 +1134,7 @@ Ref<DOMRect> Range::getBoundingClientRect() const
 
 Ref<DOMRect> Range::boundingClientRect(const SimpleRange& simpleRange)
 {
-    protect(simpleRange.startContainer().document())->updateLayout();
+    updateLayoutForRangeBoundingRect(simpleRange);
     return DOMRect::create(unionRectIgnoringZeroRects(RenderObject::clientBorderAndTextRects(simpleRange)));
 }
 
