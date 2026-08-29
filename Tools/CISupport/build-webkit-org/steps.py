@@ -34,7 +34,7 @@ import re
 import socket
 import sys
 
-from Shared.steps import ShellMixin, SetBuildSummary, InstallSwiftToolchain, InstallMetalToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, USER_TOOLCHAINS_DIR
+from Shared.steps import ShellMixin, SetBuildSummary, InstallSwiftToolchain, InstallMetalToolchain, SCAN_BUILD_PATH, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, USER_TOOLCHAINS_DIR
 from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
@@ -1718,7 +1718,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
         build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')} --configuration {self.build.getProperty('configuration')} --only-smart-pointers "
         sdkroot = 'iphonesimulator' if self.getProperty('platform', '').lower() == 'ios' else 'macosx'
         build_command += f'--toolchains={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN '
-        build_command += f'--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot={sdkroot} '
+        build_command += f'--scan-build-path={SCAN_BUILD_PATH} --sdkroot={sdkroot} '
         build_command += '2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt'
 
         for command in [
@@ -1835,7 +1835,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand):
         self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         results_dir = os.path.join(self.getProperty('builddir'), f"{SAFER_CPP_ARCHIVE_DIR}/{self.getProperty('buildnumber')}")
         self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', results_dir]
-        self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']
+        self.command += ['--scan-build-path', SCAN_BUILD_PATH]
         self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
 
         self.command += [
@@ -2142,29 +2142,6 @@ class SetPermissions(master.MasterShellCommand):
         kwargs['command'] = ['chmod', 'a+rx', resultDirectory]
         kwargs['logEnviron'] = False
         super().__init__(**kwargs)
-
-
-class PrintClangVersion(shell.ShellCommand):
-    name = 'print-clang-version'
-    haltOnFailure = False
-    flunkOnFailure = False
-    warnOnFailure = False
-
-    @defer.inlineCallbacks
-    def run(self):
-        self.log_observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.log_observer)
-        self.command = ['../llvm-project/build/bin/clang', '--version']
-        rc = yield super().run()
-        return defer.returnValue(rc)
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            return {'step': 'Failed to print clang version'}
-        log_text = self.log_observer.getStdout()
-        match = re.search('(.*clang version.+) (\\(.+?\\))', log_text)
-        if match:
-            return {'step': match.group(0)}
 
 
 class ShowIdentifier(shell.ShellCommand):
