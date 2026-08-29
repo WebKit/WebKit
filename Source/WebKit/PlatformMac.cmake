@@ -42,6 +42,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/PDF/WKPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDirectionalScrollLockTracker.swift
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKMouseTrackingGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
