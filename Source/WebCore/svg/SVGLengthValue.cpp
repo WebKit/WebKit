@@ -365,11 +365,6 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
     if (string.isEmpty())
         return Exception { ExceptionCode::SyntaxError };
 
-    // Trim leading and trailing whitespace to match SVG parsing expectations.
-    auto trimmedString = string.trim(isASCIIWhitespace<char16_t>);
-    if (trimmedString.isEmpty())
-        return Exception { ExceptionCode::SyntaxError };
-
     // CSS::Range only clamps to boundaries, but we historically handled
     // overflow values like "-45e58" to 0 instead of FLT_MAX.
     // FIXME: Consider setting to a proper value
@@ -382,8 +377,12 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
         .context = parserContext
     };
 
-    CSSTokenizer tokenizer(trimmedString);
+    CSSTokenizer tokenizer(string);
     auto tokenRange = tokenizer.tokenRange();
+
+    // Leading whitespace is allowed; the consumers below take care of the trailing
+    // whitespace by way of CSSParserTokenRange::consumeIncludingWhitespace().
+    tokenRange.consumeWhitespace();
 
     auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>, CSS::LengthPercentage<>>::consume(tokenRange, parserState, { });
     if (!parsedValue || !tokenRange.atEnd())
