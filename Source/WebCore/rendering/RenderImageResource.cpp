@@ -145,7 +145,7 @@ bool RenderImageResource::currentFrameIsComplete() const
     return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
 }
 
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
+void RenderImageResource::setContainerContext(const LayoutSize& imageContainerSize, const URL& url)
 {
     if (!m_styleImage || !m_renderer)
         return;

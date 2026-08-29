@@ -172,12 +172,12 @@ void SVGImage::setContainerSize(const FloatSize& size)
         return;
 
     if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer())) {
-        renderer->setContainerSize(IntSize(size));
+        renderer->setContainerSize(LayoutSize(size));
         return;
     }
 
     if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer())) {
-        renderer->setContainerSize(IntSize(size));
+        renderer->setContainerSize(LayoutSize(size));
         return;
     }
 }
@@ -189,7 +189,7 @@ IntSize SVGImage::containerSize() const
         return { };
 
     // If a container size is available it has precedence.
-    auto computeContainerSize = [&]() -> IntSize {
+    auto computeContainerSize = [&]() -> LayoutSize {
         if (auto* renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
 
@@ -199,9 +199,10 @@ IntSize SVGImage::containerSize() const
         return { };
     };
 
+    // The container size may be fractional; the frame view has to be large enough to hold all of it.
     auto containerSize = computeContainerSize();
     if (!containerSize.isEmpty())
-        return containerSize;
+        return expandedIntSize(FloatSize(containerSize));
 
     // Assure that a container size is always given for a non-identity zoom level.
     ASSERT(rootElement->renderer()->style().usedZoom() == 1);
@@ -227,16 +228,13 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     ImageObserverDisableScope imageObserverDisabler(*this);
 
-    IntSize roundedContainerSize = roundedIntSize(containerSize);
-    setContainerSize(roundedContainerSize);
+    // The container size is the concrete object size the SVG has to fill, and is not necessarily
+    // integral. Laying the document out at a rounded size would give the SVG viewport a different
+    // aspect ratio than the one asked for, which preserveAspectRatio would then letterbox.
+    setContainerSize(containerSize);
 
     FloatRect scaledSrc = srcRect;
     scaledSrc.scale(1 / containerZoom);
-
-    // Compensate for the container size rounding by adjusting the source rect.
-    FloatSize adjustedSrcSize = scaledSrc.size();
-    adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
-    scaledSrc.setSize(adjustedSrcSize);
 
     protect(frameView())->scrollToFragment(initialFragmentURL);
 

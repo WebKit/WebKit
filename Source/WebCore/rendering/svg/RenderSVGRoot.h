@@ -53,8 +53,8 @@ public:
     bool didTransformToRootUpdate() const { return m_didTransformToRootUpdate; }
     bool isInLayout() const { return m_inLayout; }
 
-    IntSize containerSize() const { return m_containerSize; }
-    void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
+    LayoutSize containerSize() const { return m_containerSize; }
+    void setContainerSize(const LayoutSize& containerSize) { m_containerSize = containerSize; }
 
     bool NODELETE hasRelativeDimensions() const final;
 
@@ -130,7 +130,7 @@ private:
     // descendant transform changed via the deferred (layout-free) SVG transform-attribute flush.
     void updateSVGTransformDependentBoundingBoxesIfNeeded() const;
 
-    IntSize m_containerSize;
+    LayoutSize m_containerSize;
     mutable FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     mutable Markable<FloatRect> m_strokeBoundingBox;

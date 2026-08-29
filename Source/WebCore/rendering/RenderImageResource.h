@@ -59,7 +59,7 @@ public:
     bool currentFrameIsComplete() const;
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
 
-    void setContainerContext(const IntSize&, const URL&);
+    void setContainerContext(const LayoutSize&, const URL&);
 
     bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_styleImage && m_styleImage->imageHasRelativeHeight(); }
