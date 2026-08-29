@@ -891,7 +891,9 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 {
     ASSERT(m_momentumEventDispatcherNeedsDisplayLink);
     m_momentumEventDispatcherNeedsDisplayLink = false;
-    startOrStopDisplayLink();
+    assertIsHeld(m_momentumEventDispatcherLock);
+    if (m_momentumEventDispatcher)
+        startOrStopDisplayLink();
 }
 
 void RemoteLayerTreeEventDispatcher::didEndSyntheticMomentumScrolling()
