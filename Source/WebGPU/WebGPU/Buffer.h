@@ -161,6 +161,8 @@ private:
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
+    uint32_t m_maxValidatedUnsignedIndex { 0 };
+    uint16_t m_maxValidatedUshortIndex { 0 };
 
     DrawIndexCacheContainer m_drawIndexedCache;
 
