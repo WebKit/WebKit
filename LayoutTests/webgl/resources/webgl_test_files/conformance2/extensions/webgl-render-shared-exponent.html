@@ -159,8 +159,6 @@ function colorMaskTest() {
     function expectError(enabled, effectiveMask, operation) {
         if (!enabled ||
             effectiveMask == 0x0 /* 0000 */ ||
-            effectiveMask == 0x8 /* 000A */ ||
-            effectiveMask == 0x7 /* RGB0 */ ||
             effectiveMask == 0xF /* RGBA */ ) {
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, operation);
         } else {
@@ -210,9 +208,21 @@ function colorMaskTest() {
                 dbiExt.colorMaskiOES(0, true, false, false, false);
                 runOps(enabled, 1); // overridden
 
-                debug("Setting compatible color mask on RGB9_E5 draw buffer")
+                debug("Setting incompatible color mask on RGB9_E5 draw buffer")
                 dbiExt.colorMaskiOES(0, true, true, true, false);
                 runOps(enabled, 7); // overridden
+
+                debug("Setting incompatible color mask on RGB9_E5 draw buffer")
+                dbiExt.colorMaskiOES(0, false, false, false, true);
+                runOps(enabled, 8); // overridden
+
+                debug("Setting compatible color mask on RGB9_E5 draw buffer")
+                dbiExt.colorMaskiOES(0, false, false, false, false);
+                runOps(enabled, 0); // overridden
+
+                debug("Setting compatible color mask on RGB9_E5 draw buffer")
+                dbiExt.colorMaskiOES(0, true, true, true, true);
+                runOps(enabled, 15); // overridden
             }
         }
     }

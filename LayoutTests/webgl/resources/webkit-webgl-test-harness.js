@@ -13,6 +13,7 @@
     // GPU capability dependent.
     window.console.log = function() { };
     window.console.error = function() { };
+    window.console.warn = function() { };
   }
 
 

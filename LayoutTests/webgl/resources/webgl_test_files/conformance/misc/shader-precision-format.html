@@ -24,110 +24,90 @@ debug("Tests that WebGLShaderPrecisionFormat class and getShaderPrecisionFormat 
 debug("");
 var gl = wtu.create3DContext("canvas");
 
-function verifyShaderPrecisionFormat(shadertype, precisiontype) {
-    shouldBeTrue('gl.getShaderPrecisionFormat(' + shadertype + ', ' +
-                 precisiontype + ') instanceof WebGLShaderPrecisionFormat');
-}
-
-debug("");
-debug("Test that getShaderPrecisionFormat returns a WebGLShaderPrecisionFormat object.");
-debug("");
-
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.LOW_FLOAT');
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.MEDIUM_FLOAT');
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.HIGH_FLOAT');
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.LOW_INT');
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.MEDIUM_INT');
-verifyShaderPrecisionFormat('gl.VERTEX_SHADER', 'gl.HIGH_INT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.LOW_FLOAT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.MEDIUM_FLOAT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.HIGH_FLOAT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.LOW_INT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.MEDIUM_INT');
-verifyShaderPrecisionFormat('gl.FRAGMENT_SHADER', 'gl.HIGH_INT');
-
 debug("");
 debug("Test that getShaderPrecisionFormat throws an error with invalid parameters.");
 debug("");
 
 wtu.shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.getShaderPrecisionFormat(gl.HIGH_INT, gl.VERTEX_SHADER)');
 
+// -
+
 debug("");
-debug("Test that WebGLShaderPrecisionFormat values are sensible.");
 debug("");
+debug("Test that WebGLShaderPrecisionFormat values are valid:");
 
 // The minimum values are from OpenGL ES Shading Language spec, section 4.5.
+const WEBGL1_REQUIREMENT_BY_PRECISION_TYPE = {
+  LOW_FLOAT   : {rangeMin:   1, rangeMax:   1, precision:  8},
+  MEDIUM_FLOAT: {rangeMin:  14, rangeMax:  14, precision: 10},
+  HIGH_FLOAT  : {rangeMin:  62, rangeMax:  62, precision: 16},
+  LOW_INT     : {rangeMin:   8, rangeMax:   8, precision:  0},
+  MEDIUM_INT  : {rangeMin:  10, rangeMax:  10, precision:  0},
+  HIGH_INT    : {rangeMin:  16, rangeMax:  16, precision:  0},
+};
+// For `highp float`, the ESSL3 spec erroneously states min range of -2^126
+// instead of IEEE's -2^127, perhaps confused by the IEEE magnitude range
+// min of 2^-126.
+// The ES3 spec says IEEE floats should be [127, 127, 23], and that's what
+// implementations do already.
+const WEBGL2_REQUIREMENT_BY_PRECISION_TYPE = {
+  LOW_FLOAT   : {rangeMin:   1, rangeMax:   1, precision:  8},
+  MEDIUM_FLOAT: {rangeMin:  14, rangeMax:  14, precision: 10},
+  HIGH_FLOAT  : {rangeMin: 127, rangeMax: 127, precision: 23},
+  LOW_INT     : {rangeMin:   8, rangeMax:   7, precision:  0},
+  MEDIUM_INT  : {rangeMin:  15, rangeMax:  14, precision:  0},
+  HIGH_INT    : {rangeMin:  31, rangeMax:  30, precision:  0},
+};
 
-var shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_FLOAT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 1');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 1');
-shouldBeTrue('shaderPrecisionFormat.precision >= 8');
+function validateShaderPrecisionFormats(gl) {
+  let requirement_by_precision_type = WEBGL1_REQUIREMENT_BY_PRECISION_TYPE;
+  if (wtu.isWebGL2(gl)) {
+    requirement_by_precision_type = WEBGL2_REQUIREMENT_BY_PRECISION_TYPE;
+  }
+  for (const shader_type of ['VERTEX_SHADER', 'FRAGMENT_SHADER']) {
+    for (const [precision_type, spec_requirement] of Object.entries(requirement_by_precision_type)) {
+      const was = gl.getShaderPrecisionFormat(gl[shader_type], gl[precision_type]);
+      debug('');
+      debug(`gl.getShaderPrecisionFormat(${shader_type}, ${precision_type}) => ${JSON.stringify(was)}`);
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 14');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 14');
-shouldBeTrue('shaderPrecisionFormat.precision >= 10');
+      globalThis.was = was;
+      shouldBeTrue('was instanceof WebGLShaderPrecisionFormat');
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 62');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 62');
-shouldBeTrue('shaderPrecisionFormat.precision >= 16');
+      if (shader_type == 'FRAGMENT_SHADER' && precision_type.startsWith('HIGH_')) {
+        if (was.rangeMin == 0 && was.rangeMax == 0 && was.precision == 0) {
+          debug(`    Not supported. (valid)`);
+          return;
+        }
+      }
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_INT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 8');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 8');
-shouldBeTrue('shaderPrecisionFormat.precision == 0');
+      assertMsg(was.rangeMin >= spec_requirement.rangeMin, `was.rangeMin (${was.rangeMin}) >= spec_requirement.rangeMin (${spec_requirement.rangeMin})`);
+      assertMsg(was.rangeMax >= spec_requirement.rangeMax, `was.precision (${was.rangeMax}) >= spec_requirement.rangeMax (${spec_requirement.rangeMax})`);
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_INT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 10');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 10');
-shouldBeTrue('shaderPrecisionFormat.precision == 0');
+      if (spec_requirement.precision == 0) {
+        assertMsg(was.precision == 0, `was.precision (${was.precision}) == 0`);
+      } else {
+        assertMsg(was.precision >= spec_requirement.precision, `was.precision (${was.precision}) >= spec_requirement.precision (${spec_requirement.precision})`);
+      }
+    }
+  }
+}
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_INT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 16');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 16');
-shouldBeTrue('shaderPrecisionFormat.precision == 0');
+validateShaderPrecisionFormats(gl);
 
-var shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.LOW_FLOAT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 1');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 1');
-shouldBeTrue('shaderPrecisionFormat.precision >= 8');
-
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 14');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 14');
-shouldBeTrue('shaderPrecisionFormat.precision >= 10');
-
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.LOW_INT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 8');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 8');
-shouldBeTrue('shaderPrecisionFormat.precision == 0');
-
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_INT);
-shouldBeTrue('shaderPrecisionFormat.rangeMin >= 10');
-shouldBeTrue('shaderPrecisionFormat.rangeMax >= 10');
-shouldBeTrue('shaderPrecisionFormat.precision == 0');
+// -
 
 debug("");
-debug("Test optional highp support in fragment shaders.");
-debug("");
-
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
-shouldBeTrue('(shaderPrecisionFormat.rangeMin == 0 && shaderPrecisionFormat.rangeMax == 0 && shaderPrecisionFormat.precision == 0) || (shaderPrecisionFormat.rangeMin >= 62 && shaderPrecisionFormat.rangeMax >= 62 && shaderPrecisionFormat.precision >= 16)');
-
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_INT);
-shouldBeTrue('(shaderPrecisionFormat.rangeMin == 0 && shaderPrecisionFormat.rangeMax == 0 && shaderPrecisionFormat.precision == 0) || (shaderPrecisionFormat.rangeMin >= 16 && shaderPrecisionFormat.rangeMax >= 16 && shaderPrecisionFormat.precision == 0)');
-
 debug("");
 debug("Test that getShaderPrecisionFormat returns the same thing every call.");
 debug("");
 
-shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_FLOAT);
+var shaderPrecisionFormat = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_FLOAT);
 var shaderPrecisionFormat2 = gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_FLOAT);
 shouldBeTrue('shaderPrecisionFormat.rangeMin == shaderPrecisionFormat2.rangeMin');
 shouldBeTrue('shaderPrecisionFormat.rangeMax == shaderPrecisionFormat2.rangeMax');
 shouldBeTrue('shaderPrecisionFormat.precision == shaderPrecisionFormat2.precision');
 
+debug("");
 debug("");
 debug("Test that specified precision matches rendering results");
 debug("");
@@ -243,6 +223,9 @@ function testRenderPrecisionInt(gl, precisionEnum, precision) {
     testRenderPrecision(gl, shaderType, 'int', precision, expected, msg);
   }
 
+  // Only use highp in the fragment shader if caller has determined it's supported.
+  const uniformPrecision = (precision == 'highp' ? 'highp' : 'mediump');
+
   {
     const vs = `
     attribute vec4 position;
@@ -281,7 +264,7 @@ function testRenderPrecisionInt(gl, precisionEnum, precision) {
     const fs = `
     precision ${precision} float;
     uniform ${precision} int v;
-    uniform mediump float f;
+    uniform ${uniformPrecision} float f;
 
     void main() {
       mediump float diff = abs(float(v) - f);

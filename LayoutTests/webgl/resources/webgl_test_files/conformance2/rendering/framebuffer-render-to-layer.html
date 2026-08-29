@@ -319,6 +319,9 @@ function runTest() {
       gl.framebufferTextureLayer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, texture, level, slice);
   }
 
+  // Disable dithering for more reliable results with low-bit-depth formats
+  gl.disable(gl.DITHER);
+
   const targets = {};
   targets[gl.TEXTURE_2D]       = { make: make2DTexture, attach: attach2DTexture, },
   targets[gl.TEXTURE_3D]       = { make: make3DTexture, attach: attach3DTexture, },

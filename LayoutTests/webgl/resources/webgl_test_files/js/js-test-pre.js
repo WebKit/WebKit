@@ -794,16 +794,327 @@ function finishTest() {
   document.body.appendChild(epilogue);
 }
 
-/// Prefer `call(() => { ... })` to `(() => { ... })()`\
-/// This way, it's clear up-front that we're calling not just defining.
+// -
+
+/**
+ * `=> { return fn(); }`
+ *
+ * To be clear up front that we're calling (instead of defining):
+ * ```
+ * call(() => {
+ *    ...
+ * });
+ * ```
+ *
+ * As opposed to:
+ * ```
+ * (() => {
+ *    ...
+ * })();
+ * ```
+ *
+ * @param {function(): any} fn
+ */
 function call(fn) {
     return fn();
 }
 
-/// `for (const i of range(3))` => 0, 1, 2
-/// Don't use `for...in range(n)`, it will not work.
-function* range(n) {
-  for (let i = 0; i < n; i++) {
-    yield i;
+// -
+
+/**
+ * A la python:
+ * * range(3) => [0,1,2]
+ * * range(1,3) => [1,2]
+ * @param {number} a
+ * @param {number} [b]
+ * @returns {number[]} [min(a,b), ... , max(a,b)-1]
+ */
+function range(a, b) {
+  b = b || 0;
+  const begin = Math.min(a, b);
+  const end = Math.max(a, b);
+  return new Array(end-begin).fill().map((_,i) => begin+i);
+}
+{
+  let was;
+  console.assert((was = range(0)).toString() == [].toString(), {was});
+  console.assert((was = range(1)).toString() == [0].toString(), {was});
+  console.assert((was = range(3)).toString() == [0,1,2].toString(), {was});
+  console.assert((was = range(1,3)).toString() == [1,2].toString(), {was});
+}
+
+// -
+
+/**
+ * `=> { throw v; }`
+ *
+ * Like `throw`, but usable as an expression not just a statement.\
+ * E.g. `let found = foo.bar || throwv({foo, msg: 'foo must have .bar!'});`
+ * @param {any} v
+ * @throws Always throws `v`!
+ */
+function throwv(v) {
+  throw v;
+}
+
+// -
+
+/**
+ * @typedef {object} ConfigDict
+ * @property {any=} key
+ */
+
+/**
+ * @typedef {ConfigDict[]} ConfigDictList
+ */
+
+/**
+ * @param {...ConfigDictList} comboDimensions
+ * @returns {ConfigDictList}  N-dim Cartesian Product of combinations of the key-value-map objects from each list.
+ */
+function crossCombine(...comboDimensions) {
+  function crossCombine2(listA, listB) {
+    const listC = [];
+    for (const a of listA) {
+      for (const b of listB) {
+        const c = Object.assign({}, a, b);
+        listC.push(c);
+      }
+    }
+    return listC;
   }
+
+  let res = [{}];
+  for (const i in comboDimensions) {
+    const next = comboDimensions[i] || throwv({i, comboDimensions});
+    res = crossCombine2(res, next);
+  }
+  return res;
+}
+
+// -
+
+/**
+ * @typedef {number} U32 range: `[0, 0xffff_ffff]`
+ * @typedef {number} I32 range: `[-0x8000_0000, 0x7fff_ffff]`, `0xffff_ffff|0 => -1`
+ * @typedef {number} F32
+ */
+
+/**
+ * "SHift Right as Uint32"
+ * @param {U32} val
+ * @param {number} n
+ * @returns {U32}
+ */
+function shr_u32(val, n) {
+  val >>= n; // In JS this is shr_i32, with sign-extension for negative lhs.
+
+  if (n > 0) {
+      const result_mask = (1 << (32-n)) - 1;
+      val &= result_mask;
+  }
+
+  return val;
+}
+console.assert((0xffff_ffff | 0) == -1);
+console.assert(0xffff_ff00 >> 4 == (0xffff_fff0 | 0));
+console.assert(shr_u32(0xffff_ff00, 4) != (0xffff_fff0 | 0));
+console.assert(shr_u32(0xffff_ff00, 4) == (0x0fff_fff0 | 0));
+console.assert(shr_u32(0xffff_ff00, 4) == 0x0fff_fff0);
+console.assert(shr_u32(0xffff_ff00|0, 4) == 0x0fff_fff0);
+
+/**
+ * @type {(val: number) => U32}
+ */
+const bitcast_u32 = call(() => {
+  const u32View = new Uint32Array(1);
+  return function bitcast_u32(val) {
+    u32View[0] = val;
+    return u32View[0];
+  };
+});
+
+/**
+ * @type {(u32: U32) => F32}
+ */
+const bitcast_f32_from_u32 = call(() => {
+  const u32 = new Uint32Array(1);
+  const f32 = new Float32Array(u32.buffer);
+  return function bitcast_f32_from_u32(v) {
+      u32[0] = v;
+      return f32[0];
+  };
+});
+
+// -
+
+class PrngXorwow {
+  /** @type {U32[]} */
+  actual_seed;
+
+  /** @type {U32[]} */
+  state = new Uint32Array(6); // 5 u32 shuffler + 1 u32 counter.
+
+  /**
+   * @param {U32[] | U32 | undefined} seed
+   */
+  constructor(seed) {
+    if (typeof(seed) == 'string') {
+      seed = parseInt(seed);
+    }
+    if (typeof(seed) == 'object' && seed.length !== undefined) {
+      // array-ish
+      if (!seed.length) {
+        seed = new Uint32Array(state.length);
+        crypto.getRandomValues(seed);
+      } else {
+        seed = new Uint32Array(seed);
+      }
+    } else {
+      // number?
+      if (!seed) {
+        seed = new Uint32Array(1);
+        crypto.getRandomValues(seed);
+      } else {
+        seed = new Uint32Array([seed]);
+      }
+    }
+
+    // Elide zeros from seed for compactness:
+    while (seed[seed.length-1] == 0) {
+        seed = seed.slice(0, seed.length-1);
+    }
+    this.actual_seed = seed.slice();
+
+    // Seed the state:
+    const state = this.state;
+    for (const i in state) {
+      state[i] = this.actual_seed[i] || 0;
+    }
+    console.assert(state[0] || state[1] || state[2] || state[3], "The first four words of seeded state must not all be 0:", state)
+
+  }
+
+  /**
+   * (n>=2)
+   * @returns {U32 | U32[n]}
+   */
+  seed() {
+    const seed = this.actual_seed;
+    if (seed.length == 1) return seed[0];
+    return seed.slice();
+  }
+
+  // -
+
+  /**
+   * @returns {U32[6]}
+   */
+  state() {
+    return this.state;
+  }
+
+  /**
+   * @returns {U32}
+   */
+  next_u32() {
+      /* Algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs" */
+      const state = this.state;
+      let t = state[4];
+
+      const s = state[0];
+      state[4] = state[3];
+      state[3] = state[2];
+      state[2] = state[1];
+      state[1] = s;
+
+      t ^= shr_u32(t, 2);
+      t ^= t << 1;
+      t ^= s ^ (s << 4);
+      state[0] = t;
+      state[5] += 362437;
+
+      let ret = state[0] + state[5];
+      ret = bitcast_u32(ret);
+      return ret;
+  }
+
+  /**
+   * @returns {number} range: [0.0, 1.0)
+   */
+  next_unorm() {
+      let ret = this.next_u32();
+      const U32_MAX = 0xffff_ffff;
+      ret /= (U32_MAX + 1);
+      return ret; // [0,1)
+  }
+
+  /**
+   * A la crypto.getRandomValues()
+   * @param {ArrayBufferView} dest
+   * @returns {ArrayBufferView}
+   */
+  getRandomValues(dest) {
+    const u8s = abv_cast(Uint8Array, dest);
+    const len_in_u32 = Math.floor(u8s.length / 4);
+    const u32s = abv_cast(Uint32Array, u8s.subarray(0, 4*len_in_u32));
+    for (const i in u32s) {
+      u32s[i] = this.next_u32();
+    }
+    for (const i of range(u32s.byteLength, u8s.byteLength)) {
+      u8s[i] = this.next_u32(); // Truncates u32 to u8.
+    }
+
+    return dest;
+  }
+}
+
+// -
+
+/**
+ * @template {ArrayBufferView} T
+ * @param {T.constructor} ctor
+ * @param {ArrayBufferView | ArrayBuffer} abv
+ * @returns {T}
+ */
+function abv_cast(ctor, abv) {
+  if (abv instanceof ArrayBuffer) return new ctor(abv);
+  const ctor_bytes_per_element = ctor.BYTES_PER_ELEMENT || 1; // DataView doesn't have BYTES_PER_ELEMENT.
+  return new ctor(abv.buffer, abv.byteOffset, abv.byteLength / ctor_bytes_per_element);
+}
+
+// -
+
+/**
+ * @returns {PrngXorwow}
+ */
+function getDrng(defaultSeed=1) {
+  if (globalThis._DRNG) return globalThis._DRNG;
+
+  const seedKeyName = `seed`;
+
+  const url = new URL(window.location);
+  let requestedSeed = url.searchParams.get(seedKeyName);
+  if (requestedSeed === null) {
+    requestedSeed = defaultSeed;
+  }
+
+  const drng = globalThis._DRNG = new PrngXorwow(requestedSeed);
+  const seed = drng.seed();
+
+  // Run it a few times to avoid seed=1 giving similar values at first.
+  for (const _ of range(100)) {
+    drng.next_u32();
+  }
+
+  url.searchParams.set(seedKeyName, seed);
+  let linkText = `Link to this run's seed: ${url}`;
+  if (seed != requestedSeed) {
+    linkText += ' (autogenerated)';
+  }
+
+  globalThis.debug && debug(linkText);
+  console.log(linkText);
+
+  return drng;
 }

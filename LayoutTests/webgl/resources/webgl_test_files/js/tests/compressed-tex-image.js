@@ -30,7 +30,7 @@ if (!gl) {
   shouldBe("formats.length", "0");
 
   wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4, 4, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4*4*4));");
-  wtu.shouldGenerateGLError(gl, gl.INVALID_ENUM,
+  wtu.shouldGenerateGLError(gl, [gl.INVALID_ENUM, gl.INVALID_OPERATION],
                             "gl.compressedTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 4, 4, COMPRESSED_RGB_PVRTC_4BPPV1_IMG, new Uint8Array(8));");
 
   // Check too-many and too-few args.

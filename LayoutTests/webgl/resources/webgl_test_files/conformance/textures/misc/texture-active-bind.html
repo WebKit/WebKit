@@ -85,6 +85,10 @@ function init()
   }
   wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
+  // check that OOB returns error
+  gl.activeTexture(gl.TEXTURE0 + gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS));
+  wtu.glErrorShouldBe(gl, gl.INVALID_ENUM);
+
   // now use each texture unit to write into the textures,
   for (var ii = 0; ii < texunits; ++ii) {
     var c = colors[ii];
