@@ -9,7 +9,7 @@ setTimeout(async () => {
     if (!window.IPC)
         return testRunner?.notifyDone();
 
-    const { CoreIPC } = await import('./coreipc.js');
+    const { CoreIPC, sRGBColorSpace } = await import('./coreipc.js');
     const renderingBackendIdentifier = randomIPCID();
     o58 = CoreIPC.newStreamConnection();
     CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(
@@ -33,23 +33,7 @@ setTimeout(async () => {
                         k2 : -0.0000015329670121806829,
                         k3 : 8.407790785948902e-44,
                         k4 : -8.633401098587574e-14,
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -57,23 +41,7 @@ setTimeout(async () => {
                     subclasses : {
                         variantType : 'WebCore::SourceAlpha',
                         variant : {
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -83,23 +51,7 @@ setTimeout(async () => {
                         variant : {
                         floodColor : { data : {} },
                         floodOpacity : -2.4559581509165345e-24,
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -112,23 +64,7 @@ setTimeout(async () => {
                         k2 : -1.175494351e-38,
                         k3 : 1.0369608636003646e-43,
                         k4 : 4.344025239406933e-44,
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -137,23 +73,7 @@ setTimeout(async () => {
                         variantType : 'WebCore::FEMerge',
                         variant : {
                         numberOfEffectInputs : 93,
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -161,23 +81,7 @@ setTimeout(async () => {
                     subclasses : {
                         variantType : 'WebCore::SourceGraphic',
                         variant : {
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     },
@@ -196,23 +100,7 @@ setTimeout(async () => {
                         },
                         preserveAlpha : false,
                         kernel : [],
-                        operatingColorSpace : {
-                            serializableColorSpace: {
-                                alias: {
-                                    optionalValue: {
-                                        m_cgColorSpace: {
-                                            alias: {
-                                                variantType: "WebKit::ICCData",
-                                                variant: {
-                                                    data: [],
-                                                    derivative: 0
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        }
+                        operatingColorSpace : sRGBColorSpace()
                         }
                     }
                     }

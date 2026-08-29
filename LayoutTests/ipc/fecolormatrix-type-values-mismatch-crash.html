@@ -8,7 +8,7 @@
             if (!window.IPC)
                 return window.testRunner?.notifyDone();
 
-            const { CoreIPC } = await import('./coreipc.js');
+            const { CoreIPC, sRGBColorSpace } = await import('./coreipc.js');
 
             const streamConnection = CoreIPC.newStreamConnection();
 
@@ -29,20 +29,7 @@
                 renderingMode: 1,
                 renderingPurpose: 0,
                 resolutionScale: 10,
-                colorSpace: {
-                    serializableColorSpace: {
-                        alias: {
-                            optionalValue: {
-                                m_cgColorSpace: {
-                                    alias: {
-                                        variantType: 'WebCore::ColorSpace',
-                                        variant: 1
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
+                colorSpace: sRGBColorSpace(),
                 pixelFormat: 1,
                 bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
                 identifier: imageBufferIdentifier,
@@ -50,7 +37,7 @@
             });
             const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
 
-            const srgbColorSpace = {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}};
+            const srgbColorSpace = sRGBColorSpace();
 
             try {
                 remoteImageBuffer.FilteredNativeImage({

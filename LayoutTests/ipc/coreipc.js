@@ -245,6 +245,19 @@ const aliases = {
     'CGColorSpaceRef': 'WebKit::CoreIPCCGColorSpace'
 }
 
+// A DestinationColorSpace holding sRGB. Under USE(CG) it is a structured variant; under
+// USE(SKIA) sk_sp<SkColorSpace> crosses IPC as the bytes SkColorSpace::serialize() produces,
+// which IPC.serializedSRGBColorSpace() obtains from the real serializer.
+export function sRGBColorSpace() {
+    if ('WebKit::CoreIPCCGColorSpace' in CoreIPC.typeInfo)
+        return { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } }; // WebCore::ColorSpace::SRGB
+
+    if ('sk_sp<SkColorSpace>' in CoreIPC.typeInfo)
+        return { serializableColorSpace: { alias: { dataReference: IPC.serializedSRGBColorSpace() } } };
+
+    throw new SerializationError('sRGBColorSpace() supports only the CG and Skia serialization formats');
+}
+
 export function resolveAlias(argumentType) {
     if (argumentType in aliases) {
         return resolveAlias(aliases[argumentType]);
@@ -584,6 +597,10 @@ export class ArgumentSerializer {
                 case 'UniqueRef':
                     return ArgumentSerializer.serializeArgument({type: innerType, name: argumentDefinition.name}, argument);
                 default:
+                    // A wrapper class such as sk_sp<SkColorSpace> is a template, but the
+                    // generator describes it like any other struct.
+                    if (argumentDefinition.type in CoreIPC.typeInfo)
+                        break;
                     throw new SerializationError(`Don't know how to serialize template '${ templateType }'`);
             }
         }

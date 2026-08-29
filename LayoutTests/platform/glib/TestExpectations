@@ -3396,19 +3396,16 @@ http/tests/ipc/webpageproxy-didfailload-failingurl-message-check.html [ Skip ]
 # CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
 http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]
 
-# Generic regressions whose IPC payload needs porting to Skia's colorspace format.
-ipc/nested-display-list-draw-control-part-crash.html [ Skip ]
-ipc/move-to-image-buffer-cross-thread-font-crash.html [ Skip ]
+# RemoteRenderingBackend::PrepareImageBufferSetsForDisplay is PLATFORM(COCOA).
 ipc/remotedisplaylistrecorder-drawcontrolpart-slidertrackpart-crash.html [ Skip ]
-ipc/decode-feConvolveMatrix-kernelSize-overflow.html [ Skip ]
-ipc/fecolormatrix-type-values-mismatch-crash.html [ Skip ]
-ipc/insufficient-svgfilter-inputs-crash.html [ Skip ]
-ipc/invalid-feConvolveMatrix-crash.html [ Skip ]
-ipc/invalid-svgfilter-expression-crash.html [ Skip ]
 ipc/mark-surfaces-volatile-during-prepare-for-display.html [ Skip ]
-ipc/restore-empty-stack-crash.html [ Skip ]
+
+# Hardcodes Cocoa's WebCore::FontPlatformDataAttributes in the IPC payload.
+ipc/move-to-image-buffer-cross-thread-font-crash.html [ Skip ]
+
+# Sends WebCore::PixelFormat index 3; the glib ports enable none of RGB10, RGB10A8
+# and RGBA16F, so the enum stops at BGRA8.
 ipc/convert-to-luminance-mask-float16.html [ Skip ]
-ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 
 # ATTACHMENT_ELEMENT is disabled in glib ports.
 ipc/restrictedendpoints/allow-access-attachmentElement.html [ Skip ]

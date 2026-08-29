@@ -9,7 +9,7 @@ window.setTimeout(async () => {
     if (!window.IPC)
         return window.testRunner?.notifyDone();
 
-    const { CoreIPC } = await import('./coreipc.js');
+    const { CoreIPC, sRGBColorSpace } = await import('./coreipc.js');
 
     const streamConnection = CoreIPC.newStreamConnection();
 
@@ -27,7 +27,7 @@ window.setTimeout(async () => {
         renderingMode: 0,
         renderingPurpose: 0,
         resolutionScale: 1.0,
-        colorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}},
+        colorSpace: sRGBColorSpace(),
         bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
         identifier: imageBufferIdentifier,
         contextIdentifier: contextIdentifier
@@ -54,7 +54,7 @@ window.setTimeout(async () => {
                                     variantType: 'WebCore::FEBlend',
                                     variant: {
                                         blendMode: 8,
-                                        operatingColorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}}
+                                        operatingColorSpace: sRGBColorSpace()
                                     }
                                 }
                             }

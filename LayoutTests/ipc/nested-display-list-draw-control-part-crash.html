@@ -14,7 +14,7 @@ async function main() {
     if (!window.IPC)
         return;
 
-    const { CoreIPC, ArgumentSerializer, StreamConnection } = await import('./coreipc.js');
+    const { CoreIPC, ArgumentSerializer, StreamConnection, sRGBColorSpace } = await import('./coreipc.js');
 
     // CoreIPC.js aliases RetainPtr<CGColorSpaceRef> -> CoreIPCCGColorSpace, but the
     // generated coder wraps it in a leading `bool isEngaged`. Override the field type
@@ -73,7 +73,7 @@ async function main() {
             renderingMode: 0,
             renderingPurpose: 0,
             resolutionScale: 1.0,
-            colorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } },
+            colorSpace: sRGBColorSpace(),
             bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
             identifier: imageBufferIdentifier,
             contextIdentifier: graphicsContextIdentifier
