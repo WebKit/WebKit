@@ -1,3 +1,4 @@
+//@ slow!
 //@ runDefault("--forceEagerCompilation=1")
 
 let total = 0;
