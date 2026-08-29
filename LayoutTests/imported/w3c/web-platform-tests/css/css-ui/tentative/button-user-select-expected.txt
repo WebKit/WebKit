@@ -1,0 +1,4 @@
+Button under test
+
+PASS CSS user-select default value for button element
+

@@ -1,0 +1,4 @@
+
+PASS Near-Z element projected outside border-radius is clipped
+FAIL Corner point outside border-radius hits body after perspective assert_not_equals: got disallowed value Element node <div id="near"></div>
+

@@ -7,5 +7,5 @@ PASS the button text should be selectable from outside.
 PASS the button text should not be selectable from inside when the parent is user-select: text.
 PASS the button text should be selectable from outside when the parent is user-select: text.
 PASS the button text should not be selectable from inside when the parent is user-select: none.
-FAIL the button text should not be selectable from outside when the parent is user-select: none. assert_equals: expected "" but got "button"
+PASS the button text should not be selectable from outside when the parent is user-select: none.
 

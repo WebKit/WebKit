@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/cursor-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-color-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-offset-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-offset-interpolation-rounding.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-offset-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-interpolation.html

@@ -23,4 +23,5 @@ PASS e.style['overflow-clip-margin'] = "border-box calc(0.5em - 100px)" should s
 PASS e.style['overflow-clip-margin'] = "border-box calc(0.5em - 100%)" should not set the property value
 PASS e.style['overflow-clip-margin'] = "margin-box" should not set the property value
 PASS e.style['overflow-clip-margin'] = "inset(10px)" should not set the property value
+PASS e.style['overflow-clip-margin'] = "50px 50px" should not set the property value
 

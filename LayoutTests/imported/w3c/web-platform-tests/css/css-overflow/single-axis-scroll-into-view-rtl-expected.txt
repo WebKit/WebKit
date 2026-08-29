@@ -1,0 +1,3 @@
+
+FAIL scrollIntoView() respects single-axis limits independently on each ancestor in RTL assert_equals: inner ignores the clipped vertical axis expected 0 but got 20
+

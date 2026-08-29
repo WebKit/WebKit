@@ -1,0 +1,9 @@
+
+PASS e.style['scroll-axis-lock'] = "10" should not set the property value
+PASS e.style['scroll-axis-lock'] = "true" should not set the property value
+PASS e.style['scroll-axis-lock'] = "default" should not set the property value
+PASS e.style['scroll-axis-lock'] = "all" should not set the property value
+PASS e.style['scroll-axis-lock'] = "auto, none" should not set the property value
+PASS e.style['scroll-axis-lock'] = "always" should not set the property value
+PASS e.style['scroll-axis-lock'] = "both" should not set the property value
+

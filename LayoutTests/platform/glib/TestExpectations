@@ -428,7 +428,7 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.ht
 imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-028.html [ Pass ]
 
 # css-values passing for us.
 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
@@ -5307,6 +5307,8 @@ webkit.org/b/319053 [ Debug ] media/video-playback-restriction-play-before-load.
 webkit.org/b/319310 [ Debug ] fast/repaint/iframe-avoid-redundant-repaint.html [ Failure Pass ]
 webkit.org/b/319311 [ Debug ] fast/repaint/missing-out-of-flow-repaint-on-destroy.html [ Pass ImageOnlyFailure ]
 webkit.org/b/319312 [ Debug ] workers/bomb.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-023.html [ ImageOnlyFailure ]
 
 webkit.org/b/319950 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Failure ]
 

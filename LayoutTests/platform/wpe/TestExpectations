@@ -25,7 +25,7 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-in
 
 webkit.org/b/307586 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html [ Failure Pass ]
 
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-005.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ ImageOnlyFailure ]
@@ -868,6 +868,10 @@ compositing/visible-rect/scrolled.html [ Failure ]
 media/media-source/media-detachablemse-append.html [ Timeout Pass ]
 
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-overflow/clip-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/clip-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/clip-005.html [ ImageOnlyFailure ]
 
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
 

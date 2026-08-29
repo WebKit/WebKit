@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-001-ref.html
@@ -36,6 +34,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-029-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-031-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-032-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-034-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-035-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-038-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-039-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-041-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-bidi-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-bidi-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-bidi-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-repaint-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-repaint-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/block-ellipsis-repaint-003-ref.html
@@ -53,6 +59,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-027-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-028-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-029-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-039-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-041-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-011-ref.html
@@ -75,6 +83,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-039-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-040-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-041-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-043-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-044-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-045-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-046-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-047-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-with-ruby-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-with-ruby-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-with-ruby-005-ref.html
@@ -98,9 +111,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-023-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-005-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-007-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-text-overflow-string-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-001-ref.html

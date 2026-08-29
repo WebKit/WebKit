@@ -1,0 +1,3 @@
+
+FAIL CSS Overflow Test: ::scroll-marker-group supports hover assert_equals: ::scroll-marker-group is unhovered expected "rgb(255, 0, 0)" but got ""
+

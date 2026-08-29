@@ -207,7 +207,9 @@ imported/w3c/web-platform-tests/payment-request/payment-request-disallowed-when-
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/br-wbr-content/content-property.tentative.html [ ImageOnlyFailure ]
 
-webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
+webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-028.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-overflow/before-after-pseudo-element-scrolling.html [ ImageOnlyFailure ]
 
 webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/outline-width-rounding.tentative.html [ Failure ]
 webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-computed.html [ Failure ]
@@ -7356,10 +7358,10 @@ imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces
 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-013.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-028.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-011.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-014.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-010.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-011.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-013.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-014.html [ Pass ImageOnlyFailure ]
 fast/forms/textfield-outline.html [ Pass Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Pass Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Pass Failure ]
@@ -10139,10 +10141,10 @@ imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.htm
 
 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Pass Failure ] # rdar://178676720
 
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-001.html [ Pass ImageOnlyFailure ] # rdar://178676888
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-002.html [ Pass ImageOnlyFailure ] # rdar://178676888
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-004.html [ Pass ImageOnlyFailure ] # rdar://178676888
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-003.html [ Pass ImageOnlyFailure ] # rdar://178676888
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-001.html [ Pass ImageOnlyFailure ] # rdar://178676888
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-002.html [ Pass ImageOnlyFailure ] # rdar://178676888
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-004.html [ Pass ImageOnlyFailure ] # rdar://178676888
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-003.html [ Pass ImageOnlyFailure ] # rdar://178676888
 
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-iframe.html [ Pass ImageOnlyFailure ] # rdar://178676913
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-generated-content.html [ Pass ImageOnlyFailure ] # rdar://178676913

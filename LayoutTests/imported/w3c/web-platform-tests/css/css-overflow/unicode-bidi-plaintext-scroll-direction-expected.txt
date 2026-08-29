@@ -1,0 +1,16 @@
+اسماء.شبكة/%20/test/
+اسماء.شبكة/%20/test/
+
+اسماء.شبكة/%20/test/
+اسماء.شبكة/%20/test/
+
+
+FAIL unicode-bidi: plaintext content opposite to the container's direction isn't scrollable (#plaintext-div-text) assert_equals: should not be scrollable expected 200 but got 258
+FAIL unicode-bidi: plaintext content opposite to the container's direction isn't scrollable (#plaintext-div-span) assert_equals: should not be scrollable expected 200 but got 258
+FAIL unicode-bidi: plaintext content opposite to the container's direction isn't scrollable (#plaintext-textarea) assert_equals: should not be scrollable expected 215 but got 273
+FAIL unicode-bidi: plaintext content opposite to the container's direction isn't scrollable (#plaintext-input) assert_equals: should not be scrollable expected 230 but got 290
+PASS dir=auto makes rtl-dominant content scrollable (#auto-div-text)
+PASS dir=auto makes rtl-dominant content scrollable (#auto-div-span)
+PASS dir=auto makes rtl-dominant content scrollable (#auto-textarea)
+PASS dir=auto makes rtl-dominant content scrollable (#auto-input)
+

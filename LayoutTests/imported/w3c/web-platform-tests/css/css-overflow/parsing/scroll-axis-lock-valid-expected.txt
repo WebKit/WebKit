@@ -1,0 +1,8 @@
+
+FAIL e.style['scroll-axis-lock'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-axis-lock'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-axis-lock'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-axis-lock'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-axis-lock'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-axis-lock'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+

@@ -5,17 +5,17 @@ PASS Property overflow value 'clip'
 PASS Property overflow value 'scroll'
 PASS Property overflow value 'auto'
 PASS Property overflow value 'auto auto'
-PASS Property overflow value 'auto clip'
+FAIL Property overflow value 'auto clip' assert_equals: expected "auto clip" but got "auto hidden"
 PASS Property overflow value 'auto visible'
-PASS Property overflow value 'clip auto'
+FAIL Property overflow value 'clip auto' assert_equals: expected "clip auto" but got "hidden auto"
 PASS Property overflow value 'clip clip'
-PASS Property overflow value 'clip hidden'
-PASS Property overflow value 'clip scroll'
+FAIL Property overflow value 'clip hidden' assert_equals: expected "clip hidden" but got "hidden"
+FAIL Property overflow value 'clip scroll' assert_equals: expected "clip scroll" but got "hidden scroll"
 PASS Property overflow value 'clip visible'
-PASS Property overflow value 'hidden clip'
+FAIL Property overflow value 'hidden clip' assert_equals: expected "hidden clip" but got "hidden"
 PASS Property overflow value 'hidden visible'
 PASS Property overflow value 'scroll auto'
-PASS Property overflow value 'scroll clip'
+FAIL Property overflow value 'scroll clip' assert_equals: expected "scroll clip" but got "scroll hidden"
 PASS Property overflow value 'scroll visible'
 PASS Property overflow value 'visible auto'
 PASS Property overflow value 'visible hidden'

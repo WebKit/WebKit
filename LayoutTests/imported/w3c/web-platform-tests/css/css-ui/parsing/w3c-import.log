@@ -46,9 +46,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/resize-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/text-overflow-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed-contain.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-invalid.html

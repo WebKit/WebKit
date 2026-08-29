@@ -1,6 +1,11 @@
 
 PASS e.style['continue'] = "none" should not set the property value
+FAIL e.style['continue'] = "auto" should not set the property value assert_equals: expected "" but got "auto"
 PASS e.style['continue'] = "auto discard" should not set the property value
 PASS e.style['continue'] = "auto collapse" should not set the property value
 PASS e.style['continue'] = "auto -webkit-legacy" should not set the property value
+PASS e.style['continue'] = "normal discard" should not set the property value
+PASS e.style['continue'] = "normal collapse" should not set the property value
+PASS e.style['continue'] = "normal -webkit-legacy" should not set the property value
+PASS e.style['continue'] = "collapse -webkit-legacy" should not set the property value
 
