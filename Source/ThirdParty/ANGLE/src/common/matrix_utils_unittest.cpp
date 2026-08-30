@@ -7,11 +7,8 @@
 //   Unit tests for the matrix utils.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "matrix_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -69,7 +66,7 @@ void CheckMatrixCloseToGolden(float *golden, const Mat4 &m)
     const auto &checkElts           = m.elements();
     for (size_t i = 0; i < checkElts.size(); i++)
     {
-        EXPECT_NEAR(golden[i], checkElts[i], floatFaultTolarance);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(golden[i], checkElts[i], floatFaultTolarance));
     }
 }
 
@@ -183,7 +180,7 @@ TEST(MatrixUtilsTest, 2x2MatrixInverseTest)
 {
     float inputElements[]    = {2.0f, 5.0f, 3.0f, 7.0f};
     unsigned int numElements = 4;
-    std::vector<float> input(inputElements, inputElements + numElements);
+    std::vector<float> input(inputElements, ANGLE_UNSAFE_TODO(inputElements + numElements));
     Matrix<float> inputMatrix(std::move(input), 2);
     float identityElements[] = {1.0f, 0.0f, 0.0f, 1.0f};
     // A * inverse(A) = I, where I is identity matrix.
@@ -195,7 +192,7 @@ TEST(MatrixUtilsTest, 3x3MatrixInverseTest)
 {
     float inputElements[]    = {11.0f, 23.0f, 37.0f, 13.0f, 29.0f, 41.0f, 19.0f, 31.0f, 43.0f};
     unsigned int numElements = 9;
-    std::vector<float> input(inputElements, inputElements + numElements);
+    std::vector<float> input(inputElements, ANGLE_UNSAFE_TODO(inputElements + numElements));
     Matrix<float> inputMatrix(std::move(input), 3);
     float identityElements[] = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
     // A * inverse(A) = I, where I is identity matrix.
@@ -203,7 +200,7 @@ TEST(MatrixUtilsTest, 3x3MatrixInverseTest)
     angle::Span<const float> resultElements = result.elements();
     const float floatFaultTolarance         = 0.000001f;
     for (size_t i = 0; i < numElements; i++)
-        EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance));
 }
 
 TEST(MatrixUtilsTest, 4x4MatrixInverseTest)
@@ -221,7 +218,7 @@ TEST(MatrixUtilsTest, 4x4MatrixInverseTest)
     angle::Span<const float> resultElements = result.elements();
     const float floatFaultTolarance         = 0.00001f;
     for (unsigned int i = 0; i < numElements; i++)
-        EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance));
 }
 
 // Tests constructors for mat4; using raw float*, std::vector<float>,
@@ -236,7 +233,7 @@ TEST(MatrixUtilsTest, Mat4Construction)
     std::vector<float> elementsVector(16, 0);
     for (int i = 0; i < 16; i++)
     {
-        elementsVector[i] = elements[i];
+        elementsVector[i] = ANGLE_UNSAFE_TODO(elements[i]);
     }
 
     Matrix<float> a(elements, 4);
@@ -272,7 +269,7 @@ TEST(MatrixUtilsTest, Mat4Rotate)
     std::vector<float> elementsExpectedVector(16, 0);
     for (int i = 0; i < 16; i++)
     {
-        elementsExpectedVector[i] = elementsExpected[i];
+        elementsExpectedVector[i] = ANGLE_UNSAFE_TODO(elementsExpected[i]);
     }
 
     Mat4 r = Mat4::Rotate(0.f, Vector3(0.f, 0.f, 1.f));
@@ -726,7 +723,7 @@ TEST(MatrixUtilsTest, Mat4Translate)
     std::vector<float> elementsExpectedVector(16, 0);
     for (int i = 0; i < 16; i++)
     {
-        elementsExpectedVector[i] = elementsExpected[i];
+        elementsExpectedVector[i] = ANGLE_UNSAFE_TODO(elementsExpected[i]);
     }
 
     Mat4 r = Mat4::Translate(Vector3(0.f, 0.f, 0.f));
@@ -770,7 +767,7 @@ TEST(MatrixUtilsTest, Mat4Scale)
     std::vector<float> elementsExpectedVector(16, 0);
     for (int i = 0; i < 16; i++)
     {
-        elementsExpectedVector[i] = elementsExpected[i];
+        elementsExpectedVector[i] = ANGLE_UNSAFE_TODO(elementsExpected[i]);
     }
 
     Mat4 r = Mat4::Scale(Vector3(1.f, 1.f, 1.f));
@@ -2430,14 +2427,14 @@ TEST(MatrixUtilsTest, NearEquality)
     float *bData = b.data();
     for (int i = 0; i < 16; i++)
     {
-        bData[i] += 0.09f;
+        ANGLE_UNSAFE_TODO(bData[i]) += 0.09f;
     }
 
     EXPECT_TRUE(a.nearlyEqual(0.1f, b));
 
     for (int i = 0; i < 16; i++)
     {
-        bData[i] -= 2 * 0.09f;
+        ANGLE_UNSAFE_TODO(bData[i]) -= 2 * 0.09f;
     }
 
     EXPECT_TRUE(a.nearlyEqual(0.1f, b));

@@ -11,10 +11,6 @@
 #ifndef LIBANGLE_RENDERER_METAL_COMMANDENBUFFERMTL_H_
 #define LIBANGLE_RENDERER_METAL_COMMANDENBUFFERMTL_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
 #include <cstdint>
@@ -27,6 +23,7 @@
 
 #include "common/FixedVector.h"
 #include "common/angleutils.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
@@ -324,13 +321,13 @@ class IntermediateCommandStream
     inline IntermediateCommandStream &push(const T &val)
     {
         auto ptr = reinterpret_cast<const uint8_t *>(&val);
-        mBuffer.insert(mBuffer.end(), ptr, ptr + sizeof(T));
+        ANGLE_UNSAFE_TODO(mBuffer.insert(mBuffer.end(), ptr, ptr + sizeof(T)));
         return *this;
     }
 
     inline IntermediateCommandStream &push(const uint8_t *bytes, size_t len)
     {
-        mBuffer.insert(mBuffer.end(), bytes, bytes + len);
+        ANGLE_UNSAFE_TODO(mBuffer.insert(mBuffer.end(), bytes, bytes + len));
         return *this;
     }
 
@@ -340,7 +337,8 @@ class IntermediateCommandStream
         ASSERT(mReadPtr <= mBuffer.size() - sizeof(T));
         T re;
         auto ptr = reinterpret_cast<uint8_t *>(&re);
-        std::copy(mBuffer.data() + mReadPtr, mBuffer.data() + mReadPtr + sizeof(T), ptr);
+        ANGLE_UNSAFE_TODO(
+            std::copy(mBuffer.data() + mReadPtr, mBuffer.data() + mReadPtr + sizeof(T), ptr));
         return re;
     }
 
@@ -357,7 +355,7 @@ class IntermediateCommandStream
         ASSERT(mReadPtr <= mBuffer.size() - bytes);
         auto cur = mReadPtr;
         mReadPtr += bytes;
-        return mBuffer.data() + cur;
+        return ANGLE_UNSAFE_TODO(mBuffer.data() + cur);
     }
 
     inline void clear()

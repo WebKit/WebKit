@@ -11,13 +11,10 @@
 #ifndef LIBANGLE_RESOURCE_MAP_H_
 #define LIBANGLE_RESOURCE_MAP_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <atomic>
 #include <mutex>
 #include <type_traits>
+#include "common/unsafe_buffers.h"
 
 #include "common/SimpleMutex.h"
 #include "common/hash_containers.h"
@@ -129,7 +126,7 @@ class ResourceMap final : angle::NonCopyable
 
         if (ANGLE_LIKELY(handle < mFlatResourcesSize))
         {
-            ResourceType *value = mFlatResources[handle];
+            ResourceType *value = ANGLE_UNSAFE_TODO(mFlatResources[handle]);
             return (value == InvalidPointer() ? nullptr : value);
         }
 
@@ -142,7 +139,8 @@ class ResourceMap final : angle::NonCopyable
                     mAdditionalFlatResources.load(std::memory_order_acquire);
                 if (additionalResources != nullptr)
                 {
-                    ResourceType *value = additionalResources[handle - kInitialFlatResourcesSize];
+                    ResourceType *value =
+                        ANGLE_UNSAFE_TODO(additionalResources[handle - kInitialFlatResourcesSize]);
                     return (value == InvalidPointer() ? nullptr : value);
                 }
                 return nullptr;
@@ -312,7 +310,8 @@ ResourceMap<ResourceType, IDType>::ResourceMap()
       mFlatResources(new ResourceType *[kInitialFlatResourcesSize]),
       mAdditionalFlatResources(nullptr)
 {
-    memset(mFlatResources, kInvalidPointer, mFlatResourcesSize * sizeof(mFlatResources[0]));
+    ANGLE_UNSAFE_TODO(
+        memset(mFlatResources, kInvalidPointer, mFlatResourcesSize * sizeof(mFlatResources[0])));
 }
 
 template <typename ResourceType, typename IDType>
@@ -363,7 +362,7 @@ ANGLE_INLINE bool ResourceMap<ResourceType, IDType>::contains(IDType id) const
     GLuint handle = GetIDValue(id);
     if (ANGLE_LIKELY(handle < mFlatResourcesSize))
     {
-        return mFlatResources[handle] != InvalidPointer();
+        return ANGLE_UNSAFE_TODO(mFlatResources[handle]) != InvalidPointer();
     }
 
     if constexpr (kAdditionalFlatResourcesSize > 0)
@@ -374,7 +373,8 @@ ANGLE_INLINE bool ResourceMap<ResourceType, IDType>::contains(IDType id) const
                 mAdditionalFlatResources.load(std::memory_order_acquire);
             if (additionalResources != nullptr)
             {
-                return additionalResources[handle - kInitialFlatResourcesSize] != InvalidPointer();
+                return ANGLE_UNSAFE_TODO(additionalResources[handle - kInitialFlatResourcesSize]) !=
+                       InvalidPointer();
             }
             return false;
         }
@@ -389,7 +389,7 @@ bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resource
     GLuint handle = GetIDValue(id);
     if (ANGLE_LIKELY(handle < mFlatResourcesSize))
     {
-        auto &value = mFlatResources[handle];
+        auto &value = ANGLE_UNSAFE_TODO(mFlatResources[handle]);
         if (value == InvalidPointer())
         {
             return false;
@@ -407,7 +407,8 @@ bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resource
                 mAdditionalFlatResources.load(std::memory_order_acquire);
             if (additionalResources != nullptr)
             {
-                ResourceType **value = &additionalResources[handle - kInitialFlatResourcesSize];
+                ResourceType **value =
+                    ANGLE_UNSAFE_TODO(&additionalResources[handle - kInitialFlatResourcesSize]);
                 if (*value == InvalidPointer())
                 {
                     return false;
@@ -442,15 +443,16 @@ void ResourceMap<ResourceType, IDType>::assignAboveCurrentFlatSize(GLuint handle
         ResourceType **oldResources = mFlatResources;
 
         mFlatResources = new ResourceType *[newSize];
-        memset(&mFlatResources[mFlatResourcesSize], kInvalidPointer,
-               (newSize - mFlatResourcesSize) * sizeof(mFlatResources[0]));
-        memcpy(mFlatResources, oldResources, mFlatResourcesSize * sizeof(mFlatResources[0]));
+        ANGLE_UNSAFE_TODO(memset(&mFlatResources[mFlatResourcesSize], kInvalidPointer,
+                                 (newSize - mFlatResourcesSize) * sizeof(mFlatResources[0])));
+        ANGLE_UNSAFE_TODO(
+            memcpy(mFlatResources, oldResources, mFlatResourcesSize * sizeof(mFlatResources[0])));
         mFlatResourcesSize = newSize;
         ASSERT(mFlatResourcesSize <= kFlatResourcesLimit);
         delete[] oldResources;
 
         ASSERT(mFlatResourcesSize > handle);
-        mFlatResources[handle] = resource;
+        ANGLE_UNSAFE_TODO(mFlatResources[handle]) = resource;
         return;
     }
 
@@ -472,17 +474,19 @@ void ResourceMap<ResourceType, IDType>::assignAboveCurrentFlatSize(GLuint handle
                 if (additionalResources == nullptr)
                 {
                     additionalResources = new ResourceType *[kAdditionalFlatResourcesSize];
-                    memset(additionalResources, kInvalidPointer,
-                           kAdditionalFlatResourcesSize * sizeof(additionalResources[0]));
+                    ANGLE_UNSAFE_TODO(
+                        memset(additionalResources, kInvalidPointer,
+                               kAdditionalFlatResourcesSize * sizeof(additionalResources[0])));
                     // Write the elements before the release-store so that a concurrent reader
                     // loading the pointer with memory_order_acquire observes a fully initialized
                     // array.
-                    additionalResources[handle - kInitialFlatResourcesSize] = resource;
+                    ANGLE_UNSAFE_TODO(additionalResources[handle - kInitialFlatResourcesSize]) =
+                        resource;
                     mAdditionalFlatResources.store(additionalResources, std::memory_order_release);
                     return;
                 }
             }
-            additionalResources[handle - kInitialFlatResourcesSize] = resource;
+            ANGLE_UNSAFE_TODO(additionalResources[handle - kInitialFlatResourcesSize]) = resource;
             return;
         }
     }
@@ -497,7 +501,7 @@ ANGLE_INLINE void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceT
     GLuint handle = GetIDValue(id);
     if (ANGLE_LIKELY(handle < mFlatResourcesSize))
     {
-        mFlatResources[handle] = resource;
+        ANGLE_UNSAFE_TODO(mFlatResources[handle]) = resource;
     }
     else
     {
@@ -542,7 +546,8 @@ template <typename ResourceType, typename IDType>
 void ResourceMap<ResourceType, IDType>::clear()
 {
     // No need for a lock as this is only called on destruction.
-    memset(mFlatResources, kInvalidPointer, kInitialFlatResourcesSize * sizeof(mFlatResources[0]));
+    ANGLE_UNSAFE_TODO(memset(mFlatResources, kInvalidPointer,
+                             kInitialFlatResourcesSize * sizeof(mFlatResources[0])));
     mFlatResourcesSize = kInitialFlatResourcesSize;
     if constexpr (kAdditionalFlatResourcesSize > 0)
     {
@@ -550,8 +555,9 @@ void ResourceMap<ResourceType, IDType>::clear()
             mAdditionalFlatResources.load(std::memory_order_acquire);
         if (additionalResources != nullptr)
         {
-            memset(additionalResources, kInvalidPointer,
-                   kAdditionalFlatResourcesSize * sizeof(additionalResources[0]));
+            ANGLE_UNSAFE_TODO(
+                memset(additionalResources, kInvalidPointer,
+                       kAdditionalFlatResourcesSize * sizeof(additionalResources[0])));
         }
     }
     mHashedResources.clear();
@@ -565,8 +571,8 @@ GLuint ResourceMap<ResourceType, IDType>::nextResource(size_t flatIndex, bool sk
     size_t index = flatIndex;
     for (; index < mFlatResourcesSize; index++)
     {
-        if ((mFlatResources[index] != nullptr || !skipNulls) &&
-            mFlatResources[index] != InvalidPointer())
+        if ((ANGLE_UNSAFE_TODO(mFlatResources[index]) != nullptr || !skipNulls) &&
+            ANGLE_UNSAFE_TODO(mFlatResources[index]) != InvalidPointer())
         {
             return static_cast<GLuint>(index);
         }
@@ -579,7 +585,8 @@ GLuint ResourceMap<ResourceType, IDType>::nextResource(size_t flatIndex, bool sk
         {
             for (; index < kLocklessFlatResourcesLimit; index++)
             {
-                ResourceType *value = additionalResources[index - kInitialFlatResourcesSize];
+                ResourceType *value =
+                    ANGLE_UNSAFE_TODO(additionalResources[index - kInitialFlatResourcesSize]);
                 if ((value != nullptr || !skipNulls) && value != InvalidPointer())
                 {
                     return static_cast<GLuint>(index);
@@ -669,7 +676,7 @@ void ResourceMap<ResourceType, IDType>::Iterator::updateValue()
         if (mFlatIndex < static_cast<GLuint>(mOrigin.mFlatResourcesSize))
         {
             mValue.first  = mFlatIndex;
-            mValue.second = mOrigin.mFlatResources[mFlatIndex];
+            mValue.second = ANGLE_UNSAFE_TODO(mOrigin.mFlatResources[mFlatIndex]);
         }
         else
         {
@@ -677,8 +684,8 @@ void ResourceMap<ResourceType, IDType>::Iterator::updateValue()
                 mOrigin.mAdditionalFlatResources.load(std::memory_order_acquire);
             ASSERT(additionalResources != nullptr);
             mValue.first = mFlatIndex;
-            mValue.second =
-                additionalResources[mFlatIndex - ResourceMap::kInitialFlatResourcesSize];
+            mValue.second = ANGLE_UNSAFE_TODO(
+                additionalResources[mFlatIndex - ResourceMap::kInitialFlatResourcesSize]);
         }
     }
     else if (mHashIndex != mOrigin.mHashedResources.end())

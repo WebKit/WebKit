@@ -224,7 +224,14 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
     EXPECT_EQ(nchildren, 1U);
     XFree(children);
 
+    // Teardown: destroy the surface before its native window, then terminate.
+    eglDestroySurface(display, window);
+    ASSERT_EGL_SUCCESS();
+
     OSWindow::Delete(&osWindow);
+
+    eglTerminate(display);
+    ASSERT_EGL_SUCCESS();
 }
 
 ANGLE_INSTANTIATE_TEST(EGLX11VisualHintTest, WithNoFixture(ES2_OPENGL()));

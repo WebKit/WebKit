@@ -4,15 +4,12 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #if defined(_MSC_VER)
 #    pragma warning(disable : 4718)
 #endif
 
 #include "compiler/translator/Types.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/IntermNode.h"
@@ -459,7 +456,7 @@ const char *TType::buildMangledName() const
     if (basicMangledName[0] != '{')
     {
         mangledName += basicMangledName[0];
-        mangledName += basicMangledName[1];
+        mangledName += ANGLE_UNSAFE_TODO(basicMangledName[1]);
     }
     else
     {

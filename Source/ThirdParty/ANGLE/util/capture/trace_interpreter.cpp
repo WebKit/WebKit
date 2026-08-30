@@ -7,11 +7,8 @@
 //   Parser and interpreter for the C-based replays.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "trace_interpreter.h"
+#include "common/unsafe_buffers.h"
 
 #include "anglebase/no_destructor.h"
 #include "common/gl_enum_utils.h"
@@ -172,8 +169,8 @@ class Parser : angle::NonCopyable
         advanceTo(delim);
         size_t tokenSize = mIndex - startIndex;
         ASSERT(tokenSize < kMaxTokenSize);
-        memcpy(token, &mStream[startIndex], tokenSize);
-        token[mIndex - startIndex] = 0;
+        ANGLE_UNSAFE_TODO(memcpy(token, &mStream[startIndex], tokenSize));
+        ANGLE_UNSAFE_TODO(token[mIndex - startIndex]) = 0;
     }
 
     void skipCast()
@@ -237,10 +234,10 @@ class Parser : angle::NonCopyable
                     ASSERT(numParams < kMaxParameters);
                     size_t tokenSize = mIndex - tokenStart;
                     ASSERT(tokenSize < kMaxTokenSize);
-                    Token &token = paramTokens[numParams++];
+                    Token &token = ANGLE_UNSAFE_TODO(paramTokens[numParams++]);
 
-                    memcpy(token, &mStream[tokenStart], tokenSize);
-                    token[tokenSize] = 0;
+                    ANGLE_UNSAFE_TODO(memcpy(token, &mStream[tokenStart], tokenSize));
+                    ANGLE_UNSAFE_TODO(token[tokenSize]) = 0;
                     advance();
                     skipWhitespace();
                     skipCast();
@@ -337,9 +334,9 @@ class Parser : angle::NonCopyable
 void PackResourceID(ParamBuffer &params, const Token &token)
 {
     ASSERT(token[0] == 'g');
-    const char *start = strrchr(token, '[');
+    const char *start = ANGLE_UNSAFE_TODO(strrchr(token, '['));
     ASSERT(start != nullptr && EndsWith(token, "]"));
-    uint32_t value = static_cast<uint32_t>(atoi(start + 1));
+    uint32_t value = static_cast<uint32_t>(atoi(ANGLE_UNSAFE_TODO(start + 1)));
     if (BeginsWith(token, "gShaderProgramMap"))
     {
         gl::ShaderProgramID id = {value};
@@ -392,7 +389,7 @@ void PackResourceID(ParamBuffer &params, const Token &token)
     }
     else
     {
-        printf("Unknown resource map: %s\n", token);
+        ANGLE_UNSAFE_TODO(printf("Unknown resource map: %s\n", token));
         UNREACHABLE();
     }
 }
@@ -405,7 +402,7 @@ void PackIntParameter(ParamBuffer &params, ParamType paramType, const Token &tok
     if (token[0] == 'G')
     {
         ASSERT(BeginsWith(token, "GL_"));
-        if (strchr(token, '|') == 0)
+        if (ANGLE_UNSAFE_TODO(strchr(token, '|')) == 0)
         {
             value = static_cast<IntT>(gl::StringToGLenum(token));
         }
@@ -418,12 +415,12 @@ void PackIntParameter(ParamBuffer &params, ParamType paramType, const Token &tok
     {
         if (!isdigit(token[0]) && !(token[0] == '-' && isdigit(token[1])))
         {
-            printf("Expected number, got %s\n", token);
+            ANGLE_UNSAFE_TODO(printf("Expected number, got %s\n", token));
             UNREACHABLE();
         }
         if (token[0] == '0' && token[1] == 'x')
         {
-            value = static_cast<IntT>(strtol(token, nullptr, 16));
+            value = static_cast<IntT>(ANGLE_UNSAFE_TODO(strtol(token, nullptr, 16)));
         }
         else
         {
@@ -436,7 +433,7 @@ void PackIntParameter(ParamBuffer &params, ParamType paramType, const Token &tok
 
 uint32_t GetStringArrayOffset(const Token &token, const char *prefixString)
 {
-    const char *offsetString = &token[strlen(prefixString)];
+    const char *offsetString = &ANGLE_UNSAFE_TODO(token[strlen(prefixString)]);
     return atoi(offsetString);
 }
 
@@ -444,7 +441,7 @@ template <typename PointerT>
 void PackMemPointer(ParamBuffer &params, ParamType paramType, uint32_t offset, uint8_t *mem)
 {
     ASSERT(gBinaryData);
-    params.addUnnamedParam(paramType, reinterpret_cast<PointerT>(&mem[offset]));
+    params.addUnnamedParam(paramType, reinterpret_cast<PointerT>(&ANGLE_UNSAFE_TODO(mem[offset])));
 }
 
 template <typename T>
@@ -462,7 +459,7 @@ void PackMutablePointerParameter(ParamBuffer &params, ParamType paramType, const
     }
     else if (token[0] == 'g')
     {
-        ASSERT(strcmp(token, "gReadBuffer") == 0);
+        ANGLE_UNSAFE_TODO(ASSERT(strcmp(token, "gReadBuffer") == 0));
         params.addUnnamedParam(paramType, reinterpret_cast<T *>(gReadBuffer));
     }
     else
@@ -487,18 +484,19 @@ void PackConstPointerParameter(ParamBuffer &params, ParamType paramType, const T
     }
     else if (token[0] == 'g')
     {
-        if (strcmp(token, "gResourceIDBuffer") == 0)
+        if (ANGLE_UNSAFE_TODO(strcmp(token, "gResourceIDBuffer")) == 0)
         {
             params.addUnnamedParam(paramType, reinterpret_cast<const T *>(gResourceIDBuffer));
         }
         else if (BeginsWith(token, "gClientArrays"))
         {
             uint32_t offset = GetStringArrayOffset(token, "gClientArrays[");
-            params.addUnnamedParam(paramType, reinterpret_cast<const T *>(gClientArrays[offset]));
+            params.addUnnamedParam(
+                paramType, reinterpret_cast<const T *>(ANGLE_UNSAFE_TODO(gClientArrays[offset])));
         }
         else
         {
-            printf("Unexpected token: %s\n", token);
+            ANGLE_UNSAFE_TODO(printf("Unexpected token: %s\n", token));
             UNREACHABLE();
         }
     }
@@ -591,7 +589,7 @@ void TraceInterpreter::parseTraceGz()
     fseek(fp, 0, SEEK_SET);
 
     std::vector<uint8_t> compressedData(size);
-    (void)fread(compressedData.data(), 1, size, fp);
+    (void)ANGLE_UNSAFE_TODO(fread(compressedData.data(), 1, size, fp));
 
     uint32_t uncompressedSize =
         zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
@@ -655,7 +653,7 @@ void TraceInterpreter::runTraceFunction(const char *name) const
     auto iter = mTraceFunctions.find(name);
     if (iter == mTraceFunctions.end())
     {
-        printf("Cannot find function: %s\n", name);
+        ANGLE_UNSAFE_TODO(printf("Cannot find function: %s\n", name));
         UNREACHABLE();
     }
     const TraceFunction &func = iter->second;
@@ -688,9 +686,9 @@ void PackParameter<int32_t>(ParamBuffer &params, const Token &token, const Trace
 {
     if (BeginsWith(token, "gUniformLocations"))
     {
-        const char *start = strrchr(token, '[');
+        const char *start = ANGLE_UNSAFE_TODO(strrchr(token, '['));
         ASSERT(start != nullptr && EndsWith(token, "]"));
-        int32_t value           = atoi(start + 1);
+        int32_t value           = atoi(ANGLE_UNSAFE_TODO(start + 1));
         gl::UniformLocation loc = {value};
         params.addUnnamedParam(ParamType::TUniformLocation, loc);
     }
@@ -732,15 +730,17 @@ void PackParameter<int32_t *>(ParamBuffer &params,
 template <>
 void PackParameter<uint64_t>(ParamBuffer &params, const Token &token, const TraceStringMap &strings)
 {
-    params.addUnnamedParam(ParamType::TGLuint64,
-                           static_cast<GLuint64>(std::strtoull(token, nullptr, 10)));
+    params.addUnnamedParam(
+        ParamType::TGLuint64,
+        static_cast<GLuint64>(ANGLE_UNSAFE_TODO(std::strtoull(token, nullptr, 10))));
 }
 
 template <>
 void PackParameter<int64_t>(ParamBuffer &params, const Token &token, const TraceStringMap &strings)
 {
-    params.addUnnamedParam(ParamType::TGLint64,
-                           static_cast<GLint64>(std::strtoll(token, nullptr, 10)));
+    params.addUnnamedParam(
+        ParamType::TGLint64,
+        static_cast<GLint64>(ANGLE_UNSAFE_TODO(std::strtoll(token, nullptr, 10))));
 }
 
 template <>
@@ -777,7 +777,7 @@ void PackParameter<const char *>(ParamBuffer &params,
         ASSERT(EndsWith(token, "\""));
 
         ParamCapture param(params.getNextParamName(), ParamType::TGLcharConstPointer);
-        std::vector<uint8_t> data(&token[1], &token[strlen(token) - 1]);
+        std::vector<uint8_t> data(&token[1], &ANGLE_UNSAFE_TODO(token[strlen(token) - 1]));
         data.push_back(0);
         param.data.push_back(std::move(data));
         param.value.GLcharConstPointerVal = reinterpret_cast<const char *>(param.data[0].data());
@@ -854,7 +854,7 @@ void PackParameter<const char *const *>(ParamBuffer &params,
     auto iter = strings.find(token);
     if (iter == strings.end())
     {
-        printf("Could not find string: %s\n", token);
+        ANGLE_UNSAFE_TODO(printf("Could not find string: %s\n", token));
         UNREACHABLE();
     }
     const TraceString &traceStr = iter->second;
@@ -1032,29 +1032,29 @@ GLuint GetResourceIDMapValue(ResourceIDType resourceIDType, GLuint key)
     switch (resourceIDType)
     {
         case ResourceIDType::Buffer:
-            return gBufferMap[key];
+            return ANGLE_UNSAFE_TODO(gBufferMap[key]);
         case ResourceIDType::FenceNV:
-            return gFenceNVMap[key];
+            return ANGLE_UNSAFE_TODO(gFenceNVMap[key]);
         case ResourceIDType::Framebuffer:
-            return gFramebufferMap[key];
+            return ANGLE_UNSAFE_TODO(gFramebufferMap[key]);
         case ResourceIDType::ProgramPipeline:
-            return gProgramPipelineMap[key];
+            return ANGLE_UNSAFE_TODO(gProgramPipelineMap[key]);
         case ResourceIDType::Query:
-            return gQueryMap[key];
+            return ANGLE_UNSAFE_TODO(gQueryMap[key]);
         case ResourceIDType::Renderbuffer:
-            return gRenderbufferMap[key];
+            return ANGLE_UNSAFE_TODO(gRenderbufferMap[key]);
         case ResourceIDType::Sampler:
-            return gSamplerMap[key];
+            return ANGLE_UNSAFE_TODO(gSamplerMap[key]);
         case ResourceIDType::Semaphore:
-            return gSemaphoreMap[key];
+            return ANGLE_UNSAFE_TODO(gSemaphoreMap[key]);
         case ResourceIDType::ShaderProgram:
-            return gShaderProgramMap[key];
+            return ANGLE_UNSAFE_TODO(gShaderProgramMap[key]);
         case ResourceIDType::Texture:
-            return gTextureMap[key];
+            return ANGLE_UNSAFE_TODO(gTextureMap[key]);
         case ResourceIDType::TransformFeedback:
-            return gTransformFeedbackMap[key];
+            return ANGLE_UNSAFE_TODO(gTransformFeedbackMap[key]);
         case ResourceIDType::VertexArray:
-            return gVertexArrayMap[key];
+            return ANGLE_UNSAFE_TODO(gVertexArrayMap[key]);
         default:
             printf("Incompatible resource ID type: %d\n", static_cast<int>(resourceIDType));
             UNREACHABLE();

@@ -6,15 +6,12 @@
 
 // DisplayMtl.mm: Metal implementation of DisplayImpl
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include <sys/param.h>
 
 #include "common/apple_platform_utils.h"
 #include "common/system_utils.h"
+#include "common/unsafe_buffers.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
@@ -1443,7 +1440,7 @@ bool DisplayMtl::isAMDBronzeDriver() const
 
     for (size_t i = 0; i < ArraySize(kMTLBronzeDeviceNames); ++i)
     {
-        if ([[mMetalDevice name] hasSuffix:kMTLBronzeDeviceNames[i]])
+        if (ANGLE_UNSAFE_TODO([[mMetalDevice name] hasSuffix:kMTLBronzeDeviceNames[i]]))
         {
             mIsAMDBronze = true;
             break;

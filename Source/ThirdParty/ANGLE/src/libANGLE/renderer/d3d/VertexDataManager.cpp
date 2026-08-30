@@ -7,11 +7,8 @@
 // VertexDataManager.cpp: Defines the VertexDataManager, a class that
 // runs the Buffer translation process.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/bitset_utils.h"
 #include "libANGLE/Buffer.h"
@@ -376,7 +373,7 @@ angle::Result VertexDataManager::StoreStaticAttrib(const gl::Context *context,
 
     if (sourceData)
     {
-        sourceData += uintptr_t{offset.ValueOrDie()};
+        ANGLE_UNSAFE_TODO(sourceData += uintptr_t{offset.ValueOrDie()});
     }
 
     translated->storage = nullptr;
@@ -561,7 +558,7 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
     if (buffer)
     {
         ANGLE_TRY(storage->getData(context, &sourceData));
-        sourceData += ComputeVertexAttributeOffset(attrib, binding);
+        ANGLE_UNSAFE_TODO(sourceData += ComputeVertexAttributeOffset(attrib, binding));
     }
     else
     {

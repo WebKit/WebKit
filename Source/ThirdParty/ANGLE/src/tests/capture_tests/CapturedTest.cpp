@@ -7,6 +7,7 @@
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
+#include "util/EGLWindow.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"
 #include "util/test_utils.h"
@@ -684,6 +685,99 @@ void main()
     {
         swapBuffers();
     }
+}
+
+// Test external sync detection and drop. AR camera titles import GL/EGL sync objects from
+// the camera side that never pass through the captured context's GL/EGL entry points.
+// When the trace later waits/destroys one of these sync objects, replay would generate
+// "Sync object does not exist" errors. This verifies the detection works and that the
+// trace warning comment is properly emitted in its place. We can test this because EGL sync objects
+// are validated at the display level but capture's "emitted sync" checking is done per share group.
+// So we create a second, non-shared context to create the sync after the main context's MEC runs.
+// The main context then consumes it, the call is valid, but its sync ID was never tracked by this
+// capture so it gets dropped.
+TEST_P(CapturedTest, ExternalEGLSync)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    EGLConfig config  = window->getConfig();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_fence_sync"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_wait_sync"));
+
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_position.xy * 0.5 + 0.5;
+})";
+    static constexpr char kFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture;
+void main()
+{
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+    // Create program and texture before capture start to be captured by MEC as starting
+    // resources
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "s_texture"), 0);
+
+    constexpr GLsizei kSize = 2;
+    const std::vector<GLColor> kBlueData(kSize * kSize, GLColor::blue);
+    GLTexture texture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kBlueData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create a second non-shared context (different share group) with its own pbuffer surface
+    // before capture start so it setup is not in the main context's captured frames
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface auxSurface   = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+    EGLContext auxContext = window->createContext(EGL_NO_CONTEXT, nullptr);
+    ASSERT_EGL_SUCCESS();
+
+    // Frame 1, before capture starts
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    // Frame 2, capture starts. Create EGL fence sync on the other (non-shared) context.
+    // The sync is created after main context's MEC and on a different share group, so
+    // the main capture never sees its creation
+    EGLSurface mainSurface = window->getSurface();
+    EGLContext mainContext = window->getContext();
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, auxSurface, auxSurface, auxContext));
+    EGLSyncKHR externalSync = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+    glFlush();
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+    ASSERT_NE(externalSync, EGL_NO_SYNC_KHR);
+
+    // Main context tries to wait on the external sync. These calls are valid but specify a sync
+    // ID this trace never created so both should be dropped with comments
+    EXPECT_EGL_TRUE(eglWaitSyncKHR(dpy, externalSync, 0));
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(dpy, externalSync));
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    // Empty frames to reach capture end
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+
+    eglDestroySurface(dpy, auxSurface);
+    eglDestroyContext(dpy, auxContext);
 }
 
 #if defined(CAPTURE_TESTS_AHB_SUPPORT)

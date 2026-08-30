@@ -7,13 +7,10 @@
 //    Defines the class interface for TransformFeedbackMtl, implementing TransformFeedbackImpl.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/TransformFeedbackMtl.h"
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Query.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -104,10 +101,10 @@ angle::Result TransformFeedbackMtl::getBufferOffsets(ContextMtl *contextMtl,
             (bufferBinding.getOffset() + drawCallVertexOffset * bufferStrides[bufferIndex]) /
             static_cast<int64_t>(sizeof(uint32_t));
 
-        offsetsOut[bufferIndex] = static_cast<int32_t>(writeOffset);
+        ANGLE_UNSAFE_TODO(offsetsOut[bufferIndex]) = static_cast<int32_t>(writeOffset);
 
         // Check for overflow.
-        ANGLE_CHECK_GL_ALLOC(contextMtl, offsetsOut[bufferIndex] == writeOffset);
+        ANGLE_UNSAFE_TODO(ANGLE_CHECK_GL_ALLOC(contextMtl, offsetsOut[bufferIndex] == writeOffset));
     }
 
     return angle::Result::Continue;

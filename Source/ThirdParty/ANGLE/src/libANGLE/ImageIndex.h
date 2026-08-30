@@ -45,7 +45,6 @@ class ImageIndex
     // Note that you cannot use this function when the ImageIndex represents an entire level of cube
     // map.
     TextureTarget getTarget() const;
-
     TextureTarget getTargetOrFirstCubeFace() const;
 
     bool isLayered() const;
@@ -220,12 +219,18 @@ class OwnImageIndex : public OwnIndex<ImageIndex>
     }
     OwnLayer cubeMapFaceIndex() const { return OwnLayer(mIndex.cubeMapFaceIndex()); }
     uint32_t getLayerCount() const { return mIndex.getLayerCount(); }
+    bool usesTex3D() const { return mIndex.usesTex3D(); }
+    TextureTarget getTarget() const { return mIndex.getTarget(); }
+    TextureTarget getTargetOrFirstCubeFace() const { return mIndex.getTargetOrFirstCubeFace(); }
 };
 
 class SourceImageIndex;
 class SourceLevel : public SourceIndex<LevelIndex>
 {
   public:
+    // Convenience helpers
+    SourceLevel operator+(uint32_t offset) const { return SourceLevel(mIndex + offset); }
+
     // Helper while code is being transitioned to using SourceLevel consistently.  Remove once done.
     // TODO(http://anglebug.com/525079760)
     static SourceLevel VerifiedSourceLevel(LevelIndex level) { return SourceLevel(level); }
@@ -266,6 +271,9 @@ class SourceImageIndex : public SourceIndex<ImageIndex>
     }
     SourceLayer cubeMapFaceIndex() const { return SourceLayer(mIndex.cubeMapFaceIndex()); }
     uint32_t getLayerCount() const { return mIndex.getLayerCount(); }
+    bool usesTex3D() const { return mIndex.usesTex3D(); }
+    TextureTarget getTarget() const { return mIndex.getTarget(); }
+    TextureTarget getTargetOrFirstCubeFace() const { return mIndex.getTargetOrFirstCubeFace(); }
 
   protected:
     friend struct egl::ImageSourceAttributes;

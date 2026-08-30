@@ -7,11 +7,8 @@
 //    Implements the class methods for FramebufferWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include <__config>
 
@@ -263,7 +260,7 @@ angle::Result FramebufferWgpu::clearBufferfv(const gl::Context *context,
     else
     {
         clearColorBuffers.set(drawbuffer);
-        clearColorValue = gl::ColorF(values[0], values[1], values[2], values[3]);
+        clearColorValue = ANGLE_UNSAFE_TODO(gl::ColorF(values[0], values[1], values[2], values[3]));
     }
 
     return clearImpl(context, clearColorBuffers, clearDepth, /*clearStencil=*/false,
@@ -279,8 +276,10 @@ angle::Result FramebufferWgpu::clearBufferuiv(const gl::Context *context,
     gl::ColorF clearColorValue;
 
     clearColorBuffers.set(drawbuffer);
-    clearColorValue = gl::ColorF(gl::bitCast<float>(values[0]), gl::bitCast<float>(values[1]),
-                                 gl::bitCast<float>(values[2]), gl::bitCast<float>(values[3]));
+    clearColorValue =
+        gl::ColorF(gl::bitCast<float>(values[0]), gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[1])),
+                   gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[2])),
+                   gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[3])));
 
     return clearImpl(context, clearColorBuffers, /*clearDepth=*/false, /*clearStencil=*/false,
                      clearColorValue, /*clearDepthValue=*/0.0, /*clearStencilValue=*/0);
@@ -305,8 +304,10 @@ angle::Result FramebufferWgpu::clearBufferiv(const gl::Context *context,
     else
     {
         clearColorBuffers.set(drawbuffer);
-        clearColorValue = gl::ColorF(gl::bitCast<float>(values[0]), gl::bitCast<float>(values[1]),
-                                     gl::bitCast<float>(values[2]), gl::bitCast<float>(values[3]));
+        clearColorValue = gl::ColorF(gl::bitCast<float>(values[0]),
+                                     gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[1])),
+                                     gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[2])),
+                                     gl::bitCast<float>(ANGLE_UNSAFE_TODO(values[3])));
     }
 
     return clearImpl(context, clearColorBuffers, /*clearDepth=*/false, clearStencil,
@@ -375,9 +376,9 @@ angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
     uint32_t layer           = readRT->getLayer();
 
     webgpu::ImageHelper *sourceImageHelper = readRT->getImage();
-    ANGLE_TRY(sourceImageHelper->readPixels(contextWgpu, flippedArea, params,
-                                            readRT->getLevelIndex(), layer,
-                                            static_cast<uint8_t *>(pixels) + outputSkipBytes));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(
+        sourceImageHelper->readPixels(contextWgpu, flippedArea, params, readRT->getLevelIndex(),
+                                      layer, static_cast<uint8_t *>(pixels) + outputSkipBytes)));
 
     return angle::Result::Continue;
 }

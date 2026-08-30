@@ -7,11 +7,8 @@
 //    Implements the class methods for BufferWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "common/mathutil.h"
@@ -112,7 +109,7 @@ angle::Result BufferWgpu::setData(const gl::Context *context,
         }
 
         uint8_t *mappedData = mBuffer.getMapWritePointer(0, size);
-        memcpy(mappedData, dataForImpl, size);
+        ANGLE_UNSAFE_TODO(memcpy(mappedData, dataForImpl, size));
     }
 
     return angle::Result::Continue;
@@ -136,7 +133,7 @@ angle::Result BufferWgpu::setSubData(const gl::Context *context,
         }
 
         uint8_t *mappedData = mBuffer.getMapWritePointer(offset, size);
-        memcpy(mappedData, data, size);
+        ANGLE_UNSAFE_TODO(memcpy(mappedData, data, size));
     }
     else
     {

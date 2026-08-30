@@ -6,11 +6,8 @@
 // ProgramExecutableD3D.cpp: Implementation of ProgramExecutableD3D.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/bitset_utils.h"
 #include "common/span.h"
@@ -249,7 +246,8 @@ const uint8_t *D3DUniform::getDataPtrToElement(size_t elementIndex) const
         return reinterpret_cast<const uint8_t *>(&mSamplerData[elementIndex]);
     }
 
-    return firstNonNullData() + (elementIndex > 0 ? (typeInfo.internalSize * elementIndex) : 0u);
+    return ANGLE_UNSAFE_TODO(firstNonNullData() +
+                             (elementIndex > 0 ? (typeInfo.internalSize * elementIndex) : 0u));
 }
 
 bool D3DUniform::isSampler() const
@@ -489,7 +487,8 @@ bool ProgramExecutableD3D::load(const gl::Context *context,
     stream->readBytes(angle::byte_span_from_ref(binaryDeviceIdentifier));
 
     DeviceIdentifier identifier = renderer->getAdapterIdentifier();
-    if (memcmp(&identifier, &binaryDeviceIdentifier, sizeof(DeviceIdentifier)) != 0)
+    if (ANGLE_UNSAFE_TODO(memcmp(&identifier, &binaryDeviceIdentifier, sizeof(DeviceIdentifier))) !=
+        0)
     {
         infoLog << "Invalid program binary, device configuration has changed.";
         return false;
@@ -947,7 +946,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
         stream->writeInt(vertexShaderSize);
 
         const uint8_t *vertexBlob = vertexExecutable->shaderExecutable()->getFunction();
-        stream->writeBytes(angle::Span(vertexBlob, vertexShaderSize));
+        stream->writeBytes(ANGLE_UNSAFE_TODO(angle::Span(vertexBlob, vertexShaderSize)));
     }
 
     stream->writeInt(mPixelExecutables.size());
@@ -975,7 +974,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
         stream->writeInt(pixelShaderSize);
 
         const uint8_t *pixelBlob = pixelExecutable->shaderExecutable()->getFunction();
-        stream->writeBytes(angle::Span(pixelBlob, pixelShaderSize));
+        stream->writeBytes(ANGLE_UNSAFE_TODO(angle::Span(pixelBlob, pixelShaderSize)));
     }
 
     for (auto const &geometryExecutable : mGeometryExecutables)
@@ -988,7 +987,8 @@ void ProgramExecutableD3D::save(const gl::Context *context,
 
         size_t geometryShaderSize = geometryExecutable->getLength();
         stream->writeInt(geometryShaderSize);
-        stream->writeBytes(angle::Span(geometryExecutable->getFunction(), geometryShaderSize));
+        stream->writeBytes(
+            ANGLE_UNSAFE_TODO(angle::Span(geometryExecutable->getFunction(), geometryShaderSize)));
     }
 
     for (const gl::ShaderType shaderType : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})
@@ -2191,36 +2191,40 @@ void ProgramExecutableD3D::setUniformImpl(D3DUniform *targetUniform,
 
     if (targetUniform->typeInfo.type == uniformType)
     {
-        T *dest         = reinterpret_cast<T *>(targetState) + arrayElementOffset * blockSize;
+        T *dest =
+            ANGLE_UNSAFE_TODO(reinterpret_cast<T *>(targetState) + arrayElementOffset * blockSize);
         const T *source = v;
 
         // If the component is equal to the block size, we can optimize to a single memcpy.
         // Otherwise, we have to do partial block writes.
         if (components == blockSize)
         {
-            memcpy(dest, source, components * count * sizeof(T));
+            ANGLE_UNSAFE_TODO(memcpy(dest, source, components * count * sizeof(T)));
         }
         else
         {
-            for (GLint i = 0; i < count; i++, dest += blockSize, source += components)
+            for (GLint i = 0; i < count;
+                 ANGLE_UNSAFE_TODO((i++, dest += blockSize, source += components)))
             {
-                memcpy(dest, source, components * sizeof(T));
+                ANGLE_UNSAFE_TODO(memcpy(dest, source, components * sizeof(T)));
             }
         }
     }
     else
     {
         ASSERT(targetUniform->typeInfo.type == gl::VariableBoolVectorType(uniformType));
-        GLint *boolParams = reinterpret_cast<GLint *>(targetState) + arrayElementOffset * 4;
+        GLint *boolParams =
+            ANGLE_UNSAFE_TODO(reinterpret_cast<GLint *>(targetState) + arrayElementOffset * 4);
 
         for (GLint i = 0; i < count; i++)
         {
-            GLint *dest     = boolParams + (i * 4);
-            const T *source = v + (i * components);
+            GLint *dest     = ANGLE_UNSAFE_TODO(boolParams + (i * 4));
+            const T *source = ANGLE_UNSAFE_TODO(v + (i * components));
 
             for (int c = 0; c < components; c++)
             {
-                dest[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
+                ANGLE_UNSAFE_TODO(dest[c]) =
+                    (ANGLE_UNSAFE_TODO(source[c]) == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
             }
         }
     }
@@ -2240,9 +2244,9 @@ void ProgramExecutableD3D::setUniformInternal(GLint location,
         ASSERT(uniformType == GL_INT);
         size_t size = count * sizeof(T);
         GLint *dest = &targetUniform->mSamplerData[locationInfo.arrayIndex];
-        if (memcmp(dest, v, size) != 0)
+        if (ANGLE_UNSAFE_TODO(memcmp(dest, v, size)) != 0)
         {
-            memcpy(dest, v, size);
+            ANGLE_UNSAFE_TODO(memcpy(dest, v, size));
             mDirtySamplerMapping = true;
         }
         return;
@@ -2298,7 +2302,7 @@ void ProgramExecutableD3D::getUniformInternal(GLint location, DestT *dataOut) co
     }
     else
     {
-        memcpy(dataOut, srcPointer, uniform.getElementSize());
+        ANGLE_UNSAFE_TODO(memcpy(dataOut, srcPointer, uniform.getElementSize()));
     }
 }
 

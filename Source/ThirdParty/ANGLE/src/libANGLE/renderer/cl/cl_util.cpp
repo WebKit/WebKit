@@ -6,11 +6,8 @@
 // cl_utils.cpp: Helper functions for the CL back end
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/cl/cl_util.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/Debug.h"
 
@@ -29,8 +26,8 @@ cl_version ExtractCLVersion(const std::string &version)
         return 0u;
     }
 
-    const long major = std::strtol(&version[spacePos + 1u], nullptr, 10);
-    const long minor = std::strtol(&version[dotPos + 1u], nullptr, 10);
+    const long major = ANGLE_UNSAFE_TODO(std::strtol(&version[spacePos + 1u], nullptr, 10));
+    const long minor = ANGLE_UNSAFE_TODO(std::strtol(&version[dotPos + 1u], nullptr, 10));
     if (major < 1 || major > 9 || minor < 0 || minor > 9)
     {
         ERR() << "Failed to extract version from OpenCL version string: " << version;

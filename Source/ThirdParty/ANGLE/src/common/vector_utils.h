@@ -8,15 +8,12 @@
 #ifndef COMMON_VECTOR_UTILS_H_
 #define COMMON_VECTOR_UTILS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <cmath>
 #include <cstddef>
 #include <ostream>
 #include <type_traits>
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
@@ -62,8 +59,8 @@ class VectorBase
     static void Store(const VectorN &source, Type *destination);
 
     // Index the vector
-    Type &operator[](size_t i) { return mData[i]; }
-    const Type &operator[](size_t i) const { return mData[i]; }
+    Type &operator[](size_t i) { return ANGLE_UNSAFE_TODO(mData[i]); }
+    const Type &operator[](size_t i) const { return ANGLE_UNSAFE_TODO(mData[i]); }
 
     // Basic arithmetic operations
     VectorN operator+() const;
@@ -188,7 +185,7 @@ VectorBase<Dimension, Type>::VectorBase(Type element)
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] = element;
+        ANGLE_UNSAFE_TODO(mData[i]) = element;
     }
 }
 
@@ -228,7 +225,8 @@ void VectorBase<Dimension, Type>::initWithList(const Vector<OtherDimension, Othe
                   "Too much data in the vector constructor.");
     for (size_t i = 0; i < OtherDimension; ++i)
     {
-        mData[CurrentIndex + i] = static_cast<Type>(arg1.mData[i]);
+        ANGLE_UNSAFE_TODO(mData[CurrentIndex + i]) =
+            static_cast<Type>(ANGLE_UNSAFE_TODO(arg1.mData[i]));
     }
     initWithList<CurrentIndex + OtherDimension>(args...);
 }
@@ -256,7 +254,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::Load(const Type *source)
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = source[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = source[i]);
     }
     return result;
 }
@@ -266,7 +264,7 @@ void VectorBase<Dimension, Type>::Store(const Vector<Dimension, Type> &source, T
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        destination[i] = source.mData[i];
+        ANGLE_UNSAFE_TODO(destination[i] = source.mData[i]);
     }
 }
 
@@ -277,7 +275,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator+() const
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = +mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = +mData[i]);
     }
     return result;
 }
@@ -288,7 +286,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator-() const
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = -mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = -mData[i]);
     }
     return result;
 }
@@ -300,7 +298,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator+(
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] + other.mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] + other.mData[i]);
     }
     return result;
 }
@@ -312,7 +310,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator-(
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] - other.mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] - other.mData[i]);
     }
     return result;
 }
@@ -324,7 +322,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator*(
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] * other.mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] * other.mData[i]);
     }
     return result;
 }
@@ -336,7 +334,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator/(
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] / other.mData[i];
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] / other.mData[i]);
     }
     return result;
 }
@@ -347,7 +345,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator*(Type other) const
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] * other;
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] * other);
     }
     return result;
 }
@@ -358,7 +356,7 @@ Vector<Dimension, Type> VectorBase<Dimension, Type>::operator/(Type other) const
     Vector<Dimension, Type> result;
     for (size_t i = 0; i < Dimension; ++i)
     {
-        result.mData[i] = mData[i] / other;
+        ANGLE_UNSAFE_TODO(result.mData[i] = mData[i] / other);
     }
     return result;
 }
@@ -370,7 +368,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator+=(
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] += other.mData[i];
+        ANGLE_UNSAFE_TODO(mData[i] += other.mData[i]);
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -381,7 +379,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator-=(
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] -= other.mData[i];
+        ANGLE_UNSAFE_TODO(mData[i] -= other.mData[i]);
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -392,7 +390,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator*=(
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] *= other.mData[i];
+        ANGLE_UNSAFE_TODO(mData[i] *= other.mData[i]);
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -403,7 +401,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator/=(
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] /= other.mData[i];
+        ANGLE_UNSAFE_TODO(mData[i] /= other.mData[i]);
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -413,7 +411,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator*=(Type other)
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] *= other;
+        ANGLE_UNSAFE_TODO(mData[i]) *= other;
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -423,7 +421,7 @@ Vector<Dimension, Type> &VectorBase<Dimension, Type>::operator/=(Type other)
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        mData[i] /= other;
+        ANGLE_UNSAFE_TODO(mData[i]) /= other;
     }
     return *static_cast<Vector<Dimension, Type> *>(this);
 }
@@ -434,7 +432,7 @@ bool VectorBase<Dimension, Type>::operator==(const VectorBase<Dimension, Type> &
 {
     for (size_t i = 0; i < Dimension; ++i)
     {
-        if (mData[i] != other.mData[i])
+        if (ANGLE_UNSAFE_TODO(mData[i] != other.mData[i]))
         {
             return false;
         }
@@ -469,7 +467,7 @@ Type VectorBase<Dimension, Type>::dot(const VectorBase<Dimension, Type> &other) 
     Type sum = Type();
     for (size_t i = 0; i < Dimension; ++i)
     {
-        sum += mData[i] * other.mData[i];
+        ANGLE_UNSAFE_TODO(sum += mData[i] * other.mData[i]);
     }
     return sum;
 }
@@ -484,7 +482,7 @@ std::ostream &operator<<(std::ostream &ostream, const VectorBase<Dimension, Type
         {
             ostream << ", ";
         }
-        ostream << vector.data()[elementIdx];
+        ostream << ANGLE_UNSAFE_TODO(vector.data()[elementIdx]);
     }
     ostream << " ]";
     return ostream;

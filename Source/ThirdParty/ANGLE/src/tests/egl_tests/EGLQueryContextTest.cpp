@@ -173,7 +173,6 @@ TEST_P(EGLQueryContextTest, BadAttribute)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLQueryContextTest);
 ANGLE_INSTANTIATE_TEST(EGLQueryContextTest,
-                       WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES2_VULKAN()),

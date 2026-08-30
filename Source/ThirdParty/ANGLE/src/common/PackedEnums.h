@@ -9,12 +9,9 @@
 #ifndef COMMON_PACKEDGLENUMS_H_
 #define COMMON_PACKEDGLENUMS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/PackedEGLEnums_autogen.h"
 #include "common/PackedGLEnums_autogen.h"
+#include "common/unsafe_buffers.h"
 
 #include <array>
 #include <bitset>
@@ -85,7 +82,7 @@ class PackedEnumMap
     constexpr PackedEnumMap(std::initializer_list<InitPair> init) : mPrivateData{}
     {
         // We use a for loop instead of range-for to work around a limitation in MSVC.
-        for (const InitPair *it = init.begin(); it != init.end(); ++it)
+        for (const InitPair *it = init.begin(); it != init.end(); ANGLE_UNSAFE_TODO(++it))
         {
             mPrivateData[static_cast<UnderlyingType>(it->first)] = it->second;
         }

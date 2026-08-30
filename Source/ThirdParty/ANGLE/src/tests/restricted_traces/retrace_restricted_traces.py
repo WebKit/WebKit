@@ -26,6 +26,9 @@ from difflib import unified_diff
 from gen_restricted_traces import read_json as read_json, write_json as write_json
 from pathlib import Path
 
+from contextlib import contextmanager
+from check_attribute_interleaving import analyze_trace_for_interleaved_attributes, apply_change_list_to_trace_files
+
 SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
 PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / '..' / 'py_utils')
 if PY_UTILS not in sys.path:
@@ -255,6 +258,66 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
     return True
 
 
+@contextmanager
+def preprocessed_trace_for_upgrade(args, trace):
+    """This context analyzes the trace code for potential interleaved attributes.
+
+    If such cases are found in the trace code and the feature flag `-m` (`--merge-attributes`) is enabled,
+    the existing trace code is temporarily updated and re-compiled to enable the retracing script to
+    incorporate the interleaved property of the client data attributes into the upgraded trace.
+    """
+    trace_dir = os.path.join(SCRIPT_DIR, trace)
+    backup_dir = os.path.join(SCRIPT_DIR, '_tmp_attrib_check_backup')
+
+    output_stats, change_list = analyze_trace_for_interleaved_attributes(trace_dir)
+
+    trace_attributes_already_merged = output_stats['ExistingNonZeroOffsetForClientArray'] != 0
+    interleaved_attribute_detected = output_stats['FullyMergedGroupCount'] != 0 or output_stats[
+        'PartiallyMergedGroupCount'] != 0
+    code_changes_exist = len(change_list) > 0
+    if interleaved_attribute_detected and trace_attributes_already_merged:
+        print('Trace code found to include both merged and unmerged interleaved attributes.')
+
+    should_merge_attributes = args.merge_attributes and interleaved_attribute_detected and code_changes_exist
+
+    try:
+        if should_merge_attributes:
+            # If there is interleaving, make a backup of the trace in backup_dir, and change the trace.
+            ensure_rmdir(backup_dir)
+            shutil.copytree(trace_dir, backup_dir)
+
+            # Apply the updates
+            chmod_directory(trace_dir, stat.S_IWRITE | stat.S_IREAD)
+            apply_change_list_to_trace_files(trace_dir, change_list)
+
+            # Recompile
+            run_autoninja(args)
+
+        elif interleaved_attribute_detected:
+            print(
+                'Potential interleaved attributes detected (Total group count: {}, Groups with fully merged attributes: {}, Groups with partially merged attributes: {})'
+                .format(output_stats['TotalGroupCount'], output_stats['FullyMergedGroupCount'],
+                        output_stats['PartiallyMergedGroupCount']))
+            print(
+                'To upgrade the trace with the detected interleaved attributes merged, please use the flag `-m` or `--merge-attributes`.'
+            )
+
+        yield
+
+    finally:
+        if should_merge_attributes:
+            # Restore the original trace code from the backup directory.
+            shutil.rmtree(trace_dir)
+            shutil.copytree(backup_dir, trace_dir)
+            ensure_rmdir(backup_dir)
+
+            # Clean up object files to avoid running a stale trace later.
+            shutil.rmtree(
+                os.path.join(
+                    args.gn_path,
+                    'obj/src/tests/restricted_traces/angle_restricted_traces_{}'.format(trace)))
+
+
 def upgrade_traces(args, traces):
     run_autoninja(args)
     trace_binary = os.path.join(args.gn_path, args.test_suite)
@@ -262,9 +325,10 @@ def upgrade_traces(args, traces):
     failures = []
 
     for trace in angle_test_util.FilterTests(traces, args.traces):
-        if not upgrade_single_trace(args, trace_binary, trace, args.out_path, args.no_overwrite,
-                                    args.c_sources):
-            failures += [trace]
+        with preprocessed_trace_for_upgrade(args, trace):
+            if not upgrade_single_trace(args, trace_binary, trace, args.out_path,
+                                        args.no_overwrite, args.c_sources):
+                failures += [trace]
 
     if failures:
         print('The following traces failed to upgrade:\n')
@@ -606,6 +670,11 @@ def main():
         action='store_true')
     upgrade_parser.add_argument(
         '-c', '--c-sources', help='Output to c sources instead of cpp.', action='store_true')
+    upgrade_parser.add_argument(
+        '-m',
+        '--merge-attributes',
+        help='Merge detected interleaved attributes (if any).',
+        action='store_true')
     add_upgrade_args(upgrade_parser)
     upgrade_parser.add_argument(
         '--show-test-stdout', help='Log test output.', action='store_true', default=False)

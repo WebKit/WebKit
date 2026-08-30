@@ -11,10 +11,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
 #include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
@@ -845,13 +842,14 @@ ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 template <typename DestT, typename T>
 ANGLE_INLINE DestT *Offset(T *ptr, size_t bytes)
 {
-    return reinterpret_cast<DestT *>((reinterpret_cast<uint8_t *>(ptr) + bytes));
+    return reinterpret_cast<DestT *>((ANGLE_UNSAFE_TODO(reinterpret_cast<uint8_t *>(ptr) + bytes)));
 }
 
 template <typename DestT, typename T>
 ANGLE_INLINE const DestT *Offset(const T *ptr, size_t bytes)
 {
-    return reinterpret_cast<const DestT *>((reinterpret_cast<const uint8_t *>(ptr) + bytes));
+    return reinterpret_cast<const DestT *>(
+        (ANGLE_UNSAFE_TODO(reinterpret_cast<const uint8_t *>(ptr) + bytes)));
 }
 
 class SecondaryCommandBuffer final : angle::NonCopyable
@@ -1308,8 +1306,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         // |calculatePointerParameterSize|, and that satisfies this condition.
         ASSERT(size.allocateBytes == roundUpPow2<size_t>(size.copyBytes, 8u));
 
-        memcpy(writePointer, data, size.copyBytes);
-        return writePointer + size.allocateBytes;
+        ANGLE_UNSAFE_TODO(memcpy(writePointer, data, size.copyBytes));
+        return ANGLE_UNSAFE_TODO(writePointer + size.allocateBytes);
     }
 
     // Flag to indicate that commandBuffer is open for new commands. Initially open.
@@ -2157,7 +2155,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const float blendCon
         initCommand<SetBlendConstantsParams>(CommandID::SetBlendConstants);
     for (uint32_t channel = 0; channel < 4; ++channel)
     {
-        paramStruct->blendConstants[channel] = blendConstants[channel];
+        ANGLE_UNSAFE_TODO(paramStruct->blendConstants[channel]) =
+            ANGLE_UNSAFE_TODO(blendConstants[channel]);
     }
 }
 
@@ -2228,7 +2227,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::setFragmentShadingRate(
     SetBitField(paramStruct->fragmentWidth, fragmentSize->width);
     SetBitField(paramStruct->fragmentHeight, fragmentSize->height);
     SetBitField(paramStruct->vkFragmentShadingRateCombinerOp0, ops[0]);
-    SetBitField(paramStruct->vkFragmentShadingRateCombinerOp1, ops[1]);
+    ANGLE_UNSAFE_TODO(SetBitField(paramStruct->vkFragmentShadingRateCombinerOp1, ops[1]));
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setFrontFace(VkFrontFace frontFace)

@@ -4,10 +4,6 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <algorithm>
 #include <cctype>
 #include <cstring>
@@ -15,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/msl/Layout.h"
 
@@ -159,13 +156,13 @@ Layout sh::MetalLayoutOf(const TType &type, MetalLayoutOfConfig config)
     {
         if (isPacked)
         {
-            const size_t innerScale = innerScalesPacked[type.getNominalSize()];
+            const size_t innerScale = ANGLE_UNSAFE_TODO(innerScalesPacked[type.getNominalSize()]);
             auto layout = Layout{scalarLayout.sizeOf * innerScale, scalarLayout.alignOf};
             return layout;
         }
         else
         {
-            const size_t innerScale = innerScalesUnpacked[type.getNominalSize()];
+            const size_t innerScale = ANGLE_UNSAFE_TODO(innerScalesUnpacked[type.getNominalSize()]);
             auto layout             = Layout::Both(scalarLayout.sizeOf * innerScale);
             return layout;
         }
@@ -175,7 +172,7 @@ Layout sh::MetalLayoutOf(const TType &type, MetalLayoutOfConfig config)
         ASSERT(type.isMatrix());
         ASSERT(type.getBasicType() == TBasicType::EbtFloat);
         // typeCxR <=> typeR[C]
-        const size_t innerScale = innerScalesUnpacked[type.getRows()];
+        const size_t innerScale = ANGLE_UNSAFE_TODO(innerScalesUnpacked[type.getRows()]);
         const size_t outerScale = static_cast<size_t>(type.getCols());
         const size_t n          = scalarLayout.sizeOf * innerScale;
         return {n * outerScale, n};
@@ -256,7 +253,7 @@ static Layout CommonGlslStructLayoutOf(TField const *const *begin,
         storage == TLayoutBlockStorage::EbsPacked || storage == TLayoutBlockStorage::EbsShared;
 
     auto layout = Layout::Identity();
-    for (auto iter = begin; iter != end; ++iter)
+    for (auto iter = begin; iter != end; ANGLE_UNSAFE_TODO(++iter))
     {
         layout += GlslLayoutOf(*(*iter)->type(), storage, matrixPacking, false);
     }
@@ -292,7 +289,8 @@ static Layout CommonGlslLayoutOf(const TType &type,
         ASSERT(type.getNominalSize() == 1);
         ASSERT(type.getSecondarySize() == 1);
         const TFieldList &fields = structure->fields();
-        return CommonGlslStructLayoutOf(fields.data(), fields.data() + fields.size(), storage,
+        return CommonGlslStructLayoutOf(fields.data(),
+                                        ANGLE_UNSAFE_TODO(fields.data() + fields.size()), storage,
                                         matrixPacking, maskArray, baseAlignment);
     }
 
@@ -306,15 +304,15 @@ static Layout CommonGlslLayoutOf(const TType &type,
     {
         if (isPacked)
         {
-            const size_t sizeScale  = innerScalesPacked[type.getNominalSize()];
-            const size_t alignScale = innerScalesUnpacked[type.getNominalSize()];
+            const size_t sizeScale  = ANGLE_UNSAFE_TODO(innerScalesPacked[type.getNominalSize()]);
+            const size_t alignScale = ANGLE_UNSAFE_TODO(innerScalesUnpacked[type.getNominalSize()]);
             auto layout =
                 Layout{scalarLayout.sizeOf * sizeScale, scalarLayout.alignOf * alignScale};
             return layout;
         }
         else
         {
-            const size_t innerScale = innerScalesUnpacked[type.getNominalSize()];
+            const size_t innerScale = ANGLE_UNSAFE_TODO(innerScalesUnpacked[type.getNominalSize()]);
             auto layout             = Layout::Both(scalarLayout.sizeOf * innerScale);
             return layout;
         }
@@ -344,7 +342,7 @@ static Layout CommonGlslLayoutOf(const TType &type,
 
         outerDim *= type.getArraySizeProduct();
 
-        const size_t innerScale = innerScalesUnpacked[innerDim];
+        const size_t innerScale = ANGLE_UNSAFE_TODO(innerScalesUnpacked[innerDim]);
         const size_t n          = innerScale * scalarLayout.sizeOf;
         Layout layout           = {outerDim * n, n};
         layout.requireAlignment(baseAlignment, true);

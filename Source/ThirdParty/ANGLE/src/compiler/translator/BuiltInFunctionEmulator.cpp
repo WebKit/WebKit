@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "angle_gl.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -152,7 +149,7 @@ void BuiltInFunctionEmulator::addFunctionMap(BuiltinQueryFunc queryFunc)
 // static
 void BuiltInFunctionEmulator::WriteEmulatedFunctionName(TInfoSinkBase &out, const char *name)
 {
-    ASSERT(name[strlen(name) - 1] != '(');
+    ANGLE_UNSAFE_TODO(ASSERT(name[strlen(name) - 1] != '('));
     out << name << "_emu";
 }
 

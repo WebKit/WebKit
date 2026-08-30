@@ -5,11 +5,8 @@
 //
 // CollectVariables.cpp: Collect lists of shader interface variables based on the AST.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/CollectVariables.h"
+#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/utilities.h"
@@ -1029,7 +1026,8 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
     interfaceBlock->name       = blockType->name().data();
     interfaceBlock->mappedName = getMappedName(blockType);
 
-    const bool isGLInBuiltin = (instanceName != nullptr) && strncmp(instanceName, "gl_in", 5u) == 0;
+    const bool isGLInBuiltin =
+        (instanceName != nullptr) && ANGLE_UNSAFE_TODO(strncmp(instanceName, "gl_in", 5u)) == 0;
     if (instanceName != nullptr)
     {
         interfaceBlock->instanceName = instanceName;

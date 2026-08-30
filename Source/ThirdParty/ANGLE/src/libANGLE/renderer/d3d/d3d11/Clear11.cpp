@@ -6,11 +6,8 @@
 
 // Clear11.cpp: Framebuffer clear utility class.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/d3d/d3d11/Clear11.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 
@@ -76,7 +73,7 @@ bool UpdateDataCache(RtvDsvClearInfo<T> *dataCache,
     if (numRtvs > 0)
     {
         const bool writeRGB = (writeMask & ~D3D11_COLOR_WRITE_ENABLE_ALPHA) != 0;
-        if (writeRGB && memcmp(&dataCache->r, &color.red, sizeof(T) * 3) != 0)
+        if (writeRGB && ANGLE_UNSAFE_TODO(memcmp(&dataCache->r, &color.red, sizeof(T) * 3)) != 0)
         {
             dataCache->r = color.red;
             dataCache->g = color.green;
@@ -622,7 +619,7 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
         ANGLE_TRY(mRenderer->mapResource(context, mConstantBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD,
                                          0, &mappedResource));
 
-        memcpy(mappedResource.pData, &mShaderData, g_ConstantBufferSize);
+        ANGLE_UNSAFE_TODO(memcpy(mappedResource.pData, &mShaderData, g_ConstantBufferSize));
         deviceContext->Unmap(mConstantBuffer.get(), 0);
     }
 

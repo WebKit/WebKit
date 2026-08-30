@@ -281,8 +281,6 @@ void CubeMapTextureTest::runSampleCoordinateTransformTest(const char *shader, co
 // within each face.  See section 3.7.5 of GLES2.0 (Cube Map Texture Selection).
 TEST_P(CubeMapTextureTest, SampleCoordinateTransform)
 {
-    // http://anglebug.com/40096654
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D9());
     // Create a program that samples from 6x4 directions of the cubemap, draw and verify that the
     // colors match the right color from |faceColors|.
     constexpr char kFS[] = R"(precision mediump float;

@@ -6,11 +6,8 @@
 // ImageFunctionHLSL: Class for writing implementations of ESSL image functions into HLSL output.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "compiler/translator/hlsl/ImageFunctionHLSL.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/hlsl/UtilsHLSL.h"
 
@@ -130,16 +127,18 @@ void ImageFunctionHLSL::OutputImageSizeFunctionBody(
     else
         UNREACHABLE();
 
-    if (strcmp(imageFunction.getReturnType(), "int3") == 0)
+    if (ANGLE_UNSAFE_TODO(strcmp(imageFunction.getReturnType(), "int3")) == 0)
     {
         out << "    return int3(width, height, depth);\n";
     }
-    else if (strcmp(imageFunction.getReturnType(), "int2") == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(imageFunction.getReturnType(), "int2")) == 0)
     {
         out << "    return int2(width, height);\n";
     }
-    else if (strcmp(imageFunction.getReturnType(), "int") == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(imageFunction.getReturnType(), "int")) == 0)
+    {
         out << "    return int(width);\n";
+    }
     else
         UNREACHABLE();
 }

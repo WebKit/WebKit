@@ -6,10 +6,6 @@
 // CLContextCL.cpp: Implements the class methods for CLContextCL.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/cl/CLContextCL.h"
 
 #include "libANGLE/renderer/cl/CLCommandQueueCL.h"
@@ -221,7 +217,7 @@ angle::Result CLContextCL::getSupportedImageFormats(cl::MemFlags flags,
         auto formatIt = supportedFormats.cbegin();
         while (numEntries-- != 0u && formatIt != supportedFormats.cend())
         {
-            *imageFormats++ = *formatIt++;
+            ANGLE_UNSAFE_TODO(*imageFormats++ = *formatIt++);
         }
     }
     if (numImageFormats != nullptr)

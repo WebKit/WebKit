@@ -6,11 +6,8 @@
 // OutputSPIRV: Generate SPIR-V from the AST.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/spirv/OutputSPIRV.h"
+#include "common/unsafe_buffers.h"
 
 #include "angle_gl.h"
 #include "common/debug.h"
@@ -1369,7 +1366,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
         {
             componentIds.push_back(
                 createConstant(elementType, elementTypeId, expectedBasicType, constUnion, false));
-            constUnion += elementType.getObjectSize();
+            ANGLE_UNSAFE_TODO(constUnion += elementType.getObjectSize());
         }
     }
     else if (type.getBasicType() == EbtStruct)
@@ -1382,7 +1379,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
             componentIds.push_back(createConstant(*fieldType, fieldTypeId,
                                                   fieldType->getBasicType(), constUnion, false));
 
-            constUnion += fieldType->getObjectSize();
+            ANGLE_UNSAFE_TODO(constUnion += fieldType->getObjectSize());
         }
     }
     else
@@ -1392,7 +1389,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
                expectedBasicType == EbtUInt || expectedBasicType == EbtBool ||
                expectedBasicType == EbtYuvCscStandardEXT);
 
-        for (size_t component = 0; component < size; ++component, ++constUnion)
+        for (size_t component = 0; component < size; ++component, ANGLE_UNSAFE_TODO(++constUnion))
         {
             spirv::IdRef componentId;
 

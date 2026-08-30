@@ -6,11 +6,8 @@
 
 // Framebuffer11.cpp: Implements the Framebuffer11 class.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/d3d11/Framebuffer11.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/bitset_utils.h"
 #include "common/debug.h"
@@ -159,7 +156,7 @@ angle::Result Framebuffer11::invalidateBase(const gl::Context *context,
 
     for (size_t i = 0; i < count; ++i)
     {
-        switch (attachments[i])
+        switch (ANGLE_UNSAFE_TODO(attachments[i]))
         {
             // Handle depth and stencil attachments. Defer discarding until later.
             case GL_DEPTH_STENCIL_ATTACHMENT:
@@ -177,12 +174,14 @@ angle::Result Framebuffer11::invalidateBase(const gl::Context *context,
             default:
             {
                 // Handle color attachments
-                ASSERT((attachments[i] >= GL_COLOR_ATTACHMENT0 &&
-                        attachments[i] <= GL_COLOR_ATTACHMENT15) ||
-                       (attachments[i] == GL_COLOR));
+                ASSERT((ANGLE_UNSAFE_TODO(attachments[i]) >= GL_COLOR_ATTACHMENT0 &&
+                        ANGLE_UNSAFE_TODO(attachments[i]) <= GL_COLOR_ATTACHMENT15) ||
+                       (ANGLE_UNSAFE_TODO(attachments[i]) == GL_COLOR));
 
                 size_t colorIndex =
-                    (attachments[i] == GL_COLOR ? 0u : (attachments[i] - GL_COLOR_ATTACHMENT0));
+                    (ANGLE_UNSAFE_TODO(attachments[i]) == GL_COLOR
+                         ? 0u
+                         : (ANGLE_UNSAFE_TODO(attachments[i]) - GL_COLOR_ATTACHMENT0));
                 const gl::FramebufferAttachment *colorAttachment =
                     mState.getColorAttachment(colorIndex);
                 if (colorAttachment)

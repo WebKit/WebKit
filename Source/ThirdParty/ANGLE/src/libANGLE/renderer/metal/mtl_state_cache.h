@@ -11,15 +11,12 @@
 #ifndef LIBANGLE_RENDERER_METAL_MTL_STATE_CACHE_H_
 #define LIBANGLE_RENDERER_METAL_MTL_STATE_CACHE_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #import <Metal/Metal.h>
 
 #include <unordered_map>
 
 #include "common/hash_utils.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/State.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
@@ -341,14 +338,14 @@ constexpr inline bool VertexDesc::operator==(const VertexDesc &rhs) const
     }
     for (uint8_t i = 0; i < numAttribs; ++i)
     {
-        if (attributes[i] != rhs.attributes[i])
+        if (ANGLE_UNSAFE_TODO(attributes[i] != rhs.attributes[i]))
         {
             return false;
         }
     }
     for (uint8_t i = 0; i < numBufferLayouts; ++i)
     {
-        if (layouts[i] != rhs.layouts[i])
+        if (ANGLE_UNSAFE_TODO(layouts[i] != rhs.layouts[i]))
         {
             return false;
         }
@@ -363,11 +360,11 @@ inline size_t VertexDesc::hash() const
     angle::HashCombine(hash, numBufferLayouts);
     for (uint8_t i = 0; i < numAttribs; ++i)
     {
-        angle::HashCombine(hash, attributes[i]);
+        angle::HashCombine(hash, ANGLE_UNSAFE_TODO(attributes[i]));
     }
     for (uint8_t i = 0; i < numBufferLayouts; ++i)
     {
-        angle::HashCombine(hash, layouts[i]);
+        angle::HashCombine(hash, ANGLE_UNSAFE_TODO(layouts[i]));
     }
     return hash;
 }

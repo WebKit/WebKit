@@ -4,9 +4,6 @@
 // found in the LICENSE file.
 //
 
-#ifndef ANGLE_ENABLE_D3D9
-#    define ANGLE_ENABLE_D3D9
-#endif
 
 #ifndef ANGLE_ENABLE_D3D11
 #    define ANGLE_ENABLE_D3D11
@@ -293,19 +290,6 @@ TEST_P(EGLDeviceCreationTest, D3D11DeviceReferenceCounting)
     eglReleaseDeviceANGLE(eglDevice);
 }
 
-// Test that creating a EGLDeviceEXT from a D3D9 device fails
-TEST_P(EGLDeviceCreationTest, AnyD3D9Device)
-{
-    ANGLE_SKIP_TEST_IF(!mDeviceCreationD3D11ExtAvailable);
-
-    std::string fakeD3DDevice = "This is a string, not a D3D device";
-
-    EGLDeviceEXT eglDevice = eglCreateDeviceANGLE(
-        EGL_D3D9_DEVICE_ANGLE, reinterpret_cast<void *>(&fakeD3DDevice), nullptr);
-    EXPECT_EQ(EGL_NO_DEVICE_EXT, eglDevice);
-    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
-}
-
 class EGLDeviceQueryTest : public ANGLETest<>
 {
   protected:
@@ -335,20 +319,16 @@ class EGLDeviceQueryTest : public ANGLETest<>
         EXPECT_EGL_TRUE(
             eglQueryDisplayAttribEXT(getEGLWindow()->getDisplay(), EGL_DEVICE_EXT, &angleDevice));
         if (!IsEGLDeviceExtensionEnabled(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                         "EGL_ANGLE_device_d3d9") &&
-            !IsEGLDeviceExtensionEnabled(reinterpret_cast<EGLDeviceEXT>(angleDevice),
                                          "EGL_ANGLE_device_d3d11"))
         {
-            FAIL() << "ANGLE extensions EGL_ANGLE_device_d3d9 or EGL_ANGLE_device_d3d11 were not "
+            FAIL() << "ANGLE extension EGL_ANGLE_device_d3d11 was not "
                       "found";
         }
     }
 };
 
-// This test attempts to obtain a D3D11 device and a D3D9 device using the eglQueryDeviceAttribEXT
-// function.
+// This test attempts to obtain a D3D11 device using the eglQueryDeviceAttribEXT function.
 // If the test is configured to use D3D11 then it should succeed to obtain a D3D11 device.
-// If the test is confitured to use D3D9, then it should succeed to obtain a D3D9 device.
 TEST_P(EGLDeviceQueryTest, QueryDevice)
 {
     EGLAttrib angleDevice = 0;
@@ -366,25 +346,11 @@ TEST_P(EGLDeviceQueryTest, QueryDevice)
         EXPECT_TRUE(dxgiDevice != nullptr);
         SafeRelease(dxgiDevice);
     }
-
-    if (IsEGLDeviceExtensionEnabled(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                    "EGL_ANGLE_device_d3d9"))
-    {
-        EGLAttrib device9 = 0;
-        EXPECT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                                EGL_D3D9_DEVICE_ANGLE, &device9));
-        IDirect3DDevice9 *d3d9Device = reinterpret_cast<IDirect3DDevice9 *>(device9);
-        IDirect3D9 *d3d9             = nullptr;
-        EXPECT_EQ(S_OK, d3d9Device->GetDirect3D(&d3d9));
-        EXPECT_TRUE(d3d9 != nullptr);
-        SafeRelease(d3d9);
-    }
 }
 
-// This test attempts to obtain a D3D11 device from a D3D9 configured system and a D3D9 device from
-// a D3D11 configured system using the eglQueryDeviceAttribEXT function.
-// If the test is configured to use D3D11 then it should fail to obtain a D3D11 device.
-// If the test is confitured to use D3D9, then it should fail to obtain a D3D9 device.
+// This test attempts to obtain a D3D11 device from a system that isn't configured to use D3D11
+// using the eglQueryDeviceAttribEXT function.
+// If the test is not configured to use D3D11 then it should fail to obtain a D3D11 device.
 TEST_P(EGLDeviceQueryTest, QueryDeviceBadAttribute)
 {
     EGLAttrib angleDevice = 0;
@@ -397,14 +363,6 @@ TEST_P(EGLDeviceQueryTest, QueryDeviceBadAttribute)
         EGLAttrib device11 = 0;
         EXPECT_EGL_FALSE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
                                                  EGL_D3D11_DEVICE_ANGLE, &device11));
-    }
-
-    if (!IsEGLDeviceExtensionEnabled(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                     "EGL_ANGLE_device_d3d9"))
-    {
-        EGLAttrib device9 = 0;
-        EXPECT_EGL_FALSE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
-                                                 EGL_D3D9_DEVICE_ANGLE, &device9));
     }
 }
 
@@ -427,4 +385,4 @@ TEST_P(EGLDeviceQueryTest, GetPlatformDisplayDeviceReuse)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(EGLDeviceCreationTest, WithNoFixture(ES2_D3D11()));
-ANGLE_INSTANTIATE_TEST(EGLDeviceQueryTest, ES2_D3D9(), ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(EGLDeviceQueryTest, ES2_D3D11());

@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/hlsl/OutputHLSL.h"
+#include "common/unsafe_buffers.h"
 
 #include <stdio.h>
 #include <algorithm>
@@ -253,7 +250,7 @@ const TConstantUnion *OutputHLSL::writeConstantUnionArray(TInfoSinkBase &out,
                                                           const size_t size)
 {
     const TConstantUnion *constUnionIterated = constUnion;
-    for (size_t i = 0; i < size; i++, constUnionIterated++)
+    for (size_t i = 0; i < size; i++, ANGLE_UNSAFE_TODO(constUnionIterated++))
     {
         writeSingleConstant(out, constUnionIterated);
 

@@ -7,11 +7,8 @@
 //    Defines classes for caching of mtl pipelines
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/mtl_pipeline_cache.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -28,7 +25,7 @@ bool HasDefaultAttribs(const RenderPipelineDesc &rpdesc)
     const VertexDesc &desc = rpdesc.vertexDescriptor;
     for (uint8_t i = 0; i < desc.numAttribs; ++i)
     {
-        if (desc.attributes[i].getBufferIndex() == kDefaultAttribsBindingIndex)
+        if (ANGLE_UNSAFE_TODO(desc.attributes[i].getBufferIndex()) == kDefaultAttribsBindingIndex)
         {
             return true;
         }

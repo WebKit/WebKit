@@ -94,8 +94,7 @@ EGLInitializePerfTest::EGLInitializePerfTest()
     displayAttributes.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE);
     displayAttributes.push_back(platform.minorVersion);
 
-    if (platform.renderer == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE ||
-        platform.renderer == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE)
+    if (platform.renderer == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE)
     {
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
         displayAttributes.push_back(platform.deviceType);

@@ -81,10 +81,6 @@ namespace egl_platform
 EGLPlatformParameters DEFAULT();
 EGLPlatformParameters DEFAULT_NULL();
 
-EGLPlatformParameters D3D9();
-EGLPlatformParameters D3D9_NULL();
-EGLPlatformParameters D3D9_REFERENCE();
-
 EGLPlatformParameters D3D11();
 EGLPlatformParameters D3D11_PRESENT_PATH_FAST();
 EGLPlatformParameters D3D11_FL11_1();
@@ -126,9 +122,6 @@ EGLPlatformParameters WEBGPU();
 }  // namespace egl_platform
 
 // ANGLE tests platforms
-PlatformParameters ES1_D3D9();
-PlatformParameters ES2_D3D9();
-
 PlatformParameters ES1_D3D11();
 PlatformParameters ES2_D3D11();
 PlatformParameters ES2_D3D11_PRESENT_PATH_FAST();

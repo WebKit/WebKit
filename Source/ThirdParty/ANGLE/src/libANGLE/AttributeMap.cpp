@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/AttributeMap.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -90,7 +87,8 @@ bool AttributeMap::validate(const ValidationContext *val,
 {
     if (mIntPointer)
     {
-        for (const EGLint *curAttrib = mIntPointer; curAttrib[0] != EGL_NONE; curAttrib += 2)
+        for (const EGLint *curAttrib = mIntPointer; curAttrib[0] != EGL_NONE;
+             ANGLE_UNSAFE_TODO(curAttrib += 2))
         {
             if (!validationFunc(val, display, curAttrib[0]))
             {
@@ -98,21 +96,22 @@ bool AttributeMap::validate(const ValidationContext *val,
             }
 
             mValidatedAttributes[static_cast<EGLAttrib>(curAttrib[0])] =
-                static_cast<EGLAttrib>(curAttrib[1]);
+                static_cast<EGLAttrib>(ANGLE_UNSAFE_TODO(curAttrib[1]));
         }
         mIntPointer = nullptr;
     }
 
     if (mAttribPointer)
     {
-        for (const EGLAttrib *curAttrib = mAttribPointer; curAttrib[0] != EGL_NONE; curAttrib += 2)
+        for (const EGLAttrib *curAttrib = mAttribPointer; curAttrib[0] != EGL_NONE;
+             ANGLE_UNSAFE_TODO(curAttrib += 2))
         {
             if (!validationFunc(val, display, curAttrib[0]))
             {
                 return false;
             }
 
-            mValidatedAttributes[curAttrib[0]] = curAttrib[1];
+            mValidatedAttributes[curAttrib[0]] = ANGLE_UNSAFE_TODO(curAttrib[1]);
         }
         mAttribPointer = nullptr;
     }

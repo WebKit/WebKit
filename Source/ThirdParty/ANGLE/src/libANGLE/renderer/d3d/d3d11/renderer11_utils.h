@@ -11,13 +11,10 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_RENDERER11_UTILS_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_RENDERER11_UTILS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
 #include <functional>
 #include <vector>
+#include "common/unsafe_buffers.h"
 
 #include "common/Color.h"
 
@@ -303,7 +300,7 @@ void SetBufferData(ID3D11DeviceContext *context, ID3D11Buffer *constantBuffer, c
     ASSERT(SUCCEEDED(result));
     if (SUCCEEDED(result))
     {
-        memcpy(mappedResource.pData, &value, sizeof(T));
+        ANGLE_UNSAFE_TODO(memcpy(mappedResource.pData, &value, sizeof(T)));
         context->Unmap(constantBuffer, 0);
     }
 }

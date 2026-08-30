@@ -2836,7 +2836,7 @@ void CaptureTexParameterIuivEXT_params(const State &glState,
 
 // GL_EXT_texture_storage_compression
 void CaptureTexStorageAttribs2DEXT_attrib_list(const State &glState,
-                                               GLenum target,
+                                               TextureType targetPacked,
                                                GLsizei levels,
                                                GLenum internalformat,
                                                GLsizei width,
@@ -2848,7 +2848,7 @@ void CaptureTexStorageAttribs2DEXT_attrib_list(const State &glState,
 }
 
 void CaptureTexStorageAttribs3DEXT_attrib_list(const State &glState,
-                                               GLenum target,
+                                               TextureType targetPacked,
                                                GLsizei levels,
                                                GLenum internalformat,
                                                GLsizei width,

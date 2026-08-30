@@ -266,7 +266,6 @@ TEST_P(EGLCreateContextAttribsTest, RealtimePriority)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLCreateContextAttribsTest);
 ANGLE_INSTANTIATE_TEST(EGLCreateContextAttribsTest,
-                       WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES2_VULKAN()),

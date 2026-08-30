@@ -496,6 +496,17 @@ void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size)
 {
     memcpy(gClientArrays[arrayIndex], data, static_cast<size_t>(size));
 }
+
+void UpdateClientArrayPointerWithOffset(int arrayIndex,
+                                        const void *data,
+                                        uint64_t size,
+                                        uint64_t offset)
+{
+    uintptr_t dest =
+        reinterpret_cast<uintptr_t>(gClientArrays[arrayIndex]) + static_cast<size_t>(offset);
+    memcpy(reinterpret_cast<uint8_t *>(dest), data, static_cast<size_t>(size));
+}
+
 BufferHandleMap gMappedBufferData;
 
 void UpdateClientBufferData(GLuint bufferID, const void *source, GLsizei size)

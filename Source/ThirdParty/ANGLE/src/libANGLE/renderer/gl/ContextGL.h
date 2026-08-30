@@ -13,6 +13,8 @@
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 
+#include "common/base/anglebase/containers/mru_cache.h"
+
 namespace angle
 {
 struct FeaturesGL;
@@ -298,6 +300,12 @@ class ContextGL : public ContextImpl
 
     const gl::Debug &getDebug() const { return mState.getDebug(); }
 
+    angle::Result getDepthInitPBO(const gl::Context *context,
+                                  size_t requestedSize,
+                                  GLenum type,
+                                  GLuint *pboIdOut);
+    void tickGC();
+
   private:
     angle::Result setDrawArraysState(const gl::Context *context,
                                      GLint first,
@@ -313,6 +321,28 @@ class ContextGL : public ContextImpl
 
     gl::AttributesMask updateAttributesForBaseInstance(GLuint baseInstance);
     void resetUpdatedAttributes(gl::AttributesMask attribMask);
+
+    struct PixelBufferGL
+    {
+        const FunctionsGL *functions = nullptr;
+        GLuint bufferID              = 0;
+        size_t size                  = 0;
+        uint32_t lifetimeCounter     = 0;
+
+        PixelBufferGL(const FunctionsGL *functions);
+        ~PixelBufferGL();
+
+        PixelBufferGL(PixelBufferGL &&other);
+        PixelBufferGL &operator=(PixelBufferGL &&other);
+
+        PixelBufferGL(const PixelBufferGL &)            = delete;
+        PixelBufferGL &operator=(const PixelBufferGL &) = delete;
+    };
+
+    using DepthInitPBOCache = angle::base::HashingMRUCache<GLenum, PixelBufferGL>;
+    // Keyed by the GLenum type passed to getDepthInitPBO (e.g. GL_UNSIGNED_INT_24_8,
+    // GL_FLOAT_32_UNSIGNED_INT_24_8_REV).
+    DepthInitPBOCache mDepthInitPBOs;
 
   protected:
     std::shared_ptr<RendererGL> mRenderer;

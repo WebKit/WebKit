@@ -8,11 +8,8 @@
 #ifndef UTIL_GL_H_
 #define UTIL_GL_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/platform.h"
+#include "common/unsafe_buffers.h"
 
 #if defined(ANGLE_USE_UTIL_LOADER)
 #    include "util/egl_loader_autogen.h"
@@ -47,12 +44,13 @@ inline bool CheckExtensionExists(const char *allExtensions, const std::string &e
 inline std::pair<EGLint, EGLint> GetCurrentContextVersion()
 {
     const char *versionString = reinterpret_cast<const char *>(glGetString(GL_VERSION));
-    if ((versionString == nullptr) || std::strstr(versionString, "OpenGL ES") == nullptr)
+    if ((versionString == nullptr) ||
+        ANGLE_UNSAFE_TODO(std::strstr(versionString, "OpenGL ES")) == nullptr)
     {
         return {0, 0};
     }
 
-    return {versionString[10] - '0', versionString[12] - '0'};
+    return {ANGLE_UNSAFE_TODO(versionString[10]) - '0', ANGLE_UNSAFE_TODO(versionString[12]) - '0'};
 }
 }  // namespace angle
 #endif  // UTIL_GL_H_

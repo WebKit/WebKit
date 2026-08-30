@@ -151,7 +151,6 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
 #if defined(ANGLE_PLATFORM_ANDROID)
     {"native-gles", GPUTestConfig::kAPIGLES},
 #endif
-    {"angle-d3d9", GPUTestConfig::kAPID3D9},
     {"angle-d3d11", GPUTestConfig::kAPID3D11},
     {"angle-d3d11-ref", GPUTestConfig::kAPID3D11},
     {"angle-gl", GPUTestConfig::kAPIGLDesktop},

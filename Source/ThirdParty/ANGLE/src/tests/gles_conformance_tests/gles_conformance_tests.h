@@ -14,11 +14,6 @@
 
 #include <string>
 
-struct D3D9
-{
-    static EGLNativeDisplayType GetNativeDisplay() { return EGL_DEFAULT_DISPLAY; }
-};
-
 struct D3D11
 {
     static EGLNativeDisplayType GetNativeDisplay() { return EGL_D3D11_ONLY_DISPLAY_ANGLE; }
@@ -28,7 +23,7 @@ struct D3D11
 #define CONFORMANCE_TESTS_ES3 3
 
 #if CONFORMANCE_TESTS_TYPE == CONFORMANCE_TESTS_ES2
-typedef testing::Types<D3D9, D3D11> ConformanceTestTypes;
+typedef testing::Types<D3D11> ConformanceTestTypes;
 #elif CONFORMANCE_TESTS_TYPE == CONFORMANCE_TESTS_ES3
 typedef testing::Types<D3D11> ConformanceTestTypes;
 #else

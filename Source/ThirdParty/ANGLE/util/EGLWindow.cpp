@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "util/EGLWindow.h"
+#include "common/unsafe_buffers.h"
 
 #include <cassert>
 #include <iostream>
@@ -217,7 +214,8 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
 
     if (params.presentPath != EGL_DONT_CARE)
     {
-        if (strstr(extensionString, "EGL_ANGLE_experimental_present_path") == nullptr)
+        if (ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_experimental_present_path")) ==
+            nullptr)
         {
             destroyGL();
             return false;
@@ -261,7 +259,7 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
     }
 
     const bool hasFeatureControlANGLE =
-        strstr(extensionString, "EGL_ANGLE_feature_control") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_feature_control")) != nullptr;
 
     if (!hasFeatureControlANGLE &&
         (!enabledFeatureOverrides.empty() || !disabledFeatureOverrides.empty()))
@@ -297,7 +295,8 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
     if (driverType == angle::GLESDriverType::SystemWGL)
         return false;
 
-    if (IsANGLE(driverType) && strstr(extensionString, "EGL_ANGLE_platform_angle"))
+    if (IsANGLE(driverType) &&
+        ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_platform_angle")))
     {
         mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
                                          reinterpret_cast<void *>(osWindow->getNativeDisplay()),
@@ -336,7 +335,7 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
     const char *displayExtensions = eglQueryString(mDisplay, EGL_EXTENSIONS);
 
     bool hasMutableRenderBuffer =
-        strstr(displayExtensions, "EGL_KHR_mutable_render_buffer") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_KHR_mutable_render_buffer")) != nullptr;
     if (mConfigParams.mutableRenderBuffer && !hasMutableRenderBuffer)
     {
         fprintf(stderr, "Mising EGL_KHR_mutable_render_buffer.\n");
@@ -367,7 +366,8 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
     };
 
     // Add dynamic attributes
-    bool hasPixelFormatFloat = strstr(displayExtensions, "EGL_EXT_pixel_format_float") != nullptr;
+    bool hasPixelFormatFloat =
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_EXT_pixel_format_float")) != nullptr;
     if (!hasPixelFormatFloat && mConfigParams.componentType != EGL_COLOR_COMPONENT_TYPE_FIXED_EXT)
     {
         fprintf(stderr, "Mising EGL_EXT_pixel_format_float.\n");
@@ -399,21 +399,23 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
     eglGetConfigAttrib(mDisplay, mConfig, EGL_SAMPLES, &mConfigParams.samples);
 
     std::vector<EGLint> surfaceAttributes;
-    if (strstr(displayExtensions, "EGL_NV_post_sub_buffer") != nullptr)
+    if (ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_NV_post_sub_buffer")) != nullptr)
     {
         surfaceAttributes.push_back(EGL_POST_SUB_BUFFER_SUPPORTED_NV);
         surfaceAttributes.push_back(EGL_TRUE);
     }
 
     bool hasRobustResourceInit =
-        strstr(displayExtensions, "EGL_ANGLE_robust_resource_initialization") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_ANGLE_robust_resource_initialization")) !=
+        nullptr;
     if (hasRobustResourceInit)
     {
         surfaceAttributes.push_back(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
         surfaceAttributes.push_back(mConfigParams.robustResourceInit ? EGL_TRUE : EGL_FALSE);
     }
 
-    bool hasGLColorSpace = strstr(displayExtensions, "EGL_KHR_gl_colorspace") != nullptr;
+    bool hasGLColorSpace =
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_KHR_gl_colorspace")) != nullptr;
     if (!hasGLColorSpace && mConfigParams.colorSpace != EGL_COLORSPACE_LINEAR)
     {
         fprintf(stderr, "Mising EGL_KHR_gl_colorspace.\n");
@@ -427,7 +429,8 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
     }
 
     bool hasCreateSurfaceSwapInterval =
-        strstr(displayExtensions, "EGL_ANGLE_create_surface_swap_interval") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_ANGLE_create_surface_swap_interval")) !=
+        nullptr;
     if (hasCreateSurfaceSwapInterval && mConfigParams.swapInterval != kDefaultSwapInterval)
     {
         surfaceAttributes.push_back(EGL_SWAP_INTERVAL_ANGLE);
@@ -471,7 +474,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     const char *displayExtensions = eglQueryString(mDisplay, EGL_EXTENSIONS);
 
     // EGL_KHR_create_context is required to request a ES3+ context.
-    bool hasKHRCreateContext = strstr(displayExtensions, "EGL_KHR_create_context") != nullptr;
+    bool hasKHRCreateContext =
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_KHR_create_context")) != nullptr;
     if (mClientMajorVersion > 2 && !(mEGLMajorVersion > 1 || mEGLMinorVersion >= 5) &&
         !hasKHRCreateContext)
     {
@@ -488,7 +492,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasWebGLCompatibility =
-        strstr(displayExtensions, "EGL_ANGLE_create_context_webgl_compatibility") != nullptr;
+        ANGLE_UNSAFE_TODO(
+            strstr(displayExtensions, "EGL_ANGLE_create_context_webgl_compatibility")) != nullptr;
     if ((mConfigParams.webGLCompatibility || mConfigParams.hardenedContext) &&
         !hasWebGLCompatibility)
     {
@@ -497,14 +502,16 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasCreateContextExtensionsEnabled =
-        strstr(displayExtensions, "EGL_ANGLE_create_context_extensions_enabled") != nullptr;
+        ANGLE_UNSAFE_TODO(
+            strstr(displayExtensions, "EGL_ANGLE_create_context_extensions_enabled")) != nullptr;
     if (!mConfigParams.extensionsEnabled && !hasCreateContextExtensionsEnabled)
     {
         fprintf(stderr, "EGL_ANGLE_create_context_extensions_enabled missing.\n");
         return EGL_NO_CONTEXT;
     }
 
-    bool hasRobustness = strstr(displayExtensions, "EGL_EXT_create_context_robustness") != nullptr;
+    bool hasRobustness = ANGLE_UNSAFE_TODO(strstr(displayExtensions,
+                                                  "EGL_EXT_create_context_robustness")) != nullptr;
     if ((mConfigParams.robustAccess ||
          mConfigParams.resetStrategy != EGL_NO_RESET_NOTIFICATION_EXT) &&
         !hasRobustness)
@@ -514,7 +521,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasBindGeneratesResource =
-        strstr(displayExtensions, "EGL_CHROMIUM_create_context_bind_generates_resource") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions,
+                                 "EGL_CHROMIUM_create_context_bind_generates_resource")) != nullptr;
     if (!mConfigParams.bindGeneratesResource && !hasBindGeneratesResource)
     {
         // Non-default state requested without the extension present
@@ -523,7 +531,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasClientArraysExtension =
-        strstr(displayExtensions, "EGL_ANGLE_create_context_client_arrays") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_ANGLE_create_context_client_arrays")) !=
+        nullptr;
     if (!mConfigParams.clientArraysEnabled && !hasClientArraysExtension)
     {
         // Non-default state requested without the extension present
@@ -532,7 +541,7 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasProgramCacheControlExtension =
-        strstr(displayExtensions, "EGL_ANGLE_program_cache_control ") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_ANGLE_program_cache_control ")) != nullptr;
     if (!mConfigParams.contextProgramCacheEnabled && !hasProgramCacheControlExtension)
     {
         // Non-default state requested without the extension present
@@ -541,7 +550,7 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasKHRCreateContextNoError =
-        strstr(displayExtensions, "EGL_KHR_create_context_no_error") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_KHR_create_context_no_error")) != nullptr;
     if (mConfigParams.noError && !hasKHRCreateContextNoError)
     {
         fprintf(stderr, "EGL_KHR_create_context_no_error missing.\n");
@@ -549,7 +558,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     }
 
     bool hasRobustResourceInit =
-        strstr(displayExtensions, "EGL_ANGLE_robust_resource_initialization") != nullptr;
+        ANGLE_UNSAFE_TODO(strstr(displayExtensions, "EGL_ANGLE_robust_resource_initialization")) !=
+        nullptr;
     if (mConfigParams.robustResourceInit && !hasRobustResourceInit)
     {
         fprintf(stderr, "EGL_ANGLE_robust_resource_initialization missing.\n");
@@ -565,10 +575,10 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
 
     std::vector<EGLint> contextAttributes;
     for (EGLint *extraAttrib = extraAttributes;
-         extraAttrib != nullptr && extraAttrib[0] != EGL_NONE; extraAttrib += 2)
+         extraAttrib != nullptr && extraAttrib[0] != EGL_NONE; ANGLE_UNSAFE_TODO(extraAttrib += 2))
     {
         contextAttributes.push_back(extraAttrib[0]);
-        contextAttributes.push_back(extraAttrib[1]);
+        contextAttributes.push_back(ANGLE_UNSAFE_TODO(extraAttrib[1]));
     }
 
     if (hasKHRCreateContext)
@@ -639,7 +649,8 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
         }
 
         bool hasBackwardsCompatibleContextExtension =
-            strstr(displayExtensions, "EGL_ANGLE_create_context_backwards_compatible") != nullptr;
+            ANGLE_UNSAFE_TODO(strstr(displayExtensions,
+                                     "EGL_ANGLE_create_context_backwards_compatible")) != nullptr;
         if (hasBackwardsCompatibleContextExtension)
         {
             // Always request the exact context version that the config wants
@@ -762,9 +773,10 @@ EGLBoolean EGLWindow::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
     for (size_t i = 0; i < allConfigs.size(); i++)
     {
         bool matchFound = true;
-        for (const EGLint *curAttrib = attrib_list; curAttrib[0] != EGL_NONE; curAttrib += 2)
+        for (const EGLint *curAttrib = attrib_list; curAttrib[0] != EGL_NONE;
+             ANGLE_UNSAFE_TODO(curAttrib += 2))
         {
-            if (curAttrib[1] == EGL_DONT_CARE)
+            if (ANGLE_UNSAFE_TODO(curAttrib[1]) == EGL_DONT_CARE)
             {
                 continue;
             }
@@ -772,8 +784,10 @@ EGLBoolean EGLWindow::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
             EGLint actualValue = EGL_DONT_CARE;
             eglGetConfigAttrib(dpy, allConfigs[i], curAttrib[0], &actualValue);
             if ((curAttrib[0] == EGL_SURFACE_TYPE &&
-                 (curAttrib[1] & actualValue) != curAttrib[1]) ||
-                (curAttrib[0] != EGL_SURFACE_TYPE && curAttrib[1] != actualValue))
+                 (ANGLE_UNSAFE_TODO(curAttrib[1]) & actualValue) !=
+                     ANGLE_UNSAFE_TODO(curAttrib[1])) ||
+                (curAttrib[0] != EGL_SURFACE_TYPE &&
+                 ANGLE_UNSAFE_TODO(curAttrib[1]) != actualValue))
             {
                 matchFound = false;
                 break;
@@ -981,7 +995,8 @@ void EGLWindow::queryFeatures()
     const char *extensionString =
         static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
     const bool hasFeatureControlANGLE =
-        extensionString && strstr(extensionString, "EGL_ANGLE_feature_control") != nullptr;
+        extensionString &&
+        ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_feature_control")) != nullptr;
 
     if (!hasFeatureControlANGLE)
     {
@@ -1006,8 +1021,10 @@ void EGLWindow::queryFeatures()
 
         const angle::Feature feature = featureFromName[featureName];
 
-        const bool isEnabled  = strcmp(featureStatus, angle::kFeatureStatusEnabled) == 0;
-        const bool isDisabled = strcmp(featureStatus, angle::kFeatureStatusDisabled) == 0;
+        const bool isEnabled =
+            ANGLE_UNSAFE_TODO(strcmp(featureStatus, angle::kFeatureStatusEnabled)) == 0;
+        const bool isDisabled =
+            ANGLE_UNSAFE_TODO(strcmp(featureStatus, angle::kFeatureStatusDisabled)) == 0;
         ASSERT(isEnabled || isDisabled);
 
         mFeatures[feature] = isEnabled ? ANGLEFeatureStatus::Enabled : ANGLEFeatureStatus::Disabled;

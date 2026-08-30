@@ -8,16 +8,13 @@
 //    C struct versions of Metal sampler, depth stencil, render pass, render pipeline descriptors.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 
 #include <sstream>
 
 #include "common/debug.h"
 #include "common/span.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -93,16 +90,18 @@ inline angle::ObjCPtr<MTLVertexDescriptor> ToObjC(const VertexDesc &desc)
 
     for (uint8_t i = 0; i < desc.numAttribs; ++i)
     {
-        [objCDesc.get().attributes setObject:ToObjC(desc.attributes[i]) atIndexedSubscript:i];
+        [objCDesc.get().attributes setObject:ToObjC(ANGLE_UNSAFE_TODO(desc.attributes[i]))
+                          atIndexedSubscript:i];
     }
 
     for (uint8_t i = 0; i < desc.numBufferLayouts; ++i)
     {
         // Ignore if stepFunction is kVertexStepFunctionInvalid.
         // If we don't set this slot, it will apparently be disabled by metal runtime.
-        if (desc.layouts[i].getStepFunction() != kVertexStepFunctionInvalid)
+        if (ANGLE_UNSAFE_TODO(desc.layouts[i].getStepFunction()) != kVertexStepFunctionInvalid)
         {
-            [objCDesc.get().layouts setObject:ToObjC(desc.layouts[i]) atIndexedSubscript:i];
+            [objCDesc.get().layouts setObject:ToObjC(ANGLE_UNSAFE_TODO(desc.layouts[i]))
+                           atIndexedSubscript:i];
         }
     }
 
@@ -184,16 +183,6 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
 {
     BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
     objCDesc.clearStencil = desc.clearStencil;
-}
-
-MTLColorWriteMask AdjustColorWriteMaskForSharedExponent(MTLColorWriteMask mask)
-{
-    // For RGB9_E5 color buffers, ANGLE frontend validation ignores alpha writemask value.
-    // Metal validation is more strict and allows only all-enabled or all-disabled.
-    ASSERT((mask == MTLColorWriteMaskAll) ||
-           (mask == (MTLColorWriteMaskAll ^ MTLColorWriteMaskAlpha)) ||
-           (mask == MTLColorWriteMaskAlpha) || (mask == MTLColorWriteMaskNone));
-    return (mask & MTLColorWriteMaskBlue) ? MTLColorWriteMaskAll : MTLColorWriteMaskNone;
 }
 
 }  // namespace
@@ -353,10 +342,6 @@ void BlendDesc::updateWriteMask(uint8_t angleMask)
 
 void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWriteMask writeMask)
 {
-    if (format == MTLPixelFormatRGB9E5Float)
-    {
-        writeMask = static_cast<uint32_t>(AdjustColorWriteMaskForSharedExponent(writeMask));
-    }
     // Reset the entire BlendDesc to defaults (blendingEnabled=false, default factors/operations),
     // then set the specific values.
     BlendDesc::operator=({});
@@ -367,10 +352,6 @@ void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWri
 void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, const BlendDesc &blendDesc)
 {
     BlendDesc::operator=(blendDesc);
-    if (format == MTLPixelFormatRGB9E5Float)
-    {
-        mWriteMask = static_cast<uint32_t>(AdjustColorWriteMaskForSharedExponent(mWriteMask));
-    }
     mPixelFormat = static_cast<uint32_t>(format);
 }
 

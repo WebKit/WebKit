@@ -5,14 +5,11 @@
 //
 // LoadToNative_unittest.cpp: Unit tests for pixel loading functions.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gmock/gmock.h>
 #include <vector>
 #include "common/debug.h"
 #include "common/mathutil.h"
+#include "common/unsafe_buffers.h"
 #include "image_util/loadimage.h"
 
 using namespace angle;
@@ -131,8 +128,9 @@ void TestLoadUbyteRGBToRGBA(ImageLoadContext &context,
 
     // Call loading function.
     LoadToNative3To4<uint8_t, fourthValue>(
-        context, width, height, depth, rgbInput.data() + inputByteOffset, inputRowPitch,
-        inputDepthPitch, rgbaOutput.data() + outputByteOffset, outputRowPitch, outputDepthPitch);
+        context, width, height, depth, ANGLE_UNSAFE_TODO(rgbInput.data() + inputByteOffset),
+        inputRowPitch, inputDepthPitch, ANGLE_UNSAFE_TODO(rgbaOutput.data() + outputByteOffset),
+        outputRowPitch, outputDepthPitch);
 
     // Compare the input and output data.
     verifyRGBToRGBAResults<uint8_t, fourthValue>(
@@ -174,8 +172,9 @@ void TestLoadSbyteRGBToRGBA(ImageLoadContext &context,
     // Call loading function.
     LoadToNative3To4<int8_t, fourthValue>(
         context, width, height, depth,
-        reinterpret_cast<uint8_t *>(rgbInput.data() + inputByteOffset), inputRowPitch,
-        inputDepthPitch, reinterpret_cast<uint8_t *>(rgbaOutput.data() + outputByteOffset),
+        reinterpret_cast<uint8_t *>(ANGLE_UNSAFE_TODO(rgbInput.data() + inputByteOffset)),
+        inputRowPitch, inputDepthPitch,
+        reinterpret_cast<uint8_t *>(ANGLE_UNSAFE_TODO(rgbaOutput.data() + outputByteOffset)),
         outputRowPitch, outputDepthPitch);
 
     // Compare the input and output data.

@@ -7,11 +7,8 @@
 //    Implements the OverlayVk class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/system_utils.h"
 #include "libANGLE/Context.h"
@@ -54,7 +51,8 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
     ANGLE_TRY(fontDataBuffer.get().map(contextVk, &mappedFontData));
 
     const uint8_t *fontData = mState.getFontData();
-    memcpy(mappedFontData, fontData, gl::overlay::kFontTotalDataSize * sizeof(*fontData));
+    ANGLE_UNSAFE_TODO(
+        memcpy(mappedFontData, fontData, gl::overlay::kFontTotalDataSize * sizeof(*fontData)));
 
     ANGLE_TRY(fontDataBuffer.get().flush(renderer, 0, fontDataBuffer.get().getSize()));
     fontDataBuffer.get().unmap(renderer);
@@ -96,7 +94,7 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
 
     for (uint32_t mip = 0; mip < gl::overlay::kFontMipCount; ++mip)
     {
-        copy.bufferOffset              = gl::overlay::kFontMipDataOffset[mip];
+        copy.bufferOffset              = ANGLE_UNSAFE_TODO(gl::overlay::kFontMipDataOffset[mip]);
         copy.bufferRowLength           = gl::overlay::kFontGlyphWidth >> mip;
         copy.bufferImageHeight         = gl::overlay::kFontGlyphHeight >> mip;
         copy.imageSubresource.mipLevel = mip;

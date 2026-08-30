@@ -14,7 +14,6 @@
 #include "test_utils/gl_raii.h"
 
 #include <d3d11.h>
-#include <d3d9.h>
 #include <dxgiformat.h>
 #include <windows.h>
 #include <wrl/client.h>
@@ -107,11 +106,6 @@ class D3DTextureTest : public ANGLETest<>
                 mD3D11Device = reinterpret_cast<ID3D11Device *>(result);
                 mD3D11Device->AddRef();
             }
-            else if (eglQueryDeviceAttribEXT(device, EGL_D3D9_DEVICE_ANGLE, &result))
-            {
-                mD3D9Device = reinterpret_cast<IDirect3DDevice9 *>(result);
-                mD3D9Device->AddRef();
-            }
         }
         else
         {
@@ -134,12 +128,6 @@ class D3DTextureTest : public ANGLETest<>
 
         FreeLibrary(mD3D11Module);
         mD3D11Module = nullptr;
-
-        if (mD3D9Device)
-        {
-            mD3D9Device->Release();
-            mD3D9Device = nullptr;
-        }
     }
 
     EGLSurface createD3D11PBuffer(size_t width,
@@ -201,37 +189,7 @@ class D3DTextureTest : public ANGLETest<>
                 D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET, DXGI_FORMAT_R8G8B8A8_UNORM);
         }
 
-        if (mD3D9Device)
-        {
-            EGLWindow *window  = getEGLWindow();
-            EGLDisplay display = window->getDisplay();
-            EGLConfig config   = window->getConfig();
-
-            EGLint attribs[] = {
-                EGL_TEXTURE_FORMAT, eglTextureFormat, EGL_TEXTURE_TARGET,
-                eglTextureTarget,   EGL_NONE,         EGL_NONE,
-            };
-
-            // Multisampled textures are not supported on D3D9.
-            EXPECT_TRUE(sampleCount <= 1);
-            EXPECT_TRUE(sampleQuality == 0);
-
-            IDirect3DTexture9 *texture = nullptr;
-            EXPECT_TRUE(SUCCEEDED(mD3D9Device->CreateTexture(
-                static_cast<UINT>(width), static_cast<UINT>(height), 1, D3DUSAGE_RENDERTARGET,
-                D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr)));
-
-            EGLSurface pbuffer = eglCreatePbufferFromClientBuffer(display, EGL_D3D_TEXTURE_ANGLE,
-                                                                  texture, config, attribs);
-
-            texture->Release();
-
-            return pbuffer;
-        }
-        else
-        {
-            return EGL_NO_SURFACE;
-        }
+        return EGL_NO_SURFACE;
     }
 
     bool valid() const
@@ -245,7 +203,7 @@ class D3DTextureTest : public ANGLETest<>
             return false;
         }
 
-        if (!mD3D11Device && !mD3D9Device)
+        if (!mD3D11Device)
         {
             std::cout << "Test skipped due to no D3D devices being available." << std::endl;
             return false;
@@ -299,8 +257,6 @@ class D3DTextureTest : public ANGLETest<>
 
     HMODULE mD3D11Module       = nullptr;
     ID3D11Device *mD3D11Device = nullptr;
-
-    IDirect3DDevice9 *mD3D9Device = nullptr;
 };
 
 // Test creating pbuffer from textures with several different DXGI formats.
@@ -894,8 +850,8 @@ TEST_P(D3DTextureTest, CheckSampleMismatch)
         return;
     }
 
-    // Multisampling is not supported on D3D9 or OpenGL.
-    ANGLE_SKIP_TEST_IF(IsD3D9() || IsOpenGL());
+    // Multisampling is not supported on OpenGL.
+    ANGLE_SKIP_TEST_IF(IsOpenGL());
 
     constexpr size_t bufferSize = 32;
 

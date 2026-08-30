@@ -7,11 +7,8 @@
 //    Implements the class methods for BufferManager.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/mtl_buffer_manager.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -57,7 +54,8 @@ void BufferManager::addBufferRefToFreeLists(mtl::BufferRef &bufferRef)
 {
     int cacheIndex = storageModeToCacheIndex(bufferRef->storageMode());
     ASSERT(cacheIndex < kNumCachedStorageModes);
-    mFreeBuffers[cacheIndex].insert(BufferMap::value_type(bufferRef->size(), bufferRef));
+    ANGLE_UNSAFE_TODO(
+        mFreeBuffers[cacheIndex].insert(BufferMap::value_type(bufferRef->size(), bufferRef)));
 }
 
 void BufferManager::returnBuffer(ContextMtl *contextMtl, BufferRef &bufferRef)
@@ -122,7 +120,7 @@ void BufferManager::collectGarbage(BufferManager::GCReason reason)
 
     for (int i = 0; i < kNumCachedStorageModes; ++i)
     {
-        BufferMap &map = mFreeBuffers[i];
+        BufferMap &map = ANGLE_UNSAFE_TODO(mFreeBuffers[i]);
         auto iter      = map.begin();
         while (iter != map.end())
         {
@@ -163,7 +161,7 @@ void BufferManager::collectGarbage(BufferManager::GCReason reason)
 
         for (int i = 0; i < kNumCachedStorageModes; ++i)
         {
-            BufferMap &map = mFreeBuffers[i];
+            BufferMap &map = ANGLE_UNSAFE_TODO(mFreeBuffers[i]);
             for (auto iter = map.begin(); iter != map.end(); ++iter)
             {
                 size_t sz = iter->first;
@@ -199,7 +197,7 @@ angle::Result BufferManager::getBuffer(ContextMtl *contextMtl,
     if (cacheIndex < kNumCachedStorageModes)
     {
         // Buffer has a storage mode that have a cache for.
-        BufferMap &freeBuffers = mFreeBuffers[cacheIndex];
+        BufferMap &freeBuffers = ANGLE_UNSAFE_TODO(mFreeBuffers[cacheIndex]);
         auto iter              = freeBuffers.find(size);
         if (iter != freeBuffers.end())
         {
@@ -269,7 +267,8 @@ angle::Result BufferManager::queueBlitCopyDataToBuffer(ContextMtl *contextMtl,
     for (size_t srcOffset = 0; srcOffset < sizeToCopy; srcOffset += kMaxStagingBufferSize)
     {
         size_t subSizeToCopy = std::min(kMaxStagingBufferSize, sizeToCopy - srcOffset);
-        angle::Span<const uint8_t> subSource(src + srcOffset, subSizeToCopy);
+        auto subSource =
+            ANGLE_UNSAFE_TODO(angle::Span<const uint8_t>(src + srcOffset, subSizeToCopy));
         mtl::BufferRef bufferRef;
         // TODO(anglebug.com/40644888): Here we pass DynamicDraw to get managed buffer for the
         // operation. This should be checked to see if this makes sense.

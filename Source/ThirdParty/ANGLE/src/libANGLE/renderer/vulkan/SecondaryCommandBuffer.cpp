@@ -7,12 +7,9 @@
 //    CPU-side storage of commands to delay GPU-side allocation until commands are submitted.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/SecondaryCommandBuffer.h"
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 #include "libANGLE/trace.h"
 
@@ -213,8 +210,8 @@ ANGLE_INLINE const NextT *GetNextArrayParameter(const PrevT *array, size_t array
 
 ANGLE_INLINE const CommandHeader *NextCommand(const CommandHeader *command)
 {
-    return reinterpret_cast<const CommandHeader *>(reinterpret_cast<const uint8_t *>(command) +
-                                                   command->size);
+    return reinterpret_cast<const CommandHeader *>(
+        ANGLE_UNSAFE_TODO(reinterpret_cast<const uint8_t *>(command) + command->size));
 }
 
 // Parse the cmds in this cmd buffer into given primary cmd buffer
@@ -260,8 +257,8 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                         getParamPtr<BeginTransformFeedbackParams>(currentCommand);
                     const VkBuffer *counterBuffers = GetFirstArrayParameter<VkBuffer>(params);
                     const VkDeviceSize *counterBufferOffsets =
-                        reinterpret_cast<const VkDeviceSize *>(counterBuffers +
-                                                               params->bufferCount);
+                        reinterpret_cast<const VkDeviceSize *>(
+                            ANGLE_UNSAFE_TODO(counterBuffers + params->bufferCount));
                     vkCmdBeginTransformFeedbackEXT(cmdBuffer, 0, params->bufferCount,
                                                    counterBuffers, counterBufferOffsets);
                     break;
@@ -591,8 +588,8 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                         getParamPtr<EndTransformFeedbackParams>(currentCommand);
                     const VkBuffer *counterBuffers = GetFirstArrayParameter<VkBuffer>(params);
                     const VkDeviceSize *counterBufferOffsets =
-                        reinterpret_cast<const VkDeviceSize *>(counterBuffers +
-                                                               params->bufferCount);
+                        reinterpret_cast<const VkDeviceSize *>(
+                            ANGLE_UNSAFE_TODO(counterBuffers + params->bufferCount));
                     vkCmdEndTransformFeedbackEXT(cmdBuffer, 0, params->bufferCount, counterBuffers,
                                                  counterBufferOffsets);
                     break;

@@ -7,10 +7,6 @@
 //   Tests of the PoolAlloc class
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
 
 #include "common/PoolAlloc.h"

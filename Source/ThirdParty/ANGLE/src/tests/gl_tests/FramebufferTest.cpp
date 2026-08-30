@@ -2104,7 +2104,7 @@ void main()
             glDrawBuffers(2, bufs);
 
             auto expectError = [](bool enabled, int mask) {
-                if (!enabled || mask == 0 || mask == 8 || mask == 7 || mask == 15)
+                if (!enabled || mask == 0 || mask == 15)
                 {
                     EXPECT_GL_NO_ERROR();
                 }
@@ -9662,7 +9662,6 @@ void main()
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
-                               ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND(FramebufferTest,

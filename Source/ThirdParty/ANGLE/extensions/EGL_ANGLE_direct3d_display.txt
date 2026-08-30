@@ -46,7 +46,6 @@ New Procedures and Functions
 
 New Tokens
 
-    EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE         (EGLNativeDisplayType)-2
     EGL_D3D11_ONLY_DISPLAY_ANGLE              (EGLNativeDisplayType)-3
 
 Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
@@ -54,15 +53,14 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     Add before the last sentence of the first paragraph of section 3.2,
     "Initialization":
 
-    "If <display_id> is EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE, the display returned
-    will be backed by a Direct3D 11 renderer if one is available, or by a
-    Direct3D 9 renderer otherwise. If <display_id> is EGL_D3D11_ONLY_DISPLAY_ANGLE,
-    the display returned will be backed by a Direct3D 11 renderer if one is
-    available, or will return NULL otherwise."
+    "If <display_id> is EGL_D3D11_ONLY_DISPLAY_ANGLE, the display returned will
+    be backed by a Direct3D 11 renderer if one is available, or will return NULL
+    otherwise."
 
 Issues
 
 Revision History
 
     Version 1, 2013/05/15 - First draft.
+    Version 2, 2026/06/29 - Remove the EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE enum.
 

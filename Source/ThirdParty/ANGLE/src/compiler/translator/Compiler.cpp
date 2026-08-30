@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/Compiler.h"
+#include "common/unsafe_buffers.h"
 
 #include <sstream>
 
@@ -702,7 +699,8 @@ bool TCompiler::validateAST(TIntermNode *root)
         if (!valid)
         {
             OutputTree(root, mInfoSink.info);
-            fprintf(stderr, "AST validation error(s):\n%s\n", mInfoSink.info.c_str());
+            ANGLE_UNSAFE_TODO(
+                fprintf(stderr, "AST validation error(s):\n%s\n", mInfoSink.info.c_str()));
         }
 #endif
         // In debug, assert validation.  In release, validation errors will be returned back to the

@@ -7,11 +7,8 @@
 //   Helper functions for capture and replay of traces.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "frame_capture_test_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/frame_capture_utils.h"
 #include "common/string_utils.h"
@@ -121,7 +118,7 @@ void SaveDebugFile(const std::string &outputDir,
     std::ostringstream path;
     path << outputDir << "/" << baseFileName << suffix;
     FILE *fp = fopen(path.str().c_str(), "wb");
-    fwrite(data.data(), 1, data.size(), fp);
+    ANGLE_UNSAFE_TODO(fwrite(data.data(), 1, data.size(), fp));
     fclose(fp);
 }
 }  // namespace
@@ -176,7 +173,7 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
 
     const rapidjson::Document::Object &meta = doc["TraceMetadata"].GetObj();
 
-    strncpy(traceInfoOut->name, traceName.c_str(), kTraceInfoMaxNameLen);
+    ANGLE_UNSAFE_TODO(strncpy(traceInfoOut->name, traceName.c_str(), kTraceInfoMaxNameLen));
     traceInfoOut->frameEnd               = meta["FrameEnd"].GetInt();
     traceInfoOut->frameStart             = meta["FrameStart"].GetInt();
     traceInfoOut->isBinaryDataCompressed = meta["IsBinaryDataCompressed"].GetBool();
@@ -370,7 +367,7 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
     FILE *fp = fopen(pathBuffer.str().c_str(), "rb");
     if (fp == 0)
     {
-        fprintf(stderr, "Error loading binary data file: %s\n", fileName);
+        ANGLE_UNSAFE_TODO(fprintf(stderr, "Error loading binary data file: %s\n", fileName));
         exit(1);
     }
     fseek(fp, 0, SEEK_END);
@@ -379,14 +376,14 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
 
     if (mTraceInfo.isBinaryDataCompressed)
     {
-        if (!strstr(fileName, ".gz"))
+        if (!ANGLE_UNSAFE_TODO(strstr(fileName, ".gz")))
         {
             fprintf(stderr, "Filename does not end in .gz");
             exit(1);
         }
 
         std::vector<uint8_t> compressedData(size);
-        size_t bytesRead = fread(compressedData.data(), 1, size, fp);
+        size_t bytesRead = ANGLE_UNSAFE_TODO(fread(compressedData.data(), 1, size, fp));
         if (bytesRead != static_cast<size_t>(size))
         {
             std::cerr << "Failed to read binary data: " << bytesRead << " != " << size << "\n";
@@ -412,13 +409,13 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
     }
     else
     {
-        if (!strstr(fileName, ".angledata"))
+        if (!ANGLE_UNSAFE_TODO(strstr(fileName, ".angledata")))
         {
             fprintf(stderr, "Filename does not end in .angledata");
             exit(1);
         }
         mBinaryData.resize(size + 1);
-        (void)fread(mBinaryData.data(), 1, size, fp);
+        (void)ANGLE_UNSAFE_TODO(fread(mBinaryData.data(), 1, size, fp));
     }
     fclose(fp);
 

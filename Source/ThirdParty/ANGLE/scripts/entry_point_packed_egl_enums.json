@@ -66,7 +66,7 @@
     "eglLockSurface": {
         "attrib_list": "const AttributeMap &"
     },
-    "eglStreamConsumerGLTextureExternalAttribsNV": {
+    "eglStreamConsumerGLTextureExternalAttribs": {
         "attrib_list": "const AttributeMap &"
     },
     "eglStreamPostD3DTexture": {

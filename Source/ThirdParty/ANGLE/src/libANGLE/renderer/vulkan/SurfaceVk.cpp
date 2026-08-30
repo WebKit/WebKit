@@ -7,11 +7,8 @@
 //    Implements the class methods for SurfaceVk.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
@@ -379,16 +376,16 @@ VkRectLayerKHR ToVkRectLayer(const EGLint *eglRect,
     {
         // EGL rectangles are already specified with a bottom-left origin, therefore the conversion
         // is trivial as we just get its Y coordinate as it is
-        rect.offset.y = gl::clamp(eglRect[1], 0, height);
+        rect.offset.y = gl::clamp(ANGLE_UNSAFE_TODO(eglRect[1]), 0, height);
     }
     else
     {
-        rect.offset.y =
-            gl::clamp(height - gl::clamp(eglRect[1], 0, height) - gl::clamp(eglRect[3], 0, height),
-                      0, height);
+        rect.offset.y = gl::clamp(height - gl::clamp(ANGLE_UNSAFE_TODO(eglRect[1]), 0, height) -
+                                      gl::clamp(ANGLE_UNSAFE_TODO(eglRect[3]), 0, height),
+                                  0, height);
     }
-    rect.extent.width  = gl::clamp(eglRect[2], 0, width - rect.offset.x);
-    rect.extent.height = gl::clamp(eglRect[3], 0, height - rect.offset.y);
+    rect.extent.width  = gl::clamp(ANGLE_UNSAFE_TODO(eglRect[2]), 0, width - rect.offset.x);
+    rect.extent.height = gl::clamp(ANGLE_UNSAFE_TODO(eglRect[3]), 0, height - rect.offset.y);
     rect.layer         = 0;
     return rect;
 }
@@ -522,7 +519,8 @@ bool IsCompatiblePresentMode(vk::PresentMode mode,
                              size_t compatibleModesCount)
 {
     VkPresentModeKHR vkMode              = vk::ConvertPresentModeToVkPresentMode(mode);
-    VkPresentModeKHR *compatibleModesEnd = compatibleModes + compatibleModesCount;
+    VkPresentModeKHR *compatibleModesEnd =
+        ANGLE_UNSAFE_TODO(compatibleModes + compatibleModesCount);
     return std::find(compatibleModes, compatibleModesEnd, vkMode) != compatibleModesEnd;
 }
 
@@ -2815,7 +2813,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         for (EGLint i = 0; i < n_rects; i++)
         {
             vkRects[i] = ToVkRectLayer(
-                eglRects + i * 4, width, height,
+                ANGLE_UNSAFE_TODO(eglRects + i * 4), width, height,
                 contextVk->getFeatures().bottomLeftOriginPresentRegionRectangles.enabled);
         }
         presentRegion.pRectangles = vkRects.data();

@@ -70,4 +70,45 @@ TEST_P(QueryTest, Basic)
     }
 }
 
+// Test setting and querying blend equation state
+TEST_P(QueryTest, BlendEquation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_blend_subtract"));
+
+    {
+        GLint mode = -1;
+        glGetIntegerv(GL_BLEND_EQUATION_OES, &mode);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(mode, GL_FUNC_ADD_OES);
+    }
+
+    for (GLenum mode : {GL_FUNC_ADD_OES, GL_FUNC_SUBTRACT_OES, GL_FUNC_REVERSE_SUBTRACT_OES})
+    {
+        glBlendEquationOES(mode);
+        EXPECT_GL_NO_ERROR();
+
+        GLint value = -1;
+        glGetIntegerv(GL_BLEND_EQUATION_OES, &value);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(mode, static_cast<GLenum>(value));
+    }
+
+    if (IsGLExtensionEnabled("GL_EXT_blend_minmax"))
+    {
+        for (GLenum mode : {GL_MIN_EXT, GL_MAX_EXT})
+        {
+            glBlendEquationOES(mode);
+            EXPECT_GL_NO_ERROR();
+
+            GLint value = -1;
+            glGetIntegerv(GL_BLEND_EQUATION_OES, &value);
+            EXPECT_GL_NO_ERROR();
+            EXPECT_EQ(mode, static_cast<GLenum>(value));
+        }
+    }
+
+    EXPECT_FALSE(IsGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+    EXPECT_FALSE(IsGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"));
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(QueryTest);

@@ -7,15 +7,12 @@
 //    Implements the class methods for RenderUtils.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 
 #include <utility>
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -312,7 +309,7 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
     GLsizei dstTriangle                   = 0;
     uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl, dstOffset).data());
     T triFirstIdx;
-    memcpy(&triFirstIdx, indices, sizeof(triFirstIdx));
+    ANGLE_UNSAFE_TODO(memcpy(&triFirstIdx, indices, sizeof(triFirstIdx)));
 
     if (primitiveRestartEnabled)
     {
@@ -320,20 +317,21 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
         while (triFirstIdx == kSrcPrimitiveRestartIndex && triFirstIdxLoc + 2 < count)
         {
             ++triFirstIdxLoc;
-            memcpy(&triFirstIdx, indices + triFirstIdxLoc, sizeof(triFirstIdx));
+            ANGLE_UNSAFE_TODO(memcpy(&triFirstIdx, indices + triFirstIdxLoc, sizeof(triFirstIdx)));
         }
 
         T srcPrevIdx = 0;
         if (triFirstIdxLoc + 1 < count)
         {
-            memcpy(&srcPrevIdx, indices + triFirstIdxLoc + 1, sizeof(srcPrevIdx));
+            ANGLE_UNSAFE_TODO(
+                memcpy(&srcPrevIdx, indices + triFirstIdxLoc + 1, sizeof(srcPrevIdx)));
         }
 
         for (GLsizei i = triFirstIdxLoc + 2; i < count; ++i)
         {
             uint32_t triIndices[3];
             T srcIdx;
-            memcpy(&srcIdx, indices + i, sizeof(srcIdx));
+            ANGLE_UNSAFE_TODO(memcpy(&srcIdx, indices + i, sizeof(srcIdx)));
             bool completeTriangle = true;
             if (srcPrevIdx == kSrcPrimitiveRestartIndex || srcIdx == kSrcPrimitiveRestartIndex)
             {
@@ -355,7 +353,7 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
             }
             if (completeTriangle)
             {
-                memcpy(dstPtr + 3 * dstTriangle, triIndices, sizeof(triIndices));
+                ANGLE_UNSAFE_TODO(memcpy(dstPtr + 3 * dstTriangle, triIndices, sizeof(triIndices)));
                 ++dstTriangle;
             }
             srcPrevIdx = srcIdx;
@@ -364,12 +362,12 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
     else
     {
         T srcPrevIdx;
-        memcpy(&srcPrevIdx, indices + 1, sizeof(srcPrevIdx));
+        ANGLE_UNSAFE_TODO(memcpy(&srcPrevIdx, indices + 1, sizeof(srcPrevIdx)));
 
         for (GLsizei i = 2; i < count; ++i)
         {
             T srcIdx;
-            memcpy(&srcIdx, indices + i, sizeof(srcIdx));
+            ANGLE_UNSAFE_TODO(memcpy(&srcIdx, indices + i, sizeof(srcIdx)));
 
             uint32_t triIndices[3];
             triIndices[0] = triFirstIdx;
@@ -377,7 +375,7 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
             triIndices[2] = srcIdx;
             srcPrevIdx    = srcIdx;
 
-            memcpy(dstPtr + 3 * dstTriangle, triIndices, sizeof(triIndices));
+            ANGLE_UNSAFE_TODO(memcpy(dstPtr + 3 * dstTriangle, triIndices, sizeof(triIndices)));
             ++dstTriangle;
         }
     }
@@ -404,18 +402,22 @@ size_t CopyLineLoopIndices(GLsizei indexCount,
         return 0;
     }
     In firstValue;
-    memcpy(&firstValue, indices, sizeof(In));
+    ANGLE_UNSAFE_TODO(memcpy(&firstValue, indices, sizeof(In)));
     for (GLsizei i = 0; i < indexCount; ++i)
     {
         In value;
-        memcpy(&value, indices, sizeof(In));
-        indices += sizeof(In);
+        ANGLE_UNSAFE_TODO({
+            memcpy(&value, indices, sizeof(In));
+            indices += sizeof(In);
+        })
         Out outValue = value;
-        memcpy(outIndices, &outValue, sizeof(Out));
-        outIndices += sizeof(Out);
+        ANGLE_UNSAFE_TODO({
+            memcpy(outIndices, &outValue, sizeof(Out));
+            outIndices += sizeof(Out);
+        })
     }
     Out outFirstValue = firstValue;
-    memcpy(outIndices, &outFirstValue, sizeof(Out));
+    ANGLE_UNSAFE_TODO(memcpy(outIndices, &outFirstValue, sizeof(Out)));
     return indexCount + 1;
 }
 
@@ -427,8 +429,10 @@ void GetFirstLastIndicesFromClientElements(GLsizei count,
 {
     *firstOut = 0;
     *lastOut  = 0;
-    memcpy(firstOut, indices, sizeof(indices[0]));
-    memcpy(lastOut, indices + count - 1, sizeof(indices[0]));
+    ANGLE_UNSAFE_TODO({
+        memcpy(firstOut, indices, sizeof(indices[0]));
+        memcpy(lastOut, indices + count - 1, sizeof(indices[0]));
+    })
 }
 
 int GetShaderTextureType(const TextureRef &texture)
@@ -1150,8 +1154,8 @@ angle::Result ClearUtils::setupClearWithDraw(const gl::Context *context,
     // See shaders/clear.metal (3 variants ClearFloatFS, ClearIntFS and ClearUIntFS each does the
     // appropriate bit cast)
     ASSERT(sizeof(uniformParams.clearColor) == clearValue.getValueBytes().size());
-    std::memcpy(uniformParams.clearColor, clearValue.getValueBytes().data(),
-                clearValue.getValueBytes().size());
+    ANGLE_UNSAFE_TODO(std::memcpy(uniformParams.clearColor, clearValue.getValueBytes().data(),
+                                  clearValue.getValueBytes().size()));
     uniformParams.clearDepth = params.clearDepth.value();
 
     cmdEncoder->setVertexData(uniformParams, 0);
@@ -2094,7 +2098,7 @@ angle::Result IndexGeneratorUtils::generateLineLoopLastSegment(ContextMtl *conte
     uint8_t *ptr = dstBuffer->map(contextMtl, dstOffset).data();
 
     uint32_t indices[2] = {lastVertex, firstVertex};
-    memcpy(ptr, indices, sizeof(indices));
+    ANGLE_UNSAFE_TODO(memcpy(ptr, indices, sizeof(indices)));
 
     dstBuffer->unmapAndFlushSubset(contextMtl, dstOffset, sizeof(indices));
 

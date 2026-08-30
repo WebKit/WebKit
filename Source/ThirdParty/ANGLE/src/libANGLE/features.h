@@ -11,14 +11,6 @@
 
 // Feature defaults
 
-// Direct3D9EX
-// The "Debug This Pixel..." feature in PIX often fails when using the
-// D3D9Ex interfaces.  In order to get debug pixel to work on a Vista/Win 7
-// machine, define "ANGLE_D3D9EX=0" in your project file.
-#if !defined(ANGLE_D3D9EX)
-#    define ANGLE_D3D9EX 1
-#endif
-
 // Vsync
 // ENABLED allows Vsync to be configured at runtime
 // DISABLED disallows Vsync

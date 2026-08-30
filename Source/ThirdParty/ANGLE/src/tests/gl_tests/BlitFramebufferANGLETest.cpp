@@ -1316,12 +1316,6 @@ TEST_P(BlitFramebufferANGLETest, BlitStencil)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit"));
 
-    // http://anglebug.com/40096473
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
-
-    // http://anglebug.com/42263934
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
-
     BlitStencilTestHelper(false /* mesaFlipY */);
 }
 
@@ -1330,12 +1324,6 @@ TEST_P(BlitFramebufferANGLETest, BlitStencilWithMesaYFlip)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit") ||
                        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
-
-    // http://anglebug.com/40096473
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
-
-    // http://anglebug.com/42263934
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
 
     BlitStencilTestHelper(true /* mesaFlipY */);
 }

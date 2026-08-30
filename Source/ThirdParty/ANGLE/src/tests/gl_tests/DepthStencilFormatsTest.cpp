@@ -213,7 +213,6 @@ TEST_P(DepthStencilFormatsTest, DepthTexture)
 
 TEST_P(DepthStencilFormatsTest, PackedDepthStencil)
 {
-    // Expected to fail in D3D9 if GL_OES_packed_depth_stencil is not present.
     // Expected to fail in D3D11 if GL_OES_packed_depth_stencil or GL_ANGLE_depth_texture is not
     // present.
 
@@ -580,9 +579,6 @@ void main()
     bool depthTextureCubeSupport =
         IsGLExtensionEnabled("GL_OES_depth_texture_cube_map") || getClientMajorVersion() >= 3;
     bool textureSrgbDecodeSupport = IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode");
-
-    // http://anglebug.com/42262117
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows() && IsD3D9());
 
     const int res     = 2;
     const int destRes = 4;

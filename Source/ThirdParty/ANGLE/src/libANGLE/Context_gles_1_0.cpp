@@ -6,10 +6,7 @@
 
 // Context_gles_1_0.cpp: Implements the GLES1-specific parts of Context.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/context_private_call.inl.h"
@@ -69,7 +66,7 @@ void Context::getFixedv(GLenum pname, GLfixed *data)
 
     for (unsigned int i = 0; i < numParams; i++)
     {
-        data[i] = ConvertFloatToFixed(dataf[i]);
+        ANGLE_UNSAFE_TODO(data[i]) = ConvertFloatToFixed(dataf[i]);
     }
 }
 
@@ -117,8 +114,8 @@ void Context::drawTexf(float x, float y, float z, float width, float height)
 
 void Context::drawTexfv(const GLfloat *coords)
 {
-    mGLES1Renderer->drawTexture(this, &mState, getMutableGLES1State(), coords[0], coords[1],
-                                coords[2], coords[3], coords[4]);
+    ANGLE_UNSAFE_TODO(mGLES1Renderer->drawTexture(this, &mState, getMutableGLES1State(), coords[0],
+                                                  coords[1], coords[2], coords[3], coords[4]));
 }
 
 void Context::drawTexi(GLint x, GLint y, GLint z, GLint width, GLint height)
@@ -130,10 +127,10 @@ void Context::drawTexi(GLint x, GLint y, GLint z, GLint width, GLint height)
 
 void Context::drawTexiv(const GLint *coords)
 {
-    mGLES1Renderer->drawTexture(this, &mState, getMutableGLES1State(),
-                                static_cast<GLfloat>(coords[0]), static_cast<GLfloat>(coords[1]),
-                                static_cast<GLfloat>(coords[2]), static_cast<GLfloat>(coords[3]),
-                                static_cast<GLfloat>(coords[4]));
+    ANGLE_UNSAFE_TODO(mGLES1Renderer->drawTexture(
+        this, &mState, getMutableGLES1State(), static_cast<GLfloat>(coords[0]),
+        static_cast<GLfloat>(coords[1]), static_cast<GLfloat>(coords[2]),
+        static_cast<GLfloat>(coords[3]), static_cast<GLfloat>(coords[4])));
 }
 
 void Context::drawTexs(GLshort x, GLshort y, GLshort z, GLshort width, GLshort height)
@@ -145,10 +142,10 @@ void Context::drawTexs(GLshort x, GLshort y, GLshort z, GLshort width, GLshort h
 
 void Context::drawTexsv(const GLshort *coords)
 {
-    mGLES1Renderer->drawTexture(this, &mState, getMutableGLES1State(),
-                                static_cast<GLfloat>(coords[0]), static_cast<GLfloat>(coords[1]),
-                                static_cast<GLfloat>(coords[2]), static_cast<GLfloat>(coords[3]),
-                                static_cast<GLfloat>(coords[4]));
+    ANGLE_UNSAFE_TODO(mGLES1Renderer->drawTexture(
+        this, &mState, getMutableGLES1State(), static_cast<GLfloat>(coords[0]),
+        static_cast<GLfloat>(coords[1]), static_cast<GLfloat>(coords[2]),
+        static_cast<GLfloat>(coords[3]), static_cast<GLfloat>(coords[4])));
 }
 
 void Context::drawTexx(GLfixed x, GLfixed y, GLfixed z, GLfixed width, GLfixed height)
@@ -160,10 +157,10 @@ void Context::drawTexx(GLfixed x, GLfixed y, GLfixed z, GLfixed width, GLfixed h
 
 void Context::drawTexxv(const GLfixed *coords)
 {
-    mGLES1Renderer->drawTexture(this, &mState, getMutableGLES1State(),
-                                ConvertFixedToFloat(coords[0]), ConvertFixedToFloat(coords[1]),
-                                ConvertFixedToFloat(coords[2]), ConvertFixedToFloat(coords[3]),
-                                ConvertFixedToFloat(coords[4]));
+    ANGLE_UNSAFE_TODO(mGLES1Renderer->drawTexture(
+        this, &mState, getMutableGLES1State(), ConvertFixedToFloat(coords[0]),
+        ConvertFixedToFloat(coords[1]), ConvertFixedToFloat(coords[2]),
+        ConvertFixedToFloat(coords[3]), ConvertFixedToFloat(coords[4])));
 }
 
 // GL_OES_matrix_palette

@@ -6,11 +6,8 @@
 // CLDevice.cpp: Implements the cl::Device class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/CLDevice.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/cl_utils.h"
@@ -338,7 +335,7 @@ angle::Result Device::getInfo(DeviceInfo name,
         }
         if (copyValue != nullptr)
         {
-            std::memcpy(value, copyValue, copySize);
+            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
         }
     }
     if (valueSizeRet != nullptr)
@@ -376,7 +373,7 @@ angle::Result Device::createSubDevices(const cl_device_partition_property *prope
     }
     for (DevicePtr &subDevice : devices)
     {
-        *subDevices++ = subDevice.release();
+        *ANGLE_UNSAFE_TODO(subDevices++) = subDevice.release();
     }
     return angle::Result::Continue;
 }

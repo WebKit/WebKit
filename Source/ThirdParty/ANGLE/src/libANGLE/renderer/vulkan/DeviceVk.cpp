@@ -7,11 +7,8 @@
 //    Implements the class methods for DeviceVk.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/DeviceVk.h"
+#include "common/unsafe_buffers.h"
 
 #include <stdint.h>
 
@@ -177,7 +174,7 @@ VKAPI_ATTR VkResult VKAPI_CALL DeviceVk::WrappedEnumerateInstanceVersion(uint32_
 VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(VkInstance instance,
                                                                               const char *pName)
 {
-    if (!pName || pName[0] != 'v' || pName[1] != 'k')
+    if (!pName || pName[0] != 'v' || ANGLE_UNSAFE_TODO(pName[1]) != 'k')
     {
         return nullptr;
     }
@@ -187,21 +184,21 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(Vk
         return vkGetInstanceProcAddr(instance, pName);
     }
 
-    if (!strcmp(pName, "vkCreateInstance"))
+    if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkCreateInstance")))
     {
         return reinterpret_cast<PFN_vkVoidFunction>(DeviceVk::WrappedCreateInstance);
     }
-    if (!strcmp(pName, "vkEnumerateInstanceExtensionProperties"))
+    if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkEnumerateInstanceExtensionProperties")))
     {
         return reinterpret_cast<PFN_vkVoidFunction>(
             DeviceVk::WrappedEnumerateInstanceExtensionProperties);
     }
-    if (!strcmp(pName, "vkEnumerateInstanceLayerProperties"))
+    if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkEnumerateInstanceLayerProperties")))
     {
         return reinterpret_cast<PFN_vkVoidFunction>(
             DeviceVk::WrappedEnumerateInstanceLayerProperties);
     }
-    if (!strcmp(pName, "vkEnumerateInstanceVersion"))
+    if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkEnumerateInstanceVersion")))
     {
         if (!vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"))
         {
@@ -210,7 +207,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(Vk
         }
         return reinterpret_cast<PFN_vkVoidFunction>(DeviceVk::WrappedEnumerateInstanceVersion);
     }
-    if (!strcmp(pName, "vkGetInstanceProcAddr"))
+    if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkGetInstanceProcAddr")))
     {
         return reinterpret_cast<PFN_vkVoidFunction>(DeviceVk::WrappedGetInstanceProcAddr);
     }

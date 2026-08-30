@@ -140,15 +140,6 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc,
         m_nativeDisplayFactoryRegistry.registerFactory(d3d11Factory);
     }
 
-    {
-        std::vector<eglw::EGLAttrib> d3d9Attribs = initAttribs(
-            EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
-
-        auto *d3d9Factory = new ANGLENativeDisplayFactory("angle-d3d9", "ANGLE D3D9 Display",
-                                                          d3d9Attribs, &mEvents);
-        m_nativeDisplayFactoryRegistry.registerFactory(d3d9Factory);
-    }
-
     m_nativeDisplayFactoryRegistry.registerFactory(
         new win32::EGLNativeDisplayFactory(GetModuleHandle(nullptr)));
 #endif  // (DE_OS == DE_OS_WIN32)

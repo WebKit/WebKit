@@ -7,11 +7,8 @@
 //    Implements the class methods for DisplayVkWin32.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/win32/DisplayVkWin32.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 
@@ -145,7 +142,8 @@ egl::ConfigSet DisplayVkWin32::generateConfigs()
 
     std::vector<GLenum> depthStencilFormats(
         egl_vk::kConfigDepthStencilFormats,
-        egl_vk::kConfigDepthStencilFormats + ArraySize(egl_vk::kConfigDepthStencilFormats));
+        ANGLE_UNSAFE_TODO(egl_vk::kConfigDepthStencilFormats +
+                          ArraySize(egl_vk::kConfigDepthStencilFormats)));
 
     if (getCaps().stencil8)
     {

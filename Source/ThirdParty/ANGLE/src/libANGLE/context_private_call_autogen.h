@@ -665,10 +665,6 @@ void ContextPrivatePolygonOffsetClamp(PrivateState *privateState,
                                       GLfloat factor,
                                       GLfloat units,
                                       GLfloat clamp);
-void ContextPrivatePolygonModeNV(PrivateState *privateState,
-                                 PrivateStateCache *privateStateCache,
-                                 GLenum face,
-                                 PolygonMode modePacked);
 void ContextPrivateShadingRateQCOM(PrivateState *privateState,
                                    PrivateStateCache *privateStateCache,
                                    ShadingRate ratePacked);

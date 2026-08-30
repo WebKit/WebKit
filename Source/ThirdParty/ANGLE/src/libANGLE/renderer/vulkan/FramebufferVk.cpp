@@ -7,11 +7,8 @@
 //    Implements the class methods for FramebufferVk.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
+#include "common/unsafe_buffers.h"
 
 #include <array>
 
@@ -969,9 +966,9 @@ angle::Result FramebufferVk::clearBufferfv(const gl::Context *context,
     {
         clearColorBuffers.set(drawbuffer);
         clearValue.color.float32[0] = values[0];
-        clearValue.color.float32[1] = values[1];
-        clearValue.color.float32[2] = values[2];
-        clearValue.color.float32[3] = values[3];
+        clearValue.color.float32[1] = ANGLE_UNSAFE_TODO(values[1]);
+        clearValue.color.float32[2] = ANGLE_UNSAFE_TODO(values[2]);
+        clearValue.color.float32[3] = ANGLE_UNSAFE_TODO(values[3]);
     }
 
     return clearImpl(context, clearColorBuffers, clearDepth, false, clearValue.color,
@@ -989,9 +986,9 @@ angle::Result FramebufferVk::clearBufferuiv(const gl::Context *context,
     clearColorBuffers.set(drawbuffer);
 
     clearValue.color.uint32[0] = values[0];
-    clearValue.color.uint32[1] = values[1];
-    clearValue.color.uint32[2] = values[2];
-    clearValue.color.uint32[3] = values[3];
+    clearValue.color.uint32[1] = ANGLE_UNSAFE_TODO(values[1]);
+    clearValue.color.uint32[2] = ANGLE_UNSAFE_TODO(values[2]);
+    clearValue.color.uint32[3] = ANGLE_UNSAFE_TODO(values[3]);
 
     return clearImpl(context, clearColorBuffers, false, false, clearValue.color,
                      clearValue.depthStencil);
@@ -1016,9 +1013,9 @@ angle::Result FramebufferVk::clearBufferiv(const gl::Context *context,
     {
         clearColorBuffers.set(drawbuffer);
         clearValue.color.int32[0] = values[0];
-        clearValue.color.int32[1] = values[1];
-        clearValue.color.int32[2] = values[2];
-        clearValue.color.int32[3] = values[3];
+        clearValue.color.int32[1] = ANGLE_UNSAFE_TODO(values[1]);
+        clearValue.color.int32[2] = ANGLE_UNSAFE_TODO(values[2]);
+        clearValue.color.int32[3] = ANGLE_UNSAFE_TODO(values[3]);
     }
 
     return clearImpl(context, clearColorBuffers, false, clearStencil, clearValue.color,
@@ -1116,9 +1113,9 @@ angle::Result FramebufferVk::readPixels(const gl::Context *context,
         params.reverseRowOrder = !params.reverseRowOrder;
     }
 
-    ANGLE_TRY(readPixelsImpl(contextVk, params.area, params, getReadPixelsAspectFlags(format),
-                             getReadPixelsRenderTarget(format),
-                             static_cast<uint8_t *>(pixels) + outputSkipBytes));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(readPixelsImpl(
+        contextVk, params.area, params, getReadPixelsAspectFlags(format),
+        getReadPixelsRenderTarget(format), static_cast<uint8_t *>(pixels) + outputSkipBytes)));
     return angle::Result::Continue;
 }
 
@@ -1919,7 +1916,7 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
     uint8_t *mappedBuffer;
     ANGLE_TRY(buffer->map(contextVk, &mappedBuffer));
     uint8_t val = 0;
-    memset(mappedBuffer, 0, bufferSize);
+    ANGLE_UNSAFE_TODO(memset(mappedBuffer, 0, bufferSize));
 
     // The spec requires min_pixel_density to be computed thusly -
     //
@@ -1987,7 +1984,7 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
                 // Use shading rate 2x2
                 val = (1 << 2) | 1;
             }
-            mappedBuffer[y * fragmentShadingRateWidth + x] = val;
+            ANGLE_UNSAFE_TODO(mappedBuffer[y * fragmentShadingRateWidth + x]) = val;
         }
     }
 
@@ -2037,7 +2034,8 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCompute(
     for (const gl::FocalPoint &focalPoint : activeFocalPoints)
     {
         ASSERT(focalPoint.valid());
-        shadingRateParams.focalPoints[shadingRateParams.numFocalPoints] = focalPoint;
+        ANGLE_UNSAFE_TODO(shadingRateParams.focalPoints[shadingRateParams.numFocalPoints]) =
+            focalPoint;
         shadingRateParams.numFocalPoints++;
     }
 
@@ -2253,7 +2251,7 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
 
     for (size_t i = 0; i < count; ++i)
     {
-        const GLenum attachment = attachments[i];
+        const GLenum attachment = ANGLE_UNSAFE_TODO(attachments[i]);
 
         switch (attachment)
         {

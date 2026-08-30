@@ -16,8 +16,6 @@ bool IsAdreno();
 
 // Renderer back-ends
 bool IsD3D11();
-// Is a D3D9-class renderer.
-bool IsD3D9();
 bool IsDesktopOpenGL();
 bool IsOpenGLES();
 bool IsOpenGL();

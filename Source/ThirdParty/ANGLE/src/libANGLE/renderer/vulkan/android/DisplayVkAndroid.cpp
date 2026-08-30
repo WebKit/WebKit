@@ -7,10 +7,6 @@
 //    Implements the class methods for DisplayVkAndroid.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/android/DisplayVkAndroid.h"
 
 #include <android/log.h>
@@ -19,6 +15,7 @@
 
 #include "common/angle_version_info.h"
 #include "common/system_utils.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.h"
 #include "libANGLE/renderer/vulkan/android/WindowSurfaceVkAndroid.h"
@@ -155,7 +152,8 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
 
     std::vector<GLenum> depthStencilFormats(
         egl_vk::kConfigDepthStencilFormats,
-        egl_vk::kConfigDepthStencilFormats + ArraySize(egl_vk::kConfigDepthStencilFormats));
+        ANGLE_UNSAFE_TODO(egl_vk::kConfigDepthStencilFormats +
+                          ArraySize(egl_vk::kConfigDepthStencilFormats)));
 
     if (getCaps().stencil8)
     {

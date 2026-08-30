@@ -7,7 +7,7 @@
 //   These tests are designed to ensure that the various configurations of the test fixtures work as
 //   expected. If one of these tests fails, then it is likely that some of the other tests are being
 //   configured incorrectly. For example, they might be using the D3D11 renderer when the test is
-//   meant to be using the D3D9 renderer.
+//   meant to be using the Vulkan renderer.
 
 #include <regex>
 #include "common/string_utils.h"
@@ -57,12 +57,6 @@ TEST_P(RendererTest, RequestedRendererCreated)
     if (platform.renderer == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE)
     {
         ASSERT_NE(rendererString.find(std::string("direct3d11")), std::string::npos);
-    }
-
-    // Ensure that the renderer string contains D3D9, if we requested a D3D9 renderer.
-    if (platform.renderer == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE)
-    {
-        ASSERT_NE(rendererString.find(std::string("direct3d9")), std::string::npos);
     }
 
     // Ensure that the major and minor versions trigger expected behavior in D3D11

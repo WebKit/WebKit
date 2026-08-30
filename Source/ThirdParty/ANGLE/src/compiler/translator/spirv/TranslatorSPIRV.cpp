@@ -9,11 +9,8 @@
 //   See: https://www.khronos.org/registry/vulkan/specs/misc/GL_KHR_vulkan_glsl.txt
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/spirv/TranslatorSPIRV.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/PackedEnums.h"
 #include "common/utilities.h"
@@ -1316,7 +1313,7 @@ void TranslatorSPIRV::assignSpirvIds(TIntermBlock *root)
             if (angle::BeginsWith(name.data(), "webgl_") &&
                 symbol->variable().symbolType() == SymbolType::AngleInternal)
             {
-                name = ImmutableString(name.data() + 3, name.length() - 3);
+                name = ImmutableString(ANGLE_UNSAFE_TODO(name.data() + 3), name.length() - 3);
             }
 
             ShaderVariable *output = FindShaderVariable(&mOutputVariables, name);

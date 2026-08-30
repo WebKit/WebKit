@@ -14,10 +14,6 @@
 42262559 GLES : dEQP-EGL.functional.render.multi_thread.* = SKIP
 42262559 GLES : dEQP-EGL.functional.color_clears.multi_thread.* = SKIP
 42262559 D3D11 : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
-42262559 D3D9 : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
-42262559 D3D9 : dEQP-EGL.functional.multithread.* = SKIP
-42262559 D3D9 : dEQP-EGL.functional.render.multi_thread.* = SKIP
-42262559 D3D9 : dEQP-EGL.functional.color_clears.multi_thread.* = SKIP
 
 // dEQP doesn't handle configs created for extensions
 42260609 WIN : dEQP-EGL.functional.color_clears.single_context.gles2.other = FAIL

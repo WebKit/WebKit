@@ -1897,7 +1897,6 @@ TEST_P(EGLPriorityContextSharingTestNoFixture, MultiContextsCreateDestroy)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextSharingTest);
 ANGLE_INSTANTIATE_TEST(EGLContextSharingTest,
-                       ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_METAL(),

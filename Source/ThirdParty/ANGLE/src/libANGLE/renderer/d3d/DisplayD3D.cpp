@@ -46,66 +46,21 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
             attribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
 
 #if defined(ANGLE_ENABLE_D3D11)
-        const auto addD3D11 = nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
-                              nativeDisplay == EGL_D3D11_ONLY_DISPLAY_ANGLE ||
+        const auto addD3D11 = nativeDisplay == EGL_D3D11_ONLY_DISPLAY_ANGLE ||
                               requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
-#endif
 
-#if defined(ANGLE_ENABLE_D3D9)
-        const auto addD3D9 = nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
-                             requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE;
-#endif
-
-#if ANGLE_DEFAULT_D3D11
-#    if defined(ANGLE_ENABLE_D3D11)
         if (addD3D11)
         {
             rendererCreationFunctions.push_back(CreateRenderer11);
         }
-#    endif
-
-#    if defined(ANGLE_ENABLE_D3D9)
-        if (addD3D9)
-        {
-            rendererCreationFunctions.push_back(CreateRenderer9);
-        }
-#    endif
-#else
-#    if defined(ANGLE_ENABLE_D3D9)
-        if (addD3D9)
-        {
-            rendererCreationFunctions.push_back(CreateRenderer9);
-        }
-#    endif
-
-#    if defined(ANGLE_ENABLE_D3D11)
-        if (addD3D11)
-        {
-            rendererCreationFunctions.push_back(CreateRenderer11);
-        }
-#    endif
 #endif
 
-        if (nativeDisplay != EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE &&
-            nativeDisplay != EGL_D3D11_ONLY_DISPLAY_ANGLE &&
+        if (nativeDisplay != EGL_D3D11_ONLY_DISPLAY_ANGLE &&
             requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE)
         {
-            // The default display is requested, try the D3D9 and D3D11 renderers, order them using
-            // the definition of ANGLE_DEFAULT_D3D11
-#if ANGLE_DEFAULT_D3D11
-#    if defined(ANGLE_ENABLE_D3D11)
+            // The default display is requested, try the D3D11 renderer.
+#if defined(ANGLE_ENABLE_D3D11)
             rendererCreationFunctions.push_back(CreateRenderer11);
-#    endif
-#    if defined(ANGLE_ENABLE_D3D9)
-            rendererCreationFunctions.push_back(CreateRenderer9);
-#    endif
-#else
-#    if defined(ANGLE_ENABLE_D3D9)
-            rendererCreationFunctions.push_back(CreateRenderer9);
-#    endif
-#    if defined(ANGLE_ENABLE_D3D11)
-            rendererCreationFunctions.push_back(CreateRenderer11);
-#    endif
 #endif
         }
     }
@@ -134,15 +89,6 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
             ASSERT(result.getID() >= 0 && result.getID() < NUM_D3D11_INIT_ERRORS);
             ANGLE_HISTOGRAM_ENUMERATION("GPU.ANGLE.D3D11InitializeResult", result.getID(),
                                         NUM_D3D11_INIT_ERRORS);
-        }
-#endif
-
-#if defined(ANGLE_ENABLE_D3D9)
-        if (renderer->getRendererClass() == RENDERER_D3D9)
-        {
-            ASSERT(result.getID() >= 0 && result.getID() < NUM_D3D9_INIT_ERRORS);
-            ANGLE_HISTOGRAM_ENUMERATION("GPU.ANGLE.D3D9InitializeResult", result.getID(),
-                                        NUM_D3D9_INIT_ERRORS);
         }
 #endif
 

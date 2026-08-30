@@ -228,6 +228,10 @@ const uint8_t *GetBinaryData(const size_t offset);
 void InitializeBinaryDataLoader();
 
 void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size);
+void UpdateClientArrayPointerWithOffset(int arrayIndex,
+                                        const void *data,
+                                        uint64_t size,
+                                        uint64_t offset);
 void UpdateClientBufferData(GLuint bufferID, const void *source, GLsizei size);
 void UpdateClientBufferDataWithOffset(GLuint bufferID,
                                       const void *source,

@@ -7,11 +7,8 @@
 //    Resource lifetime tracking in the Vulkan back-end.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/vulkan/vk_resource.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 
@@ -36,7 +33,8 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk,
     {
         if (debugMessage)
         {
-            ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_HIGH, "%s", debugMessage);
+            ANGLE_UNSAFE_TODO(
+                ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_HIGH, "%s", debugMessage));
         }
         ANGLE_TRY(renderer->finishResourceUse(contextVk, mUse));
     }

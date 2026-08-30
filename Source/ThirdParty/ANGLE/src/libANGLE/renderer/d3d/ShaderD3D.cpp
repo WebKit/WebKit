@@ -332,14 +332,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderD3D::compile(const gl::Context *conte
         options->pls = mRenderer->getNativePixelLocalStorageOptions();
     }
 
-    // Some renderers (e.g. D3D9) do not support non-constant loop indexes in fragment
-    // shaders.  Shader compilation will fail.  To provide a better error message we can instruct
-    // the compiler to pre-validate.
-    if (!features.supportsNonConstantLoopIndexing.enabled)
-    {
-        options->validateLoopIndexing = true;
-    }
-
     // The D3D translations are not currently validation-error-free
     options->validateAST = false;
 

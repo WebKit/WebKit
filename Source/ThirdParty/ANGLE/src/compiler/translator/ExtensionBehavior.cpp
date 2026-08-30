@@ -6,11 +6,8 @@
 // ExtensionBehavior.cpp: Extension name enumeration and data structures for storing extension
 // behavior.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/ExtensionBehavior.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -114,13 +111,13 @@ const char *GetExtensionNameString(TExtension extension)
 TExtension GetExtensionByName(const char *extension)
 {
     // If first characters of the extension don't equal "GL_", early out.
-    if (strncmp(extension, "GL_", 3) != 0)
+    if (ANGLE_UNSAFE_TODO(strncmp(extension, "GL_", 3)) != 0)
     {
         return TExtension::UNDEFINED;
     }
-    const char *extWithoutGLPrefix = extension + 3;
+    const char *extWithoutGLPrefix = ANGLE_UNSAFE_TODO(extension + 3);
 
-    LIST_EXTENSIONS(RETURN_EXTENSION_IF_NAME_MATCHES)
+    ANGLE_UNSAFE_TODO(LIST_EXTENSIONS(RETURN_EXTENSION_IF_NAME_MATCHES))
 
     return TExtension::UNDEFINED;
 }

@@ -7,11 +7,8 @@
 //    Implements the class methods for VertexArrayNULL.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/null/VertexArrayNULL.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 
@@ -29,8 +26,10 @@ angle::Result VertexArrayNULL::syncState(const gl::Context *context,
                                          gl::VertexArray::DirtyBindingBitsArray *bindingBits)
 {
     // Clear the dirty bits in the back-end here.
-    memset(attribBits, 0, sizeof(gl::VertexArray::DirtyAttribBitsArray));
-    memset(bindingBits, 0, sizeof(gl::VertexArray::DirtyBindingBitsArray));
+    ANGLE_UNSAFE_TODO({
+        memset(attribBits, 0, sizeof(gl::VertexArray::DirtyAttribBitsArray));
+        memset(bindingBits, 0, sizeof(gl::VertexArray::DirtyBindingBitsArray));
+    })
 
     return angle::Result::Continue;
 }

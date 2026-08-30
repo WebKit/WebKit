@@ -613,8 +613,8 @@ void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceANGLE(GLenum mode,
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->drawArraysInstancedBaseInstanceANGLE(modePacked, first, count, instanceCount,
-                                                          baseInstance);
+            context->drawArraysInstancedBaseInstance(modePacked, first, count, instanceCount,
+                                                     baseInstance);
         }
         ANGLE_CAPTURE_GL(DrawArraysInstancedBaseInstanceANGLE, isCallValid, context, modePacked,
                          first, count, instanceCount, baseInstance);
@@ -674,7 +674,7 @@ void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->drawElementsInstancedBaseVertexBaseInstanceANGLE(
+            context->drawElementsInstancedBaseVertexBaseInstance(
                 modePacked, count, typePacked, indices, instanceCount, baseVertex, baseInstance);
         }
         ANGLE_CAPTURE_GL(DrawElementsInstancedBaseVertexBaseInstanceANGLE, isCallValid, context,
@@ -14121,6 +14121,7 @@ void GL_APIENTRY GL_TexStorageAttribs2DEXT(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
+        TextureType targetPacked = PackParam<TextureType>(target);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
         if (!isCallValid)
@@ -14131,7 +14132,7 @@ void GL_APIENTRY GL_TexStorageAttribs2DEXT(GLenum target,
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid = ValidateTexStorageAttribs2DEXT(
-                    context, angle::EntryPoint::GLTexStorageAttribs2DEXT, target, levels,
+                    context, angle::EntryPoint::GLTexStorageAttribs2DEXT, targetPacked, levels,
                     internalformat, width, height, attrib_list);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
@@ -14144,10 +14145,10 @@ void GL_APIENTRY GL_TexStorageAttribs2DEXT(GLenum target,
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->texStorageAttribs2D(target, levels, internalformat, width, height,
+            context->texStorageAttribs2D(targetPacked, levels, internalformat, width, height,
                                          attrib_list);
         }
-        ANGLE_CAPTURE_GL(TexStorageAttribs2DEXT, isCallValid, context, target, levels,
+        ANGLE_CAPTURE_GL(TexStorageAttribs2DEXT, isCallValid, context, targetPacked, levels,
                          internalformat, width, height, attrib_list);
     }
     else
@@ -14176,6 +14177,7 @@ void GL_APIENTRY GL_TexStorageAttribs3DEXT(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
+        TextureType targetPacked = PackParam<TextureType>(target);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
         if (!isCallValid)
@@ -14186,7 +14188,7 @@ void GL_APIENTRY GL_TexStorageAttribs3DEXT(GLenum target,
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid = ValidateTexStorageAttribs3DEXT(
-                    context, angle::EntryPoint::GLTexStorageAttribs3DEXT, target, levels,
+                    context, angle::EntryPoint::GLTexStorageAttribs3DEXT, targetPacked, levels,
                     internalformat, width, height, depth, attrib_list);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
@@ -14199,10 +14201,10 @@ void GL_APIENTRY GL_TexStorageAttribs3DEXT(GLenum target,
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->texStorageAttribs3D(target, levels, internalformat, width, height, depth,
+            context->texStorageAttribs3D(targetPacked, levels, internalformat, width, height, depth,
                                          attrib_list);
         }
-        ANGLE_CAPTURE_GL(TexStorageAttribs3DEXT, isCallValid, context, target, levels,
+        ANGLE_CAPTURE_GL(TexStorageAttribs3DEXT, isCallValid, context, targetPacked, levels,
                          internalformat, width, height, depth, attrib_list);
     }
     else
@@ -15581,8 +15583,8 @@ void GL_APIENTRY GL_BlitFramebufferNV(GLint srcX0,
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->blitFramebufferNV(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask,
-                                       filter);
+            context->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask,
+                                     filter);
         }
         ANGLE_CAPTURE_GL(BlitFramebufferNV, isCallValid, context, srcX0, srcY0, srcX1, srcY1, dstX0,
                          dstY0, dstX1, dstY1, mask, filter);
@@ -15632,8 +15634,8 @@ void GL_APIENTRY GL_PolygonModeNV(GLenum face, GLenum mode)
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            ContextPrivatePolygonModeNV(context->getMutablePrivateState(),
-                                        context->getMutablePrivateStateCache(), face, modePacked);
+            ContextPrivatePolygonMode(context->getMutablePrivateState(),
+                                      context->getMutablePrivateStateCache(), face, modePacked);
         }
         ANGLE_CAPTURE_GL(PolygonModeNV, isCallValid, context, face, modePacked);
     }

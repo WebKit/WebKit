@@ -4748,6 +4748,7 @@ void CaptureShareGroupMidExecutionSetup(
         CaptureCustomFenceSync(fenceSync, *setupCalls);
         CaptureFenceSyncResetCalls(context, replayState, resourceTracker, syncID, syncObject, sync);
         resourceTracker->getStartingFenceSyncs().insert(syncID);
+        frameCaptureShared->markGLSyncEmitted(syncID);
     }
 
     // Capture EGL Sync Objects
@@ -4771,6 +4772,7 @@ void CaptureShareGroupMidExecutionSetup(
         resourceTracker->getTrackedResource(context->id(), ResourceIDType::egl_Sync)
             .getStartingResources()
             .insert(eglSyncID.value);
+        frameCaptureShared->markEGLSyncEmitted(eglSyncID);
     }
 
     GLint contextUnpackAlignment = context->getState().getUnpackState().alignment;
@@ -7198,6 +7200,28 @@ void FrameCaptureShared::captureCustomMapBufferFromContext(const gl::Context *co
     CaptureCustomMapBuffer(entryPointName, call, callsOut, buffer->id());
 }
 
+// Drop wait/destroy calls on sync IDs for which the creation was never seen by capture, as when
+// AR apps import sync objects from the camera process. If the sync object is not recognized,
+// skip the Sync call and add a trace comment instead
+bool FilterImportedSyncs(bool captureActive,
+                         GLuint syncID,
+                         bool emitted,
+                         const char *api,
+                         const CallCapture &inCall,
+                         std::vector<CallCapture> &outCalls)
+{
+    if (!captureActive || syncID == 0 || emitted)
+    {
+        return false;
+    }
+    std::stringstream msg;
+    msg << "Dropping " << GetEntryPointName(inCall.entryPoint) << " on possibly external " << api
+        << " sync ID " << syncID;
+    AddComment(&outCalls, msg.str());
+    WARN() << msg.str();
+    return true;
+}
+
 void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
                                                  CallCapture &inCall,
                                                  std::vector<CallCapture> &outCalls)
@@ -7303,6 +7327,35 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
         case EntryPoint::EGLCreateNativeClientBufferANDROID:
         {
             CaptureCustomCreateNativeClientbuffer(inCall, outCalls);
+            break;
+        }
+        case EntryPoint::GLWaitSync:
+        case EntryPoint::GLClientWaitSync:
+        case EntryPoint::GLDeleteSync:
+        {
+            gl::SyncID syncID =
+                inCall.params.getParam("syncPacked", ParamType::TSyncID, 0).value.SyncIDVal;
+            if (!FilterImportedSyncs(isCaptureActive(), syncID.value, isGLSyncEmitted(syncID), "GL",
+                                     inCall, outCalls))
+            {
+                outCalls.emplace_back(std::move(inCall));
+            }
+            break;
+        }
+        case EntryPoint::EGLWaitSync:
+        case EntryPoint::EGLWaitSyncKHR:
+        case EntryPoint::EGLClientWaitSync:
+        case EntryPoint::EGLClientWaitSyncKHR:
+        case EntryPoint::EGLDestroySync:
+        case EntryPoint::EGLDestroySyncKHR:
+        {
+            egl::SyncID syncID =
+                inCall.params.getParam("syncPacked", ParamType::Tegl_SyncID, 1).value.egl_SyncIDVal;
+            if (!FilterImportedSyncs(isCaptureActive(), syncID.value, isEGLSyncEmitted(syncID),
+                                     "EGL", inCall, outCalls))
+            {
+                outCalls.emplace_back(std::move(inCall));
+            }
             break;
         }
         default:
@@ -8144,6 +8197,18 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             if (frameCaptureShared->isCaptureActive())
             {
                 handleGennedResource(context, eglSyncID);
+                markEGLSyncEmitted(eglSyncID);
+            }
+            break;
+        }
+        case EntryPoint::GLFenceSync:
+        {
+            gl::SyncID syncID = call.params.getReturnValue().value.SyncIDVal;
+            FrameCaptureShared *frameCaptureShared =
+                context->getShareGroup()->getFrameCaptureShared();
+            if (frameCaptureShared->isCaptureActive())
+            {
+                markGLSyncEmitted(syncID);
             }
             break;
         }

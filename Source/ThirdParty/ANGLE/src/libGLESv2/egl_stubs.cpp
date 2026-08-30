@@ -6,10 +6,7 @@
 // egl_stubs.cpp: Stubs for EGL entry points.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libGLESv2/egl_stubs_autogen.h"
 
 #include "common/angle_version_info.h"
@@ -38,7 +35,7 @@ void ClipConfigs(const std::vector<const Config *> &filteredConfigs,
         resultSize = std::max(std::min(resultSize, configSize), 0);
         for (EGLint i = 0; i < resultSize; i++)
         {
-            outputConfigs[i] = const_cast<Config *>(filteredConfigs[i]);
+            ANGLE_UNSAFE_TODO(outputConfigs[i]) = const_cast<Config *>(filteredConfigs[i]);
         }
     }
     *numConfigs = resultSize;

@@ -16,11 +16,8 @@
 #ifndef COMPILER_TRANSLATOR_INTERMNODE_H_
 #define COMPILER_TRANSLATOR_INTERMNODE_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 #include <queue>
@@ -370,23 +367,24 @@ class TIntermConstantUnion : public TIntermExpression
 
     int getIConst(size_t index) const
     {
-        return mUnionArrayPointer ? mUnionArrayPointer[index].getIConst() : 0;
+        return mUnionArrayPointer ? ANGLE_UNSAFE_TODO(mUnionArrayPointer[index]).getIConst() : 0;
     }
     unsigned int getUConst(size_t index) const
     {
-        return mUnionArrayPointer ? mUnionArrayPointer[index].getUConst() : 0;
+        return mUnionArrayPointer ? ANGLE_UNSAFE_TODO(mUnionArrayPointer[index]).getUConst() : 0;
     }
     float getFConst(size_t index) const
     {
-        return mUnionArrayPointer ? mUnionArrayPointer[index].getFConst() : 0.0f;
+        return mUnionArrayPointer ? ANGLE_UNSAFE_TODO(mUnionArrayPointer[index]).getFConst() : 0.0f;
     }
     bool getBConst(size_t index) const
     {
-        return mUnionArrayPointer ? mUnionArrayPointer[index].getBConst() : false;
+        return mUnionArrayPointer ? ANGLE_UNSAFE_TODO(mUnionArrayPointer[index]).getBConst()
+                                  : false;
     }
     bool isZero(size_t index) const
     {
-        return mUnionArrayPointer ? mUnionArrayPointer[index].isZero() : false;
+        return mUnionArrayPointer ? ANGLE_UNSAFE_TODO(mUnionArrayPointer[index]).isZero() : false;
     }
 
     TIntermConstantUnion *getAsConstantUnion() override { return this; }

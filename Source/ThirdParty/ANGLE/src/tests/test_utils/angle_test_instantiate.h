@@ -125,14 +125,14 @@ struct CombinedPrintToStringParamName
     ES1_D3D11(), ES1_METAL(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), \
         ES1_VULKAN_SWIFTSHADER(), ES1_VULKAN().enable(Feature::EnableParallelCompileAndLink)
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES2                                                               \
-    ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(), \
-        ES2_METAL(), ES2_WEBGPU(),                                                                 \
-        ES2_VULKAN()                                                                               \
-            .enable(Feature::EnableParallelCompileAndLink)                                         \
-            .enable(Feature::VaryingsRequireMatchingPrecisionInSpirv),                             \
-        ES2_VULKAN_SWIFTSHADER()                                                                   \
-            .enable(Feature::EnableParallelCompileAndLink)                                         \
+#define ANGLE_ALL_TEST_PLATFORMS_ES2                                                   \
+    ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(), \
+        ES2_METAL(), ES2_WEBGPU(),                                                     \
+        ES2_VULKAN()                                                                   \
+            .enable(Feature::EnableParallelCompileAndLink)                             \
+            .enable(Feature::VaryingsRequireMatchingPrecisionInSpirv),                 \
+        ES2_VULKAN_SWIFTSHADER()                                                       \
+            .enable(Feature::EnableParallelCompileAndLink)                             \
             .disable(Feature::SupportsGraphicsPipelineLibrary)
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES3                                                   \

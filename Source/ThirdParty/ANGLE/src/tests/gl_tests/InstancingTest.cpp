@@ -111,10 +111,6 @@ class InstancingTest : public ANGLETest<>
             ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_instanced_arrays"));
         }
 
-        // TODO: Fix these.  http://anglebug.com/42261805
-        ANGLE_SKIP_TEST_IF(IsD3D9() && draw == Indexed && geometry == Point);
-        ANGLE_SKIP_TEST_IF(IsD3D9() && IsAMD());
-
         // The window is divided into kMaxDrawn slices of size kDrawSize.
         // The slice drawn into is determined by the instance datum.
         // The instance data array selects all the slices in order.

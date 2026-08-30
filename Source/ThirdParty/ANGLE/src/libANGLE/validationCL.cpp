@@ -3330,7 +3330,8 @@ cl_int ValidateCreateImage(cl_context context,
     const size_t sliceSize = imageHeight * rowPitch;
 
     // CL_INVALID_IMAGE_DESCRIPTOR if values specified in image_desc are not valid.
-    switch (FromCLenum<MemObjectType>(image_desc->image_type))
+    const MemObjectType memObjectType = FromCLenum<MemObjectType>(image_desc->image_type);
+    switch (memObjectType)
     {
         case MemObjectType::Image1D:
             if (image_desc->image_width == 0u)
@@ -3503,6 +3504,31 @@ cl_int ValidateCreateImage(cl_context context,
         return CL_INVALID_HOST_PTR;
     }
 
+    // CL_IMAGE_FORMAT_NOT_SUPPORTED
+    // if there are no devices in context that support image_format
+    cl_uint memObjectTypeFormatCount = 0;
+    if (IsError(ctx.getSupportedImageFormats(flags, memObjectType, 0, nullptr,
+                                             &memObjectTypeFormatCount)))
+    {
+        return CL_IMAGE_FORMAT_NOT_SUPPORTED;
+    }
+    std::vector<cl_image_format> supportedFormats;
+    supportedFormats.resize(memObjectTypeFormatCount);
+    if (ANGLE_UNLIKELY(IsError(ctx.getSupportedImageFormats(
+            flags, memObjectType, memObjectTypeFormatCount, supportedFormats.data(), nullptr))))
+    {
+        return CL_OUT_OF_RESOURCES;
+    }
+    cl_image_format formatOfInterest = *image_format;
+    if (std::find_if(
+            supportedFormats.begin(), supportedFormats.end(),
+            [&formatOfInterest](const auto &format) {
+                return formatOfInterest.image_channel_order == format.image_channel_order &&
+                       formatOfInterest.image_channel_data_type == format.image_channel_data_type;
+            }) == supportedFormats.end())
+    {
+        return CL_IMAGE_FORMAT_NOT_SUPPORTED;
+    }
     return CL_SUCCESS;
 }
 

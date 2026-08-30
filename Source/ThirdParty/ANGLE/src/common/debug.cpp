@@ -4,13 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 // debug.cpp: Debugging utilities.
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 
 #include <stdarg.h>
 
@@ -175,7 +172,7 @@ void ScopedPerfEventHelper::begin(const char *format, ...)
     va_start(vararg, format);
 
     std::vector<char> buffer;
-    size_t len = FormatStringIntoVector(format, vararg, buffer);
+    size_t len = ANGLE_UNSAFE_TODO(FormatStringIntoVector(format, vararg, buffer));
     va_end(vararg);
 
     ANGLE_LOG(EVENT) << std::string(&buffer[0], len);
@@ -192,8 +189,10 @@ LogMessage::LogMessage(const char *file, const char *function, int line, LogSeve
     // INFO() and EVENT() do not require additional function(line) info.
     if (mSeverity > LOG_INFO)
     {
-        const char *slash = std::max(strrchr(mFile, '/'), strrchr(mFile, '\\'));
-        mStream << (slash ? (slash + 1) : mFile) << ":" << mLine << " (" << mFunction << "): ";
+        const char *slash = std::max(ANGLE_UNSAFE_TODO(strrchr(mFile, '/')),
+                                     ANGLE_UNSAFE_TODO(strrchr(mFile, '\\')));
+        mStream << (slash ? (ANGLE_UNSAFE_TODO(slash + 1)) : mFile) << ":" << mLine << " ("
+                << mFunction << "): ";
     }
 }
 
@@ -278,8 +277,8 @@ void Trace(LogSeverity severity, const char *message)
             default:
                 UNREACHABLE();
         }
-        __android_log_print(android_priority, "ANGLE", "%s: %s\n", LogSeverityName(severity),
-                            str.c_str());
+        ANGLE_UNSAFE_TODO(__android_log_print(android_priority, "ANGLE", "%s: %s\n",
+                                              LogSeverityName(severity), str.c_str()));
         // Note: we also log to stdout/stderr below.
 #endif
 
@@ -304,15 +303,16 @@ void Trace(LogSeverity severity, const char *message)
             default:
                 UNREACHABLE();
         }
+
 #    pragma GCC diagnostic push
 #    pragma GCC diagnostic ignored "-Wignored-attributes"
-        os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n",
-                         LogSeverityName(severity), str.c_str());
+        ANGLE_UNSAFE_TODO(os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n",
+                                           LogSeverityName(severity), str.c_str()));
 #    pragma GCC diagnostic pop
 #else
         // Note: we use fprintf because <iostream> includes static initializers.
-        fprintf((severity >= LOG_WARN) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),
-                str.c_str());
+        ANGLE_UNSAFE_TODO(fprintf((severity >= LOG_WARN) ? stderr : stdout, "%s: %s\n",
+                                  LogSeverityName(severity), str.c_str()));
 #endif
     }
 

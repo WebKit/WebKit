@@ -6,11 +6,8 @@
 
 // vulkan_icd.cpp : Helper for creating vulkan instances & selecting physical device.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "common/vulkan/vulkan_icd.h"
+#include "common/unsafe_buffers.h"
 
 #include <functional>
 #include <vector>
@@ -85,16 +82,18 @@ ICDFilterFunc GetFilterForICD(vk::ICD preferredICD)
     {
         case vk::ICD::Mock:
             return [](const VkPhysicalDeviceProperties &deviceProperties) {
-                return ((deviceProperties.vendorID == kMockVendorID) &&
-                        (deviceProperties.deviceID == kMockDeviceID) &&
-                        (strcmp(deviceProperties.deviceName, kMockDeviceName) == 0));
+                return (
+                    (deviceProperties.vendorID == kMockVendorID) &&
+                    (deviceProperties.deviceID == kMockDeviceID) &&
+                    (ANGLE_UNSAFE_TODO(strcmp(deviceProperties.deviceName, kMockDeviceName)) == 0));
             };
         case vk::ICD::SwiftShader:
             return [](const VkPhysicalDeviceProperties &deviceProperties) {
-                return ((deviceProperties.vendorID == kGoogleVendorID) &&
-                        (deviceProperties.deviceID == kSwiftShaderDeviceID) &&
-                        (strncmp(deviceProperties.deviceName, kSwiftShaderDeviceName,
-                                 strlen(kSwiftShaderDeviceName)) == 0));
+                return (
+                    (deviceProperties.vendorID == kGoogleVendorID) &&
+                    (deviceProperties.deviceID == kSwiftShaderDeviceID) &&
+                    (ANGLE_UNSAFE_TODO(strncmp(deviceProperties.deviceName, kSwiftShaderDeviceName,
+                                               strlen(kSwiftShaderDeviceName))) == 0));
             };
         default:
             const std::string anglePreferredDevice =
@@ -284,14 +283,16 @@ void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties2 pGetPhysicalDeviceP
                 matched = false;
             }
             else if (preferredDeviceUUID != nullptr &&
-                     memcmp(preferredDeviceUUID, physicalDeviceIDPropertiesOut->deviceUUID,
-                            VK_UUID_SIZE) != 0)
+                     ANGLE_UNSAFE_TODO(memcmp(preferredDeviceUUID,
+                                              physicalDeviceIDPropertiesOut->deviceUUID,
+                                              VK_UUID_SIZE)) != 0)
             {
                 matched = false;
             }
             else if (preferredDriverUUID != nullptr &&
-                     memcmp(preferredDriverUUID, physicalDeviceIDPropertiesOut->driverUUID,
-                            VK_UUID_SIZE) != 0)
+                     ANGLE_UNSAFE_TODO(memcmp(preferredDriverUUID,
+                                              physicalDeviceIDPropertiesOut->driverUUID,
+                                              VK_UUID_SIZE)) != 0)
             {
                 matched = false;
             }

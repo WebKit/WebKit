@@ -7,11 +7,8 @@
 //    Implements the class methods for VertexArrayWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/wgpu/VertexArrayWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/PackedEnums.h"
 #include "common/debug.h"
@@ -60,14 +57,15 @@ void CopyIndexData(const uint8_t *sourceData, size_t count, uint8_t *destData)
 {
     if constexpr (std::is_same<SourceType, DestType>::value)
     {
-        memcpy(destData, sourceData, sizeof(SourceType) * count);
+        ANGLE_UNSAFE_TODO(memcpy(destData, sourceData, sizeof(SourceType) * count));
     }
     else
     {
         for (size_t i = 0; i < count; i++)
         {
-            DestType *dst         = reinterpret_cast<DestType *>(destData) + i;
-            const SourceType *src = reinterpret_cast<const SourceType *>(sourceData) + i;
+            DestType *dst = ANGLE_UNSAFE_TODO(reinterpret_cast<DestType *>(destData) + i);
+            const SourceType *src =
+                ANGLE_UNSAFE_TODO(reinterpret_cast<const SourceType *>(sourceData) + i);
             *dst                  = static_cast<DestType>(*src);
         }
     }
@@ -103,8 +101,8 @@ CopyIndexFunction GetCopyIndexFunction(gl::DrawElementsType sourceType,
         },
     };
 
-    CopyIndexFunction copyFunction =
-        copyFunctions[static_cast<size_t>(sourceType)][static_cast<size_t>(destType)];
+    CopyIndexFunction copyFunction = ANGLE_UNSAFE_TODO(
+        copyFunctions[static_cast<size_t>(sourceType)][static_cast<size_t>(destType)]);
     ASSERT(copyFunction != nullptr);
     return copyFunction;
 }
@@ -364,7 +362,8 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             ANGLE_TRY(srcBuffer.readDataImmediate(
                 contextWgpu, 0, reinterpret_cast<uintptr_t>(attrib.pointer) + sourceVertexDataSize,
                 webgpu::RenderPassClosureReason::IndexRangeReadback, &readbackBuffer));
-            inputPointer = readbackBuffer.data + reinterpret_cast<uintptr_t>(attrib.pointer);
+            inputPointer = ANGLE_UNSAFE_TODO(readbackBuffer.data +
+                                             reinterpret_cast<uintptr_t>(attrib.pointer));
         }
 
         const webgpu::Format &vertexFormat =
@@ -374,8 +373,9 @@ angle::Result VertexArrayWgpu::syncClientArrays(
         VertexCopyFunction copyFunction = vertexFormat.getVertexLoadFunction();
         ASSERT(copyFunction != nullptr);
         ASSERT(stagingData != nullptr);
-        copyFunction(inputPointer + (sourceStride * firstIndex), sourceStride, streamedVertexCount,
-                     stagingData + currentStagingDataPosition);
+        copyFunction(ANGLE_UNSAFE_TODO(inputPointer + (sourceStride * firstIndex)), sourceStride,
+                     streamedVertexCount,
+                     ANGLE_UNSAFE_TODO(stagingData + currentStagingDataPosition));
 
         size_t copySize = rx::roundUpPow2(streamedVertexCount * destTypeSize,
                                           webgpu::kBufferCopyToBufferAlignment);
@@ -450,7 +450,8 @@ angle::Result VertexArrayWgpu::syncDirtyAttrib(ContextWgpu *contextWgpu,
     }
     else
     {
-        memset(&mCurrentAttribs[attribIndex], 0, sizeof(webgpu::PackedVertexAttribute));
+        ANGLE_UNSAFE_TODO(
+            memset(&mCurrentAttribs[attribIndex], 0, sizeof(webgpu::PackedVertexAttribute)));
         mCurrentArrayBuffers[attribIndex].buffer = nullptr;
         mCurrentArrayBuffers[attribIndex].offset = 0;
     }
@@ -718,11 +719,12 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
         for (uint32_t i = 0; i < clampedVertexCount; i++)
         {
             uint32_t copyData = startVertex + i;
-            memcpy(stagingData + index, &copyData, destIndexUnitSize);
+            ANGLE_UNSAFE_TODO(memcpy(stagingData + index, &copyData, destIndexUnitSize));
             index += destIndexUnitSize;
         }
-        memcpy(stagingData + *currentStagingDataPositionOut + destIndexUnitSize * count,
-               &startVertex, destIndexUnitSize);
+        ANGLE_UNSAFE_TODO(
+            memcpy(stagingData + *currentStagingDataPositionOut + destIndexUnitSize * count,
+                   &startVertex, destIndexUnitSize));
 
         size_t copySize = destIndexBufferSize;
         stagingUploadsOut->push_back({*currentStagingDataPositionOut, stagingBufferPtr,
@@ -774,13 +776,14 @@ angle::Result VertexArrayWgpu::streamIndicesDefault(
     CopyIndexFunction indexCopyFunction =
         GetCopyIndexFunction(sourceDrawElementsTypeOrInvalid, destDrawElementsTypeOrInvalid);
     ASSERT(stagingData != nullptr);
-    indexCopyFunction(srcIndexData, count, stagingData + *currentStagingDataPositionOut);
+    indexCopyFunction(srcIndexData, count,
+                      ANGLE_UNSAFE_TODO(stagingData + *currentStagingDataPositionOut));
 
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        indexCopyFunction(
-            srcIndexData, count,
-            stagingData + *currentStagingDataPositionOut + (destIndexUnitSize * count));
+        indexCopyFunction(srcIndexData, count,
+                          ANGLE_UNSAFE_TODO(stagingData + *currentStagingDataPositionOut +
+                                            (destIndexUnitSize * count)));
     }
 
     size_t copySize = destIndexBufferSize;

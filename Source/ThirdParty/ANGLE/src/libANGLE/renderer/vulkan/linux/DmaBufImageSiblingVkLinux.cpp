@@ -6,11 +6,8 @@
 
 // DmaBufImageSiblingVkLinux.cpp: Implements DmaBufImageSiblingVkLinux.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/linux/DmaBufImageSiblingVkLinux.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/linux/dma_buf_utils.h"
 #include "common/system_utils.h"
@@ -139,8 +136,8 @@ bool GetFormatModifierProperties(DisplayVk *displayVk,
     uint32_t propertiesIndex = formatModifierPropertiesList.drmFormatModifierCount;
     for (uint32_t index = 0; index < formatModifierPropertiesList.drmFormatModifierCount; ++index)
     {
-        if (formatModifierPropertiesList.pDrmFormatModifierProperties[index].drmFormatModifier ==
-            drmModifier)
+        if (ANGLE_UNSAFE_TODO(formatModifierPropertiesList.pDrmFormatModifierProperties[index])
+                .drmFormatModifier == drmModifier)
         {
             propertiesIndex = index;
             break;
@@ -153,8 +150,8 @@ bool GetFormatModifierProperties(DisplayVk *displayVk,
         return false;
     }
 
-    *modifierPropertiesOut =
-        formatModifierPropertiesList.pDrmFormatModifierProperties[propertiesIndex];
+    *modifierPropertiesOut = ANGLE_UNSAFE_TODO(
+        formatModifierPropertiesList.pDrmFormatModifierProperties[propertiesIndex]);
     return true;
 }
 

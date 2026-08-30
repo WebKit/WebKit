@@ -584,7 +584,6 @@ TEST_P(BlobCacheInternalRejectionTest, ShaderCacheFunctional)
 }
 
 ANGLE_INSTANTIATE_TEST(BlobCacheTest,
-                       ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_OPENGL(),

@@ -7,10 +7,6 @@
 //   Implements the functions related to the backtrace info class for Android platforms.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "backtrace_utils.h"
 
 #include <dlfcn.h>

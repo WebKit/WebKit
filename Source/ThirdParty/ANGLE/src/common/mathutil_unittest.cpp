@@ -7,11 +7,8 @@
 //   Unit tests for the utils defined in mathutil.h
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "mathutil.h"
+#include "common/unsafe_buffers.h"
 
 #include <gtest/gtest.h>
 
@@ -32,9 +29,10 @@ TEST(MathUtilTest, packAndUnpackSnorm2x16)
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackSnorm2x16(packSnorm2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
-        EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance);
-        EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance);
+        unpackSnorm2x16(ANGLE_UNSAFE_TODO(packSnorm2x16(input[i][0], input[i][1])), &outputVal1,
+                        &outputVal2);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance));
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance));
     }
 }
 
@@ -76,10 +74,11 @@ TEST(MathUtilTest, packAndUnpackUnorm2x16)
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackUnorm2x16(packUnorm2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
-        float expected = input[i][0] < 0.0f ? 0.0f : input[i][0];
+        unpackUnorm2x16(ANGLE_UNSAFE_TODO(packUnorm2x16(input[i][0], input[i][1])), &outputVal1,
+                        &outputVal2);
+        float expected = ANGLE_UNSAFE_TODO(input[i][0] < 0.0f ? 0.0f : input[i][0]);
         EXPECT_NEAR(expected, outputVal1, floatFaultTolerance);
-        expected = input[i][1] < 0.0f ? 0.0f : input[i][1];
+        expected = ANGLE_UNSAFE_TODO(input[i][1] < 0.0f ? 0.0f : input[i][1]);
         EXPECT_NEAR(expected, outputVal2, floatFaultTolerance);
     }
 }
@@ -123,9 +122,10 @@ TEST(MathUtilTest, packAndUnpackHalf2x16)
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackHalf2x16(packHalf2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
-        EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance);
-        EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance);
+        unpackHalf2x16(ANGLE_UNSAFE_TODO(packHalf2x16(input[i][0], input[i][1])), &outputVal1,
+                       &outputVal2);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance));
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance));
     }
 }
 
@@ -144,12 +144,13 @@ TEST(MathUtilTest, packAndUnpackUnorm4x8)
 
     for (size_t i = 0; i < 5; i++)
     {
-        UnpackUnorm4x8(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
-                       outputVals);
+        UnpackUnorm4x8(
+            ANGLE_UNSAFE_TODO(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3])),
+            outputVals);
         for (size_t j = 0; j < 4; j++)
         {
-            float expected = input[i][j] < 0.0f ? 0.0f : input[i][j];
-            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
+            float expected = ANGLE_UNSAFE_TODO(input[i][j] < 0.0f ? 0.0f : input[i][j]);
+            ANGLE_UNSAFE_TODO(EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance));
         }
     }
 }
@@ -169,12 +170,13 @@ TEST(MathUtilTest, packAndUnpackSnorm4x8)
 
     for (size_t i = 0; i < 5; i++)
     {
-        UnpackSnorm4x8(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
-                       outputVals);
+        UnpackSnorm4x8(
+            ANGLE_UNSAFE_TODO(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3])),
+            outputVals);
         for (size_t j = 0; j < 4; j++)
         {
-            float expected = input[i][j];
-            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
+            float expected = ANGLE_UNSAFE_TODO(input[i][j]);
+            ANGLE_UNSAFE_TODO(EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance));
         }
     }
 }
@@ -593,7 +595,8 @@ TEST(MathUtilTest, convertRGBFloatsTo999E5)
 
     for (int i = 0; i < numTests; i++)
     {
-        EXPECT_EQ(convertRGBFloatsTo999E5(input[i][0], input[i][1], input[i][2]), result[i]);
+        ANGLE_UNSAFE_TODO(
+            EXPECT_EQ(convertRGBFloatsTo999E5(input[i][0], input[i][1], input[i][2]), result[i]));
     }
 }
 
@@ -636,10 +639,10 @@ TEST(MathUtilTest, convert999E5toRGBFloats)
 
     for (int i = 0; i < numTests; i++)
     {
-        convert999E5toRGBFloats(input[i], &outR, &outG, &outB);
-        EXPECT_NEAR(result[i][0], outR, floatFaultTolerance);
-        EXPECT_NEAR(result[i][1], outG, floatFaultTolerance);
-        EXPECT_NEAR(result[i][2], outB, floatFaultTolerance);
+        convert999E5toRGBFloats(ANGLE_UNSAFE_TODO(input[i]), &outR, &outG, &outB);
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][0], outR, floatFaultTolerance));
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][1], outG, floatFaultTolerance));
+        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][2], outB, floatFaultTolerance));
     }
 }
 

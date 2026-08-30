@@ -998,10 +998,6 @@ config("angle_backend_config") {
     configs += [ "src/libANGLE/renderer/d3d:angle_d3d11_backend_config" ]
   }
 
-  if (angle_enable_d3d9) {
-    configs += [ "src/libANGLE/renderer/d3d:angle_d3d9_backend_config" ]
-  }
-
   if (angle_enable_gl) {
     configs += [ "src/libANGLE/renderer/gl:angle_gl_backend_config" ]
   }
@@ -1089,7 +1085,7 @@ angle_source_set("libANGLE_headers") {
   public_configs += [ ":libANGLE_config" ]
 }
 
-if ((is_win && angle_enable_gl) || angle_enable_d3d11 || angle_enable_d3d9) {
+if ((is_win && angle_enable_gl) || angle_enable_d3d11) {
   angle_source_set("angle_d3d_format_tables") {
     sources = [
       "src/libANGLE/renderer/dxgi_format_map.h",
@@ -1097,13 +1093,6 @@ if ((is_win && angle_enable_gl) || angle_enable_d3d11 || angle_enable_d3d9) {
       "src/libANGLE/renderer/dxgi_support_table.h",
       "src/libANGLE/renderer/dxgi_support_table_autogen.cpp",
     ]
-
-    if (!angle_is_winuwp) {
-      sources += [
-        "src/libANGLE/renderer/d3d_format.cpp",
-        "src/libANGLE/renderer/d3d_format.h",
-      ]
-    }
 
     public_deps = [ ":libANGLE_headers" ]
     configs += [ ":angle_backend_config" ]
@@ -1147,10 +1136,6 @@ angle_source_set("libANGLE_no_vulkan") {
 
   if (angle_enable_d3d11) {
     public_deps += [ "src/libANGLE/renderer/d3d:angle_d3d11_backend" ]
-  }
-
-  if (angle_enable_d3d9) {
-    public_deps += [ "src/libANGLE/renderer/d3d:angle_d3d9_backend" ]
   }
 
   if (angle_enable_gl) {

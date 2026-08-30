@@ -6,11 +6,8 @@
 
 // BufferD3D.cpp Defines common functionality between the Buffer9 and Buffer11 classes.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/BufferD3D.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/mathutil.h"
 #include "common/utilities.h"
@@ -192,7 +189,8 @@ angle::Result BufferD3D::getIndexRange(const gl::Context *context,
     const uint8_t *data = nullptr;
     ANGLE_TRY(getData(context, &data));
 
-    *outRange = gl::ComputeIndexRange(type, data + offset, count, primitiveRestartEnabled);
+    *outRange = gl::ComputeIndexRange(type, ANGLE_UNSAFE_TODO(data + offset), count,
+                                      primitiveRestartEnabled);
     return angle::Result::Continue;
 }
 

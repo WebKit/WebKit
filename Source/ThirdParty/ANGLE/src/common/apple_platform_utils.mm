@@ -4,14 +4,11 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "common/apple_platform_utils.h"
 
 #include "common/debug.h"
 #include "common/system_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
@@ -170,13 +167,13 @@ bool ParseMacMachineModel(const std::string &identifier,
     const char *commaPtr  = &identifier[commaLoc + 1];
     char *endPtr          = nullptr;
 
-    int32_t majorTmp = static_cast<int32_t>(std::strtol(numberPtr, &endPtr, 10));
+    int32_t majorTmp = static_cast<int32_t>(ANGLE_UNSAFE_TODO(std::strtol(numberPtr, &endPtr, 10)));
     if (endPtr == numberPtr)
     {
         return false;
     }
 
-    int32_t minorTmp = static_cast<int32_t>(std::strtol(commaPtr, &endPtr, 10));
+    int32_t minorTmp = static_cast<int32_t>(ANGLE_UNSAFE_TODO(std::strtol(commaPtr, &endPtr, 10)));
     if (endPtr == commaPtr)
     {
         return false;

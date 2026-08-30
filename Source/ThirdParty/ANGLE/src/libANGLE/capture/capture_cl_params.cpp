@@ -7,10 +7,7 @@
 //   Pointer parameter capture functions for the OpenCL entry points.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "libANGLE/CLImage.h"
 #include "libANGLE/capture/capture_cl_autogen.h"
 #include "libANGLE/cl_utils.h"
@@ -128,7 +125,7 @@ void CaptureCreateContext_properties(const cl_context_properties *properties,
     if (properties)
     {
         int propertiesSize = 1;
-        while (properties[propertiesSize - 1] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize - 1]) != 0)
         {
             ++propertiesSize;
         }
@@ -205,7 +202,7 @@ void CaptureCreateContextFromType_properties(const cl_context_properties *proper
     if (properties)
     {
         int propertiesSize = 0;
-        while (properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory(properties, propertiesSize * sizeof(cl_context_properties), paramCapture);
@@ -431,19 +428,21 @@ void CaptureCreateProgramWithSource_strings(cl_context context,
 {
     for (size_t i = 0; i < count; ++i)
     {
-        if (lengths && lengths[i])
+        if (lengths && ANGLE_UNSAFE_TODO(lengths[i]))
         {
             // Add a null terminator so it can be printed in the replay file.
             // It won't effect the function parameters.
-            char *tempCharList = new char[lengths[i] + 1];
-            std::memcpy(tempCharList, strings[i], lengths[i] * sizeof(char));
-            tempCharList[lengths[i] + 1] = '\0';
-            CaptureMemory(strings[i], (lengths[i] + 1) * sizeof(char), paramCapture);
+            char *tempCharList = new char[ANGLE_UNSAFE_TODO(lengths[i]) + 1];
+            ANGLE_UNSAFE_TODO(std::memcpy(tempCharList, strings[i], lengths[i] * sizeof(char)));
+            ANGLE_UNSAFE_TODO(tempCharList[lengths[i] + 1]) = '\0';
+            CaptureMemory(ANGLE_UNSAFE_TODO(strings[i]),
+                          (ANGLE_UNSAFE_TODO(lengths[i]) + 1) * sizeof(char), paramCapture);
             delete[] tempCharList;
         }
         else
         {
-            CaptureMemory(strings[i], (strlen(strings[i]) + 1) * sizeof(char), paramCapture);
+            CaptureMemory(ANGLE_UNSAFE_TODO(strings[i]),
+                          (strlen(ANGLE_UNSAFE_TODO(strings[i])) + 1) * sizeof(char), paramCapture);
         }
     }
 }
@@ -508,9 +507,10 @@ void CaptureCreateProgramWithBinary_binaries(cl_context context,
 {
     for (size_t i = 0; i < num_devices; ++i)
     {
-        if (lengths && lengths[i])
+        if (lengths && ANGLE_UNSAFE_TODO(lengths[i]))
         {
-            CaptureMemory(binaries[i], lengths[i] * sizeof(unsigned char), paramCapture);
+            CaptureMemory(ANGLE_UNSAFE_TODO(binaries[i]),
+                          ANGLE_UNSAFE_TODO(lengths[i]) * sizeof(unsigned char), paramCapture);
         }
     }
 }
@@ -677,7 +677,8 @@ void CaptureCreateKernelsInProgram_kernels(cl_program program,
             num_kernels_ret && *num_kernels_ret < num_kernels ? *num_kernels_ret : num_kernels;
         for (cl_uint i = 0; i < maxKernels; ++i)
         {
-            cl::Platform::GetDefault()->getFrameCaptureShared()->setIndex(&kernels[i]);
+            cl::Platform::GetDefault()->getFrameCaptureShared()->setIndex(
+                &ANGLE_UNSAFE_TODO(kernels[i]));
         }
         cl::Platform::GetDefault()->getFrameCaptureShared()->setCLObjVectorMap(
             kernels, maxKernels, paramCapture, &angle::FrameCaptureShared::getIndex);
@@ -1025,11 +1026,12 @@ void CaptureEnqueueReadImage_ptr(cl_command_queue command_queue,
         if (imageType == MemObjectType::Image3D || imageType == MemObjectType::Image2D_Array ||
             imageType == MemObjectType::Image1D_Array)
         {
-            computedSlicePitch = (slice_pitch != 0) ? slice_pitch : computedRowPitch * region[1];
+            computedSlicePitch =
+                (slice_pitch != 0) ? slice_pitch : computedRowPitch * ANGLE_UNSAFE_TODO(region[1]);
         }
-        paramCapture->readBufferSizeBytes = (region[2] - 1) * computedSlicePitch +
-                                            (region[1] - 1) * computedRowPitch +
-                                            region[0] * elementSize;
+        paramCapture->readBufferSizeBytes =
+            (ANGLE_UNSAFE_TODO(region[2]) - 1) * computedSlicePitch +
+            (ANGLE_UNSAFE_TODO(region[1]) - 1) * computedRowPitch + region[0] * elementSize;
     }
 }
 void CaptureEnqueueReadImage_event_wait_list(cl_command_queue command_queue,
@@ -1130,11 +1132,13 @@ void CaptureEnqueueWriteImage_ptr(cl_command_queue command_queue,
         if (imageType == MemObjectType::Image3D || imageType == MemObjectType::Image2D_Array ||
             imageType == MemObjectType::Image1D_Array)
         {
-            computedSlicePitch =
-                (input_slice_pitch != 0) ? input_slice_pitch : computedRowPitch * region[1];
+            computedSlicePitch = (input_slice_pitch != 0)
+                                     ? input_slice_pitch
+                                     : computedRowPitch * ANGLE_UNSAFE_TODO(region[1]);
         }
-        size_t totalSize = (region[2] - 1) * computedSlicePitch +
-                           (region[1] - 1) * computedRowPitch + region[0] * elementSize;
+        size_t totalSize = (ANGLE_UNSAFE_TODO(region[2]) - 1) * computedSlicePitch +
+                           (ANGLE_UNSAFE_TODO(region[1]) - 1) * computedRowPitch +
+                           region[0] * elementSize;
         CaptureMemory(ptr, totalSize, paramCapture);
     }
 }
@@ -2249,18 +2253,20 @@ void CaptureEnqueueReadBufferRect_ptr(cl_command_queue command_queue,
         // "If host_slice_pitch is 0, host_slice_pitch is computed as region[1] x host_row_pitch"
         size_t computed_host_row_pitch = host_row_pitch != 0 ? host_row_pitch : region[0];
         size_t computed_host_slice_pitch =
-            host_slice_pitch != 0 ? host_slice_pitch : computed_host_row_pitch * region[1];
+            host_slice_pitch != 0 ? host_slice_pitch
+                                  : computed_host_row_pitch * ANGLE_UNSAFE_TODO(region[1]);
 
         // According to docs, "The offset in bytes is computed as host_origin[2] x host_slice_pitch
         // + host_origin[1] x host_row_pitch + host_origin[0]"
-        size_t totalOffset = (host_origin[2] * computed_host_slice_pitch +
-                              host_origin[1] * computed_host_row_pitch + host_origin[0]);
+        size_t totalOffset =
+            (ANGLE_UNSAFE_TODO(host_origin[2]) * computed_host_slice_pitch +
+             ANGLE_UNSAFE_TODO(host_origin[1]) * computed_host_row_pitch + host_origin[0]);
 
         // Total size = (total offset in bytes) + (total size in bytes of desired memory including
         // padding)
-        paramCapture->readBufferSizeBytes = totalOffset +
-                                            (region[2] - 1) * computed_host_slice_pitch +
-                                            (region[1] - 1) * computed_host_row_pitch + region[0];
+        paramCapture->readBufferSizeBytes =
+            totalOffset + (ANGLE_UNSAFE_TODO(region[2]) - 1) * computed_host_slice_pitch +
+            (ANGLE_UNSAFE_TODO(region[1]) - 1) * computed_host_row_pitch + region[0];
     }
 }
 void CaptureEnqueueReadBufferRect_event_wait_list(cl_command_queue command_queue,
@@ -2393,17 +2399,20 @@ void CaptureEnqueueWriteBufferRect_ptr(cl_command_queue command_queue,
         // "If host_slice_pitch is 0, host_slice_pitch is computed as region[1] x host_row_pitch"
         size_t computed_host_row_pitch = host_row_pitch != 0 ? host_row_pitch : region[0];
         size_t computed_host_slice_pitch =
-            host_slice_pitch != 0 ? host_slice_pitch : computed_host_row_pitch * region[1];
+            host_slice_pitch != 0 ? host_slice_pitch
+                                  : computed_host_row_pitch * ANGLE_UNSAFE_TODO(region[1]);
 
         // According to docs, "The offset in bytes is computed as host_origin[2] x host_slice_pitch
         // + host_origin[1] x host_row_pitch + host_origin[0]"
-        size_t totalOffset = (host_origin[2] * computed_host_slice_pitch +
-                              host_origin[1] * computed_host_row_pitch + host_origin[0]);
+        size_t totalOffset =
+            (ANGLE_UNSAFE_TODO(host_origin[2]) * computed_host_slice_pitch +
+             ANGLE_UNSAFE_TODO(host_origin[1]) * computed_host_row_pitch + host_origin[0]);
 
         // total size = (total offset in bytes) + (total size in bytes of desired memory including
         // padding)
-        size_t totalSize = totalOffset + (region[2] - 1) * computed_host_slice_pitch +
-                           (region[1] - 1) * computed_host_row_pitch + region[0];
+        size_t totalSize = totalOffset +
+                           (ANGLE_UNSAFE_TODO(region[2]) - 1) * computed_host_slice_pitch +
+                           (ANGLE_UNSAFE_TODO(region[1]) - 1) * computed_host_row_pitch + region[0];
         CaptureMemory(ptr, totalSize, paramCapture);
     }
 }
@@ -2565,7 +2574,7 @@ void CaptureCreateSubDevices_properties(cl_device_id in_device,
     if (properties)
     {
         size_t propertiesSize = 0;
-        while (properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory(properties, sizeof(cl_device_partition_property) * propertiesSize,
@@ -2776,7 +2785,8 @@ void CaptureCompileProgram_header_include_names(cl_program program,
 {
     for (size_t i = 0; i < num_input_headers; ++i)
     {
-        CaptureMemory(header_include_names[i], (strlen(header_include_names[i]) + 1) * sizeof(char),
+        CaptureMemory(ANGLE_UNSAFE_TODO(header_include_names[i]),
+                      (strlen(ANGLE_UNSAFE_TODO(header_include_names[i])) + 1) * sizeof(char),
                       paramCapture);
     }
 }
@@ -3218,7 +3228,7 @@ void CaptureCreateCommandQueueWithProperties_properties(cl_context context,
     if (properties)
     {
         size_t propertiesSize = 0;
-        while (properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory((void *)properties, sizeof(cl_queue_properties) * propertiesSize,
@@ -3247,7 +3257,7 @@ void CaptureCreatePipe_properties(cl_context context,
     if (properties)
     {
         size_t propertiesSize = 0;
-        while (properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory((void *)properties, sizeof(cl_pipe_properties) * propertiesSize,
@@ -3306,7 +3316,7 @@ void CaptureCreateSamplerWithProperties_sampler_properties(
     if (sampler_properties)
     {
         size_t propertiesSize = 0;
-        while (sampler_properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(sampler_properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory((void *)sampler_properties, sizeof(cl_sampler_properties) * propertiesSize,
@@ -3862,7 +3872,7 @@ void CaptureCreateBufferWithProperties_properties(cl_context context,
     if (properties)
     {
         size_t propertiesSize = 0;
-        while (properties[propertiesSize++] != 0)
+        while (ANGLE_UNSAFE_TODO(properties[propertiesSize++]) != 0)
         {
         }
         CaptureMemory(properties, propertiesSize, paramCapture);

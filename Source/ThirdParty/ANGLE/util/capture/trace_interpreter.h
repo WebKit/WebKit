@@ -10,11 +10,8 @@
 #ifndef ANGLE_TRACE_INTERPRETER_H_
 #define ANGLE_TRACE_INTERPRETER_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/frame_capture_utils.h"
+#include "common/unsafe_buffers.h"
 #include "frame_capture_test_utils.h"
 #include "traces_export.h"
 
@@ -262,7 +259,7 @@ struct ParameterPacker<Ret(Arg, Args...)>
     static void Pack(ParamBuffer &params, const Token *tokens, const TraceStringMap &strings)
     {
         PackParameter<Arg>(params, tokens[0], strings);
-        ParameterPacker<Ret(Args...)>::Pack(params, &tokens[1], strings);
+        ParameterPacker<Ret(Args...)>::Pack(params, &ANGLE_UNSAFE_TODO(tokens[1]), strings);
     }
 };
 

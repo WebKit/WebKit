@@ -10,12 +10,9 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SUBALLOCATION_H_
 #define LIBANGLE_RENDERER_VULKAN_SUBALLOCATION_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/SimpleMutex.h"
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/serial_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
@@ -430,7 +427,7 @@ ANGLE_INLINE bool BufferSuballocation::isMapped() const
 }
 ANGLE_INLINE uint8_t *BufferSuballocation::getMappedMemory() const
 {
-    return mBufferBlock->getMappedMemory() + getOffset();
+    return ANGLE_UNSAFE_TODO(mBufferBlock->getMappedMemory() + getOffset());
 }
 
 ANGLE_INLINE VkDeviceSize BufferSuballocation::getOffset() const
