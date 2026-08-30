@@ -131,7 +131,10 @@ private:
     MSG m_nativeEvent;
     Vector<MSG> m_pendingCharEvents;
 #else
-    explicit NativeWebKeyboardEvent(WebKeyboardEventInit&&);
+    explicit NativeWebKeyboardEvent(WebKeyboardEventInit&& init)
+        : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
+    {
+    }
 #endif
 };
 

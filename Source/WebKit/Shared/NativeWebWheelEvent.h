@@ -108,7 +108,10 @@ private:
 
     MSG m_nativeEvent;
 #else
-    explicit NativeWebWheelEvent(WebWheelEventInit&&);
+    explicit NativeWebWheelEvent(WebWheelEventInit&& init)
+        : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
+    {
+    }
 #endif
 };
 

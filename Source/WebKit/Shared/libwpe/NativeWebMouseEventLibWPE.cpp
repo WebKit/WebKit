@@ -39,11 +39,6 @@ Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(struct wpe_input_pointer_ev
     return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor, syntheticClickType)));
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(WebMouseEventInit&& init)
-    : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
-{
-}
-
 } // namespace WebKit
 
 #endif // USE(LIBWPE)

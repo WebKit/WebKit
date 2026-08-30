@@ -40,11 +40,6 @@ Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(struct wpe_input_axis_event
     return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor, phase, momentumPhase)));
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init)
-    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
-{
-}
-
 } // namespace WebKit
 
 #endif // USE(LIBWPE)

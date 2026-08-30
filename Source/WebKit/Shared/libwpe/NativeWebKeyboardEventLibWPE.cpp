@@ -39,11 +39,6 @@ Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(struct wpe_input_keyb
     return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, handledByInputMethod == HandledByInputMethod::Yes, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange))));
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init)
-    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
-{
-}
-
 } // namespace WebKit
 
 #endif // USE(LIBWPE)

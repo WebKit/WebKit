@@ -126,7 +126,10 @@ private:
 
     MSG m_nativeEvent;
 #else
-    explicit NativeWebMouseEvent(WebMouseEventInit&&);
+    explicit NativeWebMouseEvent(WebMouseEventInit&& init)
+        : WebMouseEvent(WTF::move(init.event), WTF::move(init.mouse))
+    {
+    }
 #endif
 };
 
