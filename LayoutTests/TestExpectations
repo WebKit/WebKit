@@ -4231,12 +4231,10 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-003.html 
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-030.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-034.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-035.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-036.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-037.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-038.html [ ImageOnlyFailure ]
@@ -4305,7 +4303,6 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-05
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-051.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-052.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-053.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-with-max-height.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-032.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-033.html [ ImageOnlyFailure ]
@@ -5461,7 +5458,6 @@ webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-shape-block
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-shape-underscore-001.html [ ImageOnlyFailure ]
 
 # text-overflow failures
-imported/w3c/web-platform-tests/css/css-overflow/text-overflow-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ruby.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-028.html [ ImageOnlyFailure ]
