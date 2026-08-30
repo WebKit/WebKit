@@ -184,6 +184,7 @@ void enableMiniMode(bool forceMiniMode)
     // Speed up the scavenger.
     pas_scavenger_period_in_milliseconds = 5.;
     pas_scavenger_max_epoch_delta = 5ll * 1000ll * 1000ll;
+    pas_scavenger_thread_local_cache_decommit_tick_bit = 12;
 
     // Do eager scavenging anytime pages are allocated or committed.
     pas_physical_page_sharing_pool_balancing_enabled = true;
