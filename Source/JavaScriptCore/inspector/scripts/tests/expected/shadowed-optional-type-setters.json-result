@@ -153,8 +153,8 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <expected>
 #include <tuple>
-#include <wtf/Expected.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 

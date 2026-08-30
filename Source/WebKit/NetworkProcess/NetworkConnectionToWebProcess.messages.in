@@ -35,7 +35,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     BrowsingContextRemoved(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
     PrefetchDNS(String hostname)
-    SendH2Ping(URL url, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) -> (Expected<Seconds, WebCore::ResourceError> result)
+    SendH2Ping(URL url, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) -> (std::expected<Seconds, WebCore::ResourceError> result)
     PreconnectTo(struct WebKit::PreconnectRequest request);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
 
@@ -140,10 +140,10 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    NavigatorSubscribeToPushService(URL scopeURL, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
-    NavigatorUnsubscribeFromPushService(URL scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
-    NavigatorGetPushSubscription(URL scopeURL) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
-    NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
+    NavigatorSubscribeToPushService(URL scopeURL, Vector<uint8_t> applicationServerKey) -> (std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
+    NavigatorUnsubscribeFromPushService(URL scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (std::expected<bool, WebCore::ExceptionData> result)
+    NavigatorGetPushSubscription(URL scopeURL) -> (std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
+    NavigatorGetPushPermissionState(URL scopeURL) -> (std::expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
     [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(WebKit::WebTransportSessionIdentifier identifier, URL url, struct WebCore::WebTransportOptions options, Vector<KeyValuePair<String, String>> additionalHeaders, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin clientOrigin) -> (struct std::optional<WebCore::WebTransportConnectionInfo> connectionInfo)
@@ -151,7 +151,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 
-    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
+    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
 
     SetLoginStatus(WebCore::RegistrableDomain domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus> lastAuthentication) -> ()
     IsLoggedIn(WebCore::RegistrableDomain domain) -> (bool result)

@@ -48,9 +48,9 @@ messages -> PlatformXRSystem {
     SubmitFrame()
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
-    RequestHitTestSource(PlatformXR::HitTestOptions hitTestOptions) -> (Expected<PlatformXR::HitTestSource, WebCore::ExceptionData> exceptionOrSource)
+    RequestHitTestSource(PlatformXR::HitTestOptions hitTestOptions) -> (std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData> exceptionOrSource)
     DeleteHitTestSource(PlatformXR::HitTestSource source)
-    RequestTransientInputHitTestSource(PlatformXR::TransientInputHitTestOptions hitTestOptions) -> (Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData> exceptionOrSource)
+    RequestTransientInputHitTestSource(PlatformXR::TransientInputHitTestOptions hitTestOptions) -> (std::expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData> exceptionOrSource)
     DeleteTransientInputHitTestSource(PlatformXR::TransientInputHitTestSource source)
 #endif
     DidCompleteShutdownTriggeredBySystem()

@@ -78,7 +78,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         header_includes = [
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name(), True)),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h", True)),
-            (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/Expected.h")),
+            (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("std", "expected")),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/text/MakeString.h")),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/text/WTFString.h")),
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("std", "tuple")),

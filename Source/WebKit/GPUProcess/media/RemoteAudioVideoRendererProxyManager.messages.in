@@ -37,14 +37,14 @@ messages -> RemoteAudioVideoRendererProxyManager {
     SetPreferences(WebKit::RemoteAudioVideoRendererIdentifier identifier, OptionSet<WebCore::VideoRendererPreference> preferences)
     SetHasProtectedVideoContent(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool isProtected)
 
-    AddTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, enum:uint8_t WebCore::TrackInfoTrackType type) -> (Expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result) Synchronous
+    AddTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, enum:uint8_t WebCore::TrackInfoTrackType type) -> (std::expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result) Synchronous
     RemoveTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 
     NewTrackInfoForTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, Ref<WebCore::TrackInfo> info);
     EnqueueSample(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock block, std::optional<MediaTime> upcomingMinimumTime) -> (bool readyForMoreData);
     RequestMediaDataWhenReady(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 
-    NotifyTimeReachedAndStall(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime time) -> (Expected<MediaTime, WebCore::PlatformMediaError> result)
+    NotifyTimeReachedAndStall(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime time) -> (std::expected<MediaTime, WebCore::PlatformMediaError> result)
     CancelTimeReachedAction(WebKit::RemoteAudioVideoRendererIdentifier identifier)
     PerformTaskAtTime(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime time)
 
@@ -58,7 +58,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     Pause(WebKit::RemoteAudioVideoRendererIdentifier identifier, std::optional<MonotonicTime> hostTime)
     SetRate(WebKit::RemoteAudioVideoRendererIdentifier identifier, double rate)
     Stall(WebKit::RemoteAudioVideoRendererIdentifier identifier)
-    PrepareToSeek(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime seekTime) -> (Expected<MediaTime, WebCore::PlatformMediaError> result)
+    PrepareToSeek(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime seekTime) -> (std::expected<MediaTime, WebCore::PlatformMediaError> result)
     FinishSeek(WebKit::RemoteAudioVideoRendererIdentifier identifier, MediaTime seekTime) -> (GenericPromise::Result result)
     SetScreenReserved(WebKit::RemoteAudioVideoRendererIdentifier identifier, bool reserved)
 
@@ -102,7 +102,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     [EnabledBy=EncryptedMediaAPIEnabled] SetCDMInstance(WebKit::RemoteAudioVideoRendererIdentifier identifier, std::optional<WebKit::RemoteCDMInstanceIdentifier> instanceId)
-    [EnabledBy=EncryptedMediaAPIEnabled] SetInitData(WebKit::RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData) -> (Expected<void, WebCore::PlatformMediaError> result)
+    [EnabledBy=EncryptedMediaAPIEnabled] SetInitData(WebKit::RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData) -> (std::expected<void, WebCore::PlatformMediaError> result)
     [EnabledBy=EncryptedMediaAPIEnabled] AttemptToDecrypt(WebKit::RemoteAudioVideoRendererIdentifier identifier)
 #endif
 

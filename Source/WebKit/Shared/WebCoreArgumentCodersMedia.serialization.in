@@ -997,7 +997,7 @@ header: <WebCore/SourceBufferPrivateClient.h>
     uint64_t numMediaSamples;
 };
 
-using WebCore::SourceBufferPrivate::SamplesPromise::Result = Expected<Vector<String>, WebCore::PlatformMediaError>
+using WebCore::SourceBufferPrivate::SamplesPromise::Result = std::expected<Vector<String>, WebCore::PlatformMediaError>
 
 header: <WebCore/MediaSourceConfiguration.h>
 struct WebCore::MediaSourceConfiguration {

@@ -27,17 +27,17 @@
     DispatchedTo=WebContent
 ]
 messages -> WebInspectorUIExtensionController {
-    RegisterExtension(String extensionID, String extensionBundleIdentifier, String displayName) -> (Expected<void, Inspector::ExtensionError> result)
-    UnregisterExtension(String extensionID) -> (Expected<void, Inspector::ExtensionError> result)
+    RegisterExtension(String extensionID, String extensionBundleIdentifier, String displayName) -> (std::expected<void, Inspector::ExtensionError> result)
+    UnregisterExtension(String extensionID) -> (std::expected<void, Inspector::ExtensionError> result)
 
-    CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, Inspector::ExtensionError> result)
-    EvaluateScriptForExtension(String extensionID, String scriptSource, std::optional<URL> frameURL, std::optional<URL> contextSecurityOrigin, std::optional<bool> useContentScriptContext) -> (Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result, enum:uint8_t std::optional<Inspector::ExtensionError> error)
+    CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (std::expected<String, Inspector::ExtensionError> result)
+    EvaluateScriptForExtension(String extensionID, String scriptSource, std::optional<URL> frameURL, std::optional<URL> contextSecurityOrigin, std::optional<bool> useContentScriptContext) -> (std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result, enum:uint8_t std::optional<Inspector::ExtensionError> error)
     ReloadForExtension(String extensionID, std::optional<bool> ignoreCache, std::optional<String> userAgent, std::optional<String> injectedScript) -> (enum:uint8_t std::optional<Inspector::ExtensionError> error)
-    ShowExtensionTab(String extensionTabIdentifier) -> (Expected<void, Inspector::ExtensionError> result)
+    ShowExtensionTab(String extensionTabIdentifier) -> (std::expected<void, Inspector::ExtensionError> result)
     NavigateTabForExtension(String extensionTabIdentifier, URL sourceURL) -> (enum:uint8_t std::optional<Inspector::ExtensionError> error)
     
     // For testing.
-    EvaluateScriptInExtensionTab(String extensionTabID, String scriptSource) -> (Expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result, enum:uint8_t std::optional<Inspector::ExtensionError> error)
+    EvaluateScriptInExtensionTab(String extensionTabID, String scriptSource) -> (std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result, enum:uint8_t std::optional<Inspector::ExtensionError> error)
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

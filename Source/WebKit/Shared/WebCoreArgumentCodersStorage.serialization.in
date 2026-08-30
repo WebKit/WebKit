@@ -274,15 +274,15 @@ enum class WebCore::DOMCacheEngine::Error : uint8_t {
 
 using WebCore::IDBConnectionIdentifier = WebCore::ProcessIdentifier;
 
-using WebCore::DOMCacheEngine::CacheInfosOrError = Expected<WebCore::DOMCacheEngine::CacheInfos, WebCore::DOMCacheEngine::Error>;
+using WebCore::DOMCacheEngine::CacheInfosOrError = std::expected<WebCore::DOMCacheEngine::CacheInfos, WebCore::DOMCacheEngine::Error>;
 
-using WebCore::DOMCacheEngine::CacheIdentifierOrError = Expected<WebCore::DOMCacheEngine::CacheIdentifierOperationResult, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::CacheIdentifierOrError = std::expected<WebCore::DOMCacheEngine::CacheIdentifierOperationResult, WebCore::DOMCacheEngine::Error>
 
-using WebCore::DOMCacheEngine::RecordIdentifiersOrError = Expected<Vector<uint64_t>, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::RecordIdentifiersOrError = std::expected<Vector<uint64_t>, WebCore::DOMCacheEngine::Error>
 
-using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = std::expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
 
-using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = std::expected<bool, WebCore::DOMCacheEngine::Error>
 
 using WebCore::IDBKeyPath = Variant<String, Vector<String>>;
 

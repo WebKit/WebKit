@@ -46,7 +46,7 @@
     
     function extractTypesFromContainers(inputSet) {
         let containerTypes = [
-            "Expected",
+            "std::expected",
             "HashMap",
             "MemoryCompactRobinHoodHashMap",
             "MemoryCompactLookupOnlyRobinHoodHashSet",
@@ -169,7 +169,7 @@
         // Note: This set should only be shrinking. If you need to add to this set to fix the test,
         // add IPC metadata in a *.serialization.in file instead.
         let result = [
-            "GenericPromise::Result", // Added to hide the implementation details that simulate an Expected<void, void>
+            "GenericPromise::Result", // Added to hide the implementation details that simulate an std::expected<void, void>
         ];
         if (window.testRunner) {
             if (!testRunner.isIOSFamily) {

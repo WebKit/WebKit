@@ -80,7 +80,7 @@ OPAQUE_CONTAINERS = {
 #     - True: Simple wrappers (std::optional, RetainPtr) - preserve parent opaque context
 #              Example: Vector<std::optional<uint8_t>> is opaque because Vector creates
 #              opaque context and std::optional preserves it to uint8_t
-#     - False: Structural containers (std::pair, Variant, Expected) - reset opaque context
+#     - False: Structural containers (std::pair, Variant, std::expected) - reset opaque context
 #              Example: std::pair<uint8_t, String> is NOT opaque because std::pair resets
 #              context, so uint8_t is checked outside of opaque container context
 #
@@ -89,7 +89,7 @@ TRANSPARENT_CONTAINERS = {
     "std::optional": {"check_params": "first", "propagate_context": True},
     "RetainPtr": {"check_params": "first", "propagate_context": True},
 
-    "Expected": {"check_params": "selective", "selective_indices": [0], "propagate_context": False},
+    "std::expected": {"check_params": "selective", "selective_indices": [0], "propagate_context": False},
     "Variant": {"check_params": "all", "propagate_context": False},
 
     "std::pair": {"check_params": "all", "propagate_context": False},
@@ -250,7 +250,7 @@ def _contains_opaque_data(type_str, visited=None, from_opaque_container=False):
         return None
 
     # Get which parameters to check based on container type
-    # E.g., HashMap<K,V> checks both K and V, Expected<T,E> only checks T
+    # E.g., HashMap<K,V> checks both K and V, std::expected<T,E> only checks T
     params_to_check = _get_parameters_to_check(container_name, parameters)
 
     # Determine opaque context for checking child parameters
@@ -631,7 +631,7 @@ if __name__ == '__main__':
             self.assertEqual(_contains_opaque_data("Variant<Vector<uint8_t>, String>"), "uint8_t")
 
             # Test transparent containers without opaque content
-            self.assertIsNone(_contains_opaque_data("Expected<uint8_t, String>"))
+            self.assertIsNone(_contains_opaque_data("std::expected<uint8_t, String>"))
             self.assertIsNone(_contains_opaque_data("Variant<uint8_t, String>"))
             self.assertIsNone(_contains_opaque_data("std::pair<uint8_t, String>"))
             self.assertIsNone(_contains_opaque_data("std::optional<uint8_t>"))
@@ -659,7 +659,7 @@ if __name__ == '__main__':
             self.assertTrue(is_opaque_type("RetainPtr<CFDataRef>"))
             self.assertTrue(is_opaque_type("RetainPtr<NSData>"))
             self.assertTrue(is_opaque_type("std::optional<Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("Expected<Vector<uint8_t>, String>"))
+            self.assertTrue(is_opaque_type("std::expected<Vector<uint8_t>, String>"))
             self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, String>"))
             self.assertTrue(is_opaque_type("std::pair<Vector<uint8_t>, String>"))
             self.assertTrue(is_opaque_type("std::pair<String, Vector<uint8_t>>"))
@@ -671,7 +671,7 @@ if __name__ == '__main__':
             self.assertTrue(is_opaque_type("KeyValuePair<Vector<uint8_t>, String>"))
             self.assertTrue(is_opaque_type("Vector<HashMap<String, std::pair<Vector<uint8_t>, int>>>"))
             self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>"))
-            self.assertTrue(is_opaque_type("Expected<std::pair<Vector<uint8_t>, String>, String>"))
+            self.assertTrue(is_opaque_type("std::expected<std::pair<Vector<uint8_t>, String>, String>"))
             self.assertTrue(is_opaque_type("Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>"))
             self.assertTrue(is_opaque_type("std::optional<Vector<std::pair<Vector<uint8_t>, String>>>"))
             self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>"))
@@ -683,9 +683,9 @@ if __name__ == '__main__':
             self.assertFalse(is_opaque_type("Vector<String>"))
             self.assertFalse(is_opaque_type("std::optional<String>"))
             self.assertFalse(is_opaque_type("std::optional<uint8_t>"))
-            self.assertFalse(is_opaque_type("Expected<uint8_t, String>"))
-            self.assertFalse(is_opaque_type("Expected<String, uint8_t>"))
-            self.assertFalse(is_opaque_type("Expected<String, int>"))
+            self.assertFalse(is_opaque_type("std::expected<uint8_t, String>"))
+            self.assertFalse(is_opaque_type("std::expected<String, uint8_t>"))
+            self.assertFalse(is_opaque_type("std::expected<String, int>"))
             self.assertFalse(is_opaque_type("Variant<uint8_t, int>"))
             self.assertFalse(is_opaque_type("Variant<String, int>"))
             self.assertFalse(is_opaque_type("std::pair<uint8_t, String>"))

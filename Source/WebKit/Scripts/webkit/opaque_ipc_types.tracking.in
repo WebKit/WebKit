@@ -119,8 +119,8 @@
 [Legacy] AliasParam WebKit::SharedVideoFrame::Buffer Variant<std::nullptr_t, WebKit::RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>
 
 # [UnsafeWrapper] in single line format as they are all unique types
-[Legacy] MessageParamReply WebPageProxy.ModelElementSizeDidChange result Expected<MachSendRight, WebCore::ResourceError>
-[Legacy] MessageParamReply UserMediaCaptureManagerProxy.TakePhoto result Expected<std::pair<Vector<uint8_t>, String>, String>
+[Legacy] MessageParamReply WebPageProxy.ModelElementSizeDidChange result std::expected<MachSendRight, WebCore::ResourceError>
+[Legacy] MessageParamReply UserMediaCaptureManagerProxy.TakePhoto result std::expected<std::pair<Vector<uint8_t>, String>, String>
 [Legacy] MessageParam NetworkProcess.SetProxyConfigData proxyConfigurations Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>
 [Legacy] StructureParam WebKit::HTTPBody::Element.data Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>
 [Legacy] StructureParam WebCore::SerializedPlatformDataCueValue::Data.value Variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>>

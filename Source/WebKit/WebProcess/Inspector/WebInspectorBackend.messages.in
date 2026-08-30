@@ -73,17 +73,17 @@ messages -> WebInspectorBackend {
 
     # Reply: value = success; unexpected with a non-empty error = real failure; unexpected with an
     # empty error = connection loss (AsyncReplyError), which ProxyingNetworkAgent fails explicitly.
-    GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<std::pair<String, bool>, String> result) Async
+    GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (std::expected<std::pair<String, bool>, String> result) Async
 
     # Serialize the resource's response certificate for Network.getSerializedCertificate. Same
     # Expected error convention as GetResponseBody (empty errorString on the unexpected means
     # connection loss); only the success payload differs -- here a single certificate String.
-    GetSerializedCertificate(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<String, String> result) Async
+    GetSerializedCertificate(WebCore::ResourceLoaderIdentifier resourceID) -> (std::expected<String, String> result) Async
 
     # Network.loadResource: load a URL in the given frame's document context on behalf of the inspector,
     # without cross-origin checks. Reply is {content, mimeType, status}, or an unexpected error string
     # (same empty-string == connection-loss convention as GetResponseBody above).
-    LoadResource(WebCore::FrameIdentifier frameID, String url) -> (Expected<std::tuple<String, String, int>, String> result) Async
+    LoadResource(WebCore::FrameIdentifier frameID, String url) -> (std::expected<std::tuple<String, String, int>, String> result) Async
 
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
     SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
