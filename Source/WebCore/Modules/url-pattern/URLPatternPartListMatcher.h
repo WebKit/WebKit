@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ServiceWorkerRoute.h"
+#pragma once
 
-#import <pal/system/cocoa/RegexHelper.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+namespace URLPatternUtilities {
 
-bool isRegexpMatching(const String& pattern, StringView value, bool shouldIgnoreCase)
-{
-    return [WebPALRegexHelper matchPattern:pattern.createNSString().get() value:value.createNSString().get() shouldIgnoreCase:shouldIgnoreCase];
-}
+struct Part;
+struct URLPatternStringOptions;
 
-}
+// Matches a URL component against a parsed URLPattern part list without a regular-expression
+// engine.
+//
+// The part list must be free of Regexp parts (the regex-free codepath rejects those at compile
+// time). Case-insensitive matching is handled by case-folding the part-list literals up front (in
+// the constructor) and the input at match time.
+class URLPatternPartListMatcher {
+public:
+    URLPatternPartListMatcher(Vector<Part>&&, const URLPatternStringOptions&);
+    URLPatternPartListMatcher(URLPatternPartListMatcher&&);
+    URLPatternPartListMatcher& operator=(URLPatternPartListMatcher&&);
+    ~URLPatternPartListMatcher();
+
+    bool matches(StringView input) const;
+
+private:
+    Vector<Part> m_partList;
+    String m_delimiterCodepoint;
+    bool m_ignoreCase { false };
+};
+
+} // namespace URLPatternUtilities
+} // namespace WebCore

@@ -89,7 +89,9 @@ ExceptionOr<void> URLPatternParser::performParse(const URLPatternStringOptions& 
             nameToken = tryToConsumeToken(TokenType::Name);
             regexOrWildcardToken = tryToConsumeRegexOrWildcardToken(nameToken);
             String suffix = consumeText();
-            consumeRequiredToken(TokenType::Close);
+            auto maybeSyntaxError = consumeRequiredToken(TokenType::Close);
+            if (maybeSyntaxError.hasException())
+                return maybeSyntaxError.releaseException();
             auto modifierToken = tryToConsumeModifierToken();
 
             maybeFunctionException = addPart(WTF::move(prefix), nameToken, regexOrWildcardToken, WTF::move(suffix), modifierToken);

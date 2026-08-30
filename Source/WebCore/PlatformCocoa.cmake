@@ -565,8 +565,6 @@ list(APPEND WebCore_SOURCES
     testing/MockContentFilterManager.cpp
     testing/MockContentFilterSettings.cpp
     testing/MockParentalControlsURLFilter.mm
-
-    workers/service/ServiceWorkerRoute.mm
 )
 
 if (WEBKIT_SDK_IS_MACOS)

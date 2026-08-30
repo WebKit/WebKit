@@ -53,6 +53,7 @@ URLPatternComponent& URLPatternComponent::operator=(URLPatternComponent&& other)
         m_compiledPattern.emplace(WTF::move(*other.m_compiledPattern));
     else
         m_compiledPattern.reset();
+    m_partListMatcher = WTF::move(other.m_partListMatcher);
     m_groupNameList = WTF::move(other.m_groupNameList);
     m_hasRegexGroupsFromPartList = other.m_hasRegexGroupsFromPartList;
     return *this;
@@ -61,6 +62,14 @@ URLPatternComponent& URLPatternComponent::operator=(URLPatternComponent&& other)
 URLPatternComponent::URLPatternComponent(String&& patternString, std::optional<CompiledPattern>&& compiled, Vector<String>&& groupNameList, bool hasRegexpGroupsFromPartsList)
     : m_patternString(WTF::move(patternString))
     , m_compiledPattern(WTF::move(compiled))
+    , m_groupNameList(WTF::move(groupNameList))
+    , m_hasRegexGroupsFromPartList(hasRegexpGroupsFromPartsList)
+{
+}
+
+URLPatternComponent::URLPatternComponent(String&& patternString, std::optional<URLPatternPartListMatcher>&& partListMatcher, Vector<String>&& groupNameList, bool hasRegexpGroupsFromPartsList)
+    : m_patternString(WTF::move(patternString))
+    , m_partListMatcher(WTF::move(partListMatcher))
     , m_groupNameList(WTF::move(groupNameList))
     , m_hasRegexGroupsFromPartList(hasRegexpGroupsFromPartsList)
 {
@@ -103,11 +112,48 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(StringView input, 
     return URLPatternComponent { WTF::move(patternString), WTF::move(compiled), WTF::move(nameList), hasRegexGroups };
 }
 
+ExceptionOr<URLPatternComponent> URLPatternComponent::compileWithoutRegExp(StringView input, EncodingCallbackType type, const URLPatternStringOptions& options)
+{
+    auto maybePartList = URLPatternParser::parse(input, options, type);
+    if (maybePartList.hasException())
+        return maybePartList.releaseException();
+    Vector<Part> partList = maybePartList.releaseReturnValue();
+
+    bool hasRegexGroups = partList.containsIf([](auto& part) {
+        return part.type == PartType::Regexp;
+    });
+    if (hasRegexGroups)
+        return Exception { ExceptionCode::TypeError, "URLPattern contains a regular expression group, which is not supported without a regular-expression engine."_s };
+
+    Vector<String> nameList;
+    for (auto& part : partList) {
+        if (part.type != PartType::FixedText)
+            nameList.append(part.name);
+    }
+
+    String patternString = generatePatternString(partList, options);
+
+    URLPatternPartListMatcher partListMatcher { WTF::move(partList), options };
+
+    return URLPatternComponent { WTF::move(patternString), WTF::move(partListMatcher), WTF::move(nameList), hasRegexGroups };
+}
+
+bool URLPatternComponent::matchesWithoutRegExp(StringView input) const
+{
+    RELEASE_ASSERT(m_partListMatcher);
+    ASSERT(!m_hasRegexGroupsFromPartList);
+
+    return m_partListMatcher->matches(input);
+}
+
+static constexpr std::array specialSchemeList { "ftp"_s, "file"_s, "http"_s, "https"_s, "ws"_s, "wss"_s };
+
 // https://urlpattern.spec.whatwg.org/#protocol-component-matches-a-special-scheme
 bool URLPatternComponent::matchSpecialSchemeProtocol() const
 {
-    static constexpr std::array specialSchemeList { "ftp"_s, "file"_s, "http"_s, "https"_s, "ws"_s, "wss"_s };
-    return std::ranges::any_of(specialSchemeList, [this](const String& scheme) {
+    return std::ranges::any_of(specialSchemeList, [this](StringView scheme) {
+        if (m_partListMatcher)
+            return m_partListMatcher->matches(scheme);
         return componentExec(scheme).has_value();
     });
 }

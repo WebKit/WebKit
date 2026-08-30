@@ -836,15 +836,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-005.html [ Pass
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
-# Need regexp support in networking process for sw rules
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-main-resource.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-multiple-router-registrations.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-mutiple-conditions.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-no-fetch-handler.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-race-network-and-fetch-handler.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/static-router-subresource.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/tentative/static-router/static-router-resource-timing.https.html [ Failure ]
-
 # Needs rebasing and testing
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script-module.https.html [ Failure ]

@@ -1540,7 +1540,6 @@
 		4181C5CD2555836900AEB0FF /* LibWebRTCRtpTransformableFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 4181C5CC2555836800AEB0FF /* LibWebRTCRtpTransformableFrame.h */; };
 		4181C5D12555895600AEB0FF /* LibWebRTCRtpTransformBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 4181C5CF2555895600AEB0FF /* LibWebRTCRtpTransformBackend.h */; };
 		418205471E53E98C00D62207 /* RTCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 418205451E53C8CD00D62207 /* RTCController.h */; };
-		41832D3A2F16461600103096 /* ServiceWorkerRoute.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C4FE9F2F0C253200AF90B8 /* ServiceWorkerRoute.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		4184F5161EAF05A800F18BF0 /* OrientationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 4184F5151EAF059800F18BF0 /* OrientationNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41860F0D2847A49600E4A395 /* FetchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AF37881F8C1E7900111C31 /* FetchEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41860F0E2847A58B00E4A395 /* ExtendableEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AF378A1F8C1E7A00111C31 /* ExtendableEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3694,6 +3693,7 @@
 		903C7E222CC246DA00245C29 /* URLPatternTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 903C7E212CC246D400245C29 /* URLPatternTokenizer.h */; };
 		909963D02D123679008F4FA0 /* URLPatternConstructorStringParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 909963CF2D123679008F4FA0 /* URLPatternConstructorStringParser.h */; };
 		90E0A16F2CDEE2CF0074377B /* URLPatternComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E0A16E2CDEE2CF0074377B /* URLPatternComponent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		90ABCDEF2E00000100000C03 /* URLPatternPartListMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 90ABCDEF2E00000100000C02 /* URLPatternPartListMatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		90E1B6D22CB9A7E300CADF80 /* URLPatternCanonical.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E1B6CF2CB9A7E300CADF80 /* URLPatternCanonical.h */; };
 		90E351C2247E46E400FBF24F /* IDBDatabaseNameAndVersionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E351BD247E3D4800FBF24F /* IDBDatabaseNameAndVersionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9109E9C8222CABCA00BB6264 /* InspectorAuditResourcesObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9109E9C5222CABC800BB6264 /* InspectorAuditResourcesObject.h */; };
@@ -11585,7 +11585,6 @@
 		41C3B89E2649B1B7004ED4DE /* AudioMediaStreamTrackRendererInternalUnit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRendererInternalUnit.cpp; sourceTree = "<group>"; };
 		41C3B89F2649B1B7004ED4DE /* AudioMediaStreamTrackRendererInternalUnit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererInternalUnit.h; sourceTree = "<group>"; };
 		41C3B8A02649B1B7004ED4DE /* AudioMediaStreamTrackRendererUnit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRendererUnit.cpp; sourceTree = "<group>"; };
-		41C4FE9F2F0C253200AF90B8 /* ServiceWorkerRoute.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerRoute.mm; sourceTree = "<group>"; };
 		41C6B69C2E20E6BE009E1D19 /* LibWebRTCRefWrappers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRefWrappers.h; path = libwebrtc/LibWebRTCRefWrappers.h; sourceTree = "<group>"; };
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
@@ -16208,6 +16207,8 @@
 		909963CF2D123679008F4FA0 /* URLPatternConstructorStringParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLPatternConstructorStringParser.h; sourceTree = "<group>"; };
 		90E0A16D2CDEE2BD0074377B /* URLPatternComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLPatternComponent.cpp; sourceTree = "<group>"; };
 		90E0A16E2CDEE2CF0074377B /* URLPatternComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLPatternComponent.h; sourceTree = "<group>"; };
+		90ABCDEF2E00000100000C01 /* URLPatternPartListMatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLPatternPartListMatcher.cpp; sourceTree = "<group>"; };
+		90ABCDEF2E00000100000C02 /* URLPatternPartListMatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLPatternPartListMatcher.h; sourceTree = "<group>"; };
 		90E1B6CF2CB9A7E300CADF80 /* URLPatternCanonical.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = URLPatternCanonical.h; sourceTree = "<group>"; };
 		90E1B6D02CB9A7E300CADF80 /* URLPatternCanonical.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLPatternCanonical.cpp; sourceTree = "<group>"; };
 		90E351BC247E3D4800FBF24F /* IDBDatabaseNameAndVersionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseNameAndVersionRequest.cpp; sourceTree = "<group>"; };
@@ -29460,7 +29461,6 @@
 				51F1754A1F3EBC0C00C74950 /* ServiceWorkerRegistrationOptions.h */,
 				419B36162D50FB4600F11700 /* ServiceWorkerRoute.cpp */,
 				419B36152D50FB4600F11700 /* ServiceWorkerRoute.h */,
-				41C4FE9F2F0C253200AF90B8 /* ServiceWorkerRoute.mm */,
 				515E37F41FAA938800D7F22A /* ServiceWorkerTypes.h */,
 				51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */,
 				51F175461F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.idl */,
@@ -32951,6 +32951,8 @@
 				900C20802CAF8225002C79C5 /* URLPatternOptions.idl */,
 				9017C9FC2CD007E3002E1DBC /* URLPatternParser.cpp */,
 				9017C9FD2CD007F2002E1DBC /* URLPatternParser.h */,
+				90ABCDEF2E00000100000C01 /* URLPatternPartListMatcher.cpp */,
+				90ABCDEF2E00000100000C02 /* URLPatternPartListMatcher.h */,
 				900C20812CAF8225002C79C5 /* URLPatternResult.h */,
 				900C20822CAF8225002C79C5 /* URLPatternResult.idl */,
 				903C7E202CC246C300245C29 /* URLPatternTokenizer.cpp */,
@@ -49931,6 +49933,7 @@
 				900C20852CAF8237002C79C5 /* URLPatternInit.h in Headers */,
 				900C20862CAF823C002C79C5 /* URLPatternOptions.h in Headers */,
 				9017C9FE2CD007F2002E1DBC /* URLPatternParser.h in Headers */,
+				90ABCDEF2E00000100000C03 /* URLPatternPartListMatcher.h in Headers */,
 				900C20872CAF8243002C79C5 /* URLPatternResult.h in Headers */,
 				903C7E222CC246DA00245C29 /* URLPatternTokenizer.h in Headers */,
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
@@ -51220,7 +51223,6 @@
 				43B85ED418CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp in Sources */,
 				26AA0F9E18D2A18B00419381 /* SelectorPseudoElementMap.cpp in Sources */,
 				5CFC9C842B71AE1800F8D289 /* SerializedPlatformDataCueValue.mm in Sources */,
-				41832D3A2F16461600103096 /* ServiceWorkerRoute.mm in Sources */,
 				7CD58DFD1F9565A800112791 /* Settings.cpp in Sources */,
 				46C963C82B6CA1BC002F46D1 /* ShareableBitmapCG.mm in Sources */,
 				B6F201102EAC22B200BBF4AA /* ShareableSpatialImage.cpp in Sources */,

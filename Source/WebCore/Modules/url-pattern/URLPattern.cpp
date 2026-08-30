@@ -88,7 +88,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
             && init.hostname.isNull()
             && init.port.isNull()
             && init.username.isNull())
-            result.username = processBaseURLString(baseURL.user(), type);
+            result.username = processBaseURLString(baseURL.encodedUser(), type);
 
         if (type != BaseURLStringType::Pattern
             && init.protocol.isNull()
@@ -96,7 +96,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
             && init.port.isNull()
             && init.username.isNull()
             && init.password.isNull())
-            result.password = processBaseURLString(baseURL.password(), type);
+            result.password = processBaseURLString(baseURL.encodedPassword(), type);
 
         if (init.protocol.isNull()
             && init.hostname.isNull()) {
@@ -208,7 +208,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
 }
 
 // https://urlpattern.spec.whatwg.org/#url-pattern-create
-ExceptionOr<Ref<URLPattern>> URLPattern::create(URLPatternInput&& input, String&& baseURL, URLPatternOptions&& options)
+static ExceptionOr<URLPatternInit> processInitForCreate(URLPattern::URLPatternInput&& input, String&& baseURL)
 {
     URLPatternInit init;
 
@@ -255,9 +255,37 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(URLPatternInput&& input, String&
             processedInit.port = emptyString();
     }
 
+    return processedInit;
+}
+
+ExceptionOr<Ref<URLPattern>> URLPattern::create(URLPatternInput&& input, String&& baseURL, URLPatternOptions&& options)
+{
+    auto maybeProcessedInit = processInitForCreate(WTF::move(input), WTF::move(baseURL));
+    if (maybeProcessedInit.hasException())
+        return maybeProcessedInit.releaseException();
+
     Ref result = adoptRef(*new URLPattern(options.ignoreCase));
 
-    auto maybeCompileException = result->compileAllComponents(WTF::move(processedInit));
+    auto maybeCompileException = result->compileAllComponents(maybeProcessedInit.releaseReturnValue(), CompileMode::WithRegExp);
+    if (maybeCompileException.hasException())
+        return maybeCompileException.releaseException();
+
+    return result;
+}
+
+// Builds a pattern whose components are matched without a regular-expression engine
+// for callers such as the network process that must avoid running YARR on untrusted input.
+// The returned pattern only supports testWithoutRegExp()/hasRegExpGroups(); test()/exec() must
+// not be used on it. A pattern with regexp groups will return an Exception.
+ExceptionOr<Ref<URLPattern>> URLPattern::createWithoutRegExpSupport(URLPatternInput&& input, String&& baseURL, URLPatternOptions&& options)
+{
+    auto maybeProcessedInit = processInitForCreate(WTF::move(input), WTF::move(baseURL));
+    if (maybeProcessedInit.hasException())
+        return maybeProcessedInit.releaseException();
+
+    Ref result = adoptRef(*new URLPattern(options.ignoreCase));
+
+    auto maybeCompileException = result->compileAllComponents(maybeProcessedInit.releaseReturnValue(), CompileMode::WithoutRegExp);
     if (maybeCompileException.hasException())
         return maybeCompileException.releaseException();
 
@@ -306,49 +334,56 @@ ExceptionOr<std::optional<URLPatternResult>> URLPattern::exec(URLPatternInput&& 
     return match(WTF::move(input), WTF::move(baseURL));
 }
 
-ExceptionOr<void> URLPattern::compileAllComponents(URLPatternInit&& processedInit)
+ExceptionOr<void> URLPattern::compileAllComponents(URLPatternInit&& processedInit, CompileMode compileMode)
 {
-    auto maybeProtocolComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.protocol, EncodingCallbackType::Protocol, { });
+    auto compileComponent = [compileMode](StringView input, EncodingCallbackType type, const URLPatternUtilities::URLPatternStringOptions& options) {
+        return compileMode == CompileMode::WithoutRegExp
+            ? URLPatternUtilities::URLPatternComponent::compileWithoutRegExp(input, type, options)
+            : URLPatternUtilities::URLPatternComponent::compile(input, type, options);
+    };
+
+    auto maybeProtocolComponent = compileComponent(processedInit.protocol, EncodingCallbackType::Protocol, { });
     if (maybeProtocolComponent.hasException())
         return maybeProtocolComponent.releaseException();
     m_protocolComponent = maybeProtocolComponent.releaseReturnValue();
 
-    auto maybeUsernameComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.username, EncodingCallbackType::Username, { });
+    auto maybeUsernameComponent = compileComponent(processedInit.username, EncodingCallbackType::Username, { });
     if (maybeUsernameComponent.hasException())
         return maybeUsernameComponent.releaseException();
     m_usernameComponent = maybeUsernameComponent.releaseReturnValue();
 
-    auto maybePasswordComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.password, EncodingCallbackType::Password, { });
+    auto maybePasswordComponent = compileComponent(processedInit.password, EncodingCallbackType::Password, { });
     if (maybePasswordComponent.hasException())
         return maybePasswordComponent.releaseException();
     m_passwordComponent = maybePasswordComponent.releaseReturnValue();
 
     auto hostnameEncodingCallbackType = isHostnamePatternIPv6(processedInit.hostname) ? EncodingCallbackType::IPv6Host : EncodingCallbackType::Host;
-    auto maybeHostnameComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.hostname, hostnameEncodingCallbackType, { .delimiterCodepoint = "."_s });
+    auto maybeHostnameComponent = compileComponent(processedInit.hostname, hostnameEncodingCallbackType, { .delimiterCodepoint = "."_s });
     if (maybeHostnameComponent.hasException())
         return maybeHostnameComponent.releaseException();
     m_hostnameComponent = maybeHostnameComponent.releaseReturnValue();
 
-    auto maybePortComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.port, EncodingCallbackType::Port, { });
+    auto maybePortComponent = compileComponent(processedInit.port, EncodingCallbackType::Port, { });
     if (maybePortComponent.hasException())
         return maybePortComponent.releaseException();
     m_portComponent = maybePortComponent.releaseReturnValue();
 
     URLPatternUtilities::URLPatternStringOptions compileOptions { .ignoreCase = m_shouldIgnoreCase };
 
-    auto maybePathnameComponent = m_protocolComponent.matchSpecialSchemeProtocol()
-        ? URLPatternUtilities::URLPatternComponent::compile(processedInit.pathname, EncodingCallbackType::Path, { "/"_s, "/"_s, m_shouldIgnoreCase })
-        : URLPatternUtilities::URLPatternComponent::compile(processedInit.pathname, EncodingCallbackType::OpaquePath, compileOptions);
+    bool protocolMatchesSpecialScheme = m_protocolComponent.matchSpecialSchemeProtocol();
+    auto maybePathnameComponent = protocolMatchesSpecialScheme
+        ? compileComponent(processedInit.pathname, EncodingCallbackType::Path, { "/"_s, "/"_s, m_shouldIgnoreCase })
+        : compileComponent(processedInit.pathname, EncodingCallbackType::OpaquePath, compileOptions);
     if (maybePathnameComponent.hasException())
         return maybePathnameComponent.releaseException();
     m_pathnameComponent = maybePathnameComponent.releaseReturnValue();
 
-    auto maybeSearchComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.search, EncodingCallbackType::Search, compileOptions);
+    auto maybeSearchComponent = compileComponent(processedInit.search, EncodingCallbackType::Search, compileOptions);
     if (maybeSearchComponent.hasException())
         return maybeSearchComponent.releaseException();
     m_searchComponent = maybeSearchComponent.releaseReturnValue();
 
-    auto maybeHashComponent = URLPatternUtilities::URLPatternComponent::compile(processedInit.hash, EncodingCallbackType::Hash, compileOptions);
+    auto maybeHashComponent = compileComponent(processedInit.hash, EncodingCallbackType::Hash, compileOptions);
     if (maybeHashComponent.hasException())
         return maybeHashComponent.releaseException();
     m_hashComponent = maybeHashComponent.releaseReturnValue();
@@ -378,6 +413,21 @@ static inline void matchHelperAssignInputsFromInit(const URLPatternInit& input, 
     pathname = input.pathname;
     search = input.search;
     hash = input.hash;
+}
+
+bool URLPattern::testWithoutRegExp(const URL& url) const
+{
+    String protocol, username, password, hostname, port, pathname, search, hash;
+    matchHelperAssignInputsFromURL(url, protocol, username, password, hostname, port, pathname, search, hash);
+
+    return m_protocolComponent.matchesWithoutRegExp(protocol)
+        && m_usernameComponent.matchesWithoutRegExp(username)
+        && m_passwordComponent.matchesWithoutRegExp(password)
+        && m_hostnameComponent.matchesWithoutRegExp(hostname)
+        && m_portComponent.matchesWithoutRegExp(port)
+        && m_pathnameComponent.matchesWithoutRegExp(pathname)
+        && m_searchComponent.matchesWithoutRegExp(search)
+        && m_hashComponent.matchesWithoutRegExp(hash);
 }
 
 // https://urlpattern.spec.whatwg.org/#url-pattern-match

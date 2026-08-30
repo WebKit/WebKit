@@ -53,6 +53,9 @@ public:
     WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
     WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> create(URLPatternInput&&, URLPatternOptions&&);
 
+    WEBCORE_EXPORT static ExceptionOr<Ref<URLPattern>> createWithoutRegExpSupport(URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
+    WEBCORE_EXPORT bool testWithoutRegExp(const URL&) const;
+
     using Compatible = Variant<String, URLPatternInit, Ref<URLPattern>>;
     static ExceptionOr<Ref<URLPattern>> create(Compatible&&, const String&);
 
@@ -80,7 +83,8 @@ private:
     {
     }
 
-    ExceptionOr<void> compileAllComponents(URLPatternInit&&);
+    enum class CompileMode : bool { WithRegExp, WithoutRegExp };
+    ExceptionOr<void> compileAllComponents(URLPatternInit&&, CompileMode);
     ExceptionOr<std::optional<URLPatternResult>> match(Variant<URL, URLPatternInput>&&, String&& baseURLString) const;
 
     const bool m_shouldIgnoreCase;
