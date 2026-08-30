@@ -27,6 +27,7 @@
 #define WebKitWebView_h
 
 #include <@API_INCLUDE_PREFIX@/WebKitAuthenticationRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitApplicationManifest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitBackForwardList.h>
 #include <@API_INCLUDE_PREFIX@/WebKitColorChooserRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
@@ -616,6 +617,9 @@ webkit_web_view_get_favicon                          (WebKitWebView             
 #if ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitImageList *
 webkit_web_view_get_page_icons                       (WebKitWebView             *web_view);
+
+WEBKIT_API WebKitApplicationManifest *
+webkit_web_view_get_application_manifest             (WebKitWebView             *web_view);
 #endif
 
 WEBKIT_API const gchar *

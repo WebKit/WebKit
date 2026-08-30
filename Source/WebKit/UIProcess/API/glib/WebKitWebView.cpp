@@ -95,6 +95,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
@@ -132,6 +133,7 @@
 #endif
 
 #if ENABLE(2022_GLIB_API)
+#include "WebKitApplicationManifestPrivate.h"
 #include "WebKitImagePrivate.h"
 #include "WebKitNetworkSessionPrivate.h"
 #else
@@ -264,6 +266,7 @@ enum {
 
 #if ENABLE(2022_GLIB_API)
     PROP_PAGE_ICONS,
+    PROP_APPLICATION_MANIFEST,
 #endif
 
     N_PROPERTIES,
@@ -437,6 +440,8 @@ struct _WebKitWebViewPrivate {
 
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitImageList> pageIcons;
+    GRefPtr<WebKitApplicationManifest> applicationManifest;
+    GRefPtr<GCancellable> applicationManifestCancellable;
 #endif
 
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
@@ -1284,6 +1289,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_PAGE_ICONS:
         g_value_set_boxed(value, webkit_web_view_get_page_icons(webView));
         break;
+    case PROP_APPLICATION_MANIFEST:
+        g_value_set_object(value, webkit_web_view_get_application_manifest(webView));
+        break;
 #endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1293,6 +1301,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 static void webkitWebViewDispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+
+#if ENABLE(2022_GLIB_API)
+    if (auto* cancellable = webView->priv->applicationManifestCancellable.get())
+        g_cancellable_cancel(cancellable);
+#endif
 
 #if PLATFORM(GTK)
     webkitWebViewCancelFaviconRequest(webView);
@@ -1513,6 +1526,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr, nullptr,
         WEBKIT_TYPE_IMAGE_LIST,
         WEBKIT_PARAM_READABLE);
+
+    /**
+     * WebKitWebView:application-manifest: (getter get_application_manifest):
+     *
+     * The #WebKitApplicationManifest associated with the currently loaded page,
+     * or %NULL if the page does not have a valid manifest.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_APPLICATION_MANIFEST] =
+        g_param_spec_object(
+            "application-manifest",
+            nullptr, nullptr,
+            WEBKIT_TYPE_APPLICATION_MANIFEST,
+            WEBKIT_PARAM_READABLE);
 #endif
 
     /**
@@ -2722,6 +2750,15 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 #endif
         webkitWebViewCompleteAuthenticationRequest(webView);
         priv->mainResource = nullptr;
+#if ENABLE(2022_GLIB_API)
+        if (priv->applicationManifestCancellable)
+            g_cancellable_cancel(priv->applicationManifestCancellable.get());
+        priv->applicationManifestCancellable = adoptGRef(g_cancellable_new());
+        if (priv->applicationManifest) {
+            priv->applicationManifest = nullptr;
+            g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_APPLICATION_MANIFEST]);
+        }
+#endif
         webView->priv->isActiveURIChangeBlocked = false;
         break;
     case WEBKIT_LOAD_COMMITTED: {
@@ -2743,6 +2780,28 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
     }
     case WEBKIT_LOAD_FINISHED:
         webkitWebViewCompleteAuthenticationRequest(webView);
+#if ENABLE(2022_GLIB_API) && ENABLE(APPLICATION_MANIFEST)
+        {
+            if (!priv->applicationManifestCancellable)
+                priv->applicationManifestCancellable = adoptGRef(g_cancellable_new());
+            GRefPtr<GCancellable> cancellable = priv->applicationManifestCancellable;
+            getPage(webView).getApplicationManifest([weakWebView = GWeakPtr { webView }, cancellable = WTF::move(cancellable)](const std::optional<WebCore::ApplicationManifest>& coreManifest) {
+                if (g_cancellable_is_cancelled(cancellable.get()))
+                    return;
+
+                auto* webView = weakWebView.get();
+                if (!webView)
+                    return;
+
+                if (!coreManifest)
+                    return;
+
+                GRefPtr<WebKitApplicationManifest> manifest = adoptGRef(webkitApplicationManifestCreate(webView, *coreManifest));
+                webView->priv->applicationManifest = WTF::move(manifest);
+                g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_APPLICATION_MANIFEST]);
+            });
+        }
+#endif
         break;
     default:
         break;
@@ -6143,5 +6202,26 @@ WebKitImageList* webkit_web_view_get_page_icons(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     return webView->priv->pageIcons.get();
+}
+
+/**
+ * webkit_web_view_get_application_manifest: (get-property application-manifest):
+ * @web_view: a #WebKitWebView
+ *
+ * Get the application manifest associated with the currently loaded page.
+ *
+ * The manifest is updated after a main-frame load finishes. Listen for
+ * [signal@GObject.Object::notify] on [property@WebView:application-manifest]
+ * to be notified when it becomes available or changes.
+ *
+ * Returns: (transfer none) (nullable): the page [class@ApplicationManifest].
+ *
+ * Since: 2.56
+ */
+WebKitApplicationManifest* webkit_web_view_get_application_manifest(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    return webView->priv->applicationManifest.get();
 }
 #endif

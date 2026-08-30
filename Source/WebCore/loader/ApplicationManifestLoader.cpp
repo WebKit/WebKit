@@ -90,6 +90,7 @@ bool ApplicationManifestLoader::startLoading()
     options.destination = FetchOptions::Destination::Manifest;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     CachedResourceRequest request(WTF::move(resourceRequest), options);
+    request.updateForAccessControl(*frame->document());
 
     auto cachedResource = protect(frame->document()->cachedResourceLoader())->requestApplicationManifest(WTF::move(request));
     if (cachedResource)

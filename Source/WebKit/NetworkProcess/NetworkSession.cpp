@@ -32,6 +32,7 @@
 #include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
+#include "NetworkLoad.h"
 #include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -46,6 +47,7 @@
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerFetchTask.h"
+#include "WebErrors.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -54,8 +56,10 @@
 #include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SWServer.h>
+#include <WebCore/SharedBuffer.h>
 #include <numeric>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
@@ -84,8 +88,78 @@ using namespace WebCore;
 
 constexpr Seconds cachedNetworkResourceLoaderLifetime { 30_s };
 
+class ImageDecoderLoad final : public RefCounted<ImageDecoderLoad>, public NetworkLoadClient {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ImageDecoderLoad);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDecoderLoad);
+public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    static void create(NetworkSession& session, ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<FragmentedSharedBuffer>, ResourceError>&&)>&& completionHandler)
+    {
+        Ref load = adoptRef(*new ImageDecoderLoad(session, WTF::move(request), pageID, maximumBytesFromNetwork, WTF::move(completionHandler)));
+
+        // Keep the load alive until it completes.
+        load->m_selfReference = &load.get();
+        load->start();
+    }
+
+private:
+    ImageDecoderLoad(NetworkSession& session, ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<FragmentedSharedBuffer>, ResourceError>&&)>&& completionHandler)
+        : m_url(request.url())
+        , m_maximumBytesFromNetwork(maximumBytesFromNetwork)
+        , m_completionHandler(WTF::move(completionHandler))
+    {
+        NetworkLoadParameters parameters;
+        parameters.request = WTF::move(request);
+        parameters.webPageProxyID = pageID;
+        m_load = NetworkLoad::create(*this, WTF::move(parameters), session);
+    }
+
+    void start() { protect(m_load)->start(); }
+
+    bool isSynchronous() const final { return false; }
+    bool isAllowedToAskUserForCredentials() const final { return true; }
+    void didSendData(uint64_t, uint64_t) final { }
+    void willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTF::move(request)); }
+    void didReceiveResponse(ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&& completionHandler) final { completionHandler(PolicyAction::Use); }
+    void didReceiveBuffer(const FragmentedSharedBuffer& buffer) final
+    {
+        if (m_buffer.size() > m_maximumBytesFromNetwork || buffer.size() > m_maximumBytesFromNetwork - m_buffer.size()) {
+            Ref protectedThis { *this };
+            protect(m_load)->cancel();
+            complete(makeUnexpected(imageDataExceedsMaximumSizeError(m_url)));
+            return;
+        }
+        m_buffer.append(buffer);
+    }
+    void didFinishLoading(const NetworkLoadMetrics&) final { complete(m_buffer.takeBuffer()); }
+    void didFailLoading(const ResourceError& error) final { complete(makeUnexpected(error)); }
+
+    void complete(Expected<Ref<FragmentedSharedBuffer>, ResourceError>&& result)
+    {
+        if (!m_completionHandler)
+            return;
+        auto completionHandler = WTF::move(m_completionHandler);
+        completionHandler(WTF::move(result));
+        m_selfReference = nullptr;
+    }
+
+    RefPtr<ImageDecoderLoad> m_selfReference;
+    const URL m_url;
+    const size_t m_maximumBytesFromNetwork;
+    RefPtr<NetworkLoad> m_load;
+    CompletionHandler<void(Expected<Ref<FragmentedSharedBuffer>, ResourceError>&&)> m_completionHandler;
+    SharedBufferBuilder m_buffer;
+};
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSession);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSession::CachedNetworkResourceLoader);
+
+void NetworkSession::loadImageForDecoding(ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<FragmentedSharedBuffer>, ResourceError>&&)>&& completionHandler)
+{
+    ImageDecoderLoad::create(*this, WTF::move(request), pageID, maximumBytesFromNetwork, WTF::move(completionHandler));
+}
 
 std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
