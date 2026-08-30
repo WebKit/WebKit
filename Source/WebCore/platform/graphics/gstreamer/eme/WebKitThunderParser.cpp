@@ -135,6 +135,18 @@ static GstPadProbeReturn webkitMediaThunderParserSinkPadProbe(GstPad*, GstPadPro
     return GST_PAD_PROBE_OK;
 }
 
+// parsebin sorts autoplug candidates parsers-first (gst_playback_utils_compare_factories_func, private to
+// gst-plugins-base) so a parser is always plugged before a decoder. Sorting by rank alone lets a decoder
+// outrank its parser.
+static gint compareParserAndDecoderFactories(gconstpointer a, gconstpointer b)
+{
+    bool isParserA = gst_element_factory_list_is_type(static_cast<GstElementFactory*>(const_cast<gpointer>(a)), GST_ELEMENT_FACTORY_TYPE_PARSER);
+    bool isParserB = gst_element_factory_list_is_type(static_cast<GstElementFactory*>(const_cast<gpointer>(b)), GST_ELEMENT_FACTORY_TYPE_PARSER);
+    if (isParserA != isParserB)
+        return isParserA ? -1 : 1;
+    return gst_plugin_feature_rank_compare_func(a, b);
+}
+
 static void webkitMediaThunderParserConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_media_thunder_parser_parent_class)->constructed(object);
@@ -171,7 +183,7 @@ static void webkitMediaThunderParserConstructed(GObject* object)
         GValueArray* result;
 
         auto factories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODABLE, GST_RANK_MARGINAL);
-        factories = g_list_sort(factories, gst_plugin_feature_rank_compare_func);
+        factories = g_list_sort(factories, compareParserAndDecoderFactories);
         auto list = gst_element_factory_list_filter(factories, caps, GST_PAD_SINK, gst_caps_is_fixed(caps));
         result = g_value_array_new(g_list_length(list));
         for (GList* tmp = list; tmp; tmp = tmp->next) {
