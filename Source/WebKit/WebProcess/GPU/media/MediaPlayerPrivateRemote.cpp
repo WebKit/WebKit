@@ -646,6 +646,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
     m_cachedState.hasAvailableVideoFrame = state.hasAvailableVideoFrame;
+    m_cachedState.videoFrameHasAlpha = state.videoFrameHasAlpha;
     m_cachedState.wirelessVideoPlaybackDisabled = state.wirelessVideoPlaybackDisabled;
     m_cachedState.didPassCORSAccessCheck = state.didPassCORSAccessCheck;
     m_cachedState.documentIsCrossOrigin = state.documentIsCrossOrigin;
@@ -1220,6 +1221,11 @@ Ref<MediaPlayerPrivateRemote::BitmapImagePromise> MediaPlayerPrivateRemote::bitm
 bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
 {
     return m_cachedState.hasAvailableVideoFrame;
+}
+
+bool MediaPlayerPrivateRemote::videoFrameHasAlpha() const
+{
+    return m_cachedState.videoFrameHasAlpha;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

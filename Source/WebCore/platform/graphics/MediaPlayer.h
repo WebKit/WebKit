@@ -587,6 +587,7 @@ public:
     void repaint();
 
     bool hasAvailableVideoFrame() const;
+    bool videoFrameHasAlpha() const;
     void prepareForRendering();
 
     using MediaPlayerEnums::WirelessPlaybackTargetType;

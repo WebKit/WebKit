@@ -1,0 +1,16 @@
+
+EVENT(canplaythrough)
+EVENT(seeked)
+
+Alpha of each stripe.
+EXPECTED (pixel(25, 100)[3] == '0') OK
+EXPECTED (pixel(75, 100)[3] == '26') OK
+EXPECTED (pixel(125, 100)[3] == '128') OK
+EXPECTED (pixel(175, 100)[3] == '255') OK
+
+Colour of the 50% stripe against the opaque one.
+EXPECTED (Math.abs(pixel(125, 100)[0] - pixel(175, 100)[0]) < '20') OK
+EXPECTED (Math.abs(pixel(125, 100)[1] - pixel(175, 100)[1]) < '20') OK
+EXPECTED (Math.abs(pixel(125, 100)[2] - pixel(175, 100)[2]) < '20') OK
+END OF TEST
+

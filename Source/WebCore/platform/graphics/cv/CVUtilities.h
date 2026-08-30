@@ -51,6 +51,8 @@ WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuff
 
 WEBCORE_EXPORT RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef);
 
+WEBCORE_EXPORT CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef);
+
 // Should be called with non-empty ProcessIdentity.
 WEBCORE_EXPORT void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef, const ProcessIdentity&);
 

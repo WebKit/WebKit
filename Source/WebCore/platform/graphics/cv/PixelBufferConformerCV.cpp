@@ -80,7 +80,8 @@ RefPtr<NativeImage> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBu
         buffer = adoptCF(outputBuffer);
     }
 
-    return NativeImage::create(WTF::move(buffer), kCGImageAlphaFirst, colorSpace.get());
+    auto alphaInfo = alphaInfoForCVPixelBuffer(buffer.get());
+    return NativeImage::create(WTF::move(buffer), alphaInfo, colorSpace.get());
 }
 
 }

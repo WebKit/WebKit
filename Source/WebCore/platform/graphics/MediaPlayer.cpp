@@ -743,6 +743,11 @@ bool MediaPlayer::hasAvailableVideoFrame() const
     return protect(m_private)->hasAvailableVideoFrame();
 }
 
+bool MediaPlayer::videoFrameHasAlpha() const
+{
+    return protect(m_private)->videoFrameHasAlpha();
+}
+
 void MediaPlayer::prepareForRendering()
 {
     m_shouldPrepareToRender = true;

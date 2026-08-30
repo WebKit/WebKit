@@ -69,6 +69,8 @@ struct VP8FrameHeader {
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
 
+bool vpxFrameIsKeyframe(FourCharCode codec, std::span<const uint8_t>);
+
 class VP9TestingOverrides {
 public:
     static WEBCORE_EXPORT VP9TestingOverrides& singleton();

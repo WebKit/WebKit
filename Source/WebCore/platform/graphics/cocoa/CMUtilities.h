@@ -66,6 +66,8 @@ WEBCORE_EXPORT Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(
 // is set it will be used, otherwise it will be created from the CMSampleBufferRef's CMFormatDescriptionRef.
 WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef, const TrackInfo* = nullptr);
 
+RetainPtr<CFArrayRef> compressedAlphaData(CMSampleBufferRef);
+
 WEBCORE_EXPORT void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace&, CVPixelBufferRef);
 
 PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef);

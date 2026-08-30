@@ -220,6 +220,7 @@ public:
     virtual void setPreload(MediaPlayer::Preload) { }
 
     virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::ReadyState::HaveCurrentData; }
+    virtual bool videoFrameHasAlpha() const { return false; }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
