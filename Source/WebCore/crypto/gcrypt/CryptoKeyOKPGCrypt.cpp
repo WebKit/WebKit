@@ -205,6 +205,10 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
         if (!subjectPublicKey)
             return nullptr;
 
+        // Validate the size of `subjectPublicKey`, making sure it fits the byte-size of the specified curve.
+        if (subjectPublicKey->size() != 32)
+            return nullptr;
+
         // If the parameters field of the algorithm AlgorithmIdentifier field of spki is present, then throw a DataError.
         auto parameters = PAL::TASN1::elementData(spki, "algorithm.parameters");
         if (parameters)
@@ -237,7 +241,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
         return nullptr;
     }
 
-    auto rawKey = mpiData(mpi);
+    auto rawKey = mpiZeroPrefixedData(mpi, 32);
     if (!rawKey)
         return nullptr;
 
@@ -400,7 +404,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
             return nullptr;
         }
 
-        auto rawKey = mpiData(mpi);
+        auto rawKey = mpiZeroPrefixedData(mpi, 32);
         if (!rawKey)
             return nullptr;
 
@@ -503,8 +507,8 @@ String CryptoKeyOKP::generateJwkX() const
     // Return an EdDSA style compressed point. This is only supported for Twisted Edwards curves.
     PAL::GCrypt::Handle<gcry_mpi_t> qMPI(gcry_mpi_ec_get_mpi("q@eddsa", context, 0));
     if (qMPI) {
-        auto q = mpiData(qMPI);
-        if (q && q->size() == 32)
+        auto q = mpiZeroPrefixedData(qMPI, 32);
+        if (q)
             return base64URLEncodeToString(*q);
     }
 
