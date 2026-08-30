@@ -237,7 +237,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
         return nullptr;
     }
 
-    auto rawKey = mpiData(mpi);
+    auto rawKey = mpiZeroPrefixedData(mpi, 32);
     if (!rawKey)
         return nullptr;
 
@@ -400,7 +400,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
             return nullptr;
         }
 
-        auto rawKey = mpiData(mpi);
+        auto rawKey = mpiZeroPrefixedData(mpi, 32);
         if (!rawKey)
             return nullptr;
 
@@ -503,8 +503,8 @@ String CryptoKeyOKP::generateJwkX() const
     // Return an EdDSA style compressed point. This is only supported for Twisted Edwards curves.
     PAL::GCrypt::Handle<gcry_mpi_t> qMPI(gcry_mpi_ec_get_mpi("q@eddsa", context, 0));
     if (qMPI) {
-        auto q = mpiData(qMPI);
-        if (q && q->size() == 32)
+        auto q = mpiZeroPrefixedData(qMPI, 32);
+        if (q)
             return base64URLEncodeToString(*q);
     }
 
