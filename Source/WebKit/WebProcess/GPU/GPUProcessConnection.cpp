@@ -335,10 +335,10 @@ bool GPUProcessConnection::waitForDidInitialize()
     return m_connection->isValid();
 }
 
-void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
+void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument, std::optional<WebCore::MediaSessionIdentifier> targetSession)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    WebProcess::singleton().didReceiveRemoteCommand(type, argument);
+    WebProcess::singleton().didReceiveRemoteCommand(type, argument, targetSession);
 #endif
 }
 

@@ -4,6 +4,7 @@
 <head>
 <script src="/js-test-resources/js-test.js"></script>
 <script src="/media-resources/utilities.js"></script>
+<script src="resources/now-playing-test-helpers.js"></script>
 </head>
 <body>
 <video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
@@ -18,48 +19,6 @@ let subframeElectedInitially = true;
 let mainFrameElectedAfterPause = false;
 let mainFrameElectedAfterResize = true;
 let subframeElectedAfterResize = false;
-
-function waitForSubframeMessage(replyType)
-{
-    return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-            window.removeEventListener("message", handler);
-            reject(new Error(`timed out waiting for "${replyType}" from the subframe`));
-        }, 10000);
-        function handler(event) {
-            if (!event.data || (event.data.type !== replyType && event.data.type !== "error"))
-                return;
-            window.removeEventListener("message", handler);
-            clearTimeout(timeoutId);
-            if (event.data.type === "error")
-                reject(new Error(event.data.message));
-            else
-                resolve(event.data.value);
-        }
-        window.addEventListener("message", handler);
-    });
-}
-
-function askFrame(query, replyType)
-{
-    const reply = waitForSubframeMessage(replyType);
-    iframe.contentWindow.postMessage(query, "*");
-    return reply;
-}
-
-function subframeIsActiveNowPlaying()
-{
-    return askFrame("isActiveNowPlaying?", "isActiveNowPlaying");
-}
-
-async function waitFor(predicate, tries, delay)
-{
-    for (let i = 0; i < tries; ++i) {
-        if (await predicate())
-            return;
-        await new Promise(resolve => setTimeout(resolve, delay));
-    }
-}
 
 onload = async () => {
     if (!window.internals) {
@@ -91,21 +50,21 @@ onload = async () => {
         await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
 
         // Both videos are main-content-sized, so the more recently interacted-with main frame is elected.
-        await waitFor(async () => {
+        await waitUntil(async () => {
             mainFrameElectedInitially = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
-            subframeElectedInitially = await subframeIsActiveNowPlaying();
+            subframeElectedInitially = await subframeIsActiveNowPlaying(iframe);
             return mainFrameElectedInitially && !subframeElectedInitially;
-        }, 200, 10);
+        }, { tries: 200, intervalMs: 10 });
         shouldBeTrue("mainFrameElectedInitially");
         shouldBeFalse("subframeElectedInitially");
 
         // Pausing the main-frame video leaves it eligible and still elected.
         video.pause();
         await new Promise(resolve => video.addEventListener("pause", resolve, { once: true }));
-        await waitFor(async () => {
+        await waitUntil(async () => {
             mainFrameElectedAfterPause = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
             return mainFrameElectedAfterPause;
-        }, 200, 10);
+        }, { tries: 200, intervalMs: 10 });
         shouldBeTrue("mainFrameElectedAfterPause");
 
         // Shrink the paused video below the main-content threshold. Its NowPlayingInfo does not change, so the
@@ -115,11 +74,11 @@ onload = async () => {
         video.style.height = "100px";
         video.offsetWidth;
 
-        await waitFor(async () => {
+        await waitUntil(async () => {
             mainFrameElectedAfterResize = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
-            subframeElectedAfterResize = await subframeIsActiveNowPlaying();
+            subframeElectedAfterResize = await subframeIsActiveNowPlaying(iframe);
             return !mainFrameElectedAfterResize && subframeElectedAfterResize;
-        }, 600, 25);
+        }, { tries: 600, intervalMs: 25 });
         shouldBeFalse("mainFrameElectedAfterResize");
         shouldBeTrue("subframeElectedAfterResize");
     } catch (e) {

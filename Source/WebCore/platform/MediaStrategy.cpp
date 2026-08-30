@@ -56,6 +56,11 @@ void MediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(MediaSession
     completion(false);
 }
 
+void MediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&& completion)
+{
+    completion(false);
+}
+
 void MediaStrategy::resetMediaEngines()
 {
 #if ENABLE(VIDEO)

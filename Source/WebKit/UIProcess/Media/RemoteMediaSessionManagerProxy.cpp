@@ -28,6 +28,10 @@
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
+#if ENABLE(GPU_PROCESS)
+#include "GPUProcessMessages.h"
+#include "GPUProcessProxy.h"
+#endif
 #include "MessageSenderInlines.h"
 #include "RemoteMediaSessionManagerMessages.h"
 #include "RemoteMediaSessionManagerProxyMessages.h"
@@ -138,6 +142,7 @@ void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection
         session->updateState(state);
 
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
+    updateNowPlayingFallbackSession();
 }
 
 void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
@@ -146,11 +151,12 @@ void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connect
     if (RefPtr session = findAndUpdateSession(connection, state))
         removeSession(*session);
     m_sessionProxies.remove({ state.sessionIdentifier, processIdentifier });
+    updateNowPlayingFallbackSession();
 }
 
 void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIdentifier processIdentifier)
 {
-    Vector<WebCore::ProcessQualified<WebCore::MediaSessionIdentifier>> staleKeys;
+    Vector<WebCore::QualifiedMediaSessionIdentifier> staleKeys;
     for (auto& key : m_sessionProxies.keys()) {
         if (key.processIdentifier() == processIdentifier)
             staleKeys.append(key);
@@ -161,6 +167,7 @@ void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIden
             removeSession(*session);
         m_sessionProxies.remove(key);
     }
+    updateNowPlayingFallbackSession();
 
     // Audio-capture-source counts (getUserMedia) are tracked per page outside m_sessionProxies, so drop
     // this process's entries too; otherwise countActiveAudioCaptureSources() stays inflated and the audio
@@ -196,6 +203,8 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& c
         m_audioCaptureSourceCountsByPage.remove(key);
     else
         m_audioCaptureSourceCountsByPage.set(key, audioCaptureSourceCount);
+
+    updateNowPlayingFallbackSession();
 }
 
 int RemoteMediaSessionManagerProxy::countActiveAudioCaptureSources()
@@ -209,6 +218,7 @@ int RemoteMediaSessionManagerProxy::countActiveAudioCaptureSources()
 void RemoteMediaSessionManagerProxy::mediaSessionStateChanged(IPC::Connection& connection, WebKit::RemoteMediaSessionState&& state)
 {
     findAndUpdateSession(connection, state);
+    updateNowPlayingFallbackSession();
 }
 
 void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSessionInterface& session)
@@ -223,6 +233,36 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
     }
 
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
+    updateNowPlayingFallbackSession();
+}
+
+#if ENABLE(GPU_PROCESS)
+std::optional<WebCore::QualifiedMediaSessionIdentifier> RemoteMediaSessionManagerProxy::computeNowPlayingFallbackSession() const
+{
+    for (auto& weakSession : copySessionsToVector()) {
+        RefPtr proxy = dynamicDowncast<RemoteMediaSessionProxy>(weakSession.get());
+        if (!proxy || !proxy->canReceiveRemoteControlCommands())
+            continue;
+
+        if (auto identifier = proxy->qualifiedSessionIdentifier())
+            return identifier;
+    }
+
+    return std::nullopt;
+}
+#endif
+
+void RemoteMediaSessionManagerProxy::updateNowPlayingFallbackSession()
+{
+#if ENABLE(GPU_PROCESS)
+    auto fallback = computeNowPlayingFallbackSession();
+    if (fallback == m_nowPlayingFallbackSession)
+        return;
+    m_nowPlayingFallbackSession = fallback;
+
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::SetNowPlayingFallbackSession(fallback), 0);
+#endif
 }
 
 void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state)

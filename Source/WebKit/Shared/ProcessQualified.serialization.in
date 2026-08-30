@@ -24,6 +24,7 @@
 additional_forward_declaration: namespace WebCore { using BackForwardFrameItemIdentifierID = ObjectIdentifier<BackForwardFrameItemIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = ObjectIdentifier<BackForwardItemIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = AtomicObjectIdentifier<DOMCacheIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlaybackTargetClientContextID = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>; }
@@ -87,6 +88,11 @@ header: <WebCore/ProcessQualified.h>
 
 [Alias=class ProcessQualified<ScrollingNodeIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::ScrollingNodeID {
     WebCore::ScrollingNodeIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class ProcessQualified<MediaSessionIdentifier>, CustomHeader] alias WebCore::QualifiedMediaSessionIdentifier {
+    WebCore::MediaSessionIdentifier object();
     WebCore::ProcessIdentifier processIdentifier();
 };
 

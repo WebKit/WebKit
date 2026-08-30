@@ -70,6 +70,15 @@ void RemoteMediaSessionProxy::updateState(const RemoteMediaSessionState& remoteS
     downcast<RemoteMediaSessionClientProxy>(protect(client())).updateState(remoteState);
 }
 
+std::optional<WebCore::QualifiedMediaSessionIdentifier> RemoteMediaSessionProxy::qualifiedSessionIdentifier() const
+{
+    RefPtr process = m_process.get();
+    if (!process)
+        return std::nullopt;
+
+    return WebCore::QualifiedMediaSessionIdentifier { m_sessionState.sessionIdentifier, process->coreProcessIdentifier() };
+}
+
 void RemoteMediaSessionProxy::setState(WebCore::PlatformMediaSessionState state)
 {
     PlatformMediaSession::setState(state);

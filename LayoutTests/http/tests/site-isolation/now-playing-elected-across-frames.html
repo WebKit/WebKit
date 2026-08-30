@@ -4,6 +4,7 @@
 <head>
 <script src="/js-test-resources/js-test.js"></script>
 <script src="/media-resources/utilities.js"></script>
+<script src="resources/now-playing-test-helpers.js"></script>
 </head>
 <body>
 <video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
@@ -19,48 +20,6 @@ let subframeActiveInitially = true;
 let mainFramePausedAfterSubframePlays = false;
 let mainFrameActiveAfterSubframePlays = true;
 let subframeActiveAfterSubframePlays = false;
-
-function waitForSubframeMessage(replyType)
-{
-    return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-            window.removeEventListener("message", handler);
-            reject(new Error(`timed out waiting for "${replyType}" from the subframe`));
-        }, 10000);
-        function handler(event) {
-            if (!event.data || (event.data.type !== replyType && event.data.type !== "error"))
-                return;
-            window.removeEventListener("message", handler);
-            clearTimeout(timeoutId);
-            if (event.data.type === "error")
-                reject(new Error(event.data.message));
-            else
-                resolve(event.data.value);
-        }
-        window.addEventListener("message", handler);
-    });
-}
-
-function askFrame(query, replyType)
-{
-    const reply = waitForSubframeMessage(replyType);
-    iframe.contentWindow.postMessage(query, "*");
-    return reply;
-}
-
-function subframeIsActiveNowPlaying()
-{
-    return askFrame("isActiveNowPlaying?", "isActiveNowPlaying");
-}
-
-async function waitFor(predicate)
-{
-    for (let tries = 0; tries < 200; ++tries) {
-        if (await predicate())
-            return;
-        await new Promise(resolve => setTimeout(resolve, 10));
-    }
-}
 
 onload = async () => {
     if (!window.internals) {
@@ -86,11 +45,11 @@ onload = async () => {
         internals.withUserGesture(() => video.play());
         await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
 
-        await waitFor(async () => {
+        await waitUntil(async () => {
             mainFrameActiveInitially = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
-            subframeActiveInitially = await subframeIsActiveNowPlaying();
+            subframeActiveInitially = await subframeIsActiveNowPlaying(iframe);
             return mainFrameActiveInitially && !subframeActiveInitially;
-        });
+        }, { tries: 200, intervalMs: 10 });
         shouldBeTrue("mainFrameActiveInitially");
         shouldBeFalse("subframeActiveInitially");
 
@@ -98,12 +57,12 @@ onload = async () => {
         iframe.contentWindow.postMessage("play", "*");
         await framePlaying;
 
-        await waitFor(async () => {
+        await waitUntil(async () => {
             mainFramePausedAfterSubframePlays = video.paused;
             mainFrameActiveAfterSubframePlays = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
-            subframeActiveAfterSubframePlays = await subframeIsActiveNowPlaying();
+            subframeActiveAfterSubframePlays = await subframeIsActiveNowPlaying(iframe);
             return mainFramePausedAfterSubframePlays && !mainFrameActiveAfterSubframePlays && subframeActiveAfterSubframePlays;
-        });
+        }, { tries: 200, intervalMs: 10 });
         shouldBeTrue("mainFramePausedAfterSubframePlays");
         shouldBeFalse("mainFrameActiveAfterSubframePlays");
         shouldBeTrue("subframeActiveAfterSubframePlays");

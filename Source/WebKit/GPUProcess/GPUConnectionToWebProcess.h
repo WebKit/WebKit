@@ -174,7 +174,8 @@ public:
     };
     const HashMap<WebCore::PageIdentifier, UniqueRef<NowPlayingCandidate>>& nowPlayingCandidates() const LIFETIME_BOUND { return m_nowPlayingCandidates; }
     void becomeNowPlayingOwner(WebCore::PageIdentifier);
-    void resignNowPlayingOwner();
+    void becomeRemoteCommandFallbackTarget();
+    void resignNowPlayingManagerClient();
     Ref<RemoteSharedResourceCache> sharedResourceCache();
 
 #if ENABLE(VIDEO)
@@ -320,7 +321,10 @@ private:
     void clearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier>);
     void setNowPlayingInfoForPage(WebCore::NowPlayingInfo&&, std::optional<WebCore::PageIdentifier>);
     void setNowPlayingCandidateState(WebCore::NowPlayingCandidateState&&);
+    void nowPlayingClientDidClose();
     void isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
+    void isRemoteCommandTargetSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
+    void postNowPlayingRemoteControlCommandForTesting(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void updateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<WTF::MachSendRightAnnotated>&&);
@@ -457,7 +461,7 @@ private:
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     HashMap<WebCore::PageIdentifier, UniqueRef<NowPlayingCandidate>> m_nowPlayingCandidates;
-    bool m_isActiveNowPlayingProcess { false };
+    bool m_isNowPlayingManagerClient { false };
     const bool m_isLockdownModeEnabled { false };
 
 #if ENABLE(EXTENSION_CAPABILITIES)

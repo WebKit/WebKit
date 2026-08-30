@@ -5617,41 +5617,61 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
     element.mediaSession().addBehaviorRestriction(restrictions);
 }
 
+static std::optional<PlatformMediaSession::RemoteControlCommandType> remoteControlCommandForString(const String& commandString)
+{
+    if (equalLettersIgnoringASCIICase(commandString, "play"_s))
+        return PlatformMediaSession::RemoteControlCommandType::PlayCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "pause"_s))
+        return PlatformMediaSession::RemoteControlCommandType::PauseCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "stop"_s))
+        return PlatformMediaSession::RemoteControlCommandType::StopCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "toggleplaypause"_s))
+        return PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "beginseekingbackward"_s))
+        return PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "endseekingbackward"_s))
+        return PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "beginseekingforward"_s))
+        return PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "endseekingforward"_s))
+        return PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"_s))
+        return PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"_s))
+        return PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand;
+    if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"_s))
+        return PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand;
+    return std::nullopt;
+}
+
 ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandString, float argument)
 {
     RefPtr manager = sessionManager();
     if (!manager)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    PlatformMediaSession::RemoteControlCommandType command;
-    PlatformMediaSession::RemoteCommandArgument parameter { argument, { } };
-
-    if (equalLettersIgnoringASCIICase(commandString, "play"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::PlayCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "pause"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::PauseCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "stop"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::StopCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "toggleplaypause"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingbackward"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endseekingbackward"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingforward"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endseekingforward"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"_s))
-        command = PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand;
-    else
+    auto command = remoteControlCommandForString(commandString);
+    if (!command)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    manager->processDidReceiveRemoteControlCommand(command, parameter);
+    manager->processDidReceiveRemoteControlCommand(*command, { argument, { } });
+    return { };
+}
+
+ExceptionOr<void> Internals::postSystemRemoteControlCommand(const String& commandString, float argument)
+{
+    RefPtr manager = sessionManager();
+    if (!manager)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto command = remoteControlCommandForString(commandString);
+    if (!command)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    // The GPU process delivers the command the way a real system command arrives. Without one (WebKitLegacy, or
+    // WebKit not using a GPU process) fall back to injecting into the local manager.
+    if (!platformStrategies()->mediaStrategy()->postNowPlayingRemoteControlCommandToGPUProcessForTesting(*command, { argument, { } }))
+        manager->processDidReceiveRemoteControlCommand(*command, { argument, { } });
     return { };
 }
 
@@ -5982,6 +6002,13 @@ bool Internals::elementIsActiveNowPlayingSession(HTMLMediaElement& element) cons
 void Internals::elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement& element, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     platformStrategies()->mediaStrategy()->isActiveNowPlayingSessionInGPUProcessForTesting(element.mediaSession().mediaSessionIdentifier(), [promise = WTF::move(promise)](bool result) mutable {
+        promise.resolve(result);
+    });
+}
+
+void Internals::elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement& element, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    platformStrategies()->mediaStrategy()->isRemoteCommandTargetSessionInGPUProcessForTesting(element.mediaSession().mediaSessionIdentifier(), [promise = WTF::move(promise)](bool result) mutable {
         promise.resolve(result);
     });
 }

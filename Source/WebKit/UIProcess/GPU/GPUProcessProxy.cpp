@@ -210,6 +210,11 @@ GPUProcessProxy::GPUProcessProxy()
     parameters.drmDevice = drmMainDevice();
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    if (RefPtr mediaSessionManagerProxy = RemoteMediaSessionManagerProxy::singletonIfCreated())
+        parameters.nowPlayingFallbackSession = mediaSessionManagerProxy->computeNowPlayingFallbackSession();
+#endif
+
 #if PLATFORM(COCOA)
     m_isMetalDebugDeviceEnabledForTesting = s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     m_isMetalShaderValidationEnabledForTesting = s_enableMetalShaderValidationInNewGPUProcessesForTesting;

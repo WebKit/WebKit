@@ -196,3 +196,13 @@ async function waitForAudioSessionCategory(category, description) {
     }
     throw new Error(`audio session category is "${observed}", expected "${category}"${description ? ` (${description})` : ""}`);
 }
+
+// Polls a predicate until it returns true, or gives up after the attempts run out (callers then assert the
+// specific conditions they expected, so the failure names which one).
+async function waitUntil(predicate, { tries = 200, intervalMs = 10 } = {}) {
+    for (let i = 0; i < tries; ++i) {
+        if (await predicate())
+            return;
+        await delay(intervalMs);
+    }
+}

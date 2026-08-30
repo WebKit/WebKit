@@ -162,6 +162,40 @@ void WebMediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::
     completion(false);
 }
 
+void WebMediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection();
+        if (!gpuProcessConnection) {
+            completion(false);
+            return;
+        }
+        gpuProcessConnection->connection().sendWithAsyncReply(Messages::GPUConnectionToWebProcess::IsRemoteCommandTargetSessionForTesting(identifier), WTF::move(completion), 0);
+        return;
+    }
+#endif
+
+    completion(false);
+}
+
+bool WebMediaStrategy::postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType type, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection()) {
+            gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::PostNowPlayingRemoteControlCommandForTesting(type, argument), 0);
+            return true;
+        }
+    }
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(argument);
+#endif
+
+    return false;
+}
+
 bool WebMediaStrategy::hasThreadSafeMediaSourceSupport() const
 {
 #if USE(AVFOUNDATION)

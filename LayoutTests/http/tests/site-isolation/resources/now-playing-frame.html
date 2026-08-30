@@ -15,6 +15,10 @@ window.onmessage = async (event) => {
         window.parent.postMessage({ type: "isActiveNowPlaying", value }, "*");
         return;
     }
+    if (event.data === "isPaused?") {
+        window.parent.postMessage({ type: "isPaused", value: video.paused }, "*");
+        return;
+    }
     if (event.data === "play") {
         try {
             video.volume = 0.001;

@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include "RemoteMediaSessionState.h"
 #include <WebCore/PlatformMediaSession.h>
+#include <WebCore/ProcessQualified.h>
 
 namespace WebKit {
 
@@ -48,6 +49,7 @@ public:
 
     WebCore::MediaSessionIdentifier sessionIdentifier() const { return m_sessionState.sessionIdentifier; }
     WebCore::PageIdentifier pageIdentifier() const { return m_sessionState.pageIdentifier; }
+    std::optional<WebCore::QualifiedMediaSessionIdentifier> qualifiedSessionIdentifier() const;
 
 private:
     RemoteMediaSessionProxy(Ref<RemoteMediaSessionClientProxy>&&, const RemoteMediaSessionState&, WebProcessProxy&);

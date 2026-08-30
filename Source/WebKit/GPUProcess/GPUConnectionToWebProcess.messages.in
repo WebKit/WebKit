@@ -40,6 +40,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void SetNowPlayingInfoForPage(struct WebCore::NowPlayingInfo nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
     void SetNowPlayingCandidateState(struct WebCore::NowPlayingCandidateState candidate)
     [EnabledBy=AllowTestOnlyIPC] IsActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier) -> (bool isActive)
+    [EnabledBy=AllowTestOnlyIPC] IsRemoteCommandTargetSessionForTesting(WebCore::MediaSessionIdentifier identifier) -> (bool isTarget)
+    [EnabledBy=AllowTestOnlyIPC] PostNowPlayingRemoteControlCommandForTesting(enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType type, struct WebCore::PlatformMediaSessionRemoteCommandArgument argument)
 #if USE(AUDIO_SESSION)
     [EnabledBy=UseGPUProcessForMediaEnabled && MediaPlaybackEnabled] EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
 #endif

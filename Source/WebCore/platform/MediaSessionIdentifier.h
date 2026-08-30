@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
 struct MediaSessionIdentifierType;
 using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>;
+using QualifiedMediaSessionIdentifier = ProcessQualified<MediaSessionIdentifier>;
 
 }

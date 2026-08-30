@@ -53,6 +53,11 @@
 #endif
 
     Vector<String> overrideLanguages;
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    std::optional<WebCore::QualifiedMediaSessionIdentifier> nowPlayingFallbackSession;
+#endif
+
 #if PLATFORM(COCOA)
     bool enableMetalDebugDeviceForTesting;
     bool enableMetalShaderValidationForTesting;

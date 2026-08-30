@@ -1,0 +1,11 @@
+Under site isolation, a system remote-control command received by the GPU process is delivered to the GPU-elected NowPlaying session, even when that session lives in a different web process than the one that injects the command. The main-frame video plays first, then the cross-site subframe video, which becomes the elected session; a pause command injected from the main frame's process must reach and pause the subframe's session. (The main frame's own playback state is not asserted: platforms that forbid concurrent playback, e.g. iOS, pause it when the subframe starts.)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS subframeElectedInitially is true
+PASS subframePausedAfterCommand is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

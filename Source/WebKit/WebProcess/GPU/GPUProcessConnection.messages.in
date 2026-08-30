@@ -28,7 +28,7 @@
 ]
 messages -> GPUProcessConnection WantsDispatchMessage {
     DidInitialize(struct std::optional<WebKit::GPUProcessConnectionInfo> info) CanDispatchOutOfOrder
-    DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType type, struct WebCore::PlatformMediaSessionRemoteCommandArgument argument)
+    DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType type, struct WebCore::PlatformMediaSessionRemoteCommandArgument argument, std::optional<WebCore::MediaSessionIdentifier> targetSession)
 
 #if ENABLE(ROUTING_ARBITRATION)
     BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSessionCategory category) -> (enum:uint8_t WebCore::AudioSessionRoutingArbitrationError error, enum:bool WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged defaultRouteChanged)

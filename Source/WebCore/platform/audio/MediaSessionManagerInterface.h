@@ -165,7 +165,7 @@ public:
     virtual Ref<GenericPromise> audioCaptureSourceStateChanged(IsCaptureStarting);
     virtual size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSize(); }
 
-    virtual void processDidReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&);
+    bool processDidReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&, std::optional<MediaSessionIdentifier> targetSession = std::nullopt);
     virtual bool processIsSuspended() const { return m_processIsSuspended; };
     virtual void processSystemWillSleep();
     virtual void processSystemDidWake();

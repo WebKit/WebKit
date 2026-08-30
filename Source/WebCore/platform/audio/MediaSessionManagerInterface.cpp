@@ -813,28 +813,40 @@ int MediaSessionManagerInterface::countActiveAudioCaptureSources()
     return count;
 }
 
-void MediaSessionManagerInterface::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+bool MediaSessionManagerInterface::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument, std::optional<MediaSessionIdentifier> targetSession)
 {
-#if ENABLE(VIDEO) || ENABLE(audio)
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     RefPtr<PlatformMediaSessionInterface> activeSession;
-    for (auto& weakSession : copySessionsToVector()) {
-        RefPtr session = weakSession.get();
-        if (!session || !session->canReceiveRemoteControlCommands())
-            continue;
+    if (targetSession) {
+        // A NowPlaying owner elected across processes; deliver only to that session (this manager may not own it).
+        activeSession = firstSessionMatching([&](auto& session) {
+            return session.mediaSessionIdentifier() == *targetSession && session.canReceiveRemoteControlCommands();
+        }).get();
+    } else {
+        for (auto& weakSession : copySessionsToVector()) {
+            RefPtr session = weakSession.get();
+            if (!session || !session->canReceiveRemoteControlCommands())
+                continue;
 
-        if (session->isNowPlayingEligible()) {
-            activeSession = WTF::move(session);
-            break;
+            if (session->isNowPlayingEligible()) {
+                activeSession = WTF::move(session);
+                break;
+            }
+            if (!activeSession)
+                activeSession = WTF::move(session);
         }
-        if (!activeSession)
-            activeSession = WTF::move(session);
     }
 
-    if (activeSession)
-        activeSession->didReceiveRemoteControlCommand(command, argument);
+    if (!activeSession)
+        return false;
+
+    activeSession->didReceiveRemoteControlCommand(command, argument);
+    return true;
 #else
     UNUSED_PARAM(command);
     UNUSED_PARAM(argument);
+    UNUSED_PARAM(targetSession);
+    return false;
 #endif
 }
 

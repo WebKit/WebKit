@@ -418,8 +418,8 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
     assertIsMainThread();
 
-    if (m_isActiveNowPlayingProcess)
-        clearNowPlayingInfoForPage(std::nullopt);
+    if (m_isNowPlayingManagerClient)
+        nowPlayingClientDidClose();
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     if (m_routingArbitrator)
@@ -829,7 +829,7 @@ void GPUConnectionToWebProcess::clearNowPlayingInfoForPage(std::optional<WebCore
         return;
     }
 
-    m_isActiveNowPlayingProcess = false;
+    m_isNowPlayingManagerClient = false;
     gpuProcess->nowPlayingManager().removeClient(*this);
 }
 
@@ -871,7 +871,7 @@ void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPla
         return;
     }
 
-    m_isActiveNowPlayingProcess = true;
+    m_isNowPlayingManagerClient = true;
     gpuProcess->nowPlayingManager().addClient(*this);
     gpuProcess->nowPlayingManager().setNowPlayingInfo(WTF::move(nowPlayingInfo));
     updateSupportedRemoteCommands();
@@ -883,7 +883,7 @@ void GPUConnectionToWebProcess::becomeNowPlayingOwner(WebCore::PageIdentifier pa
     if (it == m_nowPlayingCandidates.end())
         return;
 
-    m_isActiveNowPlayingProcess = true;
+    m_isNowPlayingManagerClient = true;
     Ref gpuProcess = this->gpuProcess();
     gpuProcess->nowPlayingManager().addClient(*this);
     if (it->value->info)
@@ -891,10 +891,34 @@ void GPUConnectionToWebProcess::becomeNowPlayingOwner(WebCore::PageIdentifier pa
     updateSupportedRemoteCommands();
 }
 
-void GPUConnectionToWebProcess::resignNowPlayingOwner()
+void GPUConnectionToWebProcess::becomeRemoteCommandFallbackTarget()
 {
-    m_isActiveNowPlayingProcess = false;
+    m_isNowPlayingManagerClient = true;
+    gpuProcess().nowPlayingManager().addClient(*this);
+    updateSupportedRemoteCommands();
+}
+
+void GPUConnectionToWebProcess::resignNowPlayingManagerClient()
+{
+    m_isNowPlayingManagerClient = false;
     gpuProcess().nowPlayingManager().removeClient(*this);
+}
+
+void GPUConnectionToWebProcess::nowPlayingClientDidClose()
+{
+    ASSERT(m_isNowPlayingManagerClient);
+
+    m_nowPlayingCandidates.clear();
+
+    // Resign here rather than leaving it to GPUProcess::recomputeNowPlayingOwner. This connection is still in the
+    // GPU process's connection map right now, but it is gone by the time the recompute from
+    // removeGPUConnectionToWebProcess runs, so a resign that looks the connection up by process identifier would
+    // silently do nothing and leave a dead NowPlayingManager client holding the system command listener.
+    resignNowPlayingManagerClient();
+
+    Ref gpuProcess = this->gpuProcess();
+    if (gpuProcess->isNowPlayingArbiterActive())
+        gpuProcess->nowPlayingClientDidClose(webProcessIdentifier());
 }
 
 void GPUConnectionToWebProcess::isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
@@ -902,9 +926,19 @@ void GPUConnectionToWebProcess::isActiveNowPlayingSessionForTesting(WebCore::Med
     completion(gpuProcess().isActiveNowPlayingSession(webProcessIdentifier(), identifier));
 }
 
+void GPUConnectionToWebProcess::isRemoteCommandTargetSessionForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
+{
+    completion(gpuProcess().isRemoteCommandTargetSession(webProcessIdentifier(), identifier));
+}
+
+void GPUConnectionToWebProcess::postNowPlayingRemoteControlCommandForTesting(WebCore::PlatformMediaSessionRemoteControlCommandType type, const WebCore::PlatformMediaSessionRemoteCommandArgument& argument)
+{
+    gpuProcess().nowPlayingManager().didReceiveRemoteControlCommand(type, argument);
+}
+
 void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
 {
-    if (!m_isActiveNowPlayingProcess || !m_remoteRemoteCommandListener)
+    if (!m_isNowPlayingManagerClient || !m_remoteRemoteCommandListener)
         return;
 
     Ref gpuProcess = this->gpuProcess();
@@ -914,7 +948,7 @@ void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
 
 void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    m_connection->send(Messages::GPUProcessConnection::DidReceiveRemoteCommand(type, argument), 0);
+    m_connection->send(Messages::GPUProcessConnection::DidReceiveRemoteCommand(type, argument, gpuProcess().remoteCommandTargetSessionInProcess(webProcessIdentifier())), 0);
 }
 
 #if USE(AUDIO_SESSION)

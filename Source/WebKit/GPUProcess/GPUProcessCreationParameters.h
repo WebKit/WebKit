@@ -32,6 +32,10 @@
 #include "SecurityFlags.h"
 #include <wtf/ProcessID.h>
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+#include <WebCore/MediaSessionIdentifier.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/DRMDevice.h>
 #endif
@@ -71,6 +75,11 @@ struct GPUProcessCreationParameters {
 #endif
 
     Vector<String> overrideLanguages;
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    std::optional<WebCore::QualifiedMediaSessionIdentifier> nowPlayingFallbackSession;
+#endif
+
 #if PLATFORM(COCOA)
     bool enableMetalDebugDeviceForTesting { false };
     bool enableMetalShaderValidationForTesting { false };

@@ -114,6 +114,8 @@ messages -> GPUProcess : AuxiliaryProcess {
     PostWillTakeSnapshotNotification() -> ()
     RegisterFonts(Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
 #endif
+
+    SetNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)
 }
 
 #endif // ENABLE(GPU_PROCESS)

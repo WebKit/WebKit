@@ -37,6 +37,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/AudioSession.h>
+#include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
@@ -150,7 +151,7 @@ private:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     // Messages.
-    void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+    void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&, std::optional<WebCore::MediaSessionIdentifier> targetSession);
     void didInitialize(std::optional<GPUProcessConnectionInfo>&&);
 
 #if ENABLE(ROUTING_ARBITRATION)
