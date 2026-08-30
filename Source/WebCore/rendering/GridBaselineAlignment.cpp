@@ -146,9 +146,11 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
         return AlignmentContext { makeUnique<BaselineAlignmentState>(alignmentAxis, m_writingMode), { } };
     }).iterator->value;
     auto groupIndex = context.sharedGroups->sharedGroupIndex(gridItem.writingMode(), preference);
-    if (groupIndex == context.maxAscents.size())
-        context.maxAscents.append(LayoutUnit());
-    context.maxAscents[groupIndex] = std::max(context.maxAscents[groupIndex], ascent);
+    if (groupIndex >= context.alignments.size())
+        context.alignments.grow(groupIndex + 1);
+    auto& alignment = context.alignments[groupIndex];
+    ++alignment.alignmentSubjectCount;
+    alignment.maxAscent = std::max(alignment.maxAscent, ascent);
 }
 
 LayoutUnit GridBaselineAlignment::baselineOffsetForGridItem(ItemPosition preference, unsigned sharedContext, const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
@@ -159,10 +161,12 @@ LayoutUnit GridBaselineAlignment::baselineOffsetForGridItem(ItemPosition prefere
     ASSERT(it != contextMap.end());
     auto& context = it->value;
     auto groupIndex = context.sharedGroups->sharedGroupIndex(gridItem.writingMode(), preference);
-    // No recorded ascent means a lone participant (its own ascent is the max), so there is no baseline shim.
-    if (groupIndex >= context.maxAscents.size())
+    if (groupIndex >= context.alignments.size())
         return { };
-    return context.maxAscents[groupIndex] - logicalAscentForGridItem(gridItem, alignmentContextType, preference);
+    auto& alignment = context.alignments[groupIndex];
+    if (alignment.alignmentSubjectCount < 2)
+        return { };
+    return alignment.maxAscent - logicalAscentForGridItem(gridItem, alignmentContextType, preference);
 }
 
 void GridBaselineAlignment::clear(Style::GridTrackSizingDirection alignmentContextType)

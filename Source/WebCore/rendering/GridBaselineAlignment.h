@@ -75,9 +75,13 @@ private:
 
     // Per baseline alignment-context: the baseline-sharing groups plus this context's max ascent per group,
     // indexed by the group index returned from BaselineAlignmentState::sharedGroupIndex.
+    struct SharedGroupAlignment {
+        LayoutUnit maxAscent;
+        size_t alignmentSubjectCount { 0 };
+    };
     struct AlignmentContext {
         std::unique_ptr<BaselineAlignmentState> sharedGroups;
-        Vector<LayoutUnit> maxAscents;
+        Vector<SharedGroupAlignment> alignments;
     };
     using AlignmentContextMap = HashMap<unsigned, AlignmentContext, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
