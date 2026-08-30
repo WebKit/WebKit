@@ -619,7 +619,8 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
 FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, std::unique_ptr<Layout::InlineLayoutResult>&& layoutResult)
 {
-    auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), ensureInlineContent(), m_lineDamage.get());
+    ensureInlineContent().setContentMayHaveInkOverflow(inlineLayoutState.contentMayHaveInkOverflow());
+    auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), *m_inlineContent, m_lineDamage.get());
 
     m_inlineContent->setClearGapBeforeFirstLine(inlineLayoutState.clearGapBeforeFirstLine());
     m_inlineContent->setClearGapAfterLastLine(inlineLayoutState.clearGapAfterLastLine());

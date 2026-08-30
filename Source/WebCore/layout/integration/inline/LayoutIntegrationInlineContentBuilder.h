@@ -45,7 +45,14 @@ public:
     void updateLineOverflow(InlineContent&) const;
 
 private:
-    void adjustDisplayLines(InlineContent&, size_t startIndex) const;
+    // Recomputes the style driven part of ink overflow on the display boxes from startIndex on, then
+    // recomputes line and block level overflow from them.
+    void updateOverflow(InlineContent&, size_t startIndex) const;
+    void updateInkOverflowForBoxes(InlineContent&, size_t startIndex) const;
+    static void updateInkOverflowForText(std::span<InlineDisplay::Box>, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
+    static void updateInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>, const Layout::ElementBox& root);
+
+    void computeOverflowFromBoxes(InlineContent&, size_t startIndex) const;
     using DecoratingBoxes = HashSet<CheckedRef<const Layout::Box>>;
     void adjustInkOverflowForPercentageTextDecorationInsets(InlineContent&, size_t startIndex, const DecoratingBoxes&) const;
     void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;

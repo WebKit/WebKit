@@ -50,8 +50,7 @@ private:
     void processNonBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     bool processBidiLinesWithNoContent(const LineLayoutResult&, InlineDisplay::Boxes&);
-    void collectInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>);
-    void collectInkOverflowForTextDecorations(std::span<InlineDisplay::Box>);
+
     void truncateForEllipsisPolicy(LineEndingTruncationPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
@@ -102,8 +101,6 @@ private:
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
     bool m_hasSeenRubyBase { false };
-    bool m_hasSeenTextDecoration { false };
-    bool m_hasSeenNestedInlineBoxesWithDifferentFontCascade { false };
 };
 
 inline InlineRect InlineDisplayContentBuilder::mapInlineRectLogicalToVisual(const InlineRect& logicalRect, const InlineRect& containerLogicalRect, WritingMode writingMode)
