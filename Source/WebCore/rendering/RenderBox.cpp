@@ -1424,9 +1424,11 @@ bool RenderBox::hasAlwaysPresentScrollbar(ScrollbarOrientation orientation) cons
 
 bool RenderBox::shouldInvalidateContentWidths() const
 {
+    // A stretched flex or grid item transfers the size it is stretched to through its aspect ratio,
+    // so its cached contribution is only valid for the cross/block size of the layout that measured it.
     return style().paddingStart().isPercentOrCalculated()
         || style().paddingEnd().isPercentOrCalculated()
-        || (style().aspectRatio().hasRatio() && (hasRelativeLogicalHeight() || (isFlexItem() && hasStretchedLogicalHeight())));
+        || (style().aspectRatio().hasRatio() && (hasRelativeLogicalHeight() || ((isFlexItem() || isGridItem()) && hasStretchedLogicalHeight())));
 }
 
 ScrollPosition RenderBox::scrollPosition() const
