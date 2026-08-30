@@ -36,12 +36,6 @@ namespace CSS {
 struct CustomIdent {
     AtomString value;
 
-    std::optional<AtomString> tryResolved() const
-    {
-        // FIXME: When ident() function is added, only successfully resolve when there are no <integer> components.
-        return value;
-    }
-
     bool operator==(const CustomIdent&) const = default;
 };
 
