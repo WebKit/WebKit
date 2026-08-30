@@ -194,6 +194,8 @@ public:
     id<MTLRenderPipelineState> _Nullable indirectBufferClampPipeline(NSUInteger rasterSampleCount);
     id<MTLRenderPipelineState> _Nullable icbCommandClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
     id<MTLFunction> icbCommandClampFunction(MTLIndexType);
+    id<MTLRenderPipelineState> _Nullable icbIndirectEncodePipeline(bool isIndexed, MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLFunction> icbIndirectEncodeFunction(bool isIndexed, MTLIndexType);
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, bool skipMemoryAttribution = false, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger, bool skipMemoryAttribution = false) const;
     template<typename T>
@@ -321,6 +323,13 @@ private:
     id<MTLRenderPipelineState> _Nullable m_icbCommandClampUshortPSO { nil };
     id<MTLRenderPipelineState> _Nullable m_icbCommandClampUintPSOMS { nil };
     id<MTLRenderPipelineState> _Nullable m_icbCommandClampUshortPSOMS { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUintPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUshortPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUintPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUshortPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeDrawPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeDrawPSOMS { nil };
 
     const Ref<Adapter> m_adapter;
     const ThreadSafeWeakPtr<Instance> m_instance;

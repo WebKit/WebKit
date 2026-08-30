@@ -558,8 +558,10 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
 
     if (dataSize < 16*KB && (buffer.usage() & WGPUBufferUsage_Index) && !(buffer.usage() & WGPUBufferUsage_Indirect)) {
         auto maxUnsignedUshortValue = maxIndexValue(data);
-        if (!buffer.needsIndexValidation(maxUnsignedUshortValue.first, maxUnsignedUshortValue.second))
+        if (!buffer.needsIndexValidation(maxUnsignedUshortValue.first, maxUnsignedUshortValue.second)) {
             needsInvalidation = false;
+            buffer.indexBufferContentsModified(maxUnsignedUshortValue.first, maxUnsignedUshortValue.second);
+        }
     }
     if (needsInvalidation)
         buffer.indirectBufferInvalidated();

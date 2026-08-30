@@ -909,6 +909,134 @@ id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger raster
     return result;
 }
 
+id<MTLRenderPipelineState> Device::icbIndirectEncodePipeline(bool isIndexed, MTLIndexType indexType, NSUInteger rasterSampleCount)
+{
+    if (!m_device)
+        return nil;
+
+    bool isUint16 = indexType == MTLIndexTypeUInt16;
+    id<MTLRenderPipelineState> result;
+    if (!isIndexed)
+        result = rasterSampleCount > 1 ? m_icbIndirectEncodeDrawPSOMS : m_icbIndirectEncodeDrawPSO;
+    else
+        result = isUint16 ? (rasterSampleCount > 1 ? m_icbIndirectEncodeUshortPSOMS : m_icbIndirectEncodeUshortPSO) : (rasterSampleCount > 1 ? m_icbIndirectEncodeUintPSOMS : m_icbIndirectEncodeUintPSO);
+    if (result)
+        return result;
+
+    NSError *error = nil;
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    mtlRenderPipelineDescriptor.vertexFunction = icbIndirectEncodeFunction(isIndexed, indexType);
+    mtlRenderPipelineDescriptor.rasterizationEnabled = false;
+    mtlRenderPipelineDescriptor.rasterSampleCount = rasterSampleCount;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    if (!isIndexed) {
+        if (rasterSampleCount > 1)
+            result = m_icbIndirectEncodeDrawPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_icbIndirectEncodeDrawPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    } else if (isUint16) {
+        if (rasterSampleCount > 1)
+            result = m_icbIndirectEncodeUshortPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_icbIndirectEncodeUshortPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    } else {
+        if (rasterSampleCount > 1)
+            result = m_icbIndirectEncodeUintPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+        else
+            result = m_icbIndirectEncodeUintPSO = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    }
+
+    if (error) {
+        WTFLogAlways("%@", error);  // NOLINT
+        return nil;
+    }
+    return result;
+}
+
+// Encodes an indirect draw into an ICB slot on the GPU, reading the draw counts from the args buffer
+// (clamped shadow args, or the app's raw buffer when no clamping is required) at executeBundles() time.
+id<MTLFunction> Device::icbIndirectEncodeFunction(bool isIndexed, MTLIndexType indexType)
+{
+    static id<MTLFunction> functionDraw = nil;
+    static id<MTLFunction> functionIndexedUint = nil;
+    static id<MTLFunction> functionIndexedUshort = nil;
+    NSError *error = nil;
+    static std::once_flag onceFlag;
+    // The shader below hardcodes [[buffer(1)]] for the ICB container to match bufferIndexForICBContainer().
+    RELEASE_ASSERT(bufferIndexForICBContainer() == 1);
+    std::call_once(onceFlag, [&] {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+    using namespace metal;
+    struct ICBContainer {
+        device uint* outOfBoundsRead [[ id(0) ]];
+        command_buffer commandBuffer [[ id(1) ]];
+    };
+
+    static_assert(sizeof(primitive_type) == sizeof(uint32_t), "API assumes primitive type is sizeof uint32_t");
+
+    // slotData[0] = ICB slot index, slotData[1] = primitive_type.
+    [[vertex]] void vsICBIndirectDraw(device const MTLDrawPrimitivesIndirectArguments& args [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(1)]],
+        const constant uint* slotData [[buffer(2)]])
+    {
+        render_command cmd(icb_container->commandBuffer, slotData[0]);
+        cmd.draw_primitives(static_cast<primitive_type>(slotData[1]),
+            args.vertexStart,
+            args.vertexCount,
+            args.instanceCount,
+            args.baseInstance);
+    }
+
+    // slotData[2] = index buffer element offset.
+    [[vertex]] void vsICBIndirectIndexedUint(device const MTLDrawIndexedPrimitivesIndirectArguments& args [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(1)]],
+        device uint* indexBuffer [[buffer(2)]],
+        const constant uint* slotData [[buffer(3)]])
+    {
+        render_command cmd(icb_container->commandBuffer, slotData[0]);
+        device uint* indexBufferBase = indexBuffer + slotData[2] + args.indexStart;
+        cmd.draw_indexed_primitives(static_cast<primitive_type>(slotData[1]),
+            args.indexCount,
+            indexBufferBase,
+            args.instanceCount,
+            args.baseVertex,
+            args.baseInstance);
+    }
+
+    [[vertex]] void vsICBIndirectIndexedUshort(device const MTLDrawIndexedPrimitivesIndirectArguments& args [[buffer(0)]],
+        device ICBContainer *icb_container [[buffer(1)]],
+        device ushort* indexBuffer [[buffer(2)]],
+        const constant uint* slotData [[buffer(3)]])
+    {
+        render_command cmd(icb_container->commandBuffer, slotData[0]);
+        device ushort* indexBufferBase = indexBuffer + slotData[2] + args.indexStart;
+        cmd.draw_indexed_primitives(static_cast<primitive_type>(slotData[1]),
+            args.indexCount,
+            indexBufferBase,
+            args.instanceCount,
+            args.baseVertex,
+            args.baseInstance);
+    })" /* NOLINT */ options:options error:&error];
+        if (error)
+            WTFLogAlways("%@", error);  // NOLINT
+
+        functionDraw = [library newFunctionWithName:@"vsICBIndirectDraw"];
+        functionIndexedUint = [library newFunctionWithName:@"vsICBIndirectIndexedUint"];
+        functionIndexedUshort = [library newFunctionWithName:@"vsICBIndirectIndexedUshort"];
+    });
+
+    RELEASE_ASSERT(functionDraw && functionIndexedUint && functionIndexedUshort);
+    if (!isIndexed)
+        return functionDraw;
+    return indexType == MTLIndexTypeUInt16 ? functionIndexedUshort : functionIndexedUint;
+}
+
 id<MTLRenderPipelineState> Device::icbCommandClampPipeline(MTLIndexType indexType, NSUInteger rasterSampleCount)
 {
     if (!m_device)

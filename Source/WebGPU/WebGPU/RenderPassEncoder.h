@@ -108,6 +108,11 @@ public:
 
     static std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer*, Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, bool& splitEncoder);
     static std::pair<id<MTLBuffer>, uint64_t> clampIndirectBufferToValidValues(Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, bool& splitEncoder);
+    // Batched (no-internal-barrier, per-draw-scratch) clamp helpers used by executeBundles.
+    static std::pair<id<MTLBuffer>, uint64_t> newZeroedIndirectScratch(Device&, size_t);
+    static bool clampIndirectBufferDispatchBatched(Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, id<MTLBuffer> finalScratch, uint64_t finalScratchOffset);
+    static bool clampIndirectIndexBufferDispatch1Batched(Buffer* apiIndexBuffer, Buffer& indexedIndirectBuffer, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minInstanceCount, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, id<MTLBuffer> finalScratch, uint64_t finalScratchOffset, id<MTLBuffer> intermediateScratch, uint64_t intermediateScratchOffset, uint32_t& outIndexBufferCount);
+    static bool clampIndirectIndexBufferDispatch2Batched(Buffer* apiIndexBuffer, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint32_t minVertexCount, MTLPrimitiveType, uint32_t indexBufferCount, Device&, uint32_t rasterSampleCount, RenderPassEncoder&, id<MTLBuffer> finalScratch, uint64_t finalScratchOffset, id<MTLBuffer> intermediateScratch, uint64_t intermediateScratchOffset);
     enum class IndexCall { Draw, IndirectDraw, Skip, CachedIndirectDraw };
     struct DrawIndexResult {
         IndexCall result;

@@ -496,13 +496,13 @@ static DrawIndexCacheContainerKey makeKey(uint32_t firstIndex, uint32_t indexCou
 std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb) const
 {
     auto containerIt = m_drawIndexedCache.find(makeKey(firstIndex, indexCount, indexType, primitiveOffset, icb));
-    if (containerIt != m_drawIndexedCache.end() && containerIt->value <= vertexCount)
+    if (containerIt != m_drawIndexedCache.end() && containerIt->value.indexContentsGeneration == m_indexContentsGeneration && containerIt->value.vertexCount <= vertexCount)
         return containerIt;
 
     return std::nullopt;
 }
 
-void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb)
+void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> icb)
 {
     if (invalidationCountAtDispatch != m_drawIndexedCacheInvalidationCount)
         return;
@@ -511,7 +511,7 @@ void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t
     if (m_drawIndexedCache.size() > maxCacheSize)
         m_drawIndexedCache.clear();
 
-    m_drawIndexedCache.set(makeKey(firstIndex, indexCount, indexType, primitiveOffset, icb), vertexCount);
+    m_drawIndexedCache.set(makeKey(firstIndex, indexCount, indexType, primitiveOffset, icb), DrawIndexValidationCacheEntry { vertexCount, validationGeneration });
 
     // Update the validated high-water marks so future writeBuffer calls
     // with indices at or below these values don't need to invalidate.
@@ -790,6 +790,10 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
     ++m_drawIndexedCacheInvalidationCount;
     m_maxValidatedUnsignedIndex = 0;
     m_maxValidatedUshortIndex = 0;
+    ++m_contentsGeneration;
+    ++m_indexContentsGeneration;
+    m_indexValueUpperBoundUint = UINT32_MAX;
+    m_indexValueUpperBoundUshort = UINT16_MAX;
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,
         .indexBufferOffsetInBytes = UINT64_MAX,
