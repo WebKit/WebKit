@@ -1472,7 +1472,7 @@ static std::optional<Style::PseudoElementIdentifier> NODELETE pseudoElementIdent
 
 // FIXME: It's probably worth investigating if more logic can be shared with
 // CSSSelectorParser::consumePseudo(), though note that the requirements are subtly different.
-std::optional<Style::PseudoElementIdentifier> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
+std::optional<Style::PseudoElementIdentifier> CSSSelectorParser::parsePseudoElement(StringView input, const CSSSelectorParserContext& context)
 {
     auto tokenizer = CSSTokenizer { input };
     auto range = tokenizer.tokenRange();

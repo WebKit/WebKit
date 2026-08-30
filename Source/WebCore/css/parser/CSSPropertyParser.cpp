@@ -270,7 +270,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important
     return parseSuccess;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID property, const String& string, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID property, StringView string, const CSSParserContext& context)
 {
     ASSERT(!WebCore::isShorthand(property));
 
@@ -324,7 +324,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID pro
     return value;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property, const String& string, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property, StringView string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

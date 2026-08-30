@@ -87,7 +87,7 @@ Vector<std::pair<CSSValueID, CSS::Percentage<>>> consumeKeyframeKeyList(CSSParse
     }
 }
 
-Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(const String& string, const CSSParserContext& context)
+Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(StringView string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

@@ -108,7 +108,7 @@ static inline SVGAngleValue::Type NODELETE cssAngleUnitToSVGAngleType(CSS::Angle
     return SVGAngleValue::SVG_ANGLETYPE_UNKNOWN;
 }
 
-ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
+ExceptionOr<void> SVGAngleValue::setValueAsString(StringView value)
 {
     if (value.isEmpty()) {
         m_unitType = SVG_ANGLETYPE_UNSPECIFIED;

@@ -69,19 +69,19 @@ WebCore::Color consumeColorRaw(CSSParserTokenRange&, CSS::PropertyParserState&, 
 
 // Parse with default options.
 // NOTE: Callers must include CSSPropertyParserConsumer+ColorInlines.h to use this.
-WebCore::Color parseColorRaw(const String&, const CSSParserContext&, ScriptExecutionContext&);
+WebCore::Color parseColorRaw(StringView, const CSSParserContext&, ScriptExecutionContext&);
 
 // Fast variant to be used when ScriptExecutionContext is expensive to obtain or when need to pass parsing options.
 // If the result is invalid, callers should call parseColorRawGeneral().
 // NOTE: Callers must include CSSPropertyParserConsumer+ColorInlines.h to use this.
-WebCore::Color parseColorRawSimple(const String&, const CSSParserContext&);
+WebCore::Color parseColorRawSimple(StringView, const CSSParserContext&);
 
 // Parse with specific options.
-WEBCORE_EXPORT WebCore::Color parseColorRawGeneral(const String&, const CSSParserContext&, ScriptExecutionContext&, const CSSColorParsingOptions&, CSS::PlatformColorResolutionState&);
+WEBCORE_EXPORT WebCore::Color parseColorRawGeneral(StringView, const CSSParserContext&, ScriptExecutionContext&, const CSSColorParsingOptions&, CSS::PlatformColorResolutionState&);
 
 // FIXME: All callers are not getting the right Settings, keyword resolution and calc resolution
 // when using this function and should switch to parseColorRaw().
-WEBCORE_EXPORT WebCore::Color deprecatedParseColorRawWithoutContext(const String&, const CSSColorParsingOptions& = { });
+WEBCORE_EXPORT WebCore::Color deprecatedParseColorRawWithoutContext(StringView, const CSSColorParsingOptions& = { });
 
 // MARK: <dynamic-range-limit> (unresolved)
 std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSParserTokenRange&, CSS::PropertyParserState&);

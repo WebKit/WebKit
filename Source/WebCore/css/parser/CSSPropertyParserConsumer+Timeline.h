@@ -50,8 +50,8 @@ struct ViewTimelineInsetItem;
 namespace CSSPropertyParserHelpers {
 
 bool NODELETE isTimelineRangeName(CSSValueID);
-std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(const String&);
-std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(const String&);
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(StringView);
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(StringView);
 
 // MARK: - Consumer functions
 
@@ -67,7 +67,7 @@ RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, CSS::Propert
 // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
 RefPtr<CSSValue> consumeSingleViewTimelineInsetItem(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInsetItemRaw(const String&, const CSSParserContext&, const Document&);
+std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInsetItemRaw(StringView, const CSSParserContext&, const Document&);
 
 // <single-animation-range> = normal | <length-percentage> | <timeline-range-name> <length-percentage>?
 // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
@@ -75,8 +75,8 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange&, CSS::Property
 RefPtr<CSSValue> consumeSingleAnimationRangeStart(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeSingleAnimationRangeEnd(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-std::optional<Style::SingleAnimationRangeStart> parseAbsoluteSingleAnimationRangeStartRaw(const String&, const CSSParserContext&, const Document&);
-std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeEndRaw(const String&, const CSSParserContext&, const Document&);
+std::optional<Style::SingleAnimationRangeStart> parseAbsoluteSingleAnimationRangeStartRaw(StringView, const CSSParserContext&, const Document&);
+std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeEndRaw(StringView, const CSSParserContext&, const Document&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -47,7 +47,7 @@ Vector<std::pair<CSSValueID, CSS::Percentage<>>> consumeKeyframeKeyList(CSSParse
 
 // MARK: <keyframe-selector> parsing
 // https://drafts.csswg.org/css-animations-1/#typedef-keyframe-selector
-Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(const String&, const CSSParserContext&);
+Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(StringView, const CSSParserContext&);
 
 // MARK: <keyframes-name> consuming
 // https://drafts.csswg.org/css-animations/#typedef-keyframes-name

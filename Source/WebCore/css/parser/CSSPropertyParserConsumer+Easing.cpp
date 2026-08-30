@@ -367,7 +367,7 @@ RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange& range, CSS::Property
     return { };
 }
 
-RefPtr<TimingFunction> parseEasingFunctionDeprecated(const String& string, const CSSParserContext& context)
+RefPtr<TimingFunction> parseEasingFunctionDeprecated(StringView string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

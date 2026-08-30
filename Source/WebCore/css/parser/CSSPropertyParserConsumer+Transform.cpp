@@ -410,7 +410,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSS::PropertyParserSta
     return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 }
 
-std::optional<Style::Transform> parseTransformRaw(const String& string, const CSSParserContext& context, const Document& document)
+std::optional<Style::Transform> parseTransformRaw(StringView string, const CSSParserContext& context, const Document& document)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

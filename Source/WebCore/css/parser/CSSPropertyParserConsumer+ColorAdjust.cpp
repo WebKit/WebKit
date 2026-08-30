@@ -110,7 +110,7 @@ std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange
     return result;
 }
 
-std::optional<CSS::ColorScheme> parseUnresolvedColorScheme(const String& string, const CSSParserContext& context)
+std::optional<CSS::ColorScheme> parseUnresolvedColorScheme(StringView string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

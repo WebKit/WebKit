@@ -60,7 +60,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParser
     return supportsParser.consumeSupportsFeatureOrGeneralEnclosed(range);
 }
 
-CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(const String& condition, const CSSParserContext& context, ParsingMode mode)
+CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(StringView condition, const CSSParserContext& context, ParsingMode mode)
 {
     CSSParser parser(context, condition);
     if (!parser.tokenizer())

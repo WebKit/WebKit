@@ -33,12 +33,12 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: <color> parsing (raw)
 
-inline WebCore::Color parseColorRawSimple(const String& string, const CSSParserContext& context)
+inline WebCore::Color parseColorRawSimple(StringView string, const CSSParserContext& context)
 {
     return CSSParserFastPaths::parseSimpleColor(string, context);
 }
 
-inline WebCore::Color parseColorRaw(const String& string, const CSSParserContext& context, ScriptExecutionContext& scriptExecutionContext)
+inline WebCore::Color parseColorRaw(StringView string, const CSSParserContext& context, ScriptExecutionContext& scriptExecutionContext)
 {
     auto color = parseColorRawSimple(string, context);
     if (color.isValid())

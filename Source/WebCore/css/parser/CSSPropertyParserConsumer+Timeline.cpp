@@ -68,7 +68,7 @@ static RefPtr<CSSValue> consumeTimelineRangeName(CSSParserTokenRange& range)
     return nullptr;
 }
 
-std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(const String& rangeString)
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(StringView rangeString)
 {
     if (rangeString == "cover"_s)
         return Style::SingleAnimationRangeName::Cover;
@@ -87,7 +87,7 @@ std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(const S
     return std::nullopt;
 }
 
-std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(const String& rangeString)
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(StringView rangeString)
 {
     if (rangeString == "normal"_s)
         return Style::SingleAnimationRangeName::Normal;
@@ -170,7 +170,7 @@ RefPtr<CSSValue> consumeSingleViewTimelineInsetItem(CSSParserTokenRange& range, 
     return startInset;
 }
 
-std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInsetItemRaw(const String& string, const CSSParserContext& context, const Document& document)
+std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInsetItemRaw(StringView string, const CSSParserContext& context, const Document& document)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();
@@ -242,7 +242,7 @@ RefPtr<CSSValue> consumeSingleAnimationRangeEnd(CSSParserTokenRange& range, CSS:
 }
 
 template<typename T>
-static std::optional<T> parseAbsoluteSingleAnimationRangeEdgeRaw(const String& string, const CSSParserContext& context, const Document& document)
+static std::optional<T> parseAbsoluteSingleAnimationRangeEdgeRaw(StringView string, const CSSParserContext& context, const Document& document)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();
@@ -269,12 +269,12 @@ static std::optional<T> parseAbsoluteSingleAnimationRangeEdgeRaw(const String& s
     return Style::toStyleFromCSSValue<T>(*CheckedPtr { dummyState.ptr() }, *parsedValue);
 }
 
-std::optional<Style::SingleAnimationRangeStart> parseAbsoluteSingleAnimationRangeStartRaw(const String& string, const CSSParserContext& context, const Document& document)
+std::optional<Style::SingleAnimationRangeStart> parseAbsoluteSingleAnimationRangeStartRaw(StringView string, const CSSParserContext& context, const Document& document)
 {
     return parseAbsoluteSingleAnimationRangeEdgeRaw<Style::SingleAnimationRangeStart>(string, context, document);
 }
 
-std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeEndRaw(const String& string, const CSSParserContext& context, const Document& document)
+std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeEndRaw(StringView string, const CSSParserContext& context, const Document& document)
 {
     return parseAbsoluteSingleAnimationRangeEdgeRaw<Style::SingleAnimationRangeEnd>(string, context, document);
 }

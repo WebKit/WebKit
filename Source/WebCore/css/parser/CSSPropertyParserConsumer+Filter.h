@@ -64,7 +64,7 @@ std::optional<CSS::Filter> consumeUnresolvedFilter(CSSParserTokenRange&, CSS::Pr
 std::optional<CSS::AppleColorFilter> consumeUnresolvedAppleColorFilter(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <'filter'> parsing (raw)
-std::optional<Style::Filter> parseFilterValueListOrNoneRaw(const String&, const CSSParserContext&, const Document&, Style::ComputedStyle&);
+std::optional<Style::Filter> parseFilterValueListOrNoneRaw(StringView, const CSSParserContext&, const Document&, Style::ComputedStyle&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

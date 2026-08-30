@@ -166,15 +166,17 @@ static ASCIILiteral atRuleIdentifierForType(StyleRuleType styleRuleType)
 
 static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleRuleType, Document* document, CSSParserEnum::NestedContext nestedContext = { })
 {
-    auto isValidAtRuleHeaderText = [&] (const String& atRuleIdentifier) {
+    auto isValidAtRuleHeaderText = [&](const String& atRuleIdentifier) {
         if (headerText.isEmpty())
             return false;
+
+        auto parseText = makeString(atRuleIdentifier, ' ', headerText, " {}"_s);
 
         // Make sure the engine can parse the provided `@` rule, even if it only uses unsupported features. As long as
         // the rule text is entirely consumed and it creates a rule of the expected type, we consider it valid because
         // we will be able to continue to edit the rule in the future.
         CSSParserContext context(parserContextForDocument(document)); // CSSParser holds a reference to this.
-        CSSParser parser(context, makeString(atRuleIdentifier, ' ', headerText, " {}"_s));
+        CSSParser parser(context, parseText);
         if (!parser.tokenizer())
             return false;
 

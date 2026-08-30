@@ -57,11 +57,11 @@ public:
     static bool parseValue(CSSPropertyID, IsImportant, CSSParserTokenRange, const CSSParserContext&, Vector<CSSProperty, 256>& result, StyleRuleType, const CSSNamespacePrefixMap& = { });
 
     // Parses a longhand style property.
-    static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, const String&, const CSSParserContext&);
+    static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, StringView, const CSSParserContext&);
     static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, CSSParserTokenRange, const CSSParserContext&);
 
     // Parses a @counter-style descriptor.
-    static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, const String&, const CSSParserContext&);
+    static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, StringView, const CSSParserContext&);
 
     static RefPtr<const Style::CustomProperty> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
     static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&, Style::IsAttrTainted);

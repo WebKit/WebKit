@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document)
+SizesAttributeParser::SizesAttributeParser(StringView attribute, const Document& document)
     : m_document(document)
 {
     if (!attribute.isEmpty())

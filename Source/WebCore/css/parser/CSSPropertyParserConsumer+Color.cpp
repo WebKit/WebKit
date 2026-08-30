@@ -918,7 +918,7 @@ Color consumeColorRaw(CSSParserTokenRange& range, CSS::PropertyParserState& prop
 
 // MARK: - Raw parsing entry points
 
-Color parseColorRawGeneral(const String& string, const CSSParserContext& context, ScriptExecutionContext& scriptExecutionContext, const CSSColorParsingOptions& options, CSS::PlatformColorResolutionState& eagerResolutionState)
+Color parseColorRawGeneral(StringView string, const CSSParserContext& context, ScriptExecutionContext& scriptExecutionContext, const CSSColorParsingOptions& options, CSS::PlatformColorResolutionState& eagerResolutionState)
 {
     CSSTokenizer tokenizer(string);
     CSSParserTokenRange range(tokenizer.tokenRange());
@@ -938,7 +938,7 @@ Color parseColorRawGeneral(const String& string, const CSSParserContext& context
     return createColor(*result, eagerResolutionState);
 }
 
-Color deprecatedParseColorRawWithoutContext(const String& string, const CSSColorParsingOptions& options)
+Color deprecatedParseColorRawWithoutContext(StringView string, const CSSColorParsingOptions& options)
 {
     auto& context = strictCSSParserContext();
     if (auto color = CSSParserFastPaths::parseSimpleColor(string, context))

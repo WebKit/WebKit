@@ -49,7 +49,7 @@ namespace CSSPropertyParserHelpers {
 std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <'color-scheme'> parsing (unresolved)
-std::optional<CSS::ColorScheme> parseUnresolvedColorScheme(const String&, const CSSParserContext&);
+std::optional<CSS::ColorScheme> parseUnresolvedColorScheme(StringView, const CSSParserContext&);
 
 // MARK: <'color-scheme'> consuming (CSSValue)
 RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&, CSS::PropertyParserState&);

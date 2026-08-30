@@ -52,7 +52,7 @@ public:
     };
 
     static SupportsResult supportsCondition(CSSParserTokenRange, CSSParser&, ParsingMode);
-    static SupportsResult supportsCondition(const String&, const CSSParserContext&, ParsingMode);
+    static SupportsResult supportsCondition(StringView, const CSSParserContext&, ParsingMode);
 
 private:
     CSSSupportsParser(CSSParser& parser)

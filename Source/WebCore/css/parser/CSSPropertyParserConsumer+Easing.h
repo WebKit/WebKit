@@ -52,7 +52,7 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
 RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: <easing-function> parsing (raw)
-RefPtr<TimingFunction> parseEasingFunctionDeprecated(const String&, const CSSParserContext&);
+RefPtr<TimingFunction> parseEasingFunctionDeprecated(StringView, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -71,10 +71,6 @@ class ImmutableStyleProperties;
 class Element;
 class MutableStyleProperties;
 
-namespace Style {
-struct Color;
-}
-
 enum CSSAtRuleID : uint8_t;
 
 class CSSParser {
@@ -85,9 +81,6 @@ public:
         Unchanged,
         Error
     };
-
-    CSSParser(const CSSParserContext&, const String&, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr, CSSParserEnum::NestedContext = { });
-    ~CSSParser();
 
     enum class AllowedRules : uint8_t {
         // As per css-syntax, css-cascade and css-namespaces, @charset rules
@@ -106,28 +99,32 @@ public:
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
-    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant, const CSSParserContext&);
-    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, IsImportant, const CSSParserContext&);
-    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element&);
-    WEBCORE_EXPORT static bool parseDeclarationList(MutableStyleProperties&, const String&, const CSSParserContext&);
-    static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::NestedContext = { });
-    static RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&, const CSSParserContext&);
-    static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
+    CSSParser(const CSSParserContext&, StringView string LIFETIME_BOUND, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr, CSSParserEnum::NestedContext = { });
+    ~CSSParser();
+
+    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, StringView, IsImportant, const CSSParserContext&);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, StringView, IsImportant, const CSSParserContext&);
+    WEBCORE_EXPORT static bool parseDeclarationList(MutableStyleProperties&, StringView, const CSSParserContext&);
+
+    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(StringView, const Element&);
+    static RefPtr<StyleRuleBase> parseRule(StringView, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::NestedContext = { });
+    static RefPtr<StyleRuleKeyframe> parseKeyframeRule(StringView, const CSSParserContext&);
+    static RefPtr<StyleRuleNestedDeclarations> parseNestedDeclarations(StringView, const CSSParserContext&);
+
+    static void parseStyleSheet(StringView, const CSSParserContext&, StyleSheetContents&);
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
 
     bool supportsDeclaration(CSSParserTokenRange&);
-    const CSSParserContext& context() const LIFETIME_BOUND { return m_context; }
 
     // This function updates the range it's given.
     RefPtr<StyleRuleBase> consumeAtRule(CSSParserTokenRange&, AllowedRules);
 
-    static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
-    static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents&, CSSParserObserver&);
+    static void parseDeclarationListForInspector(StringView, const CSSParserContext&, CSSParserObserver&);
+    static void parseStyleSheetForInspector(StringView, const CSSParserContext&, StyleSheetContents&, CSSParserObserver&);
 
     static IsImportant consumeTrailingImportantAndWhitespace(CSSParserTokenRange&);
 
-    static RefPtr<StyleRuleNestedDeclarations> parseNestedDeclarations(const CSSParserContext&, const String&);
-
+    const CSSParserContext& context() const LIFETIME_BOUND { return m_context; }
     const CSSTokenizer* tokenizer() const LIFETIME_BOUND { return m_tokenizer.get(); }
 
 private:

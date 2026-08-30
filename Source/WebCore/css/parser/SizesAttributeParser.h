@@ -44,7 +44,7 @@ struct CSSParserContext;
 
 class SizesAttributeParser {
 public:
-    SizesAttributeParser(const String&, const Document&);
+    SizesAttributeParser(StringView attribute LIFETIME_BOUND, const Document&);
 
     std::optional<float> effectiveSize();
     bool isAuto() const { return m_isAuto; }

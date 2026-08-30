@@ -101,7 +101,7 @@ CSSParser::CSSParser(const CSSParserContext& context, StyleSheetContents* styleS
 {
 }
 
-CSSParser::CSSParser(const CSSParserContext& context, const String& string, StyleSheetContents* styleSheet, CSSParserObserverWrapper* wrapper, CSSParserEnum::NestedContext nestedContext)
+CSSParser::CSSParser(const CSSParserContext& context, StringView string, StyleSheetContents* styleSheet, CSSParserObserverWrapper* wrapper, CSSParserEnum::NestedContext nestedContext)
     : m_context(context)
     , m_styleSheet(styleSheet)
     , m_tokenizer(wrapper ? CSSTokenizer::tryCreate(string, *wrapper) : CSSTokenizer::tryCreate(string))
@@ -112,7 +112,7 @@ CSSParser::CSSParser(const CSSParserContext& context, const String& string, Styl
         m_ancestorRuleTypeStack.append(*nestedContext);
 }
 
-auto CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, IsImportant important, const CSSParserContext& context) -> ParseResult
+auto CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, StringView string, IsImportant important, const CSSParserContext& context) -> ParseResult
 {
     auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
 
@@ -132,7 +132,7 @@ auto CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID pr
     return declaration.addParsedProperties(parser.topContext().m_parsedProperties) ? ParseResult::Changed : ParseResult::Unchanged;
 }
 
-auto CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, IsImportant important, const CSSParserContext& context) -> ParseResult
+auto CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, StringView string, IsImportant important, const CSSParserContext& context) -> ParseResult
 {
     CSSParser parser(context, string);
 
@@ -187,7 +187,7 @@ static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector&
     return result;
 }
 
-Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element& element)
+Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(StringView string, const Element& element)
 {
     CSSParserContext context(element.document());
     context.mode = strictToCSSParserMode(element.isHTMLElement() && !element.document().inQuirksMode());
@@ -197,7 +197,7 @@ Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const Strin
     return createStyleProperties(parser.topContext().m_parsedProperties, context.mode);
 }
 
-bool CSSParser::parseDeclarationList(MutableStyleProperties& declaration, const String& string, const CSSParserContext& context)
+bool CSSParser::parseDeclarationList(MutableStyleProperties& declaration, StringView string, const CSSParserContext& context)
 {
     CSSParser parser(context, string);
     auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
@@ -216,7 +216,7 @@ bool CSSParser::parseDeclarationList(MutableStyleProperties& declaration, const 
     return declaration.addParsedProperties(results);
 }
 
-RefPtr<StyleRuleBase> CSSParser::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRules allowedRules, CSSParserEnum::NestedContext nestedContext)
+RefPtr<StyleRuleBase> CSSParser::parseRule(StringView string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRules allowedRules, CSSParserEnum::NestedContext nestedContext)
 {
     CSSParser parser(context, string, styleSheet, nullptr, nestedContext);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
@@ -236,13 +236,13 @@ RefPtr<StyleRuleBase> CSSParser::parseRule(const String& string, const CSSParser
     return rule;
 }
 
-RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string, const CSSParserContext& context)
+RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(StringView string, const CSSParserContext& context)
 {
     RefPtr keyframe = parseRule(string, context, nullptr, CSSParser::AllowedRules::KeyframeRules);
     return downcast<StyleRuleKeyframe>(keyframe.get());
 }
 
-RefPtr<StyleRuleNestedDeclarations> CSSParser::parseNestedDeclarations(const CSSParserContext&context , const String& string)
+RefPtr<StyleRuleNestedDeclarations> CSSParser::parseNestedDeclarations(StringView string, const CSSParserContext& context)
 {
     auto properties = MutableStyleProperties::createEmpty();
     if (!parseDeclarationList(properties, string , context))
@@ -251,7 +251,7 @@ RefPtr<StyleRuleNestedDeclarations> CSSParser::parseNestedDeclarations(const CSS
     return StyleRuleNestedDeclarations::create(WTF::move(properties));
 }
 
-void CSSParser::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet)
+void CSSParser::parseStyleSheet(StringView string, const CSSParserContext& context, StyleSheetContents& styleSheet)
 {
     CSSParser parser(context, string, &styleSheet, nullptr);
     bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), RuleList::TopLevel, [&](Ref<StyleRuleBase> rule) {
@@ -318,7 +318,7 @@ bool CSSParser::supportsDeclaration(CSSParserTokenRange& range)
     return result;
 }
 
-void CSSParser::parseDeclarationListForInspector(const String& declaration, const CSSParserContext& context, CSSParserObserver& observer)
+void CSSParser::parseDeclarationListForInspector(StringView declaration, const CSSParserContext& context, CSSParserObserver& observer)
 {
     Ref wrapper = CSSParserObserverWrapper::create(observer);
     CSSParser parser(context, declaration, nullptr, wrapper.ptr());
@@ -327,7 +327,7 @@ void CSSParser::parseDeclarationListForInspector(const String& declaration, cons
     parser.consumeDeclarationList(parser.tokenizer()->tokenRange(), StyleRuleType::Style);
 }
 
-void CSSParser::parseStyleSheetForInspector(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet, CSSParserObserver& observer)
+void CSSParser::parseStyleSheetForInspector(StringView string, const CSSParserContext& context, StyleSheetContents& styleSheet, CSSParserObserver& observer)
 {
     Ref wrapper = CSSParserObserverWrapper::create(observer);
     CSSParser parser(context, string, &styleSheet, wrapper.ptr());

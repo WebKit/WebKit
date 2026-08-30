@@ -239,7 +239,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     RefPtr styleSheet = parentStyleSheet();
     RefPtr newRule = CSSParser::parseRule(ruleString, parserContext(), styleSheet ? protect(styleSheet->contents()).ptr() : nullptr, CSSParser::AllowedRules::ImportRules, CSSParserEnum::NestedContextType::Style);
     if (!newRule) {
-        newRule = CSSParser::parseNestedDeclarations(parserContext(), ruleString);
+        newRule = CSSParser::parseNestedDeclarations(ruleString, parserContext());
         if (!newRule)
             return Exception { ExceptionCode::SyntaxError };
     }
