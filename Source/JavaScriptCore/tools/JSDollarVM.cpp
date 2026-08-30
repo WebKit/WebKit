@@ -39,6 +39,7 @@
 #include "DOMJITGetterSetter.h"
 #include "Debugger.h"
 #include "ExecutableBaseInlines.h"
+#include "FastMallocAlignedMemoryAllocator.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
@@ -55,6 +56,7 @@
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
+#include "ObjectConstructor.h"
 #include "ObjectPropertyCondition.h"
 #include "OperationResult.h"
 #include "Options.h"
@@ -2217,6 +2219,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionInstallPropertyInlineCacheClearingWatch
 static JSC_DECLARE_HOST_FUNCTION(functionDeltaBetweenButterflies);
 static JSC_DECLARE_HOST_FUNCTION(functionCurrentCPUTime);
 static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
+static JSC_DECLARE_HOST_FUNCTION(functionWarmUpMarkedBlockState);
+static JSC_DECLARE_HOST_FUNCTION(functionSetWarmUpMarkedBlockAllocationShouldFail);
 static JSC_DECLARE_HOST_FUNCTION(functionParseCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIsWasmSupported);
 static JSC_DECLARE_HOST_FUNCTION(functionWasmCanonicalTypeCount);
@@ -3977,6 +3981,35 @@ JSC_DEFINE_HOST_FUNCTION(functionTotalGCTime, (JSGlobalObject* globalObject, Cal
     return JSValue::encode(jsNumber(vm.heap.totalGCTime().seconds()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionWarmUpMarkedBlockState, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto state = warmUpMarkedBlockStateForTesting();
+    ASCIILiteral phase = [&] {
+        switch (state.phase) {
+        case WarmUpMarkedBlockPhase::Stopped:
+            return "stopped"_s;
+        case WarmUpMarkedBlockPhase::Armed:
+            return "armed"_s;
+        case WarmUpMarkedBlockPhase::StandingDown:
+            return "standingDown"_s;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }();
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "blocks"_s), jsNumber(static_cast<unsigned>(state.blockCount)));
+    result->putDirect(vm, Identifier::fromString(vm, "phase"_s), jsString(vm, String(phase)));
+    return JSValue::encode(result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionSetWarmUpMarkedBlockAllocationShouldFail, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    setWarmUpMarkedBlockAllocationShouldFailForTesting(callFrame->argument(0).toBoolean(globalObject));
+    return JSValue::encode(jsUndefined());
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionParseCount, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4724,6 +4757,8 @@ void JSDollarVM::finishCreation(VM& vm)
     
     addFunction(vm, alwaysAllow, "currentCPUTime"_s, functionCurrentCPUTime, 0);
     addFunction(vm, alwaysAllow, "totalGCTime"_s, functionTotalGCTime, 0);
+    addFunction(vm, alwaysAllow, "warmUpMarkedBlockState"_s, functionWarmUpMarkedBlockState, 0);
+    addFunction(vm, alwaysAllow, "setWarmUpMarkedBlockAllocationShouldFail"_s, functionSetWarmUpMarkedBlockAllocationShouldFail, 1);
 
     addFunction(vm, alwaysAllow, "parseCount"_s, functionParseCount, 0);
 
