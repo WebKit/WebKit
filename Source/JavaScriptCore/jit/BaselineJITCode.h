@@ -57,34 +57,6 @@ private:
     Bag<JITSubIC> m_subICs;
 };
 
-class JITConstantPool {
-    WTF_MAKE_NONCOPYABLE(JITConstantPool);
-public:
-    using Constant = unsigned;
-
-    enum class Type : uint8_t {
-        FunctionDecl,
-        FunctionExpr,
-    };
-
-    using Value = JITConstant<Type>;
-
-    JITConstantPool() = default;
-    JITConstantPool(JITConstantPool&&) = default;
-    JITConstantPool& operator=(JITConstantPool&&) = default;
-
-    JITConstantPool(Vector<Value>&& constants)
-        : m_constants(WTF::move(constants))
-    {
-    }
-
-    size_t size() const { return m_constants.size(); }
-    Value at(size_t i) const { return m_constants[i]; }
-
-private:
-    FixedVector<Value> m_constants;
-};
-
 
 class BaselineJITCode : public DirectJITCode, public MathICHolder {
 public:
@@ -104,7 +76,6 @@ public:
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
     JITCodeMap m_jitCodeMap;
-    JITConstantPool m_constantPool;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 private:
     // The percentage of ValueProfiles that had some profiling data in them.
@@ -120,9 +91,9 @@ class BaselineJITData final : public ButterflyArray<BaselineJITData, HandlerProp
 public:
     using Base = ButterflyArray<BaselineJITData, HandlerPropertyInlineCache, void*>;
 
-    static std::unique_ptr<BaselineJITData> create(unsigned propertyCacheSize, unsigned poolSize, CodeBlock* codeBlock)
+    static std::unique_ptr<BaselineJITData> create(unsigned propertyCacheSize, CodeBlock* codeBlock)
     {
-        return std::unique_ptr<BaselineJITData> { createImpl(propertyCacheSize, poolSize, codeBlock) };
+        return std::unique_ptr<BaselineJITData> { createImpl(propertyCacheSize, 0, codeBlock) };
     }
 
     explicit BaselineJITData(unsigned poolSize, unsigned propertyCacheSize, CodeBlock*);

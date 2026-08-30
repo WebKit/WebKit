@@ -92,7 +92,6 @@ enum class SourceCodeRepresentation : uint8_t {
     Other,
     Integer,
     Double,
-    LinkTimeConstant,
 };
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;

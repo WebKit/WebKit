@@ -84,12 +84,6 @@ JIT::JIT(VM& vm, BaselineJITPlan& plan, CodeBlock* codeBlock)
 
 JIT::~JIT() = default;
 
-JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, void* payload)
-{
-    unsigned result = m_constantPool.size();
-    m_constantPool.append(JITConstantPool::Value { payload, type });
-    return result;
-}
 
 std::tuple<BaselineUnlinkedPropertyInlineCache*, PropertyInlineCacheIndex> JIT::addUnlinkedPropertyInlineCache()
 {
@@ -344,6 +338,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jneq_null)
         DEFINE_OP(op_jundefined_or_null)
         DEFINE_OP(op_jnundefined_or_null)
+        DEFINE_OP(op_get_link_time_constant)
+        DEFINE_OP(op_get_template_object)
         DEFINE_OP(op_jeq_ptr)
         DEFINE_OP(op_jneq_ptr)
         DEFINE_OP(op_less)
@@ -1012,7 +1008,6 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     jitCode->m_stringSwitchJumpTables = WTF::move(m_stringSwitchJumpTables);
     jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();
     jitCode->adoptMathICs(m_mathICs);
-    jitCode->m_constantPool = WTF::move(m_constantPool);
     jitCode->m_isShareable = m_isShareable;
     jitCode->m_pcToCodeOriginMap = WTF::move(pcToCodeOriginMap);
 

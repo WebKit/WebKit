@@ -243,7 +243,7 @@ RegisterID* ImportNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         generator.emitLoad(arguments.argumentRegister(1), jsUndefined());
     if (m_deferred)
         generator.emitLoad(arguments.argumentRegister(2), jsBoolean(true));
-    return generator.emitCall(generator.finalDestination(dst, importModule.get()), importModule.get(), NoExpectedFunction, arguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    return generator.emitCall(generator.finalDestination(dst), importModule.get(), NoExpectedFunction, arguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
 }
 
 // ------------------------------ NewTargetNode ----------------------------------
@@ -603,7 +603,7 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
             RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(propertyList->m_node->m_assign)->expression());
             CallArguments args(generator, nullptr, 0);
             generator.move(args.thisRegister(), src.get());
-            return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+            return generator.emitCall(generator.finalDestination(dst), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
         }
 
         bool foundNonConstant = false;
@@ -656,7 +656,7 @@ void PropertyListNode::emitDeclarePrivateFieldNames(BytecodeGenerator& generator
             CallArguments arguments(generator, nullptr, 1);
             generator.emitLoad(arguments.thisRegister(), jsUndefined());
             generator.emitLoad(arguments.argumentRegister(0), *node.name());
-            RefPtr<RegisterID> symbol = generator.emitCall(generator.finalDestination(nullptr, createPrivateSymbol.get()), createPrivateSymbol.get(), NoExpectedFunction, arguments, position(), position(), position(), DebuggableCall::No);
+            RefPtr<RegisterID> symbol = generator.emitCall(generator.finalDestination(nullptr), createPrivateSymbol.get(), NoExpectedFunction, arguments, position(), position(), position(), DebuggableCall::No);
 
             Variable var = generator.variable(*node.name());
             generator.emitPutToScope(scope, var, symbol.get(), DoNotThrowIfNotFound, InitializationMode::ConstInitialization);
@@ -6025,6 +6025,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
         RefPtr<RegisterID> restElementBase;
         RefPtr<RegisterID> restElementPropertyName;
         RefPtr<RegisterID> newObject;
+        RefPtr<RegisterID> copyDataProperties;
         IdentifierSet excludedSet;
         std::optional<CallArguments> args;
         unsigned numberOfComputedProperties = 0;
@@ -6041,6 +6042,9 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
             restElementBase = generator.newTemporary();
             restElementPropertyName = generator.newTemporary();
             newObject = generator.newTemporary();
+            // Must be loaded before the CallArguments below, since those registers have to stay
+            // topmost until the call is emitted.
+            copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
             args.emplace(generator, nullptr, indexInArguments + numberOfComputedProperties);
         }
 
@@ -6130,9 +6134,6 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                     targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator, restElementBase.get(), restElementPropertyName.get());
 
                 generator.emitNewObject(newObject.get());
-
-                // load and call @copyDataProperties
-                RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
 
                 // This must be non-tail-call because @copyDataProperties accesses caller-frame.
                 generator.move(args->thisRegister(), newObject.get());

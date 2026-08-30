@@ -28,6 +28,7 @@
 #include "GetPutInfo.h"
 #include "Interpreter.h"
 #include "Label.h"
+#include "LinkTimeConstant.h"
 #include "OpcodeSize.h"
 #include "PrivateFieldPutKind.h"
 #include "ProfileTypeBytecodeFlag.h"
@@ -152,6 +153,30 @@ struct Fits<VirtualRegister, size> {
         if (i >= s_firstConstantIndex)
             return VirtualRegister { (i - s_firstConstantIndex) + FirstConstantRegisterIndex };
         return VirtualRegister { i };
+    }
+};
+
+// LinkTimeConstant would otherwise go through the generic enum specialization below and be encoded as
+// its signed underlying type, capping the narrow form at 127 even though the values are all
+// non-negative and there are more than that many of them.
+template<OpcodeSize size>
+    requires (size != OpcodeSize::Wide32)
+struct Fits<LinkTimeConstant, size> : public Fits<unsigned, size> {
+    static_assert(numberOfLinkTimeConstants <= std::numeric_limits<typename TypeBySize<OpcodeSize::Narrow>::unsignedType>::max() + 1,
+        "A LinkTimeConstant no longer fits the narrow operand form; widen it deliberately rather than silently.");
+    using TargetType = typename TypeBySize<size>::unsignedType;
+    using Base = Fits<unsigned, size>;
+
+    static bool check(LinkTimeConstant constant) { return Base::check(static_cast<unsigned>(constant)); }
+
+    static TargetType convert(LinkTimeConstant constant)
+    {
+        return Base::convert(static_cast<unsigned>(constant));
+    }
+
+    static LinkTimeConstant convert(TargetType constant)
+    {
+        return static_cast<LinkTimeConstant>(Base::convert(constant));
     }
 };
 

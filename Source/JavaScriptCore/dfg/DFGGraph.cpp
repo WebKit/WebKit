@@ -1635,12 +1635,10 @@ const WTF::BitSet<256>* Graph::regExpFirstCharacterBitmap(RegExp* regExp, FirstC
 
 void Graph::registerFrozenValues()
 {
-    ConcurrentJSLocker locker(m_codeBlock->m_lock);
-    m_codeBlock->constants().shrink(0);
     for (FrozenValue& value : m_frozenValues) {
         if (!value.pointsToHeap())
             continue;
-        
+
         ASSERT(value.structure());
         ASSERT(m_plan.weakReferences().contains(value.structure()));
 
@@ -1650,13 +1648,10 @@ void Graph::registerFrozenValues()
             break;
         }
         case StrongValue: {
-            unsigned constantIndex = m_codeBlock->addConstantLazily(locker);
-            // We already have a barrier on the code block.
-            m_codeBlock->constants()[constantIndex].setWithoutWriteBarrier(value.value());
+            m_plan.addStrongReference(value.value().asCell());
             break;
         } }
     }
-    m_codeBlock->constants().shrinkToFit();
 }
 
 template<typename Visitor>

@@ -1360,7 +1360,6 @@ namespace JSC {
         RegisterID* m_emptyValueRegister { nullptr };
         RegisterID* m_newTargetRegister { nullptr };
         RegisterID* m_isDerivedConstuctor { nullptr };
-        UncheckedKeyHashMap<LinkTimeConstant, RegisterID*, WTF::IntHash<LinkTimeConstant>, WTF::StrongEnumHashTraits<LinkTimeConstant>> m_linkTimeConstantRegisters;
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
         RegisterID* m_promiseRegister { nullptr };
 

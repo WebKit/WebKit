@@ -1521,7 +1521,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
             ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
         }
 
-        auto functionDecls = codeBlock->functionDecls();
+        auto functionDecls = codeBlock->unlinkedCodeBlock()->functionDecls();
         BatchedTransitionOptimizer optimizer(vm, variableObject);
         if (variableObject->next() && !eval->isInStrictContext())
             variableObject->realm()->varInjectionWatchpointSet().fireAll(vm, "Executed eval, fired VarInjection watchpoint");
@@ -1535,7 +1535,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
             }
 
             for (auto& slot : functionDecls) {
-                FunctionExecutable* function = slot.get();
+                UnlinkedFunctionExecutable* function = slot.get();
                 JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (resolvedScope.isUndefined())
@@ -1546,7 +1546,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
         bool isGlobalVariableEnvironment = variableObject->isGlobalObject();
         if (isGlobalVariableEnvironment) {
             for (auto& slot : functionDecls) {
-                FunctionExecutable* function = slot.get();
+                UnlinkedFunctionExecutable* function = slot.get();
                 bool canDeclare = uncheckedDowncast<JSGlobalObject>(variableObject)->canDeclareGlobalFunction(function->name());
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (!canDeclare)
@@ -1595,7 +1595,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
         }
 
         for (auto& slot : functionDecls) {
-            FunctionExecutable* function = slot.get();
+            UnlinkedFunctionExecutable* function = slot.get();
             if (isGlobalVariableEnvironment) {
                 uncheckedDowncast<JSGlobalObject>(variableObject)->createGlobalFunctionBinding<BindingCreationContext::Eval>(function->name());
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());

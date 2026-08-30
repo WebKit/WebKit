@@ -242,7 +242,6 @@ namespace JSC {
         void materializePointerIntoMetadata(const Bytecode&, size_t offset, GPRReg);
 
     public:
-        void loadConstant(unsigned constantIndex, GPRReg);
         void loadPropertyInlineCache(PropertyInlineCacheIndex, GPRReg);
         static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
     private:
@@ -250,11 +249,8 @@ namespace JSC {
 
         // Assuming GPRInfo::jitDataRegister is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
-        static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
         static void loadPropertyInlineCache(CCallHelpers&, PropertyInlineCacheIndex, GPRReg);
 
-        void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
-        void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
 
         void exceptionCheck(Jump jumpToHandler);
         void exceptionCheck();
@@ -430,6 +426,8 @@ namespace JSC {
         void emit_op_jneq_null(const JSInstruction*);
         void emit_op_jundefined_or_null(const JSInstruction*);
         void emit_op_jnundefined_or_null(const JSInstruction*);
+        void emit_op_get_link_time_constant(const JSInstruction*);
+        void emit_op_get_template_object(const JSInstruction*);
         void emit_op_jeq_ptr(const JSInstruction*);
         void emit_op_jneq_ptr(const JSInstruction*);
         void emit_op_less(const JSInstruction*);
@@ -835,7 +833,6 @@ namespace JSC {
 
         void resetSP();
 
-        JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
         std::tuple<BaselineUnlinkedPropertyInlineCache*, PropertyInlineCacheIndex> addUnlinkedPropertyInlineCache();
         BaselineUnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
@@ -900,7 +897,6 @@ namespace JSC {
 
         MathICHolder m_mathICs;
 
-        Vector<JITConstantPool::Value> m_constantPool;
         SaSegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
         SaSegmentedVector<BaselineUnlinkedPropertyInlineCache> m_unlinkedPropertyInlineCaches;
         FixedVector<SimpleJumpTable> m_switchJumpTables;

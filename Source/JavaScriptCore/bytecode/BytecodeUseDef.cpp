@@ -84,6 +84,8 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
 
     // No uses.
     case op_new_reg_exp:
+    case op_get_link_time_constant:
+    case op_get_template_object:
     case op_loop_hint:
     case op_jmp:
     case op_new_object:
@@ -138,8 +140,8 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpJnstricteq, lhs, rhs)
     USES(OpJbelow, lhs, rhs)
     USES(OpJbeloweq, lhs, rhs)
-    USES(OpJeqPtr, value, specialPointer)
-    USES(OpJneqPtr, value, specialPointer)
+    USES(OpJeqPtr, value)
+    USES(OpJneqPtr, value)
 
     USES(OpSetFunctionName, function, name)
     USES(OpLogShadowChickenTail, thisValue, scope)
@@ -587,6 +589,8 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpNeqNull, dst)
     DEFS(OpEqNull, dst)
     DEFS(OpNot, dst)
+    DEFS(OpGetLinkTimeConstant, dst)
+    DEFS(OpGetTemplateObject, dst)
     DEFS(OpMov, dst)
     DEFS(OpNewObject, dst)
     DEFS(OpNewPromise, dst)

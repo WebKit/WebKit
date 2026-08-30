@@ -2798,8 +2798,8 @@ op(llint_polymorphic_closure_call_trampoline, macro ()
 end)
 
 if JIT
-    macro loadBaselineJITConstantPool()
-        # Baseline uses LLInt's PB register for its JIT constant pool.
+    macro loadBaselineJITData()
+        # Baseline uses LLInt's PB register to address its BaselineJITData.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_jitData[PB], PB
     end
@@ -2810,15 +2810,15 @@ if JIT
         # LLInt. However, during OSR exit for checkpoints, we might return to
         # JIT code if it's already compiled. After the OSR exit gets compiled,
         # we can tier up to JIT code. And checkpoint exit will jump to it.
-        # That means we always need to set up our constant pool GPR, because the OSR
+        # That means we always need to set up our JIT data GPR, because the OSR
         # exit code might not have done it.
         bpneq r0, 1, .notBaselineJIT
-        loadBaselineJITConstantPool()
+        loadBaselineJITData()
     .notBaselineJIT:
 
     end
 else
-    macro loadBaselineJITConstantPool()
+    macro loadBaselineJITData()
     end
 
     macro setupReturnToBaselineAfterCheckpointExitIfNeeded()

@@ -143,7 +143,7 @@ void* prepareOSREntry(
     // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.
     if (result) {
         if (reconstructedThis)
-            callFrame->r(virtualRegisterForArgumentIncludingThis(0)) = JSValue::encode(reconstructedThis.value());
+            callFrame->uncheckedR(virtualRegisterForArgumentIncludingThis(0)) = JSValue::encode(reconstructedThis.value());
     }
     
     return result;

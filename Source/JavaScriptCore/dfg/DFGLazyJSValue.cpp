@@ -275,7 +275,8 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result, Plan& planRef) con
             JSValue realValue = thisValue.value.getValue(codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
-            codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), realValue);
+            // Runs before Plan::reallyAdd, so this still reaches DFG::CommonData::m_strongReferences.
+            plan->addStrongReference(realValue.asCell());
 
             MacroAssembler::repatchPointer(patchLocation, realValue.asCell());
         });

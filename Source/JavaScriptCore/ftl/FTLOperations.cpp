@@ -784,7 +784,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             return CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
         }
         auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
-        ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).m_arrayAllocationProfile;
+        auto& metadata = newArrayBuffer.metadata(codeBlock);
+        ArrayAllocationProfile* profile = &metadata.m_arrayAllocationProfile;
 
         // FIXME: Share the code with CommonSlowPaths. Currently, codeBlock etc. are slightly different.
         IndexingType indexingMode = profile->selectIndexingType();
@@ -798,11 +799,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 newButterfly->setIndex(vm, i, immutableButterfly->get(i));
             immutableButterfly = newButterfly;
 
-            // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
-            // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
-            // a compilation thread.
+            // We cannot allocate a new butterfly from a compilation thread, so the re-typed one is
+            // published here for the DFG to pick up. The fences order the butterfly's initializing stores
+            // against the pointer store, and pair with the dependentLoadLoadFence in the DFG parser.
             WTF::storeStoreFence();
-            codeBlock->constantRegister(newArrayBuffer.m_immutableButterfly).set(vm, codeBlock, immutableButterfly);
+            metadata.m_immutableButterfly.set(vm, codeBlock, immutableButterfly);
             WTF::storeStoreFence();
         }
 

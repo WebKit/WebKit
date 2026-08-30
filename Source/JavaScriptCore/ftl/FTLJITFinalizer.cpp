@@ -60,6 +60,7 @@ bool JITFinalizer::finalize()
 
     CodeBlock* codeBlock = m_plan.codeBlock();
     m_jitCode->setSize(m_codeSize);
+    m_plan.installStrongReferences(&m_jitCode->common);
     codeBlock->setJITCode(*m_jitCode);
 
     if (Options::dumpFTLCodeSize()) [[unlikely]] {

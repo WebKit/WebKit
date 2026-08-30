@@ -55,12 +55,7 @@ void JIT::emit_op_mov(const JSInstruction* currentInstruction)
     VirtualRegister src = bytecode.m_src;
 
     if (src.isConstant()) {
-        if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src)) {
-            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst));
-        } else {
-            loadCodeBlockConstant(src, jsRegT10);
-            storeValue(jsRegT10, addressFor(dst));
-        }
+        storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst));
         return;
     }
 
@@ -502,6 +497,20 @@ void JIT::emit_op_jnundefined_or_null(const JSInstruction* currentInstruction)
     addJump(branchIfNotNull(jsRegT10), target);
 }
 
+void JIT::emit_op_get_link_time_constant(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetLinkTimeConstant>();
+    loadPtrFromMetadata(bytecode, OpGetLinkTimeConstant::Metadata::offsetOfConstant(), jsRegT10.payloadGPR());
+    storeValue(jsRegT10, addressFor(bytecode.m_dst));
+}
+
+void JIT::emit_op_get_template_object(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetTemplateObject>();
+    loadPtrFromMetadata(bytecode, OpGetTemplateObject::Metadata::offsetOfTemplateObject(), jsRegT10.payloadGPR());
+    storeValue(jsRegT10, addressFor(bytecode.m_dst));
+}
+
 void JIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqPtr>();
@@ -509,7 +518,7 @@ void JIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitGetVirtualRegister(src, jsRegT10);
-    loadCodeBlockConstantPayload(bytecode.m_specialPointer, regT2);
+    loadPtrFromMetadata(bytecode, OpJeqPtr::Metadata::offsetOfSpecialPointer(), regT2);
     addJump(branchPtr(Equal, jsRegT10.payloadGPR(), regT2), target);
 }
 
@@ -520,7 +529,7 @@ void JIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     
     emitGetVirtualRegister(src, jsRegT10);
-    loadCodeBlockConstantPayload(bytecode.m_specialPointer, regT2);
+    loadPtrFromMetadata(bytecode, OpJneqPtr::Metadata::offsetOfSpecialPointer(), regT2);
     CCallHelpers::Jump equal = branchPtr(Equal, jsRegT10.payloadGPR(), regT2);
     store8ToMetadata(TrustedImm32(1), bytecode, OpJneqPtr::Metadata::offsetOfHasJumped());
     addJump(jump(), target);
@@ -682,8 +691,6 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
     auto tryGetBitwiseComparableConstant = [&](VirtualRegister src) -> JSValue {
         if (!src.isConstant())
             return { };
-        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
-            return { };
         JSValue value = m_unlinkedCodeBlock->getConstant(src);
         if (value.isUndefinedOrNull())
             return value;
@@ -720,8 +727,6 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
 
     auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
         if (!src.isConstant())
-            return nullptr;
-        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
             return nullptr;
         JSValue value = m_unlinkedCodeBlock->getConstant(src);
         if (!value.isString())
@@ -860,8 +865,6 @@ void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
     auto tryGetBitwiseComparableConstant = [&](VirtualRegister src) -> JSValue {
         if (!src.isConstant())
             return { };
-        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
-            return { };
         JSValue value = m_unlinkedCodeBlock->getConstant(src);
         if (value.isUndefinedOrNull())
             return value;
@@ -896,8 +899,6 @@ void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
 
     auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
         if (!src.isConstant())
-            return nullptr;
-        if (!m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
             return nullptr;
         JSValue value = m_unlinkedCodeBlock->getConstant(src);
         if (!value.isString())
@@ -1838,8 +1839,7 @@ void JIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
 
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(bytecode.m_scope, argumentGPR1);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
-    loadConstant(constant, argumentGPR2);
+    loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfFunctionExecutable(), argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
     auto function = operationNewFunction;
@@ -1885,8 +1885,7 @@ void JIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
 
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(bytecode.m_scope, argumentGPR1);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
-    loadConstant(constant, argumentGPR2);
+    loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfFunctionExecutable(), argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
     auto function = operationNewFunction;
@@ -1957,16 +1956,14 @@ void JIT::emit_op_create_lexical_environment(const JSInstruction* currentInstruc
     auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister scope = bytecode.m_scope;
-    VirtualRegister symbolTable = bytecode.m_symbolTable;
     VirtualRegister initialValue = bytecode.m_initialValue;
 
     ASSERT(initialValue.isConstant());
-    ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(initialValue));
     JSValue value = m_unlinkedCodeBlock->getConstant(initialValue);
 
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(scope, argumentGPR1);
-    emitGetVirtualRegister(symbolTable, argumentGPR2);
+    loadPtrFromMetadata(bytecode, OpCreateLexicalEnvironment::Metadata::offsetOfSymbolTable(), argumentGPR2);
     callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, argumentGPR0, argumentGPR1, argumentGPR2);
 }
 

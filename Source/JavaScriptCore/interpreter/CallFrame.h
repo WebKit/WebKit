@@ -278,7 +278,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         inline void setScope(int scopeRegisterOffset, JSScope*);
 
         // Read a register from the codeframe (or constant from the CodeBlock).
-        Register& r(VirtualRegister);
+        const Register& r(VirtualRegister);
         // Read a register for a known non-constant
         Register& uncheckedR(VirtualRegister);
 

@@ -219,16 +219,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         changed |= phase(dfg);                                   \
     } while (false);                                             \
 
-    
-    // By this point the DFG bytecode parser will have potentially mutated various tables
-    // in the CodeBlock. This is a good time to perform an early shrink, which is more
-    // powerful than a late one. It's safe to do so because we haven't generated any code
-    // that references any of the tables directly, yet.
-    {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::EarlyShrink);
-    }
-
     if (validationEnabled())
         validate(dfg);
     
@@ -546,6 +536,30 @@ bool Plan::isStillValidCodeBlock()
     return true;
 }
 
+// Must run before the CodeBlock adopts the new JITCode. Once it does, the CodeBlock is what keeps these
+// alive, and until then only the plan does - but the plan has already been taken off the worklist by
+// removeAllReadyPlansForVM, so it is no longer visited. Populating any later leaves a window where a
+// concurrent marker can reach none of these values and condemn cells the new code has baked in.
+void Plan::installStrongReferences(CommonData* commonData)
+{
+    ASSERT(m_vm->heap.isDeferred());
+    // No WriteBarriers: GC is deferred and Plan::finalize emits one on the CodeBlock at the end.
+    ASSERT(commonData->m_strongReferences.isEmpty());
+    if (m_strongReferences.isEmpty())
+        return;
+    FixedVector<WriteBarrier<JSCell>> strongReferences(m_strongReferences.size());
+    for (unsigned index = 0; index < m_strongReferences.size(); ++index)
+        strongReferences[index].setWithoutWriteBarrier(m_strongReferences[index]);
+
+    // Parallel marker threads read CommonData through CodeBlock::stronglyVisitStrongReferences while
+    // this store happens, and they synchronize with nothing here. Assigning a FixedVector is one
+    // pointer store, so without this fence a marker can observe the new buffer before the slot writes
+    // above and then trace uninitialized cells.
+    static_assert(sizeof(strongReferences) == sizeof(void*));
+    WTF::storeStoreFence();
+    commonData->m_strongReferences = WTF::move(strongReferences);
+}
+
 bool Plan::reallyAdd(CommonData* commonData)
 {
     if (!m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers))
@@ -595,11 +609,6 @@ CompilationResult Plan::finalize()
             return CompilationResult::CompilationInvalidated;
         }
 
-        {
-            ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
-        }
-
         // Since Plan::reallyAdd could fire watchpoints (see ArrayBufferViewWatchpointAdaptor::add),
         // it is possible that the current CodeBlock is now invalidated & jettisoned.
         if (m_codeBlock->isJettisoned()) {
@@ -614,8 +623,8 @@ CompilationResult Plan::finalize()
                 trackedReferences.add(reference.get());
             for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->m_weakStructureReferences)
                 trackedReferences.add(structureID.decode());
-            for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
-                trackedReferences.add(constant.get());
+            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_strongReferences)
+                trackedReferences.add(reference.get());
 
             for (auto* inlineCallFrame : *m_inlineCallFrames) {
                 ASSERT(inlineCallFrame->baselineCodeBlock.get());
@@ -682,6 +691,8 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
 
     m_weakReferences.visitChildren(visitor);
     m_transitions.visitChildren(visitor);
+    for (JSCell* cell : m_strongReferences)
+        visitor.appendUnbarriered(cell);
     return true;
 }
 

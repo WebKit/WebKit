@@ -417,6 +417,8 @@ void LOLJIT::privateCompileMainPass()
         DEFINE_OP(op_jneq_null)
         DEFINE_OP(op_jundefined_or_null)
         DEFINE_OP(op_jnundefined_or_null)
+        DEFINE_OP(op_get_link_time_constant)
+        DEFINE_OP(op_get_template_object)
         DEFINE_OP(op_jeq_ptr)
         DEFINE_OP(op_jneq_ptr)
         DEFINE_OP(op_less)
@@ -734,6 +736,8 @@ void LOLJIT::privateCompileSlowCases()
         REPLAY_ALLOCATION_FOR_OP(op_jneq_null, OpJneqNull)
         REPLAY_ALLOCATION_FOR_OP(op_jundefined_or_null, OpJundefinedOrNull)
         REPLAY_ALLOCATION_FOR_OP(op_jnundefined_or_null, OpJnundefinedOrNull)
+        REPLAY_ALLOCATION_FOR_OP(op_get_link_time_constant, OpGetLinkTimeConstant)
+        REPLAY_ALLOCATION_FOR_OP(op_get_template_object, OpGetTemplateObject)
         REPLAY_ALLOCATION_FOR_OP(op_jeq_ptr, OpJeqPtr)
         REPLAY_ALLOCATION_FOR_OP(op_jneq_ptr, OpJneqPtr)
         REPLAY_ALLOCATION_FOR_OP(op_jbelow, OpJbelow)
@@ -1493,13 +1497,12 @@ void LOLJIT::emit_op_create_lexical_environment(const JSInstruction* currentInst
 {
     auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
-    auto [ scopeRegs, symbolTableRegs ] = allocations.uses;
+    auto [ scopeRegs ] = allocations.uses;
 
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister initialValue = bytecode.m_initialValue;
 
     ASSERT(initialValue.isConstant());
-    ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(initialValue));
     JSValue value = m_unlinkedCodeBlock->getConstant(initialValue);
 
     using Operation = decltype(operationCreateLexicalEnvironmentUndefined);
@@ -1507,7 +1510,8 @@ void LOLJIT::emit_op_create_lexical_environment(const JSInstruction* currentInst
     constexpr GPRReg scopeGPR = preferredArgumentGPR<Operation, 1>();
     constexpr GPRReg symbolTableGPR = preferredArgumentGPR<Operation, 2>();
 
-    shuffleRegisters<GPRReg, 2>({ scopeRegs.payloadGPR(), symbolTableRegs.payloadGPR() }, { scopeGPR, symbolTableGPR });
+    shuffleRegisters<GPRReg, 1>({ scopeRegs.payloadGPR() }, { scopeGPR });
+    loadPtrFromMetadata(bytecode, OpCreateLexicalEnvironment::Metadata::offsetOfSymbolTable(), symbolTableGPR);
     loadGlobalObject(globalObjectGPR);
     callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, globalObjectGPR, scopeGPR, symbolTableGPR);
 
@@ -1626,8 +1630,7 @@ void LOLJIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
     // Move allocated register first before it can be clobbered
     move(scopeRegs.payloadGPR(), scopeGPR);
     loadGlobalObject(globalObjectGPR);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
-    loadConstant(constant, functionDeclGPR);
+    loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfFunctionExecutable(), functionDeclGPR);
 
     OpcodeID opcodeID = Op::opcodeID;
     auto function = operationNewFunction;
@@ -1684,8 +1687,7 @@ void LOLJIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
     // Move allocated register first before it can be clobbered
     move(scopeRegs.payloadGPR(), scopeGPR);
     loadGlobalObject(globalObjectGPR);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
-    loadConstant(constant, functionDeclGPR);
+    loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfFunctionExecutable(), functionDeclGPR);
 
     OpcodeID opcodeID = Op::opcodeID;
     auto function = operationNewFunction;
@@ -2269,6 +2271,28 @@ void LOLJIT::emit_op_jnundefined_or_null(const JSInstruction* currentInstruction
     m_fastAllocator.releaseScratches(allocations);
 }
 
+void LOLJIT::emit_op_get_link_time_constant(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetLinkTimeConstant>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ destRegs ] = allocations.defs;
+
+    loadPtrFromMetadata(bytecode, OpGetLinkTimeConstant::Metadata::offsetOfConstant(), destRegs.payloadGPR());
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_get_template_object(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetTemplateObject>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ destRegs ] = allocations.defs;
+
+    loadPtrFromMetadata(bytecode, OpGetTemplateObject::Metadata::offsetOfTemplateObject(), destRegs.payloadGPR());
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
 void LOLJIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqPtr>();
@@ -2276,7 +2300,7 @@ void LOLJIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-    loadCodeBlockConstantPayload(bytecode.m_specialPointer, s_scratch);
+    loadPtrFromMetadata(bytecode, OpJeqPtr::Metadata::offsetOfSpecialPointer(), s_scratch);
     addJump(branchPtr(Equal, valueRegs.payloadGPR(), s_scratch), target);
 
     m_fastAllocator.releaseScratches(allocations);
@@ -2289,7 +2313,7 @@ void LOLJIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ valueRegs ] = allocations.uses;
 
-    loadCodeBlockConstantPayload(bytecode.m_specialPointer, s_scratch);
+    loadPtrFromMetadata(bytecode, OpJneqPtr::Metadata::offsetOfSpecialPointer(), s_scratch);
     CCallHelpers::Jump equal = branchPtr(Equal, valueRegs.payloadGPR(), s_scratch);
     store8ToMetadata(TrustedImm32(1), bytecode, OpJneqPtr::Metadata::offsetOfHasJumped());
     addJump(jump(), target);

@@ -133,7 +133,7 @@ void CodeBlockBytecodeDumper<Block>::dumpIdentifiers()
 template<class Block>
 void CodeBlockBytecodeDumper<Block>::dumpConstants()
 {
-    if (!this->block()->constantRegisters().isEmpty()) {
+    if (this->block()->constantRegisters().size()) {
         this->m_out.printf("\nConstants:\n");
         size_t i = 0;
         for (const auto& constant : this->block()->constantRegisters()) {
@@ -147,9 +147,6 @@ void CodeBlockBytecodeDumper<Block>::dumpConstants()
                 break;
             case SourceCodeRepresentation::Other:
                 sourceCodeRepresentationDescription = "";
-                break;
-            case SourceCodeRepresentation::LinkTimeConstant:
-                sourceCodeRepresentationDescription = ": in source as link-time-constant";
                 break;
             }
             this->m_out.printf("   k%u = %s%s\n", static_cast<unsigned>(i), toCString(constant.get()).data(), sourceCodeRepresentationDescription);
