@@ -2978,6 +2978,9 @@ bool Document::needsStyleRecalc() const
     if (backForwardCacheState() != NotInBackForwardCache)
         return false;
 
+    if (renderTreeState() != RenderTreeState::Built)
+        return false;
+
     if (m_needsFullStyleRebuild)
         return true;
 
@@ -3017,6 +3020,13 @@ bool Document::updateStyleIfNeeded()
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     ContentChangeObserver::StyleRecalcScope observingScope(*this);
 #endif
+
+    if (!renderView()) {
+        // needsStyleRecalc() is what keeps this true, and resolveStyle() resolves nothing without it.
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     resolveStyle();
 
     updateRenderTreesForDescendantFrames();
