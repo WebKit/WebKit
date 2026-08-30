@@ -492,7 +492,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     }
 
     if (videoInfo.fieldCount())
-        CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldCountKey, (__bridge CFTypeRef)@(*videoInfo.fieldCount()));
+        CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldCountKey, (__bridge CFTypeRef)@(std::to_underlying(*videoInfo.fieldCount())));
 
     if (videoInfo.fieldDetail()) {
         if (RetainPtr cmFieldDetail = convertToCMFieldDetail(*videoInfo.fieldDetail()))

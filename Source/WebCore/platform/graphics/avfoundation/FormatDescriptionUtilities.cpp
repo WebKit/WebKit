@@ -191,7 +191,7 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
     return colorSpace;
 }
 
-std::optional<uint8_t> fieldCountFromFormatDescription(CMFormatDescriptionRef formatDescription)
+std::optional<PlatformVideoFieldCount> fieldCountFromFormatDescription(CMFormatDescriptionRef formatDescription)
 {
     if (!formatDescription)
         return { };
@@ -201,10 +201,17 @@ std::optional<uint8_t> fieldCountFromFormatDescription(CMFormatDescriptionRef fo
         return { };
 
     int value = 0;
-    if (!CFNumberGetValue(fieldCount.get(), kCFNumberIntType, &value) || value < 1 || value > 2)
+    if (!CFNumberGetValue(fieldCount.get(), kCFNumberIntType, &value))
         return { };
 
-    return static_cast<uint8_t>(value);
+    switch (value) {
+    case 1:
+        return PlatformVideoFieldCount::Progressive;
+    case 2:
+        return PlatformVideoFieldCount::Interlaced;
+    }
+
+    return { };
 }
 
 std::optional<PlatformVideoFieldDetail> fieldDetailFromFormatDescription(CMFormatDescriptionRef formatDescription)

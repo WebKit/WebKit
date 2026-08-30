@@ -765,9 +765,10 @@ TEST(CMUtilities, ChromaLocationSurvivesFormatDescriptionRoundTrip)
 
 TEST(CMUtilities, FieldCountAndDetailRoundTrip)
 {
+    using C = WebCore::PlatformVideoFieldCount;
     using F = WebCore::PlatformVideoFieldDetail;
 
-    auto testFieldDetail = [&](uint8_t fieldCount, F input) {
+    auto testFieldDetail = [&](C fieldCount, F input) {
         auto videoInfo = WebCore::VideoInfo::create({
             { .codecName = WebCore::FourCC('avc1') }, {
                 .size = { 640, 480 },
@@ -782,11 +783,11 @@ TEST(CMUtilities, FieldCountAndDetailRoundTrip)
         EXPECT_EQ(WebCore::fieldDetailFromFormatDescription(desc.get()), input);
     };
 
-    testFieldDetail(2, F::TemporalTopFirst);
-    testFieldDetail(2, F::TemporalBottomFirst);
-    testFieldDetail(2, F::SpatialFirstLineEarly);
-    testFieldDetail(2, F::SpatialFirstLineLate);
-    testFieldDetail(1, F::TemporalTopFirst);
+    testFieldDetail(C::Interlaced, F::TemporalTopFirst);
+    testFieldDetail(C::Interlaced, F::TemporalBottomFirst);
+    testFieldDetail(C::Interlaced, F::SpatialFirstLineEarly);
+    testFieldDetail(C::Interlaced, F::SpatialFirstLineLate);
+    testFieldDetail(C::Progressive, F::TemporalTopFirst);
 }
 
 TEST(CMUtilities, AbsentFieldInfoStaysAbsent)

@@ -6946,6 +6946,12 @@ enum class WebCore::EncryptionBoxType : uint8_t {
 };
 
 header: <WebCore/TrackInfo.h>
+enum class WebCore::PlatformVideoFieldCount : uint8_t {
+    Progressive,
+    Interlaced
+};
+
+header: <WebCore/TrackInfo.h>
 enum class WebCore::PlatformVideoFieldDetail : uint8_t {
     TemporalTopFirst,
     TemporalBottomFirst,
@@ -6988,7 +6994,7 @@ header: <WebCore/TrackInfo.h>
     WebCore::FloatSize displaySize;
     uint8_t bitDepth;
     WebCore::PlatformVideoColorSpace colorSpace;
-    std::optional<uint8_t> fieldCount;
+    std::optional<WebCore::PlatformVideoFieldCount> fieldCount;
     std::optional<WebCore::PlatformVideoFieldDetail> fieldDetail;
     Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
 
