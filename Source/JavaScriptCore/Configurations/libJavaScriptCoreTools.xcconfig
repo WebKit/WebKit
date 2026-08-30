@@ -34,6 +34,9 @@
 
 PRODUCT_NAME = JavaScriptCoreTools;
 
+// Disable IR PGO profile generation for JavaScriptCoreTools.
+WK_PGO_GEN_FLAGS = ;
+
 // Not built for simulator or Catalyst builds.
 WK_LIB_JSC_TOOLS_SIMULATOR = NO;
 WK_LIB_JSC_TOOLS_SIMULATOR[sdk=*simulator*] = YES;
