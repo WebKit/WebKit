@@ -216,6 +216,11 @@ class TParseContext : angle::NonCopyable
     bool checkWorkGroupSizeIsNotSpecified(const TSourceLoc &location,
                                           const TLayoutQualifier &layoutQualifier);
     void functionCallRValueLValueErrorCheck(const TFunction *fnCandidate, TIntermAggregate *fnCall);
+    void checkClipCullDistanceWholeArrayUse(const TSourceLoc &location,
+                                            TIntermTyped *node,
+                                            const char *message);
+    void functionCallClipCullDistanceCheck(const TFunction *fnCandidate, TIntermAggregate *fnCall);
+    void functionCallFragDataCheck(const TFunction *fnCandidate, TIntermAggregate *fnCall);
     void checkInvariantVariableQualifier(bool invariant,
                                          const TQualifier qualifier,
                                          const TSourceLoc &invariantLocation);
@@ -613,6 +618,7 @@ class TParseContext : angle::NonCopyable
                          const TType *type,
                          GeomTessArray sized,
                          TVariable **variable);
+    void addAndCheckOutputVaryings(const TVariable &variable, const TSourceLoc &line);
 
     void checkNestingLevel(const TSourceLoc &line);
     bool checkCase(const TSourceLoc &line, int64_t caseValue, const char *caseOrDefault);
@@ -894,6 +900,9 @@ class TParseContext : angle::NonCopyable
     unsigned int mMaxUniformBlocks;
     // Current count of declared uniform blocks.
     unsigned int mNumUniformBlocks;
+
+    // Current count of declared output varying components.
+    unsigned int mNumOutputVaryingComponents;
 
     // Keeps track of whether any of the built-ins that can be redeclared (see
     // IsRedeclarableBuiltIn()) has been marked as invariant/precise before the possible

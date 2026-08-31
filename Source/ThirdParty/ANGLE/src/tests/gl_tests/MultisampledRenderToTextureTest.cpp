@@ -652,9 +652,9 @@ void MSRTTTest::colorAttachmentMultisampleDrawTestCommon(bool useRenderbuffer)
                                    mTestSampleCount, &texture, &renderbuffer);
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    // Set viewport and clear to black
+    // Set viewport and clear to blue
     glViewport(0, 0, kSize, kSize);
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Set up Green square program
@@ -671,7 +671,7 @@ void MSRTTTest::colorAttachmentMultisampleDrawTestCommon(bool useRenderbuffer)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize / 2, GLColor::green);
 
     // Set up Red square program
@@ -687,7 +687,7 @@ void MSRTTTest::colorAttachmentMultisampleDrawTestCommon(bool useRenderbuffer)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize / 2, GLColor::red);
 
     glDisableVertexAttribArray(0);
@@ -4672,6 +4672,98 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that MSRTT rendering to multiple cubemap attachments works.
+TEST_P(MSRTTES3Test, CubeMapMultipleAttachments)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_sample_variables : enable
+precision mediump float;
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
+void main()
+{
+    switch (gl_SampleID % 4)
+    {
+    case 0:
+        color0 = vec4(1.0, 0.9, 0.8, 0.7);
+        color1 = vec4(0.7, 1.0, 0.9, 0.8);
+        break;
+    case 1:
+        color0 = vec4(0.0, 0.1, 0.2, 0.3);
+        color1 = vec4(0.3, 0.0, 0.1, 0.2);
+        break;
+    case 2:
+        color0 = vec4(0.5, 0.25, 0.75, 1.0);
+        color1 = vec4(1.0, 0.5, 0.25, 0.75);
+        break;
+    case 3:
+        color0 = vec4(0.4, 0.6, 0.2, 0.8);
+        color1 = vec4(0.8, 0.4, 0.6, 0.2);
+        break;
+    }
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    constexpr GLsizei kSize = 6;
+
+    // Create multisampled framebuffer to draw into.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, color);
+    for (GLenum face = 0; face < 6; face++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (GLenum faceOffset = 0; faceOffset < 6; faceOffset += 2)
+    {
+        glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                             GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceOffset, color, 0,
+                                             4);
+        glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
+                                             GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1 + faceOffset, color,
+                                             0, 4);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+        glDrawBuffers(2, drawBuffers);
+
+        constexpr float kClearRed[]  = {1.0f, 0.0f, 0.0f, 1.0f};
+        constexpr float kClearBlue[] = {0.0f, 0.0f, 1.0f, 1.0f};
+        glClearBufferfv(GL_COLOR, 0, kClearRed);
+        glClearBufferfv(GL_COLOR, 1, kClearBlue);
+        // Force immediate clear so that the attachments are unresolved if MSRTT is emulated.
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        glReadBuffer(GL_COLOR_ATTACHMENT1);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+        // Draw to top left corner only
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, kSize / 2, kSize / 2);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+        glDisable(GL_SCISSOR_TEST);
+
+        // The result should be the average of the four colors written by the shader.
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(121, 118, 124, 178), 1);
+        EXPECT_PIXEL_COLOR_NEAR(kSize - 1, kSize - 1, GLColor::red, 1);
+
+        glReadBuffer(GL_COLOR_ATTACHMENT1);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(178, 121, 118, 124), 1);
+        EXPECT_PIXEL_COLOR_NEAR(kSize - 1, kSize - 1, GLColor::blue, 1);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 class MSRTTSRGBES3Test : public MSRTTES3Test
 {};
 
@@ -5278,6 +5370,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+    ES3_VULKAN().disable(Feature::SupportsShaderStencilExport),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
     ES31_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture));
 

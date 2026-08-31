@@ -197,10 +197,11 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
 
     bool updateAppliedImmediately = false;
     result                        = mColorAttachment.image.stageSubresourceUpdate(
-        contextVk, gl::ImageIndex::Make2D(0), extents, offset, internalFormatInfo,
-        kIOSurfaceFormats[mFormatIndex].type, reinterpret_cast<uint8_t *>(source), format,
-        vk::ImageFormatSupport::Renderable, inputRowPitch, inputDepthPitch, inputSkipBytes,
-        vk::ApplyImageUpdate::Defer, &updateAppliedImmediately);
+        contextVk, gl::SourceImageIndex::Make2D(gl::SourceLevel::Zero()), extents, offset,
+        internalFormatInfo, kIOSurfaceFormats[mFormatIndex].type,
+        reinterpret_cast<uint8_t *>(source), format, vk::ImageFormatSupport::Renderable,
+        inputRowPitch, inputDepthPitch, inputSkipBytes, vk::ApplyImageUpdate::Defer,
+        &updateAppliedImmediately);
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);
 

@@ -6507,51 +6507,6 @@ void GL_APIENTRY GL_CopySubTextureCHROMIUM(GLuint sourceId,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
-// GL_CHROMIUM_framebuffer_mixed_samples
-void GL_APIENTRY GL_CoverageModulationCHROMIUM(GLenum components)
-{
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-    Context *context = GetValidGlobalContext();
-    ANGLE_UNSAFE_TODO(EVENT(context, GLCoverageModulationCHROMIUM, "context = %d, components = %s",
-                            CID(context), GLenumToString(GLESEnum::AllEnums, components)));
-
-    if (ANGLE_LIKELY(context != nullptr))
-    {
-        bool isCallValid = context->skipValidation();
-        if (!isCallValid)
-        {
-            if (ANGLE_LIKELY(context->getExtensions().framebufferMixedSamplesCHROMIUM))
-            {
-#if defined(ANGLE_ENABLE_ASSERTS)
-                const uint32_t errorCount = context->getPushedErrorCount();
-#endif
-                isCallValid = ValidateCoverageModulationCHROMIUM(
-                    context->getPrivateState(), context->getMutableErrorSetForValidation(),
-                    angle::EntryPoint::GLCoverageModulationCHROMIUM, components);
-#if defined(ANGLE_ENABLE_ASSERTS)
-                ASSERT(isCallValid || context->getPushedErrorCount() != errorCount);
-#endif
-            }
-            else
-            {
-                RecordVersionErrorESEXT(context, angle::EntryPoint::GLCoverageModulationCHROMIUM);
-            }
-        }
-        if (ANGLE_LIKELY(isCallValid))
-        {
-            ContextPrivateCoverageModulation(context->getMutablePrivateState(),
-                                             context->getMutablePrivateStateCache(), components);
-        }
-        ANGLE_CAPTURE_GL(CoverageModulationCHROMIUM, isCallValid, context, components);
-    }
-    else
-    {
-        GenerateContextLostErrorOnCurrentGlobalContext(
-            angle::EntryPoint::GLCoverageModulationCHROMIUM);
-    }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
-}
-
 // GL_CHROMIUM_lose_context
 void GL_APIENTRY GL_LoseContextCHROMIUM(GLenum current, GLenum other)
 {

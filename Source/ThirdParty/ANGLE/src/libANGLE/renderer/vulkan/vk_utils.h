@@ -39,7 +39,6 @@
     PROC(Context)                \
     PROC(Framebuffer)            \
     PROC(MemoryObject)           \
-    PROC(Overlay)                \
     PROC(Program)                \
     PROC(ProgramExecutable)      \
     PROC(ProgramPipeline)        \
@@ -62,7 +61,6 @@ class ShareGroup;
 
 namespace gl
 {
-class MockOverlay;
 class ProgramExecutable;
 struct RasterizerState;
 struct SwizzleState;
@@ -273,7 +271,7 @@ void AppendToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
 class QueueSerialIndexAllocator final
 {
   public:
-    QueueSerialIndexAllocator() : mLargestIndexEverAllocated(kInvalidQueueSerialIndex)
+    QueueSerialIndexAllocator() : mLargestIndexEverAllocated(0)
     {
         // Start with every index is free
         mFreeIndexBitSetArray.set();
@@ -291,7 +289,8 @@ class QueueSerialIndexAllocator final
         SerialIndex index = static_cast<SerialIndex>(mFreeIndexBitSetArray.first());
         ASSERT(index < kMaxQueueSerialIndexCount);
         mFreeIndexBitSetArray.reset(index);
-        mLargestIndexEverAllocated = (~mFreeIndexBitSetArray).last();
+        // Increase mLargestIndexEverAllocated to include the newly allocated index.
+        mLargestIndexEverAllocated = std::max<size_t>(mLargestIndexEverAllocated, index);
         return index;
     }
 
@@ -437,12 +436,6 @@ struct ImplTypeHelper<gl::OBJ>         \
 ANGLE_GL_OBJECTS_X(ANGLE_IMPL_TYPE_HELPER_GL)
 
 template <>
-struct ImplTypeHelper<gl::MockOverlay>
-{
-    using ImplType = OverlayVk;
-};
-
-template <>
 struct ImplTypeHelper<egl::Display>
 {
     using ImplType = DisplayVk;
@@ -473,12 +466,6 @@ template <typename T>
 GetImplType<T> *SafeGetImpl(const T *glObject)
 {
     return SafeGetImplAs<GetImplType<T>>(glObject);
-}
-
-template <>
-inline OverlayVk *GetImpl(const gl::MockOverlay *glObject)
-{
-    return nullptr;
 }
 
 // Reference to a deleted object. The object is due to be destroyed at some point in the future.
@@ -1692,7 +1679,7 @@ enum class RenderPassClosureReason
     TemporaryForClearTexture,
     TemporaryForImageClear,
     TemporaryForImageCopy,
-    TemporaryForOverlayDraw,
+    TemporaryForMSRTTUnresolve,
 
     // LegacyDithering requires updating the render pass
     LegacyDithering,
@@ -1760,7 +1747,6 @@ enum class QueueSubmitReason
 
     // Others
     DeferredFlush,
-    DrawOverlay,
     TileMemoryFallback,
 
     InvalidEnum,

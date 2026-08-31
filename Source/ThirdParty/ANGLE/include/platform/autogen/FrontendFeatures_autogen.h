@@ -237,6 +237,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo compressProgramBinaryBlob = {
+        "compressProgramBinaryBlob",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

@@ -216,16 +216,6 @@ enum SrcType
 constexpr size_t kArrayLen = 0x00000002;
 }  // namespace ImageCopyFloat_frag
 
-namespace OverlayDraw_frag
-{
-constexpr size_t kArrayLen = 0x00000001;
-}  // namespace OverlayDraw_frag
-
-namespace OverlayDraw_vert
-{
-constexpr size_t kArrayLen = 0x00000001;
-}  // namespace OverlayDraw_vert
-
 }  // namespace InternalShader
 
 class ShaderLibrary final : angle::NonCopyable
@@ -284,12 +274,6 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getImageCopyFloat_frag(ErrorContext *context,
                                          uint32_t shaderFlags,
                                          ShaderModulePtr *shaderOut);
-    angle::Result getOverlayDraw_frag(ErrorContext *context,
-                                      uint32_t shaderFlags,
-                                      ShaderModulePtr *shaderOut);
-    angle::Result getOverlayDraw_vert(ErrorContext *context,
-                                      uint32_t shaderFlags,
-                                      ShaderModulePtr *shaderOut);
 
   private:
     ShaderModulePtr mBlit3DSrc_frag_shaders[InternalShader::Blit3DSrc_frag::kArrayLen];
@@ -313,8 +297,6 @@ class ShaderLibrary final : angle::NonCopyable
     ShaderModulePtr mImageClear_frag_shaders[InternalShader::ImageClear_frag::kArrayLen];
     ShaderModulePtr mImageCopy_frag_shaders[InternalShader::ImageCopy_frag::kArrayLen];
     ShaderModulePtr mImageCopyFloat_frag_shaders[InternalShader::ImageCopyFloat_frag::kArrayLen];
-    ShaderModulePtr mOverlayDraw_frag_shaders[InternalShader::OverlayDraw_frag::kArrayLen];
-    ShaderModulePtr mOverlayDraw_vert_shaders[InternalShader::OverlayDraw_vert::kArrayLen];
 };
 }  // namespace vk
 }  // namespace rx

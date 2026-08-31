@@ -9,12 +9,12 @@ void InitReplay(void)
     // binaryDataFileName = CapturedTest_ActiveTextures_ES3_Vulkan.angledata
     // maxClientArraySize = 72
     // readBufferSize = 276
-    // resourceIDBufferSize = 0
+    // resourceIDBufferSize = 1
     // contextID = 3
     // maxBuffer = 0
     // maxContext = 3
     // maxFenceNV = 0
-    // maxFramebuffer = 2
+    // maxFramebuffer = 3
     // maxImage = 0
     // maxMemoryObject = 0
     // maxProgramPipeline = 0
@@ -25,11 +25,11 @@ void InitReplay(void)
     // maxShaderProgram = 5
     // maxSurface = 1
     // maxSync = 0
-    // maxTexture = 3
+    // maxTexture = 4
     // maxTransformFeedback = 0
     // maxVertexArray = 0
     // maxegl_Sync = 0
-    InitializeReplay5("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 0, 3, 0, 3, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 3, 0, 0, 0);
+    InitializeReplay5("CapturedTest_ActiveTextures_ES3_Vulkan.angledata", 72, 276, 1, 3, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 4, 0, 0, 0);
     InitializeBinaryDataLoader();
 }
 

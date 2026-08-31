@@ -2416,6 +2416,21 @@ bool ValidateFramebufferTextureCommon(const Context *context,
             return false;
         }
 
+        if (tex->getType() == TextureType::External)
+        {
+            if (!context->getExtensions().YUVTargetEXT)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kYUVTargetExtensionRequired);
+                return false;
+            }
+
+            if (attachment != GL_COLOR_ATTACHMENT0)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidAttachment);
+                return false;
+            }
+        }
+
         // GLES spec 3.2, Section 9.2.8 "Attaching Texture Images to a Framebuffer"
         // * If textarget is TEXTURE_2D_MULTISAMPLE, then level must be zero.
         // * If texture is a two-dimensional multisample array texture, then level must be zero.

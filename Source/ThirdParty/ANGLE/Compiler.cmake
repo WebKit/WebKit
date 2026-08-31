@@ -199,6 +199,7 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/glsl/ExpandFragmentOutputsToVec4.h"
     "src/compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.h"
     "src/compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.h"
+    "src/compiler/translator/tree_ops/glsl/WrapStructConstructors.h"
     "src/compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.h"
     "src/compiler/translator/tree_ops/glsl/apple/RewriteRowMajorMatrices.h"
     "src/compiler/translator/tree_ops/glsl/apple/UnfoldShortCircuitAST.h"
@@ -268,6 +269,7 @@ set(angle_translator_glsl_sources
     "src/compiler/translator/tree_ops/glsl/ExpandFragmentOutputsToVec4.cpp"
     "src/compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.cpp"
     "src/compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.cpp"
+    "src/compiler/translator/tree_ops/glsl/WrapStructConstructors.cpp"
 )
 
 set(angle_translator_glsl_apple_sources

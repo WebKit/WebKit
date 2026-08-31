@@ -365,34 +365,4 @@ bool OutputUniformBlocksAndSamplers(TCompiler *compiler,
     return true;
 }
 
-std::string WGSLGetMappedSamplerName(const std::string &originalName)
-{
-    std::string samplerName = originalName;
-
-    // Samplers in structs are extracted.
-    std::replace(samplerName.begin(), samplerName.end(), '.', '_');
-
-    // Remove array elements
-    auto out = samplerName.begin();
-    for (auto in = samplerName.begin(); in != samplerName.end(); in++)
-    {
-        if (*in == '[')
-        {
-            while (*in != ']')
-            {
-                in++;
-                ASSERT(in != samplerName.end());
-            }
-        }
-        else
-        {
-            *out++ = *in;
-        }
-    }
-
-    samplerName.erase(out, samplerName.end());
-
-    return samplerName;
-}
-
 }  // namespace sh

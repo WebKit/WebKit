@@ -192,17 +192,7 @@ gles_requestable_extensions = [
     "GL_NV_read_depth_stencil",
     "GL_NV_read_stencil",
     "GL_NV_shader_noperspective_interpolation",
-    "GL_OES_compressed_EAC_R11_signed_texture",
-    "GL_OES_compressed_EAC_R11_unsigned_texture",
-    "GL_OES_compressed_EAC_RG11_signed_texture",
-    "GL_OES_compressed_EAC_RG11_unsigned_texture",
     "GL_OES_compressed_ETC1_RGB8_texture",
-    "GL_OES_compressed_ETC2_punchthroughA_RGBA8_texture",
-    "GL_OES_compressed_ETC2_punchthroughA_sRGB8_alpha_texture",
-    "GL_OES_compressed_ETC2_RGB8_texture",
-    "GL_OES_compressed_ETC2_RGBA8_texture",
-    "GL_OES_compressed_ETC2_sRGB8_alpha8_texture",
-    "GL_OES_compressed_ETC2_sRGB8_texture",
     "GL_OES_compressed_paletted_texture",
     "GL_OES_copy_image",
     "GL_OES_depth_texture_cube_map",
@@ -271,7 +261,6 @@ angle_es_only_extensions = [
     "GL_CHROMIUM_bind_uniform_location",
     "GL_CHROMIUM_copy_compressed_texture",
     "GL_CHROMIUM_copy_texture",
-    "GL_CHROMIUM_framebuffer_mixed_samples",
 ]
 
 gles_es_only_extensions = [

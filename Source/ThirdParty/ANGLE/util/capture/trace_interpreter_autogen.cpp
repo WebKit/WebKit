@@ -1474,13 +1474,6 @@ CallCapture ParseCallCapture(const Token &nameToken,
                                                                                      strings);
         return CallCapture(EntryPoint::GLCopyTextureCHROMIUM, std::move(params));
     }
-    if (strcmp(nameToken, "glCoverageModulationCHROMIUM") == 0)
-    {
-        ParamBuffer params =
-            ParseParameters<std::remove_pointer<PFNGLCOVERAGEMODULATIONCHROMIUMPROC>::type>(
-                paramTokens, strings);
-        return CallCapture(EntryPoint::GLCoverageModulationCHROMIUM, std::move(params));
-    }
     if (strcmp(nameToken, "glCreateMemoryObjectsEXT") == 0)
     {
         ParamBuffer params =

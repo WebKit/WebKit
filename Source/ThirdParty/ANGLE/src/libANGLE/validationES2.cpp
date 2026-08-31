@@ -3513,26 +3513,6 @@ bool ValidateBindUniformLocationCHROMIUM(const Context *context,
     return true;
 }
 
-bool ValidateCoverageModulationCHROMIUM(const PrivateState &state,
-                                        ErrorSet *errors,
-                                        angle::EntryPoint entryPoint,
-                                        GLenum components)
-{
-    switch (components)
-    {
-        case GL_RGB:
-        case GL_RGBA:
-        case GL_ALPHA:
-        case GL_NONE:
-            break;
-        default:
-            errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCoverageComponents);
-            return false;
-    }
-
-    return true;
-}
-
 bool ValidateCopyTextureCHROMIUM(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  TextureID sourceId,

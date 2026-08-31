@@ -912,12 +912,6 @@ bool ValidateCopySubTextureCHROMIUM(const Context *context,
                                     GLboolean unpackPremultiplyAlpha,
                                     GLboolean unpackUnmultiplyAlpha);
 
-// GL_CHROMIUM_framebuffer_mixed_samples
-bool ValidateCoverageModulationCHROMIUM(const PrivateState &state,
-                                        ErrorSet *errors,
-                                        angle::EntryPoint entryPoint,
-                                        GLenum components);
-
 // GL_CHROMIUM_lose_context
 bool ValidateLoseContextCHROMIUM(const Context *context,
                                  angle::EntryPoint entryPoint,

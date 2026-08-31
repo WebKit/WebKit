@@ -187,11 +187,11 @@ template <typename T>
 class SourceIndex
 {
   public:
-    T get() const { return mIndex; }
+    constexpr T get() const { return mIndex; }
 
   protected:
     friend struct egl::ImageSourceAttributes;
-    SourceIndex(T index) : mIndex(index) {}
+    constexpr SourceIndex(T index) : mIndex(index) {}
     T mIndex;
 };
 
@@ -229,42 +229,49 @@ class SourceLevel : public SourceIndex<LevelIndex>
 {
   public:
     // Convenience helpers
-    SourceLevel operator+(uint32_t offset) const { return SourceLevel(mIndex + offset); }
+    constexpr SourceLevel operator+(uint32_t offset) const { return SourceLevel(mIndex + offset); }
+    SourceLevel &operator++()
+    {
+        ++mIndex;
+        return *this;
+    }
+    constexpr bool operator<(const SourceLevel &other) const { return mIndex < other.mIndex; }
+    constexpr bool operator<=(const SourceLevel &other) const { return mIndex <= other.mIndex; }
+
+    static constexpr SourceLevel Zero() { return SourceLevel(LevelIndex(0)); }
 
     // Helper while code is being transitioned to using SourceLevel consistently.  Remove once done.
     // TODO(http://anglebug.com/525079760)
-    static SourceLevel VerifiedSourceLevel(LevelIndex level) { return SourceLevel(level); }
+    static constexpr SourceLevel VerifiedSourceLevel(LevelIndex level)
+    {
+        return SourceLevel(level);
+    }
 
   protected:
     friend struct egl::ImageSourceAttributes;
     friend class SourceImageIndex;
-    SourceLevel(LevelIndex level) : SourceIndex(level) {}
+    constexpr SourceLevel(LevelIndex level) : SourceIndex(level) {}
 };
 class SourceLayer : public SourceIndex<uint32_t>
 {
   public:
     // Convenience helpers
-    SourceLayer operator+(uint32_t offset) const { return SourceLayer(mIndex + offset); }
+    constexpr SourceLayer operator+(uint32_t offset) const { return SourceLayer(mIndex + offset); }
+
+    static constexpr SourceLayer Zero() { return SourceLayer(0); }
 
     // Helper while code is being transitioned to using SourceLayer consistently.  Remove once done.
     // TODO(http://anglebug.com/525079760)
-    static SourceLayer VerifiedSourceLayer(uint32_t layer) { return SourceLayer(layer); }
+    static constexpr SourceLayer VerifiedSourceLayer(uint32_t layer) { return SourceLayer(layer); }
 
   protected:
     friend struct egl::ImageSourceAttributes;
     friend class SourceImageIndex;
-    SourceLayer(uint32_t layer) : SourceIndex(layer) {}
+    constexpr SourceLayer(uint32_t layer) : SourceIndex(layer) {}
 };
 class SourceImageIndex : public SourceIndex<ImageIndex>
 {
   public:
-    // Helper while code is being transitioned to using SourceLevel consistently.  Remove once done.
-    // TODO(http://anglebug.com/525079760)
-    static SourceImageIndex VerifiedSourceIndex(ImageIndex index)
-    {
-        return SourceImageIndex(index);
-    }
-
     // Convenience helpers that forward to ImageIndex and possibly wrap the results.
     TextureType getType() const { return mIndex.getType(); }
     SourceLevel getLevelIndex() const { return SourceLevel(LevelIndex(mIndex.getLevelIndex())); }
@@ -278,6 +285,30 @@ class SourceImageIndex : public SourceIndex<ImageIndex>
     bool usesTex3D() const { return mIndex.usesTex3D(); }
     TextureTarget getTarget() const { return mIndex.getTarget(); }
     TextureTarget getTargetOrFirstCubeFace() const { return mIndex.getTargetOrFirstCubeFace(); }
+
+    static SourceImageIndex Make2D(SourceLevel level)
+    {
+        return SourceImageIndex(ImageIndex::Make2D(level.get().get()));
+    }
+    static SourceImageIndex MakeCubeMapFace(TextureTarget target, SourceLevel level)
+    {
+        return SourceImageIndex(ImageIndex::MakeCubeMapFace(target, level.get().get()));
+    }
+    static SourceImageIndex Make2DArrayRange(SourceLevel level, SourceLayer layer, GLint layerCount)
+    {
+        return SourceImageIndex(
+            ImageIndex::Make2DArrayRange(level.get().get(), layer.get(), layerCount));
+    }
+    static SourceImageIndex MakeFromType(TextureType type,
+                                         SourceLevel level,
+                                         SourceLayer layer = kEntireLayer,
+                                         GLint layerCount  = 1)
+    {
+        return SourceImageIndex(
+            ImageIndex::MakeFromType(type, level.get().get(), layer.get(), layerCount));
+    }
+
+    static constexpr SourceLayer kEntireLayer = SourceLayer::Zero() + ImageIndex::kEntireLevel;
 
   protected:
     friend struct egl::ImageSourceAttributes;

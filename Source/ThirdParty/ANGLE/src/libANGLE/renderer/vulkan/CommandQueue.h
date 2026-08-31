@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_COMMAND_Queue_H_
 #define LIBANGLE_RENDERER_VULKAN_COMMAND_Queue_H_
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -32,6 +33,32 @@ using SharedExternalFence = std::shared_ptr<ExternalFence>;
 constexpr size_t kInFlightCommandsLimit    = 50u;
 constexpr size_t kMaxFinishedCommandsLimit = 64u;
 static_assert(kInFlightCommandsLimit <= kMaxFinishedCommandsLimit);
+
+struct CommandQueuePerfCounters
+{
+    CommandQueuePerfCounters() = default;
+    CommandQueuePerfCounters(const CommandQueuePerfCounters &other)
+        : queueSubmitCallsTotal(other.queueSubmitCallsTotal.load(std::memory_order_relaxed)),
+          vkQueueSubmitCallsTotal(other.vkQueueSubmitCallsTotal.load(std::memory_order_relaxed)),
+          queueWaitSemaphoresTotal(other.queueWaitSemaphoresTotal.load(std::memory_order_relaxed))
+    {}
+
+    CommandQueuePerfCounters &operator=(const CommandQueuePerfCounters &other)
+    {
+        queueSubmitCallsTotal.store(other.queueSubmitCallsTotal.load(std::memory_order_relaxed),
+                                    std::memory_order_relaxed);
+        vkQueueSubmitCallsTotal.store(other.vkQueueSubmitCallsTotal.load(std::memory_order_relaxed),
+                                      std::memory_order_relaxed);
+        queueWaitSemaphoresTotal.store(
+            other.queueWaitSemaphoresTotal.load(std::memory_order_relaxed),
+            std::memory_order_relaxed);
+        return *this;
+    }
+
+    std::atomic<uint64_t> queueSubmitCallsTotal{0};
+    std::atomic<uint64_t> vkQueueSubmitCallsTotal{0};
+    std::atomic<uint64_t> queueWaitSemaphoresTotal{0};
+};
 
 struct Error
 {
@@ -451,8 +478,7 @@ class CommandQueue : angle::NonCopyable
 
     CommandPoolAccess &getCommandPoolAccess() { return mCommandPoolAccess; }
 
-    const angle::VulkanPerfCounters getPerfCounters() const;
-    void resetPerFramePerfCounters();
+    const CommandQueuePerfCounters getPerfCounters() const;
 
     // Release finished commands and clean up garbage immediately, or request async clean up if
     // enabled.
@@ -505,7 +531,6 @@ class CommandQueue : angle::NonCopyable
 
     // Warning: Mutexes must be locked in the order as declared below.
     // Protect multi-thread access to mInFlightCommands.push/back and ensure ordering of submission.
-    // Also protects mPerfCounters.
     mutable angle::SimpleMutex mQueueSubmitMutex;
     // Protect multi-thread access to mInFlightCommands.pop/front and
     // mFinishedCommandBatches.push/back.
@@ -534,7 +559,7 @@ class CommandQueue : angle::NonCopyable
     // QueueMap
     DeviceQueueMap mQueueMap;
 
-    angle::VulkanPerfCounters mPerfCounters;
+    CommandQueuePerfCounters mPerfCounters;
 };
 
 ANGLE_INLINE bool CommandQueue::isInFlightCommandsEmpty() const

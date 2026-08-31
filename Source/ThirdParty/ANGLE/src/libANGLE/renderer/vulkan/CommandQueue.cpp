@@ -848,8 +848,7 @@ angle::Result CommandQueue::submitCommands(ErrorContext *context,
     Renderer *renderer = context->getRenderer();
     VkDevice device    = renderer->getDevice();
 
-    ++mPerfCounters.commandQueueSubmitCallsTotal;
-    ++mPerfCounters.commandQueueSubmitCallsPerFrame;
+    mPerfCounters.queueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
 
     DeviceScoped<CommandBatch> scopedBatch(device);
     CommandBatch &batch = scopedBatch.get();
@@ -862,8 +861,8 @@ angle::Result CommandQueue::submitCommands(ErrorContext *context,
 
     ANGLE_TRY(commandsState.getCommandsAndWaitSemaphores(
         context, &mCommandPoolAccess, &batch, &waitSemaphores, &waitSemaphoreStageMasks));
-
-    mPerfCounters.commandQueueWaitSemaphoresTotal += waitSemaphores.size();
+    mPerfCounters.queueWaitSemaphoresTotal.fetch_add(waitSemaphores.size(),
+                                                     std::memory_order_relaxed);
 
     // Don't make a submission if there is nothing to submit.
     const bool needsQueueSubmit = batch.getPrimaryCommands().valid() ||
@@ -899,9 +898,6 @@ angle::Result CommandQueue::submitCommands(ErrorContext *context,
         {
             batch.setExternalFence(std::move(externalFence));
         }
-
-        ++mPerfCounters.vkQueueSubmitCallsTotal;
-        ++mPerfCounters.vkQueueSubmitCallsPerFrame;
     }
 
     return queueSubmitLocked(context, commandsState.getPriority(), submitInfo, scopedBatch,
@@ -951,9 +947,6 @@ angle::Result CommandQueue::queueSubmitOneOff(ErrorContext *context,
         submitInfo.pWaitDstStageMask  = &waitSemaphoreStageMask;
     }
 
-    ++mPerfCounters.vkQueueSubmitCallsTotal;
-    ++mPerfCounters.vkQueueSubmitCallsPerFrame;
-
     return queueSubmitLocked(context, contextPriority, submitInfo, scopedBatch, submitQueueSerial);
 }
 
@@ -1001,6 +994,7 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
             VkFence externalFenceHandle = batch.getExternalFence()->getHandle();
             ASSERT(externalFenceHandle != VK_NULL_HANDLE);
             ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &submitInfo, externalFenceHandle));
+            mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
 
             // If enabled, there will be an extra fence submitted after the primary commands.
             if (renderer->getFeatures().enableExtraSubmitFence.enabled)
@@ -1009,6 +1003,7 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
                 VkSubmitInfo fenceSubmitInfo = {};
                 fenceSubmitInfo.sType        = VK_STRUCTURE_TYPE_SUBMIT_INFO;
                 ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &fenceSubmitInfo, extraSubmitFence));
+                mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
             }
 
             // exportFd is exporting VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR type handle which
@@ -1027,6 +1022,7 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
             VkFence fence = batch.getFenceHandle();
             ASSERT(fence != VK_NULL_HANDLE);
             ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &submitInfo, fence));
+            mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
         }
     }
 
@@ -1046,17 +1042,9 @@ VkResult CommandQueue::queuePresent(egl::ContextPriority contextPriority,
     return vkQueuePresentKHR(queue, &presentInfo);
 }
 
-const angle::VulkanPerfCounters CommandQueue::getPerfCounters() const
+const CommandQueuePerfCounters CommandQueue::getPerfCounters() const
 {
-    std::lock_guard<angle::SimpleMutex> lock(mQueueSubmitMutex);
     return mPerfCounters;
-}
-
-void CommandQueue::resetPerFramePerfCounters()
-{
-    std::lock_guard<angle::SimpleMutex> lock(mQueueSubmitMutex);
-    mPerfCounters.commandQueueSubmitCallsPerFrame = 0;
-    mPerfCounters.vkQueueSubmitCallsPerFrame      = 0;
 }
 
 angle::Result CommandQueue::releaseFinishedCommandsAndCleanupGarbage(ErrorContext *context)

@@ -129,10 +129,45 @@ void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::Featur
 namespace nativegl
 {
 bool SupportsVertexArrayObjects(const FunctionsGL *functions);
+bool SupportsTextureBufferObjects(const FunctionsGL *functions);
+bool SupportsPixelBufferObjects(const FunctionsGL *functions);
 bool CanUseDefaultVertexArrayObject(const FunctionsGL *functions);
 bool CanUseClientSideArrays(const FunctionsGL *functions, GLuint vao);
+bool SupportsSettingCubemapSeamless(const FunctionsGL *functions);
+bool SupportsLogicOp(const FunctionsGL *functions);
+bool SupportsProvokingVertex(const FunctionsGL *functions);
+bool SupportsPrimitiveRestartFixedIndex(const FunctionsGL *functions);
+bool SupportsPrimitiveRestart(const FunctionsGL *functions);  // note: The non-fixed index (desktop)
 bool SupportsCompute(const FunctionsGL *functions);
+bool SupportsCubeMapArrayTextures(const FunctionsGL *functions);
+bool SupportsRectangleTextures(const FunctionsGL *functions);
+bool SupportsExternalTextures(const FunctionsGL *functions);
+bool Supports3DTextures(const FunctionsGL *functions);
+bool Supports2DArrayTextures(const FunctionsGL *functions);
+bool Supports2DMultisampleTextures(const FunctionsGL *functions);
+bool Supports2DMultisampleArrayTextures(const FunctionsGL *functions);
 bool SupportsOcclusionQueries(const FunctionsGL *functions);
+bool SupportsTransformFeedback(const FunctionsGL *functions);
+bool SupportsUniformBufferObjects(const FunctionsGL *functions);
+bool SupportsCopyReadWriteBufferObjects(const FunctionsGL *functions);
+bool SupportsDrawIndirect(const FunctionsGL *functions);
+bool SupportsSeparateFramebufferBindings(const FunctionsGL *functions);
+bool SupportsUnpackSubImage(const FunctionsGL *functions);
+bool SupportsPackSubImage(const FunctionsGL *functions);
+bool SupportsClipControl(const FunctionsGL *functions);
+bool SupportsDrawBuffersIndexed(const FunctionsGL *functions);
+bool SupportsBlendEquationAdvancedCoherent(const FunctionsGL *functions);
+bool SupportsPolygonMode(const FunctionsGL *functions);
+bool SupportsPolygonModeNV(const FunctionsGL *functions);
+bool SupportsPolygonOffsetClamp(const FunctionsGL *functions);
+bool SupportsDepthClamp(const FunctionsGL *functions);
+bool SupportsSRGBWriteControl(const FunctionsGL *functions);
+bool SupportsMultisampleComatibility(const FunctionsGL *functions);
+bool SupportsFramebufferMixedSamples(const FunctionsGL *functions);
+bool SupportsShaderIOBlocks(const FunctionsGL *functions);
+bool SupportsClipCullDistance(const FunctionsGL *functions);
+bool SupportsSampleMask(const FunctionsGL *functions);
+bool SupportsRasterizerDiscard(const FunctionsGL *functions);
 bool SupportsNativeRendering(const FunctionsGL *functions,
                              gl::TextureType type,
                              GLenum internalFormat);

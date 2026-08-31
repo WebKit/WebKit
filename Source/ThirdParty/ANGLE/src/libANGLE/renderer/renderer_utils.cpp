@@ -1566,6 +1566,57 @@ template void GetUniform<GLfloat>(const gl::ProgramExecutable *executable,
                                   GLenum entryPointType,
                                   const DefaultUniformBlockMap *defaultUniformBlocks);
 
+std::string RemoveArraySubscripts(const std::string &uniformName)
+{
+    std::string strippedName = uniformName;
+
+    auto out = strippedName.begin();
+    for (auto in = strippedName.begin(); in != strippedName.end(); in++)
+    {
+        if (*in == '[')
+        {
+            while (*in != ']')
+            {
+                in++;
+                ASSERT(in != strippedName.end());
+            }
+        }
+        else
+        {
+            *out++ = *in;
+        }
+    }
+
+    strippedName.erase(out, strippedName.end());
+    return strippedName;
+}
+
+std::string GetExtractedStructSamplerName(
+    const std::string uniformNameWithoutIndices,
+    angle::HashMap<std::string, size_t> *extractedSamplerIndices)
+{
+    ASSERT(uniformNameWithoutIndices.find('.') != std::string::npos);
+    ASSERT(uniformNameWithoutIndices.find('[') == std::string::npos);
+
+    // The first time this uniform is visited, the extracted sampler name is generated.  For
+    // arrays, consecutive visits reuse the same extracted sampler name.
+    size_t index = extractedSamplerIndices->size();
+
+    auto extracted = extractedSamplerIndices->find(uniformNameWithoutIndices);
+    if (extracted != extractedSamplerIndices->end())
+    {
+        index = extracted->second;
+    }
+    else
+    {
+        (*extractedSamplerIndices)[uniformNameWithoutIndices] = index;
+    }
+
+    std::ostringstream name;
+    name << sh::kExtractedSamplerNamePrefix << index;
+    return name.str();
+}
+
 const angle::Format &GetFormatFromFormatType(GLenum format, GLenum type)
 {
     GLenum sizedInternalFormat    = gl::GetInternalFormatInfo(format, type).sizedInternalFormat;

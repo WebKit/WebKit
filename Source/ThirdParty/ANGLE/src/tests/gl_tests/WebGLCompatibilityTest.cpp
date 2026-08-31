@@ -363,6 +363,12 @@ class HardenedContextTest : public ANGLETest<>
     HardenedContextTest() { setHardenedContextEnabled(true); }
 };
 
+class HardenedContextTestES31 : public HardenedContextTest
+{
+  protected:
+    HardenedContextTestES31() { setHardenedContextEnabled(true); }
+};
+
 // Context creation would fail if EGL_ANGLE_create_context_webgl_compatibility was not available so
 // the GL extension should always be present
 TEST_P(WebGLCompatibilityTest, ExtensionStringExposed)
@@ -6714,6 +6720,50 @@ void main()
     EXPECT_EQ(0u, program);
 }
 
+// Similar to HardendContextTest.ValidateTypeSizes, but validate size checks in compute shaders
+// in ES31.
+TEST_P(HardenedContextTestES31, ValidateTypeSizes)
+{
+    constexpr char kCSArrayBlockTooLarge[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+// 1 + the maximum size this implementation allows.
+uniform LargeArrayBlock {
+    vec4 large_array[134217729];
+};
+
+layout(binding = 1) buffer Output {
+    uint result[];
+} sb_out;
+
+void main()
+{
+    if (large_array[1].x == 2.0)
+        sb_out.result[0] = 42u;
+    else
+        sb_out.result[0] = 21u;
+})";
+
+    GLuint program = CompileComputeProgram(kCSArrayBlockTooLarge, true);
+    EXPECT_EQ(0u, program);
+}
+
+// Similar to HardendContextTestES31.ValidateTypeSizes, but validates that an 8x8x8 int array does
+// not trigger the validation error.
+TEST_P(HardenedContextTestES31, PassingArraySize)
+{
+    constexpr char kCS[] = R"(#version 310 es
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+void main() {
+  int a[8][8][8];
+}
+)";
+
+    GLuint program = CompileComputeProgram(kCS, true);
+    EXPECT_NE(0u, program);
+}
+
 // Similar to WebGL2GLSLTest.InitUninitializedLocals, but ensure the same validation is done in
 // non-webgl contexts with the EGL_CONTEXT_HARDENED_ANGLE flag.
 TEST_P(HardenedContextTest, InitUninitializedLocals)
@@ -8501,4 +8551,7 @@ TEST_P(HardenedContextTest, UniformBufferRangeExceedsSize)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTest);
 ANGLE_INSTANTIATE_TEST_ES3(HardenedContextTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(HardenedContextTestES31);
 }  // namespace angle

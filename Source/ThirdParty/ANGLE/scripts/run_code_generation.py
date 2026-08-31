@@ -106,10 +106,6 @@ generators = {
         'src/libANGLE/renderer/metal/shaders/gen_mtl_internal_shaders.py',
     'OpenGL dispatch table':
         'src/libANGLE/renderer/gl/generate_gl_dispatch_table.py',
-    'overlay fonts':
-        'src/libANGLE/gen_overlay_fonts.py',
-    'overlay widgets':
-        'src/libANGLE/gen_overlay_widgets.py',
     'packed enum':
         'src/common/gen_packed_gl_enums.py',
     'proc table':

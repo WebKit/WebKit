@@ -7038,6 +7038,94 @@ TEST_P(VertexAttributeTestES3, LargeAttribPointerOffsetNoCrash)
     swapBuffers();
 }
 
+class VertexAttributeTestES31_Basic : public ANGLETest<>
+{
+  protected:
+    VertexAttributeTestES31_Basic()
+    {
+        setWindowWidth(256);
+        setWindowHeight(256);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Test enabled vertex array attribute but without calling glVertexAttribFormat. The default format
+// should be float
+TEST_P(VertexAttributeTestES31_Basic, EnabledAttribArrayWithoutVertexAttribFormat)
+{
+    constexpr char kVS[] =
+        "attribute vec4 a_position;\n"
+        "attribute vec4 a_color;\n"
+        "varying vec4 v_color;\n"
+        "bool isCorrectColor(vec4 v) {\n"
+        "    return a_position == v;\n"
+        "}"
+        "void main() {\n"
+        "    gl_Position = a_position;\n"
+        "    v_color = isCorrectColor(a_color) ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);\n"
+        "}";
+
+    constexpr char kFS[] =
+        "varying mediump vec4 v_color;\n"
+        "void main() {\n"
+        "    gl_FragColor = v_color;\n"
+        "}";
+
+    GLProgram program;
+    program.makeRaster(kVS, kFS);
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(positionLoc, -1);
+    GLint colorLoc = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(colorLoc, -1);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    // enable position attrib
+    constexpr size_t kVertexCount = 6;
+    GLBuffer positionBuffer;
+    const std::array<Vector3, kVertexCount> &quadVerts = GetQuadVertices();
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+    constexpr GLint kPositionBinding = 2;
+    glBindVertexBuffer(kPositionBinding, positionBuffer, 0, sizeof(Vector3));
+    glVertexAttribFormat(positionLoc, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexAttribBinding(positionLoc, kPositionBinding);
+    glEnableVertexAttribArray(positionLoc);
+
+    // enable color attrib without calling glVertexAttribFormat with non-zero stride. Set the color
+    // data to match position data for each vertex, and then add vector4 as padding so that if ANGLE
+    // mess up stride, it will render red instead of green.
+    Vector4 padding(0.0, 0.0, 0.0, 0.0);
+    std::vector<Vector4> colorData;
+    for (size_t i = 0; i < kVertexCount; i++)
+    {
+        colorData.emplace_back(quadVerts[i][0], quadVerts[i][1], quadVerts[i][2], 1.0);
+        colorData.push_back(padding);
+    }
+    GLint colorStride  = sizeof(Vector4) * 2;
+    GLsizei bufferSize = kVertexCount * colorStride;
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, colorData.data(), GL_STATIC_DRAW);
+    constexpr GLint kColorBinding = 3;
+    glBindVertexBuffer(kColorBinding, colorBuffer, 0, colorStride);
+    glVertexAttribBinding(colorLoc, kColorBinding);
+    glEnableVertexAttribArray(colorLoc);
+
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, kVertexCount);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
 ANGLE_INSTANTIATE_TEST_ES3(VertexAttributeResizeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeUint8Test);
@@ -7112,4 +7200,13 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES31_Basic);
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    VertexAttributeTestES31_Basic,
+    ES31_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
+    ES31_VULKAN()
+        .disable(Feature::UseVertexInputBindingStrideDynamicState)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
+    ES31_VULKAN().disable(Feature::SupportsVertexInputDynamicState),
+    ES31_VULKAN().disable(Feature::ForceSizePointerForBoundVertexBuffers));
 }  // anonymous namespace

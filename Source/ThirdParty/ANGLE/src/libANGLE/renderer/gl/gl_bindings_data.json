@@ -605,8 +605,7 @@
         "VertexAttribFormat",
         "VertexAttribIFormat",
         "VertexAttribLFormat",
-        "VertexBindingDivisor",
-        "CoverageModulationNV"
+        "VertexBindingDivisor"
     ],
 
     "4.4":

@@ -19,13 +19,28 @@ namespace sh
 {
 namespace
 {
+enum class ExtDrawBuffers
+{
+    Disabled,
+    Enabled,
+};
+
+bool ClampIndirectIndicesImpl(TCompiler *compiler,
+                              TIntermNode *root,
+                              TSymbolTable *symbolTable,
+                              ExtDrawBuffers extDrawBuffers);
+
 // Traverser that finds EOpIndexIndirect nodes and applies a clamp to their right-hand side
 // expression.
 class ClampIndirectIndicesTraverser : public TIntermTraverser
 {
   public:
-    ClampIndirectIndicesTraverser(TCompiler *compiler, TSymbolTable *symbolTable)
-        : TIntermTraverser(true, false, false, symbolTable), mCompiler(compiler)
+    ClampIndirectIndicesTraverser(TCompiler *compiler,
+                                  TSymbolTable *symbolTable,
+                                  ExtDrawBuffers extDrawBuffers)
+        : TIntermTraverser(true, false, false, symbolTable),
+          mCompiler(compiler),
+          mExtDrawBuffers(extDrawBuffers)
     {
         mIsSecondaryFragDataUsed = symbolTable->isSecondaryFragDataUsed();
     }
@@ -41,9 +56,11 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
         }
 
         // Apply the transformation to the left and right nodes
-        bool valid = ClampIndirectIndices(mCompiler, node->getLeft(), mSymbolTable);
+        bool valid =
+            ClampIndirectIndicesImpl(mCompiler, node->getLeft(), mSymbolTable, mExtDrawBuffers);
         ASSERT(valid);
-        valid = ClampIndirectIndices(mCompiler, node->getRight(), mSymbolTable);
+        valid =
+            ClampIndirectIndicesImpl(mCompiler, node->getRight(), mSymbolTable, mExtDrawBuffers);
         ASSERT(valid);
 
         // Generate clamp(right, 0, N), where N is the size of the array being indexed minus 1.  If
@@ -72,7 +89,13 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
         if (leftType.isArray())
         {
             int arraySize = static_cast<int>(leftType.getOutermostArraySize());
-            if (leftType.getQualifier() == EvqFragData && mIsSecondaryFragDataUsed)
+            if (leftType.getQualifier() == EvqFragData &&
+                mExtDrawBuffers == ExtDrawBuffers::Disabled)
+            {
+                // When EXT_draw_buffers is disabled, only element 0 of gl_FragData may be accessed.
+                arraySize = 1;
+            }
+            else if (leftType.getQualifier() == EvqFragData && mIsSecondaryFragDataUsed)
             {
                 // When gl_SecondaryFragDataEXT is used, only indices up to MaxDualSourceDrawBuffers
                 // of gl_FragData may be accessed.
@@ -133,15 +156,32 @@ class ClampIndirectIndicesTraverser : public TIntermTraverser
     }
 
     TCompiler *mCompiler;
+    const ExtDrawBuffers mExtDrawBuffers;
     bool mIsSecondaryFragDataUsed = false;
 };
-}  // anonymous namespace
 
-bool ClampIndirectIndices(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
+bool ClampIndirectIndicesImpl(TCompiler *compiler,
+                              TIntermNode *root,
+                              TSymbolTable *symbolTable,
+                              ExtDrawBuffers extDrawBuffers)
 {
-    ClampIndirectIndicesTraverser traverser(compiler, symbolTable);
+    ClampIndirectIndicesTraverser traverser(compiler, symbolTable, extDrawBuffers);
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);
+}
+
+}  // anonymous namespace
+
+bool ClampIndirectIndices(TCompiler *compiler,
+                          TIntermNode *root,
+                          TSymbolTable *symbolTable,
+                          const TExtensionBehavior &extensionBehavior)
+{
+    const ExtDrawBuffers extDrawBuffers =
+        IsExtensionEnabled(extensionBehavior, TExtension::EXT_draw_buffers)
+            ? ExtDrawBuffers::Enabled
+            : ExtDrawBuffers::Disabled;
+    return ClampIndirectIndicesImpl(compiler, root, symbolTable, extDrawBuffers);
 }
 
 }  // namespace sh

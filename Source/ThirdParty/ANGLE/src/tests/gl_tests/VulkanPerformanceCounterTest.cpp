@@ -286,6 +286,48 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
             counters.stencilAttachmentResolves + incrementalStencilAttachmentResolves;
     }
 
+    void adjustExpectedCountersForDynamicRenderingMSRTTEmulationUnresolve(
+        uint64_t incrementalUnresolveRenderPasses,
+        uint64_t incrementalUnresolveColorAttachments,
+        uint64_t incrementalUnresolveDepthStencilAttachment,
+        bool unresolveDepth,
+        bool unresolveStencil,
+        angle::VulkanPerfCounters *expected)
+    {
+        if (isFeatureEnabled(Feature::PreferDynamicRendering) &&
+            !isFeatureEnabled(Feature::SupportsMultisampledRenderToSingleSampled))
+        {
+            expected->renderPasses += incrementalUnresolveRenderPasses;
+            expected->colorStoreOpStores += incrementalUnresolveColorAttachments;
+
+            if (unresolveDepth)
+            {
+                expected->depthStoreOpStores += incrementalUnresolveDepthStencilAttachment;
+            }
+            else if (isFeatureEnabled(Feature::SupportsRenderPassLoadStoreOpNone))
+            {
+                expected->depthStoreOpNones += incrementalUnresolveDepthStencilAttachment;
+                expected->depthLoadOpNones += incrementalUnresolveDepthStencilAttachment;
+            }
+
+            if (unresolveStencil)
+            {
+                expected->stencilStoreOpStores += incrementalUnresolveDepthStencilAttachment;
+                if (!isFeatureEnabled(Feature::SupportsShaderStencilExport))
+                {
+                    // Without VK_EXT_shader_stencil_export, the unresolve render pass clears
+                    // stencil to 0.
+                    expected->stencilLoadOpClears += incrementalUnresolveDepthStencilAttachment;
+                }
+            }
+            else if (isFeatureEnabled(Feature::SupportsRenderPassLoadStoreOpNone))
+            {
+                expected->stencilStoreOpNones += incrementalUnresolveDepthStencilAttachment;
+                expected->stencilLoadOpNones += incrementalUnresolveDepthStencilAttachment;
+            }
+        }
+    }
+
     void maskedFramebufferFetchDraw(const GLColor &clearColor, GLBuffer &buffer);
     void maskedFramebufferFetchDrawVerify(const GLColor &expectedColor, GLBuffer &buffer);
 
@@ -5053,6 +5095,8 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Additionally, expect 4 resolves and 3 unresolves.
     setExpectedCountersForUnresolveResolveTest(getPerfCounters(), 3, 3, 3, 4, 4, 4, &expected);
+    adjustExpectedCountersForDynamicRenderingMSRTTEmulationUnresolve(3, 3, 3, true, true,
+                                                                     &expected);
 
     constexpr GLsizei kSize = 6;
 
@@ -5442,6 +5486,8 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     // stencil(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
     setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
     setExpectedCountersForStencilOps(getPerfCounters(), 0, 1, 0, 1, 0, &expected);
+    adjustExpectedCountersForDynamicRenderingMSRTTEmulationUnresolve(1, 0, 1, true, true,
+                                                                     &expected);
 
     glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
     drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
@@ -5460,6 +5506,8 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     // stencil(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
     setExpectedCountersForDepthOps(getPerfCounters(), 1, 1, 0, 0, 1, 0, &expected);
     setExpectedCountersForStencilOps(getPerfCounters(), 0, 1, 0, 1, 0, &expected);
+    adjustExpectedCountersForDynamicRenderingMSRTTEmulationUnresolve(1, 0, 1, false, true,
+                                                                     &expected);
 
     glUniform4f(colorUniformLocation, 0.0f, 0.0f, 1.0f, 1.0f);
     drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.25f);
@@ -5478,6 +5526,8 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     // stencil(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
     setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
     setExpectedCountersForStencilOps(getPerfCounters(), 1, 0, 0, 1, 0, &expected);
+    adjustExpectedCountersForDynamicRenderingMSRTTEmulationUnresolve(1, 0, 1, true, false,
+                                                                     &expected);
 
     glUniform4f(colorUniformLocation, 1.0f, 1.0f, 0.0f, 1.0f);
     drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.0f);
@@ -10981,6 +11031,78 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, DeleteColorRenderbufferOfUnsynce
     EXPECT_EQ(1u, getPerfCounters().fallbackFromTileMemory);
 }
 
+// Test tile memory allocation failure is handled properly
+TEST_P(VulkanPerformanceCounterTest_TileMemory, DSBufferAllocateFailureThenBlit)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::SimulateTileMemoryForTesting) &&
+                       !isFeatureEnabled(Feature::SupportsTileMemoryHeap));
+
+    setupPrograms();
+
+    GLfloat zValue = 0.0f;
+
+    // draw to default fbo to initialize depth buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(zValue * 0.5f + 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+    EXPECT_EQ(1u, getPerfCounters().fallbackFromTileMemory);
+
+    uint64_t tileMemoryImageCountBefore = getPerfCounters().tileMemoryImages;
+
+    // Set up depthStencil with 4097x4097, the simulation code path will fail to allocate for
+    // testing purpose (allocation size > 64M).
+    constexpr GLsizei kWidth  = 4097;
+    constexpr GLsizei kHeight = 4097;
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+
+    GLFramebuffer fbo;
+    setupFBO(colorTexture, depthStencil, depthStencil, fbo, kWidth, kHeight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(0.0f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+
+    // blit depth from surface to to fbo
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+    ASSERT(getWindowWidth() < kWidth);
+    ASSERT(getWindowHeight() < kHeight);
+    glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, getWindowWidth(),
+                      getWindowHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+    if (isFeatureEnabled(Feature::SupportsTileMemoryHeap))
+    {
+        // depthStencil may or may not be using tile memory.
+        EXPECT_TRUE(getPerfCounters().tileMemoryImages - tileMemoryImageCountBefore <= 1);
+    }
+    else
+    {
+        // simulation code path should fail to allocate tile memory and automatically fall back to
+        // regular memory
+        ASSERT(isFeatureEnabled(Feature::SimulateTileMemoryForTesting));
+        EXPECT_EQ(0u, getPerfCounters().tileMemoryImages - tileMemoryImageCountBefore);
+    }
+
+    // Verify depth buffer has correct value
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, zValue);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
 class VulkanPerformanceCounterTest_ClipDistance : public VulkanPerformanceCounterTest
 {};
 
@@ -11194,6 +11316,137 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, RedefineSharedDepthTextureWithOp
 
         threadSynchronization.nextStep(Step::Thread1OpenedRP);
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0Redefined));
+
+        glFinish();
+        glDeleteTextures(1, &depthTex);
+        threadSynchronization.nextStep(Step::Finish);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {std::move(thread0), std::move(thread1)};
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
+// Regression test: respecifying a depth texture's max level that is bound as the depth attachment
+// of the current draw FBO in two share-group contexts (each with an open render pass and a
+// surviving mImageWithTileMemory pointer) must not dereference a freed RenderTargetVk via
+// FramebufferVk::getImageWithTileMemory() during the re-entrant submitCommands() inside
+// TextureVk::stageSelfAsSubresourceUpdates().
+TEST_P(VulkanPerformanceCounterTest_TileMemory, RespecifySharedDepthTextureWithOpenRenderPasses)
+{
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::SimulateTileMemoryForTesting) &&
+                       !isFeatureEnabled(Feature::SupportsTileMemoryHeap));
+
+    constexpr GLsizei kSize = 64;
+
+    enum class Step
+    {
+        Start,
+        Thread1CreatedDepthTex,
+        Thread0OpenedRP,
+        Thread1OpenedRP,
+        Thread0Respecified,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+    std::mutex mutex;
+    std::condition_variable condVar;
+    GLuint sharedDepthTex = 0;
+
+    // Per-context setup:
+    // 1. FBO_A: Color and a depth renderbuffer that is invalidated.  The Vulkan backend may use
+    //    tile memory for this depth renderbuffer
+    // 2. FBO_B: Color and the shared depth texture.  The Vulkan backend does not use tile memory
+    //    for textures.
+    auto setupContextState = [&](GLuint colorTexA, GLuint depthRB, GLuint fboA, GLuint colorTexB,
+                                 GLuint fboB, GLuint depthTex, GLuint program) {
+        glBindTexture(GL_TEXTURE_2D, colorTexA);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kSize, kSize);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboA);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexA, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRB);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glViewport(0, 0, kSize, kSize);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_ALWAYS);
+        glClearDepthf(1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        const GLenum kDepthAttachment = GL_DEPTH_ATTACHMENT;
+        glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &kDepthAttachment);
+        EXPECT_GL_NO_ERROR();
+
+        glBindTexture(GL_TEXTURE_2D, colorTexB);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboB);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexB, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_GL_NO_ERROR();
+    };
+
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1CreatedDepthTex));
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        GLTexture colorTexA, colorTexB;
+        GLRenderbuffer depthRB;
+        GLFramebuffer fboA, fboB;
+        setupContextState(colorTexA, depthRB, fboA, colorTexB, fboB, sharedDepthTex, program);
+
+        threadSynchronization.nextStep(Step::Thread0OpenedRP);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1OpenedRP));
+
+        // Both contexts now have an open render pass with |sharedDepthTex| as depth attachment.
+        // In the Vulkan backend if tile memory is used, a reference to |depthRB| may be kept.
+        // The draw framebuffer is not dirty.
+        //
+        // Respecify max level of |sharedDepthTex| to recreate its views.  This should not cause
+        // use-after-free.
+        glBindTexture(GL_TEXTURE_2D, sharedDepthTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+        EXPECT_GL_NO_ERROR();
+
+        glFinish();
+        threadSynchronization.nextStep(Step::Thread0Respecified);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+        // Create the shared depth texture as a mutable texture so glTexParameteri can respecify it.
+        GLuint depthTex;
+        glGenTextures(1, &depthTex);
+        glBindTexture(GL_TEXTURE_2D, depthTex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
+                     GL_UNSIGNED_INT, nullptr);
+        EXPECT_GL_NO_ERROR();
+        sharedDepthTex = depthTex;
+
+        threadSynchronization.nextStep(Step::Thread1CreatedDepthTex);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0OpenedRP));
+
+        GLTexture colorTexA, colorTexB;
+        GLRenderbuffer depthRB;
+        GLFramebuffer fboA, fboB;
+        setupContextState(colorTexA, depthRB, fboA, colorTexB, fboB, sharedDepthTex, program);
+
+        threadSynchronization.nextStep(Step::Thread1OpenedRP);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0Respecified));
 
         glFinish();
         glDeleteTextures(1, &depthTex);

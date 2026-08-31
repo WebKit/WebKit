@@ -942,20 +942,19 @@ void StateManager11::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_PROVOKING_VERTEX:
                 invalidateShaders();
                 break;
+            case gl::state::DIRTY_BIT_CLIP_CONTROL:
+                checkPresentPath(context);
+                if (mShaderConstants.onClipDepthModeChange(state.isClipDepthModeZeroToOne()))
+                {
+                    invalidateDriverUniforms();
+                }
+                break;
             case gl::state::DIRTY_BIT_EXTENDED:
             {
                 for (size_t extendedDirtyBit : extendedDirtyBits)
                 {
                     switch (extendedDirtyBit)
                     {
-                        case gl::state::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
-                            checkPresentPath(context);
-                            if (mShaderConstants.onClipDepthModeChange(
-                                    state.isClipDepthModeZeroToOne()))
-                            {
-                                invalidateDriverUniforms();
-                            }
-                            break;
                         case gl::state::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
                             if (mShaderConstants.onClipDistancesEnabledChange(
                                     state.getEnabledClipDistances().bits()))

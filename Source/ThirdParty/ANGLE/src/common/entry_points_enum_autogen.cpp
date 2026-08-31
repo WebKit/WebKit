@@ -710,8 +710,6 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glCopyTexture3DANGLE";
         case EntryPoint::GLCopyTextureCHROMIUM:
             return "glCopyTextureCHROMIUM";
-        case EntryPoint::GLCoverageModulationCHROMIUM:
-            return "glCoverageModulationCHROMIUM";
         case EntryPoint::GLCreateMemoryObjectsEXT:
             return "glCreateMemoryObjectsEXT";
         case EntryPoint::GLCreateProgram:

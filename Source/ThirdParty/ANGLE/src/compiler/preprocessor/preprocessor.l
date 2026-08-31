@@ -23,10 +23,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN scripts/run_code_generation.py
 // preprocessor.l:
 //   Lexer for the OpenGL shading language preprocessor.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#pragma allow_unsafe_buffers
-#endif
-
 // Rename yyalloc/yyrealloc/yyfree during flex generation to allow macro definitions.
 #define yyalloc yyalloc_FLEXGEN
 #define yyrealloc yyrealloc_FLEXGEN

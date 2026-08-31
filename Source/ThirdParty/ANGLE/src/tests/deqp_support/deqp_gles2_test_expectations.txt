@@ -416,3 +416,7 @@
 
 // webkit.org/b/319849
 0 METAL : dEQP-GLES2.functional.shaders.linkage.varying* = SKIP
+
+// Translator IR failures
+// Some |bool| variables seem to be given a precision
+349994211 IR PIXEL10 GLES : dEQP-GLES2.functional.shaders.random.* = SKIP

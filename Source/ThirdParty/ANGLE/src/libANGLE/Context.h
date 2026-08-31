@@ -1172,8 +1172,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     mutable size_t mRefCount;
 
-    OverlayType mOverlay;
-
     bool mIsDestroyed;
     bool mDestroyedManagers;
 

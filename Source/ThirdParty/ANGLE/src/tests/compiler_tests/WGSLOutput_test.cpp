@@ -2123,8 +2123,8 @@ struct ANGLE_Output_Annotated {
 @group(1) @binding(@@@@@@) var ANGLE_texture_samp3D : texture_3d<f32>;
 @group(1) @binding(@@@@@@) var ANGLE_sampler_sampCube : sampler;
 @group(1) @binding(@@@@@@) var ANGLE_texture_sampCube : texture_cube<f32>;
-@group(1) @binding(@@@@@@) var ANGLE_sampler_sampStruct_samp1 : sampler;
-@group(1) @binding(@@@@@@) var ANGLE_texture_sampStruct_samp1 : texture_2d<f32>;
+@group(1) @binding(@@@@@@) var ANGLE_sampler_extractedSampler0 : sampler;
+@group(1) @binding(@@@@@@) var ANGLE_texture_extractedSampler0 : texture_2d<f32>;
 
 struct ANGLEDepthRangeParams
 {
@@ -2153,7 +2153,7 @@ struct ANGLEUniformBlock
 
 fn _umain()
 {
-  (ANGLE_output_global._ufragColor) = (textureSample(ANGLE_texture_sampStruct_samp1, ANGLE_sampler_sampStruct_samp1, (vec2<f32>(0.0f, 0.0f)).xy));
+  (ANGLE_output_global._ufragColor) = (textureSample(ANGLE_texture_extractedSampler0, ANGLE_sampler_extractedSampler0, (vec2<f32>(0.0f, 0.0f)).xy));
   (ANGLE_output_global._ufragColor) += (textureSample(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec2<f32>(0.0f, 0.0f)).xy));
   (ANGLE_output_global._ufragColor) += (textureSample(ANGLE_texture_samp3D, ANGLE_sampler_samp3D, (vec3<f32>(0.0f, 0.0f, 0.0f)).xyz));
   (ANGLE_output_global._ufragColor) += (textureSample(ANGLE_texture_sampCube, ANGLE_sampler_sampCube, (vec3<f32>(0.0f, 0.0f, 0.0f)).xyz));

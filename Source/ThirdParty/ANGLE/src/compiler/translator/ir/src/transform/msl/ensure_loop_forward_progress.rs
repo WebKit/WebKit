@@ -91,6 +91,7 @@ fn mark_variable_writes(state: &mut State, instruction: &BlockInstruction) {
 //
 // Where:
 //
+// * `variable` can only be a scalar integer
 // * `op` can only be one of > >= < <= == or !=
 // * `constant` can be a non-zero constant, or a read-only value such as shader inputs and uniforms.
 // * `expression` can only be one of:
@@ -159,6 +160,12 @@ fn matches_finite_loop_condition(ir_meta: &IRMeta, block: &Block) -> Option<Vari
         ir_meta.get_instruction(loop_variable_value).op
         && loop_variable.id.is_variable()
     {
+        // Loop variable must be scalar integer
+        let type_info = ir_meta.get_type(ir_meta.get_pointee_type(loop_variable.type_id));
+        if !matches!(type_info, Type::Scalar(BasicType::Int) | Type::Scalar(BasicType::Uint)) {
+            return None;
+        }
+
         loop_variable.id.get_variable()
     } else {
         return None;

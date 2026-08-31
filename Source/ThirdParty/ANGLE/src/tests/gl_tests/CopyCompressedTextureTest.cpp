@@ -245,6 +245,8 @@ TEST_P(CopyCompressedTextureTest, InternalFormatNotSupported)
 TEST_P(CopyCompressedTextureTest, UncompressedToCompressed)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
 
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

@@ -108,10 +108,18 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::A8_UNORM:
-            mIntendedGLFormat              = GL_ALPHA8_EXT;
-            mActualSampleOnlyImageFormatID = angle::FormatID::R8_UNORM;
-            mImageInitializerFunction      = nullptr;
-
+            mIntendedGLFormat = GL_ALPHA8_EXT;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::A8_UNORM, nullptr},
+                    {angle::FormatID::R8_UNORM, nullptr},
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::A8_UNORM;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
@@ -3120,6 +3128,7 @@ VkFormat GetVkFormatFromFormatID(const Renderer *renderer, angle::FormatID forma
 {
     static constexpr angle::FormatMap<VkFormat> kMap = {
         {angle::FormatID::A1R5G5B5_UNORM, VK_FORMAT_A1R5G5B5_UNORM_PACK16},
+        {angle::FormatID::A8_UNORM, VK_FORMAT_A8_UNORM},
         {angle::FormatID::ASTC_10x10_SRGB_BLOCK, VK_FORMAT_ASTC_10x10_SRGB_BLOCK},
         {angle::FormatID::ASTC_10x10_UNORM_BLOCK, VK_FORMAT_ASTC_10x10_UNORM_BLOCK},
         {angle::FormatID::ASTC_10x5_SRGB_BLOCK, VK_FORMAT_ASTC_10x5_SRGB_BLOCK},
@@ -3309,6 +3318,8 @@ angle::FormatID GetFormatIDFromVkFormat(VkFormat vkFormat)
     {
         case VK_FORMAT_A1R5G5B5_UNORM_PACK16:
             return angle::FormatID::A1R5G5B5_UNORM;
+        case VK_FORMAT_A8_UNORM:
+            return angle::FormatID::A8_UNORM;
         case VK_FORMAT_ASTC_10x10_SRGB_BLOCK:
             return angle::FormatID::ASTC_10x10_SRGB_BLOCK;
         case VK_FORMAT_ASTC_10x10_UNORM_BLOCK:

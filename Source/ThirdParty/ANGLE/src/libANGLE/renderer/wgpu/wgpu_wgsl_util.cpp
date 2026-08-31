@@ -16,6 +16,7 @@
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramExecutable.h"
+#include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
 {
@@ -25,6 +26,25 @@ namespace webgpu
 namespace
 {
 const bool kOutputReplacements = false;
+
+// GLSL sampler uniforms are extracted from structs. Given a GLSL sampler's associated name string,
+// this function retrieves its new WGSL name and strips off array indices.
+//
+// For extracted samplers, their names are generated and indexed by their order.
+std::string GetMappedSamplerName(const std::string &originalName,
+                                 angle::HashMap<std::string, size_t> *extractedSamplerIndices)
+{
+    // Remove array elements
+    const std::string samplerName = RemoveArraySubscripts(originalName);
+
+    // Samplers in structs are extracted.
+    if (samplerName.find('.') != std::string::npos)
+    {
+        return GetExtractedStructSamplerName(samplerName, extractedSamplerIndices);
+    }
+
+    return samplerName;
+}
 
 void ReplaceFoundMarker(const std::string &shaderSource,
                         std::string &newSource,
@@ -213,6 +233,7 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
     // locations, alternating between a sampler and its corresponding texture.
     // The WGPU backend will read the same metadata and lay out its bind groups in the same
     // alternating fashion.
+    angle::HashMap<std::string, size_t> extractedSamplerIndices;
     for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
     {
         if (samplerBindings[textureIndex].textureUnitsCount != 1)
@@ -224,7 +245,7 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
         // Get the name of the sampler variable from the uniform metadata.
         uint32_t uniformIndex          = executable.getUniformIndexFromSamplerIndex(textureIndex);
         const std::string &uniformName = executable.getUniformNames()[uniformIndex];
-        std::string mappedSamplerName  = sh::WGSLGetMappedSamplerName(uniformName);
+        std::string mappedSamplerName = GetMappedSamplerName(uniformName, &extractedSamplerIndices);
 
         varNameToLocation[std::string(sh::kAngleSamplerPrefix) + mappedSamplerName] =
             textureIndex * 2;

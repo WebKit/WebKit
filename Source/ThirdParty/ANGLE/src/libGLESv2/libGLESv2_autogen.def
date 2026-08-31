@@ -677,9 +677,6 @@ EXPORTS
     glCopySubTextureCHROMIUM
     glCopyTextureCHROMIUM
 
-    ; GL_CHROMIUM_framebuffer_mixed_samples
-    glCoverageModulationCHROMIUM
-
     ; GL_CHROMIUM_lose_context
     glLoseContextCHROMIUM
 

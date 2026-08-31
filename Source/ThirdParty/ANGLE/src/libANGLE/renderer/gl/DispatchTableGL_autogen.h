@@ -561,7 +561,6 @@ class DispatchTableGL : angle::NonCopyable
     PFNGLCLEARBUFFERDATAPROC clearBufferData = nullptr;
     PFNGLCLEARBUFFERSUBDATAPROC clearBufferSubData = nullptr;
     PFNGLCOPYIMAGESUBDATAPROC copyImageSubData = nullptr;
-    PFNGLCOVERAGEMODULATIONNVPROC coverageModulationNV = nullptr;
     PFNGLDEBUGMESSAGECALLBACKPROC debugMessageCallback = nullptr;
     PFNGLDEBUGMESSAGECONTROLPROC debugMessageControl = nullptr;
     PFNGLDEBUGMESSAGEINSERTPROC debugMessageInsert = nullptr;

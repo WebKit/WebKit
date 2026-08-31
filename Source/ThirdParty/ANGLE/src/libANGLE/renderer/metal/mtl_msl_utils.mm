@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_msl_utils.h"
+#include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
 {
@@ -167,44 +168,21 @@ void TranslatedShaderInfo::reset()
 using OriginalSamplerBindingMap =
     std::unordered_map<std::string, std::vector<std::pair<uint32_t, uint32_t>>>;
 
-bool MappedSamplerNameNeedsUserDefinedPrefix(const std::string &originalName)
+static std::string MSLGetMappedSamplerName(
+    const std::string &originalName,
+    angle::HashMap<std::string, size_t> *extractedSamplerIndices)
 {
-    return originalName.find('.') == std::string::npos;
-}
-
-static std::string MSLGetMappedSamplerName(const std::string &originalName)
-{
-    std::string samplerName = originalName;
+    // Remove array elements
+    const std::string samplerName = RemoveArraySubscripts(originalName);
 
     // Samplers in structs are extracted.
-    std::replace(samplerName.begin(), samplerName.end(), '.', '_');
-
-    // Remove array elements
-    auto out = samplerName.begin();
-    for (auto in = samplerName.begin(); in != samplerName.end(); in++)
+    if (samplerName.find('.') != std::string::npos)
     {
-        if (*in == '[')
-        {
-            while (*in != ']')
-            {
-                in++;
-                ASSERT(in != samplerName.end());
-            }
-        }
-        else
-        {
-            *out++ = *in;
-        }
+        ASSERT(extractedSamplerIndices != nullptr);
+        return GetExtractedStructSamplerName(samplerName, extractedSamplerIndices);
     }
 
-    samplerName.erase(out, samplerName.end());
-
-    if (MappedSamplerNameNeedsUserDefinedPrefix(originalName))
-    {
-        samplerName = kUserDefinedNamePrefix + samplerName;
-    }
-
-    return samplerName;
+    return kUserDefinedNamePrefix + samplerName;
 }
 
 void MSLGetShaderSource(const gl::ProgramState &programState,
@@ -232,7 +210,7 @@ void GetAssignedSamplerBindings(const sh::TranslatorMetalReflection *reflection,
         // Assign sequential index for subsequent array elements
         const bool structSampler = structSamplers.find(name) != structSamplers.end();
         const std::string mappedName =
-            structSampler ? name : MSLGetMappedSamplerName(kUserDefinedNamePrefix + name);
+            structSampler ? name : MSLGetMappedSamplerName(kUserDefinedNamePrefix + name, nullptr);
         auto original = originalBindings.find(mappedName);
         if (original != originalBindings.end())
         {
@@ -633,6 +611,7 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
     const std::vector<gl::SamplerBinding> &samplerBindings = executable.getSamplerBindings();
     std::unordered_set<std::string> structSamplers         = {};
 
+    angle::HashMap<std::string, size_t> extractedSamplerIndices;
     for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
     {
         const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
@@ -640,12 +619,13 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
         const std::string &uniformName = executable.getUniformNames()[uniformIndex];
         const std::string &uniformMappedName = executable.getUniformMappedNames()[uniformIndex];
         bool isSamplerInStruct               = uniformName.find('.') != std::string::npos;
-        std::string mappedSamplerName        = isSamplerInStruct
-                                                   ? MSLGetMappedSamplerName(uniformName)
-                                                   : MSLGetMappedSamplerName(uniformMappedName);
+        std::string mappedSamplerName        = MSLGetMappedSamplerName(
+            isSamplerInStruct ? uniformName : uniformMappedName, &extractedSamplerIndices);
         // These need to be prefixed later seperately
         if (isSamplerInStruct)
+        {
             structSamplers.insert(mappedSamplerName);
+        }
         originalSamplerBindings[mappedSamplerName].push_back(
             {textureIndex, static_cast<uint32_t>(samplerBinding.textureUnitsCount)});
     }

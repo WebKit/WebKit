@@ -10,6 +10,7 @@
 #define COMPILER_TRANSLATOR_TREEOPS_CLAMPINDIRECTINDICES_H_
 
 #include "common/angleutils.h"
+#include "compiler/translator/ExtensionBehavior.h"
 
 namespace sh
 {
@@ -20,7 +21,8 @@ class TSymbolTable;
 
 [[nodiscard]] bool ClampIndirectIndices(TCompiler *compiler,
                                         TIntermNode *root,
-                                        TSymbolTable *symbolTable);
+                                        TSymbolTable *symbolTable,
+                                        const TExtensionBehavior &extensionBehavior);
 
 }  // namespace sh
 

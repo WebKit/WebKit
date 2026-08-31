@@ -80,16 +80,16 @@ static bool IsSupportedTypeForStructuredBuffer(const TType &type)
         {
             const TType &fieldType = *fields[i]->type();
             // Do not allow the structure's member is array or structure.
-            if (!fieldType.isArray() && !fieldType.getStruct() &&
-                (fieldType.isScalar() || fieldType.isVector() ||
-                 (fieldType.isMatrix() &&
-                  ((matrixPacking != EmpRowMajor && fieldType.getRows() == 4) ||
-                   (matrixPacking == EmpRowMajor && fieldType.getCols() == 4)))))
+            if (fieldType.isArray() || fieldType.getStruct() ||
+                !(fieldType.isScalar() || fieldType.isVector() ||
+                  (fieldType.isMatrix() &&
+                   ((matrixPacking != EmpRowMajor && fieldType.getRows() == 4) ||
+                    (matrixPacking == EmpRowMajor && fieldType.getCols() == 4)))))
             {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
     else if (type.isMatrix())
     {

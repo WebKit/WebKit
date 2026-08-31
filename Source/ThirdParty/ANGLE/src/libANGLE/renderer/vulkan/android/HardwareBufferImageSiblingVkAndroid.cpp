@@ -455,14 +455,12 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     VkExtent3D vkExtents;
     gl_vk::GetExtent(mSize, &vkExtents);
 
-    // Setup level count
-    mLevelCount = ((ahbDescription.usage & AHARDWAREBUFFER_USAGE_GPU_MIPMAP_COMPLETE) != 0)
-                      ? static_cast<uint32_t>(log2(std::max(mSize.width, mSize.height))) + 1
-                      : 1;
-
-    // No support for rendering to external YUV AHB with multiple miplevels
-    ANGLE_VK_CHECK(displayVk, (!externalRenderTargetSupported || mLevelCount == 1),
-                   VK_ERROR_INITIALIZATION_FAILED);
+    // Setup level count.  Per VUID-VkImageCreateInfo-pNext-02396, if the pNext chain includes a
+    // VkExternalFormatANDROID structure whose externalFormat member is not 0, mipLevels must be 1.
+    mLevelCount =
+        (!isExternal && (ahbDescription.usage & AHARDWAREBUFFER_USAGE_GPU_MIPMAP_COMPLETE) != 0)
+            ? static_cast<uint32_t>(log2(std::max(mSize.width, mSize.height))) + 1
+            : 1;
 
     // Setup layer count
     const uint32_t layerCount = mSize.depth;

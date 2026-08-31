@@ -344,7 +344,7 @@ mod ffi {
         storage_blocks: Vec<InterfaceBlock>,
     }
 
-    extern "C++" {
+    unsafe extern "C++" {
         include!("compiler/translator/ir/src/output/legacy.h");
 
         #[namespace = "sh"]
@@ -363,11 +363,13 @@ mod ffi {
         type IR = crate::ir::IR;
 
         include!("compiler/translator/ir/src/pool_alloc.h");
-        unsafe fn initialize_global_pool_index();
-        unsafe fn free_global_pool_index();
+        fn initialize_global_pool_index();
+        fn free_global_pool_index();
+        // SAFETY: Pointer must be obtained from C++ and passed back unmodified.
         unsafe fn set_global_pool_allocator(allocator: *mut PoolAllocator);
     }
     extern "Rust" {
+        // SAFETY: Pointers must be obtained from C++ and passed back unmodified.
         unsafe fn generate_ast(
             mut ir: Box<IR>,
             compiler: *mut TCompiler,
@@ -397,6 +399,7 @@ unsafe fn generate_ast(
     allocator: *mut ffi::PoolAllocator,
     options: &Options,
 ) -> ffi::Output {
+    // SAFETY: Pointer is obtained from C++ and passed back to it.
     unsafe { ffi::set_global_pool_allocator(allocator) };
 
     // Apply transforms shared by multiple generators:
@@ -658,8 +661,8 @@ fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
 }
 
 fn initialize_global_pool_index_workaround() {
-    unsafe { ffi::initialize_global_pool_index() };
+    ffi::initialize_global_pool_index();
 }
 fn free_global_pool_index_workaround() {
-    unsafe { ffi::free_global_pool_index() };
+    ffi::free_global_pool_index();
 }

@@ -90,6 +90,15 @@ FormatID Format::InternalFormatToID(GLenum internalFormat)
 
 #if defined(ANGLE_ENABLE_CL)
 // static
+FormatID Format::CLAFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_a_format_switch}
+    }}
+}}
+
+// static
 FormatID Format::CLRFormatToID(cl_channel_type internalChannelType)
 {{
     switch (internalChannelType)
@@ -511,6 +520,7 @@ def main():
 
     gl_to_angle = angle_format.load_forward_table('angle_format_map.json')
 
+    cl_a_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "a")
     cl_r_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "r")
     cl_rg_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rg")
     cl_rgb_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rgb")
@@ -529,6 +539,7 @@ def main():
     angle_format_cases = parse_angle_format_table(all_angle, json_data, angle_to_gl)
     switch_data = gen_map_switch_string(gl_to_angle)
 
+    cl_a_switch_data = gen_map_switch_string(cl_a_to_angle)
     cl_r_switch_data = gen_map_switch_string(cl_r_to_angle)
     cl_rg_switch_data = gen_map_switch_string(cl_rg_to_angle)
     cl_rgb_switch_data = gen_map_switch_string(cl_rgb_to_angle)
@@ -543,6 +554,7 @@ def main():
         angle_format_info_cases=angle_format_cases,
         angle_format_switch=switch_data,
         data_source_name=data_source_name,
+        angle_a_format_switch=cl_a_switch_data,
         angle_r_format_switch=cl_r_switch_data,
         angle_rg_format_switch=cl_rg_switch_data,
         angle_rgb_format_switch=cl_rgb_switch_data,

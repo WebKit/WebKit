@@ -8,6 +8,10 @@ import("//build/config/dcheck_always_on.gni")
 import("//build_overrides/swiftshader.gni")
 import("vulkan_backend.gni")
 
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
 #import("../../../../gni/angle.gni")
 
 assert(angle_enable_vulkan)
@@ -162,6 +166,10 @@ template("angle_vulkan_backend_template") {
 
     if (angle_use_wayland) {
       public_configs += [ "$angle_root:angle_wayland_config" ]
+      deps += [
+        "$wayland_gn_dir:wayland_client",
+        "$wayland_gn_dir:wayland_egl",
+      ]
     }
 
     data_deps = []

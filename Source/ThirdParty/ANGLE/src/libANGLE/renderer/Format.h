@@ -57,6 +57,7 @@ struct Format final : private angle::NonCopyable
     static FormatID InternalFormatToID(GLenum internalFormat);
 
 #if defined(ANGLE_ENABLE_CL)
+    static FormatID CLAFormatToID(cl_channel_type internalChannelType);
     static FormatID CLRFormatToID(cl_channel_type internalChannelType);
     static FormatID CLRGFormatToID(cl_channel_type internalChannelType);
     static FormatID CLRGBFormatToID(cl_channel_type internalChannelType);

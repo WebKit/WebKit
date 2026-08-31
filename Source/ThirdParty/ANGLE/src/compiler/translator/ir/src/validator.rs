@@ -24,8 +24,12 @@
 //     validate_image_types()
 //   - Variables are Pointers: validate_all_alive_variables_are_pointers()
 //   - No pointer->pointer type: validate_no_pointer_to_pointer_type()
-//   - Validate pointer types for instruction operands and results
+//   - Arguments of OpCode that must be pointer type is indeed a pointer:
+//     validate_pointer_types_for_operands()
+//   - Validate pointer types for instruction operands and results:
 //     validate_pointer_types_for_operands(), validate_pointer_types_for_result()
+//   - Block inputs are not pointers (not supported by the `astify` pass):
+//     validate_merge_block_input_prerequisites()
 //
 // Control flow:
 //   - Branches must have the appropriate targets set (merge, trueblock for if, etc); every block
@@ -35,6 +39,10 @@
 //     output: validate_merge_block_with_input()
 //   - For block that has a merge block with an input, the branch instruction must be If, and the
 //     block must contains block1: validate_merge_block_with_input()
+//   - Validate that if there's a merge variable in an if block, both true and false blocks exist
+//     and they both end in a Merge with an ID.  (Technically, we should be able to also support one
+//     block being merge and the other discard/return/break/continue, but no such code can be
+//     generated right now): validate_merge_block_with_input()
 //
 // Instructions:
 //   - Access to struct fields are in bounds: validate_struct_field_in_bounds()
@@ -47,6 +55,13 @@
 //   - Block inputs have MergeInput opcode, nothing else has that opcode:
 //     validate_merge_block_input_prerequisites(),
 //     validate_no_merge_input_opcode_in_block_instruction()
+//   - No identity swizzles: validate_no_identity_swizzles()
+//
+// Functions:
+//   - Check that function parameter variables don't have an initializer:
+//     validate_function_parameter_variables()
+//   - Check that returned values from functions match the type of the function's return value:
+//     validate_function_return_types()
 
 // TODO(http://anglebug.com/349994211): to validate:
 //   - If there's a cached "has side effect", that it's correct.
@@ -54,29 +69,19 @@
 //   - Precision is not applied to types that don't are not applicable.  It _is_ applied to types
 //     that are applicable (including uniforms and samplers for example).  Needs to work to make
 //     sure precision is always assigned.
-//   - Arguments of OpCode that must be pointer type is indeed a pointer
 //   - Loop blocks ends in the appropriate instructions.
-//   - Do blocks end in DoLoop (unless already terminated by something else, like Return)
 //   - Interface variables with NameSource::Internal are unique.
 //   - NameSource::Internal names don't start with the user and temporary name prefixes (_u, t and f
 //     respectively).
 //   - Interface variables with NameSource::ShaderInterface are unique.
 //   - NameSource::ShaderInterface and NameSource::Internal are never found inside body
 //   - blocks, those should always be Temporary.
-//   - No identity swizzles.
 //   - Type matches?
-//   - Block inputs are not pointers.  AST-ifier does not handle that.
 //   - Whatever else is in the AST validation currently.
 //   - Validate built-ins that accept an out or inout parameter, that the corresponding parameter is
 //     passed a Pointer at the call site.  For that matter, do the same for user function calls too.
 //   - Check for invalid texture* combinations, like non-shadow samplers with TextureCompare ops, or
 //     is_proj is false for cubemaps.
-//   - Check that function parameter variables don't have an initializer.
-//   - Check that returned values from functions match the type of the function's return value.
-//   - Validate that if there's a merge variable in an if block, both true and false blocks exist
-//     and they both end in a Merge with an ID.  (Technically, we should be able to also support one
-//     block being merge and the other discard/return/break/continue, but no such code can be
-//     generated right now).
 //   - Images with the Rect dimension can only have a Float base type and be 2D samplers (not
 //     storage image, array, msaa, etc).
 //   - Between the Smooth, Flat, NoPerspective, Centroid and Sample decorations, they are all
@@ -281,6 +286,8 @@ impl<'a> Validator<'a> {
         self.validate_all_branch_instructions_have_valid_target();
         self.validate_merge_block_with_input();
         self.validate_all_instructions();
+        self.validate_function_parameter_variables();
+        self.validate_function_return_types();
     }
 
     fn validate_all_ids_are_present(&self) {
@@ -1635,16 +1642,24 @@ impl<'a> Validator<'a> {
         block: &Block,
         block_kind: traverser::BlockKind,
     ) {
-        // If the current block has any inputs, the corresponding instruction must be MergeInput
-        // OpCode
         block.input.inspect(|input| {
+            // If the current block has any inputs, the corresponding instruction must be MergeInput
+            // OpCode
             if !matches!(self.ir.meta.get_instruction(input.id).op, OpCode::MergeInput) {
                 self.on_error(format_args!("Block inputs must have MergeInput OpCode"));
+            }
+            // Block input must not be pointer, astify uses this input register as the result of
+            // generated Load instruction
+            if self.ir.meta.get_type(input.type_id).is_pointer() {
+                self.on_error(format_args!(
+                    "invalid {:?} block, input {:?} must not be a pointer",
+                    block_kind, input
+                ));
             }
         });
         if block.merge_block.as_ref().and_then(|merge_block| merge_block.input).is_some() {
             // merge_block with input is only allowed when current block ends with OpCode::If, and
-            // "if true" block exists
+            // both the "true" and "false" blocks exist
             if !matches!(block.get_terminating_op(), OpCode::If(_)) {
                 self.on_error(format_args!(
                     "current {:?} block contains a merge block with input, but current block does \
@@ -1652,10 +1667,10 @@ impl<'a> Validator<'a> {
                     block_kind
                 ));
             }
-            if block.block1.is_none() {
+            if block.block1.is_none() || block.block2.is_none() {
                 self.on_error(format_args!(
-                    "current {:?} block contains a merge block with input, at minimum current \
-                     block must contains block1 to sets the merge block input value",
+                    "current {:?} block contains a merge block with input, current block must \
+                     contain both block1 and block2 to set the merge block input value",
                     block_kind
                 ));
             }
@@ -1671,20 +1686,77 @@ impl<'a> Validator<'a> {
                 ));
             }
 
-            // Branch instruction in block2 (if block2 exists) that jumps to the merge block should
-            // have an output
-            if let Some(block2) = block.block2.as_ref() {
-                let block2_last_op = block2.get_merge_chain_terminating_op();
-                if !matches!(block2_last_op, OpCode::Merge(Some(_))) {
-                    self.on_error(format_args!(
-                        "current {:?} block contains a merge block with input, but the branch \
-                         instruction in block2 that jumps to the merge block does not have an \
-                         output",
-                        block_kind
-                    ));
-                }
+            // Branch instruction in block2 that jumps to the merge block should have an output
+            let block2 = block.block2.as_ref().expect("block2 can't be none");
+            let block2_last_op = block2.get_merge_chain_terminating_op();
+            if !matches!(block2_last_op, OpCode::Merge(Some(_))) {
+                self.on_error(format_args!(
+                    "current {:?} block contains a merge block with input, but the branch \
+                     instruction in block2 that jumps to the merge block does not have an output",
+                    block_kind
+                ));
             }
         }
+    }
+
+    fn validate_function_parameter_variables(&self) {
+        traverser::visitor::for_each_function(
+            &mut (),
+            &self.ir.function_entries,
+            |_, function_id| {
+                let function = self.ir.meta.get_function(function_id);
+                for param in &function.params {
+                    let param_variable = self.ir.meta.get_variable(param.variable_id);
+                    if param_variable.initializer.is_some() {
+                        self.on_error(format_args!(
+                            "invalid function {:?}, parameter variable {:?} {:?} must not have \
+                             initializer",
+                            function_id, param.variable_id, param_variable
+                        ));
+                    }
+                }
+            },
+            |_, _, _, _| traverser::visitor::STOP,
+            |_, _| {}, // do nothing in post_visit
+        );
+    }
+
+    fn validate_function_return_types(&self) {
+        let mut current_func_id = FunctionId { id: 0 };
+        traverser::visitor::for_each_function(
+            &mut current_func_id,
+            &self.ir.function_entries,
+            |current_func_id, function_id| {
+                *current_func_id = function_id;
+            },
+            |current_func_id, block, _, _| {
+                let function = self.ir.meta.get_function(*current_func_id);
+                if let &OpCode::Return(return_value) = block.get_terminating_op() {
+                    match return_value {
+                        Some(return_value) => {
+                            if return_value.type_id != function.return_type_id {
+                                self.on_error(format_args!(
+                                    "invalid return value {:?} from function {:?}, expected type \
+                                     {:?}",
+                                    return_value, *current_func_id, function.return_type_id
+                                ));
+                            }
+                        }
+                        None => {
+                            if function.return_type_id != TYPE_ID_VOID {
+                                self.on_error(format_args!(
+                                    "invalid return with no value from function {:?}, expected \
+                                     type {:?}",
+                                    *current_func_id, function.return_type_id
+                                ));
+                            }
+                        }
+                    }
+                }
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            |_, _| {}, // do nothing in post_visit
+        );
     }
 
     fn validate_all_instructions(&self) {
@@ -1702,6 +1774,7 @@ impl<'a> Validator<'a> {
                 self.validate_no_merge_input_opcode_in_block_instruction(opcode);
                 self.validate_pointer_types_for_operands(opcode);
                 self.validate_pointer_types_for_result(opcode, result);
+                self.validate_no_identity_swizzles(opcode);
             },
         );
     }
@@ -2051,5 +2124,35 @@ impl<'a> Validator<'a> {
             }
             _ => (),
         }
+    }
+
+    fn validate_no_identity_swizzles(&self, opcode: &OpCode) {
+        let (vec_type, components) = match *opcode {
+            OpCode::ExtractVectorComponentMulti(vector, ref components) => {
+                (self.ir.meta.get_type(vector.type_id), components)
+            }
+            OpCode::AccessVectorComponentMulti(vector_ptr, ref components) => {
+                // Access* takes a pointer to vector
+                let pointee_type_id = self.ir.meta.get_pointee_type(vector_ptr.type_id);
+                (self.ir.meta.get_type(pointee_type_id), components)
+            }
+            _ => {
+                return;
+            }
+        };
+        let vec_size = vec_type.get_vector_size().unwrap() as usize;
+        if components.len() != vec_size {
+            return;
+        }
+        for (index, &component) in components.iter().enumerate() {
+            if component != index as u32 {
+                return;
+            }
+        }
+        // Every component is selected in original order
+        self.on_error(format_args!(
+            "invalid instruction: {:?}, identity swizzles found, components selected: {:?}",
+            opcode, components
+        ));
     }
 }

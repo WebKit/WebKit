@@ -208,7 +208,7 @@ class GraphicsDriverUniforms
         mDirtyBits.set(DIRTY_BIT_ATOMIC_COUNTER_BUFFER);
     }
 
-    bool updateBaseInstance(int32_t baseInstance)
+    bool updateBaseInstance(uint32_t baseInstance)
     {
         if (mUniformData.baseInstance != baseInstance)
         {
@@ -354,7 +354,7 @@ class GraphicsDriverUniforms
         };
 
         // Used to implement gl_InstanceID (which is gl_InstanceIndex - baseInstance)
-        int32_t baseInstance;
+        uint32_t baseInstance;
 
         // Contain packed 8-bit values for atomic counter buffer offsets.  These offsets are within
         // Vulkan's minStorageBufferOffsetAlignment limit and are used to support unaligned offsets

@@ -208,6 +208,7 @@ class alignas(4) RenderPassDesc final
     // Indicate that a color attachment should take its data from the resolve attachment initially.
     void packColorUnresolveAttachment(size_t colorIndexGL);
     void removeColorUnresolveAttachment(size_t colorIndexGL);
+    void resetColorUnresolveAttachments();
     // Indicate that a depth/stencil attachment should have a corresponding resolve attachment.
     void packDepthResolveAttachment();
     void packStencilResolveAttachment();
@@ -292,6 +293,12 @@ class alignas(4) RenderPassDesc final
     void updateRenderToTexture(bool isRenderToTexture) { mIsRenderToTexture = isRenderToTexture; }
     bool isRenderToTexture() const { return mIsRenderToTexture; }
 
+    void setDynamicMSRTTUnresolve(bool isDynamicMSRTTUnresolve)
+    {
+        mIsDynamicMSRTTUnresolve = isDynamicMSRTTUnresolve;
+    }
+    bool isDynamicMSRTTUnresolve() const { return mIsDynamicMSRTTUnresolve; }
+
     void setFragmentShadingAttachment(bool value) { mHasFragmentShadingAttachment = value; }
     bool hasFragmentShadingAttachment() const { return mHasFragmentShadingAttachment; }
 
@@ -355,6 +362,7 @@ class alignas(4) RenderPassDesc final
     uint8_t mIsRenderToTexture : 1;
     uint8_t mUnresolveDepth : 1;
     uint8_t mUnresolveStencil : 1;
+    uint8_t mIsDynamicMSRTTUnresolve : 1;
 
     // Dithering state when using VK_EXT_legacy_dithering
     uint8_t mLegacyDitherEnabled : 1;
@@ -366,7 +374,7 @@ class alignas(4) RenderPassDesc final
     uint8_t mHasFragmentShadingAttachment : 1;
 
     // Available space for expansion.
-    uint8_t mPadding2 : 5;
+    uint8_t mPadding2 : 4;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
     // attachments can be used to optimize resolve through glBlitFramebuffer() as well as support

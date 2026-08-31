@@ -19,7 +19,6 @@
 #include "libANGLE/Debug.h"
 #include "libANGLE/GLES1State.h"
 #include "libANGLE/HandleAllocator.h"
-#include "libANGLE/Overlay.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/ProgramPipeline.h"
@@ -147,7 +146,7 @@ enum DirtyBitType
     DIRTY_BIT_UNIFORM_BUFFER_BINDINGS,
     DIRTY_BIT_MULTISAMPLING,
     DIRTY_BIT_SAMPLE_ALPHA_TO_ONE,
-    DIRTY_BIT_COVERAGE_MODULATION,                  // CHROMIUM_framebuffer_mixed_samples
+    DIRTY_BIT_CLIP_CONTROL,                         // EXT_clip_control
     DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,  // GL_EXT_sRGB_write_control
     DIRTY_BIT_CURRENT_VALUES,
     DIRTY_BIT_PROVOKING_VERTEX,
@@ -164,7 +163,6 @@ using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 
 enum ExtendedDirtyBitType
 {
-    EXTENDED_DIRTY_BIT_CLIP_CONTROL,                  // EXT_clip_control
     EXTENDED_DIRTY_BIT_CLIP_DISTANCES,                // clip distances
     EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED,           // EXT_depth_clamp
     EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT,        // mipmap generation hint
@@ -469,10 +467,6 @@ class PrivateState : angle::NonCopyable
     const PixelUnpackState &getUnpackState() const { return mUnpack; }
     PixelUnpackState &getUnpackState() { return mUnpack; }
 
-    // CHROMIUM_framebuffer_mixed_samples coverage modulation
-    void setCoverageModulation(GLenum components);
-    GLenum getCoverageModulation() const { return mCoverageModulation; }
-
     // GL_EXT_sRGB_write_control
     void setFramebufferSRGB(bool sRGB);
     bool getFramebufferSRGB() const { return mFramebufferSRGB; }
@@ -764,8 +758,6 @@ class PrivateState : angle::NonCopyable
     // GL_KHR_blend_equation_advanced_coherent
     bool mBlendAdvancedCoherent;
 
-    GLenum mCoverageModulation;
-
     // GL_EXT_sRGB_write_control
     bool mFramebufferSRGB;
 
@@ -863,7 +855,6 @@ class State : angle::NonCopyable
           TextureManager *shareTextures,
           SemaphoreManager *shareSemaphores,
           egl::ContextMutex *contextMutex,
-          const OverlayType *overlay,
           const Version &clientVersion,
           bool debug,
           bool bindGeneratesResourceCHROMIUM,
@@ -1269,6 +1260,7 @@ class State : angle::NonCopyable
     void onUniformBufferStateChange(size_t uniformBufferIndex, angle::SubjectMessage message);
     void onAtomicCounterBufferStateChange(size_t atomicCounterBufferIndex);
     void onShaderStorageBufferStateChange(size_t shaderStorageBufferIndex);
+    void onCurrentExecutableRelink();
 
     bool isCurrentTransformFeedback(const TransformFeedback *tf) const
     {
@@ -1301,8 +1293,6 @@ class State : angle::NonCopyable
     {
         mDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
     }
-
-    const OverlayType *getOverlay() const { return mOverlay; }
 
     // Not for general use.
     const BufferManager &getBufferManagerForCapture() const { return *mBufferManager; }
@@ -1469,7 +1459,6 @@ class State : angle::NonCopyable
     GLint getUnpackSkipPixels() const { return mPrivateState.getUnpackSkipPixels(); }
     const PixelUnpackState &getUnpackState() const { return mPrivateState.getUnpackState(); }
     PixelUnpackState &getUnpackState() { return mPrivateState.getUnpackState(); }
-    GLenum getCoverageModulation() const { return mPrivateState.getCoverageModulation(); }
     bool getFramebufferSRGB() const { return mPrivateState.getFramebufferSRGB(); }
     GLuint getPatchVertices() const { return mPrivateState.getPatchVertices(); }
     GLsizei getPixelLocalStorageActivePlanes() const
@@ -1736,9 +1725,6 @@ class State : angle::NonCopyable
 
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;
-
-    // The Overlay object, used by the backend to render the overlay.
-    const OverlayType *mOverlay;
 
     state::DirtyBits mDirtyBits;
     state::ExtendedDirtyBits mExtendedDirtyBits;

@@ -228,8 +228,7 @@ TEST_P(PbufferTest, BindTexImage)
     window->makeCurrent();
 
     // Create a texture and bind the Pbuffer to it
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -254,8 +253,6 @@ TEST_P(PbufferTest, BindTexImage)
 
     // Verify that purple was drawn
     EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 255, 0, 255, 255);
-
-    glDeleteTextures(1, &texture);
 }
 
 // Test various EGL level cases for eglBindTexImage.
@@ -726,8 +723,7 @@ TEST_P(PbufferTest, ClearAndBindTexImageSrgb)
     window->makeCurrent();
 
     // Create a texture and bind the Pbuffer to it
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -753,8 +749,6 @@ TEST_P(PbufferTest, ClearAndBindTexImageSrgb)
     // Expect glReadPixels to be `kLinearColor` with a tolerance of 1
     EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, kLinearColor[0], kLinearColor[1],
                       kLinearColor[2], kLinearColor[3], 1);
-
-    glDeleteTextures(1, &texture);
 }
 
 // Test clearing a Pbuffer in sRGB colorspace and checking the color is correct.
@@ -799,8 +793,7 @@ TEST_P(PbufferTest, ClearAndBindTexImageSrgbSkipDecode)
     window->makeCurrent();
 
     // Create a texture and bind the Pbuffer to it
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -834,8 +827,6 @@ TEST_P(PbufferTest, ClearAndBindTexImageSrgbSkipDecode)
     // Unbind the texture
     eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
     ASSERT_EGL_SUCCESS();
-
-    glDeleteTextures(1, &texture);
 }
 
 // Verify that when eglBind/ReleaseTexImage are called, the texture images are freed and their
@@ -1112,8 +1103,7 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     window->makeCurrent();
 
     // Create a texture and bind the Pbuffer to it
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1140,8 +1130,6 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
 
     // Verify that magenta was drawn
     EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 255, 0, 255, 255);
-
-    glDeleteTextures(1, &texture);
 }
 
 // Bind a Pbuffer, generate mipmap for it, and verify it renders correctly
@@ -1156,7 +1144,6 @@ TEST_P(PbufferTest, BindTexImageAndGenerateMipmap)
     EGLWindow *window = getEGLWindow();
 
     EGLSurface pbuffer;
-    GLuint texture = 0;
 
     static EGLint pbufferAttributes[] = {
         EGL_WIDTH,          2,
@@ -1173,7 +1160,7 @@ TEST_P(PbufferTest, BindTexImageAndGenerateMipmap)
     ASSERT_NE(EGL_NO_SURFACE, pbuffer);
 
     // create texture
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -1215,9 +1202,330 @@ TEST_P(PbufferTest, BindTexImageAndGenerateMipmap)
     // Verify that the texture color is still magenta (texture is disconnected from pbuffer)
     EXPECT_PIXEL_EQ(0, 0, 255, 0, 255, 255);
 
-    glDeleteTextures(1, &texture);
     window->makeCurrent();
     eglDestroySurface(window->getDisplay(), pbuffer);
+}
+
+// Bind a Pbuffer, then use glCopyTexSubImage2D to copy into it.
+TEST_P(PbufferTest, BindTexImageAndCopyTexSubImageDst)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Draw into the framebuffer, then copy it into the texture
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, mPbufferSize, mPbufferSize);
+
+    // Clear the framebuffer and sample from the texture, ensuring the copy was successful.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the pbuffer is red
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    window->makeCurrent();
+}
+
+// Bind a Pbuffer, then use glCopyTexImage2D to copy from it.
+TEST_P(PbufferTest, BindTexImageAndCopyTexImageSrc)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Bind it to a framebuffer and initialize it.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw into the framebuffer, then copy it into a texture
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture copy;
+    glBindTexture(GL_TEXTURE_2D, copy);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, mPbufferSize, mPbufferSize, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Verify that the pbuffer is red
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the copy was done successfully.
+    window->makeCurrent();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Bind a Pbuffer, then use glCopySubTextureCHROMIUM to copy into it.
+TEST_P(PbufferTestES3, BindTexImageAndCopyTexSubTextureDst)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create the copy source
+    const std::vector<GLColor> kSrcData(mPbufferSize * mPbufferSize, GLColor::green);
+    GLTexture copySrc;
+    glBindTexture(GL_TEXTURE_2D, copySrc);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mPbufferSize, mPbufferSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kSrcData.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Copy into the texture
+    glCopySubTextureCHROMIUM(copySrc, 0, GL_TEXTURE_2D, texture, 0, 0, 0, 0, 0, mPbufferSize,
+                             mPbufferSize, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    // Clear the framebuffer and sample from the texture, ensuring the copy was successful.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the pbuffer is green
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    window->makeCurrent();
+}
+
+// Bind a Pbuffer, then use glCopySubTextureCHROMIUM to copy into it with a flip.  This is similar
+// to BindTexImageAndCopyTexSubTextureDst, except it disallows a fast transfer path.
+TEST_P(PbufferTestES3, BindTexImageAndCopyTexSubTextureInvertedDst)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create the copy source
+    const std::vector<GLColor> kSrcData(mPbufferSize * mPbufferSize, GLColor::green);
+    GLTexture copySrc;
+    glBindTexture(GL_TEXTURE_2D, copySrc);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mPbufferSize, mPbufferSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kSrcData.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Copy into the texture
+    glCopySubTextureCHROMIUM(copySrc, 0, GL_TEXTURE_2D, texture, 0, 0, 0, 0, 0, mPbufferSize,
+                             mPbufferSize, GL_TRUE, GL_FALSE, GL_FALSE);
+
+    // Clear the framebuffer and sample from the texture, ensuring the copy was successful.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the pbuffer is green
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    window->makeCurrent();
+}
+
+// Bind a Pbuffer, then use glCopyTextureCHROMIUM to copy from it.
+TEST_P(PbufferTestES3, BindTexImageAndCopyTextureSrc)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Bind it to a framebuffer and initialize it.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw into the framebuffer, then copy it into a texture
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture copy;
+    glBindTexture(GL_TEXTURE_2D, copy);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glCopyTextureCHROMIUM(texture, 0, GL_TEXTURE_2D, copy, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_FALSE,
+                          GL_FALSE, GL_FALSE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Verify that the pbuffer is blue
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the copy was done successfully.
+    window->makeCurrent();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Bind a Pbuffer, then use glCopyTextureCHROMIUM to copy from it with a flip.  This is similar
+// to BindTexImageAndCopyTextureSrc, except it disallows a fast transfer path.
+TEST_P(PbufferTestES3, BindTexImageAndCopyTextureInvertedSrc)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    EGLWindow *window = getEGLWindow();
+
+    // Create texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind pbuffer as texture storage
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+    EXPECT_GL_NO_ERROR();
+
+    // Bind it to a framebuffer and initialize it.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw into the framebuffer, then copy it into a texture
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture copy;
+    glBindTexture(GL_TEXTURE_2D, copy);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glCopyTextureCHROMIUM(texture, 0, GL_TEXTURE_2D, copy, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_TRUE,
+                          GL_FALSE, GL_FALSE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Verify that the pbuffer is blue
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    EXPECT_TRUE(eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext()));
+    ASSERT_EGL_SUCCESS();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the copy was done successfully.
+    window->makeCurrent();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Bind the Pbuffer to a texture, use that texture as Framebuffer color attachment and then
@@ -1234,8 +1542,7 @@ TEST_P(PbufferTest, UseAsFramebufferColorThenDestroy)
     window->makeCurrent();
 
     // Create a texture and bind the Pbuffer to it
-    GLuint texture = 0;
-    glGenTextures(1, &texture);
+    GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1247,8 +1554,7 @@ TEST_P(PbufferTest, UseAsFramebufferColorThenDestroy)
     ASSERT_EGL_SUCCESS();
 
     // Create Framebuffer and use texture as color attachment
-    GLuint fbo;
-    glGenFramebuffers(1, &fbo);
+    GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1270,11 +1576,6 @@ TEST_P(PbufferTest, UseAsFramebufferColorThenDestroy)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glViewport(0, 0, getWindowWidth(), getWindowHeight());
-    ASSERT_GL_NO_ERROR();
-
-    // Delete resources
-    glDeleteFramebuffers(1, &fbo);
-    glDeleteTextures(1, &texture);
     ASSERT_GL_NO_ERROR();
 
     // Destroy Pbuffer
@@ -1496,7 +1797,7 @@ TEST_P(PbufferTest, ZeroSizedSurfaceFormatQuery)
     eglDestroySurface(display, pbufferSurface);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(PbufferTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(PbufferTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PbufferTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(PbufferTestES3);

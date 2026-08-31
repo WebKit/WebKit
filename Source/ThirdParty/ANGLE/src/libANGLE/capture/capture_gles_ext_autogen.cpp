@@ -4191,17 +4191,6 @@ CallCapture CaptureCopySubTextureCHROMIUM(const State &glState,
     return CallCapture(angle::EntryPoint::GLCopySubTextureCHROMIUM, std::move(paramBuffer));
 }
 
-CallCapture CaptureCoverageModulationCHROMIUM(const State &glState,
-                                              bool isCallValid,
-                                              GLenum components)
-{
-    ParamBuffer paramBuffer;
-
-    paramBuffer.addEnumParam("components", GLESEnum::AllEnums, ParamType::TGLenum, components);
-
-    return CallCapture(angle::EntryPoint::GLCoverageModulationCHROMIUM, std::move(paramBuffer));
-}
-
 CallCapture CaptureLoseContextCHROMIUM(const State &glState,
                                        bool isCallValid,
                                        GraphicsResetStatus currentPacked,
