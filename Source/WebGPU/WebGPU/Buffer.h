@@ -108,6 +108,15 @@ public:
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     std::span<uint8_t> getBufferContents();
 
+<<<<<<< HEAD
+=======
+    bool indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
+    bool indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
+
+    void indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed = false);
+    void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed = false);
+
+>>>>>>> a9ffefa3b5d0 ([WebGPU] Unsubmitted command encoder can poison drawIndirect clamp cache leading to GPU OOB vertex fetch)
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
     void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
@@ -146,6 +155,11 @@ private:
     void NODELETE setState(State);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
+<<<<<<< HEAD
+=======
+    void takeSlowIndirectIndexValidationPath(CommandBuffer&, Buffer&, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType);
+    void takeSlowIndirectValidationPath(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
+>>>>>>> a9ffefa3b5d0 ([WebGPU] Unsubmitted command encoder can poison drawIndirect clamp cache leading to GPU OOB vertex fetch)
 
     id<MTLBuffer> m_buffer { nil };
 
@@ -161,8 +175,25 @@ private:
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
+<<<<<<< HEAD
     uint32_t m_maxValidatedUnsignedIndex { 0 };
     uint16_t m_maxValidatedUshortIndex { 0 };
+=======
+
+    struct IndirectArgsCache {
+        uint64_t indirectOffset { UINT64_MAX };
+        uint64_t indexBufferOffsetInBytes { UINT64_MAX };
+        uint32_t minVertexCount { 0 };
+        uint32_t minInstanceCount { 0 };
+        MTLIndexType indexType { MTLIndexTypeUInt16 };
+        bool committed { false };
+        enum {
+            NoDraw,
+            IndirectDraw,
+            IndirectIndexedDraw
+        } drawType { NoDraw };
+    } m_indirectCache;
+>>>>>>> a9ffefa3b5d0 ([WebGPU] Unsubmitted command encoder can poison drawIndirect clamp cache leading to GPU OOB vertex fetch)
 
     DrawIndexCacheContainer m_drawIndexedCache;
 

@@ -950,10 +950,20 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
+<<<<<<< HEAD
     encoder.parentEncoder().addBuffer(finalScratch);
     encoder.parentEncoder().addBuffer(intermediateScratch);
     // Device-loss flag lives in intermediateScratch; also retain finalScratch until GPU completion.
     encoder.trackIndirectDeviceLostCheck(intermediateScratch, intermediateScratchOffset, finalScratch);
+=======
+    indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount);
+    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indexedIndirectBuffer }, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer&, CommandEncoder&) {
+        if (RefPtr buffer = weakBuffer.get())
+            buffer->indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, true);
+        return true;
+    });
+    checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer);
+>>>>>>> a9ffefa3b5d0 ([WebGPU] Unsubmitted command encoder can poison drawIndirect clamp cache leading to GPU OOB vertex fetch)
 
     return std::make_pair(finalScratch, finalScratchOffset);
 }
@@ -989,8 +999,18 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
     encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
+<<<<<<< HEAD
     encoder.parentEncoder().addBuffer(scratch);
     encoder.trackIndirectDeviceLostCheck(scratch, scratchOffset, nil);
+=======
+    indirectBuffer.indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount);
+    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indirectBuffer }, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer&, CommandEncoder&) {
+        if (RefPtr buffer = weakBuffer.get())
+            buffer->indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount, true);
+        return true;
+    });
+    checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer.indirectBuffer());
+>>>>>>> a9ffefa3b5d0 ([WebGPU] Unsubmitted command encoder can poison drawIndirect clamp cache leading to GPU OOB vertex fetch)
 
     return std::make_pair(scratch, scratchOffset);
 }
