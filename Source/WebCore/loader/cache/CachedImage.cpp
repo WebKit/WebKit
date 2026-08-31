@@ -213,7 +213,7 @@ void CachedImage::switchClientsToRevalidatedResource()
         CachedResource::switchClientsToRevalidatedResource();
         RefPtr revalidatedCachedImage = downcast<CachedImage>(*resourceToRevalidate());
         for (auto& request : switchContainerContextRequests)
-            revalidatedCachedImage->setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL);
+            revalidatedCachedImage->setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
         return;
     }
 
@@ -283,14 +283,14 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     return m_image.get();
 }
 
-void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
+void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL, const Style::LinkParameters& linkParameters)
 {
     if (containerSize.isEmpty())
         return;
     ASSERT(containerZoom);
     RefPtr image = m_image;
     if (!image) {
-        m_pendingContainerContextRequests.set(client, ContainerContext { containerSize, containerZoom, imageURL });
+        m_pendingContainerContextRequests.set(client, ContainerContext { containerSize, containerZoom, imageURL, linkParameters });
         return;
     }
 
@@ -299,7 +299,7 @@ void CachedImage::setContainerContextForClient(const CachedImageClient& client, 
         return;
     }
 
-    m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL);
+    m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL, linkParameters);
 }
 
 FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
@@ -413,7 +413,7 @@ inline void CachedImage::createImage()
         // Send queued container size requests.
         if (image->usesContainerSize()) {
             for (auto& request : m_pendingContainerContextRequests)
-                setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL);
+                setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
         }
         m_pendingContainerContextRequests.clear();
         m_clientsWaitingForAsyncDecoding.clear();

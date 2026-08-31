@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/Image.h>
+#include <WebCore/StyleLinkParameters.h>
 #include <WebCore/Timer.h>
 #include <wtf/URL.h>
 
@@ -111,11 +112,15 @@ private:
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
-    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, ImagePaintingOptions = { });
+    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const Style::LinkParameters&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const Style::LinkParameters&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, ImagePaintingOptions = { });
+
+    void applyLinkParameters(const Style::LinkParameters&);
 
     RefPtr<Page> m_page;
     FloatSize m_intrinsicSize;
+
+    Style::LinkParameters m_appliedLinkParameters;
 
     Timer m_startAnimationTimer;
 };

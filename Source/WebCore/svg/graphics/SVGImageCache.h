@@ -27,6 +27,10 @@
 
 namespace WebCore {
 
+namespace Style {
+struct LinkParameters;
+}
+
 class CachedImage;
 class CachedImageClient;
 class ImageBuffer;
@@ -43,7 +47,7 @@ public:
 
     void removeClientFromCache(const CachedImageClient*);
 
-    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&);
+    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
     FloatSize imageSizeForRenderer(const RenderObject*) const;
 
     Image* imageForRenderer(const RenderObject*) const;

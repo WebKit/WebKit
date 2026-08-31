@@ -52,7 +52,7 @@ void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
     m_imageForContainerMap.remove(client);
 }
 
-void SVGImageCache::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
+void SVGImageCache::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL, const Style::LinkParameters& linkParameters)
 {
     ASSERT(!containerSize.isEmpty());
     ASSERT(containerZoom);
@@ -64,7 +64,7 @@ void SVGImageCache::setContainerContextForClient(const CachedImageClient& client
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
 
-    m_imageForContainerMap.set(&client, SVGImageForContainer::create(protect(m_svgImage).get(), containerSizeWithoutZoom, containerZoom, imageURL));
+    m_imageForContainerMap.set(&client, SVGImageForContainer::create(protect(m_svgImage).get(), containerSizeWithoutZoom, containerZoom, imageURL, linkParameters));
 }
 
 Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const

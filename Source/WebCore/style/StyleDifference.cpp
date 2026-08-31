@@ -249,6 +249,9 @@ public:
         if (a.usedCounterDirectives != b.usedCounterDirectives)
             return true;
 
+        if (a.linkParameters != b.linkParameters)
+            return true;
+
         if (a.scale != b.scale || a.rotate != b.rotate || a.translate != b.translate)
             changedContextSensitiveProperties.add(DifferenceContextSensitiveProperty::Transform);
 

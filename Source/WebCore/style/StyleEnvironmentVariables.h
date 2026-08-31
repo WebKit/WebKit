@@ -28,6 +28,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -43,6 +44,7 @@ class WeakPtrImplWithEventTargetData;
 namespace Style {
 
 class CustomProperty;
+struct LinkParameters;
 
 enum class UADefinedVariable {
     SafeAreaInsetTop,
@@ -62,13 +64,17 @@ public:
     explicit EnvironmentVariables(Document&);
 
     using Values = HashMap<AtomString, Ref<const CustomProperty>>;
-    const Values& values() const LIFETIME_BOUND;
+
+    RefPtr<const CustomProperty> valueForName(const AtomString&) const;
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
     void setFullscreenAutoHideDuration(Seconds);
 
+    void setLinkParameters(const LinkParameters&);
+
 private:
+    const Values& userAgentDefinedValues() const LIFETIME_BOUND;
     void buildValues();
 
     const AtomString& nameForVariable(UADefinedVariable) const;
@@ -79,6 +85,8 @@ private:
 
 
     std::optional<Values> m_values;
+
+    Values m_linkParameterValues;
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };

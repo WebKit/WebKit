@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>link-parameters: changing the property after load updates the rendered resource</title>
+<link rel="help" href="https://drafts.csswg.org/css-link-params/#propdef-link-parameters">
+<style>
+  body { margin: 0; }
+  img { display: block; width: 100px; height: 100px; }
+  #target { link-parameters: param(--bg, #a01010); }
+</style>
+<img id="target" src="resources/solid.svg">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = function() {
+    requestAnimationFrame(function() {
+        document.getElementById("target").style.linkParameters = "param(--bg, #0a5c2e)";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>

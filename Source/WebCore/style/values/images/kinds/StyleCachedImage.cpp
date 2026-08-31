@@ -40,6 +40,7 @@
 #include "SVGResourceImage.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -301,7 +302,7 @@ void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, 
     m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
-    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved);
+    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved, renderer.style().linkParameters());
 }
 
 void CachedImage::addClient(RenderElement& renderer)

@@ -128,7 +128,7 @@ SubstitutionResolver::SubstitutionResolver(Builder& builder, const CSSRegistered
 RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId)
 {
     if (functionId == CSSValueEnv)
-        return m_styleBuilder.state().document().styleScope().environmentVariables().values().get(variableName);
+        return m_styleBuilder.state().document().styleScope().environmentVariables().valueForName(variableName);
 
     // Every parameter of the function whose arguments are being resolved shadows the calling element's
     // custom property of the same name, resolved or not, so a default can reference an earlier

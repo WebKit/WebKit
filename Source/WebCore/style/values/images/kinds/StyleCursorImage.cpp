@@ -35,6 +35,7 @@
 #include "RenderElement.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImageSet.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -116,7 +117,7 @@ void CursorImage::setContainerContextForRenderer(const RenderElement& renderer, 
 {
     if (!hasCachedImage())
         return;
-    protect(cachedImage())->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_originalURL.resolved);
+    protect(cachedImage())->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters());
 }
 
 bool CursorImage::usesDataProtocol() const

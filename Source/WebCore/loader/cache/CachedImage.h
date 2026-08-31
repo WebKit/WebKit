@@ -29,6 +29,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutSize.h>
 #include <WebCore/SVGImageCache.h>
+#include <WebCore/StyleLinkParameters.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -65,7 +66,7 @@ public:
     void setAllowsOrientationOverride(bool b) { m_allowsOrientationOverride = b; }
     bool allowsOrientationOverride() const { return m_allowsOrientationOverride; }
 
-    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&);
+    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
     bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
     bool imageHasNaturalAspectRatio() const { return m_image && m_image->hasNaturalAspectRatio(); }
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
@@ -196,6 +197,7 @@ private:
         LayoutSize containerSize;
         float containerZoom;
         URL imageURL;
+        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
     };
 
     using ContainerContextRequests = HashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;

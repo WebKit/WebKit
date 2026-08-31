@@ -31,7 +31,11 @@
 #include "CSSParserTokenRange.h"
 #include "CSSVariableData.h"
 #include "DocumentPage.h"
+#include "ElementInlines.h"
 #include "StyleCustomProperty.h"
+#include "StyleDocumentScope.h"
+#include "StyleLinkParameters.h"
+#include "StyleScope.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,11 +49,18 @@ EnvironmentVariables::EnvironmentVariables(Document& document)
 {
 }
 
-const EnvironmentVariables::Values& EnvironmentVariables::values() const
+const EnvironmentVariables::Values& EnvironmentVariables::userAgentDefinedValues() const
 {
     if (!m_values)
         const_cast<EnvironmentVariables&>(*this).buildValues();
     return *m_values;
+}
+
+RefPtr<const CustomProperty> EnvironmentVariables::valueForName(const AtomString& name) const
+{
+    if (auto value = m_linkParameterValues.get(name))
+        return value;
+    return userAgentDefinedValues().get(name);
 }
 
 const AtomString& EnvironmentVariables::nameForVariable(UADefinedVariable variable) const
@@ -95,6 +106,21 @@ void EnvironmentVariables::setValueForVariable(UADefinedVariable variable, Ref<C
 
     auto& name = nameForVariable(variable);
     m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
+}
+
+void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
+{
+    m_linkParameterValues.clear();
+
+    for (auto& parameter : parameters) {
+        auto& name = parameter->name.value;
+        m_linkParameterValues.set(name, CustomProperty::createForVariableData(name, parameter->value.value.copyRef()));
+    }
+
+    Ref<Document> document = m_document.get();
+    document->styleScope().invalidateMatchedDeclarationsCache();
+    if (RefPtr documentElement = document->documentElement())
+        documentElement->invalidateStyleForSubtree();
 }
 
 void EnvironmentVariables::buildValues()
