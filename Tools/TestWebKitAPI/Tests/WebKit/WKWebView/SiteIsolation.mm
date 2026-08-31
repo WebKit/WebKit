@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "FrameTreeChecks.h"
+#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
@@ -3951,25 +3952,51 @@ TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
         findStringAndValidateResults(webView.get(), *it);
 }
 
-TEST(SiteIsolation, FindStringMatchCount)
+static void checkFindStringMatchCount(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate)
 {
-    auto mainframeHTML = "<p>Hello world</p>"
-        "<iframe src='https://domain2.com/subframe'></iframe>"
-        "<iframe src='https://domain3.com/subframe'></iframe>"_s;
-    HTTPServer server({
-        { "/mainframe"_s, { mainframeHTML } },
-        { "/subframe"_s, { "<p>Hello world</p>"_s } }
-    }, HTTPServer::Protocol::HttpsProxy);
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-    RetainPtr findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
     [webView _setFindDelegate:findDelegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
+    RetainPtr findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+    // Without a counting option this only reports that the string was found.
+    EXPECT_EQ(1ul, [findDelegate matchesCount]);
+
+    isDone = false;
+    // The main frame's only match is the one the find above selected, and StartInSelection searches
+    // past it, so WrapAround is what finds it again. Without it that process reports no match and
+    // the total is 2.
+    [webView _findString:@"Hello World" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsDetermineMatchIndex maxCount:100];
+    Util::run(&isDone);
     EXPECT_EQ(3ul, [findDelegate matchesCount]);
+}
+
+static HTTPServer findStringMatchCountServer()
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain3.com/subframe'></iframe>"_s;
+    return HTTPServer({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+TEST(SiteIsolation, FindStringMatchCount)
+{
+    auto server = findStringMatchCountServer();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    checkFindStringMatchCount(webView.get(), navigationDelegate.get());
+}
+
+TEST(SiteIsolation, FindStringMatchCountWithSharedProcess)
+{
+    auto server = findStringMatchCountServer();
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+    checkFindStringMatchCount(webView.get(), navigationDelegate.get());
 }
 
 TEST(SiteIsolation, CountStringMatches)

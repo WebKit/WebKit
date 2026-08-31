@@ -27,6 +27,7 @@
 #include "FindStringCallbackAggregator.h"
 
 #include "APIFindClient.h"
+#include "WebFindOptions.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -100,7 +101,9 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     } while (frameContainingMatch && frameContainingMatch != focusedFrame);
 
     auto message = Messages::WebPage::SelectLastFoundRange(m_string, m_options, m_maxMatchCount);
-    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount = m_matchCount, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
+    bool shouldReportMatchesCount = willFindAllMatches(m_options);
+    auto matchCount = shouldReportMatchesCount ? m_matchCount : 1;
+    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
         if (!frameID)
             protectedPage->findClient().didFailToFindString(protectedPage.ptr(), string);
         else
