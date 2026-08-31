@@ -206,7 +206,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
         auto markerRange = textMarkerRange();
         if (!markerRange)
             return { };
-        return NSMakeRange(0, markerRange.toString().length());
+        return NSMakeRange(0, markerRange.length());
     }
 
     RefPtr current = const_cast<AXIsolatedObject*>(this);
@@ -249,7 +249,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
 
                 // Points to the last text position of the text belonging to this object that *was not* painted.
                 markerPriorToPaintedText = AXTextMarker { *current, renderedCharactersPriorToStartLine };
-                finalRange.location = AXTextMarkerRange { WTF::move(thisFirstMarker), *markerPriorToPaintedText }.toString().length();
+                finalRange.location = AXTextMarkerRange { WTF::move(thisFirstMarker), *markerPriorToPaintedText }.length();
             }
             unsigned visibleCharactersUpToEndLine = currentRuns->runLengthSumTo(range.endLineIndex);
             lastVisibleMarker = AXTextMarker { *current, visibleCharactersUpToEndLine };
@@ -264,7 +264,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
     }
 
     AXTextMarkerRange visibleTextRange = AXTextMarkerRange { WTF::move(*markerPriorToPaintedText), WTF::move(*lastVisibleMarker) };
-    finalRange.length = visibleTextRange.toString().length();
+    finalRange.length = visibleTextRange.length();
     return finalRange;
 }
 
@@ -350,7 +350,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
     }
 
     if (std::optional markerRange = Accessibility::markerRangeFrom(range, *this)) {
-        if (range.length > markerRange->toString().length())
+        if (range.length > markerRange->length())
             return { };
         return WTF::move(*markerRange);
     }
@@ -368,7 +368,20 @@ unsigned AXIsolatedObject::textLength() const
     AX_ASSERT(isTextControl());
     AX_ASSERT(!isMainThread());
 
-    return textMarkerRange().toString().length();
+    // The marker range spans this control's rendered inner text, which is one character longer than
+    // its value when the value ends in a line break: rendering adds a placeholder <br> for the empty
+    // final line, and the text walks emit its newline. The main-thread implementation measures the
+    // value, so leave that newline out. See isCollapsedTrailingLineBreak().
+    auto range = textMarkerRange();
+    auto lastMarker = range.end().toTextRunMarker();
+    RefPtr lastObject = lastMarker.isolatedObject();
+    // Ask the range's last object rather than testing the text for a trailing newline: a control
+    // that isn't a native text control (an ARIA textbox, say) has no placeholder, so a newline
+    // ending its text is a character of it.
+    bool endsWithPlaceholderNewline = lastObject && lastObject->isCollapsedTrailingLineBreak() && lastMarker.offset();
+    unsigned length = range.length();
+    AX_ASSERT(!endsWithPlaceholderNewline || length);
+    return endsWithPlaceholderNewline && length ? length - 1 : length;
 }
 
 RetainPtr<id> AXIsolatedObject::remoteFramePlatformElement() const

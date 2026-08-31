@@ -209,6 +209,7 @@ enum class AXProperty : uint16_t {
     IsBusy,
     IsChecked,
     IsColumnHeader,
+    IsCollapsedTrailingLineBreak,
     IsExpanded,
     IsExposableTable,
     IsFieldset,
