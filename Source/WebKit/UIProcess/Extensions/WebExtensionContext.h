@@ -601,6 +601,7 @@ public:
     void sendTestMessage(const String& message, id argument);
     void sendTestStarted(id argument);
     void sendTestFinished(id argument);
+    void reloadBackgroundContentForTesting();
 #endif
 
     URL backgroundContentURL();

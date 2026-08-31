@@ -178,6 +178,7 @@ public:
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(Ref<SWServerRegistration>&&);
     void removeRegistration(ServiceWorkerRegistrationIdentifier);
+    void didReconnectServiceWorkerPage(SWServerRegistration&, ScriptExecutionContextIdentifier);
     WEBCORE_EXPORT void getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>&&);
     WEBCORE_EXPORT RefPtr<SWServerRegistration> doRegistrationMatchingSync(const SecurityOriginData& topOrigin, const URL& clientURL);
     WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);

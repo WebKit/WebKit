@@ -3625,6 +3625,16 @@ void WebExtensionContext::setStorageAccessLevel(WebExtensionDataType dataType, W
         extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(dataType, accessLevel), identifier());
 }
 
+void WebExtensionContext::reloadBackgroundContentForTesting()
+{
+    ASSERT(isLoaded() && inTestingMode());
+    if (!isLoaded() || !inTestingMode())
+        return;
+
+    unloadBackgroundWebView();
+    loadBackgroundWebViewIfNeeded();
+}
+
 void WebExtensionContext::sendTestMessage(const String& message, id argument)
 {
     ASSERT(isLoaded() && inTestingMode());

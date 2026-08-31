@@ -235,6 +235,15 @@ void SWServerRegistration::clear()
 {
     RELEASE_LOG(ServiceWorker, "SWServerRegistration::clear %" PRIu64, identifier().toUInt64());
 
+    terminateWorkersForServiceWorkerPageDisconnect();
+    notifyClientsOfControllerChange();
+
+    // Remove scope to registration map[scopeString].
+    protect(server())->removeRegistration(identifier());
+}
+
+void SWServerRegistration::terminateWorkersForServiceWorkerPageDisconnect()
+{
     if (RefPtr preInstallationWorker = m_preInstallationWorker) {
         ASSERT(preInstallationWorker->state() == ServiceWorkerState::Parsed);
         preInstallationWorker->terminate();
@@ -263,11 +272,6 @@ void SWServerRegistration::clear()
         updateWorkerState(*waitingWorker, ServiceWorkerState::Redundant);
     if (activeWorker)
         updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
-
-    notifyClientsOfControllerChange();
-
-    // Remove scope to registration map[scopeString].
-    protect(server())->removeRegistration(identifier());
 }
 
 // https://w3c.github.io/ServiceWorker/#try-activate-algorithm

@@ -380,6 +380,15 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     protect(backgroundFetchEngine())->remove(*registration);
 }
 
+void SWServer::didReconnectServiceWorkerPage(SWServerRegistration& registration, ScriptExecutionContextIdentifier newServiceWorkerPageIdentifier)
+{
+    if (auto previousIdentifier = registration.serviceWorkerPageIdentifier())
+        m_serviceWorkerPageIdentifierToRegistrationMap.remove(*previousIdentifier);
+
+    registration.setServiceWorkerPageIdentifier(newServiceWorkerPageIdentifier);
+    m_serviceWorkerPageIdentifierToRegistrationMap.add(newServiceWorkerPageIdentifier, registration);
+}
+
 void SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>&& callback)
 {
     importRegistrationsForOrigin(topOrigin, [weakThis = WeakPtr { *this }, topOrigin, clientURL, callback = WTF::move(callback)]() mutable {
@@ -1530,16 +1539,25 @@ void SWServer::unregisterServiceWorkerClientInternal(const ClientOrigin& clientO
 
     bool didUnregister = false;
     if (shouldUpdateRegistrations == ShouldUpdateRegistrations::Yes) {
-        // If the client that's going away is a service worker page then we need to unregister its service worker.
+        // If the client that's going away is a service worker page then we need to unregister its service worker,
+        // unless other clients are still depending on this registration. In that case, only terminate the workers
+        // and leave the registration alive so a subsequent service worker page reconnection can reuse
+        // the same registration, keeping those other clients' association with it valid.
         if (RefPtr registration = m_serviceWorkerPageIdentifierToRegistrationMap.get(clientIdentifier)) {
-            removeFromScopeToRegistrationMap(registration->key());
-            if (RefPtr preinstallingServiceWorker = registration->preInstallationWorker()) {
-                if (CheckedPtr jobQueue = m_jobQueues.get(registration->key()))
-                    jobQueue->cancelJobsFromServiceWorker(preinstallingServiceWorker->identifier());
+            m_serviceWorkerPageIdentifierToRegistrationMap.remove(clientIdentifier);
+            if (registration->hasClientsUsingRegistration()) {
+                registration->setServiceWorkerPageIdentifier(std::nullopt);
+                registration->terminateWorkersForServiceWorkerPageDisconnect();
+            } else {
+                removeFromScopeToRegistrationMap(registration->key());
+                if (RefPtr preinstallingServiceWorker = registration->preInstallationWorker()) {
+                    if (CheckedPtr jobQueue = m_jobQueues.get(registration->key()))
+                        jobQueue->cancelJobsFromServiceWorker(preinstallingServiceWorker->identifier());
+                }
+                registration->clear(); // Will destroy the registration.
+                didUnregister = true;
             }
-            registration->clear(); // Will destroy the registration.
             ASSERT(!m_serviceWorkerPageIdentifierToRegistrationMap.contains(clientIdentifier));
-            didUnregister = true;
         }
     }
 

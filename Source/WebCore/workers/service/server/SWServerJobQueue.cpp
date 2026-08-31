@@ -340,6 +340,11 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
 
     // If registration is not null (in our parlance "empty"), then:
     if (RefPtr registration = server->getRegistration(m_registrationKey)) {
+        if (job.isFromServiceWorkerPage) {
+            if (auto serviceWorkerPageIdentifier = job.serviceWorkerPageIdentifier())
+                server->didReconnectServiceWorkerPage(*registration, *serviceWorkerPageIdentifier);
+        }
+
         RefPtr newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.workerType == newestWorker->type() && job.registrationOptions->updateViaCache == registration->updateViaCache()) {
             RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found directly reusable registration %" PRIu64 " for job %s (DONE)", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());

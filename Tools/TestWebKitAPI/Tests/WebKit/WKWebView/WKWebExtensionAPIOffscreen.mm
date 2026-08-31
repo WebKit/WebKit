@@ -420,6 +420,43 @@ TEST_F(WKWebExtensionAPIOffscreen, TabAndOffscreenDocumentVisibleToClientsMatchA
     }, offscreenConfig);
 }
 
+TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentVisibleToClientsMatchAllAfterBackgroundContentReloads)
+{
+    auto *script = @[
+        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
+        @"const isOffscreenAClient = async () => (await self.clients.matchAll()).some((client) => client.url === offscreenURL)",
+
+        @"if (await browser.offscreen.hasDocument()) {",
+        // The relaunched worker briefly isn't the registration's active worker yet while it installs/activates,
+        // during which matchAll() legitimately reports no controlled clients. Poll until that settles.
+        @"  let isAClient = false",
+        @"  for (let attempt = 0; attempt < 50 && !isAClient; ++attempt) {",
+        @"    isAClient = await isOffscreenAClient()",
+        @"    if (!isAClient)",
+        @"      await new Promise((resolve) => setTimeout(resolve, 50))",
+        @"  }",
+        @"  browser.test.assertTrue(isAClient, 'The offscreen document should still be a client after the background content reloads')",
+        @"  browser.test.sendMessage('Offscreen Document Still A Client')",
+        @"  browser.test.notifyPass()",
+        @"} else {",
+        @"  await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"  browser.test.assertTrue(await isOffscreenAClient(), 'The offscreen document should be a client while it is open')",
+        @"  browser.test.sendMessage('Offscreen Document Created')",
+        @"}",
+    ];
+
+    auto manager = Util::loadExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+    }, offscreenConfig);
+
+    [manager runUntilTestMessage:@"Offscreen Document Created"];
+
+    [manager.get().context _reloadBackgroundContentForTesting];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
