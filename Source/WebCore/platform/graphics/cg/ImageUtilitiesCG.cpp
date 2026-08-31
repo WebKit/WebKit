@@ -295,7 +295,7 @@ static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const 
     if (!buffer)
         return nullptr;
 
-    Ref svgImageContainer = SVGImageForContainer::create(&image, size, 1, { });
+    Ref svgImageContainer = SVGImageForContainer::create(&image, { .containerSize = size });
     buffer->context().drawImage(svgImageContainer.get(), FloatPoint::zero());
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));

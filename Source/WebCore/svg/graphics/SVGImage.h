@@ -45,6 +45,13 @@ class Settings;
 
 class SVGImage final : public Image {
 public:
+    struct ContainerContext {
+        FloatSize containerSize { };
+        float containerZoom { 1 };
+        URL initialFragmentURL { };
+        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
+    };
+
     static Ref<SVGImage> create(ImageObserver* observer) { return adoptRef(*new SVGImage(observer)); }
     WEBCORE_EXPORT static void tryCreateFromData(std::span<const uint8_t>, CompletionHandler<void(RefPtr<SVGImage>&&)>&&);
     WEBCORE_EXPORT static bool isDataDecodable(const Settings&, std::span<const uint8_t>);
@@ -112,8 +119,8 @@ private:
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const Style::LinkParameters&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
-    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const Style::LinkParameters&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, ImagePaintingOptions = { });
+    ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+    void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { });
 
     void applyLinkParameters(const Style::LinkParameters&);
 

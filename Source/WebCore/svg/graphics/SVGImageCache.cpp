@@ -64,7 +64,12 @@ void SVGImageCache::setContainerContextForClient(const CachedImageClient& client
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
 
-    m_imageForContainerMap.set(&client, SVGImageForContainer::create(protect(m_svgImage).get(), containerSizeWithoutZoom, containerZoom, imageURL, linkParameters));
+    m_imageForContainerMap.set(&client, SVGImageForContainer::create(protect(m_svgImage).get(), {
+        .containerSize = containerSizeWithoutZoom,
+        .containerZoom = containerZoom,
+        .initialFragmentURL = imageURL,
+        .linkParameters = linkParameters
+    }));
 }
 
 Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const

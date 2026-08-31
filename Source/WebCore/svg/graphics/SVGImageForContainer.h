@@ -37,9 +37,9 @@ namespace WebCore {
 
 class SVGImageForContainer final : public Image {
 public:
-    static Ref<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, Style::LinkParameters linkParameters = CSS::Keyword::None { })
+    static Ref<SVGImageForContainer> create(SVGImage* image, SVGImage::ContainerContext&& containerContext)
     {
-        return adoptRef(*new SVGImageForContainer(image, containerSize, containerZoom, initialFragmentURL, WTF::move(linkParameters)));
+        return adoptRef(*new SVGImageForContainer(image, WTF::move(containerContext)));
     }
 
     bool NODELETE isSVGImageForContainer() const final { return true; }
@@ -65,13 +65,10 @@ public:
     RefPtr<NativeImage> currentNativeImage() final;
 
 private:
-    WEBCORE_EXPORT SVGImageForContainer(SVGImage*, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, Style::LinkParameters&&);
+    WEBCORE_EXPORT SVGImageForContainer(SVGImage*, SVGImage::ContainerContext&&);
 
     WeakPtr<SVGImage> m_image;
-    const FloatSize m_containerSize;
-    const float m_containerZoom;
-    const URL m_initialFragmentURL;
-    const Style::LinkParameters m_linkParameters;
+    const SVGImage::ContainerContext m_containerContext;
 };
 
 } // namespace WebCore

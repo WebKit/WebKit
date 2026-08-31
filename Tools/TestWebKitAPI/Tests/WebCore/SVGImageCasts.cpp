@@ -91,7 +91,7 @@ TEST(SVGImageCasts, SVGImageForContainerIsNotSVGImage)
     Image& svgImageBase = svgImage.get();
     EXPECT_TRUE(is<SVGImage>(svgImageBase));
     EXPECT_FALSE(is<SVGImageForContainer>(svgImageBase));
-    auto svgImageForContainer = SVGImageForContainer::create(svgImage.ptr(), { }, 0, URL());
+    auto svgImageForContainer = SVGImageForContainer::create(svgImage.ptr(), { });
     Image& svgImageForContainerBase = svgImageForContainer.get();
     EXPECT_FALSE(is<SVGImage>(svgImageForContainerBase));
     EXPECT_TRUE(is<SVGImageForContainer>(svgImageForContainerBase));
