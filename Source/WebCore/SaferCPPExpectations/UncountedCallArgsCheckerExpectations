@@ -417,6 +417,7 @@ testing/LegacyMockCDM.cpp
 [ Mac ] testing/MockMediaSessionCoordinator.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
+workers/service/context/ServiceWorkerThread.cpp
 worklets/PaintWorkletGlobalScope.cpp
 xml/XSLImportRule.cpp
 xml/XSLTProcessorLibxslt.cpp
