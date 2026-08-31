@@ -144,6 +144,8 @@ PASS Shared between elements within a property, unresolved percentage values: ra
 PASS Shared between elements within a property - shorthand: random(property-index-scoped, a, b)
 PASS Shared globally: random(--identifier, a, b)
 PASS Shared globally - shorthand: random(--other-identifier, a, b)
+PASS Different between properties with percentage value: random(0%, 100%)
+PASS Different between elements with percentage value: random(0%, 100%)
 PASS Shared by property - shorthand and longhand: random(property-index-scoped, a, b)
 PASS Shared by property - logical and physical property: random(property-index-scoped, a, b)
 FAIL Fixed: random(fixed <number>, a, b) assert_true: Random value with fixed should be 150000px expected true got false

@@ -29,4 +29,7 @@ PASS 'background-image: image-set(var(--some-other-url))' with data-foo="https:/
 PASS 'background-image: attr(data-foo type(*))' with data-foo="url(https://does-not-exist.test/404.png), linear-gradient(black, white)"
 PASS 'background-image: image-set(var(--image-set-valid))' with data-foo="image/jpeg"
 PASS 'background-image: image-set(var(--image-set-invalid))' with data-foo="https://does-not-exist.test/404.png"
+PASS 'background-image: attr(data-foo type(*))' with data-foo="linear-gradient(black, white), url(https://does-not-exist.test/404.png)"
+PASS 'background-image: var(--url-after-gradients)' with data-foo="https://does-not-exist.test/404.png"
+PASS 'background-image: var(--undefined, var(--url-after-gradients))' with data-foo="https://does-not-exist.test/404.png"
 

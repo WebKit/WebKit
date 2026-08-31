@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/crashtests/calc-with-percent-and-number-in-line-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/crashtests/chrome-405422528-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/crashtests/chrome-bug-492735384.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/crashtests/chrome-bug-493952652.html

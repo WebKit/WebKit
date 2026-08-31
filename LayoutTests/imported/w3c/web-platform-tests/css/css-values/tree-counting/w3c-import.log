@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 text-size-adjust
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/WEB_FEATURES.yml
@@ -36,4 +34,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-value-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-linear-gradient-gcs.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/tree-scoped-sibling-function.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/trig-functions-in-gradient-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/trig-functions-with-runtime-angle-arguments.html

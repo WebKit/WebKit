@@ -10,5 +10,5 @@ PASS testing calc(calc(300px - (0% + 100px) * 1))
 PASS testing calc(calc(300px - (0% + 100px) * -1))
 PASS testing calc(calc(300px - -1 * (0% + 100px)))
 PASS testing calc(calc(300px - 1 * (0% - 100px)))
-FAIL testing simplification with nested sum assert_equals: expected "calc(10px - min(20%, 20px))" but got "calc(0px - (1 * (-10px + min(20%, 20px))))"
+PASS testing simplification with nested sum
 

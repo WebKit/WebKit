@@ -18,7 +18,6 @@ FAIL calc(10% * 10% / 1px * 1deg / 1deg) should be used-value-equivalent to 1px 
 PASS calc(1px * 2deg / 1deg) should be used-value-equivalent to 2px
 PASS calc(1px * 3deg / 1deg / 1px) should be used-value-equivalent to 3
 PASS calc(1px * pow(50% / 1px, 1)) should be used-value-equivalent to 50px
-FAIL e.style['width'] = "calc(1px * pow(tan(atan2(50%, 1px)), 1))" should not set the property value assert_equals: expected "" but got "calc(1px * pow(tan(atan2(50%, 1px)), 1))"
 PASS e.style['width'] = "calc((1% * 1deg) / 1px)" should not set the property value
 PASS e.style['width'] = "calc((1% * 1% * 1%) / 1px)" should not set the property value
 PASS Property width value 'calc(1px * 10em / 0em)'

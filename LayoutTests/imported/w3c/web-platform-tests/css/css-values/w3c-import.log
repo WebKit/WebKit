@@ -11,8 +11,6 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 initial-letter
 text-size-adjust
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/META.yml
@@ -84,6 +82,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-revert-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-if.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition-interpolated.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-serialization.html
@@ -355,6 +355,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ic-unit-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-substitution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-conditionals.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-function-revert-rule.html
@@ -447,6 +448,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-in-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-in-media.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-invalid.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-in-container-query.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-in-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-serialize.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-unresolvable-argument.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-item-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-serialize.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/random-unresolvable-argument.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/rcap-invalidation.html
@@ -487,6 +496,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed_arithmetic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed_arithmetic_cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/update-subpixel-rem-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/using-font-relative-units-in-font-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/various-values-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-calc-support-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-calc-support-pct-expected.html

@@ -27,6 +27,8 @@ PASS calc(asin(sin(180deg * sign(1em - 1px)))) should be used-value-equivalent t
 PASS calc(acos(cos(180deg * sign(1em - 1px)))) should be used-value-equivalent to 180deg
 PASS calc(atan(tan(180deg * sign(1em - 1px)))) should be used-value-equivalent to 0deg
 PASS calc(atan2(1, sign(1em - 1px))) should be used-value-equivalent to 45deg
+PASS calc(tan(atan2(round(up,1px,100%),round(up,1px,100%)))*1px) should be computed-value-equivalent to calc(tan(atan2(round(up,1px,100%),round(up,1px,100%)))*1px)
+PASS calc(1px * pow(tan(atan2(50%, 1px)), 1)) should be computed-value-equivalent to calc(1px * pow(tan(atan2(50%, 1px)), 1))
 PASS calc(cos(sin(acos(cos(pi))))) should be used-value-equivalent to 1
 PASS atan2(1px, -1px) should be used-value-equivalent to 135deg
 PASS atan2(1cm, -1cm) should be used-value-equivalent to 135deg

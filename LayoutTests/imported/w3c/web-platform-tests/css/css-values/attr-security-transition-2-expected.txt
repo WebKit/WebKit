@@ -1,0 +1,4 @@
+poc
+
+PASS CSS Values and Units Test: attr() tainted value from a transition
+

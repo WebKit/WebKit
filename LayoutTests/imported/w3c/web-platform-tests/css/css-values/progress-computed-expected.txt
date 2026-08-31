@@ -14,6 +14,7 @@ PASS scale(progress(sign(1em - 1rem) * 1ex, 0rem, 0em)) should be used-value-equ
 PASS calc(progress(1, 0, 1) * 10px) should be used-value-equivalent to 10px
 PASS calc(progress(1, 0, 1) * 1s) should be used-value-equivalent to 1s
 PASS calc(progress(1, 0, 1) * 1deg) should be used-value-equivalent to 1deg
+PASS calc(progress(50%, 0px, 100px) * 10px) should be used-value-equivalent to 5px
 PASS calc(progress(sign(1001em - 10lh * progress(100px, 2rex, 10ex)) * 10em, 2rem, 12em) / 2) should be used-value-equivalent to 0.4
 PASS calc(progress(sign(1001em - 10lh * progress(100px, 2rex, 10ex)) * 20em, 2rem, 12em) * 10) should be used-value-equivalent to 10
 PASS calc(progress(sign(1001em - 10lh * progress(100px, 2rex, 10ex)) * 20em, 2rem, 12em) * 30) should be used-value-equivalent to 30

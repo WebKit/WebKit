@@ -176,6 +176,4 @@ PASS CSS Values and Units Test: attr 172
 PASS CSS Values and Units Test: attr 173
 PASS CSS Values and Units Test: attr 174
 PASS CSS Values and Units Test: attr 175
-PASS CSS Values and Units Test: attr 176
-PASS CSS Values and Units Test: attr 177
 

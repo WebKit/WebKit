@@ -137,6 +137,15 @@
   attrElem.removeAttribute('data-bar');
   attrElem.style.setProperty('--x', null);
 
+  /* Same as above, but with the custom properties swapped, so that the property
+     using the raw (bare) attr() and the one using type() are resolved in the
+     opposite order. The result must not depend on resolution order. */
+  attrElem.style.setProperty('--y', 'attr(data-foo)');
+  attrElem.setAttribute('data-bar', 'var(--y)');
+  test_attr_no_cycle('--x', 'attr(data-foo type(*))', 'attr(data-bar, 11) var(--y, 3)', '"var(--y)" "attr(data-bar, 11) var(--y, 3)"');
+  attrElem.removeAttribute('data-bar');
+  attrElem.style.setProperty('--y', null);
+
   /* No cycle, wrong attr syntax in attribute */
   test_attr_no_cycle('--x', 'attr(data-foo type(*), abc)', 'attr(data-foo', 'abc');
 
@@ -156,4 +165,30 @@
   attrElem.setAttribute('data-bar', '3');
   test_attr_no_cycle('--data-foo', 'attr(data-foo type(*))', 'attr(data-bar number)', '3');
   attrElem.setAttribute('data-bar', null);
+
+  /* Cycle in non-custom property */
+  CSS.registerProperty({
+    name: '--data-baz',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: '4px',
+  });
+  attrElem.style.setProperty('--data-baz', '3em');
+  test_attr_cycle('font-size', 'attr(data-foo type(*))', 'var(--data-baz)');
+  test_attr_cycle('font-size', 'attr(unknown type(*), var(--data-baz))', '');
+  attrElem.style.setProperty('--data-baz', null);
+
+  /* No cycle in non-custom property */
+  attrElem.style.setProperty('--bar', '3em');
+  test_attr_no_cycle('font-size', 'attr(unknown, var(--bar))', '', '48px');
+  attrElem.style.setProperty('--bar', null);
+
+  attrElem.setAttribute('data-bar', '3');
+  test_attr_no_cycle('font-size', 'attr(data-foo type(*))', 'attr(data-bar em)', '48px');
+  attrElem.setAttribute('data-bar', null);
+
+  /* Cycle in unused fallback for non-custom property */
+  attrElem.style.setProperty('--data-baz', '3em');
+  test_attr_no_cycle('font-size', 'attr(data-foo type(<length>), var(--data-baz))', '5px', '5px');
+  attrElem.style.setProperty('--data-baz', null);
 </script>

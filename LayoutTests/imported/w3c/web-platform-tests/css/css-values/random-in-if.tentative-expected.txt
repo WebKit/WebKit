@@ -1,6 +1,16 @@
 
-PASS random() should not be allowed in if() style() condition
-PASS random() in var() should not be allowed in if() style() condition
+FAIL random() should be allowed in if() style() condition assert_equals: expected "true" but got "false"
+FAIL random() in var() should be allowed in if() style() condition assert_equals: expected "true" but got "false"
+PASS Sharing random() in same if() condition
+FAIL Sharing property-scoped random() in same if() condition assert_equals: expected true but got false
+FAIL Sharing random() in if() style() condition within same property assert_equals: expected false but got true
+PASS Sharing element-scoped random() in if() style() condition across different properties
+FAIL Sharing property-index-scoped random() in if() style() condition across different properties assert_equals: expected false but got true
+PASS Sharing property-index-scoped random() in if() style() condition across different elements
+PASS Sharing property-scoped random() in if() style() condition across different elements
+FAIL Sharing element-scoped random() in if() style() condition across different elements assert_equals: expected false but got true
 PASS random() with different property names should not be shared in if() declaration value
 PASS random() with same property name on different elements in if() declaration value should be equal
+PASS Sharing property-index-scoped random() in if() style() condition across different elements with different property counts
+FAIL Sharing property-index-scoped random() with multiple random() inside calc() assert_equals: expected false but got true
 
