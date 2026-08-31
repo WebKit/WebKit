@@ -47,8 +47,11 @@ public:
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
 
 private:
+#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
+#else
     sk_sp<SkImage> skiaImage() override;
+#endif
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled, const sk_sp<GrContextThreadSafeProxy>&);
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class GStreamerQuirksManager;
+class IntRect;
 
 class CoordinatedPlatformLayerBufferHolePunch final : public CoordinatedPlatformLayerBuffer {
 public:
@@ -51,7 +52,9 @@ public:
 #endif
 
 private:
+#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
+#endif
 
 #if USE(GSTREAMER)
     GRefPtr<GstElement> m_videoSink;

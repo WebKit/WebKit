@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBuffer.h"
 
 namespace WebCore {
@@ -43,12 +43,7 @@ public:
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-#if USE(SKIA)
-    sk_sp<SkImage> skiaImage() override;
-#endif
-
-    enum class UseSkiaForCompositing : bool { No, Yes };
-    bool tryEnsureBuffer(UseSkiaForCompositing = UseSkiaForCompositing::No);
+    bool tryEnsureBuffer();
 
     RefPtr<NativeImage> m_image;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
@@ -58,4 +53,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_COORDINATED_PLATFORM_LAYER_BUFFER_TYPE(CoordinatedPlatformLayerBufferNativeImage, Type::NativeImage)
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

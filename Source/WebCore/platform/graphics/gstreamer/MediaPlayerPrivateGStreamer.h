@@ -359,9 +359,7 @@ protected:
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
     void loadStateChanged();
 
-#if USE(TEXTURE_MAPPER)
     void updateTextureMapperFlags();
-#endif
 
     void setCachedPosition(const MediaTime&) const;
 
@@ -419,9 +417,7 @@ protected:
     // Reflects whether the pipeline was suspended due to the HTMLMediaElement being both muted and invisible in the viewport.
     bool isSuspended() const { return m_isSuspended; };
 
-#if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> m_textureMapperFlags;
-#endif
 
     GRefPtr<GstElement> m_audioSink;
     GRefPtr<GstElement> m_videoSink;

@@ -40,7 +40,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -55,10 +55,14 @@ class CoordinatedPlatformLayerBuffer;
 class CoordinatedTileBuffer;
 class GraphicsLayerCoordinated;
 class NativeImage;
+
+#if USE(TEXTURE_MAPPER)
 class TextureMapperLayer;
+#else
+class SkiaCompositingLayer;
+#endif
 
 #if USE(SKIA)
-class SkiaCompositingLayer;
 class SkiaPaintingEngine;
 #endif
 #if USE(CAIRO)
@@ -103,9 +107,10 @@ public:
     void setOwner(GraphicsLayerCoordinated*);
     GraphicsLayerCoordinated* owner() const;
 
+#if USE(TEXTURE_MAPPER)
     TextureMapperLayer& ensureTarget();
-#if USE(SKIA)
-    SkiaCompositingLayer& ensureSkiaTarget();
+#else
+    SkiaCompositingLayer& ensureTarget();
     sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const { return m_threadSafeGrContext; }
 #endif
     void invalidateTarget();
@@ -201,8 +206,8 @@ public:
     void updateBackingStore();
 
     void flushPendingState();
-    void flushPositionChanges(const OptionSet<CompositionReason>&, bool = false);
-    void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
+    void flushPositionChanges(const OptionSet<CompositionReason>&);
+    void flushCompositingState(const OptionSet<CompositionReason>&);
 
     bool hasPendingTilesCreation() const { assertIsMainThread(); return m_pendingTilesCreation; }
     bool hasPendingBackingStoreTileUpdates() const;
@@ -231,9 +236,10 @@ private:
 #endif
     void damageWholeLayer() WTF_REQUIRES_LOCK(m_lock);
 
+#if USE(TEXTURE_MAPPER)
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
-#if USE(SKIA)
-    void flushCompositingStateOnSkiaTarget(const OptionSet<CompositionReason>&, SkiaCompositingLayer&);
+#else
+    void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, SkiaCompositingLayer&);
 #endif
 
     enum class Change : uint8_t {
@@ -282,9 +288,10 @@ private:
     const PlatformLayerIdentifier m_id;
 
     GraphicsLayerCoordinated* m_owner WTF_GUARDED_BY_CAPABILITY(mainThread) { nullptr };
+#if USE(TEXTURE_MAPPER)
     std::unique_ptr<TextureMapperLayer> m_target;
-#if USE(SKIA)
-    RefPtr<SkiaCompositingLayer> m_skiaTarget;
+#else
+    RefPtr<SkiaCompositingLayer> m_target;
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
 #endif
 
@@ -326,7 +333,9 @@ private:
     FloatSize m_contentsTilePhase WTF_GUARDED_BY_LOCK(m_lock);
     float m_contentsScale WTF_GUARDED_BY_LOCK(m_lock) { 1. };
     RefPtr<CoordinatedBackingStoreProxy> m_backingStoreProxy WTF_GUARDED_BY_LOCK(m_lock);
+#if USE(TEXTURE_MAPPER)
     RefPtr<CoordinatedBackingStore> m_backingStore WTF_GUARDED_BY_LOCK(m_lock);
+#endif
     struct {
         RefPtr<CoordinatedImageBackingStore> current;
         RefPtr<CoordinatedImageBackingStore> committed;

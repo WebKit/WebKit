@@ -9600,20 +9600,6 @@ UsePreHTML5ParserQuirks:
     WebCore:
       default: false
 
-UseSkiaForComposition:
-  type: bool
-  status: internal
-  humanReadableName: "Use Skia for composition"
-  humanReadableDescription: "Use Skia instead of TextureMapper for layer composition"
-  condition: PLATFORM(GTK) || PLATFORM(WPE)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 UseSystemAppearance:
   type: bool
   status: embedder

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "FloatRect.h"
 #include "TransformationMatrix.h"
 #include <array>
@@ -222,4 +222,4 @@ IntRect ComputeOverlapRegionData::transformedBoundingBox(const TransformationMat
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)

@@ -29,8 +29,11 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "BitmapTexturePool.h"
 #include "PlatformDisplay.h"
-#include "TextureMapper.h"
 #include <wtf/MathExtras.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapper.h"
+#endif
 
 #if USE(GSTREAMER) && USE(GBM)
 #include <drm_fourcc.h>
@@ -192,6 +195,7 @@ RefPtr<BitmapTexture> CoordinatedPlatformLayerBufferExternalOES::createExternalO
 }
 #endif // USE(GSTREAMER) && USE(GBM)
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferExternalOES::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     waitForContentsIfNeeded();
@@ -206,7 +210,8 @@ void CoordinatedPlatformLayerBufferExternalOES::paintToTextureMapper(TextureMapp
 #endif // USE(GSTREAMER) && USE(GBM)
 }
 
-#if USE(SKIA)
+#else
+
 sk_sp<SkImage> CoordinatedPlatformLayerBufferExternalOES::skiaImage()
 {
     waitForContentsIfNeeded();

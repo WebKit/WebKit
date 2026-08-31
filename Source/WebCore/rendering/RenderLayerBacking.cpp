@@ -3217,12 +3217,6 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath, bool
             if (!GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
                 return true;
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            Ref settings = renderer().settings();
-            if (!settings->useSkiaForComposition())
-                return true;
-#endif
-
             return false;
         };
         if (shouldAddClipPathPaintingPhase())

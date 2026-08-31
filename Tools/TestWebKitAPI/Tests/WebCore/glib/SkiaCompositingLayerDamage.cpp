@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(DAMAGE_TRACKING) && USE(SKIA)
+#if ENABLE(DAMAGE_TRACKING) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/Damage.h>
@@ -402,4 +402,4 @@ TEST(SkiaCompositingLayerDamage, ReplicatedLayerIsDamagedWithItsReplica)
 
 } // namespace TestWebKitAPI
 
-#endif // (PLATFORM(GTK) || PLATFORM(WPE)) && USE(COORDINATED_GRAPHICS) && USE(SKIA) && ENABLE(DAMAGE_TRACKING)
+#endif // ENABLE(DAMAGE_TRACKING) && USE(SKIA) && !USE(TEXTURE_MAPPER)

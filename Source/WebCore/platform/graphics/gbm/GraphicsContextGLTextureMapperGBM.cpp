@@ -232,16 +232,16 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
     if (contextAttributes().alpha)
         flags.add(TextureMapperFlags::ShouldBlend);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
-#if USE(SKIA)
-    if (fenceFD)
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext());
-    else
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
-#else
+#if USE(TEXTURE_MAPPER)
     if (fenceFD)
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD));
     else
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence));
+#else
+    if (fenceFD)
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext());
+    else
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
 #endif
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }

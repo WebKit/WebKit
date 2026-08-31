@@ -41,7 +41,6 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SkiaCompositingLayer.h>
 #include <WebCore/SkiaDamageRegion.h>
-#include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TransformationMatrix.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
@@ -56,6 +55,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
+#if USE(TEXTURE_MAPPER)
+#include <WebCore/TextureMapperLayer.h>
 #endif
 
 #if USE(LIBEPOXY)
@@ -78,10 +81,11 @@ Ref<ThreadedCompositor> ThreadedCompositor::create(WebPage& webPage, LayerTreeHo
 ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTreeHost, CoordinatedSceneState& sceneState)
     : m_workQueue(WorkQueue::create("org.webkit.ThreadedCompositor"_s))
     , m_layerTreeHost(&layerTreeHost)
-    , m_useSkia(webPage.corePage()->settings().useSkiaForComposition())
-    , m_surface(AcceleratedSurface::create(webPage, [this] { frameComplete(); }, AcceleratedSurface::RenderingPurpose::Composited, m_useSkia))
+    , m_surface(AcceleratedSurface::create(webPage, [this] { frameComplete(); }, AcceleratedSurface::RenderingPurpose::Composited))
     , m_sceneState(&sceneState)
+#if USE(TEXTURE_MAPPER)
     , m_flipY(!m_surface->shouldPaintMirrored())
+#endif
     , m_renderTimer(m_workQueue->runLoop(), "ThreadedCompositor::RenderTimer"_s, this, &ThreadedCompositor::renderLayerTree)
 {
     ASSERT(RunLoop::isMain());
@@ -92,15 +96,16 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 
     initializeFPSCounter();
 #if ENABLE(DAMAGE_TRACKING)
-    if (m_useSkia) {
-        // The margin TextureMapperDamageVisualizer takes means nothing here, since the overlay fills the
-        // damage as a region, but the same variable enables both so it does not depend on the compositor.
-        if (const auto* showDamageEnvvar = getenv("WEBKIT_SHOW_DAMAGE")) {
-            if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar)); value && *value)
-                m_damage.showAccumulatedDamageOverlay = true;
-        }
-    } else
-        m_damage.visualizer = TextureMapperDamageVisualizer::create();
+#if USE(TEXTURE_MAPPER)
+    m_damage.visualizer = TextureMapperDamageVisualizer::create();
+#else
+    // The margin TextureMapperDamageVisualizer takes means nothing here, since the overlay fills the
+    // damage as a region, but the same variable enables both so it does not depend on the compositor.
+    if (const auto* showDamageEnvvar = getenv("WEBKIT_SHOW_DAMAGE")) {
+        if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar)); value && *value)
+            m_damage.showAccumulatedDamageOverlay = true;
+    }
+#endif
 #endif
 
     updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
@@ -123,13 +128,13 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
 
-        if (m_useSkia) {
-            PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(WTF::move(context));
-            m_threadSafeGrContext = PlatformDisplay::sharedDisplay().skiaGrContext()->threadSafeProxy();
-        } else {
-            m_context = WTF::move(context);
-            m_textureMapper = TextureMapper::create();
-        }
+#if USE(TEXTURE_MAPPER)
+        m_context = WTF::move(context);
+        m_textureMapper = TextureMapper::create();
+#else
+        PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(WTF::move(context));
+        m_threadSafeGrContext = PlatformDisplay::sharedDisplay().skiaGrContext()->threadSafeProxy();
+#endif
     });
 }
 
@@ -154,18 +159,24 @@ void ThreadedCompositor::invalidate()
 
     m_didCompositeRunLoopObserver->invalidate();
     m_workQueue->dispatchSync([this] {
-        if (!m_useSkia && (!m_context || !m_context->makeContextCurrent()))
+#if USE(TEXTURE_MAPPER)
+        if (!m_context || !m_context->makeContextCurrent())
             return;
+#endif
 
         // Update the scene at this point ensures the layers state are correctly propagated.
         flushCompositingState(CompositionReason::RenderingUpdate);
 
         m_sceneState->invalidateCommittedLayers();
+#if USE(TEXTURE_MAPPER)
         m_textureMapper = nullptr;
+#endif
         m_surface->willDestroyGLContext();
+#if USE(TEXTURE_MAPPER)
         m_context = nullptr;
-        if (m_useSkia)
-            PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(nullptr);
+#else
+        PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(nullptr);
+#endif
     });
     m_sceneState = nullptr;
     m_layerTreeHost = nullptr;
@@ -299,7 +310,11 @@ bool ThreadedCompositor::damageUsedForCompositing() const
 {
     // Only the Skia compositor draws just the damage rects. TextureMapper scissors with the damage
     // bounds, which needs neither fine-grained records nor swap-chain accumulation.
-    return m_useSkia && m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::UseForCompositing);
+#if USE(TEXTURE_MAPPER)
+    return false;
+#else
+    return m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::UseForCompositing);
+#endif
 }
 
 bool ThreadedCompositor::drawsOverlay() const
@@ -308,10 +323,11 @@ bool ThreadedCompositor::drawsOverlay() const
     // each path only has its own. Both draw over the damage itself, and damaging what they drew would
     // feed their own rects back into what they show next, growing until they cover the surface. So the
     // frame repaints in full instead. The FPS counter has no such loop and damages its own box.
-    if (m_useSkia)
-        return m_damage.showAccumulatedDamageOverlay;
-
+#if USE(TEXTURE_MAPPER)
     return !!m_damage.visualizer;
+#else
+    return m_damage.showAccumulatedDamageOverlay;
+#endif
 }
 
 void ThreadedCompositor::enableFrameDamageNotificationForTesting()
@@ -332,18 +348,20 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
     }
 #endif
 
-    m_sceneState->flushCompositingState(reasons, m_useSkia);
+    m_sceneState->flushCompositingState(reasons);
 }
 
 TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
-    if (m_useSkia)
-        return paintToSkiaCanvas(matrix, size, reasons);
-
+#if USE(TEXTURE_MAPPER)
     paintToTextureMapper(matrix, size, reasons);
     return TargetContents::Valid;
+#else
+    return paintToSkiaCanvas(matrix, size, reasons);
+#endif
 }
 
+#if USE(TEXTURE_MAPPER)
 void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
     FloatRect clipRect(FloatPoint { }, size);
@@ -413,20 +431,9 @@ void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix
         requestComposition(CompositionReason::Animation);
 }
 
+#else
+
 #if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::recordFrameDamage(Damage&& damage)
-{
-    if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-        m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
-
-    // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
-    // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
-    if (damage.isEmpty())
-        return;
-
-    m_surface->setFrameDamage(WTF::move(damage));
-}
-
 static void drawDamageOverlay(SkCanvas& canvas, const Damage& damage, const IntSize& size, SkColor color)
 {
     SkPaint paint;
@@ -448,7 +455,7 @@ TargetContents ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix&
     if (!canvas)
         return TargetContents::Invalid;
 
-    auto& rootLayer = m_sceneState->rootLayer().ensureSkiaTarget();
+    auto& rootLayer = m_sceneState->rootLayer().ensureTarget();
     rootLayer.setTransform(matrix);
 
     // paint() collects this frame's damage into frameDamage, and limits the draw to what this target must
@@ -508,6 +515,22 @@ TargetContents ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix&
 
     return TargetContents::Valid;
 }
+#endif
+
+#if ENABLE(DAMAGE_TRACKING)
+void ThreadedCompositor::recordFrameDamage(Damage&& damage)
+{
+    if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
+        m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
+
+    // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
+    // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
+    if (damage.isEmpty())
+        return;
+
+    m_surface->setFrameDamage(WTF::move(damage));
+}
+#endif
 
 #if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
 static String reasonsToString(const OptionSet<CompositionReason>& reasons)
@@ -559,8 +582,10 @@ void ThreadedCompositor::renderLayerTree()
         m_state.state = State::InProgress;
     }
 
-    if (!m_useSkia && (!m_context || !m_context->makeContextCurrent()))
+#if USE(TEXTURE_MAPPER)
+    if (!m_context || !m_context->makeContextCurrent())
         return;
+#endif
 
     // Retrieve the scene attributes in a thread-safe manner.
     IntSize viewportSize;
@@ -599,10 +624,12 @@ void ThreadedCompositor::renderLayerTree()
 
     WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", reasonsToString(reasons).ascii().data());
 
+#if USE(TEXTURE_MAPPER)
     if (m_context)
         m_context->swapBuffers();
-    else
-        PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
+#else
+    PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
+#endif
 
     m_surface->didRenderFrame(targetContents);
     m_surface->sendFrame();

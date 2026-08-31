@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)
 #include "GraphicsLayer.h"
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerKeyframeValueList.h"
@@ -117,4 +117,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)

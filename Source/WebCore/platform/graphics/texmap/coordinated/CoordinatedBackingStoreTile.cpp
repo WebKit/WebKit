@@ -21,7 +21,7 @@
 #include "config.h"
 #include "CoordinatedBackingStoreTile.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "BitmapTexturePool.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsLayer.h"
@@ -99,13 +99,12 @@ void CoordinatedBackingStoreTile::processPendingUpdates()
             auto& buffer = static_cast<CoordinatedAcceleratedTileBuffer&>(update.buffer.get());
             buffer.serverWait();
 
-            auto texture = buffer.texture();
-            ASSERT(texture);
+            Ref texture = buffer.texture();
             // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
             if (update.sourceRect.size() == update.tileRect.size()) {
                 ASSERT(update.sourceRect.location().isZero());
                 if (m_texture)
-                    m_texture->swapTexture(*texture);
+                    m_texture->swapTexture(texture);
                 else
                     m_texture = WTF::move(texture);
             } else {
@@ -133,4 +132,4 @@ void CoordinatedBackingStoreTile::processPendingUpdates()
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

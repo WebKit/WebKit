@@ -62,7 +62,11 @@ bool GraphicsLayer::supportsLayerType(Type type)
     case Type::TiledBacking:
         return true;
     case Type::Shape:
+#if USE(TEXTURE_MAPPER)
+        return false;
+#else
         return true;
+#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -436,7 +440,7 @@ void GraphicsLayerCoordinated::setContentsDisplayDelegate(RefPtr<GraphicsLayerCo
 
     EnumSet<Change> change = { Change::ContentsBuffer };
     if (m_contentsDisplayDelegate) {
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
         m_contentsDisplayDelegate->setThreadSafeGrContext(m_platformLayer->threadSafeGrContext());
 #endif
         if (m_contentsBufferProxy) {
@@ -455,7 +459,7 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCoordinated::crea
         return existing;
     }
     auto delegate = GraphicsLayerAsyncContentsDisplayDelegateCoordinated::create(*this);
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
     delegate->setThreadSafeGrContext(m_platformLayer->threadSafeGrContext());
 #endif
     return delegate;

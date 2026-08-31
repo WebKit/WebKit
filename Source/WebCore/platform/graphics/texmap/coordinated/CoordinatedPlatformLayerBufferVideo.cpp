@@ -33,7 +33,10 @@
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "CoordinatedPlatformLayerBufferYUV.h"
 #include "GraphicsTypesGL.h"
+
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
+#endif
 
 #if USE(GSTREAMER_GL)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
@@ -165,7 +168,12 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
     auto dmabuf = m_videoFrame->getDMABuf();
     RELEASE_ASSERT(dmabuf);
+#if USE(TEXTURE_MAPPER)
+    UNUSED_PARAM(threadSafeGrContext);
+    return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr);
+#else
     return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr, threadSafeGrContext);
+#endif
 }
 #endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
 
@@ -300,6 +308,7 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
     m_mappedVideoFrame = std::nullopt;
 }
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     createBufferFromMappedFrameIfNeeded();
@@ -308,7 +317,8 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
         m_buffer->paintToTextureMapper(textureMapper, targetRect, modelViewMatrix, opacity);
 }
 
-#if USE(SKIA)
+#else
+
 sk_sp<SkImage> CoordinatedPlatformLayerBufferVideo::skiaImage()
 {
     createBufferFromMappedFrameIfNeeded();

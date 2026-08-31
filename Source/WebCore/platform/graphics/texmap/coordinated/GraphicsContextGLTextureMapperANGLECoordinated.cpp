@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContextGLTextureMapperANGLE.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
+#if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
 #include <epoxy/gl.h>
 
 namespace WebCore {
@@ -51,4 +51,4 @@ GCGLuint GraphicsContextGLTextureMapperANGLE::setupCurrentTexture()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
+#endif // ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)

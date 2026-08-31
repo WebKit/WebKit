@@ -128,7 +128,7 @@ void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTextur
 }
 #endif
 
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
 sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayerBufferProxy::threadSafeGrContext() const
 {
     RefPtr layer = m_layer;

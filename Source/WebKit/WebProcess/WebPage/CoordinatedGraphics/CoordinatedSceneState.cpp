@@ -125,21 +125,21 @@ void CoordinatedSceneState::commitPendingLayers()
         m_committedLayers = WTF::move(m_pendingLayers);
 }
 
-void CoordinatedSceneState::flushCompositingState(const OptionSet<CompositionReason>& reasons, bool useSkia)
+void CoordinatedSceneState::flushCompositingState(const OptionSet<CompositionReason>& reasons)
 {
     commitPendingLayers();
 
     {
         Locker stateLock { m_stateLock };
-        m_rootLayer->flushPositionChanges(reasons, useSkia);
+        m_rootLayer->flushPositionChanges(reasons);
         for (auto& layer : m_committedLayers)
-            layer->flushPositionChanges(reasons, useSkia);
+            layer->flushPositionChanges(reasons);
     }
 
     Vector<Ref<CoordinatedPlatformLayer>, 16> layersWithPendingTileUpdates;
-    m_rootLayer->flushCompositingState(reasons, useSkia);
+    m_rootLayer->flushCompositingState(reasons);
     for (auto& layer : m_committedLayers) {
-        layer->flushCompositingState(reasons, useSkia);
+        layer->flushCompositingState(reasons);
         if (layer->hasPendingBackingStoreTileUpdates())
             layersWithPendingTileUpdates.append(Ref { layer });
     }

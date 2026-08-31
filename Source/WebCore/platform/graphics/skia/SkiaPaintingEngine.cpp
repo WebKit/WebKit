@@ -73,12 +73,14 @@ static bool canPerformAcceleratedRendering()
 SkiaPaintingEngine::SkiaPaintingEngine(sk_sp<GrContextThreadSafeProxy>&& threadSafeGrContext)
     : m_threadSafeGrContext(WTF::move(threadSafeGrContext))
 {
-    if (canPerformAcceleratedRendering() && !m_threadSafeGrContext) {
+#if USE(TEXTURE_MAPPER)
+    if (canPerformAcceleratedRendering()) {
         if (auto numberOfGPUThreads = numberOfGPUPaintingThreads())
             m_paintingWorkerPool = WorkerPool::create("SkiaGPUWorker"_s, numberOfGPUThreads);
 
         return;
     }
+#endif
 
     if (auto numberOfCPUThreads = numberOfCPUPaintingThreads())
         m_paintingWorkerPool = WorkerPool::create("SkiaCPUWorker"_s, numberOfCPUThreads);
@@ -113,9 +115,7 @@ void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, Gr
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode renderingMode, const IntSize& size, bool contentsOpaque) const
 {
     if (renderingMode == RenderingMode::Accelerated) {
-        if (m_threadSafeGrContext)
-            return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
-
+#if USE(TEXTURE_MAPPER)
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
 
         OptionSet<BitmapTexture::Flags> textureFlags;
@@ -123,6 +123,10 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode render
             textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
 
         return CoordinatedAcceleratedTileBuffer::create(BitmapTexturePool::singleton().acquireTexture(size, textureFlags));
+#else
+        ASSERT(m_threadSafeGrContext);
+        return CoordinatedAcceleratedTileBuffer::create(m_threadSafeGrContext, size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
+#endif
     }
 
     return CoordinatedUnacceleratedTileBuffer::create(size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
@@ -250,7 +254,11 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
     platformLayer->willPaintTile();
 
     auto renderingMode = recording->renderingMode();
-    auto bufferSize = renderingMode == RenderingMode::Accelerated && m_threadSafeGrContext ? tileRect.size() : dirtyRect.size();
+#if USE(TEXTURE_MAPPER)
+    auto bufferSize = dirtyRect.size();
+#else
+    auto bufferSize = renderingMode == RenderingMode::Accelerated ? tileRect.size() : dirtyRect.size();
+#endif
     auto buffer = createBuffer(renderingMode, bufferSize, recording->contentsOpaque());
     buffer->beginPainting();
 
@@ -270,10 +278,16 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
                 canvas->restore();
             };
 
-            const bool isDDLBuffer = buffer->isBackedByOpenGL() && !static_cast<CoordinatedAcceleratedTileBuffer&>(buffer.get()).texture();
+#if USE(TEXTURE_MAPPER)
+            const bool isDDLBuffer = false;
+            const bool needsReplayCanvas = recording->hasFences() || recording->hasGPUAtlases();
+#else
+            const bool isDDLBuffer = buffer->isBackedByOpenGL();
+            const bool needsReplayCanvas = recording->hasGPUAtlases();
+#endif
             WTFBeginSignpost(canvas, PaintTile, "Skia/%s%s threaded, dirty region %ix%i+%i+%i", buffer->isBackedByOpenGL() ? "GPU" : "CPU", isDDLBuffer ? "(DDL)" : "", dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
             // Use SkiaReplayCanvas if there are GPU fences or GPU atlases to handle.
-            if (recording->hasFences() || recording->hasGPUAtlases()) {
+            if (needsReplayCanvas) {
                 auto replayCanvas = SkiaReplayCanvas::create(tileRect.size(), recording, threadSafeGrContext);
                 replayCanvas->addCanvas(canvas);
                 replayPicture(replayCanvas->picture(), &replayCanvas.get(), recording->recordRect(), tileRect, dirtyRect, isDDLBuffer);
@@ -310,6 +324,7 @@ unsigned SkiaPaintingEngine::numberOfCPUPaintingThreads()
     return numberOfThreads;
 }
 
+#if USE(TEXTURE_MAPPER)
 unsigned SkiaPaintingEngine::numberOfGPUPaintingThreads()
 {
     static std::once_flag onceFlag;
@@ -330,6 +345,7 @@ unsigned SkiaPaintingEngine::numberOfGPUPaintingThreads()
 
     return numberOfThreads;
 }
+#endif
 
 bool SkiaPaintingEngine::shouldUseDMABufAtlasTextures()
 {

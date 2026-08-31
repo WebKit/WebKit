@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TextureMapperAnimation.h"
 
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)
 
 #include "AnimationUtilities.h"
 #include "GraphicsLayerAnimationValue.h"
@@ -456,4 +456,4 @@ bool TextureMapperAnimations::hasRunningTransformAnimations() const
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)

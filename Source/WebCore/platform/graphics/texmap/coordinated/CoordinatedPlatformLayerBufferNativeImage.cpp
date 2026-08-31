@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "NativeImage.h"
@@ -100,7 +100,7 @@ CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNative
 #endif
 }
 
-bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(UseSkiaForCompositing useSkiaForCompositing)
+bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer()
 {
     if (m_buffer)
         return true;
@@ -125,28 +125,13 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(UseSkiaForCompos
     auto surface = m_image->platformImage();
     auto* imageData = cairo_image_surface_get_data(surface.get());
     texture->updateContents(imageData, IntRect(IntPoint(), m_size), IntPoint(), cairo_image_surface_get_stride(surface.get()), PixelFormat::BGRA8);
-    UNUSED_PARAM(useSkiaForCompositing);
 #elif USE(SKIA)
     const auto& image = m_image->platformImage();
     SkPixmap pixmap;
     if (!image->peekPixels(&pixmap))
         return false;
 
-    if (useSkiaForCompositing == UseSkiaForCompositing::Yes) {
-        auto& display = PlatformDisplay::sharedDisplay();
-        GLContext::ScopedGLContextCurrent scopedCurrent(*display.skiaGLContext());
-        GrGLTextureInfo externalTexture;
-        externalTexture.fTarget = GL_TEXTURE_2D;
-        externalTexture.fID = texture->id();
-        externalTexture.fFormat = image->imageInfo().colorType() == kRGBA_8888_SkColorType ? GL_RGBA8 : GL_BGRA8_EXT;
-        auto backendTexture = GrBackendTextures::MakeGL(texture->size().width(), texture->size().height(), skgpu::Mipmapped::kNo, externalTexture);
-        auto surface = SkSurfaces::WrapBackendTexture(display.skiaGrContext(), backendTexture, kTopLeft_GrSurfaceOrigin, 0, image->imageInfo().colorType(), SkColorSpace::MakeSRGB(), nullptr);
-        if (!surface)
-            return false;
-
-        surface->writePixels(pixmap, 0, 0);
-    } else
-        texture->updateContents(pixmap.addr(), IntRect(IntPoint(), m_size), IntPoint(), image->imageInfo().minRowBytes(), PixelFormat::BGRA8);
+    texture->updateContents(pixmap.addr(), IntRect(IntPoint(), m_size), IntPoint(), image->imageInfo().minRowBytes(), PixelFormat::BGRA8);
 #endif
 
     m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
@@ -163,18 +148,6 @@ void CoordinatedPlatformLayerBufferNativeImage::paintToTextureMapper(TextureMapp
     m_buffer->paintToTextureMapper(textureMapper, targetRect, modelViewMatrix, opacity);
 }
 
-#if USE(SKIA)
-sk_sp<SkImage> CoordinatedPlatformLayerBufferNativeImage::skiaImage()
-{
-    waitForContentsIfNeeded();
-
-    if (!tryEnsureBuffer(UseSkiaForCompositing::Yes))
-        return nullptr;
-
-    return m_buffer->skiaImage();
-}
-#endif
-
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

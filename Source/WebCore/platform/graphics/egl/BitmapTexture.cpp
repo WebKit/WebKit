@@ -23,16 +23,19 @@
 #include "BitmapTexture.h"
 
 #include "GLContext.h"
-#include "GraphicsContext.h"
-#include "GraphicsLayer.h"
-#include "ImageBuffer.h"
-#include "NativeImage.h"
 #include "PlatformDisplay.h"
 #include "TextureMapperFlags.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
+#endif
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
@@ -229,23 +232,17 @@ BitmapTexture::BitmapTexture(EGLImage image, const IntSize& size, OptionSet<Flag
 }
 #endif
 
-void BitmapTexture::swapTexture(BitmapTexture& other)
+BitmapTexture::~BitmapTexture()
 {
-    RELEASE_ASSERT(m_size == other.m_size);
+    glDeleteTextures(1, &m_id);
 
-#if USE(GBM)
-    std::swap(m_memoryMappedGPUBuffer, other.m_memoryMappedGPUBuffer);
+#if USE(TEXTURE_MAPPER)
+    if (m_fbo)
+        glDeleteFramebuffers(1, &m_fbo);
+
+    if (m_stencilBufferObject)
+        glDeleteRenderbuffers(1, &m_stencilBufferObject);
 #endif
-    std::swap(m_flags, other.m_flags);
-    std::swap(m_id, other.m_id);
-
-    determineRenderTargetAndBinding();
-    other.determineRenderTargetAndBinding();
-
-    // Take the pixel format from the source texture. The source texture
-    // (going back to the pool) is reset to the default pixel format.
-    m_pixelFormat = other.m_pixelFormat;
-    other.m_pixelFormat = PixelFormat::RGBA8;
 }
 
 void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
@@ -256,8 +253,10 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
 #endif
 
     m_flags = flags;
-    m_shouldClear = true;
     m_pixelFormat = flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
+
+#if USE(TEXTURE_MAPPER)
+    m_shouldClear = true;
     m_filterOperation = nullptr;
 
     if (m_fbo) {
@@ -272,6 +271,7 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
 
     m_stencilBound = false;
     m_clipStack = { };
+#endif
 
     if (m_size == size)
         return;
@@ -378,6 +378,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     glBindTexture(m_renderTarget, boundTexture);
 }
 
+#if USE(TEXTURE_MAPPER)
 void BitmapTexture::updateContents(NativeImage* frameImage, const IntRect& targetRect, const IntPoint& offset)
 {
     if (!frameImage)
@@ -424,6 +425,75 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
         return;
 
     updateContents(image.get(), targetRect, IntPoint());
+}
+#endif
+
+void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset)
+{
+    RELEASE_ASSERT(sourceOffset.width() + targetRect.width() <= m_size.width());
+    RELEASE_ASSERT(sourceOffset.height() + targetRect.height() <= m_size.height());
+
+    if (m_pixelFormat != PixelFormat::RGBA8) {
+        // Only allow pixel format changes, if the whole texture content changes.
+        ASSERT(targetRect.size() == m_size);
+        ASSERT(targetRect.location().isZero());
+        m_pixelFormat = PixelFormat::RGBA8;
+    }
+
+    GLint boundFramebuffer = 0;
+    GLint boundActiveTexture = 0;
+    GLint boundTextureOnOriginalUnit = 0;
+
+    determineRenderTargetAndBinding();
+
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &boundActiveTexture);
+    glGetIntegerv(m_binding, &boundTextureOnOriginalUnit);
+
+    glBindTexture(m_renderTarget, sourceTextureID);
+
+    GLuint copyFbo = 0;
+    glGenFramebuffers(1, &copyFbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, copyFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderTarget, sourceTextureID, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    // Save GL_TEXTURE0's binding separately when switching away from a different unit.
+    GLint boundTextureOnUnit0 = 0;
+    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
+        glGetIntegerv(m_binding, &boundTextureOnUnit0);
+
+    glBindTexture(m_renderTarget, id());
+    glCopyTexSubImage2D(m_renderTarget, 0, targetRect.x(), targetRect.y(), sourceOffset.width(), sourceOffset.height(), targetRect.width(), targetRect.height());
+
+    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
+        glBindTexture(m_renderTarget, boundTextureOnUnit0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
+    glActiveTexture(boundActiveTexture);
+    glBindTexture(m_renderTarget, boundTextureOnOriginalUnit);
+    glDeleteFramebuffers(1, &copyFbo);
+}
+
+#if USE(TEXTURE_MAPPER)
+void BitmapTexture::swapTexture(BitmapTexture& other)
+{
+    RELEASE_ASSERT(m_size == other.m_size);
+
+#if USE(GBM)
+    std::swap(m_memoryMappedGPUBuffer, other.m_memoryMappedGPUBuffer);
+#endif
+    std::swap(m_flags, other.m_flags);
+    std::swap(m_id, other.m_id);
+
+    determineRenderTargetAndBinding();
+    other.determineRenderTargetAndBinding();
+
+    // Take the pixel format from the source texture. The source texture
+    // (going back to the pool) is reset to the default pixel format.
+    m_pixelFormat = other.m_pixelFormat;
+    other.m_pixelFormat = PixelFormat::RGBA8;
 }
 
 void BitmapTexture::initializeStencil()
@@ -474,65 +544,6 @@ void BitmapTexture::bindAsSurface()
     m_clipStack.apply();
 }
 
-BitmapTexture::~BitmapTexture()
-{
-    glDeleteTextures(1, &m_id);
-
-    if (m_fbo)
-        glDeleteFramebuffers(1, &m_fbo);
-
-    if (m_stencilBufferObject)
-        glDeleteRenderbuffers(1, &m_stencilBufferObject);
-}
-
-void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset)
-{
-    RELEASE_ASSERT(sourceOffset.width() + targetRect.width() <= m_size.width());
-    RELEASE_ASSERT(sourceOffset.height() + targetRect.height() <= m_size.height());
-
-    if (m_pixelFormat != PixelFormat::RGBA8) {
-        // Only allow pixel format changes, if the whole texture content changes.
-        ASSERT(targetRect.size() == m_size);
-        ASSERT(targetRect.location().isZero());
-        m_pixelFormat = PixelFormat::RGBA8;
-    }
-
-    GLint boundFramebuffer = 0;
-    GLint boundActiveTexture = 0;
-    GLint boundTextureOnOriginalUnit = 0;
-
-    determineRenderTargetAndBinding();
-
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &boundActiveTexture);
-    glGetIntegerv(m_binding, &boundTextureOnOriginalUnit);
-
-    glBindTexture(m_renderTarget, sourceTextureID);
-
-    GLuint copyFbo = 0;
-    glGenFramebuffers(1, &copyFbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, copyFbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderTarget, sourceTextureID, 0);
-
-    glActiveTexture(GL_TEXTURE0);
-
-    // Save GL_TEXTURE0's binding separately when switching away from a different unit.
-    GLint boundTextureOnUnit0 = 0;
-    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
-        glGetIntegerv(m_binding, &boundTextureOnUnit0);
-
-    glBindTexture(m_renderTarget, id());
-    glCopyTexSubImage2D(m_renderTarget, 0, targetRect.x(), targetRect.y(), sourceOffset.width(), sourceOffset.height(), targetRect.width(), targetRect.height());
-
-    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
-        glBindTexture(m_renderTarget, boundTextureOnUnit0);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
-    glActiveTexture(boundActiveTexture);
-    glBindTexture(m_renderTarget, boundTextureOnOriginalUnit);
-    glDeleteFramebuffers(1, &copyFbo);
-}
-
 OptionSet<TextureMapperFlags> BitmapTexture::colorConvertFlags() const
 {
     if (m_pixelFormat == PixelFormat::RGBA8)
@@ -546,6 +557,7 @@ OptionSet<TextureMapperFlags> BitmapTexture::colorConvertFlags() const
     // the color conversion on-the-fly, when painting the texture.
     return TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
 }
+#endif
 
 #if USE(SKIA)
 GrBackendTexture BitmapTexture::createSkiaBackendTexture() const

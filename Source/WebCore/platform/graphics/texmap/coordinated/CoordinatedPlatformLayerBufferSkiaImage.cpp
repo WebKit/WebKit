@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "PlatformDisplay.h"
 #include "SkiaUtilities.h"
 
@@ -47,11 +47,6 @@ CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage
 {
 }
 
-void CoordinatedPlatformLayerBufferSkiaImage::paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)

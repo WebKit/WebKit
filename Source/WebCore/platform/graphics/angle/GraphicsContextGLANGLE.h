@@ -447,7 +447,7 @@ protected:
     GCGLContext m_contextObj { nullptr };
     GCGLContext m_angleSharingContextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)
     GCEGLSurface m_surfaceObj { nullptr };
 #endif
     GCGLint m_packAlignment { 4 };

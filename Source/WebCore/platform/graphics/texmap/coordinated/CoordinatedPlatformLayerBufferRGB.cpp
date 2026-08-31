@@ -30,7 +30,16 @@
 #include "BitmapTexture.h"
 #include "ColorMatrix.h"
 #include "PlatformDisplay.h"
+
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
+#else
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES3/gl3.h>
+#endif
+#endif
 
 #if USE(SKIA)
 #include "ColorSpaceSkia.h"
@@ -75,6 +84,7 @@ unsigned CoordinatedPlatformLayerBufferRGB::textureID() const
     return m_texture ? m_texture->id() : m_textureID;
 }
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferRGB::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     waitForContentsIfNeeded();
@@ -85,12 +95,13 @@ void CoordinatedPlatformLayerBufferRGB::paintToTextureMapper(TextureMapper& text
         textureMapper.drawTexture(m_textureID, m_flags, targetRect, modelViewMatrix, opacity);
 }
 
-#if USE(SKIA)
+#else
+
 sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
 {
     waitForContentsIfNeeded();
 
-    ASSERT(!m_texture || !m_texture->colorConvertFlags().contains(TextureMapperFlags::ShouldConvertTextureBGRAToRGBA));
+    ASSERT(!m_texture || !m_texture->flags().contains(BitmapTexture::Flags::UseBGRALayout));
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     ASSERT(grContext);

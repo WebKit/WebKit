@@ -31,7 +31,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -60,7 +60,7 @@ public:
     void dropCurrentBufferWhilePreservingTexture(ShouldWait);
 #endif
 
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
     sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const;
 #endif
 

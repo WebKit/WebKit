@@ -46,9 +46,9 @@ public:
     const RefPtr<BitmapTexture>& texture(size_t index) const { RELEASE_ASSERT(index < m_planeCount); return m_textures[index]; }
 
 private:
+#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-
-#if USE(SKIA)
+#else
     sk_sp<SkImage> skiaImage() override;
 #endif
 

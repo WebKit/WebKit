@@ -106,7 +106,7 @@ public:
         NonComposited,
     };
 
-    static Ref<AcceleratedSurface> create(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose, bool useSkia);
+    static Ref<AcceleratedSurface> create(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose);
     ~AcceleratedSurface();
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
@@ -167,7 +167,7 @@ public:
     void backgroundColorDidChange();
 
 private:
-    AcceleratedSurface(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose, bool useSkia);
+    AcceleratedSurface(WebPage&, Function<void()>&& frameCompleteHandler, RenderingPurpose);
 
     RenderingPurpose renderingPurpose() const { return m_renderingPurpose; }
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)

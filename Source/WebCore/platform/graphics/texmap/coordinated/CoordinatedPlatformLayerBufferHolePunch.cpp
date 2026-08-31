@@ -28,7 +28,10 @@
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO)
 #include "IntRect.h"
+
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
+#endif
 
 #if USE(GSTREAMER)
 #include "GStreamerQuirks.h"
@@ -71,6 +74,7 @@ void CoordinatedPlatformLayerBufferHolePunch::setHolePunchVideoRectangle(const I
 }
 #endif
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferHolePunch::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float)
 {
 #if USE(GSTREAMER)
@@ -79,6 +83,7 @@ void CoordinatedPlatformLayerBufferHolePunch::paintToTextureMapper(TextureMapper
 #endif
     textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
 }
+#endif
 
 } // namespace WebCore
 

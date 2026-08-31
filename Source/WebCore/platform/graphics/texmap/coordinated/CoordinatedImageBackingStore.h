@@ -28,7 +28,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -41,8 +41,9 @@ class NativeImage;
 
 class CoordinatedImageBackingStore final : public ThreadSafeRefCounted<CoordinatedImageBackingStore> {
 public:
+#if USE(TEXTURE_MAPPER)
     static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&);
-#if USE(SKIA)
+#else
     static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
     ~CoordinatedImageBackingStore();
@@ -51,8 +52,9 @@ public:
     CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
 
 private:
+#if USE(TEXTURE_MAPPER)
     explicit CoordinatedImageBackingStore(Ref<NativeImage>&&);
-#if USE(SKIA)
+#else
     CoordinatedImageBackingStore(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
 

@@ -50,9 +50,9 @@ public:
     virtual ~CoordinatedPlatformLayerBufferExternalOES();
 
 private:
+#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-
-#if USE(SKIA)
+#else
     sk_sp<SkImage> skiaImage() override;
 #endif
 

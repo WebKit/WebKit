@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)
 
 namespace WebCore {
 
@@ -45,4 +45,4 @@ enum class TextureMapperFlags : uint16_t {
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)

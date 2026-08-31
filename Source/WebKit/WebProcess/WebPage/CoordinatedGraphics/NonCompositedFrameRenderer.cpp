@@ -56,7 +56,7 @@ NonCompositedFrameRenderer::NonCompositedFrameRenderer(WebPage& webPage)
     : m_webPage(webPage)
     , m_surface(AcceleratedSurface::create(m_webPage, [this] {
         frameComplete();
-    }, AcceleratedSurface::RenderingPurpose::NonComposited, true))
+    }, AcceleratedSurface::RenderingPurpose::NonComposited))
 {
 #if ENABLE(DAMAGE_TRACKING)
     resetFrameDamage();

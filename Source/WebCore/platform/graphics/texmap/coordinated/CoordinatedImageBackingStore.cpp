@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+#if USE(TEXTURE_MAPPER)
 Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
 {
     return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage)));
@@ -44,11 +45,10 @@ CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& na
 {
 }
 
-#if USE(SKIA)
+#else
+
 Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
-    if (!threadSafeGrContext)
-        return CoordinatedImageBackingStore::create(WTF::move(nativeImage));
     return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage), threadSafeGrContext));
 }
 

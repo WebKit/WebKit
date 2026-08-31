@@ -126,7 +126,7 @@
 #include "CoordinatedPlatformLayerBufferHolePunch.h"
 #include "CoordinatedPlatformLayerBufferProxy.h"
 #include "CoordinatedPlatformLayerBufferVideo.h"
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(COORDINATED_GRAPHICS)
 
 #if USE(EXTERNAL_HOLEPUNCH)
 #include "MediaPlayerPrivateHolePunch.h"
@@ -3761,9 +3761,7 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
     if (gstObjectHasProperty(decoder, "max-errors"_s))
         g_object_set(decoder, "max-errors", 0, nullptr);
 
-#if USE(TEXTURE_MAPPER)
     updateTextureMapperFlags();
-#endif
 
     setupCodecProbe(decoder);
 
@@ -3883,7 +3881,11 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDu
     options.info = m_videoInfo;
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample, options);
 
+#if USE(TEXTURE_MAPPER)
+    auto buffer = CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags, nullptr);
+#else
     auto buffer = CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags, proxy->threadSafeGrContext());
+#endif
     if (isInitialBuffer == IsInitialBuffer::Yes)
         proxy->setInitialDisplayBuffer(WTF::move(buffer));
     else
@@ -4331,13 +4333,11 @@ bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation ori
         return false;
 
     m_videoSourceOrientation = orientation;
-#if USE(TEXTURE_MAPPER)
     updateTextureMapperFlags();
-#endif
+
     return true;
 }
 
-#if USE(TEXTURE_MAPPER)
 void MediaPlayerPrivateGStreamer::updateTextureMapperFlags()
 {
     switch (m_videoSourceOrientation.orientation()) {
@@ -4362,7 +4362,6 @@ void MediaPlayerPrivateGStreamer::updateTextureMapperFlags()
         break;
     }
 }
-#endif
 
 bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 {

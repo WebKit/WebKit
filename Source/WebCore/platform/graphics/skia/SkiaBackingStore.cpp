@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SkiaBackingStore.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "BitmapTexturePool.h"
 #include "CoordinatedTileBuffer.h"
 #include "FontRenderOptions.h"
@@ -235,8 +235,6 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
 
     if (buffer.isBackedByOpenGL()) {
         auto& acceleratedBuffer = static_cast<CoordinatedAcceleratedTileBuffer&>(buffer);
-        acceleratedBuffer.serverWait();
-
         if (auto displayList = acceleratedBuffer.displayList()) {
             ASSERT(!m_texture);
             ASSERT(!m_cachedImage);
@@ -311,4 +309,4 @@ SkRect SkiaBackingStore::Tile::imageSourceRect() const
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)

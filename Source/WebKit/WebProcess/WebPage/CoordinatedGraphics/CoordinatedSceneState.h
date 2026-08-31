@@ -55,7 +55,7 @@ public:
 
     bool flush();
     void flushPendingState();
-    void flushCompositingState(const OptionSet<WebCore::CompositionReason>&, bool useSkia);
+    void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void invalidate();
 
     void invalidateCommittedLayers();

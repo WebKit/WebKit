@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TextureMapperDamageVisualizer.h"
 
-#if ENABLE(DAMAGE_TRACKING)
+#if USE(TEXTURE_MAPPER) && ENABLE(DAMAGE_TRACKING)
 #include "Damage.h"
 #include "TextureMapper.h"
 #include <wtf/text/StringToIntegerConversion.h>
@@ -58,4 +58,4 @@ void TextureMapperDamageVisualizer::paintDamage(TextureMapper& textureMapper, co
 
 } // namespace WebCore
 
-#endif // ENABLE(DAMAGE_TRACKING)
+#endif // USE(TEXTURE_MAPPER) && ENABLE(DAMAGE_TRACKING)

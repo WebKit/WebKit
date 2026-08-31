@@ -145,17 +145,26 @@ private:
 #if USE(SKIA)
 class CoordinatedAcceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
+#if USE(TEXTURE_MAPPER)
     WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(Ref<BitmapTexture>&&);
+#else
     WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags);
+#endif
     WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
-    RefPtr<BitmapTexture> texture() const { return m_texture; }
-    sk_sp<GrDeferredDisplayList> displayList() const { return m_displayList; }
+#if USE(TEXTURE_MAPPER)
+    Ref<BitmapTexture> texture() const { return m_texture; }
     void serverWait();
+#else
+    sk_sp<GrDeferredDisplayList> displayList() const { return m_displayList; }
+#endif
 
 private:
+#if USE(TEXTURE_MAPPER)
     CoordinatedAcceleratedTileBuffer(Ref<BitmapTexture>&&, Flags);
+#else
     CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&&, Flags);
+#endif
 
     bool isBackedByOpenGL() const final { return true; }
     IntSize size() const final;
@@ -164,13 +173,16 @@ private:
     SkCanvas* canvas() final;
     void completePainting() final;
 
-    RefPtr<BitmapTexture> m_texture;
+#if USE(TEXTURE_MAPPER)
+    Ref<BitmapTexture> m_texture;
     std::unique_ptr<GLFence> m_fence;
+#else
     GrSurfaceCharacterization m_characterization;
     std::optional<GrDeferredDisplayListRecorder> m_recorder;
     sk_sp<GrDeferredDisplayList> m_displayList;
-};
 #endif
+};
+#endif // USE(SKIA)
 
 } // namespace WebCore
 

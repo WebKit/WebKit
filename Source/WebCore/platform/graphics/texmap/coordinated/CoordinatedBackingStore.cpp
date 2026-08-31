@@ -20,7 +20,7 @@
 #include "config.h"
 #include "CoordinatedBackingStore.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "BitmapTexture.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsLayer.h"
@@ -125,4 +125,4 @@ void CoordinatedBackingStore::drawRepaintCounter(TextureMapper& textureMapper, i
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

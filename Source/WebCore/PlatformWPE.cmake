@@ -1,13 +1,17 @@
 include(platform/Adwaita.cmake)
+include(platform/CoordinatedGraphics.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Skia.cmake)
 include(platform/Soup.cmake)
-include(platform/TextureMapper.cmake)
 
 if (USE_EXTERNAL_HOLEPUNCH)
     include(platform/HolePunch.cmake)
+endif ()
+
+if (USE_TEXTURE_MAPPER)
+    include(platform/TextureMapper.cmake)
 endif ()
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES

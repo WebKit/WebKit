@@ -58,7 +58,9 @@ public:
     static std::unique_ptr<SkiaPaintingEngine> create(sk_sp<GrContextThreadSafeProxy>&&);
 
     static unsigned numberOfCPUPaintingThreads();
+#if USE(TEXTURE_MAPPER)
     static unsigned numberOfGPUPaintingThreads();
+#endif
     static bool shouldUseDMABufAtlasTextures();
     static bool shouldUseLinearTileTextures();
     static bool shouldUseVivanteSuperTiledTileTextures();

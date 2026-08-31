@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DAMAGE_TRACKING)
+#if USE(TEXTURE_MAPPER) && ENABLE(DAMAGE_TRACKING)
 #include "FloatRect.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DAMAGE_TRACKING)
+#endif // USE(TEXTURE_MAPPER) && ENABLE(DAMAGE_TRACKING)

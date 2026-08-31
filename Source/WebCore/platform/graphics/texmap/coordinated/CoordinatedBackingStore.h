@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "CoordinatedBackingStoreTile.h"
 #include "TextureMapperBackingStore.h"
 #include <wtf/HashMap.h>
@@ -62,4 +62,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

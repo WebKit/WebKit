@@ -218,7 +218,9 @@ void ImageBufferSkiaAcceleratedBackend::replayCanvasRecordingContextIfNeeded()
     auto* surfaceCanvas = m_surface->getCanvas();
     auto surfaceSaveCount = surfaceCanvas->getSaveCount();
 
+#if USE(TEXTURE_MAPPER)
     ASSERT(!recording->hasFences());
+#endif
     recording->picture()->playback(surfaceCanvas);
 
     // Undo unbalanced saves from the picture playback on the surface canvas.
@@ -266,12 +268,13 @@ void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 
     ASSERT(grContext == PlatformDisplay::sharedDisplay().skiaGrContext());
 
+#if USE(TEXTURE_MAPPER)
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(),
+        SkiaUtilities::flushAndSubmitSurfaceWithFence(grContext, m_surface.get())));
+#else
     if (auto threadSafeGrContext = m_layerContentsDisplayDelegate->threadSafeGrContext())
         m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), threadSafeGrContext));
-    else {
-        m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(),
-            SkiaUtilities::flushAndSubmitSurfaceWithFence(grContext, m_surface.get())));
-    }
+#endif
 
     // Re-enable recording mode for subsequent drawing operations.
     // This allows batching to occur again after each prepareForDisplay() cycle.
