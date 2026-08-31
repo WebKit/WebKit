@@ -105,12 +105,12 @@ ExceptionOr<void> CSSPageDescriptors::setMarginLeft(const String& value)
 // @page 'size'
 String CSSPageDescriptors::size() const
 {
-    return getPropertyValueInternal(CSSPropertySize);
+    return getPropertyValueInternal(CSSPropertyPageSize);
 }
 
 ExceptionOr<void> CSSPageDescriptors::setSize(const String& value)
 {
-    return setPropertyInternal(CSSPropertySize, value, IsImportant::No);
+    return setPropertyInternal(CSSPropertyPageSize, value, IsImportant::No);
 }
 
 } // namespace WebCore

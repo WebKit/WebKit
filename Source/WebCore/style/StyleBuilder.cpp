@@ -468,7 +468,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         }
     }
 
-    if (id == CSSPropertySize && valueType == ApplyValueType::Value) [[unlikely]] {
+    if (id == CSSPropertyPageSize && valueType == ApplyValueType::Value) [[unlikely]] {
         applyPageSizeDescriptor(valueToApply.get());
         return;
     }

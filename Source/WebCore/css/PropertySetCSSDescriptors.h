@@ -72,6 +72,9 @@ protected:
     bool isExposed(CSSPropertyID) const;
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
 
+    // Maps an author-facing name to its stored id (`size` -> `page-size` within @page).
+    CSSPropertyID resolvePropertyName(const String&) const;
+
     enum class MutationType : uint8_t { NoChanges, StyleAttributeChanged, PropertyChanged };
     [[nodiscard]] bool willMutate();
     void didMutate(MutationType);

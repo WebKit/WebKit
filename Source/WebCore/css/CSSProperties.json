@@ -13978,6 +13978,18 @@
                 "parser-grammar": "<<values>>"
             },
             "status": "non-standard"
+        },
+        "size": {
+            "codegen-properties": {
+                "longhands": ["width", "height"],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'width'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://drafts.csswg.org/css-sizing-4/#sizing-properties"
+            }
         }
     },
     "descriptors": {
@@ -14310,7 +14322,7 @@
             }
         },
         "@page": {
-            "size": {
+            "page-size": {
                 "codegen-properties": {
                     "parser-grammar": "<length [0,inf]>{1,2}@(type=CSSValuePair) | auto | [ <page-size> || [ portrait | landscape ] ]@(type=CSSValuePair)"
                 },

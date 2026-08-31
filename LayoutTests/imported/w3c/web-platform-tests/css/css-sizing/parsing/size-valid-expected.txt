@@ -1,0 +1,12 @@
+
+PASS e.style['size'] = "initial" should set the property value
+PASS e.style['size'] = "inherit" should set the property value
+PASS e.style['size'] = "revert" should set the property value
+PASS e.style['size'] = "revert-layer" should set the property value
+PASS e.style['size'] = "unset" should set the property value
+PASS e.style['size'] = "640px 480px" should set the property value
+PASS e.style['size'] = "8.5in 11in" should set the property value
+PASS e.style['size'] = "3in 10in" should set the property value
+PASS e.style['size'] = "auto" should set the property value
+PASS e.style['size'] = "100px 100px" should set the property value
+

@@ -1,3 +1,23 @@
 
-FAIL CSSPageDescriptors properties tests assert_own_property: CSSPageDescriptors should have property page-orientation expected property "page-orientation" missing
+PASS CSSPageDescriptors exposes "margin"
+FAIL CSSPageDescriptors exposes "page-orientation" assert_own_property: CSSPageDescriptors should have property page-orientation expected property "page-orientation" missing
+PASS CSSPageDescriptors exposes "size"
+PASS CSSPageDescriptors exposes "margin-left"
+PASS CSSPageDescriptors exposes "marginLeft"
+PASS CSSPageDescriptors exposes "margin-right"
+PASS CSSPageDescriptors exposes "marginRight"
+PASS CSSPageDescriptors exposes "margin-top"
+PASS CSSPageDescriptors exposes "marginTop"
+PASS CSSPageDescriptors exposes "margin-bottom"
+PASS CSSPageDescriptors exposes "marginBottom"
+PASS @page size descriptor is parsed and serialized from CSS
+FAIL @page page-orientation descriptor is parsed and serialized from CSS assert_equals: expected (string) "rotate-right" but got (undefined) undefined
+PASS @page size descriptor can be set from script
+FAIL @page page-orientation descriptor can be set from script assert_equals: Value of page-orientation should match pageOrientation after setting from script expected "rotate-left" but got ""
+PASS CSSPageDescriptors does not expose properties that are not @page descriptors
+PASS @page margin descriptor expands to its longhands
+PASS @page margin-left and marginLeft are aliases
+PASS @page margin-right and marginRight are aliases
+PASS @page margin-top and marginTop are aliases
+PASS @page margin-bottom and marginBottom are aliases
 
