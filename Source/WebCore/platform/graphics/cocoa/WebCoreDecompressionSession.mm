@@ -100,7 +100,6 @@ WorkQueue& WebCoreDecompressionSession::queueSingleton()
 
 void WebCoreDecompressionSession::invalidate()
 {
-    assertIsMainThread();
     m_invalidated = true;
     Locker lock { m_lock };
     m_dispatcher->dispatch([decoder = WTF::move(m_videoDecoder)] {
