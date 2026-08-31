@@ -31,7 +31,6 @@
 #if ENABLE(WEBXR_LAYERS)
 
 #include "WebGLOpaqueTexture.h"
-#include "WebXRSession.h"
 #include "WebXRViewport.h"
 #include "XRCompositionLayer.h"
 #include <wtf/TZoneMallocInlines.h>
