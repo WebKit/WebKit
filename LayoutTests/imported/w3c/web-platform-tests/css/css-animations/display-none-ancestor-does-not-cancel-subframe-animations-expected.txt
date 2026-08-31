@@ -1,6 +1,0 @@
-
-
-
-PASS Changing an ancestor's display type does not restart animations inside a subframe
-PASS Hiding and showing an ancestor does not restart animations inside a subframe
-

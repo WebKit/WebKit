@@ -3028,9 +3028,6 @@ bool Document::updateStyleIfNeeded()
     }
 
     resolveStyle();
-
-    updateRenderTreesForDescendantFrames();
-
     return true;
 }
 
@@ -3469,74 +3466,12 @@ bool Document::isInStyleInterleavedLayoutForSelfOrAncestor() const
     return false;
 }
 
-bool Document::ownerElementGeneratesBox() const
-{
-    CheckedPtr ownerElement = this->ownerElement();
-    if (!ownerElement) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    if (ownerElement->renderer())
-        return true;
-
-    if (ownerElement->needsStyleRecalc())
-        return true;
-
-    Ref ownerElementDocument = ownerElement->document();
-
-    if (ownerElementDocument->renderTreeState() != RenderTreeState::Built)
-        return !ownerElementDocument->ownerElement() || ownerElementDocument->ownerElementGeneratesBox();
-
-    return false;
-}
-
-void Document::updateRenderTreeForOwnerElementBox()
-{
-    if (!ownerElement())
-        return;
-
-    auto needsRenderTree = ownerElementGeneratesBox() || printing() || isPluginDocument();
-    if (needsRenderTree && renderTreeState() == RenderTreeState::NotBuilt) {
-        createRenderTree();
-        return;
-    }
-
-    if (!needsRenderTree && renderTreeState() == RenderTreeState::Built)
-        destroyRenderTree(DocumentIsGoingAway::No);
-}
-
-void Document::updateRenderTreesForDescendantFrames()
-{
-    RefPtr frame = m_frame.get();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    Vector<Ref<Document>> contentDocuments;
-    for (RefPtr descendant = frame->tree().firstChild(); descendant; descendant = descendant->tree().traverseNext(frame.get())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(descendant.get());
-        if (RefPtr contentDocument = localFrame ? localFrame->document() : nullptr)
-            contentDocuments.append(contentDocument.releaseNonNull());
-    }
-
-    for (auto& contentDocument : contentDocuments) {
-        if (contentDocument->frame() && contentDocument->frame()->document() == contentDocument.ptr())
-            contentDocument->updateRenderTreeForOwnerElementBox();
-    }
-}
-
 void Document::createRenderTree()
 {
     ASSERT(!renderView());
     ASSERT(m_backForwardCacheState != InBackForwardCache);
 
     if (m_isNonRenderedPlaceholder)
-        return;
-
-    auto needsRenderTree = !ownerElement() || ownerElementGeneratesBox() || printing() || isPluginDocument();
-    if (!needsRenderTree)
         return;
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
@@ -3646,29 +3581,20 @@ void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
 
 void Document::destroyRenderTree()
 {
+    ASSERT(renderTreeState() == RenderTreeState::Built);
     ASSERT(frame());
     ASSERT(frame()->document() == this);
     ASSERT(page());
-
-    destroyRenderTree(DocumentIsGoingAway::Yes);
-}
-
-void Document::destroyRenderTree(DocumentIsGoingAway documentIsGoingAway)
-{
-    ASSERT(renderTreeState() == RenderTreeState::Built);
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     auto scope = SetForScope { m_renderTreeState, RenderTreeState::BeingDestroyed, RenderTreeState::NotBuilt };
 
-    if (documentIsGoingAway == DocumentIsGoingAway::Yes) {
-        if (isTopDocument())
-            clearAXObjectCache();
+    if (isTopDocument())
+        clearAXObjectCache();
 
-        documentWillBecomeInactive();
-    } else
-        m_renderView->setIsInWindow(false);
+    documentWillBecomeInactive();
 
     if (RefPtr view = this->view())
         view->willDestroyRenderTree();
@@ -3676,12 +3602,8 @@ void Document::destroyRenderTree(DocumentIsGoingAway documentIsGoingAway)
     m_pendingRenderTreeUpdate = { };
     m_initialContainingBlockStyle = { };
 
-    if (RefPtr documentElement = m_documentElement) {
-        if (documentIsGoingAway == DocumentIsGoingAway::Yes)
-            RenderTreeUpdater::tearDownRenderers(*documentElement);
-        else
-            RenderTreeUpdater::tearDownRenderersForDisplayNoneFrame(*documentElement);
-    }
+    if (RefPtr documentElement = m_documentElement)
+        RenderTreeUpdater::tearDownRenderers(*documentElement);
 
     clearChildNeedsStyleRecalc();
 
@@ -4569,9 +4491,6 @@ void Document::enqueuePaintTimingEntryIfNeeded()
         return;
 
     if (!window() || !view())
-        return;
-
-    if (renderTreeState() != RenderTreeState::Built)
         return;
 
     // To make sure we don't report paint while the layer tree is still frozen.
@@ -11817,7 +11736,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
 {
     Ref protectedThis { *this };
 
-    if (renderTreeState() != RenderTreeState::Built)
+    if (!renderView())
         return false;
 
     Ref frameView = renderView()->frameView();
@@ -11828,9 +11747,6 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
         frameView->updateLayoutAndStyleIfNeededRecursive();
     else
         updateLayout();
-
-    if (renderTreeState() != RenderTreeState::Built)
-        return false;
 
 #if ASSERT_ENABLED
     SetForScope hitTestRestorer { m_inHitTesting, true };
