@@ -15,6 +15,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/current-time-block-size.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/decodeAudioData-oversized-resample.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-rendersizehint.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-suspend-rendersizehint.https.html

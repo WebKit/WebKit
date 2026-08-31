@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume-close.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/callback-detached-buffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/constructor-allowed-to-start.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/context-time-monotonic-on-setsinkid.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html

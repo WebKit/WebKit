@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/convolution-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/delay-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/distance-model-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/flac-builder.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/merger-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/mix-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/mixing-rules.js

@@ -4633,6 +4633,7 @@ webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttpreques
 
 webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSource_volumeChange.html [ Skip ] # timeout
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/callback-detached-buffer.html [ Skip ] # timeout
 
 webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
 

@@ -1,7 +1,8 @@
 
-FAIL AudioWorkletGlobalScope: message via shared port promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.port.onmessage = (event) => {
-            resolve(event.data);
-          }')"
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'port.addEventListener')
+
+FAIL AudioWorklet: shared port exists before addModule() assert_true: AudioWorklet.port must exist before addModule() expected true got false
+FAIL AudioWorkletGlobalScope: shared port is available at module evaluation time and supports message passing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'port.addEventListener')"
 PASS AudioWorkletProcessor: initialization message
 PASS AudioWorkletProcessor: message via instance port
 

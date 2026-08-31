@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurveAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-summingjunction.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-zero-duration-ramp.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values.html

@@ -1,0 +1,3 @@
+
+FAIL decodeAudioData rejects when the resampled length exceeds AudioBuffer.length sampleRate is not in range
+

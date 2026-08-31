@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-dynamic-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-negative.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-reverse-long-buffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-start-null-buffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-start.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-onended.html
