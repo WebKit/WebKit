@@ -28,6 +28,7 @@ namespace WebCore {
 
 class CSSRegisteredCounterStyle;
 class RenderBlockFlow;
+class RenderInline;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
@@ -73,8 +74,22 @@ public:
     // child (contentContainer()) that this marker lays out and paints itself.
     bool hasContentProperty() const;
     bool needsContentContainer() const;
+    // An inside marker whose text the bidi algorithm can reorder, or whose contents the author generated, puts those
+    // renderers in an anonymous inline box around the marker rather than in a content container of the marker's, so
+    // that they are inline content of the list item's own formatting context. That is what lets unicode-bidi and
+    // direction on the ::marker take effect, and the marker box itself then draws nothing and takes up no room. Text
+    // with no strong directionality has nothing to reorder and keeps the container, which is also what leaves the
+    // glyphs the marker draws in a font of its own choosing (disc/circle/square, disclosure triangles) measured by the
+    // marker. This is what the box around the marker is built from; everything after that asks inlineWrapper(), so
+    // laying out and painting follow the tree we have rather than a style question that can answer differently later
+    // (a counter style resolves its `extends` reference after the marker is built).
+    bool needsInlineWrapper() const { return isInside() && (hasContentProperty() || textHasStrongDirectionality()); }
 
     RenderBlockFlow* contentContainer() const;
+    RenderInline* inlineWrapper() const;
+    Style::ComputedStyle styleForInlineWrapper() const;
+    // The box the marker's contents are attached to, whichever of the two it is.
+    RenderElement* contentRenderersParent() const;
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
     RenderListItem* NODELETE listItem() const;
@@ -133,6 +148,7 @@ private:
 
     RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
     bool textNeedsBidiResolution() const;
+    bool textHasStrongDirectionality() const;
 
 private:
     ListMarkerTextContent m_textContent;
@@ -145,6 +161,9 @@ private:
     std::optional<ExcludedPosition> m_excludedPosition;
     bool m_shouldCollapseAnonymousBlockParent { false };
 };
+
+// The anonymous inline box an inside marker is wrapped in (see RenderListMarker::needsInlineWrapper).
+bool isInlineWrapperForListMarker(const RenderObject&);
 
 } // namespace WebCore
 

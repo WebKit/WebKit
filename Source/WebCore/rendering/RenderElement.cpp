@@ -82,6 +82,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#include "RenderListMarker.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
@@ -281,7 +282,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
 const Style::ComputedStyle& RenderElement::firstLineStyle() const
 {
     // FIXME: It would be better to just set anonymous block first-line styles correctly.
-    if (isAnonymousBlock()) {
+    if (isAnonymousBlock() || isInlineWrapperForListMarker(*this)) {
         if (!previousInFlowSibling()) {
             if (auto* firstLineStyle = parent()->style().pseudoElementStyle({ PseudoElementType::FirstLine }))
                 return *firstLineStyle;

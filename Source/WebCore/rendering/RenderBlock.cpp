@@ -2575,7 +2575,8 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
         }
 
         RenderElement& current = downcast<RenderElement>(*firstLetter);
-        if (is<RenderListMarker>(current))
+        // css-pseudo-4: the contents of a ::marker are ignored by ::first-letter, wherever the marker renders them.
+        if (is<RenderListMarker>(current) || isInlineWrapperForListMarker(current))
             firstLetter = current.nextSibling();
         else if (current.isFloatingOrOutOfFlowPositioned()) {
             if (current.style().pseudoElementType() == PseudoElementType::FirstLetter) {
