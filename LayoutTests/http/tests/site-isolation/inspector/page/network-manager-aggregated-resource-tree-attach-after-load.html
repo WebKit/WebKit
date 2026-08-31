@@ -1,0 +1,142 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+// Appended while the document is still parsing, so the iframe and its subresources finish loading before the
+// load event -- which is when runTest() attaches the inspector. Moving this into the test body would defeat
+// the test: the frame's loads would then be observed live, which already works.
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html`;
+    document.body.appendChild(iframe);
+}
+
+// resource-tree-frame-with-grandchild.html embeds its own further iframe once it loads, so this produces a
+// frame the page target's bootstrap cannot even placeholder: InspectorPageAgent's RemoteFrame handling does
+// not recurse into a remote frame's own children, so nothing about the grandchild exists in the frontend's
+// frame model until the aggregated merge introduces it -- and by then its immediate parent (the frame below)
+// is itself brand-new in that same merge, not an existing placeholder being corrected.
+function addNestedCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "nested-parent-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-grandchild.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.NetworkManager.AggregatedResourceTree");
+
+    const documentPath = "/resource-tree-frame-with-subresource.html";
+    const stylePath = "/resource-tree-subframe-style.css";
+    const nestedParentPath = "/resource-tree-frame-with-grandchild.html";
+    const grandchildPath = "/resource-tree-frame.html";
+
+    function subresourcesOf(frame) {
+        return Array.from(frame.resourceCollection);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.AggregatedResourceTree.MergedAtAttach",
+        description: "A cross-origin frame that finished loading before the frontend attached should be described by the aggregated cross-process resource tree instead of the page target's origin-only placeholder.",
+        async test() {
+            // The merge is a protocol round trip issued while the first frame target is initialized, so it
+            // races test(). Poll until the child frame is described, or give up and let the assertions fail.
+            let child = null;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(documentPath));
+                if (child && subresourcesOf(child).some((resource) => resource.url.endsWith(stylePath)))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!WI.networkManager.mainFrame, "There should be a main frame.");
+
+            // Without the merge this is the placeholder built from the RemoteFrame's security origin, whose
+            // url is the bare origin with no path at all.
+            InspectorTest.expectThat(!!child, "Cross-origin child frame's url should point at the iframe document, not at its origin.");
+            if (!child)
+                return;
+
+            InspectorTest.expectThat(child.parentFrame === WI.networkManager.mainFrame, "Cross-origin child's parent should be the main frame.");
+            InspectorTest.expectEqual(child.name, "child-frame", "Cross-origin child's name attribute should be reported.");
+            InspectorTest.expectThat(!!child.loaderIdentifier, "Cross-origin child should have a non-empty loaderIdentifier.");
+            InspectorTest.expectThat(child.loaderIdentifier !== WI.networkManager.mainFrame.loaderIdentifier, "Cross-origin child's loaderIdentifier should differ from the main frame's.");
+
+            let subresources = subresourcesOf(child);
+            InspectorTest.expectThat(subresources.some((resource) => resource.url.endsWith(stylePath)), "Cross-origin child's stylesheet subresource should be in the frame model.");
+
+            // The merge fills in the existing frame rather than adding a second one, and adds each missing
+            // resource once.
+            let framesForDocument = WI.networkManager.frames.filter((frame) => frame.url && frame.url.endsWith(documentPath));
+            InspectorTest.expectEqual(framesForDocument.length, 1, "There should be exactly one frame for the iframe document.");
+
+            let stylesheets = subresources.filter((resource) => resource.url.endsWith(stylePath));
+            InspectorTest.expectEqual(stylesheets.length, 1, "The stylesheet subresource should not be duplicated.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.AggregatedResourceTree.MergeIsIdempotent",
+        description: "Merging the aggregated resource tree again should fill nothing in twice, and must not rebuild the frames the model already has.",
+        async test() {
+            let framesBefore = WI.networkManager.frames;
+            let child = framesBefore.find((frame) => frame.url && frame.url.endsWith(documentPath));
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should be in the frame model.");
+            if (!child)
+                return;
+
+            let subresourceCountBefore = child.resourceCollection.size;
+
+            let {frameTree} = await WI.backendTarget.PageAgent.getResourceTree();
+            WI.networkManager._mergeAggregatedResourceTreePayload(null, frameTree);
+
+            let framesAfter = WI.networkManager.frames;
+            InspectorTest.expectEqual(framesAfter.length, framesBefore.length, "Merging again should not add frames.");
+            InspectorTest.expectThat(framesAfter.every((frame, i) => frame === framesBefore[i]), "Merging again should keep the same WI.Frame objects.");
+            InspectorTest.expectEqual(child.resourceCollection.size, subresourceCountBefore, "Merging again should not add resources.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.AggregatedResourceTree.NestedNewFrame",
+        description: "A grandchild frame that the page target's bootstrap never even placeholdered should be added under its immediate parent, which the same merge also discovers for the first time.",
+        async test() {
+            let nestedParent = null;
+            let grandchild = null;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                nestedParent = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(nestedParentPath));
+                grandchild = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(grandchildPath));
+                if (nestedParent && grandchild)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!nestedParent, "Nested parent frame should be in the frame model.");
+            InspectorTest.expectThat(!!grandchild, "Grandchild frame should be in the frame model.");
+            if (!nestedParent || !grandchild)
+                return;
+
+            InspectorTest.expectThat(nestedParent.parentFrame === WI.networkManager.mainFrame, "Nested parent's parent should be the main frame.");
+            InspectorTest.expectThat(grandchild.parentFrame === nestedParent, "Grandchild's parent should be the nested parent frame, not the main frame.");
+            InspectorTest.expectEqual(grandchild.name, "grandchild-frame", "Grandchild's name attribute should be reported.");
+            InspectorTest.expectThat(!!grandchild.loaderIdentifier, "Grandchild should have a non-empty loaderIdentifier.");
+            InspectorTest.expectThat(grandchild.loaderIdentifier !== nestedParent.loaderIdentifier, "Grandchild's loaderIdentifier should differ from its parent's.");
+
+            let nestedParentFrames = WI.networkManager.frames.filter((frame) => frame.url && frame.url.endsWith(nestedParentPath));
+            InspectorTest.expectEqual(nestedParentFrames.length, 1, "There should be exactly one nested parent frame.");
+
+            let grandchildFrames = WI.networkManager.frames.filter((frame) => frame.url && frame.url.endsWith(grandchildPath));
+            InspectorTest.expectEqual(grandchildFrames.length, 1, "There should be exactly one grandchild frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a cross-origin frame which finished loading before the frontend attached is described by the aggregated cross-process resource tree.</p>
+<script>addCrossOriginIFrame(); addNestedCrossOriginIFrame();</script>
+</body>

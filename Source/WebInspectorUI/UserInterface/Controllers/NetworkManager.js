@@ -39,6 +39,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._waitingForMainFrameResourceTreePayload = true;
         this._transitioningPageTarget = false;
+        this._needsAggregatedResourceTreeMerge = false;
 
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
@@ -256,6 +257,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             this._enabledPageForSiteIsolation = true;
             if (WI.backendTarget && WI.backendTarget.hasDomain("Network"))
                 this.initializeTarget(WI.backendTarget);
+
+            // The bootstrap snapshot cannot describe a frame in another process, and nothing replays loads
+            // that finished before the frontend attached, so fold in the aggregated tree now that
+            // ProxyingPageAgent is live.
+            this._requestAggregatedResourceTree();
         }
     }
 
@@ -1225,13 +1231,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let frame = this.frameForIdentifier(frameIdentifier);
 
-        // FIXME: <webkit.org/b/308896> Under Site Isolation, cross-origin iframe frames may
-        // not be in the frame map. They don't appear in getResourceTree (dynamically added) or
-        // Page.frameNavigated (RemoteFrame, not LocalFrame), and Page.frameDetached removes any
-        // stubs during the provisional frame commit lifecycle. Create a stub frame on-demand so
-        // the resource is added as a subresource (firing ResourceWasAdded) rather than being
-        // treated as the main resource of a brand-new frame (firing FrameWasAdded). This will be
-        // resolved when Page.getResourceTree supports Site Isolation cross-process frames.
+        // Under Site Isolation, cross-origin iframe frames may not be in the frame map. They don't appear
+        // in the page target's getResourceTree (a RemoteFrame is reported as a placeholder with no
+        // subresources) or in Page.frameNavigated (RemoteFrame, not LocalFrame), and Page.frameDetached
+        // removes any stubs during the provisional frame commit lifecycle. The aggregated cross-process
+        // tree fills those gaps, but live events can arrive before it has been merged, so still create a
+        // stub frame on demand: the resource is then added as a subresource (firing ResourceWasAdded)
+        // rather than being treated as the main resource of a brand-new frame (firing FrameWasAdded).
         if (!frame && frameIdentifier.startsWith("frame-")) {
             let mainResource = new WI.Resource("about:blank");
             frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
@@ -1439,6 +1445,20 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             this._transitioningPageTarget = false;
             this._mainFrame._dispatchMainResourceDidChangeEvent(oldMainFrame.mainResource);
         }
+
+        if (this._needsAggregatedResourceTreeMerge) {
+            this._needsAggregatedResourceTreeMerge = false;
+            this._requestAggregatedResourceTree();
+        }
+    }
+
+    // Only served once ProxyingPageAgent is live, which the first Frame target signals; see initializeTarget.
+    _requestAggregatedResourceTree()
+    {
+        if (!WI.backendTarget || !WI.backendTarget.hasDomain("Page"))
+            return;
+
+        WI.backendTarget.PageAgent.getResourceTree(this._mergeAggregatedResourceTreePayload.bind(this));
     }
 
     _createFrame(payload)
@@ -1508,6 +1528,105 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._dispatchFrameWasAddedEvent(frame);
 
         return frame;
+    }
+
+    // Fold the aggregated cross-process resource tree into the frame model. Unlike
+    // _processMainFrameResourceTreePayload, which rebuilds the model from scratch, this only fills in what
+    // the model is missing, so it is safe to call at any point and more than once.
+    //
+    // FIXME: <https://webkit.org/b/XXXXXX> Once Page and Network fully move to the WebPage target, this
+    // becomes the only bootstrap and the merge-vs-placeholder distinction goes away entirely.
+    _mergeAggregatedResourceTreePayload(error, mainFramePayload)
+    {
+        if (error) {
+            console.error(JSON.stringify(error));
+            return;
+        }
+
+        // A bootstrap in flight is about to rebuild the model, so merging now would accomplish nothing. The
+        // order of the two replies isn't guaranteed by the protocol -- the aggregated fetch is even issued
+        // later than the page target's own getResourceTree -- but in practice it usually still arrives first.
+        if (this._waitingForMainFrameResourceTreePayload) {
+            this._needsAggregatedResourceTreeMerge = true;
+            return;
+        }
+
+        console.assert(mainFramePayload);
+        console.assert(mainFramePayload.frame);
+        if (!mainFramePayload || !mainFramePayload.frame)
+            return;
+
+        this._mergeAggregatedFrameTreePayload(mainFramePayload, null);
+    }
+
+    _mergeAggregatedFrameTreePayload(payload, parentFrame)
+    {
+        let framePayload = payload.frame;
+
+        let frame = this.frameForIdentifier(framePayload.id);
+        let isNewFrame = !frame;
+        if (isNewFrame) {
+            // A root frame the model has never seen would mean the page target and ProxyingPageAgent
+            // disagree on frame ids; adding it would build a second, parentless copy of the whole tree.
+            console.assert(parentFrame, "The aggregated tree's root frame should already be in the frame model.");
+            if (!parentFrame)
+                return;
+
+            frame = this._createFrame(framePayload);
+            parentFrame.addChildFrame(frame);
+        } else if (this._shouldUpdatePlaceholderMainResource(frame, framePayload)) {
+            frame.updatePlaceholderMainResource(framePayload.url, framePayload.mimeType, framePayload.loaderId, framePayload.name, framePayload.securityOrigin);
+        }
+
+        for (let resourcePayload of payload.resources || []) {
+            // The main resource is included as a resource. Skip it, since the frame already has one.
+            if (resourcePayload.type === "Document" && resourcePayload.url === framePayload.url)
+                continue;
+
+            // Never replace: a resource the frontend watched load carries request, timing and size data this
+            // snapshot lacks. Resources carrying a targetId go to that target below, not to the frame.
+            if (frame.resourceCollection.resourcesForURL(resourcePayload.url).size)
+                continue;
+
+            let resource = this._createResource(resourcePayload, payload);
+            if (resource.target === WI.pageTarget)
+                frame.addResource(resource);
+            else if (resource.target)
+                resource.target.addResource(resource);
+            else
+                this._addOrphanedResource(resource, resourcePayload.targetId);
+
+            if (resourcePayload.failed || resourcePayload.canceled)
+                resource.markAsFailed(resourcePayload.canceled);
+            else
+                resource.markAsFinished();
+        }
+
+        // Announce the frame only once its resources are in place, as the bootstrap path does.
+        if (isNewFrame)
+            this._dispatchFrameWasAddedEvent(frame);
+
+        for (let childPayload of payload.childFrames || [])
+            this._mergeAggregatedFrameTreePayload(childPayload, frame);
+    }
+
+    _shouldUpdatePlaceholderMainResource(frame, framePayload)
+    {
+        // Nothing to learn: the model already describes this document.
+        if (frame.mainResource.url === framePayload.url)
+            return false;
+
+        // Mid-navigation. The provisional load owns what this frame becomes next; stay out of it.
+        if (frame.provisionalLoaderIdentifier)
+            return false;
+
+        // No loader identifier: no way to tell whether this is the load the model already holds.
+        if (!framePayload.loaderId)
+            return false;
+
+        // Live events are at least as current as the snapshot, so only correct a placeholder that was never
+        // attributed to a load, or one for this very load.
+        return !frame.loaderIdentifier || frame.loaderIdentifier === framePayload.loaderId;
     }
 
     _addOrphanedResource(resource, targetId)
