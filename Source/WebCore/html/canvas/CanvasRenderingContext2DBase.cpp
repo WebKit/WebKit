@@ -68,6 +68,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include "PaintRenderingContext2D.h"
 #include "Path2D.h"
@@ -290,6 +291,17 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::surfaceBufferToImageBuffer(Sur
     return buffer();
 }
 
+RefPtr<NativeImage> CanvasRenderingContext2DBase::surfaceBufferToNativeImage(SurfaceBuffer)
+{
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = this->buffer();
+    if (!buffer)
+        return nullptr;
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
+}
+
 bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
 {
     // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
@@ -337,6 +349,7 @@ void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChange
         restore();
     m_stateStack.first() = State();
     m_path.clear();
+    m_bufferNativeImage = nullptr;
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
@@ -681,7 +694,7 @@ void CanvasRenderingContext2DBase::setLineCap(const String& stringValue)
         cap = CanvasLineCap::Square;
     else
         return;
-    
+
     setLineCap(cap);
 }
 
@@ -1831,34 +1844,48 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     Ref protectedCanvas { sourceCanvas };
     checkOrigin(&sourceCanvas);
 
-    RefPtr buffer = sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
-    if (!buffer)
+    RefPtr<ImageBuffer> copy;
+    RefPtr image = sourceCanvas.copyNativeImage();
+    if (!image)
         return { };
+
+    auto normalizedImageSrcRect = normalizedSrcRect;
+    if (&sourceCanvas == &canvasBase() && c->renderingMode() == RenderingMode::Accelerated) {
+        // Currently sourcing the draw target, i.e. draw from self, is slow. Draw to a copy, source
+        // the copy.
+        copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size());
+        if (!copy)
+            return { };
+        copy->context().drawNativeImage(*image, { -normalizedSrcRect.location(), FloatSize { image->size() } }, { { }, FloatSize { image->size() } });
+        image = copy->copyNativeImage();
+        if (!image)
+            return { };
+        // The copy holds only normalizedSrcRect, so source it from the origin.
+        normalizedImageSrcRect = { { }, normalizedSrcRect.size() };
+    }
 
     auto shouldUseDrawOptionsWithoutPostProcessing = sourceCanvas.renderingContext() && sourceCanvas.renderingContext()->is2d() && !sourceCanvas.havePendingCanvasNoiseInjection();
     auto willUpdateContentsOptions = shouldUseDrawOptionsWithoutPostProcessing ? defaultWillUpdateContentsOptionsWithoutPostProcessing() : defaultWillUpdateContentsOptions();
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*image, normalizedDstRect, normalizedImageSrcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        fullCanvasCompositedDrawImage(*buffer, normalizedDstRect, normalizedSrcRect, state().globalComposite);
+        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedImageSrcRect, state().globalComposite);
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size())) {
-                copy->context().drawImageBuffer(*buffer, -normalizedSrcRect.location());
-                clearCanvas();
-                c->drawImageBuffer(*copy, normalizedDstRect, { { }, normalizedSrcRect.size() }, { state().globalComposite, state().globalBlend });
-            }
-        } else {
-            clearCanvas();
-            c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
-        }
+        clearCanvas();
+        c->drawNativeImage(*image, normalizedDstRect, normalizedImageSrcRect, { state().globalComposite, state().globalBlend });
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*image, normalizedDstRect, normalizedImageSrcRect, { state().globalComposite, state().globalBlend });
+    }
+
+    if (copy) {
+        // Avoid pending image copies when copy gets destroyed.
+        if (RefPtr targetBuffer = buffer())
+            targetBuffer->flushDrawingContextAsync();
     }
 
     return { };
@@ -2064,6 +2091,11 @@ static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& contex
     context.drawImageBuffer(imageBuffer, dest, src, options);
 }
 
+static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+{
+    context.drawNativeImage(image, dest, src, options);
+}
+
 template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     ASSERT(isFullCanvasCompositeMode(op));
@@ -2249,7 +2281,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
     RefPtr cachedImage = imageElement.cachedImage();
-    
+
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
     if (!cachedImage || !imageElement.complete())
         return nullptr;
@@ -2305,21 +2337,21 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
     if (!copiedImage)
         return Exception { ExceptionCode::InvalidStateError };
-    
+
     auto nativeImage = copiedImage->nativeImage();
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
     return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, canvas.originClean()) };
 }
-    
+
 #if ENABLE(VIDEO)
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLVideoElement& videoElement, bool repeatX, bool repeatY)
 {
     if (videoElement.readyState() < HTMLMediaElement::HAVE_CURRENT_DATA)
         return nullptr;
-    
+
     checkOrigin(&videoElement);
     bool originClean = canvasBase().originClean();
 
@@ -2334,7 +2366,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
         return nullptr;
 
     videoElement.paintCurrentFrameInContext(imageBuffer->context(), FloatRect(FloatPoint(), size(videoElement)));
-    
+
     return RefPtr<CanvasPattern> { CanvasPattern::create({ imageBuffer.releaseNonNull() }, repeatX, repeatY, originClean) };
 }
 
@@ -2380,6 +2412,7 @@ void CanvasRenderingContext2DBase::willUpdateEntireContents(OptionSet<WillUpdate
 
 void CanvasRenderingContext2DBase::willUpdateContents(std::optional<FloatRect> rect, OptionSet<WillUpdateContentsOption> options)
 {
+    m_bufferNativeImage = nullptr;
     if (!options.contains(WillUpdateContentsOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
 

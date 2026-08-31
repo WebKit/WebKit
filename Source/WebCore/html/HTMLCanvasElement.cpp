@@ -860,11 +860,10 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 
 Image* HTMLCanvasElement::copiedImage() const
 {
-    if (!m_copiedImage) {
-        RefPtr buffer = const_cast<HTMLCanvasElement*>(this)->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
-        if (buffer)
-            m_copiedImage = BitmapImage::create(buffer->copyNativeImage());
-    }
+    if (m_copiedImage)
+        return m_copiedImage.get();
+    if (RefPtr image = copyNativeImage())
+        m_copiedImage = BitmapImage::create(WTF::move(image));
     return m_copiedImage.get();
 }
 
