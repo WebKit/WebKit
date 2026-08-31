@@ -56,6 +56,7 @@
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <optional>
 #include <wtf/Expected.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -143,21 +144,19 @@ std::optional<PermissionQuerySource> Permissions::sourceFromContext(const Script
     return std::nullopt;
 }
 
-
 std::optional<PermissionName> Permissions::toPermissionName(const String& name)
 {
-    if (name == "camera"_s)
-        return PermissionName::Camera;
-    if (name == "geolocation"_s)
-        return PermissionName::Geolocation;
-    if (name == "microphone"_s)
-        return PermissionName::Microphone;
-    if (name == "notifications"_s)
-        return PermissionName::Notifications;
-    if (name == "push"_s)
-        return PermissionName::Push;
-    if (name == "storage-access"_s)
-        return PermissionName::StorageAccess;
+    static constexpr SortedArrayMap permissionNames { WTF::toArray<std::pair<ComparableASCIILiteral, PermissionName>>({
+        { "camera"_s, PermissionName::Camera },
+        { "geolocation"_s, PermissionName::Geolocation },
+        { "microphone"_s, PermissionName::Microphone },
+        { "notifications"_s, PermissionName::Notifications },
+        { "push"_s, PermissionName::Push },
+        { "storage-access"_s, PermissionName::StorageAccess },
+    }) };
+
+    if (auto* permissionName = permissionNames.tryGet(name))
+        return *permissionName;
     return std::nullopt;
 }
 
