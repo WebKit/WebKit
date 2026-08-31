@@ -11,8 +11,13 @@ PASS Blob range with whitespace after hyphen
 PASS Blob range with whitespace around equals sign
 PASS Blob range with no value
 PASS Blob range with incorrect range header
+PASS Blob range unit is case-sensitive
+PASS Blob range unit is case-sensitive #2
 PASS Blob range with incorrect range header #2
 PASS Blob range with incorrect range header #3
+PASS Blob range with U+000C where HTTP tab or space is allowed
+PASS Blob range with U+000C before the dash
+PASS Blob range with U+000B where HTTP tab or space is allowed
 PASS Blob range request with multiple range values
 PASS Blob range request with multiple range values and whitespace
 PASS Blob range request with trailing comma
@@ -21,6 +26,9 @@ PASS Blob range request with short range end
 PASS Blob range start should be an ASCII digit
 PASS Blob range should have a dash
 PASS Blob range end should be an ASCII digit
+PASS Blob range start must not be signed
+PASS Blob range start must not be signed #2
+PASS Blob range end must not be signed
 PASS Blob range should include '-'
 PASS Blob range should include '='
 PASS Blob range should include 'bytes='

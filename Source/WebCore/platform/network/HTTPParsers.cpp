@@ -614,61 +614,56 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
 }
 
 // Implements <https://fetch.spec.whatwg.org/#simple-range-header-value>.
-// FIXME: this whole function could be more efficient by walking through the range value once.
 std::optional<HTTPRange> parseRange(StringView range, RangeAllowWhitespace allowWhitespace)
 {
-    // Only 0x20 and 0x09 matter as newlines are already gone by the time we parse a header value.
-    if (allowWhitespace == RangeAllowWhitespace::No && range.contains(isTabOrSpace<char16_t>))
+    static constexpr auto bytesPrefix = "bytes"_s;
+    if (!range.startsWith(bytesPrefix))
         return std::nullopt;
 
-    // The "bytes" unit identifier should be present.
-    static const unsigned bytesLength = 5;
-    if (!startsWithLettersIgnoringASCIICase(range, "bytes"_s))
-        return std::nullopt;
+    return readCharactersForParsing(range.substring(bytesPrefix.length()), [allowWhitespace](auto buffer) -> std::optional<HTTPRange> {
+        // Only 0x20 and 0x09 matter as newlines are already gone by the time we parse a header value.
+        auto skipOptionalWhitespace = [&] {
+            if (allowWhitespace == RangeAllowWhitespace::Yes)
+                WTF::skipWhile<isTabOrSpace>(buffer);
+        };
+        auto collectDigits = [&] {
+            auto digits = buffer.span();
+            WTF::skipWhile<isASCIIDigit>(buffer);
+            return digits.first(digits.size() - buffer.lengthRemaining());
+        };
 
-    auto byteRange = range.substring(bytesLength).trim(isASCIIWhitespaceWithoutFF<char16_t>);
-
-    if (!byteRange.startsWith('='))
-        return std::nullopt;
-
-    byteRange = byteRange.substring(1);
-
-    // The '-' character needs to be present.
-    size_t index = byteRange.find('-');
-    if (index == notFound)
-        return std::nullopt;
-
-    // If the '-' character is at the beginning, the suffix length, which specifies the last N bytes, is provided.
-    // Example:
-    //     -500
-    if (!index) {
-        auto value = parseInteger<uint64_t>(byteRange.substring(index + 1));
-        if (!value)
+        skipOptionalWhitespace();
+        if (!skipExactly(buffer, '='))
             return std::nullopt;
-        return HTTPRange { std::nullopt, *value };
-    }
-
-    // Otherwise, the first-byte-position and the last-byte-position are provied.
-    // Examples:
-    //     0-499
-    //     500-
-    auto firstBytePos = parseInteger<uint64_t>(byteRange.left(index));
-    if (!firstBytePos)
-        return std::nullopt;
-
-    auto lastBytePosStr = byteRange.substring(index + 1);
-    std::optional<uint64_t> lastBytePos;
-    if (!lastBytePosStr.isEmpty()) {
-        auto value = parseInteger<uint64_t>(lastBytePosStr);
-        if (!value)
+        skipOptionalWhitespace();
+        auto startDigits = collectDigits();
+        skipOptionalWhitespace();
+        if (!skipExactly(buffer, '-'))
             return std::nullopt;
-        lastBytePos = *value;
-    }
+        skipOptionalWhitespace();
+        auto endDigits = collectDigits();
+        if (!buffer.atEnd())
+            return std::nullopt;
+        if (startDigits.empty() && endDigits.empty())
+            return std::nullopt;
 
-    if (lastBytePos && *firstBytePos > *lastBytePos)
-        return std::nullopt;
+        std::optional<uint64_t> start;
+        if (!startDigits.empty()) {
+            start = parseInteger<uint64_t>(startDigits);
+            if (!start)
+                return std::nullopt;
+        }
+        std::optional<uint64_t> end;
+        if (!endDigits.empty()) {
+            end = parseInteger<uint64_t>(endDigits);
+            if (!end)
+                return std::nullopt;
+        }
+        if (start && end && *start > *end)
+            return std::nullopt;
 
-    return HTTPRange { *firstBytePos, lastBytePos };
+        return HTTPRange { start, end };
+    });
 }
 
 template<typename CharacterType>
