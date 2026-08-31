@@ -51,7 +51,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
     { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
-            sessionHost.connectionDidClose();
+            sessionHost.disconnect(DisconnectReason::BrowserDidCloseConnection);
         }}
     },
     { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
@@ -240,16 +240,27 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
     });
 }
 
-void SessionHost::connectionDidClose()
+void SessionHost::disconnect(DisconnectReason reason)
 {
     Ref<SessionHost> protectedThis(*this);
 
     if (!m_targetIp.isEmpty())
-        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u closed connection", m_targetIp.utf8().data(), m_targetPort);
+        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u disconnected", m_targetIp.utf8().data(), m_targetPort);
     else
-        RELEASE_LOG_INFO(SessionHost, "Inspector connection closed (local browser)");
+        RELEASE_LOG_INFO(SessionHost, "Inspector disconnected (local browser)");
 
-    m_browser = nullptr;
+    switch (reason) {
+    case DisconnectReason::BrowserDidCloseConnection:
+        RELEASE_LOG_INFO(SessionHost, "Disconnection reason: BrowserDidCloseConnection");
+        m_browser = nullptr;
+        break;
+    case DisconnectReason::AutomationTargetLost:
+        RELEASE_LOG_INFO(SessionHost, "Disconnection reason: AutomationTargetLost");
+        if (m_browser && !m_isRemoteBrowser)
+            g_subprocess_force_exit(std::exchange(m_browser, nullptr).get());
+        break;
+    }
+
     m_isRemoteBrowser = false;
 
     inspectorDisconnected();
@@ -385,7 +396,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
             RELEASE_LOG_INFO(SessionHost, "Remote browser removed all automation targets; disconnecting");
             if (m_socketConnection)
                 m_socketConnection->close();
-            connectionDidClose();
+            disconnect(DisconnectReason::AutomationTargetLost);
         }
         return;
     }
