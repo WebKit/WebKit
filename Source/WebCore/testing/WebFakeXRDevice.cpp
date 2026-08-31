@@ -542,10 +542,12 @@ Vector<PlatformXR::FrameData::HitTestResult> SimulatedXRDevice::hitTestWorld(con
         // This situation is possible when a ray intersects the region through an edge shared
         // by 2 faces.
         std::ranges::sort(resultsForFaces, { }, &HitTestResult::distance);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         for (auto it = resultsForFaces.begin(); it != resultsForFaces.end(); it++) {
             if (it == resultsForFaces.begin() || it->distance != (it-1)->distance)
                 resultsForRegions.append(*it);
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     std::ranges::sort(resultsForRegions, { }, &HitTestResult::distance);
     return resultsForRegions.map([](auto& x) { return PlatformXR::FrameData::HitTestResult { x.pose }; });

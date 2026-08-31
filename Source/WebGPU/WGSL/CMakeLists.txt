@@ -164,6 +164,7 @@ set(wgslc_HEADERS
 # WGSLCore static library -- shared between wgslc and TestWGSL.
 WEBKIT_COMPUTE_SOURCES(WGSLCore)
 add_library(WGSLCore STATIC ${WGSLCore_SOURCES})
+WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WGSLCore)
 WEBKIT_ADD_PREFIX_HEADER(WGSLCore WGSLPrefix.h PREFIX_LANGUAGES CXX)
 target_include_directories(WGSLCore PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/../../..

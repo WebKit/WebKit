@@ -8,6 +8,10 @@ include(WebKitVersion)
 enable_language(OBJC OBJCXX)
 
 WEBKIT_OPTION_BEGIN()
+
+set(ENABLE_UNSAFE_BUFFER_USAGE_WARNING ON)
+set(ENABLE_THREAD_SAFETY_WARNING ON)
+
 # Private options shared with other WebKit ports. Add options here only if
 # we need a value different from the default defined in WebKitFeatures.cmake.
 

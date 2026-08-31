@@ -144,6 +144,11 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR USE_APPLE_INTERNAL_SDK)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
+    # MIG emits unchecked indexing into the subsystem routine table, which
+    # cannot be annotated because the generator owns the output.
+    WEBKIT_ADD_COMPILER_FLAGS(C SOURCE
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
+        -Wno-unsafe-buffer-usage)
 endif ()
 
 

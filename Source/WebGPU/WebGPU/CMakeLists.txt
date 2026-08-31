@@ -28,6 +28,8 @@ endif ()
 # (WebGPU_ARC_SOURCES) compile directly into the library alongside WebGPU_SOURCES.
 add_library(WebGPU SHARED ${WebGPU_SOURCES} ${WebGPU_ARC_SOURCES})
 
+WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WebGPU)
+
 WEBKIT_ADD_PREFIX_HEADER(WebGPU WebGPUPrefix.h PREFIX_LANGUAGES OBJCXX)
 
 set_target_properties(WebGPU PROPERTIES

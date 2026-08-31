@@ -338,6 +338,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(OptionsCommon)
     include(Options${PORT})
 
+    # This has to come after Options${PORT} to see any ENABLE_THREAD_SAFETY_WARNING.
+    if (ENABLE_THREAD_SAFETY_WARNING)
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wthread-safety)
+    endif ()
+
     # Check gperf after including OptionsXXX.cmake since gperf is required only when ENABLE_WEBCORE is true,
     # and ENABLE_WEBCORE is configured in OptionsXXX.cmake.
     if (ENABLE_WEBCORE)
