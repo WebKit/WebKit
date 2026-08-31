@@ -47,11 +47,16 @@ class ImageBackingStore {
 public:
     static std::unique_ptr<ImageBackingStore> create(const IntSize& size, bool premultiplyAlpha = true)
     {
-        return std::unique_ptr<ImageBackingStore>(new ImageBackingStore(size, premultiplyAlpha));
+        auto backingStore = std::unique_ptr<ImageBackingStore>(new ImageBackingStore(size, premultiplyAlpha));
+        if (!backingStore->m_pixels)
+            return nullptr;
+        return backingStore;
     }
 
     static std::unique_ptr<ImageBackingStore> create(const ImageBackingStore& other)
     {
+        if (!other.m_pixels)
+            return nullptr;
         return std::unique_ptr<ImageBackingStore>(new ImageBackingStore(other));
     }
 
@@ -212,6 +217,7 @@ private:
 
     ImageBackingStore(const ImageBackingStore& other)
         : m_size(other.m_size)
+        , m_frameRect(other.m_frameRect)
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));

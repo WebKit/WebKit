@@ -271,25 +271,26 @@ void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* deco
     assertIsHeld(m_lock);
     auto& buffer = m_frameBufferCache[frameIndex];
     int decodedWidth = 0;
-    int decodedHeight = 0;
-    if (!WebPIDecGetRGB(decoder, &decodedHeight, &decodedWidth, 0, 0))
+    int decodedRows = 0;
+    if (!WebPIDecGetRGB(decoder, &decodedRows, &decodedWidth, 0, 0))
         return; // See also https://bugs.webkit.org/show_bug.cgi?id=74062
-    if (decodedHeight <= 0)
+    if (decodedRows <= 0)
         return;
 
     const IntRect& frameRect = buffer.backingStore()->frameRect();
-    ASSERT_WITH_SECURITY_IMPLICATION(decodedWidth == frameRect.width());
-    ASSERT_WITH_SECURITY_IMPLICATION(decodedHeight <= frameRect.height());
     const int left = frameRect.x();
     const int top = frameRect.y();
 
-    for (int y = 0; y < decodedHeight; y++) {
+    const int copyWidth = std::min(decodedWidth, frameRect.width());
+    const int copyRows = std::min(decodedRows, frameRect.height());
+
+    for (int y = 0; y < copyRows; y++) {
         const int canvasY = top + y;
-        for (int x = 0; x < decodedWidth; x++) {
+        for (int x = 0; x < copyWidth; x++) {
             const int canvasX = left + x;
             auto& destinationPixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
-            uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
+            uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + y * decoderBuffer.u.RGBA.stride + x * sizeof(uint32_t);
             if (blend && (sourcePixels[3] < 255))
                 buffer.backingStore()->blendPixel(destinationPixel, sourcePixels[0], sourcePixels[1], sourcePixels[2], sourcePixels[3]);
             else

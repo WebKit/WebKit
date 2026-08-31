@@ -246,6 +246,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/IDBKeyData.cpp
         Tests/WebCore/IDBSerializationTest.cpp
         Tests/WebCore/IPAddressSpaceTests.cpp
+        Tests/WebCore/ImageBackingStoreTests.cpp
         Tests/WebCore/ImageBufferTests.cpp
         Tests/WebCore/IntPointTests.cpp
         Tests/WebCore/IntRectTests.cpp
