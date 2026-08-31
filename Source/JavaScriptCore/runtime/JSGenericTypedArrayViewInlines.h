@@ -302,7 +302,17 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
             return false;
 
         RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->type()));
-        memmove(typedVector() + offset, std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
+        auto* target = std::bit_cast<uint8_t*>(typedVector() + offset);
+        const auto* source = std::bit_cast<const uint8_t*>(std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset);
+        size_t byteLength = length * elementSize;
+        // %TypedArray%.prototype.slice copies bytes in ascending order, so a destination that
+        // overlaps and follows the source reads back its own writes instead of the original bytes.
+        if (type == CopyType::LeftToRight && source < target && target < source + byteLength) {
+            for (size_t i = 0; i < byteLength; ++i)
+                target[i] = source[i];
+            return true;
+        }
+        memmove(target, source, byteLength);
         return true;
     };
 

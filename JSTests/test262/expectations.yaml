@@ -52,9 +52,6 @@ test/built-ins/Proxy/construct/arguments-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 3
   strict mode: 3
-test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-offset.js:
-  default: 3
-  strict mode: 3
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 3
   strict mode: 3
@@ -177,9 +174,6 @@ test/staging/sm/RegExp/unicode-braced.js:
   default: 3
   strict mode: 3
 test/staging/sm/RegExp/unicode-class-braced.js:
-  default: 3
-  strict mode: 3
-test/staging/sm/TypedArray/slice-memcpy.js:
   default: 3
   strict mode: 3
 test/staging/sm/class/superPropOrdering.js:
