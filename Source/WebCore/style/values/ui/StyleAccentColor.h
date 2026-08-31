@@ -40,8 +40,8 @@ struct AccentColor : ValueOrKeyword<Color, CSS::Keyword::Auto> {
     bool isColor() const { return isValue(); }
     std::optional<Color> tryColor() const { return tryValue(); }
 
-    // Returns the color or a `currentColor` singleton if `auto`.
-    const Color& colorOrCurrentColor() const;
+    // Returns the color or the default accent color (equivalent to CSS `AccentColor`) if `auto`.
+    const Color& colorOrDefaultColor() const;
 };
 
 // MARK: - Blending

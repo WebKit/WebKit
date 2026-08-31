@@ -27,15 +27,20 @@
 #include "StyleAccentColor.h"
 
 #include "AnimationUtilities.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace Style {
 
-const Color& AccentColor::colorOrCurrentColor() const
+const Color& AccentColor::colorOrDefaultColor() const
 {
     if (m_value)
         return *m_value;
-    return Color::currentColor();
+
+    // Get the default accent color, which is a constant regardless of StyleColorOptions.
+    // Hence the StyleColorOptions can be a default empty one.
+    static NeverDestroyed<Style::Color> defaultColor { CSS::colorFromKeyword(CSSValueAccentcolor, { }) };
+    return defaultColor;
 }
 
 // MARK: - Blending
