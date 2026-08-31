@@ -159,6 +159,7 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WebKitTestRunner_DIR}/mac/main.mm
 
     ${WebKitTestRunner_SHARED_DIR}/mac/NSPasteboardAdditions.mm
+    ${WebKitTestRunner_SHARED_DIR}/mac/SyntheticNSEvent.mm
 
     ${WebKitTestRunner_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
     ${WebKitTestRunner_SHARED_DIR}/cocoa/InstanceMethodSwizzler.mm

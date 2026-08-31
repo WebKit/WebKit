@@ -27,10 +27,10 @@
 #import "config.h"
 #import "EventSenderProxy.h"
 
-#import "CoreGraphicsTestSPI.h"
 #import "ModifierKeys.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
+#import "SyntheticNSEvent.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerWindow.h"
@@ -41,7 +41,6 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -53,202 +52,6 @@
 
 @interface NSEvent (ForTestRunner)
 - (void)_postDelayed;
-- (instancetype)_initWithCGEvent:(CGEventRef)event eventRef:(void *)eventRef;
-@end
-
-@interface EventSenderSyntheticEvent : NSEvent {
-@public
-    NSPoint _eventSender_locationInWindow;
-    NSPoint _eventSender_location;
-    NSInteger _eventSender_stage;
-    float _eventSender_pressure;
-    CGFloat _eventSender_magnification;
-    CGFloat _eventSender_stageTransition;
-    NSEventPhase _eventSender_phase;
-    NSEventPhase _eventSender_momentumPhase;
-    NSTimeInterval _eventSender_timestamp;
-    NSInteger _eventSender_eventNumber;
-    short _eventSender_subtype;
-    NSEventType _eventSender_type;
-    NSWindow *_eventSender_window;
-}
-
-- (id)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window;
-- (id)initMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation magnification:(CGFloat)magnification phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window;
-- (id)initSmartMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window;
-
-- (NSTimeInterval)timestamp;
-
-@end
-
-static CGSGesturePhase EventSenderCGGesturePhaseFromNSEventPhase(NSEventPhase phase)
-{
-    switch (phase) {
-    case NSEventPhaseMayBegin:
-        return kCGSGesturePhaseMayBegin;
-
-    case NSEventPhaseBegan:
-        return kCGSGesturePhaseBegan;
-
-    case NSEventPhaseChanged:
-        return kCGSGesturePhaseChanged;
-
-    case NSEventPhaseCancelled:
-        return kCGSGesturePhaseCancelled;
-
-    case NSEventPhaseEnded:
-        return kCGSGesturePhaseEnded;
-
-    case NSEventPhaseNone:
-    default:
-        return kCGSGesturePhaseNone;
-    }
-}
-
-@implementation EventSenderSyntheticEvent
-
-- (instancetype)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
-{
-    auto cgEvent = adoptCF(CGEventCreate(nullptr));
-    CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, kIOHIDEventTypeForce);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, EventSenderCGGesturePhaseFromNSEventPhase(phase));
-    CGEventSetDoubleValueField(cgEvent.get(), kCGEventStagePressure, pressure);
-    CGEventSetDoubleValueField(cgEvent.get(), kCGEventTransitionProgress, pressure);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureStage, stageTransition);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureBehavior, kCGSGestureBehaviorDeepPress);
-
-    self = [super _initWithCGEvent:cgEvent.get() eventRef:nullptr];
-
-    if (!self)
-        return nil;
-
-    _eventSender_location = location;
-    _eventSender_locationInWindow = globalLocation;
-    _eventSender_stage = stage;
-    _eventSender_pressure = pressure;
-    _eventSender_stageTransition = stageTransition;
-    _eventSender_phase = phase;
-    _eventSender_timestamp = time;
-    _eventSender_eventNumber = eventNumber;
-    _eventSender_window = window;
-    _eventSender_type = NSEventTypePressure;
-
-    return self;
-}
-
-- (id)initMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation magnification:(CGFloat)magnification phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
-{
-    auto cgEvent = adoptCF(CGEventCreate(nullptr));
-    CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, kIOHIDEventTypeZoom);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, EventSenderCGGesturePhaseFromNSEventPhase(phase));
-    CGEventSetDoubleValueField(cgEvent.get(), kCGEventGestureZoomValue, magnification);
-
-    if (!(self = [super _initWithCGEvent:cgEvent.get() eventRef:nullptr]))
-        return nil;
-
-    _eventSender_location = location;
-    _eventSender_locationInWindow = globalLocation;
-    _eventSender_magnification = magnification;
-    _eventSender_phase = phase;
-    _eventSender_timestamp = time;
-    _eventSender_eventNumber = eventNumber;
-    _eventSender_window = window;
-    _eventSender_type = NSEventTypeMagnify;
-
-    return self;
-}
-
-- (id)initSmartMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
-{
-    auto cgEvent = adoptCF(CGEventCreate(nullptr));
-    CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, kIOHIDEventTypeZoomToggle);
-
-    if (!(self = [super _initWithCGEvent:cgEvent.get() eventRef:nullptr]))
-        return nil;
-
-    _eventSender_type = NSEventTypeSmartMagnify;
-    _eventSender_location = location;
-    _eventSender_locationInWindow = globalLocation;
-    _eventSender_timestamp = time;
-    _eventSender_window = window;
-
-    return self;
-}
-
-
-- (CGFloat)stageTransition
-{
-    return _eventSender_stageTransition;
-}
-
-- (NSTimeInterval)timestamp
-{
-    return _eventSender_timestamp;
-}
-
-- (NSEventType)type
-{
-    return _eventSender_type;
-}
-
-- (NSEventSubtype)subtype
-{
-    return (NSEventSubtype)_eventSender_subtype;
-}
-
-- (NSPoint)locationInWindow
-{
-    return _eventSender_location;
-}
-
-- (NSPoint)location
-{
-    return _eventSender_locationInWindow;
-}
-
-- (NSInteger)stage
-{
-    return _eventSender_stage;
-}
-
-- (float)pressure
-{
-    return _eventSender_pressure;
-}
-
-- (CGFloat)magnification
-{
-    return _eventSender_magnification;
-}
-
-- (NSEventPhase)phase
-{
-    return _eventSender_phase;
-}
-
-- (NSEventPhase)momentumPhase
-{
-    return _eventSender_momentumPhase;
-}
-
-- (NSInteger)eventNumber
-{
-    return _eventSender_eventNumber;
-}
-
-- (BOOL)_isTouchesEnded
-{
-    return false;
-}
-
-- (NSWindow *)window
-{
-    return _eventSender_window;
-}
-
 @end
 
 namespace WTR {
@@ -477,7 +280,7 @@ static void handleForceEventSynchronously(NSEvent *event)
 
 RetainPtr<NSEvent> EventSenderProxy::beginPressureEvent(int stage)
 {
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:stage
         pressure:0.5
@@ -492,7 +295,7 @@ RetainPtr<NSEvent> EventSenderProxy::beginPressureEvent(int stage)
 
 RetainPtr<NSEvent> EventSenderProxy::pressureChangeEvent(int stage, float pressure, EventSenderProxy::PressureChangeDirection direction)
 {
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:stage
         pressure:pressure
@@ -815,14 +618,9 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event];
-        [targetView scrollWheel:event];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint location = [event locationInWindow];
-        WTFLogAlways("mouseScrollBy failed to find the target view at %f,%f\n", location.x, location.y);
-    }
+    dispatchSyntheticEvent(event, m_testController->mainWebView()->platformView(), @"mouseScrollBy", ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView scrollWheel:syntheticEvent];
+    });
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
@@ -850,14 +648,9 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
     // Our event should have the correct settings:
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event];
-        [targetView scrollWheel:event];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    dispatchSyntheticEvent(event, m_testController->mainWebView()->platformView(), @"mouseScrollByWithWheelAndMomentumPhases", ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView scrollWheel:syntheticEvent];
+    });
 }
 
 static CGGesturePhase cgScrollPhaseFromPhase(EventSenderProxy::WheelEventPhase phase)
@@ -927,14 +720,9 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
 
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
     // Our event should have the correct settings:
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event];
-        [targetView scrollWheel:event];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("EventSenderProxy::sendWheelEvent failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    dispatchSyntheticEvent(event, m_testController->mainWebView()->platformView(), @"EventSenderProxy::sendWheelEvent", ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView scrollWheel:syntheticEvent];
+    });
 }
 
 void EventSenderProxy::smartMagnify()
@@ -942,91 +730,50 @@ void EventSenderProxy::smartMagnify()
     auto* mainWebView = m_testController->mainWebView();
     NSView *platformView = mainWebView->platformView();
 
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initSmartMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initSmartMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         time:absoluteTimeForEventTime(currentEventTime())
         eventNumber:++m_eventNumber
         window:platformView.window]);
 
-    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event.get()];
-        [targetView smartMagnifyWithEvent:event.get()];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    dispatchSyntheticEvent(event, platformView, @"smartMagnify", ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView smartMagnifyWithEvent:syntheticEvent];
+    });
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
+static void sendMagnifyEvent(TestController& testController, WKPoint position, NSInteger eventNumber, NSTimeInterval time, double scale, NSEventPhase phase, const String& description)
+{
+    auto* mainWebView = testController.mainWebView();
+    RetainPtr platformView = mainWebView->platformView();
+
+    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initMagnifyEventAtLocation:NSMakePoint(position.x, position.y)
+        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(position.x, position.y, 1, 1)].origin)
+        magnification:scale
+        phase:phase
+        time:time
+        eventNumber:eventNumber
+        window:[platformView window]]);
+
+    dispatchSyntheticEvent(event, platformView, description.createNSString(), ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView magnifyWithEvent:syntheticEvent];
+    });
+}
+
 void EventSenderProxy::scaleGestureStart(double scale)
 {
-    auto* mainWebView = m_testController->mainWebView();
-    NSView *platformView = mainWebView->platformView();
-
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
-        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
-        magnification:scale
-        phase:NSEventPhaseBegan
-        time:absoluteTimeForEventTime(currentEventTime())
-        eventNumber:++m_eventNumber
-        window:platformView.window]);
-
-    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event.get()];
-        [targetView magnifyWithEvent:event.get()];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseBegan, "scaleGestureStart"_s);
 }
 
 void EventSenderProxy::scaleGestureChange(double scale)
 {
-    auto* mainWebView = m_testController->mainWebView();
-    NSView *platformView = mainWebView->platformView();
-
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
-        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
-        magnification:scale
-        phase:NSEventPhaseChanged
-        time:absoluteTimeForEventTime(currentEventTime())
-        eventNumber:++m_eventNumber
-        window:platformView.window]);
-
-    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event.get()];
-        [targetView magnifyWithEvent:event.get()];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseChanged, "scaleGestureChange"_s);
 }
 
 void EventSenderProxy::scaleGestureEnd(double scale)
 {
-    auto* mainWebView = m_testController->mainWebView();
-    NSView *platformView = mainWebView->platformView();
-
-    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
-        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
-        magnification:scale
-        phase:NSEventPhaseEnded
-        time:absoluteTimeForEventTime(currentEventTime())
-        eventNumber:++m_eventNumber
-        window:platformView.window]);
-
-    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
-        [NSApp _setCurrentEvent:event.get()];
-        [targetView magnifyWithEvent:event.get()];
-        [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
-        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseEnded, "scaleGestureEnd"_s);
 }
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)

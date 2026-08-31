@@ -184,6 +184,7 @@
 		F474EE3D2B82B65100DE5F41 /* WKTextExtractionTestingHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F474EE3A2B82B65100DE5F41 /* WKTextExtractionTestingHelpers.h */; };
 		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
 		F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */; };
+		1A2B3C4D2E5F60718293A4B3 /* SyntheticNSEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D2E5F60718293A4B2 /* SyntheticNSEvent.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -530,6 +531,8 @@
 		F4F2894B2AC4ED290084A38D /* UIKitSPIForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitSPIForTesting.h; path = ../TestRunnerShared/spi/UIKitSPIForTesting.h; sourceTree = "<group>"; };
 		F4FED3212358215E003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = ../TestRunnerShared/mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
 		F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = ../TestRunnerShared/mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
+		1A2B3C4D2E5F60718293A4B1 /* SyntheticNSEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyntheticNSEvent.h; path = ../TestRunnerShared/mac/SyntheticNSEvent.h; sourceTree = "<group>"; };
+		1A2B3C4D2E5F60718293A4B2 /* SyntheticNSEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyntheticNSEvent.mm; path = ../TestRunnerShared/mac/SyntheticNSEvent.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1100,6 +1103,8 @@
 			children = (
 				F4FED3212358215E003C139C /* NSPasteboardAdditions.h */,
 				F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */,
+				1A2B3C4D2E5F60718293A4B1 /* SyntheticNSEvent.h */,
+				1A2B3C4D2E5F60718293A4B2 /* SyntheticNSEvent.mm */,
 			);
 			name = mac;
 			sourceTree = "<group>";
@@ -1411,6 +1416,7 @@
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
+				1A2B3C4D2E5F60718293A4B3 /* SyntheticNSEvent.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 				0F87B6131BACAD82004EC572 /* UIScriptControllerMac.mm in Sources */,
 				E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */,
