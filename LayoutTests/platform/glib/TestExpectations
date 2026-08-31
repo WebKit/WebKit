@@ -96,6 +96,10 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-079.xht 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-080.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-155.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-156.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-dynamic-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-min-line-count-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-zero-size.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ Pass ]
@@ -3118,7 +3122,7 @@ imported/w3c/web-platform-tests/content-security-policy/reporting/report-origina
 webkit.org/b/231083 imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Failure Pass ]
 
 # Started to fail more on interval [318765@main-318767@main]
-webkit.org/b/321358 [ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Pass Crash Failure Timeout ]
+webkit.org/b/321358 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Pass Crash Failure Timeout ]
 
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
@@ -5269,12 +5273,12 @@ webkit.org/b/319049 [ Debug ] http/tests/cache/cancel-multiple-post-xhrs.html [ 
 webkit.org/b/319050 [ Debug ] imported/w3c/web-platform-tests/fetch/local-network-access/iframe.tentative.https.window.html [ Failure ]
 webkit.org/b/319051 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Failure Pass ]
 webkit.org/b/319052 [ Debug ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Pass Failure ]
-webkit.org/b/319053 [ Debug ] media/video-playback-restriction-play-before-load.html [ Failure ]
+webkit.org/b/319053 [ Debug ] media/video-playback-restriction-play-before-load.html [ Failure Pass ]
 webkit.org/b/319310 [ Debug ] fast/repaint/iframe-avoid-redundant-repaint.html [ Failure Pass ]
 webkit.org/b/319311 [ Debug ] fast/repaint/missing-out-of-flow-repaint-on-destroy.html [ Pass ImageOnlyFailure ]
 webkit.org/b/319312 [ Debug ] workers/bomb.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-023.html [ ImageOnlyFailure ]
+[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-023.html [ ImageOnlyFailure ]
 
 webkit.org/b/319950 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Failure ]
 
@@ -5368,6 +5372,13 @@ webkit.org/b/322814 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html [ Pass Timeout ]
 webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Timeout ]
 webkit.org/b/322816 imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html [ Failure Pass ]
+
+webkit.org/b/323001 imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties.html [ Crash Pass ]
+webkit.org/b/323001 imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation.html [ Crash Pass ]
+webkit.org/b/323002 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
+webkit.org/b/323003 [ Release ] imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Crash Pass ]
+webkit.org/b/323003 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Crash Pass ]
+webkit.org/b/314218 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-seeking.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
