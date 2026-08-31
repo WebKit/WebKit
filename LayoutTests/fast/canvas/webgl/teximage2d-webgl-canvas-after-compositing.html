@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>texImage2D from WebGL canvas after compositing</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="source" width="16" height="16"></canvas>
+<canvas id="target" width="16" height="16"></canvas>
+<script>
+description("Test texImage2D from a WebGL canvas after the source has been composited. See https://bugs.webkit.org/show_bug.cgi?id=290436.");
+
+if (window.initNonKhronosFramework)
+    window.initNonKhronosFramework(true);
+
+var wtu = WebGLTestUtils;
+
+// Create the source context first and render red.
+var glSource = wtu.create3DContext("source");
+glSource.clearColor(1.0, 0.0, 0.0, 1.0);
+glSource.clear(glSource.COLOR_BUFFER_BIT);
+
+glErrorShouldBe(glSource, glSource.NO_ERROR, "Should be no errors from source setup.");
+
+// Wait for the source canvas to be composited, then create the target context
+// and copy. After compositing, the drawing buffer is cleared (preserveDrawingBuffer
+// is false by default), so the copy must read from the display buffer.
+requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+        runTest();
+    });
+});
+
+function runTest() {
+    var glTarget = wtu.create3DContext("target");
+    var program = wtu.setupTexturedQuad(glTarget);
+
+    glTarget.disable(glTarget.BLEND);
+    glTarget.disable(glTarget.DEPTH_TEST);
+
+    var tex = glTarget.createTexture();
+    glTarget.bindTexture(glTarget.TEXTURE_2D, tex);
+    glTarget.texParameteri(glTarget.TEXTURE_2D, glTarget.TEXTURE_WRAP_S, glTarget.CLAMP_TO_EDGE);
+    glTarget.texParameteri(glTarget.TEXTURE_2D, glTarget.TEXTURE_WRAP_T, glTarget.CLAMP_TO_EDGE);
+    glTarget.texParameteri(glTarget.TEXTURE_2D, glTarget.TEXTURE_MIN_FILTER, glTarget.NEAREST);
+    glTarget.texParameteri(glTarget.TEXTURE_2D, glTarget.TEXTURE_MAG_FILTER, glTarget.NEAREST);
+
+    // This is the call that fails without the fix: the source drawing buffer has
+    // been cleared after compositing, but the display buffer still has red.
+    glTarget.texImage2D(glTarget.TEXTURE_2D, 0, glTarget.RGBA, glTarget.RGBA, glTarget.UNSIGNED_BYTE, glSource.canvas);
+    glErrorShouldBe(glTarget, glTarget.NO_ERROR, "texImage2D from source canvas");
+
+    wtu.drawQuad(glTarget);
+    glErrorShouldBe(glTarget, glTarget.NO_ERROR, "drawQuad");
+
+    wtu.checkCanvas(glTarget, [255, 0, 0, 255], "Canvas should be red after copying from composited source");
+
+    debug("");
+    finishTest();
+}
+</script>
+</body>
+</html>
