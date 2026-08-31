@@ -408,6 +408,17 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                 auto contributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList);
                 return std::max({ }, std::ranges::max(contributions));
             },
+            // A <length-percentage> min track sizing function was already resolved to an absolute
+            // length by Initialize Track Sizes.
+            [&](const Style::GridTrackBreadth::Fixed&) -> LayoutUnit {
+                return track.baseSize;
+            },
+            [&](const Style::GridTrackBreadth::Percentage&) -> LayoutUnit {
+                return track.baseSize;
+            },
+            [&](const Style::GridTrackBreadth::Calc&) -> LayoutUnit {
+                return track.baseSize;
+            },
             [&](const auto&) -> LayoutUnit {
                 ASSERT_NOT_REACHED();
                 return { };
@@ -435,6 +446,17 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                 // limit to the maximum of the items’ max-content contributions.
                 auto itemContributions = maxContentContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions);
                 return std::ranges::max(itemContributions);
+            },
+            // A <length-percentage> max track sizing function was already resolved to an absolute
+            // length by Initialize Track Sizes.
+            [&](const Style::GridTrackBreadth::Fixed&) -> LayoutUnit {
+                return track.growthLimit;
+            },
+            [&](const Style::GridTrackBreadth::Percentage&) -> LayoutUnit {
+                return track.growthLimit;
+            },
+            [&](const Style::GridTrackBreadth::Calc&) -> LayoutUnit {
+                return track.growthLimit;
             },
             [&](const auto&) -> LayoutUnit {
                 ASSERT_NOT_REACHED();
