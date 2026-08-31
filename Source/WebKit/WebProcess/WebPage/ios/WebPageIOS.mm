@@ -760,20 +760,30 @@ static RetainPtr<NSDictionary> createAccessibillityTokenDictionary(WebCore::Acce
     return @{ @"ax-pid" : @(elementToken.pid), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES };
 }
 
-void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
 {
-    createMockAccessibilityElement(pid);
-    if ([m_mockAccessibilityElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
-        [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
-    [m_mockAccessibilityElement setFrameIdentifier:frameID];
+    // Each local root frame gets a mock accessibility element that serves as the target for the
+    // remote accessibility element in the parent process.
+    RetainPtr frameElement = ensureRemoteFrameAccessibilityElement(frameID);
+
+    if ([frameElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
+        [frameElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
+    [frameElement setFrameIdentifier:frameID];
 }
 
-void WebPage::createMockAccessibilityElement(pid_t pid)
+// The presenting process identifier is only used on macOS. iOS pairs an element with its parent by
+// the UUID in the remote token dictionary instead.
+RetainPtr<WKAccessibilityWebPageObject> WebPage::createMockAccessibilityElementWithPresenter(pid_t)
 {
     auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
 
     [mockAccessibilityElement setWebPage:this];
-    m_mockAccessibilityElement = WTF::move(mockAccessibilityElement);
+    return mockAccessibilityElement;
+}
+
+void WebPage::createMockAccessibilityElement(pid_t pid)
+{
+    m_mockAccessibilityElement = createMockAccessibilityElementWithPresenter(pid);
 }
 
 void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken)

@@ -164,14 +164,19 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
     WebProcess::singleton().revokeLaunchServicesSandboxExtension();
 }
 
-void WebPage::createMockAccessibilityElement(pid_t pid)
+RetainPtr<WKAccessibilityWebPageObject> WebPage::createMockAccessibilityElementWithPresenter(pid_t pid)
 {
     auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
 
     if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
     [mockAccessibilityElement setWebPage:this];
-    m_mockAccessibilityElement = WTF::move(mockAccessibilityElement);
+    return mockAccessibilityElement;
+}
+
+void WebPage::createMockAccessibilityElement(pid_t pid)
+{
+    m_mockAccessibilityElement = createMockAccessibilityElementWithPresenter(pid);
 }
 
 void WebPage::platformReinitializeAccessibilityToken()
@@ -198,6 +203,14 @@ RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
 {
     ASSERT(m_mockAccessibilityElement);
     return [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:m_mockAccessibilityElement.get()];
+}
+
+RetainPtr<NSData> WebPage::accessibilityRemoteTokenDataForFrame(WebCore::FrameIdentifier frameID) const
+{
+    RetainPtr element = m_remoteFrameAccessibilityElements.get(frameID);
+    if (!element)
+        return accessibilityRemoteTokenData();
+    return [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:element.get()];
 }
 
 void WebPage::platformDetach()
@@ -486,20 +499,15 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::Accessi
     RetainPtr elementTokenData = toNSData(elementToken.bytes);
     auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
 
-    // Don't replace m_mockAccessibilityElement here. The AXIsolatedTree's ScrollArea caches a strong
-    // reference to the current mock element as its RemoteParent property at construction time, so
-    // recreating the mock would leave the isolated tree pointing at a stale instance with no remote
-    // parent set, breaking cross-process accessibility-parent traversal from inside this iframe.
-    // Reuse the existing mock element and only update what changed: the presenter PID, the remote
-    // parent, and the frame identifier.
-    if (!m_mockAccessibilityElement)
-        createMockAccessibilityElement(pid);
-    else if ([m_mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
-        [(id)m_mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
+    // Each local root frame gets a mock accessibility element that serves as the target for the
+    // remote accessibility element in the parent process.
+    RetainPtr frameElement = ensureRemoteFrameAccessibilityElement(frameID);
 
-    RetainPtr accessibilityRemoteObject = this->accessibilityRemoteObject();
-    [accessibilityRemoteObject setRemoteParent:remoteElement.get() token:elementTokenData.get()];
-    [accessibilityRemoteObject setFrameIdentifier:frameID];
+    if ([frameElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)frameElement.get() accessibilitySetPresenterProcessIdentifier:pid];
+
+    [frameElement setRemoteParent:remoteElement.get() token:elementTokenData.get()];
+    [frameElement setFrameIdentifier:frameID];
 }
 
 void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken)
@@ -566,14 +574,14 @@ void WebPage::cacheAXSize(const WebCore::IntSize& size)
     [m_mockAccessibilityElement setSize:size];
 }
 
-void WebPage::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
+void WebPage::setIsolatedTreeForFrame(WebCore::LocalFrame& frame, Ref<WebCore::AXIsolatedTree>&& tree)
 {
-    [m_mockAccessibilityElement setIsolatedTree:WTF::move(tree)];
+    [protect(accessibilityRemoteObjectForFrame(frame)) setIsolatedTree:WTF::move(tree)];
 }
 
-RefPtr<AXIsolatedTree> WebPage::isolatedTree() const
+RefPtr<AXIsolatedTree> WebPage::isolatedTreeForFrame(WebCore::LocalFrame& frame)
 {
-    return [m_mockAccessibilityElement isolatedTree];
+    return [protect(accessibilityRemoteObjectForFrame(frame)) isolatedTree];
 }
 #endif
 

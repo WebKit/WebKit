@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shared-process accessibility frame</title>
+<script>
+// One file backs both iframes; the query string names this one.
+var frameName = new URLSearchParams(location.search).get("name") || "Unnamed";
+
+// The parent asks for the process ID once we've loaded, so the listener has to be
+// installed while parsing rather than on load.
+window.addEventListener("message", (event) => {
+    if (event.data !== "reportProcessId")
+        return;
+    parent.postMessage({
+        type: "processId",
+        name: frameName,
+        pid: window.internals ? internals.processIdentifier : null,
+    }, "*");
+});
+</script>
+</head>
+<body>
+<h1 id="heading"></h1>
+<script>
+document.getElementById("heading").textContent = `Frame ${frameName} Heading`;
+</script>
+</body>
+</html>

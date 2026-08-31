@@ -3820,6 +3820,9 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
     if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsBoolean"))
         return completionHandler(handleAXCopyAttributeValueAsBoolean(dictionaryValue(messageBody)).get());
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AXElementsAreEqual"))
+        return completionHandler(handleAXElementsAreEqual(dictionaryValue(messageBody)).get());
+
     if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsPoint"))
         return completionHandler(handleAXCopyAttributeValueAsPoint(dictionaryValue(messageBody)).get());
 
@@ -6000,6 +6003,17 @@ WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsBoolean(WKDic
     bool boolValue = CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 
     return adoptWK(WKBooleanCreate(boolValue));
+}
+
+// Compare underlying AXUIElementRefs rather than tokens.
+WKRetainPtr<WKTypeRef> TestController::handleAXElementsAreEqual(WKDictionaryRef messageBody)
+{
+    RetainPtr first = getAXElement(uint64Value(messageBody, "elementToken"));
+    RetainPtr second = getAXElement(uint64Value(messageBody, "otherElementToken"));
+    if (!first || !second)
+        return adoptWK(WKBooleanCreate(false));
+
+    return adoptWK(WKBooleanCreate(CFEqual(first.get(), second.get())));
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsPoint(WKDictionaryRef messageBody)

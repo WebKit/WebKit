@@ -20,6 +20,11 @@ accessibility/win [ Skip ]
 # (re-enabled in platform/mac/TestExpectations).
 accessibility/isolated-tree [ Skip ]
 http/tests/site-isolation/accessibility/client [ Skip ]
+# Also uses the accessibility client API, but served by the WPT server so the iframes get
+# non-loopback hostnames and can land in the shared Web process (sharedProcessForSite()
+# skips loopback sites, so the localhost-served tests above can never reach it).
+# Enabled on macOS only, in platform/mac/TestExpectations.
+http/wpt/site-isolation/accessibility [ Skip ]
 # Exercises iOS-specific remote-frame accessibility search behavior; enabled only on iOS (see platform/ios/TestExpectations).
 http/tests/site-isolation/accessibility/heading-search-returns-remote-frame.html [ Skip ]
 displaylists [ Skip ]

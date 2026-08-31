@@ -411,6 +411,8 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsSt
 
     // If there's no start object, it means we want to search everything.
     RefPtr startObject = criteria.startObject.get();
+    // Whether the caller passed an explicit start, as opposed to startObject being defaulted to the anchor below.
+    bool hasExplicitStartObject = startObject;
     if (!startObject)
         startObject = anchorObject;
 
@@ -464,7 +466,7 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsSt
     // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
     // exception when no start object was specified because we want to search everything regardless of search direction.
     RefPtr<AXCoreObject> previousObject;
-    if (!isForward && startObject != anchorObject) {
+    if (!isForward && hasExplicitStartObject) {
         previousObject = startObject;
         startObject = startObject->crossFrameParentObjectUnignored();
     }
@@ -526,7 +528,12 @@ AccessibilitySearchResultStream AXSearchManager::findMatchingObjectsInternalAsSt
             break;
 
         // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
-        if (!isForward && startObject != anchorObject && addMatchToStream(*startObject))
+        // Only an object within the anchor is eligible. A search is scoped to its receiver, so if the start element lies outside
+        // the anchor's subtree this walk begins above the anchor, never reaches the stop element below it, and would otherwise
+        // match the anchor's own ancestors. That hands the client an element it is already above, which looks like navigation
+        // escaping the page: walking up out of an iframe returned the main frame's root scroll area.
+        if (!isForward && startObject != anchorObject && startObject->crossFrameIsDescendantOfObject(*anchorObject)
+            && addMatchToStream(*startObject))
             break;
 
         previousObject = startObject;

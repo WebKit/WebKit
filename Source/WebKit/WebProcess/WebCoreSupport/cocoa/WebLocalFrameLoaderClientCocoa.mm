@@ -46,21 +46,31 @@ RemoteAXObjectRef WebLocalFrameLoaderClient::accessibilityRemoteObject()
     if (!webPage)
         return 0;
 
-    return webPage->accessibilityRemoteObject();
+    RefPtr coreFrame = m_frame->coreLocalFrame();
+    if (!coreFrame)
+        return webPage->accessibilityRemoteObject();
+
+    return webPage->accessibilityRemoteObjectForFrame(*coreFrame);
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void WebLocalFrameLoaderClient::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
 {
     ASSERT(isMainRunLoop());
-    if (RefPtr webPage = m_frame->page())
-        webPage->setIsolatedTree(WTF::move(tree));
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+    if (RefPtr coreFrame = m_frame->coreLocalFrame())
+        webPage->setIsolatedTreeForFrame(*coreFrame, WTF::move(tree));
 }
 
 RefPtr<AXIsolatedTree> WebLocalFrameLoaderClient::isolatedTree() const
 {
     RefPtr webPage = m_frame->page();
-    return webPage ? webPage->isolatedTree() : nullptr;
+    if (!webPage)
+        return nullptr;
+    RefPtr coreFrame = m_frame->coreLocalFrame();
+    return coreFrame ? webPage->isolatedTreeForFrame(*coreFrame) : nullptr;
 }
 #endif
 

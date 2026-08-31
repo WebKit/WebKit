@@ -47,6 +47,7 @@ public:
 
     // Attribute getters.
     bool isValid() const override;
+    bool isEqual(AccessibilityUIElement*) override;
     JSRetainPtr<JSStringRef> role() override;
     JSRetainPtr<JSStringRef> title() override;
     JSRetainPtr<JSStringRef> description() override;

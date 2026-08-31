@@ -1,11 +1,11 @@
 Tests forward and backward AnyType search traversal across process boundaries.
 
 === Forward Traversal ===
-Forward search found 18 elements:
+Forward search found 19 elements:
   1: domIdentifier=btn-before, role=AXRole: AXButton
   2: domIdentifier=text-before, role=AXRole: AXGroup
   3: domIdentifier=(no id), role=AXRole: AXStaticText
-  4: (remote platform element)
+  4: domIdentifier=(no id), role=AXRole: AXGroup
   5: (remote platform element)
   6: (remote platform element)
   7: (remote platform element)
@@ -17,16 +17,17 @@ Forward search found 18 elements:
   13: (remote platform element)
   14: (remote platform element)
   15: (remote platform element)
-  16: domIdentifier=text-after, role=AXRole: AXGroup
-  17: domIdentifier=(no id), role=AXRole: AXStaticText
-  18: domIdentifier=btn-after, role=AXRole: AXButton
+  16: (remote platform element)
+  17: domIdentifier=text-after, role=AXRole: AXGroup
+  18: domIdentifier=(no id), role=AXRole: AXStaticText
+  19: domIdentifier=btn-after, role=AXRole: AXButton
 
 === Backward Traversal ===
-Backward search found 18 elements:
+Backward search found 19 elements:
   1: domIdentifier=btn-after, role=AXRole: AXButton
   2: domIdentifier=text-after, role=AXRole: AXGroup
   3: domIdentifier=(no id), role=AXRole: AXStaticText
-  4: (remote platform element)
+  4: domIdentifier=(no id), role=AXRole: AXGroup
   5: (remote platform element)
   6: (remote platform element)
   7: (remote platform element)
@@ -38,9 +39,10 @@ Backward search found 18 elements:
   13: (remote platform element)
   14: (remote platform element)
   15: (remote platform element)
-  16: domIdentifier=text-before, role=AXRole: AXGroup
-  17: domIdentifier=(no id), role=AXRole: AXStaticText
-  18: domIdentifier=btn-before, role=AXRole: AXButton
+  16: (remote platform element)
+  17: domIdentifier=text-before, role=AXRole: AXGroup
+  18: domIdentifier=(no id), role=AXRole: AXStaticText
+  19: domIdentifier=btn-before, role=AXRole: AXButton
 
 === Verification ===
 PASS: forwardResults.length === backwardResults.length

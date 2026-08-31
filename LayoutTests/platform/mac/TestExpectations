@@ -137,6 +137,12 @@ webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 http/tests/site-isolation/accessibility/client [ Skip ]
 http/tests/site-isolation/accessibility/client/simple-iframe.html [ Pass ]
 
+# Shared-process site isolation accessibility tests using the accessibility client API:
+# Skip by default, enable tests that are stable.
+http/wpt/site-isolation/accessibility [ Skip ]
+# Passes on the first run and fails or times out on subsequent
+webkit.org/b/322236 http/wpt/site-isolation/accessibility/two-iframes-shared-process.sub.html [ Pass Failure Timeout ]
+
 # Skip glib-only combobox accessibility tests.
 accessibility/combobox/gtk [ Skip ]
 

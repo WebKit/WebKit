@@ -1357,15 +1357,23 @@ public:
     void registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken);
     void registerRemoteFrameAccessibilityTokens(pid_t, WebCore::AccessibilityRemoteToken, WebCore::FrameIdentifier);
     WKAccessibilityWebPageObject* NODELETE accessibilityRemoteObject();
+    // Returns the mock element serving the local root frame that contains this frame. When several
+    // cross-site frames share one Web process they are each a root frame of this page, and each
+    // needs its own mock element; accessibilityRemoteObject() alone can't tell them apart.
+    WKAccessibilityWebPageObject* accessibilityRemoteObjectForFrame(WebCore::LocalFrame&);
+    // Returns the element serving this root frame, creating it if the UI process hasn't bound the
+    // frame yet, so that the element's identity never depends on registration order.
+    WKAccessibilityWebPageObject* ensureRemoteFrameAccessibilityElement(WebCore::FrameIdentifier);
     WebCore::IntPoint remoteFrameOffsetInMainFrame();
     WebCore::IntPoint mainFrameCoordinatesToRootView(WebCore::IntPoint) const;
     void createMockAccessibilityElement(pid_t);
+    RetainPtr<WKAccessibilityWebPageObject> createMockAccessibilityElementWithPresenter(pid_t);
     void sendAccessibilityTokenIfNeeded();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void cacheAXPosition(const WebCore::FloatPoint&);
     void cacheAXSize(const WebCore::IntSize&);
-    void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&);
-    RefPtr<WebCore::AXIsolatedTree> isolatedTree() const;
+    void setIsolatedTreeForFrame(WebCore::LocalFrame&, Ref<WebCore::AXIsolatedTree>&&);
+    RefPtr<WebCore::AXIsolatedTree> isolatedTreeForFrame(WebCore::LocalFrame&);
 #endif
     NSObject *accessibilityObjectForMainFramePlugin();
     bool shouldFallbackToWebContentAXObjectForMainFramePlugin() const;
@@ -2655,6 +2663,7 @@ private:
 #if PLATFORM(COCOA)
     void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&&);
     RetainPtr<NSData> accessibilityRemoteTokenData() const;
+    RetainPtr<NSData> accessibilityRemoteTokenDataForFrame(WebCore::FrameIdentifier) const;
     void accessibilityTransferRemoteToken(RetainPtr<NSData>);
 #endif
 
@@ -2928,6 +2937,9 @@ private:
     WebCore::FloatPoint m_accessibilityPosition;
 
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
+    // Mock elements for local root frames other than the main frame, keyed by root frame ID. Each
+    // gets its own remote token so the UI process can address each frame in this process separately.
+    HashMap<WebCore::FrameIdentifier, RetainPtr<WKAccessibilityWebPageObject>> m_remoteFrameAccessibilityElements;
     bool m_needsAccessibilityTokenTransfer { false };
 
     // This frame's content origin in top-level (main-frame) coordinates, pushed from the UI process

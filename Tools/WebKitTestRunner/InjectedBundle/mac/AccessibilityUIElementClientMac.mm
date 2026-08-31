@@ -147,6 +147,25 @@ static std::optional<bool> axCopyAttributeValueAsBoolean(uint64_t elementToken, 
     return value;
 }
 
+static bool axElementsAreEqual(uint64_t elementToken, uint64_t otherElementToken)
+{
+    WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+    setValue(dictionary, "elementToken", elementToken);
+    setValue(dictionary, "otherElementToken", otherElementToken);
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    WKTypeRef returnData = nullptr;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), toWK("AXElementsAreEqual").get(), dictionary.get(), &returnData);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    if (!returnData || WKGetTypeID(returnData) != WKBooleanGetTypeID())
+        return false;
+
+    bool value = WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
+    WKRelease(returnData);
+    return value;
+}
+
 static std::pair<double, double> axCopyAttributeValueAsPoint(uint64_t elementToken, const char* attributeName)
 {
     WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
@@ -397,6 +416,13 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementClientMac::parentElement()
 {
     std::optional token = axCopyAttributeValueAsElementToken(m_elementToken, "AXParent");
     return token ? create(*token).ptr() : nullptr;
+}
+
+bool AccessibilityUIElementClientMac::isEqual(AccessibilityUIElement* otherElement)
+{
+    if (!otherElement)
+        return false;
+    return axElementsAreEqual(m_elementToken, static_cast<AccessibilityUIElementClientMac*>(otherElement)->m_elementToken);
 }
 
 bool AccessibilityUIElementClientMac::isIgnored() const

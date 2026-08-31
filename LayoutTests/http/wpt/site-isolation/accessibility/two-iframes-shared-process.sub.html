@@ -1,0 +1,112 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationSharedProcessEnabled=true ] -->
+<html>
+<head>
+<script src="/webkit-test-resources/js-test.js"></script>
+<script src="/webkit-test-resources/accessibility-helper.js"></script>
+<script>
+// Installed before the iframes are parsed so no frame can reply before we listen.
+var framePIDs = {};
+var allFramesReported = new Promise((resolve) => {
+    var pending = 2;
+    window.addEventListener("message", (event) => {
+        if (!event.data || event.data.type !== "processId")
+            return;
+        framePIDs[event.data.name] = event.data.pid;
+        if (!--pending)
+            resolve();
+    });
+});
+</script>
+</head>
+<body>
+
+<button id="before">Before</button>
+
+<!--
+  The main frame is served from localhost, which sharedProcessForSite() classifies as
+  loopback and so keeps in its own process. Both iframes use WPT hostname aliases,
+  which are not loopback and are different sites from each other and from the main
+  frame, so SiteIsolationSharedProcessEnabled coalesces them into a single shared Web
+  process instead of giving each its own.
+-->
+<iframe id="frameOne" src="http://{{hosts[][]}}:{{ports[http][0]}}/WebKit/site-isolation/accessibility/resources/frame-with-heading.html?name=One"></iframe>
+<iframe id="frameTwo" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/accessibility/resources/frame-with-heading.html?name=Two"></iframe>
+
+<button id="after">After</button>
+
+<script>
+var output = "Tests the accessibility tree for two cross-site iframes that share one Web process.\n\n";
+
+window.jsTestIsAsync = true;
+
+var mainFramePID = window.internals ? internals.processIdentifier : null;
+
+if (window.accessibilityController)
+    accessibilityController.setClientAccessibilityMode(true);
+
+// Counts AXWebArea elements so we can tell that each iframe contributed its own,
+// rather than the two collapsing into one or one going missing.
+function countWebAreas(element) {
+    if (!element || !element.role)
+        return 0;
+    var count = element.role.includes("AXWebArea") ? 1 : 0;
+    for (var i = 0; i < element.childrenCount; i++)
+        count += countWebAreas(element.childAtIndex(i));
+    return count;
+}
+
+var allowedRoles = ["AXWebArea", "AXButton", "AXHeading"];
+function dumpFilteredAccessibilityTree(element, indent) {
+    var role = element.role;
+    var matched = allowedRoles.some(r => role.endsWith(r));
+    if (matched) {
+        for (var i = 0; i < indent; i++)
+            output += "    ";
+        output += role + " " + element.title + "\n";
+    }
+    var childIndent = matched ? indent + 1 : indent;
+    for (var i = 0; i < element.childrenCount; i++)
+        dumpFilteredAccessibilityTree(element.childAtIndex(i), childIndent);
+}
+
+var webAreaCount;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    document.getElementById("frameOne").contentWindow.postMessage("reportProcessId", "*");
+    document.getElementById("frameTwo").contentWindow.postMessage("reportProcessId", "*");
+    await allFramesReported;
+
+    // Confirm the test is actually exercising the shared process. Without
+    // SiteIsolationSharedProcessEnabled these two sites get a process each.
+    output += expect("typeof framePIDs.One", '"number"');
+    output += expect("framePIDs.One === framePIDs.Two", "true");
+    output += expect("framePIDs.One !== mainFramePID", "true");
+    output += "\n";
+
+    // Wait for both iframes' content to reach the accessibility tree.
+    try {
+        await waitForElements([
+            (element) => element.role.includes("Heading") && element.title.includes("Frame One"),
+            (element) => element.role.includes("Heading") && element.title.includes("Frame Two"),
+        ]);
+    } catch (error) {
+        output += `FAIL: both iframe headings never appeared in the accessibility tree (${error})\n`;
+    }
+
+    // The main frame's web area plus one per iframe.
+    webAreaCount = countWebAreas(accessibilityController.rootElement);
+    output += expect("webAreaCount", "3");
+
+    output += "\nAccessibility tree:\n";
+    dumpFilteredAccessibilityTree(accessibilityController.rootElement, 0);
+
+    debug(output);
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>
