@@ -120,10 +120,10 @@ void NetworkTransportStream::start(NetworkTransportStreamReadyHandler&& readyHan
 
 void NetworkTransportStream::initializeReadyConnection()
 {
-    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get()));
+    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(MAYBE_SOFT_LINK(nw_protocol_copy_webtransport_definition)()).get()));
 
-    bool isPeerInitiated = nw_webtransport_metadata_get_is_peer_initiated(metadata.get());
-    bool isUnidirectional = nw_webtransport_metadata_get_is_unidirectional(metadata.get());
+    bool isPeerInitiated = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_is_peer_initiated)(metadata.get());
+    bool isUnidirectional = MAYBE_SOFT_LINK(nw_webtransport_metadata_get_is_unidirectional)(metadata.get());
 
     if (!isUnidirectional)
         m_streamType = NetworkTransportStreamType::Bidirectional;
@@ -145,7 +145,7 @@ void NetworkTransportStream::initializeReadyConnection()
     }
 
     if (m_streamType != NetworkTransportStreamType::IncomingUnidirectional) {
-        nw_webtransport_metadata_set_remote_receive_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
+        MAYBE_SOFT_LINK(nw_webtransport_metadata_set_remote_receive_error_handler)(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -172,7 +172,7 @@ void NetworkTransportStream::initializeReadyConnection()
     }
 
     if (m_streamType != NetworkTransportStreamType::OutgoingUnidirectional) {
-        nw_webtransport_metadata_set_remote_send_error_handler(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
+        MAYBE_SOFT_LINK(nw_webtransport_metadata_set_remote_send_error_handler)(metadata.get(), makeBlockPtr([weakThis = WeakPtr { *this }] (uint64_t errorCode) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -301,12 +301,12 @@ void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportSt
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::ReadClosed;
-        nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+        MAYBE_SOFT_LINK(nw_connection_abort_reads)(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::WriteClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-        nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+        MAYBE_SOFT_LINK(nw_connection_abort_reads)(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::ReadClosed:
@@ -320,12 +320,12 @@ void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStrea
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::WriteClosed;
-        nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+        MAYBE_SOFT_LINK(nw_connection_abort_writes)(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::ReadClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-        nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+        MAYBE_SOFT_LINK(nw_connection_abort_writes)(m_connection.get(), errorCode.value_or(0));
         break;
     }
     case NetworkTransportStreamState::WriteClosed:

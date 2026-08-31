@@ -62,6 +62,7 @@
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebErrors.h"
+#include "WebPreferencesDefaultValues.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -2014,7 +2015,8 @@ void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSe
     if (!url.isValid()
         || !portAllowed(url)
         || isIPAddressDisallowed(url)
-        || m_networkTransportSessions.contains(identifier))
+        || m_networkTransportSessions.contains(identifier)
+        || !defaultWebTransportEnabled())
         return completionHandler(std::nullopt);
 
     MESSAGE_CHECK_COMPLETION(areValidWebTransportHeaders(additionalHeaders), completionHandler(std::nullopt));
