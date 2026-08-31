@@ -280,6 +280,13 @@
         <path fill="var(--light)" opacity="0.8" d="M 6 12 L 4 12 L 4 7 L 6 7 Z"/>
     </symbol>
 
+    <symbol id="search" viewBox="0 0 16 16">
+        <circle fill="none" stroke="var(--shadow)" stroke-width="3" cx="7" cy="7" r="2.625"/>
+        <path fill="none" stroke="var(--shadow)" stroke-width="3" stroke-linecap="round" d="M 8.875 8.875 L 11.75 11.75"/>
+        <circle fill="none" stroke="white" cx="7" cy="7" r="2.625"/>
+        <path fill="none" stroke="white" stroke-linecap="round" d="M 8.875 8.875 L 11.75 11.75"/>
+    </symbol>
+
     <g id="Assertion-dark" class="dark blue"><use href="#box"/><use href="#A"/></g>
     <g id="Assertion-light" class="light blue"><use href="#box"/><use href="#A"/></g>
     <g id="AuditTestCase-dark" class="dark blue"><use href="#box"/><use href="#t"/></g>
@@ -441,4 +448,6 @@
     <g id="TypeUndefined-light" class="light grey"><use href="#box"/><use href="#question-mark"/></g>
     <g id="URLBreakpoint-dark" class="dark blue"><use href="#box"/><use href="#arrows"/></g>
     <g id="URLBreakpoint-light" class="light blue"><use href="#box"/><use href="#arrows"/></g>
+    <g id="WatchedObject-dark" class="dark blue"><use href="#box"/><use href="#search"/></g>
+    <g id="WatchedObject-light" class="light blue"><use href="#box"/><use href="#search"/></g>
 </svg>

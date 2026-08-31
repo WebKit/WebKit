@@ -1,0 +1,58 @@
+Tests watching named data-property writes without pausing at setter entry.
+
+
+== Running test suite: CommandLineAPI.watch.PropertyWrite
+-- Running test case: CommandLineAPI.watch.PropertyWrite.PlainObject
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before replacing a plain object's named data property.
+PASS: Should pause exactly once for the property write.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before adding a plain object's named data property.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.NullPrototype
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before writing a null-prototype object's named data property.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.ClassInstance
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before writing a class instance's named data property.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.Setter
+PASS: Should not pause when a setter does not modify the watched object.
+PASS: The non-mutating setter should still run.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a backing-field write inside a setter.
+PASS: Should pause exactly once for the property write.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a backing-field write inside a setter called by Object.assign.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.SuperSetter
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a backing-field write inside a superclass setter.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.InternalWrites
+PASS: Should not pause for Object.assign's internal data-property write.
+PASS: Should not pause for Reflect.set's internal data-property write.
+PASS: Should not pause for Object.defineProperty's internal data-property write.
+PASS: Internal data-property writes should still complete.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.RejectedWrites
+PASS: Should not pause for a rejected read-only property write.
+PASS: A rejected strict write should still throw TypeError without changing the property.
+PASS: Should not pause for a rejected property addition.
+PASS: The rejected property addition should leave the object unchanged.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before replacing a non-extensible object's writable data property.
+PASS: Should pause exactly once for the property write.
+
+-- Running test case: CommandLineAPI.watch.PropertyWrite.ReentrantDescriptor
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a write whose property becomes a setter while paused.
+PASS: Should run the requested expression while paused.
+PASS: Should pause exactly once for the property write.
+
