@@ -85,6 +85,29 @@ Structure* JSGenericTypedArrayViewConstructor<ViewClass>::createStructure(
         vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
+// https://tc39.es/ecma262/#sec-initializetypedarrayfromlist
+template<typename ViewClass>
+inline JSObject* constructGenericTypedArrayViewFromList(JSGlobalObject* globalObject, Structure* structure, const MarkedArgumentBuffer& storage)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_VARIABLE(scope);
+
+    ViewClass* result = ViewClass::createUninitialized(globalObject, structure, storage.size());
+    EXCEPTION_ASSERT(!!scope.exception() == !result);
+    if (!result) [[unlikely]]
+        return nullptr;
+
+    for (unsigned i = 0; i < storage.size(); ++i) {
+        bool success = result->setIndex(globalObject, i, storage.at(i));
+        EXCEPTION_ASSERT(scope.exception() || success);
+        if (!success)
+            return nullptr;
+    }
+
+    return result;
+}
+
 template<typename ViewClass>
 inline JSObject* constructGenericTypedArrayViewFromIterator(JSGlobalObject* globalObject, Structure* structure, JSObject* iterable, JSValue iteratorMethod)
 {
@@ -101,19 +124,24 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(JSGlobalObject* glob
     });
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    ViewClass* result = ViewClass::createUninitialized(globalObject, structure, storage.size());
-    EXCEPTION_ASSERT(!!scope.exception() == !result);
-    if (!result) [[unlikely]]
-        return nullptr;
+    RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromList<ViewClass>(globalObject, structure, storage));
+}
 
-    for (unsigned i = 0; i < storage.size(); ++i) {
-        bool success = result->setIndex(globalObject, i, storage.at(i));
-        EXCEPTION_ASSERT(scope.exception() || success);
-        if (!success)
-            return nullptr;
+template<typename ViewClass>
+inline JSObject* constructGenericTypedArrayViewFromFastArray(JSGlobalObject* globalObject, Structure* structure, JSArray* array)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    MarkedArgumentBuffer storage;
+    array->fillArgList(globalObject, storage);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (storage.hasOverflowed()) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
     }
 
-    return result;
+    RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromList<ViewClass>(globalObject, structure, storage));
 }
 
 constinit const ASCIILiteral typedArrayErrorMessageBufferIsAlreadyDetached = "Buffer is already detached"_s;
@@ -204,9 +232,14 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
         // This getPropertySlot operation should not be observed by the Proxy.
         // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
-        if (JSArray* array = dynamicDowncast<JSArray>(object); array && isJSArray(array) && array->isIteratorProtocolFastAndNonObservable()) [[likely]]
+        if (JSArray* array = dynamicDowncast<JSArray>(object); array && isJSArray(array) && array->isIteratorProtocolFastAndNonObservable()) [[likely]] {
+            // Every element must be read before any of them is converted, since converting an object
+            // runs valueOf or toString, which can modify the array. Only these shapes can hold an object.
+            IndexingType indexingType = array->indexingType();
+            if (hasContiguous(indexingType) || hasAnyArrayStorage(indexingType))
+                RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromFastArray<ViewClass>(globalObject, structure, array));
             length = array->length();
-        else {
+        } else {
             PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
             object->getPropertySlot(globalObject, vm.propertyNames->length, lengthSlot);
             RETURN_IF_EXCEPTION(scope, nullptr);
