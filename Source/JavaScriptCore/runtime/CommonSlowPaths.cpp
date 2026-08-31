@@ -31,6 +31,7 @@
 #include "BytecodeStructs.h"
 #include "ClonedArguments.h"
 #include "CommonSlowPathsInlines.h"
+#include "Debugger.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
 #include "ErrorHandlingScope.h"
@@ -1494,6 +1495,16 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_put_by_id_with_this)
     JSValue thisVal = GET_C(bytecode.m_thisValue).jsValue();
     JSValue putValue = GET_C(bytecode.m_value).jsValue();
     PutPropertySlot slot(thisVal, bytecode.m_ecmaMode.isStrict(), codeBlock->putByIdContext());
+
+    if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+        if (!codeBlock->unlinkedCodeBlock()->isBuiltinFunction()) [[likely]] {
+            if (JSObject* receiver = thisVal.getObject(); receiver && receiver->structure()->isUncacheableDictionary()) [[unlikely]] {
+                debugger->willModifyUncacheableDictionary(*receiver);
+                CHECK_EXCEPTION();
+            }
+        }
+    }
+
     baseValue.putInline(globalObject, ident, putValue, slot);
     END();
 }
@@ -1510,6 +1521,16 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_put_by_val_with_this)
     auto property = subscript.toPropertyKey(globalObject);
     CHECK_EXCEPTION();
     PutPropertySlot slot(thisValue, bytecode.m_ecmaMode.isStrict());
+
+    if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+        if (!codeBlock->unlinkedCodeBlock()->isBuiltinFunction()) [[likely]] {
+            if (JSObject* receiver = thisValue.getObject(); receiver && receiver->structure()->isUncacheableDictionary()) [[unlikely]] {
+                debugger->willModifyUncacheableDictionary(*receiver);
+                CHECK_EXCEPTION();
+            }
+        }
+    }
+
     baseValue.put(globalObject, property, value, slot);
     END();
 }

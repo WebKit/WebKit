@@ -1676,6 +1676,8 @@ CommandLineAPI.methods["values"] = function(object) { return @Object.@values(obj
 CommandLineAPI.methods["queryInstances"] = function() { return InjectedScriptHost.queryInstances(...createIterableWithoutPrototypeFromArguments(arguments)); };
 CommandLineAPI.methods["queryObjects"] = function() { return InjectedScriptHost.queryInstances(...createIterableWithoutPrototypeFromArguments(arguments)); };
 CommandLineAPI.methods["queryHolders"] = function() { return InjectedScriptHost.queryHolders(...createIterableWithoutPrototypeFromArguments(arguments)); };
+CommandLineAPI.methods["unwatch"] = function() { return InjectedScriptHost.unwatch(...createIterableWithoutPrototypeFromArguments(arguments)); };
+CommandLineAPI.methods["watch"] = function() { return InjectedScriptHost.watch(...createIterableWithoutPrototypeFromArguments(arguments)); };
 
 CommandLineAPI.methods["inspect"] = function(object) { return injectedScript.inspectObject(object); };
 

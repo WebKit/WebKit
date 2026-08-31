@@ -403,6 +403,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (WI.debuggerManager.assertionFailuresBreakpoint)
             this._addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
+        if (WI.debuggerManager.watchedObjectBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.watchedObjectBreakpoint);
+
         if (WI.debuggerManager.allMicrotasksBreakpoint)
             this._addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
 
@@ -2029,6 +2032,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
             return true;
 
+        case WI.DebuggerManager.PauseReason.WatchedObject:
+            if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.watchedObjectBreakpoint, WI.UIString("Watched Object"))) {
+                console.assert(false, "not reached");
+                break;
+            }
+            return true;
+
         case WI.DebuggerManager.PauseReason.PauseOnNextStatement:
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
@@ -2273,6 +2283,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             });
 
             contextMenu.appendSeparator();
+        }
+
+        if (WI.JavaScriptBreakpoint.supportsWatchedObjectBreakpoint()) {
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.watchedObjects(), WI.debuggerManager.watchedObjectBreakpoint, () => {
+                WI.debuggerManager.createWatchedObjectBreakpoint();
+            });
         }
 
         addToggleForSpecialBreakpoint(WI.repeatedUIString.assertionFailures(), WI.debuggerManager.assertionFailuresBreakpoint, () => {

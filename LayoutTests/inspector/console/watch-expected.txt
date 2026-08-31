@@ -1,0 +1,124 @@
+Tests for the watch function in the Command Line API.
+
+
+== Running test suite: CommandLineAPI.watch
+-- Running test case: CommandLineAPI.watch.WarmedMutator
+PASS: The mutator should DFG compile before watch.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write from a mutator warmed before watch.
+
+-- Running test case: CommandLineAPI.watch.API
+PASS: Should return undefined after watching an object.
+PASS: Should return undefined without an argument.
+PASS: Should throw a TypeError for a primitive.
+
+-- Running test case: CommandLineAPI.watch.ObjectTypes
+PASS: Should watch and unwatch a null-prototype object.
+PASS: Should watch and unwatch a class instance with private members.
+PASS: Should watch and unwatch an object from another realm.
+PASS: Should watch and unwatch an object with an Array constructor and toStringTag.
+PASS: watch should reject an array.
+PASS: unwatch should reject an array.
+PASS: watch should reject an Array subclass instance.
+PASS: unwatch should reject an Array subclass instance.
+PASS: watch should reject a regular expression.
+PASS: unwatch should reject a regular expression.
+PASS: watch should reject a RegExp subclass instance.
+PASS: unwatch should reject a RegExp subclass instance.
+PASS: watch should reject a Map.
+PASS: unwatch should reject a Map.
+PASS: watch should reject a Set.
+PASS: unwatch should reject a Set.
+PASS: watch should reject a WeakMap.
+PASS: unwatch should reject a WeakMap.
+PASS: watch should reject a WeakSet.
+PASS: unwatch should reject a WeakSet.
+PASS: watch should reject a Promise.
+PASS: unwatch should reject a Promise.
+PASS: watch should reject an ArrayBuffer.
+PASS: unwatch should reject an ArrayBuffer.
+PASS: watch should reject a typed array.
+PASS: unwatch should reject a typed array.
+PASS: watch should reject a DataView.
+PASS: unwatch should reject a DataView.
+PASS: watch should reject a function.
+PASS: unwatch should reject a function.
+PASS: watch should reject a Date.
+PASS: unwatch should reject a Date.
+PASS: watch should reject an Error.
+PASS: unwatch should reject an Error.
+PASS: watch should reject a boxed primitive.
+PASS: unwatch should reject a boxed primitive.
+PASS: watch should reject an arguments object.
+PASS: unwatch should reject an arguments object.
+PASS: watch should reject a Proxy without invoking its traps.
+PASS: unwatch should reject a Proxy without invoking its traps.
+PASS: watch should reject a revoked Proxy.
+PASS: unwatch should reject a revoked Proxy.
+PASS: watch should reject a DOM object.
+PASS: unwatch should reject a DOM object.
+PASS: watch should reject Object.prototype.
+PASS: unwatch should reject Object.prototype.
+PASS: watch should reject ArrayBuffer.prototype.
+PASS: unwatch should reject ArrayBuffer.prototype.
+PASS: watch should reject an array from another realm.
+PASS: unwatch should reject an array from another realm.
+
+-- Running test case: CommandLineAPI.watch.PropertyAddition
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before adding an ordinary named property.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before writing a named property after a Structure transition.
+
+-- Running test case: CommandLineAPI.watch.SuperPropertyWrite
+PASS: The super-property mutator should DFG compile before watch.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a named super-property write to a watched receiver.
+
+-- Running test case: CommandLineAPI.watch.ComputedSuperPropertyWrite
+PASS: The computed super-property mutator should DFG compile after watch.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a computed super-property write from a mutator compiled after watch.
+PASS: Should pause exactly once for the compiled computed super-property write.
+
+-- Running test case: CommandLineAPI.watch.SloppyComputedSuperPropertyWrite
+PASS: The non-strict computed super-property mutator should DFG compile after watch.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a non-strict computed super-property write from a mutator compiled after watch.
+PASS: Should pause exactly once for the compiled non-strict computed super-property write.
+
+-- Running test case: CommandLineAPI.watch.FlattenAttempt
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write after an attempted dictionary flatten.
+
+-- Running test case: CommandLineAPI.watch.ReentrantUnwatch
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write whose receiver is unwatched while paused.
+PASS: Should run the requested expression while paused.
+PASS: Should not pause for a subsequent write after reentrant unwatch.
+
+-- Running test case: CommandLineAPI.watch.WarmedOwnRead
+PASS: The own-property reader should DFG compile before watch.
+PASS: The watched object's property should remain readable after invalidating the warmed read cache.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write after warming an own-property read cache.
+
+-- Running test case: CommandLineAPI.watch.WarmedInheritedRead
+PASS: The inherited-property reader should DFG compile before watch.
+PASS: The inherited property should remain readable after watching its prototype.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a direct prototype write after warming an inherited read cache.
+
+-- Running test case: CommandLineAPI.watch.ObjectIdentity
+PASS: Should not pause for an unwatched object with the same original Structure.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write to the watched object rather than its same-Structure sibling.
+
+-- Running test case: CommandLineAPI.watch.GarbageCollection
+PASS: A watched object should be garbage collected.
+
+-- Running test case: CommandLineAPI.watch.OtherObjectsWatchedDFGMutator
+PASS: A mutator should DFG compile while other watched objects exist.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write reached from DFG code compiled while other objects were watched.
+

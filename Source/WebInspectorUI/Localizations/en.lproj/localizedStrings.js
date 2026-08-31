@@ -1978,6 +1978,9 @@ localizedStrings["Warn @ Audit Tab - Test Case"] = "Warn";
 localizedStrings["Warning: "] = "Warning: ";
 localizedStrings["Warnings"] = "Warnings";
 localizedStrings["Watch Expressions"] = "Watch Expressions";
+localizedStrings["Watched Object"] = "Watched Object";
+/* Break (pause) on supported operations involving a watched object */
+localizedStrings["Watched Objects @ JavaScript Breakpoint"] = "Watched Objects";
 localizedStrings["Waterfall"] = "Waterfall";
 localizedStrings["Web Animation"] = "Web Animation";
 /* Section title for the JavaScript backtrace of the creation of a web animation */

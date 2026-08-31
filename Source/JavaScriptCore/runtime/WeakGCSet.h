@@ -46,12 +46,14 @@ template<typename T>
 struct WeakGCSetHash {
     // We only prune stale entries on Full GCs so we have to handle non-Live entries in the table.
     static unsigned hash(const Weak<T>& p) { return PtrHash<T*>::hash(p.get()); }
+    static unsigned hash(const T* p) { return PtrHash<const T*>::hash(p); }
     static bool equal(const Weak<T>& a, const Weak<T>& b)
     {
         if (!a || !b)
             return false;
         return a.get() == b.get();
     }
+    static bool equal(const Weak<T>& a, const T* b) { return b && a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
@@ -76,6 +78,11 @@ public:
         m_set.clear();
     }
 
+    bool isEmptyIgnoringNullReferences() const
+    {
+        return m_set.isEmptyIgnoringNullReferences();
+    }
+
     AddResult add(ValueArg* key)
     {
         // Constructing a Weak shouldn't trigger a GC but add this ASSERT for good measure.
@@ -92,6 +99,26 @@ public:
         
         auto result = m_set.template ensure<HashTranslator>(std::forward<T>(key), functor);
         return result.iterator->get();
+    }
+
+    iterator find(const ValueArg* key) const
+    {
+        return m_set.template find<HashArg>(key);
+    }
+
+    bool contains(const ValueArg* key) const
+    {
+        return m_set.template contains<HashArg>(key);
+    }
+
+    bool remove(const ValueArg* key)
+    {
+        return m_set.remove(find(key));
+    }
+
+    Weak<ValueArg> takeAny()
+    {
+        return m_set.takeAny();
     }
 
     // It's not safe to call into the VM or allocate an object while an iterator is open.
