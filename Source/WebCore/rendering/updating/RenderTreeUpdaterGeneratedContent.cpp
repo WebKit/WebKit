@@ -127,6 +127,13 @@ void RenderTreeUpdater::GeneratedContent::updateCounters()
     update();
 }
 
+void RenderTreeUpdater::GeneratedContent::updateListMarkers()
+{
+    // The markers were collected by the builder as it changed the tree, since a marker's text is made of its list
+    // item's list-item counter value and that is only settled once the tree is done changing.
+    m_updater.m_builder.updateListMarkerContents();
+}
+
 static KeyframeEffectStack* NODELETE keyframeEffectStackForPseudoElement(const Element& element, PseudoElementType pseudoElementType)
 {
     if (!element.mayHaveKeyframeEffects())

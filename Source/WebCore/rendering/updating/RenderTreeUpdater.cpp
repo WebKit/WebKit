@@ -143,6 +143,7 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 
     generatedContent().updateRemainingQuotes();
     generatedContent().updateCounters();
+    generatedContent().updateListMarkers();
 
     m_builder.updateAfterDescendants(renderView());
 

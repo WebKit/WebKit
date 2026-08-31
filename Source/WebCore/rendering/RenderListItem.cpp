@@ -296,7 +296,7 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
 void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement& list)
 {
     for (auto* listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
-        listItem->updateValue();
+        listItem->updateValueAndMarkerContent();
 }
 
 unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
@@ -387,6 +387,15 @@ void RenderListItem::updateValue()
     }
 }
 
+void RenderListItem::updateValueAndMarkerContent()
+{
+    updateValue();
+    // Nothing is changing the render tree here, so there is nothing to wait for: fill the marker's text in right away
+    // rather than leave it to layout (see RenderTreeBuilder::updateListMarkerContents()).
+    if (m_marker)
+        m_marker->updateInlineMarginsAndContent();
+}
+
 void RenderListItem::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -397,15 +406,6 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
         if (m_marker && m_marker->excludedPosition())
             m_marker->invalidateExcludedMarkerContainer();
     }
-}
-
-void RenderListItem::computeIntrinsicLogicalWidthContributions()
-{
-    // FIXME: RenderListMarker::updateInlineMargins() mutates margin style which affects preferred widths.
-    if (m_marker && m_marker->hasInvalidContentLogicalWidths())
-        m_marker->updateInlineMarginsAndContent();
-
-    RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
 }
 
 RenderListMarker* RenderListItem::excludedMarker() const
@@ -475,20 +475,20 @@ void RenderListItem::usedCounterDirectivesChanged()
     if (m_marker)
         m_marker->setNeedsLayoutAndInvalidateContentLogicalWidths();
 
-    updateValue();
+    updateValueAndMarkerContent();
     RefPtr list = enclosingList(*this);
     if (!list)
         return;
     auto* item = this;
     while ((item = nextListItem(*list, *item)))
-        item->updateValue();
+        item->updateValueAndMarkerContent();
 }
 
-void RenderListItem::updateListMarkerNumbers()
+Vector<CheckedRef<RenderListMarker>> RenderListItem::updateListMarkerNumbers()
 {
     RefPtr list = enclosingList(*this);
     if (!list)
-        return;
+        return { };
 
     bool isInReversedOrderedList = false;
     if (auto* orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
@@ -498,10 +498,15 @@ void RenderListItem::updateListMarkerNumbers()
 
     // If an item has been marked for update before, we know that all following items have, too.
     // This gives us the opportunity to stop and avoid marking the same nodes again.
+    Vector<CheckedRef<RenderListMarker>> markersNeedingContentUpdate;
     auto* item = this;
     auto subsequentListItem = isInReversedOrderedList ? previousListItem : nextListItem;
-    while ((item = subsequentListItem(*list, *item)) && item->m_value)
+    while ((item = subsequentListItem(*list, *item)) && item->m_value) {
         item->updateValue();
+        if (CheckedPtr marker = item->m_marker.get())
+            markersNeedingContentUpdate.append(*marker);
+    }
+    return markersNeedingContentUpdate;
 }
 
 bool RenderListItem::isInReversedOrderedList() const

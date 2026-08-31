@@ -193,7 +193,27 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
 
 RenderTreeBuilder::~RenderTreeBuilder()
 {
+    // Normally a no-op: RenderTreeUpdater::commit() has already done this. It is here for the tree changes that run
+    // with no render tree update in flight, tearing renderers down for a subtree that is leaving the composed tree
+    // (ContainerNode::destroyRenderTreeIfNeeded()), since those build a RenderTreeBuilder of their own.
+    // FIXME: Remove once those sites are driven by the render tree update, see RenderTreeBuilder::current().
+    updateListMarkerContents();
     s_current = m_previous;
+}
+
+void RenderTreeBuilder::addListMarkerNeedingContentUpdate(RenderListMarker& marker)
+{
+    m_listMarkersNeedingContentUpdate.add(marker);
+}
+
+void RenderTreeBuilder::updateListMarkerContents()
+{
+    // A marker's text is made of its list item's list-item counter value, which is only settled once the tree is done
+    // changing: inserting or removing a list item renumbers every item after it.
+    while (!m_listMarkersNeedingContentUpdate.isEmptyIgnoringNullReferences()) {
+        for (auto& marker : std::exchange(m_listMarkersNeedingContentUpdate, { }))
+            marker.updateInlineMarginsAndContent();
+    }
 }
 
 bool RenderTreeBuilder::isRebuildRootForChildren(const RenderElement& renderer)
@@ -485,8 +505,10 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         newChild->initializeFragmentedFlowStateOnInsertion();
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
             multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
-        if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild))
-            listItemRenderer->updateListMarkerNumbers();
+        if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild)) {
+            for (auto& marker : listItemRenderer->updateListMarkerNumbers())
+                addListMarkerNeedingContentUpdate(marker);
+        }
     }
 
     newChild->setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -1004,7 +1026,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
-static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, RenderTreeBuilder::IsInternalMove isInternalMove)
+static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
 {
     if (child.isFloatingOrOutOfFlowPositioned())
         downcast<RenderBox>(child).removeFloatingOrOutOfFlowChildFromBlockLists();
@@ -1020,8 +1042,6 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     if (CheckedPtr textRenderer = dynamicDowncast<RenderSVGInlineText>(child))
         textRenderer->removeAndDestroyLegacyTextBoxes();
 
-    if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && isInternalMove == RenderTreeBuilder::IsInternalMove::No)
-        listItemRenderer->updateListMarkerNumbers();
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
@@ -1039,7 +1059,12 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     }
 
     if (child.everHadLayout())
-        resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);
+        resetRendererStateOnDetach(parent, child, willBeDestroyed);
+
+    if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && child.everHadLayout() && m_internalMovesType == IsInternalMove::No) {
+        for (auto& marker : listItemRenderer->updateListMarkerNumbers())
+            addListMarkerNeedingContentUpdate(marker);
+    }
 
     if (m_tearDownType == RenderTreeBuilder::TearDownType::Root || is<RenderInline>(m_subtreeDestroyRoot)) {
         // In case of partial damage on the inline content (the block root is not going away), we need to initiate inline layout invalidation on leaf renderers too.

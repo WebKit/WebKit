@@ -140,6 +140,8 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         // unicode-bidi, so rebuild on that too, to carry the new value into it.
         auto contentChanged = markerRenderer->style().content() != newStyle.content() || markerRenderer->style().unicodeBidi() != newStyle.unicodeBidi() || markerRenderer->style().listStyleType() != newStyle.listStyleType();
         markerRenderer->setStyle(WTF::move(newStyle));
+        // list-style-type, the counter style it resolves to and the writing mode all decide the marker's text.
+        m_builder.addListMarkerNeedingContentUpdate(*markerRenderer);
 
         // Recomputing this here rather than diffing the style properties it is made of also picks up
         // what is not the marker's own style: its direction, and what the document's counter style
@@ -193,6 +195,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
 
     RenderPtr<RenderListMarker> newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTF::move(newStyle));
     newMarkerRenderer->initializeStyle();
+    m_builder.addListMarkerNeedingContentUpdate(*newMarkerRenderer);
     listItemRenderer.setMarkerRenderer(*newMarkerRenderer);
     auto searchResult = parentCandidateForMarker(listItemRenderer, *newMarkerRenderer);
     auto shouldCollapseAnonymousBlockParent = !searchResult.parent && !newMarkerRenderer->isInside() && searchResult.shouldCollapseAnonymousBlockParent;

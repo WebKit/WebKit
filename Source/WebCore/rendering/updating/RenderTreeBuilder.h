@@ -27,10 +27,12 @@
 
 #include "RenderTreePosition.h"
 #include "RenderWidget.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class RenderGrid;
+class RenderListMarker;
 class RenderTreeUpdater;
 
 class RenderTreeBuilder {
@@ -68,7 +70,14 @@ public:
     void destroyAndCleanUpAnonymousWrappers(RenderObject& child, const RenderElement* destroyRoot);
     void normalizeTreeAfterStyleChange(RenderElement&, Style::ComputedStyle& oldStyle);
 
+    // Fills in what the marker registration below collected. Called from RenderTreeUpdater::GeneratedContent.
+    void updateListMarkerContents();
+
 private:
+    // Collected while the tree is being built: a marker's text is made of its list item's list-item counter value,
+    // which is only settled once the tree is done changing.
+    void addListMarkerNeedingContentUpdate(RenderListMarker&);
+
     static void markBoxForRelayoutAfterSplit(RenderBoxModelObject&);
 
     void attachInternal(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild);
@@ -131,6 +140,7 @@ private:
 
     WidgetHierarchyUpdatesSuspensionScope m_widgetHierarchyUpdatesSuspensionScope;
     RenderView& m_view;
+    SingleThreadWeakHashSet<RenderListMarker> m_listMarkersNeedingContentUpdate;
     RenderTreeBuilder* m_previous { nullptr };
     static RenderTreeBuilder* s_current;
 

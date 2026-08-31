@@ -44,6 +44,7 @@ public:
     void updateBeforeOrAfterPseudoElement(Element&, const Style::ElementUpdate&, PseudoElementType);
     void updateRemainingQuotes();
     void updateCounters();
+    void updateListMarkers();
     void updateWritingSuggestionsRenderer(RenderElement&, Style::DifferenceResult minimalStyleDifference);
 
     static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
