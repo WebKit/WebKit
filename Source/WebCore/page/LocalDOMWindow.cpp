@@ -2449,19 +2449,27 @@ void LocalDOMWindow::dispatchLoadEvent()
         WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventBegin");
     }
 
-    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
+    {
+        // The load event of the frame owner element is dispatched synchronously below, even when the owner
+        // lives in another process, whereas a message posted to another process from a load event handler is
+        // dispatched from a task. Defer sending such messages until the load event has been sent so that the
+        // owner observes the same ordering it would if both frames were in the same process.
+        Page::DeferRemotePostMessageScope deferRemotePostMessageScope(frame ? frame->page() : nullptr);
 
-    if (shouldMarkLoadEventTimes) {
-        auto now = MonotonicTime::now();
-        protectedLoader->timing().setLoadEventEnd(now);
-        protect(performance())->navigationFinished(now);
-        WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventEnd");
-        WTFEndSignpost(document.get(), NavigationAndPaintTiming);
+        dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
+
+        if (shouldMarkLoadEventTimes) {
+            auto now = MonotonicTime::now();
+            protectedLoader->timing().setLoadEventEnd(now);
+            protect(performance())->navigationFinished(now);
+            WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventEnd");
+            WTFEndSignpost(document.get(), NavigationAndPaintTiming);
+        }
+
+        // Send a separate load event to the element that owns this frame.
+        if (RefPtr frame = this->frame())
+            frame->dispatchLoadEventToParent();
     }
-
-    // Send a separate load event to the element that owns this frame.
-    if (RefPtr frame = this->frame())
-        frame->dispatchLoadEventToParent();
 
     InspectorInstrumentation::loadEventFired(protect(this->frame()).get());
 }
