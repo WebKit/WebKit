@@ -176,6 +176,7 @@ public:
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 
+    bool hasInlineWrapperForDisplayContents() const { return m_hasInlineWrapperForDisplayContents; }
     RenderInline* NODELETE inlineWrapperForDisplayContents();
     void setInlineWrapperForDisplayContents(RenderInline*);
 

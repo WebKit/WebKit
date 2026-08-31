@@ -1302,19 +1302,31 @@ void TreeResolver::resolveComposedTree()
 
         if (RefPtr text = dynamicDowncast<Text>(node)) {
             auto containsOnlyASCIIWhitespace = text->containsOnlyASCIIWhitespace();
+            auto isDisplayContentsParent = parent.style.display() == DisplayType::Contents;
+            auto inheritedDisplayContentsStyle = isDisplayContentsParent ? createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle()) : nullptr;
+
             auto needsTextUpdate = [&] {
-                if ((text->hasInvalidRenderer() && parent.changes != Change::Renderer) || parent.style.display() == DisplayType::Contents)
+                if ((text->hasInvalidRenderer() && parent.changes != Change::Renderer) || inheritedDisplayContentsStyle)
                     return true;
-                if (!text->renderer() && containsOnlyASCIIWhitespace && parent.style.preserveNewline()) {
+
+                auto* textRenderer = text->renderer();
+                if (isDisplayContentsParent) {
+                    if (textRenderer)
+                        return textRenderer->hasInlineWrapperForDisplayContents();
+                    if (!containsOnlyASCIIWhitespace)
+                        return true;
+                }
+
+                if (!textRenderer && containsOnlyASCIIWhitespace && parent.style.preserveNewline()) {
                     // FIXME: This really needs to be done only when parent.style.preserveNewline() changes value.
                     return true;
                 }
                 return false;
             };
+
             if (needsTextUpdate()) {
                 TextUpdate textUpdate;
-                textUpdate.inheritedDisplayContentsStyle = createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle());
-
+                textUpdate.inheritedDisplayContentsStyle = WTF::move(inheritedDisplayContentsStyle);
                 m_update->addText(*text, protect(parent.element), WTF::move(textUpdate));
             }
 
