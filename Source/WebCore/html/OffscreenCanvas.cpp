@@ -359,10 +359,12 @@ Image* OffscreenCanvas::copiedImage() const
 {
     if (m_detached)
         return nullptr;
-    if (m_copiedImage)
-        return m_copiedImage;
-    if (RefPtr image = const_cast<OffscreenCanvas*>(this)->copyNativeImage())
-        m_copiedImage = BitmapImage::create(WTF::move(image));
+
+    if (!m_copiedImage) {
+        RefPtr buffer = const_cast<OffscreenCanvas*>(this)->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
+        if (buffer)
+            m_copiedImage = BitmapImage::create(buffer->copyNativeImage());
+    }
     return m_copiedImage.get();
 }
 

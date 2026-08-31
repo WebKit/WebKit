@@ -30,7 +30,6 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
-#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -92,7 +91,6 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
         m_buffer = nullptr;
         updateMemoryCost(0);
     }
-    m_bufferNativeImage = nullptr;
     return { };
 }
 
@@ -104,7 +102,6 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
         return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     canvasBase->willUpdateContents(FloatRect { { }, size });
     RefPtr result = std::exchange(m_buffer, { });
-    m_bufferNativeImage = nullptr;
     updateMemoryCost(0);
     canvasBase->setOriginClean();
     return result;
@@ -120,17 +117,6 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(Surf
         }
     }
     return m_buffer;
-}
-
-RefPtr<NativeImage> ImageBitmapRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer sourceBuffer)
-{
-    if (m_bufferNativeImage)
-        return m_bufferNativeImage;
-    RefPtr buffer = surfaceBufferToImageBuffer(sourceBuffer);
-    if (!buffer)
-        return nullptr;
-    m_bufferNativeImage = buffer->copyNativeImage();
-    return m_bufferNativeImage;
 }
 
 }

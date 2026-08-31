@@ -80,7 +80,6 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "NVShaderNoperspectiveInterpolation.h"
-#include "NativeImage.h"
 #include "NavigatorWebXR.h"
 #include "NotImplemented.h"
 #include "OESDrawBuffersIndexed.h"
@@ -537,8 +536,8 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
 void WebGLRenderingContextBase::initializeContextState()
 {
     m_errors = { };
-    m_readDisplayBuffer.clear();
-    m_readDrawingBuffer.clear();
+    m_readDisplayBuffer = nullptr;
+    m_readDrawingBuffer = nullptr;
     m_compositingResultsNeedUpdating = false;
     m_activeTextureUnit = 0;
     m_packParameters = { };
@@ -690,8 +689,8 @@ void WebGLRenderingContextBase::willUpdateDrawingBufferContents(WebGLRenderingCo
         return;
 
     m_compositingResultsNeedUpdating = true;
-    if (!m_readDrawingBuffer.isEmpty()) {
-        m_readDrawingBuffer.clear();
+    if (m_readDrawingBuffer) {
+        m_readDrawingBuffer = nullptr;
         updateMemoryCost();
     }
     willUpdateCanvasContents();
@@ -777,48 +776,6 @@ static RefPtr<ImageBuffer> createImageBufferForWebGLContextReads(IntSize size, S
     return ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext.graphicsClient());
 }
 
-void WebGLRenderingContextBase::ReadSurfaceBuffer::clear()
-{
-    image = nullptr;
-    buffer = nullptr;
-}
-
-size_t WebGLRenderingContextBase::ReadSurfaceBuffer::memoryCost() const
-{
-    size_t cost = 0;
-    if (RefPtr image = this->image)
-        cost += image->sizeInBytes();
-    if (buffer)
-        cost += buffer->memoryCost();
-    return cost;
-}
-
-auto WebGLRenderingContextBase::readSurfaceBuffer(SurfaceBuffer sourceBuffer) -> ReadSurfaceBuffer&
-{
-    return sourceBuffer == SurfaceBuffer::DrawingBuffer ? m_readDrawingBuffer : m_readDisplayBuffer;
-}
-
-RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(SurfaceBuffer sourceBuffer)
-{
-    auto size = clampedCanvasSize();
-    if (size.isEmpty())
-        return nullptr;
-    auto& readBuffer = readSurfaceBuffer(sourceBuffer);
-    if (readBuffer.image)
-        return readBuffer.image;
-    if (!isContextLost()) {
-        if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
-            clearIfComposited(CallerTypeOther);
-        readBuffer.image = protect(graphicsContextGL())->copyNativeImage(toGCGLSurfaceBuffer(sourceBuffer));
-    }
-    // A lost context or a failed read is transparent black.
-    if (!readBuffer.image)
-        readBuffer.image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
-    if (readBuffer.image)
-        updateMemoryCost();
-    return readBuffer.image;
-}
-
 RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(SurfaceBuffer sourceBuffer)
 {
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
@@ -827,23 +784,33 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(Surfac
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
-    auto& readBuffer = readSurfaceBuffer(sourceBuffer);
-    if (readBuffer.buffer)
-        return readBuffer.buffer;
-    // Obtain the image before creating the buffer, as obtaining it might invalidate the cache.
-    RefPtr image = surfaceBufferToNativeImage(sourceBuffer);
-    readBuffer.buffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
-    updateMemoryCost();
-    RefPtr buffer = readBuffer.buffer;
-    if (!buffer)
-        return nullptr;
-    // A lost context or a failed read is a transparent black buffer.
-    if (!image)
+    RefPtr<ImageBuffer> buffer;
+    if (sourceBuffer == SurfaceBuffer::DrawingBuffer) {
+        if (m_readDrawingBuffer)
+            return m_readDrawingBuffer;
+        m_readDrawingBuffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
+        updateMemoryCost();
+        buffer = m_readDrawingBuffer;
+    } else {
+        if (m_readDisplayBuffer)
+            return m_readDisplayBuffer;
+        m_readDisplayBuffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
+        updateMemoryCost();
+        buffer = m_readDisplayBuffer;
+    }
+    if (isContextLost())
         return buffer;
+    if (!buffer)
+        return buffer;
+    if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
+        clearIfComposited(CallerTypeOther);
     // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
     // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
     // canvas element repeatedly.
     buffer->flushDrawingContext();
+    RefPtr image = protect(graphicsContextGL())->copyNativeImage(toGCGLSurfaceBuffer(sourceBuffer));
+    if (!image)
+        return buffer;
     GraphicsContextGL::paintToCanvas(*image, buffer->backendSize(), buffer->context());
     return buffer;
 }
@@ -926,8 +893,8 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
 {
     if (isContextLost()) {
-        m_readDrawingBuffer.clear();
-        m_readDisplayBuffer.clear();
+        m_readDrawingBuffer = nullptr;
+        m_readDisplayBuffer = nullptr;
         updateMemoryCost();
         return;
     }
@@ -936,8 +903,8 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
     if (newSize == m_defaultFramebuffer->size())
         return;
 
-    m_readDrawingBuffer.clear();
-    m_readDisplayBuffer.clear();
+    m_readDrawingBuffer = nullptr;
+    m_readDisplayBuffer = nullptr;
 
     m_defaultFramebuffer->reshape(newSize);
     updateMemoryCost();
@@ -5740,8 +5707,8 @@ void WebGLRenderingContextBase::prepareForDisplay()
     m_defaultFramebuffer->markAllUnpreservedBuffersDirty();
 
     m_compositingResultsNeedUpdating = false;
-    m_readDisplayBuffer.clear();
-    m_readDrawingBuffer.clear();
+    m_readDisplayBuffer = nullptr;
+    m_readDrawingBuffer = nullptr;
     updateMemoryCost();
 
     if (hasActiveInspectorCanvasCallTracer()) [[unlikely]]
@@ -5779,8 +5746,10 @@ void WebGLRenderingContextBase::updateMemoryCost() const
 {
     // Computes only a rough ballpark figure to drive garbage collection and Web Inspector.
     size_t newMemoryCost = 0;
-    newMemoryCost += m_readDisplayBuffer.memoryCost();
-    newMemoryCost += m_readDrawingBuffer.memoryCost();
+    if (m_readDisplayBuffer)
+        newMemoryCost += m_readDisplayBuffer->memoryCost();
+    if (m_readDrawingBuffer)
+        newMemoryCost += m_readDrawingBuffer->memoryCost();
     if (!isContextLost()) {
         size_t area = m_defaultFramebuffer->size().unclampedArea();
         size_t bytesPerSample = 4;

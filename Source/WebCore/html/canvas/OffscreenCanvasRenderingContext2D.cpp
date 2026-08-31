@@ -145,7 +145,6 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
     if (result)
         result->flushDrawingContext();
 #endif
-    willUpdateEntireContents();
     clearCanvas();
     return result;
 }

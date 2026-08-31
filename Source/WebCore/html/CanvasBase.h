@@ -48,7 +48,6 @@ class GraphicsContext;
 class Image;
 class ImageBuffer;
 class IntRect;
-class NativeImage;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
@@ -76,8 +75,6 @@ public:
     virtual void setSizeForControllingContext(IntSize) = 0;
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
-
-    WEBCORE_EXPORT RefPtr<NativeImage> copyNativeImage() const;
 
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }

@@ -37,7 +37,6 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
-#include "NativeImage.h"
 #include "NoiseInjectionPolicy.h"
 #include "RenderElementInlines.h"
 #include "ScriptTrackingPrivacyCategory.h"
@@ -98,15 +97,6 @@ RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostPro
         return nullptr;
     // Currently we don't cache transparent black bitmaps of canvases that do not have a context.
     return ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-}
-
-RefPtr<NativeImage> CanvasBase::copyNativeImage() const
-{
-    if (RefPtr context = renderingContext())
-        return context->surfaceBufferToNativeImage(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
-    if (!validateArea())
-        return nullptr;
-    return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 }
 
 static inline size_t NODELETE maxCanvasArea()
