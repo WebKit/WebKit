@@ -164,6 +164,9 @@ struct FragmentState;
 struct Identifier;
 struct ImageCopyBuffer;
 struct ImageCopyExternalImage;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+struct ImageCopyExternalImageVideoSource;
+#endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
 struct ImageDataLayout;
@@ -237,6 +240,9 @@ public:
     std::optional<Identifier> convertToBacking(const WebCore::WebGPU::Identifier&);
     std::optional<ImageCopyBuffer> convertToBacking(const WebCore::WebGPU::ImageCopyBuffer&);
     std::optional<ImageCopyExternalImage> convertToBacking(const WebCore::WebGPU::ImageCopyExternalImage&);
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    std::optional<ImageCopyExternalImageVideoSource> convertToBackingVideoSource(const WebCore::WebGPU::ImageCopyExternalImage&);
+#endif
     std::optional<ImageCopyTexture> convertToBacking(const WebCore::WebGPU::ImageCopyTexture&);
     std::optional<ImageCopyTextureTagged> convertToBacking(const WebCore::WebGPU::ImageCopyTextureTagged&);
     std::optional<ImageDataLayout> NODELETE convertToBacking(const WebCore::WebGPU::ImageDataLayout&);

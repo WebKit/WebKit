@@ -31,9 +31,11 @@
 #include "CanvasRenderingContext.h"
 #include "GPUBuffer.h"
 #include "GPUDevice.h"
+#include "GPUExternalTextureDescriptor.h"
 #include "GPUImageCopyExternalImage.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
@@ -42,7 +44,9 @@
 #include "JSDOMPromiseDeferred.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
+#include "PredefinedColorSpace.h"
 #include "SVGImage.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "VideoFrame.h"
 #include "WebCodecsVideoFrame.h"
@@ -685,6 +689,198 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
     );
 }
 
+#if HAVE(IOSURFACE)
+// Whether the backing queue can wrap an accelerated ImageBuffer of this pixel format in a texture.
+// Kept in sync with QueueImpl::copyExternalImageToTexture, which does the wrapping: a format it
+// cannot express has to be rejected here, while there is still a CPU path to fall back to.
+static bool isSupportedGPUSourcePixelFormat(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRX8:
+    case PixelFormat::BGRA8:
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+#endif
+        return true;
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10) || ENABLE(PIXEL_FORMAT_RGB10A8)
+        // Packed 10-bit surfaces have no single-plane MTLPixelFormat equivalent.
+        return false;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+#endif // HAVE(IOSURFACE)
+
+// Returns the source's ImageBuffer when its pixels are already GPU-resident, so that
+// GPUQueue::copyExternalImageToTexture can hand the buffer to the GPU process and let Metal do the
+// copy. Sources which have no ImageBuffer, or whose ImageBuffer is unaccelerated and so has no
+// IOSurface to wrap in an MTLTexture, return null and take the CPU readback path below.
+struct GPUResidentSource {
+    RefPtr<ImageBuffer> imageBuffer;
+    // An ImageBitmap created with premultiplyAlpha: "none", and an ImageData, hold unpremultiplied
+    // pixels. Everything else here was composited by a 2D context, which premultiplies.
+    bool premultipliedAlpha { true };
+    // Set instead of imageBuffer when the source is a video: a decoded frame is not an ImageBuffer,
+    // it is a CVPixelBuffer the GPU process already holds.
+    std::optional<WebGPU::VideoSourceIdentifier> videoSource { };
+
+    bool isGPUResident() const { return imageBuffer || videoSource; }
+};
+
+#if HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+// A video's current frame is decoded in the GPU process, so the copy only has to name it: either by
+// the media player which owns it, or - for a WebCodecs frame, which has no player - by the frame
+// itself, which reaches the GPU process through shared memory rather than being read back here. This
+// is the same identification importExternalTexture() performs, and the backing queue resolves it the
+// same way, by wrapping the frame's planes in textures.
+static GPUResidentSource gpuResidentSourceForVideo(const GPUVideoSource& source)
+{
+    auto videoSource = GPUExternalTextureDescriptor::mediaIdentifierForSource(source);
+
+    // A media element which is not backed by a video player, or has not decoded a frame yet, and a
+    // closed WebCodecs frame, all name nothing; there is nothing for either path to copy.
+    if (auto* mediaIdentifier = std::get_if<std::optional<MediaPlayerIdentifier>>(&videoSource); mediaIdentifier && !*mediaIdentifier)
+        return { };
+    if (auto* videoFrame = std::get_if<RefPtr<VideoFrame>>(&videoSource); videoFrame && !*videoFrame)
+        return { };
+
+    // A decoded frame is opaque, so premultiplied and unpremultiplied alpha describe the same
+    // pixels and the backing queue does not have to undo anything.
+    return { nullptr, true, WTF::move(videoSource) };
+}
+
+// An ImageData is a plain byte array, so it has to be moved into an accelerated buffer before Metal
+// can read it. Its channels go in unpremultiplied, exactly as the caller supplied them: 8-bit
+// channels do not survive being premultiplied here and unpremultiplied again in the shader.
+static GPUResidentSource gpuResidentSourceForImageData(ScriptExecutionContext& context, const ImageData& imageData)
+{
+    IntSize size { imageData.width(), imageData.height() };
+    RefPtr imageBuffer = ImageBitmap::createImageBuffer(context, size, toDestinationColorSpace(imageData.colorSpace()));
+    if (!imageBuffer)
+        return { };
+
+    imageBuffer->putPixelBuffer(imageData.byteArrayPixelBuffer().get(), { { }, size }, { }, AlphaPremultiplication::Unpremultiplied);
+    return { WTF::move(imageBuffer), false };
+}
+
+// A decoded image's pixels live in CoreGraphics' own decode buffer rather than an IOSurface, so they
+// have to be drawn into an accelerated buffer first. Doing it this way lets CoreGraphics resolve the
+// EXIF orientation, indexed palettes and the image's colour space, which is what the CPU path below
+// hand-rolls. Only bitmap images come this way: a vector image has no pixels of its own, and the CPU
+// path rasterizes it at the destination texture's size.
+static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext& context, HTMLImageElement& imageElement)
+{
+    RefPtr cachedImage = imageElement.cachedImage();
+    if (!cachedImage)
+        return { };
+
+    RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
+    if (!image)
+        return { };
+
+    // The source rectangle is in the image's own coordinate space, the destination in the space the
+    // orientation maps it onto, which is the one the copy's origin and size are expressed in.
+    auto sourceRect = FloatRect { { }, image->size(ImageOrientation::Orientation::None) };
+    auto destinationRect = FloatRect { { }, image->size() };
+    if (sourceRect.isEmpty() || destinationRect.isEmpty())
+        return { };
+
+    // The image is converted into sRGB rather than kept in its own colour space, because that is the
+    // space copyExternalImageToTexture's destination is described relative to, and because the
+    // backing queue can only convert between sRGB and Display P3 itself.
+    RefPtr imageBuffer = ImageBitmap::createImageBuffer(context, destinationRect.size(), DestinationColorSpace::SRGB());
+    if (!imageBuffer)
+        return { };
+
+    // CoreGraphics decodes to premultiplied alpha, so compositing over the buffer's transparent
+    // black leaves the decoded channels untouched; the copy is lossless for as long as the
+    // destination wants premultiplied alpha too.
+    imageBuffer->context().drawImage(*image, destinationRect, sourceRect, { CompositeOperator::Copy, ImageOrientation::Orientation::FromImage });
+    return { WTF::move(imageBuffer) };
+}
+#endif // HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+
+static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionContext& context, const GPUImageCopyExternalImage::SourceType& source)
+{
+#if !HAVE(IOSURFACE)
+    UNUSED_PARAM(source);
+    return { };
+#else
+    using ResultType = GPUResidentSource;
+    auto result = WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            return { imageBitmap->buffer(), imageBitmap->premultiplyAlpha() };
+        },
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+        [&](const Ref<ImageData>& imageData) -> ResultType {
+            return gpuResidentSourceForImageData(context, imageData);
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
+            return gpuResidentSourceForImageElement(context, imageElement);
+        },
+        [&](const Ref<HTMLVideoElement>& videoElement) -> ResultType {
+            return gpuResidentSourceForVideo(videoElement);
+        },
+        [&](const Ref<WebCodecsVideoFrame>& videoFrame) -> ResultType {
+            return gpuResidentSourceForVideo(videoFrame);
+        },
+#endif
+        [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            return { canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No) };
+        }
+#if ENABLE(OFFSCREEN_CANVAS)
+        , [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            return { offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No) };
+        }
+#endif
+    );
+
+    // A video source is a CVPixelBuffer rather than an ImageBuffer, so none of the checks below apply
+    // to it: it is not resampled, it has no unpremultiplied channels to preserve, and the backing
+    // queue converts out of its own colour space using the matrices the frame itself carries.
+    if (result.videoSource)
+        return result;
+
+    RefPtr imageBuffer = result.imageBuffer;
+    if (!imageBuffer || imageBuffer->renderingMode() != RenderingMode::Accelerated)
+        return { };
+
+    auto size = imageBuffer->truncatedLogicalSize();
+    if (!size.width() || !size.height())
+        return { };
+
+    // The backing queue copies one surface texel per destination texel, so the surface has to be in the
+    // same coordinate space as the copy. A scaled backing store is not, and resampling it is what the
+    // CPU path below already does.
+    if (imageBuffer->resolutionScale() != 1)
+        return { };
+
+    if (!isSupportedGPUSourcePixelFormat(imageBuffer->pixelFormat()))
+        return { };
+
+    // The backing queue converts between sRGB and Display P3 only; anything else would need a colour
+    // matrix it does not have.
+    auto colorSpace = imageBuffer->colorSpace();
+    bool isSupportedColorSpace = colorSpace == DestinationColorSpace::SRGB();
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    isSupportedColorSpace = isSupportedColorSpace || colorSpace == DestinationColorSpace::DisplayP3();
+#endif
+    if (!isSupportedColorSpace)
+        return { };
+
+    return result;
+#endif // HAVE(IOSURFACE)
+}
+
 static bool isOriginClean(const auto& source, [[maybe_unused]] ScriptExecutionContext& context)
 {
     using ResultType = bool;
@@ -1187,10 +1383,29 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     if (!isOriginClean(source.source, context))
         return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_s };
 
+    auto backingCopySize = convertToBacking(copySize);
+
+    // When the source is already GPU-resident, hand it to the backing queue: the copy is performed by
+    // wrapping the source's IOSurface, or the planes of a decoded video frame, in MTLTextures and
+    // rendering into the destination texture, so no pixels are read back and no format conversion
+    // happens on the CPU.
+    if (auto gpuResidentSource = imageBufferForSource(context, source.source); gpuResidentSource.isGPUResident()) {
+        // Drawing into a canvas source is still outstanding here: a 2D context hands back the buffer
+        // it is drawing into untouched, and WebGLRenderingContextBase::surfaceBufferToImageBuffer
+        // paints the drawing buffer into it *after* flushing it. The backing queue wraps the buffer's
+        // IOSurface rather than reading its pixels, so unlike the readback below nothing else forces
+        // those commands out. RemoteQueueProxy flushes again for the same reason, because there the
+        // source travels by identifier on a stream unordered against the rendering backend's; this
+        // call is what covers the in-process backing, which has no proxy to do it.
+        if (RefPtr sourceImageBuffer = gpuResidentSource.imageBuffer)
+            sourceImageBuffer->flushDrawingContext();
+        m_backing->copyExternalImageToTexture(source.convertToBacking(WTF::move(gpuResidentSource.imageBuffer), gpuResidentSource.premultipliedAlpha, WTF::move(gpuResidentSource.videoSource)), destination.convertToBacking(), backingCopySize);
+        return { };
+    }
+
     bool callbackScopeIsSafe { true };
     bool needsYFlip = source.flipY;
     bool needsPremultipliedAlpha = destination.premultipliedAlpha;
-    auto backingCopySize = convertToBacking(copySize);
     imageBytesForSource(m_backing.get(), source, destination, needsYFlip, needsPremultipliedAlpha, backingCopySize, [&](std::span<const uint8_t> imageBytes, size_t columns, size_t rows) {
         RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
@@ -1225,8 +1440,13 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
 
         auto copyDestination = destination.convertToBacking();
 
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed once copyExternalImageToTexture
-        // is implemented in the GPU process
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed once
+        // every source takes the GPU process path above. The sources which still land here are the
+        // ones it turns away: an unaccelerated or scaled ImageBuffer, a 10-bit packed surface, a
+        // colour space beyond sRGB and Display P3, a vector image, and every source at all on a port
+        // without IOSurface. Until then a request the CPU converter cannot satisfy is made to fail
+        // Metal validation, so that the destination texture is left untouched rather than written
+        // with the wrong bytes.
         if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
             copyDestination.mipLevel = INT_MAX;
 

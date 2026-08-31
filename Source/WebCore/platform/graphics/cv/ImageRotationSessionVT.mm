@@ -51,8 +51,9 @@ static ImageRotationSessionVT::RotationProperties transformToRotationProperties(
     if (!inTransform.decompose(decomposed))
         return rotation;
 
-    rotation.flipY = WTF::areEssentiallyEqual(decomposed.scaleX, -1.);
-    rotation.flipX = WTF::areEssentiallyEqual(decomposed.scaleY, -1.);
+    // Negating an axis mirrors across the perpendicular one, so a -1 scaleX is a horizontal flip.
+    rotation.flipX = WTF::areEssentiallyEqual(decomposed.scaleX, -1.);
+    rotation.flipY = WTF::areEssentiallyEqual(decomposed.scaleY, -1.);
     auto degrees = rad2deg(decomposed.angle);
     while (degrees < 0)
         degrees += 360;

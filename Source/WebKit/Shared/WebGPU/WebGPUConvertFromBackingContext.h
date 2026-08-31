@@ -48,6 +48,10 @@
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+
+namespace WebCore {
+enum class VideoFrameRotation : uint16_t;
+}
 #endif
 
 namespace WebCore::WebGPU {
@@ -170,6 +174,9 @@ struct FragmentState;
 struct Identifier;
 struct ImageCopyBuffer;
 struct ImageCopyExternalImage;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+struct ImageCopyExternalImageVideoSource;
+#endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
 struct ImageDataLayout;
@@ -247,6 +254,9 @@ public:
     std::optional<WebCore::WebGPU::Identifier> convertFromBacking(const Identifier&);
     std::optional<WebCore::WebGPU::ImageCopyBuffer> convertFromBacking(const ImageCopyBuffer&);
     std::optional<WebCore::WebGPU::ImageCopyExternalImage> convertFromBacking(const ImageCopyExternalImage&);
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    std::optional<WebCore::WebGPU::ImageCopyExternalImage> convertFromBacking(const ImageCopyExternalImageVideoSource&, PixelBufferType, WebCore::VideoFrameRotation, bool isMirrored);
+#endif
     std::optional<WebCore::WebGPU::ImageCopyTexture> convertFromBacking(const ImageCopyTexture&);
     std::optional<WebCore::WebGPU::ImageCopyTextureTagged> convertFromBacking(const ImageCopyTextureTagged&);
     std::optional<WebCore::WebGPU::ImageDataLayout> NODELETE convertFromBacking(const ImageDataLayout&);

@@ -36,7 +36,17 @@ messages -> RemoteQueue Stream {
     void WriteBuffer(WebKit::WebGPUIdentifier identifier, WebCore::WebGPU::Size64 bufferOffset, std::optional<WebCore::SharedMemory::Handle> data) -> (bool success) NotStreamEncodable
     void WriteTexture(WebKit::WebGPU::ImageCopyTexture destination, std::optional<WebCore::SharedMemory::Handle> dataHandle, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size) -> (bool success) NotStreamEncodable
     void WriteTextureWithCopy(WebKit::WebGPU::ImageCopyTexture destination, Vector<uint8_t> data, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size)
-    void CopyExternalImageToTexture(WebKit::WebGPU::ImageCopyExternalImage source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize)
+    void CopyExternalImageToTexture(WebKit::WebGPU::ImageCopyExternalImage source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize) -> () Synchronous
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
+    void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
+    // A separate message from CopyExternalImageToTexture, because a shared video frame cannot be
+    // written into the stream buffer and adding it here would push the ImageBuffer copy out of the
+    // stream too. Unlike that copy this one need not be synchronous: a frame is either owned by the
+    // message or named by a media player the GPU process resolves itself, so there is no identifier
+    // on another stream to race against.
+    void CopyExternalImageFromVideoFrameToTexture(WebKit::WebGPU::ImageCopyExternalImageVideoSource source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize) NotStreamEncodable
+#endif
     void SetLabel(String label)
 }
 

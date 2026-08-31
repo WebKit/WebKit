@@ -87,6 +87,56 @@ typedef struct WGPUExternalTextureDescriptor {
     WGPUColorSpace colorSpace;
 } WGPUExternalTextureDescriptor;
 
+// How a decoded frame has to be transformed to be presented, which its pixel buffer does not carry:
+// the values are the clockwise angle in degrees, matching WebCore::VideoFrameRotation.
+typedef enum WGPUVideoFrameRotation {
+    WGPUVideoFrameRotation_None = 0,
+    WGPUVideoFrameRotation_Right = 90,
+    WGPUVideoFrameRotation_UpsideDown = 180,
+    WGPUVideoFrameRotation_Left = 270,
+} WGPUVideoFrameRotation;
+
+// Source of wgpuQueueCopyExternalImageToTexture(). The pixels stay on the GPU: the IOSurface, or the
+// planes of a decoded video frame, are wrapped in MTLTextures and rendered into the destination
+// texture. Exactly one of source and pixelBuffer names the source.
+typedef struct WGPUImageCopyExternalImage {
+    IOSurfaceRef source;
+    // Set instead of source when the source is a video element or a WebCodecs frame. A frame carries
+    // its own extent, crop and primaries, so sourceFormat, sourceWidth and sourceHeight are unused
+    // and the frame is treated as opaque, the way an external texture is.
+    CVPixelBufferRef pixelBuffer;
+    // The frame's display transform, applied to the pixel buffer to obtain the image script sees:
+    // a horizontal mirror if pixelBufferIsMirrored, then a clockwise rotation. Unused without
+    // pixelBuffer.
+    WGPUVideoFrameRotation pixelBufferRotation;
+    WGPUBool pixelBufferIsMirrored;
+    // Format of the IOSurface's single plane. Only the uncompressed colour formats which can back an
+    // accelerated 2D canvas are accepted; anything else must not reach here.
+    WGPUTextureFormat sourceFormat;
+    // Top-left corner of the sub-rect to copy, in source pixels.
+    uint32_t originX;
+    uint32_t originY;
+    // Logical extent of the source. The IOSurface may be larger than this.
+    uint32_t sourceWidth;
+    uint32_t sourceHeight;
+    WGPUBool flipY;
+    // False when the alpha channel of sourceFormat carries no meaningful data, as it does not for an
+    // opaque canvas: the alpha read out of the surface is then replaced with 1.
+    WGPUBool hasAlpha;
+    WGPUBool premultipliedAlpha;
+    WGPUColorSpace colorSpace;
+} WGPUImageCopyExternalImage;
+
+// WGPUImageCopyTexture plus the GPUImageCopyTextureTagged colour-space and alpha tags.
+typedef struct WGPUImageCopyTextureTagged {
+    WGPUTexture texture;
+    uint32_t mipLevel;
+    WGPUOrigin3D origin;
+    WGPUTextureAspect aspect;
+    WGPUColorSpace colorSpace;
+    WGPUBool premultipliedAlpha;
+} WGPUImageCopyTextureTagged;
+
 #if !defined(WGPU_SKIP_PROCS)
 
 typedef void (*WGPUProcRenderBundleSetLabel)(WGPURenderBundle renderBundle, char const * label);
@@ -108,6 +158,7 @@ WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, 
 WGPU_EXPORT double wgpuSurfaceGetLastFrameGPUCostSeconds(WGPUSurface surface);
 
 WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
+WGPU_EXPORT void wgpuQueueCopyExternalImageToTexture(WGPUQueue queue, const WGPUImageCopyExternalImage* source, const WGPUImageCopyTextureTagged* destination, const WGPUExtent3D* copySize) WGPU_FUNCTION_ATTRIBUTE;
 
 WGPU_EXPORT void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata);
 WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);

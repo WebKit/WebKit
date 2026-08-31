@@ -480,6 +480,10 @@
     [Legacy] MessageParam RemoteAudioDestinationManager.CreateAudioDestination frameCount
     [Legacy] MessageParam RemoteVideoFrameObjectHeap.SetSharedVideoFrameMemory storageHandle
 
+    # The same shared video frame memory RemoteDevice.SetSharedVideoFrameMemory above carries, for the
+    # frames copyExternalImageToTexture copies from a video element or a WebCodecs frame.
+    [Legacy] MessageParam RemoteQueue.SetSharedVideoFrameMemory storageHandle
+
     [NotSentFromWebContent] MessageParam VisitedLinkTableController.SetVisitedLinkTable handle
     [NotSentFromWebContent] MessageParam WebSWClientConnection.SetSWOriginTableSharedMemory handle
     [NotSentFromWebContent] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.SetSharedVideoFrameMemory storageHandle

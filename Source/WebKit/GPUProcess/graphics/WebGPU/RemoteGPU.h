@@ -59,6 +59,7 @@ class Connection;
 
 namespace WebCore {
 class IOSurface;
+class ImageBuffer;
 class MediaPlayer;
 class NativeImage;
 class ProcessIdentity;
@@ -97,6 +98,7 @@ public:
     void stopListeningForIPC();
 
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
 
     static Vector<UniqueRef<WebCore::IOSurface>> createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity&, bool standardDynamicRange = false);

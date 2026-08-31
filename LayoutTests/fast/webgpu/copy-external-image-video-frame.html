@@ -1,0 +1,91 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+
+const size = 64;
+// One opaque colour per quadrant, so that a copy which rotates, mirrors or flips the frame is
+// distinguishable from one which does not.
+const quadrants = [
+    { name: 'top left', x: 16, y: 16, color: [255, 0, 0] },
+    { name: 'top right', x: 48, y: 16, color: [0, 255, 0] },
+    { name: 'bottom left', x: 16, y: 48, color: [0, 0, 255] },
+    { name: 'bottom right', x: 48, y: 48, color: [255, 255, 0] },
+];
+
+function log(message)
+{
+    document.getElementById('result').textContent += message + '\n';
+}
+
+async function videoFrameWithQuadrants()
+{
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const context = canvas.getContext('2d');
+    for (const quadrant of quadrants) {
+        context.fillStyle = `rgb(${quadrant.color.join(',')})`;
+        context.fillRect(quadrant.x < size / 2 ? 0 : size / 2, quadrant.y < size / 2 ? 0 : size / 2, size / 2, size / 2);
+    }
+    return new VideoFrame(await createImageBitmap(canvas), { timestamp: 0 });
+}
+
+async function copiedTexels(device, frame, flipY)
+{
+    const texture = device.createTexture({
+        size: [size, size],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    device.queue.copyExternalImageToTexture({ source: frame, flipY }, { texture }, [size, size]);
+
+    // 64 texels of rgba8unorm is exactly the 256-byte row alignment copyTextureToBuffer requires.
+    const bytesPerRow = size * 4;
+    const buffer = device.createBuffer({ size: bytesPerRow * size, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [size, size]);
+    device.queue.submit([encoder.finish()]);
+
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texels = new Uint8Array(buffer.getMappedRange()).slice();
+    buffer.unmap();
+    return { texels, bytesPerRow };
+}
+
+function check(label, texels, bytesPerRow, x, y, expected)
+{
+    const offset = y * bytesPerRow + x * 4;
+    const actual = [texels[offset], texels[offset + 1], texels[offset + 2], texels[offset + 3]];
+    // A frame may be stored as YCbCr, so allow the couple of ULPs that converting back to RGB costs.
+    const tolerance = 3;
+    const withinTolerance = expected.every((value, i) => Math.abs(actual[i] - value) <= tolerance)
+        && Math.abs(actual[3] - 255) <= tolerance;
+    // Only a failure prints the texel, so that the expected output does not depend on how exactly a
+    // given GPU's frame round trips through YCbCr.
+    log(withinTolerance ? `PASS ${label}` : `FAIL ${label}: got ${actual.join(',')}, expected ${expected.join(',')},255`);
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        const device = await adapter.requestDevice();
+        const frame = await videoFrameWithQuadrants();
+
+        const upright = await copiedTexels(device, frame, false);
+        for (const quadrant of quadrants)
+            check(`${quadrant.name} without flipY`, upright.texels, upright.bytesPerRow, quadrant.x, quadrant.y, quadrant.color);
+
+        // flipY reads the frame bottom-up, so each quadrant's colour lands in the one across the
+        // horizontal midline from it.
+        const flipped = await copiedTexels(device, frame, true);
+        for (const quadrant of quadrants)
+            check(`${quadrant.name} with flipY`, flipped.texels, flipped.bytesPerRow, quadrant.x, size - 1 - quadrant.y, quadrant.color);
+
+        frame.close();
+    } catch (error) {
+        log(`FAIL threw ${error}`);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<p>Tests that GPUQueue.copyExternalImageToTexture copies from a WebCodecs VideoFrame.</p>
+<pre id="result"></pre>

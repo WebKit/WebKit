@@ -25,15 +25,36 @@
 
 #pragma once
 
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/WebGPUExternalTextureDescriptor.h>
 #include <WebCore/WebGPUOrigin2D.h>
 #include <optional>
+#include <wtf/RefPtr.h>
 
 namespace WebCore::WebGPU {
 
 struct ImageCopyExternalImage {
-    // FIXME: Handle the source.
     std::optional<Origin2D> origin;
     bool flipY { false };
+    // The source, when it is backed by an ImageBuffer whose pixels are already GPU-resident
+    // (a canvas, an OffscreenCanvas, or an ImageBitmap). Null for the sources which still take
+    // the CPU readback path in GPUQueue::copyExternalImageToTexture.
+    RefPtr<WebCore::ImageBuffer> imageBuffer;
+    // Whether those pixels are premultiplied by their alpha. True for anything a 2D context
+    // composited, but an ImageBitmap created with premultiplyAlpha: "none" holds them straight.
+    bool premultipliedAlpha { true };
+    // Set in place of imageBuffer when the source is a video element or a WebCodecs frame. The
+    // decoded frame already lives in the GPU process, so it is named rather than read back, the
+    // same way importExternalTexture() names one.
+    std::optional<VideoSourceIdentifier> videoSource;
+#if ENABLE(VIDEO)
+    // How that frame has to be transformed to be presented, which its pixels are not stored with:
+    // a horizontal mirror if videoSourceIsMirrored, then a clockwise rotation. A frame a media
+    // player decoded has already been transformed, so both are inert for one; a WebCodecs frame
+    // carries its transform as state instead.
+    VideoFrameRotation videoSourceRotation { VideoFrameRotation::None };
+    bool videoSourceIsMirrored { false };
+#endif
 };
 
 } // namespace WebCore::WebGPU

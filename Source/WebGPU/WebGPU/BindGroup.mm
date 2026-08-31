@@ -156,6 +156,10 @@ static TransferFunctionCV transferFunctionFromString(RetainPtr<CFStringRef> stri
     return TransferFunctionCV::kITU_R_709_2;
 }
 
+// Columns are the Y, Cb, Cr and constant terms of the YCbCr-to-RGB conversion, over inputs normalized
+// by 255 rather than 256, which is what sampling an 8-bit Metal texture gives. Each is derived from the
+// standard's luma coefficients: R = Y' + 2(1-Kr)Cr', B = Y' + 2(1-Kb)Cb', and G from the remainder,
+// where a video-range Y' is (255Y - 16)/219 and a video-range chroma is (255C - 128)/224.
 static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
     auto format = CVPixelBufferGetPixelFormatType(pixelBuffer);
@@ -166,46 +170,46 @@ static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef 
     case TransferFunctionCV::kITU_R_709_2: {
         switch (range) {
         case PixelRange::Full:
-            return simd::float4x3(simd::make_float3(+1.00000f, +1.00000f, +1.00000f),
-                simd::make_float3(-0.00012f, -0.18726f, +1.85559f),
-                simd::make_float3(+1.57471f, -0.46814f, +0.00012f),
-                simd::make_float3(-0.78729f, +0.32770f, -0.92786f));
+            return simd::float4x3(simd::make_float3(+1.00000000f, +1.00000000f, +1.00000000f),
+                simd::make_float3(+0.00000000f, -0.18732430f, +1.85560000f),
+                simd::make_float3(+1.57480000f, -0.46813550f, +0.00000000f),
+                simd::make_float3(-0.79048784f, +0.32901511f, -0.93143764f));
         case PixelRange::Video:
-            return simd::float4x3(simd::make_float3(+1.16895f, +1.16895f, +1.16895f),
-                simd::make_float3(-0.00012f, -0.21399f, +2.12073f),
-                simd::make_float3(+1.79968f, -0.53503f, +0.00012f),
-                simd::make_float3(-0.97284f, +0.30145f, -1.13348f));
+            return simd::float4x3(simd::make_float3(+1.16438356f, +1.16438356f, +1.16438356f),
+                simd::make_float3(+0.00000000f, -0.21324866f, +2.11240177f),
+                simd::make_float3(+1.79274106f, -0.53292211f, +0.00000000f),
+                simd::make_float3(-0.97294507f, +0.30148910f, -1.13340221f));
         }
     }
 
     case TransferFunctionCV::kITU_R_601_4: {
         switch (range) {
         case PixelRange::Full:
-            return simd::float4x3(simd::make_float3(+1.00000f, +1.00000f, +1.00000f),
-                simd::make_float3(-0.00100f, -0.34375f, +1.77221f),
-                simd::make_float3(+1.40173f, -0.71411f, +0.00100f),
-                simd::make_float3(-0.70038f, +0.51672f, -0.88660f));
+            return simd::float4x3(simd::make_float3(+1.00000000f, +1.00000000f, +1.00000000f),
+                simd::make_float3(+0.00000000f, -0.34413628f, +1.77200000f),
+                simd::make_float3(+1.40200000f, -0.71413629f, +0.00000000f),
+                simd::make_float3(-0.70374902f, +0.53121133f, -0.88947451f));
 
         case PixelRange::Video:
-            return simd::float4x3(simd::make_float3(+1.16895f, +1.16895f, +1.16895f),
-                simd::make_float3(-0.00110f, -0.39282f, +2.02527f),
-                simd::make_float3(+1.60193f, -0.81616f, +0.00110f),
-                simd::make_float3(-0.87347f, +0.53143f, -1.08624f));
+            return simd::float4x3(simd::make_float3(+1.16438356f, +1.16438356f, +1.16438356f),
+                simd::make_float3(+0.00000000f, -0.39176200f, +2.01723214f),
+                simd::make_float3(+1.59602678f, -0.81296769f, +0.00000000f),
+                simd::make_float3(-0.87420221f, +0.53166750f, -1.08563078f));
         }
     }
 
     case TransferFunctionCV::kITU_R_2020: {
         switch (range) {
         case PixelRange::Full:
-            return simd::float4x3(simd::make_float3(+1.00000f, +1.00000f, +1.00000f),
-                simd::make_float3(+0.00000f, -0.16455f, +1.88135f),
-                simd::make_float3(+1.47461f, -0.57129f, -0.00012f),
-                simd::make_float3(-0.73730f, +0.36792f, -0.94061f));
+            return simd::float4x3(simd::make_float3(+1.00000000f, +1.00000000f, +1.00000000f),
+                simd::make_float3(+0.00000000f, -0.16455310f, +1.88140000f),
+                simd::make_float3(+1.47460000f, -0.57135310f, +0.00000000f),
+                simd::make_float3(-0.74019137f, +0.36939605f, -0.94438902f));
         case PixelRange::Video:
-            return simd::float4x3(simd::make_float3(+1.16895f, +1.16895f, +1.16895f),
-                simd::make_float3(+0.00000f, -0.18799f, +2.15015f),
-                simd::make_float3(+1.68530f, -0.65295f, +0.00012f),
-                simd::make_float3(-0.91571f, +0.34741f, -1.14807f));
+            return simd::float4x3(simd::make_float3(+1.16438356f, +1.16438356f, +1.16438356f),
+                simd::make_float3(+0.00000000f, -0.18732607f, +2.14177231f),
+                simd::make_float3(+1.67867410f, -0.65042428f, +0.00000000f),
+                simd::make_float3(-0.91568793f, +0.34745847f, -1.14814507f));
         }
     } }
 }

@@ -29,6 +29,7 @@
 
 #include "RemoteAdapterProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
+#include "SharedVideoFrame.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/TZoneMalloc.h>
@@ -75,6 +76,11 @@ private:
     {
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
+    template<typename T>
+    [[nodiscard]] IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    {
+        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
+    }
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
@@ -109,6 +115,13 @@ private:
         const WebCore::WebGPU::ImageCopyTextureTagged& destination,
         const WebCore::WebGPU::Extent3D& copySize) final;
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void copyExternalImageFromVideoFrameToTexture(
+        const WebCore::WebGPU::ImageCopyExternalImage& source,
+        const WebCore::WebGPU::ImageCopyTextureTagged& destination,
+        const WebCore::WebGPU::Extent3D& copySize);
+#endif
+
     void setLabelInternal(const String&) final;
     RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&) final;
 
@@ -117,6 +130,9 @@ private:
     const Ref<RemoteAdapterProxy> m_parent;
 #if ENABLE(VIDEO)
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
 };
 
