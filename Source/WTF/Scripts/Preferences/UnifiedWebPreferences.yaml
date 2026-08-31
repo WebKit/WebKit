@@ -4437,9 +4437,11 @@ InputTypeColorEnhancementsEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
   sharedPreferenceForWebProcess: true
 

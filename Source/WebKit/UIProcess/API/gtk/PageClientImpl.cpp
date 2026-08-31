@@ -291,11 +291,11 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color& color, const WebCore::IntRect& rect, ColorControlSupportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier> frameID)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color& color, const WebCore::IntRect& rect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier> frameID)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        return WebKitColorChooser::create(page, color, rect, frameID);
-    return WebColorPickerGtk::create(page, color, rect, frameID);
+        return WebKitColorChooser::create(page, color, rect, supportsAlpha, frameID);
+    return WebColorPickerGtk::create(page, color, rect, supportsAlpha, frameID);
 }
 
 RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& page)

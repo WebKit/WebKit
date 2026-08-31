@@ -298,9 +298,6 @@ fast/history/page-cache-indexed-closed-db.html [ Pass ]
 
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 
-# Enhanced <input type=color>
-accessibility/color-well.html [ Skip ]
-
 # permessage-deflate WebSocket extension.
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Pass ]
@@ -1707,8 +1704,6 @@ imported/w3c/web-platform-tests/event-timing/TapToStopFling.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollIntoView-in-onscroll-to-sticky.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-composed.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-no-scroll-after-prevent-default.html [ Skip ]
-
-fast/forms/color/display-none-input-color-chooser-shown.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs

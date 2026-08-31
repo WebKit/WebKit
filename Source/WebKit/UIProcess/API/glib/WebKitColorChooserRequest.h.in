@@ -225,6 +225,9 @@ WEBKIT_API void
 webkit_color_chooser_request_cancel                (WebKitColorChooserRequest *request);
 #endif
 
+WEBKIT_API gboolean
+webkit_color_chooser_request_get_supports_alpha    (WebKitColorChooserRequest *request);
+
 G_END_DECLS
 
 #endif

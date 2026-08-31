@@ -39,6 +39,7 @@
 enum {
     PROP_0,
     PROP_COLOR,
+    PROP_SUPPORTS_ALPHA,
     N_PROPERTIES,
 };
 
@@ -59,6 +60,7 @@ struct _WebKitColorChooserRequestPrivate {
 #elif PLATFORM(WPE)
     WebKitColor color;
 #endif
+    WebKit::ColorControlSupportsAlpha supportsAlpha;
     bool handled;
 };
 
@@ -94,6 +96,9 @@ static void webkitColorChooserRequestGetProperty(GObject* object, guint property
 #elif PLATFORM(WPE)
         g_value_set_boxed(value, &request->priv->color);
 #endif
+        break;
+    case PROP_SUPPORTS_ALPHA:
+        g_value_set_boolean(value, webkit_color_chooser_request_get_supports_alpha(request));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, paramSpec);
@@ -151,6 +156,19 @@ static void webkit_color_chooser_request_class_init(WebKitColorChooserRequestCla
             WEBKIT_TYPE_COLOR,
             WEBKIT_PARAM_READWRITE);
 #endif
+
+    /**
+     * WebKitColorChooserRequest:supports-alpha:
+     *
+     * Whether the color input element accepts colors with an alpha channel.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_SUPPORTS_ALPHA] =
+        g_param_spec_boolean("supports-alpha",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
@@ -261,6 +279,27 @@ void webkit_color_chooser_request_get_element_rectangle(WebKitColorChooserReques
 }
 #endif
 
+/**
+ * webkit_color_chooser_request_get_supports_alpha:
+ * @request: a [class@ColorChooserRequest]
+ *
+ * Gets whether the color input element accepts colors with an alpha channel.
+ *
+ * This is %TRUE when the input element has the `alpha` attribute. When it is
+ * %FALSE, the alpha component of the selected color is ignored and the element
+ * always uses an opaque color.
+ *
+ * Returns: %TRUE if the element accepts an alpha channel, or %FALSE otherwise
+ *
+ * Since: 2.56
+ */
+gboolean webkit_color_chooser_request_get_supports_alpha(WebKitColorChooserRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_COLOR_CHOOSER_REQUEST(request), FALSE);
+
+    return request->priv->supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes;
+}
+
 void webkit_color_chooser_request_finish(WebKitColorChooserRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_COLOR_CHOOSER_REQUEST(request));
@@ -285,12 +324,13 @@ void webkit_color_chooser_request_cancel(WebKitColorChooserRequest* request)
     g_signal_emit(request, signals[FINISHED], 0);
 }
 
-WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebColorPicker& colorPicker, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect)
+WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebColorPicker& colorPicker, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect, WebKit::ColorControlSupportsAlpha supportsAlpha)
 {
     WebKitColorChooserRequest* request = WEBKIT_COLOR_CHOOSER_REQUEST(g_object_new(WEBKIT_TYPE_COLOR_CHOOSER_REQUEST, nullptr));
     request->priv->colorPicker = colorPicker;
     request->priv->initialColor = initialColor;
     request->priv->elementRect = elementRect;
+    request->priv->supportsAlpha = supportsAlpha;
 #if PLATFORM(GTK)
     request->priv->rgba = WebKit::colorToGdkRGBA(initialColor);
 #elif PLATFORM(WPE)

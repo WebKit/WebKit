@@ -26,10 +26,11 @@
 
 #pragma once
 
+#include "ColorControlSupportsAlpha.h"
 #include "WebColorPicker.h"
 #include "WebKitColorChooserRequest.h"
 #include <WebCore/Color.h>
 #include <WebCore/IntRect.h>
 #include <wtf/WeakPtr.h>
 
-WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebColorPicker&, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect);
+WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebColorPicker&, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect, WebKit::ColorControlSupportsAlpha);

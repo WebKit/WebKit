@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "ColorControlSupportsAlpha.h"
 #include "WebColorPicker.h"
 #include <wtf/glib/GRefPtr.h>
 
@@ -32,11 +33,11 @@ namespace WebKit {
 
 class WebKitColorChooser final : public WebColorPicker {
 public:
-    static Ref<WebKitColorChooser> create(WKWPE::View&, WebPageProxy&, std::optional<WebCore::FrameIdentifier> = std::nullopt);
+    static Ref<WebKitColorChooser> create(WKWPE::View&, WebPageProxy&, ColorControlSupportsAlpha, std::optional<WebCore::FrameIdentifier> = std::nullopt);
     ~WebKitColorChooser();
 
 private:
-    WebKitColorChooser(WKWPE::View&, WebPageProxy&, std::optional<WebCore::FrameIdentifier>);
+    WebKitColorChooser(WKWPE::View&, WebPageProxy&, ColorControlSupportsAlpha, std::optional<WebCore::FrameIdentifier>);
 
     void endPicker() override;
     void showColorPicker(const WebCore::Color&, const WebCore::IntRect&) override;
@@ -44,6 +45,7 @@ private:
     static void colorChooserRequestFinished(WebKitColorChooserRequest*, WebKitColorChooser*);
 
     WKWPE::View& m_view;
+    ColorControlSupportsAlpha m_supportsAlpha;
     GRefPtr<WebKitColorChooserRequest> m_request;
 };
 

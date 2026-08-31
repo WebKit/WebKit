@@ -1574,6 +1574,7 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
     test->loadHtml(defaultColorHTML.get(), nullptr);
     test->waitUntilLoadFinished();
     WebKitColorChooserRequest* request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+    g_assert_false(webkit_color_chooser_request_get_supports_alpha(request));
 
 #if PLATFORM(GTK)
     // Default color is black (#000000).
@@ -1652,6 +1653,41 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
 #endif
     GUniquePtr<char> value(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').value", nullptr)));
     g_assert_cmpstr(value.get(), ==, "#000000");
+
+    // The alpha attribute makes the element accept colors with an alpha channel.
+    GUniquePtr<char> alphaColorHTML(g_strdup_printf(colorChooserHTMLFormat, "alpha value='#ff000000'"));
+    test->loadHtml(alphaColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+    g_assert_true(webkit_color_chooser_request_get_supports_alpha(request));
+#if PLATFORM(GTK)
+    webkit_color_chooser_request_get_rgba(request, &rgba1);
+    GdkRGBA rgba4 = { 1., 0., 0., 0. };
+    g_assert_true(gdk_rgba_equal(&rgba1, &rgba4));
+    rgba4 = { 0., 1., 0., 0.5 };
+    webkit_color_chooser_request_set_rgba(request, &rgba4);
+#elif PLATFORM(WPE)
+    webkit_color_chooser_request_get_color(request, &color);
+    assertColorIsEqual(&color, 1., 0., 0., 0.);
+    color = { 0., 1., 0., 0.5 };
+    webkit_color_chooser_request_set_color(request, &color);
+#endif
+    value.reset(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').value", nullptr)));
+    g_assert_cmpstr(value.get(), ==, "color(srgb 0 1 0 / 0.501961)");
+    test->finishRequest();
+
+    // Without the alpha attribute the alpha channel of the selected color is dropped.
+    test->loadHtml(defaultColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+#if PLATFORM(GTK)
+    webkit_color_chooser_request_set_rgba(request, &rgba4);
+#elif PLATFORM(WPE)
+    webkit_color_chooser_request_set_color(request, &color);
+#endif
+    value.reset(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').value", nullptr)));
+    g_assert_cmpstr(value.get(), ==, "#00ff00");
+    test->finishRequest();
 
 #if PLATFORM(WPE)
     test->loadHtml(defaultColorHTML.get(), nullptr);

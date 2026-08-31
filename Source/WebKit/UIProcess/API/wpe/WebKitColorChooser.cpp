@@ -29,15 +29,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebKitColorChooser> WebKitColorChooser::create(WKWPE::View& view, WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID)
+Ref<WebKitColorChooser> WebKitColorChooser::create(WKWPE::View& view, WebPageProxy& page, ColorControlSupportsAlpha supportsAlpha, std::optional<WebCore::FrameIdentifier> frameID)
 {
     ASSERT(view.client().isGLibBasedAPI());
-    return adoptRef(*new WebKitColorChooser(view, page, frameID));
+    return adoptRef(*new WebKitColorChooser(view, page, supportsAlpha, frameID));
 }
 
-WebKitColorChooser::WebKitColorChooser(WKWPE::View& view, WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID)
+WebKitColorChooser::WebKitColorChooser(WKWPE::View& view, WebPageProxy& page, ColorControlSupportsAlpha supportsAlpha, std::optional<WebCore::FrameIdentifier> frameID)
     : WebColorPicker(&page.colorPickerClient(), frameID)
     , m_view(view)
+    , m_supportsAlpha(supportsAlpha)
 {
 }
 
@@ -65,7 +66,7 @@ void WebKitColorChooser::colorChooserRequestFinished(WebKitColorChooserRequest*,
 
 void WebKitColorChooser::showColorPicker(const Color& color, const IntRect& rect)
 {
-    GRefPtr<WebKitColorChooserRequest> request = adoptGRef(webkitColorChooserRequestCreate(*this, color, rect));
+    GRefPtr<WebKitColorChooserRequest> request = adoptGRef(webkitColorChooserRequestCreate(*this, color, rect, m_supportsAlpha));
     g_signal_connect(request.get(), "finished", G_CALLBACK(WebKitColorChooser::colorChooserRequestFinished), this);
     m_request = request;
 

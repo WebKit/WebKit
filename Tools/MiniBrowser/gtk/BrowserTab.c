@@ -515,6 +515,7 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
     gtk_popover_set_pointing_to(GTK_POPOVER(popover), &rectangle);
 
     GtkWidget *colorChooser = gtk_color_chooser_widget_new();
+    gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(colorChooser), webkit_color_chooser_request_get_supports_alpha(request));
     GdkRGBA rgba;
     webkit_color_chooser_request_get_rgba(request, &rgba);
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorChooser), &rgba);

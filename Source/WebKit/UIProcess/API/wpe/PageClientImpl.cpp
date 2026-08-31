@@ -328,11 +328,11 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 }
 #endif
 
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color&, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier> frameID)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color&, const WebCore::IntRect&, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier> frameID)
 {
     if (!m_view.client().isGLibBasedAPI())
         return nullptr;
-    return WebKitColorChooser::create(m_view, page, frameID);
+    return WebKitColorChooser::create(m_view, page, supportsAlpha, frameID);
 }
 
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy&)
