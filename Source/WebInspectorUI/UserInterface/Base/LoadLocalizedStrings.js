@@ -107,6 +107,10 @@ WI.repeatedUIString.allMicrotasks = function() {
     return WI.UIString("All Microtasks", "All Microtasks @ JavaScript Breakpoint", "Break (pause) on all microtasks");
 };
 
+WI.repeatedUIString.watchedObjects = function() {
+    return WI.UIString("Watched Objects", "Watched Objects @ JavaScript Breakpoint", "Break (pause) on supported operations involving a watched object");
+};
+
 WI.repeatedUIString.allAnimationFrames = function() {
     return WI.UIString("All Animation Frames", "All Animation Frames @ Event Breakpoint", "Break (pause) on All animation frames");
 };

@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "Completion.h"
 #include "DateInstance.h"
+#include "Debugger.h"
 #include "DeferGCInlines.h"
 #include "DirectArguments.h"
 #include "EnumerationMode.h"
@@ -1199,6 +1200,50 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
     }
 
     return result;
+}
+
+JSValue JSInjectedScriptHost::watch(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    if (callFrame->argumentCount() < 1)
+        return jsUndefined();
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue target = callFrame->uncheckedArgument(0);
+    if (!target.isObject())
+        return throwTypeError(globalObject, scope, "watch first argument must be an object."_s);
+
+    auto* object = asObject(target);
+    if (object->type() != FinalObjectType)
+        return throwTypeError(globalObject, scope, "watch first argument must be a regular object."_s);
+
+    if (auto* debugger = globalObject->debugger())
+        debugger->watchObject(*object);
+
+    return jsUndefined();
+}
+
+JSValue JSInjectedScriptHost::unwatch(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    if (callFrame->argumentCount() < 1)
+        return jsUndefined();
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue target = callFrame->uncheckedArgument(0);
+    if (!target.isObject())
+        return throwTypeError(globalObject, scope, "unwatch first argument must be an object."_s);
+
+    auto* object = asObject(target);
+    if (object->type() != FinalObjectType)
+        return throwTypeError(globalObject, scope, "unwatch first argument must be a regular object."_s);
+
+    if (auto* debugger = globalObject->debugger())
+        debugger->unwatchObject(*object);
+
+    return jsUndefined();
 }
 
 Structure* JSInjectedScriptHost::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

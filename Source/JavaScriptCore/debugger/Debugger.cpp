@@ -34,9 +34,12 @@
 #include "Microtask.h"
 #include "SourceOrigin.h"
 #include "SourceProvider.h"
+#include "Strong.h"
 #include "VMEntryScopeInlines.h"
+#include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include "WasmModuleInformation.h"
+#include "WeakGCSetInlines.h"
 #include <atomic>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
@@ -157,6 +160,9 @@ Debugger::Debugger(VM& vm)
     , m_reasonForPause(NotPaused)
     , m_lastExecutedLine(UINT_MAX)
     , m_lastExecutedSourceID(noSourceID)
+    , m_watchedObjects(vm)
+    , m_objectsToFlattenOnUnwatch(vm)
+    , m_objectsToResetFlattenedFlagOnUnwatch(vm)
     , m_pausingBreakpointID(noBreakpointID)
 {
     m_vm.addDebugger(*this);
@@ -165,6 +171,10 @@ Debugger::Debugger(VM& vm)
 Debugger::~Debugger()
 {
     resetAsyncPauseState();
+
+    ASSERT(m_watchedObjects.isEmpty());
+    ASSERT(m_objectsToFlattenOnUnwatch.isEmpty());
+    ASSERT(m_objectsToResetFlattenedFlagOnUnwatch.isEmpty());
 
     m_vm.removeDebugger(*this);
 
@@ -288,6 +298,77 @@ void Debugger::registerCodeBlock(CodeBlock* codeBlock)
     applyBreakpoints(codeBlock);
     if (isStepping())
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
+}
+
+bool Debugger::isWatchingObject(JSObject& object) const
+{
+    return m_watchedObjects.contains(&object);
+}
+
+bool Debugger::isWatchedObject(VM& vm, JSObject& object)
+{
+    bool result = false;
+    vm.forEachDebugger([&] (Debugger& debugger) {
+        if (debugger.isWatchingObject(object))
+            result = true;
+    });
+    return result;
+}
+
+void Debugger::watchObject(JSObject& object)
+{
+    ASSERT(object.type() == FinalObjectType);
+
+    if (isWatchingObject(object))
+        return;
+
+    m_watchedObjects.add(&object);
+
+    Structure* structure = object.structure();
+    if (!structure->isUncacheableDictionary()) {
+        m_objectsToFlattenOnUnwatch.add(&object);
+        object.replaceWithUncacheableDictionary(m_vm, HasBeenFlattenedBefore::Yes);
+    } else if (!structure->hasBeenFlattenedBefore()) {
+        m_objectsToResetFlattenedFlagOnUnwatch.add(&object);
+        object.replaceWithUncacheableDictionary(m_vm, HasBeenFlattenedBefore::Yes);
+    }
+}
+
+void Debugger::unwatchObject(JSObject& object)
+{
+    if (!m_watchedObjects.remove(&object))
+        return;
+
+    unwatchObjectAfterRemoval(object);
+}
+
+void Debugger::unwatchObjectAfterRemoval(JSObject& object)
+{
+    bool shouldFlatten = m_objectsToFlattenOnUnwatch.remove(&object);
+    bool shouldRestoreHasBeenFlattenedBefore = m_objectsToResetFlattenedFlagOnUnwatch.remove(&object);
+
+    if (shouldFlatten && object.structure()->isUncacheableDictionary()) {
+        object.flattenDictionaryObject(m_vm);
+        RELEASE_ASSERT(!object.structure()->isDictionary());
+    } else if (shouldRestoreHasBeenFlattenedBefore) {
+        RELEASE_ASSERT(object.structure()->isUncacheableDictionary());
+        object.replaceWithUncacheableDictionary(m_vm, HasBeenFlattenedBefore::No);
+    }
+}
+
+void Debugger::clearWatchedObjects()
+{
+    while (!m_watchedObjects.isEmpty()) {
+        JSObject* object = m_watchedObjects.takeAny();
+        Strong<JSObject> protectedObject(m_vm, object);
+        unwatchObjectAfterRemoval(*object);
+    }
+    m_watchedObjects.clear();
+
+    ASSERT(m_objectsToFlattenOnUnwatch.isEmpty());
+    m_objectsToFlattenOnUnwatch.clear();
+    ASSERT(m_objectsToResetFlattenedFlagOnUnwatch.isEmpty());
+    m_objectsToResetFlattenedFlagOnUnwatch.clear();
 }
 
 void Debugger::forEachRegisteredCodeBlock(NOESCAPE const Function<void(CodeBlock*)>& callback)
@@ -749,6 +830,8 @@ private:
 void Debugger::clearBreakpoints()
 {
     m_vm.heap.completeAllJITPlans();
+
+    clearWatchedObjects();
 
     m_breakpointsForSourceID.clear();
     m_breakpoints.clear();
@@ -1298,6 +1381,19 @@ void Debugger::atExpression(CallFrame* callFrame)
 
     PauseReasonDeclaration reason(*this, PausedAtExpression);
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, shouldAttemptPause ? AttemptPause : NoPause);
+}
+
+void Debugger::willModifyUncacheableDictionary(JSObject& object)
+{
+    if (m_isPaused)
+        return;
+
+    if (!isWatchingObject(object))
+        return;
+
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.willModifyWatchedObject();
+    });
 }
 
 void Debugger::willAwait(CallFrame* callFrame, JSValue generatorValue)

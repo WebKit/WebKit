@@ -66,6 +66,10 @@ icon to the icon element's background so animations are layered on top. */
     content: url(../Images/TypeIcons.svg#Assertion-light);
 }
 
+.item.breakpoint.javascript.watched-object .icon {
+    content: url(../Images/TypeIcons.svg#WatchedObject-light);
+}
+
 .item.breakpoint.javascript.microtask .icon {
     content: url(../Images/TypeIcons.svg#Microtask-light);
 }
@@ -85,6 +89,10 @@ icon to the icon element's background so animations are layered on top. */
 
     .item.breakpoint.javascript.assertion .icon {
         content: url(../Images/TypeIcons.svg#Assertion-dark);
+    }
+
+    .item.breakpoint.javascript.watched-object .icon {
+        content: url(../Images/TypeIcons.svg#WatchedObject-dark);
     }
 
     .item.breakpoint.javascript.microtask .icon {
