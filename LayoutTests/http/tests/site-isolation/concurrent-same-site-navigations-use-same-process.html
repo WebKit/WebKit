@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Two popups are navigated to the same cross-site URL in the same task, so both navigations pick a
+// process before either has committed. Each must end up in the one process registered for that site.
+//
+// Before the site was bound to its process at decision time, both navigations looked up the process
+// map, found nothing registered yet, and each created its own process for the site. The second one
+// to reach BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext then hit a debug
+// assertion for a duplicate entry, since the site was already mapped to a live process.
+
+promise_test(async (t) => {
+    assert_true(!!window.internals, "This test requires internals API");
+
+    const crossSiteURL = "http://localhost:8000/site-isolation/resources/report-process-id.html";
+
+    const pids = [];
+    const gotBothPIDs = new Promise((resolve, reject) => {
+        t.step_timeout(() => reject(new Error("Timed out waiting for both popups to report a process ID")), 8000);
+        window.addEventListener("message", (event) => {
+            if (event.data && event.data.type === "processId") {
+                pids.push(event.data.pid);
+                if (pids.length === 2)
+                    resolve();
+            }
+        });
+    });
+
+    // Navigate both popups without yielding, so neither navigation has committed when the other is
+    // deciding which process to use.
+    const firstPopup = window.open();
+    const secondPopup = window.open();
+    t.add_cleanup(() => { firstPopup.close(); secondPopup.close(); });
+    firstPopup.location = crossSiteURL;
+    secondPopup.location = crossSiteURL;
+
+    await gotBothPIDs;
+
+    assert_equals(pids[0], pids[1], "Concurrent navigations to the same site should share one process");
+    assert_not_equals(pids[0], internals.processIdentifier, "The cross-site popups should not be in the opener's process");
+}, "Concurrent navigations to the same site use the same process");
+</script>
+</body>
+</html>

@@ -2290,6 +2290,24 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(WTF::move(process), suspendedPage.get(), reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
+
+    // Reserve a process for this site now so that a concurrent navigation to the same site uses the same
+    // one. This navigation's process is not registered for the site until its provisional page is created,
+    // which is several asynchronous steps away; until then a second navigation finds nothing registered
+    // for the site and starts a process of its own.
+    if (siteIsolationEnabled && !site.isEmpty() && process.ptr() != sourceProcess.ptr() && !browsingContextGroup.processForSite(site)) {
+        Ref reservedFrameProcess = browsingContextGroup.ensureProcessForSite(site, mainFrameSite, process, protect(page.preferences()), loadedWebArchive, BrowsingContextGroupUpdate::None);
+        // Register the process for the site and give the group's other pages a remote page in it, exactly
+        // as ProvisionalPageProxy::initializeWebPage() does.
+        browsingContextGroup.addFrameProcessAndInjectPageContextIf(reservedFrameProcess, [navigatingPage = Ref { page }](WebPageProxy& otherPage) {
+            return navigatingPage.ptr() != &otherPage;
+        });
+        // The process map is weak, so keep the reservation alive until a provisional page owns the process.
+        completionHandler = [reservedFrameProcess = WTF::move(reservedFrameProcess), completionHandler = WTF::move(completionHandler)] (Ref<WebProcessProxy>&& chosenProcess, SuspendedPageProxy* chosenSuspendedPage, ASCIILiteral chosenReason) mutable {
+            completionHandler(WTF::move(chosenProcess), chosenSuspendedPage, chosenReason);
+        };
+    }
+
     prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(), reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), WTF::move(completionHandler));
 }
 

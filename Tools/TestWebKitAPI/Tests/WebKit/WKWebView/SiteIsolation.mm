@@ -1183,6 +1183,70 @@ TEST(SiteIsolation, OpenWithNoopener)
     EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
 }
 
+// Three popups are opened in one task and navigated to the same site, so every one of them picks a
+// process while the others are still in flight and none of them has committed. The first popup's load
+// then fails. The other two still have to be in the process the site was bound to rather than one each.
+TEST(SiteIsolation, ConcurrentPopupNavigationsToSameSiteShareProcessWhenOneFails)
+{
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+        { "/webkit-failing"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } },
+        { "/webkit-first"_s, { "hi"_s } },
+        { "/webkit-second"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    __block Vector<RetainPtr<TestWKWebView>> openedViews;
+    __block Vector<RetainPtr<TestNavigationDelegate>> openedDelegates;
+    __block unsigned failedPopups { 0 };
+    __block unsigned finishedPopups { 0 };
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        enableSiteIsolation(configuration);
+        RetainPtr openedDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedDelegate allowAnyTLSCertificate];
+        // Count from the delegate rather than waiting on each popup in turn, so that the order the three
+        // loads settle in cannot leave this test waiting for something that already happened.
+        openedDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+            failedPopups++;
+        };
+        openedDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+            finishedPopups++;
+        };
+        RetainPtr opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedDelegate.get();
+        openedDelegates.append(WTF::move(openedDelegate));
+        openedViews.append(WTF::move(opened));
+        return openedViews.last().get();
+    };
+
+    RetainPtr openerDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerDelegate allowAnyTLSCertificate];
+    RetainPtr opener = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    opener.get().navigationDelegate = openerDelegate.get();
+    opener.get().UIDelegate = openerUIDelegate.get();
+    opener.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerDelegate waitForDidFinishNavigation];
+
+    // Navigating the popups rather than passing URLs to window.open() is what makes these concurrent:
+    // window.open(url) blocks the web process on a synchronous CreateNewPage, which gives the UI process
+    // room to finish the previous navigation's process lookup before the next one arrives.
+    [opener evaluateJavaScript:@"w1 = window.open(); w2 = window.open(); w3 = window.open();"
+        "w1.location = 'https://webkit.org/webkit-failing';"
+        "w2.location = 'https://webkit.org/webkit-first';"
+        "w3.location = 'https://webkit.org/webkit-second';" completionHandler:nil];
+    while (openedViews.size() < 3 || !failedPopups || finishedPopups < 2)
+        Util::spinRunLoop();
+
+    pid_t webKitPid = [openedViews[1] _webProcessIdentifier];
+    EXPECT_NE(webKitPid, 0);
+    EXPECT_EQ(webKitPid, [openedViews[2] _webProcessIdentifier]);
+    EXPECT_NE(webKitPid, [opener _webProcessIdentifier]);
+}
+
 TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)
 {
     HTTPServer server({
