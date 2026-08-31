@@ -9,7 +9,7 @@ To update to a newer version:
 5. Delete the .mjs.map files (currently pdf.mjs.map, viewer.mjs.map, pdf.worker.mjs.map, and pdf.sandbox.mjs.map).
 6. Delete the example PDF file, compressed.tracemonkey-pldi-09.pdf.
 7. From top source dir, run: 'Tools/glib/generate-pdfjs-resource-manifest.py --cmake --input=Source/ThirdParty/pdfjs --output=Source/ThirdParty/pdfjs/PdfJSFiles.cmake'
-8. Build WebKit, your favorite port will do
+8. Build WebKitGTK or WPE WebKit with ENABLE_PDFJS enabled
 9. Sanity-check:
   * Load https://www.irs.gov/pub/irs-pdf/i1040gi.pdf (a big PDF)
   * Test downloading the PDF

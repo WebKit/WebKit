@@ -240,6 +240,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorSignature.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorStamp.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-menuArrow.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-menuArrowNova.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-openFile.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-pageDown.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-pageUp.svg
