@@ -4825,7 +4825,10 @@ static bool areAllSinksPlayingForBin(GstBin* bin)
         }
 
         GstState state, pending;
-        gst_element_get_state(element, &state, &pending, 0);
+        GstClockTime timeout = 0;
+        if (GST_STATE_RETURN(element) == GST_STATE_CHANGE_ASYNC)
+            timeout = GST_CLOCK_TIME_NONE;
+        gst_element_get_state(element, &state, &pending, timeout);
         if (state != GST_STATE_PLAYING && pending != GST_STATE_PLAYING) {
             GST_WARNING_OBJECT(element, "Unexpectedly not in PLAYING state");
             return false;
