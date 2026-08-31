@@ -28,6 +28,7 @@
 #include "HeapIterationScope.h"
 #include "JSAsyncFunctionGenerator.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkedVector.h"
@@ -36,7 +37,13 @@
 #include "SourceProvider.h"
 #include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
+#include "WasmDebugServer.h"
+#include "WasmExecutionHandler.h"
+#include "WasmModule.h"
+#include "WasmModuleDebugInfo.h"
 #include "WasmModuleInformation.h"
+#include "WasmModuleManager.h"
+#include "WasmVirtualAddress.h"
 #include <atomic>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
@@ -350,6 +357,9 @@ void Debugger::removeObserver(Observer& observer, bool isBeingDestroyed)
         return;
 
     m_reportedSourceIDs.clear();
+#if ENABLE(WEBASSEMBLY)
+    m_wasmModuleForSourceID.clear();
+#endif // ENABLE(WEBASSEMBLY)
 
     detachDebugger(isBeingDestroyed);
 }
@@ -452,6 +462,11 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, JSWebAssemblyModule* m
     if (!m_reportedSourceIDs.add(sourceID).isNewEntry)
         return;
 
+    {
+        JSLockHolder locker(m_vm);
+        m_wasmModuleForSourceID.set(sourceID, module);
+    }
+
     Debugger::Script script;
     script.url = sourceProvider->sourceURL();
     script.displayName = Wasm::makeString(info->nameSection().moduleName);
@@ -467,6 +482,255 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, JSWebAssemblyModule* m
     dispatchFunctionToObservers([&] (Observer& observer) {
         observer.didParseSource(globalObject, sourceID, script);
     });
+}
+
+SourceID Debugger::sourceID(JSWebAssemblyModule* module) const
+{
+    if (!module)
+        return noSourceID;
+
+    for (const auto& [sourceID, weakModule] : m_wasmModuleForSourceID) {
+        if (weakModule.get() == module)
+            return sourceID;
+    }
+    return noSourceID;
+}
+
+bool Debugger::breakProgram(JSGlobalObject* globalObject, CallFrame* wasmCallFrame, JSWebAssemblyInstance* instance, Wasm::IPIntCallee* callee, uint8_t* pc, SourceID sourceID, unsigned bytecodeOffset)
+{
+    if (m_isPaused || m_suppressAllPauses || !m_breakpointsActivated)
+        return false;
+
+    BreakpointsVector breakpoints;
+    auto sourceIterator = m_wasmBreakpoints.find(sourceID);
+    if (sourceIterator != m_wasmBreakpoints.end()) {
+        auto breakpointIterator = sourceIterator->value.find(bytecodeOffset);
+        if (breakpointIterator != sourceIterator->value.end())
+            breakpoints = breakpointIterator->value;
+    }
+    if (breakpoints.isEmpty())
+        return false;
+
+    m_currentCallFrame = wasmCallFrame;
+    m_wasmPauseSourceID = sourceID;
+    m_wasmPauseBytecodeOffset = bytecodeOffset;
+    m_wasmPauseInstance = instance;
+    m_wasmPauseCallee = callee;
+    m_wasmPausePC = pc;
+
+    bool didPause = false;
+    {
+        DebuggerPausedScope debuggerPausedScope(*this);
+        TemporaryPausedState pausedState(*this);
+        PauseReasonDeclaration pauseReasonDeclaration(*this, PausedForBreakpoint);
+
+        BreakpointID pausingBreakpointID = noBreakpointID;
+        for (auto& breakpoint : breakpoints) {
+            bool shouldPause = breakpoint->shouldPause(*this, globalObject);
+            if (!m_currentCallFrame)
+                break;
+            if (!shouldPause)
+                continue;
+
+            evaluateBreakpointActions(breakpoint, globalObject);
+            if (!m_currentCallFrame)
+                break;
+            if (!breakpoint->isAutoContinue() && pausingBreakpointID == noBreakpointID)
+                pausingBreakpointID = breakpoint->id();
+        }
+
+        if (m_currentCallFrame && pausingBreakpointID != noBreakpointID) {
+            m_pausingBreakpointID = pausingBreakpointID;
+            handlePause(globalObject);
+            didPause = true;
+        }
+        m_pausingBreakpointID = noBreakpointID;
+    }
+
+    m_wasmPauseSourceID = noSourceID;
+    m_wasmPauseBytecodeOffset = 0;
+    m_wasmPauseInstance = nullptr;
+    m_wasmPauseCallee = nullptr;
+    m_wasmPausePC = nullptr;
+
+    if (!m_pauseAtNextOpportunity && !m_pauseOnCallFrame && !m_specialBreakpoint) {
+        setSteppingMode(SteppingModeDisabled);
+        m_currentCallFrame = nullptr;
+    }
+
+    return didPause;
+}
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+
+struct ResolvedWebAssemblyBreakpoint {
+    Ref<Wasm::IPIntCallee> callee;
+    const uint8_t* pc;
+    unsigned bytecodeOffset;
+};
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+static std::optional<ResolvedWebAssemblyBreakpoint> resolveWebAssemblyBreakpoint(Wasm::Module& module, unsigned bytecodeOffset)
+{
+    Ref moduleInformation = module.moduleInformation();
+    if (!moduleInformation->debugInfo)
+        return std::nullopt;
+
+    Ref ipintCallees = module.ipintCallees();
+
+    for (unsigned functionIndex = 0; functionIndex < ipintCallees->size() && functionIndex < moduleInformation->functions.size(); ++functionIndex) {
+        const auto& function = moduleInformation->functions[functionIndex];
+        if (bytecodeOffset < function.start || bytecodeOffset >= function.start + function.data.size())
+            continue;
+
+        Ref callee = ipintCallees.get()[functionIndex];
+        unsigned firstInstructionOffset = Wasm::VirtualAddress::toVirtual(module, callee->functionIndex(), callee->bytecode()).offset();
+        unsigned resolvedOffset = std::max(bytecodeOffset, firstInstructionOffset);
+        if (!moduleInformation->debugInfo->ensureFunctionDebugInfo(callee->functionIndex()).hasInstructionAtOffset(resolvedOffset))
+            return std::nullopt;
+
+        const uint8_t* pc = callee->bytecode() + resolvedOffset - firstInstructionOffset;
+        if (pc > callee->bytecodeEnd())
+            return std::nullopt;
+
+        return ResolvedWebAssemblyBreakpoint { WTF::move(callee), pc, resolvedOffset };
+    }
+
+    return std::nullopt;
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
+
+std::optional<unsigned> Debugger::setBreakpoint(SourceID sourceID, unsigned bytecodeOffset, Breakpoint& breakpoint)
+{
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    auto moduleIterator = m_wasmModuleForSourceID.find(sourceID);
+    if (moduleIterator == m_wasmModuleForSourceID.end())
+        return std::nullopt;
+
+    JSWebAssemblyModule* jsModule = moduleIterator->value.get();
+    if (!jsModule)
+        return std::nullopt;
+
+    Ref module = jsModule->module();
+    module->ensureDebugInfo();
+
+    auto& debugServer = Wasm::DebugServer::singleton();
+    auto& execution = debugServer.ensureExecutionHandlerForInspector();
+    if (debugServer.moduleManager().module(module->debugId()) != module.ptr())
+        debugServer.trackModule(module.get());
+
+    auto resolvedBreakpoint = resolveWebAssemblyBreakpoint(module, bytecodeOffset);
+    if (!resolvedBreakpoint)
+        return std::nullopt;
+
+    auto sourceIterator = m_wasmBreakpoints.find(sourceID);
+    if (sourceIterator != m_wasmBreakpoints.end()) {
+        auto breakpointIterator = sourceIterator->value.find(resolvedBreakpoint->bytecodeOffset);
+        if (breakpointIterator != sourceIterator->value.end()) {
+            if (!breakpointIterator->value.containsIf([&] (const Ref<Breakpoint>& existingBreakpoint) { return existingBreakpoint.ptr() == &breakpoint; }))
+                breakpointIterator->value.append(breakpoint);
+            return resolvedBreakpoint->bytecodeOffset;
+        }
+    }
+
+    if (!execution.setBreakpointAtPC(module, resolvedBreakpoint->callee->functionIndex(), Wasm::Breakpoint::Type::Inspector, resolvedBreakpoint->pc))
+        return std::nullopt;
+
+    BreakpointsVector breakpoints;
+    breakpoints.append(breakpoint);
+    m_wasmBreakpoints.ensure(sourceID, [] {
+        return WebAssemblyBreakpointMap { };
+    }).iterator->value.set(resolvedBreakpoint->bytecodeOffset, WTF::move(breakpoints));
+    return resolvedBreakpoint->bytecodeOffset;
+#else // ENABLE(WEBASSEMBLY_DEBUGGER)
+    UNUSED_PARAM(sourceID);
+    UNUSED_PARAM(bytecodeOffset);
+    UNUSED_PARAM(breakpoint);
+    return std::nullopt;
+#endif // !ENABLE(WEBASSEMBLY_DEBUGGER)
+}
+
+void Debugger::forEachWebAssemblyBreakpointBytecodeOffset(SourceID sourceID, unsigned startBytecodeOffset, unsigned endBytecodeOffset, Function<void(unsigned)>&& callback)
+{
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (endBytecodeOffset <= startBytecodeOffset)
+        return;
+
+    auto moduleIterator = m_wasmModuleForSourceID.find(sourceID);
+    if (moduleIterator == m_wasmModuleForSourceID.end())
+        return;
+
+    JSWebAssemblyModule* jsModule = moduleIterator->value.get();
+    if (!jsModule)
+        return;
+
+    Ref module = jsModule->module();
+    Ref moduleInformation = module->moduleInformation();
+    auto& moduleDebugInfo = module->ensureDebugInfo();
+
+    Vector<unsigned> locations;
+    for (uint32_t functionIndex = 0; functionIndex < moduleInformation->functions.size(); ++functionIndex) {
+        auto& functionDebugInfo = moduleDebugInfo.ensureFunctionDebugInfo(Wasm::FunctionCodeIndex(functionIndex));
+        for (uint32_t bytecodeOffset : functionDebugInfo.instructionOffsets) {
+            if (bytecodeOffset >= startBytecodeOffset && bytecodeOffset < endBytecodeOffset)
+                locations.append(bytecodeOffset);
+        }
+    }
+
+    std::ranges::sort(locations);
+    for (unsigned bytecodeOffset : locations)
+        callback(bytecodeOffset);
+#else // ENABLE(WEBASSEMBLY_DEBUGGER)
+    UNUSED_PARAM(sourceID);
+    UNUSED_PARAM(startBytecodeOffset);
+    UNUSED_PARAM(endBytecodeOffset);
+    UNUSED_PARAM(callback);
+#endif // !ENABLE(WEBASSEMBLY_DEBUGGER)
+}
+
+void Debugger::removeBreakpoint(SourceID sourceID, unsigned bytecodeOffset, Breakpoint& breakpoint)
+{
+    auto sourceIterator = m_wasmBreakpoints.find(sourceID);
+    if (sourceIterator == m_wasmBreakpoints.end())
+        return;
+
+    auto breakpointIterator = sourceIterator->value.find(bytecodeOffset);
+    if (breakpointIterator == sourceIterator->value.end())
+        return;
+
+    breakpointIterator->value.removeFirstMatching([&] (const Ref<Breakpoint>& existingBreakpoint) {
+        return existingBreakpoint.ptr() == &breakpoint;
+    });
+    if (!breakpointIterator->value.isEmpty())
+        return;
+
+    sourceIterator->value.remove(breakpointIterator);
+    if (sourceIterator->value.isEmpty())
+        m_wasmBreakpoints.remove(sourceIterator);
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    auto moduleIterator = m_wasmModuleForSourceID.find(sourceID);
+    if (moduleIterator == m_wasmModuleForSourceID.end())
+        return;
+
+    JSWebAssemblyModule* jsModule = moduleIterator->value.get();
+    if (!jsModule)
+        return;
+
+    Ref module = jsModule->module();
+    auto resolvedBreakpoint = resolveWebAssemblyBreakpoint(module, bytecodeOffset);
+    if (!resolvedBreakpoint)
+        return;
+
+    Wasm::DebugServer::singleton().ensureExecutionHandlerForInspector().removeBreakpointAtPC(module, resolvedBreakpoint->callee->functionIndex(), resolvedBreakpoint->pc);
+#else // ENABLE(WEBASSEMBLY_DEBUGGER)
+    UNUSED_PARAM(bytecodeOffset);
+    UNUSED_PARAM(breakpoint);
+#endif // !ENABLE(WEBASSEMBLY_DEBUGGER)
 }
 
 #endif // ENABLE(WEBASSEMBLY)
@@ -735,7 +999,6 @@ RefPtr<Breakpoint> Debugger::didHitBreakpoint(SourceID sourceID, const TextPosit
 
     unsigned line = position.m_line.zeroBasedInt();
     unsigned column = position.m_column.zeroBasedInt();
-    
     auto breakpointsIterator = breakpointsForLineIterator->value.find(line);
     if (breakpointsIterator == breakpointsForLineIterator->value.end())
         return nullptr;
@@ -774,9 +1037,31 @@ void Debugger::clearBreakpoints()
 {
     m_vm.heap.completeAllJITPlans();
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    for (auto& [sourceID, breakpoints] : m_wasmBreakpoints) {
+        auto moduleIterator = m_wasmModuleForSourceID.find(sourceID);
+        if (moduleIterator == m_wasmModuleForSourceID.end())
+            continue;
+
+        JSWebAssemblyModule* jsModule = moduleIterator->value.get();
+        if (!jsModule)
+            continue;
+
+        Ref module = jsModule->module();
+        for (auto& bytecodeOffset : breakpoints.keys()) {
+            auto resolvedBreakpoint = resolveWebAssemblyBreakpoint(module, bytecodeOffset);
+            if (resolvedBreakpoint)
+                Wasm::DebugServer::singleton().ensureExecutionHandlerForInspector().removeBreakpointAtPC(module, resolvedBreakpoint->callee->functionIndex(), resolvedBreakpoint->pc);
+        }
+    }
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
+
     m_breakpointsForSourceID.clear();
     m_breakpoints.clear();
     m_specialBreakpoint = nullptr;
+#if ENABLE(WEBASSEMBLY)
+    m_wasmBreakpoints.clear();
+#endif // ENABLE(WEBASSEMBLY)
 
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
     m_vm.heap.forEachCodeBlock(functor);
@@ -960,6 +1245,11 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 
 void Debugger::continueProgram()
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (m_isPaused && m_wasmPauseSourceID != noSourceID && m_wasmPauseInstance && m_wasmPauseCallee && m_wasmPausePC)
+        Wasm::DebugServer::singleton().ensureExecutionHandlerForInspector().prepareInspectorResume(m_wasmPauseInstance->module(), m_wasmPauseCallee, m_wasmPausePC);
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
+
     resetImmediatePauseState();
     resetEventualPauseState();
     m_deferredBreakpoints.clear();
@@ -975,6 +1265,11 @@ void Debugger::stepNextExpression()
     if (!m_isPaused)
         return;
 
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmPauseSourceID != noSourceID)
+        return;
+#endif // ENABLE(WEBASSEMBLY)
+
     m_pauseOnCallFrame = m_currentCallFrame;
     m_pauseOnStepNext = true;
     setSteppingMode(SteppingModeEnabled);
@@ -986,6 +1281,11 @@ void Debugger::stepIntoStatement()
     if (!m_isPaused)
         return;
 
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmPauseSourceID != noSourceID)
+        return;
+#endif // ENABLE(WEBASSEMBLY)
+
     m_pauseAtNextOpportunity = true;
     setSteppingMode(SteppingModeEnabled);
     m_doneProcessingDebuggerEvents = true;
@@ -996,6 +1296,11 @@ void Debugger::stepOverStatement()
     if (!m_isPaused)
         return;
 
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmPauseSourceID != noSourceID)
+        return;
+#endif // ENABLE(WEBASSEMBLY)
+
     m_pauseOnCallFrame = m_currentCallFrame;
     setSteppingMode(SteppingModeEnabled);
     m_doneProcessingDebuggerEvents = true;
@@ -1005,6 +1310,11 @@ void Debugger::stepOutOfFunction()
 {
     if (!m_isPaused)
         return;
+
+#if ENABLE(WEBASSEMBLY)
+    if (m_wasmPauseSourceID != noSourceID)
+        return;
+#endif // ENABLE(WEBASSEMBLY)
 
     EntryFrame* topEntryFrame = m_vm.topEntryFrame;
     m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topEntryFrame) : nullptr;
@@ -1539,8 +1849,18 @@ void Debugger::didRunMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier
 
 DebuggerCallFrame& Debugger::currentDebuggerCallFrame()
 {
-    if (!m_currentDebuggerCallFrame)
-        m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_vm, m_currentCallFrame);
+    if (!m_currentDebuggerCallFrame) {
+#if ENABLE(WEBASSEMBLY)
+        if (m_wasmPauseSourceID != noSourceID) {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+            m_currentDebuggerCallFrame = DebuggerCallFrame::create(*this, m_vm, m_currentCallFrame, m_wasmPauseSourceID, m_wasmPauseBytecodeOffset, m_wasmPauseInstance.get(), m_wasmPauseCallee, m_wasmPausePC);
+#else // ENABLE(WEBASSEMBLY_DEBUGGER)
+            m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_currentCallFrame, m_wasmPauseSourceID, m_wasmPauseBytecodeOffset);
+#endif // !ENABLE(WEBASSEMBLY_DEBUGGER)
+        } else
+#endif // ENABLE(WEBASSEMBLY)
+            m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_vm, m_currentCallFrame);
+    }
     return *m_currentDebuggerCallFrame;
 }
 

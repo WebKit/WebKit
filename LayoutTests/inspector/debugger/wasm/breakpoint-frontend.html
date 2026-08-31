@@ -1,0 +1,457 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebAssemblyDebuggerEnabled=true jscOptions=--enableWasmDebugger=true ] -->
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+const addBase64 = "AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCw==";
+
+function encodeULEB128(value)
+{
+    let bytes = [];
+    do {
+        let byte = value & 0x7f;
+        value >>>= 7;
+        if (value)
+            byte |= 0x80;
+        bytes.push(byte);
+    } while (value);
+    return bytes;
+}
+
+function appendStringCustomSection(bytes, name, value)
+{
+    let encoder = new TextEncoder;
+    name = encoder.encode(name);
+    value = encoder.encode(value);
+    let payload = [...encodeULEB128(name.length), ...name, ...encodeULEB128(value.length), ...value];
+    return new Uint8Array([...bytes, 0, ...encodeULEB128(payload.length), ...payload]);
+}
+
+let wasmInstances = new Map;
+let breakpointConditionHitCount = 0;
+function instantiateWasm(name, sourceMappingURL, base64 = addBase64)
+{
+    let bytes = Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+    if (sourceMappingURL)
+        bytes = appendStringCustomSection(bytes, "sourceMappingURL", sourceMappingURL);
+    wasmInstances.set(name, new WebAssembly.Instance(new WebAssembly.Module(bytes)));
+}
+
+async function instantiateStreamingWasm(name)
+{
+    let {instance} = await WebAssembly.instantiateStreaming(fetch("data:application/wasm;base64," + addBase64));
+    wasmInstances.set(name, instance);
+}
+
+function invokeWasm(name)
+{
+    return invokeWasmExport(name, "add", 2, 3);
+}
+
+function invokeWasmExport(name, exportName, ...args)
+{
+    return wasmInstances.get(name).exports[exportName](...args);
+}
+
+function test()
+{
+    const mathBase64 = "AGFzbQEAAAABFQRgAn9/AX9gAX8Bf2AAAX9gAX8BfgMGBQABAQIDByQEA2FkZAAAB2xvb3BTdW0AAQZjYWxsZXIAAwdiaWdNYXRoAAQKUwUNAQF/IAAgAWohAiACCyMBAn8CQANAIAEgAE4NASACIAFqIQIgAUEBaiEBDAALCyACCwcAIAAgAGoLBgBBFRACCxABAX4gAKwhASABQsCEPX4LADQEbmFtZQEtBQADYWRkAQdsb29wU3VtAgtkb3VibGVWYWx1ZQMGY2FsbGVyBAdiaWdNYXRo";
+    const cppMathSource = `extern "C" int add(int a, int b)
+{
+    int sum = a + b;
+    return sum;
+}
+
+extern "C" int loopSum(int n)
+{
+    int sum = 0;
+    int i = 0;
+    while (i < n) {
+        sum += i;
+        ++i;
+    }
+    return sum;
+}
+
+static int doubleValue(int value)
+{
+    return value + value;
+}
+
+extern "C" int caller()
+{
+    return doubleValue(21);
+}
+
+extern "C" long long bigMath(int value)
+{
+    long long wide = value;
+    return wide * 1000000;
+}`;
+    const cppMathSourceMap = {
+        version: 3,
+        file: "main-source-map-math-cpp.wasm",
+        sources: ["main/source-map-math.cpp"],
+        sourcesContent: [cppMathSource],
+        names: [],
+        mappings: "oFAEA,OACA,OAOA,WACA,OACA,WAEA,KAKA,QAKA,SAKA,KACA",
+    };
+
+    async function createWasmScript(name, sourceMappingURL = null, streaming = false, shouldRequestContent = true, base64 = null)
+    {
+        let scriptPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
+            let script = event.data.script;
+            if (script.sourceType !== WI.Script.SourceType.WebAssembly)
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+            scriptPromise.resolve(script);
+        });
+
+        let expression = streaming ? `instantiateStreamingWasm(${JSON.stringify(name)})` : `instantiateWasm(${JSON.stringify(name)}, ${JSON.stringify(sourceMappingURL)}${base64 ? `, ${JSON.stringify(base64)}` : ""})`;
+        await InspectorTest.evaluateInPage(expression);
+        let script = await scriptPromise.promise;
+        let sourceMapAddedPromise = sourceMappingURL && !script.sourceMaps.length ? script.awaitEvent(WI.SourceCode.Event.SourceMapAdded) : null;
+        if (shouldRequestContent)
+            await script.requestContent();
+        if (sourceMapAddedPromise)
+            await sourceMapAddedPromise;
+        return script;
+    }
+
+    async function addBreakpoint(location, options = {})
+    {
+        let breakpoint = new WI.JavaScriptBreakpoint(location, options);
+        let resolvedPromise = Promise.withResolvers();
+        breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, () => {
+            if (breakpoint.resolved)
+                resolvedPromise.resolve();
+        });
+        WI.debuggerManager.addBreakpoint(breakpoint);
+        if (!breakpoint.resolved)
+            await resolvedPromise.promise;
+        return breakpoint;
+    }
+
+    async function invokeAndPause(name)
+    {
+        let pausedPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, () => {
+            if (!WI.debuggerManager.activeCallFrame)
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+            pausedPromise.resolve(WI.debuggerManager.activeCallFrame);
+        });
+        await InspectorTest.evaluateInPage(`setTimeout(() => invokeWasm(${JSON.stringify(name)}))`);
+        return pausedPromise.promise;
+    }
+
+    async function invokeAndCollectPauses(name, exportName, args, stringifyResult = false)
+    {
+        let pauses = [];
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, () => {
+            let callFrame = WI.debuggerManager.activeCallFrame;
+            if (!callFrame)
+                return;
+
+            let location = callFrame.sourceCodeLocation;
+            pauses.push({
+                sourceCode: location.sourceCode,
+                lineNumber: location.lineNumber,
+                columnNumber: location.columnNumber,
+                displaySourceCode: location.displaySourceCode,
+                displayLineNumber: location.displayLineNumber,
+                pausedInWebAssembly: WI.debuggerManager.pausedInWebAssembly,
+            });
+            WI.debuggerManager.resume();
+        });
+
+        try {
+            let expression = `invokeWasmExport(${JSON.stringify(name)}, ${JSON.stringify(exportName)}, ...${JSON.stringify(args)})`;
+            if (stringifyResult)
+                expression = `String(${expression})`;
+            let result = await InspectorTest.evaluateInPage(expression);
+            return {pauses, result};
+        } finally {
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+        }
+    }
+
+    async function resume()
+    {
+        let resumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        WI.debuggerManager.resume();
+        await resumedPromise;
+    }
+
+    function expectWasmPause()
+    {
+        InspectorTest.expectTrue(WI.debuggerManager.pausedInWebAssembly, "The debugger should identify the WebAssembly pause.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WI.DebuggerManager.WebAssemblyBreakpoint");
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.FrontendAvailability",
+        description: "WebAssembly debugging UI should be available when the inspected page enables WebAssembly debugging.",
+        async test() {
+            InspectorTest.expectTrue("wasmDebuggerEnabled" in InspectorFrontendHost, "This build should support WebAssembly debugging.");
+            InspectorTest.expectTrue(InspectorFrontendHost.wasmDebuggerEnabled, "The Inspector frontend host should report that WebAssembly debugging is enabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.ByteOffset",
+        description: "A breakpoint set at a canonical module byte offset should pause at that instruction without source content.",
+        async test() {
+            let script = await createWasmScript("byte-offset");
+            let location = script.createSourceCodeLocationForBytecodeOffset(53);
+            let entryLocation = script.createSourceCodeLocationForBytecodeOffset(49);
+            InspectorTest.expectEqual(location.lineNumber, 0, "The selected instruction should use the canonical WebAssembly line.");
+            InspectorTest.expectNotEqual(location.columnNumber, entryLocation.columnNumber, "The selected instruction should not be the function entry.");
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause("byte-offset");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, script, "The pause should belong to the WebAssembly script.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.lineNumber, 0, "The pause should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.columnNumber, 53, "The pause should preserve the selected module byte offset.");
+            expectWasmPause();
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.PauseBeforeContent",
+        description: "A pause received before empty WebAssembly content loads should retain its canonical module byte offset.",
+        async test() {
+            let script = await createWasmScript("pause-before-content", null, false, false);
+            let {breakpointId} = await script.target.DebuggerAgent.setBreakpoint.invoke({
+                location: {
+                    scriptId: script.id,
+                    lineNumber: 0,
+                    columnNumber: 53,
+                },
+            });
+
+            let callFrame = await invokeAndPause("pause-before-content");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, script, "The pause should belong to the WebAssembly script.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.lineNumber, 0, "The pause should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.columnNumber, 53, "The pause should preserve module byte offset 53.");
+            expectWasmPause();
+
+            await resume();
+            await script.target.DebuggerAgent.removeBreakpoint.invoke({breakpointId});
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.SourceMap",
+        description: "A breakpoint set in source-mapped original code should pause at the corresponding WebAssembly instruction.",
+        async test() {
+            let script = await createWasmScript("source-map", "resources/source-map.json");
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let mappedLocations = [2, 3, 4].map((lineNumber) => sourceMapResource.createSourceCodeLocation(lineNumber, 0));
+            InspectorTest.expectTrue(mappedLocations.every((location) => !location.lineNumber), "Mapped breakpoints should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(mappedLocations.map((location) => location.columnNumber).join(", "), "49, 51, 53", "Mapped breakpoints should preserve module byte offsets as columns.");
+            let location = mappedLocations.lastValue;
+            InspectorTest.expectEqual(script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber), 53, "The generated position should map back to module byte offset 53.");
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause("source-map");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displaySourceCode, sourceMapResource, "The pause should map back to the original source.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displayLineNumber, 4, "The pause should map back to the selected original line.");
+            expectWasmPause();
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.SourceMapMultipleFunctions",
+        description: "Source-mapped breakpoints throughout a multi-function WebAssembly module should pause in each corresponding function.",
+        async test() {
+            let sourceMappingURL = "data:application/json;base64," + btoa(JSON.stringify(cppMathSourceMap));
+            let script = await createWasmScript("source-map-math-cpp", sourceMappingURL, false, true, mathBase64);
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let breakpointData = [
+                {name: "add", lineNumber: 2, bytecodeOffset: 84},
+                {name: "loopSum", lineNumber: 11, bytecodeOffset: 109},
+                {name: "doubleValue", lineNumber: 19, bytecodeOffset: 132},
+                {name: "caller", lineNumber: 24, bytecodeOffset: 140},
+                {name: "bigMath", lineNumber: 30, bytecodeOffset: 154},
+            ];
+            let breakpoints = [];
+
+            function expectPauses(action, pauses, expectedBytecodeOffsets, expectedDisplayLineNumbers)
+            {
+                InspectorTest.expectEqual(pauses.length, expectedBytecodeOffsets.length, `${action} should pause the expected number of times.`);
+                InspectorTest.expectEqual(pauses.map((pause) => script.bytecodeOffsetForPosition(pause.lineNumber, pause.columnNumber)).join(", "), expectedBytecodeOffsets.join(", "), `${action} should pause at the expected module byte offsets.`);
+                InspectorTest.expectTrue(pauses.every((pause) => pause.sourceCode === script), `${action} pauses should belong to the WebAssembly script.`);
+                InspectorTest.expectTrue(pauses.every((pause) => pause.displaySourceCode === sourceMapResource), `${action} pauses should map back to the C++ source.`);
+                InspectorTest.expectEqual(pauses.map((pause) => pause.displayLineNumber).join(", "), expectedDisplayLineNumbers.join(", "), `${action} pauses should map back to the expected C++ lines.`);
+                InspectorTest.expectTrue(pauses.every((pause) => pause.pausedInWebAssembly), `${action} pauses should be identified as WebAssembly pauses.`);
+            }
+
+            try {
+                for (let data of breakpointData) {
+                    let location = sourceMapResource.createSourceCodeLocation(data.lineNumber, 0);
+                    InspectorTest.expectEqual(script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber), data.bytecodeOffset, `${data.name} should map to module byte offset ${data.bytecodeOffset}.`);
+                    let breakpoint = await addBreakpoint(location);
+                    breakpoints.push(breakpoint);
+                    InspectorTest.expectTrue(breakpoint.resolvedLocations.some((resolvedLocation) => script.bytecodeOffsetForPosition(resolvedLocation.lineNumber, resolvedLocation.columnNumber) === data.bytecodeOffset), `${data.name} should resolve at module byte offset ${data.bytecodeOffset}.`);
+                }
+
+                let add = await invokeAndCollectPauses("source-map-math-cpp", "add", [8, 5]);
+                InspectorTest.expectEqual(add.result, 13, "add should return the expected result.");
+                expectPauses("add", add.pauses, [84], [2]);
+
+                let loopSum = await invokeAndCollectPauses("source-map-math-cpp", "loopSum", [6]);
+                InspectorTest.expectEqual(loopSum.result, 15, "loopSum should return the expected result.");
+                expectPauses("loopSum", loopSum.pauses, [109, 109, 109, 109, 109, 109], [11, 11, 11, 11, 11, 11]);
+
+                let caller = await invokeAndCollectPauses("source-map-math-cpp", "caller", []);
+                InspectorTest.expectEqual(caller.result, 42, "caller should return the expected result.");
+                expectPauses("caller", caller.pauses, [140, 132], [24, 19]);
+
+                let bigMath = await invokeAndCollectPauses("source-map-math-cpp", "bigMath", [9], true);
+                InspectorTest.expectEqual(bigMath.result, "9000000", "bigMath should return the expected result.");
+                expectPauses("bigMath", bigMath.pauses, [154], [30]);
+            } finally {
+                for (let breakpoint of breakpoints) {
+                    if (WI.debuggerManager.breakpoints.includes(breakpoint))
+                        WI.debuggerManager.removeBreakpoint(breakpoint);
+                }
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.SourceMapUnmappedLine",
+        description: "A breakpoint set on an unmapped original source line should safely resolve to the next mapped WebAssembly instruction.",
+        async test() {
+            let script = await createWasmScript("source-map-unmapped", "resources/source-map.json?unmapped");
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let location = sourceMapResource.createSourceCodeLocation(1, 0);
+            let expectedLocation = script.createSourceCodeLocationForBytecodeOffset(49);
+            InspectorTest.expectEqual(location.lineNumber, expectedLocation.lineNumber, "The unmapped source line should resolve forward to the canonical WebAssembly line.");
+            InspectorTest.expectEqual(location.columnNumber, expectedLocation.columnNumber, "The unmapped source line should resolve forward to module byte offset 49.");
+            InspectorTest.expectEqual(script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber), 49, "The generated position should map back to module byte offset 49.");
+            let breakpoint = await addBreakpoint(location);
+            InspectorTest.expectTrue(breakpoint.resolved, "The breakpoint should resolve without crashing the inspected page.");
+
+            let callFrame = await invokeAndPause("source-map-unmapped");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displaySourceCode, sourceMapResource, "The pause should map back to the original source.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displayLineNumber, 2, "The pause should use the next mapped original line.");
+            expectWasmPause();
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.ContentLoadLocationStability",
+        description: "Loading WebAssembly source content should not move a canonical source-mapped breakpoint.",
+        async test() {
+            let script = await createWasmScript("empty-content-location-stability", "resources/source-map.json?empty-content-location-stability", false, false);
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let location = sourceMapResource.createSourceCodeLocation(4, 0);
+            let breakpoint = new WI.JavaScriptBreakpoint(location, {disabled: true});
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.expectEqual(location.lineNumber, 0, "The breakpoint should begin on the canonical WebAssembly line.");
+            InspectorTest.expectEqual(location.columnNumber, 53, "The breakpoint should begin at module byte offset 53.");
+
+            await script.requestContent();
+            InspectorTest.expectEqual(location.lineNumber, 0, "Loading content should preserve the canonical WebAssembly line.");
+            InspectorTest.expectEqual(location.columnNumber, 53, "Loading content should preserve the module byte offset.");
+            InspectorTest.expectEqual(location.displaySourceCode, sourceMapResource, "Loading content should preserve the original source.");
+            InspectorTest.expectEqual(location.displayLineNumber, 4, "Loading content should preserve the original line.");
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.RestoredSourceMapLocation",
+        description: "A persisted source-mapped WebAssembly byte offset should map back to original source when it is restored.",
+        async test() {
+            let script = await createWasmScript("restored-source-map", "resources/source-map.json?restored");
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let breakpoint = WI.JavaScriptBreakpoint.fromJSON({
+                contentIdentifier: script.contentIdentifier,
+                lineNumber: 0,
+                columnNumber: 53,
+                disabled: true,
+            });
+
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.lineNumber, 0, "The persisted breakpoint should begin on the canonical WebAssembly line.");
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.columnNumber, 53, "The persisted breakpoint should preserve its module byte offset.");
+
+            WI.debuggerManager.addBreakpoint(breakpoint);
+            WI.debuggerManager.breakpointsForSourceCode(script);
+
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.lineNumber, 0, "The restored breakpoint should preserve the canonical WebAssembly line.");
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.columnNumber, 53, "The restored breakpoint should preserve its module byte offset.");
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.displaySourceCode, sourceMapResource, "The restored breakpoint should map back to the original source.");
+            InspectorTest.expectEqual(breakpoint.sourceCodeLocation.displayLineNumber, 4, "The restored breakpoint should map back to the selected original line.");
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.PersistentURL",
+        description: "A URL-backed breakpoint should resolve in every WebAssembly module compiled from that URL.",
+        async test() {
+            let firstScript = await createWasmScript("persistent-a", null, true);
+            let location = firstScript.createSourceCodeLocationForBytecodeOffset(53);
+            let breakpoint = await addBreakpoint(location);
+
+            let secondScript = await createWasmScript("persistent-b", null, true);
+            await retryUntil(() => breakpoint.resolvedLocations.some((resolvedLocation) => resolvedLocation.sourceCode === secondScript));
+            InspectorTest.pass("The breakpoint resolved in the second module.");
+
+            let callFrame = await invokeAndPause("persistent-b");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, secondScript, "The second module should pause in its own script.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.lineNumber, 0, "The second module should pause on the canonical WebAssembly line.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.columnNumber, 53, "The second module should pause at the persisted module byte offset.");
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.DebuggerManager.WebAssemblyBreakpoint.ConfiguredSourceMap",
+        description: "A configured breakpoint in source-mapped original code should preserve its condition after translation to WebAssembly.",
+        async test() {
+            let script = await createWasmScript("configured-source-map", "resources/source-map.json?configured");
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let location = sourceMapResource.createSourceCodeLocation(4, 0);
+            await InspectorTest.evaluateInPage("breakpointConditionHitCount = 0");
+            let breakpoint = await addBreakpoint(location, {condition: "(++breakpointConditionHitCount, false)"});
+            let pauseCount = 0;
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+            await InspectorTest.evaluateInPage(`invokeWasm("configured-source-map")`);
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            InspectorTest.expectEqual(pauseCount, 0, "The falsy condition should prevent the source-mapped breakpoint from pausing.");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("breakpointConditionHitCount"), 1, "The source-mapped breakpoint condition should be evaluated.");
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests frontend WebAssembly breakpoints at module byte offsets and in source-mapped original code.</p>
+</body>
+</html>

@@ -404,7 +404,8 @@ static Ref<JSON::Object> buildCSPViolationPauseReason(const String& directiveTex
 
 RefPtr<JSON::Object> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::BreakpointID debuggerBreakpointID)
 {
-    ASSERT(debuggerBreakpointID != JSC::noBreakpointID);
+    if (debuggerBreakpointID == JSC::noBreakpointID)
+        return nullptr;
 
     for (auto& [protocolBreakpointID, debuggerBreakpoints] : m_debuggerBreakpointsForProtocolBreakpointID) {
         for (auto& debuggerBreakpoint : debuggerBreakpoints) {
@@ -595,11 +596,19 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::A
 
         auto debuggerBreakpoint = protocolBreakpoint->createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
 
-        if (!resolveBreakpoint(script, debuggerBreakpoint))
-            continue;
+#if ENABLE(WEBASSEMBLY)
+        if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly) {
+            if (!setWebAssemblyBreakpoint(script, debuggerBreakpoint))
+                continue;
+        } else
+#endif // ENABLE(WEBASSEMBLY)
+        {
+            if (!resolveBreakpoint(script, debuggerBreakpoint))
+                continue;
 
-        if (!setBreakpoint(debuggerBreakpoint))
-            continue;
+            if (!setBreakpoint(debuggerBreakpoint))
+                continue;
+        }
 
         didSetBreakpoint(*protocolBreakpoint, debuggerBreakpoint);
 
@@ -626,6 +635,20 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protoco
     auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, sourceID, lineNumber, columnNumber, WTF::move(options));
     if (!protocolBreakpoint)
         return makeUnexpected(errorString);
+
+#if ENABLE(WEBASSEMBLY)
+    if (scriptTypeForScript(scriptIterator->value) == Protocol::Debugger::ScriptType::WebAssembly) {
+        if (m_debuggerBreakpointsForProtocolBreakpointID.contains(protocolBreakpoint->id()))
+            return makeUnexpected("Breakpoint for given location already exists."_s);
+
+        auto debuggerBreakpoint = protocolBreakpoint->createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
+        if (!setWebAssemblyBreakpoint(scriptIterator->value, debuggerBreakpoint))
+            return makeUnexpected("Could not set WebAssembly breakpoint"_s);
+
+        didSetBreakpoint(*protocolBreakpoint, debuggerBreakpoint);
+        return { { protocolBreakpoint->id(), buildDebuggerLocation(debuggerBreakpoint) } };
+    }
+#endif // ENABLE(WEBASSEMBLY)
 
     // Don't save `protocolBreakpoint` in `m_protocolBreakpointForProtocolBreakpointID` because it
     // was set specifically for the given `sourceID`, which is unique, meaning that it will never
@@ -665,6 +688,36 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const JSC::Debugger::Script& scri
     return m_debugger.resolveBreakpoint(debuggerBreakpoint, script.sourceProvider.get());
 }
 
+#if ENABLE(WEBASSEMBLY)
+
+static std::optional<unsigned> bytecodeOffsetForBreakpoint(const JSC::Debugger::Script& script, const JSC::Breakpoint& breakpoint)
+{
+    UNUSED_PARAM(script);
+    if (breakpoint.lineNumber())
+        return std::nullopt;
+    return breakpoint.columnNumber();
+}
+
+bool InspectorDebuggerAgent::setWebAssemblyBreakpoint(const JSC::Debugger::Script& script, JSC::Breakpoint& breakpoint)
+{
+    auto bytecodeOffset = bytecodeOffsetForBreakpoint(script, breakpoint);
+    if (!bytecodeOffset)
+        return false;
+
+    std::optional<unsigned> resolvedBytecodeOffset;
+    {
+        JSC::JSLockHolder locker(m_debugger.vm());
+        resolvedBytecodeOffset = m_debugger.setBreakpoint(breakpoint.sourceID(), *bytecodeOffset, breakpoint);
+    }
+    if (!resolvedBytecodeOffset)
+        return false;
+
+    breakpoint.resolve(0, *resolvedBytecodeOffset);
+    return true;
+}
+
+#endif // ENABLE(WEBASSEMBLY)
+
 bool InspectorDebuggerAgent::setBreakpoint(JSC::Breakpoint& debuggerBreakpoint)
 {
     JSC::JSLockHolder locker(m_debugger.vm());
@@ -680,6 +733,13 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeBreakpoint(const Pro
             injectedScriptManager().releaseObjectGroup(objectGroupForBreakpointAction(action.id));
 
         JSC::JSLockHolder locker(m_debugger.vm());
+#if ENABLE(WEBASSEMBLY)
+        auto scriptIterator = m_scripts.find(debuggerBreakpoint->sourceID());
+        if (scriptIterator != m_scripts.end() && scriptTypeForScript(scriptIterator->value) == Protocol::Debugger::ScriptType::WebAssembly) {
+            m_debugger.removeBreakpoint(debuggerBreakpoint->sourceID(), debuggerBreakpoint->columnNumber(), debuggerBreakpoint.get());
+            continue;
+        }
+#endif // ENABLE(WEBASSEMBLY)
         m_debugger.removeBreakpoint(debuggerBreakpoint);
     }
 
@@ -1173,11 +1233,26 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
     if (scriptIterator == m_scripts.end())
         return makeUnexpected("Missing script for scriptId in given start"_s);
 
-    // FIXME: Support breakpoints in WebAssembly.
-    if (scriptTypeForScript(scriptIterator->value) == Protocol::Debugger::ScriptType::WebAssembly)
-        return makeUnexpected("WebAssembly breakpoints are not supported"_s);
-
     auto protocolLocations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
+
+#if ENABLE(WEBASSEMBLY)
+    if (scriptTypeForScript(scriptIterator->value) == Protocol::Debugger::ScriptType::WebAssembly) {
+        if (startLineNumber || endLineNumber)
+            return protocolLocations;
+
+        JSC::JSLockHolder locker(m_debugger.vm());
+        m_debugger.forEachWebAssemblyBreakpointBytecodeOffset(startSourceID, startColumnNumber, endColumnNumber, [&] (unsigned bytecodeOffset) {
+            auto protocolLocation = Protocol::Debugger::Location::create()
+                .setScriptId(String::number(startSourceID))
+                .setLineNumber(0)
+                .release();
+            protocolLocation->setColumnNumber(bytecodeOffset);
+            protocolLocations->addItem(WTF::move(protocolLocation));
+        });
+        return protocolLocations;
+    }
+#endif // ENABLE(WEBASSEMBLY)
+
     m_debugger.forEachBreakpointLocation(startSourceID, scriptIterator->value.sourceProvider.get(), startLineNumber, startColumnNumber, endLineNumber, endColumnNumber, [&] (int lineNumber, int columnNumber) {
         auto protocolLocation = Protocol::Debugger::Location::create()
             .setScriptId(String::number(startSourceID))
@@ -1869,15 +1944,12 @@ void InspectorDebuggerAgent::didParseSource(JSC::JSGlobalObject* globalObject, J
 
     m_scripts.set(sourceID, script);
 
-    // FIXME: Support breakpoints and blackboxing in WebAssembly.
-    if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly)
-        return;
-
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())
         return;
 
-    setBlackboxConfiguration(sourceID, script);
+    if (scriptTypeForScript(script) != Protocol::Debugger::ScriptType::WebAssembly)
+        setBlackboxConfiguration(sourceID, script);
 
     for (auto& protocolBreakpoint : m_protocolBreakpointForProtocolBreakpointID.values()) {
         if (!protocolBreakpoint.matchesScriptURL(scriptURLForBreakpoints))
@@ -1885,11 +1957,19 @@ void InspectorDebuggerAgent::didParseSource(JSC::JSGlobalObject* globalObject, J
 
         auto debuggerBreakpoint = protocolBreakpoint.createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
 
-        if (!resolveBreakpoint(script, debuggerBreakpoint))
-            continue;
+#if ENABLE(WEBASSEMBLY)
+        if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly) {
+            if (!setWebAssemblyBreakpoint(script, debuggerBreakpoint))
+                continue;
+        } else
+#endif // ENABLE(WEBASSEMBLY)
+        {
+            if (!resolveBreakpoint(script, debuggerBreakpoint))
+                continue;
 
-        if (!setBreakpoint(debuggerBreakpoint))
-            continue;
+            if (!setBreakpoint(debuggerBreakpoint))
+                continue;
+        }
 
         didSetBreakpoint(protocolBreakpoint, debuggerBreakpoint);
 

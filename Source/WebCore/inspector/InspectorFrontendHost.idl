@@ -68,6 +68,8 @@
     readonly attribute unsigned long inspectionLevel;
     readonly attribute DebuggableInfo debuggableInfo;
 
+    [Conditional=WEBASSEMBLY_DEBUGGER&REMOTE_INSPECTOR] readonly attribute boolean wasmDebuggerEnabled;
+
     undefined copyText(DOMString text);
     undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
 

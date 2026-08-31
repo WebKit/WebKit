@@ -227,6 +227,9 @@ private:
     };
 
     bool resolveBreakpoint(const JSC::Debugger::Script&, JSC::Breakpoint&);
+#if ENABLE(WEBASSEMBLY)
+    bool setWebAssemblyBreakpoint(const JSC::Debugger::Script&, JSC::Breakpoint&);
+#endif // ENABLE(WEBASSEMBLY)
     bool setBreakpoint(JSC::Breakpoint&);
     void didSetBreakpoint(ProtocolBreakpoint&, JSC::Breakpoint&);
 

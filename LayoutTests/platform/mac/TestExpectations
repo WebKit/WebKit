@@ -513,6 +513,11 @@ inspector/debugger/break-on-exception.html [ Slow ]
 inspector/debugger/break-on-uncaught-exception-throw-in-promise.html [ Slow ]
 inspector/debugger/break-on-uncaught-exception.html [ Slow ]
 
+[ x86_64 ] http/tests/inspector/debugger/wasm/resource-breakpoint.html [ Skip ]
+[ x86_64 ] inspector/debugger/wasm/breakpoint.html [ Skip ]
+[ x86_64 ] inspector/debugger/wasm/breakpoint-frontend.html [ Skip ]
+[ x86_64 ] inspector/worker/debugger-breakpoint-wasm.html [ Skip ]
+
 webkit.org/b/124321 animations/resume-after-page-cache.html [ Pass Failure ]
 
 # These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.

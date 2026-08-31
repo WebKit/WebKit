@@ -1,0 +1,164 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: thisFunctionDoesNotExist
+CONSOLE MESSAGE: ReferenceError: Can't find variable: thisFunctionDoesNotExist
+CONSOLE MESSAGE: ReferenceError: Can't find variable: thisFunctionDoesNotExist
+CONSOLE MESSAGE: WebAssembly log action
+CONSOLE MESSAGE: WebAssembly log action
+CONSOLE MESSAGE: WebAssembly log action
+Tests setting, resolving, repeatedly hitting, and removing WebAssembly instruction breakpoints.
+
+
+== Running test suite: Debugger.WebAssemblyBreakpoint
+-- Running test case: Debugger.WebAssemblyBreakpoint.Locations
+PASS: The full module byte-offset range should contain every instruction.
+PASS: Breakpoint locations should use canonical WebAssembly protocol lines.
+PASS: A canonical byte-offset range should include its start and exclude its end.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Instruction
+PASS: The breakpoint should resolve to the requested instruction.
+PASS: Should pause 2 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: Both invocations should complete.
+PASS: Both pauses should use the requested module byte offset.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.MixedCallStack
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The mixed call stack should contain both WebAssembly and all three JavaScript frames.
+PASS: The inner WebAssembly frame should be first.
+PASS: The imported JavaScript callback should follow the inner WebAssembly frame.
+PASS: The tail-deleted JavaScript wrapper should remain in its logical call-stack position.
+PASS: The JavaScript wrapper should be represented as a tail-deleted frame.
+PASS: The outer WebAssembly frame should follow the JavaScript callback chain.
+PASS: The JavaScript entry point should follow the outer WebAssembly frame.
+PASS: The direct JavaScript caller's local scope should remain inspectable.
+PASS: The tail-deleted JavaScript caller's local scope should remain inspectable.
+PASS: The outer JavaScript caller's local scope should remain inspectable.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.MultipleExports
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The second export should pause in the second function.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The first export should pause in the first function.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.MultipleInstances
+PASS: Should pause 2 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: Both instances should complete.
+PASS: Both instances should pause at the shared module breakpoint.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.MultipleModules
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The first module should pause in its script.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The second module should pause in its script.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Adjacent
+PASS: Should pause 4 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: The adjacent breakpoints should fire in execution order.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.FunctionEnd
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The first invocation should pause at the function end.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The second invocation should pause at the function end.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Loop
+PASS: Should pause 3 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: Should pause for a breakpoint.
+PASS: The loop should complete.
+PASS: Every iteration should pause at the loop body breakpoint.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.SharedInstruction
+PASS: The URL breakpoint should share the canonical instruction.
+PASS: An exact duplicate breakpoint was rejected.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Removing one logical owner should leave the shared instruction active.
+PASS: Should pause 0 time(s).
+PASS: Removing the final logical owner should restore the instruction.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.ActiveState
+PASS: Should pause 0 time(s).
+PASS: Execution should continue while breakpoints are disabled.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The existing breakpoint should pause again after breakpoints are enabled.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Remove
+PASS: Should pause 0 time(s).
+PASS: Execution should complete without pausing.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.LocalsDeclaration
+PASS: The breakpoint should resolve to the function entry.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Execution should pause at the resolved function entry.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.InvalidOffset
+PASS: The invalid breakpoint was rejected.
+PASS: Should pause 0 time(s).
+PASS: Rejecting the breakpoint should leave the function unchanged.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.URLByteOffset
+PASS: The URL breakpoint should resolve in the module.
+PASS: The URL breakpoint should preserve its module byte offset.
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Execution should pause at the restored module byte offset.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Condition
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The truthy condition should pause at the configured instruction.
+PASS: The condition should be evaluated for every hit.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.SharedInstructionConfiguration
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Both logical breakpoint conditions should be evaluated.
+PASS: The pausing logical breakpoint should identify itself.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.ConditionAndIgnoreCount
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: Falsy condition results should not advance the ignore count.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.ConditionException
+PASS: Should pause 0 time(s).
+PASS: Condition exceptions did not pause execution.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.IgnoreCount
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The breakpoint paused after ignoring two hits.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.AutoContinue
+PASS: Should pause 0 time(s).
+PASS: The auto-continuing breakpoint did not pause.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.Actions
+PASS: Should pause 0 time(s).
+PASS: The log action should emit a console message.
+PASS: The evaluate action should run for every hit.
+PASS: The sound action should run for every hit.
+PASS: The probe action should run for every hit.
+
+-- Running test case: Debugger.WebAssemblyBreakpoint.PauseReason
+PASS: Should pause 1 time(s).
+PASS: Should pause for a breakpoint.
+PASS: The pause should identify the configured breakpoint.
+

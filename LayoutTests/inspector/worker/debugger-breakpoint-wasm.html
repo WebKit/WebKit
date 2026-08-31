@@ -1,0 +1,199 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--enableWasmDebugger=true ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let workerPromise = Promise.withResolvers();
+function createWorker()
+{
+    let worker = new Worker("resources/worker-debugger-wasm.js?no-initial-instance");
+    worker.addEventListener("message", ({data}) => {
+        if (data === "ready")
+            workerPromise.resolve();
+        else if (data === "instantiated-streaming")
+            TestPage.dispatchEventToFrontend("WorkerInstantiatedStreaming");
+    });
+    worker.addEventListener("error", workerPromise.reject);
+    return worker;
+}
+let worker = createWorker();
+
+async function test()
+{
+    let workerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.includes("worker-debugger-wasm.js"));
+
+    async function createWasmScript(message)
+    {
+        let existingScripts = new Set(WI.debuggerManager.dataForTarget(workerTarget).scripts);
+        let scriptPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
+            let script = event.data.script;
+            if (script.target !== workerTarget || script.sourceType !== WI.Script.SourceType.WebAssembly || existingScripts.has(script))
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+            scriptPromise.resolve(script);
+        });
+
+        let instantiatedPromise = message === "instantiate-streaming" ? InspectorTest.awaitEvent("WorkerInstantiatedStreaming") : null;
+        await InspectorTest.evaluateInPage(`worker.postMessage(${JSON.stringify(message)})`);
+        let script = await scriptPromise.promise;
+        let sourceMapAddedPromise = message === "instantiate-source-map" && !script.sourceMaps.length ? script.awaitEvent(WI.SourceCode.Event.SourceMapAdded) : null;
+        await script.requestContent();
+        if (sourceMapAddedPromise)
+            await sourceMapAddedPromise;
+        if (instantiatedPromise)
+            await instantiatedPromise;
+        return script;
+    }
+
+    async function addBreakpoint(location)
+    {
+        let breakpoint = new WI.JavaScriptBreakpoint(location);
+        let resolvedPromise = Promise.withResolvers();
+        breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, () => {
+            if (breakpoint.resolved)
+                resolvedPromise.resolve();
+        });
+        WI.debuggerManager.addBreakpoint(breakpoint);
+        if (!breakpoint.resolved)
+            await resolvedPromise.promise;
+        return breakpoint;
+    }
+
+    function invokeAndPause()
+    {
+        let pausedPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+            if (event.data.target !== workerTarget)
+                return;
+            let targetData = WI.debuggerManager.dataForTarget(workerTarget);
+            if (!targetData.paused)
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+            pausedPromise.resolve(targetData.stackTrace.callFrames[0]);
+        });
+        Promise.resolve(InspectorTest.evaluateInPage(`worker.postMessage("invoke")`)).catch(pausedPromise.reject);
+        return pausedPromise.promise;
+    }
+
+    async function resume()
+    {
+        let resumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        WI.debuggerManager.resume();
+        await resumedPromise;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Debugger.WebAssemblyBreakpoint");
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssemblyBreakpoint.FrontendUnavailable",
+        description: "WebAssembly debugging UI should be unavailable when the inspected page does not enable WebAssembly debugging.",
+        async test() {
+            InspectorTest.expectTrue("wasmDebuggerEnabled" in InspectorFrontendHost, "This build should support WebAssembly debugging.");
+            InspectorTest.expectFalse(InspectorFrontendHost.wasmDebuggerEnabled, "The Inspector frontend host should report that WebAssembly debugging is disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssemblyBreakpoint.Locations",
+        description: "A Worker module should expose every instruction as a canonical module byte-offset breakpoint location.",
+        async test() {
+            let script = await createWasmScript("instantiate");
+            let locations = await script.breakpointLocations(new WI.SourceCodePosition(0, 0), new WI.SourceCodePosition(0, script.range.endColumn));
+            InspectorTest.expectEqual(locations.length, 4, "The Worker module should expose four breakpoint locations.");
+            InspectorTest.expectTrue(locations.every((location) => !location.lineNumber), "The frontend locations should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(JSON.stringify(locations.map((location) => location.columnNumber)), JSON.stringify([49, 51, 53, 54]), "The frontend locations should preserve every instruction byte offset.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssemblyBreakpoint.ByteOffset",
+        description: "A breakpoint at a Worker module byte offset should pause that Worker at the selected instruction.",
+        async test() {
+            let script = await createWasmScript("instantiate");
+            let location = script.createSourceCodeLocationForBytecodeOffset(53);
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause();
+            let pausedInWebAssembly = WI.debuggerManager.pausedInWebAssembly;
+            await resume();
+            InspectorTest.expectEqual(callFrame.target, workerTarget, "The paused call frame should belong to the Worker.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, script, "The pause should belong to the Worker's WebAssembly script.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.lineNumber, 0, "The pause should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.columnNumber, 53, "The pause should preserve the selected module byte offset.");
+            InspectorTest.expectTrue(pausedInWebAssembly, "The debugger should identify the WebAssembly pause.");
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+            await retryUntil(() => !breakpoint.identifier);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssemblyBreakpoint.SourceMap",
+        description: "A breakpoint in source-mapped original code should pause the Worker at the corresponding WebAssembly instruction.",
+        async test() {
+            let script = await createWasmScript("instantiate-source-map");
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let location = sourceMapResource.createSourceCodeLocation(4, 0);
+            let expectedLocation = script.createSourceCodeLocationForBytecodeOffset(53);
+            InspectorTest.expectEqual(location.lineNumber, expectedLocation.lineNumber, "The source-mapped breakpoint should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(location.columnNumber, expectedLocation.columnNumber, "The source-mapped breakpoint should preserve module byte offset 53.");
+            InspectorTest.expectEqual(script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber), 53, "The generated position should map back to module byte offset 53.");
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause();
+            let pausedInWebAssembly = WI.debuggerManager.pausedInWebAssembly;
+            await resume();
+            InspectorTest.expectEqual(callFrame.target, workerTarget, "The paused call frame should belong to the Worker.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displaySourceCode, sourceMapResource, "The pause should map back to the original source.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displayLineNumber, 4, "The pause should map back to the selected original line.");
+            InspectorTest.expectTrue(pausedInWebAssembly, "The debugger should identify the WebAssembly pause.");
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+            await retryUntil(() => !breakpoint.identifier);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.WebAssemblyBreakpoint.PersistentURLAfterRestart",
+        description: "A URL-backed WebAssembly breakpoint should resolve in a replacement Worker instead of being sent to the destroyed Worker target.",
+        async test() {
+            let firstTarget = workerTarget;
+            let firstScript = await createWasmScript("instantiate-streaming");
+            let location = firstScript.createSourceCodeLocationForBytecodeOffset(53);
+            let breakpoint = await addBreakpoint(location);
+
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            await InspectorTest.evaluateInPage("worker.terminate()");
+            await targetRemovedPromise;
+
+            await InspectorTest.evaluateInPage("worker = createWorker()");
+            workerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target !== firstTarget && target.displayName.includes("worker-debugger-wasm.js"));
+
+            let secondScript = await createWasmScript("instantiate-streaming");
+            await retryUntil(() => breakpoint.resolvedLocations.some((resolvedLocation) => resolvedLocation.sourceCode === secondScript));
+            InspectorTest.pass("The breakpoint resolved in the replacement Worker.");
+
+            let callFrame = await invokeAndPause();
+            let pausedInWebAssembly = WI.debuggerManager.pausedInWebAssembly;
+            await resume();
+            InspectorTest.expectEqual(callFrame.target, workerTarget, "The replacement Worker should pause.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, secondScript, "The replacement Worker's WebAssembly script should pause.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.lineNumber, 0, "The replacement Worker should pause on the canonical WebAssembly line.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.columnNumber, 53, "The replacement Worker should pause at the persisted module byte offset.");
+            InspectorTest.expectTrue(pausedInWebAssembly, "The debugger should identify the WebAssembly pause.");
+
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+            await retryUntil(() => !breakpoint.identifier);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="testRunner.waitUntilDone(); workerPromise.promise.then(runTest)">
+<p>Tests frontend WebAssembly breakpoints in a Worker using module byte offsets and source-mapped original code.</p>
+</body>
+</html>

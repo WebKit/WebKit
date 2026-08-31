@@ -1,0 +1,105 @@
+Tests frontend WebAssembly breakpoints at module byte offsets and in source-mapped original code.
+
+
+== Running test suite: WI.DebuggerManager.WebAssemblyBreakpoint
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.FrontendAvailability
+PASS: This build should support WebAssembly debugging.
+PASS: The Inspector frontend host should report that WebAssembly debugging is enabled.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.ByteOffset
+PASS: The selected instruction should use the canonical WebAssembly line.
+PASS: The selected instruction should not be the function entry.
+PASS: The pause should belong to the WebAssembly script.
+PASS: The pause should use the canonical WebAssembly line.
+PASS: The pause should preserve the selected module byte offset.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.PauseBeforeContent
+PASS: The pause should belong to the WebAssembly script.
+PASS: The pause should use the canonical WebAssembly line.
+PASS: The pause should preserve module byte offset 53.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.SourceMap
+PASS: Mapped breakpoints should use the canonical WebAssembly line.
+PASS: Mapped breakpoints should preserve module byte offsets as columns.
+PASS: The generated position should map back to module byte offset 53.
+PASS: The pause should map back to the original source.
+PASS: The pause should map back to the selected original line.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.SourceMapMultipleFunctions
+PASS: add should map to module byte offset 84.
+PASS: add should resolve at module byte offset 84.
+PASS: loopSum should map to module byte offset 109.
+PASS: loopSum should resolve at module byte offset 109.
+PASS: doubleValue should map to module byte offset 132.
+PASS: doubleValue should resolve at module byte offset 132.
+PASS: caller should map to module byte offset 140.
+PASS: caller should resolve at module byte offset 140.
+PASS: bigMath should map to module byte offset 154.
+PASS: bigMath should resolve at module byte offset 154.
+PASS: add should return the expected result.
+PASS: add should pause the expected number of times.
+PASS: add should pause at the expected module byte offsets.
+PASS: add pauses should belong to the WebAssembly script.
+PASS: add pauses should map back to the C++ source.
+PASS: add pauses should map back to the expected C++ lines.
+PASS: add pauses should be identified as WebAssembly pauses.
+PASS: loopSum should return the expected result.
+PASS: loopSum should pause the expected number of times.
+PASS: loopSum should pause at the expected module byte offsets.
+PASS: loopSum pauses should belong to the WebAssembly script.
+PASS: loopSum pauses should map back to the C++ source.
+PASS: loopSum pauses should map back to the expected C++ lines.
+PASS: loopSum pauses should be identified as WebAssembly pauses.
+PASS: caller should return the expected result.
+PASS: caller should pause the expected number of times.
+PASS: caller should pause at the expected module byte offsets.
+PASS: caller pauses should belong to the WebAssembly script.
+PASS: caller pauses should map back to the C++ source.
+PASS: caller pauses should map back to the expected C++ lines.
+PASS: caller pauses should be identified as WebAssembly pauses.
+PASS: bigMath should return the expected result.
+PASS: bigMath should pause the expected number of times.
+PASS: bigMath should pause at the expected module byte offsets.
+PASS: bigMath pauses should belong to the WebAssembly script.
+PASS: bigMath pauses should map back to the C++ source.
+PASS: bigMath pauses should map back to the expected C++ lines.
+PASS: bigMath pauses should be identified as WebAssembly pauses.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.SourceMapUnmappedLine
+PASS: The unmapped source line should resolve forward to the canonical WebAssembly line.
+PASS: The unmapped source line should resolve forward to module byte offset 49.
+PASS: The generated position should map back to module byte offset 49.
+PASS: The breakpoint should resolve without crashing the inspected page.
+PASS: The pause should map back to the original source.
+PASS: The pause should use the next mapped original line.
+PASS: The debugger should identify the WebAssembly pause.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.ContentLoadLocationStability
+PASS: The breakpoint should begin on the canonical WebAssembly line.
+PASS: The breakpoint should begin at module byte offset 53.
+PASS: Loading content should preserve the canonical WebAssembly line.
+PASS: Loading content should preserve the module byte offset.
+PASS: Loading content should preserve the original source.
+PASS: Loading content should preserve the original line.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.RestoredSourceMapLocation
+PASS: The persisted breakpoint should begin on the canonical WebAssembly line.
+PASS: The persisted breakpoint should preserve its module byte offset.
+PASS: The restored breakpoint should preserve the canonical WebAssembly line.
+PASS: The restored breakpoint should preserve its module byte offset.
+PASS: The restored breakpoint should map back to the original source.
+PASS: The restored breakpoint should map back to the selected original line.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.PersistentURL
+PASS: The breakpoint resolved in the second module.
+PASS: The second module should pause in its own script.
+PASS: The second module should pause on the canonical WebAssembly line.
+PASS: The second module should pause at the persisted module byte offset.
+
+-- Running test case: WI.DebuggerManager.WebAssemblyBreakpoint.ConfiguredSourceMap
+PASS: The falsy condition should prevent the source-mapped breakpoint from pausing.
+PASS: The source-mapped breakpoint condition should be evaluated.
+

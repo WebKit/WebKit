@@ -403,6 +403,11 @@ InspectorFrontendHost::DebuggableInfo InspectorFrontendHost::debuggableInfo() co
     };
 }
 
+bool InspectorFrontendHost::wasmDebuggerEnabled() const
+{
+    return m_client && m_client->wasmDebuggerEnabled();
+}
+
 unsigned InspectorFrontendHost::inspectionLevel() const
 {
     return m_client ? m_client->inspectionLevel() : 1;

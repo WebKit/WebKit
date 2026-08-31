@@ -56,6 +56,16 @@ UncheckedKeyHashSet<uint32_t>* FunctionDebugInfo::findNextInstructions(uint32_t 
     return itr == offsetToNextInstructions.end() ? nullptr : &itr->value;
 }
 
+bool FunctionDebugInfo::hasInstructionAtOffset(uint32_t offset) const
+{
+    return instructionOffsets.contains(offset);
+}
+
+void FunctionDebugInfo::addInstruction(uint32_t offset)
+{
+    instructionOffsets.add(offset);
+}
+
 void FunctionDebugInfo::addNextInstruction(uint32_t offset, uint32_t nextInstruction)
 {
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] addNextInstruction offset:", RawHex(offset), " nextInstruction:", RawHex(nextInstruction));
@@ -81,7 +91,7 @@ FunctionDebugInfo& ModuleDebugInfo::ensureFunctionDebugInfo(FunctionCodeIndex fu
     FunctionSpaceIndex spaceIndex = moduleInfo->toSpaceIndex(functionIndex);
     Ref rtt = moduleInfo->rtt(spaceIndex);
     auto& info = functionIndexToData.add(functionIndex, FunctionDebugInfo()).iterator->value;
-    auto functionData = source.subspan(function.start, function.data.size());
+    auto functionData = source.isEmpty() ? function.data.span() : source.subspan(function.start, function.data.size());
 
     parseForDebugInfo(functionData, rtt.get(), moduleInfo, functionIndex, info);
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] Debug info collection completed for function ", functionIndex, " with ", info.offsetToNextInstructions.size(), " instruction mappings and ", info.locals.size(), " locals");

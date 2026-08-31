@@ -1287,6 +1287,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
         }
 
+        if (script.resource && script.sourceType === WI.Script.SourceType.WebAssembly)
+            this._addBreakpointsForSourceCode(script);
+
         // If the script URL matches a resource we can assume it is part of that resource and does not need added.
         if (script.resource || script.dynamicallyAddedScriptElement)
             return;
@@ -1535,6 +1538,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
             if (!sourceCode)
+                return null;
+            if (WI.Script.isWebAssembly(sourceCode) && !InspectorFrontendHost.wasmDebuggerEnabled)
                 return null;
 
             parentTreeElement = this._addDebuggerTreeElementForSourceCode(sourceCode);
@@ -2629,11 +2634,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
-        this._debuggerStepOverButtonItem.enabled = true;
-        this._debuggerStepIntoButtonItem.enabled = true;
-        this._debuggerStepOutButtonItem.enabled = true;
-        if (this._debuggerStepNextButtonItem)
-            this._debuggerStepNextButtonItem.enabled = true;
+        this._updateDebuggerStepNavigationItems();
 
         this.element.classList.add("paused");
     }
@@ -2646,11 +2647,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = false;
-        this._debuggerStepOverButtonItem.enabled = false;
-        this._debuggerStepIntoButtonItem.enabled = false;
-        this._debuggerStepOutButtonItem.enabled = false;
-        if (this._debuggerStepNextButtonItem)
-            this._debuggerStepNextButtonItem.enabled = false;
+        this._updateDebuggerStepNavigationItems();
 
         this.element.classList.remove("paused");
     }
@@ -2675,12 +2672,24 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._activeCallFrameTreeElement = null;
         }
 
+        this._updateDebuggerStepNavigationItems();
+
         if (!WI.debuggerManager.activeCallFrame)
             return;
 
         this._activeCallFrameTreeElement = this._callStackTreeOutline.findTreeElement(WI.debuggerManager.activeCallFrame);
         if (this._activeCallFrameTreeElement)
             this._activeCallFrameTreeElement.isActiveCallFrame = true;
+    }
+
+    _updateDebuggerStepNavigationItems()
+    {
+        let steppingEnabled = WI.debuggerManager.paused && !WI.debuggerManager.pausedInWebAssembly;
+        this._debuggerStepOverButtonItem.enabled = steppingEnabled;
+        this._debuggerStepIntoButtonItem.enabled = steppingEnabled;
+        this._debuggerStepOutButtonItem.enabled = steppingEnabled;
+        if (this._debuggerStepNextButtonItem)
+            this._debuggerStepNextButtonItem.enabled = steppingEnabled;
     }
 
     _handleDebuggerWaitingToPause(event)
@@ -2707,6 +2716,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 return;
 
             wasSelected = oldDebuggerTreeElement.selected;
+
+            this._removeDebuggerTreeElement(oldDebuggerTreeElement);
+            oldDebuggerTreeElement = null;
 
             newDebuggerTreeElement = this._addBreakpoint(debuggerObject);
         } else if (debuggerObject instanceof WI.IssueMessage) {

@@ -101,6 +101,22 @@ void BreakpointManager::clearAllOneTimeBreakpoints()
     dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Cleared all one-time breakpoints");
 }
 
+void BreakpointManager::clearInspectorStepBreakpoints()
+{
+    Locker locker { m_lock };
+    Vector<VirtualAddress> addresses;
+    for (VirtualAddress address : m_oneTimeBreakpoints) {
+        auto iterator = m_breakpoints.find(address);
+        RELEASE_ASSERT(iterator != m_breakpoints.end());
+        if (iterator->value.type == Breakpoint::Type::InspectorStep)
+            addresses.append(address);
+    }
+    for (VirtualAddress address : addresses) {
+        m_oneTimeBreakpoints.remove(address);
+        removeBreakpointImpl(address);
+    }
+}
+
 void BreakpointManager::clearAllBreakpoints()
 {
     Locker locker { m_lock };
@@ -108,6 +124,20 @@ void BreakpointManager::clearAllBreakpoints()
         breakpoint.restorePatch();
     m_breakpoints.clear();
     RELEASE_ASSERT(m_oneTimeBreakpoints.isEmpty());
+}
+
+void BreakpointManager::clearBreakpointsForModule(uint32_t moduleID)
+{
+    Locker locker { m_lock };
+    Vector<VirtualAddress> addresses;
+    for (auto& address : m_breakpoints.keys()) {
+        if (address.type() == VirtualAddress::Type::Module && address.id() == moduleID)
+            addresses.append(address);
+    }
+    for (VirtualAddress address : addresses) {
+        m_oneTimeBreakpoints.remove(address);
+        removeBreakpointImpl(address);
+    }
 }
 
 } // namespace Wasm

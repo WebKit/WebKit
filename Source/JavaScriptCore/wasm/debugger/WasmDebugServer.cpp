@@ -114,6 +114,17 @@ void DebugServer::startRWI(Function<bool(const String&)>&& rwiResponseHandler)
 }
 #endif
 
+ExecutionHandler& DebugServer::ensureExecutionHandlerForInspector()
+{
+    static Lock initializationLock;
+    Locker locker { initializationLock };
+    if (!m_moduleManager)
+        m_moduleManager = makeUnique<ModuleManager>();
+    if (!m_executionHandler)
+        m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager);
+    return *m_executionHandler;
+}
+
 union SocketAddress {
     sockaddr_in in;
     sockaddr generic;
@@ -469,7 +480,13 @@ void DebugServer::untrackModule(Module& module)
 {
     if (!m_moduleManager)
         return;
+    Ref moduleInformation = module.moduleInformation();
+    if (!moduleInformation->debugInfo || m_moduleManager->module(moduleInformation->debugInfo->id) != &module)
+        return;
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Untracking WebAssembly module: ", RawPointer(&module));
+    uint32_t moduleID = moduleInformation->debugInfo->id;
+    if (m_executionHandler)
+        m_executionHandler->clearBreakpointsForModule(moduleID);
     m_moduleManager->unregisterModule(module);
 }
 

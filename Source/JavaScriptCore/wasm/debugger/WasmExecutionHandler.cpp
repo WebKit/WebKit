@@ -30,8 +30,9 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include "Debugger.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyModule.h"
 #include "Options.h"
 #include "SubspaceInlines.h"
 #include "VM.h"
@@ -43,6 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmExceptionType.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmIPIntSlowPaths.h"
+#include "WasmModule.h"
 #include "WasmModuleManager.h"
 #include "WasmOps.h"
 #include "WasmVirtualAddress.h"
@@ -139,6 +141,36 @@ DebuggerTrapStatus ExecutionHandler::handleDebuggerTrapIfNeeded(CallFrame* callF
     if (exceptionType == Wasm::ExceptionType::Unreachable && hasBreakpoints()) {
         VirtualAddress address = VirtualAddress::toVirtual(instance, callee->functionIndex(), pc);
         if (auto* breakpoint = m_breakpointManager->findBreakpoint(address)) {
+            if (breakpoint->isInspectorBreakpoint()) {
+                if (breakpoint->isOneTimeBreakpoint()) {
+                    m_breakpointManager->clearInspectorStepBreakpoints();
+                    if (m_inspectorRearmAddress) {
+                        if (auto* rearmBreakpoint = m_breakpointManager->findBreakpoint(*m_inspectorRearmAddress))
+                            rearmBreakpoint->patchBreakpoint();
+                        m_inspectorRearmAddress = std::nullopt;
+                    }
+                    if (m_inspectorSilentStep) {
+                        m_inspectorSilentStep = false;
+                        return DebuggerTrapStatus::ResolvedByDebugger;
+                    }
+                } else {
+                    if (m_inspectorRearmAddress) {
+                        if (auto* rearmBreakpoint = m_breakpointManager->findBreakpoint(*m_inspectorRearmAddress))
+                            rearmBreakpoint->patchBreakpoint();
+                    }
+                    m_inspectorSilentStep = false;
+                    breakpoint->restorePatch();
+                    m_inspectorRearmAddress = address;
+                    m_breakpointManager->clearInspectorStepBreakpoints();
+                }
+
+                JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(debuggee);
+                Debugger* debugger = globalObject ? globalObject->debugger() : nullptr;
+                if (!debugger || !debugger->breakProgram(globalObject, callFrame, instance, callee, pc, debugger->sourceID(instance->jsModule()), address.offset()))
+                    prepareInspectorResume(instance->module(), callee, pc);
+                return DebuggerTrapStatus::ResolvedByDebugger;
+            }
+
             debuggee.debugState()->setBreakpointStopData(breakpoint->type, address, breakpoint->originalBytecode, pc, mc, stack, callee, instance, callFrame);
             dataLogLnIf(Options::verboseWasmDebugger(), "[Code][handleDebuggerTrapIfNeeded] Breakpoint at ", *breakpoint, " with ", *debuggee.debugState()->stopData);
             stopTheWorld(debuggee, StopTheWorldEvent::WasmProgramStop);
@@ -606,13 +638,82 @@ void ExecutionHandler::setBreakpointAtEntry(JSWebAssemblyInstance* instance, IPI
     setBreakpointAtPC(instance, callee->functionIndex(), type, callee->bytecode());
 }
 
-void ExecutionHandler::setBreakpointAtPC(JSWebAssemblyInstance* instance, FunctionCodeIndex functionIndex, Breakpoint::Type type, const uint8_t* pc)
+bool ExecutionHandler::setBreakpointAtPC(JSWebAssemblyInstance* instance, FunctionCodeIndex functionIndex, Breakpoint::Type type, const uint8_t* pc)
+{
+    return setBreakpointAtPC(instance->module(), functionIndex, type, pc);
+}
+
+bool ExecutionHandler::setBreakpointAtPC(Module& module, FunctionCodeIndex functionIndex, Breakpoint::Type type, const uint8_t* pc)
 {
     RELEASE_ASSERT(pc);
-    VirtualAddress address = VirtualAddress::toVirtual(instance, functionIndex, pc);
-    if (m_breakpointManager->findBreakpoint(address))
-        return;
+    VirtualAddress address = VirtualAddress::toVirtual(module, functionIndex, pc);
+    if (auto* breakpoint = m_breakpointManager->findBreakpoint(address))
+        return breakpoint->isInspectorBreakpoint();
     m_breakpointManager->setBreakpoint(address, Breakpoint(const_cast<uint8_t*>(pc), type));
+    return true;
+}
+
+void ExecutionHandler::removeBreakpointAtPC(Module& module, FunctionCodeIndex functionIndex, const uint8_t* pc)
+{
+    RELEASE_ASSERT(pc);
+    VirtualAddress address = VirtualAddress::toVirtual(module, functionIndex, pc);
+    if (m_inspectorRearmAddress == address)
+        m_inspectorRearmAddress = std::nullopt;
+    if (auto* breakpoint = m_breakpointManager->findBreakpoint(address); breakpoint && breakpoint->isInspectorBreakpoint())
+        m_breakpointManager->removeBreakpoint(address);
+}
+
+void ExecutionHandler::prepareInspectorResume(Module& module, IPIntCallee* callee, uint8_t* pc)
+{
+    if (!m_inspectorRearmAddress)
+        return;
+
+    Ref moduleInformation = module.moduleInformation();
+    if (!moduleInformation->debugInfo)
+        return;
+
+    auto functionIndex = callee->functionIndex();
+    unsigned bytecodeOffset = VirtualAddress::toVirtual(module, functionIndex, pc).offset();
+    auto* nextInstructions = moduleInformation->debugInfo->ensureFunctionDebugInfo(functionIndex).findNextInstructions(bytecodeOffset);
+    if (!nextInstructions)
+        return;
+
+    unsigned firstInstructionOffset = VirtualAddress::toVirtual(module, functionIndex, callee->bytecode()).offset();
+    bool hasOneTimeBreakpoint = false;
+    for (unsigned nextInstructionOffset : *nextInstructions) {
+        if (nextInstructionOffset < firstInstructionOffset)
+            continue;
+
+        const uint8_t* nextPC = callee->bytecode() + nextInstructionOffset - firstInstructionOffset;
+        if (nextPC > callee->bytecodeEnd())
+            continue;
+
+        VirtualAddress nextAddress = VirtualAddress::toVirtual(module, functionIndex, nextPC);
+        if (!m_breakpointManager->findBreakpoint(nextAddress)) {
+            setBreakpointAtPC(module, functionIndex, Breakpoint::Type::InspectorStep, nextPC);
+            hasOneTimeBreakpoint = true;
+        }
+    }
+    m_inspectorSilentStep = hasOneTimeBreakpoint;
+}
+
+void ExecutionHandler::rearmInspectorBreakpointIfNeeded()
+{
+    if (!m_inspectorRearmAddress)
+        return;
+
+    if (auto* breakpoint = m_breakpointManager->findBreakpoint(*m_inspectorRearmAddress))
+        breakpoint->patchBreakpoint();
+    m_inspectorRearmAddress = std::nullopt;
+}
+
+void ExecutionHandler::clearBreakpointsForModule(uint32_t moduleID)
+{
+    if (m_inspectorRearmAddress && m_inspectorRearmAddress->id() == moduleID) {
+        m_inspectorRearmAddress = std::nullopt;
+        m_inspectorSilentStep = false;
+    }
+    m_breakpointManager->clearBreakpointsForModule(moduleID);
 }
 
 void ExecutionHandler::setBreakpoint(StringView packet)

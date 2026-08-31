@@ -1,0 +1,138 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebAssemblyDebuggerEnabled=true jscOptions=--enableWasmDebugger=true ] -->
+<html>
+<head>
+<script src="../../resources/inspector-test.js"></script>
+<script>
+let wasmInstances = new Map;
+
+async function instantiateWasmURL(url)
+{
+    let result = await WebAssembly.instantiateStreaming(fetch(url));
+    wasmInstances.set(url, result.instance);
+    return result;
+}
+
+function invokeWasmURL(url)
+{
+    return wasmInstances.get(url).exports.add(2, 3);
+}
+
+function test()
+{
+    function wasmScripts()
+    {
+        let scripts = [];
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                scripts.pushAll(WI.debuggerManager.dataForTarget(target).scripts);
+        }
+        return scripts;
+    }
+
+    async function createWasmScript(query)
+    {
+        let origin = await InspectorTest.evaluateInPage("location.origin");
+        let url = origin + "/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?" + query;
+        let knownScripts = new Set(wasmScripts());
+        let {result, wasThrown} = await WI.mainTarget.RuntimeAgent.evaluate.invoke({
+            expression: `instantiateWasmURL(${JSON.stringify(url)})`,
+        });
+        if (wasThrown)
+            throw new Error(result.description);
+        let response = await WI.mainTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: result.objectId});
+        if (response.wasThrown)
+            throw new Error(response.result.description);
+
+        let script;
+        await retryUntil(() => {
+            script = wasmScripts().find((candidate) => candidate.sourceType === WI.Script.SourceType.WebAssembly && !knownScripts.has(candidate));
+            return script;
+        });
+        await retryUntil(() => script.resource);
+        await script.requestContent();
+        return {script, url};
+    }
+
+    async function addBreakpoint(location)
+    {
+        let breakpoint = new WI.JavaScriptBreakpoint(location);
+        let resolvedPromise = Promise.withResolvers();
+        breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, () => {
+            if (breakpoint.resolved)
+                resolvedPromise.resolve();
+        });
+        WI.debuggerManager.addBreakpoint(breakpoint);
+        if (!breakpoint.resolved)
+            await resolvedPromise.promise;
+        return breakpoint;
+    }
+
+    async function invokeAndPause(url)
+    {
+        let pausedPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, () => {
+            if (!WI.debuggerManager.activeCallFrame)
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+            pausedPromise.resolve(WI.debuggerManager.activeCallFrame);
+        });
+        await InspectorTest.evaluateInPage(`setTimeout(() => invokeWasmURL(${JSON.stringify(url)}))`);
+        return pausedPromise.promise;
+    }
+
+    async function resume()
+    {
+        let resumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        WI.debuggerManager.resume();
+        await resumedPromise;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WI.Script.Resource.WebAssemblyBreakpoint");
+
+    suite.addTestCase({
+        name: "WI.Script.Resource.WebAssemblyBreakpoint.ByteOffset",
+        description: "A breakpoint set at a Resource-backed WebAssembly module byte offset should pause at the selected instruction.",
+        async test() {
+            let {script, url} = await createWasmScript("resource-breakpoint");
+            InspectorTest.expectTrue(script.resource instanceof WI.Resource, "The WebAssembly script should be associated with its Resource.");
+            let location = script.createSourceCodeLocationForBytecodeOffset(53);
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause(url);
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, script, "The pause should belong to the Resource's WebAssembly script.");
+            InspectorTest.expectEqual(script.bytecodeOffsetForPosition(callFrame.sourceCodeLocation.lineNumber, callFrame.sourceCodeLocation.columnNumber), 53, "The pause should map to the selected instruction.");
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.Resource.WebAssemblyBreakpoint.SourceMap",
+        description: "A breakpoint set in original source owned by a Resource-backed WebAssembly script should pause at the mapped instruction.",
+        async test() {
+            let {script, url} = await createWasmScript("source-map");
+            await retryUntil(() => script.sourceMaps.length);
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let location = sourceMapResource.createSourceCodeLocation(4, 0);
+            InspectorTest.expectEqual(script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber), 53, "The original-source breakpoint should map to the add instruction.");
+            let breakpoint = await addBreakpoint(location);
+
+            let callFrame = await invokeAndPause(url);
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.sourceCode, script, "The generated pause should belong to the Resource's WebAssembly script.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displaySourceCode, sourceMapResource, "The pause should map back to the original source.");
+            InspectorTest.expectEqual(callFrame.sourceCodeLocation.displayLineNumber, 4, "The pause should map back to the selected original line.");
+
+            await resume();
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests breakpoints in WebAssembly scripts associated with network Resources.</p>
+</body>
+</html>

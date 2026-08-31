@@ -134,6 +134,10 @@ public:
         return *m_executionHandler;
     }
 
+    bool hasExecutionHandler() const { return !!m_executionHandler; }
+
+    ExecutionHandler& ensureExecutionHandlerForInspector();
+
     JS_EXPORT_PRIVATE ModuleManager& moduleManager() const;
 
     JS_EXPORT_PRIVATE void reset();

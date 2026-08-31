@@ -31,11 +31,23 @@ function instantiateWasm(bytes)
     wasmInstances.push(new WebAssembly.Instance(wasmModule));
 }
 
-instantiateWasm(wasmBytes);
+async function instantiateStreamingWasm()
+{
+    let base64 = "AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCw==";
+    let {instance} = await WebAssembly.instantiateStreaming(fetch("data:application/wasm;base64," + base64));
+    wasmInstances.push(instance);
+}
+
+if (location.search !== "?no-initial-instance")
+    instantiateWasm(wasmBytes);
 addEventListener("message", ({data}) => {
     if (data === "instantiate")
         instantiateWasm(wasmBytes);
     else if (data === "instantiate-source-map")
         instantiateWasm(appendStringCustomSection(wasmBytes, "sourceMappingURL", "../../debugger/wasm/resources/source-map.json"));
+    else if (data === "instantiate-streaming")
+        instantiateStreamingWasm().then(() => postMessage("instantiated-streaming"));
+    else if (data === "invoke")
+        postMessage(wasmInstances[wasmInstances.length - 1].exports.add(2, 3));
 });
 postMessage("ready");

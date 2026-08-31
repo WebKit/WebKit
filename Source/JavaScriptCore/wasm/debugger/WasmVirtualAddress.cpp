@@ -31,7 +31,6 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyModule.h"
 #include "WasmCallee.h"
 #include "WasmDebugServerUtilities.h"
 #include "WasmFormat.h"
@@ -66,11 +65,14 @@ void VirtualAddress::dump(PrintStream& out) const
 
 VirtualAddress VirtualAddress::toVirtual(JSWebAssemblyInstance* jsInstance, FunctionCodeIndex index, const uint8_t* pc)
 {
-    JSWebAssemblyModule* jsModule = jsInstance->jsModule();
-    Ref module = jsModule->module();
-    const Wasm::FunctionData& functionData = jsModule->moduleInformation().functions[index];
+    return toVirtual(jsInstance->module(), index, pc);
+}
+
+VirtualAddress VirtualAddress::toVirtual(Module& module, FunctionCodeIndex index, const uint8_t* pc)
+{
+    const Wasm::FunctionData& functionData = module.moduleInformation().functions[index];
     uint32_t offset = static_cast<uint32_t>(pc - &functionData.data[0] + functionData.start);
-    return VirtualAddress::createModule(module->debugId(), offset);
+    return VirtualAddress::createModule(module.debugId(), offset);
 }
 
 uint8_t* VirtualAddress::toPhysicalPC(const ModuleManager& moduleManager)

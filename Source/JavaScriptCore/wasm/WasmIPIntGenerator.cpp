@@ -552,6 +552,10 @@ public:
     void NODELETE willParseExtendedOpcode() { }
     void didParseOpcode()
     {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+        if (m_debugInfo)
+            m_debugInfo->addInstruction(m_functionStartByteOffset + m_parser->currentOpcodeStartingOffset());
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
         if (!m_parser->unreachableBlocks()) {
             ASSERT(m_parser->getStackHeightInValues() == m_stackSize.value());
             if (Options::enableWasmDebugger()) [[unlikely]] {

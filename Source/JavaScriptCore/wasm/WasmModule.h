@@ -53,6 +53,7 @@ namespace Wasm {
 class IPIntCallee;
 class IPIntPlan;
 class MergedProfile;
+struct ModuleDebugInfo;
 struct ModuleInformation;
 enum class BindingFailure;
 
@@ -94,9 +95,10 @@ public:
     std::unique_ptr<MergedProfile> createMergedProfile(const IPIntCallee&);
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
+    ModuleDebugInfo& ensureDebugInfo();
     uint32_t NODELETE debugId() const;
     void NODELETE setDebugId(uint32_t);
-#endif
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
 
 private:
     Ref<CalleeGroup> getOrCreateCalleeGroup(VM&, MemoryMode);
