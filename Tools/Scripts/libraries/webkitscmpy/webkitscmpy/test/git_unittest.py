@@ -334,6 +334,12 @@ class TestGit(testing.PathTestCase):
                     git.commit(hash='fff83bb2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(hash='9b8311f2'), end=dict(hash='bae5d1e9')))))
 
+    def test_commits_empty_range(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock, LoggerCapture():
+                git = local.Git(self.path)
+                self.assertEqual([], list(git.commits(begin={'hash': '9b8311f2'}, end={'hash': '9b8311f2'})))
+
     def test_commits_branch(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock, LoggerCapture():

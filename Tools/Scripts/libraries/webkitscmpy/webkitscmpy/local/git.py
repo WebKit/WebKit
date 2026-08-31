@@ -1071,7 +1071,9 @@ class Git(Scm):
 
             line = log.stdout.readline()
             previous = [end]
+            saw_output = False
             while line:
+                saw_output = True
                 if not line.startswith('commit '):
                     raise OSError('Failed to parse `git log` format')
                 branch_point = previous[-1].branch_point
@@ -1119,10 +1121,11 @@ class Git(Scm):
                             yield cached
                     previous = [commit]
 
-            for cached in previous:
-                cached.order += begin.order
-                if scopes is None or cached.hash in in_scope:
-                    yield cached
+            if saw_output:
+                for cached in previous:
+                    cached.order += begin.order
+                    if scopes is None or cached.hash in in_scope:
+                        yield cached
         finally:
             if log and log.poll() is None:
                 log.kill()
