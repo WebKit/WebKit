@@ -37,6 +37,7 @@
 #include <WebCore/InspectorOverlayLabel.h>
 #include <WebCore/Path.h>
 #include <WebCore/Timer.h>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
@@ -60,10 +61,13 @@ class WeakPtrImplWithEventTargetData;
 class FontCascade;
 class FloatPoint;
 class GraphicsContext;
+class InspectorBackendClient;
+class LocalFrame;
 class Node;
 class NodeList;
 class Page;
 class PageInspectorController;
+class RenderObject;
 
 struct InspectorOverlayHighlight {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InspectorOverlayHighlight);
@@ -140,10 +144,33 @@ struct InspectorOverlayHighlight {
     using Bounds = FloatRect;
 };
 
+// Owner of an InspectorOverlay: a PageInspectorController (page overlay) or, under Site Isolation,
+// a LocalFrame's FrameInspectorController (frame overlay). ref()/deref() pin the owner, not the
+// overlay, which is not RefCounted; AbstractCanMakeCheckedPtr lets the overlay hold a CheckedRef.
+class InspectorOverlayOwner : public AbstractCanMakeCheckedPtr {
+public:
+    virtual ~InspectorOverlayOwner() = default;
+
+    virtual void overlayOwnerRef() const = 0;
+    virtual void overlayOwnerDeref() const = 0;
+
+    // Null for a frame overlay once its frame is detached.
+    virtual Page* NODELETE overlayOwnerPage() const = 0;
+
+    // Not cached by callers: destroyed by PageInspectorController::inspectedPageDestroyed().
+    virtual InspectorBackendClient* NODELETE overlayOwnerBackendClient() const = 0;
+
+    // The frame the overlay draws in, or null for the page overlay. See frameForGeometry().
+    virtual LocalFrame* NODELETE overlayOwnerFrame() const { return nullptr; }
+
+    // Flex line-wrap positions for line separators, from the owning DOM agent's cache.
+    virtual Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const { return { }; }
+};
+
 class InspectorOverlay : public CanMakeWeakPtr<InspectorOverlay> {
     WTF_MAKE_TZONE_ALLOCATED(InspectorOverlay);
 public:
-    InspectorOverlay(PageInspectorController&, InspectorBackendClient*);
+    explicit InspectorOverlay(InspectorOverlayOwner&);
     ~InspectorOverlay();
 
     void NODELETE ref() const;
@@ -251,10 +278,19 @@ private:
     bool removeGridOverlayForNode(Node&);
     bool removeFlexOverlayForNode(Node&);
 
-    Page& NODELETE page() const;
+    // Null once the owner is detached from its page; every geometry path must tolerate that.
+    Page* NODELETE page() const;
 
-    const WeakRef<PageInspectorController> m_controller;
-    InspectorBackendClient* m_client;
+    // The frame this overlay draws in: the owner's frame, else the page's local main frame.
+    LocalFrame* NODELETE frameForGeometry() const;
+
+    // True when scoped to one frame rather than the whole page.
+    bool isFrameScoped() const { return !!m_owner->overlayOwnerFrame(); }
+
+    // Single answer to "are rulers being drawn", so the guide lines and tooltip insets agree.
+    bool shouldDrawRulers() const;
+
+    const CheckedRef<const InspectorOverlayOwner> m_owner;
 
     RefPtr<Node> m_highlightNode;
     RefPtr<NodeList> m_highlightNodeList;
