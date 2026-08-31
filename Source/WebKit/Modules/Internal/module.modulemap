@@ -315,6 +315,12 @@ module WebKit_Internal [system] {
         requires objc
     }
 
+    module TransferString {
+        requires cplusplus23
+        header "../../Platform/IPC/TransferString.h"
+        export *
+    }
+
     module WKDeferringGestureRecognizer {
         header "../../UIProcess/Cocoa/WKDeferringGestureRecognizer.h"
         export *

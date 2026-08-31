@@ -156,6 +156,8 @@ TransferString::IPCData TransferString::toIPCData() const LIFETIME_BOUND
     );
 }
 
+TransferString::TransferString(TransferString&&) = default;
+
 TransferString::TransferString(const TransferString& other)
 {
     WTF::switchOn(other.m_storage,

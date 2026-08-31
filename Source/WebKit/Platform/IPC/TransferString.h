@@ -66,7 +66,8 @@ public:
     TransferString(IPCData&&);
     TransferString(const TransferString&);
     TransferString& operator=(const TransferString&);
-    TransferString(TransferString&&) = default;
+    // Defined out-of-line to work around rdar://186108994.
+    TransferString(TransferString&&);
     TransferString& operator=(TransferString&&) = default;
 
     static constexpr size_t transferAsMappingSize = 16384;
