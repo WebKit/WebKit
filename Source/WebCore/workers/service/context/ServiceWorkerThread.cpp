@@ -168,10 +168,19 @@ void ServiceWorkerThread::runEventLoop()
     WorkerThread::runEventLoop();
 }
 
-void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, String&& referrer, FetchOptions&& options, SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void ServiceWorkerThread::queueTaskToFireEvent(Function<void(ServiceWorkerGlobalScope&)>&& callback)
 {
     Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, client = WTF::move(client), request = WTF::move(request), referrer = WTF::move(referrer), options = WTF::move(options), connectionIdentifier, fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTF::move(clientIdentifier), resultingClientIdentifier = WTF::move(resultingClientIdentifier)]() mutable {
+    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, callback = WTF::move(callback)] {
+        if (serviceWorkerGlobalScope->activeDOMObjectsAreStopped())
+            return;
+        callback(serviceWorkerGlobalScope);
+    });
+}
+
+void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, String&& referrer, FetchOptions&& options, SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+{
+    queueTaskToFireEvent([client = WTF::move(client), request = WTF::move(request), referrer = WTF::move(referrer), options = WTF::move(options), connectionIdentifier, fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTF::move(clientIdentifier), resultingClientIdentifier = WTF::move(resultingClientIdentifier)](auto& serviceWorkerGlobalScope) mutable {
         if (client->isCancelled()) {
             RELEASE_LOG_INFO(ServiceWorker, "Skipping fetch event dispatching since client cancelled it");
             return;
@@ -195,25 +204,24 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
 
 void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope, message = WTF::move(message), sourceData = WTF::move(sourceData)]() mutable {
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, message = WTF::move(message), sourceData = WTF::move(sourceData)](auto& serviceWorkerGlobalScope) mutable {
         URL sourceURL;
         auto source = WTF::switchOn(WTF::move(sourceData),
             [&](ServiceWorkerClientData&& sourceData) {
                 Ref<ServiceWorkerClient> sourceClient = ServiceWorkerClient::create(serviceWorkerGlobalScope, WTF::move(sourceData));
 
-                if (sourceClient->url().protocolIsInHTTPFamily() && serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceClient->url())) {
+                if (sourceClient->url().protocolIsInHTTPFamily() && serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceClient->url())) {
                     StringBuilder mismatchParts;
                     auto addMismatch = [&](ASCIILiteral partName) {
                         if (mismatchParts.length())
                             mismatchParts.append(", "_s);
                         mismatchParts.append(partName);
                     };
-                    if (serviceWorkerGlobalScope->url().protocol() != sourceClient->url().protocol())
+                    if (serviceWorkerGlobalScope.url().protocol() != sourceClient->url().protocol())
                         addMismatch("protocol"_s);
-                    if (serviceWorkerGlobalScope->url().host() != sourceClient->url().host())
+                    if (serviceWorkerGlobalScope.url().host() != sourceClient->url().host())
                         addMismatch("host"_s);
-                    if (serviceWorkerGlobalScope->url().port() != sourceClient->url().port())
+                    if (serviceWorkerGlobalScope.url().port() != sourceClient->url().port())
                         addMismatch("port"_s);
                     RELEASE_LOG_FAULT(ServiceWorker, "ServiceWorkerThread::queueTaskToPostMessage service worker and client mismatch: %s", mismatchParts.toString().utf8().data());
                     ASSERT_NOT_REACHED();
@@ -226,7 +234,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
             [&](ServiceWorkerData&& sourceData) -> ExtendableMessageEventSource {
                 Ref<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTF::move(sourceData));
 
-                RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceWorker->scriptURL()));
+                RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceWorker->scriptURL()));
 
                 sourceURL = sourceWorker->scriptURL();
                 return ExtendableMessageEventSource { WTF::move(sourceWorker) };
@@ -242,12 +250,11 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
 
 void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        Ref installEvent = serviceWorkerGlobalScope->settingsValues().serviceWorkerInstallEventEnabled ? Ref<ExtendableEvent> { InstallEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes) } : ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchEvent(installEvent);
+        Ref installEvent = serviceWorkerGlobalScope.settingsValues().serviceWorkerInstallEventEnabled ? Ref<ExtendableEvent> { InstallEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes) } : ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope.dispatchEvent(installEvent);
 
         installEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTF::move(weakThis)](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) mutable {
             bool hasRejectedAnyPromise = false;
@@ -269,12 +276,11 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
 
 void ServiceWorkerThread::queueTaskToFireActivateEvent()
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
         auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchEvent(activateEvent);
+        serviceWorkerGlobalScope.dispatchEvent(activateEvent);
 
         activateEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTF::move(weakThis)](auto&&) mutable {
             callOnMainThread([weakThis = WTF::move(weakThis)] {
@@ -299,16 +305,15 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
     UNUSED_PARAM(payload);
 #endif
 
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([data = WTF::move(data), callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        serviceWorkerGlobalScope->setHasPendingSilentPushEvent(true);
+        serviceWorkerGlobalScope.setHasPendingSilentPushEvent(true);
 
         auto pushEvent = PushEvent::create(eventNames().pushEvent, { }, WTF::move(data), ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchPushEvent(pushEvent);
+        serviceWorkerGlobalScope.dispatchPushEvent(pushEvent);
 
-        pushEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, eventCreationTime = pushEvent->timeStamp(), callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
+        pushEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = protect(serviceWorkerGlobalScope), eventCreationTime = pushEvent->timeStamp(), callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
             bool hasRejectedAnyPromise = false;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
@@ -335,12 +340,12 @@ void ServiceWorkerThread::queueTaskToFireDeclarativePushEvent(NotificationPayloa
 {
     Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     auto scopeURL = serviceWorkerGlobalScope->registration().data().scopeURL;
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, proposedPayload = WTF::move(proposedPayload), callback = WTF::move(callback), scopeURL]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireDeclarativePushEvent firing push event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, proposedPayload = WTF::move(proposedPayload), callback = WTF::move(callback), scopeURL](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireDeclarativePushEvent firing push event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        auto notification = Notification::create(serviceWorkerGlobalScope.get(), scopeURL, proposedPayload);
+        auto notification = Notification::create(serviceWorkerGlobalScope, scopeURL, proposedPayload);
         Ref declarativePushEvent = PushEvent::create(eventNames().pushEvent, { }, notification.get(), proposedPayload.appBadge, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchDeclarativePushEvent(declarativePushEvent);
+        serviceWorkerGlobalScope.dispatchDeclarativePushEvent(declarativePushEvent);
 
         declarativePushEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, proposedPayload = WTF::move(proposedPayload), declarativePushEvent = WTF::move(declarativePushEvent), callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
             serviceWorkerGlobalScope->clearDeclarativePushEvent();
@@ -379,20 +384,19 @@ void ServiceWorkerThread::queueTaskToFireDeclarativePushEvent(NotificationPayloa
 
 void ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope, newSubscriptionData = WTF::move(newSubscriptionData), oldSubscriptionData = WTF::move(oldSubscriptionData)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, newSubscriptionData = WTF::move(newSubscriptionData), oldSubscriptionData = WTF::move(oldSubscriptionData)](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
         RefPtr<PushSubscription> newSubscription;
         RefPtr<PushSubscription> oldSubscription;
 
         if (newSubscriptionData)
-            newSubscription = PushSubscription::create(WTF::move(*newSubscriptionData), &serviceWorkerGlobalScope->registration());
+            newSubscription = PushSubscription::create(WTF::move(*newSubscriptionData), &serviceWorkerGlobalScope.registration());
         if (oldSubscriptionData)
             oldSubscription = PushSubscription::create(WTF::move(*oldSubscriptionData));
 
         auto pushSubscriptionChangeEvent = PushSubscriptionChangeEvent::create(eventNames().pushsubscriptionchangeEvent, { }, WTF::move(newSubscription), WTF::move(oldSubscription), ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchEvent(pushSubscriptionChangeEvent);
+        serviceWorkerGlobalScope.dispatchEvent(pushSubscriptionChangeEvent);
 
         pushSubscriptionChangeEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTF::move(weakThis)](auto&&) mutable {
             callOnMainThread([weakThis = WTF::move(weakThis)] {
@@ -408,17 +412,16 @@ void ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent(std::option
 #if ENABLE(NOTIFICATION_EVENT)
 void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& data, NotificationEventType eventType, Function<void(bool)>&& callback)
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, data = WTF::move(data), eventType, callback = WTF::move(callback)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireNotificationEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([data = WTF::move(data), eventType, callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireNotificationEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        Ref notification = Notification::create(serviceWorkerGlobalScope.get(), WTF::move(data));
+        Ref notification = Notification::create(serviceWorkerGlobalScope, WTF::move(data));
         AtomString eventName;
         switch (eventType) {
         case NotificationEventType::Click:
             eventName = eventNames().notificationclickEvent;
             notification->markAsShown();
-            serviceWorkerGlobalScope->recordUserGesture();
+            serviceWorkerGlobalScope.recordUserGesture();
             break;
         case NotificationEventType::Close:
             eventName = eventNames().notificationcloseEvent;
@@ -426,9 +429,9 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
         }
 
         Ref notificationEvent = NotificationEvent::create(eventName, WTF::move(notification), emptyString(), ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchEvent(notificationEvent);
+        serviceWorkerGlobalScope.dispatchEvent(notificationEvent);
 
-        notificationEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
+        notificationEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
             bool success = true;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
@@ -446,11 +449,10 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
 
 void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInformation&& info, Function<void(bool)>&& callback)
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = ThreadSafeWeakPtr { *this }, serviceWorkerGlobalScope, info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(serviceWorkerGlobalScope->registration());
+        Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(protect(serviceWorkerGlobalScope.registration()));
         auto failureReason = info.failureReason;
         BackgroundFetchEventInit eventInit { { }, manager->backgroundFetchRegistrationInstance(serviceWorkerGlobalScope, WTF::move(info)) };
         RefPtr<ExtendableEvent> event;
@@ -466,9 +468,9 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
             break;
         };
 
-        serviceWorkerGlobalScope->dispatchEvent(*event);
+        serviceWorkerGlobalScope.dispatchEvent(*event);
 
-        event->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
+        event->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
             bool success = true;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
@@ -485,17 +487,16 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
 
 void ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent(BackgroundFetchInformation&& info, Function<void(bool)>&& callback)
 {
-    Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
-    protect(serviceWorkerGlobalScope->eventLoop())->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
+    queueTaskToFireEvent([info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
-        Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(serviceWorkerGlobalScope->registration());
+        Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(protect(serviceWorkerGlobalScope.registration()));
         BackgroundFetchEventInit eventInit { { }, manager->backgroundFetchRegistrationInstance(serviceWorkerGlobalScope, WTF::move(info)) };
         auto event = BackgroundFetchEvent::create(eventNames().backgroundfetchclickEvent, WTF::move(eventInit));
 
-        serviceWorkerGlobalScope->dispatchEvent(event.get());
+        serviceWorkerGlobalScope.dispatchEvent(event);
 
-        event->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
+        event->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {
             bool success = true;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
