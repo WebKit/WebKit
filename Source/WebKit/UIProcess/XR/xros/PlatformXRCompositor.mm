@@ -70,6 +70,19 @@ static std::optional<WebCore::IntSize> sizeFromLayerProperties(cp_layer_renderer
     return WebCore::IntSize { defaultWidth, defaultHeight };
 }
 
+static ASCIILiteral layerRendererLayoutName(cp_layer_renderer_layout layout)
+{
+    switch (layout) {
+    case cp_layer_renderer_layout_dedicated:
+        return "dedicated"_s;
+    case cp_layer_renderer_layout_shared:
+        return "shared"_s;
+    case cp_layer_renderer_layout_layered:
+        return "layered"_s;
+    }
+    return "unknown"_s;
+}
+
 namespace WebKit {
 
 using namespace PAL;
@@ -114,7 +127,13 @@ void CompositorCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoC
     }
 
     m_foveationEnabled = cp_layer_renderer_configuration_get_foveation_enabled(defaultConfiguration.get());
-    m_layeredModeEnabled = cp_layer_renderer_configuration_get_layout(defaultConfiguration.get());
+
+    // FIXME: rdar://183548202 - m_layeredModeEnabled cannot distinguish the shared layout from the
+    // layered one, and the viewport packing in render() assumes the shared layout unconditionally.
+    // Log the negotiated layout so a repro can be attributed without a new build.
+    auto layout = cp_layer_renderer_configuration_get_layout(defaultConfiguration.get());
+    RELEASE_LOG(XR, "CompositorCoordinator: negotiated layer renderer layout is %" PUBLIC_LOG_STRING " (%u), foveation %d", layerRendererLayoutName(layout).characters(), static_cast<unsigned>(layout), m_foveationEnabled);
+    m_layeredModeEnabled = layout;
 
     auto defaultDepthRange = cp_layer_renderer_configuration_get_default_depth_range(defaultConfiguration.get());
     m_depthRange.near = std::min(defaultDepthRange.x, defaultDepthRange.y);
