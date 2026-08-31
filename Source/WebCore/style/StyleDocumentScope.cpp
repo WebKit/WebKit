@@ -40,13 +40,16 @@
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrameView.h"
 #include "MatchResultCache.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "RuleSet.h"
+#include "ScrollableArea.h"
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -288,9 +291,106 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     }
 
     for (auto& toInvalidate : containersToInvalidate)
-        toInvalidate->invalidateForQueryContainerSizeChange();
+        toInvalidate->invalidateForQueryContainerChange();
 
     return !containersToInvalidate.isEmpty();
+}
+
+// Edges the container can currently be scrolled further toward.
+static RectEdges<bool> scrollableEdges(const RenderBox& containerRenderer)
+{
+    // This mirrors ScrollableArea::edgePinnedState(), except for where it takes the axes from. That
+    // function decides whether an axis can scroll at all from the Scrollbar objects the area owns,
+    // and a frame view has none when scrolling is delegated to a native scroll view, so it reports
+    // every edge as pinned there. Take the axes from the renderer and the frame view instead, like
+    // RenderLayerScrollableArea::hasScrollableHorizontalOverflow() and LocalFrameView::isScrollable().
+    CheckedPtr<const ScrollableArea> scrollableArea;
+    bool canScrollHorizontally = false;
+    bool canScrollVertically = false;
+
+    if (containerRenderer.isDocumentElementRenderer()) {
+        // In standards mode the document element scrolls the viewport, which is driven by the frame
+        // view rather than the element's own layer.
+        auto& frameView = containerRenderer.view().frameView();
+        scrollableArea = &frameView;
+        canScrollHorizontally = frameView.horizontalScrollbarMode() != ScrollbarMode::AlwaysOff;
+        canScrollVertically = frameView.verticalScrollbarMode() != ScrollbarMode::AlwaysOff;
+    } else if (CheckedPtr layer = containerRenderer.layer()) {
+        scrollableArea = layer->scrollableArea();
+        // Only auto and scroll overflow are reachable through user initiated scrolling, which is what
+        // the feature queries; scrollable never matches a hidden container.
+        canScrollHorizontally = containerRenderer.scrollsOverflowX();
+        canScrollVertically = containerRenderer.scrollsOverflowY();
+    }
+
+    // A container with no scrollable area is not a scroll container, so it is scrollable nowhere.
+    if (!scrollableArea)
+        return { false, false, false, false };
+
+    auto scrollPosition = scrollableArea->scrollPosition();
+    auto minimumScrollPosition = scrollableArea->minimumScrollPosition();
+    auto maximumScrollPosition = scrollableArea->maximumScrollPosition();
+
+    // Top, right, bottom, left.
+    return {
+        canScrollVertically && scrollPosition.y() > minimumScrollPosition.y(),
+        canScrollHorizontally && scrollPosition.x() < maximumScrollPosition.x(),
+        canScrollVertically && scrollPosition.y() < maximumScrollPosition.y(),
+        canScrollHorizontally && scrollPosition.x() > minimumScrollPosition.x()
+    };
+}
+
+// https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
+// Reading live scroll state during style resolution would allow layout cycles, since a scroll-state
+// query can change style, which changes layout, which changes the scroll state. Instead the state is
+// snapshotted here, after layout, and that snapshot is what evaluation sees until the next snapshot.
+void DocumentScope::updateScrollStateSnapshots()
+{
+    CheckedPtr renderView = m_document->renderView();
+    if (!renderView)
+        return;
+
+    auto previousScrollStates = WTF::move(m_queryContainerScrollStatesOnLastUpdate);
+    m_queryContainerScrollStatesOnLastUpdate.clear();
+
+    Vector<CheckedPtr<Element>> containersToInvalidate;
+
+    for (auto& containerRenderer : renderView->scrollStateQueryBoxes()) {
+        CheckedPtr containerElement = containerRenderer.element();
+        if (!containerElement)
+            continue;
+
+        auto scrollState = ScrollState { scrollableEdges(containerRenderer) };
+
+        // Keyed on the container itself, ::before/::after included, since evaluation looks the state
+        // up by the container it is querying. Folding a pseudo-element into its host here would make
+        // the two share one entry and read each other's state.
+        auto it = previousScrollStates.find(*containerElement);
+        // A container seen for the first time is always invalidated, even when its state matches the
+        // default that evaluation falls back to: the first style resolution ran before this container
+        // had a renderer, so its queries evaluated to false and need resolving again.
+        bool changed = it == previousScrollStates.end() || it->value != scrollState;
+
+        m_queryContainerScrollStatesOnLastUpdate.add(*containerElement, scrollState);
+
+        if (!changed)
+            continue;
+
+        // Invalidation uses real elements, replace ::before/::after with its host.
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(containerElement.get()))
+            containerElement = pseudoElement->hostElement();
+
+        if (containerElement)
+            containersToInvalidate.append(containerElement);
+    }
+
+    for (auto& toInvalidate : containersToInvalidate)
+        toInvalidate->invalidateForQueryContainerChange();
+}
+
+auto DocumentScope::scrollStateSnapshotFor(const Element& element) const -> ScrollState
+{
+    return m_queryContainerScrollStatesOnLastUpdate.get(element);
 }
 
 bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& context)
