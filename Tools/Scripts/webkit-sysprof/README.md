@@ -140,6 +140,85 @@ between the reported minimum and maximum, and are left out below two samples.
 `analyze --explain` prints the long form of all of this in the report itself, next to
 the table it applies to.
 
+### `cycle-analysis`
+
+Draw every frame cycle as a bar, one cell per slice of time, colored by whatever the
+engine is doing at that moment. Where `analyze` reports the median cycle, this shows the
+individual ones, which is how a cycle stalled by layout is told apart from one stalled
+by a long timer or a slow `requestAnimationFrame` callback.
+
+```
+webkit-sysprof cycle-analysis CAPTURE_FILE [-t TIMESPAN] [-n MAX_CYCLES]
+                              [-r RESOLUTION] [--order first|slowest]
+                              [--min-duration MS] [--min-length MS]
+                              [--max-cells CELLS] [--no-tile-lane]
+                              [--color auto|always|never]
+```
+
+- `-n`/`--max-cycles`: how many cycles to draw (default 40).
+- `-r`/`--resolution`: milliseconds per cell (default 0.2).
+- `--order`: `first` draws the cycles in capture order, `slowest` the worst ones first,
+  which is usually what you want when hunting dropped frames.
+- `--min-duration`: skip cycles shorter than this, another way to isolate bad frames.
+- `--min-length`: shortest bar to draw, in milliseconds (default 16). Bars are padded to
+  at least this length so the refresh marker stays visible, and the padding is drawn
+  blank because it is not part of the cycle.
+- `--max-cells`: a cycle longer than this many cells is truncated and marked with `»`
+  (default 400). Only the cycle counts: a short bar whose padding did not fit is drawn
+  whole and is not marked.
+- `--no-tile-lane`: drop the `tiles` lane.
+- `--color`: `auto` colorizes only when writing to a terminal. Without color each cell
+  becomes a letter instead of a colored block, and the legend maps both.
+
+```
+$ webkit-sysprof cycle-analysis capture.syscap -t 30000-30200 -n 2 -r 0.5
+                          0   2   4   6   8   10  12  14  16  18  2
+                          ┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼─┴─┼ [ms]
+#1        20.40 ms  main ▕uuRRRRRRSSSSBBLL........UUUffPPPP│PPPPwww
+                   tiles ▕.................2344432.........│.......
+
+#2        20.40 ms  main ▕uuRRRRRRSSSSBBLL........UUUffPPPP│PPPPwww
+                   tiles ▕.................2344432.........│.......
+```
+
+Reading the first bar: the rendering update opens (`u`), then `requestAnimationFrame`
+callbacks (`R`), style resolution (`S`), render tree build (`B`) and layout (`L`),
+an idle stretch during which the lower lane shows two to four tiles painting in
+parallel, then the tile upload (`U`), the flush of compositing state (`f`), the paint
+(`P`) and the wait for the composition to complete (`w`). This cycle crosses the refresh
+marker, so it cost a frame.
+
+The `main` lane holds the marks of the process that rendered the cycle, which for all
+but the timer marks is its main thread. `EventLoopRun`, `WebCoreTimerExecution` and
+`WebCoreThreadTimers` are emitted by any thread running a run loop, and a capture names
+the process a mark came from but not the thread, so those three cannot be told apart
+from main-thread work. The innermost mark covering a cell wins, so nested marks are
+drawn over their parents and the bar reads as the real call structure rather than as
+flat top-level phases.
+
+The `tiles` lane is **not** the main thread and does not show an activity. It counts how
+many tiles are being rasterized at that instant on the painting threads, so `3` means
+three `PaintTile` marks overlap there. Painting is asynchronous, which is why this lane
+comes alive where the `main` lane goes idle: the main thread has handed the tiles off
+and is waiting for them before it can composite. It answers what the main lane cannot,
+namely whether an idle stretch is the engine waiting on parallel work or doing nothing.
+
+A vertical line crosses all bars at each multiple of the refresh interval. A cycle that
+reaches past the first line took longer than one display refresh, so it cost a frame. The
+line replaces the cell it is drawn in, so where a refresh interval is only a few cells
+wide, the header says so and no line is drawn rather than most of the lane being markers.
+
+A cycle only ever runs between two rendering updates of one process, so where more than
+one rendered, each bar names the process it belongs to and is drawn from that process's
+marks alone.
+
+The legend lists the activities present, the average time each took per drawn cycle, and
+the marks it is drawn from. The average covers the whole of every cycle drawn, including
+whatever part of a truncated one did not fit in its bar. Several activities aggregate more than one mark, so that
+list is what says exactly what a color covers. It also makes clear that `idle` is the
+absence of any mark rather than a mark of its own.
+
+
 ### `delta-histogram`
 
 Plot a histogram of the time between consecutive occurrences of a given mark (e.g. to

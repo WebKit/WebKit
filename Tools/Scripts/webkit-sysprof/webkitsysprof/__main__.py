@@ -5,6 +5,11 @@ import sys
 from typing import Any, Callable, Optional, Sequence
 
 from .analyze import analyze
+from .cycle_analysis import (
+    DEFAULT_MIN_LENGTH,
+    DEFAULT_RESOLUTION,
+    analyze_frame_cycle,
+)
 from .dump import dump
 from .histogram import delta_histogram
 from .summary import summary
@@ -79,6 +84,73 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Explain how to read the report, alongside the report itself"
         " (text format only)",
+    )
+
+    cycle_analysis_parser = _add_subcommand(
+        subparsers,
+        "cycle-analysis",
+        "Visualize individual frame cycles",
+        analyze_frame_cycle,
+    )
+    cycle_analysis_parser.add_argument(
+        "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
+    )
+    cycle_analysis_parser.add_argument(
+        "-t",
+        "--timespan",
+        type=str,
+        default="-",
+        help=TIMESPAN_HELP,
+    )
+    cycle_analysis_parser.add_argument(
+        "-n",
+        "--max-cycles",
+        type=int,
+        default=40,
+        help="Maximum number of cycles to draw",
+    )
+    cycle_analysis_parser.add_argument(
+        "-r",
+        "--resolution",
+        type=float,
+        default=DEFAULT_RESOLUTION,
+        help="Milliseconds per cell",
+    )
+    cycle_analysis_parser.add_argument(
+        "--order",
+        choices=["first", "slowest"],
+        default="first",
+        help="Draw the first cycles or the slowest ones",
+    )
+    cycle_analysis_parser.add_argument(
+        "--min-duration",
+        type=float,
+        default=0.0,
+        help="Only draw cycles at least this long, in milliseconds",
+    )
+    cycle_analysis_parser.add_argument(
+        "--min-length",
+        type=float,
+        default=DEFAULT_MIN_LENGTH,
+        help="Shortest bar to draw, in milliseconds",
+    )
+    cycle_analysis_parser.add_argument(
+        "--max-cells",
+        type=int,
+        default=400,
+        help="Truncate bars longer than this many cells",
+    )
+    cycle_analysis_parser.add_argument(
+        "--no-tile-lane",
+        dest="tile_lane",
+        action="store_false",
+        help="Omit the second lane showing threaded tile painting",
+    )
+    cycle_analysis_parser.add_argument(
+        "--color",
+        choices=["auto", "always", "never"],
+        default="auto",
+        help="Colorize the bars",
     )
 
     histogram_parser = _add_subcommand(

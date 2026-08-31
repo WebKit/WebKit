@@ -5,6 +5,7 @@ import unittest
 from .helpers import SysprofTestCase, approx, mark, sysprof_data
 
 from webkitsysprof.utils import (
+    MarkIndex,
     UsageError,
     marks_in_time_order,
     merged_spans,
@@ -18,7 +19,38 @@ from webkitsysprof.utils import (
 )
 
 
+def _window(begin_msec, end_msec):
+    return msec_to_nsec(begin_msec), msec_to_nsec(end_msec)
+
+
 class UtilsTest(SysprofTestCase):
+    def test_the_marks_overlapping_a_window_are_the_ones_running_in_it(self):
+        index = MarkIndex(
+            [
+                mark("Enclosing", 0, 100),
+                mark("Early", 10, 12),
+                mark("Inside", 40, 60),
+                mark("Late", 90, 95),
+            ]
+        )
+
+        # In begin order, and the long mark that began well before the window is
+        # found even though the walk back to it passes marks that end before it.
+        self.assertEqual(
+            [found["name"] for found in index.marks_overlapping(*_window(30, 50))],
+            ["Enclosing", "Inside"],
+        )
+
+    def test_a_mark_touching_a_window_at_its_edge_does_not_overlap_it(self):
+        # Half open at both ends, like every other window these are read through, so
+        # a mark of the neighbouring cycle stays out of this one.
+        index = MarkIndex([mark("Before", 0, 10), mark("After", 20, 30)])
+
+        self.assertEqual(index.marks_overlapping(*_window(10, 20)), [])
+
+    def test_an_index_of_no_marks_has_none_overlapping_anything(self):
+        self.assertEqual(MarkIndex([]).marks_overlapping(*_window(0, 10)), [])
+
     def test_spans_are_merged_where_they_overlap_or_touch(self):
         self.assertEqual(
             merged_spans([(0, 5), (3, 8), (8, 9), (20, 25)]), [(0, 9), (20, 25)]

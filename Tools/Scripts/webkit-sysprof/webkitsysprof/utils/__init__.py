@@ -1,4 +1,6 @@
+import bisect
 import collections
+import itertools
 import logging
 import re
 import statistics
@@ -256,6 +258,75 @@ def marks_by_process(
     for mark in marks:
         by_pid[mark_pid(mark)].append(mark)
     return dict(sorted(by_pid.items()))
+
+
+class MarkIndex:
+    """Marks ordered by begin time, for lookup within a window.
+
+    Holds whatever marks it is given, of one name or of many, so that a caller
+    reading several names as one timeline indexes them once.
+    """
+
+    def __init__(self, marks: Sequence[Dict[str, Any]]) -> None:
+        self._marks = sorted(marks, key=mark_begin)
+        self._begins = [mark_begin(mark) for mark in self._marks]
+        # The latest end among the first i marks. Every mark still running at a
+        # given time covers that time onwards, so their union is one span reaching
+        # to the latest of their ends, and that is all this has to answer.
+        self._ends_until: List[int] = list(
+            itertools.accumulate((mark["end_time"] for mark in self._marks), max)
+        )
+
+    def spans_within(self, begin: int, end: int) -> List[Tuple[int, int]]:
+        """The [begin, end) spans of time one of these marks was running.
+
+        Unmerged and in begin order. What began before the window and had not ended
+        by then counts, since a composition of an earlier cycle is what a cycle
+        waiting on the compositor is running, and all of those together reach from
+        the start of the window to the latest of their ends.
+        """
+        first = bisect.bisect_left(self._begins, begin)
+        spans = []
+        still_running = self._ends_until[first - 1] if first else None
+        if still_running is not None and still_running > begin:
+            spans.append((begin, min(still_running, end)))
+        for index in range(first, len(self._marks)):
+            if self._begins[index] >= end:
+                break
+            spans.append(
+                (self._begins[index], min(self._marks[index]["end_time"], end))
+            )
+        return spans
+
+    def last_end_of_marks_beginning_within(self, begin: int, end: int) -> Optional[int]:
+        """End of the last mark beginning within [begin, end), None if there is none.
+
+        The last end, not the first: marks nest, so the first one to end is not the
+        one compositing finished with. Indexing by end time instead has the mirror
+        problem, of returning a short mark of the next cycle when an enclosing mark
+        overruns this one.
+        """
+        first = bisect.bisect_left(self._begins, begin)
+        last = bisect.bisect_left(self._begins, end)
+        if first >= last:
+            return None
+        return max(self._marks[index]["end_time"] for index in range(first, last))
+
+    def marks_overlapping(self, begin: int, end: int) -> List[Dict[str, Any]]:
+        """The marks running at any point of [begin, end), in begin order.
+
+        Walked backwards from the last mark that began before the window, and
+        stopped where no earlier mark reaches into it, so the walk costs what
+        overlaps rather than everything that came before.
+        """
+        overlapping = []
+        for index in reversed(range(bisect.bisect_left(self._begins, end))):
+            if self._ends_until[index] <= begin:
+                break
+            if self._marks[index]["end_time"] > begin:
+                overlapping.append(self._marks[index])
+        overlapping.reverse()
+        return overlapping
 
 
 def marks_in_time_order(

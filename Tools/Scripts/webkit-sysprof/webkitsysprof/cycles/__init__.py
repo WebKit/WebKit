@@ -5,11 +5,16 @@ is what `analyze --explain` prints, from webkitsysprof.analyze.explanations, whi
 is where that is written down rather than here.
 """
 
-import bisect
 import itertools
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-from ..utils import mark_begin, marks_by_process, merged_spans, nsec_to_msec
+from ..utils import (
+    MarkIndex,
+    mark_begin,
+    marks_by_process,
+    merged_spans,
+    nsec_to_msec,
+)
 
 # Compositing of a cycle is the time any of these marks was running within it,
 # whether the mark began there or in an earlier cycle it overran. All four are read,
@@ -24,6 +29,10 @@ COMPOSITING_MARKS = [
     "PaintToGLContext",
     "WaitForCompositionCompletion",
 ]
+# The mark a frame cycle begins with, and so also the one a capture must hold two
+# of before there is any cycle to speak of.
+RENDERING_UPDATE_MARK = "LayerTreeHostRenderingUpdate"
+
 PHASES = [
     "rendering_update",
     "waiting_for_compositing",
@@ -31,55 +40,6 @@ PHASES = [
     "idle",
 ]
 RENDERING_UPDATE, WAITING, COMPOSITING, IDLE = PHASES
-
-
-class _MarkIndex:
-    """Marks of a single name, ordered by begin time for lookup within a cycle."""
-
-    def __init__(self, marks: Sequence[Dict[str, Any]]) -> None:
-        self._marks = sorted(marks, key=mark_begin)
-        self._begins = [mark_begin(mark) for mark in self._marks]
-        # The latest end among the first i marks. Every mark still running at a
-        # given time covers that time onwards, so their union is one span reaching
-        # to the latest of their ends, and that is all this has to answer.
-        self._ends_until: List[int] = list(
-            itertools.accumulate((mark["end_time"] for mark in self._marks), max)
-        )
-
-    def spans_within(self, begin: int, end: int) -> List[Tuple[int, int]]:
-        """The [begin, end) spans of time a mark of this name was running.
-
-        Unmerged and in begin order. What began before the window and had not ended
-        by then counts, since a composition of an earlier cycle is what a cycle
-        waiting on the compositor is running, and all of those together reach from
-        the start of the window to the latest of their ends.
-        """
-        first = bisect.bisect_left(self._begins, begin)
-        spans = []
-        still_running = self._ends_until[first - 1] if first else None
-        if still_running is not None and still_running > begin:
-            spans.append((begin, min(still_running, end)))
-        for index in range(first, len(self._marks)):
-            if self._begins[index] >= end:
-                break
-            spans.append(
-                (self._begins[index], min(self._marks[index]["end_time"], end))
-            )
-        return spans
-
-    def last_end_of_marks_beginning_within(self, begin: int, end: int) -> Optional[int]:
-        """End of the last mark beginning within [begin, end), None if there is none.
-
-        The last end, not the first: marks nest, so the first one to end is not the
-        one compositing finished with. Indexing by end time instead has the mirror
-        problem, of returning a short mark of the next cycle when an enclosing mark
-        overruns this one.
-        """
-        first = bisect.bisect_left(self._begins, begin)
-        last = bisect.bisect_left(self._begins, end)
-        if first >= last:
-            return None
-        return max(self._marks[index]["end_time"] for index in range(first, last))
 
 
 def _marks_beginning_within(
@@ -104,7 +64,7 @@ def _compositing_indices_by_process(
     sysprof_data: Dict[str, Any],
     timespan_begin: Optional[int],
     timespan_end: Optional[int],
-) -> Dict[int, List[_MarkIndex]]:
+) -> Dict[int, List[MarkIndex]]:
     """The compositing marks of the capture, grouped by process and by name."""
     by_pid: Dict[int, Dict[str, List[Dict[str, Any]]]] = {}
     for mark_name in COMPOSITING_MARKS:
@@ -118,13 +78,13 @@ def _compositing_indices_by_process(
         for pid, process_marks in marks_by_process(marks).items():
             by_pid.setdefault(pid, {})[mark_name] = process_marks
     return {
-        pid: [_MarkIndex(marks.get(mark_name, [])) for mark_name in COMPOSITING_MARKS]
+        pid: [MarkIndex(marks.get(mark_name, [])) for mark_name in COMPOSITING_MARKS]
         for pid, marks in by_pid.items()
     }
 
 
 def _compositing_spans(
-    indices: Sequence[_MarkIndex], begin: int, end: int
+    indices: Sequence[MarkIndex], begin: int, end: int
 ) -> List[Tuple[int, int]]:
     """The spans of [begin, end) that were spent compositing, merged and in order.
 
@@ -139,7 +99,7 @@ def _compositing_spans(
 
 
 def _own_compositing_end(
-    indices: Sequence[_MarkIndex], cycle_begin: int, cycle_end: int
+    indices: Sequence[MarkIndex], cycle_begin: int, cycle_end: int
 ) -> Optional[int]:
     """When the composition of this cycle was over, None where it has none.
 
@@ -182,7 +142,7 @@ def calculate_frame_cycles(
     # A cycle ends where the next update begins, and the whole cycle has to fit in
     # the window, so an update beginning on the very edge still bounds one.
     all_updates = _marks_beginning_within(
-        sysprof_data["marks"].get("LayerTreeHostRenderingUpdate", []),
+        sysprof_data["marks"].get(RENDERING_UPDATE_MARK, []),
         timespan_begin,
         timespan_end,
         including_end=True,
@@ -199,7 +159,7 @@ def calculate_frame_cycles(
 
 
 def _cycles_of_one_process(
-    pid: int, updates: Sequence[Dict[str, Any]], indices: Sequence[_MarkIndex]
+    pid: int, updates: Sequence[Dict[str, Any]], indices: Sequence[MarkIndex]
 ) -> List[Dict[str, Any]]:
     """The cycles between the given rendering updates, all of one process.
 

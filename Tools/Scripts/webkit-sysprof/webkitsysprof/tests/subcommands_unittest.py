@@ -317,24 +317,22 @@ class SubcommandsTest(SysprofTestCase):
         for marks in data["marks"].values():
             marks.reverse()
         self.assertEqual(
-            analyze._prepare_rendering_report(
-                data, display_refreshes(data)
-            )["vblanks_per_rendering_update"],
+            analyze._prepare_rendering_report(data, display_refreshes(data))[
+                "vblanks_per_rendering_update"
+            ],
             in_parse_order["vblanks_per_rendering_update"],
         )
         self.assertEqual(
-            analyze._prepare_rendering_report(
-                data, display_refreshes(data)
-            )["vblank_interval_statistics"],
+            analyze._prepare_rendering_report(data, display_refreshes(data))[
+                "vblank_interval_statistics"
+            ],
             in_parse_order["vblank_interval_statistics"],
         )
 
     def test_a_capture_of_no_length_reports_no_rate(self):
         # A window of no length is rejected, but a capture of no length is the
         # capture's own doing and still has to be reported on.
-        data = sysprof_data(
-            [mark("DidRenderFrame", 0, 0)], begin_msec=0, end_msec=0
-        )
+        data = sysprof_data([mark("DidRenderFrame", 0, 0)], begin_msec=0, end_msec=0)
 
         report = analyze._prepare_report(data, data)
 
@@ -444,6 +442,57 @@ class SubcommandsTest(SysprofTestCase):
             ],
             {"Scrolling": 1, "Scrolling, AsyncScrolling": 1, "_none": 2},
         )
+
+    def test_cycle_analysis_draws_a_bar_per_cycle_through_the_command_line(self):
+        main(["cycle-analysis", "--color", "never", SAMPLE_CAPTURE_FILE])
+
+        stdout = self.stdout()
+        self.assertIn("Frame cycles: 2 in the analyzed window, 2 shown", stdout)
+        # Two lanes per cycle, and the legend that says what the glyphs mean.
+        self.assertEqual(stdout.count(" main \u2595"), 2)
+        self.assertEqual(stdout.count(" tiles \u2595"), 2)
+        self.assertIn("style resolution", stdout)
+
+    def test_cycle_analysis_says_so_where_there_is_nothing_to_draw(self):
+        main(["cycle-analysis", "-t", "0-370", SAMPLE_CAPTURE_FILE])
+        # The capture holds the updates, the window cut through them, and saying it
+        # holds none would send the reader looking for marks that are there.
+        stdout = self.stdout()
+        self.assertIn("No frame cycles found in the selected timespan", stdout)
+        self.assertIn("widen --timespan", stdout)
+
+    def test_cycle_analysis_says_so_where_the_selection_matches_nothing(self):
+        main(["cycle-analysis", "--min-duration", "10000", SAMPLE_CAPTURE_FILE])
+        self.assertIn("No frame cycles match the selection", self.stdout())
+
+    def test_cycle_analysis_rejects_a_timespan_it_cannot_honour(self):
+        for timespan in ["0-0", "5000-6000", "abc"]:
+            with self.subTest(timespan=timespan), self.assertRaises(SystemExit):
+                main(["cycle-analysis", "-t", timespan, SAMPLE_CAPTURE_FILE])
+
+    def test_cycle_analysis_rejects_options_that_draw_nothing(self):
+        # A usage error like every other one the tool reports, rather than a
+        # traceback or a bar of one nonsense cell.
+        for option in [
+            ["--resolution", "0"],
+            ["--resolution", "-1"],
+            # Accepted by float(), and every comparison with one of them is False,
+            # so they reach the drawing and raise there unless rejected here.
+            ["--resolution", "nan"],
+            ["--resolution", "inf"],
+            ["--min-length", "nan"],
+            ["--min-duration", "nan"],
+            # Shorter than the nanosecond a capture is timed in, which rounds the
+            # length of a cell to zero and draws every bar as idle.
+            ["--resolution", "0.0000004"],
+            ["--max-cycles", "0"],
+            ["--max-cycles", "-1"],
+            ["--max-cells", "0"],
+            ["--min-duration", "-1"],
+            ["--min-length", "-1"],
+        ]:
+            with self.subTest(option=option), self.assertRaises(SystemExit):
+                main(["cycle-analysis"] + option + [SAMPLE_CAPTURE_FILE])
 
     def test_explain_reaches_the_report_through_the_command_line(self):
         # Through main(), so that renaming the flag or its dest cannot quietly stop the
