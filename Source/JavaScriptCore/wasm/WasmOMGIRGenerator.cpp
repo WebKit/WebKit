@@ -4404,7 +4404,30 @@ void OMGIRGenerator::mutatorFence()
 
 auto OMGIRGenerator::addAnyConvertExtern(ExpressionType reference, ExpressionType& result) -> PartialResult
 {
-    result = push(callWasmOperation(m_currentBlock, toB3Type(anyrefType()), operationWasmAnyConvertExtern, get(reference)));
+    Value* bits = get(reference);
+    Value* numberTag = constant(Int64, JSValue::NumberTag);
+    Value* isInt32 = m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), bits, numberTag);
+    Value* isNumber = m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, numberTag), constant(Int64, 0));
+    Value* isDouble = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), isNumber, m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), isInt32, constant(Int32, 0)));
+
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+    auto* phi = continuation->appendNew<Value>(m_proc, Phi, toB3Type(anyrefType()), origin());
+
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), bits, phi);
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isDouble,
+        FrequentedBlock(slowPath, FrequencyClass::Rare), FrequentedBlock(continuation));
+    slowPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    auto* called = callWasmOperation(m_currentBlock, toB3Type(anyrefType()), operationWasmAnyConvertExtern, bits);
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), called, phi);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
+    result = push(phi);
     return { };
 }
 
