@@ -25,34 +25,37 @@
 
 WI.Font = class Font
 {
-    constructor(name, variationAxes, {synthesizedBold, synthesizedOblique} = {})
+    constructor(name, {url, variationAxes, synthesizedBold, synthesizedOblique, characterRanges} = {})
     {
         this._name = name;
-        this._variationAxes = variationAxes;
-
-        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.Font.synthesizedBold and CSS.Font.synthesizedOblique did not exist yet.
+        this._url = url || null;
+        this._variationAxes = variationAxes || [];
         this._synthesizedBold = !!synthesizedBold;
         this._synthesizedOblique = !!synthesizedOblique;
+        this._characterRanges = characterRanges || [];
     }
 
     // Static
 
     static fromPayload(payload)
     {
-        let variationAxes = payload.variationAxes.map((axisPayload) => WI.FontVariationAxis.fromPayload(axisPayload));
-
-        let synthesizedBold = payload.synthesizedBold;
-        let synthesizedOblique = payload.synthesizedOblique;
-
-        return new WI.Font(payload.displayName, variationAxes, {synthesizedBold, synthesizedOblique});
+        return new WI.Font(payload.displayName, {
+            url: payload.url,
+            variationAxes: payload.variationAxes?.map((axisPayload) => WI.FontVariationAxis.fromPayload(axisPayload)) || [],
+            synthesizedBold: payload.synthesizedBold,
+            synthesizedOblique: payload.synthesizedOblique,
+            characterRanges: payload.characterRanges,
+        });
     }
 
     // Public
 
     get name() { return this._name; }
+    get url() { return this._url; }
     get variationAxes() { return this._variationAxes; }
     get synthesizedBold() { return this._synthesizedBold; }
     get synthesizedOblique() { return this._synthesizedOblique; }
+    get characterRanges() { return this._characterRanges; }
 
     variationAxis(tag)
     {
