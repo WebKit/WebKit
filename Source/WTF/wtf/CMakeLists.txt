@@ -91,7 +91,6 @@ set(WTF_PUBLIC_HEADERS
     EnumTraits.h
     EnumeratedArray.h
     EscapableByteSpan.h
-    Expected.h
     ExperimentalFeatureNames.h
     ExportMacros.h
     FailureAction.h

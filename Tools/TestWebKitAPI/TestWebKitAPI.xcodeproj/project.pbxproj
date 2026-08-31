@@ -1240,7 +1240,6 @@
 				WTF/EnumSet.cpp,
 				WTF/EnumTraits.cpp,
 				WTF/EscapableByteSpan.cpp,
-				WTF/Expected.cpp,
 				WTF/FileSystem.cpp,
 				WTF/FixedBitVector.cpp,
 				WTF/FixedVector.cpp,

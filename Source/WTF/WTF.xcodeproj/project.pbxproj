@@ -337,7 +337,6 @@
 		DD3DC87927A4BF8E007E5B61 /* RefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FF151A825B004123FF /* RefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87A27A4BF8E007E5B61 /* DebugHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F95B63120CB4B7700479635 /* DebugHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87B27A4BF8E007E5B61 /* ParallelHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC87C27A4BF8E007E5B61 /* Expected.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7C434A1DD2A4A70026888B /* Expected.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87D27A4BF8E007E5B61 /* GraphNodeWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA11GRAPHORDERING0000001 /* GraphOrdering.h in Headers */ = {isa = PBXBuildFile; fileRef = AA11GRAPHORDERING0000002 /* GraphOrdering.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87E27A4BF8E007E5B61 /* BumpPointerAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47267151A825A004123FF /* BumpPointerAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1746,7 +1745,6 @@
 		A8A47372151A825B004123FF /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		AD653DA82006B6C200D820D7 /* RawValueTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawValueTraits.h; sourceTree = "<group>"; };
-		AD7C434A1DD2A4A70026888B /* Expected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expected.h; sourceTree = "<group>"; };
 		AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryPressureHandler.cpp; sourceTree = "<group>"; };
 		AD89B6B61E6415080090707F /* MemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryPressureHandler.h; sourceTree = "<group>"; };
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
@@ -2504,7 +2502,6 @@
 				E42785642E9BC0F200A0DEF4 /* EnumSet.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
 				BB0000000000000000000001 /* EscapableByteSpan.h */,
-				AD7C434A1DD2A4A70026888B /* Expected.h */,
 				DF292D55278F9BC600BB2918 /* ExperimentalFeatureNames.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				FE996B5224A845AF001D2E63 /* FailureAction.h */,
@@ -3680,7 +3677,6 @@
 				DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */,
 				BB0000000000000000000002 /* EscapableByteSpan.h in Headers */,
 				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
-				DD3DC87C27A4BF8E007E5B61 /* Expected.h in Headers */,
 				DD3DC8FB27A4BF8E007E5B61 /* ExperimentalFeatureNames.h in Headers */,
 				DD3DC97327A4BF8E007E5B61 /* ExportMacros.h in Headers */,
 				DDF307C827C086DF006A526F /* ExternalStringImpl.h in Headers */,
