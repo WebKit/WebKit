@@ -879,7 +879,7 @@ void VideoPresentationInterfaceMac::preparedToReturnToInline(bool visible, const
     UNUSED_PARAM(parentWindow);
 }
 
-void VideoPresentationInterfaceMac::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+void VideoPresentationInterfaceMac::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::externalPlaybackChanged(%p), enabled:%s", this, boolString(enabled));
 

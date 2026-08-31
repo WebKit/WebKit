@@ -74,7 +74,7 @@ void PlaybackSessionInterfaceIOS::initialize()
     canPlayFastReverseChanged(model->canPlayFastReverse());
     audioMediaSelectionOptionsChanged(model->audioMediaSelectionOptions(), model->audioMediaSelectedIndex());
     legibleMediaSelectionOptionsChanged(model->legibleMediaSelectionOptions(), model->legibleMediaSelectedIndex());
-    externalPlaybackChanged(model->externalPlaybackEnabled(), model->externalPlaybackTargetType(), model->externalPlaybackLocalizedDeviceName());
+    externalPlaybackChanged(model->externalPlaybackEnabled(), model->externalPlaybackTargetType(), model->externalPlaybackLocalizedDeviceName(), model->externalPlaybackLocalizedRouteName());
     wirelessVideoPlaybackDisabledChanged(model->wirelessVideoPlaybackDisabled());
 }
 

@@ -212,7 +212,7 @@ void PlaybackSessionInterfaceMac::isPictureInPictureSupportedChanged(bool)
 #endif
 }
 
-void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     updatePlaybackControlsManagerCanTogglePictureInPicture();

@@ -36,7 +36,7 @@ messages -> PlaybackSessionManagerProxy {
     LegibleMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier identifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
     AudioMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier identifier, uint64_t selectedIndex)
     LegibleMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier identifier, uint64_t selectedIndex)
-    ExternalPlaybackPropertiesChanged(WebCore::MediaPlayerClientIdentifier identifier, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName)
+    ExternalPlaybackPropertiesChanged(WebCore::MediaPlayerClientIdentifier identifier, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
     WirelessVideoPlaybackDisabledChanged(WebCore::MediaPlayerClientIdentifier identifier, bool disabled)
     DurationChanged(WebCore::MediaPlayerClientIdentifier identifier, double duration)
     PlaybackStartedTimeChanged(WebCore::MediaPlayerClientIdentifier identifier, double playbackStartedTime)

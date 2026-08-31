@@ -93,7 +93,7 @@ private:
     void canPlayFastReverseChanged(bool) final { }
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final { }
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final { }
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&) final { }
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final { }
     void volumeChanged(double) final { }

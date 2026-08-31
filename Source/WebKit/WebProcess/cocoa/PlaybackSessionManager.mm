@@ -138,10 +138,10 @@ void PlaybackSessionInterfaceContext::legibleMediaSelectionIndexChanged(uint64_t
         manager->legibleMediaSelectionIndexChanged(m_contextId, selectedIndex);
 }
 
-void PlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName)
+void PlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName, const String& localizedRouteName)
 {
     if (RefPtr manager = m_manager.get())
-        manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName);
+        manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName, localizedRouteName);
 }
 
 void PlaybackSessionInterfaceContext::wirelessVideoPlaybackDisabledChanged(bool disabled)
@@ -448,9 +448,9 @@ void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(WebCore::HTMLMe
     m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
-void PlaybackSessionManager::externalPlaybackChanged(WebCore::HTMLMediaElementIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
+void PlaybackSessionManager::externalPlaybackChanged(WebCore::HTMLMediaElementIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, targetType, localizedDeviceName));
+    m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, targetType, localizedDeviceName, localizedRouteName));
 }
 
 void PlaybackSessionManager::audioMediaSelectionIndexChanged(WebCore::HTMLMediaElementIdentifier contextId, uint64_t selectedIndex)

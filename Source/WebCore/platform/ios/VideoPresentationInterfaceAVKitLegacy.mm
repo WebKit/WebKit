@@ -786,7 +786,7 @@ VideoPresentationInterfaceAVKitLegacy::~VideoPresentationInterfaceAVKitLegacy()
 {
     WebAVPlayerController* playerController = this->playerController();
     if (playerController && playerController.externalPlaybackActive)
-        externalPlaybackChanged(false, PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone, emptyString());
+        externalPlaybackChanged(false, PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone, emptyString(), emptyString());
 }
 
 UIViewController *VideoPresentationInterfaceAVKitLegacy::playerViewController() const

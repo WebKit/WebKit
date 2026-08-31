@@ -228,11 +228,12 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         bool enabled = externalPlaybackEnabled();
         ExternalPlaybackTargetType targetType = externalPlaybackTargetType();
         String localizedDeviceName = externalPlaybackLocalizedDeviceName();
+        String localizedRouteName = externalPlaybackLocalizedRouteName();
 
         bool wirelessVideoPlaybackDisabled = this->wirelessVideoPlaybackDisabled();
 
         for (auto& client : m_clients) {
-            client->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+            client->externalPlaybackChanged(enabled, targetType, localizedDeviceName, localizedRouteName);
             client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
         }
     }
@@ -842,6 +843,13 @@ String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() c
 {
     if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->mediaControlsHost())
         return mediaElement->mediaControlsHost()->externalDeviceDisplayName();
+    return emptyString();
+}
+
+String PlaybackSessionModelMediaElement::externalPlaybackLocalizedRouteName() const
+{
+    if (RefPtr mediaElement = m_mediaElement; mediaElement && mediaElement->mediaControlsHost())
+        return mediaElement->mediaControlsHost()->externalDeviceRouteName();
     return emptyString();
 }
 
