@@ -130,4 +130,15 @@ if (Intl.DurationFormat) {
             `0:05:06`,
         ]);
     }
+    {
+        var fmt = new Intl.DurationFormat('en-US', {
+            style: "digital",
+            hoursDisplay: "auto",
+            minutesDisplay: "auto",
+        });
+
+        shouldBeOneOf(fmt.format({ minutes: 0 }), [
+            `00`,
+        ]);
+    }
 }
