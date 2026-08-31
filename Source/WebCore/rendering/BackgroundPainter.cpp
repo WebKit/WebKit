@@ -1055,7 +1055,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style:
 
             auto shapeForInnerHole = BorderShape(outerRectExpandedToObscureOpenEdges, borderWidthsWithSpread, borderShape.radii(), borderShape.cornerCurvatures());
             if (shapeForInnerHole.snappedInnerRect(deviceScaleFactor).isEmpty()) {
-                shapeForInnerHole.fillOuterShape(context, shadowColor, deviceScaleFactor);
+                borderShape.fillInnerShape(context, shadowColor, deviceScaleFactor);
                 continue;
             }
 
