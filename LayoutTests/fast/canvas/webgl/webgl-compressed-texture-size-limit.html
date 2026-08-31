@@ -223,7 +223,7 @@ function testFormatType(t, test) {
       } else {
         var pixelsNegativeTest1 = new test.dataType(sharedArrayBuffer, 0, dataSize);
         gl.compressedTexImage2D(target, 0, test.format, t.maxSize + test.sizeStep, t.maxSize + test.sizeStep, 0, pixelsNegativeTest1);
-        wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "width or height out of bounds for level 0: should generate INVALID_VALUE.");
+        wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, "width or height out of bounds for level 0: should generate INVALID_VALUE.");
         //debug("Level is 0, size is " + (t.maxSize + test.sizeStep) + "x" + (t.maxSize + test.sizeStep));
       }
       // level out of bounds
