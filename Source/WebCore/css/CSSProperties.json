@@ -10714,20 +10714,24 @@
             "values": [
                 "nowrap",
                 "wrap",
-                "wrap-reverse"
+                "wrap-reverse",
+                {
+                    "value": "balance",
+                    "settings-flag": "cssFlexWrapBalanceEnabled"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-flex-wrap"
                 ],
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "flexibleBox"],
-                "computed-style-storage-kind": "enum",
-                "computed-style-type": "FlexWrap",
-                "parser-grammar": "<<values>>"
+                "computed-style-storage-kind": "raw",
+                "computed-style-type": "Style::FlexWrap",
+                "parser-grammar": "nowrap | [ [ wrap | wrap-reverse ] || balance@(settings-flag=cssFlexWrapBalanceEnabled) ]@(type=CSSFlexWrapValue)"
             },
             "specification": {
-                "category": "css-flexbox",
-                "url": "https://www.w3.org/TR/css-flexbox-1/#propdef-flex-wrap"
+                "category": "css-flexbox-2",
+                "url": "https://drafts.csswg.org/css-flexbox-2/#propdef-flex-wrap"
             }
         },
         "justify-content": {
@@ -14490,6 +14494,11 @@
             "shortname": "CSS Flexbox",
             "longname": "CSS Flexible Box Module",
             "url": "https://www.w3.org/TR/css-flexbox-1/"
+        },
+        "css-flexbox-2": {
+            "shortname": "CSS Flexbox Level 2",
+            "longname": "CSS Flexible Box Module Level 2",
+            "url": "https://drafts.csswg.org/css-flexbox-2/"
         },
         "css-fonts": {
             "shortname": "CSS Fonts",

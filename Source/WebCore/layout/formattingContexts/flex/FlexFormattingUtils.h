@@ -128,6 +128,7 @@ public:
     bool isColumnOrRowReverse() const;
     static bool isWrapReverse(const RenderFlexibleBox&);
     static bool isMultiline(const RenderFlexibleBox&);
+    static bool isBalance(const RenderFlexibleBox&);
     bool isLeftToRightFlow() const;
     static bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem);
     bool mainAxisIsFlexItemInlineAxis(const FlexLayoutItem&) const;

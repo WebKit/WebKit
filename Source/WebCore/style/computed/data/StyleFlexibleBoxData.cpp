@@ -42,7 +42,7 @@ FlexibleBoxData::FlexibleBoxData()
     , flexShrink(ComputedStyle::initialFlexShrink())
     , flexBasis(ComputedStyle::initialFlexBasis())
     , flexDirection(static_cast<unsigned>(ComputedStyle::initialFlexDirection()))
-    , flexWrap(static_cast<unsigned>(ComputedStyle::initialFlexWrap()))
+    , flexWrap(ComputedStyle::initialFlexWrap().toRaw())
 {
 }
 
@@ -78,7 +78,7 @@ void FlexibleBoxData::dumpDifferences(TextStream& ts, const FlexibleBoxData& oth
     LOG_IF_DIFFERENT(flexBasis);
 
     LOG_IF_DIFFERENT_WITH_CAST(FlexDirection, flexDirection);
-    LOG_IF_DIFFERENT_WITH_CAST(FlexWrap, flexWrap);
+    LOG_IF_DIFFERENT_WITH_FROM_RAW(FlexWrap, flexWrap);
 }
 #endif // !LOG_DISABLED
 

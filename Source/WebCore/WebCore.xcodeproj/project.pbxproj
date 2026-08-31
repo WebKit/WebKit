@@ -5415,6 +5415,8 @@
 		BC675B6B2DEE8BB700AD4D79 /* StyleMinimumSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B682DEE8B7100AD4D79 /* StyleMinimumSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC675B6C2DEE8BB700AD4D79 /* StyleMaximumSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B672DEE8B7100AD4D79 /* StyleMaximumSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC675B6D2DEE8BB700AD4D79 /* StyleFlexBasis.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B692DEE8B8200AD4D79 /* StyleFlexBasis.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A4C91D920FE3B4100C1E5A2 /* StyleFlexWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A4C91D820FE3B4100C1E5A2 /* StyleFlexWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A4C91E120FE3B4100C1E5A2 /* CSSFlexWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A4C91E020FE3B4100C1E5A2 /* CSSFlexWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC675B6E2DEE8BB700AD4D79 /* StylePreferredSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC675B642DEE883300AD4D79 /* StylePreferredSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6A708F2FDC6D3800872C12 /* StylePrimitiveNumericTypes+EvaluationMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6A708E2FDC695D00872C12 /* StylePrimitiveNumericTypes+EvaluationMinimum.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19481,6 +19483,9 @@
 		BC3078B32D00CC3000630D75 /* CSSFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFilter.h; sourceTree = "<group>"; };
 		BC3078B62D00D33400630D75 /* CSSFilterValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFilterValue.h; sourceTree = "<group>"; };
 		BC3078B72D00D34300630D75 /* CSSFilterValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFilterValue.cpp; sourceTree = "<group>"; };
+		7A4C91E020FE3B4100C1E5A2 /* CSSFlexWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFlexWrap.h; sourceTree = "<group>"; };
+		7A4C91E220FE3B4100C1E5A2 /* CSSFlexWrapValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFlexWrapValue.h; sourceTree = "<group>"; };
+		7A4C91E320FE3B4100C1E5A2 /* CSSFlexWrapValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFlexWrapValue.cpp; sourceTree = "<group>"; };
 		BC3078B82D00D3E800630D75 /* CSSAppleColorFilterValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSAppleColorFilterValue.h; sourceTree = "<group>"; };
 		BC3078B92D00D3E800630D75 /* CSSAppleColorFilterValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAppleColorFilterValue.cpp; sourceTree = "<group>"; };
 		BC3078BA2D020FA000630D75 /* StyleFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFilter.h; sourceTree = "<group>"; };
@@ -19947,6 +19952,7 @@
 		BC675B682DEE8B7100AD4D79 /* StyleMinimumSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMinimumSize.h; sourceTree = "<group>"; };
 		BC675B692DEE8B8200AD4D79 /* StyleFlexBasis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFlexBasis.h; sourceTree = "<group>"; };
 		BC675B722DEEB1A600AD4D79 /* StyleFlexBasis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFlexBasis.cpp; sourceTree = "<group>"; };
+		7A4C91D820FE3B4100C1E5A2 /* StyleFlexWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFlexWrap.h; sourceTree = "<group>"; };
 		BC6768342CE5116A0087ED47 /* CSSValueTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueTypes.cpp; sourceTree = "<group>"; };
 		BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowBase.cpp; sourceTree = "<group>"; };
 		BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowBase.h; sourceTree = "<group>"; };
@@ -38396,6 +38402,7 @@
 				BC675B692DEE8B8200AD4D79 /* StyleFlexBasis.h */,
 				BC34D2EA2E3D22D3001EAD95 /* StyleFlexGrow.h */,
 				BC34D2EC2E3D2370001EAD95 /* StyleFlexShrink.h */,
+				7A4C91D820FE3B4100C1E5A2 /* StyleFlexWrap.h */,
 				BC731F282E68B37100A6584F /* StyleWebKitBoxFlex.h */,
 				BC731F2A2E68B38500A6584F /* StyleWebKitBoxFlexGroup.h */,
 				BC731F2C2E68B39D00A6584F /* StyleWebKitBoxOrdinalGroup.h */,
@@ -38793,6 +38800,7 @@
 				BC2C01242F7C420D00F65FC9 /* counter-styles */,
 				BCD2C6E82D0F403700F77591 /* easing */,
 				BC3078982CFFF06800630D75 /* filter-effects */,
+				7A4C91E420FE3B4100C1E5A2 /* flexbox */,
 				BC66AF632F7D92E400345E91 /* fonts */,
 				BCD9F1362E1EE1BD00D1C3DF /* grid */,
 				BCB271A12CBD7D4C00265123 /* images */,
@@ -39520,6 +39528,14 @@
 				BCD9F2012E255F0000D1C3DF /* StyleGridTrackSizingDirection.h */,
 			);
 			path = grid;
+			sourceTree = "<group>";
+		};
+		7A4C91E420FE3B4100C1E5A2 /* flexbox */ = {
+			isa = PBXGroup;
+			children = (
+				7A4C91E020FE3B4100C1E5A2 /* CSSFlexWrap.h */,
+			);
+			path = flexbox;
 			sourceTree = "<group>";
 		};
 		BCD9F1362E1EE1BD00D1C3DF /* grid */ = {
@@ -41998,6 +42014,8 @@
 				FB965B8117BBB5F900E835B9 /* CSSFilterImageValue.h */,
 				BC3078B72D00D34300630D75 /* CSSFilterValue.cpp */,
 				BC3078B62D00D33400630D75 /* CSSFilterValue.h */,
+				7A4C91E320FE3B4100C1E5A2 /* CSSFlexWrapValue.cpp */,
+				7A4C91E220FE3B4100C1E5A2 /* CSSFlexWrapValue.h */,
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
 				BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */,
 				BC23880A2D88EFDA00698102 /* CSSFontFaceDescriptors.cpp */,
@@ -45068,6 +45086,7 @@
 				BCB272162CC1F21B00265123 /* CSSFillRule.h in Headers */,
 				FBB0C5B817BBD629003D3677 /* CSSFilterImageValue.h in Headers */,
 				7246963B275C5FA600A9156A /* CSSFilterRenderer.h in Headers */,
+				7A4C91E120FE3B4100C1E5A2 /* CSSFlexWrap.h in Headers */,
 				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,
 				BC2388132D89D94800698102 /* CSSFontFaceDescriptors.h in Headers */,
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
@@ -49196,6 +49215,7 @@
 				BC34D2EB2E3D22D3001EAD95 /* StyleFlexGrow.h in Headers */,
 				BC63AD372F084C2F007B62C4 /* StyleFlexibleBoxData.h in Headers */,
 				BC34D2ED2E3D2370001EAD95 /* StyleFlexShrink.h in Headers */,
+				7A4C91D920FE3B4100C1E5A2 /* StyleFlexWrap.h in Headers */,
 				BC63AD332F084C2F007B62C4 /* StyleFontData.h in Headers */,
 				BC6F79892EC1294A0049BA02 /* StyleFontFamily.h in Headers */,
 				BC6F79AC2EC25C110049BA02 /* StyleFontFamilyName.h in Headers */,

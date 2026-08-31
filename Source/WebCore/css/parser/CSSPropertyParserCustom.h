@@ -33,6 +33,7 @@
 #include "CSSBorderImage.h"
 #include "CSSBorderRadius.h"
 #include "CSSCustomIdentValue.h"
+#include "CSSFlexWrapValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"

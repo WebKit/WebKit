@@ -158,7 +158,7 @@ bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const Elem
 
     // A wrapped column flex container (flex-flow: column wrap) lays out its flex lines along the cross (inline) axis,
     // so the number of lines - and thus its inline contribution - grows as the available block size shrinks.
-    if (itemStyle->display().isFlexibleBox() && itemStyle->isColumnFlexDirection() && itemStyle->flexWrap() != FlexWrap::NoWrap)
+    if (itemStyle->display().isFlexibleBox() && itemStyle->isColumnFlexDirection() && itemStyle->flexWrap().isMultiline())
         return true;
 
     // A multi-column container fills its columns based on the available block size, so its column count - and thus

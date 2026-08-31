@@ -3251,7 +3251,7 @@ bool RenderBox::isStretchingColumnFlexItem() const
         return true;
 
     // We don't stretch multiline flexboxes because they need to apply line spacing (align-content) first.
-    if (is<RenderFlexibleBox>(*parent()) && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && hasStretchedLogicalWidth())
+    if (is<RenderFlexibleBox>(*parent()) && !parent()->style().flexWrap().isMultiline() && parent()->style().isColumnFlexDirection() && hasStretchedLogicalWidth())
         return true;
     return false;
 }
@@ -3295,7 +3295,7 @@ bool RenderBox::sizesLogicalWidthToFitContent() const
     // to avoid an extra layout when applying alignment.
     if (is<RenderFlexibleBox>(*parent())) {
         // For multiline columns, we need to apply align-content first, so we can't stretch now.
-        if (!parent()->style().isColumnFlexDirection() || parent()->style().flexWrap() != FlexWrap::NoWrap)
+        if (!parent()->style().isColumnFlexDirection() || parent()->style().flexWrap().isMultiline())
             return true;
         if (!hasStretchedLogicalWidth())
             return true;

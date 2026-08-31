@@ -54,6 +54,7 @@
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFilterValue.h"
+#include "CSSFlexWrapValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFamilyNameValue.h"
 #include "CSSFontFeatureValue.h"
@@ -171,6 +172,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFilterImageValue>(*this));
     case Filter:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFilterValue>(*this));
+    case FlexWrap:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFlexWrapValue>(*this));
     case Font:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontValue>(*this));
     case FontFaceSrcLocal:

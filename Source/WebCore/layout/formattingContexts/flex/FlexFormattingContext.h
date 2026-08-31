@@ -82,6 +82,7 @@ struct FlexLayoutConstraints {
     bool isColumnFlow { false };
     bool isMultiline { false };
     bool isWrapReverse { false };
+    bool isBalance { false };
     bool isColumnOrRowReverse { false };
     bool isLeftToRightFlow { false };
     FlowDirection crossAxisDirection { };

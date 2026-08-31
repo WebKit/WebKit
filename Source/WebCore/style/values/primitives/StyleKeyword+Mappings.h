@@ -710,36 +710,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(FlexWrap e)
-{
-    switch (e) {
-    case FlexWrap::NoWrap:
-        return CSSValueNowrap;
-    case FlexWrap::Wrap:
-        return CSSValueWrap;
-    case FlexWrap::Reverse:
-        return CSSValueWrapReverse;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
-
-template<> constexpr FlexWrap fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueNowrap:
-        return FlexWrap::NoWrap;
-    case CSSValueWrap:
-        return FlexWrap::Wrap;
-    case CSSValueWrapReverse:
-        return FlexWrap::Reverse;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return FlexWrap::NoWrap;
-}
-
 #define TYPE Float
 #define FOR_EACH(CASE) CASE(None) CASE(Left) CASE(Right) CASE(InlineStart) CASE(InlineEnd)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

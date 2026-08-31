@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ CSSFlexWrapBalanceEnabled=false ]-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test flex-wrap parsing when flex-wrap: balance is disabled</title>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#propdef-flex-wrap">
+</head>
+<body>
+<p>When flex-wrap: balance is disabled, the balance value should not parse:</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+test_valid_value("flex-wrap", "nowrap");
+test_valid_value("flex-wrap", "wrap");
+test_valid_value("flex-wrap", "wrap-reverse");
+
+test_invalid_value("flex-wrap", "balance");
+test_invalid_value("flex-wrap", "wrap balance");
+test_invalid_value("flex-wrap", "wrap-reverse balance");
+test_invalid_value("flex-wrap", "balance wrap");
+</script>
+</body>
+</html>

@@ -2,9 +2,9 @@
 PASS Property flex-wrap value 'nowrap'
 PASS Property flex-wrap value 'wrap'
 PASS Property flex-wrap value 'wrap-reverse'
-FAIL Property flex-wrap value 'balance' assert_true: 'balance' is a supported value for flex-wrap. expected true got false
-FAIL Property flex-wrap value 'wrap balance' assert_true: 'wrap balance' is a supported value for flex-wrap. expected true got false
-FAIL Property flex-wrap value 'wrap-reverse balance' assert_true: 'wrap-reverse balance' is a supported value for flex-wrap. expected true got false
-FAIL Property flex-wrap value 'balance wrap' assert_true: 'balance wrap' is a supported value for flex-wrap. expected true got false
-FAIL Property flex-wrap value 'balance wrap-reverse' assert_true: 'balance wrap-reverse' is a supported value for flex-wrap. expected true got false
+PASS Property flex-wrap value 'balance'
+PASS Property flex-wrap value 'wrap balance'
+PASS Property flex-wrap value 'wrap-reverse balance'
+PASS Property flex-wrap value 'balance wrap'
+PASS Property flex-wrap value 'balance wrap-reverse'
 

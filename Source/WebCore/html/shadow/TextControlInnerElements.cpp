@@ -99,7 +99,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerContainer::resolveCustomSt
     auto elementStyle = resolveStyle(resolutionContext);
     CheckedRef elementStyleStyle = *elementStyle.style;
     if (isStrongPasswordTextField(shadowHost.get())) {
-        elementStyleStyle->setFlexWrap(FlexWrap::Wrap);
+        elementStyleStyle->setFlexWrap(Style::FlexWrapType::Wrap);
         elementStyleStyle->setOverflowX(Overflow::Hidden);
         elementStyleStyle->setOverflowY(Overflow::Hidden);
     }

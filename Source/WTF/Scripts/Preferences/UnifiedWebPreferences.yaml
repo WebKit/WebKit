@@ -1245,6 +1245,20 @@ CSSFieldSizingEnabled:
     WebCore:
       default: true
 
+CSSFlexWrapBalanceEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS flex-wrap: balance"
+  humanReadableDescription: "Enable the balance value for flex-wrap"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSFontFaceMetricOverrideDescriptorsEnabled:
   type: bool
   status: stable

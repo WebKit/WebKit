@@ -154,8 +154,7 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
         return true;
 
     auto& gridItemStyle = gridItem.style();
-    auto gridItemFlexWrap = gridItemStyle.flexWrap();
-    if (gridItem.isRenderFlexibleBox() && gridItem.style().isColumnFlexDirection() && (gridItemFlexWrap == FlexWrap::Wrap || gridItemFlexWrap == FlexWrap::Reverse))
+    if (gridItem.isRenderFlexibleBox() && gridItemStyle.isColumnFlexDirection() && gridItemStyle.flexWrap().isMultiline())
         return true;
 
     if (gridItem.isRenderMultiColumnFlow())

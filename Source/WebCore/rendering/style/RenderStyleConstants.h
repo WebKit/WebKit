@@ -413,14 +413,7 @@ enum class FlexDirection : uint8_t {
     ColumnReverse
 };
 
-enum class FlexWrap : uint8_t {
-    NoWrap,
-    Wrap,
-    Reverse
-};
-
 inline AxisDirection toAxisDirection(FlexDirection direction) { return static_cast<AxisDirection>(direction == FlexDirection::RowReverse || direction == FlexDirection::ColumnReverse); }
-inline AxisDirection toAxisDirection(FlexWrap wrap) { return static_cast<AxisDirection>(wrap == FlexWrap::Reverse); }
 
 enum class ItemPosition : uint8_t {
     Legacy,
@@ -1195,7 +1188,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, FillBox);
 WTF::TextStream& operator<<(WTF::TextStream&, FillRepeat);
 WTF::TextStream& operator<<(WTF::TextStream&, FillSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FlexDirection);
-WTF::TextStream& operator<<(WTF::TextStream&, FlexWrap);
 WTF::TextStream& operator<<(WTF::TextStream&, Float);
 WTF::TextStream& operator<<(WTF::TextStream&, UsedFloat);
 WTF::TextStream& operator<<(WTF::TextStream&, Hyphens);

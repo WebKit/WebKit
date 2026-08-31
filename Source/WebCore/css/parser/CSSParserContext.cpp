@@ -102,6 +102,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssAppearanceBaseEnabled { settings.cssAppearanceBaseEnabled() }
     , cssPaintingAPIEnabled { settings.cssPaintingAPIEnabled() }
     , cssTextDecorationLineErrorValues { settings.cssTextDecorationLineErrorValues() }
+    , cssFlexWrapBalanceEnabled { settings.cssFlexWrapBalanceEnabled() }
     , cssWordBreakAutoPhraseEnabled { settings.cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { settings.popoverAttributeEnabled() }
     , cssTextWrapPrettyEnabled { settings.cssTextWrapPrettyEnabled() }
@@ -172,6 +173,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssDynamicRangeLimitMixEnabled,
         context.cssConstrainedDynamicRangeLimitEnabled,
         context.cssTextDecorationLineErrorValues,
+        context.cssFlexWrapBalanceEnabled,
         context.cssTextTransformMathAutoEnabled,
         context.cssFontSynthesisStyleObliqueOnlyEnabled,
         context.cssInternalAutoBaseParsingEnabled,

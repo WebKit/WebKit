@@ -978,6 +978,7 @@ css/CSSDynamicRangeLimitValue.cpp
 css/CSSEasingFunctionValue.cpp
 css/CSSFilterImageValue.cpp
 css/CSSFilterValue.cpp
+css/CSSFlexWrapValue.cpp
 css/CSSFontFace.cpp
 css/CSSFontFaceDescriptors.cpp
 css/CSSFontFaceRule.cpp
@@ -3455,6 +3456,7 @@ style/values/filter-effects/StyleOpacityFunction.cpp
 style/values/filter-effects/StyleSaturateFunction.cpp
 style/values/filter-effects/StyleSepiaFunction.cpp
 style/values/flexbox/StyleFlexBasis.cpp
+style/values/flexbox/StyleFlexWrap.cpp
 style/values/fonts/StyleFontFamily.cpp
 style/values/fonts/StyleFontFamilyName.cpp
 style/values/fonts/StyleFontFeatureSettings.cpp

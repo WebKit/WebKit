@@ -95,6 +95,7 @@ public:
     bool isEasingFunctionValue() const { return m_classType == ClassType::EasingFunction; }
     bool isFilterImageValue() const { return m_classType == ClassType::FilterImage; }
     bool isFilterValue() const { return m_classType == ClassType::Filter; }
+    bool isFlexWrapValue() const { return m_classType == ClassType::FlexWrap; }
     bool isFontFaceSrcLocalValue() const { return m_classType == ClassType::FontFaceSrcLocal; }
     bool isFontFaceSrcResourceValue() const { return m_classType == ClassType::FontFaceSrcResource; }
     bool isFontFamilyNameValue() const { return m_classType == ClassType::FontFamilyName; }
@@ -232,6 +233,7 @@ protected:
         DynamicRangeLimit,
         EasingFunction,
         Filter,
+        FlexWrap,
         Font,
         FontFaceSrcLocal,
         FontFaceSrcResource,

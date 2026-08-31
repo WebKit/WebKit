@@ -76,6 +76,7 @@ FlexLayoutConstraints FlexLayout::flexLayoutConstraints() const
         .isColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox()),
         .isMultiline = FlexFormattingUtils::isMultiline(flexBox()),
         .isWrapReverse = FlexFormattingUtils::isWrapReverse(flexBox()),
+        .isBalance = FlexFormattingUtils::isBalance(flexBox()),
         .isColumnOrRowReverse = utils.isColumnOrRowReverse(),
         .isLeftToRightFlow = utils.isLeftToRightFlow(),
         .crossAxisDirection = utils.crossAxisDirection(),

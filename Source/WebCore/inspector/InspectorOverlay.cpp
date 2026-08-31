@@ -2154,7 +2154,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     auto isRowDirection = wasRowDirection ^ !computedStyle->writingMode().isHorizontal();
     auto isMainAxisDirectionReversed = computedStyle->isReverseFlexDirection() ^ (wasRowDirection ? isRightToLeftDirection : isBlockFlipped);
-    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isBlockFlipped : isRightToLeftDirection);
+    auto isCrossAxisDirectionReversed = computedStyle->flexWrap().isReverse() ^ (wasRowDirection ? isBlockFlipped : isRightToLeftDirection);
 
     auto localQuadToRootQuad = [&](const FloatQuad& quad) {
         return FloatQuad(
