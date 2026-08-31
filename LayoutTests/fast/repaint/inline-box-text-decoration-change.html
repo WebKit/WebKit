@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: how much do we repaint when a link gets text-decoration: underline (a la :hover)? -->
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+#container { width: 800px; font: 16px/20px Ahem; /* Ahem-only text, so the rects are the same on every port. */ }
+a { text-decoration: none; }
+</style>
+<div id="container">
+  <a id="target" class="a" href=".">XXXX XXXX</a>
+</div>

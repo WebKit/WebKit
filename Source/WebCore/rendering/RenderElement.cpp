@@ -297,6 +297,26 @@ const Style::ComputedStyle& RenderElement::firstLineStyle() const
 
 Style::Difference RenderElement::adjustStyleDifference(Style::Difference diff) const
 {
+    auto canRecomputeOverflowWithoutLayout = [&] {
+        // Nothing under an SVG root runs simplified layout.
+        if (!isRenderOrLegacyRenderSVGRoot() && (isSVGLayerAwareRenderer() || isRenderSVGBlock() || isLegacyRenderSVGModelObject()))
+            return false;
+        // An out-of-flow box reaches its new position through simplified layout's movement only path.
+        if (isOutOfFlowPositioned())
+            return false;
+        // RenderTextControlSingleLine::layout() mutates the inner renderers' style heights and resets them on
+        // the next pass, so its geometry depends on how many times it has run. Keep the full layout it has
+        // always had rather than make its 1px rounding depend on this optimization.
+        if (isRenderTextControl())
+            return false;
+        // Let's still trigger layout on content with legacy line layout.
+        if (is<RenderInline>(*this) && !LayoutIntegration::LineLayout::containing(*this))
+            return false;
+        return true;
+    };
+    if (diff.result == Style::DifferenceResult::Overflow && !canRecomputeOverflowWithoutLayout())
+        diff.result = Style::DifferenceResult::Layout;
+
     // If transform changed, and we are not composited, need to do a layout.
     if (diff.contextSensitiveProperties & Style::DifferenceContextSensitiveProperty::Transform) {
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
@@ -489,6 +509,9 @@ bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style
         }
 
         if (shouldRepaintForStyleDifference(diff))
+            return RequiredRepaint::RendererOnly;
+
+        if (diff == Style::DifferenceResult::Overflow && !diff.contextSensitiveProperties.contains(Style::DifferenceContextSensitiveProperty::Transform))
             return RequiredRepaint::RendererOnly;
 
         auto deviceScaleFactor = newStyle.deviceScaleFactor();

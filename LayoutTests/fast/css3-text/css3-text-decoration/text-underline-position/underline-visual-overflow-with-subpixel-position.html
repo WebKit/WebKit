@@ -31,9 +31,13 @@ setTimeout(function() {
       elements[i].style.textDecoration = "underline";
     document.body.offsetHeight;
     if (window.internals) {
-        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 8 784 13')", "-1");
-        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 20 784 13')", "-1");
+        // Take one snapshot: shouldNotBe writes its result to the console, which repaints and would show up
+        // in a second call. The 13px tall rects are the point of the test, the line boxes are 12px tall and
+        // the underline needs the extra row.
+        window.repaintRects = internals.repaintRectsAsText();
         internals.stopTrackingRepaints();
+        shouldNotBe("repaintRects.indexOf('8 8 36 13')", "-1");
+        shouldNotBe("repaintRects.indexOf('8 20 36 13')", "-1");
     }
     finishJSTest();
 }, 10);

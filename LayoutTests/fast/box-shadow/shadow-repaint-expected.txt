@@ -1,7 +1,11 @@
 Repaint rects:
 
 (repaint rects
-  (rect 20 12 156 156)
+  (rect 38 30 100 100)
+  (rect 20 12 18 156)
+  (rect 138 12 38 156)
+  (rect 20 12 156 18)
+  (rect 20 130 156 38)
   (rect 8 12 784 18)
 )
 

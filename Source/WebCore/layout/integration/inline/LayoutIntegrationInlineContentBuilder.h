@@ -42,12 +42,12 @@ public:
     InlineContentBuilder(const RenderBlockFlow&);
 
     FloatRect build(std::unique_ptr<Layout::InlineLayoutResult>&&, InlineContent&, const Layout::InlineDamage*) const;
-    void updateLineOverflow(InlineContent&) const;
 
-private:
     // Recomputes the style driven part of ink overflow on the display boxes from startIndex on, then
     // recomputes line and block level overflow from them.
     void updateOverflow(InlineContent&, size_t startIndex) const;
+
+private:
     void updateInkOverflowForBoxes(InlineContent&, size_t startIndex) const;
     static void updateInkOverflowForText(std::span<InlineDisplay::Box>, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
     static void updateInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>, const Layout::ElementBox& root);

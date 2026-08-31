@@ -393,11 +393,41 @@ bool LineLayout::boxContentWillChange(const RenderBox& renderer)
     return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.inlineLevelBoxContentWillChange(*renderer.layoutBox());
 }
 
-void LineLayout::updateOverflow()
+std::optional<LayoutRect> LineLayout::updateOverflow()
 {
     if (!m_inlineContent)
-        return;
-    InlineContentBuilder { flow() }.updateLineOverflow(*m_inlineContent);
+        return { };
+
+    auto& boxes = m_inlineContent->displayContent().boxes;
+    auto inkOverflowBefore = boxes.map([](auto& displayBox) {
+        return displayBox.inkOverflow();
+    });
+
+    // Forces the ink overflow recompute below.
+    m_inlineContent->setContentMayHaveInkOverflow(true);
+    InlineContentBuilder { flow() }.updateOverflow(*m_inlineContent, 0);
+
+    auto damage = std::optional<FloatRect> { };
+    auto uniteWithDamage = [&](const FloatRect& rect) {
+        // A box's ink overflow can be empty at a non-zero position, which unite() would drop, so this has to
+        // be uniteEvenIfEmpty -and damage can't start out as an empty rect at the origin.
+        if (!damage)
+            damage = rect;
+        else
+            damage->uniteEvenIfEmpty(rect);
+    };
+    for (size_t index = 0; index < boxes.size(); ++index) {
+        if (inkOverflowBefore[index] == boxes[index].inkOverflow())
+            continue;
+        uniteWithDamage(inkOverflowBefore[index]);
+        uniteWithDamage(boxes[index].inkOverflow());
+    }
+    if (!damage || damage->isEmpty())
+        return { };
+
+    auto damageRect = LayoutRect { *damage };
+    flow().flipForWritingMode(damageRect);
+    return damageRect;
 }
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()

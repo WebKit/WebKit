@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: text-underline-position: under puts the underline below the lowest content on the
+     line, so its ink overflow depends on the line's geometry rather than the link's own box. -->
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+#container { width: 800px; font: 16px/20px Ahem; /* Ahem-only text, so the rects are the same on every port. */ }
+.a { text-decoration: none; text-underline-position: under; }
+.tall { font-size: 2em; }
+</style>
+<div id="container">
+  XXXX XXXX<br>
+  <a id="target" class="a" href=".">XXXX XXXX</a><span class="tall">X</span><br>
+  XXXX XXXX
+</div>
