@@ -994,6 +994,7 @@
 		3326F2672B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3326F2632B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		335698F62B19307700C7FEE4 /* WebExtensionConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 335698F52B19307700C7FEE4 /* WebExtensionConstants.h */; };
+		336207753044CD74005B0265 /* WKMouseTrackingGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 336207743044CD74005B0265 /* WKMouseTrackingGestureRecognizer.h */; };
 		3365E6733023E5C0003166AA /* WebExtensionAPIOffscreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 3365E6723023E5C0003166AA /* WebExtensionAPIOffscreen.h */; };
 		3366F02F3024FD1B002EEB9A /* WebExtensionOffscreenDocumentParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3366F02D3024FD10002EEB9A /* WebExtensionOffscreenDocumentParameters.h */; };
 		336E07482EBCC1E400B4D635 /* WKAppKitGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */; };
@@ -5423,6 +5424,7 @@
 		33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKResourceCacheManager.cpp; sourceTree = "<group>"; };
 		33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceCacheManager.h; sourceTree = "<group>"; };
 		335698F52B19307700C7FEE4 /* WebExtensionConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionConstants.h; sourceTree = "<group>"; };
+		336207743044CD74005B0265 /* WKMouseTrackingGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKMouseTrackingGestureRecognizer.h; sourceTree = "<group>"; };
 		3365E6723023E5C0003166AA /* WebExtensionAPIOffscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIOffscreen.h; sourceTree = "<group>"; };
 		3365E6743023E75D003166AA /* WebExtensionAPIOffscreenCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIOffscreenCocoa.mm; sourceTree = "<group>"; };
 		3365E6763023EA6F003166AA /* WebExtensionAPIOffscreen.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIOffscreen.idl; sourceTree = "<group>"; };
@@ -9657,6 +9659,7 @@
 				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
 				078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */,
 				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
+				336207743044CD74005B0265 /* WKMouseTrackingGestureRecognizer.h */,
 				3323520E303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift */,
 			);
 			path = AppKitGestures;
@@ -19627,6 +19630,7 @@
 				411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */,
 				950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */,
 				F4C627E72A7AC17B00F546BF /* WKMouseInteraction.h in Headers */,
+				336207753044CD74005B0265 /* WKMouseTrackingGestureRecognizer.h in Headers */,
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
 				BC407600124FF0270068F20A /* WKMutableDictionary.h in Headers */,
 				C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */,

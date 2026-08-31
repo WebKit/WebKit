@@ -41,6 +41,7 @@
 #import "TextRecognitionUpdateResult.h"
 #import "ViewGestureController.h"
 #import "WKDeferringGestureRecognizer.h"
+#import "WKMouseTrackingGestureRecognizer.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
 #import "WebEventFactory.h"
@@ -793,7 +794,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     case NSGestureRecognizerStateBegan:
         _activeMouseTrackingGestureRecognizer = mouseTrackingGesture.get();
         if (_mouseTrackingHasSentMouseDown)
-            [mouseTrackingGesture beginTrackingMouseInheritedFromLocationInWindow:_mouseTrackingStartLocationInWindow];
+            [mouseTrackingGesture beginTrackingMouseInheritedFromWindowLocation:_mouseTrackingStartLocationInWindow];
         else
             [mouseTrackingGesture beginTrackingMouse];
         break;

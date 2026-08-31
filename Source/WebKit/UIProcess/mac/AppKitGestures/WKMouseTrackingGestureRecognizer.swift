@@ -24,37 +24,36 @@
 #if HAVE_APPKIT_GESTURES_SUPPORT
 
 import AppKit
+import WebKit_Internal
 private import AppKit_Private.NSPressGestureRecognizer_Private
 
-@objc(WKMouseTrackingGestureRecognizer)
-final class WKMouseTrackingGestureRecognizer: NSPressGestureRecognizer {
+@objc
+@implementation
+extension WKMouseTrackingGestureRecognizer {
+    @nonobjc
     private var mouseLocationOffsetInWindow: CGSize = .zero
 
-    override func reset() {
+    final override func reset() {
         mouseLocationOffsetInWindow = .zero
         super.reset()
     }
 
-    @objc(beginTrackingMouse)
     func beginTrackingMouse() {
         mouseLocationOffsetInWindow = .zero
     }
 
-    @objc(beginTrackingMouseInheritedFromLocationInWindow:)
-    func beginTrackingMouse(inheritedFromLocationInWindow locationInWindow: CGPoint) {
+    func beginTrackingMouseInherited(fromWindowLocation windowLocation: CGPoint) {
         let start = startLocationInWindow
         mouseLocationOffsetInWindow = CGSize(
-            width: start.x - locationInWindow.x,
-            height: start.y - locationInWindow.y
+            width: start.x - windowLocation.x,
+            height: start.y - windowLocation.y
         )
     }
 
-    @objc
     var startLocationInWindow: CGPoint {
         _startLocation(in: nil)
     }
 
-    @objc
     var mouseLocationInWindow: CGPoint {
         let location = self.location(in: nil)
         return CGPoint(
@@ -63,7 +62,6 @@ final class WKMouseTrackingGestureRecognizer: NSPressGestureRecognizer {
         )
     }
 
-    @objc
     var movementInWindowSinceStart: CGSize {
         let location = self.location(in: nil)
         let start = startLocationInWindow
