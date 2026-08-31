@@ -277,12 +277,19 @@ WasmToJSCallee::WasmToJSCallee()
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+EncodedJSValue g_wasmToJSCalleeBoxed { };
+#endif
+
 WasmToJSCallee& WasmToJSCallee::singleton()
 {
     static LazyNeverDestroyed<Ref<WasmToJSCallee>> callee;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&]() {
         callee.construct(adoptRef(*new WasmToJSCallee));
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        g_wasmToJSCalleeBoxed = CalleeBits::encodeNativeCallee(&callee.get().get());
+#endif
     });
     return callee.get().get();
 }

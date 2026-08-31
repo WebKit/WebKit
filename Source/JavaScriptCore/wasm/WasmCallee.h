@@ -235,6 +235,10 @@ private:
 extern "C" EncodedJSValue g_restoreFrameCalleeBoxed;
 extern "C" void wasm_restore_frame_return();
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+extern "C" EncodedJSValue g_wasmToJSCalleeBoxed;
+#endif
+
 #if ENABLE(JIT)
 
 class JSToWasmICCallee final : public Callee {
