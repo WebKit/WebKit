@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +39,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringCommon.h>
 
 #if PLATFORM(COCOA)
@@ -159,6 +161,10 @@ public:
     void promiseDrainDoesNotEatExceptions();
     void topCallFrameAccess();
     void markedJSValueArrayAndGC();
+    void functionCallbackArgumentsAndGC();
+    void constructorCallbackArgumentsAndGC();
+    void classCallAsFunctionArgumentsAndGC();
+    void classCallAsConstructorArgumentsAndGC();
     void classDefinitionWithJSSubclass();
     void proxyReturnedWithJSSubclassing();
     void testJSObjectSetOnGlobalObjectSubclassDefinition();
@@ -674,6 +680,122 @@ void TestAPI::markedJSValueArrayAndGC()
     };
     testMarkedJSValueArray(4);
     testMarkedJSValueArray(1000);
+}
+
+// Above MarkedJSValueRefArray's inline capacity, where a stack buffer would be found by conservative
+// scanning whether or not the collector knows about it.
+static constexpr unsigned manyArgumentCount = 32;
+static constexpr double recycledArgumentValue = 987654321;
+
+static bool argumentsSurviveCollectionInCallback(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[])
+{
+    if (argumentCount != manyArgumentCount)
+        return false;
+
+    {
+        auto* globalObject = toJS(ctx);
+        JSC::VM& vm = globalObject->vm();
+        JSC::JSLockHolder locker(vm);
+        JSC::sanitizeStackForVM(vm);
+        vm.heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
+    }
+
+    // Where a JSValue does not fit in a pointer a JSValueRef for a number is a JSAPIValueWrapper cell,
+    // so these allocations recycle the wrappers that a dangling argument still points at.
+    for (unsigned index = 0; index < 8192; ++index)
+        JSValueMakeNumber(ctx, recycledArgumentValue);
+
+    for (unsigned index = 0; index < argumentCount; ++index) {
+        if (!JSValueIsNumber(ctx, arguments[index]))
+            return false;
+        if (JSValueToNumber(ctx, arguments[index], nullptr) != index)
+            return false;
+    }
+    return true;
+}
+
+static CString scriptCallingWithManyArguments(ASCIILiteral prefix, ASCIILiteral suffix)
+{
+    StringBuilder builder;
+    builder.append(prefix);
+    for (unsigned index = 0; index < manyArgumentCount; ++index) {
+        if (index)
+            builder.append(", "_s);
+        builder.append(index);
+    }
+    builder.append(suffix);
+    return builder.toString().utf8();
+}
+
+static JSValueRef checkArgumentsAsFunctionCallback(JSContextRef ctx, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
+{
+    return JSValueMakeBoolean(ctx, argumentsSurviveCollectionInCallback(ctx, argumentCount, arguments));
+}
+
+static JSObjectRef checkArgumentsAsConstructorCallback(JSContextRef ctx, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
+{
+    bool survived = argumentsSurviveCollectionInCallback(ctx, argumentCount, arguments);
+    JSObjectRef result = JSObjectMake(ctx, nullptr, nullptr);
+    JSObjectSetProperty(ctx, result, APIString("ok"), JSValueMakeBoolean(ctx, survived), kJSPropertyAttributeNone, nullptr);
+    return result;
+}
+
+void TestAPI::functionCallbackArgumentsAndGC()
+{
+    APIString name("functionWithManyArguments");
+    JSObjectRef function = JSObjectMakeFunctionWithCallback(context, name, checkArgumentsAsFunctionCallback);
+    JSObjectSetProperty(context, JSContextGetGlobalObject(context), name, function, kJSPropertyAttributeNone, nullptr);
+
+    auto script = scriptCallingWithManyArguments("functionWithManyArguments("_s, ")"_s);
+    ScriptResult result = evaluateScript(script.data());
+    check(!!result && JSValueToBoolean(context, result.value()), "JSObjectMakeFunctionWithCallback arguments should survive a collection inside the callback.");
+}
+
+void TestAPI::constructorCallbackArgumentsAndGC()
+{
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    JSClassRef jsClass = JSClassCreate(&definition);
+    APIString name("ConstructorWithManyArguments");
+    JSObjectRef constructor = JSObjectMakeConstructor(context, jsClass, checkArgumentsAsConstructorCallback);
+    JSObjectSetProperty(context, JSContextGetGlobalObject(context), name, constructor, kJSPropertyAttributeNone, nullptr);
+
+    auto script = scriptCallingWithManyArguments("new ConstructorWithManyArguments("_s, ").ok"_s);
+    ScriptResult result = evaluateScript(script.data());
+    check(!!result && JSValueToBoolean(context, result.value()), "JSObjectMakeConstructor arguments should survive a collection inside the callback.");
+
+    JSClassRelease(jsClass);
+}
+
+void TestAPI::classCallAsFunctionArgumentsAndGC()
+{
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = "CallableWithManyArguments";
+    definition.callAsFunction = checkArgumentsAsFunctionCallback;
+    JSClassRef jsClass = JSClassCreate(&definition);
+    APIString name("callableWithManyArguments");
+    JSObjectSetProperty(context, JSContextGetGlobalObject(context), name, JSObjectMake(context, jsClass, nullptr), kJSPropertyAttributeNone, nullptr);
+
+    auto script = scriptCallingWithManyArguments("callableWithManyArguments("_s, ")"_s);
+    ScriptResult result = evaluateScript(script.data());
+    check(!!result && JSValueToBoolean(context, result.value()), "JSClassDefinition::callAsFunction arguments should survive a collection inside the callback.");
+
+    JSClassRelease(jsClass);
+}
+
+void TestAPI::classCallAsConstructorArgumentsAndGC()
+{
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = "ConstructibleWithManyArguments";
+    definition.callAsConstructor = checkArgumentsAsConstructorCallback;
+    JSClassRef jsClass = JSClassCreate(&definition);
+    APIString name("ConstructibleWithManyArguments");
+    JSObjectSetProperty(context, JSContextGetGlobalObject(context), name, JSObjectMake(context, jsClass, nullptr), kJSPropertyAttributeNone, nullptr);
+
+    auto script = scriptCallingWithManyArguments("new ConstructibleWithManyArguments("_s, ").ok"_s);
+    ScriptResult result = evaluateScript(script.data());
+    check(!!result && JSValueToBoolean(context, result.value()), "JSClassDefinition::callAsConstructor arguments should survive a collection inside the callback.");
+
+    JSClassRelease(jsClass);
 }
 
 void TestAPI::classDefinitionWithJSSubclass()
@@ -1241,6 +1363,10 @@ int testCAPIViaCpp(const char* filter)
     RUN(promiseDrainDoesNotEatExceptions());
     RUN(promiseEarlyHandledRejections());
     RUN(markedJSValueArrayAndGC());
+    RUN(functionCallbackArgumentsAndGC());
+    RUN(constructorCallbackArgumentsAndGC());
+    RUN(classCallAsFunctionArgumentsAndGC());
+    RUN(classCallAsConstructorArgumentsAndGC());
     RUN(classDefinitionWithJSSubclass());
     RUN(proxyReturnedWithJSSubclassing());
     RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());

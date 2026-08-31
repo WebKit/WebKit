@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +36,7 @@
 #include "JSLock.h"
 #include "JSObjectRef.h"
 #include "JSString.h"
+#include "MarkedJSValueRefArray.h"
 #include "OpaqueJSString.h"
 #include "PropertyNameArray.h"
 #include <wtf/Vector.h>
@@ -479,14 +481,15 @@ EncodedJSValue JSCallbackObject<Parent>::constructImpl(JSGlobalObject* globalObj
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(constructor)->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsConstructorCallback callAsConstructor = jsClass->callAsConstructor) {
             size_t argumentCount = callFrame->argumentCount();
-            Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
-                return toRef(globalObject, callFrame->uncheckedArgument(i));
-            });
+            MarkedJSValueRefArray arguments(toGlobalRef(globalObject), static_cast<unsigned>(argumentCount));
+            for (unsigned i = 0; i < arguments.size(); ++i)
+                arguments[i] = toRef(globalObject, callFrame->uncheckedArgument(i));
+            ASSERT(static_cast<size_t>(argumentCount) == arguments.size());
             JSValueRef exception = nullptr;
             JSObject* result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
-                result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.span().data(), &exception));
+                result = toJS(callAsConstructor(execRef, constructorRef, arguments.size(), arguments.data(), &exception));
             }
             if (exception) {
                 throwException(globalObject, scope, toJS(globalObject, exception));
@@ -557,15 +560,16 @@ EncodedJSValue JSCallbackObject<Parent>::callImpl(JSGlobalObject* globalObject, 
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
             size_t argumentCount = callFrame->argumentCount();
-            Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
-                return toRef(globalObject, callFrame->uncheckedArgument(i));
-            });
+            MarkedJSValueRefArray arguments(toGlobalRef(globalObject), static_cast<unsigned>(argumentCount));
+            for (unsigned i = 0; i < arguments.size(); ++i)
+                arguments[i] = toRef(globalObject, callFrame->uncheckedArgument(i));
+            ASSERT(static_cast<size_t>(argumentCount) == arguments.size());
 
             JSValueRef exception = nullptr;
             JSValue result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
-                result = toJS(globalObject, callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.span().data(), &exception));
+                result = toJS(globalObject, callAsFunction(execRef, functionRef, thisObjRef, arguments.size(), arguments.data(), &exception));
             }
             if (exception) {
                 throwException(globalObject, scope, toJS(globalObject, exception));

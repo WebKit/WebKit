@@ -27,6 +27,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -4819,9 +4820,147 @@ static void testJSCJSON()
     }
 }
 
+static constexpr unsigned varargsParameterCount = 16;
+static constexpr unsigned varargsParameterLength = 512 * 1024;
+
+// Each parameter reports half a megabyte against a one megabyte smallHeapSize(), so the collector runs
+// partway through the conversion loop, when only the argument Vector refers to the earlier parameters.
+static void testJSCFunctionCallParameterLifetime()
+{
+    LeakChecker checker;
+    GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+    checker.watch(context.get());
+    ExceptionHandler exceptionHandler(context.get());
+
+    GRefPtr<JSCValue> function = adoptGRef(jsc_context_evaluate(context.get(),
+        "(function() {\n"
+        "    for (var i = 0; i < arguments.length; i++) {\n"
+        "        if (arguments[i] !== String.fromCharCode(65 + i).repeat(524288))\n"
+        "            return 'parameter ' + i + ' did not survive';\n"
+        "    }\n"
+        "    return 'ok';\n"
+        "})", -1));
+    checker.watch(function.get());
+    g_assert_true(jsc_value_is_function(function.get()));
+
+    GUniquePtr<char> parameters[varargsParameterCount];
+    for (unsigned i = 0; i < varargsParameterCount; ++i)
+        parameters[i].reset(g_strnfill(varargsParameterLength, static_cast<char>('A' + i)));
+
+#define STRING_PARAMETER(index) G_TYPE_STRING, parameters[index].get()
+    GRefPtr<JSCValue> result = adoptGRef(jsc_value_function_call(function.get(),
+        STRING_PARAMETER(0), STRING_PARAMETER(1), STRING_PARAMETER(2), STRING_PARAMETER(3),
+        STRING_PARAMETER(4), STRING_PARAMETER(5), STRING_PARAMETER(6), STRING_PARAMETER(7),
+        STRING_PARAMETER(8), STRING_PARAMETER(9), STRING_PARAMETER(10), STRING_PARAMETER(11),
+        STRING_PARAMETER(12), STRING_PARAMETER(13), STRING_PARAMETER(14), STRING_PARAMETER(15),
+        G_TYPE_NONE));
+#undef STRING_PARAMETER
+
+    checker.watch(result.get());
+    GUniquePtr<char> resultString(jsc_value_to_string(result.get()));
+    g_assert_cmpstr(resultString.get(), ==, "ok");
+}
+
+// Above the argument array's inline capacity, where a stack buffer would be found by conservative
+// scanning whether or not the collector knows about it.
+static constexpr unsigned manyArgumentCount = 32;
+static constexpr double recycledArgumentValue = 987654321;
+
+// Called from the toString() of the first argument, which JSC calls while it is still converting the
+// remaining arguments of the function being invoked.
+static void collectAndRecycleValues(int)
+{
+    JSCContext* context = jsc_context_get_current();
+    jscContextGarbageCollect(context, true);
+
+    // Where a JSValue does not fit in a pointer a JSValueRef for a number is a JSAPIValueWrapper cell,
+    // so these allocations recycle the wrappers that a dangling argument still points at. The unref
+    // only unprotects the cell; it stays allocated until the next collection.
+    for (unsigned i = 0; i < 4096; ++i)
+        g_object_unref(jsc_value_new_number(context, recycledArgumentValue));
+}
+
+static GRefPtr<JSCValue> collectFunction(JSCContext* context)
+{
+    return adoptGRef(jsc_value_new_function(context, "collect", G_CALLBACK(collectAndRecycleValues), nullptr, nullptr, G_TYPE_NONE, 1, G_TYPE_INT));
+}
+
+// Converting the first argument to G_TYPE_STRING calls its toString(), so "collect(0)" runs before
+// JSC converts the second argument.
+static GUniquePtr<char> scriptCallingWithManyArguments(const char* callee)
+{
+    GString* script = g_string_new(callee);
+    g_string_append(script, "({ toString: function() { collect(0); return 'trigger'; } }, 42");
+    for (unsigned i = 2; i < manyArgumentCount; ++i)
+        g_string_append_printf(script, ", %u", i);
+    g_string_append(script, ")");
+    return GUniquePtr<char>(g_string_free(script, FALSE));
+}
+
+static double s_secondArgument;
+
+static void recordSecondArgument(const char*, double second)
+{
+    s_secondArgument = second;
+}
+
+static void testJSCCallbackArgumentLifetime()
+{
+    LeakChecker checker;
+    GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+    checker.watch(context.get());
+    ExceptionHandler exceptionHandler(context.get());
+
+    GRefPtr<JSCValue> collect = collectFunction(context.get());
+    checker.watch(collect.get());
+    jsc_context_set_value(context.get(), "collect", collect.get());
+
+    GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "check", G_CALLBACK(recordSecondArgument), nullptr, nullptr, G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_DOUBLE));
+    checker.watch(function.get());
+    jsc_context_set_value(context.get(), "check", function.get());
+
+    s_secondArgument = 0;
+    GUniquePtr<char> script = scriptCallingWithManyArguments("check");
+    GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), script.get(), -1));
+    checker.watch(result.get());
+    g_assert_cmpfloat(s_secondArgument, ==, 42);
+}
+
+static Foo* fooCreateRecordingSecondArgument(const char*, double second)
+{
+    s_secondArgument = second;
+    return fooCreate();
+}
+
+static void testJSCConstructorArgumentLifetime()
+{
+    LeakChecker checker;
+    GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+    checker.watch(context.get());
+    ExceptionHandler exceptionHandler(context.get());
+
+    GRefPtr<JSCValue> collect = collectFunction(context.get());
+    checker.watch(collect.get());
+    jsc_context_set_value(context.get(), "collect", collect.get());
+
+    JSCClass* jscClass = jsc_context_register_class(context.get(), "Foo", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(fooFree));
+    checker.watch(jscClass);
+    GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(jscClass, nullptr, G_CALLBACK(fooCreateRecordingSecondArgument), nullptr, nullptr,
+        G_TYPE_POINTER, 2, G_TYPE_STRING, G_TYPE_DOUBLE));
+    checker.watch(constructor.get());
+    jsc_context_set_value(context.get(), jsc_class_get_name(jscClass), constructor.get());
+
+    s_secondArgument = 0;
+    GUniquePtr<char> script = scriptCallingWithManyArguments("new Foo");
+    GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), script.get(), -1));
+    checker.watch(result.get());
+    g_assert_cmpfloat(s_secondArgument, ==, 42);
+}
+
 int main(int argc, char** argv)
 {
     g_test_init(&argc, &argv, nullptr);
+    WTF::initializeMainThread();
 
     // options should always be the first test, since changing options
     // is not allowed after the first VM instance is created.
@@ -4846,6 +4985,9 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/autocleanups", testsJSCAutocleanups);
 #endif
     g_test_add_func("/jsc/json", testJSCJSON);
+    g_test_add_func("/jsc/function-call-parameter-lifetime", testJSCFunctionCallParameterLifetime);
+    g_test_add_func("/jsc/callback-argument-lifetime", testJSCCallbackArgumentLifetime);
+    g_test_add_func("/jsc/constructor-argument-lifetime", testJSCConstructorArgumentLifetime);
 
     return g_test_run();
 }
