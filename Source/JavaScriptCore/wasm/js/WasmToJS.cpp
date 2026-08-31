@@ -83,7 +83,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
     // If we ever change this, we will also need to change WasmOMGIRGenerator.
 
     // Below, we assume that the JS calling convention is always on the stack.
-    ASSERT_UNUSED(jsCC, !jsCC.jsrArgs.size());
+    ASSERT_UNUSED(jsCC, !jsCC.gprArgs.size());
     ASSERT(!jsCC.fprArgs.size());
 
     jit.emitFunctionPrologue();
@@ -123,7 +123,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
 
     // FIXME make these loops which switch on signature if there are many arguments on the stack. It'll otherwise be huge for huge type definitions. https://bugs.webkit.org/show_bug.cgi?id=165547
 
-    constexpr JSValueRegs jsArg10 { GPRInfo::argumentGPR0 };
+    constexpr GPRReg argumentScratchGPR = GPRInfo::argumentGPR0;
 
     // First go through the integer parameters, freeing up their register for use afterwards.
     {
@@ -153,19 +153,19 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
             case TypeKind::Funcref:
             case TypeKind::I32:
             case TypeKind::I64: {
-                JSValueRegs argReg;
-                if (marshalledGPRs < wasmCC.jsrArgs.size())
-                    argReg = wasmCC.jsrArgs[marshalledGPRs];
+                GPRReg argReg = InvalidGPRReg;
+                if (marshalledGPRs < wasmCC.gprArgs.size())
+                    argReg = wasmCC.gprArgs[marshalledGPRs];
                 else {
                     // We've already spilled all arguments, these registers are available as scratch.
-                    argReg = jsArg10;
+                    argReg = argumentScratchGPR;
                     jit.loadValue(JIT::Address(GPRInfo::callFrameRegister, frOffset), argReg);
                     frOffset += sizeof(Register);
                 }
                 ++marshalledGPRs;
                 if (argType.isI32()) {
-                    jit.zeroExtend32ToWord(argReg.payloadGPR(), argReg.payloadGPR()); // Clear non-int32 and non-tag bits.
-                    jit.boxInt32(argReg.payloadGPR(), argReg, DoNotHaveTagRegisters);
+                    jit.zeroExtend32ToWord(argReg, argReg); // Clear non-int32 and non-tag bits.
+                    jit.boxInt32(argReg, argReg, DoNotHaveTagRegisters);
                 }
                 jit.storeValue(argReg, calleeFrame.withOffset(calleeFrameOffset));
                 calleeFrameOffset += sizeof(Register);
@@ -238,7 +238,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
             case TypeKind::I32:
             case TypeKind::I64: {
                 // Skipped: handled above.
-                if (marshalledGPRs >= wasmCC.jsrArgs.size())
+                if (marshalledGPRs >= wasmCC.gprArgs.size())
                     frOffset += sizeof(Register);
                 ++marshalledGPRs;
                 calleeFrameOffset += sizeof(Register);
@@ -284,14 +284,14 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             if (signature.argumentType(argNum).isI64()) {
                 using Operation = decltype(operationConvertToBigInt);
-                constexpr JSValueRegs valueJSR = preferredArgumentJSR<Operation, 1>();
-                jit.loadValue(calleeFrame.withOffset(calleeFrameOffset), valueJSR);
+                constexpr GPRReg valueGPR = preferredArgumentGPR<Operation, 1>();
+                jit.loadValue(calleeFrame.withOffset(calleeFrameOffset), valueGPR);
                 jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-                jit.setupArguments<Operation>(GPRInfo::wasmContextInstancePointer, valueJSR);
+                jit.setupArguments<Operation>(GPRInfo::wasmContextInstancePointer, valueGPR);
                 jit.callOperation<OperationPtrTag>(operationConvertToBigInt);
                 using ResultType = typename FunctionTraits<decltype(operationConvertToBigInt)>::ResultType;
                 exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-                jit.storeValue(JSRInfo::returnValueJSR, calleeFrame.withOffset(calleeFrameOffset));
+                jit.storeValue(GPRInfo::returnValueGPR, calleeFrame.withOffset(calleeFrameOffset));
             }
             calleeFrameOffset += sizeof(Register);
         }
@@ -316,11 +316,10 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         case TypeKind::I64: {
             CCallHelpers::JumpList done;
             CCallHelpers::JumpList slowPath;
-            JSValueRegs destJSR = wasmCallInfo.results[0].location.jsr();
-            GPRReg destGPR = destJSR.payloadGPR();
-            GPRReg cellGPR = JSRInfo::returnValueJSR.payloadGPR();
+            GPRReg destGPR = wasmCallInfo.results[0].location.gpr();
+            GPRReg cellGPR = GPRInfo::returnValueGPR;
 
-            slowPath.append(jit.branchIfNotCell(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
+            slowPath.append(jit.branchIfNotCell(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
             slowPath.append(jit.branchIfNotHeapBigInt(cellGPR));
             if (cellGPR == destGPR) {
                 GPRReg scratch = GPRInfo::nonPreservedNonReturnGPR;
@@ -332,31 +331,31 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
 
             slowPath.link(&jit);
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-            jit.setupArguments<decltype(operationConvertToI64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
+            jit.setupArguments<decltype(operationConvertToI64)>(GPRInfo::wasmContextInstancePointer, GPRInfo::returnValueGPR);
             jit.callOperation<OperationPtrTag>(operationConvertToI64);
             using ResultType = typename FunctionTraits<decltype(operationConvertToI64)>::ResultType;
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-            jit.moveValueRegs(JSRInfo::returnValueJSR, destJSR);
+            jit.move(GPRInfo::returnValueGPR, destGPR);
             done.link(&jit);
             break;
         }
         case TypeKind::I32: {
             CCallHelpers::JumpList done;
             CCallHelpers::JumpList slowPath;
-            JSValueRegs destJSR = wasmCallInfo.results[0].location.jsr();
+            GPRReg destGPR = wasmCallInfo.results[0].location.gpr();
 
-            slowPath.append(jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
-            slowPath.append(jit.branchIfNotInt32(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
-            jit.zeroExtend32ToWord(JSRInfo::returnValueJSR.payloadGPR(), destJSR.payloadGPR());
+            slowPath.append(jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
+            slowPath.append(jit.branchIfNotInt32(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
+            jit.zeroExtend32ToWord(GPRInfo::returnValueGPR, destGPR);
             done.append(jit.jump());
 
             slowPath.link(&jit);
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-            jit.setupArguments<decltype(operationConvertToI32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
+            jit.setupArguments<decltype(operationConvertToI32)>(GPRInfo::wasmContextInstancePointer, GPRInfo::returnValueGPR);
             jit.callOperation<OperationPtrTag>(operationConvertToI32);
             using ResultType = typename FunctionTraits<decltype(operationConvertToI32)>::ResultType;
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-            jit.move(JSRInfo::returnValueJSR.payloadGPR(), destJSR.payloadGPR());
+            jit.move(GPRInfo::returnValueGPR, destGPR);
             done.link(&jit);
             break;
         }
@@ -364,8 +363,8 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
             FPRReg dest = wasmCallInfo.results[0].location.fpr();
 
             CCallHelpers::JumpList done;
-            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
-            auto isDouble = jit.branchIfNotInt32(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
+            auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
+            auto isDouble = jit.branchIfNotInt32(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
             // We're an int32
             jit.convertInt32ToFloat(GPRInfo::returnValueGPR, dest);
             done.append(jit.jump());
@@ -377,7 +376,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
 
             notANumber.link(&jit);
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-            jit.setupArguments<decltype(operationConvertToF32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
+            jit.setupArguments<decltype(operationConvertToF32)>(GPRInfo::wasmContextInstancePointer, GPRInfo::returnValueGPR);
             jit.callOperation<OperationPtrTag>(operationConvertToF32);
             jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
@@ -389,8 +388,8 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
             FPRReg dest = wasmCallInfo.results[0].location.fpr();
             CCallHelpers::JumpList done;
 
-            auto notANumber = jit.branchIfNotNumber(JSRInfo::returnValueJSR, DoNotHaveTagRegisters);
-            auto isDouble = jit.branchIfNotInt32(JSValueRegs(JSRInfo::returnValueJSR), DoNotHaveTagRegisters);
+            auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
+            auto isDouble = jit.branchIfNotInt32(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
             // We're an int32
             jit.convertInt32ToDouble(GPRInfo::returnValueGPR, dest);
             done.append(jit.jump());
@@ -401,7 +400,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
 
             notANumber.link(&jit);
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-            jit.setupArguments<decltype(operationConvertToF64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
+            jit.setupArguments<decltype(operationConvertToF64)>(GPRInfo::wasmContextInstancePointer, GPRInfo::returnValueGPR);
             jit.callOperation<OperationPtrTag>(operationConvertToF64);
             jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
@@ -412,7 +411,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         default:  {
             if (Wasm::isRefType(returnType)) {
                 if (!returnType.isNullable()) {
-                    auto isNotNull = jit.branchIfNotNull(JSRInfo::returnValueJSR);
+                    auto isNotNull = jit.branchIfNotNull(GPRInfo::returnValueGPR);
                     jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
                     emitThrowWasmToJSException(jit, GPRInfo::argumentGPR0, ExceptionType::TypeErrorUnexpectedNullReference);
                     isNotNull.link(&jit);
@@ -422,18 +421,18 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
                     // Do nothing.
                 } else if (Wasm::isFuncref(returnType)) {
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-                    jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), JSRInfo::returnValueJSR);
+                    jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), GPRInfo::returnValueGPR);
                     jit.callOperation<OperationPtrTag>(operationConvertToFuncref);
                     using ResultType = typename FunctionTraits<decltype(operationConvertToFuncref)>::ResultType;
                     exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
                 } else {
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-                    jit.setupArguments<decltype(operationConvertToAnyref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), JSRInfo::returnValueJSR);
+                    jit.setupArguments<decltype(operationConvertToAnyref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), GPRInfo::returnValueGPR);
                     jit.callOperation<OperationPtrTag>(operationConvertToAnyref);
                     using ResultType = typename FunctionTraits<decltype(operationConvertToAnyref)>::ResultType;
                     exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
                 }
-                jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].location.jsr());
+                jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].location.gpr());
             } else
                 // For the JavaScript embedding, imports with these types in their type definition return are a WebAssembly.Module validation error.
                 RELEASE_ASSERT_NOT_REACHED();
@@ -444,10 +443,10 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         jit.move(CCallHelpers::stackPointerRegister, savedResultsGPR);
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-        static_assert(noOverlap(savedResultsGPR, JSRInfo::returnValueJSR));
+        static_assert(noOverlap(savedResultsGPR, GPRInfo::returnValueGPR));
         static_assert(GPRInfo::wasmContextInstancePointer != savedResultsGPR);
         jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-        jit.setupArguments<decltype(operationIterateResults)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), JSRInfo::returnValueJSR, savedResultsGPR, CCallHelpers::framePointerRegister);
+        jit.setupArguments<decltype(operationIterateResults)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), GPRInfo::returnValueGPR, savedResultsGPR, CCallHelpers::framePointerRegister);
         jit.callOperation<OperationPtrTag>(operationIterateResults);
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
@@ -456,7 +455,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         for (unsigned i = 0; i < signature.returnCount(); ++i) {
             ValueLocation loc = wasmCallInfo.results[i].location;
             if (loc.isGPR()) {
-                jit.loadValue(CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.jsr().payloadGPR())->offset()), loc.jsr());
+                jit.loadValue(CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.gpr())->offset()), loc.gpr());
             } else if (loc.isFPR())
                 jit.loadDouble(CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.fpr())->offset()), loc.fpr());
         }

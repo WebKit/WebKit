@@ -55,7 +55,7 @@ namespace JSC {
             emitSaveThenMaterializeTagRegisters();
         }
 
-        void loadJSArgument(int argument, JSValueRegs dst)
+        void loadJSArgument(int argument, GPRReg dst)
         {
             VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);
             emitLoadJSValue(src, dst);
@@ -96,19 +96,10 @@ namespace JSC {
         {
             m_failures.append(failure);
         }
-        void returnJSValue(RegisterID src)
+        void returnJSValue(GPRReg src)
         {
-            if (src != regT0)
-                move(src, regT0);
-
-            emitRestoreSavedTagRegisters();
-            emitFunctionEpilogue();
-            ret();
-        }
-        void returnJSValue(JSValueRegs src)
-        {
-            if (src != JSRInfo::returnValueJSR)
-                moveValueRegs(src, JSRInfo::returnValueJSR);
+            if (src != GPRInfo::returnValueGPR)
+                move(src, GPRInfo::returnValueGPR);
 
             emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();

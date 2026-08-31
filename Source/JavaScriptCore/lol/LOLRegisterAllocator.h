@@ -40,22 +40,21 @@ namespace JSC::LOL {
 
 // TODO: Pack this.
 struct Location {
-    GPRReg gpr() const { return regs.gpr(); }
     void dumpInContext(PrintStream& out, const auto*) const
     {
         if (!isFlushed)
             out.print("!"_s);
     }
 
-    JSValueRegs regs { InvalidGPRReg };
+    GPRReg gpr { InvalidGPRReg };
     bool isFlushed { false };
 };
 
 template<size_t useCount, size_t defCount, size_t scratchCount = 0>
 struct AllocationBindings {
-    std::array<JSValueRegs, useCount> uses;
-    std::array<JSValueRegs, defCount> defs;
-    std::array<JSValueRegs, scratchCount> scratches;
+    std::array<GPRReg, useCount> uses;
+    std::array<GPRReg, defCount> defs;
+    std::array<GPRReg, scratchCount> scratches;
 };
 
 template<typename Backend>
@@ -121,21 +120,21 @@ public:
         m_needsReleaseScratches = false;
 #endif
 
-        for (JSValueRegs scratch : allocations.scratches) {
-            ASSERT(!bindingFor(scratch.gpr()).isValid());
-            m_allocator.unlock(scratch.gpr());
-            m_allocator.unbind(scratch.gpr());
+        for (GPRReg scratch : allocations.scratches) {
+            ASSERT(!bindingFor(scratch).isValid());
+            m_allocator.unlock(scratch);
+            m_allocator.unbind(scratch);
         }
     }
 
 private:
     struct AllocationHint {
         AllocationHint() = default;
-        AllocationHint(VirtualRegister b, JSValueRegs h = JSValueRegs())
+        AllocationHint(VirtualRegister b, GPRReg h = InvalidGPRReg)
             : m_binding(b), m_hint(h) { }
 
         VirtualRegister m_binding;
-        JSValueRegs m_hint;
+        GPRReg m_hint = InvalidGPRReg;
     };
 
     template<size_t scratchCount, size_t useCount, size_t defCount>
@@ -152,27 +151,28 @@ private:
         UNUSED_PARAM(instruction);
         // Bump the spill count for our uses so we don't spill them when allocating below.
         for (auto operand : uses) {
-            if (auto current = locationOf(operand.m_binding).regs)
-                m_allocator.setSpillHint(current.gpr(), index.offset());
+            GPRReg current = locationOf(operand.m_binding).gpr;
+            if (current != InvalidGPRReg)
+                m_allocator.setSpillHint(current, index.offset());
         }
 
         auto doAllocate = [&](AllocationHint operand, bool isDef) ALWAYS_INLINE_LAMBDA {
             ASSERT_IMPLIES(isDef, operand.m_binding.isLocal() || operand.m_binding.isArgument());
             Location& location = locationOfImpl(operand.m_binding);
-            if (location.regs) {
+            if (location.gpr != InvalidGPRReg) {
                 // Uses might be dirty from a previous instruction, so don't touch them.
                 if (isDef)
                     location.isFlushed = false;
-                return location.regs;
+                return location.gpr;
             }
 
             // TODO: Consider LRU insertion policy here (i.e. 0 for hint). Might need locking so these don't spill on the next allocation in the same bytecode.
-            location.regs = JSValueRegs(m_allocator.allocate(*this, operand.m_binding, index.offset(), operand.m_hint.payloadGPR()));
+            location.gpr = m_allocator.allocate(*this, operand.m_binding, index.offset(), operand.m_hint);
             location.isFlushed = !isDef;
 
             if (!isDef)
-                jit.fill(operand.m_binding, location.regs.gpr());
-            return location.regs;
+                jit.fill(operand.m_binding, location.gpr);
+            return location.gpr;
         };
 
         AllocationBindings<useCount, defCount, scratchCount> result;
@@ -184,7 +184,7 @@ private:
 
         for (size_t i = 0; i < result.scratches.size(); ++i) {
             GPRReg scratch = m_allocator.allocate(*this, VirtualRegister(), 0);
-            result.scratches[i] = JSValueRegs(scratch);
+            result.scratches[i] = scratch;
             // Lock the register so it doesn't get spilled subsequently.
             m_allocator.lock(scratch);
         }
@@ -212,7 +212,7 @@ private:
     void flush(GPRReg gpr, VirtualRegister binding)
     {
         Location& location = locationOfImpl(binding);
-        ASSERT(location.gpr() == gpr);
+        ASSERT(location.gpr == gpr);
         m_backend.flush(location, gpr, binding);
         location = Location();
     }
@@ -319,18 +319,18 @@ FOR_EACH_BINARY_OP(ALLOCATE_USE_DEFS_FOR_BINARY_OP)
 #undef FOR_EACH_BINARY_OP
 
 #define FOR_EACH_FLUSHING_UNARY_OP(macro) \
-    macro(OpJtrue, m_condition, BaselineJITRegisters::JTrue::valueJSR) \
-    macro(OpJfalse, m_condition, BaselineJITRegisters::JFalse::valueJSR) \
-    macro(OpJeqNull, m_value, JSValueRegs()) \
-    macro(OpJneqNull, m_value, JSValueRegs()) \
-    macro(OpJundefinedOrNull, m_value, JSValueRegs()) \
-    macro(OpJnundefinedOrNull, m_value, JSValueRegs()) \
-    macro(OpJeqPtr, m_value, JSValueRegs()) \
-    macro(OpJneqPtr, m_value, JSValueRegs()) \
-    macro(OpThrow, m_value, BaselineJITRegisters::Throw::thrownValueJSR) \
-    macro(OpSwitchImm, m_scrutinee, JSValueRegs()) \
-    macro(OpSwitchChar, m_scrutinee, JSValueRegs()) \
-    macro(OpSwitchString, m_scrutinee, BaselineJITRegisters::SwitchString::scrutineeJSR)
+    macro(OpJtrue, m_condition, BaselineJITRegisters::JTrue::valueGPR) \
+    macro(OpJfalse, m_condition, BaselineJITRegisters::JFalse::valueGPR) \
+    macro(OpJeqNull, m_value, InvalidGPRReg) \
+    macro(OpJneqNull, m_value, InvalidGPRReg) \
+    macro(OpJundefinedOrNull, m_value, InvalidGPRReg) \
+    macro(OpJnundefinedOrNull, m_value, InvalidGPRReg) \
+    macro(OpJeqPtr, m_value, InvalidGPRReg) \
+    macro(OpJneqPtr, m_value, InvalidGPRReg) \
+    macro(OpThrow, m_value, BaselineJITRegisters::Throw::thrownValueGPR) \
+    macro(OpSwitchImm, m_scrutinee, InvalidGPRReg) \
+    macro(OpSwitchChar, m_scrutinee, InvalidGPRReg) \
+    macro(OpSwitchString, m_scrutinee, BaselineJITRegisters::SwitchString::scrutineeGPR)
 
 #define ALLOCATE_FOR_FLUSHING_UNARY_OP(Struct, operand, hint) \
 template<typename Backend> \
@@ -395,8 +395,8 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpGetArgument& ins
     if (static_cast<uint32_t>(instruction.m_index) < m_numArguments) {
         VirtualRegister argument = virtualRegisterForArgumentIncludingThis(instruction.m_index);
         Location& location = locationOfImpl(argument);
-        if (location.regs)
-            jit.flush(location, location.regs.payloadGPR(), argument);
+        if (location.gpr != InvalidGPRReg)
+            jit.flush(location, location.gpr, argument);
     }
 
 
@@ -620,9 +620,9 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpMod& instruction
     // TODO: FIX X86 clobbering rules for eax/edx/ecx. This is inefficient and hacky.
     m_allocator.flushAllRegisters(*this);
     Location& dstLocation = locationOfImpl(instruction.m_dst);
-    dstLocation.regs = result.defs[0];
+    dstLocation.gpr = result.defs[0];
     ASSERT(!dstLocation.isFlushed);
-    m_allocator.bind(result.defs[0].payloadGPR(), instruction.m_dst, index.offset());
+    m_allocator.bind(result.defs[0], instruction.m_dst, index.offset());
 #endif
     return result;
 }
@@ -638,9 +638,9 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpDiv& instruction
     // TODO: FIX X86 clobbering rules for eax/edx/ecx. This is inefficient and hacky.
     m_allocator.flushAllRegisters(*this);
     Location& dstLocation = locationOfImpl(instruction.m_dst);
-    dstLocation.regs = result.defs[0];
+    dstLocation.gpr = result.defs[0];
     ASSERT(!dstLocation.isFlushed);
-    m_allocator.bind(result.defs[0].payloadGPR(), instruction.m_dst, index.offset());
+    m_allocator.bind(result.defs[0], instruction.m_dst, index.offset());
 #endif
     return result;
 }
@@ -656,7 +656,7 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpToThis& instruct
 template<typename Backend>
 auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpRet& instruction, BytecodeIndex index)
 {
-    std::array<AllocationHint, 1> uses = { AllocationHint(instruction.m_value, JSRInfo::returnValueJSR) };
+    std::array<AllocationHint, 1> uses = { AllocationHint(instruction.m_value, GPRInfo::returnValueGPR) };
     std::array<AllocationHint, 0> defs = { };
     auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
     // unbind everything without flushing since we're returning anyway.

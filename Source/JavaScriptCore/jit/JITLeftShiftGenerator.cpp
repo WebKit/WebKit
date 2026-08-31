@@ -39,18 +39,18 @@ void JITLeftShiftGenerator::generateFastPath(CCallHelpers& jit)
     if (m_rightOperand.isConstInt32()) {
         // Try to do (intVar << intConstant).
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
-        jit.lshift32(m_left.payloadGPR(), CCallHelpers::Imm32(m_rightOperand.asConstInt32()), m_result.payloadGPR());
+        jit.lshift32(m_left, CCallHelpers::Imm32(m_rightOperand.asConstInt32()), m_result);
     } else {
         // Try to do (intConstant << intVar) or (intVar << intVar).
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
         if (m_leftOperand.isConstInt32())
-            jit.lshift32(CCallHelpers::Imm32(m_leftOperand.asConstInt32()), m_right.payloadGPR(), m_result.payloadGPR());
+            jit.lshift32(CCallHelpers::Imm32(m_leftOperand.asConstInt32()), m_right, m_result);
         else {
             m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
-            jit.lshift32(m_left.payloadGPR(), m_right.payloadGPR(), m_result.payloadGPR());
+            jit.lshift32(m_left, m_right, m_result);
         }
     }
-    jit.boxInt32(m_result.payloadGPR(), m_result);
+    jit.boxInt32(m_result, m_result);
 }
 
 } // namespace JSC

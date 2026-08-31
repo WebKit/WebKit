@@ -37,7 +37,7 @@
 #if ENABLE(JIT)
 
 namespace JSC {
-    class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public JSRInfo, public FPRInfo {
+    class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public FPRInfo {
         WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(JSInterfaceJIT);
     public:
 
@@ -51,7 +51,7 @@ namespace JSC {
         inline Jump emitLoadInt32(VirtualRegister, RegisterID dst);
         inline Jump emitLoadDouble(VirtualRegister, FPRegisterID dst, RegisterID scratch);
 
-        inline void emitLoadJSValue(VirtualRegister, JSValueRegs dst);
+        inline void emitLoadJSValue(VirtualRegister, GPRReg dst);
 
         VM* vm() const { return m_vm; }
 
@@ -85,7 +85,7 @@ namespace JSC {
         return notNumber;
     }
 
-inline void JSInterfaceJIT::emitLoadJSValue(VirtualRegister virtualRegister, JSValueRegs dst)
+inline void JSInterfaceJIT::emitLoadJSValue(VirtualRegister virtualRegister, GPRReg dst)
 {
     loadValue(addressFor(virtualRegister), dst);
 }

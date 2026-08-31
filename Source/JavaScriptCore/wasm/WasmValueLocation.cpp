@@ -36,7 +36,7 @@ void ValueLocation::dump(PrintStream& out) const
     out.print(m_kind);
     switch (m_kind) {
     case GPRRegister:
-        out.print("(", jsr(), ")");
+        out.print("(", gpr(), ")");
         return;
     case FPRRegister:
         out.print("(", fpr(), ")");

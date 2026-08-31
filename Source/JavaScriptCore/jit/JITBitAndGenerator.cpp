@@ -33,42 +33,42 @@ namespace JSC {
 void JITBitAndGenerator::generateFastPath(CCallHelpers& jit)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
-    ASSERT(m_scratchGPR != m_left.payloadGPR());
-    ASSERT(m_scratchGPR != m_right.payloadGPR());
+    ASSERT(m_scratchGPR != m_left);
+    ASSERT(m_scratchGPR != m_right);
 
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
 
     m_didEmitFastPath = true;
 
     if (m_leftOperand.isConstInt32() || m_rightOperand.isConstInt32()) {
-        JSValueRegs var = m_leftOperand.isConstInt32() ? m_right : m_left;
+        GPRReg var = m_leftOperand.isConstInt32() ? m_right : m_left;
         SnippetOperand& constOpr = m_leftOperand.isConstInt32() ? m_leftOperand : m_rightOperand;
         
         // Try to do intVar & intConstant.
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
         
         if (constOpr.asConstInt32() != static_cast<int32_t>(0xffffffff)) {
-            jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), var.payloadGPR(), m_result.payloadGPR());
+            jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), var, m_result);
             if (constOpr.asConstInt32() >= 0)
-                jit.boxInt32(m_result.payloadGPR(), m_result);
+                jit.boxInt32(m_result, m_result);
         } else
-            jit.moveValueRegs(var, m_result);
+            jit.move(var, m_result);
         return;
     }
 
     if (m_leftOperand.definitelyIsBoolean() && m_rightOperand.definitelyIsBoolean()) {
-        jit.and32(m_left.payloadGPR(), m_right.payloadGPR(), m_result.payloadGPR());
-        jit.and32(CCallHelpers::TrustedImm32(1), m_result.payloadGPR());
-        jit.boxInt32(m_result.payloadGPR(), m_result);
+        jit.and32(m_left, m_right, m_result);
+        jit.and32(CCallHelpers::TrustedImm32(1), m_result);
+        jit.boxInt32(m_result, m_result);
         return;
     }
 
     ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
 
     // Try to do intVar & intVar.
-    jit.and64(m_left.payloadGPR(), m_right.payloadGPR(), m_scratchGPR);
+    jit.and64(m_left, m_right, m_scratchGPR);
     m_slowPathJumpList.append(jit.branchIfNotInt32(m_scratchGPR));
-    jit.move(m_scratchGPR, m_result.payloadGPR());
+    jit.move(m_scratchGPR, m_result);
 }
 
 } // namespace JSC

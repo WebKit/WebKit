@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock* optimizedCodeBlock, JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode) const
+void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock* optimizedCodeBlock, GPRReg valueGPR, GPRReg tempGPR, TagRegistersMode mode) const
 {
     if (m_kind == Kind::None)
         return;
@@ -51,31 +51,31 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock*
         LazyOperandValueProfileKey key(m_codeOrigin.bytecodeIndex(), Operand::fromBits(m_rawOperand));
         
         LazyOperandValueProfile* profile = profiledBlock->lazyValueProfiles().addOperandValueProfile(key);
-        jit.storeValue(regs, profile->specFailBucket(0));
+        jit.storeValue(valueGPR, profile->specFailBucket(0));
         return;
     }
         
     case Kind::UnaryArithProfile: {
         if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeIndex(m_codeOrigin.bytecodeIndex()))
-            result->emitObserveResult(jit, regs, tempGPR, mode);
+            result->emitObserveResult(jit, valueGPR, tempGPR, mode);
         return;
     }
 
     case Kind::BinaryArithProfile: {
         if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeIndex(m_codeOrigin.bytecodeIndex()))
-            result->emitObserveResult(jit, regs, tempGPR, mode);
+            result->emitObserveResult(jit, valueGPR, tempGPR, mode);
         return;
     }
 
     case Kind::ArgumentValueProfile: {
         auto& valueProfile = profiledBlock->valueProfileForArgument(Operand::fromBits(m_rawOperand).toArgument());
-        jit.storeValue(regs, valueProfile.specFailBucket(0));
+        jit.storeValue(valueGPR, valueProfile.specFailBucket(0));
         return;
     }
 
     case Kind::BytecodeValueProfile: {
         JSValue* bucket = profiledBlock->lazyValueProfiles().addSpeculationFailureValueProfile(m_codeOrigin.bytecodeIndex());
-        jit.storeValue(regs, bucket);
+        jit.storeValue(valueGPR, bucket);
         return;
     }
     }

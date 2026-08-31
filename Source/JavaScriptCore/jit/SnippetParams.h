@@ -57,10 +57,8 @@ public:
 
         bool isGPR() const { return m_reg.isGPR(); }
         bool isFPR() const { return m_reg.isFPR(); }
-        bool isJSValueRegs() const { return m_reg.isJSValueRegs(); }
         GPRReg gpr() const { return m_reg.gpr(); }
         FPRReg fpr() const { return m_reg.fpr(); }
-        JSValueRegs jsValueRegs() const { return m_reg.jsValueRegs(); }
 
         SnippetReg reg() const
         {

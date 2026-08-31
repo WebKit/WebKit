@@ -128,7 +128,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
         if (cachedRecovery.recovery().dataFormat() == DataFormatDouble) {
             if (verbose)
                 dataLog("   * Boxing ", cachedRecovery.recovery());
-            GPRReg resultGPR = cachedRecovery.wantedJSValueRegs().gpr();
+            GPRReg resultGPR = cachedRecovery.wantedGPR();
             if (resultGPR == InvalidGPRReg || m_registers[resultGPR])
                 resultGPR = getFreeGPR();
             ASSERT(resultGPR != InvalidGPRReg);
@@ -164,7 +164,7 @@ void CallFrameShuffler::emitLoad(CachedRecovery& cachedRecovery)
     VirtualRegister reg = cachedRecovery.recovery().virtualRegister();
     MacroAssembler::Address address { addressForOld(reg) };
     bool tryFPR { true };
-    GPRReg resultGPR { cachedRecovery.wantedJSValueRegs().gpr() };
+    GPRReg resultGPR { cachedRecovery.wantedGPR() };
 
     // If we want a GPR and it's available, that's better than loading
     // into an FPR.
@@ -226,7 +226,7 @@ bool CallFrameShuffler::canLoad(CachedRecovery& cachedRecovery)
 void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
 {
     Reg wantedReg;
-    if (!(wantedReg = Reg { cachedRecovery.wantedJSValueRegs().gpr() }))
+    if (!(wantedReg = Reg { cachedRecovery.wantedGPR() }))
         wantedReg = Reg { cachedRecovery.wantedFPR() };
     ASSERT(wantedReg);
     ASSERT(!m_lockedRegisters.contains(wantedReg, IgnoreVectors));
@@ -300,7 +300,7 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
         ASSERT(wantedReg.isGPR());
         if (verbose)
             dataLog("   * Loading ", cachedRecovery.recovery().constant(), " into ", wantedReg, "\n");
-        m_jit.moveTrustedValue(cachedRecovery.recovery().constant(), JSValueRegs { wantedReg.gpr() });
+        m_jit.moveTrustedValue(cachedRecovery.recovery().constant(), wantedReg.gpr());
         updateRecovery(
             cachedRecovery,
             ValueRecovery::inRegister(wantedReg, DataFormatJS));

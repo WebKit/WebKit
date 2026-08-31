@@ -80,7 +80,7 @@ CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(cons
                 virtualRegisterForArgumentIncludingThis(i) - bytecode.m_argv,
                 DataFormatJS);
     }
-    shuffleData.callee = ValueRecovery::inGPR(BaselineJITRegisters::Call::calleeJSR.payloadGPR(), DataFormatJS);
+    shuffleData.callee = ValueRecovery::inGPR(BaselineJITRegisters::Call::calleeGPR, DataFormatJS);
     shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     shuffleData.shrinkToFit();
     return shuffleData;

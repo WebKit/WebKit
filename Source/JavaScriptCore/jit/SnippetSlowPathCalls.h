@@ -32,6 +32,6 @@
 
 // macro(OperationType, ArgType1, ArgType2, ...)
 #define SNIPPET_SLOW_PATH_CALLS(macro) \
-    macro(J_JITOperation_GP, JSValueRegs, GPRReg, GPRReg) \
+    macro(J_JITOperation_GP, GPRReg, GPRReg, GPRReg) \
 
 #endif

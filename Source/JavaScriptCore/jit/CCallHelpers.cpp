@@ -69,19 +69,19 @@ void CCallHelpers::ensureShadowChickenPacket(VM& vm, GPRReg shadowPacket, GPRReg
 
 
 template <typename CodeBlockType>
-void CCallHelpers::logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex)
+void CCallHelpers::logShadowChickenTailPacketImpl(GPRReg shadowPacket, GPRReg thisGPR, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex)
 {
     storePtr(GPRInfo::callFrameRegister, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)));
     storePtr(TrustedImmPtr(ShadowChicken::Packet::tailMarker()), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)));
-    storeValue(thisRegs, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, thisValue)));
+    storeValue(thisGPR, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, thisValue)));
     storePtr(scope, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)));
     storePtr(codeBlock, Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, codeBlock)));
     store32(TrustedImm32(callSiteIndex.bits()), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callSiteIndex)));
 }
 
-void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex)
+void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, GPRReg thisGPR, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex)
 {
-    logShadowChickenTailPacketImpl(shadowPacket, thisRegs, scope, codeBlock, callSiteIndex);
+    logShadowChickenTailPacketImpl(shadowPacket, thisGPR, scope, codeBlock, callSiteIndex);
 }
 
 static_assert(!((maxFrameExtentForSlowPathCall + 2 * sizeof(CPURegister)) % 16), "Stack must be aligned after CTI thunk entry");

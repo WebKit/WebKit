@@ -47,8 +47,8 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
         return JITMathICInlineResult::DontGenerate;
 
     if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
-        ASSERT(m_left);
-        ASSERT(m_right);
+        ASSERT(m_left != InvalidGPRReg);
+        ASSERT(m_right != InvalidGPRReg);
         if (!m_leftOperand.definitelyIsNumber())
             state.slowPathJumps.append(jit.branchIfNotNumber(m_left));
         if (!m_rightOperand.definitelyIsNumber())
@@ -71,11 +71,11 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
             state.slowPathJumps.append(jit.branchIfNotInt32(m_right));
 
         if (m_leftOperand.isPositiveConstInt32() || m_rightOperand.isPositiveConstInt32()) {
-            JSValueRegs var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
+            GPRReg var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
             int32_t constValue = m_leftOperand.isPositiveConstInt32() ? m_leftOperand.asConstInt32() : m_rightOperand.asConstInt32();
-            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constValue), m_scratchGPR));
+            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, var, CCallHelpers::Imm32(constValue), m_scratchGPR));
         } else {
-            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, m_right.payloadGPR(), m_left.payloadGPR(), m_scratchGPR));
+            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, m_right, m_left, m_scratchGPR));
             state.slowPathJumps.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
         }
         jit.boxInt32(m_scratchGPR, m_result);
@@ -89,9 +89,9 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
 bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const BinaryArithProfile* arithProfile, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
-    ASSERT(m_scratchGPR != m_left.payloadGPR());
-    ASSERT(m_scratchGPR != m_right.payloadGPR());
-    ASSERT(m_scratchGPR != m_result.payloadGPR());
+    ASSERT(m_scratchGPR != m_left);
+    ASSERT(m_scratchGPR != m_right);
+    ASSERT(m_scratchGPR != m_result);
 
     ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
 
@@ -99,18 +99,18 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         return false;
 
     if (m_leftOperand.isPositiveConstInt32() || m_rightOperand.isPositiveConstInt32()) {
-        JSValueRegs var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
+        GPRReg var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
         SnippetOperand& varOpr = m_leftOperand.isPositiveConstInt32() ? m_rightOperand : m_leftOperand;
         SnippetOperand& constOpr = m_leftOperand.isPositiveConstInt32() ? m_leftOperand : m_rightOperand;
 
         // Try to do intVar * intConstant.
         CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(var);
 
-        GPRReg multiplyResultGPR = m_result.payloadGPR();
-        if (multiplyResultGPR == var.payloadGPR())
+        GPRReg multiplyResultGPR = m_result;
+        if (multiplyResultGPR == var)
             multiplyResultGPR = m_scratchGPR;
 
-        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constOpr.asConstInt32()), multiplyResultGPR));
+        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, var, CCallHelpers::Imm32(constOpr.asConstInt32()), multiplyResultGPR));
 
         jit.boxInt32(multiplyResultGPR, m_result);
         endJumpList.append(jit.jump());
@@ -137,7 +137,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         leftNotInt = jit.branchIfNotInt32(m_left);
         rightNotInt = jit.branchIfNotInt32(m_right);
 
-        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, m_right.payloadGPR(), m_left.payloadGPR(), m_scratchGPR));
+        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, m_right, m_left, m_scratchGPR));
         slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
 
         jit.boxInt32(m_scratchGPR, m_result);
@@ -152,14 +152,14 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
         CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
 
-        jit.convertInt32ToDouble(m_right.payloadGPR(), m_rightFPR);
+        jit.convertInt32ToDouble(m_right, m_rightFPR);
         CCallHelpers::Jump rightWasInteger = jit.jump();
 
         rightNotInt.link(&jit);
         if (!m_rightOperand.definitelyIsNumber())
             slowPathJumpList.append(jit.branchIfNotNumber(m_right));
 
-        jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
+        jit.convertInt32ToDouble(m_left, m_leftFPR);
 
         rightIsDouble.link(&jit);
         jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR);
@@ -180,9 +180,9 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         // done to simplify the checking algorithm.
 
         const int64_t negativeZeroBits = 1ll << 63;
-        jit.moveDoubleTo64(m_leftFPR, m_result.payloadGPR());
+        jit.moveDoubleTo64(m_leftFPR, m_result);
 
-        CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm64(negativeZeroBits));
+        CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result, CCallHelpers::TrustedImm64(negativeZeroBits));
 
         arithProfile->emitUnconditionalSet(jit, ObservedResults::NegZeroDouble);
         CCallHelpers::Jump done = jit.jump();
@@ -190,7 +190,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         notNegativeZero.link(&jit);
         arithProfile->emitUnconditionalSet(jit, ObservedResults::NonNegZeroDouble);
 
-        jit.move(m_result.payloadGPR(), m_scratchGPR);
+        jit.move(m_result, m_scratchGPR);
         jit.urshiftPtr(CCallHelpers::Imm32(52), m_scratchGPR);
         jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
         CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
@@ -199,7 +199,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         noInt52Overflow.link(&jit);
 
         done.link(&jit);
-        jit.sub64(GPRInfo::numberTagRegister, m_result.payloadGPR()); // Box the double.
+        jit.sub64(GPRInfo::numberTagRegister, m_result); // Box the double.
     }
 
     return true;

@@ -45,18 +45,18 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
         return JITMathICInlineResult::DontGenerate;
 
     if (observedTypes.isOnlyInt32()) {
-        jit.moveValueRegs(m_src, m_result);
+        jit.move(m_src, m_result);
         state.slowPathJumps.append(jit.branchIfNotInt32(m_src));
-        state.slowPathJumps.append(jit.branchTest32(CCallHelpers::Zero, m_src.payloadGPR(), CCallHelpers::TrustedImm32(0x7fffffff)));
-        jit.neg32(m_result.payloadGPR());
-        jit.boxInt32(m_result.payloadGPR(), m_result);
+        state.slowPathJumps.append(jit.branchTest32(CCallHelpers::Zero, m_src, CCallHelpers::TrustedImm32(0x7fffffff)));
+        jit.neg32(m_result);
+        jit.boxInt32(m_result, m_result);
 
         return JITMathICInlineResult::GeneratedFastPath;
     }
     if (observedTypes.isOnlyNumber()) {
         state.slowPathJumps.append(jit.branchIfInt32(m_src));
         state.slowPathJumps.append(jit.branchIfNotNumber(m_src));
-        jit.xor64(CCallHelpers::TrustedImm64(static_cast<int64_t>(1ull << 63)), m_src.payloadGPR(), m_result.payloadGPR());
+        jit.xor64(CCallHelpers::TrustedImm64(static_cast<int64_t>(1ull << 63)), m_src, m_result);
         return JITMathICInlineResult::GeneratedFastPath;
     }
     return JITMathICInlineResult::GenerateFullSnippet;
@@ -64,26 +64,26 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
 
 bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const UnaryArithProfile* arithProfile, bool shouldEmitProfiling)
 {
-    ASSERT(m_scratchGPR != m_src.payloadGPR());
-    ASSERT(m_scratchGPR != m_result.payloadGPR());
+    ASSERT(m_scratchGPR != m_src);
+    ASSERT(m_scratchGPR != m_result);
     ASSERT(m_scratchGPR != InvalidGPRReg);
 
-    jit.moveValueRegs(m_src, m_result);
+    jit.move(m_src, m_result);
     CCallHelpers::Jump srcNotInt = jit.branchIfNotInt32(m_src);
 
     // -0 should produce a double, and hence cannot be negated as an int.
     // The negative int32 0x80000000 doesn't have a positive int32 representation, and hence cannot be negated as an int.
-    slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_src.payloadGPR(), CCallHelpers::TrustedImm32(0x7fffffff)));
+    slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_src, CCallHelpers::TrustedImm32(0x7fffffff)));
 
-    jit.neg32(m_result.payloadGPR());
-    jit.boxInt32(m_result.payloadGPR(), m_result);
+    jit.neg32(m_result);
+    jit.boxInt32(m_result, m_result);
     endJumpList.append(jit.jump());
 
     srcNotInt.link(&jit);
     slowPathJumpList.append(jit.branchIfNotNumber(m_src));
 
     // For a double, all we need to do is to invert the sign bit.
-    jit.xor64(CCallHelpers::TrustedImm64((int64_t)(1ull << 63)), m_result.payloadGPR());
+    jit.xor64(CCallHelpers::TrustedImm64((int64_t)(1ull << 63)), m_result);
     // The flags of ArithNegate are basic in DFG.
     // We only need to know if we ever produced a number.
     if (shouldEmitProfiling && arithProfile && !arithProfile->argObservedType().sawNumber() && !arithProfile->didObserveDouble())

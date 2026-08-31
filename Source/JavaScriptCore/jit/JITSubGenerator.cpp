@@ -65,10 +65,10 @@ JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICG
         state.slowPathJumps.append(jit.branchIfNotInt32(m_left));
         state.slowPathJumps.append(jit.branchIfNotInt32(m_right));
 #if CPU(ARM64)
-        state.slowPathJumps.append(jit.branchSub32(CCallHelpers::Overflow, m_left.payloadGPR(), m_right.payloadGPR(), m_scratchGPR));
+        state.slowPathJumps.append(jit.branchSub32(CCallHelpers::Overflow, m_left, m_right, m_scratchGPR));
 #else
-        jit.move(m_left.payloadGPR(), m_scratchGPR);
-        state.slowPathJumps.append(jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
+        jit.move(m_left, m_scratchGPR);
+        state.slowPathJumps.append(jit.branchSub32(CCallHelpers::Overflow, m_right, m_scratchGPR));
 #endif
         jit.boxInt32(m_scratchGPR, m_result);
         return JITMathICInlineResult::GeneratedFastPath;
@@ -80,17 +80,17 @@ JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICG
 bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const BinaryArithProfile* arithProfile, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
-    ASSERT(m_scratchGPR != m_left.payloadGPR());
-    ASSERT(m_scratchGPR != m_right.payloadGPR());
+    ASSERT(m_scratchGPR != m_left);
+    ASSERT(m_scratchGPR != m_right);
 
     CCallHelpers::Jump leftNotInt = jit.branchIfNotInt32(m_left);
     CCallHelpers::Jump rightNotInt = jit.branchIfNotInt32(m_right);
 
 #if CPU(ARM64)
-    slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_left.payloadGPR(), m_right.payloadGPR(), m_scratchGPR));
+    slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_left, m_right, m_scratchGPR));
 #else
-    jit.move(m_left.payloadGPR(), m_scratchGPR);
-    slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
+    jit.move(m_left, m_scratchGPR);
+    slowPathJumpList.append(jit.branchSub32(CCallHelpers::Overflow, m_right, m_scratchGPR));
 #endif
     jit.boxInt32(m_scratchGPR, m_result);
 
@@ -105,14 +105,14 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
     CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
 
-    jit.convertInt32ToDouble(m_right.payloadGPR(), m_rightFPR);
+    jit.convertInt32ToDouble(m_right, m_rightFPR);
     CCallHelpers::Jump rightWasInteger = jit.jump();
 
     rightNotInt.link(&jit);
     if (!m_rightOperand.definitelyIsNumber())
         slowPathJumpList.append(jit.branchIfNotNumber(m_right));
 
-    jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
+    jit.convertInt32ToDouble(m_left, m_leftFPR);
 
     rightIsDouble.link(&jit);
     jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR);

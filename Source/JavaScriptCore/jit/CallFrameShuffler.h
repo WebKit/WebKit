@@ -122,13 +122,13 @@ public:
     // Ask the shuffler to put the callee into some registers once the
     // shuffling is done. You should call this before any of the
     // prepare() methods.
-    void setCalleeJSValueRegs(JSValueRegs jsValueRegs)
+    void setCalleeGPR(GPRReg gpr)
     {
         ASSERT(isUndecided());
-        ASSERT(!getNew(jsValueRegs));
+        ASSERT(!getNew(gpr));
         CachedRecovery* cachedRecovery { getNew(CallFrameSlot::callee) };
         ASSERT(cachedRecovery);
-        addNew(jsValueRegs, cachedRecovery->recovery());
+        addNew(gpr, cachedRecovery->recovery());
     }
 
     // This will emit code to build the new frame over the old one.
@@ -373,7 +373,7 @@ private:
     // This stores, for each register, information about the recovery
     // for the value that should eventually go into that register. The
     // only registers that have a target recovery will be callee-save
-    // registers, as well as possibly one JSValueRegs for holding the
+    // registers, as well as possibly one GPRReg for holding the
     // callee.
     //
     // Once the correct value has been put into the registers, and
@@ -553,20 +553,20 @@ private:
             });
     }
 
-    CachedRecovery* getNew(JSValueRegs jsValueRegs) const
+    CachedRecovery* getNew(GPRReg gpr) const
     {
-        return m_newRegisters[jsValueRegs.gpr()];
+        return m_newRegisters[gpr];
     }
 
-    void addNew(JSValueRegs jsValueRegs, ValueRecovery recovery)
+    void addNew(GPRReg gpr, ValueRecovery recovery)
     {
-        ASSERT(jsValueRegs && !getNew(jsValueRegs));
+        ASSERT(gpr != InvalidGPRReg && !getNew(gpr));
         CachedRecovery* cachedRecovery = addCachedRecovery(recovery);
-        if (cachedRecovery->wantedJSValueRegs())
-            m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
-        m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
-        ASSERT(!cachedRecovery->wantedJSValueRegs());
-        cachedRecovery->setWantedJSValueRegs(jsValueRegs);
+        if (cachedRecovery->wantedGPR() != InvalidGPRReg)
+            m_newRegisters[cachedRecovery->wantedGPR()] = nullptr;
+        m_newRegisters[gpr] = cachedRecovery;
+        ASSERT(cachedRecovery->wantedGPR() == InvalidGPRReg);
+        cachedRecovery->setWantedGPR(gpr);
     }
 
     void addNew(FPRReg fpr, ValueRecovery recovery)

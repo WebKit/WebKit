@@ -43,7 +43,7 @@ static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGen
         from.link(&jit);
         callOperation(
             *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
-            exceptions.get(), operation, extractResult(result), std::get<ArgumentsIndex>(arguments)...);
+            exceptions.get(), operation, result, std::get<ArgumentsIndex>(arguments)...);
         jit.jump().linkTo(done, &jit);
     });
 }

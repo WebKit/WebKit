@@ -797,8 +797,8 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
                 if (m_unlinkedCodeBlock->isConstructor() && !argument)
                     continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
-                loadValue(Address(callFrameRegister, offset), jsRegT10);
-                storeValue(jsRegT10, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + argument * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+                loadValue(Address(callFrameRegister, offset), regT0);
+                storeValue(regT0, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + argument * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
             }
         }
     }

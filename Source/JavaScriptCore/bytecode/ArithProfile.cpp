@@ -33,7 +33,7 @@ namespace JSC {
 
 #if ENABLE(JIT)
 template<typename BitfieldType>
-void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode)
+void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, GPRReg valueGPR, GPRReg tempGPR, TagRegistersMode mode)
 {
     if (!shouldEmitSetDouble() && !shouldEmitSetNonNumeric() && !shouldEmitSetHeapBigInt() && !shouldEmitSetBigInt32())
         return;
@@ -41,15 +41,15 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueReg
     CCallHelpers::JumpList done;
     CCallHelpers::JumpList nonNumeric;
 
-    done.append(jit.branchIfInt32(regs, mode));
-    CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(regs, mode);
+    done.append(jit.branchIfInt32(valueGPR, mode));
+    CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(valueGPR, mode);
     emitSetDouble(jit, tempGPR);
     done.append(jit.jump());
 
     notDouble.link(&jit);
 
 #if USE(BIGINT32)
-    CCallHelpers::Jump notBigInt32 = jit.branchIfNotBigInt32(regs, tempGPR, mode);
+    CCallHelpers::Jump notBigInt32 = jit.branchIfNotBigInt32(valueGPR, tempGPR, mode);
     emitSetBigInt32(jit);
     done.append(jit.jump());
     notBigInt32.link(&jit);
@@ -57,8 +57,8 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueReg
     UNUSED_PARAM(tempGPR);
 #endif
 
-    nonNumeric.append(jit.branchIfNotCell(regs, mode));
-    nonNumeric.append(jit.branchIfNotHeapBigInt(regs.payloadGPR()));
+    nonNumeric.append(jit.branchIfNotCell(valueGPR, mode));
+    nonNumeric.append(jit.branchIfNotHeapBigInt(valueGPR));
     emitSetHeapBigInt(jit);
     done.append(jit.jump());
 

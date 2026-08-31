@@ -84,9 +84,9 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
         MinifiedID id = recovery.nodeID();
         auto iter = alreadyAllocatedArguments.find(id);
         if (iter != alreadyAllocatedArguments.end()) {
-            JSValueRegs regs { GPRInfo::regT0 };
-            jit.loadValue(CCallHelpers::addressFor(iter->value), regs);
-            jit.storeValue(regs, CCallHelpers::addressFor(operand));
+            GPRReg valueGPR { GPRInfo::regT0 };
+            jit.loadValue(CCallHelpers::addressFor(iter->value), valueGPR);
+            jit.storeValue(valueGPR, CCallHelpers::addressFor(operand));
             continue;
         }
 
@@ -350,7 +350,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     value = scratch1;
                     jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), value);
                 } else
-                    value = exit.m_jsValueSource.payloadGPR();
+                    value = exit.m_jsValueSource.gpr();
 
                 jit.load32(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
                 jit.store32(scratch1, arrayProfile->addressOfSpeculationFailureStructureID());
@@ -386,10 +386,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::numberTagRegister);
                 // We also use the notCellMaskRegister as the scratch register, for the same reason.
                 // FIXME: find a less gross way of doing this, maybe through delaying these operations until we actually have some spare registers around?
-                profile.emitReportValue(jit, jit.codeBlock(), JSValueRegs(GPRInfo::numberTagRegister), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
+                profile.emitReportValue(jit, jit.codeBlock(), GPRInfo::numberTagRegister, GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
                 jit.emitMaterializeTagCheckRegisters();
             } else {
-                profile.emitReportValue(jit, jit.codeBlock(), JSValueRegs(exit.m_jsValueSource.gpr()), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
+                profile.emitReportValue(jit, jit.codeBlock(), exit.m_jsValueSource.gpr(), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
                 jit.move(AssemblyHelpers::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
             }
         }
@@ -495,8 +495,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case DisplacedInJSStack:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
-            jit.loadValue(AssemblyHelpers::addressFor(recovery.virtualRegister()), JSRInfo::jsRegT10);
-            jit.storeValue(JSRInfo::jsRegT10, scratch + index);
+            jit.loadValue(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+            jit.storeValue(GPRInfo::regT0, scratch + index);
             break;
 
         case Constant: {

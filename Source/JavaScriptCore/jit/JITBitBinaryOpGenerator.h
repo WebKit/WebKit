@@ -35,7 +35,7 @@ namespace JSC {
 class JITBitBinaryOpGenerator {
 public:
     JITBitBinaryOpGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
-        JSValueRegs result, JSValueRegs left, JSValueRegs right)
+        GPRReg result, GPRReg left, GPRReg right)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -52,9 +52,9 @@ public:
 protected:
     SnippetOperand m_leftOperand;
     SnippetOperand m_rightOperand;
-    JSValueRegs m_result;
-    JSValueRegs m_left;
-    JSValueRegs m_right;
+    GPRReg m_result { InvalidGPRReg };
+    GPRReg m_left { InvalidGPRReg };
+    GPRReg m_right { InvalidGPRReg };
     bool m_didEmitFastPath { false };
 
     CCallHelpers::JumpList m_endJumpList;

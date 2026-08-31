@@ -71,7 +71,7 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
             continue;
 
         if (reg.isGPR()) {
-            addNew(JSValueRegs(reg.gpr()), data.registers[reg]);
+            addNew(reg.gpr(), data.registers[reg]);
         } else
             addNew(reg.fpr(), data.registers[reg]);
     }
@@ -435,7 +435,7 @@ bool CallFrameShuffler::tryWrites(CachedRecovery& cachedRecovery)
         && cachedRecovery.targets().size() == 1
         && newAsOld(cachedRecovery.targets()[0]) == cachedRecovery.recovery().virtualRegister()) {
         cachedRecovery.clearTargets();
-        if (!cachedRecovery.wantedJSValueRegs() && cachedRecovery.wantedFPR() == InvalidFPRReg)
+        if (cachedRecovery.wantedGPR() == InvalidGPRReg && cachedRecovery.wantedFPR() == InvalidFPRReg)
             clearCachedRecovery(cachedRecovery.recovery());
         return true;
     }
@@ -461,7 +461,7 @@ bool CallFrameShuffler::tryWrites(CachedRecovery& cachedRecovery)
     if (verbose)
         dataLog("\n");
     cachedRecovery.clearTargets();
-    if (!cachedRecovery.wantedJSValueRegs() && cachedRecovery.wantedFPR() == InvalidFPRReg)
+    if (cachedRecovery.wantedGPR() == InvalidGPRReg && cachedRecovery.wantedFPR() == InvalidFPRReg)
         clearCachedRecovery(cachedRecovery.recovery());
 
     return true;
@@ -502,7 +502,7 @@ bool CallFrameShuffler::performSafeWrites()
                 }
                 continue;
             }
-            if (cachedRecovery->wantedJSValueRegs()) {
+            if (cachedRecovery->wantedGPR() != InvalidGPRReg) {
                 if (verbose) {
                     dataLog("   - ", cachedRecovery->recovery(), " writes to NEW ", reg,
                         " but is also needed in registers.\n");
@@ -540,7 +540,7 @@ bool CallFrameShuffler::performSafeWrites()
                     continue;
 
                 ASSERT(hasOnlySafeWrites(*cachedRecovery)
-                    && !cachedRecovery->wantedJSValueRegs()
+                    && cachedRecovery->wantedGPR() == InvalidGPRReg
                     && cachedRecovery->wantedFPR() == InvalidFPRReg);
                 if (!tryWrites(*cachedRecovery))
                     stillFailing.append(failed);
@@ -606,7 +606,7 @@ void CallFrameShuffler::prepareAny()
         }
 
         if (canLoadAndBox(*cachedRecovery) && hasOnlySafeWrites(*cachedRecovery)
-            && !cachedRecovery->wantedJSValueRegs()
+            && cachedRecovery->wantedGPR() == InvalidGPRReg
             && cachedRecovery->wantedFPR() == InvalidFPRReg) {
             emitLoad(*cachedRecovery);
             emitBox(*cachedRecovery);

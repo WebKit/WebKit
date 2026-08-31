@@ -281,7 +281,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
         jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
 
         loadedCase.link(&jit);
-        jit.loadValue(CCallHelpers::Address(GPRInfo::regT0, VM::offsetOfEncodedHostCallReturnValue()), JSRInfo::returnValueJSR);
+        jit.loadValue(CCallHelpers::Address(GPRInfo::regT0, VM::offsetOfEncodedHostCallReturnValue()), GPRInfo::returnValueGPR);
         jit.emitFunctionEpilogue();
         jit.ret();
 

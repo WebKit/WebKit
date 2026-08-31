@@ -225,7 +225,7 @@ RefPtr<AccessCase> AccessCase::createTransition(
     // enough registers to make it happen.
     if (oldStructure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
         // 1 register for value.
-        size_t requiredRegisters = 1; // propertyCache.valueRegs()
+        size_t requiredRegisters = 1; // propertyCache.valueGPR()
 
         // 1 register for the property.
         ++requiredRegisters;

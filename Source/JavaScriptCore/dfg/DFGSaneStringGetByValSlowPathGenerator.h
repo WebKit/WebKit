@@ -38,14 +38,14 @@ class SaneStringGetByValSlowPathGenerator final : public JumpingSlowPathGenerato
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SaneStringGetByValSlowPathGenerator);
 public:
     SaneStringGetByValSlowPathGenerator(
-        const MacroAssembler::Jump& from, SpeculativeJIT* jit, JSValueRegs resultRegs, JITCompiler::LinkableConstant globalObject, GPRReg baseReg, GPRReg propertyReg)
+        const MacroAssembler::Jump& from, SpeculativeJIT* jit, GPRReg resultGPR, JITCompiler::LinkableConstant globalObject, GPRReg baseReg, GPRReg propertyReg)
         : JumpingSlowPathGenerator<MacroAssembler::Jump>(from, jit)
-        , m_resultRegs(resultRegs)
+        , m_resultGPR(resultGPR)
         , m_globalObject(globalObject)
         , m_baseReg(baseReg)
         , m_propertyReg(propertyReg)
     {
-        jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(resultRegs));
+        jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR);
     }
     
 private:
@@ -57,17 +57,17 @@ private:
             MacroAssembler::LessThan, m_propertyReg, MacroAssembler::TrustedImm32(0));
         
         jit->move(
-            MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined())), m_resultRegs.gpr());
+            MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined())), m_resultGPR);
         jumpTo(jit);
         
         isNeg.link(jit);
 
-        jit->callOperationWithSilentSpill(m_plans, operationGetByValStringInt, extractResult(m_resultRegs), m_globalObject, m_baseReg, m_propertyReg);
+        jit->callOperationWithSilentSpill(m_plans, operationGetByValStringInt, m_resultGPR, m_globalObject, m_baseReg, m_propertyReg);
         
         jumpTo(jit);
     }
 
-    JSValueRegs m_resultRegs;
+    GPRReg m_resultGPR { InvalidGPRReg };
     JITCompiler::LinkableConstant m_globalObject;
     GPRReg m_baseReg;
     GPRReg m_propertyReg;

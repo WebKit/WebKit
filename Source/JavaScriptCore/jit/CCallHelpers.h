@@ -172,20 +172,6 @@ public:
         }
     }
 
-    template<unsigned NumberOfJSRs>
-    ALWAYS_INLINE void shuffleJSRs(std::array<JSValueRegs, NumberOfJSRs> sources, std::array<JSValueRegs, NumberOfJSRs> destinations)
-    {
-        constexpr unsigned NumberOfRegisters = NumberOfJSRs;
-        std::array<GPRReg, NumberOfRegisters> sourceRegs;
-        std::array<GPRReg, NumberOfRegisters> destinationRegs;
-
-        for (unsigned i = 0; i < NumberOfJSRs; ++i) {
-            sourceRegs[i] = sources[i].payloadGPR();
-            destinationRegs[i] = destinations[i].payloadGPR();
-        }
-        shuffleRegisters<GPRReg, NumberOfRegisters>(sourceRegs, destinationRegs);
-    }
-
 private:
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
@@ -380,12 +366,6 @@ private:
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, nonArgGPRs, extraPoke> argSourceRegs, GPRReg arg, Args... args)
     {
         marshallArgumentRegister<OperationType>(argSourceRegs, arg, args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, nonArgGPRs, extraPoke> argSourceRegs, JSValueRegs arg, Args... args)
-    {
-        marshallArgumentRegister<OperationType>(argSourceRegs, arg.gpr(), args...);
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
@@ -586,11 +566,6 @@ public:
             swap(destA, destB);
     }
     
-    void setupResults(JSValueRegs regs)
-    {
-        move(GPRInfo::returnValueGPR, regs.gpr());
-    }
-    
     void setupResults(FPRReg destA)
     {
         if (destA != InvalidFPRReg)
@@ -752,9 +727,9 @@ public:
 
 private:
     template <typename CodeBlockType>
-    void logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex);
+    void logShadowChickenTailPacketImpl(GPRReg shadowPacket, GPRReg thisGPR, GPRReg scope, CodeBlockType, CallSiteIndex);
 public:
-    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex);
+    void logShadowChickenTailPacket(GPRReg shadowPacket, GPRReg thisGPR, GPRReg scope, GPRReg codeBlock, CallSiteIndex);
 
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.
     void ensureShadowChickenPacket(VM&, GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);

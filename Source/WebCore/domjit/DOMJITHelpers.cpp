@@ -36,7 +36,6 @@ namespace WebCore { namespace DOMJIT {
 
 using JSC::CCallHelpers;
 using JSC::GPRReg;
-using JSC::JSValueRegs;
 using JSC::MacroAssembler;
 
 void loadDocument(MacroAssembler& jit, GPRReg node, GPRReg output)

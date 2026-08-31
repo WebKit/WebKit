@@ -78,7 +78,7 @@ Location Location::fromArgumentLocation(ArgumentLocation argLocation, TypeKind)
 {
     switch (argLocation.location.kind()) {
     case ValueLocation::Kind::GPRRegister:
-        return Location::fromGPR(argLocation.location.jsr().gpr());
+        return Location::fromGPR(argLocation.location.gpr());
     case ValueLocation::Kind::FPRRegister:
         return Location::fromFPR(argLocation.location.fpr());
     case ValueLocation::Kind::StackArgument:

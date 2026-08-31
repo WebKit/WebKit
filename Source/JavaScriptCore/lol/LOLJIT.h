@@ -349,9 +349,9 @@ private:
             if (!binding.isValid())
                 continue;
             Location location = allocator.locationOf(binding);
-            ASSERT(location.gpr() == gpr);
+            ASSERT(location.gpr == gpr);
             if (!location.isFlushed)
-                emitPutVirtualRegister(binding, JSValueRegs(gpr));
+                emitPutVirtualRegister(binding, gpr);
         }
     }
 
@@ -366,28 +366,28 @@ private:
             // This is scratch
             if (!binding.isValid())
                 continue;
-            ASSERT(allocator.locationOf(binding).gpr() == gpr);
-            emitGetVirtualRegister(binding, JSValueRegs(gpr));
+            ASSERT(allocator.locationOf(binding).gpr == gpr);
+            emitGetVirtualRegister(binding, gpr);
         }
     }
 
-    void emitWriteBarrier(const auto& allocator, const auto& allocations, JSValueRegs owner, JSValueRegs value, GPRReg scratch, WriteBarrierMode mode)
+    void emitWriteBarrier(const auto& allocator, const auto& allocations, GPRReg owner, GPRReg value, GPRReg scratch, WriteBarrierMode mode)
     {
-        ASSERT(noOverlap(owner, value.payloadGPR(), scratch));
+        ASSERT(noOverlap(owner, value, scratch));
 
         JumpList done;
         if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
             done.append(branchIfNotCell(owner));
         else
-            jitAssertIsCell(owner.payloadGPR());
+            jitAssertIsCell(owner);
 
         if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
             done.append(branchIfNotCell(value));
 
         // TODO: We should have a way to add out-of-line slow paths in a encapsulated way i.e. some addSlowPath(lambda)
-        done.append(barrierBranch(vm(), owner.payloadGPR(), scratch));
+        done.append(barrierBranch(vm(), owner, scratch));
         silentSpill(allocator, allocations);
-        callOperationNoExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), owner.payloadGPR());
+        callOperationNoExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), owner);
         silentFill(allocator);
 
         done.link(this);
@@ -419,7 +419,7 @@ private:
     template<typename Op>
     void emitCompare(const JSInstruction*, RelationalCondition);
     template <typename EmitCompareFunctor>
-    void emitCompareImpl(VirtualRegister op1, JSValueRegs op1Regs, VirtualRegister op2, JSValueRegs op2Regs, RelationalCondition, const EmitCompareFunctor&);
+    void emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, RelationalCondition, const EmitCompareFunctor&);
 
     template<typename Op>
     void emitCompareAndJump(const JSInstruction*, RelationalCondition);
@@ -427,7 +427,7 @@ private:
     template<typename Op, typename SlowOperation>
     void emitCompareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
     template<typename SlowOperation>
-    void emitCompareSlowImpl(const auto& allocations, VirtualRegister op1, JSValueRegs op1Regs, VirtualRegister op2, JSValueRegs op2Regs, JSValueRegs dstRegs, SlowOperation, Vector<SlowCaseEntry>::iterator&, const Invocable<void(FPRReg, FPRReg)> auto&);
+    void emitCompareSlowImpl(const auto& allocations, VirtualRegister op1, GPRReg op1GPR, VirtualRegister op2, GPRReg op2GPR, GPRReg dstGPR, SlowOperation, Vector<SlowCaseEntry>::iterator&, const Invocable<void(FPRReg, FPRReg)> auto&);
 
     template<typename Op, typename SlowOperation>
     void emitCompareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invertOperationResult, Vector<SlowCaseEntry>::iterator&);
@@ -454,7 +454,7 @@ private:
     static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
 
     Vector<RegisterSet> m_liveTempsForSlowPaths;
-    Vector<JSValueRegs> m_slowPathOperandRegs;
+    Vector<GPRReg> m_slowPathOperandRegs;
     unsigned m_currentSlowPathOperandIndex;
     Vector<JSInstructionStream::Offset, 32> m_jumpTargets;
     unsigned m_currentJumpTargetIndex;
@@ -463,7 +463,6 @@ private:
     // FixedVector<Location> m_locations;
     RegisterAllocator<LOLJIT> m_fastAllocator;
     static constexpr GPRReg s_scratch = RegisterAllocator<LOLJIT>::s_scratch;
-    static constexpr JSValueRegs s_scratchRegs = JSValueRegs { s_scratch };
     ReplayRegisterAllocator m_replayAllocator;
     // SimpleRegisterAllocator<GPRBank> m_allocator;
     const JSInstruction* m_currentInstruction;

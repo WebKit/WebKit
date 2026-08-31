@@ -176,7 +176,7 @@ public:
         , m_result(result)
     {
         if (m_spillMode == NeedToSpill)
-            jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(result));
+            jit->silentSpillAllRegistersImpl(false, m_plans, result);
     }
     
     MacroAssembler::Call call() const override
@@ -209,7 +209,7 @@ protected:
         }
 
         if constexpr (!std::same_as<ResultType, NoResultTag>)
-            jit->setupResults(extractResult(this->m_result));
+            jit->setupResults(this->m_result);
 
         if (m_spillMode == NeedToSpill)
             jit->silentFill(m_plans);

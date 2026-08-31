@@ -35,7 +35,7 @@ namespace JSC {
 class JITDivGenerator {
 public:
     JITDivGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
-        JSValueRegs result, JSValueRegs left, JSValueRegs right,
+        GPRReg result, GPRReg left, GPRReg right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
         BinaryArithProfile* arithProfile = nullptr)
         : m_leftOperand(leftOperand)
@@ -59,13 +59,13 @@ public:
     CCallHelpers::JumpList& slowPathJumpList() LIFETIME_BOUND { return m_slowPathJumpList; }
 
 private:
-    void loadOperand(CCallHelpers&, SnippetOperand&, JSValueRegs opRegs, FPRReg destFPR);
+    void loadOperand(CCallHelpers&, SnippetOperand&, GPRReg opGPR, FPRReg destFPR);
 
     SnippetOperand m_leftOperand;
     SnippetOperand m_rightOperand;
-    JSValueRegs m_result;
-    JSValueRegs m_left;
-    JSValueRegs m_right;
+    GPRReg m_result { InvalidGPRReg };
+    GPRReg m_left { InvalidGPRReg };
+    GPRReg m_right { InvalidGPRReg };
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;

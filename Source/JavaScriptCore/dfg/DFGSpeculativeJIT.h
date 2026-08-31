@@ -49,7 +49,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC { namespace DFG {
 
 class GPRTemporary;
-class JSValueRegsTemporary;
 class JSValueOperand;
 class SlowPathGenerator;
 class SpeculativeJIT;
@@ -392,12 +391,6 @@ public:
     {
         silentSpillAllRegistersImpl(doSpill, plans, InvalidGPRReg, InvalidGPRReg, exclude);
     }
-    template<typename CollectionType>
-    void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, JSValueRegs exclude)
-    {
-        silentSpillAllRegistersImpl(doSpill, plans, exclude.gpr());
-    }
-    
     void silentSpillAllRegisters(GPRReg exclude, GPRReg exclude2 = InvalidGPRReg, FPRReg fprExclude = InvalidFPRReg)
     {
         silentSpillAllRegistersImpl(true, m_plans, exclude, exclude2, fprExclude);
@@ -405,10 +398,6 @@ public:
     void silentSpillAllRegisters(FPRReg exclude)
     {
         silentSpillAllRegisters(InvalidGPRReg, InvalidGPRReg, exclude);
-    }
-    void silentSpillAllRegisters(JSValueRegs exclude)
-    {
-        silentSpillAllRegisters(exclude.payloadGPR());
     }
 
     void silentFillAllRegisters()
@@ -626,9 +615,9 @@ public:
 
     void compileCheckDetached(Node*);
 
-    void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, CacheableIdentifier, bool needsBaseCellCheck, AccessType, CacheType);
-    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, CacheableIdentifier, AccessType);
-    void cachedGetByIdWithThis(Node*, CodeOrigin, JSValueRegs baseRegs, JSValueRegs thisRegs, JSValueRegs resultRegs, CacheableIdentifier, bool needsBaseAndThisCellCheck);
+    void cachedGetById(Node*, CodeOrigin, GPRReg base, GPRReg result, CacheableIdentifier, bool needsBaseCellCheck, AccessType, CacheType);
+    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, GPRReg valueGPR, CacheableIdentifier, AccessType);
+    void cachedGetByIdWithThis(Node*, CodeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, CacheableIdentifier, bool needsBaseAndThisCellCheck);
 
     void compileDeleteById(Node*);
     void compileDeleteByVal(Node*);
@@ -665,7 +654,7 @@ public:
     void emitCall(Node*);
 
     void emitAllocateButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, JumpList& slowCases);
-    void emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR);
+    void emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg emptyValueGPR, GPRReg scratchGPR);
     void compileAllocateNewArrayWithSize(Node*, GPRReg resultGPR, GPRReg sizeGPR, RegisteredStructure, bool shouldConvertLargeSizeToArrayStorage = true);
     void compileAllocateNewArrayWithSize(Node*, GPRReg resultGPR, GPRReg sizeGPR, IndexingType, bool shouldConvertLargeSizeToArrayStorage = true);
     
@@ -760,10 +749,6 @@ public:
     void jsValueResult(GPRReg reg, Node* node, UseChildrenMode mode)
     {
         jsValueResult(reg, node, DataFormatJS, mode);
-    }
-    void jsValueResult(JSValueRegs regs, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
-    {
-        jsValueResult(regs.gpr(), node, format, mode);
     }
     void storageResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
@@ -970,14 +955,14 @@ public:
 
         if (exceptionReg != InvalidGPRReg) {
             RegisterSet spilledRegs = spilledRegsForSilentSpillPlans(plans);
-            if constexpr (std::same_as<GPRReg, ResultRegType> || std::same_as<JSValueRegs, ResultRegType>) {
+            if constexpr (std::same_as<GPRReg, ResultRegType>) {
                 spilledRegs.add(GPRInfo::returnValueGPR, IgnoreVectors);
                 spilledRegs.add(result, IgnoreVectors);
             }
 
             if constexpr (sizeof...(OtherSpilledRegTypes) > 0) {
                 constexpr auto addRegIfNeeded = [](auto& spilledRegs, auto& reg) ALWAYS_INLINE_LAMBDA {
-                    static_assert(std::same_as<GPRReg, std::decay_t<decltype(reg)>> || std::same_as<JSValueRegs, std::decay_t<decltype(reg)>>);
+                    static_assert(std::same_as<GPRReg, std::decay_t<decltype(reg)>>);
                     spilledRegs.add(reg, IgnoreVectors);
                 };
                 (addRegIfNeeded(spilledRegs, otherSpilledRegs), ...);
@@ -1284,8 +1269,8 @@ public:
     void compileHeapBigIntCompare(Node*, RelationalCondition);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
     void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node*, Edge neitherDoubleNorHeapBigInt, Edge notDouble);
-    void emitBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, GPRReg& result);
-    void emitBranchOnBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, BasicBlock* taken, BasicBlock* notTaken);
+    void emitBitwiseJSValueEquality(GPRReg&, GPRReg&, GPRReg& result);
+    void emitBranchOnBitwiseJSValueEquality(GPRReg&, GPRReg&, BasicBlock* taken, BasicBlock* notTaken);
     void compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
     void compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Node* branchNode, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
@@ -1377,7 +1362,7 @@ public:
     void compileLoadMapValue(Node*);
     void compileIsEmptyStorage(Node*);
     void compileMapIteratorNext(Node*);
-    void loadMapEntryData(bool isMap, GPRReg storageGPR, GPRReg entryGPR, GPRReg scratchGPR, JSValueRegs resultRegs, int32_t indexAdjust);
+    void loadMapEntryData(bool isMap, GPRReg storageGPR, GPRReg entryGPR, GPRReg scratchGPR, GPRReg resultGPR, int32_t indexAdjust);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);
     void compileMapStorage(Node*);
@@ -1416,22 +1401,22 @@ public:
     void compilePutByValMegamorphic(Node*);
 
     // We use a ScopedLambda to placate register allocation validation.
-    void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByVal(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
 
     void compileMultiGetByVal(Node*);
     void compileMultiPutByVal(Node*);
 
     void compileGetCharCodeAt(Node*);
-    void compileGetByValOnString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValOnString(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compileStringFromCharCodeOrCodePoint(Node*);
     void compileGetByValMegamorphic(Node*);
 
-    void compileGetByValOnDirectArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
-    void compileGetByValOnScopedArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValOnDirectArguments(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValOnScopedArguments(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
 
     void compileGetPrivateName(Node*);
     void compileGetPrivateNameById(Node*);
-    void compileGetPrivateNameByVal(Node*, JSValueRegs base, JSValueRegs property);
+    void compileGetPrivateNameByVal(Node*, GPRReg base, GPRReg property);
 
     void compileGetScopeOrGetEvalScope(Node*);
     void compileSkipScope(Node*);
@@ -1516,12 +1501,12 @@ public:
 #if USE(LARGE_TYPED_ARRAYS)
     void compileGetTypedArrayByteOffsetAsInt52(Node*);
 #endif
-    void compileGetByValOnIntTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValOnIntTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compilePutByValForIntTypedArray(Node*, TypedArrayType);
-    void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compilePutByValForFloatTypedArray(Node*, TypedArrayType);
-    void compileGetByValForObjectWithString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
-    void compileGetByValForObjectWithSymbol(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValForObjectWithString(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+    void compileGetByValForObjectWithSymbol(Node*, const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
     void compilePutByValForCellWithString(Node*);
     void compilePutByValForCellWithSymbol(Node*);
     void compileGetByValWithThis(Node*);
@@ -1543,7 +1528,7 @@ public:
         GPRReg property,
         Edge valueUse);
     void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
-    void setIntTypedArrayLoadResult(Node*, JSValueRegs resultRegs, TypedArrayType, bool canSpeculate, bool shouldBox, FPRReg, Jump);
+    void setIntTypedArrayLoadResult(Node*, GPRReg resultGPR, TypedArrayType, bool canSpeculate, bool shouldBox, FPRReg, Jump);
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
@@ -1583,7 +1568,7 @@ public:
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpSplitFast(Node*);
     void compileRegExpTest(Node*);
-    bool tryEmitRegExpTestFirstCharacterFilter(Node*, GPRReg globalObjectGPR, GPRReg baseGPR, JSValueRegs argumentRegs, Edge baseEdge, Edge argumentEdge);
+    bool tryEmitRegExpTestFirstCharacterFilter(Node*, GPRReg globalObjectGPR, GPRReg baseGPR, GPRReg argumentGPR, Edge baseEdge, Edge argumentEdge);
     void compileRegExpTestInline(Node*);
     void compileRegExpSearch(Node*);
     void compileRegExpStringIteratorNext(Node*);
@@ -1812,8 +1797,8 @@ public:
 
     // Called when we statically determine that a speculation will fail.
     void terminateUnreachableNode();
-    void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*);
-    void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
+    void terminateSpeculativeExecution(ExitKind, JSValueSource, Node*);
+    void terminateSpeculativeExecution(ExitKind, JSValueSource, Edge);
     
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
@@ -1824,7 +1809,7 @@ public:
     void speculateCellType(Edge, GPRReg cellGPR, SpeculatedType, JSType);
     
     void speculateInt32(Edge);
-    void speculateInt32(Edge, JSValueRegs);
+    void speculateInt32(Edge, GPRReg);
     void convertAnyInt(Edge, GPRReg resultGPR, bool canIgnoreNegativeZero);
     void speculateAnyInt(Edge);
     void speculateDoubleRepAnyInt(Edge);
@@ -1880,7 +1865,7 @@ public:
     void speculateStringIdent(Edge edge, GPRReg string);
     void speculateStringIdent(Edge);
     void speculateString(Edge);
-    void speculateStringOrOther(Edge, JSValueRegs, GPRReg scratch);
+    void speculateStringOrOther(Edge, GPRReg, GPRReg scratch);
     void speculateStringOrOther(Edge);
     void speculateNotStringVar(Edge);
     void speculateNotSymbol(Edge);
@@ -1891,19 +1876,19 @@ public:
     void speculateSymbol(Edge);
     void speculateHeapBigInt(Edge, GPRReg cell);
     void speculateHeapBigInt(Edge);
-    void speculateNotCell(Edge, JSValueRegs);
+    void speculateNotCell(Edge, GPRReg);
     void speculateNotCell(Edge);
     void speculateNotCellNorBigInt(Edge);
-    void speculateNotDouble(Edge, JSValueRegs);
+    void speculateNotDouble(Edge, GPRReg);
     void speculateNotDouble(Edge);
-    void speculateNeitherDoubleNorHeapBigInt(Edge, JSValueRegs);
+    void speculateNeitherDoubleNorHeapBigInt(Edge, GPRReg);
     void speculateNeitherDoubleNorHeapBigInt(Edge);
-    void speculateNeitherDoubleNorHeapBigIntNorString(Edge, JSValueRegs);
+    void speculateNeitherDoubleNorHeapBigIntNorString(Edge, GPRReg);
     void speculateNeitherDoubleNorHeapBigIntNorString(Edge);
-    void speculateOther(Edge, JSValueRegs, GPRReg temp);
-    void speculateOther(Edge, JSValueRegs);
+    void speculateOther(Edge, GPRReg, GPRReg temp);
+    void speculateOther(Edge, GPRReg);
     void speculateOther(Edge);
-    void speculateMisc(Edge, JSValueRegs);
+    void speculateMisc(Edge, GPRReg);
     void speculateMisc(Edge);
     void speculate(Node*, Edge);
     
@@ -2057,19 +2042,12 @@ public:
         return edge().node();
     }
 
-    JSValueRegs regs() { return jsValueRegs(); }
-
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillJSValue(m_edge);
         return m_gprOrInvalid;
     }
-    JSValueRegs jsValueRegs()
-    {
-        return JSValueRegs(gpr());
-    }
-
     void use()
     {
         m_jit->use(node());
@@ -2219,32 +2197,6 @@ private:
     GPRReg m_gpr;
 };
 
-class JSValueRegsTemporary {
-    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(JSValueRegsTemporary);
-public:
-    JSValueRegsTemporary();
-    JSValueRegsTemporary(SpeculativeJIT*);
-    template<typename T>
-    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, T& operand);
-    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&);
-    ~JSValueRegsTemporary();
-    
-    explicit operator bool() { return !!regs(); }
-
-    JSValueRegsTemporary& operator=(JSValueRegsTemporary&&) = default;
-
-    JSValueRegs NODELETE regs();
-
-private:
-    GPRTemporary m_gpr;
-};
-
-template<typename T>
-JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand)
-    : m_gpr(jit, Reuse, operand)
-{
-}
-
 class FPRTemporary {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(FPRTemporary);
 public:
@@ -2284,6 +2236,7 @@ private:
 // These classes lock the result of a call to a C++ helper function.
 
 class GPRFlushedCallResult : public GPRTemporary {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(GPRFlushedCallResult);
 public:
     GPRFlushedCallResult(SpeculativeJIT* jit)
         : GPRTemporary(jit, GPRInfo::returnValueGPR)
@@ -2292,6 +2245,7 @@ public:
 };
 
 class GPRFlushedCallResult2 : public GPRTemporary {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(GPRFlushedCallResult2);
 public:
     GPRFlushedCallResult2(SpeculativeJIT* jit)
         : GPRTemporary(jit, GPRInfo::returnValueGPR2)
@@ -2300,6 +2254,7 @@ public:
 };
 
 class FPRResult : public FPRTemporary {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(FPRResult);
 public:
     FPRResult(SpeculativeJIT* jit)
         : FPRTemporary(jit, lockedResult(jit))
@@ -2313,24 +2268,6 @@ private:
         return FPRInfo::returnValueFPR;
     }
 };
-
-class JSValueRegsFlushedCallResult {
-    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(JSValueRegsFlushedCallResult);
-public:
-    JSValueRegsFlushedCallResult(SpeculativeJIT* jit)
-        : m_gpr(jit)
-    {
-    }
-
-    JSValueRegs regs()
-    {
-        return JSValueRegs { m_gpr.gpr() };
-    }
-
-private:
-    GPRFlushedCallResult m_gpr;
-};
-
 
 // === Speculative Operand types ===
 //

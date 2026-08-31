@@ -41,7 +41,7 @@ public:
     { }
 
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
-        JSValueRegs result, JSValueRegs left, JSValueRegs right,
+        GPRReg result, GPRReg left, GPRReg right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
@@ -64,9 +64,9 @@ public:
 private:
     SnippetOperand m_leftOperand;
     SnippetOperand m_rightOperand;
-    JSValueRegs m_result;
-    JSValueRegs m_left;
-    JSValueRegs m_right;
+    GPRReg m_result { InvalidGPRReg };
+    GPRReg m_left { InvalidGPRReg };
+    GPRReg m_right { InvalidGPRReg };
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;

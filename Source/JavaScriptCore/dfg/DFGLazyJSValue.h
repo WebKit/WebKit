@@ -114,7 +114,7 @@ public:
     
     uintptr_t NODELETE switchLookupValue(SwitchKind) const;
 
-    void emit(CCallHelpers&, JSValueRegs, Plan&) const;
+    void emit(CCallHelpers&, GPRReg, Plan&) const;
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

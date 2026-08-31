@@ -81,7 +81,7 @@ struct CallInformation {
         RegisterSet usedResultRegisters;
         for (auto loc : results) {
             if (loc.location.isGPR()) {
-                usedResultRegisters.add(loc.location.jsr().payloadGPR(), IgnoreVectors);
+                usedResultRegisters.add(loc.location.gpr(), IgnoreVectors);
             } else if (loc.location.isFPR())
                 usedResultRegisters.add(loc.location.fpr(), loc.width);
         }
@@ -102,8 +102,8 @@ class WasmCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
-    WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves)
-        : jsrArgs(WTF::move(jsrs))
+    WasmCallingConvention(Vector<GPRReg>&& gprs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves)
+        : gprArgs(WTF::move(gprs))
         , fprArgs(WTF::move(fprs))
         , prologueScratchGPRs(WTF::move(scratches))
         , calleeSaveRegisters(calleeSaves)
@@ -139,7 +139,7 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset, valueSize);
+            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset, valueSize);
         case TypeKind::F32:
         case TypeKind::F64:
         case TypeKind::V128:
@@ -184,7 +184,7 @@ public:
 
     RegisterSet argumentGPRs() const { return RegisterSet::argumentGPRs(); }
 
-    const Vector<JSValueRegs> jsrArgs;
+    const Vector<GPRReg> gprArgs;
     const Vector<FPRReg> fprArgs;
     const Vector<GPRReg> prologueScratchGPRs;
     const RegisterSet calleeSaveRegisters;
@@ -194,8 +194,8 @@ class JSCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
-    JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves)
-        : jsrArgs(WTF::move(gprs))
+    JSCallingConvention(Vector<GPRReg>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves)
+        : gprArgs(WTF::move(gprs))
         , fprArgs(WTF::move(fprs))
         , calleeSaveRegisters(calleeSaves)
     { }
@@ -225,7 +225,7 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset);
+            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
@@ -252,11 +252,11 @@ public:
             [&](unsigned index) {
                 return marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, stackOffset);
             });
-        Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { JSRInfo::returnValueJSR }, Width64 } };
+        Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { GPRInfo::returnValueGPR }, Width64 } };
         return { thisArgument, WTF::move(params), WTF::move(results), stackOffset, headerSize };
     }
 
-    const Vector<JSValueRegs> jsrArgs;
+    const Vector<GPRReg> gprArgs;
     const Vector<FPRReg> fprArgs;
     const RegisterSet calleeSaveRegisters;
 };

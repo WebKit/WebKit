@@ -145,8 +145,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> materializeBaselineDataGenerator(const Abs
 
     const unsigned extraPaddingBytes = 0;
     RegisterSet builder;
-    for (auto regs : wasmCallingConvention().jsrArgs)
-        builder.add(regs, IgnoreVectors);
+    for (auto gpr : wasmCallingConvention().gprArgs)
+        builder.add(gpr, IgnoreVectors);
     for (auto reg : wasmCallingConvention().fprArgs)
         builder.add(reg, Options::useWasmSIMD() ? Width128 : Width64);
 
@@ -206,8 +206,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> callPolymorphicCalleeGenerator(const Abstr
     jit.emitFunctionPrologue();
     const unsigned extraPaddingBytes = 0;
     RegisterSet builder;
-    for (auto regs : wasmCallingConvention().jsrArgs)
-        builder.add(regs, IgnoreVectors);
+    for (auto gpr : wasmCallingConvention().gprArgs)
+        builder.add(gpr, IgnoreVectors);
     for (auto reg : wasmCallingConvention().fprArgs)
         builder.add(reg, Options::useWasmSIMD() ? Width128 : Width64);
 

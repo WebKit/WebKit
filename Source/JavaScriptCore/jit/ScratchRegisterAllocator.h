@@ -47,7 +47,6 @@ public:
 
     void NODELETE lock(GPRReg);
     void lock(FPRReg);
-    void lock(JSValueRegs);
     
     template<typename BankInfo>
     typename BankInfo::RegisterType NODELETE allocateScratch();

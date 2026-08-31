@@ -99,7 +99,7 @@ public:
     explicit operator bool() const { return m_kind != Kind::None; }
 
     // The temporary register is only needed on 64-bits builds (for testing BigInt32).
-    void emitReportValue(CCallHelpers&, CodeBlock* optimizedCodeBlock, JSValueRegs, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
+    void emitReportValue(CCallHelpers&, CodeBlock* optimizedCodeBlock, GPRReg, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
 
 private:
     enum class Kind : uint8_t {

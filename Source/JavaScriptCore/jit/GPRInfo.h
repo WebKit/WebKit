@@ -48,37 +48,6 @@ static constexpr GPRReg InvalidGPRReg { GPRReg::InvalidGPRReg };
 
 #if ENABLE(ASSEMBLER)
 
-class JSValueRegs {
-public:
-    constexpr JSValueRegs() = default;
-
-    constexpr explicit JSValueRegs(GPRReg gpr)
-        : m_gpr(gpr)
-    {
-    }
-    
-    constexpr bool operator!() const { return m_gpr == InvalidGPRReg; }
-    explicit constexpr operator bool() const { return m_gpr != InvalidGPRReg; }
-
-    friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
-
-    constexpr GPRReg gpr() const { return m_gpr; }
-    constexpr GPRReg payloadGPR() const { return m_gpr; }
-    
-    constexpr bool uses(GPRReg gpr) const
-    {
-        if (gpr == InvalidGPRReg)
-            return false;
-        return m_gpr == gpr;
-    }
-    constexpr bool overlaps(JSValueRegs other) const { return uses(other.payloadGPR()); }
-
-    void dump(PrintStream&) const;
-    
-    // Intentionally public to make JSValueRegs usable for template parameters.
-    GPRReg m_gpr { InvalidGPRReg };
-};
-
 class JSValueSource {
 public:
     JSValueSource()
@@ -86,19 +55,13 @@ public:
         , m_base(InvalidGPRReg)
     {
     }
-    
-    JSValueSource(JSValueRegs regs)
-        : m_offset(notAddress())
-        , m_base(regs.gpr())
-    {
-    }
-    
+
     explicit JSValueSource(GPRReg gpr)
         : m_offset(notAddress())
         , m_base(gpr)
     {
     }
-    
+
     JSValueSource(MacroAssembler::Address address)
         : m_offset(address.offset)
         , m_base(address.base)
@@ -107,9 +70,9 @@ public:
         ASSERT(m_base != InvalidGPRReg);
     }
     
-    static JSValueSource unboxedCell(GPRReg payloadGPR)
+    static JSValueSource unboxedCell(GPRReg gpr)
     {
-        return JSValueSource(payloadGPR);
+        return JSValueSource(gpr);
     }
     
     bool operator!() const { return m_base == InvalidGPRReg; }
@@ -135,13 +98,6 @@ public:
         return m_base;
     }
 
-    GPRReg payloadGPR() const { return gpr(); }
-
-    JSValueRegs regs() const
-    {
-        return JSValueRegs(gpr());
-    }
-    
     MacroAssembler::Address asAddress() const { return MacroAssembler::Address(base(), offset()); }
     
 private:
@@ -567,29 +523,9 @@ public:
 
 #endif // CPU(RISCV64)
 
-// A JSValueRegs corresponds to a single 64-bit architectural GPR. We use standard names for certain
-// JSValueRegs instances via the following aliases. See AssemblyHelper::noOverlap for catching
-// conflicting register aliasing statically.
-class JSRInfo {
-public:
-    // Temporary registers.
-    // jsRegT{2*n+1}{2*n} always maps one-to-one to GPR regT{2*n}.
-    static constexpr JSValueRegs jsRegT10 { GPRInfo::regT0 };
-    static constexpr JSValueRegs jsRegT32 { GPRInfo::regT2 };
-    static constexpr JSValueRegs jsRegT54 { GPRInfo::regT4 };
-
-    // Return value register
-    static constexpr JSValueRegs returnValueJSR { GPRInfo::returnValueGPR };
-};
-
 // The baseline JIT uses "accumulator" style execution with regT0 serving as the
 // accumulator register for passing results of one opcode to the next. Hence:
 static_assert(GPRInfo::regT0 == GPRInfo::returnValueGPR);
-static_assert(JSRInfo::jsRegT10 == JSRInfo::returnValueJSR);
-
-inline GPRReg extractResult(GPRReg result) { return result; }
-inline GPRReg extractResult(JSValueRegs result) { return result.gpr(); }
-inline NoResultTag extractResult(NoResultTag) { return NoResult; }
 
 // We use this hack to get the GPRInfo from the GPRReg type in templates because our code is bad and we should feel bad..
 constexpr GPRInfo toInfoFromReg(GPRReg) { return GPRInfo(); }
@@ -638,16 +574,6 @@ class NoOverlapImpl {
         return noOverlapImpl(usedGPR, usedFPR | mask, args...);
     }
 
-    // JSValueRegs case
-    template<typename... Args>
-    static constexpr bool noOverlapImpl(uint64_t usedGPR, uint64_t usedFPR, JSValueRegs jsr, Args... args)
-    {
-        unsigned mask = noOverlapImplRegMask(jsr.payloadGPR());
-        if (usedGPR & mask)
-            return false;
-        return noOverlapImpl(usedGPR | mask, usedFPR, args...);
-    }
-
     // NoResultTag case, this happens from templates
     template<typename... Args>
     static constexpr bool noOverlapImpl(uint64_t usedGPR, uint64_t usedFPR, NoResultTag, Args... args)
@@ -661,7 +587,7 @@ public:
     static constexpr bool entry(Args... args) { return noOverlapImpl(0, 0, args...); }
 };
 
-// Checks that the given list of GPRRegs, FPRegisterIDs, and JSValueRegs do not overlap.
+// Checks that the given list of GPRRegs and FPRegisterIDs do not overlap.
 // GPRs and FPRs are tracked independently (a GPR and FPR with the same number do not conflict).
 // Use this in static assertions to ensure that register aliases live at the same point do not
 // map to the same architectural register.
@@ -681,32 +607,25 @@ class PreferredArgumentImpl {
     }
 
     template <typename OperationType, size_t ArgNum, size_t Index = ArgNum, typename... Args>
-    static constexpr JSValueRegs pickJSR(GPRReg first, Args... rest)
+    static constexpr GPRReg pickGPR(GPRReg first, Args... rest)
     {
         static_assert(sizeOfArg<OperationType, ArgNum - Index>() <= 8, "Don't know how to handle large arguments");
         if constexpr (!Index)
-            return JSValueRegs { first };
+            return first;
         else {
             UNUSED_PARAM(first); // Otherwise warning due to constexpr
-            return pickJSR<OperationType, ArgNum, Index - 1>(rest...);
+            return pickGPR<OperationType, ArgNum, Index - 1>(rest...);
         }
     }
 
 public:
     template<typename OperationType, size_t ArgNum>
         requires HasNthArgument<OperationType, ArgNum>
-    static constexpr JSValueRegs preferredArgumentJSR()
-    {
-        return pickJSR<OperationType, ArgNum>(
-            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
-            GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, GPRInfo::argumentGPR5);
-    }
-
-    template<typename OperationType, size_t ArgNum>
-        requires HasNthArgument<OperationType, ArgNum>
     static constexpr GPRReg preferredArgumentGPR()
     {
-        return preferredArgumentJSR<OperationType, ArgNum>().payloadGPR();
+        return pickGPR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, GPRInfo::argumentGPR5);
     }
 };
 
@@ -723,24 +642,9 @@ constexpr GPRReg preferredArgumentGPR()
     return PreferredArgumentImpl::preferredArgumentGPR<OperationType, ArgNum>();
 }
 
-// See preferredArgumentGPR for the purpose of this function. This version returns a JSValueRegs
-// instead of a GPR; use it when passing a JSValue/EncodedJSValue argument, and
-// preferredArgumentGPR when passing host pointers.
-template<typename OperationType, size_t ArgNum>
-    requires HasNthArgument<OperationType, ArgNum>
-constexpr JSValueRegs preferredArgumentJSR()
-{
-    return PreferredArgumentImpl::preferredArgumentJSR<OperationType, ArgNum>();
-}
-
 template<typename RegisterBank, auto... registers>
 struct StaticScratchRegisterAllocator {
     static_assert(noOverlap(registers...));
-    static constexpr size_t countRegisters(JSValueRegs)
-    {
-        return 1;
-    }
-
     static constexpr size_t countRegisters(typename RegisterBank::RegisterType)
     {
         return 1;

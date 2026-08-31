@@ -3514,7 +3514,6 @@
 		0F919D2215853CDE004A4E7D /* Watchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchpoint.cpp; sourceTree = "<group>"; };
 		0F919D2315853CDE004A4E7D /* Watchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchpoint.h; sourceTree = "<group>"; };
 		0F919D2715856770004A4E7D /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
-		0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPRInfo.cpp; sourceTree = "<group>"; };
 		0F9327591C20BCBA00CF6564 /* dynbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dynbench; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F93275A1C20BCDF00CF6564 /* dynbench.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynbench.cpp; sourceTree = "<group>"; };
 		0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectInlines.h; sourceTree = "<group>"; };
@@ -7705,7 +7704,6 @@
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
 				4BC88EDD2DBADA8200DB5E36 /* GdbJIT.cpp */,
 				4BC88EDC2DBADA8200DB5E36 /* GdbJIT.h */,
-				0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */,
 				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
 				DC2143051CA32E52000A8869 /* ICStats.cpp */,
 				DC2143061CA32E52000A8869 /* ICStats.h */,

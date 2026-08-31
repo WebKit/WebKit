@@ -252,7 +252,7 @@ struct EscapedLazyJSValue {
     RefPtr<StringImpl> ownedString;
 };
 
-void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result, Plan& planRef) const
+void LazyJSValue::emit(CCallHelpers& jit, GPRReg result, Plan& planRef) const
 {
     if (m_kind == KnownValue) {
         jit.moveValue(value()->value(), result);
@@ -262,7 +262,7 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result, Plan& planRef) con
     // It must be some kind of cell.
     CCallHelpers::DataLabelPtr label = jit.moveWithPatch(
         CCallHelpers::TrustedImmPtr(static_cast<size_t>(0xd1e7beeflu)),
-        result.payloadGPR());
+        result);
 
     EscapedLazyJSValue thisValue { *this };
 

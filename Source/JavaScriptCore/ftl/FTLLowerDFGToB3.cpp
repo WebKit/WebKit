@@ -2190,7 +2190,7 @@ private:
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                value.emit(jit, JSValueRegs(params[0].gpr()), state->graph.m_plan);
+                value.emit(jit, params[0].gpr(), state->graph.m_plan);
             });
         patchpoint->effects = Effects::none();
         setJSValue(patchpoint);
@@ -2913,7 +2913,7 @@ private:
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
                 JITUnaryMathIC<Generator>* mathIC = addMathIC<Generator>(state->jitCode->common, arithProfile);
-                mathIC->m_generator = Generator(JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()), params.gpScratch(0));
+                mathIC->m_generator = Generator(params[0].gpr(), params[1].gpr(), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
                 bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
@@ -3021,8 +3021,8 @@ private:
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
                 JITBinaryMathIC<Generator>* mathIC = addMathIC<Generator>(state->jitCode->common, arithProfile);
-                mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
+                mathIC->m_generator = Generator(leftOperand, rightOperand, params[0].gpr(),
+                    params[1].gpr(), params[2].gpr(), params.fpScratch(0),
                     params.fpScratch(1), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
@@ -4785,7 +4785,7 @@ private:
             auto* propertyCache = state->addPropertyInlineCache();
             auto generator = Box<JITGetByValWithThisGenerator>::create(
                 jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetByValWithThis,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(thisValueGPR), JSValueRegs(resultGPR), InvalidGPRReg, propertyCacheGPR);
+                params.unavailableRegisters(), baseGPR, propertyGPR, thisValueGPR, resultGPR, InvalidGPRReg, propertyCacheGPR);
 
             generator->propertyCache()->propertyIsString = propertyIsString;
             generator->propertyCache()->propertyIsInt32 = propertyIsInt32;
@@ -4941,7 +4941,7 @@ private:
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITGetByValGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetPrivateName,
-                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), InvalidGPRReg, propertyCacheGPR);
+                    params.unavailableRegisters(), baseGPR, propertyGPR, resultGPR, InvalidGPRReg, propertyCacheGPR);
 
                 CCallHelpers::Jump notCell;
                 if (!baseIsCell)
@@ -5084,7 +5084,7 @@ private:
             auto* propertyCache = state->addPropertyInlineCache();
             auto generator = Box<JITPrivateBrandAccessGenerator>::create(
                 jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, accessType,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(brandGPR), propertyCacheGPR);
+                params.unavailableRegisters(), baseGPR, brandGPR, propertyCacheGPR);
 
             CCallHelpers::Jump notCell;
             if (!baseIsCell)
@@ -5331,7 +5331,7 @@ private:
             auto* propertyCache = state->addPropertyInlineCache();
             auto generator = Box<JITPutByValGenerator>::create(
                 jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, privateFieldPutKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, propertyCacheGPR);
+                params.unavailableRegisters(), baseGPR, propertyGPR, valueGPR, InvalidGPRReg, propertyCacheGPR);
 
             generator->propertyCache()->propertyIsSymbol = true;
 
@@ -5713,8 +5713,8 @@ private:
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITPutByIdGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
-                    params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), propertyCacheGPR, GPRInfo::patchpointScratchRegister,
+                    params.unavailableRegisters(), identifier, params[0].gpr(),
+                    params[1].gpr(), propertyCacheGPR, GPRInfo::patchpointScratchRegister,
                     accessType);
 
                 generator->generateFastPath(jit);
@@ -6666,7 +6666,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITGetByValGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetByVal,
-                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), InvalidGPRReg, propertyCacheGPR);
+                    params.unavailableRegisters(), baseGPR, propertyGPR, resultGPR, InvalidGPRReg, propertyCacheGPR);
 
                 generator->propertyCache()->propertyIsString = propertyIsString;
                 generator->propertyCache()->propertyIsInt32 = propertyIsInt32;
@@ -7398,7 +7398,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITPutByValGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
-                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, propertyCacheGPR);
+                    params.unavailableRegisters(), baseGPR, propertyGPR, valueGPR, InvalidGPRReg, propertyCacheGPR);
 
                 generator->propertyCache()->propertyIsString = propertyIsString;
                 generator->propertyCache()->propertyIsInt32 = propertyIsInt32;
@@ -8023,10 +8023,10 @@ IGNORE_CLANG_WARNINGS_END
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                 CCallHelpers::JumpList slowCases;
 
-                auto base = JSValueRegs(params[1].gpr());
+                auto base = params[1].gpr();
                 auto returnGPR = params[0].gpr();
                 GPRReg propertyCacheGPR = Options::useHandlerICInFTL() ? params.gpScratch(0) : InvalidGPRReg;
-                ASSERT(base.gpr() != returnGPR);
+                ASSERT(base != returnGPR);
 
                 if (child1UseKind)
                     slowCases.append(jit.branchIfNotCell(base));
@@ -8047,8 +8047,8 @@ IGNORE_CLANG_WARNINGS_END
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else {
                         if (child2UseKind == UntypedUse)
-                            slowCases.append(jit.branchIfNotCell(JSValueRegs(params[2].gpr())));
-                        return JSValueRegs(params[2].gpr());
+                            slowCases.append(jit.branchIfNotCell(params[2].gpr()));
+                        return params[2].gpr();
                     }
                 }();
 
@@ -8059,14 +8059,14 @@ IGNORE_CLANG_WARNINGS_END
                             jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             kind == DelByKind::ByIdSloppy ? AccessType::DeleteByIdSloppy : AccessType::DeleteByIdStrict,
                             params.unavailableRegisters(), subscriptValue, base,
-                            JSValueRegs(returnGPR), propertyCacheGPR);
+                            returnGPR, propertyCacheGPR);
                     } else {
                         auto* propertyCache = state->addPropertyInlineCache();
                         return Box<JITDelByValGenerator>::create(
                             jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             kind == DelByKind::ByValSloppy ? AccessType::DeleteByValSloppy : AccessType::DeleteByValStrict,
                             params.unavailableRegisters(), base,
-                            subscript, JSValueRegs(returnGPR), propertyCacheGPR);
+                            subscript, returnGPR, propertyCacheGPR);
                     }
                 }();
 
@@ -14263,7 +14263,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, [&] {
                     CallFrameShuffler shuffler { jit, shuffleData };
-                    shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
+                    shuffler.setCalleeGPR(BaselineJITRegisters::Call::calleeGPR);
                     shuffler.prepareForTailCall();
                 });
                 jit.abortWithReason(JITDidReturnFromTailCall);
@@ -14992,7 +14992,7 @@ IGNORE_CLANG_WARNINGS_END
                 if (isStack)
                     arguments.append(ConstrainedValue(lowInt32(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(safeCast<int32_t>(wasmCallInfo.params[i].location.offsetFromSP()))));
                 else
-                    arguments.append(ConstrainedValue(m_out.zeroExtPtr(lowInt32(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                    arguments.append(ConstrainedValue(m_out.zeroExtPtr(lowInt32(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.gpr())));
                 break;
             case Wasm::TypeKind::I64: {
                 // FIXME: We are handling BigInt extraction here. But once BigInt Int64 value is natively represented in DFG / FTL pipeline, we should extract this as a DFG node,
@@ -15009,7 +15009,7 @@ IGNORE_CLANG_WARNINGS_END
                 if (isStack)
                     arguments.append(ConstrainedValue(patchpoint, ValueRep::stackArgument(safeCast<Value::OffsetType>(wasmCallInfo.params[i].location.offsetFromSP()))));
                 else
-                    arguments.append(ConstrainedValue(patchpoint, ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                    arguments.append(ConstrainedValue(patchpoint, ValueRep::reg(wasmCallInfo.params[i].location.gpr())));
                 break;
             }
             case Wasm::TypeKind::Ref:
@@ -15020,7 +15020,7 @@ IGNORE_CLANG_WARNINGS_END
                 if (isStack)
                     arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(safeCast<Value::OffsetType>(wasmCallInfo.params[i].location.offsetFromSP()))));
                 else
-                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.gpr())));
                 break;
             case Wasm::TypeKind::F32:
                 if (isStack)
@@ -15065,12 +15065,12 @@ IGNORE_CLANG_WARNINGS_END
             switch (signature->returnType(0).kind()) {
             case Wasm::TypeKind::I32: {
                 patchpoint = m_out.patchpoint(Int32);
-                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.gpr()) };
                 break;
             }
             case Wasm::TypeKind::I64: {
                 patchpoint = m_out.patchpoint(Int64);
-                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.gpr()) };
                 break;
             }
             case Wasm::TypeKind::Ref:
@@ -15078,7 +15078,7 @@ IGNORE_CLANG_WARNINGS_END
             case Wasm::TypeKind::Funcref:
             case Wasm::TypeKind::Externref: {
                 patchpoint = m_out.patchpoint(Int64);
-                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.gpr()) };
                 break;
             }
             case Wasm::TypeKind::F32: {
@@ -17282,7 +17282,7 @@ IGNORE_CLANG_WARNINGS_END
                 UNUSED_PARAM(propertyCacheGPR);
                 UNUSED_PARAM(scratchGPR);
                 auto returnGPR = params[0].gpr();
-                auto base = JSValueRegs(params[1].gpr());
+                auto base = params[1].gpr();
 
                 constexpr auto optimizationFunction = [&] () {
                     if constexpr (type == AccessType::InById)
@@ -17301,7 +17301,7 @@ IGNORE_CLANG_WARNINGS_END
                     if constexpr (type == AccessType::InById)
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else
-                        return JSValueRegs(params[2].gpr());
+                        return params[2].gpr();
                 }();
 
                 const auto generator = [&] {
@@ -17310,13 +17310,13 @@ IGNORE_CLANG_WARNINGS_END
                         return Box<JITInByIdGenerator>::create(
                             jit.codeBlock(), propertyCache, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
-                            JSValueRegs(returnGPR), propertyCacheGPR);
+                            returnGPR, propertyCacheGPR);
                     } else {
                         auto* propertyCache = state->addPropertyInlineCache();
                         return Box<JITInByValGenerator>::create(
                             jit.codeBlock(), propertyCache, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             type, params.unavailableRegisters(), base, subscript,
-                            JSValueRegs(returnGPR), InvalidGPRReg, propertyCacheGPR);
+                            returnGPR, InvalidGPRReg, propertyCacheGPR);
                     }
                 }();
 
@@ -17867,7 +17867,7 @@ IGNORE_CLANG_WARNINGS_END
                 CCallHelpers::Jump doneJump;
                 if (!valueIsCell) {
                     CCallHelpers::Jump isCell = jit.branchIfCell(valueGPR);
-                    jit.boxBooleanPayload(false, resultGPR);
+                    jit.boxBoolean(false, resultGPR);
                     doneJump = jit.jump();
                     isCell.link(&jit);
                 }
@@ -18783,7 +18783,7 @@ IGNORE_CLANG_WARNINGS_END
             auto* propertyCache = state->addPropertyInlineCache();
             auto generator = Box<JITPutByValGenerator>::create(
                 jit.codeBlock(), propertyCache, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy,
-                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, propertyCacheGPR);
+                params.unavailableRegisters(), baseGPR, propertyGPR, valueGPR, InvalidGPRReg, propertyCacheGPR);
 
             generator->generateFastPath(jit);
             CCallHelpers::Label done = jit.label();
@@ -20666,8 +20666,8 @@ IGNORE_CLANG_WARNINGS_END
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
-                    params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
-                    JSValueRegs(params[0].gpr()), propertyCacheGPR, type, CacheType::GetByIdSelf);
+                    params.unavailableRegisters(), identifier, params[1].gpr(),
+                    params[0].gpr(), propertyCacheGPR, type, CacheType::GetByIdSelf);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
@@ -20756,8 +20756,8 @@ IGNORE_CLANG_WARNINGS_END
                 auto* propertyCache = state->addPropertyInlineCache();
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
-                    params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), propertyCacheGPR);
+                    params.unavailableRegisters(), identifier, params[0].gpr(),
+                    params[1].gpr(), params[2].gpr(), propertyCacheGPR);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
@@ -21617,7 +21617,7 @@ IGNORE_CLANG_WARNINGS_END
                 Vector<FPRReg> fpScratch;
                 Vector<SnippetParams::Value> regs;
 
-                regs.append(JSValueRegs(params[0].gpr()));
+                regs.append(params[0].gpr());
                 regs.append(SnippetParams::Value(params[1].gpr(), baseConstant));
                 if (domJIT->requireGlobalObject)
                     regs.append(SnippetParams::Value(params[2].gpr(), globalObjectConstant));
@@ -22416,7 +22416,7 @@ IGNORE_CLANG_WARNINGS_END
                 }
             }
             restore();
-            jit.moveValue(baselineCodeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
+            jit.moveValue(baselineCodeBlock->globalObject(), GPRInfo::returnValueGPR);
             jit.loadPtr(CCallHelpers::Address(GPRInfo::returnValueGPR, JSGlobalObject::offsetOfGlobalThis()), GPRInfo::returnValueGPR);
             params.code().emitEpilogue(jit);
 
@@ -22747,8 +22747,8 @@ IGNORE_CLANG_WARNINGS_END
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
                 auto generator = Box<BinaryArithOpGenerator>::create(
-                    leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
+                    leftOperand, rightOperand, params[0].gpr(),
+                    params[1].gpr(), params[2].gpr(),
                     params.fpScratch(0), params.fpScratch(1), params.gpScratch(0),
                     scratchFPRUsage == NeedScratchFPR ? params.fpScratch(2) : InvalidFPRReg);
 
@@ -22817,12 +22817,12 @@ IGNORE_CLANG_WARNINGS_END
                 auto generator = [&] {
                     if constexpr (BinaryBitOpGenerator::needsScratchGPR) {
                         return Box<BinaryBitOpGenerator>::create(
-                            leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                            JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.gpScratch(0));
+                            leftOperand, rightOperand, params[0].gpr(),
+                            params[1].gpr(), params[2].gpr(), params.gpScratch(0));
                     } else {
                         return Box<BinaryBitOpGenerator>::create(
-                            leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                            JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()));
+                            leftOperand, rightOperand, params[0].gpr(),
+                            params[1].gpr(), params[2].gpr());
                     }
                 }();
 
@@ -22881,8 +22881,8 @@ IGNORE_CLANG_WARNINGS_END
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
                 auto generator = Box<JITRightShiftGenerator>::create(
-                    leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
-                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
+                    leftOperand, rightOperand, params[0].gpr(),
+                    params[1].gpr(), params[2].gpr(),
                     params.fpScratch(0), params.gpScratch(0), shiftType);
 
                 generator->generateFastPath(jit);

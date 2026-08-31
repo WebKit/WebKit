@@ -37,21 +37,21 @@ void JITBitXorGenerator::generateFastPath(CCallHelpers& jit)
     m_didEmitFastPath = true;
     
     if (m_leftOperand.isConstInt32() || m_rightOperand.isConstInt32()) {
-        JSValueRegs var = m_leftOperand.isConstInt32() ? m_right : m_left;
+        GPRReg var = m_leftOperand.isConstInt32() ? m_right : m_left;
         SnippetOperand& constOpr = m_leftOperand.isConstInt32() ? m_leftOperand : m_rightOperand;
         
         // Try to do intVar ^ intConstant.
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
 
-        jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), var.payloadGPR(), m_result.payloadGPR());
-        jit.boxInt32(m_result.payloadGPR(), m_result);
+        jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), var, m_result);
+        jit.boxInt32(m_result, m_result);
         return;
     }
 
     if (m_leftOperand.definitelyIsBoolean() && m_rightOperand.definitelyIsBoolean()) {
-        jit.xor32(m_left.payloadGPR(), m_right.payloadGPR(), m_result.payloadGPR());
-        jit.and32(CCallHelpers::TrustedImm32(1), m_result.payloadGPR());
-        jit.boxInt32(m_result.payloadGPR(), m_result);
+        jit.xor32(m_left, m_right, m_result);
+        jit.and32(CCallHelpers::TrustedImm32(1), m_result);
+        jit.boxInt32(m_result, m_result);
         return;
     }
 
@@ -61,8 +61,8 @@ void JITBitXorGenerator::generateFastPath(CCallHelpers& jit)
     m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
     m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
 
-    jit.xor32(m_right.payloadGPR(), m_left.payloadGPR(), m_result.payloadGPR());
-    jit.boxInt32(m_result.payloadGPR(), m_result);
+    jit.xor32(m_right, m_left, m_result);
+    jit.boxInt32(m_result, m_result);
 }
 
 } // namespace JSC

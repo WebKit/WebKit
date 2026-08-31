@@ -149,7 +149,7 @@ public:
 #if ENABLE(JIT)
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
     // double. Sets NonNumeric if it sees a non-numeric.
-    void emitObserveResult(CCallHelpers&, JSValueRegs, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters);
+    void emitObserveResult(CCallHelpers&, GPRReg, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters);
 
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
     bool NODELETE shouldEmitSetDouble() const;

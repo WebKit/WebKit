@@ -39,7 +39,7 @@ public:
     };
 
     JITRightShiftGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
-        JSValueRegs result, JSValueRegs left, JSValueRegs right,
+        GPRReg result, GPRReg left, GPRReg right,
         FPRReg leftFPR, GPRReg scratchGPR, ShiftType type = SignedShift)
         : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right)
         , m_shiftType(type)

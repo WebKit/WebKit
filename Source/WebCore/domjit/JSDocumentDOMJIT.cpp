@@ -55,7 +55,7 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentDocumentElementAttribute()
     Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
     snippet->numGPScratchRegisters = 1;
     snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
-        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg result = params[0].gpr();
         GPRReg document = params[1].gpr();
         GPRReg globalObject = params[2].gpr();
         JSValue globalObjectValue = params[2].value();
@@ -90,7 +90,7 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
     Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
     snippet->numGPScratchRegisters = 2;
     snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
-        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg result = params[0].gpr();
         GPRReg document = params[1].gpr();
         GPRReg globalObject = params[2].gpr();
         JSValue globalObjectValue = params[2].value();

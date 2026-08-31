@@ -208,7 +208,6 @@ public:
     // Get the machine resister currently holding the value.
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble); return u.fpr; }
-    JSValueRegs jsValueRegs() { ASSERT(m_registerFormat & DataFormatJS); return JSValueRegs(u.gpr); }
 
     // Check whether a value needs spilling in order to free up any associated machine registers.
     bool needsSpill()

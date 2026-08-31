@@ -55,10 +55,10 @@ public:
     {
     }
 
-    explicit ValueLocation(JSValueRegs regs)
+    explicit ValueLocation(GPRReg gpr)
         : m_kind(GPRRegister)
     {
-        u.jsr = regs;
+        u.gpr = gpr;
     }
 
     explicit ValueLocation(FPRReg reg)
@@ -90,10 +90,10 @@ public:
     bool isStack() const { return kind() == Stack; }
     bool isStackArgument() const { return kind() == StackArgument; }
 
-    JSValueRegs jsr() const
+    GPRReg gpr() const
     {
         ASSERT(isGPR());
-        return u.jsr;
+        return u.gpr;
     }
 
     FPRReg fpr() const
@@ -118,7 +118,7 @@ public:
 
 private:
     union U {
-        JSValueRegs jsr;
+        GPRReg gpr;
         FPRReg fpr;
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;

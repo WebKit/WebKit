@@ -1669,7 +1669,7 @@ auto OMGIRGenerator::addArguments(const RTT& signature) -> PartialResult
                     dataLog("     Arg source ", i, " located at ", src, " = ");
 
                     if (src.isGPR())
-                        dataLog(context.gpr(src.jsr().payloadGPR()), " / ", (int) context.gpr(src.jsr().payloadGPR()));
+                        dataLog(context.gpr(src.gpr()), " / ", (int) context.gpr(src.gpr()));
                     else if (src.isFPR() && width <= Width::Width64)
                         dataLog(context.fpr(src.fpr()));
                     else if (src.isFPR())
@@ -1687,7 +1687,7 @@ auto OMGIRGenerator::addArguments(const RTT& signature) -> PartialResult
         B3::Value* argument;
         auto rep = wasmCallInfo.params[i];
         if (rep.location.isGPR()) {
-            argument = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.jsr().payloadGPR());
+            argument = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.gpr());
             if (type == B3::Int32)
                 argument = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), argument);
         } else if (rep.location.isFPR()) {
@@ -5921,7 +5921,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
         ShuffleLocation dst;
         if (dstParam.location.isGPR())
-            dst = ShuffleLocation::fromGPR(dstParam.location.jsr().payloadGPR());
+            dst = ShuffleLocation::fromGPR(dstParam.location.gpr());
         else if (dstParam.location.isFPR())
             dst = ShuffleLocation::fromFPR(dstParam.location.fpr());
         else {
@@ -6226,7 +6226,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
                     auto src = arg.location;
                     dataLog("Arg ", i, " located at ", arg.location, " = ");
                     if (arg.location.isGPR())
-                        dataLog(context.gpr(arg.location.jsr().payloadGPR()), " / ", (int) context.gpr(arg.location.jsr().payloadGPR()));
+                        dataLog(context.gpr(arg.location.gpr()), " / ", (int) context.gpr(arg.location.gpr()));
                     else if (arg.location.isFPR() && arg.width <= Width::Width64)
                         dataLog(context.fpr(arg.location.fpr()));
                     else if (arg.location.isFPR())

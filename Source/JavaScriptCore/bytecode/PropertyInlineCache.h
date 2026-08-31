@@ -163,10 +163,6 @@ public:
 
     bool NODELETE containsPC(void* pc) const;
 
-    JSValueRegs valueRegs() const { return JSValueRegs(valueGPR()); }
-    JSValueRegs propertyRegs() const { return JSValueRegs(propertyGPR()); }
-    JSValueRegs baseRegs() const { return JSValueRegs(baseGPR()); }
-
     bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis || accessType == AccessType::GetByValWithThis; }
 
     bool isHandlerIC() const { return m_icType == PropertyInlineCacheType::Handler; }

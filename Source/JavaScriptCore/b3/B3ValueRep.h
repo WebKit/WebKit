@@ -146,7 +146,7 @@ public:
         switch (location.kind()) {
         case Wasm::ValueLocation::Kind::GPRRegister:
             m_kind = Register;
-            u.reg = location.jsr().payloadGPR();
+            u.reg = location.gpr();
             break;
         case Wasm::ValueLocation::Kind::FPRRegister:
             m_kind = Register;

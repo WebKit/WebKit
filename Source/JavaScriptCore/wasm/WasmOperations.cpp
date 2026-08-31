@@ -132,7 +132,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSToWasmCallee
             if (wasmFrameConvention.params[i].location.isFPR())
                 dst = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmFrameConvention.params[i].location.fpr()) * bytesForWidth(Width::Width64);
             else
-                dst = GPRInfo::toArgumentIndex(wasmFrameConvention.params[i].location.jsr().payloadGPR()) * sizeof(UCPURegister);
+                dst = GPRInfo::toArgumentIndex(wasmFrameConvention.params[i].location.gpr()) * sizeof(UCPURegister);
             ASSERT(dst >= 0);
 
             dataLogLnIf(WasmOperationsInternal::verbose, "* Register Arg ", i, " ", dst);
@@ -236,10 +236,10 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
         if (loc.isGPR() || loc.isFPR()) {
             switch (type.kind()) {
             case TypeKind::I32:
-                result = jsNumber(*access.operator()<int32_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                result = jsNumber(*access.operator()<int32_t>(registerSpace, GPRInfo::toArgumentIndex(loc.gpr()) * sizeof(UCPURegister)));
                 break;
             case TypeKind::I64:
-                result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, *access.operator()<int64_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, *access.operator()<int64_t>(registerSpace, GPRInfo::toArgumentIndex(loc.gpr()) * sizeof(UCPURegister)));
                 OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 break;
             case TypeKind::F32:
@@ -249,7 +249,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                 result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
                 break;
             default:
-                result = *access.operator()<JSValue>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
+                result = *access.operator()<JSValue>(registerSpace, GPRInfo::toArgumentIndex(loc.gpr()) * sizeof(UCPURegister));
                 break;
             }
         } else {
@@ -360,7 +360,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
                 else
                     *access.operator()<uint64_t>(calleeFrame, dst) = raw;
             } else {
-                auto raw = *access.operator()<UCPURegister>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.jsr().payloadGPR()) * sizeof(UCPURegister));
+                auto raw = *access.operator()<UCPURegister>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.gpr()) * sizeof(UCPURegister));
                 if (argType.isI32())
                     *access.operator()<uint64_t>(calleeFrame, dst) = static_cast<uint32_t>(raw) | JSValue::NumberTag;
                 else
@@ -374,7 +374,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
                 OPERATION_RETURN_IF_EXCEPTION(scope);
                 *access.operator()<uint64_t>(calleeFrame, dst) = JSValue::encode(result);
             } else {
-                auto result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, *access.operator()<int64_t>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                auto result = JSBigInt::makeHeapBigIntOrBigInt32(globalObject, *access.operator()<int64_t>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.gpr()) * sizeof(UCPURegister)));
                 OPERATION_RETURN_IF_EXCEPTION(scope);
                 *access.operator()<uint64_t>(calleeFrame, dst) = JSValue::encode(result);
             }
@@ -652,7 +652,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 
         auto rep = wasmCC.results[index];
         if (rep.location.isGPR()) {
-            auto offset = GPRInfo::toArgumentIndex(rep.location.jsr().payloadGPR()) * sizeof(UCPURegister);
+            auto offset = GPRInfo::toArgumentIndex(rep.location.gpr()) * sizeof(UCPURegister);
             *access.operator()<uint64_t>(registerSpace, offset) = unboxedValue;
         } else if (rep.location.isFPR()) {
             auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(rep.location.fpr()) * bytesForWidth(Width::Width64);
@@ -1409,7 +1409,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
 
         auto rep = wasmCallInfo.results[index];
         if (rep.location.isGPR())
-            registerResults[registerResultOffsets.find(rep.location.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
+            registerResults[registerResultOffsets.find(rep.location.gpr())->offset() / sizeof(uint64_t)] = unboxedValue;
         else if (rep.location.isFPR())
             registerResults[registerResultOffsets.find(rep.location.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
         else
@@ -1445,7 +1445,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssembly
         ValueLocation loc = wasmCallInfo.results[i].location;
         JSValue value;
         if (loc.isGPR()) {
-            value = stackPointerFromCallee[(registerResults.find(loc.jsr().payloadGPR())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
+            value = stackPointerFromCallee[(registerResults.find(loc.gpr())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
         } else if (loc.isFPR())
             value = stackPointerFromCallee[(registerResults.find(loc.fpr())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
         else

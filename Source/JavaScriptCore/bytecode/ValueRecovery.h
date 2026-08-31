@@ -237,7 +237,7 @@ public:
 
     bool isInRegisters() const
     {
-        return isInJSValueRegs() || isInGPR() || isInFPR();
+        return isInGPR() || isInFPR();
     }
 
     bool isInJSStack() const
@@ -290,11 +290,6 @@ public:
     {
         ASSERT(isInGPR());
         return m_source.get().gpr;
-    }
-    
-    bool isInJSValueRegs() const
-    {
-        return isInGPR();
     }
 
     MacroAssembler::FPRegisterID fpr() const

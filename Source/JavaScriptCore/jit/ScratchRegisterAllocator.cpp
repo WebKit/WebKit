@@ -58,11 +58,6 @@ void ScratchRegisterAllocator::lock(FPRReg reg)
     m_lockedRegisters.add(reg, IgnoreVectors);
 }
 
-void ScratchRegisterAllocator::lock(JSValueRegs regs)
-{
-    lock(regs.payloadGPR());
-}
-
 template<typename BankInfo>
 typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 {

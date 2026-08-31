@@ -276,7 +276,7 @@ public:
     static void emitDataICPrepareForCall(CCallHelpers&);
     static void emitDataICRestoreAfterCall(CCallHelpers&);
     static CCallHelpers::Jump emitDataICCheckStructure(CCallHelpers&, GPRReg baseGPR, GPRReg scratchGPR);
-    static CCallHelpers::JumpList emitDataICCheckUid(CCallHelpers&, bool isSymbol, JSValueRegs, GPRReg scratchGPR);
+    static CCallHelpers::JumpList emitDataICCheckUid(CCallHelpers&, bool isSymbol, GPRReg, GPRReg scratchGPR);
     static void emitDataICJumpNextHandler(CCallHelpers&);
 
     bool NODELETE useHandlerIC() const;

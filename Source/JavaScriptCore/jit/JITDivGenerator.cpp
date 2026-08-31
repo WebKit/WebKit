@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValueRegs oprRegs, FPRReg destFPR)
+void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, GPRReg oprGPR, FPRReg destFPR)
 {
     if (opr.isConstInt32()) {
         // FIXME: this does not looks right.
@@ -48,12 +48,12 @@ void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValu
         jit.move64ToDouble(m_scratchGPR, destFPR);
     } else {
         if (!opr.definitelyIsNumber())
-            m_slowPathJumpList.append(jit.branchIfNotNumber(oprRegs));
-        CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(oprRegs);
-        jit.convertInt32ToDouble(oprRegs.payloadGPR(), destFPR);
+            m_slowPathJumpList.append(jit.branchIfNotNumber(oprGPR));
+        CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(oprGPR);
+        jit.convertInt32ToDouble(oprGPR, destFPR);
         CCallHelpers::Jump oprIsLoaded = jit.jump();
         notInt32.link(&jit);
-        jit.unboxDoubleNonDestructive(oprRegs, destFPR, m_scratchGPR);
+        jit.unboxDoubleNonDestructive(oprGPR, destFPR, m_scratchGPR);
         oprIsLoaded.link(&jit);
     }
 }
@@ -61,8 +61,8 @@ void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValu
 void JITDivGenerator::generateFastPath(CCallHelpers& jit)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
-    ASSERT(m_scratchGPR != m_left.payloadGPR());
-    ASSERT(m_scratchGPR != m_right.payloadGPR());
+    ASSERT(m_scratchGPR != m_left);
+    ASSERT(m_scratchGPR != m_right);
 
     ASSERT(!m_didEmitFastPath);
     if (!m_leftOperand.mightBeNumber() || !m_rightOperand.mightBeNumber())
@@ -111,7 +111,7 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
     notInt32.link(&jit);
     jit.moveDoubleTo64(m_leftFPR, m_scratchGPR);
     CCallHelpers::Jump notDoubleZero = jit.branchTest64(CCallHelpers::NonZero, m_scratchGPR);
-    jit.move(GPRInfo::numberTagRegister, m_result.payloadGPR());
+    jit.move(GPRInfo::numberTagRegister, m_result);
     m_endJumpList.append(jit.jump());
 
     notDoubleZero.link(&jit);
