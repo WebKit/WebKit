@@ -124,6 +124,35 @@ static dispatch_queue_t globalOutputDelegateQueue()
     return globalQueue.get().get();
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+using ProtectedVideoOutput = RetainPtr<AVPlayerItemVideoOutput>;
+#else
+// The periodic time observer's block is copied and disposed on globalOutputDelegateQueue().
+// -[AVPlayerItemVideoOutput dealloc] mutates the AVPlayer's KVO observation graph, which
+// invalidate() runs on the main thread, so the block hands its reference back to the main
+// run loop rather than releasing it on the delegate queue.
+class MainRunLoopVideoOutput final {
+public:
+    explicit MainRunLoopVideoOutput(RetainPtr<AVPlayerItemVideoOutput> output)
+        : m_output(WTF::move(output))
+    {
+    }
+
+    ~MainRunLoopVideoOutput()
+    {
+        if (RetainPtr output = std::exchange(m_output, nil))
+            ensureOnMainRunLoop([output = WTF::move(output)] { });
+    }
+
+    AVPlayerItemVideoOutput *get() const { return m_output.get(); }
+
+private:
+    RetainPtr<AVPlayerItemVideoOutput> m_output;
+};
+
+using ProtectedVideoOutput = MainRunLoopVideoOutput;
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 RefPtr<QueuedVideoOutput> QueuedVideoOutput::create(AVPlayerItem* item, AVPlayer* player)
 {
     auto queuedVideoOutput = adoptRef(new QueuedVideoOutput(item, player));
@@ -154,7 +183,7 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
     relaxAdoptionRequirement(); // WebQueuedVideoOutputDelegate's observeValueForKeyPath above can create a RefPtr to this object.
     [m_player addObserver:m_delegate.get() forKeyPath:@"rate" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
 
-    m_videoTimebaseObserver = [m_player addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput](CMTime currentTime) mutable {
+    m_videoTimebaseObserver = [m_player addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = ProtectedVideoOutput { m_videoOutput }](CMTime currentTime) mutable {
 
         // Periodically check for new available pixel buffers.
         [protectedDelegate outputMediaDataWillChange:protectedOutput.get()];
@@ -182,6 +211,10 @@ bool QueuedVideoOutput::valid()
 
 void QueuedVideoOutput::invalidate()
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    RetainPtr videoOutput = std::exchange(m_videoOutput, nil);
+#endif
+
     if (m_videoTimebaseObserver) {
         [m_player removeTimeObserver:m_videoTimebaseObserver.get()];
         m_videoTimebaseObserver = nil;
@@ -189,11 +222,18 @@ void QueuedVideoOutput::invalidate()
 
     cancelNextImageTimeObserver();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (m_videoOutput) {
         [m_playerItem removeOutput:m_videoOutput.get()];
         [m_videoOutput setDelegate:nil queue:nil];
         m_videoOutput = nil;
     }
+#else
+    if (videoOutput) {
+        [m_playerItem removeOutput:videoOutput.get()];
+        [videoOutput setDelegate:nil queue:nil];
+    }
+#endif
 
     if (m_player) {
         [m_player removeObserver:m_delegate.get() forKeyPath:@"rate"];
@@ -259,7 +299,11 @@ void QueuedVideoOutput::configureNextImageTimeObserver()
 
     auto nextImageTime = iter->first;
 
-    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput] () mutable {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput]() mutable {
+#else
+    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }]() mutable {
+#endif
         callOnMainRunLoop([weakThis = WTF::move(weakThis)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->nextImageTimeReached();
