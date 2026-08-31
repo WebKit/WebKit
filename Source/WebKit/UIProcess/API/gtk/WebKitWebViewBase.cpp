@@ -2247,6 +2247,9 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
     if (priv->isLongPressed)
         webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Motion, GDK_BUTTON_PRIMARY, GDK_BUTTON1_MASK, x + offsetX, y + offsetY, modifiers, 0, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     else {
+        // Round offsets to avoid accumulated rounding errors of deltas.
+        offsetX = std::round(offsetX);
+        offsetY = std::round(offsetY);
         double deltaX = priv->dragOffset.x() - offsetX;
         double deltaY = priv->dragOffset.y() - offsetY;
         priv->dragOffset.set(offsetX, offsetY);
