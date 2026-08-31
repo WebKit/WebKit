@@ -96,6 +96,7 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-079.xht 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-080.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-155.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-156.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-center-001.html [ Pass ]
@@ -366,6 +367,9 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg [ Pass ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-018.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-overflow/single-axis-overflow-clip-rtl.html [ Pass ]
+[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-018.html [ Pass ]
+[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-019.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vrl-rtl-rtl-in-multicols.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-002.html [ Pass ]
@@ -1550,6 +1554,9 @@ webkit.org/b/306017 [ Release ] imported/w3c/web-platform-tests/css/css-view-tra
 webkit.org/b/318778 [ Release ] fast/body-propagation/background-color/009.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/322946 imported/w3c/web-platform-tests/css/css-anchor-position/transform-011.html [ Failure Pass ]
+webkit.org/b/322946 imported/w3c/web-platform-tests/css/css-anchor-position/transform-012.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -4762,6 +4769,7 @@ webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_r
 webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_override_pending_capture_element.html?touch [ Skip ]
 webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_to_same_element_twice.html?touch [ Skip ]
 webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerrawupdate_changes_pointer_capture.https.html [ Skip ]
+webkit.org/b/204115 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerrawupdate_flush_pointercapture.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-in-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-in-iframe.html [ Skip ]
@@ -5355,13 +5363,14 @@ webkit.org/b/322623 accessibility/list-marker-content-renderers-text.html [ Fail
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash Timeout Pass ]
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ Crash Timeout Pass ]
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash Timeout Pass ]
-webkit.org/b/322625 [ Release ] ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash ]
+webkit.org/b/322625 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Timeout ]
 webkit.org/b/322641 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/start-time-compat.html [ Pass Failure ]
 webkit.org/b/322642 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Pass Failure ]
 webkit.org/b/322646 [ Debug ] media/track/track-readiness-state.html [ Pass Failure ]
 
 webkit.org/b/322814 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Crash Failure Pass ]
 webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html [ Pass Timeout ]
+webkit.org/b/322815 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Timeout ]
 webkit.org/b/322816 imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
