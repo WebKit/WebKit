@@ -44,6 +44,7 @@
 #include "ViewTimeline.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
+#include "WebAnimationUtilities.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/TextStream.h>
@@ -122,8 +123,26 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
         element = element->parentElementInComposedTree();
     }
 
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    // If we get to this point, this means we haven't found a matching timeline that has
+    // its originating element in the provided `timeline-scope` element's hierarchy. Since
+    // timelines match globally, we must use global tree order..
+    ASSERT(!timelineScopeElement);
+    auto sortedTimelines = ancestorTimelines;
+    std::ranges::stable_sort(sortedTimelines, [](auto& lhs, auto& rhs) {
+        auto lhsStyleable = originatingElement(lhs).styleable();
+        auto rhsStyleable = originatingElement(rhs).styleable();
+        ASSERT(lhsStyleable);
+        ASSERT(rhsStyleable);
+
+        if (lhsStyleable == rhsStyleable) {
+            ASSERT(is<ViewTimeline>(lhs) != is<ViewTimeline>(rhs));
+            if (!is<ViewTimeline>(lhs))
+                return false;
+        }
+
+        return compareStyleablePositionsInDocumentTreeOrder(*lhsStyleable, *rhsStyleable);
+    });
+    return sortedTimelines.first().unsafePtr();
 }
 
 static bool timelineIsInScopeForTarget(const Ref<ScrollTimeline>& timeline, Element& targetElement, Style::ScopeOrdinal animationTimelineNameScopeOrdinal)
@@ -156,9 +175,7 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(
         Ref targetElement { styleable.element };
         if (!timelineIsInScopeForTarget(timeline, targetElement.get(), targetTimelineScopeOrdinal))
             continue;
-        Ref protectedElementForTimeline { styleableForTimeline->element };
-        if (&styleableForTimeline->element == &styleable.element || styleable.element.isComposedTreeDescendantOf(protectedElementForTimeline.get()))
-            matchedTimelines.append(timeline);
+        matchedTimelines.append(timeline);
     }
     if (matchedTimelines.isEmpty())
         return nullptr;

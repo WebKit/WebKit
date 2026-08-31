@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(const Styleable& a, const Styleable& b)
+bool compareStyleablePositionsInDocumentTreeOrder(const Styleable& a, const Styleable& b)
 {
     // We should not ever be calling this function with two Elements that are the same. If that were the case,
     // then comparing objects of this kind would yield inconsistent results when comparing A == B and B == A.
@@ -153,7 +153,7 @@ static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b
 
     // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
     if (*aOwningElement != *bOwningElement)
-        return compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
+        return compareStyleablePositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
 
     // Otherwise, if A and B have different transition generation values, sort by their corresponding transition generation in ascending order.
     if (a.generationTime() != b.generationTime())
@@ -174,7 +174,7 @@ static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
 
     // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
     if (*aOwningElement != *bOwningElement)
-        return compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
+        return compareStyleablePositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
 
     // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
     auto& cssAnimationList = aOwningElement->ensureKeyframeEffectStack().cssAnimationList();
@@ -253,7 +253,7 @@ static std::optional<bool> compareStyleOriginatedAnimationEvents(const Animation
 
     auto aStyleable = Styleable(*downcast<Element>(aTarget), aAsDStyleOriginatedAnimationEventAnimationEvent->pseudoElementIdentifier());
     auto bStyleable = Styleable(*downcast<Element>(bTarget), bAsDStyleOriginatedAnimationEventAnimationEvent->pseudoElementIdentifier());
-    return compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeOrder(aStyleable, bStyleable);
+    return compareStyleablePositionsInDocumentTreeOrder(aStyleable, bStyleable);
 }
 
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const AnimationEventBase& b)

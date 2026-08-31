@@ -40,6 +40,8 @@ class Document;
 class Element;
 class WebAnimation;
 
+struct Styleable;
+
 namespace Style {
 class ComputedStyle;
 struct PseudoElementIdentifier;
@@ -61,6 +63,7 @@ inline double secondsToWebAnimationsAPITime(const Seconds time)
 
 const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 
+bool compareStyleablePositionsInDocumentTreeOrder(const Styleable&, const Styleable&);
 bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
 String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>&);
