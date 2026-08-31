@@ -59,18 +59,31 @@ actor Recap {
 final class TestWindowHost {
     let window: NSWindow
 
-    init(size: NSSize, @ViewBuilder rootView: () -> some View) {
-        self.window = NSWindow(size: size, rootView: rootView)
+    init(size: NSSize, shouldBecomeKey: Bool = true, @ViewBuilder rootView: () -> some View) {
+        self.window =
+            shouldBecomeKey
+            ? NSWindow(size: size, rootView: rootView)
+            : NonKeyWindow(size: size, rootView: rootView)
         self.window.setFrameOrigin(.zero)
 
         NSApp.activate(ignoringOtherApps: true)
-        self.window.makeKeyAndOrderFront(nil)
+
+        if shouldBecomeKey {
+            self.window.makeKeyAndOrderFront(nil)
+        } else {
+            self.window.orderFront(nil)
+        }
     }
 
     isolated deinit {
         window.resignKey()
         window.orderOut(nil)
     }
+}
+
+private final class NonKeyWindow: NSWindow {
+    override var canBecomeKey: Bool { false }
+    override var isKeyWindow: Bool { false }
 }
 
 @MainActor
