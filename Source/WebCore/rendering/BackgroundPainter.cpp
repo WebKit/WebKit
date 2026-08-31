@@ -882,20 +882,24 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
             auto& layerWidth = size.width();
             auto& layerHeight = size.height();
 
-            if (auto fixed = layerWidth.tryFixed())
-                tileSize.setWidth(Style::evaluate<LayoutUnit>(*fixed, zoom));
-            else if (layerWidth.isPercentOrCalculated()) {
+            if (auto fixed = layerWidth.tryFixed()) {
+                auto resolvedWidth = Style::evaluate<LayoutUnit>(*fixed, zoom);
+                // Non-zero resolved value should always produce some content.
+                tileSize.setWidth(!resolvedWidth ? 0_lu : std::max(devicePixelSize, resolvedWidth));
+            } else if (layerWidth.isPercentOrCalculated()) {
                 auto resolvedWidth = Style::evaluate<LayoutUnit>(layerWidth, positioningAreaSize.width(), zoom);
                 // Non-zero resolved value should always produce some content.
-                tileSize.setWidth(!resolvedWidth ? resolvedWidth : std::max(devicePixelSize, resolvedWidth));
+                tileSize.setWidth(!resolvedWidth ? 0_lu : std::max(devicePixelSize, resolvedWidth));
             }
 
-            if (auto fixed = layerHeight.tryFixed())
-                tileSize.setHeight(Style::evaluate<LayoutUnit>(*fixed, zoom));
-            else if (layerHeight.isPercentOrCalculated()) {
+            if (auto fixed = layerHeight.tryFixed()) {
+                auto resolvedHeight = Style::evaluate<LayoutUnit>(*fixed, zoom);
+                // Non-zero resolved value should always produce some content.
+                tileSize.setHeight(!resolvedHeight ? 0_lu : std::max(devicePixelSize, resolvedHeight));
+            } else if (layerHeight.isPercentOrCalculated()) {
                 auto resolvedHeight = Style::evaluate<LayoutUnit>(layerHeight, positioningAreaSize.height(), zoom);
                 // Non-zero resolved value should always produce some content.
-                tileSize.setHeight(!resolvedHeight ? resolvedHeight : std::max(devicePixelSize, resolvedHeight));
+                tileSize.setHeight(!resolvedHeight ? 0_lu : std::max(devicePixelSize, resolvedHeight));
             }
 
             // If one of the values is auto we have to use the appropriate
