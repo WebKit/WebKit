@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebRemoteFrameClient.h"
 
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "WebFrameProxyMessages.h"
@@ -96,8 +97,14 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
     for (auto& port : message.transferredPorts)
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
-    if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
+    RefPtr page = m_frame->page();
+    if (!page) {
+        if (!message.transferredPorts.isEmpty())
+            RELEASE_LOG_ERROR(SiteIsolation, "WebRemoteFrameClient::postMessageToRemote: dropping a message with %zu transferred port(s) because the page is gone", message.transferredPorts.size());
+        return;
+    }
+
+    page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
 }
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)

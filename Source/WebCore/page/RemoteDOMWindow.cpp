@@ -27,10 +27,12 @@
 #include "RemoteDOMWindow.h"
 
 #include "Document.h"
+#include "DocumentPage.h"
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
+#include "Logging.h"
 #include "MessagePort.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
@@ -130,8 +132,28 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     RefPtr userGestureToForward = UserGestureIndicator::currentUserGesture();
 
     MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-    if (RefPtr remoteFrame = frame())
-        remoteFrame->client().postMessageToRemote(sourceFrame->frameID(), sourceOrigin, remoteFrame->frameID(), target, messageWithPorts, userGestureToForward ? std::optional(userGestureToForward->data()) : std::nullopt);
+    RefPtr remoteFrame = frame();
+    if (!remoteFrame) {
+        if (!messageWithPorts.transferredPorts.isEmpty())
+            RELEASE_LOG_ERROR(MessagePorts, "RemoteDOMWindow::postMessage: dropping a message with %zu transferred port(s) because the target frame is gone", messageWithPorts.transferredPorts.size());
+        return { };
+    }
+
+    auto sendMessage = [remoteFrame = WeakPtr { *remoteFrame }, sourceFrameID = sourceFrame->frameID(), sourceOrigin, target, messageWithPorts = WTF::move(messageWithPorts), userGestureToForward = userGestureToForward ? std::optional(userGestureToForward->data()) : std::nullopt] mutable {
+        RefPtr frame = remoteFrame.get();
+        if (!frame) {
+            if (!messageWithPorts.transferredPorts.isEmpty())
+                RELEASE_LOG_ERROR(MessagePorts, "RemoteDOMWindow::postMessage: dropping a deferred message with %zu transferred port(s) because the target frame went away", messageWithPorts.transferredPorts.size());
+            return;
+        }
+        frame->client().postMessageToRemote(sourceFrameID, sourceOrigin, frame->frameID(), target, messageWithPorts, userGestureToForward);
+    };
+
+    RefPtr page = remoteFrame->page();
+    if (page && page->shouldDeferRemotePostMessage())
+        page->deferRemotePostMessage(WTF::move(sendMessage));
+    else
+        sendMessage();
     return { };
 }
 

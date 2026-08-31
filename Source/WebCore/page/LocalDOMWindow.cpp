@@ -2449,19 +2449,25 @@ void LocalDOMWindow::dispatchLoadEvent()
         WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventBegin");
     }
 
-    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
+    {
+        // Messages posted from a load event handler must not be sent until dispatchLoadEventToParent()
+        // below has notified the owner element.
+        Page::DeferRemotePostMessageScope deferRemotePostMessageScope(frame ? frame->page() : nullptr);
 
-    if (shouldMarkLoadEventTimes) {
-        auto now = MonotonicTime::now();
-        protectedLoader->timing().setLoadEventEnd(now);
-        protect(performance())->navigationFinished(now);
-        WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventEnd");
-        WTFEndSignpost(document.get(), NavigationAndPaintTiming);
+        dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
+
+        if (shouldMarkLoadEventTimes) {
+            auto now = MonotonicTime::now();
+            protectedLoader->timing().setLoadEventEnd(now);
+            protect(performance())->navigationFinished(now);
+            WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventEnd");
+            WTFEndSignpost(document.get(), NavigationAndPaintTiming);
+        }
+
+        // Send a separate load event to the element that owns this frame.
+        if (RefPtr currentFrame = this->frame())
+            currentFrame->dispatchLoadEventToParent();
     }
-
-    // Send a separate load event to the element that owns this frame.
-    if (RefPtr frame = this->frame())
-        frame->dispatchLoadEventToParent();
 
     InspectorInstrumentation::loadEventFired(protect(this->frame()).get());
 }
