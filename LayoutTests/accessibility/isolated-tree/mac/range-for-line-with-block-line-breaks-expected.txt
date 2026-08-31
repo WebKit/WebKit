@@ -1,0 +1,61 @@
+Asserts AXRangeForLine and AXLineForIndex for multi-line text controls whose lines are separated by block boundaries rather than <br> elements.
+
+two block-separated lines: value "one two\nthree"
+PASS: axField.numberOfCharacters === 13
+PASS: lineRange === "{0, 7}"
+PASS: axField.stringForRange(0, 7) === "one two"
+PASS: lineRange === "{8, 5}"
+PASS: axField.stringForRange(8, 5) === "three"
+PASS: lineIndexes.join(',') === "0,0,0,0,0,0,0,0,1,1,1,1,1,-1"
+
+four block-separated lines: value "aaa\nbbb\nccc\nddd"
+PASS: axField.numberOfCharacters === 15
+PASS: lineRange === "{0, 3}"
+PASS: axField.stringForRange(0, 3) === "aaa"
+PASS: lineRange === "{4, 3}"
+PASS: axField.stringForRange(4, 3) === "bbb"
+PASS: lineRange === "{8, 3}"
+PASS: axField.stringForRange(8, 3) === "ccc"
+PASS: lineRange === "{12, 3}"
+PASS: axField.stringForRange(12, 3) === "ddd"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+
+four <br>-separated lines: value "aaa\nbbb\nccc\nddd"
+PASS: axField.numberOfCharacters === 15
+PASS: lineRange === "{0, 4}"
+PASS: axField.stringForRange(0, 4) === "aaa\n"
+PASS: lineRange === "{4, 4}"
+PASS: axField.stringForRange(4, 4) === "bbb\n"
+PASS: lineRange === "{8, 4}"
+PASS: axField.stringForRange(8, 4) === "ccc\n"
+PASS: lineRange === "{12, 3}"
+PASS: axField.stringForRange(12, 3) === "ddd"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+
+textarea, newlines in the value: value "aaa\nbbb\nccc\nddd"
+PASS: axField.numberOfCharacters === 15
+PASS: lineRange === "{0, 4}"
+PASS: axField.stringForRange(0, 4) === "aaa\n"
+PASS: lineRange === "{4, 4}"
+PASS: axField.stringForRange(4, 4) === "bbb\n"
+PASS: lineRange === "{8, 4}"
+PASS: axField.stringForRange(8, 4) === "ccc\n"
+PASS: lineRange === "{12, 3}"
+PASS: axField.stringForRange(12, 3) === "ddd"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+one two
+three
+aaa
+bbb
+ccc
+ddd
+aaa
+bbb
+ccc
+ddd
+
