@@ -192,7 +192,7 @@ Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<char16_
     return createUninitializedInternal(length, data);
 }
 
-template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::reallocateInternal(Ref<StringImpl>&& originalString, unsigned length, CharacterType*& data)
+template<typename CharacterType> inline std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::reallocateInternal(Ref<StringImpl>&& originalString, unsigned length, CharacterType*& data)
 {
     ASSERT(originalString->hasOneRef());
     ASSERT(originalString->bufferOwnership() == BufferInternal);
@@ -232,13 +232,13 @@ Ref<StringImpl> StringImpl::reallocate(Ref<StringImpl>&& originalString, unsigne
     return WTF::move(expectedStringImpl.value());
 }
 
-Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, Latin1Character*& data)
+std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, Latin1Character*& data)
 {
     ASSERT(originalString->is8Bit());
     return reallocateInternal(WTF::move(originalString), length, data);
 }
 
-Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, char16_t*& data)
+std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, char16_t*& data)
 {
     ASSERT(!originalString->is8Bit());
     return reallocateInternal(WTF::move(originalString), length, data);
@@ -1540,21 +1540,21 @@ size_t NODELETE StringImpl::sizeInBytes() const
     return size + sizeof(*this);
 }
 
-Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
+std::expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, source);
 }
 
-Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const char16_t> characters, ConversionMode mode)
+std::expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const char16_t> characters, ConversionMode mode)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, characters, mode);
 }
 
-Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const char16_t> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
+std::expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const char16_t> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
 {
     ASSERT(bufferVector.size() == span.size() * 3);
 
@@ -1592,7 +1592,7 @@ size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::
     return notFound;
 }
 
-Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
+std::expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
 {
     if (is8Bit())
         return utf8ForCharacters(span8());

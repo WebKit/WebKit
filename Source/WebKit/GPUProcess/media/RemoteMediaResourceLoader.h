@@ -86,7 +86,7 @@ private:
 
     // PlatformMediaResourceLoader
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
+    void sendH2Ping(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
     Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }
 
     // Messages

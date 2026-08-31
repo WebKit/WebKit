@@ -102,7 +102,7 @@ private:
     // TracksRendererInterface
     using TrackIdentifier = WebCore::AudioVideoRenderer::TrackIdentifier;
 
-    void addTrack(RemoteAudioVideoRendererIdentifier, WebCore::TrackInfo::TrackType, CompletionHandler<void(Expected<TrackIdentifier, WebCore::PlatformMediaError>)>&&);
+    void addTrack(RemoteAudioVideoRendererIdentifier, WebCore::TrackInfo::TrackType, CompletionHandler<void(std::expected<TrackIdentifier, WebCore::PlatformMediaError>)>&&);
     void removeTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier);
 
     void newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier, Ref<WebCore::TrackInfo>&&);
@@ -167,7 +167,7 @@ private:
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     void setCDMInstance(RemoteAudioVideoRendererIdentifier, std::optional<RemoteCDMInstanceIdentifier>);
-    void setInitData(RemoteAudioVideoRendererIdentifier, Ref<WebCore::SharedBuffer>, CompletionHandler<void(Expected<void, WebCore::PlatformMediaError>)>&&);
+    void setInitData(RemoteAudioVideoRendererIdentifier, Ref<WebCore::SharedBuffer>, CompletionHandler<void(std::expected<void, WebCore::PlatformMediaError>)>&&);
     void attemptToDecrypt(RemoteAudioVideoRendererIdentifier);
 #endif
 

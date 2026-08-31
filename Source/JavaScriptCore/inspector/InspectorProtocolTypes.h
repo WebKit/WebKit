@@ -27,7 +27,6 @@
 #pragma once
 
 #include <wtf/Assertions.h>
-#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +38,7 @@ namespace Protocol {
 using ErrorString = String;
 
 template <typename T>
-using ErrorStringOr = Expected<T, ErrorString>;
+using ErrorStringOr = std::expected<T, ErrorString>;
 
 template<typename> struct BindingTraits;
 

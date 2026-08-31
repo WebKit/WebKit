@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT static void forEach(NOESCAPE Function<void(CoreAudioCaptureUnit&)>&&);
     static void forNewUnit(Function<void(CoreAudioCaptureUnit&)>&&);
 
-    using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
+    using CreationCallback = Function<std::expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
     void setInternalUnitCreationCallback(CreationCallback&& callback) { m_creationCallback = WTF::move(callback); }
     using GetSampleRateCallback = Function<int()>;
     void setInternalUnitGetSampleRateCallback(GetSampleRateCallback&& callback) { m_getSampleRateCallback = WTF::move(callback); }

@@ -71,26 +71,26 @@ public:
     void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);
     std::optional<FileSystemStorageError> move(WebCore::FileSystemHandleIdentifier, const String& newName);
-    Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
-    Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
     std::optional<FileSystemStorageError> removeEntry(const String& name, bool deleteRecursively);
-    Expected<std::optional<Vector<String>>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
-    Expected<Vector<String>, FileSystemStorageError> getHandleNames();
-    Expected<WebCore::FileSystemHandleInfo, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, String&& name);
+    std::expected<std::optional<Vector<String>>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
+    std::expected<Vector<String>, FileSystemStorageError> getHandleNames();
+    std::expected<WebCore::FileSystemHandleInfo, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, String&& name);
     void requestNewCapacityForSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
-    Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
+    std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
     std::optional<FileSystemStorageError> closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> NODELETE activeSyncAccessHandle();
 
-    Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError> createWritable(bool keepExistingData);
+    std::expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError> createWritable(bool keepExistingData);
     std::optional<FileSystemStorageError> closeWritable(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCloseReason);
     void executeCommandForWritable(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
     Vector<WebCore::FileSystemWritableFileStreamIdentifier> writables() const;
 
 private:
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
-    Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
     bool NODELETE isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<FileSystemStorageError> executeCommandForWritableInternal(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);
     std::optional<size_t> computeCommandSpace(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);

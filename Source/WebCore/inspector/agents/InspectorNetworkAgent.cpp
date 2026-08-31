@@ -87,7 +87,6 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <tuple>
-#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -984,7 +983,7 @@ void InspectorNetworkAgent::loadResource(const Inspector::Protocol::Network::Fra
         return;
     }
 
-    ResourceUtilities::loadResource(*context, urlString, [callback = WTF::move(callback)](Expected<std::tuple<String, String, int>, String>&& result) mutable {
+    ResourceUtilities::loadResource(*context, urlString, [callback = WTF::move(callback)](std::expected<std::tuple<String, String, int>, String>&& result) mutable {
         if (result) {
             auto& [content, mimeType, status] = result.value();
             callback->sendSuccess(content, mimeType, status);

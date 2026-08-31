@@ -302,7 +302,7 @@ WKWebExtensionWindowState NODELETE toAPI(WebExtensionWindow::State state)
     return WKWebExtensionWindowStateNormal;
 }
 
-void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"windows.update()";
 
@@ -351,7 +351,7 @@ bool WebExtensionWindow::isFrontmost() const
     return this == extensionContext->frontmostWindow();
 }
 
-void WebExtensionWindow::focus(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionWindow::focus(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"windows.update()";
 
@@ -409,7 +409,7 @@ CGRect WebExtensionWindow::frame() const
     return CGRectStandardize([m_delegate frameForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"windows.update()";
 
@@ -448,7 +448,7 @@ CGRect WebExtensionWindow::screenFrame() const
 }
 #endif
 
-void WebExtensionWindow::close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionWindow::close(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"windows.remove()";
 

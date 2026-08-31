@@ -2252,7 +2252,7 @@ struct ResolvedMouseTarget {
 
 enum class ScrollTargetIntoView : bool { No, Yes };
 
-static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode, const String& searchText, ASCIILiteral boxShadowColor, ScrollTargetIntoView scrollTargetIntoView = ScrollTargetIntoView::No)
+static std::expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode, const String& searchText, ASCIILiteral boxShadowColor, ScrollTargetIntoView scrollTargetIntoView = ScrollTargetIntoView::No)
 {
     RefPtr element = dynamicDowncast<Element>(targetNode);
     if (!element)

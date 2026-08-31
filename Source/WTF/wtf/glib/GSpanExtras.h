@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <wtf/Expected.h>
 #include <wtf/MallocSpan.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -75,8 +74,8 @@ GMallocSpan<T, Malloc> dupGMallocSpan(std::span<const T> span)
     return duplicate;
 }
 
-WTF_EXPORT_PRIVATE Expected<GMallocSpan<char>, GUniquePtr<GError>> gFileGetContents(CStringView);
-WTF_EXPORT_PRIVATE Expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKeys(GKeyFile*, CStringView groupName);
+WTF_EXPORT_PRIVATE std::expected<GMallocSpan<char>, GUniquePtr<GError>> gFileGetContents(CStringView);
+WTF_EXPORT_PRIVATE std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKeys(GKeyFile*, CStringView groupName);
 WTF_EXPORT_PRIVATE GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass*);
 WTF_EXPORT_PRIVATE GMallocSpan<const char*> gVariantGetStrv(const GRefPtr<GVariant>&);
 

@@ -317,7 +317,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidateHandler&& val
     });
 }
 
-Expected<RealtimeMediaSourceCenter::ValidDevices, MediaConstraintType> RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(const MediaStreamRequest& request, const MediaDeviceHashSalts& deviceIdentifierHashSalts)
+std::expected<RealtimeMediaSourceCenter::ValidDevices, MediaConstraintType> RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(const MediaStreamRequest& request, const MediaDeviceHashSalts& deviceIdentifierHashSalts)
 {
     ASSERT(request.type != MediaStreamRequest::Type::DisplayMedia || request.type != MediaStreamRequest::Type::DisplayMediaWithAudio);
     struct {

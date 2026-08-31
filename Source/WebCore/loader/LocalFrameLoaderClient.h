@@ -36,7 +36,6 @@
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
@@ -349,7 +348,7 @@ public:
 #endif
 
     virtual void prefetchDNS(const String&) = 0;
-    virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
+    virtual void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) = 0;
 
     virtual void didRestoreScrollPosition() { }
 

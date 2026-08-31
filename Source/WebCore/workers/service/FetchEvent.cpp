@@ -133,7 +133,7 @@ void FetchEvent::respondWithError(ResourceError&& error)
     processResponse(makeUnexpected(WTF::move(error)));
 }
 
-void FetchEvent::processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result)
+void FetchEvent::processResponse(std::expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result)
 {
     m_respondPromise = nullptr;
     m_waitToRespond = false;

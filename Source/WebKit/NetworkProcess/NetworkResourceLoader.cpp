@@ -92,7 +92,6 @@
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/MakeString.h>
 

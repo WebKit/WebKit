@@ -144,7 +144,7 @@ WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses(
     return result;
 }
 
-Expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensionContext& extensionContext)
+std::expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensionContext& extensionContext)
 {
     if (!m_extensionContexts.add(extensionContext)) {
         RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
@@ -188,7 +188,7 @@ Expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensionCont
     return true;
 }
 
-Expected<bool, RefPtr<API::Error>> WebExtensionController::unload(WebExtensionContext& extensionContext)
+std::expected<bool, RefPtr<API::Error>> WebExtensionController::unload(WebExtensionContext& extensionContext)
 {
     Ref protectedExtensionContext = extensionContext;
 
@@ -495,7 +495,7 @@ RefPtr<WebExtensionStorageSQLiteStore> WebExtensionController::sqliteStore(const
     return WebExtensionStorageSQLiteStore::create(uniqueIdentifier, type, storageDirectory, WebExtensionStorageSQLiteStore::UsesInMemoryDatabase::No);
 }
 
-void WebExtensionController::calculateStorageSize(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionController::calculateStorageSize(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(std::expected<size_t, WebExtensionError>&&)>&& completionHandler)
 {
     storage.getStorageSizeForKeys({ }, [completionHandler = WTF::move(completionHandler)](size_t storageSize, const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Add storage size of window.localStorage, window.sessionStorage and indexedDB.
@@ -506,7 +506,7 @@ void WebExtensionController::calculateStorageSize(WebExtensionStorageSQLiteStore
     });
 }
 
-void WebExtensionController::removeStorage(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionController::removeStorage(WebExtensionStorageSQLiteStore& storage, WebExtensionDataType type, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     storage.deleteDatabase([completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         // FIXME: <https://webkit.org/b/269100> Remove window.localStorage, window.sessionStorage, indexedDB.

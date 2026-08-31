@@ -952,7 +952,7 @@ Awaitable<DragInitiationResult> WebPage::requestDragStart(std::optional<WebCore:
     if (!localRootFrame)
         co_return { false };
 
-    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<Expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
+    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<std::expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
         localRootFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
     } };
     if (handledOrTransformer)
@@ -979,7 +979,7 @@ Awaitable<DragInitiationResult> WebPage::requestAdditionalItemsForDragSession(st
 
     localMainFrame->eventHandler().dragSourceEndedAt(event, { }, MayExtendDragSession::Yes);
 
-    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<Expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
+    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<std::expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
         localMainFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
     } };
     if (handledOrTransformer)
@@ -3926,7 +3926,7 @@ void WebPage::didEndUserTriggeredZooming()
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const Expected<bool, WebCore::RemoteFrameGeometryTransformer>& transformer, const WebTouchEvent& event)
+static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const std::expected<bool, WebCore::RemoteFrameGeometryTransformer>& transformer, const WebTouchEvent& event)
 {
     if (transformer)
         return std::nullopt;

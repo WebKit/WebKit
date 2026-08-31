@@ -60,7 +60,7 @@ struct ExceptionData;
 
 - (instancetype)initWithView:(WKWebView *)view page:(WebKit::WebPageProxy*)page;
 
-- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
+- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
 - (void)dismissWithCompletionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 @end
 

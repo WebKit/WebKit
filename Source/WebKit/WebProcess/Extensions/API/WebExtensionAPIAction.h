@@ -75,7 +75,7 @@ private:
     static NSArray *parseIconVariants(NSArray *, const URL& baseURL, NSString *inputKey, NSString **outExceptionString);
 #endif
 
-    static Expected<void, String> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
+    static std::expected<void, String> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
 
     RefPtr<WebExtensionAPIEvent> m_onClicked;
 #endif

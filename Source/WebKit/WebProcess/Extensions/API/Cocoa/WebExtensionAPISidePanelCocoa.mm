@@ -44,7 +44,7 @@
 namespace WebKit {
 
 
-static Expected<std::optional<WebExtensionTabIdentifier>, WebExtensionError> parseTabIdentifier(NSDictionary *options)
+static std::expected<std::optional<WebExtensionTabIdentifier>, WebExtensionError> parseTabIdentifier(NSDictionary *options)
 {
     id maybeTabId = [options objectForKey:tabIdKey];
 
@@ -61,7 +61,7 @@ static Expected<std::optional<WebExtensionTabIdentifier>, WebExtensionError> par
     return makeUnexpected(toErrorString(nullString(), @"options", @"'tabId' must be a number"));
 }
 
-static Expected<std::optional<WebExtensionWindowIdentifier>, WebExtensionError> parseWindowIdentifier(NSDictionary *options)
+static std::expected<std::optional<WebExtensionWindowIdentifier>, WebExtensionError> parseWindowIdentifier(NSDictionary *options)
 {
     id maybeWindowId = [options objectForKey:windowIdKey];
 
@@ -78,7 +78,7 @@ static Expected<std::optional<WebExtensionWindowIdentifier>, WebExtensionError> 
     return makeUnexpected(toErrorString(nullString(), @"options", @"'windowId' must be a number"));
 }
 
-static Expected<std::optional<WebExtensionActionClickBehavior>, WebExtensionError> parseActionClickBehavior(NSDictionary *behavior)
+static std::expected<std::optional<WebExtensionActionClickBehavior>, WebExtensionError> parseActionClickBehavior(NSDictionary *behavior)
 {
     static NSDictionary<NSString *, id> *types = @{
         actionClickBehaviorKey: @YES.class,
@@ -96,7 +96,7 @@ static Expected<std::optional<WebExtensionActionClickBehavior>, WebExtensionErro
 
 using SidebarTargetIdentifiers = std::tuple<std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>>;
 
-static Expected<SidebarTargetIdentifiers, WebExtensionError> parseRequiredTabOrWindowIdentifiers(NSDictionary *options)
+static std::expected<SidebarTargetIdentifiers, WebExtensionError> parseRequiredTabOrWindowIdentifiers(NSDictionary *options)
 {
     auto tabResult = parseTabIdentifier(options);
     if (!tabResult)
@@ -134,7 +134,7 @@ void WebExtensionAPISidePanel::getOptions(NSDictionary *options, Ref<WebExtensio
     const auto tabId = WTF::move(result.value());
 
     WebProcess::singleton()
-        .sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetOptions(std::nullopt, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionSidebarParameters, WebExtensionError>&& result) {
+        .sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetOptions(std::nullopt, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionSidebarParameters, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -167,7 +167,7 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
     if (enabled)
         enabledValue = enabled.get().boolValue;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, tabIdentifierResult.value(), panelPath, enabledValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, tabIdentifierResult.value(), panelPath, enabledValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -179,7 +179,7 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
 
 void WebExtensionAPISidePanel::getPanelBehavior(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetActionClickBehavior(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionActionClickBehavior, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetActionClickBehavior(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionActionClickBehavior, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -205,7 +205,7 @@ void WebExtensionAPISidePanel::setPanelBehavior(NSDictionary *behavior, Ref<WebE
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetActionClickBehavior(*maybeClickBehavior), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetActionClickBehavior(*maybeClickBehavior), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -229,7 +229,7 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
 
     auto [windowId, tabId] = WTF::move(identifiers.value());
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -247,7 +247,7 @@ void WebExtensionAPISidePanel::close(NSDictionary *options, Ref<WebExtensionCall
 
     auto [windowId, tabId] = WTF::move(identifiers.value());
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -259,7 +259,7 @@ void WebExtensionAPISidePanel::close(NSDictionary *options, Ref<WebExtensionCall
 
 void WebExtensionAPISidePanel::getLayout(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetLayout(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionSidebarSide, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetLayout(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionSidebarSide, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

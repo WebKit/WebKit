@@ -100,7 +100,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         using OperationVariant = Variant<AppendOperation, SetOperation, RemoveOperation>;
         OperationVariant operation;
 
-        static Expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&);
+        static std::expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&);
         ModifyHeaderInfo isolatedCopy() const &;
         ModifyHeaderInfo isolatedCopy() &&;
         friend bool operator==(const ModifyHeaderInfo&, const ModifyHeaderInfo&) = default;
@@ -129,7 +129,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     bool isEmptyValue() const { return hashTableType == HashTableType::Empty; }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    static Expected<ModifyHeadersAction, std::error_code> parse(const JSON::Object&);
+    static std::expected<ModifyHeadersAction, std::error_code> parse(const JSON::Object&);
     ModifyHeadersAction isolatedCopy() const &;
     ModifyHeadersAction isolatedCopy() &&;
     friend bool operator==(const ModifyHeadersAction&, const ModifyHeadersAction&) = default;
@@ -165,7 +165,7 @@ struct WEBCORE_EXPORT RedirectAction {
                 bool replaceOnly { false };
                 String value;
 
-                static Expected<QueryKeyValue, std::error_code> parse(const JSON::Value&);
+                static std::expected<QueryKeyValue, std::error_code> parse(const JSON::Value&);
                 QueryKeyValue isolatedCopy() const & { return { key.isolatedCopy(), replaceOnly, value.isolatedCopy() }; }
                 QueryKeyValue isolatedCopy() && { return { WTF::move(key).isolatedCopy(), replaceOnly, WTF::move(value).isolatedCopy() }; }
                 friend bool operator==(const QueryKeyValue&, const QueryKeyValue&) = default;
@@ -177,7 +177,7 @@ struct WEBCORE_EXPORT RedirectAction {
             Vector<QueryKeyValue> addOrReplaceParams;
             Vector<String> removeParams;
 
-            static Expected<QueryTransform, std::error_code> parse(const JSON::Object&);
+            static std::expected<QueryTransform, std::error_code> parse(const JSON::Object&);
             QueryTransform isolatedCopy() const &;
             QueryTransform isolatedCopy() &&;
             friend bool operator==(const QueryTransform&, const QueryTransform&) = default;
@@ -197,7 +197,7 @@ struct WEBCORE_EXPORT RedirectAction {
         String scheme;
         String username;
 
-        static Expected<URLTransformAction, std::error_code> parse(const JSON::Object&);
+        static std::expected<URLTransformAction, std::error_code> parse(const JSON::Object&);
         URLTransformAction isolatedCopy() const &;
         URLTransformAction isolatedCopy() &&;
         friend bool operator==(const URLTransformAction&, const URLTransformAction&) = default;
@@ -230,7 +230,7 @@ struct WEBCORE_EXPORT RedirectAction {
     bool isEmptyValue() const { return hashTableType == HashTableType::Empty; }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    static Expected<RedirectAction, std::error_code> parse(const JSON::Object&, const String& urlFilter);
+    static std::expected<RedirectAction, std::error_code> parse(const JSON::Object&, const String& urlFilter);
     RedirectAction isolatedCopy() const &;
     RedirectAction isolatedCopy() &&;
     friend bool operator==(const RedirectAction&, const RedirectAction&) = default;

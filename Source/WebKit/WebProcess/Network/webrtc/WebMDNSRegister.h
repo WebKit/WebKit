@@ -32,7 +32,6 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakRef.h>

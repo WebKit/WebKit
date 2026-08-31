@@ -692,7 +692,7 @@ void ViewPlatform::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     }
 }
 
-Expected<Ref<ViewSnapshot>, String> ViewPlatform::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
+std::expected<Ref<ViewSnapshot>, String> ViewPlatform::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
     return m_backingStore->takeSnapshot(WTF::move(clipRect));
 }

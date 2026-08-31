@@ -30,7 +30,6 @@
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
-#include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
@@ -45,7 +44,7 @@ class ResourceResponse;
 class CrossOriginPreflightResultCacheItem {
     WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCacheItem); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CrossOriginPreflightResultCacheItem, Loader);
 public:
-    static Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> create(StoredCredentialsPolicy, const ResourceResponse&);
+    static std::expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> create(StoredCredentialsPolicy, const ResourceResponse&);
 
     CrossOriginPreflightResultCacheItem(MonotonicTime, StoredCredentialsPolicy, HashSet<String>&&, HashSet<String, ASCIICaseInsensitiveHash>&&);
 

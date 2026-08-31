@@ -210,7 +210,7 @@ String NetworkDataTask::description() const
     return emptyString();
 }
 
-void NetworkDataTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void NetworkDataTask::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(makeUnexpected(internalError(url)));

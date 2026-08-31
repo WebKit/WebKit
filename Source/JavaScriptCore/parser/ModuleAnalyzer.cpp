@@ -102,7 +102,7 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
 
 
 
-Expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
+std::expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
 {
     // Traverse the module AST and collect
     // * Import entries

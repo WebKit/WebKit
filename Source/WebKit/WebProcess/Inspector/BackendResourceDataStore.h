@@ -32,7 +32,6 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <utility>
 #include <wtf/CheckedRef.h>
-#include <wtf/Expected.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -170,11 +169,11 @@ public:
     // process's buffered response bodies for matches.
     template<typename Visitor> void forEach(NOESCAPE const Visitor&) const;
 
-    Expected<std::pair<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
+    std::expected<std::pair<String, bool>, String> getResponseBody(WebCore::ResourceLoaderIdentifier);
 
     // Base64-encoded persistence encoding of the response's CertificateInfo, matching
     // InspectorNetworkAgent::getSerializedCertificate.
-    Expected<String, String> getSerializedCertificate(WebCore::ResourceLoaderIdentifier);
+    std::expected<String, String> getSerializedCertificate(WebCore::ResourceLoaderIdentifier);
 
 private:
     ResourceData* resourceDataForId(WebCore::ResourceLoaderIdentifier);

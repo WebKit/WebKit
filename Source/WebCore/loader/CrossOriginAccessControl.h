@@ -30,7 +30,6 @@
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/StoredCredentialsPolicy.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 
@@ -87,8 +86,8 @@ private:
     bool m_accessControlCheckEnabled { true };
 };
 
-WEBCORE_EXPORT Expected<void, String> passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
-WEBCORE_EXPORT Expected<void, String> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler*);
+WEBCORE_EXPORT std::expected<void, String> passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
+WEBCORE_EXPORT std::expected<void, String> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler*);
 
 enum class ForNavigation : bool { No, Yes };
 WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation, const OriginAccessPatterns&);

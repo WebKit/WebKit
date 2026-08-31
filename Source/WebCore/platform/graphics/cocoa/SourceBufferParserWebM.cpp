@@ -1693,7 +1693,7 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
     m_queuedAudioDuration = { };
 }
 
-Expected<void, PlatformMediaError> SourceBufferParserWebM::appendData(Ref<const SharedBuffer>&& segment, AppendFlags appendFlags)
+std::expected<void, PlatformMediaError> SourceBufferParserWebM::appendData(Ref<const SharedBuffer>&& segment, AppendFlags appendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment->size(), ")");
 

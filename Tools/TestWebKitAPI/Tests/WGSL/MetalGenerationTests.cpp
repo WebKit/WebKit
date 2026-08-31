@@ -34,7 +34,7 @@
 
 namespace TestWGSLAPI {
 
-inline Expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName)
+inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName)
 {
     auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
     if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))

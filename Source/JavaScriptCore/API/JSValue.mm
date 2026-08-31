@@ -42,7 +42,6 @@
 #import "JSCJSValue.h"
 #import "Strong.h"
 #import "StrongInlines.h"
-#import <wtf/Expected.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -399,7 +398,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 }
 
 template<typename Result, typename NSStringFunction, typename JSValueFunction, typename... Types>
-inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction stringFunction, JSValueFunction jsFunction, JSValue* value, id propertyKey, Types... arguments)
+inline std::expected<Result, JSValueRef> performPropertyOperation(NSStringFunction stringFunction, JSValueFunction jsFunction, JSValue* value, id propertyKey, Types... arguments)
 {
     JSContext* context = [value context];
     JSValueRef exception = nullptr;
@@ -414,7 +413,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
         result = stringFunction([context JSGlobalContextRef], object, name.get(), arguments..., &exception);
     } else
         result = jsFunction([context JSGlobalContextRef], object, [[JSValue valueWithObject:propertyKey inContext:context] JSValueRef], arguments..., &exception);
-    return Expected<Result, JSValueRef>(result);
+    return std::expected<Result, JSValueRef>(result);
 }
 
 - (JSValue *)valueForProperty:(id)key
@@ -450,7 +449,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (BOOL)deleteProperty:(JSValueProperty)key
 {
-    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(JSObjectDeleteProperty, JSObjectDeletePropertyForKey, self, key);
+    std::expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(JSObjectDeleteProperty, JSObjectDeletePropertyForKey, self, key);
     if (!result)
         return [_context boolFromNotifyException:result.error()];
     return result.value();
@@ -463,7 +462,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
         return JSObjectHasProperty(ctx, object, propertyName);
     };
 
-    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(stringHasProperty, JSObjectHasPropertyForKey, self, key);
+    std::expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(stringHasProperty, JSObjectHasPropertyForKey, self, key);
     if (!result)
         return [_context boolFromNotifyException:result.error()];
     return result.value();

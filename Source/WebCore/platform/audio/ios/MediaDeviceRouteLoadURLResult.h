@@ -37,7 +37,7 @@ enum class MediaDeviceRouteLoadURLError : uint8_t {
     PlatformError,
 };
 
-using MediaDeviceRouteLoadURLResult = Expected<void, MediaDeviceRouteLoadURLError>;
+using MediaDeviceRouteLoadURLResult = std::expected<void, MediaDeviceRouteLoadURLError>;
 
 } // namespace WebCore
 

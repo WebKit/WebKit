@@ -233,7 +233,7 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-auto Thread::suspend(const ThreadSuspendLocker&) -> Expected<void, PlatformSuspendError>
+auto Thread::suspend(const ThreadSuspendLocker&) -> std::expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::currentSingleton(), "We do not support suspending the current thread itself.");
     DWORD result = SuspendThread(m_handle);

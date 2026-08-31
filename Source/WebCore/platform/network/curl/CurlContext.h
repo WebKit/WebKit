@@ -311,7 +311,7 @@ public:
     std::optional<CertificateInfo> certificateInfo() const;
 
     // socket
-    Expected<curl_socket_t, CURLcode> getActiveSocket();
+    std::expected<curl_socket_t, CURLcode> getActiveSocket();
     CURLcode send(const uint8_t*, size_t, size_t&);
     CURLcode receive(uint8_t*, size_t, size_t&);
 

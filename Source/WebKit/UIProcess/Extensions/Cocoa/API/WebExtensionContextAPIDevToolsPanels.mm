@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(Expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const String& title, const String& iconPath, const String& pagePath, CompletionHandler<void(std::expected<Inspector::ExtensionTabID, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"devtools.panels.create()";
 
@@ -49,7 +49,7 @@ void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPagePro
         return;
     }
 
-    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTF::move(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable {
+    extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTF::move(completionHandler)](std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", extensionErrorToString(result.error()).createNSString().get());
             completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not create the panel"));

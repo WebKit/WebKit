@@ -429,8 +429,8 @@ public:
 
     typedef String ErrorType;
     typedef std::unexpected<ErrorType> UnexpectedResult;
-    typedef Expected<std::unique_ptr<InternalFunction>, ErrorType> Result;
-    typedef Expected<void, ErrorType> PartialResult;
+    typedef std::expected<std::unique_ptr<InternalFunction>, ErrorType> Result;
+    typedef std::expected<void, ErrorType> PartialResult;
 
     static ExpressionType NODELETE emptyExpression() { return { }; };
 
@@ -1106,7 +1106,7 @@ private:
         return m_mode == MemoryMode::Signaling;
     }
 
-    Expected<Vector<ValueResults>, ErrorType> tryInliningPolymorphicCalls(unsigned callProfileIndex, Value* calleeInstance, Value* calleeCallee, const RTT& signature, const ArgumentList&, CallType, bool isTailCallRootCaller, BasicBlock* continuation);
+    std::expected<Vector<ValueResults>, ErrorType> tryInliningPolymorphicCalls(unsigned callProfileIndex, Value* calleeInstance, Value* calleeCallee, const RTT& signature, const ArgumentList&, CallType, bool isTailCallRootCaller, BasicBlock* continuation);
 
     template<typename... Args>
     void traceValue(Type, Value*, Args&&... info);
@@ -6592,7 +6592,7 @@ auto OMGIRGenerator::emitDirectCall(unsigned callProfileIndex, FunctionSpaceInde
     return { };
 }
 
-auto OMGIRGenerator::tryInliningPolymorphicCalls(unsigned callProfileIndex, Value* calleeInstance, Value* calleeCallee, const RTT& signature, const ArgumentList& args, CallType callType, bool isTailCallRootCaller, BasicBlock* continuation) -> Expected<Vector<ValueResults>, ErrorType>
+auto OMGIRGenerator::tryInliningPolymorphicCalls(unsigned callProfileIndex, Value* calleeInstance, Value* calleeCallee, const RTT& signature, const ArgumentList& args, CallType callType, bool isTailCallRootCaller, BasicBlock* continuation) -> std::expected<Vector<ValueResults>, ErrorType>
 {
     if (callProfileIndex >= m_inlining->callSites().size())
         return { };
@@ -7006,7 +7006,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext& compilationContext, IPIntCallee& profiledCallee, OptimizingJITCallee& callee, const FunctionData& function, const RTT& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, Module& module, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry)
+std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext& compilationContext, IPIntCallee& profiledCallee, OptimizingJITCallee& callee, const FunctionData& function, const RTT& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, Module& module, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry)
 {
     CompilerTimingScope totalScope("B3"_s, "Total OMG compilation"_s);
 

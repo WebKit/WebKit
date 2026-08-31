@@ -1086,13 +1086,13 @@ String Session::extractElementID(const JSON::Value& value)
     return elementID;
 }
 
-Expected<Ref<JSON::Value>, CommandResult> Session::replaceReferences(Ref<JSON::Value>&& value)
+std::expected<Ref<JSON::Value>, CommandResult> Session::replaceReferences(Ref<JSON::Value>&& value)
 {
     HashSet<Ref<JSON::Value>> seen;
     return replaceReferences(WTF::move(value), seen);
 }
 
-Expected<Ref<JSON::Value>, CommandResult> Session::replaceReferences(Ref<JSON::Value>&& value, HashSet<Ref<JSON::Value>>& seen)
+std::expected<Ref<JSON::Value>, CommandResult> Session::replaceReferences(Ref<JSON::Value>&& value, HashSet<Ref<JSON::Value>>& seen)
 {
     if (seen.contains(value))
         return makeUnexpected(CommandResult::fail(CommandResult::ErrorCode::JavascriptError, "Cyclic object reference found while resolving references"_s));

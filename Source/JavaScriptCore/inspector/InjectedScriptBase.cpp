@@ -136,7 +136,7 @@ JSC::JSObject* InjectedScriptBase::injectedScriptObject() const
     return m_injectedScriptObject.get();
 }
 
-Expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& function) const
+std::expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& function) const
 {
     JSC::DebuggerEvalEnabler evalEnabler(m_globalObject);
     return function.call();

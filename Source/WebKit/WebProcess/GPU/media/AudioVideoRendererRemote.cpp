@@ -629,7 +629,7 @@ std::optional<AudioVideoRendererRemote::TrackIdentifier> AudioVideoRendererRemot
         return std::nullopt;
 
     // the sendSync() call requires us to run on the connection's dispatcher, which is the main thread.
-    Expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result = makeUnexpected(PlatformMediaError::IPCError);
+    std::expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result = makeUnexpected(PlatformMediaError::IPCError);
     callOnMainRunLoopAndWait([&] {
         // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
         auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteAudioVideoRendererProxyManager::AddTrack(m_identifier, type), 0);

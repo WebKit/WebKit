@@ -32,7 +32,6 @@
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/SharedMemory.h>
-#include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -73,7 +72,7 @@ public:
     // Messages from RemoteMediaResourceLoader:
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier, CompletionHandler<void()>&&);
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    void sendH2Ping(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     // Messages to RemoteMediaResourceLoader:
     void responseReceived(RemoteMediaResourceIdentifier, const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);

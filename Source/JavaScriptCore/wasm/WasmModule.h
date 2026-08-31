@@ -38,7 +38,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/WasmJS.h>
 #include <JavaScriptCore/WasmMemory.h>
 #include <JavaScriptCore/WasmOps.h>
-#include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -59,7 +58,7 @@ enum class BindingFailure;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:
-    using ValidationResult = Expected<Ref<Module>, String>;
+    using ValidationResult = std::expected<Ref<Module>, String>;
     typedef void CallbackType(ValidationResult&&);
     using AsyncValidationCallback = RefPtr<SharedTask<CallbackType>>;
 

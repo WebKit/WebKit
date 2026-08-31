@@ -42,7 +42,6 @@
 #include "WasmModuleInformation.h"
 #include "WasmTierUpCount.h"
 #include <wtf/Box.h>
-#include <wtf/Expected.h>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {

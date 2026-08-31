@@ -522,7 +522,7 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
     connection->focusServiceWorkerClient(clientIdentifier, WTF::move(callback));
 }
 
-void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
+void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
 {
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {

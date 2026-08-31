@@ -69,7 +69,7 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
     };
-    static Expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
+    static std::expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
 
     static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
@@ -104,7 +104,7 @@ private:
     OSStatus m_lastError WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { noErr };
 };
 
-Expected<InternalAudioEncoderCocoa::InternalConfig, String> InternalAudioEncoderCocoa::checkConfiguration(const String& codecName, const AudioEncoder::Config& config)
+std::expected<InternalAudioEncoderCocoa::InternalConfig, String> InternalAudioEncoderCocoa::checkConfiguration(const String& codecName, const AudioEncoder::Config& config)
 {
     auto result = AudioDecoderCocoa::isCodecSupported(codecName);
     if (!result)

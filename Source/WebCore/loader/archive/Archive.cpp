@@ -53,7 +53,7 @@ void Archive::clearAllSubframeArchives(HashSet<Ref<Archive>>& clearedArchives)
     m_subframeArchives.clear();
 }
 
-Expected<Vector<String>, ArchiveError> Archive::saveResourcesToDisk(const String& directory)
+std::expected<Vector<String>, ArchiveError> Archive::saveResourcesToDisk(const String& directory)
 {
     ASSERT(!RunLoop::isMain());
 

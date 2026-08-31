@@ -104,7 +104,7 @@ public:
         IDBValue value;
         std::optional<int64_t> recordID;
     };
-    using RecordOrError = Expected<ObjectStoreRecord, IDBError>;
+    using RecordOrError = std::expected<ObjectStoreRecord, IDBError>;
     virtual void forEachObjectStoreRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, Function<void(RecordOrError&&)>&&) = 0;
 
     virtual IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) = 0;

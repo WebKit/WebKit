@@ -1915,7 +1915,7 @@ bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession:
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
-void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(Expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (isClosed())
         return completionHandler(makeUnexpected(WebCore::ImageDecodingError::Internal));
@@ -1925,7 +1925,7 @@ void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, Completio
     }, webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::getImageMetadata(Vector<uint8_t>&& data, CompletionHandler<void(Expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPageProxy::getImageMetadata(Vector<uint8_t>&& data, CompletionHandler<void(std::expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (isClosed())
         return completionHandler(makeUnexpected(WebCore::ImageDecodingError::Internal));

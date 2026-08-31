@@ -27,7 +27,6 @@
 
 #include <WebCore/ServiceWorkerRegistrationKey.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -59,7 +58,7 @@ public:
     virtual void storeFetch(const ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) = 0;
     virtual void storeFetchResponseBodyChunk(const ServiceWorkerRegistrationKey&, const String&, size_t, const SharedBuffer&, CompletionHandler<void(StoreResult)>&&) = 0;
 
-    using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
+    using RetrieveRecordResponseBodyCallback = Function<void(std::expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
     virtual void retrieveResponseBody(const ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) = 0;
 };
 

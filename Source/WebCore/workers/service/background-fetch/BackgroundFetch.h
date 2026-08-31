@@ -73,8 +73,8 @@ public:
     const ServiceWorkerRegistrationKey& registrationKey() const LIFETIME_BOUND { return m_registrationKey; }
     const BackgroundFetchOptions& options() const LIFETIME_BOUND { return m_options; }
 
-    using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
-    using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
+    using RetrieveRecordResponseCallback = CompletionHandler<void(std::expected<ResourceResponse, ExceptionData>&&)>;
+    using RetrieveRecordResponseBodyCallback = Function<void(std::expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
     using CreateLoaderCallback = Function<RefPtr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoaderClient&, const BackgroundFetchRequest&, size_t responseDataSize, const ClientOrigin&)>;
 
     bool pausedFlagIsSet() const { return m_pausedFlag; }

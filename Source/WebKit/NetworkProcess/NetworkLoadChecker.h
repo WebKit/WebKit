@@ -89,7 +89,7 @@ public:
     using ValidationHandler = CompletionHandler<void(RequestOrRedirectionTripletOrError&&)>;
     void check(WebCore::ResourceRequest&&, WebCore::ContentSecurityPolicyClient*, ValidationHandler&&);
 
-    using RedirectionRequestOrError = Expected<RedirectionTriplet, WebCore::ResourceError>;
+    using RedirectionRequestOrError = std::expected<RedirectionTriplet, WebCore::ResourceError>;
     using RedirectionValidationHandler = CompletionHandler<void(RedirectionRequestOrError&&)>;
     void checkRedirection(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, WebCore::ContentSecurityPolicyClient*, RedirectionValidationHandler&&);
 
@@ -154,7 +154,7 @@ private:
         WebCore::ResourceRequest request;
         const WebCore::ContentRuleListResults& results;
     };
-    using ContentExtensionResultOrError = Expected<ContentExtensionResult, WebCore::ResourceError>;
+    using ContentExtensionResultOrError = std::expected<ContentExtensionResult, WebCore::ResourceError>;
     using ContentExtensionCallback = CompletionHandler<void(ContentExtensionResultOrError&&)>;
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif

@@ -59,7 +59,7 @@ class ScreenCaptureKitCaptureSource final
     WTF_MAKE_TZONE_ALLOCATED(ScreenCaptureKitCaptureSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScreenCaptureKitCaptureSource);
 public:
-    static Expected<uint32_t, CaptureSourceError> computeDeviceID(const CaptureDevice&);
+    static std::expected<uint32_t, CaptureSourceError> computeDeviceID(const CaptureDevice&);
 
     ScreenCaptureKitCaptureSource(CapturerObserver&, const CaptureDevice&, uint32_t);
     virtual ~ScreenCaptureKitCaptureSource();

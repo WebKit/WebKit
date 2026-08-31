@@ -44,7 +44,6 @@
 #include <WebCore/ProcessQualified.h>
 #include <tuple>
 #include <utility>
-#include <wtf/Expected.h>
 
 namespace Inspector {
 
@@ -377,7 +376,7 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetResponseBody { resourceID },
-        [callback = WTF::move(callback)](Expected<std::pair<String, bool>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::pair<String, bool>, String>&& result) mutable {
             if (result) {
                 auto& [content, base64Encoded] = result.value();
                 callback->sendSuccess(content, base64Encoded);
@@ -399,7 +398,7 @@ void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::Req
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetSerializedCertificate { resourceID },
-        [callback = WTF::move(callback)](Expected<String, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<String, String>&& result) mutable {
             if (result)
                 callback->sendSuccess(result.value());
             else
@@ -464,7 +463,7 @@ void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameI
 
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::LoadResource { frameID, url },
-        [callback = WTF::move(callback)](Expected<std::tuple<String, String, int>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::tuple<String, String, int>, String>&& result) mutable {
             if (result) {
                 auto& [content, mimeType, status] = result.value();
                 callback->sendSuccess(content, mimeType, status);

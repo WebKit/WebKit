@@ -62,7 +62,7 @@ bool WebExtensionContext::isMenusMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && (hasPermission(WebExtensionPermission::contextMenus()) || hasPermission(WebExtensionPermission::menus()));
 }
 
-void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"menus.create()";
 
@@ -91,7 +91,7 @@ void WebExtensionContext::menusCreate(const WebExtensionMenuItemParameters& para
     completionHandler({ });
 }
 
-void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensionMenuItemParameters& parameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"menus.update()";
 
@@ -121,7 +121,7 @@ void WebExtensionContext::menusUpdate(const String& identifier, const WebExtensi
     completionHandler({ });
 }
 
-void WebExtensionContext::menusRemove(const String& identifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::menusRemove(const String& identifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr menuItem = this->menuItem(identifier);
     if (!menuItem) {
@@ -145,7 +145,7 @@ void WebExtensionContext::menusRemove(const String& identifier, CompletionHandle
     completionHandler({ });
 }
 
-void WebExtensionContext::menusRemoveAll(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::menusRemoveAll(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     m_menuItems.clear();
     m_mainMenuItems.clear();

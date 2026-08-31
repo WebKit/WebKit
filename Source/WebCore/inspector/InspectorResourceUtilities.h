@@ -33,7 +33,6 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <tuple>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -100,7 +99,7 @@ struct SearchResult {
 
 // Completion for Network.loadResource: {content, mimeType, status} on success, or an error string
 // on failure.
-using LoadResourceCompletionHandler = CompletionHandler<void(Expected<std::tuple<String /* content */, String /* mimeType */, int /* status */>, String /* error */>&&)>;
+using LoadResourceCompletionHandler = CompletionHandler<void(std::expected<std::tuple<String /* content */, String /* mimeType */, int /* status */>, String /* error */>&&)>;
 
 namespace ResourceUtilities {
 

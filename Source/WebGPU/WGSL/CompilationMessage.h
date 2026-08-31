@@ -62,6 +62,6 @@ private:
 using Warning = CompilationMessage;
 using Error = CompilationMessage;
 template <typename T>
-using Result = Expected<T, Error>;
+using Result = std::expected<T, Error>;
 
 } // namespace WGSL

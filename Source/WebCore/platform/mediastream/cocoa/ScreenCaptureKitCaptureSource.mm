@@ -137,7 +137,7 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-Expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDeviceID(const CaptureDevice& device)
+std::expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDeviceID(const CaptureDevice& device)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
 

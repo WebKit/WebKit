@@ -111,7 +111,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC { namespace Wasm {
 
 using ErrorType = String;
-using PartialResult = Expected<void, ErrorType>;
+using PartialResult = std::expected<void, ErrorType>;
 using UnexpectedResult = std::unexpected<ErrorType>;
 struct IPIntValue { };
 
@@ -2988,7 +2988,7 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     return WTF::move(m_metadata);
 }
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
+std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
 {
     IPIntGenerator generator(info, functionIndex, signature, function);
     FunctionParser<IPIntGenerator> parser(generator, function, signature, info);

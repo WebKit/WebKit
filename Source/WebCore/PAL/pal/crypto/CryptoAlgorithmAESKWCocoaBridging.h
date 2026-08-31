@@ -26,12 +26,11 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
-#include <wtf/Expected.h>
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data);
+std::expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data);
 
-Expected<VectorUInt8, Error> unwrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data);
+std::expected<VectorUInt8, Error> unwrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data);
 
 } // namespace PAL::Crypto

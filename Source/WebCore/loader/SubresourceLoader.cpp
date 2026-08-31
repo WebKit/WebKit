@@ -667,7 +667,7 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
     protect(frame->page())->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceLoadedKey(), resourceType, ShouldSample::Yes);
 }
 
-Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response)
+std::expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response)
 {
     if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
         return { };
@@ -690,7 +690,7 @@ Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(
     return passesAccessControlCheck(response, options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse, *protect(m_origin), &CrossOriginAccessControlCheckDisabler::singleton());
 }
 
-Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
+std::expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
 {
     bool crossOriginFlag = m_resource->isCrossOrigin();
     bool isNextRequestCrossOrigin = m_origin && !protect(m_origin)->canRequest(newRequest.url(), OriginAccessPatternsForWebProcess::singleton());

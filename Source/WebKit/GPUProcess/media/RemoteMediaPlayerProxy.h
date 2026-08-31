@@ -158,7 +158,7 @@ public:
     void play();
     void pause();
 
-    void seekToTarget(const WebCore::SeekTarget&, CompletionHandler<void(Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&&);
+    void seekToTarget(const WebCore::SeekTarget&, CompletionHandler<void(std::expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&&);
 
     void setVolumeLocked(bool);
     void setVolume(double);

@@ -366,7 +366,7 @@ String NetworkLoad::description() const
     return emptyString();
 }
 
-void NetworkLoad::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void NetworkLoad::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     if (RefPtr task = m_task)
         task->setH2PingCallback(url, WTF::move(completionHandler));

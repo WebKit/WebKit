@@ -26,12 +26,11 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
-#include <wtf/Expected.h>
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction);
+std::expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction);
 
-Expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction);
+std::expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction);
 
 } // namespace PAL::Crypto

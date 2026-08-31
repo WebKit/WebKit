@@ -385,7 +385,7 @@ RetainPtr<NSNumber> AudioSampleBufferConverter::gradualDecoderRefreshCount()
     return retainPtr([NSNumber numberWithInt:(primeInfo.leadingFrames / m_destinationFormat.mFramesPerPacket)]);
 }
 
-Expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter::sampleBuffer(const WebAudioBufferList& fillBufferList, uint32_t numSamples)
+std::expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter::sampleBuffer(const WebAudioBufferList& fillBufferList, uint32_t numSamples)
 {
     assertIsCurrent(queue());
 

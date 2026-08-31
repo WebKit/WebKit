@@ -70,7 +70,7 @@ RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&&
     return create(WTF::move(data), url, response.mimeType(), response.textEncodingName(), String(), response);
 }
 
-Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directory)
+std::expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directory)
 {
     ASSERT(!RunLoop::isMain());
 

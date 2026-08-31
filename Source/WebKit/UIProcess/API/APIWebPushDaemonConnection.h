@@ -53,13 +53,13 @@ public:
     void getPushPermissionState(const WTF::URL&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(const WTF::URL&, CompletionHandler<void(bool)>&&);
     void setAppBadge(const WTF::URL&, std::optional<uint64_t>);
-    void subscribeToPushService(const WTF::URL&, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
-    void unsubscribeFromPushService(const WTF::URL&, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
-    void getPushSubscription(const WTF::URL&, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
+    void subscribeToPushService(const WTF::URL&, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
+    void unsubscribeFromPushService(const WTF::URL&, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&&);
+    void getPushSubscription(const WTF::URL&, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
     void getNextPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&&);
 
     void showNotification(const WebCore::NotificationData&, CompletionHandler<void()>&&);
-    void getNotifications(const WTF::URL&, const WTF::String& tag, CompletionHandler<void(const Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&&);
+    void getNotifications(const WTF::URL&, const WTF::String& tag, CompletionHandler<void(const std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&&);
     void cancelNotification(const WTF::URL&, const WTF::UUID&);
 
 private:

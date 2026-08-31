@@ -31,7 +31,7 @@
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> signEd25519CryptoKit(const VectorUInt8 &sk, const VectorUInt8& data)
+std::expected<VectorUInt8, Error> signEd25519CryptoKit(const VectorUInt8 &sk, const VectorUInt8& data)
 {
     if (sk.size() != ed25519KeySize)
         return makeUnexpected(Error::FailedToSign);
@@ -41,7 +41,7 @@ Expected<VectorUInt8, Error> signEd25519CryptoKit(const VectorUInt8 &sk, const V
     return WTF::move(rv.result);
 }
 
-Expected<bool, Error> verifyEd25519CryptoKit(const VectorUInt8& pubKey, const VectorUInt8& signature, const VectorUInt8& data)
+std::expected<bool, Error> verifyEd25519CryptoKit(const VectorUInt8& pubKey, const VectorUInt8& signature, const VectorUInt8& data)
 {
     if (pubKey.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;

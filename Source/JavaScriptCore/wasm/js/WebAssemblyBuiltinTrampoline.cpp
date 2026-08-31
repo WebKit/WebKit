@@ -43,7 +43,7 @@ using JIT = CCallHelpers;
 //
 // IMPORTANT: Any changes to the trampoline here should be replicated in its static counterparts in InPlaceInterpreter.asm.
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> generateWasmBuiltinTrampoline(const WebAssemblyBuiltin& builtin)
+std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> generateWasmBuiltinTrampoline(const WebAssemblyBuiltin& builtin)
 {
     auto scratch = GPRInfo::regT5;
     size_t arity = builtin.signature().numParams();

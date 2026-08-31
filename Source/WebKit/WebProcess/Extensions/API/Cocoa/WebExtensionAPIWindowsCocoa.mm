@@ -371,7 +371,7 @@ void WebExtensionAPIWindows::createWindow(NSDictionary *data, Ref<WebExtensionCa
     if (!parseWindowCreateOptions(data, parameters, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsCreate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsCreate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -394,7 +394,7 @@ void WebExtensionAPIWindows::get(WebPageProxyIdentifier webPageProxyIdentifier, 
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(webPageProxyIdentifier, windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(webPageProxyIdentifier, windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -413,7 +413,7 @@ void WebExtensionAPIWindows::getCurrent(WebPageProxyIdentifier webPageProxyIdent
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(webPageProxyIdentifier, WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(webPageProxyIdentifier, WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -432,7 +432,7 @@ void WebExtensionAPIWindows::getLastFocused(NSDictionary *info, Ref<WebExtension
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetLastFocused(filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetLastFocused(filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -451,7 +451,7 @@ void WebExtensionAPIWindows::getAll(NSDictionary *info, Ref<WebExtensionCallback
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetAll(filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionWindowParameters>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetAll(filter, populate), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionWindowParameters>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -473,7 +473,7 @@ void WebExtensionAPIWindows::update(double windowID, NSDictionary *info, Ref<Web
     if (!parseWindowUpdateOptions(info, parameters, @"properties", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsUpdate(windowIdentifer.value(), WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsUpdate(windowIdentifer.value(), WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -491,7 +491,7 @@ void WebExtensionAPIWindows::remove(double windowID, Ref<WebExtensionCallbackHan
     if (!isValid(windowIdentifer, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsRemove(windowIdentifer.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsRemove(windowIdentifer.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

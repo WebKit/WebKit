@@ -73,9 +73,9 @@ static void NODELETE writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t
     reinterpretCastSpanStartTo<uint32_t>(vector.mutableSpan().subspan(offset)) = integer;
 }
 
-Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const JSON::Object& modifyHeaders)
+std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const JSON::Object& modifyHeaders)
 {
-    auto parseHeaders = [] (const JSON::Object& modifyHeaders, ASCIILiteral arrayName) -> Expected<Vector<ModifyHeaderInfo>, std::error_code> {
+    auto parseHeaders = [] (const JSON::Object& modifyHeaders, ASCIILiteral arrayName) -> std::expected<Vector<ModifyHeaderInfo>, std::error_code> {
         auto value = modifyHeaders.getValue(arrayName);
         if (!value)
             return { };
@@ -196,7 +196,7 @@ void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& requ
     }), operation);
 }
 
-auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) -> Expected<ModifyHeaderInfo, std::error_code>
+auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) -> std::expected<ModifyHeaderInfo, std::error_code>
 {
     auto object = infoValue.asObject();
     if (!object)
@@ -283,7 +283,7 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(std::span<const u
     return deserializeLength(span, 0);
 }
 
-Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
+std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
 {
     auto redirect = redirectObject.getObject("redirect"_s);
     if (!redirect)
@@ -473,7 +473,7 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
         url = WTF::move(replacementURL);
 }
 
-auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>
+auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> std::expected<URLTransformAction, std::error_code>
 {
     URLTransformAction action;
     if (auto fragment = transform.getString("fragment"_s); !!fragment) {
@@ -674,7 +674,7 @@ size_t RedirectAction::URLTransformAction::serializedLength(std::span<const uint
     return deserializeLength(span, 0);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Object& queryTransform) -> Expected<QueryTransform, std::error_code>
+auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Object& queryTransform) -> std::expected<QueryTransform, std::error_code>
 {
     QueryTransform parsedQueryTransform;
 
@@ -856,7 +856,7 @@ size_t RedirectAction::URLTransformAction::QueryTransform::serializedLength(std:
     return deserializeLength(span, 0);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(const JSON::Value& keyValueValue) -> Expected<QueryKeyValue, std::error_code>
+auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(const JSON::Value& keyValueValue) -> std::expected<QueryKeyValue, std::error_code>
 {
     auto keyValue = keyValueValue.asObject();
     if (!keyValue)

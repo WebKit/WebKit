@@ -64,7 +64,7 @@ public:
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
     };
-    using CreateResult = Expected<Ref<VideoEncoder>, String>;
+    using CreateResult = std::expected<Ref<VideoEncoder>, String>;
     using CreatePromise = NativePromise<Ref<VideoEncoder>, String>;
 
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;

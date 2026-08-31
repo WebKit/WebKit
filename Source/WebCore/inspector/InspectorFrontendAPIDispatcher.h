@@ -27,7 +27,6 @@
 
 #include <WebCore/ExceptionDetails.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -48,8 +47,8 @@ class InspectorFrontendAPIDispatcher final
     , public CanMakeWeakPtr<InspectorFrontendAPIDispatcher> {
 public:
     enum class EvaluationError { ExecutionSuspended, ContextDestroyed, InternalError };
-    using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
-    using EvaluationResult = Expected<ValueOrException, EvaluationError>;
+    using ValueOrException = std::expected<JSC::JSValue, ExceptionDetails>;
+    using EvaluationResult = std::expected<ValueOrException, EvaluationError>;
     using EvaluationResultHandler = CompletionHandler<void(EvaluationResult)>;
 
     enum class UnsuspendSoon : bool { No, Yes };

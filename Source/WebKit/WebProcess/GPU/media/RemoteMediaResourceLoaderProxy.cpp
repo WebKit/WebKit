@@ -81,7 +81,7 @@ void RemoteMediaResourceLoaderProxy::requestResource(RemoteMediaResourceIdentifi
     m_connection->send(Messages::RemoteMediaResourceLoader::LoadFailed(id, { WebCore::ResourceError::Type::Cancellation }), m_identifier.toUInt64());
 }
 
-void RemoteMediaResourceLoaderProxy::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void RemoteMediaResourceLoaderProxy::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     assertIsCurrent(defaultQueue());
     m_platformLoader->sendH2Ping(url, WTF::move(completionHandler));

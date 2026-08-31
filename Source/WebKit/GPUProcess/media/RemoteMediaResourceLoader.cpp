@@ -84,7 +84,7 @@ RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(Resourc
     return remoteMediaResource;
 }
 
-void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
     m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoaderProxy::SendH2Ping(url), WTF::move(completionHandler), identifier());
 }

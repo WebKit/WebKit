@@ -106,7 +106,7 @@ private:
     State parseFunctionPayload(Vector<uint8_t>&&);
 
     std::optional<Vector<uint8_t>> consume(std::span<const uint8_t> bytes, size_t&, size_t);
-    Expected<uint32_t, State> consumeVarUInt32(std::span<const uint8_t> bytes, size_t&, IsEndOfStream);
+    std::expected<uint32_t, State> consumeVarUInt32(std::span<const uint8_t> bytes, size_t&, IsEndOfStream);
 
     void moveToStateIfNotFailed(State);
     template <typename ...Args> [[nodiscard]] NEVER_INLINE State fail(Args...);

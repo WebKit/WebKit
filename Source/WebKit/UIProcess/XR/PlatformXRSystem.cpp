@@ -295,7 +295,7 @@ void PlatformXRSystem::submitFrame(IPC::Connection& connection)
 }
 
 #if ENABLE(WEBXR_HIT_TEST)
-void PlatformXRSystem::requestHitTestSource(const PlatformXR::HitTestOptions& hitTestOptions, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
+void PlatformXRSystem::requestHitTestSource(const PlatformXR::HitTestOptions& hitTestOptions, CompletionHandler<void(std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
 {
     auto completionHandler = [passedCompletionHandler = WTF::move(passedCompletionHandler)](WebCore::ExceptionOr<PlatformXR::HitTestSource> exceptionOrValue) mutable {
         if (exceptionOrValue.hasException()) {
@@ -326,7 +326,7 @@ void PlatformXRSystem::deleteHitTestSource(PlatformXR::HitTestSource source)
         xrCoordinator->deleteHitTestSource(*page, source);
 }
 
-void PlatformXRSystem::requestTransientInputHitTestSource(const PlatformXR::TransientInputHitTestOptions& hitTestOptions, CompletionHandler<void(Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
+void PlatformXRSystem::requestTransientInputHitTestSource(const PlatformXR::TransientInputHitTestOptions& hitTestOptions, CompletionHandler<void(std::expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
 {
     auto completionHandler = [passedCompletionHandler = WTF::move(passedCompletionHandler)](WebCore::ExceptionOr<PlatformXR::TransientInputHitTestSource> exceptionOrValue) mutable {
         if (exceptionOrValue.hasException()) {

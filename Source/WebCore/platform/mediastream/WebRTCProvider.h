@@ -31,7 +31,6 @@
 #include <WebCore/RTCRtpCapabilities.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>

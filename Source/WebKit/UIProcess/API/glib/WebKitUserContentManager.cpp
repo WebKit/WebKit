@@ -283,7 +283,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
  * Since: 2.40
  */
 struct _WebKitScriptMessageReply {
-    _WebKitScriptMessageReply(WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+    _WebKitScriptMessageReply(WTF::Function<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
         : completionHandler(WTF::move(completionHandler))
         , referenceCount(1)
     {
@@ -309,7 +309,7 @@ struct _WebKitScriptMessageReply {
         }
     }
 
-    WTF::CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)> completionHandler;
+    WTF::CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)> completionHandler;
     int referenceCount;
 };
 
@@ -354,7 +354,7 @@ void webkit_script_message_reply_unref(WebKitScriptMessageReply* scriptMessageRe
     }
 }
 
-WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
     WebKitScriptMessageReply* scriptMessageReply = static_cast<WebKitScriptMessageReply*>(fastMalloc(sizeof(WebKitScriptMessageReply)));
     new (scriptMessageReply) WebKitScriptMessageReply(WTF::move(completionHandler));
@@ -409,7 +409,7 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
     {
         if (!m_manager) {
             g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));

@@ -127,7 +127,7 @@ private:
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 
-    using UnregisterJobResult = Expected<bool, WebCore::ExceptionData>;
+    using UnregisterJobResult = std::expected<bool, WebCore::ExceptionData>;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&&);
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
@@ -150,10 +150,10 @@ private:
     void setThrottleState(bool isThrottleable);
     void updateThrottleState();
 
-    void subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
-    void unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier,  CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&&);
-    void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
-    void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
+    void subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
+    void unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier,  CompletionHandler<void(std::expected<bool, WebCore::ExceptionData>&&)>&&);
+    void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
+    void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
     void controlClient(const NetworkResourceLoadParameters&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&, WebCore::ProcessIdentifier);
@@ -162,19 +162,19 @@ private:
     void enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&);
     void disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&);
     void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&);
-    using ExceptionOrNavigationPreloadStateCallback = CompletionHandler<void(Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData>&&)>;
+    using ExceptionOrNavigationPreloadStateCallback = CompletionHandler<void(std::expected<WebCore::NavigationPreloadState, WebCore::ExceptionData>&&)>;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&);
 
     void retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallbackIdentifier);
 
     void addCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::CookieChangeSubscription>&&, ExceptionOrVoidCallback&&);
     void removeCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::CookieChangeSubscription>&&, ExceptionOrVoidCallback&&);
-    using ExceptionOrCookieChangeSubscriptionsCallback = CompletionHandler<void(Expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData>&&)>;
+    using ExceptionOrCookieChangeSubscriptionsCallback = CompletionHandler<void(std::expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData>&&)>;
     void cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&&);
-    void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&);
+    void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&);
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
     bool checkTopOrigin(const WebCore::SecurityOriginData&);

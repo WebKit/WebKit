@@ -112,7 +112,7 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
     std::optional<uint64_t> index = objectForKey<NSNumber>(bookmark, indexKey).unsignedLongValue;
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksCreate(parentMockId, index, url, title),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -129,7 +129,7 @@ void WebExtensionAPIBookmarks::getChildren(NSString *bookmarkIdentifier, Ref<Web
 {
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksGetChildren(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -156,7 +156,7 @@ void WebExtensionAPIBookmarks::getRecent(long long numberOfItems, Ref<WebExtensi
 
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksGetRecent(static_cast<uint64_t>(numberOfItems)),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -178,7 +178,7 @@ void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebE
 {
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksGetSubTree(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -206,7 +206,7 @@ void WebExtensionAPIBookmarks::getTree(Ref<WebExtensionCallbackHandler>&& callba
 {
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksGetTree(),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -245,7 +245,7 @@ void WebExtensionAPIBookmarks::get(NSObject *idOrIdList, Ref<WebExtensionCallbac
 
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksGet(bookmarkIds),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -293,7 +293,7 @@ void WebExtensionAPIBookmarks::move(NSString *bookmarkIdentifier, NSDictionary *
 
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksMove(bookmarkIdentifier, ipcParentId, ipcIndex),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -310,7 +310,7 @@ void WebExtensionAPIBookmarks::remove(NSString *bookmarkIdentifier, Ref<WebExten
 {
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksRemove(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -325,7 +325,7 @@ void WebExtensionAPIBookmarks::removeTree(NSString *bookmarkIdentifier, Ref<WebE
 {
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksRemoveTree(bookmarkIdentifier),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -376,7 +376,7 @@ void WebExtensionAPIBookmarks::search(NSObject *query, Ref<WebExtensionCallbackH
 
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksSearch(ipcQueryTerms, ipcURL, ipcTitle),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionBookmarksParameters>, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;
@@ -434,7 +434,7 @@ void WebExtensionAPIBookmarks::update(NSString *bookmarkIdentifier, NSDictionary
 
     WebProcess::singleton().sendWithAsyncReply(
         Messages::WebExtensionContext::BookmarksUpdate(bookmarkIdentifier, newURL, newTitle),
-        [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
+        [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarksParameters, WebExtensionError>&& result) {
             if (!result) {
                 callback->reportError(result.error().createNSString().get());
                 return;

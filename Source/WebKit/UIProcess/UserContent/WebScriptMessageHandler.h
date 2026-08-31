@@ -53,7 +53,7 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&&) = 0;
+        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&) = 0;
     };
 
     static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::ContentWorld&);

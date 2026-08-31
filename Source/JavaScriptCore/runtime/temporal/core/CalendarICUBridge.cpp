@@ -2334,7 +2334,7 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
 // ecmaReferenceYear — no spec AO, no ICU4C equivalent.
 // Ported line-for-line from icu4x: ecma_reference_year (components/calendar/src/cal/{east_asian_traditional,hijri,hebrew,coptic,persian,indian}.rs).
 // Returns the extended calendar year for (monthNumber, isLeapMonth, day), or an EcmaReferenceYearError.
-Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID calendarId, uint8_t monthNumber, bool isLeapMonth, uint8_t day)
+std::expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID calendarId, uint8_t monthNumber, bool isLeapMonth, uint8_t day)
 {
     bool bigDay = day > 29;
 

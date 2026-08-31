@@ -190,7 +190,7 @@ void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const 
     }
 }
 
-auto CustomPropertyRegistry::parseInitialValue(const Document& document, const AtomString& propertyName, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokenRange) -> Expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError>
+auto CustomPropertyRegistry::parseInitialValue(const Document& document, const AtomString& propertyName, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokenRange) -> std::expected<std::pair<RefPtr<const CustomProperty>, ViewportUnitDependency>, ParseInitialValueError>
 {
     // FIXME: This parses twice.
     auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, tokenRange, document.cssParserContext());

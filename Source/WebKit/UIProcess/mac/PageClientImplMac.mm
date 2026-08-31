@@ -723,7 +723,7 @@ bool PageClientImpl::showShareSheet(ShareDataWithParsedURL&& shareData, WTF::Com
 }
 
 #if ENABLE(WEB_AUTHN)
-void PageClientImpl::showDigitalCredentialsChooser(const WebCore::DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+void PageClientImpl::showDigitalCredentialsChooser(const WebCore::DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     protect(m_impl)->showDigitalCredentialsChooser(requestData, WTF::move(completionHandler), webView().get());
 }
@@ -1268,7 +1268,7 @@ void PageClientImpl::didChangeLocalInspectorAttachment()
 #endif
 }
 
-void PageClientImpl::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier identifier, const WebCore::ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
+void PageClientImpl::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier identifier, const WebCore::ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     protect(m_impl)->showCaptionDisplaySettings(identifier, options, WTF::move(completionHandler));
 }

@@ -444,7 +444,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
         .release();
 }
 
-Expected<PageAndFrameHandle, AutomationCommandError> WebAutomationSession::extractBrowsingContextHandles(const String& handle)
+std::expected<PageAndFrameHandle, AutomationCommandError> WebAutomationSession::extractBrowsingContextHandles(const String& handle)
 {
     if (handle.isEmpty())
         return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "Browsing context handles cannot be empty"_s));

@@ -366,7 +366,7 @@ public:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    WEBCORE_EXPORT Expected<bool, RemoteFrameGeometryTransformer> handleTouchEvent(const PlatformTouchEvent&);
+    WEBCORE_EXPORT std::expected<bool, RemoteFrameGeometryTransformer> handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
@@ -391,7 +391,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
-    WEBCORE_EXPORT void tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition, CompletionHandler<void(Expected<bool, RemoteFrameGeometryTransformer>)>&&);
+    WEBCORE_EXPORT void tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition, CompletionHandler<void(std::expected<bool, RemoteFrameGeometryTransformer>)>&&);
 #endif
     
 #if PLATFORM(COCOA)
@@ -610,7 +610,7 @@ private:
         }
 
         CapturesDragging(InabilityReason inabilityReason)
-            : m_state { unexpect, inabilityReason }
+            : m_state { std::unexpect, inabilityReason }
         {
         }
 
@@ -633,7 +633,7 @@ private:
         InabilityReason inabilityReason() const { return m_state.error(); }
 
     private:
-        Expected<std::monostate, InabilityReason> m_state;
+        std::expected<std::monostate, InabilityReason> m_state;
     };
 #ifndef __swift__ // FIXME: (rdar://167557269) temporary until SWIFT_COPYABLE_IF is fully supported
     CapturesDragging capturesDragging() const { return m_capturesDragging; }

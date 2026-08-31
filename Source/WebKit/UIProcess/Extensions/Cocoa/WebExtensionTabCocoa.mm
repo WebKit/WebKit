@@ -316,7 +316,7 @@ RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
     return extensionContext->getOrCreateTab(parentTab);
 }
 
-void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -392,7 +392,7 @@ bool WebExtensionTab::isSelected() const
     return [m_delegate isSelectedForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::setPinned(bool pinned, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setPinned(bool pinned, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -439,7 +439,7 @@ bool WebExtensionTab::isPrivate() const
     return m_private;
 }
 
-void WebExtensionTab::setReaderModeActive(bool showReaderMode, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setReaderModeActive(bool showReaderMode, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.toggleReaderMode()";
 
@@ -475,7 +475,7 @@ bool WebExtensionTab::isReaderModeActive() const
     return [m_delegate isReaderModeActiveForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::setMuted(bool muted, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setMuted(bool muted, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -527,7 +527,7 @@ double WebExtensionTab::zoomFactor() const
     return [m_delegate zoomFactorForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.setZoom()";
 
@@ -578,7 +578,7 @@ bool WebExtensionTab::isLoadingComplete() const
     return [m_delegate isLoadingCompleteForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(Expected<NSLocale *, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(std::expected<NSLocale *, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.detectLanguage()";
 
@@ -599,7 +599,7 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(Expected<NSLoca
     }).get()];
 }
 
-void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<CocoaImage *, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(std::expected<CocoaImage *, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.captureVisibleTab()";
 
@@ -638,7 +638,7 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<Coco
     [m_delegate takeSnapshotUsingConfiguration:snapshotConfiguration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:internalCompletionHandler.get()];
 }
 
-void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::loadURL(URL url, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -659,7 +659,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, Web
     }).get()];
 }
 
-void WebExtensionTab::reload(ReloadFromOrigin fromOrigin, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::reload(ReloadFromOrigin fromOrigin, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.reload()";
 
@@ -680,7 +680,7 @@ void WebExtensionTab::reload(ReloadFromOrigin fromOrigin, CompletionHandler<void
     }).get()];
 }
 
-void WebExtensionTab::goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::goBack(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.goBack()";
 
@@ -701,7 +701,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Expected<void, WebExtensionE
     }).get()];
 }
 
-void WebExtensionTab::goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::goForward(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.goForward()";
 
@@ -722,7 +722,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Expected<void, WebExtensi
     }).get()];
 }
 
-void WebExtensionTab::activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::activate(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -742,7 +742,7 @@ void WebExtensionTab::activate(CompletionHandler<void(Expected<void, WebExtensio
     }).get()];
 }
 
-void WebExtensionTab::setSelected(bool selected, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setSelected(bool selected, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.update()";
 
@@ -762,7 +762,7 @@ void WebExtensionTab::setSelected(bool selected, CompletionHandler<void(Expected
     }).get()];
 }
 
-void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(std::expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&& completionHandler)
 {
     ASSERT(!parameters.audible);
     ASSERT(!parameters.loading);
@@ -819,7 +819,7 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     }).get()];
 }
 
-void WebExtensionTab::close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::close(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.remove()";
 

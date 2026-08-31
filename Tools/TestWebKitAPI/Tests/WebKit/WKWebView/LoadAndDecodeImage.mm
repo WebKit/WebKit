@@ -36,7 +36,6 @@
 #import <WebCore/ImageAdapter.h>
 #import <WebCore/NativeImage.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <wtf/Expected.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -74,7 +73,7 @@ TEST(WebKit, LoadAndDecodeImage)
     };
     RetainPtr webView = adoptNS([WKWebView new]);
 
-    auto imageOrError = [&] (auto requestPath, CGSize size = CGSizeZero) -> Expected<RetainPtr<Util::PlatformImage>, RetainPtr<NSError>> {
+    auto imageOrError = [&] (auto requestPath, CGSize size = CGSizeZero) -> std::expected<RetainPtr<Util::PlatformImage>, RetainPtr<NSError>> {
         __block RetainPtr<Util::PlatformImage> image;
         __block RetainPtr<NSError> error;
         __block bool loadAndDecodeDone { false };

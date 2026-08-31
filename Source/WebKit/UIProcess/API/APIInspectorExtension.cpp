@@ -52,7 +52,7 @@ void InspectorExtension::setClient(UniqueRef<InspectorExtensionClient>&& client)
     m_client = client.moveToUniquePtr();
 }
 
-void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
+void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
     if (!extensionControllerProxy) {

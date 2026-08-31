@@ -26,10 +26,9 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
-#include <wtf/Expected.h>
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> deriveBitsHKDFCryptoKit(const VectorUInt8& key, const VectorUInt8& salt, const VectorUInt8& info, size_t length, CryptoDigestHashFunction);
+std::expected<VectorUInt8, Error> deriveBitsHKDFCryptoKit(const VectorUInt8& key, const VectorUInt8& salt, const VectorUInt8& info, size_t length, CryptoDigestHashFunction);
 
 } // namespace PAL::Crypto

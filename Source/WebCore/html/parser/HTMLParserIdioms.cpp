@@ -131,7 +131,7 @@ double parseToDoubleForNumberType(StringView string)
 }
 
 template <typename CharacterType>
-static Expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(std::span<const CharacterType> data)
+static std::expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(std::span<const CharacterType> data)
 {
     skipWhile<isASCIIWhitespace>(data);
 
@@ -165,7 +165,7 @@ static Expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(std::span
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
-Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView input)
+std::expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView input)
 {
     if (input.isEmpty())
         return makeUnexpected(HTMLIntegerParsingError::Other);
@@ -177,7 +177,7 @@ Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView input)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView input)
+std::expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView input)
 {
     auto optionalSignedResult = parseHTMLInteger(input);
     if (!optionalSignedResult)

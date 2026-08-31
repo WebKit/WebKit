@@ -84,7 +84,7 @@ public:
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
     String description() const;
-    void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     void setTimingAllowFailedFlag();
     std::optional<WebCore::FrameIdentifier> NODELETE webFrameID() const;

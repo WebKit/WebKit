@@ -120,7 +120,7 @@ void Symbol::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 DEFINE_VISIT_CHILDREN(Symbol);
 
-Expected<String, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
+std::expected<String, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
 {
     String description = tryMakeString("Symbol("_s, StringView(m_privateName.uid()), ')');
     if (!description)

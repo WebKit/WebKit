@@ -43,7 +43,7 @@ class ModuleAnalyzer {
 public:
     ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, CodeFeatures);
 
-    Expected<JSModuleRecord*, std::tuple<ErrorType, String>> analyze(ModuleProgramNode&);
+    std::expected<JSModuleRecord*, std::tuple<ErrorType, String>> analyze(ModuleProgramNode&);
 
     VM& vm() { return m_vm; }
 

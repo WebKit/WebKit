@@ -56,7 +56,7 @@ PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParame
     RELEASE_ASSERT(m_networkLoad->parameters().shouldPreconnectOnly == PreconnectOnly::Yes);
 }
 
-void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     m_networkLoad->setH2PingCallback(url, WTF::move(completionHandler));
 }

@@ -259,7 +259,7 @@ void RemoteAudioVideoRendererProxyManager::setHasProtectedVideoContent(RemoteAud
         renderer->setHasProtectedVideoContent(hasProtected);
 }
 
-void RemoteAudioVideoRendererProxyManager::addTrack(RemoteAudioVideoRendererIdentifier identifier, WebCore::AudioVideoRenderer::TrackType type, CompletionHandler<void(Expected<TrackIdentifier, PlatformMediaError>)>&& completionHandler)
+void RemoteAudioVideoRendererProxyManager::addTrack(RemoteAudioVideoRendererIdentifier identifier, WebCore::AudioVideoRenderer::TrackType type, CompletionHandler<void(std::expected<TrackIdentifier, PlatformMediaError>)>&& completionHandler)
 {
     RefPtr renderer = rendererFor(identifier);
     if (!renderer) {
@@ -817,7 +817,7 @@ void RemoteAudioVideoRendererProxyManager::setCDMInstance(RemoteAudioVideoRender
         ALWAYS_LOG(LOGIDENTIFIER, "Unable to find CDMInstance: ", instanceId->loggingString());
 }
 
-void RemoteAudioVideoRendererProxyManager::setInitData(RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData, CompletionHandler<void(Expected<void, WebCore::PlatformMediaError>)>&& completionHandler)
+void RemoteAudioVideoRendererProxyManager::setInitData(RemoteAudioVideoRendererIdentifier identifier, Ref<WebCore::SharedBuffer> initData, CompletionHandler<void(std::expected<void, WebCore::PlatformMediaError>)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
     if (RefPtr renderer = rendererFor(identifier))

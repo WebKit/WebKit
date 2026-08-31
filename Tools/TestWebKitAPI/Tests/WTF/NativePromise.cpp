@@ -677,7 +677,7 @@ TEST(NativePromise, InvokeAsyncWithExpected)
 {
     runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
         auto asyncMethodWithExpected = [] {
-            return Expected<int, long> { 1 };
+            return std::expected<int, long> { 1 };
         };
 
         invokeAsync(runLoop, WTF::move(asyncMethodWithExpected))->whenSettled(runLoop, [&](auto&& result) {
@@ -1169,8 +1169,8 @@ TEST(NativePromise, NonExclusiveWithCrossThreadCopy)
         AutoWorkQueue awq;
         auto queue = awq.queue();
         // If you replace PromiseOption::WithCrossThreadCopy with PromiseOption::WithoutCrossThreadCopy, this test will crash due to the AtomString being deleted on the target queue.
-        using MyPromise = NativePromise<Expected<String, AtomString>, bool, PromiseOption::NonExclusive | PromiseOption::WithCrossThreadCopy>;
-        static_assert(CrossThreadCopier<Expected<String, AtomString>>::IsNeeded);
+        using MyPromise = NativePromise<std::expected<String, AtomString>, bool, PromiseOption::NonExclusive | PromiseOption::WithCrossThreadCopy>;
+        static_assert(CrossThreadCopier<std::expected<String, AtomString>>::IsNeeded);
         MyPromise::Producer producer;
         Ref<MyPromise> promise = producer;
         promise->whenSettled(queue, [&resolution] (const MyPromise::Result& val) {
@@ -1223,7 +1223,7 @@ TEST(NativePromise, WithCrossThreadCopyType)
 
 TEST(NativePromise, ExpectedWithString)
 {
-    using MyPromise = NativePromise<Expected<String, String>, int>;
+    using MyPromise = NativePromise<std::expected<String, String>, int>;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -1245,7 +1245,7 @@ TEST(NativePromise, ExpectedWithString)
             EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
         });
 
-    Expected<String, String> error = std::unexpected<String>("error"_s);
+    std::expected<String, String> error = std::unexpected<String>("error"_s);
     MyPromise::createAndResolve(WTF::move(error))->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
@@ -1665,7 +1665,7 @@ TEST(NativePromise, MismatchChainToVoidPromise)
 TEST(NativePromise, CreateSettledPromise)
 {
     runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
-        using MyExpected = Expected<int, long>;
+        using MyExpected = std::expected<int, long>;
         createSettledPromise(MyExpected { makeUnexpected<long>(1) })->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!result);
             EXPECT_EQ(result.error(), 1L);

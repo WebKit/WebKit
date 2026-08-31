@@ -211,7 +211,7 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
 
@@ -293,7 +293,7 @@ void WebExtension::recordError(Ref<API::Error> error)
     [wrapper() didChangeValueForKey:@"errors"];
 }
 
-Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const String& imagePath, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
+std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const String& imagePath, WebCore::FloatSize sizeForResizing, std::optional<double> idealDisplayScale)
 {
     ASSERT(!imagePath.isEmpty());
 

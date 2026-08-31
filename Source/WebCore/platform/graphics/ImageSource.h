@@ -79,8 +79,8 @@ public:
 
     virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return primaryNativeImage(); }
 
-    virtual Expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
-    virtual Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+    virtual std::expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+    virtual std::expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
 
     // Overridden by BitmapImageSource to keep decoded-size accounting in step with the
     // platform-image replacement the GPU process performs while the image is drawn.

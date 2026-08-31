@@ -192,7 +192,7 @@ private:
 
     bool NODELETE isEmptyFrameLoaderClient() const override;
     void NODELETE prefetchDNS(const String&) final;
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) final;
+    void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) final;
 
 #if USE(QUICK_LOOK)
     RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final;

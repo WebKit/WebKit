@@ -123,13 +123,13 @@ private:
     void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
     void isPowerEfficient(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(bool)>&&);
 
-    using TakePhotoCallback = CompletionHandler<void(Expected<std::pair<Vector<uint8_t>, String>, String>&&)>;
+    using TakePhotoCallback = CompletionHandler<void(std::expected<std::pair<Vector<uint8_t>, String>, String>&&)>;
     void takePhoto(WebCore::RealtimeMediaSourceIdentifier, WebCore::PhotoSettings&&, TakePhotoCallback&&);
 
-    using GetPhotoCapabilitiesCallback = CompletionHandler<void(Expected<WebCore::PhotoCapabilities, String>&&)>;
+    using GetPhotoCapabilitiesCallback = CompletionHandler<void(std::expected<WebCore::PhotoCapabilities, String>&&)>;
     void getPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier, GetPhotoCapabilitiesCallback&&);
 
-    using GetPhotoSettingsCallback = CompletionHandler<void(Expected<WebCore::PhotoSettings, String>&&)>;
+    using GetPhotoSettingsCallback = CompletionHandler<void(std::expected<WebCore::PhotoSettings, String>&&)>;
     void getPhotoSettings(WebCore::RealtimeMediaSourceIdentifier, GetPhotoSettingsCallback&&);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier);

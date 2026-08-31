@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsigned minimumBufferCount, NSDictionary *pixelAttributes)
+static std::expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsigned minimumBufferCount, NSDictionary *pixelAttributes)
 {
     NSDictionary *poolOptions = nullptr;
     if (minimumBufferCount) {
@@ -55,7 +55,7 @@ static Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsi
     return adoptCF(pool);
 }
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
+std::expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
 {
     return createBufferPool(minimumBufferCount, @{
         (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
@@ -69,7 +69,7 @@ Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBuffer
     });
 }
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
+std::expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
 {
     return createBufferPool(minimumBufferCount, @{
         (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
@@ -82,12 +82,12 @@ Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferP
     });
 }
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible, bool shouldUseIOSurfacePool)
+std::expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible, bool shouldUseIOSurfacePool)
 {
     return shouldUseIOSurfacePool ? createIOSurfaceCVPixelBufferPool(width, height, format, minimumBufferCount, isCGImageCompatible) : createInMemoryCVPixelBufferPool(width, height, format, minimumBufferCount, isCGImageCompatible);
 }
 
-Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef pixelBufferPool, unsigned maxBufferSize)
+std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef pixelBufferPool, unsigned maxBufferSize)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
     CVReturn status;
@@ -135,7 +135,7 @@ static CFDictionaryRef pixelBufferCreationOptions(IOSurfaceRef surface)
     };
 }
 
-Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef surface)
+std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef surface)
 {
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, RetainPtr { pixelBufferCreationOptions(surface) }.get(), &pixelBuffer);

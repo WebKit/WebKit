@@ -34,7 +34,6 @@
 #include "TextIterator.h"
 #include "TextIteratorBehavior.h"
 #include "dom/BoundaryPoint.h"
-#include <wtf/Expected.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -171,7 +170,7 @@ std::optional<SimpleRange> CachedMatchFinder::findNextMatch(StringView buffer, c
     return result;
 }
 
-Expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findNextMatchInShadowIncludingAncestorTree(ShadowRoot& startingShadowRoot, const SimpleRange& selectionRange, const String& target, FindOptions options)
+std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findNextMatchInShadowIncludingAncestorTree(ShadowRoot& startingShadowRoot, const SimpleRange& selectionRange, const String& target, FindOptions options)
 {
     RefPtr shadowRoot = &startingShadowRoot;
     String shadowBuffer;
@@ -219,7 +218,7 @@ Expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMat
     return std::optional<SimpleRange> { };
 }
 
-Expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatchFrom(const std::optional<SimpleRange>& selectionRange, const String& target, FindOptions options)
+std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatchFrom(const std::optional<SimpleRange>& selectionRange, const String& target, FindOptions options)
 {
     if (!isTextBufferCacheValid()) {
         if (!clearTextBufferCache())
@@ -251,7 +250,7 @@ Expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMat
     return std::optional<SimpleRange> { };
 }
 
-Expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
+std::expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
 {
     if (!isTextBufferCacheValid()) {
         if (!clearTextBufferCache())
@@ -279,7 +278,7 @@ Expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinde
     return results;
 }
 
-Expected<unsigned, CachedMatchFinder::CacheUnusable> CachedMatchFinder::countMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
+std::expected<unsigned, CachedMatchFinder::CacheUnusable> CachedMatchFinder::countMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
 {
     if (!isTextBufferCacheValid()) {
         if (!clearTextBufferCache())

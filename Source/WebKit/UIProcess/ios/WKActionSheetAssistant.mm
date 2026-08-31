@@ -128,7 +128,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     std::unique_ptr<WebKit::FrameInfoData> _frameInfo;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 #if ENABLE(VIDEO)
-    CompletionHandler<void(Expected<void, WebCore::ExceptionData>)> _captionDisplaySettingsMenuCompletionHandler;
+    CompletionHandler<void(std::expected<void, WebCore::ExceptionData>)> _captionDisplaySettingsMenuCompletionHandler;
 #endif
 #endif // USE(UICONTEXTMENU)
     WeakObjCPtr<UIView> _view;
@@ -1013,7 +1013,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #if ENABLE(VIDEO) && USE(UICONTEXTMENU)
-- (void)showCaptionDisplaySettingsMenu:(WebCore::HTMLMediaElementIdentifier)identifier withOptions:(const WebCore::ResolvedCaptionDisplaySettingsOptions&)options completionHandler:(CompletionHandler<void(Expected<void, WebCore::ExceptionData>)>&&)completionHandler
+- (void)showCaptionDisplaySettingsMenu:(WebCore::HTMLMediaElementIdentifier)identifier withOptions:(const WebCore::ResolvedCaptionDisplaySettingsOptions&)options completionHandler:(CompletionHandler<void(std::expected<void, WebCore::ExceptionData>)>&&)completionHandler
 {
     _captionStyleMenuController = [WKCaptionStyleMenuController menuController];
     [_captionStyleMenuController setDelegate:self];

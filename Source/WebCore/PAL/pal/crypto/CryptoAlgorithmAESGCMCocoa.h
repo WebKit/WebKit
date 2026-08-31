@@ -26,14 +26,13 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
-#include <wtf/Expected.h>
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> encryptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
+std::expected<VectorUInt8, Error> encryptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
 
-Expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const Vector<uint8_t>& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
+std::expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const Vector<uint8_t>& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
 
-Expected<VectorUInt8, Error> decyptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& cipherText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
+std::expected<VectorUInt8, Error> decyptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& cipherText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes);
 
 } // namespace PAL::Crypto

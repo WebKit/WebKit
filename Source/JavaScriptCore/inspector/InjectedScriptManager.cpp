@@ -136,7 +136,7 @@ void InjectedScriptManager::clearExceptionValue()
         injectedScript.clearExceptionValue();
 }
 
-Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedScript(JSGlobalObject* globalObject, int id)
+std::expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedScript(JSGlobalObject* globalObject, int id)
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);

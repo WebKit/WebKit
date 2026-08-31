@@ -106,7 +106,7 @@ void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<Strin
     }
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (rulesetIdentifiersToEnable.isEmpty() && rulesetIdentifiersToDisable.isEmpty()) {
         completionHandler({ });
@@ -170,7 +170,7 @@ void WebExtensionContext::incrementActionCountForTab(WebExtensionTab& tab, ssize
     tabAction->incrementBlockedResourceCount(incrementAmount);
 }
 
-void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (shouldDisplayBlockedResourceCountAsBadgeText() == displayActionCountAsBadgeText) {
         completionHandler({ });
@@ -186,7 +186,7 @@ void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(boo
     completionHandler({ });
 }
 
-void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier tabIdentifier, double increment, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier tabIdentifier, double increment, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
@@ -198,7 +198,7 @@ void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtension
     completionHandler({ });
 }
 
-void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp, CompletionHandler<void(Expected<Vector<WebExtensionMatchedRuleParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp, CompletionHandler<void(std::expected<Vector<WebExtensionMatchedRuleParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr tab = tabIdentifier ? getTab(tabIdentifier.value()) : nullptr;
 

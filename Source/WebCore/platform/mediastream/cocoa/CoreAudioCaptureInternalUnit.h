@@ -35,7 +35,7 @@ namespace WebCore {
 class CoreAudioCaptureInternalUnit final :  public CoreAudioCaptureUnit::InternalUnit {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CoreAudioCaptureInternalUnit);
 public:
-    static Expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
+    static std::expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
     CoreAudioCaptureInternalUnit(CoreAudioCaptureUnit::StoredAudioUnit&&, bool shouldUseVPIO);
     ~CoreAudioCaptureInternalUnit() final;
 

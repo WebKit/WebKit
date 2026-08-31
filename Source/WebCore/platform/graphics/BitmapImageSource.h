@@ -29,7 +29,6 @@
 #include "ImageDecoderClient.h"
 #include "ImageSource.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/Expected.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -75,7 +74,7 @@ public:
     const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) final { return frameAtIndexCacheIfNeeded(primaryFrameIndex(), subsamplingLevel); }
 
     // NativeImage
-    Expected<DecodingDestination, DecodingStatus> requestNativeImageAtIndexIfNeeded(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&);
+    std::expected<DecodingDestination, DecodingStatus> requestNativeImageAtIndexIfNeeded(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&);
 
     RefPtr<NativeImage> primaryNativeImageIfExists() { return frameAtIndex(primaryFrameIndex()).nativeImage(std::nullopt); }
     RefPtr<NativeImage> primaryNativeImage() final { return nativeImageAtIndex(primaryFrameIndex()); }
@@ -149,11 +148,11 @@ private:
     // NativeImage
     DecodingStatus requestNativeImageAtIndex(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&);
 
-    Expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
-    Expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel, const DecodingOptions&);
-    Expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel, const DecodingOptions&);
+    std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
+    std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel, const DecodingOptions&);
+    std::expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel, const DecodingOptions&);
 
-    Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&) final;
+    std::expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&) final;
 
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final;
     RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned index, ImageOrientation);

@@ -31,7 +31,6 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include <WebCore/DigitalCredentialPresentationProtocol.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -52,7 +51,7 @@ struct VirtualWalletBehavior {
     String responseJSON;
 };
 
-using DigitalCredentialsPickerCompletionHandler = CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>;
+using DigitalCredentialsPickerCompletionHandler = CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>;
 
 class BidiDigitalCredentialsAgent final : public Inspector::BidiDigitalCredentialsBackendDispatcherHandler {
     WTF_MAKE_TZONE_ALLOCATED(BidiDigitalCredentialsAgent);

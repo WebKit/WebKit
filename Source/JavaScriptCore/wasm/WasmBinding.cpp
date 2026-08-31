@@ -40,7 +40,7 @@ namespace JSC { namespace Wasm {
 
 using JIT = CCallHelpers;
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(const Wasm::ModuleInformation& info, unsigned importIndex)
+std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(const Wasm::ModuleInformation& info, unsigned importIndex)
 {
     // FIXME: Consider uniquify the stubs based on signature + index to see if this saves memory.
     // https://bugs.webkit.org/show_bug.cgi?id=184157

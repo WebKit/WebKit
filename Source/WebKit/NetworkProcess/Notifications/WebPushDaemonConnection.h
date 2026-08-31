@@ -34,7 +34,6 @@
 #include "WebPushDaemonConstants.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PushSubscriptionData.h>
-#include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace IPC {
@@ -42,15 +41,15 @@ class Connection;
 class Decoder;
 class Encoder;
 
-template<> struct AsyncReplyError<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>> {
-    static Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> create()
+template<> struct AsyncReplyError<std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>> {
+    static std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> create()
     {
         return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Connection to web push daemon failed"_s });
     }
 };
 
-template<> struct AsyncReplyError<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>> {
-    static Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> create()
+template<> struct AsyncReplyError<std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>> {
+    static std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> create()
     {
         return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Connection to web push daemon failed"_s });
     }

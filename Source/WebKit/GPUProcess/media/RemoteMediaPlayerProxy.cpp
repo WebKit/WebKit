@@ -255,7 +255,7 @@ static MediaTimeUpdateData timeUpdateData(const MediaPlayer& player, MediaTime t
     };
 }
 
-void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(Expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&& handler)
+void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(std::expected<WebCore::MediaTimeUpdateData, WebCore::PlatformMediaError>)>&& handler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
     protect(m_player)->seekToTarget(target)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, handler = WTF::move(handler)](auto&& result) mutable {

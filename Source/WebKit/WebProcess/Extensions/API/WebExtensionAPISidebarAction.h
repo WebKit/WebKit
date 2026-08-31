@@ -35,7 +35,7 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-using ParseResult = Expected<std::optional<Variant<WebExtensionTabIdentifier, WebExtensionWindowIdentifier>>, WebExtensionError>;
+using ParseResult = std::expected<std::optional<Variant<WebExtensionTabIdentifier, WebExtensionWindowIdentifier>>, WebExtensionError>;
 
 template<typename T, typename VARIANT_T>
 struct isVariantMember;
@@ -51,7 +51,7 @@ std::optional<OptType> toOptional(Variant<Types...>& variant)
 }
 
 template<typename SuccessType>
-RetainPtr<NSString> indicatesError(const Expected<SuccessType, WebExtensionError>& result)
+RetainPtr<NSString> indicatesError(const std::expected<SuccessType, WebExtensionError>& result)
 {
     if (result.has_value())
         return nil;

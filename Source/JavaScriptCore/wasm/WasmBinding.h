@@ -29,7 +29,6 @@
 
 #include "JITCompilation.h"
 #include "WasmFormat.h"
-#include <wtf/Expected.h>
 
 namespace JSC {
 
@@ -41,7 +40,7 @@ enum class BindingFailure {
     OutOfMemory,
 };
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(const Wasm::ModuleInformation&, unsigned importIndex);
+std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(const Wasm::ModuleInformation&, unsigned importIndex);
 
 } } // namespace JSC::Wasm
 

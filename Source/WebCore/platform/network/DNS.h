@@ -89,7 +89,7 @@ private:
 
 enum class DNSError { Unknown, CannotResolve, Cancelled };
 
-using DNSAddressesOrError = Expected<Vector<IPAddress>, DNSError>;
+using DNSAddressesOrError = std::expected<Vector<IPAddress>, DNSError>;
 using DNSCompletionHandler = CompletionHandler<void(DNSAddressesOrError&&)>;
 
 WEBCORE_EXPORT void prefetchDNS(const String& hostname);

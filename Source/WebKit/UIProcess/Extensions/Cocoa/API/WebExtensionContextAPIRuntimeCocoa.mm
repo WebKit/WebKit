@@ -50,14 +50,14 @@
 
 namespace WebKit {
 
-void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(Expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(std::expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&& completionHandler)
 {
     wakeUpBackgroundContentIfNecessary([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(backgroundPageIdentifierInOwnProcess());
     });
 }
 
-void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.openOptionsPage()";
 
@@ -127,7 +127,7 @@ void WebExtensionContext::runtimeReload()
     std::ignore = reload();
 }
 
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.sendMessage()";
 
@@ -160,7 +160,7 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
             return;
         }
 
-        auto callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
         for (auto& process : mainWorldProcesses) {
             process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](String&& replyJSON) {
@@ -175,7 +175,7 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     });
 }
 
-void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.connect()";
 
@@ -236,7 +236,7 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     });
 }
 
-void WebExtensionContext::sendNativeMessage(const String& applicationID, id message, CompletionHandler<void(Expected<RetainPtr<id>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::sendNativeMessage(const String& applicationID, id message, CompletionHandler<void(std::expected<RetainPtr<id>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.sendNativeMessage()";
 
@@ -274,7 +274,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
             return;
         }
 
-        Ref callbackAggregator = EagerCallbackAggregator<void(Expected<RetainPtr<id>, WebExtensionError>&&)>::create(WTF::move(completionHandler), { });
+        Ref callbackAggregator = EagerCallbackAggregator<void(std::expected<RetainPtr<id>, WebExtensionError>&&)>::create(WTF::move(completionHandler), { });
 
         nativeExtension.requestCancellationBlock = makeBlockPtr([callbackAggregator](id<NSCopying> requestIdentifier, NSError *error) {
             RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ was canceled: %{public}@", requestIdentifier, privacyPreservingDescription(error));
@@ -350,7 +350,7 @@ void WebExtensionContext::sendNativeMessage(const String& applicationID, id mess
     }).get()];
 }
 
-void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     sendNativeMessage(applicationID, parseJSON(messageJSON.createNSString().get(), JSONOptions::FragmentsAllowed), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
         if (!result) {
@@ -362,7 +362,7 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
     });
 }
 
-void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, WebPageProxyIdentifier pageProxyIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, WebPageProxyIdentifier pageProxyIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.connectNative()";
 
@@ -439,7 +439,7 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     }).get()];
 }
 
-void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
@@ -481,7 +481,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
             return;
         }
 
-        auto callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
         for (auto& process : mainWorldProcesses) {
             process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](String&& replyJSON) {
@@ -496,7 +496,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     });
 }
 
-void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.connect()";
 

@@ -135,7 +135,7 @@ public:
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
-    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     WKWebView *webView() const;
 
@@ -148,62 +148,62 @@ public:
     bool isPrivate() const;
 
     bool isPinned() const;
-    void setPinned(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setPinned(bool, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTF::move(completionHandler)); }
-    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTF::move(completionHandler)); }
+    void pin(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTF::move(completionHandler)); }
+    void unpin(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTF::move(completionHandler)); }
 
     bool isReaderModeAvailable() const;
 
     bool isReaderModeActive() const;
-    void setReaderModeActive(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setReaderModeActive(bool, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTF::move(completionHandler)); }
+    void toggleReaderMode(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTF::move(completionHandler)); }
 
     bool isPlayingAudio() const;
 
     bool isMuted() const;
-    void setMuted(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setMuted(bool, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTF::move(completionHandler)); }
-    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTF::move(completionHandler)); }
+    void mute(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTF::move(completionHandler)); }
+    void unmute(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTF::move(completionHandler)); }
 
 #if PLATFORM(COCOA)
     CGSize size() const;
 #endif
 
     double zoomFactor() const;
-    void setZoomFactor(double, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setZoomFactor(double, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     URL url() const;
     URL pendingURL() const;
 
     bool isLoadingComplete() const;
 
-    void detectWebpageLocale(CompletionHandler<void(Expected<NSLocale *, WebExtensionError>&&)>&&);
+    void detectWebpageLocale(CompletionHandler<void(std::expected<NSLocale *, WebExtensionError>&&)>&&);
 #if PLATFORM(COCOA)
-    void captureVisibleWebpage(CompletionHandler<void(Expected<CocoaImage *, WebExtensionError>&&)>&&);
+    void captureVisibleWebpage(CompletionHandler<void(std::expected<CocoaImage *, WebExtensionError>&&)>&&);
 #endif
 
-    void loadURL(URL, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void loadURL(URL, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void reload(ReloadFromOrigin, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void reload(ReloadFromOrigin, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void goBack(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void goForward(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     bool isActive() const;
-    void activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void activate(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     bool isSelected() const;
-    void setSelected(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void setSelected(bool, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
-    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTF::move(completionHandler)); }
-    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTF::move(completionHandler)); }
+    void select(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTF::move(completionHandler)); }
+    void deselect(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTF::move(completionHandler)); }
 
-    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
+    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(std::expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
 
-    void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void close(CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     bool shouldGrantPermissionsOnUserGesture() const;
 

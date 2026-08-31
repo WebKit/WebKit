@@ -92,7 +92,7 @@ public:
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
 
-    Expected<void, MediaPlaybackDenialExplanation> playbackStateChangePermitted(MediaPlaybackState) const;
+    std::expected<void, MediaPlaybackDenialExplanation> playbackStateChangePermitted(MediaPlaybackState) const;
     // playbackStateChangePermitted() only denies an audible element, so play() is permitted while
     // the resource is believed to be silent (no audio track discovered yet, muted, or volume zero)
     // and denied once it becomes audible.

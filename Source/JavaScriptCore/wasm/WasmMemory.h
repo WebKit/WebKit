@@ -36,7 +36,6 @@
 #include <JavaScriptCore/WeakGCSet.h>
 
 #include <wtf/CagedPtr.h>
-#include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -92,7 +91,7 @@ public:
     MemorySharingMode sharingMode() const { return m_handle->sharingMode(); }
     MemoryMode mode() const { return m_handle->mode(); }
 
-    Expected<PageCount, GrowFailReason> grow(VM&, PageCount);
+    std::expected<PageCount, GrowFailReason> grow(VM&, PageCount);
     bool init(uint64_t, const uint8_t*, uint32_t);
 
     void registerInstance(JSWebAssemblyInstance&);
@@ -107,7 +106,7 @@ private:
     Memory(Ref<BufferMemoryHandle>&&, Ref<SharedArrayBufferContents>&&, AddressType, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
     Memory(PageCount initial, PageCount maximum, MemorySharingMode, AddressType, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
 
-    Expected<PageCount, GrowFailReason> growShared(VM&, PageCount);
+    std::expected<PageCount, GrowFailReason> growShared(VM&, PageCount);
 
     Ref<BufferMemoryHandle> m_handle;
     RefPtr<SharedArrayBufferContents> m_shared;

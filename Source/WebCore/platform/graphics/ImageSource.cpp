@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-Expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&)
+std::expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&)
 {
     if (auto nativeImage = primaryNativeImage())
         return nativeImage.releaseNonNull();
     return makeUnexpected(DecodingStatus::Invalid);
 }
 
-Expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
+std::expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
     return primaryNativeImageForDrawing(subsamplingLevel, options);
 }

@@ -31,7 +31,6 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
-#include <wtf/Expected.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -70,7 +69,7 @@ public:
 
     // appendData will be called on the SourceBufferPrivateAVFObjC data parser queue.
     // Other methods will be called on the main thread, but only once appendData has returned.
-    virtual Expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) = 0;
+    virtual std::expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void resetParserState() = 0;
     virtual void invalidate() = 0;

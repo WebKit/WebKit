@@ -45,7 +45,7 @@ public:
     ArchiveResource* mainResource() const { return m_mainResource.get(); }
     const Vector<Ref<ArchiveResource>>& subresources() const LIFETIME_BOUND { return m_subresources; }
     const Vector<Ref<Archive>>& subframeArchives() const LIFETIME_BOUND { return m_subframeArchives; }
-    WEBCORE_EXPORT Expected<Vector<String>, ArchiveError> saveResourcesToDisk(const String& directory);
+    WEBCORE_EXPORT std::expected<Vector<String>, ArchiveError> saveResourcesToDisk(const String& directory);
 
     virtual bool isLegacyWebArchive() const { return false; }
 

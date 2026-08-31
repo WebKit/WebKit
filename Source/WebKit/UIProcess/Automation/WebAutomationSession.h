@@ -341,7 +341,7 @@ public:
     String handleForWebFrameID(std::optional<WebCore::FrameIdentifier>);
     String handleForWebPageProxy(const WebPageProxy&);
 
-    Expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
+    std::expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
 
 #if ENABLE(WEBDRIVER_BIDI)
     bool isValidUserContext(const String& userContextID) const;

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <pal/crypto/CryptoTypes.h>
-#include <wtf/Expected.h>
 
 namespace PAL::Crypto {
 

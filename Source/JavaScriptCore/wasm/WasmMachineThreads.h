@@ -29,7 +29,6 @@
 
 #include "WasmCalleeGroup.h"
 #include "WasmMemory.h"
-#include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>

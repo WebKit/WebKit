@@ -33,7 +33,7 @@
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
+std::expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
 {
     auto rv = pal::AesKw::wrap(escapableSpan(borrow(data)->span()), escapableSpan(borrow(key)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)
@@ -41,7 +41,7 @@ Expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const
     return WTF::move(rv.result);
 }
 
-Expected<VectorUInt8, Error> unwrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
+std::expected<VectorUInt8, Error> unwrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
 {
     auto rv = pal::AesKw::unwrap(escapableSpan(borrow(data)->span()), escapableSpan(borrow(key)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)

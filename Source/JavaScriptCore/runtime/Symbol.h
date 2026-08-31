@@ -30,7 +30,6 @@
 #include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/PrivateName.h>
 #include <JavaScriptCore/VM.h>
-#include <wtf/Expected.h>
 
 namespace JSC {
 
@@ -75,7 +74,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    Expected<String, ErrorTypeWithExtension> tryGetDescriptiveString() const;
+    std::expected<String, ErrorTypeWithExtension> tryGetDescriptiveString() const;
 
 private:
     Symbol(VM&);

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/TextExtractionTypes.h>
-#include <wtf/Expected.h>
 
 namespace WebCore {
 

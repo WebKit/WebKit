@@ -129,7 +129,7 @@ bool WebExtensionContext::isScriptingMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::scripting());
 }
 
-void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, bool userGesture, CompletionHandler<void(std::expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.executeScript()";
 
@@ -160,7 +160,7 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
     });
 }
 
-void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.insertCSS()";
 
@@ -192,7 +192,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
     });
 }
 
-void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (m_dynamicallyInjectedUserStyleSheets.isEmpty()) {
         completionHandler({ });
@@ -225,7 +225,7 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     completionHandler({ });
 }
 
-void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.registerContentScripts()";
 
@@ -256,7 +256,7 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
     });
 }
 
-void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.updateContentScripts()";
 
@@ -311,7 +311,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
     });
 }
 
-void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     Vector<WebExtensionRegisteredScriptParameters> scripts;
 
@@ -332,7 +332,7 @@ void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& sc
     completionHandler(WTF::move(scripts));
 }
 
-void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"scripting.unregisterContentScripts()";
 

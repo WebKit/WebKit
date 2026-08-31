@@ -35,7 +35,6 @@
 #include "ContentExtensionsBackend.h"
 #include "ContentExtensionsDebugging.h"
 #include "ProcessWarming.h"
-#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -51,7 +50,7 @@ static bool NODELETE containsOnlyASCIIWithNoUppercase(const String& domain)
     return true;
 }
     
-static Expected<Vector<String>, std::error_code> getStringList(const JSON::Array& array)
+static std::expected<Vector<String>, std::error_code> getStringList(const JSON::Array& array)
 {
     Vector<String> strings;
     strings.reserveInitialCapacity(array.length());
@@ -64,7 +63,7 @@ static Expected<Vector<String>, std::error_code> getStringList(const JSON::Array
     return strings;
 }
 
-static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array& arrayObject)
+static std::expected<Vector<String>, std::error_code> getDomainList(const JSON::Array& arrayObject)
 {
     auto domains = getStringList(arrayObject);
     if (!domains)
@@ -119,7 +118,7 @@ static std::error_code getTypeFlags(const JSON::Array& array, ResourceFlags& fla
     return { };
 }
     
-static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleObject)
+static std::expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleObject)
 {
     auto triggerObject = ruleObject.getObject("trigger"_s);
     if (!triggerObject)
@@ -174,7 +173,7 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
         trigger.flags |= static_cast<ResourceFlags>(requestMethod.value());
     }
 
-    auto checkCondition = [&] (ASCIILiteral key, Expected<Vector<String>, std::error_code> (*listReader)(const JSON::Array&), ActionCondition actionCondition) -> std::error_code {
+    auto checkCondition = [&] (ASCIILiteral key, std::expected<Vector<String>, std::error_code> (*listReader)(const JSON::Array&), ActionCondition actionCondition) -> std::error_code {
         if (auto value = triggerObject->getValue(key)) {
             if (trigger.flags & ActionConditionMask)
                 return ContentExtensionError::JSONMultipleConditions;
@@ -232,7 +231,7 @@ WebCore::CSSParserContext contentExtensionCSSParserContext()
     return context;
 }
 
-static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const String& urlFilter, CSSSelectorsAllowed selectorsAllowed)
+static std::optional<std::expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const String& urlFilter, CSSSelectorsAllowed selectorsAllowed)
 {
     auto actionObject = ruleObject.getObject("action"_s);
     if (!actionObject)
@@ -285,7 +284,7 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, CSSSelectorsAllowed selectorsAllowed)
+static std::optional<std::expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject, CSSSelectorsAllowed selectorsAllowed)
 {
     auto trigger = loadTrigger(ruleObject);
     if (!trigger.has_value())
@@ -300,7 +299,7 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(c
     return { { { WTF::move(trigger.value()), WTF::move(action->value()) } } };
 }
 
-static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRuleIdentifier(const JSON::Object& ruleObject)
+static std::optional<std::expected<ContentExtensionRule, std::error_code>> loadRuleIdentifier(const JSON::Object& ruleObject)
 {
     auto identifierValue = ruleObject.getValue("_identifier"_s);
     if (!identifierValue || !identifierValue->asValue())
@@ -319,7 +318,7 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRuleId
     return { { { WTF::move(trigger.value()), Action { ReportIdentifierAction { rulesetIdentifier, identifier.value() } } } } };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
+static std::expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
 {
     auto decodedRules = JSON::Value::parseJSON(ruleJSON);
 
@@ -358,7 +357,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
     return ruleList;
 }
 
-Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
+std::expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();

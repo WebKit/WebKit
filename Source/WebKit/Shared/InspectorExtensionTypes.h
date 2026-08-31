@@ -35,8 +35,8 @@ enum class ExtensionError : uint8_t;
 
 using ExtensionTabID = WTF::String;
 using ExtensionID = WTF::String;
-using ExtensionVoidResult = Expected<void, ExtensionError>;
-using ExtensionEvaluationResult = Expected<WebKit::RunJavaScriptResult, ExtensionError>;
+using ExtensionVoidResult = std::expected<void, ExtensionError>;
+using ExtensionEvaluationResult = std::expected<WebKit::RunJavaScriptResult, ExtensionError>;
 
 enum class ExtensionAppearance : bool {
     Light,

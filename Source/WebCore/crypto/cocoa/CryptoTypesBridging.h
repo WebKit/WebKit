@@ -70,7 +70,7 @@ inline std::optional<ExceptionCode> toExceptionCode(const PAL::Crypto::Error& er
 }
 
 template<typename T>
-inline ExceptionOr<T> toException(Expected<T, PAL::Crypto::Error>&& expected)
+inline ExceptionOr<T> toException(std::expected<T, PAL::Crypto::Error>&& expected)
 {
     if (expected)
         return WTF::move(*expected);

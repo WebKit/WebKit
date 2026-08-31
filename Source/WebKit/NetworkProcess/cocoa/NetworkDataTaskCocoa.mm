@@ -733,10 +733,10 @@ String NetworkDataTaskCocoa::description() const
     return String([m_task description]);
 }
 
-void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void NetworkDataTaskCocoa::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     ASSERT(m_task.get()._preconnect);
-    auto handler = CompletionHandlerWithFinalizer<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>(WTF::move(completionHandler), [url = url.isolatedCopy()] (Function<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>& completionHandler) mutable {
+    auto handler = CompletionHandlerWithFinalizer<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>(WTF::move(completionHandler), [url = url.isolatedCopy()] (Function<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>& completionHandler) mutable {
         ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), url = WTF::move(url).isolatedCopy()]() mutable {
             completionHandler(makeUnexpected(WebCore::internalError(url)));
         });

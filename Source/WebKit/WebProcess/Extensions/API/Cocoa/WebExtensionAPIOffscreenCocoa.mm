@@ -60,7 +60,7 @@ void WebExtensionAPIOffscreen::createDocument(NSDictionary *details, Ref<WebExte
     parameters.url = details[urlKey];
     parameters.reasons = makeVector<String>(details[reasonsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCreateDocument(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCreateDocument(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -74,7 +74,7 @@ void WebExtensionAPIOffscreen::closeDocument(Ref<WebExtensionCallbackHandler>&& 
 {
     // https://developer.chrome.com/docs/extensions/reference/api/offscreen#method-closeDocument
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCloseDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCloseDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -88,7 +88,7 @@ void WebExtensionAPIOffscreen::hasDocument(Ref<WebExtensionCallbackHandler>&& ca
 {
     // https://developer.chrome.com/docs/extensions/reference/api/offscreen#method-hasDocument
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenHasDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<bool, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenHasDocument(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<bool, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

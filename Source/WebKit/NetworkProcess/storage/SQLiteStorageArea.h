@@ -59,9 +59,9 @@ private:
     StorageType storageType() const final { return StorageAreaBase::StorageType::Local; };
     bool isEmpty() final;
     HashMap<String, String> allItems() final;
-    Expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) final;
-    Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
-    Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
+    std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) final;
+    std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
+    std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
 
     bool createTableIfNecessary();
     enum class ShouldCreateIfNotExists : bool { No, Yes };
@@ -79,8 +79,8 @@ private:
     };
     ASCIILiteral statementString(StatementType) const;
     WebCore::SQLiteStatementAutoResetScope cachedStatement(StatementType);
-    Expected<String, StorageError> getItem(const String& key);
-    Expected<String, StorageError> getItemFromDatabase(const String& key);
+    std::expected<String, StorageError> getItem(const String& key);
+    std::expected<String, StorageError> getItemFromDatabase(const String& key);
     enum class IsDatabaseDeleted : bool { No, Yes };
     IsDatabaseDeleted handleDatabaseErrorIfNeeded(int databaseError);
     void updateCacheIfNeeded(const String& key, const String& value);

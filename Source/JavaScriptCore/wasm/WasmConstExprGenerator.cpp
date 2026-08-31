@@ -39,7 +39,6 @@
 #include "WasmParser.h"
 #include "WasmTypeDefinition.h"
 #include <wtf/Assertions.h>
-#include <wtf/Expected.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/text/MakeString.h>
 
@@ -49,7 +48,7 @@ class ConstExprGenerator {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     using ErrorType = String;
-    using PartialResult = Expected<void, ErrorType>;
+    using PartialResult = std::expected<void, ErrorType>;
     using UnexpectedResult = std::unexpected<ErrorType>;
     using CallType = CallLinkInfo::CallType;
 
@@ -744,7 +743,7 @@ private:
     MarkedArgumentBufferWithSize<16> m_keepAlive;
 };
 
-Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
+std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
 {
     ConstExprGenerator generator(ConstExprGenerator::Mode::Validate, offsetInSource, info);
     FunctionParser<ConstExprGenerator> parser(generator, source, BlockSignature { expectedType }, info);
@@ -757,7 +756,7 @@ Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, s
     return { };
 }
 
-Expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
+std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
     auto constantExpression = constantExpressionAndSourceOffset.first;
     size_t offsetInSource = constantExpressionAndSourceOffset.second;

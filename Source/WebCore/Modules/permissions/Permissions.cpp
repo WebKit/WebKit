@@ -55,7 +55,6 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <optional>
-#include <wtf/Expected.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -161,7 +160,7 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
     return std::nullopt;
 }
 
-static Expected<PermissionState, Exception> processPermissionQueryResult(std::optional<PermissionState> permissionState, const PermissionDescriptor& permissionDescriptor, const Document& document)
+static std::expected<PermissionState, Exception> processPermissionQueryResult(std::optional<PermissionState> permissionState, const PermissionDescriptor& permissionDescriptor, const Document& document)
 {
     if (!permissionState)
         return makeUnexpected(Exception { ExceptionCode::NotSupportedError, "Permissions::query does not support this API"_s });

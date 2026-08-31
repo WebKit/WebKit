@@ -51,7 +51,7 @@ namespace Inspector {
 using ErrorString = String;
 
 template <typename T>
-using ErrorStringOr = Expected<T, ErrorString>;
+using ErrorStringOr = std::expected<T, ErrorString>;
 }
 
 namespace WebCore {

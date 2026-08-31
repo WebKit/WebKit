@@ -50,13 +50,13 @@ public:
 
     bool NODELETE isActive() const;
     uint64_t allocatedUnusedCapacity() const;
-    Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
     const String& NODELETE getPath(WebCore::FileSystemHandleIdentifier);
     const String& rootPath() const LIFETIME_BOUND { return m_path; }
     FileSystemStorageHandle::Type NODELETE getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);
-    Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
 
     struct GlobalIdentifierEntry {
         WebCore::FileSystemHandleKind kind;
@@ -67,7 +67,7 @@ public:
 
     void addGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier);
     void removeGlobalIdentifierReferences(std::span<const WebCore::FileSystemHandleGlobalIdentifier>);
-    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> resolveGlobalIdentifier(IPC::Connection::UniqueID, WebCore::FileSystemHandleGlobalIdentifier);
+    std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> resolveGlobalIdentifier(IPC::Connection::UniqueID, WebCore::FileSystemHandleGlobalIdentifier);
 
     std::optional<WebCore::FileSystemHandleRecord> lookupHandle(WebCore::FileSystemHandleGlobalIdentifier);
     std::optional<Vector<WebCore::FileSystemHandleRecord>> lookupHandles(std::span<const WebCore::FileSystemHandleGlobalIdentifier>);

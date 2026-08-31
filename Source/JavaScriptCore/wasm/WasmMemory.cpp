@@ -270,7 +270,7 @@ bool Memory::addressIsInGrowableOrFastMemory(void* address)
     return BufferMemoryManager::singleton().isInGrowableOrFastMemory(address);
 }
 
-Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
+std::expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
 {
     // Collections happen with the handle lock released, so a retry recomputes the target: another agent
     // may have grown this memory while we were unlocked, and delta is relative to whatever the size is now.
@@ -278,7 +278,7 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
     for (unsigned attempt = 1; ; ++attempt) {
         PageCount oldPageCount;
         PageCount newPageCount;
-        Expected<int64_t, GrowFailReason> result;
+        std::expected<int64_t, GrowFailReason> result;
         auto collection = BufferMemoryResult::Kind::Success;
         {
             std::optional<Locker<Lock>> locker;
@@ -327,7 +327,7 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
     }
 }
 
-Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
+std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 {
     if (!delta.isValid())
         return makeUnexpected(GrowFailReason::InvalidDelta);

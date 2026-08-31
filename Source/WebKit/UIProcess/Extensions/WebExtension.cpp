@@ -567,7 +567,7 @@ String WebExtension::resourceMIMETypeForPath(const String& path)
     return MIMETypeRegistry::mimeTypeForPath(path);
 }
 
-Expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+std::expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
 
@@ -2425,7 +2425,7 @@ void WebExtension::populateCommandsIfNeeded()
     }
 }
 
-Expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> WebExtension::parseDeclarativeNetRequestRulesetObject(const JSON::Object& rulesetObject)
+std::expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> WebExtension::parseDeclarativeNetRequestRulesetObject(const JSON::Object& rulesetObject)
 {
     auto rulesetID = rulesetObject.getString(declarativeNetRequestRulesetIDManifestKey);
     if (rulesetID.isEmpty()) {

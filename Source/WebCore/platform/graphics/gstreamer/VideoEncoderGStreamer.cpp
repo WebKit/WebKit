@@ -107,7 +107,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     });
 }
 
-Expected<Ref<GStreamerVideoEncoder>, String> GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+std::expected<Ref<GStreamerVideoEncoder>, String> GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]]
         return makeUnexpected("GStreamer initialization failed"_s);

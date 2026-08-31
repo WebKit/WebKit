@@ -31,7 +31,7 @@
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> deriveBitsHKDFCryptoKit(const VectorUInt8& key, const VectorUInt8& salt, const VectorUInt8& info, size_t length, CryptoDigestHashFunction hashFunction)
+std::expected<VectorUInt8, Error> deriveBitsHKDFCryptoKit(const VectorUInt8& key, const VectorUInt8& salt, const VectorUInt8& info, size_t length, CryptoDigestHashFunction hashFunction)
 {
     auto rv = pal::HKDF::deriveBits(escapableSpan(borrow(key)->span()), escapableSpan(borrow(salt)->span()), escapableSpan(borrow(info)->span()), length, hashFunction);
     if (rv.errorCode != PAL::Crypto::Error::Success)

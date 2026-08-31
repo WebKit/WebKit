@@ -26,7 +26,6 @@
 #pragma once
 
 #include <unicode/uchar.h>
-#include <wtf/Expected.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -57,10 +56,10 @@ double parseToDoubleForNumberType(StringView, double fallbackValue);
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
 enum class HTMLIntegerParsingError { NegativeOverflow, PositiveOverflow, Other };
 
-WEBCORE_EXPORT Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView);
+WEBCORE_EXPORT std::expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-WEBCORE_EXPORT Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView);
+WEBCORE_EXPORT std::expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
 std::optional<int> parseValidHTMLNonNegativeInteger(StringView);

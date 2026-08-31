@@ -30,14 +30,13 @@
 #include "JIT.h"
 #include "JITCompilation.h"
 #include "WebAssemblyBuiltin.h"
-#include <wtf/Expected.h>
 
 namespace JSC {
 namespace Wasm {
 
 enum class BindingFailure;
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> generateWasmBuiltinTrampoline(const WebAssemblyBuiltin&);
+std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> generateWasmBuiltinTrampoline(const WebAssemblyBuiltin&);
 
 } // namespace Wasm
 } // namespace JSC

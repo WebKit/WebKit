@@ -28,10 +28,10 @@
 #if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #include <JavaScriptCore/CorpseByteParser.h>
+#include <expected>
 #include <span>
 #include <stdint.h>
 #include <string_view>
-#include <wtf/Expected.h>
 
 namespace JSC {
 namespace Corpse {
@@ -60,7 +60,7 @@ public:
         UnsupportedKind, // Matched, but the kind has no one address, such as a thread-local.
     };
 
-    static Expected<Export, Failure> lookUp(std::span<const uint8_t> trie, std::string_view name);
+    static std::expected<Export, Failure> lookUp(std::span<const uint8_t> trie, std::string_view name);
 };
 
 } // namespace Corpse

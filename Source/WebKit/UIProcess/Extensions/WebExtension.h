@@ -246,8 +246,8 @@ public:
 
     String resourceMIMETypeForPath(const String&);
 
-    Expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
-    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    std::expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    std::expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     RefPtr<WebExtensionLocalization> localization();
 
@@ -282,7 +282,7 @@ public:
     const std::optional<String>& sidebarTitle();
 #endif
 
-    Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
+    std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
 
     size_t bestIconSize(const JSON::Object&, size_t idealPixelSize);
     String pathForBestImage(const JSON::Object&, size_t idealPixelSize);
@@ -389,7 +389,7 @@ private:
 
     URL resourceFileURLForPath(const String&);
 
-    Expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> parseDeclarativeNetRequestRulesetObject(const JSON::Object&);
+    std::expected<WebExtension::DeclarativeNetRequestRulesetData, Ref<API::Error>> parseDeclarativeNetRequestRulesetObject(const JSON::Object&);
 
     InjectedContentVector m_staticInjectedContents;
     WebAccessibleResourcesVector m_webAccessibleResources;

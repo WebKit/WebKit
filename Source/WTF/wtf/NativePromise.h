@@ -35,7 +35,6 @@
 #include <utility>
 #include <wtf/Assertions.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/Expected.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -373,7 +372,7 @@ public:
     static_assert(!WithAutomaticCrossThreadCopy || IsExclusive, "Using Non-Exclusive NativePromise with a ResolveValueT or RejectValueT requiring a call to isolatedCopy() must be explicitly set with WithCrossThreadCopy or WithoutCrossThreadCopy option");
     using ResolveValueType = std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<ResolveValueT>::Type, ResolveValueT>;
     using RejectValueType = std::conditional_t<std::is_void_v<RejectValueT>, detail::VoidPlaceholder, std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<RejectValueT>::Type, RejectValueT>>;
-    using Result = Expected<ResolveValueType, RejectValueType>;
+    using Result = std::expected<ResolveValueType, RejectValueType>;
     using Error = std::unexpected<RejectValueType>;
     using ResultRunnable = Function<Result(void)>;
 
@@ -1534,7 +1533,7 @@ using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, PromiseOption::Default | PromiseOption::NonExclusive>;
 
 template<typename S, typename E>
-Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)
+Ref<NativePromise<S, E>> createSettledPromise(std::expected<S, E>&& result)
 {
     return NativePromise<S, E>::createAndSettle(WTF::move(result));
 }
@@ -1542,14 +1541,14 @@ Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)
 // Invoke a function object (e.g., lambda) asynchronously.
 // Returns a promise that the function should eventually resolve or reject once the original promise returned by the lambda
 // is itself resolved or rejected.
-// The lambda can return an Expected<T, U> or void.
+// The lambda can return an std::expected<T, U> or void.
 template<typename Function>
 auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
 {
     static_assert(!std::is_lvalue_reference_v<Function>, "Function object must not be passed by lvalue-ref (to avoid unplanned copies); WTF::move() the object.");
     using ReturnType = decltype(function());
     using ReturnTypeNoRef = typename RemoveSmartPointer<ReturnType>::type;
-    static_assert((IsSmartRef<ReturnType>::value && IsConvertibleToNativePromise<ReturnTypeNoRef>) || IsExpected<ReturnType>::value || std::is_void_v<ReturnType>, "Function object must return Ref<NativePromise>, Expected<T, F> or void");
+    static_assert((IsSmartRef<ReturnType>::value && IsConvertibleToNativePromise<ReturnTypeNoRef>) || IsExpected<ReturnType>::value || std::is_void_v<ReturnType>, "Function object must return Ref<NativePromise>, std::expected<T, F> or void");
 
     if constexpr (IsConvertibleToNativePromise<ReturnTypeNoRef>) {
         typename ReturnTypeNoRef::PromiseType::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);

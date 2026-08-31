@@ -53,7 +53,7 @@ public:
         return m_result ? std::nullopt : std::optional<RemoteUserInputEventData>(m_result.error());
     }
 private:
-    Expected<bool, RemoteUserInputEventData> m_result;
+    std::expected<bool, RemoteUserInputEventData> m_result;
 };
 
 }

@@ -1158,7 +1158,7 @@ std::optional<bool> SWServer::globalPrivacyControlEnabledFromClient(const Client
     return result;
 }
 
-void SWServer::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes, CompletionHandler<void(Expected<void, ExceptionData>&&)>&& callback)
+void SWServer::addRoutes(ServiceWorkerRegistrationIdentifier identifier, Vector<ServiceWorkerRoute>&& routes, CompletionHandler<void(std::expected<void, ExceptionData>&&)>&& callback)
 {
     RefPtr registration = getRegistration(identifier);
     if (!registration) {
@@ -2081,7 +2081,7 @@ void SWServer::fireBackgroundFetchClickEvent(SWServerRegistration& registration,
 }
 
 // https://w3c.github.io/ServiceWorker/#fire-functional-event-algorithm, just for push right now.
-void SWServer::fireFunctionalEvent(SWServerRegistration& registration, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&& callback)
+void SWServer::fireFunctionalEvent(SWServerRegistration& registration, CompletionHandler<void(std::expected<SWServerToContextConnection*, ShouldSkipEvent>)>&& callback)
 {
     RefPtr worker = registration.activeWorker();
     if (!worker) {

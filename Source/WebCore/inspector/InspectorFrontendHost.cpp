@@ -97,7 +97,7 @@
 namespace WebCore {
 
 using namespace Inspector;
-using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
+using ValueOrException = std::expected<JSC::JSValue, ExceptionDetails>;
 
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {

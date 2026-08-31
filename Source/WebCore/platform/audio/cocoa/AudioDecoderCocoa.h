@@ -30,7 +30,6 @@
 #include "AudioDecoder.h"
 #include <WebCore/AudioStreamDescription.h>
 #include <WebCore/FourCC.h>
-#include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WTF {
@@ -49,7 +48,7 @@ public:
 
     ~AudioDecoderCocoa();
 
-    static Expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> isCodecSupported(const StringView&);
+    static std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> isCodecSupported(const StringView&);
 
     static WTF::WorkQueue& queueSingleton();
 

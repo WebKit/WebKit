@@ -70,7 +70,7 @@ static inline ResourceError validateResponse(const ResourceResponse& response, F
     return { };
 }
 
-static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo, DeferredPromise& promise)
+static void processResponse(Ref<Client>&& client, std::expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo, DeferredPromise& promise)
 {
     if (!result.has_value()) {
         auto& error = result.error();

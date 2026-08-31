@@ -33,7 +33,6 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
-#include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -67,9 +66,9 @@ public:
     Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
     Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }
 
-    void getSubscription(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
-    void subscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
-    void unsubscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
+    void getSubscription(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
+    void subscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
+    void unsubscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&&);
 
     void incrementSilentPushCount(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
 

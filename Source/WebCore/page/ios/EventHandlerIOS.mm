@@ -791,7 +791,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return false;
 }
 
-void EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint&, CompletionHandler<void(Expected<bool, RemoteFrameGeometryTransformer>)>&& completionHandler)
+void EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint&, CompletionHandler<void(std::expected<bool, RemoteFrameGeometryTransformer>)>&& completionHandler)
 {
     Ref frame = m_frame.get();
 

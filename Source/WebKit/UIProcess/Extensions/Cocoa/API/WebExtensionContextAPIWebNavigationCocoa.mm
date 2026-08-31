@@ -85,7 +85,7 @@ std::optional<WebExtensionFrameParameters> WebExtensionContext::webNavigationFin
     return std::nullopt;
 }
 
-void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIdentifier, WebExtensionFrameIdentifier frameIdentifier, CompletionHandler<void(Expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIdentifier, WebExtensionFrameIdentifier frameIdentifier, CompletionHandler<void(std::expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
@@ -113,7 +113,7 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
     }).get()];
 }
 
-void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier tabIdentifier, CompletionHandler<void(Expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier tabIdentifier, CompletionHandler<void(std::expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {

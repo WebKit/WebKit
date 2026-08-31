@@ -47,7 +47,7 @@ public:
     void ignoreWhenUnarchiving() { m_shouldIgnoreWhenUnarchiving = true; }
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
     void setRelativeFilePath(const String& relativeFilePath) { m_relativeFilePath = relativeFilePath; }
-    Expected<String, ArchiveError> saveToDisk(const String& directory);
+    std::expected<String, ArchiveError> saveToDisk(const String& directory);
 
 private:
     ArchiveResource(Ref<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&, const String& fileName = { });

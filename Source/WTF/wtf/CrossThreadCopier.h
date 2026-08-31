@@ -34,7 +34,6 @@
 #include <tuple>
 #include <type_traits>
 #include <wtf/Assertions.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashIterators.h>
 #include <wtf/HashSet.h>
@@ -346,8 +345,8 @@ struct CrossThreadCopierBase<false, false, void> {
     using Type = void;
 };
 
-template<typename T, typename U> struct CrossThreadCopierBase<false, false, Expected<T, U> > {
-    using Type = Expected<T, U>;
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, std::expected<T, U> > {
+    using Type = std::expected<T, U>;
     static constexpr bool IsNeeded = CrossThreadCopier<std::remove_cvref_t<T>>::IsNeeded || CrossThreadCopier<std::remove_cvref_t<U>>::IsNeeded;
     static Type copy(const Type& source)
     {

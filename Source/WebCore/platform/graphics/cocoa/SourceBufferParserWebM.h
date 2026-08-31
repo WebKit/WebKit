@@ -356,7 +356,7 @@ public:
     static bool NODELETE isAvailable();
 
     Type type() const { return Type::WebM; }
-    WEBCORE_EXPORT Expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;
+    WEBCORE_EXPORT std::expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void resetParserState() final { m_parser.resetState(); }
     void invalidate() final;

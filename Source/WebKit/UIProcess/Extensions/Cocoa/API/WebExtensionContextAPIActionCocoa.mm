@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-static Expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
+static std::expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
 {
     if (windowIdentifier) {
         RefPtr window = context.getWindow(windowIdentifier.value());
@@ -60,7 +60,7 @@ static Expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithIdentif
     return Ref { context.defaultAction() };
 }
 
-static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
+static std::expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
 {
     if (windowIdentifier) {
         RefPtr window = context.getWindow(windowIdentifier.value());
@@ -87,7 +87,7 @@ bool WebExtensionContext::isActionMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
 }
 
-void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getTitle()";
 
@@ -100,7 +100,7 @@ void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentif
     completionHandler(Ref { action.value() }->label(WebExtensionAction::FallbackWhenEmpty::No));
 }
 
-void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setTitle()";
 
@@ -115,7 +115,7 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
     completionHandler({ });
 }
 
-void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconsJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconsJSON, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setIcon()";
 
@@ -144,7 +144,7 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
     completionHandler({ });
 }
 
-void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getPopup()";
 
@@ -157,7 +157,7 @@ void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentif
     completionHandler(Ref { action.value() }->popupPath());
 }
 
-void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setPopup()";
 
@@ -172,7 +172,7 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
     completionHandler({ });
 }
 
-void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.openPopup()";
 
@@ -231,7 +231,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
     completionHandler({ });
 }
 
-void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.getBadgeText()";
 
@@ -244,7 +244,7 @@ void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIde
     completionHandler(Ref { action.value() }->badgeText());
 }
 
-void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setBadgeText()";
 
@@ -259,7 +259,7 @@ void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIde
     completionHandler({ });
 }
 
-void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<bool, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::expected<bool, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.isEnabled()";
 
@@ -272,7 +272,7 @@ void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdent
     completionHandler(Ref { action.value() }->isEnabled());
 }
 
-void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     auto action = getOrCreateActionWithIdentifiers(std::nullopt, tabIdentifier, *this, enabled ? @"action.enable()" : @"action.disable()");
     if (!action) {

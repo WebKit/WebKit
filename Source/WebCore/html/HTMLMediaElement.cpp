@@ -3256,7 +3256,7 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged()
     m_remainingReadyStateChangedAttempts.store(0);
 }
 
-Expected<void, MediaPlaybackDenialExplanation> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
+std::expected<void, MediaPlaybackDenialExplanation> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
     auto makeUnexpectedDenial = [](MediaPlaybackDenialReason reason, const String& explanation) {
         return makeUnexpected<MediaPlaybackDenialExplanation>({ reason, explanation });

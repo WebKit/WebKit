@@ -79,7 +79,7 @@ enum class ReasonForCallingCanExecuteScripts : uint8_t {
     NotAboutToExecuteScript
 };
 
-using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
+using ValueOrException = std::expected<JSC::JSValue, ExceptionDetails>;
 
 class ScriptController final : public CanMakeWeakPtr<ScriptController>, public CanMakeCheckedPtr<ScriptController> {
     WTF_MAKE_TZONE_ALLOCATED(ScriptController);

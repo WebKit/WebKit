@@ -69,9 +69,9 @@ public:
     void notifyListenersAboutClear();
 
     virtual HashMap<String, String> allItems() = 0;
-    virtual Expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) = 0;
-    virtual Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) = 0;
-    virtual Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) = 0;
+    virtual std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) = 0;
+    virtual std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) = 0;
+    virtual std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) = 0;
 
     virtual void ref() const = 0;
     virtual void deref() const = 0;

@@ -32,9 +32,9 @@
 #pragma once
 
 #include <cstddef>
+#include <expected>
 #include <type_traits>
 #include <utility>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 
 namespace WTF {
@@ -127,7 +127,7 @@ template <typename T>
 struct IsExpected : std::false_type { };
 
 template <typename T, typename E>
-struct IsExpected<Expected<T, E>> : std::true_type { };
+struct IsExpected<std::expected<T, E>> : std::true_type { };
 
 template <typename... Args>
 struct ParameterCountImpl {

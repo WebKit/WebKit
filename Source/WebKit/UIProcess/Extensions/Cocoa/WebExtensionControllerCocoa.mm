@@ -147,7 +147,7 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> data
                 continue;
             }
 
-            calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, uniqueIdentifier, displayName, dataType, record = Ref { record }](Expected<size_t, WebExtensionError>&& result) mutable {
+            calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, uniqueIdentifier, displayName, dataType, record = Ref { record }](std::expected<size_t, WebExtensionError>&& result) mutable {
                 if (!result)
                     record->addError(result.error().createNSString().get(), dataType);
                 else
@@ -197,7 +197,7 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> dataT
             continue;
         }
 
-        calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, matchingUniqueIdentifier, displayName, dataType, record = Ref { record }](Expected<size_t, WebExtensionError>&& result) mutable {
+        calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, matchingUniqueIdentifier, displayName, dataType, record = Ref { record }](std::expected<size_t, WebExtensionError>&& result) mutable {
             if (!result)
                 record->addError(result.error().createNSString().get(), dataType);
             else
@@ -228,7 +228,7 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> dataType
                 continue;
             }
 
-            removeStorage(*storage, dataType, makeBlockPtr([aggregator, uniqueIdentifier, dataType, record = Ref { record }](Expected<void, WebExtensionError>&& result) mutable {
+            removeStorage(*storage, dataType, makeBlockPtr([aggregator, uniqueIdentifier, dataType, record = Ref { record }](std::expected<void, WebExtensionError>&& result) mutable {
                 if (!result)
                     record->addError(result.error().createNSString().get(), dataType);
                 else {

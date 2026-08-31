@@ -149,7 +149,7 @@ public:
     {
     }
 
-    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
+    void didPostMessage(WebKit::WebPageProxy& page, WebKit::FrameInfoData&& frameInfoData, API::ContentWorld& world, WebKit::JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& replyHandler) final
     {
         @autoreleasepool {
             if (!page.cocoaView())
@@ -158,7 +158,7 @@ public:
             RetainPtr message = wrapper(API::ScriptMessage::create(jsMessage.toID(), page, API::FrameInfo::create(WTF::move(frameInfoData)), RetainPtr { m_name }, world));
 
             if (m_supportsAsyncReply) {
-                __block auto handler = CompletionHandlerWithFinalizer<void(Expected<WebKit::JavaScriptEvaluationResult, String>&&)>(WTF::move(replyHandler), [](auto& function) {
+                __block auto handler = CompletionHandlerWithFinalizer<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>(WTF::move(replyHandler), [](auto& function) {
                     function(makeUnexpected("WKWebView API client did not respond to this postMessage"_s));
                 });
                 [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {

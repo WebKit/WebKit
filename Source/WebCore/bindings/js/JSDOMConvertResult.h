@@ -29,7 +29,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <wtf/Expected.h>
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ struct ConversionResultStorage {
 
     template<typename U>
     ConversionResultStorage(ConversionResultStorage<U>&& other)
-        : value([&]() -> Expected<Type, ConversionResultException> {
+        : value([&]() -> std::expected<Type, ConversionResultException> {
             if (other.hasException())
                 return makeUnexpected(ConversionResultException());
             return ReturnType { other.releaseReturnValue() };
@@ -66,7 +65,7 @@ struct ConversionResultStorage {
     template<typename U>
         requires (std::is_pointer_v<Type> && std::is_lvalue_reference_v<U>)
     ConversionResultStorage(ConversionResultStorage<U>&& other)
-        : value([&]() -> Expected<Type, ConversionResultException> {
+        : value([&]() -> std::expected<Type, ConversionResultException> {
             if (other.hasException())
                 return makeUnexpected(ConversionResultException());
             return ReturnType { &other.releaseReturnValue() };
@@ -97,7 +96,7 @@ struct ConversionResultStorage {
         return WTF::move(value.value());
     }
 
-    Expected<Type, ConversionResultException> value;
+    std::expected<Type, ConversionResultException> value;
 #if ASSERT_ENABLED
     bool wasReleased { false };
 #endif
@@ -113,7 +112,7 @@ struct ConversionResultStorage<T&> {
 
     template<typename U>
     ConversionResultStorage(ConversionResultStorage<U>&& other)
-        : value([&]() -> Expected<Type, ConversionResultException> {
+        : value([&]() -> std::expected<Type, ConversionResultException> {
             if (other.hasException())
                 return makeUnexpected(ConversionResultException());
             return static_cast<WebCore::Detail::ConversionResultStorage<T&>::ReturnType>(other.releaseReturnValue());
@@ -144,7 +143,7 @@ struct ConversionResultStorage<T&> {
         return WTF::move(value.value()).get();
     }
 
-    Expected<std::reference_wrapper<Type>, ConversionResultException> value;
+    std::expected<std::reference_wrapper<Type>, ConversionResultException> value;
 #if ASSERT_ENABLED
     bool wasReleased { false };
 #endif

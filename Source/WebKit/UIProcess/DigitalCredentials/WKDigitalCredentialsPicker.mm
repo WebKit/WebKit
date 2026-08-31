@@ -55,7 +55,6 @@
 #import <WebKit/WKIdentityDocumentPresentmentRawRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRequest.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/Expected.h>
 #import <wtf/JSONValues.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
@@ -227,7 +226,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
     RetainPtr<WKIdentityDocumentPresentmentController> _presentmentController;
     WeakObjCPtr<id<WKDigitalCredentialsPickerDelegate>> _delegate;
     WeakObjCPtr<WKWebView> _webView;
-    CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> _completionHandler;
+    CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> _completionHandler;
 }
 
 - (instancetype)initWithView:(WKWebView *)view page:(WebKit::WebPageProxy *)page
@@ -314,7 +313,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
     });
 }
 
-- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData &)requestData completionHandler:(CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> &&)completionHandler
+- (void)presentWithRequestData:(const WebCore::DigitalCredentialsRequestData &)requestData completionHandler:(CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)> &&)completionHandler
 {
     WTF::switchOn(requestData,
         [](const auto& requestData) {
@@ -481,7 +480,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         [self.delegate digitalCredentialsPickerDidDismiss:self];
 }
 
-- (void)completeWith:(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)result
+- (void)completeWith:(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> &&)result
 {
     if (!_completionHandler) {
         LOG(DigitalCredentials, "Completion handler is null.");

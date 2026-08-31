@@ -63,7 +63,7 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
-    Expected<Ref<WebKit::ViewSnapshot>, String> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
+    std::expected<Ref<WebKit::ViewSnapshot>, String> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
 
     void updateAcceleratedSurface(uint64_t);
     WebKit::RendererBufferDescription renderBufferDescription() const;

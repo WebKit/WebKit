@@ -33,7 +33,6 @@
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <utility>
-#include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -102,9 +101,9 @@ public:
 
     void enableNetworkInstrumentation();
     void disableNetworkInstrumentation();
-    void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(Expected<std::pair<String, bool>, String>&&)>&&);
-    void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(Expected<String, String>&&)>&&);
-    void loadResource(WebCore::FrameIdentifier, const String& url, CompletionHandler<void(Expected<std::tuple<String, String, int>, String>&&)>&&);
+    void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&&);
+    void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<String, String>&&)>&&);
+    void loadResource(WebCore::FrameIdentifier, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&&);
 
     void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
     void setResourceCachingDisabled(bool);

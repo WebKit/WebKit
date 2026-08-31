@@ -28,7 +28,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include <system_error>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +44,7 @@ enum class CSSSelectorsAllowed : bool {
     Yes
 };
 
-WEBCORE_EXPORT Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&, CSSSelectorsAllowed);
+WEBCORE_EXPORT std::expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String&, CSSSelectorsAllowed);
 WEBCORE_EXPORT bool isValidCSSSelector(const String&);
 
 CSSParserContext contentExtensionCSSParserContext();

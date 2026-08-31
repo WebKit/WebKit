@@ -46,7 +46,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
-#include <wtf/Expected.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
@@ -224,8 +223,8 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
     static AsyncReplyResult create() { return AsyncReplyResult { }; };
 };
 
-template<typename T, typename E> struct AsyncReplyError<Expected<T, E>> {
-    static Expected<T, E> create() { return makeUnexpected<E>(AsyncReplyError<E>::create()); };
+template<typename T, typename E> struct AsyncReplyError<std::expected<T, E>> {
+    static std::expected<T, E> create() { return makeUnexpected<E>(AsyncReplyError<E>::create()); };
 };
 
 class Decoder;
@@ -278,7 +277,7 @@ private:
         typename T::ReplyArguments reply;
     };
 
-    Expected<ReplyData, Error> value;
+    std::expected<ReplyData, Error> value;
 };
 
 struct ConnectionAsyncReplyHandler {
@@ -380,7 +379,7 @@ public:
 
     enum UniqueIDType { };
     using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
-    using DecoderOrError = Expected<UniqueRef<Decoder>, Error>;
+    using DecoderOrError = std::expected<UniqueRef<Decoder>, Error>;
 
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
@@ -433,12 +432,12 @@ public:
         };
 
         template <typename T, typename E>
-        struct Promise<Expected<T, E>, E> {
+        struct Promise<std::expected<T, E>, E> {
             using Type = NativePromise<T, E>;
         };
 
         template <typename T>
-        struct Promise<Expected<T, GenericPromise::RejectValueType>, GenericPromise::RejectValueType> {
+        struct Promise<std::expected<T, GenericPromise::RejectValueType>, GenericPromise::RejectValueType> {
             using Type = NativePromise<T, void>;
         };
 

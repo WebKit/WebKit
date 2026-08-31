@@ -95,8 +95,8 @@ private:
     void releaseResources() final;
 
     bool responseHasHTTPStatusCodeError() const;
-    Expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
-    Expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
+    std::expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
+    std::expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
     void didReceiveDataOrBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType);
 

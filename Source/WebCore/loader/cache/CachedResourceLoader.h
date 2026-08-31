@@ -36,7 +36,6 @@
 #include <WebCore/ResourceTimingInformation.h>
 #include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
-#include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -67,7 +66,7 @@ class SVGImage;
 class Settings;
 
 template <typename T>
-using ResourceErrorOr = Expected<T, ResourceError>;
+using ResourceErrorOr = std::expected<T, ResourceError>;
 
 enum class CachePolicy : uint8_t;
 enum class ImageLoading : uint8_t { Immediate, DeferredUntilVisible };

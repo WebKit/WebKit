@@ -342,10 +342,10 @@ std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 }
 
 template<typename Lexer>
-Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
+std::expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 {
     if (current().type == type) {
-        Expected<Token, TokenType> result = { m_current };
+        std::expected<Token, TokenType> result = { m_current };
         consume();
         return result;
     }
@@ -354,7 +354,7 @@ Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 
 template<typename Lexer>
 template<TokenType... TTs>
-Expected<Token, TokenType> Parser<Lexer>::consumeTypes()
+std::expected<Token, TokenType> Parser<Lexer>::consumeTypes()
 {
     auto token = m_current;
     if (TemplateTypes<TTs...>::includes(token.type)) {

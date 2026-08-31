@@ -964,7 +964,7 @@ void CurlHandle::enableStdErrIfUsed()
 
 #endif
 
-Expected<curl_socket_t, CURLcode> CurlHandle::getActiveSocket()
+std::expected<curl_socket_t, CURLcode> CurlHandle::getActiveSocket()
 {
     curl_socket_t socket;
 

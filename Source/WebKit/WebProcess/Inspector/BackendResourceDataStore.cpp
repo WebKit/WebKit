@@ -310,7 +310,7 @@ void BackendResourceDataStore::clear()
     m_contentSize = 0;
 }
 
-Expected<std::pair<String, bool>, String> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
+std::expected<std::pair<String, bool>, String> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
 {
     ResourceData const* resourceData = data(resourceID);
     if (!resourceData)
@@ -331,7 +331,7 @@ Expected<std::pair<String, bool>, String> BackendResourceDataStore::getResponseB
     return makeUnexpected("Missing content of resource for given requestId"_s);
 }
 
-Expected<String, String> BackendResourceDataStore::getSerializedCertificate(ResourceLoaderIdentifier resourceID)
+std::expected<String, String> BackendResourceDataStore::getSerializedCertificate(ResourceLoaderIdentifier resourceID)
 {
     ResourceData const* resourceData = data(resourceID);
     if (!resourceData)

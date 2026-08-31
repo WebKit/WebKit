@@ -82,7 +82,7 @@ Ref<WebExtensionDeclarativeNetRequestSQLiteStore> WebExtensionContext::declarati
     return *m_declarativeNetRequestSessionRulesStore;
 }
 
-void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> storage, const String& storageType, const String& apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebExtensionDeclarativeNetRequestSQLiteStore> storage, const String& storageType, const String& apiName, Ref<JSON::Array> rulesToAdd, Vector<double> ruleIDsToRemove, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (storage) {
         storage->createSavepoint([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storage, storageType, apiName, rulesToAdd, ruleIDsToRemove](Markable<WTF::UUID> savepointIdentifier, const String& errorMessage) mutable {
@@ -142,7 +142,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
     }
 }
 
-void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& filter, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     auto ruleIDs = compactMap(filter, [&](auto& ruleID) -> std::optional<double> {
         if (m_dynamicRulesIDs.contains(ruleID))
@@ -161,7 +161,7 @@ void WebExtensionContext::declarativeNetRequestGetDynamicRules(Vector<double>&& 
     });
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static constexpr auto apiName = "declarativeNetRequest.updateDynamicRules()"_s;
 
@@ -193,7 +193,7 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
     updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), "dynamic"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
 }
 
-void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     auto ruleIDs = compactMap(filter, [&](auto& ruleID) -> std::optional<double> {
         if (m_sessionRulesIDs.contains(ruleID))
@@ -212,7 +212,7 @@ void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& 
     });
 }
 
-void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rulesToAddJSON, Vector<double>&& ruleIDsToDeleteVector, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static constexpr auto apiName = "declarativeNetRequest.updateSessionRules()"_s;
 

@@ -37,7 +37,7 @@ PageClient::PageClient(ClangVTableWorkaroundTag)
 }
 
 #if ENABLE(VIDEO)
-void PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
+void PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     completionHandler(makeUnexpected<WebCore::ExceptionData>({ WebCore::ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s }));
 }

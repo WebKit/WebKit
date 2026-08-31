@@ -141,23 +141,23 @@ struct CacheIdentifierOperationResult {
     bool hadStorageError { false };
 };
 
-using CacheIdentifierOrError = Expected<CacheIdentifierOperationResult, Error>;
+using CacheIdentifierOrError = std::expected<CacheIdentifierOperationResult, Error>;
 using CacheIdentifierCallback = CompletionHandler<void(const CacheIdentifierOrError&)>;
 
-using RemoveCacheIdentifierOrError = Expected<bool, Error>;
+using RemoveCacheIdentifierOrError = std::expected<bool, Error>;
 using RemoveCacheIdentifierCallback = CompletionHandler<void(const RemoveCacheIdentifierOrError&)>;
 
-using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
+using RecordIdentifiersOrError = std::expected<Vector<uint64_t>, Error>;
 using RecordIdentifiersCallback = CompletionHandler<void(RecordIdentifiersOrError&&)>;
 
 
-using CacheInfosOrError = Expected<CacheInfos, Error>;
+using CacheInfosOrError = std::expected<CacheInfos, Error>;
 using CacheInfosCallback = CompletionHandler<void(CacheInfosOrError&&)>;
 
-using RecordsOrError = Expected<Vector<Record>, Error>;
+using RecordsOrError = std::expected<Vector<Record>, Error>;
 using RecordsCallback = CompletionHandler<void(RecordsOrError&&)>;
 
-using CrossThreadRecordsOrError = Expected<Vector<CrossThreadRecord>, Error>;
+using CrossThreadRecordsOrError = std::expected<Vector<CrossThreadRecord>, Error>;
 using CrossThreadRecordsCallback = CompletionHandler<void(CrossThreadRecordsOrError&&)>;
 
 using CompletionCallback = CompletionHandler<void(std::optional<Error>&&)>;

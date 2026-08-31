@@ -75,7 +75,7 @@ static void checkVec4F32Type(WGSL::AST::Expression& type)
 
 namespace TestWGSLAPI {
 
-inline Expected<WGSL::ShaderModule, WGSL::FailedCheck> parse(const String& wgsl)
+inline std::expected<WGSL::ShaderModule, WGSL::FailedCheck> parse(const String& wgsl)
 {
     WGSL::ShaderModule shaderModule(wgsl, { 8 });
     auto maybeError = WGSL::parse(shaderModule);

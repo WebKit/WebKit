@@ -51,7 +51,7 @@ namespace BBQJITImpl {
 class BBQJIT {
 public:
     using ErrorType = String;
-    using PartialResult = Expected<void, ErrorType>;
+    using PartialResult = std::expected<void, ErrorType>;
     using Address = MacroAssembler::Address;
     using BaseIndex = MacroAssembler::BaseIndex;
     using Imm32 = MacroAssembler::Imm32;
@@ -2319,7 +2319,7 @@ using MinOrMax = BBQJIT::MinOrMax;
 } // namespace JSC::Wasm::BBQJITImpl
 
 using BBQJIT = BBQJITImpl::BBQJIT;
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
+std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
 
 } } // namespace JSC::Wasm
 

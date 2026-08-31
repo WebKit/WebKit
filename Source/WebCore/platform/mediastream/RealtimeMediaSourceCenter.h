@@ -75,10 +75,10 @@ public:
         Vector<CaptureDevice> audioDevices;
         Vector<CaptureDevice> videoDevices;
     };
-    using ValidateHandler = CompletionHandler<void(Expected<ValidDevices, MediaConstraintType>&&)>;
+    using ValidateHandler = CompletionHandler<void(std::expected<ValidDevices, MediaConstraintType>&&)>;
     WEBCORE_EXPORT void validateRequestConstraints(ValidateHandler&&, const MediaStreamRequest&, MediaDeviceHashSalts&&);
 
-    using NewMediaStreamHandler = Function<void(Expected<Ref<MediaStreamPrivate>, CaptureSourceError>&&)>;
+    using NewMediaStreamHandler = Function<void(std::expected<Ref<MediaStreamPrivate>, CaptureSourceError>&&)>;
     void createMediaStream(Ref<const Logger>&&, NewMediaStreamHandler&&, MediaDeviceHashSalts&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT void getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&&);
@@ -117,7 +117,7 @@ public:
     void setCurrentMediaEnvironment(String&&);
 #endif
 
-    Expected<ValidDevices, MediaConstraintType> validateRequestConstraintsAfterEnumeration(const MediaStreamRequest&, const MediaDeviceHashSalts&);
+    std::expected<ValidDevices, MediaConstraintType> validateRequestConstraintsAfterEnumeration(const MediaStreamRequest&, const MediaDeviceHashSalts&);
 
 private:
     RealtimeMediaSourceCenter();

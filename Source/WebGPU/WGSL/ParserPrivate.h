@@ -120,8 +120,8 @@ public:
     Vector<Warning> takeWarnings() { return WTF::move(m_warnings); }
 
 private:
-    Expected<Token, TokenType> consumeType(TokenType);
-    template<TokenType... TTs> Expected<Token, TokenType> consumeTypes();
+    std::expected<Token, TokenType> consumeType(TokenType);
+    template<TokenType... TTs> std::expected<Token, TokenType> consumeTypes();
 
     void consume();
 

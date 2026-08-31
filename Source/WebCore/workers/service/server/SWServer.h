@@ -101,7 +101,7 @@ public:
         WEBCORE_EXPORT void doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
         void resolveRegistrationReadyRequests(SWServerRegistration&);
 
-        using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
+        using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(std::expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
         WEBCORE_EXPORT void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
         WEBCORE_EXPORT void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&);
         using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;
@@ -110,9 +110,9 @@ public:
         WEBCORE_EXPORT void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&&);
         using MatchBackgroundFetchCallback = CompletionHandler<void(Vector<BackgroundFetchRecordInformation>&&)>;
         WEBCORE_EXPORT void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&);
-        using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
+        using RetrieveRecordResponseCallback = CompletionHandler<void(std::expected<ResourceResponse, ExceptionData>&&)>;
         WEBCORE_EXPORT void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&);
-        using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
+        using RetrieveRecordResponseBodyCallback = Function<void(std::expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
         WEBCORE_EXPORT void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&);
 
         // Messages to the client WebProcess
@@ -269,7 +269,7 @@ public:
     WEBCORE_EXPORT void processNotificationEvent(NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
 
     enum class ShouldSkipEvent : bool { No, Yes };
-    void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
+    void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(std::expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
     void fireBackgroundFetchEvent(SWServerRegistration&, BackgroundFetchInformation&&, CompletionHandler<void()>&&);
     void fireBackgroundFetchClickEvent(SWServerRegistration&, BackgroundFetchInformation&&);
 
@@ -314,7 +314,7 @@ public:
     WEBCORE_EXPORT void reportNetworkUsageToAllWorkerClients(ServiceWorkerIdentifier, size_t bytesTransferredOverNetworkDelta);
 #endif
 
-    WEBCORE_EXPORT void addRoutes(ServiceWorkerRegistrationIdentifier, Vector<ServiceWorkerRoute>&&, CompletionHandler<void(Expected<void, ExceptionData>&&)>&&);
+    WEBCORE_EXPORT void addRoutes(ServiceWorkerRegistrationIdentifier, Vector<ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, ExceptionData>&&)>&&);
     WEBCORE_EXPORT bool addHandlerIfHasControlledClients(CompletionHandler<void()>&&);
 
     bool hasPendingConnectionDomain(const ContextConnectionKey& key) const { return m_pendingConnectionDomains.contains(key); }

@@ -30,7 +30,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/WasmCallingConvention.h>
-#include <wtf/Expected.h>
 #include <wtf/TrailingArray.h>
 #include <wtf/text/WTFString.h>
 

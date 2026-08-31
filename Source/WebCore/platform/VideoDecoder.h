@@ -67,8 +67,8 @@ public:
 
     static bool isVPXSupported();
 
-    using OutputCallback = Function<void(Expected<DecodedFrame, String>&&)>;
-    using CreateResult = Expected<Ref<VideoDecoder>, String>;
+    using OutputCallback = Function<void(std::expected<DecodedFrame, String>&&)>;
+    using CreateResult = std::expected<Ref<VideoDecoder>, String>;
     using CreatePromise = NativePromise<Ref<VideoDecoder>, String>;
     using CreateCallback = Function<void(CreateResult&&)>;
 

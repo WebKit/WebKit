@@ -33,7 +33,6 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <thread>
 #include <wtf/DataLog.h>
-#include <wtf/Expected.h>
 #include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NumberOfCores.h>
@@ -152,7 +151,7 @@ private:
     void checkThrownException(JSValueRef* exception, const ASCIILiteral& expectedMessage, const char* description);
 
     // Helper methods.
-    using ScriptResult = Expected<JSValueRef, JSValueRef>;
+    using ScriptResult = std::expected<JSValueRef, JSValueRef>;
     ScriptResult evaluateScript(const char* script, JSObjectRef thisObject = nullptr);
     template<typename... ArgumentTypes>
     ScriptResult callFunction(const char* functionSource, ArgumentTypes... arguments);

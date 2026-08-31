@@ -1046,7 +1046,7 @@ private:
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
     void dispatchPlayPauseEventsIfNeedsQuirks();
-    Expected<void, MediaPlaybackDenialExplanation> canTransitionFromAutoplayToPlay() const;
+    std::expected<void, MediaPlaybackDenialExplanation> canTransitionFromAutoplayToPlay() const;
 
     void setAutoplayEventPlaybackState(AutoplayEventPlaybackState);
     void userDidInterfereWithAutoplay();

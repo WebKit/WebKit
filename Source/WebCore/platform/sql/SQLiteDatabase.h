@@ -30,7 +30,6 @@
 #include <sqlite3.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CurrentThread.h>
-#include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>

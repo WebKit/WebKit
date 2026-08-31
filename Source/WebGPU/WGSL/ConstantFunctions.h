@@ -38,11 +38,11 @@ namespace WGSL {
 
 // Zero values
 
-using ConstantResult = Expected<ConstantValue, String>;
+using ConstantResult = std::expected<ConstantValue, String>;
 using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<ConstantValue>&);
 
 #define CONSTANT_FUNCTION(name) \
-    [[maybe_unused]] static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+    [[maybe_unused]] static std::expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \
@@ -1809,7 +1809,7 @@ CONSTANT_FUNCTION(Bitcast)
 
 [[maybe_unused]] static bool containsZero(ConstantValue value, const Type* valueType)
 {
-    auto wrapped = [&]() -> Expected<bool, String> {
+    auto wrapped = [&]() -> std::expected<bool, String> {
         auto zero = zeroValue(valueType);
         CALL(equal, Equal, nullptr, { value, zero });
         CALL(any, Any, nullptr, { equal });

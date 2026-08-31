@@ -141,7 +141,7 @@ public:
     bool isInitiatedByDedicatedWorker() const { return m_isInitiatedByDedicatedWorker; }
 
     virtual String description() const;
-    virtual void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
+    virtual void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     virtual void setPriority(WebCore::ResourceLoadPriority) { }
     String attributedBundleIdentifier(WebPageProxyIdentifier);

@@ -59,8 +59,8 @@ public:
         Ref<PlatformRawAudioData> data;
     };
 
-    using OutputCallback = Function<void(Expected<DecodedData, String>&&)>;
-    using CreateResult = Expected<Ref<AudioDecoder>, String>;
+    using OutputCallback = Function<void(std::expected<DecodedData, String>&&)>;
+    using CreateResult = std::expected<Ref<AudioDecoder>, String>;
     using CreatePromise = NativePromise<Ref<AudioDecoder>, String>;
     using CreateCallback = Function<void(CreateResult&&)>;
 

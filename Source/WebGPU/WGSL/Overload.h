@@ -134,7 +134,7 @@ struct OverloadedDeclaration {
     Kind kind;
     bool mustUse;
 
-    Expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
+    std::expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
     ValidationFunction validationFunction;
     OptionSet<ShaderStage> visibility;
     Vector<OverloadCandidate> overloads;

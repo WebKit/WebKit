@@ -30,7 +30,6 @@
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThreadDispatcher.h>
 #include <wtf/Noncopyable.h>
@@ -75,7 +74,7 @@ public:
 
     virtual ~PlatformMediaResourceLoader() = default;
 
-    virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
+    virtual void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) = 0;
 
     // Can be called on any threads. Return the function dispatcher on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
     virtual Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }

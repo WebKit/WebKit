@@ -36,7 +36,6 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
@@ -76,7 +75,7 @@ public:
     typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
     JS_EXPORT_PRIVATE ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler = nullptr);
     JS_EXPORT_PRIVATE ~ScriptFunctionCall();
-    JS_EXPORT_PRIVATE Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
+    JS_EXPORT_PRIVATE std::expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 
 protected:
     ScriptFunctionCallHandler m_callHandler;

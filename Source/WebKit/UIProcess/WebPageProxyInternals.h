@@ -193,7 +193,7 @@ public:
 
 #if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
     std::optional<VirtualWalletBehavior> testingVirtualWalletBehavior;
-    CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)> testingPendingDigitalCredentialHandler;
+    CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)> testingPendingDigitalCredentialHandler;
 #endif
 
     uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }

@@ -2287,7 +2287,7 @@ enum class URLParser::IPv4PieceParsingError {
 };
 
 template<typename CharacterType>
-Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
+std::expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
 {
     enum class State : uint8_t {
         UnknownBase,
@@ -2376,9 +2376,9 @@ enum class URLParser::IPv4ParsingError {
 };
 
 template<typename CharacterTypeForSyntaxViolation, typename CharacterType>
-Expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>& iteratorForSyntaxViolationPosition, CodePointIterator<CharacterType> iterator)
+std::expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>& iteratorForSyntaxViolationPosition, CodePointIterator<CharacterType> iterator)
 {
-    Vector<Expected<uint32_t, URLParser::IPv4PieceParsingError>, 4> items;
+    Vector<std::expected<uint32_t, URLParser::IPv4PieceParsingError>, 4> items;
     bool didSeeSyntaxViolation = false;
     if (!iterator.atEnd() && *iterator == '.')
         return makeUnexpected(IPv4ParsingError::NotIPv4);

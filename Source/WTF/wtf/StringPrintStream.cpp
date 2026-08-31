@@ -87,7 +87,7 @@ void StringPrintStream::reset()
     m_buffer[0] = 0;
 }
 
-Expected<String, UTF8ConversionError> StringPrintStream::tryToString() const
+std::expected<String, UTF8ConversionError> StringPrintStream::tryToString() const
 {
     ASSERT(m_length == strlenSpan(m_buffer));
     if (m_length > String::MaxLength)

@@ -31,7 +31,6 @@
 #include "ThreadableLoader.h"
 #include <pal/text/TextEncoding.h>
 #include <tuple>
-#include <wtf/Expected.h>
 
 namespace Inspector {
 

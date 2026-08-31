@@ -132,7 +132,7 @@ AudioDecoderCocoa::~AudioDecoderCocoa()
     });
 }
 
-Expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> AudioDecoderCocoa::isCodecSupported(const StringView& codecName)
+std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> AudioDecoderCocoa::isCodecSupported(const StringView& codecName)
 {
     auto codec = [](auto& codecName) -> FourCharCode {
         if (codecName.startsWith("mp4a.40.5"_s))

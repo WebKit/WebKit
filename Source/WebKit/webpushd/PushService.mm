@@ -267,7 +267,7 @@ public:
     }
 
 protected:
-    using ResultHandler = CompletionHandler<void(const Expected<ResultType, WebCore::ExceptionData>&)>;
+    using ResultHandler = CompletionHandler<void(const std::expected<ResultType, WebCore::ExceptionData>&)>;
 
     PushServiceRequestImpl(PushService& service, const PushSubscriptionSetIdentifier& identifier, const String& scope, ResultHandler&& resultHandler)
         : PushServiceRequest(service, identifier, scope)
@@ -589,7 +589,7 @@ void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushSer
     });
 }
 
-void PushService::getSubscription(const PushSubscriptionSetIdentifier& identifier, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& completionHandler)
+void PushService::getSubscription(const PushSubscriptionSetIdentifier& identifier, const String& scope, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& completionHandler)
 {
     if (identifier.bundleIdentifier.isEmpty() || scope.isEmpty()) {
         RELEASE_LOG_ERROR(Push, "Ignoring getSubscription request with bundleIdentifier (empty = %d) and scope (empty = %d)", identifier.bundleIdentifier.isEmpty(), scope.isEmpty());
@@ -605,7 +605,7 @@ void PushService::didCompleteGetSubscriptionRequest(GetSubscriptionRequest& requ
     finishedPushServiceRequest(m_getSubscriptionRequests, request);
 }
 
-void PushService::subscribe(const PushSubscriptionSetIdentifier& identifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& completionHandler)
+void PushService::subscribe(const PushSubscriptionSetIdentifier& identifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& completionHandler)
 {
     if (identifier.bundleIdentifier.isEmpty() || scope.isEmpty()) {
         RELEASE_LOG_ERROR(Push, "Ignoring subscribe request with bundleIdentifier (empty = %d) and scope (empty = %d)", identifier.bundleIdentifier.isEmpty(), scope.isEmpty());
@@ -626,7 +626,7 @@ void PushService::didCompleteSubscribeRequest(SubscribeRequest& request)
     finishedPushServiceRequest(m_subscribeRequests, request);
 }
 
-void PushService::unsubscribe(const PushSubscriptionSetIdentifier& identifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
+void PushService::unsubscribe(const PushSubscriptionSetIdentifier& identifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
 {
     if (identifier.bundleIdentifier.isEmpty() || scope.isEmpty()) {
         RELEASE_LOG_ERROR(Push, "Ignoring unsubscribe request with bundleIdentifier (empty = %d) and scope (empty = %d)", identifier.bundleIdentifier.isEmpty(), scope.isEmpty());

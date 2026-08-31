@@ -30,7 +30,7 @@
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 
-static Expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
+static std::expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {
     WGSL::ShaderModule shaderModule(input, { });
     WGSL::Lexer lexer(input.span<Latin1Character>());

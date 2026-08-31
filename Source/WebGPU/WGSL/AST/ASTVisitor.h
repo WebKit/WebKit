@@ -29,7 +29,6 @@
 #include "ASTInterpolateAttribute.h"
 #include "CompilationMessage.h"
 
-#include <wtf/Expected.h>
 
 namespace WGSL {
 

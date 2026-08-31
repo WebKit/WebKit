@@ -770,7 +770,7 @@ void SQLiteDatabase::releaseMemory()
     sqlite3_db_release_memory(m_db);
 }
 
-static Expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase& database, std::span<const char> queryIncludingNullTerminator)
+static std::expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase& database, std::span<const char> queryIncludingNullTerminator)
 {
     Locker databaseLock { database.databaseMutex() };
     LOG(SQLDatabase, "SQL - prepare - %s", queryIncludingNullTerminator.data());

@@ -433,7 +433,7 @@ void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
     }
 }
 
-void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(Expected<std::pair<String, bool>, String>&&)>&& completionHandler)
+void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&& completionHandler)
 {
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto result = resourceDataStore->getResponseBody(resourceID);
@@ -446,7 +446,7 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
     completionHandler(WTF::move(result));
 }
 
-void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier resourceID, CompletionHandler<void(Expected<String, String>&&)>&& completionHandler)
+void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier resourceID, CompletionHandler<void(std::expected<String, String>&&)>&& completionHandler)
 {
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto result = resourceDataStore->getSerializedCertificate(resourceID);
@@ -455,7 +455,7 @@ void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier reso
     completionHandler(WTF::move(result));
 }
 
-void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(Expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)
+void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)
 {
     // Site Isolation load leg for Network.loadResource: ProxyingNetworkAgent already routed this to
     // the frame's hosting process, so resolve the frame locally and run the load in its document

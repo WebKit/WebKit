@@ -31,12 +31,12 @@
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
+std::expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
     return pal::HMAC::sign(escapableSpan(borrow(key)->span()), escapableSpan(borrow(data)->span()), hashFunction);
 }
 
-Expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
+std::expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
     return pal::HMAC::verify(escapableSpan(borrow(signature)->span()), escapableSpan(borrow(key)->span()), escapableSpan(borrow(data)->span()), hashFunction);
 }

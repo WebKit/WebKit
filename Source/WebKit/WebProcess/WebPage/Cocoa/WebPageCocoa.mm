@@ -2297,7 +2297,7 @@ void WebPage::confirmCompositionAsync()
     protect(frame->editor())->confirmComposition();
 }
 
-void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, CompletionHandler<void(Expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, CompletionHandler<void(std::expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (m_isClosed)
         return completionHandler(makeUnexpected(ImageDecodingError::Internal));
@@ -2308,7 +2308,7 @@ void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, Completio
     completionHandler(utiAndAvailableSizesFromImageData(data.span()));
 }
 
-void WebPage::getImageMetadata(const Vector<uint8_t>& data, CompletionHandler<void(Expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+void WebPage::getImageMetadata(const Vector<uint8_t>& data, CompletionHandler<void(std::expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
 {
     if (m_isClosed)
         return completionHandler(makeUnexpected(ImageDecodingError::Internal));

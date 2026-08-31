@@ -35,7 +35,7 @@ class GStreamerVideoEncoder : public VideoEncoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoEncoder);
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
-    static Expected<Ref<GStreamerVideoEncoder>, String> create(const String& codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
+    static std::expected<Ref<GStreamerVideoEncoder>, String> create(const String& codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
 
     GStreamerVideoEncoder(const Config&, DescriptionCallback&&, OutputCallback&&);
     ~GStreamerVideoEncoder();

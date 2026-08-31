@@ -252,7 +252,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-Expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Ref<const SharedBuffer>&& segment, AppendFlags)
+std::expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Ref<const SharedBuffer>&& segment, AppendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 

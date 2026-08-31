@@ -43,7 +43,7 @@ public:
         return adoptRef(*new BackgroundFetchEngine(swServer));
     }
 
-    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
+    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(std::expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
     void startBackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
     void backgroundFetchInformation(SWServerRegistration&, const String&, ExceptionOrBackgroundFetchInformationCallback&&);
     using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;

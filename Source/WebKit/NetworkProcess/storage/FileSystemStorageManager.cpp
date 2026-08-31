@@ -74,7 +74,7 @@ uint64_t FileSystemStorageManager::allocatedUnusedCapacity() const
     return result;
 }
 
-Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
+std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -165,7 +165,7 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
     m_handlesByConnection.remove(connectionHandles);
 }
 
-Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::getDirectory(IPC::Connection::UniqueID connection)
+std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::getDirectory(IPC::Connection::UniqueID connection)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -289,7 +289,7 @@ void FileSystemStorageManager::removeGlobalIdentifierReferences(std::span<const 
         removeGlobalIdentifierReference(identifier);
 }
 
-Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::resolveGlobalIdentifier(IPC::Connection::UniqueID connection, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
+std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::resolveGlobalIdentifier(IPC::Connection::UniqueID connection, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 

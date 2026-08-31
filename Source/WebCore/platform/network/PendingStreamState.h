@@ -63,9 +63,9 @@ public:
     // Data consumer API
     WEBCORE_EXPORT void setDataAvailableHandler(Function<void()>&&);
     WEBCORE_EXPORT void clearDataAvailableHandler();
-    using ReadResult = Expected<std::pair<size_t, bool>, int>;
+    using ReadResult = std::expected<std::pair<size_t, bool>, int>;
     ReadResult readInto(std::span<uint8_t>);
-    using TakeResult = Expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int>;
+    using TakeResult = std::expected<std::pair<Deque<Ref<SharedBuffer>>, bool>, int>;
     WEBCORE_EXPORT TakeResult takeAvailableChunks();
     bool hasReadyData();
     WEBCORE_EXPORT void cancel();

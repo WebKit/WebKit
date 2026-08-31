@@ -27,8 +27,8 @@
 
 #ifdef __cplusplus
 
+#import <expected>
 #import <wtf/CompletionHandler.h>
-#import <wtf/Expected.h>
 #import <wtf/Function.h>
 #import <wtf/StdLibExtras.h>
 
@@ -141,12 +141,12 @@ using CopyCountingProbeCompletionHandler = WTF::CompletionHandler<void(CopyCount
 using SharedProbeHolderCompletionHandler = WTF::CompletionHandler<void(SharedProbeHolder)>;
 using SelfReferentialProbeCompletionHandler = WTF::CompletionHandler<void(SelfReferentialProbe&&)>;
 
-using IntExpected = Expected<int, ProbeError>;
-using CopyCountingProbeExpected = Expected<CopyCountingProbe, ProbeError>;
-using SharedProbeHolderExpected = Expected<SharedProbeHolder, ProbeError>;
-using MoveOnlyProbeExpected = Expected<MoveOnlyProbe, ProbeError>;
-using SelfReferentialProbeExpected = Expected<SelfReferentialProbe, ProbeError>;
-using CountedErrorExpected = Expected<MoveOnlyProbe, CountingProbeError>;
+using IntExpected = std::expected<int, ProbeError>;
+using CopyCountingProbeExpected = std::expected<CopyCountingProbe, ProbeError>;
+using SharedProbeHolderExpected = std::expected<SharedProbeHolder, ProbeError>;
+using MoveOnlyProbeExpected = std::expected<MoveOnlyProbe, ProbeError>;
+using SelfReferentialProbeExpected = std::expected<SelfReferentialProbe, ProbeError>;
+using CountedErrorExpected = std::expected<MoveOnlyProbe, CountingProbeError>;
 
 // MARK: Function declarations
 

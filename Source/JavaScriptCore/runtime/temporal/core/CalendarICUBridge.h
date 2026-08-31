@@ -132,7 +132,7 @@ enum class EcmaReferenceYearError : uint8_t {
     UseRegularIfConstrain,
 };
 
-Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
+std::expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
 
 JS_EXPORT_PRIVATE std::optional<ASCIILiteral> canonicalizeEraInCalendar(CalendarID, StringView era);
 

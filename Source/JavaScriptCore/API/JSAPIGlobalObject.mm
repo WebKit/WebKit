@@ -88,7 +88,7 @@ void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globa
     [context notifyException:toRef(globalObject->vm(), exception->value())];
 }
 
-static Expected<URL, String> computeValidImportSpecifier(const URL& base, const String& specifier)
+static std::expected<URL, String> computeValidImportSpecifier(const URL& base, const String& specifier)
 {
     URL absoluteURL(specifier);
     if (absoluteURL.isValid())

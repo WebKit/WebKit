@@ -36,7 +36,6 @@
 #include "StackVisitor.h"
 #include "VMEntryRecord.h"
 #include "VMManager.h"
-#include <wtf/Expected.h>
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -66,7 +65,7 @@ VM* VMInspector::vmForCallFrame(CallFrame* callFrame)
     });
 }
 
-WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Error>
+WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(void* machinePC) -> std::expected<bool, Error>
 {
 #if ENABLE(JIT)
     auto& allocator = ExecutableAllocator::singleton();
@@ -87,7 +86,7 @@ WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(voi
 #endif
 }
 
-auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*, Error>
+auto VMInspector::codeBlockForMachinePC(void* machinePC) -> std::expected<CodeBlock*, Error>
 {
 #if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;

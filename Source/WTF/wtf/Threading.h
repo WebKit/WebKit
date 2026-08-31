@@ -36,7 +36,6 @@
 #include <stdint.h>
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
-#include <wtf/Expected.h>
 #include <wtf/FastTLS.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -188,7 +187,7 @@ public:
     using PlatformSuspendError = DWORD;
 #endif
 
-    WTF_EXPORT_PRIVATE Expected<void, PlatformSuspendError> suspend(const ThreadSuspendLocker&);
+    WTF_EXPORT_PRIVATE std::expected<void, PlatformSuspendError> suspend(const ThreadSuspendLocker&);
     WTF_EXPORT_PRIVATE void resume(const ThreadSuspendLocker&);
     WTF_EXPORT_PRIVATE size_t getRegisters(const ThreadSuspendLocker&, PlatformRegisters&);
 

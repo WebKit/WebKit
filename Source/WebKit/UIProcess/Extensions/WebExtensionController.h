@@ -125,14 +125,14 @@ public:
     void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
     void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
 
-    void calculateStorageSize(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
-    void removeStorage(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void calculateStorageSize(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(std::expected<size_t, WebExtensionError>&&)>&&);
+    void removeStorage(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
 
-    Expected<bool, RefPtr<API::Error>> load(WebExtensionContext&);
-    Expected<bool, RefPtr<API::Error>> unload(WebExtensionContext&);
+    std::expected<bool, RefPtr<API::Error>> load(WebExtensionContext&);
+    std::expected<bool, RefPtr<API::Error>> unload(WebExtensionContext&);
 
     void unloadAll();
 

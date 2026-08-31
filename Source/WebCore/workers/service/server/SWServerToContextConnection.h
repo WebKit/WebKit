@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT void setAsInspected(ServiceWorkerIdentifier, bool);
     WEBCORE_EXPORT void findClientByVisibleIdentifier(ServiceWorkerIdentifier, const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
 
-    using OpenWindowCallback = CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>;
+    using OpenWindowCallback = CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>;
     virtual void openWindow(ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) = 0;
 
     const RegistrableDomain& registrableDomain() const LIFETIME_BOUND { return m_site.domain(); }

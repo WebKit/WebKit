@@ -29,7 +29,6 @@
 #include "Logging.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/Expected.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -145,7 +144,7 @@ bool PrivateClickMeasurement::isNeitherSameSiteNorCrossSiteTriggeringEvent(const
     return !isCrossSiteTriggeringEvent;
 }
 
-Expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
+std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
 {
     if (!redirectURL.hasQuery())
         return PCM::AttributionTriggerData { };
@@ -194,7 +193,7 @@ Expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttr
     return { WTF::move(attributionTriggerData) };
 }
 
-Expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
+std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
     if (path.isEmpty() || !path.startsWith(privateClickMeasurementTriggerAttributionPath))

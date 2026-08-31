@@ -104,7 +104,7 @@ public:
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
     IDBError getFileSystemHandleRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<FileSystemHandleRecord>& records);
-    Expected<IDBValue, IDBError> buildIDBValueForRecord(int64_t objectStoreRecord, const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
+    std::expected<IDBValue, IDBError> buildIDBValueForRecord(int64_t objectStoreRecord, const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
 
     WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
     const String& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
@@ -125,7 +125,7 @@ protected:
     IDBError ensureValidFileSystemHandleRecordsTable();
     std::optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
-    Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> extractExistingDatabaseInfo();
+    std::expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> extractExistingDatabaseInfo();
 
     void closeSQLiteDB();
 

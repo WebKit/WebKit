@@ -33,7 +33,7 @@
 
 namespace PAL::Crypto {
 
-Expected<VectorUInt8, Error> encryptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
+std::expected<VectorUInt8, Error> encryptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
@@ -48,7 +48,7 @@ Expected<VectorUInt8, Error> encryptAESGCM(const VectorUInt8& iv, const VectorUI
     return WTF::move(cipherText);
 }
 
-Expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
+std::expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& plainText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
 {
     auto rv = pal::AesGcm::encrypt(escapableSpan(borrow(key)->span()), escapableSpan(borrow(iv)->span()), escapableSpan(borrow(additionalData)->span()), escapableSpan(borrow(plainText)->span()), desiredTagLengthInBytes);
     if (rv.errorCode != Error::Success)
@@ -56,7 +56,7 @@ Expected<VectorUInt8, Error> encryptCryptoKitAESGCM(const VectorUInt8& iv, const
     return WTF::move(rv.result);
 }
 
-Expected<VectorUInt8, Error> decyptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& cipherText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
+std::expected<VectorUInt8, Error> decyptAESGCM(const VectorUInt8& iv, const VectorUInt8& key, const VectorUInt8& cipherText, const VectorUInt8& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> plainText(cipherText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);

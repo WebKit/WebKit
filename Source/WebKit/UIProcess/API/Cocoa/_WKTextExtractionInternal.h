@@ -29,7 +29,6 @@
 
 #if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 #import "ExtractedNodeInfo.h"
-#import <wtf/Expected.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -73,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 - (instancetype)initWithWebView:(nullable WKWebView *)webView origin:(nullable WKSecurityOrigin *)origin textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs textToContainerMap:(HashMap<String, Vector<WebKit::ExtractedNodeInfo>>&&)textToContainerMap;
-- (Expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText;
+- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText;
 #endif
 
 @end

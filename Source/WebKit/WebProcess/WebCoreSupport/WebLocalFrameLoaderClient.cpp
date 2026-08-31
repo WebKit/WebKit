@@ -2065,7 +2065,7 @@ void WebLocalFrameLoaderClient::prefetchDNS(const String& hostname)
     WebProcess::singleton().prefetchDNS(hostname);
 }
 
-void WebLocalFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+void WebLocalFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)

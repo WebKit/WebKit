@@ -1571,7 +1571,7 @@ void GlobalObject::promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromis
 
 #endif // ENABLE(FUZZILLI)
 
-static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, Expected<CString, UTF8ConversionError> expectedString)
+static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, std::expected<CString, UTF8ConversionError> expectedString)
 {
     if (expectedString)
         return expectedString.value();
@@ -3747,7 +3747,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
 
     auto exceptionString = exception.toWTFString(globalObject);
     CHECK_EXCEPTION();
-    Expected<CString, UTF8ConversionError> expectedCString = exceptionString.tryGetUTF8();
+    std::expected<CString, UTF8ConversionError> expectedCString = exceptionString.tryGetUTF8();
     if (expectedCString)
         printf("Exception: %s\n", expectedCString.value().data());
     else
@@ -4026,7 +4026,7 @@ static void runInteractive(GlobalObject* globalObject)
         if (evaluationException && vm.isTerminationException(evaluationException.get()))
             vm.setExecutionForbidden();
 
-        Expected<CString, UTF8ConversionError> utf8;
+        std::expected<CString, UTF8ConversionError> utf8;
         if (evaluationException) {
             fputs("Exception: ", stdout);
             utf8 = evaluationException->value().toWTFString(globalObject).tryGetUTF8();

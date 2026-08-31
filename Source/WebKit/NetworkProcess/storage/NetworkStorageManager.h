@@ -205,26 +205,26 @@ private:
     void estimate(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&&);
 
     // Message handlers for FileSystem.
-    void fileSystemGetDirectory(IPC::Connection&, WebCore::ClientOrigin&&, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
+    void fileSystemGetDirectory(IPC::Connection&, WebCore::ClientOrigin&&, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
     void closeHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier);
     void isSameEntry(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(bool)>&&);
     void move(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, const String& newName, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void getFileHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
-    void getDirectoryHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
+    void getFileHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
+    void getDirectoryHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
     void removeEntry(IPC::Connection&, WebCore::FileSystemHandleIdentifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void resolve(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<std::optional<Vector<String>>, FileSystemStorageError>)>&&);
-    void getFile(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&&);
-    void createSyncAccessHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&&);
+    void resolve(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(std::expected<std::optional<Vector<String>>, FileSystemStorageError>)>&&);
+    void getFile(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(std::expected<String, FileSystemStorageError>)>&&);
+    void createSyncAccessHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&&);
     void closeSyncAccessHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, CompletionHandler<void()>&&);
     void requestNewCapacityForSyncAccessHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&&);
-    void createWritable(IPC::Connection&, WebCore::FileSystemHandleIdentifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&&);
+    void createWritable(IPC::Connection&, WebCore::FileSystemHandleIdentifier, bool keepExistingData, CompletionHandler<void(std::expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&&);
     void closeWritable(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCloseReason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
     void executeCommandForWritable(IPC::Connection&, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void getHandleNames(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
-    void getHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, CompletionHandler<void(Expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>)>&&);
+    void getHandleNames(IPC::Connection&, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(std::expected<Vector<String>, FileSystemStorageError>)>&&);
+    void getHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, CompletionHandler<void(std::expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>)>&&);
     void addGlobalIdentifierReference(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier);
     void removeGlobalIdentifierReferences(IPC::Connection&, WebCore::ClientOrigin&&, Vector<WebCore::FileSystemHandleGlobalIdentifier>&&);
-    void resolveGlobalIdentifier(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
+    void resolveGlobalIdentifier(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier, CompletionHandler<void(std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
 
     // Message handlers for WebStorage.
     void connectToStorageArea(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, std::optional<StorageNamespaceIdentifier>, const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&&);

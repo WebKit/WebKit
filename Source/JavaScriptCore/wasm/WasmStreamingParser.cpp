@@ -260,7 +260,7 @@ auto StreamingParser::consume(std::span<const uint8_t> bytes, size_t& offsetInBy
     return result;
 }
 
-auto StreamingParser::consumeVarUInt32(std::span<const uint8_t> bytes, size_t& offsetInBytes, IsEndOfStream isEndOfStream) -> Expected<uint32_t, State>
+auto StreamingParser::consumeVarUInt32(std::span<const uint8_t> bytes, size_t& offsetInBytes, IsEndOfStream isEndOfStream) -> std::expected<uint32_t, State>
 {
     constexpr size_t maxSize = WTF::LEBDecoder::maxByteLength<uint32_t>();
     size_t bytesRemainingSize = bytes.size() - offsetInBytes;

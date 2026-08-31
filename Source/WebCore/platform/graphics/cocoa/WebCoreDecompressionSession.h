@@ -30,7 +30,6 @@
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/ProcessIdentity.h>
 #include <atomic>
-#include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
@@ -83,7 +82,7 @@ private:
     WEBCORE_EXPORT WebCoreDecompressionSession(NSDictionary *, GuaranteedSerialFunctionDispatcher*);
     static NSDictionary *defaultPixelBufferAttributes();
 
-    Expected<RefPtr<VideoDecoderVTB>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
+    std::expected<RefPtr<VideoDecoderVTB>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
 
     Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, DecodingFlags);
     void assignResourceOwner(CVImageBufferRef);

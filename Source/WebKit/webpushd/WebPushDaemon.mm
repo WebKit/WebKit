@@ -827,7 +827,7 @@ void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, Co
     });
 }
 
-void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
+void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
 {
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
@@ -869,7 +869,7 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
     });
 }
 
-void WebPushDaemon::unsubscribeFromPushService(PushClientConnection& connection, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
+void WebPushDaemon::unsubscribeFromPushService(PushClientConnection& connection, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&& replySender)
 {
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
@@ -889,7 +889,7 @@ void WebPushDaemon::unsubscribeFromPushService(PushClientConnection& connection,
     });
 }
 
-void WebPushDaemon::getPushSubscription(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
+void WebPushDaemon::getPushSubscription(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
 {
     auto origin = SecurityOriginData::fromURL(scopeURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);
@@ -1067,7 +1067,7 @@ ALLOW_NONLITERAL_FORMAT_END
     [center addNotificationRequest:request.get() withCompletionHandler:blockPtr.get()];
 }
 
-void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     auto origin = SecurityOriginData::fromURL(registrationURL);
     auto maybeIdentifier = connection.subscriptionSetIdentifierForOrigin(origin);

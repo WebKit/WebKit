@@ -175,7 +175,7 @@ String descriptionString(ImageDecodingError error)
     return "Unkown error"_s;
 }
 
-Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t> data)
+std::expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t> data)
 {
     Ref buffer = SharedBuffer::create(data);
     Ref imageDecoder = ImageDecoderCG::create(buffer.get(), AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
@@ -200,7 +200,7 @@ Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailable
     return std::make_pair(WTF::move(uti), WTF::move(sizes));
 }
 
-Expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t> data)
+std::expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t> data)
 {
     Ref buffer = SharedBuffer::create(data);
     Ref bitmapImage = BitmapImage::create();

@@ -89,7 +89,7 @@ void MediaResourceLoader::contextDestroyed()
     m_element = nullptr;
 }
 
-void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
     assertIsMainThread();
 

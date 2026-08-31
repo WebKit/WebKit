@@ -72,7 +72,7 @@ void CoreAudioCaptureUnit::AudioUnitDeallocator::operator()(AudioUnit unit) cons
     PAL::AudioComponentInstanceDispose(unit);
 }
 
-static Expected<CoreAudioCaptureUnit::StoredAudioUnit, OSStatus> createAudioUnit(bool shouldUseVPIO)
+static std::expected<CoreAudioCaptureUnit::StoredAudioUnit, OSStatus> createAudioUnit(bool shouldUseVPIO)
 {
     OSType unitSubType = kAudioUnitSubType_VoiceProcessingIO;
     if (!shouldUseVPIO) {
@@ -111,7 +111,7 @@ static Expected<CoreAudioCaptureUnit::StoredAudioUnit, OSStatus> createAudioUnit
     return CoreAudioCaptureUnit::StoredAudioUnit(ioUnit);
 }
 
-Expected<UniqueRef<CoreAudioCaptureUnit::InternalUnit>, OSStatus> CoreAudioCaptureInternalUnit::create(bool shouldUseVPIO)
+std::expected<UniqueRef<CoreAudioCaptureUnit::InternalUnit>, OSStatus> CoreAudioCaptureInternalUnit::create(bool shouldUseVPIO)
 {
 #if PLATFORM(MAC)
     if (shouldUseVPIO) {

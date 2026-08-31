@@ -35,7 +35,6 @@
 #include <JavaScriptCore/MemoryMode.h>
 #include <JavaScriptCore/WasmFormat.h>
 #include <wtf/Bag.h>
-#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>

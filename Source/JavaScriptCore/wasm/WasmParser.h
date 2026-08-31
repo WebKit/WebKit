@@ -40,7 +40,6 @@
 #include "WasmTypeSectionState.h"
 #include "Width.h"
 #include <type_traits>
-#include <wtf/Expected.h>
 #include <wtf/LEBDecoder.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
@@ -62,7 +61,7 @@ class ParserBase {
 public:
     typedef String ErrorType;
     typedef std::unexpected<ErrorType> UnexpectedResult;
-    typedef Expected<void, ErrorType> PartialResult;
+    typedef std::expected<void, ErrorType> PartialResult;
 
     std::span<const uint8_t> source() const { return m_source; }
     size_t offset() const { return m_offset; }
@@ -131,7 +130,7 @@ protected:
 
 template<typename SuccessType> class Parser : public ParserBase {
 public:
-    using Result = Expected<SuccessType, ErrorType>;
+    using Result = std::expected<SuccessType, ErrorType>;
 
     explicit Parser(std::span<const uint8_t> span)
         : ParserBase { span }

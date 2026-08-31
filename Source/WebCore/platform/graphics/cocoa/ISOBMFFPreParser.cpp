@@ -110,7 +110,7 @@ void ISOBMFFPreParser::setPendingInitializationSegmentForChangeType()
     reset();
 }
 
-Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
+std::expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
     Ref<const SharedBuffer>&& segment, AppendFlags callerFlags)
 {
     if (segment->isEmpty())

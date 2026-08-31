@@ -184,7 +184,7 @@
     return self;
 }
 
-- (Expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText
+- (std::expected<std::optional<WebKit::ExtractedNodeInfo>, String>)resolveContainerForSearchText:(NSString *)searchText
 {
     if (!searchText.length)
         return { std::nullopt };

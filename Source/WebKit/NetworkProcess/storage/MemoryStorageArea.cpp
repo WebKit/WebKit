@@ -59,7 +59,7 @@ HashMap<String, String> MemoryStorageArea::allItems()
     return m_map.items();
 }
 
-Expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Connection::UniqueID> connection, std::optional<StorageAreaImplIdentifier> storageAreaImplID, String&& key, String&& value, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Connection::UniqueID> connection, std::optional<StorageAreaImplIdentifier> storageAreaImplID, String&& key, String&& value, const String& urlString)
 {
     String oldValue;
     bool hasQuotaError = false;
@@ -73,7 +73,7 @@ Expected<void, StorageError> MemoryStorageArea::setItem(std::optional<IPC::Conne
     return { };
 }
 
-Expected<void, StorageError> MemoryStorageArea::removeItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::removeItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
 {
     String oldValue;
     m_map.removeItem(key, oldValue);
@@ -82,7 +82,7 @@ Expected<void, StorageError> MemoryStorageArea::removeItem(IPC::Connection::Uniq
     return { };
 }
 
-Expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier implIdentifier, const String& urlString)
+std::expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier implIdentifier, const String& urlString)
 {
     if (!m_map.length())
         return { };

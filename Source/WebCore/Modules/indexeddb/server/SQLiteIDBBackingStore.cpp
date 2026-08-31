@@ -693,7 +693,7 @@ bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<st
     return true;
 }
 
-static Expected<String, IDBError> databaseNameFromDatabase(SQLiteDatabase& database, uint64_t metadataVersion)
+static std::expected<String, IDBError> databaseNameFromDatabase(SQLiteDatabase& database, uint64_t metadataVersion)
 {
     auto sql = database.prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';"_s);
     if (!sql)
@@ -709,7 +709,7 @@ static Expected<String, IDBError> databaseNameFromDatabase(SQLiteDatabase& datab
     return databaseName;
 }
 
-static Expected<std::pair<uint64_t, String>, IDBError> databaseMetadataVersionAndNameFromDatabase(SQLiteDatabase& database)
+static std::expected<std::pair<uint64_t, String>, IDBError> databaseMetadataVersionAndNameFromDatabase(SQLiteDatabase& database)
 {
     uint64_t metadataVersion = 0;
     {
@@ -797,7 +797,7 @@ static IDBError migrateIDBDatabaseInfoTableIfNecessary(SQLiteDatabase& database,
     return IDBError { };
 }
 
-Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> SQLiteIDBBackingStore::extractExistingDatabaseInfo()
+std::expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> SQLiteIDBBackingStore::extractExistingDatabaseInfo()
 {
     CheckedPtr sqliteDB = m_sqliteDB.get();
     ASSERT(sqliteDB);
@@ -2246,7 +2246,7 @@ IDBError SQLiteIDBBackingStore::getFileSystemHandleRecordsForObjectStoreRecord(i
     return IDBError { };
 }
 
-Expected<IDBValue, IDBError> SQLiteIDBBackingStore::buildIDBValueForRecord(int64_t recordID, const ThreadSafeDataBuffer& data, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths)
+std::expected<IDBValue, IDBError> SQLiteIDBBackingStore::buildIDBValueForRecord(int64_t recordID, const ThreadSafeDataBuffer& data, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths)
 {
     Vector<FileSystemHandleRecord> fileSystemHandleRecords;
     if (auto error = getFileSystemHandleRecordsForObjectStoreRecord(recordID, fileSystemHandleRecords); !error.isNull())

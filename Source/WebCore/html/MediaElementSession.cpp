@@ -462,7 +462,7 @@ static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason
 
 #endif
 
-Expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
+std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
     RefPtr element = m_element.get();
     auto makeUnexpectedDenial = [](MediaPlaybackDenialReason reason, const String& explanation) {

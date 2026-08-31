@@ -299,7 +299,7 @@ void WebSocketTask::skipReceivedBuffer(size_t length)
     m_receiveBuffer.shrink(m_receiveBuffer.size() - length);
 }
 
-Expected<bool, String> WebSocketTask::validateOpeningHandshake()
+std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
 {
     if (m_didCompleteOpeningHandshake)
         return true;

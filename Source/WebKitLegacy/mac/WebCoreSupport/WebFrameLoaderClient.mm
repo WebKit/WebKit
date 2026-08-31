@@ -1828,7 +1828,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)
+void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(makeUnexpected(WebCore::internalError(url)));

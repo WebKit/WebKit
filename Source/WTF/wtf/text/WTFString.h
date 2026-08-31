@@ -126,9 +126,9 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = LenientConversion) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8() const;
+    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE std::expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode) const;
+    WTF_EXPORT_PRIVATE std::expected<CString, UTF8ConversionError> tryGetUTF8() const;
 
     char16_t codeUnitAt(unsigned index) const;
     char16_t operator[](unsigned index) const { return codeUnitAt(index); }
@@ -168,8 +168,8 @@ public:
     size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
     size_t reverseFind(StringView, unsigned start = MaxLength) const;
 
-    WTF_EXPORT_PRIVATE Expected<Vector<char16_t>, UTF8ConversionError> charactersWithNullTermination() const;
-    WTF_EXPORT_PRIVATE Expected<Vector<char16_t>, UTF8ConversionError> charactersWithoutNullTermination() const;
+    WTF_EXPORT_PRIVATE std::expected<Vector<char16_t>, UTF8ConversionError> charactersWithNullTermination() const;
+    WTF_EXPORT_PRIVATE std::expected<Vector<char16_t>, UTF8ConversionError> charactersWithoutNullTermination() const;
 
     WTF_EXPORT_PRIVATE char32_t NODELETE codePointAt(unsigned) const;
 
@@ -508,7 +508,7 @@ inline String String::substring(unsigned position, unsigned length) const
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> String::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
+inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> String::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
 {
     if (!m_impl)
         return function(nonNullEmptyUTF8Span());
