@@ -80,7 +80,7 @@ https://www.ea.com/
     (none)
 https://www.espn.com/
     AllowLayeredFullscreenVideos
-    NeedsPauseBeforeFullscreenExitQuirk
+    NeedsSuppressedPauseEventOnFullscreenExitQuirk
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/
     NeedsFacebookRemoveNotSupportedQuirk
