@@ -1241,6 +1241,7 @@
 				WTF/EnumTraits.cpp,
 				WTF/EscapableByteSpan.cpp,
 				WTF/Expected.cpp,
+				WTF/FastMalloc.cpp,
 				WTF/FileSystem.cpp,
 				WTF/FixedBitVector.cpp,
 				WTF/FixedVector.cpp,

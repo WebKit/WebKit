@@ -270,6 +270,8 @@ struct FastMalloc {
         return nullptr;
     }
     
+    static void* alignedMalloc(size_t alignment, size_t size) { return fastAlignedMalloc(alignment, size); }
+
     static void free(void* p) { fastFree(p); }
 
     static void fastFree(void* p) { ::WTF::fastFree(p); }
@@ -321,6 +323,8 @@ struct FastCompactMalloc {
             return realResult;
         return nullptr;
     }
+
+    static void* alignedMalloc(size_t alignment, size_t size) { return fastCompactAlignedMalloc(alignment, size); }
 
     static void free(void* p) { fastFree(p); }
 
@@ -488,6 +492,26 @@ using WTF::fastCompactAlignedMalloc;
     { \
         ::WTF::fastFree(p); \
     } \
+    \
+    void* operator new(size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::fastAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete(void* p, std::align_val_t) \
+    { \
+        ::WTF::fastFree(p); \
+    } \
+    \
+    void* operator new[](size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::fastAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete[](void* p, std::align_val_t) \
+    { \
+        ::WTF::fastFree(p); \
+    } \
     void* operator new(size_t, NotNullTag, void* location) \
     { \
         ASSERT(location); \
@@ -522,6 +546,26 @@ using WTF::fastCompactAlignedMalloc;
     } \
     \
     void operator delete[](void* p) \
+    { \
+        ::WTF::fastFree(p); \
+    } \
+    \
+    void* operator new(size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::fastCompactAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete(void* p, std::align_val_t) \
+    { \
+        ::WTF::fastFree(p); \
+    } \
+    \
+    void* operator new[](size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::fastCompactAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete[](void* p, std::align_val_t) \
     { \
         ::WTF::fastFree(p); \
     } \

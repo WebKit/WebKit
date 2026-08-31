@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <new>
 #include <wtf/StdLibExtras.h>
 
 // We do not delete "delete" operators to allow classes to have a virtual destructor. The following code raises a compile error like "error: attempt to use a deleted function".
@@ -42,6 +43,8 @@ private: \
     void* operator new[](size_t, void*) = delete; \
     void* operator new(size_t) = delete; \
     void* operator new[](size_t size) = delete; \
+    void* operator new(size_t, std::align_val_t) = delete; \
+    void* operator new[](size_t, std::align_val_t) = delete; \
     void* operator new(size_t, NotNullTag, void*) = delete; \
     typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationMacro
 
@@ -57,6 +60,8 @@ public: \
 private: \
     void* operator new(size_t) = delete; \
     void* operator new[](size_t size) = delete; \
+    void* operator new(size_t, std::align_val_t) = delete; \
+    void* operator new[](size_t, std::align_val_t) = delete; \
     typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationAllowingPlacementNewMacro
 
 // WTF::usesTZoneHeap is defined in FastMalloc.h
