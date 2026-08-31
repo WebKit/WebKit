@@ -33,6 +33,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ThreadableWebSocketChannel.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -74,7 +75,6 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         blockCookies();
 
     readNextMessage();
-    protect(m_channel)->didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     updateTaskWithStoragePartitionIdentifier(request);
@@ -97,6 +97,7 @@ void WebSocketTask::readNextMessage()
                 return;
 
             if (!protectedThis->m_receivedDidConnect) {
+                protectedThis->reportHandshakeRequest();
                 ResourceResponse response { [protectedThis->m_task response] };
                 if (!response.isNull())
                     channel->didReceiveHandshakeResponse(WTF::move(response));
@@ -115,6 +116,18 @@ void WebSocketTask::readNextMessage()
     }).get()];
 }
 
+void WebSocketTask::reportHandshakeRequest()
+{
+    if (m_didReportHandshakeRequest)
+        return;
+    m_didReportHandshakeRequest = true;
+
+    // currentRequest can omit headers added while composing a WebSocket handshake.
+    // Prefer the transaction request, which represents the request sent by the loader.
+    RetainPtr request = [m_task _incompleteTaskMetrics].transactionMetrics.lastObject.request ?: [m_task currentRequest];
+    protect(m_channel)->didSendHandshakeRequest(ResourceRequest { request });
+}
+
 void WebSocketTask::cancel()
 {
     [m_task cancel];
@@ -127,6 +140,8 @@ void WebSocketTask::resume()
 
 void WebSocketTask::didConnect(const String& protocol)
 {
+    reportHandshakeRequest();
+
     String extensionsValue;
     RetainPtr response = [m_task response];
     if (RetainPtr httpResponse  = dynamic_objc_cast<NSHTTPURLResponse>(response.get()))
@@ -143,6 +158,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     if (m_receivedDidClose)
         return;
 
+    reportHandshakeRequest();
     m_receivedDidClose = true;
     protect(m_channel)->didClose(code, reason);
 }

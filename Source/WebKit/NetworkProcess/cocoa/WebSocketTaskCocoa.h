@@ -86,12 +86,14 @@ private:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WeakPtr<SessionSet>&&, const WebCore::ResourceRequest&, const WebCore::ClientOrigin&, RetainPtr<NSURLSessionWebSocketTask>&&, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
 
     void readNextMessage();
+    void reportHandshakeRequest();
 
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
     WeakPtr<NetworkSocketChannel> m_channel;
     RetainPtr<NSURLSessionWebSocketTask> m_task;
+    bool m_didReportHandshakeRequest { false };
     bool m_receivedDidClose { false };
     bool m_receivedDidConnect { false };
     Markable<WebPageProxyIdentifier> m_webProxyPageID;

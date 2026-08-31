@@ -7,7 +7,7 @@ function load()
 {
     testRunner.waitUntilDone();
 
-    const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+    const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo-headers";
     window.testWebSocket = new WebSocket(url);
     window.testWebSocket.addEventListener("open", (event) => {
         // Only run the tests once the websocket has connected.
@@ -44,7 +44,7 @@ function test()
         name: "WebSocket.BeforeLoad",
         description: "Test that the existing websocket is sent to the frontend when it is first opened.",
         test(resolve, reject) {
-            const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+            const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo-headers";
             let webSocketResources = WI.networkManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
             InspectorTest.expectEqual(webSocketResources.size, 1, "Should have 1 WebSocketResource");
 
@@ -59,7 +59,8 @@ function test()
             InspectorTest.expectEqual(webSocketResource.statusCode, 101, "Resource status code should be 101.");
             InspectorTest.expectEqual(webSocketResource.statusText, "Switching Protocols", "Resource status text should be \"Switching Protocols\".");
             InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Connection"), "Resource should have request header Connection.");
-            InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Sec-Websocket-Key"), "Resource should have request header Sec-Websocket-Key.");
+            let secWebSocketKey = webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Sec-Websocket-Key");
+            InspectorTest.expectThat(secWebSocketKey, "Resource should have request header Sec-Websocket-Key.");
             InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Sec-Websocket-Version"), "Resource should have request header Sec-Websocket-Version.");
             InspectorTest.expectEqual(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Upgrade"), "websocket", "Resource should have request header Upgrade.");
             InspectorTest.expectThat(webSocketResource.responseHeaders.valueForCaseInsensitiveKey("Connection"), "Resource should have response header Connection.");
@@ -69,12 +70,14 @@ function test()
 
             let expectedFrames = [
                 {
-                    data: "Hello World!",
+                    data: "Sec-WebSocket-Key",
                     isOutgoing: true,
+                    message: "Outgoing frame should request the Sec-WebSocket-Key header.",
                 },
                 {
-                    data: "Hello World!",
+                    data: secWebSocketKey,
                     isOutgoing: false,
+                    message: "Incoming frame should match the reported Sec-WebSocket-Key header.",
                 },
             ];
 
@@ -84,7 +87,7 @@ function test()
                 if (!expectedFrame)
                     return;
 
-                InspectorTest.expectEqual(frame.data, expectedFrame.data, `Frame data should be '${expectedFrame.data}'`);
+                InspectorTest.expectEqual(frame.data, expectedFrame.data, expectedFrame.message);
                 InspectorTest.expectEqual(frame.isOutgoing, expectedFrame.isOutgoing, `Frame outgoing should be '${expectedFrame.isOutgoing}'`);
 
                 if (webSocketResource.frames.length == expectedFrames.length) {
@@ -94,7 +97,7 @@ function test()
             };
             webSocketResource.addEventListener(WI.WebSocketResource.Event.FrameAdded, handleFrameAdded);
 
-            InspectorTest.evaluateInPage("window.testWebSocket.send(\"Hello World!\")");
+            InspectorTest.evaluateInPage("window.testWebSocket.send(\"Sec-WebSocket-Key\")");
         }
     });
 
