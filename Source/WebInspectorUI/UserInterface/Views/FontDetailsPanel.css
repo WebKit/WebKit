@@ -31,3 +31,23 @@
     color: var(--text-color-secondary);
     word-break: normal;
 }
+
+.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters {
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters > span {
+    unicode-bidi: isolate;
+}
+
+.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters > .code-point {
+    display: inline-block;
+    margin-inline: 2px;
+    padding: 0 3px;
+    font-family: Menlo, monospace;
+    color: var(--text-color-secondary);
+    background-color: var(--background-color-alternate);
+    border: 1px solid var(--border-color-secondary);
+    border-radius: 3px;
+}

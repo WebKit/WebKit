@@ -59,6 +59,9 @@ void InlineContentPainter::paintEllipsis(size_t lineIndex)
     if ((m_paintInfo.phase != PaintPhase::Foreground && m_paintInfo.phase != PaintPhase::TextClip) || root().usedStyle().visibility() != UsedVisibility::Visible)
         return;
 
+    if (!m_paintInfo.shouldPaintWithinRoot(root()))
+        return;
+
     auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorModernPath { m_inlineContent, lineIndex } };
     if (!lineBox.hasEllipsis())
         return;
@@ -121,6 +124,12 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box);
         if (!hasVisibleDamage)
             return;
+
+        if (CheckedPtr subtreePaintRoot = m_paintInfo.subtreePaintRoot) {
+            CheckedPtr renderer = box.layoutBox().rendererForIntegration();
+            if (renderer.get() != subtreePaintRoot.get() && !renderer->isDescendantOf(subtreePaintRoot.get()))
+                return;
+        }
 
         TextBoxPainter { m_inlineContent, box, box.style(), m_paintInfo, m_paintOffset }.paint();
         return;

@@ -68,6 +68,12 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         return false;
     }
 
+    get needsFontData()
+    {
+        // Overriden by subclasses if needed.
+        return false;
+    }
+
     attached()
     {
         super.attached();
@@ -124,7 +130,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
     {
         if (!this._nodeStyles)
             return;
-        this._nodeStyles.refresh();
+        this._nodeStyles.refresh({includeFontData: this.needsFontData});
     }
 
     _refreshPreservingScrollPosition(significantChange)

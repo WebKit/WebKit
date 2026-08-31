@@ -2749,9 +2749,6 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomString& nam
     if (!id)
         return;
 
-    if (CheckedPtr cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
-        cssAgent->didModifyDOMAttr(element);
-
     m_frontendDispatcher->attributeModified(id, name, value);
 }
 
@@ -2760,9 +2757,6 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& nam
     auto id = boundNodeId(&element);
     if (!id)
         return;
-
-    if (CheckedPtr cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
-        cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeRemoved(id, name);
 }
