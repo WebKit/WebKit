@@ -4906,7 +4906,9 @@ webkit.org/b/305514 [ Debug ] imported/w3c/web-platform-tests/css/css-anchor-pos
 webkit.org/b/305514 imported/w3c/web-platform-tests/css/css-view-transitions/transform-origin-view-transition-group.html [ ImageOnlyFailure Pass ]
 webkit.org/b/305514 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html [ Failure Pass ]
 webkit.org/b/305514 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Failure Pass ]
+webkit.org/b/305514 webgl/1.0.x/conformance/textures/misc/texture-video-transparent.html [ Failure Pass ]
 webkit.org/b/305514 webgl/1.0.x/conformance/textures/misc/video-rotation.html [ Failure Pass ]
+webkit.org/b/305514 webgl/2.0.y/conformance/textures/misc/texture-video-transparent.html [ Failure Pass ]
 webkit.org/b/305514 webgl/2.0.y/conformance/textures/misc/video-rotation.html [ Failure Pass ]
 webkit.org/b/305514 fullscreen/fullscreen-zero-height-element-with-non-zero-children.html [ Failure Pass ]
 
