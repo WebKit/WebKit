@@ -1222,24 +1222,26 @@ DEFINE_VISIT_CHILDREN(CodeBlock);
 template<typename Visitor>
 void CodeBlock::visitChildren(Visitor& visitor)
 {
-    ConcurrentJSLocker locker(m_lock);
+    {
+        ConcurrentJSLocker locker(m_lock);
 
-    // In CodeBlock::shouldVisitStrongly() we may have decided to skip visiting this
-    // codeBlock. However, if we end up visiting it anyway due to other references,
-    // we can clear this flag and allow the verifier GC to visit it as well.
-    m_visitChildrenSkippedDueToOldAge = false;
-    if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
-        visitor.appendUnbarriered(otherBlock);
+        // In CodeBlock::shouldVisitStrongly() we may have decided to skip visiting this
+        // codeBlock. However, if we end up visiting it anyway due to other references,
+        // we can clear this flag and allow the verifier GC to visit it as well.
+        m_visitChildrenSkippedDueToOldAge = false;
+        if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
+            visitor.appendUnbarriered(otherBlock);
 
-    size_t extraMemory = 0;
-    if (m_metadata)
-        extraMemory += m_metadata->sizeInBytesForGC();
-    if (m_jitCode && !m_jitCode->isShared())
-        extraMemory += m_jitCode->size();
-    visitor.reportExtraMemoryVisited(extraMemory);
+        size_t extraMemory = 0;
+        if (m_metadata)
+            extraMemory += m_metadata->sizeInBytesForGC();
+        if (m_jitCode && !m_jitCode->isShared())
+            extraMemory += m_jitCode->size();
+        visitor.reportExtraMemoryVisited(extraMemory);
 
-    stronglyVisitStrongReferences(locker, visitor);
-    stronglyVisitWeakReferences(locker, visitor);
+        stronglyVisitStrongReferences(locker, visitor);
+        stronglyVisitWeakReferences(locker, visitor);
+    }
 
     // Update profiles from concurrent markers to reduce the cost of update at the GC end phase as its execution is serialized.
     if constexpr (std::is_same_v<Visitor, SlotVisitor>) {
