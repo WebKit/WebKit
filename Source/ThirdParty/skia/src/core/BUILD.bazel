@@ -177,6 +177,7 @@ SEMI_PUBLIC_HEADERS = [
     "SkRuntimeEffectPriv.h",
     "SkSLTypeShared.h",
     "SkSafeMath.h",
+    "SkSafetyChecks.h",
     "SkSamplingPriv.h",
     "SkScalerContext.h",
     "SkScan.h",
@@ -249,7 +250,6 @@ PRIVATE_HEADERS = [
     "SkAlphaRuns.h",
     "SkAnalyticEdge.h",
     "SkAutoBlitterChoose.h",
-    "SkBigPicture.h",
     "SkBlitMask.h",
     "SkBlitRow.h",
     "SkBlitter.h",
@@ -306,7 +306,6 @@ skia_filegroup(
         "SkBBHFactory.cpp",
         "SkBase64.cpp",
         "SkBezierCurves.cpp",
-        "SkBigPicture.cpp",
         "SkBitmap.cpp",
         "SkBitmapCache.cpp",
         "SkBitmapDevice.cpp",
@@ -640,6 +639,7 @@ skia_cc_library(
     deps = [
         ":core",
         "//modules/skcms",
+        "//src/partition_alloc:raw_ptr",
     ],
 )
 

@@ -176,16 +176,46 @@ BufferSubAllocator& BufferSubAllocator::operator=(BufferSubAllocator&& other) {
 
 void BufferSubAllocator::prepForStride(size_t stride, size_t align, size_t minCount,
                                        size_t headroom) {
+    SkASSERT(stride > 0 && align > 0); // Expect valid inputs
     if (fBuffer) {
-        const uint32_t minAlignment = fOwner->fCurrentBuffers[fStateIndex].fMinAlignment;
-        std::tie(fOffset, fRemaining) =
-                BufferAligner::prepForStride(fBuffer->size(), fOffset, fStride, fRemaining,
-                                             minAlignment, stride, align, minCount, headroom);
-        if (fRemaining > 0) {
-            fStride = SkTo<uint32_t>(stride);
+        if (fStride == stride && (align == 1 || align == stride)) {
+            // Shortcut if we're already aligned with the last call to prepForStride().
+            // Leave fRemaining alone, it's either enough for minCount or not, but reserve() will
+            // do the right thing regardless.
+            SkASSERT(fOffset % align == 0);
+            SkASSERT(fOffset % stride == 0);
             return;
         }
+
+        // On re-aligning to a new stride, the offset needs to be aligned to the LCM of `align` and
+        // `stride` so that repeated suballocations of `stride` can be performed by simply adding to
+        // fOffset without additional instructions. If `fStride == 0`, it's a signal that the first
+        // offset also needs to be aligned to the minimum binding requirement.
+        uint32_t align32 = BufferAligner::LcmAlignment(SkTo<uint32_t>(align), SkTo<uint32_t>(stride));
+        if (fStride == 0) {
+            const uint32_t minAlignment = fOwner->fCurrentBuffers[fStateIndex].fMinAlignment;
+            align32 = BufferAligner::LcmAlignment(minAlignment, align32);
+        }
+
+        const uint32_t stride32 = SkTo<uint32_t>(stride);
+        const uint32_t headroom32 = SkTo<uint32_t>(headroom);
+        const uint32_t reserveForHeadroom = headroom32 > stride32 ? headroom32 - stride32 : 0;
+        // Ensures we won't overflow fOffset past buffer size once we align it
+        if (this->remainingBytes() >= align32 - 1 + reserveForHeadroom) {
+            const uint32_t offset = SkAlignNonPow2(fOffset, align32);
+            SkASSERT(offset + reserveForHeadroom <= fBuffer->size());
+            fStride = stride32;
+            fRemaining = (SkTo<uint32_t>(fBuffer->size()) - offset - reserveForHeadroom) / fStride;
+            if (fRemaining > 0 && fRemaining >= minCount) {
+                // Successful prep, so preserve the aligned offset
+                fOffset = offset;
+                return;
+            }
+        }
     }
+
+    // If we've reached here, there wasn't a buffer or enough room to align, or enough room to
+    // satisfy minCount, so set fRemaining=0 to fail subsequent reservations.
     fRemaining = 0;
 }
 
@@ -398,7 +428,7 @@ BufferSubAllocator DrawBufferManager::getBuffer(
     BufferState& state = fCurrentBuffers[stateIndex];
     // The size for a buffer is aligned to the minimum block size for better resource reuse, which
     // is more conservative than fMinAlignment.
-    uint32_t requiredBytes32 = BufferAligner::validateCountAndStride(count, stride, headroom,
+    uint32_t requiredBytes32 = BufferAligner::ValidateCountAndStride(count, stride, headroom,
                                                                      state.fMinBlockSize);
     if (fMappingFailed || !requiredBytes32) {
         return {};
@@ -527,12 +557,12 @@ void* StaticBufferManager::prepareStaticData(BufferState* state,
     // Unlike in BufferSubAllocator::reserve(), we do use SkTo<uint32_t> to check
     // `requiredAlignment`. This is not dynamic data and is fully controlled by Graphite, so if it
     // asserts, then there is a bug in the static data for a Renderer that must be fixed.
-    const uint32_t align32 = BufferAligner::lcmAlignment(state->fMinimumAlignment,
+    const uint32_t align32 = BufferAligner::LcmAlignment(state->fMinimumAlignment,
                                                          SkTo<uint32_t>(requiredAlignment));
 
     SkASSERT(target);
     *target = {nullptr, 0};
-    uint32_t size32 = BufferAligner::validateCountAndStride(requiredBytes, /*stride=*/1,
+    uint32_t size32 = BufferAligner::ValidateCountAndStride(requiredBytes, /*stride=*/1,
                                                             /*headroom=*/0, align32);
     if (!size32 || fMappingFailed) {
         return nullptr;
@@ -599,7 +629,7 @@ bool StaticBufferManager::BufferState::createAndUpdateBindings(
     for (const CopyRange& data : fData) {
         // Each copy range's size should be aligned to the lcm of the required alignment and minimum
         // alignment so we can increment the offset in the static buffer.
-        const uint32_t alignment = BufferAligner::lcmAlignment(fMinimumAlignment,
+        const uint32_t alignment = BufferAligner::LcmAlignment(fMinimumAlignment,
                                                                data.fRequiredAlignment);
         offset = SkAlignNonPow2(offset, alignment);
         SkASSERT(!(offset % fMinimumAlignment) && !(offset % data.fRequiredAlignment));

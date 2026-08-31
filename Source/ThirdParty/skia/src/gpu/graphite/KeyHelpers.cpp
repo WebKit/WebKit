@@ -21,6 +21,7 @@
 #include "src/core/SkColorSpacePriv.h"
 #include "src/core/SkDebugUtils.h"
 #include "src/core/SkHalf.h"
+#include "src/core/SkMeshPriv.h"
 #include "src/core/SkRuntimeBlender.h"
 #include "src/core/SkRuntimeEffectPriv.h"
 #include "src/core/SkYUVMath.h"
@@ -613,6 +614,13 @@ void ImageShaderBlock::AddBlock(const KeyContext& keyContext, const ImageData& i
             : imgData.fImmutableSamplerInfo;
     auto tileModeWithSubstitution = doTilingInHw ? imgData.fTileModes :
                                     std::make_pair(SkTileMode::kClamp, SkTileMode::kClamp);
+
+    // If we're a read only texture, we should have no mipmapping and kNearest sampling.
+    SkASSERT(!imgData.fTextureProxy ||
+             !caps->isReadable(imgData.fTextureProxy->textureInfo()) ||
+             caps->isTexturable(imgData.fTextureProxy->textureInfo()) ||
+             imgData.fSampling == SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone));
+
     SamplerDesc samplerDesc{imgData.fSampling, tileModeWithSubstitution, info};
     keyContext.pipelineDataGatherer()->add(imgData.fTextureProxy, samplerDesc);
     add_sampler_data_to_key(keyContext, samplerDesc);
@@ -2001,7 +2009,8 @@ static void add_yuv_image_to_key(const KeyContext& keyContext,
         // however we want to filter at a fixed point for each logical image pixel to simulate
         // nearest neighbor. In the shader we detect that the UV filtermode doesn't match the Y
         // filtermode, and snap to Y pixel centers.
-        if (imgData.fSampling.filter == SkFilterMode::kNearest) {
+        if (imgData.fSampling.filter == SkFilterMode::kNearest &&
+            keyContext.caps()->isTexturable(view.proxy()->textureInfo())) {
             imgData.fSamplingUV = SkSamplingOptions(SkFilterMode::kLinear,
                                                     imgData.fSampling.mipmap);
             // Consider a logical image pixel at the edge of the subset. When computing the logical
@@ -2730,5 +2739,46 @@ void AddDitherBlock(const KeyContext& keyContext, SkColorType ct) {
     DitherShaderBlock::AddBlock(keyContext, data);
 }
 
+void MeshShaderBlock::AddBlock(const KeyContext& keyContext,
+                               const SkMeshSpecification* spec,
+                               SkSpan<const SkRuntimeEffect::ChildPtr> children) {
+    int meshSnippetID = keyContext.dict()->findOrCreateMeshSnippet(spec);
+    keyContext.rtEffectDict()->set(meshSnippetID, sk_ref_sp(spec));
+
+    keyContext.paintParamsKeyBuilder()->beginBlock(meshSnippetID);
+
+    SkSpan<const SkRuntimeEffect::Child> childInfo = spec->children();
+    SkASSERT(children.size() == childInfo.size());
+
+    for (size_t index = 0; index < children.size(); ++index) {
+        const SkRuntimeEffect::ChildPtr& child = children[index];
+        KeyContext childContext = keyContext.forMeshSpecChild();
+
+        using ChildType = SkRuntimeEffect::ChildType;
+
+        std::optional<ChildType> type = child.type();
+        if (type == ChildType::kShader) {
+            AddToKey(childContext, child.shader());
+        } else if (type == ChildType::kColorFilter) {
+            AddToKey(childContext, child.colorFilter());
+        } else if (type == ChildType::kBlender) {
+            AddToKey(childContext, child.blender());
+        } else {
+            switch (childInfo[index].type) {
+                case ChildType::kShader:
+                    SolidColorShaderBlock::AddBlock(childContext, SK_PMColor4fTRANSPARENT);
+                    break;
+                case ChildType::kColorFilter:
+                    keyContext.paintParamsKeyBuilder()->addBlock(BuiltInCodeSnippetID::kPriorOutput);
+                    break;
+                case ChildType::kBlender:
+                    AddFixedBlendMode(childContext, SkBlendMode::kSrcOver);
+                    break;
+            }
+        }
+    }
+
+    keyContext.paintParamsKeyBuilder()->endBlock();
+}
 
 } // namespace skgpu::graphite

@@ -19,6 +19,7 @@
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
 #include "src/gpu/graphite/render/CoverBoundsRenderStep.h"
 #include "src/gpu/graphite/render/CoverageMaskRenderStep.h"
+#include "src/gpu/graphite/render/MeshRenderStep.h"
 #include "src/gpu/graphite/render/MiddleOutFanRenderStep.h"
 #include "src/gpu/graphite/render/PerEdgeAAQuadRenderStep.h"
 #include "src/gpu/graphite/render/SDFTextLCDRenderStep.h"
@@ -174,23 +175,22 @@ RendererProvider::RendererProvider(const Caps* caps, StaticBufferManager* buffer
                  DrawTypeFlags::kDropShadows);
 
     // vertices
-    for (PrimitiveType primType : {PrimitiveType::kTriangles, PrimitiveType::kTriangleStrip}) {
-        for (bool color : {false, true}) {
-            for (bool texCoords : {false, true}) {
-                DrawTypeFlags dtFlags = DrawTypeFlags::kDrawVertices;
-                if (primType == PrimitiveType::kTriangles && color && !texCoords) {
-                    // Android uses this drawVertices combination for drop shadows
-                    dtFlags = static_cast<DrawTypeFlags>(dtFlags | DrawTypeFlags::kDropShadows);
-                }
-
-                int index = 4*(primType == PrimitiveType::kTriangleStrip) + 2*color + texCoords;
-                initFromStep(&fVertices[index],
-                             std::make_unique<VerticesRenderStep>(layout, primType, color,
-                                                                  texCoords),
-                             dtFlags);
+    for (bool color : {false, true}) {
+        for (bool texCoords : {false, true}) {
+            DrawTypeFlags dtFlags = DrawTypeFlags::kDrawVertices;
+            if (color && !texCoords) {
+                // Android uses this drawVertices combination for drop shadows
+                dtFlags = static_cast<DrawTypeFlags>(dtFlags | DrawTypeFlags::kDropShadows);
             }
+
+            int index = 2*color + texCoords;
+            initFromStep(&fVertices[index],
+                         std::make_unique<VerticesRenderStep>(layout, color, texCoords),
+                         dtFlags);
         }
     }
+
+    initFromStep(&fMesh, std::make_unique<MeshRenderStep>(layout), DrawTypeFlags::kDrawMesh);
 
     // The tessellating path renderers that use stencil can share the cover steps.
     auto coverFill = std::make_unique<CoverBoundsRenderStep>(

@@ -8,12 +8,27 @@
 #define skgpu_graphite_sparse_strips_SparseStripsTypes_DEFINED
 
 #include "include/core/SkPoint.h"
+#include "include/core/SkTypes.h"
+#include "src/core/SkVx.h"
 
+#include <array>
 #include <cstdint>
 #include <functional>
 #include <string>
+#include <type_traits>
 
 namespace skgpu::graphite {
+
+template <typename T>
+inline constexpr std::array<uint8_t, sizeof(T) * 8> kMsaaPattern = []() {
+    if constexpr (std::is_same_v<T, uint8_t>) {
+        return std::array<uint8_t, 8>{0, 5, 3, 7, 1, 4, 6, 2};
+    } else if constexpr (std::is_same_v<T, uint16_t>) {
+        return std::array<uint8_t, 16>{1, 8, 4, 11, 15, 7, 3, 12, 0, 9, 5, 13, 2, 10, 6, 14};
+    } else {
+        SkUNREACHABLE;
+    }
+}();
 
 enum class FlattenMode {
     kScalar,
@@ -57,7 +72,7 @@ struct IntersectionBits {
 };
 
 #if defined(GPU_TEST_UTILS)
-using MsaaExactMaskObserver = std::function<void(uint8_t exactMask)>;
+using MsaaExactMaskObserver = std::function<void(uint8_t exactMask, skvx::int8 winding)>;
 #endif
 
 } // namespace skgpu::graphite

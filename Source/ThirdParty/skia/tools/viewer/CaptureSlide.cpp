@@ -19,7 +19,6 @@
 #include "include/private/SkDebug.h"
 #include "include/private/SkLog.h"
 #include "src/capture/SkCapture.h"
-#include "src/core/SkBigPicture.h"
 #include "src/core/SkRecord.h"
 #include "src/utils/SkJSONWriter.h"
 #include "tools/ProcsUtils.h"
@@ -234,11 +233,17 @@ void CaptureSlide::draw(SkCanvas* canvas) {
         return;
     }
 
+    // drawCaptureExplorer may update fCurrentAssetIndex if the user clicks on a different asset.
+    // If so, fDebugCanvas must be reset with the newly focused draw commands.
+    int prevAssetIndex = fCurrentAssetIndex;
     drawCaptureExplorer(fCapture.get(),
                         fCurrentAssetIndex,
                         fCurrentRecordingCaptureIndex,
                         fCurrentDrawTaskIndex,
                         fInvalidate);
+    if (prevAssetIndex != fCurrentAssetIndex) {
+        fDebugCanvas.reset();
+    }
 
     auto focusPicture = fCapture->getAsset(fCurrentAssetIndex);
     if (!focusPicture) {

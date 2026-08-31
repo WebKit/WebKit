@@ -8,6 +8,7 @@
 
 #include "include/core/SkTypes.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "src/core/SkSafetyChecks.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/graphite/DrawPass.h"
 #include "src/gpu/graphite/DrawWriter.h"
@@ -28,6 +29,7 @@ std::pair<DrawParams*, Layer*> DrawList::recordDraw(
         SkEnumBitMask<DstUsage> dstUsage,
         BarrierType barrierBeforeDraws,
         PipelineDataGatherer* gatherer,
+        StorageContext* storageContext,
         const StrokeStyle* stroke,
         Layer*) {
 
@@ -50,6 +52,12 @@ std::pair<DrawParams*, Layer*> DrawList::recordDraw(
     for (int stepIndex = 0; stepIndex < draw.renderer()->numRenderSteps(); ++stepIndex) {
         const RenderStep* const step = draw.renderer()->steps()[stepIndex];
         const bool performsShading = step->performsShading() && paintID.isValid();
+
+        if (storageContext && step->storageUniformStride() > 0) {
+            storageContext->recordAlignment(step->storageUniformStride(),
+                                            step->storageUniformAlignment());
+        }
+
         gatherer->markOffsetAndAlign(performsShading, step->uniformAlignment());
 
         GraphicsPipelineCache::Index pipelineIndex = fPipelineCache.insert(
@@ -226,7 +234,7 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
         }
 
         uint32_t uniformSsboIndex = useStorageBuffers ? uniformTracker.ssboIndex() : 0;
-        renderStep.writeVertices(&drawWriter, draw.drawParams(), uniformSsboIndex);
+        renderStep.writeVertices(&drawWriter, storageContext, draw.drawParams(), uniformSsboIndex);
 
         if (bufferMgr->hasMappingFailed()) {
             SKIA_LOG_W("Failed to write necessary vertex/instance data for DrawPass, dropping!");
@@ -266,6 +274,7 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
 }
 
 void DrawList::reset(LoadOp op, SkColor4f clearColor) {
+    SK_SCOPED_DISABLE_PARTITION_ALLOC_SAFETY_CHECKS;
     fDraws.reset();
     fSortKeys.clear();
     DrawListBase::reset(op, clearColor);

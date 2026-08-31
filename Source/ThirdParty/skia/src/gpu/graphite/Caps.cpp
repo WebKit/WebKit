@@ -70,6 +70,9 @@ void Caps::finishInitialization(const ContextOptions& options) {
     fRequireOrderedRecordings = options.fRequireOrderedRecordings;
     fSetBackendLabels = options.fSetBackendLabels;
     fAvoidDepthMode = options.fAvoidDepthMode;
+
+    // Enable setting this flag from either the private or public context options.
+    fDrawListLayer |= options.fUseDrawListLayer;
 }
 
 sk_sp<SkCapabilities> Caps::capabilities() const { return fCapabilities; }
@@ -156,6 +159,14 @@ bool Caps::isSupported(const TextureInfo& info,
 
 bool Caps::isTexturable(const TextureInfo& info, bool allowMSAA) const {
     return this->isSupported(info, TextureUsage::kSample,
+                             allowMSAA,
+                             /*allowExternal=*/true,
+                             /*allowCompressed=*/true,
+                             /*allowProtected=*/true);
+}
+
+bool Caps::isReadable(const TextureInfo& info, bool allowMSAA) const {
+    return this->isSupported(info, TextureUsage::kRead,
                              allowMSAA,
                              /*allowExternal=*/true,
                              /*allowCompressed=*/true,
@@ -293,12 +304,36 @@ TextureInfo Caps::getDefaultSampledTextureInfo(SkColorType colorType,
                                        Discardable::kNo);
 }
 
+TextureInfo Caps::getDefaultReadableTextureInfo(SkColorType colorType,
+                                                Protected isProtected) const {
+    return this->getDefaultTextureInfo(TextureUsage::kRead |
+                                       TextureUsage::kCopySrc |
+                                       TextureUsage::kCopyDst,
+                                       PreferredTextureFormats(colorType),
+                                       SampleCount::k1,
+                                       Mipmapped::kNo,
+                                       isProtected,
+                                       Discardable::kNo);
+}
+
 TextureInfo Caps::getTextureInfoForSampledCopy(const TextureInfo& info, Mipmapped mipmapped) const {
     const TextureFormat format = TextureInfoPriv::ViewFormat(info);
     return this->getDefaultTextureInfo(kDefaultSampledUsage,
                                        SkSpan(&format, 1),
                                        SampleCount::k1,
                                        mipmapped,
+                                       info.isProtected(),
+                                       Discardable::kNo);
+}
+
+TextureInfo Caps::getTextureInfoForReadableCopy(const TextureInfo& info) const {
+    const TextureFormat format = TextureInfoPriv::ViewFormat(info);
+    return this->getDefaultTextureInfo(TextureUsage::kRead |
+                                       TextureUsage::kCopySrc |
+                                       TextureUsage::kCopyDst,
+                                       SkSpan(&format, 1),
+                                       SampleCount::k1,
+                                       Mipmapped::kNo,
                                        info.isProtected(),
                                        Discardable::kNo);
 }

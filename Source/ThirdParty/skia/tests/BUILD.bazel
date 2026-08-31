@@ -184,6 +184,7 @@ filegroup(
         "InvalidIndexedPngTest.cpp",
         "IsClosedSingleContourTest.cpp",
         "JSONTest.cpp",
+        "JpegxlTest.cpp",
         "LListTest.cpp",
         "LRUCacheTest.cpp",
         "M44Test.cpp",
@@ -544,14 +545,16 @@ filegroup(
     visibility = ["//dm:__pkg__"],
 )
 
-# TODO(b/480952153): These tests require Metal and Objective-C++ which are not yet supported in dm.
+# Metal test .cc files are actually .mm files. Targets building these files in a
+# skia_cc_binary or skia_cc_library need to pass the "-x objective-c++" and "-fobjc-arc" flags.
 filegroup(
     name = "ganesh_metal_tests_sources",
     testonly = True,
     srcs = [
-        "MtlBackendAllocationTest.mm",
-        "MtlCopySurfaceTest.mm",
+        "MtlBackendAllocationTest.cc",
+        "MtlCopySurfaceTest.cc",
     ],
+    visibility = ["//dm:__pkg__"],
 )
 
 filegroup(
@@ -639,11 +642,20 @@ filegroup(
     name = "graphite_sparse_strips_test_sources",
     testonly = True,
     srcs = [
+        "graphite/sparse_strips/AtlasTests.cpp",
         "graphite/sparse_strips/ClipTest.cpp",
         "graphite/sparse_strips/CoverageTest.cpp",
+        "graphite/sparse_strips/CoverageTestUtils.h",
         "graphite/sparse_strips/FlattenTest.cpp",
         "graphite/sparse_strips/LUTTest.cpp",
+        "graphite/sparse_strips/Oracle.cpp",
+        "graphite/sparse_strips/Oracle.h",
+        "graphite/sparse_strips/OracleTest.cpp",
+        "graphite/sparse_strips/OracleValidator.cpp",
+        "graphite/sparse_strips/OracleValidator.h",
         "graphite/sparse_strips/PolylineTest.cpp",
+        "graphite/sparse_strips/SkpValidator.cpp",
+        "graphite/sparse_strips/SkpValidator.h",
         "graphite/sparse_strips/TileTestCases.cpp",
         "graphite/sparse_strips/TileTestCases.h",
         "graphite/sparse_strips/TilerTest.cpp",
@@ -658,11 +670,13 @@ filegroup(
     visibility = ["//dm:__pkg__"],
 )
 
-# TODO(b/480952153): These tests require Metal and Objective-C++ which are not yet supported in dm.
+# Metal test .cc files are actually .mm files. Targets building these files in a
+# skia_cc_binary or skia_cc_library need to pass the "-x objective-c++" and "-fobjc-arc" flags.
 filegroup(
     name = "graphite_metal_tests_sources",
     testonly = True,
-    srcs = ["graphite/MtlBackendTextureTest.mm"],
+    srcs = ["graphite/MtlBackendTextureTest.cc"],
+    visibility = ["//dm:__pkg__"],
 )
 
 filegroup(
