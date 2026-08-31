@@ -351,13 +351,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     auto isReservedESMName = [](const Wasm::Name& name) {
         return startsWith(name.span(), "wasm:"_s) || startsWith(name.span(), "wasm-js:"_s);
     };
-
-    if (creationMode == CreationMode::FromModuleLoader) {
-        for (auto& exp : moduleInformation.exports) {
-            if (isReservedESMName(exp.field))
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Export name '"_s, makeString(exp.field), "' is reserved"_s)));
-        }
-    }
+    const bool fromModuleLoader = creationMode == CreationMode::FromModuleLoader;
 
     // For each import i in module.imports:
     {
@@ -365,14 +359,14 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
         for (auto& import : moduleInformation.imports) {
             auto moduleName = Identifier::fromString(vm, makeAtomString(import.module));
             auto fieldName = Identifier::fromString(vm, makeAtomString(import.field));
-            if (creationMode == CreationMode::FromModuleLoader) {
-                if (isReservedESMName(import.field))
-                    return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import name '"_s, StringView(fieldName.impl()), "' is reserved"_s)));
+            bool skipRequestedModule = false;
+            if (fromModuleLoader) {
                 if (startsWith(import.module.span(), "wasm-js:"_s))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import module '"_s, StringView(moduleName.impl()), "' is reserved"_s)));
+                if (isReservedESMName(import.field))
+                    return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Import name '"_s, StringView(fieldName.impl()), "' is reserved"_s)));
+                skipRequestedModule = moduleInformation.importedStringConstantsEquals(import.module) || moduleInformation.builtinSetsInclude(import.module);
             }
-            bool skipRequestedModule = creationMode == CreationMode::FromModuleLoader
-                && (moduleInformation.importedStringConstantsEquals(import.module) || moduleInformation.builtinSetsInclude(import.module));
             auto result = specifiers.add(moduleName.impl());
             if (result.isNewEntry && !skipRequestedModule)
                 moduleRecord->appendRequestedModule(moduleName, nullptr);
@@ -386,6 +380,13 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
             });
         }
         ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
+    }
+
+    if (fromModuleLoader) {
+        for (auto& exp : moduleInformation.exports) {
+            if (isReservedESMName(exp.field))
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, makeString("Export name '"_s, makeString(exp.field), "' is reserved"_s)));
+        }
     }
 
     for (unsigned i = 0; i < moduleInformation.memoryCount(); i++) {

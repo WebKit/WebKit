@@ -343,7 +343,10 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
 JSValue JSWebAssembly::instantiate(JSGlobalObject* globalObject, JSPromise* promise, RefPtr<SourceProvider>&& sourceProvider, const Identifier& moduleKey, JSValue argument)
 {
     VM& vm = globalObject->vm();
-    compileAndInstantiate(vm, globalObject, promise, moduleKey, argument, nullptr, WTF::move(sourceProvider), std::nullopt, Resolve::WithModuleRecord, Wasm::CreationMode::FromModuleLoader);
+    std::optional<WebAssemblyCompileOptions> compileOptions;
+    if (Options::useWasmJSStringBuiltins())
+        compileOptions = WebAssemblyCompileOptions::esmIntegrationDefaults();
+    compileAndInstantiate(vm, globalObject, promise, moduleKey, argument, nullptr, WTF::move(sourceProvider), WTF::move(compileOptions), Resolve::WithModuleRecord, Wasm::CreationMode::FromModuleLoader);
     return promise;
 }
 

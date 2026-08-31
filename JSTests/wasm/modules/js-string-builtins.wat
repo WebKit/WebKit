@@ -1,0 +1,13 @@
+(module
+  (import "wasm:js-string" "length" (func $length (param externref) (result i32)))
+  (import "wasm:js-string" "concat" (func $concat (param externref externref) (result (ref extern))))
+  (import "wasm:js-string" "equals" (func $equals (param externref externref) (result i32)))
+  (import "wasm:js-string" "test" (func $test (param externref) (result i32)))
+  (func (export "getLength") (param externref) (result i32)
+    (call $length (local.get 0)))
+  (func (export "concatStrings") (param externref externref) (result (ref extern))
+    (call $concat (local.get 0) (local.get 1)))
+  (func (export "compareStrings") (param externref externref) (result i32)
+    (call $equals (local.get 0) (local.get 1)))
+  (func (export "testString") (param externref) (result i32)
+    (call $test (local.get 0))))

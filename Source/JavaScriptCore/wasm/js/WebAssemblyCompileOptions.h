@@ -43,6 +43,7 @@ class WebAssemblyCompileOptions {
 public:
     // Create an instance if `optionsObject` is not a nullptr, or return a `nullopt`.
     static std::optional<WebAssemblyCompileOptions> tryCreate(JSGlobalObject*, JSObject* optionsObject);
+    static WebAssemblyCompileOptions esmIntegrationDefaults();
 
     const std::optional<String>& importedStringConstants() const LIFETIME_BOUND { return m_importedStringConstants; }
     const Vector<String>& qualifiedBuiltinSetNames() const LIFETIME_BOUND { return m_qualifiedBuiltinSetNames; }

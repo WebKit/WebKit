@@ -80,6 +80,14 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
     return options;
 }
 
+WebAssemblyCompileOptions WebAssemblyCompileOptions::esmIntegrationDefaults()
+{
+    WebAssemblyCompileOptions options;
+    options.m_importedStringConstants = "wasm:js/string-constants"_s;
+    options.m_qualifiedBuiltinSetNames.append("wasm:js-string"_s);
+    return options;
+}
+
 static bool NODELETE namesInclude(const String& expected, const Vector<String>& names)
 {
     for (auto& name : names) {
