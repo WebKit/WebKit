@@ -256,11 +256,11 @@ ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
 
-    if (index >= decodeIfNeededAndGetFrameCount())
-        index = decodeIfNeededAndGetFrameCount() - 1;
-
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
+
+    // A malformed acTL can advertise more frames than there are buffers.
+    index = std::min(index, m_frameBufferCache.size() - 1);
 
     auto& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
@@ -444,6 +444,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Initialize the framebuffer if needed.
     if (m_currentFrame >= decodeIfNeededAndGetFrameCount())
         return;
+    RELEASE_ASSERT(m_currentFrame < m_frameBufferCache.size());
     auto& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.isInvalid()) {
         png_structp png = m_reader->pngPtr();
@@ -589,13 +590,18 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         if (m_hasInfo || m_isAnimated)
             return;
 
-        m_frameCount = png_get_uint_32(chunk->data);
-        m_playCount = png_get_uint_32(chunk->data + 4);
+        // frameCount() reports m_frameCount and callers size per-frame containers from it, so a
+        // rejected count must not be stored.
+        size_t frameCount = png_get_uint_32(chunk->data);
+        unsigned playCount = png_get_uint_32(chunk->data + 4);
 
-        if (!m_frameCount || m_frameCount > cMaxFrameCount || m_playCount > PNG_UINT_31_MAX) {
+        if (!frameCount || frameCount > cMaxFrameCount || playCount > PNG_UINT_31_MAX) {
             fallbackNotAnimated();
             return;
         }
+
+        m_frameCount = frameCount;
+        m_playCount = playCount;
 
         m_isAnimated = true;
         if (!m_frameInfo)
@@ -786,11 +792,13 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
     }
 
     png_structp png = m_reader->pngPtr();
-    ASSERT(prevBuffer->isComplete());
+
+    if (!prevBuffer->backingStore())
+        longjmp(JMPBUF(png), 1);
 
     if (prevMethod == ScalableImageDecoderFrame::DisposalMethod::DoNotDispose) {
         // Preserve the last frame as the starting state for this frame.
-        if (!prevBuffer->backingStore() || !buffer.initialize(*prevBuffer->backingStore()))
+        if (!buffer.initialize(*prevBuffer->backingStore()))
             longjmp(JMPBUF(png), 1);
     } else {
         // We want to clear the previous frame to transparent, without
@@ -803,7 +811,7 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
             buffer.setHasAlpha(true);
         } else {
             // Copy the whole previous buffer, then clear just its frame.
-            if (!prevBuffer->backingStore() || !buffer.initialize(*prevBuffer->backingStore())) {
+            if (!buffer.initialize(*prevBuffer->backingStore())) {
                 longjmp(JMPBUF(png), 1);
                 return;
             }
@@ -829,6 +837,7 @@ void PNGImageDecoder::frameComplete()
     if (m_frameIsHidden || m_currentFrame >= decodeIfNeededAndGetFrameCount())
         return;
 
+    RELEASE_ASSERT(m_currentFrame < m_frameBufferCache.size());
     auto& buffer = m_frameBufferCache[m_currentFrame];
     buffer.setDecodingStatus(DecodingStatus::Complete);
 
@@ -867,14 +876,17 @@ void PNGImageDecoder::frameComplete()
             if (rect.contains(IntRect(IntPoint(), size())))
                 buffer.setHasAlpha(false);
             else {
+                RELEASE_ASSERT(m_currentFrame);
                 size_t frameIndex = m_currentFrame;
                 const auto* prevBuffer = &m_frameBufferCache[--frameIndex];
                 while (frameIndex && (prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious))
                     prevBuffer = &m_frameBufferCache[--frameIndex];
 
-                IntRect prevRect = prevBuffer->backingStore()->frameRect();
-                if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
-                    buffer.setHasAlpha(false);
+                if (prevBuffer->backingStore()) {
+                    IntRect prevRect = prevBuffer->backingStore()->frameRect();
+                    if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
+                        buffer.setHasAlpha(false);
+                }
             }
         } else if (!m_blend && !buffer.hasAlpha())
             buffer.setHasAlpha(nonTrivialAlpha);

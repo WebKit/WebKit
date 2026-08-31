@@ -13,7 +13,9 @@
             return new Promise(resolve => {
                 const image = document.querySelector('img');
                 image.src = src;
-                return image.decode().then(() => { resolve(image); });
+                // The file is malformed on purpose, so decode() is allowed to reject. This test
+                // only checks that loading it does not crash, and hangs if the promise never settles.
+                return image.decode().then(() => { resolve(image); }, () => { resolve(image); });
             });
         }
 

@@ -220,7 +220,13 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     if (m_pngDecoders[index]->encodedDataStatus() >= EncodedDataStatus::SizeAvailable && (m_pngDecoders[index]->size() != dirEntry.m_size))
         return setFailed();
 
-    m_frameBufferCache[index] = *static_cast<PNGImageDecoder*>(m_pngDecoders[index].get())->firstFrameBuffer();
+    // firstFrameBuffer() is null until the sub-decoder has parsed its own header, which has not
+    // happened yet when only part of the embedded PNG has arrived.
+    auto* frameBuffer = static_cast<PNGImageDecoder*>(m_pngDecoders[index].get())->firstFrameBuffer();
+    if (!frameBuffer)
+        return false;
+
+    m_frameBufferCache[index] = *frameBuffer;
     return !m_pngDecoders[index]->failed() || setFailed();
 }
 

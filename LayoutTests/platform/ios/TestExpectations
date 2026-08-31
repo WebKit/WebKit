@@ -276,6 +276,9 @@ fast/images/jpegxl-with-color-profile.html [ Pass ]
 # Video as an image source is only supported on macOS and iOS.
 fast/images/video-as-image.html [ Pass ]
 
+# ImageIO rejects an acTL declaring zero frames, so the default image never decodes.
+fast/images/apng-acTL-zero-frame-count.html [ Skip ]
+
 # No fullscreen API on iOS
 fullscreen
 http/tests/fullscreen
