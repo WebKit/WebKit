@@ -28,6 +28,7 @@
 #include <WebCore/ContentsFormat.h>
 #include <WebCore/ScreenProperties.h>
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -121,6 +122,7 @@ private:
 };
 
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
+WEBCORE_EXPORT void collectScreenPropertiesAsync(CompletionHandler<void(ScreenProperties&&)>&&);
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
 WEBCORE_EXPORT float currentEDRHeadroomForDisplay(PlatformDisplayID);

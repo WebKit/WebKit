@@ -100,6 +100,8 @@ list(APPEND TestWebKit_SOURCES
 
     Tests/WebCore/ASN1Utilities.cpp
 
+    Tests/WebCore/cocoa/PlatformScreenTests.mm
+
     Tests/WebKit/WKWebView/WKBackForwardListTests.mm
 )
 

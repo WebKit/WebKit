@@ -39,7 +39,10 @@
 #import <pal/cocoa/OpenGLSoftLinkCocoa.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -129,37 +132,51 @@ static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
 }
 #endif
 
-ScreenProperties collectScreenProperties()
+// May run on the main thread or a background thread.
+static bool collectHDRStateForDisplay(PlatformDisplayID displayID, DynamicRangeMode& dynamicRangeMode)
+{
+    bool supportsHighDynamicRange = false;
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
+    if (PAL::isAVFoundationFrameworkAvailable()) {
+        dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClassSingleton() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
+        supportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
+    }
+#endif
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE) && USE(MEDIATOOLBOX)
+    else
+#endif
+#if USE(MEDIATOOLBOX)
+    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+        supportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
+#endif
+
+    if (!supportsHighDynamicRange && dynamicRangeMode > DynamicRangeMode::Standard)
+        dynamicRangeMode = DynamicRangeMode::Standard;
+
+    if (supportsHighDynamicRange && WebCore::ThermalMitigationNotifier::isThermalMitigationEnabled())
+        supportsHighDynamicRange = false;
+
+    return supportsHighDynamicRange;
+}
+
+static void collectHDRState(ScreenProperties& screenProperties)
+{
+    for (auto& [displayID, screenData] : screenProperties.screenDataMap)
+        screenData.screenSupportsHighDynamicRange = collectHDRStateForDisplay(displayID, screenData.preferredDynamicRangeMode);
+}
+
+static WorkQueue& screenPropertiesQueueSingleton()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("org.webkit.ScreenProperties"_s, WorkQueue::QOS::UserInitiated));
+    return queue.get();
+}
+
+static ScreenProperties collectScreenPropertiesExceptForHDRState()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     ScreenProperties screenProperties;
     bool screenHasInvertedColors = [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldInvertColors];
-
-    auto screenSupportsHighDynamicRange = [](PlatformDisplayID displayID, DynamicRangeMode& dynamicRangeMode) {
-        bool supportsHighDynamicRange = false;
-#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-        if (PAL::isAVFoundationFrameworkAvailable()) {
-            dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClassSingleton() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
-            supportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
-        }
-#endif
-#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE) && USE(MEDIATOOLBOX)
-        else
-#endif
-#if USE(MEDIATOOLBOX)
-        if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
-            supportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
-#endif
-
-        if (!supportsHighDynamicRange && dynamicRangeMode > DynamicRangeMode::Standard)
-            dynamicRangeMode = DynamicRangeMode::Standard;
-
-        if (supportsHighDynamicRange && WebCore::ThermalMitigationNotifier::isThermalMitigationEnabled())
-            supportsHighDynamicRange = false;
-
-        return supportsHighDynamicRange;
-    };
 
     for (NSScreen *screen in [NSScreen screens]) {
         ScreenData screenData;
@@ -182,7 +199,6 @@ ScreenProperties collectScreenProperties()
 
         screenData.screenSize = FloatSize { CGDisplayScreenSize(displayID) };
         screenData.scaleFactor = screen.backingScaleFactor;
-        screenData.screenSupportsHighDynamicRange = screenSupportsHighDynamicRange(displayID, screenData.preferredDynamicRangeMode);
 #if HAVE(SUPPORT_HDR_DISPLAY)
         screenData.maxEDRHeadroom = [screen maximumPotentialExtendedDynamicRangeColorComponentValue];
         screenData.currentEDRHeadroom = [screen maximumExtendedDynamicRangeColorComponentValue];
@@ -196,6 +212,27 @@ ScreenProperties collectScreenProperties()
     }
 
     return screenProperties;
+}
+
+ScreenProperties collectScreenProperties()
+{
+    auto screenProperties = collectScreenPropertiesExceptForHDRState();
+    collectHDRState(screenProperties);
+    return screenProperties;
+}
+
+void collectScreenPropertiesAsync(CompletionHandler<void(ScreenProperties&&)>&& completionHandler)
+{
+    ASSERT(isMainThread());
+
+    auto screenProperties = collectScreenPropertiesExceptForHDRState();
+
+    screenPropertiesQueueSingleton().dispatch([screenProperties = WTF::move(screenProperties), completionHandler = WTF::move(completionHandler)]() mutable {
+        collectHDRState(screenProperties);
+        callOnMainThread([screenProperties = WTF::move(screenProperties), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(screenProperties));
+        });
+    });
 }
 
 void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange)

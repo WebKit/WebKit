@@ -518,7 +518,7 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
         m_gpuProcess = gpuProcess.copyRef();
         for (Ref process : m_processes)
             gpuProcess->updatePreferences(process);
-        gpuProcess->updateScreenPropertiesIfNeeded();
+        gpuProcess->updateScreenPropertiesIfNeeded(*this);
     }
     return *m_gpuProcess;
 }
@@ -1407,7 +1407,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated()) {
         gpuProcess->updatePreferences(*process);
-        gpuProcess->updateScreenPropertiesIfNeeded();
+        gpuProcess->updateScreenPropertiesIfNeeded(*this);
     }
 #endif
 

@@ -72,6 +72,7 @@ enum class ProcessTerminationReason : uint8_t;
 
 class SandboxExtensionHandle;
 class WebPageProxy;
+class WebProcessPool;
 class WebProcessProxy;
 class WebsiteDataStore;
 
@@ -140,7 +141,7 @@ public:
 #endif
 
     void updatePreferences(WebProcessProxy&);
-    void updateScreenPropertiesIfNeeded();
+    void updateScreenPropertiesIfNeeded(WebProcessPool&);
 
     void childConnectionDidBecomeUnresponsive();
 
