@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script src="../resources/ipc.js"></script>
+<script>
+function findAscii(array, string, from)
+{
+    outer:
+    for (let i = from; i + string.length <= array.length; i++) {
+        for (let j = 0; j < string.length; j++) {
+            if (array[i + j] !== string.charCodeAt(j))
+                continue outer;
+        }
+        return i;
+    }
+    return -1;
+}
+
+function patchAscii(array, from, to)
+{
+    if (from.length !== to.length)
+        throw new Error("patchAscii requires equal-length strings");
+    let count = 0;
+    for (let offset = 0; (offset = findAscii(array, from, offset)) >= 0; offset += to.length) {
+        for (let j = 0; j < to.length; j++)
+            array[offset + j] = to.charCodeAt(j);
+        count++;
+    }
+    return count;
+}
+
+function download(name, contents)
+{
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = URL.createObjectURL(new Blob([contents], { type: "application/octet-stream" }));
+    document.body.appendChild(link);
+    link.click();
+}
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+
+    const startDownloadName = IPC.messages.NetworkConnectionToWebProcess_StartDownload.name;
+    const headerLength = 16;
+    let captured = null;
+    IPC.addOutgoingMessageListener("Networking", message => {
+        if (message.name === startDownloadName && !captured)
+            captured = new Uint8Array(message.buffer.slice(headerLength));
+    });
+
+    download("legit-download.bin", "legitimate contents");
+    await asyncFlush("Networking");
+    assert_true(!!captured, "should observe a NetworkConnectionToWebProcess::StartDownload message");
+
+    assert_equals(patchAscii(captured, "legit-download.bin", "hijacked-bytes.bin"), 1,
+        "should find and patch the suggested filename in the StartDownload message");
+    IPC.sendMessage("Networking", 0, startDownloadName, captured);
+    await asyncFlush("Networking");
+
+    let captured2 = null;
+    IPC.addOutgoingMessageListener("Networking", message => {
+        if (message.name === startDownloadName)
+            captured2 = new Uint8Array(message.buffer.slice(headerLength));
+    });
+    download("second-download.bin", "more legitimate contents");
+    await asyncFlush("Networking");
+    assert_true(!!captured2, "should observe a StartDownload message for the second download");
+}, "NetworkProcess must refuse a StartDownload with an unauthorized DownloadID");
+</script>
+</body>
+</html>
