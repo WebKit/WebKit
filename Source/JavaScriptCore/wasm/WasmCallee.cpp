@@ -277,12 +277,15 @@ WasmToJSCallee::WasmToJSCallee()
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
 
+EncodedJSValue g_wasmToJSCalleeBoxed { };
+
 WasmToJSCallee& WasmToJSCallee::singleton()
 {
     static LazyNeverDestroyed<Ref<WasmToJSCallee>> callee;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&]() {
         callee.construct(adoptRef(*new WasmToJSCallee));
+        g_wasmToJSCalleeBoxed = CalleeBits::encodeNativeCallee(&callee.get().get());
     });
     return callee.get().get();
 }
