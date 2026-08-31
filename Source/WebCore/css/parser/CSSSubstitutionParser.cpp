@@ -80,6 +80,7 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
     struct ClassifyBlockState {
         CSSParserTokenRange range;
         bool isTopLevelBlock = true;
+        bool isInsideTopLevelBraceBlock = false;
         bool hasOtherValues = false;
         unsigned topLevelBraceBlocks = 0;
         bool doneWithThisRange = false;
@@ -181,6 +182,10 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             stack.push(ClassifyBlockState {
                 .range = block,
                 .isTopLevelBlock = false, // Nested block, not top-level
+                // A top-level brace block only wraps the value so that it can contain commas, so '!'
+                // inside it is still at the top level of the value.
+                // https://drafts.csswg.org/css-values-5/#component-function-commas
+                .isInsideTopLevelBraceBlock = token.type() == LeftBraceToken && current.isTopLevelBlock,
             });
             continue;
         }
@@ -192,7 +197,7 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
         case AtKeywordToken:
             break;
         case DelimiterToken: {
-            if (token.delimiter() == '!' && current.isTopLevelBlock)
+            if (token.delimiter() == '!' && (current.isTopLevelBlock || current.isInsideTopLevelBraceBlock))
                 return { };
             break;
         }

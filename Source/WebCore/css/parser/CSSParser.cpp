@@ -1165,11 +1165,12 @@ RefPtr<StyleRuleFunction> CSSParser::consumeFunctionRule(CSSParserTokenRange pre
             if (parametersRange.peek().type() == ColonToken) {
                 parametersRange.consumeIncludingWhitespace();
                 // <default-value> = <declaration-value>
+                // A comma only separates parameters at the top level, so blocks are consumed whole.
                 auto defaultRangeStart = parametersRange;
                 while (!parametersRange.atEnd() && parametersRange.peek().type() != CommaToken) {
                     if (parametersRange.peek().type() == DelimiterToken && parametersRange.peek().delimiter() == '!')
                         return { };
-                    parametersRange.consumeIncludingWhitespace();
+                    parametersRange.consumeComponentValue();
                 }
 
                 auto defaultRange = defaultRangeStart.rangeUntil(parametersRange);

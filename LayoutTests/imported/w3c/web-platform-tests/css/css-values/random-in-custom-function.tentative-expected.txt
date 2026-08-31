@@ -39,20 +39,20 @@ PASS random(p-i-s) in multiple untyped locals, substituted into untyped result
 PASS random(p-s) in multiple untyped locals, substituted into untyped result
 PASS random(p-i-s) in untyped local, substituted multiple times into typed result
 PASS random(p-s) in untyped local, substituted multiple times into typed result
-FAIL random(p-i-s) in typed arg default, same function on different elements assert_true: expected true got false
-FAIL random(p-i-s) in typed arg default, same function in different properties assert_true: expected true got false
-FAIL random(p-i-s) in typed arg default, same function at different indexes assert_true: expected true got false
-FAIL random(p-i-s) in typed arg default, different function on different elements assert_true: expected true got false
-FAIL random(p-i-s) in typed arg default, different function in different properties assert_true: expected true got false
-FAIL random(p-i-s) in typed arg default, different function at different indexes assert_true: expected true got false
-FAIL random(p-s) in typed arg defaults, substituted into untyped result assert_true: expected true got false
-FAIL random(p-s) in untyped arg defaults, substituted into typed result assert_true: expected true got false
-FAIL random(e-s) in typed arg defaults, same function on different elements assert_true: expected true got false
-FAIL random(e-s) in typed arg defaults, same function in different properties assert_true: expected true got false
-FAIL random(e-s) in typed arg defaults, same function at different indexes assert_true: expected true got false
-FAIL random(e-s) in untyped arg defaults, same function on different elements assert_true: expected true got false
-FAIL random(e-s) in untyped arg defaults, same function in different properties assert_true: expected true got false
-FAIL random(e-s) in untyped arg defaults, same function at different indexes assert_true: expected true got false
+PASS random(p-i-s) in typed arg default, same function on different elements
+PASS random(p-i-s) in typed arg default, same function in different properties
+PASS random(p-i-s) in typed arg default, same function at different indexes
+PASS random(p-i-s) in typed arg default, different function on different elements
+PASS random(p-i-s) in typed arg default, different function in different properties
+PASS random(p-i-s) in typed arg default, different function at different indexes
+PASS random(p-s) in typed arg defaults, substituted into untyped result
+PASS random(p-s) in untyped arg defaults, substituted into typed result
+PASS random(e-s) in typed arg defaults, same function on different elements
+FAIL random(e-s) in typed arg defaults, same function in different properties assert_false: Random values should not be equal expected false got true
+FAIL random(e-s) in typed arg defaults, same function at different indexes assert_false: Random values should not be equal expected false got true
+PASS random(e-s) in untyped arg defaults, same function on different elements
+PASS random(e-s) in untyped arg defaults, same function in different properties
+PASS random(e-s) in untyped arg defaults, same function at different indexes
 PASS random(p-i-s) in typed arg and set in body, same function on different elements
 FAIL random(p-i-s) in typed arg and set in body, same function in different properties assert_true: Random values should be equal expected true got false
 FAIL random(p-i-s) in typed arg and set in body, same function at different indexes assert_true: Random values should be equal expected true got false

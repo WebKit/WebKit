@@ -39,6 +39,13 @@ PASS @function --foo(--x type(<length> | auto): auto) is valid
 PASS @function --foo(--x type(<length> | auto) : auto) is valid
 PASS @function --foo(--x:1px, --y, --z:2px) is valid
 PASS @function --foo(--x: 10px !important) is invalid
+PASS @function --foo(--x: var(--y, 10px)) is valid
+PASS @function --foo(--x <color>: rgb(1, 2, 3)) is valid
+PASS @function --foo(--x: var(--y, 10px), --z: 2px) is valid
+PASS @function --foo(--x <length>: clamp(1px, 2px, 3px)) is valid
+PASS @function --foo(--x: {1px, 2px}) is valid
+PASS @function --foo(--x: --bar(1px, 2px)) is valid
+PASS @function --foo(--x: var(--y, 10px) is invalid
 PASS @function --foo(--x <length>: 10deg) is invalid
 PASS @function --foo(--x <angle>: 10px) is invalid
 PASS @function --foo(--x <color>: 10px) is invalid
