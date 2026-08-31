@@ -1986,6 +1986,7 @@ inspector/InspectorCanvasCallTracer.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
 inspector/InspectorFrontendClientLocal.cpp
 inspector/InspectorFrontendHost.cpp
+inspector/InspectorFontData.cpp @header:RenderStyleGetters
 inspector/InspectorHistory.cpp
 inspector/InspectorIdentifierRegistry.cpp
 inspector/InspectorInstrumentation.cpp @header:RenderStyleGetters

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+async function loadTestFonts(eventName)
+{
+    try {
+        await Promise.all([
+            document.fonts.load("20px InspectorSegmented", "ABC\u00A5"),
+            document.fonts.load("20px InspectorLigature", "AB"),
+            document.fonts.load("20px InspectorMissing", "\u{10FFFD}"),
+        ]);
+        TestPage.log("PASS: Test fonts should be loaded.");
+    } catch {
+        TestPage.log("FAIL: Test fonts should be loaded.");
+    }
+
+    document.body.offsetWidth;
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    const target = WI.assumingMainTarget();
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.getFontDataForNode.RenderedText");
+
+    async function ensureDocumentSubtree()
+    {
+        if (documentNode)
+            return;
+
+        documentNode = await WI.domManager.requestDocument();
+        const entireSubtreeDepth = -1;
+        await target.DOMAgent.requestChildNodes(documentNode.id, entireSubtreeDepth);
+    }
+
+    async function nodeForSelector(selector)
+    {
+        await ensureDocumentSubtree();
+        let nodeId = await documentNode.querySelector(selector);
+        let node = WI.domManager.nodeForId(nodeId);
+        InspectorTest.assert(node, `Should find DOM node for '${selector}'.`);
+        return node;
+    }
+
+    async function textNodeForSelector(selector)
+    {
+        let element = await nodeForSelector(selector);
+        let textNode = element.children?.find((child) => child.nodeType() === Node.TEXT_NODE);
+        InspectorTest.assert(textNode, `Should find text node for '${selector}'.`);
+        return textNode;
+    }
+
+    function getFontData(node)
+    {
+        return target.CSSAgent.getFontDataForNode.invoke({nodeId: node.id});
+    }
+
+    function formatCodePoint(codePoint)
+    {
+        return `U+${codePoint.toString(16).toUpperCase().padStart(4, "0")}`;
+    }
+
+    function normalizeCharacterRanges(ranges)
+    {
+        return [...ranges].sort((a, b) => a.start - b.start || a.end - b.end).map(({start, end}) => {
+            let formattedStart = formatCodePoint(start);
+            let formattedEnd = formatCodePoint(end);
+            return start === end ? formattedStart : `${formattedStart}-${formattedEnd}`;
+        });
+    }
+
+    function normalizeRenderedFonts(data)
+    {
+        return (data.renderedFonts || []).map((font) => ({
+            name: font.displayName ?? font.name,
+            synthesizedBold: !!font.synthesizedBold,
+            synthesizedOblique: !!font.synthesizedOblique,
+            ranges: normalizeCharacterRanges(font.characterRanges),
+        })).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+    }
+
+    function renderedCharacters(data)
+    {
+        let result = new Set;
+        for (let font of data.renderedFonts || []) {
+            for (let {start, end} of font.characterRanges) {
+                for (let character = start; character <= end; ++character)
+                    result.add(character);
+            }
+        }
+        return result;
+    }
+
+    function renderedFontNamed(data, name)
+    {
+        return (data.renderedFonts || []).find((font) => (font.displayName ?? font.name) === name);
+    }
+
+    async function loadFonts()
+    {
+        const eventName = "TestPage-FontsLoaded";
+        await Promise.all([
+            InspectorTest.awaitEvent(eventName),
+            InspectorTest.evaluateInPage(`loadTestFonts("${eventName}")`),
+        ]);
+        await ensureDocumentSubtree();
+    }
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.NoText",
+        description: "Empty rendered-font result arrays should be omitted.",
+        setup: loadFonts,
+        async test() {
+            let data = await getFontData(await nodeForSelector("#empty"));
+            InspectorTest.expectFalse(data.primaryFont.characterRanges, "The computed primary font should omit characterRanges.");
+            InspectorTest.expectFalse(data.primaryFont.variationAxes, "A font without variation axes should omit variationAxes.");
+            InspectorTest.expectFalse(data.renderedFonts, "renderedFonts should be omitted when no text is painted.");
+            InspectorTest.expectFalse(data.missingCharacterRanges, "missingCharacterRanges should be omitted when no characters are missing.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.FallbackRangesAndTextNode",
+        description: "Actual primary and fallback fonts should report coalesced Unicode-scalar ranges for an element or its Text child.",
+        async test() {
+            let element = await nodeForSelector("#segmented");
+            let elementData = await getFontData(element);
+            let textData = await getFontData(await textNodeForSelector("#segmented"));
+
+            InspectorTest.expectFalse(elementData.primaryFont.characterRanges, "The computed primary font should omit rendered character ranges.");
+            InspectorTest.expectTrue(elementData.renderedFonts.every((font) => font.characterRanges.length), "Every rendered font should have nonempty characterRanges.");
+            InspectorTest.expectFalse(elementData.missingCharacterRanges, "missingCharacterRanges should be omitted when every character has a glyph.");
+
+            let ahem = renderedFontNamed(elementData, "Ahem");
+            let boxis = renderedFontNamed(elementData, "Boxis");
+            InspectorTest.expectTrue(!!ahem && JSON.stringify(normalizeCharacterRanges(ahem.characterRanges)) === JSON.stringify(["U+0041-U+0043"]), "Adjacent and repeated Latin scalars should be coalesced and deduplicated.");
+            InspectorTest.expectTrue(!!boxis && JSON.stringify(normalizeCharacterRanges(boxis.characterRanges)) === JSON.stringify(["U+00A5"]), "The actual fallback font should own the yen scalar.");
+
+            InspectorTest.expectEqual(JSON.stringify(normalizeRenderedFonts(textData)), JSON.stringify(normalizeRenderedFonts(elementData)), "A direct Text-node query should match its parent element.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.VisibleDescendantsAndGeneratedText",
+        description: "A subtree paint should include visible descendants, transformed text, and ordinary pseudo content while excluding hidden text.",
+        async test() {
+            let data = await getFontData(await nodeForSelector("#visibility"));
+            let actual = [...renderedCharacters(data)].sort((a, b) => a - b);
+            let expected = [0x41, 0x42, 0x43, 0xA5];
+            InspectorTest.expectEqual(JSON.stringify(actual), JSON.stringify(expected), "Only the displayed A, transformed B, generated C, and generated yen should be reported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.EquivalentFontMetadata",
+        description: "Concrete fonts with equivalent inspector metadata should share one rendered-font record.",
+        async test() {
+            let data = await getFontData(await nodeForSelector("#equivalent-font-metadata"));
+            let ahemFonts = data.renderedFonts.filter((font) => (font.displayName ?? font.name) === "Ahem");
+            InspectorTest.expectEqual(ahemFonts.length, 1, "Equivalent concrete fonts should produce one rendered-font record.");
+            InspectorTest.expectEqual(JSON.stringify(normalizeCharacterRanges(ahemFonts[0].characterRanges)), JSON.stringify(["U+0041", "U+0043"]), "The shared rendered-font record should contain characters from every concrete font.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.SelectedText",
+        description: "Interactively selected text should remain part of the rendered-font result.",
+        async test() {
+            await InspectorTest.evaluateInPage(`getSelection().selectAllChildren(document.getElementById("segmented"))`);
+            let data;
+            try {
+                data = await getFontData(await nodeForSelector("#segmented"));
+            } finally {
+                await InspectorTest.evaluateInPage(`getSelection().removeAllRanges()`);
+            }
+
+            let actual = [...renderedCharacters(data)].sort((a, b) => a - b);
+            InspectorTest.expectEqual(JSON.stringify(actual), JSON.stringify([0x41, 0x42, 0x43, 0xA5]), "Selected text should report the same characters as unselected text.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.FontSourceURL",
+        description: "Downloadable fonts should expose an absolute final source URL while system fonts omit it.",
+        async test() {
+            let downloadableData = await getFontData(await nodeForSelector("#segmented"));
+            let ahem = renderedFontNamed(downloadableData, "Ahem");
+            let boxis = renderedFontNamed(downloadableData, "Boxis");
+            InspectorTest.expectTrue(URL.canParse(downloadableData.primaryFont.url), "The primary downloadable font should expose an absolute URL.");
+            InspectorTest.expectTrue(downloadableData.primaryFont.url?.endsWith("/resources/Ahem.otf"), "The primary downloadable font should expose its final resource URL.");
+            InspectorTest.expectTrue(URL.canParse(ahem?.url), "The primary rendered font should expose an absolute URL.");
+            InspectorTest.expectTrue(ahem?.url?.endsWith("/resources/Ahem.otf"), "The primary rendered font should expose its final resource URL.");
+            InspectorTest.expectFalse(ahem.variationAxes, "A rendered font without variation axes should omit variationAxes.");
+            InspectorTest.expectTrue(URL.canParse(boxis?.url), "The fallback downloadable font should expose an absolute URL.");
+            InspectorTest.expectTrue(boxis?.url?.endsWith("/animations/font-variations/resources/Boxis-VF.ttf"), "The fallback downloadable font should expose its final resource URL.");
+            InspectorTest.expectTrue(boxis?.variationAxes?.length > 0, "A rendered variable font should expose variationAxes.");
+
+            let systemData = await getFontData(await nodeForSelector("#system-font"));
+            InspectorTest.expectFalse(systemData.primaryFont.url, "A system primary font should omit url.");
+            InspectorTest.expectTrue(systemData.renderedFonts.length > 0, "The system-font fixture should report at least one rendered font.");
+            InspectorTest.expectTrue(systemData.renderedFonts.every((font) => !font.url), "Rendered system fonts should omit url.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.LigatureAndMissingGlyph",
+        description: "The diagnostic-paint MVP should report the scalar starting a ligature glyph, while a missing supplementary scalar should remain one scalar. Shaping backends may also attribute the rest of the ligature's cluster to its font.",
+        async test() {
+            let ligatureData = await getFontData(await nodeForSelector("#ligature"));
+            let ligatureRanges = ligatureData.renderedFonts.flatMap((font) => normalizeCharacterRanges(font.characterRanges));
+            let serializedLigatureRanges = JSON.stringify(ligatureRanges);
+            InspectorTest.expectTrue(serializedLigatureRanges === JSON.stringify(["U+0041"]) || serializedLigatureRanges === JSON.stringify(["U+0041-U+0042"]), "The scalar starting the AB ligature glyph should be attributed to its actual font.");
+
+            let missingData = await getFontData(await nodeForSelector("#missing"));
+            InspectorTest.expectEqual(JSON.stringify(normalizeCharacterRanges(missingData.missingCharacterRanges)), JSON.stringify(["U+10FFFD"]), "A missing supplementary character should be reported as one Unicode scalar.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.UnsupportedContentDoesNotCrash",
+        description: "Representative specialized descendants should not prevent ordinary subtree text from being collected.",
+        async test() {
+            let data = await getFontData(await nodeForSelector("#unsupported"));
+            InspectorTest.expectTrue(!!data, "The command should succeed for a subtree containing unsupported specialized renderers.");
+            InspectorTest.expectTrue(renderedCharacters(data).has(0x44), "Ordinary text alongside unsupported specialized renderers should still be reported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.RenderedText.ForcesCurrentLayout",
+        description: "A query should synchronously use ordinary text changed since the last layout.",
+        async test() {
+            await InspectorTest.evaluateInPage(`document.getElementById("dirty").textContent = "BC"; document.getElementById("dirty").style.paddingLeft = "1px"`);
+            let data = await getFontData(await nodeForSelector("#dirty"));
+            let actual = [...renderedCharacters(data)].sort((a, b) => a - b);
+            InspectorTest.expectEqual(JSON.stringify(actual), JSON.stringify([0x42, 0x43]), "The diagnostic paint should use current style and layout.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+@font-face {
+    font-family: "InspectorSegmented";
+    src: url("../../resources/Ahem.otf") format("opentype");
+    unicode-range: U+0020-007E;
+}
+
+@font-face {
+    font-family: "InspectorSegmented";
+    src: url("../../animations/font-variations/resources/Boxis-VF.ttf") format("truetype");
+    unicode-range: U+00A5;
+}
+
+@font-face {
+    font-family: "InspectorLigature";
+    src: url("../../fast/text/resources/Ahem-GSUB-ligatures.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "InspectorMissing";
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+
+#fixtures {
+    font: 20px/1 "InspectorSegmented";
+}
+
+#hidden {
+    display: none;
+}
+
+#visibility-hidden {
+    visibility: hidden;
+}
+
+#uppercase {
+    text-transform: uppercase;
+}
+
+#pseudo::before {
+    content: "C";
+}
+
+#pseudo::after {
+    content: "\00A5";
+}
+
+#ligature {
+    font-family: "InspectorLigature";
+}
+
+#missing {
+    font-family: "InspectorMissing";
+}
+
+#dirty {
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for rendered and missing character data from CSS.getFontDataForNode.</p>
+<div id="fixtures">
+<span id="empty"></span>
+<div id="segmented">ABBAC¥</div>
+<div id="equivalent-font-metadata"><span style="font-size: 10px">A</span><span style="font-size: 30px">C</span></div>
+<div id="visibility"><span>A</span><span id="hidden">H</span><span id="visibility-hidden">V</span><span id="uppercase">b</span><span id="pseudo"></span></div>
+<div id="ligature">AB</div>
+<div id="missing">􏿽</div>
+<div id="system-font" style="font-family: system-ui">A</div>
+<div id="unsupported">D<input value="E"><img alt="F" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="><canvas>G</canvas><svg width="20" height="20"><text x="0" y="15">H</text></svg><math><mi>I</mi></math></div>
+<div id="dirty">A</div>
+</div>
+</body>
+</html>
+

@@ -46,15 +46,13 @@
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventTarget.h"
-#include "Font.h"
 #include "FontCache.h"
-#include "FontCascadeInlines.h"
-#include "FontPlatformData.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorFontData.h"
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
 #include "InspectorPageAgent.h"
@@ -161,6 +159,11 @@ void InspectorCSSAgent::documentDetached(Document& document)
     m_documentToKnownCSSStyleSheets.remove(&document);
     m_documentToInspectorStyleSheet.remove(document);
     m_documentsWithForcedPseudoStates.remove(&document);
+}
+
+void InspectorCSSAgent::fontDataChanged()
+{
+    m_frontendDispatcher->fontDataChanged();
 }
 
 void InspectorCSSAgent::mediaQueryResultChanged()
@@ -398,48 +401,18 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     return inspectorStyle->buildArrayForComputedStyle();
 }
 
-static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
-{
-    auto& fontPlatformData = font.platformData();
-    
-    auto resultVariationAxes = JSON::ArrayOf<Inspector::Protocol::CSS::FontVariationAxis>::create();
-    for (auto& variationAxis : fontPlatformData.variationAxes(ShouldLocalizeAxisNames::Yes)) {
-        auto axis = Inspector::Protocol::CSS::FontVariationAxis::create()
-            .setTag(variationAxis.tag())
-            .setMinimumValue(variationAxis.minimumValue())
-            .setMaximumValue(variationAxis.maximumValue())
-            .setDefaultValue(variationAxis.defaultValue())
-            .release();
-        
-        if (variationAxis.name().length() && variationAxis.name() != variationAxis.tag())
-            axis->setName(variationAxis.name());
-        
-        resultVariationAxes->addItem(WTF::move(axis));
-    }
-
-    auto protocolFont = Inspector::Protocol::CSS::Font::create()
-        .setDisplayName(font.platformData().familyName())
-        .setVariationAxes(WTF::move(resultVariationAxes))
-        .release();
-
-    protocolFont->setSynthesizedBold(fontPlatformData.syntheticBold());
-    protocolFont->setSynthesizedOblique(fontPlatformData.syntheticOblique());
-
-    return protocolFont;
-}
-
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
+Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>>> InspectorCSSAgent::getFontDataForNode(Inspector::Protocol::DOM::NodeId nodeId)
 {
     Inspector::Protocol::ErrorString errorString;
     RefPtr node = nodeForId(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
-    
-    CheckedPtr computedStyle = node->computedStyle();
-    if (!computedStyle)
-        return makeUnexpected("No computed style for node."_s);
-    
-    return buildObjectForFont(protect(computedStyle->fontCascade().primaryFont()));
+
+    auto result = getFontData(*node);
+    if (!result)
+        return makeUnexpected("Rendered font data is temporarily unavailable."_s);
+
+    return { { WTF::move(result->primaryFont), WTF::move(result->renderedFonts), WTF::move(result->missingCharacterRanges) } };
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()

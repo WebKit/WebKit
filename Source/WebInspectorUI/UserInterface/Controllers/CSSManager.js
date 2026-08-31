@@ -566,6 +566,16 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     // CSSObserver
 
+    fontDataChanged(target)
+    {
+        for (let key in this._nodeStylesMap) {
+            let nodeStyles = this._nodeStylesMap[key];
+            if ((nodeStyles.node.owningTarget || WI.assumingMainTarget()) !== target)
+                continue;
+            nodeStyles.fontDataChanged();
+        }
+    }
+
     mediaQueryResultChanged()
     {
         for (var key in this._nodeStylesMap)
