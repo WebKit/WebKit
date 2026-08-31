@@ -12,6 +12,6 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/imported-sheet-with-mixin.css
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/imported-sheet-with-red-mixin.css
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/support/mixin-shared-across-documents-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/support/mixin-shared-across-documents.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/support/mixin-shared-across-documents.css.headers

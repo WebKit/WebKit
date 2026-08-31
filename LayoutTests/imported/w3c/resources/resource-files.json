@@ -6998,6 +6998,7 @@
         "web-platform-tests/css/css-masking/mask-svg-content/reference/mask-green-square-001-ref.svg",
         "web-platform-tests/css/css-masking/mask-svg-content/reference/mask-negative-scale-001-ref.svg",
         "web-platform-tests/css/css-masking/mask-svg-content/reference/mask-text-001-ref.svg",
+        "web-platform-tests/css/css-mixins/mixins/support/mixin-shared-across-documents-frame.html",
         "web-platform-tests/css/css-multicol/abspos-containing-block-outside-spanner-ref.html",
         "web-platform-tests/css/css-multicol/auto-fill-auto-size-001-print-ref.html",
         "web-platform-tests/css/css-multicol/auto-fill-auto-size-001-print.html",

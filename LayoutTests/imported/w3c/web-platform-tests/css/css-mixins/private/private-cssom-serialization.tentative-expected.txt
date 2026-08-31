@@ -1,0 +1,20 @@
+
+FAIL Empty @private rule assert_equals: expected 1 but got 0
+FAIL Untyped variable without a default assert_equals: expected 1 but got 0
+FAIL Untyped variable with a default assert_equals: expected 1 but got 0
+FAIL Multiple variables assert_equals: expected 1 but got 0
+FAIL Repeated variable name assert_equals: expected 1 but got 0
+FAIL Trailing whitespace is omitted assert_equals: expected 1 but got 0
+FAIL Typed variable without a default assert_equals: expected 1 but got 0
+FAIL Typed variable with a default assert_equals: expected 1 but got 0
+FAIL Multi-component type assert_equals: expected 1 but got 0
+FAIL Single-component type() is unwrapped assert_equals: expected 1 but got 0
+FAIL Universal type is omitted assert_equals: expected 1 but got 0
+FAIL Custom-ident type() is unwrapped assert_equals: expected 1 but got 0
+FAIL Structured default value assert_equals: expected 1 but got 0
+FAIL Escaped variable name assert_equals: expected 1 but got 0
+FAIL Escaped custom-ident type assert_equals: expected 1 but got 0
+FAIL An all-invalid block serializes as an empty rule assert_equals: expected 1 but got 0
+FAIL Invalid declarations are omitted assert_equals: expected 1 but got 0
+FAIL !important declaration is omitted assert_equals: expected 1 but got 0
+

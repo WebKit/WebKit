@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/at-function-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/at-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/dashed-function-cycles.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/dashed-function-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/dashed-function-named-arg.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/dashed-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/dashed-function-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-conditionals.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-container-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-container-self.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-container-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-in-media.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-layer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-media-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-parameter-types.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-shadow-animations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-shadow-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-shadow-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/function-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/local-attr-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/local-if-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/local-inherit-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/functions/local-var-substitution.html

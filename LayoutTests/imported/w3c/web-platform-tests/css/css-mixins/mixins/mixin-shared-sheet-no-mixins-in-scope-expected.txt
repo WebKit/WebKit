@@ -1,0 +1,4 @@
+
+FAIL A scope with no mixins does not affect @apply in a scope that declares the mixin assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL An applied mixin does not affect @apply in a scope that has no mixins assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+

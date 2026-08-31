@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/apply-nested-declarations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/apply-top-level.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/apply-within-mixin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/contents-nested-declarations-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/contents-nested-declarations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/contents-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-conditionals.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-cross-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-cssom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-cycle.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-declarations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-from-import-with-media-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-from-import.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-invalidation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-layers.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-locals.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-media-query-invalidation-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-media-query-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-parameters.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-shared-across-documents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/mixins/mixin-shared-sheet-no-mixins-in-scope.html

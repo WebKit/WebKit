@@ -1,0 +1,6 @@
+
+FAIL !important is valid in mixin result declarations assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS !important invalidates mixin parameter defaults
+PASS !important invalidates mixin argument "red !important"
+PASS !important invalidates mixin argument "{red !important}"
+

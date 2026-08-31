@@ -1,0 +1,39 @@
+
+PASS Empty CSSFunctionRule
+PASS Single CSSFunctionDeclarations
+PASS CSSFunctionDescriptors (result)
+PASS CSSFunctionDescriptors (result, repeated)
+PASS CSSFunctionDescriptors (local variables)
+PASS CSSFunctionDescriptors (local variables, repeated)
+PASS CSSFunctionDescriptors (local variables and result)
+PASS CSSFunctionDescriptors serialization
+PASS Unknown descriptors
+PASS !important invalidates declarations in function bodies
+PASS !important invalidates declarations in conditional function bodies
+FAIL Unknown descriptors (mutation) assert_equals: expected 3 but got 1
+PASS item()
+PASS Indexed property getter
+PASS @supports in body
+PASS CSSFunctionRule.name
+PASS CSSFunctionRule.getParameters()
+PASS CSSFunctionRule.returnType
+PASS CSSFunctionRule escapes
+PASS CSSFunctionRule.cssText (--empty)
+PASS CSSFunctionRule.cssText (--ret-length)
+PASS CSSFunctionRule.cssText (--ret-length-auto)
+PASS CSSFunctionRule.cssText (--param-single)
+PASS CSSFunctionRule.cssText (--param-typed)
+PASS CSSFunctionRule.cssText (--param-typed-default)
+PASS CSSFunctionRule.cssText (--param-default)
+PASS CSSFunctionRule.cssText (--param-multi)
+PASS CSSFunctionRule.cssText (--param-multi-mixed)
+PASS CSSFunctionRule.cssText (--body-result)
+PASS CSSFunctionRule.cssText (--body-locals)
+PASS CSSFunctionRule.cssText (--param-type-fn)
+PASS CSSFunctionRule.cssText (--param-type-fn-uni)
+PASS CSSFunctionRule.cssText (--ret-type-fn)
+PASS CSSFunctionRule.cssText (--ret-type-fn-uni)
+PASS CSSFunctionRule.cssText (--body-result-multi)
+PASS CSSFunctionRule.cssText (--escaped-)
+PASS CSSFunctionRule.cssText (--identy)
+

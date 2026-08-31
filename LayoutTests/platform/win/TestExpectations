@@ -4682,7 +4682,7 @@ imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttrib
 imported/w3c/web-platform-tests/trusted-types/set-event-handlers-content-attributes.tentative.html [ Failure ]
 
 # Expected localhost URLs but got web-platform.test URLs
-imported/w3c/web-platform-tests/css/css-mixins/function-attr.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-mixins/functions/function-attr.html [ Failure ]
 
 # Flaky crash due to running out of commit space due to 4GB wasm memory
 webgl/2.0.y/conformance2/wasm/teximage2d-2gb-in-4gb-wasm-memory.html [ Skip ]

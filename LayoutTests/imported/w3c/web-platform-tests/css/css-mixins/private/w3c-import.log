@@ -12,6 +12,5 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/imported-sheet-with-mixin.css
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/imported-sheet-with-red-mixin.css
-/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/resources/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/private/private-cssom-insert-rule.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-mixins/private/private-cssom-serialization.tentative.html
