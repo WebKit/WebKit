@@ -4116,10 +4116,8 @@ void RenderBlockFlow::invalidateLineLayout(InvalidationReason invalidationReason
         setNeedsLayout();
     };
 
-    if (inlineLayout()) {
-        ASSERT(!m_previousInlineLayoutContentTopAndBottomIncludingInkOverflow);
+    if (inlineLayout() && !m_previousInlineLayoutContentTopAndBottomIncludingInkOverflow)
         m_previousInlineLayoutContentTopAndBottomIncludingInkOverflow = inlineContentTopAndBottomIncludingInkOverflow();
-    }
 
     switch (invalidationReason) {
     case InvalidationReason::InternalMove:
