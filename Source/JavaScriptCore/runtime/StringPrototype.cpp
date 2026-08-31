@@ -921,9 +921,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObje
     JSString* otherJSString = a0.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto otherView = otherJSString->view(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
     // 5. Let numPos be ? ToNumber(position).
     // 6. Assert: If position is undefined, then numPos is NaN.
     // 7. If numPos is NaN, let pos be +∞; else let pos be ! ToIntegerOrInfinity(numPos).
@@ -935,7 +932,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObje
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned len = thisJSString->length();
-    unsigned otherLen = otherView->length();
+    unsigned otherLen = otherJSString->length();
     if (len < otherLen)
         return JSValue::encode(jsNumber(-1));
 
@@ -947,6 +944,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObje
         startPosition = maxStart;
     else
         startPosition = static_cast<unsigned>(numPos);
+
+    auto otherView = otherJSString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     // Now, startPosition is in [0, maxStart(len - otherLen)].
     if (otherLen == 1) {
@@ -1979,13 +1979,14 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncStartsWith, (JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
+    auto searchLength = search->length();
+    if (length - start < searchLength)
+        return JSValue::encode(jsBoolean(false));
+
     auto searchString = search->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (searchString->length() == 1 && string->isRope() && length >= JSString::minLengthForRopeWalk) {
-        if (start >= length)
-            return JSValue::encode(jsBoolean(false));
-
+    if (searchLength == 1 && string->isRope() && length >= JSString::minLengthForRopeWalk) {
         if (auto character = string->tryGetCharAt(globalObject, start))
             return JSValue::encode(jsBoolean(*character == searchString[0]));
     }
@@ -2029,13 +2030,14 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncEndsWith, (JSGlobalObject* globalObject,
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
+    auto searchLength = search->length();
+    if (end < searchLength)
+        return JSValue::encode(jsBoolean(false));
+
     auto searchString = search->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (searchString->length() == 1 && string->isRope() && length >= JSString::minLengthForRopeWalk) {
-        if (!end)
-            return JSValue::encode(jsBoolean(false));
-
+    if (searchLength == 1 && string->isRope() && length >= JSString::minLengthForRopeWalk) {
         if (auto character = string->tryGetCharAt(globalObject, end - 1))
             return JSValue::encode(jsBoolean(*character == searchString[0]));
     }
@@ -2058,7 +2060,11 @@ static EncodedJSValue stringIncludesImpl(JSGlobalObject* globalObject, VM& vm, J
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    if (search->length() == 1 && string->isRope() && string->length() >= JSString::minLengthForRopeWalk) {
+    auto searchLength = search->length();
+    if (length - start < searchLength)
+        return JSValue::encode(jsBoolean(false));
+
+    if (searchLength == 1 && string->isRope() && string->length() >= JSString::minLengthForRopeWalk) {
         auto searchView = search->view(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
