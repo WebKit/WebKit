@@ -114,7 +114,7 @@ struct _WPEProcessManagerClass {
     void    (* terminate) (WPEProcessManager* manager, guint64 process_id);
 
     /*< private >*/
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API GQuark   wpe_process_manager_error_quark (void);

@@ -53,7 +53,7 @@ struct _WPEClipboardClass
                         gboolean             is_local,
                         WPEClipboardContent *content);
 
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API WPEClipboard        *wpe_clipboard_new              (WPEDisplay          *display);

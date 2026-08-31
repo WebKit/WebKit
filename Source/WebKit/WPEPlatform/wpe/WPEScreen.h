@@ -46,7 +46,7 @@ struct _WPEScreenClass
     void                   (* invalidate)        (WPEScreen *screen);
     WPEScreenSyncObserver *(* get_sync_observer) (WPEScreen *screen);
 
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API guint32                wpe_screen_get_id               (WPEScreen *screen);
