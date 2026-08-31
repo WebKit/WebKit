@@ -1,25 +1,3 @@
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
-CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
 This test verifies the functionality of the OES_texture_float_linear extension, if it is available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -35,20 +13,20 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 0,0,0,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
-PASS should be 255,255,255,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_float_linear is not enabled
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
@@ -59,20 +37,20 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 0,0,0,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_2D -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_float_linear is not enabled
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
@@ -83,20 +61,20 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 0,0,0,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
-PASS should be 255,255,255,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_float_linear is not enabled
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
@@ -107,20 +85,20 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 0,0,0,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is not enabled
-PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_float_linear isn't enabled
-PASS should be 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
+generateMipmap failed for floating-point TEXTURE_CUBE_MAP -- this is legal -- skipping the rest of this test
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_float_linear is enabled
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
@@ -131,18 +109,22 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
@@ -155,18 +137,22 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
@@ -179,18 +165,22 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_float_linear is enabled or not
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
@@ -203,18 +193,22 @@ PASS getError was expected value: NO_ERROR : OES_texture_float texture with Line
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_float_linear is enabled
+PASS getError was expected value: NO_ERROR : should be no errors during texture setup
 PASS getError was expected value: NO_ERROR : OES_texture_float texture with Linear filter should succeed with NO_ERROR if OES_texture_float is enabled
 PASS should be 255,255,255,255
 PASS successfullyParsed is true
