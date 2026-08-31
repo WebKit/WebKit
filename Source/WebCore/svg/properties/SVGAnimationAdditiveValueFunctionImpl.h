@@ -87,17 +87,17 @@ public:
 
     void animate(SVGElement&, float progress, unsigned repeatCount, Color& animated)
     {
-        auto simpleAnimated = animated.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        auto simpleFrom = m_animationMode == AnimationMode::To ? simpleAnimated : m_from.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        auto simpleTo = m_to.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        auto simpleToAtEndOfDuration = toAtEndOfDuration().toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleAnimated = animated.toColorTypeLossy<SRGBA<float>>().resolved();
+        auto simpleFrom = m_animationMode == AnimationMode::To ? simpleAnimated : m_from.toColorTypeLossy<SRGBA<float>>().resolved();
+        auto simpleTo = m_to.toColorTypeLossy<SRGBA<float>>().resolved();
+        auto simpleToAtEndOfDuration = toAtEndOfDuration().toColorTypeLossy<SRGBA<float>>().resolved();
 
         float red = Base::animate(progress, repeatCount, simpleFrom.red, simpleTo.red, simpleToAtEndOfDuration.red, simpleAnimated.red);
         float green = Base::animate(progress, repeatCount, simpleFrom.green, simpleTo.green, simpleToAtEndOfDuration.green, simpleAnimated.green);
         float blue = Base::animate(progress, repeatCount, simpleFrom.blue, simpleTo.blue, simpleToAtEndOfDuration.blue, simpleAnimated.blue);
         float alpha = Base::animate(progress, repeatCount, simpleFrom.alpha, simpleTo.alpha, simpleToAtEndOfDuration.alpha, simpleAnimated.alpha);
 
-        animated = makeFromComponentsClamping<SRGBA<uint8_t>>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
+        animated = makeFromComponentsClamping<SRGBA<float>>(red, green, blue, alpha);
     }
 
     std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override;
