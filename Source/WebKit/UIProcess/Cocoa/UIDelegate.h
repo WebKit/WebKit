@@ -184,7 +184,7 @@ private:
         void confirmPDFOpening(WebPageProxy&, const WTF::URL&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
-        void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, CompletionHandler<void(std::optional<bool>)>&&) final;
+        void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&&) final;
 #endif
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
@@ -315,6 +315,7 @@ private:
 #if ENABLE(WEB_AUTHN)
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler : 1;
+        bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler : 1;
 #endif
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;
