@@ -48,7 +48,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::List);
 static RenderObject* firstNonMarkerChild(RenderBlock& parent)
 {
     RenderObject* child = parent.firstChild();
-    while (is<RenderListMarker>(child))
+    // An inside marker may be wrapped in an anonymous inline box, which is the marker as far as this is concerned.
+    while (child && (is<RenderListMarker>(*child) || isInlineWrapperForListMarker(*child)))
         child = child->nextSibling();
     return child;
 }
@@ -131,8 +132,13 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // excluded and attaches directly to the list item, while an inside one is ordinary inline content that needs an
     // anonymous block when the list item's other children are block level. Only attach() makes that call, and it is not
     // consulted when the marker's parent happens to be unchanged, so rebuild rather than patch the placement in place.
-    if (auto* markerRenderer = listItemRenderer.markerRenderer(); markerRenderer && markerRenderer->style().listStylePosition() != newStyle.listStylePosition())
-        m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, { });
+    if (auto* markerRenderer = listItemRenderer.markerRenderer(); markerRenderer && markerRenderer->style().listStylePosition() != newStyle.listStylePosition()) {
+        // Destroying the anonymous inline box takes the marker with it, and leaves nothing of the inside placement behind.
+        if (CheckedPtr wrapper = markerRenderer->inlineWrapper())
+            m_builder.destroyAndCleanUpAnonymousWrappers(*wrapper, { });
+        else
+            m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, { });
+    }
 
     if (auto* markerRenderer = listItemRenderer.markerRenderer()) {
         // Whether the marker box holds inline content depends on `content` and on list-style-type
@@ -147,17 +153,19 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         // what is not the marker's own style: its direction, and what the document's counter style
         // registry currently resolves list-style-type to.
         auto needsContentContainer = markerRenderer->needsContentContainer();
-        if (contentChanged || needsContentContainer != !!markerRenderer->contentContainer()) {
-            if (auto* existingContainer = markerRenderer->contentContainer())
-                m_builder.destroy(*existingContainer);
+        if (contentChanged || needsContentContainer != !!markerRenderer->contentRenderersParent()) {
+            destroyMarkerContentRenderers(*markerRenderer);
             if (needsContentContainer)
                 buildMarkerContentRenderers(*markerRenderer);
-        } else if (auto* container = markerRenderer->contentContainer()) {
+        } else if (CheckedPtr contentParent = markerRenderer->contentRenderersParent()) {
             // Content unchanged but other style changed: refresh the generated image/quote children
             // (RenderText/RenderCounter are handled by propagateStyleToAnonymousChildren on setStyle).
-            RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*container, markerRenderer->style());
+            RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*contentParent, markerRenderer->style());
         }
-        auto* currentParent = markerRenderer->parent();
+        // What gets placed is the marker, or the anonymous inline box around it when it has one: moving the marker out
+        // of that box on its own would leave its text behind.
+        CheckedRef<RenderElement> markerToPlace = markerRenderer->inlineWrapper() ? static_cast<RenderElement&>(*markerRenderer->inlineWrapper()) : static_cast<RenderElement&>(*markerRenderer);
+        auto* currentParent = markerToPlace->parent();
         if (!currentParent) {
             ASSERT_NOT_REACHED();
             return;
@@ -182,7 +190,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         if (searchResult.parent == currentParent)
             return;
 
-        m_builder.attach(*searchResult.parent, m_builder.detach(*currentParent, *markerRenderer, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), firstNonMarkerChild(*searchResult.parent));
+        m_builder.attach(*searchResult.parent, m_builder.detach(*currentParent, markerToPlace.get(), WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), firstNonMarkerChild(*searchResult.parent));
 
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent->isAnonymousBlock() && !currentParent->firstChild()) {
@@ -213,30 +221,77 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         buildMarkerContentRenderers(*listItemRenderer.markerRenderer());
 }
 
+void RenderTreeBuilder::List::wrapInsideMarkerInAnonymousInline(RenderListMarker& marker)
+{
+    ASSERT(marker.needsInlineWrapper());
+    ASSERT(!marker.inlineWrapper());
+
+    // The marker box is atomic and opaque to the bidi algorithm, so putting its contents in an inline box of their
+    // own is what gives the inline formatting context something to read unicode-bidi from (InlineItemsBuilder emits
+    // the bidi control characters on inline box start and end).
+    auto newWrapper = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, marker.document(), marker.styleForInlineWrapper());
+    newWrapper->initializeStyle();
+    CheckedRef wrapper = *newWrapper;
+
+    CheckedRef markerParent = *marker.parent();
+    m_builder.attach(markerParent.get(), WTF::move(newWrapper), &marker);
+    m_builder.attach(wrapper.get(), m_builder.detach(markerParent.get(), marker, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No));
+
+    // Wrapping can happen after the inline content was already laid out once (a style change brings us back here),
+    // and the layout box tree is built from the render tree, so it has to be thrown away for the wrapper to get a box
+    // of its own. Without that the marker's box is left with no parent at all.
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(wrapper->containingBlock()))
+        blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
+}
+
+void RenderTreeBuilder::List::destroyMarkerContentRenderers(RenderListMarker& marker)
+{
+    if (CheckedPtr container = marker.contentContainer()) {
+        m_builder.destroy(*container);
+        return;
+    }
+
+    // The contents of a wrapped marker are its siblings inside the anonymous inline box, and that box holds a copy of
+    // the marker's style, so it goes with them: move the marker back out and let the wrapper take the rest.
+    CheckedPtr wrapper = marker.inlineWrapper();
+    if (!wrapper)
+        return;
+
+    CheckedRef wrapperParent = *wrapper->parent();
+    m_builder.attach(wrapperParent.get(), m_builder.detach(*wrapper, marker, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), wrapper.get());
+    m_builder.destroyAndCleanUpAnonymousWrappers(*wrapper, { });
+}
+
 void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& marker)
 {
     ASSERT(marker.needsContentContainer());
-    ASSERT(!marker.contentContainer());
+    ASSERT(!marker.contentRenderersParent());
 
-    // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
-    // inline-block box holding the content list (strings, images, counters, quotes). The marker
-    // (RenderListMarker) lays this box out and paints it as a single atomic inline.
-    auto containerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(marker.style(), Style::DisplayType::InlineFlowRoot);
-    auto newContainer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, marker.document(), WTF::move(containerStyle));
-    newContainer->initializeStyle();
-    CheckedRef container = *newContainer;
-    m_builder.attach(marker, WTF::move(newContainer));
+    CheckedPtr<RenderElement> contentParent;
+    if (marker.needsInlineWrapper()) {
+        wrapInsideMarkerInAnonymousInline(marker);
+        contentParent = marker.inlineWrapper();
+    } else {
+        // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
+        // inline-block box holding the content list (strings, images, counters, quotes). The marker
+        // (RenderListMarker) lays this box out and paints it as a single atomic inline.
+        auto containerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(marker.style(), Style::DisplayType::InlineFlowRoot);
+        auto newContainer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, marker.document(), WTF::move(containerStyle));
+        newContainer->initializeStyle();
+        contentParent = newContainer.get();
+        m_builder.attach(marker, WTF::move(newContainer));
+    }
 
     if (!marker.hasContentProperty()) {
         // list-style-type text that needs renderers of its own, so inline layout can bidi-resolve it.
         // The text itself is only known once counter values resolve, so start empty and let
         // RenderListMarker::updateContent() fill it in at layout time.
         auto textRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, marker.document(), emptyString());
-        m_builder.attach(container.get(), WTF::move(textRenderer));
+        m_builder.attach(*contentParent, WTF::move(textRenderer));
         return;
     }
 
-    RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, container.get(), marker.style(), PseudoElementType::Marker);
+    RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, *contentParent, marker.style(), PseudoElementType::Marker);
 }
 
 }

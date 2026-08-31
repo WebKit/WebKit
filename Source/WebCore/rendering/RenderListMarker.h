@@ -28,6 +28,7 @@ namespace WebCore {
 
 class CSSRegisteredCounterStyle;
 class RenderBlockFlow;
+class RenderInline;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
@@ -73,8 +74,18 @@ public:
     // child (contentContainer()) that this marker lays out and paints itself.
     bool hasContentProperty() const;
     bool needsContentContainer() const;
+    // An inside marker whose contents need renderers of their own puts them in an anonymous inline box around the
+    // marker instead of in a content container, so that they are inline content of the list item's own formatting
+    // context. That is what lets unicode-bidi and direction on the ::marker take effect. The marker box itself then
+    // draws nothing and takes up no room of its own. A synthesized glyph (disc/circle/square) is drawn by the marker,
+    // so it keeps its container.
+    bool needsInlineWrapper() const { return isInside() && !synthesizesGlyph() && needsContentContainer(); }
 
     RenderBlockFlow* contentContainer() const;
+    RenderInline* inlineWrapper() const;
+    Style::ComputedStyle styleForInlineWrapper() const;
+    // The box the marker's contents are attached to, whichever of the two it is.
+    RenderElement* contentRenderersParent() const;
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
     RenderListItem* NODELETE listItem() const;
@@ -145,6 +156,9 @@ private:
     std::optional<ExcludedPosition> m_excludedPosition;
     bool m_shouldCollapseAnonymousBlockParent { false };
 };
+
+// The anonymous inline box an inside marker is wrapped in (see RenderListMarker::needsInlineWrapper).
+bool isInlineWrapperForListMarker(const RenderObject&);
 
 } // namespace WebCore
 

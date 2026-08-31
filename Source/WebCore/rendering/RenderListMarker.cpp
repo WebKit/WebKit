@@ -35,12 +35,15 @@
 #include "FontCascadeInlines.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
+#include "LocalFrameView.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "InlineIteratorBoxInlines.h"
 #include "PaintInfoInlines.h"
 #include "PseudoElement.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMenuList.h"
@@ -109,6 +112,10 @@ void RenderListMarker::styleDidChange(Style::Difference diff, const Style::Compu
     RenderBox::styleDidChange(diff, oldStyle);
 
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
+
+    // The anonymous inline box around us is our parent, so nothing propagates our style into it.
+    if (CheckedPtr wrapper = inlineWrapper())
+        wrapper->setStyle(styleForInlineWrapper());
 
     if (RefPtr newImage = style().listStyleImage().tryStyleImage(); m_image != newImage) {
         if (m_image)
@@ -203,6 +210,41 @@ RenderBlockFlow* RenderListMarker::contentContainer() const
     return dynamicDowncast<RenderBlockFlow>(firstChild());
 }
 
+RenderInline* RenderListMarker::inlineWrapper() const
+{
+    // The wrapper is put around the marker (and nothing else) by RenderTreeBuilder::List, so the marker is its
+    // first child and the marker's contents follow.
+    auto* wrapper = dynamicDowncast<RenderInline>(parent());
+    if (wrapper && wrapper->isAnonymous() && wrapper->firstChild() == this)
+        return wrapper;
+    return nullptr;
+}
+
+Style::ComputedStyle RenderListMarker::styleForInlineWrapper() const
+{
+    auto wrapperStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(style(), Style::DisplayType::InlineFlow);
+    // The wrapper is an anonymous child of the list item, which would otherwise hand it a style inheriting from itself
+    // (RenderElement::propagateStyleToAnonymousChildren) and lose what the ::marker sets, tabular figures among it.
+    wrapperStyle.setPseudoElementIdentifier({ { PseudoElementType::Marker } });
+    return wrapperStyle;
+}
+
+RenderElement* RenderListMarker::contentRenderersParent() const
+{
+    if (auto* wrapper = inlineWrapper())
+        return wrapper;
+    return contentContainer();
+}
+
+bool isInlineWrapperForListMarker(const RenderObject& renderer)
+{
+    CheckedPtr wrapper = dynamicDowncast<RenderInline>(renderer);
+    if (!wrapper || !wrapper->isAnonymous())
+        return false;
+    CheckedPtr marker = dynamicDowncast<RenderListMarker>(wrapper->firstChild());
+    return marker && marker->inlineWrapper();
+}
+
 LayoutRect RenderListMarker::localSelectionRect()
 {
     return LayoutRect(LayoutPoint(), borderBoxSize());
@@ -268,6 +310,9 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         container->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*container, boxOrigin));
         return;
     }
+
+    if (needsInlineWrapper())
+        return;
 
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Accessibility)
         return;
@@ -374,6 +419,11 @@ void RenderListMarker::layout()
         setBorderBoxWidth(image->imageSize(this, style().usedZoom()).width());
         setBorderBoxHeight(image->imageSize(this, style().usedZoom()).height());
         m_layoutBounds = { borderBoxHeight(), 0 };
+    } else if (needsInlineWrapper()) {
+        updateInlineMarginsAndContent();
+        setLogicalWidth({ });
+        setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        m_layoutBounds = layoutBoundForTextContent(m_textContent.textWithSuffix);
     } else {
         setLogicalWidth(minContentLogicalWidthContribution());
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
@@ -516,13 +566,15 @@ void RenderListMarker::updateContent()
 
 void RenderListMarker::updateContentContainerText()
 {
-    CheckedPtr container = contentContainer();
-    if (!container) {
+    CheckedPtr contentParent = contentRenderersParent();
+    if (!contentParent) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    CheckedPtr textRenderer = dynamicDowncast<RenderText>(container->firstChild());
+    CheckedPtr<RenderText> textRenderer;
+    for (CheckedPtr child = contentParent->firstChild(); child && !textRenderer; child = child->nextSibling())
+        textRenderer = dynamicDowncast<RenderText>(child.get());
     if (!textRenderer) {
         ASSERT_NOT_REACHED();
         return;
@@ -540,6 +592,16 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
     updateContent();
+
+    if (needsInlineWrapper()) {
+        // The text renderer next to us is inline content of the list item's own formatting context and already
+        // contributes the marker's width there, so the marker box must not contribute it a second time.
+        m_minContentLogicalWidthContribution = { };
+        m_maxContentLogicalWidthContribution = { };
+        clearContentLogicalWidthsInvalidation();
+        updateInlineMargins();
+        return;
+    }
 
     if (CheckedPtr container = contentContainer()) {
         // The marker is non-wrapping, so its min- and max-content widths are both the
@@ -588,6 +650,11 @@ void RenderListMarker::updateInlineMargins()
     const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
 
     auto marginsForInsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        // The text renderer next to us draws the marker and carries its suffix, so the room between marker and
+        // content is that text's, not something the empty marker box has to make.
+        if (needsInlineWrapper())
+            return { };
+
         if (isImage())
             return { 0, markerPadding };
 
