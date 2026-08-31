@@ -82,7 +82,7 @@ struct _WPEKeymapClass
                                                WPEModifiers    *consumed_modifiers);
     WPEModifiers (* get_modifiers)            (WPEKeymap       *keymap);
 
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API gboolean     wpe_keymap_get_entries_for_keyval   (WPEKeymap       *keymap,

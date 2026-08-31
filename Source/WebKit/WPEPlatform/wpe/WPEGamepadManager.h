@@ -43,7 +43,7 @@ struct _WPEGamepadManagerClass
 {
     GObjectClass parent_class;
 
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API void         wpe_gamepad_manager_add_device    (WPEGamepadManager *manager,

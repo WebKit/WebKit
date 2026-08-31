@@ -48,7 +48,7 @@ struct _WPEBufferClass
     GBytes  *(* import_to_pixels)    (WPEBuffer *buffer,
                                       GError   **error);
 
-    gpointer padding[32];
+    gpointer padding[16];
 };
 
 #define WPE_BUFFER_ERROR (wpe_buffer_error_quark())

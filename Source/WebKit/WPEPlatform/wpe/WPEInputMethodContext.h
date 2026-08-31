@@ -159,7 +159,7 @@ struct _WPEInputMethodContextClass
                                      guint                  selection_index);
     void     (* reset)              (WPEInputMethodContext *context);
 
-    gpointer padding[32];
+    gpointer padding[8];
 };
 
 WPE_API WPEInputMethodContext   *wpe_input_method_context_new                (WPEView                 *view);
