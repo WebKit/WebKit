@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="routines.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="64" height="64"></canvas>
+<script>
+promise_test(async test => {
+    const worker = new Worker("script-transform-oversized-frame-worker.js");
+    await new Promise(resolve => worker.onmessage = e => { if (e.data === "registered") resolve(); });
+
+    const channel = new MessageChannel;
+    const senderTransform = new RTCRtpScriptTransform(worker, { port: channel.port2 }, [channel.port2]);
+
+    canvas.getContext("2d").fillRect(0, 0, 64, 64);
+    const stream = canvas.captureStream();
+    setInterval(() => canvas.getContext("2d").fillRect(0, 0, 64, 64), 50);
+
+    await new Promise((resolve, reject) => {
+        createConnections(firstConnection => {
+            const sender = firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+            sender.transform = senderTransform;
+            const codecs = RTCRtpSender.getCapabilities("video").codecs.filter(c => /vp8/i.test(c.mimeType));
+            if (codecs.length)
+                firstConnection.getTransceivers()[0].setCodecPreferences(codecs);
+        }, secondConnection => {
+            secondConnection.ontrack = resolve;
+        });
+        test.step_timeout(() => reject("Connection setup timed out"), 5000);
+    });
+
+    const result = await new Promise((resolve, reject) => {
+        channel.port1.onmessage = e => resolve(e.data);
+        test.step_timeout(() => reject("No frame seen by transform"), 10000);
+    });
+
+    // If the oversized frame was sent to the packetizer, let's wait a bit.
+    if (result === "sent")
+        await new Promise(resolve => test.step_timeout(resolve, 500));
+
+    closeConnections();
+    assert_true(result === "sent" || result === "skipped", result);
+}, "Replacing RTCEncodedVideoFrame data with an oversized buffer does not crash the VP8 packetizer");
+</script>
+</body>
+</html>
