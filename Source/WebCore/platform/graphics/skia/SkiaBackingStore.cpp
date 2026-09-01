@@ -207,10 +207,10 @@ void SkiaBackingStore::Tile::ensureTexture(const IntSize& size, CoordinatedTileB
     if (m_texture) {
         if (buffer.supportsAlpha() == m_texture->isOpaque())
             m_texture->reset(size, flags);
-    } else {
+    } else
         m_texture = BitmapTexturePool::singleton().acquireTexture(size, flags);
-        m_cachedImage = nullptr;
-    }
+
+    m_cachedImage = nullptr;
 }
 
 void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer& buffer)
@@ -290,7 +290,10 @@ sk_sp<SkImage> SkiaBackingStore::Tile::image() const
         auto allocatedSize = m_texture->allocatedSize();
         auto backendTexture = GrBackendTextures::MakeGL(allocatedSize.width(), allocatedSize.height(), skgpu::Mipmapped::kNo, externalTexture);
         auto alphaType = m_texture->isOpaque() ? kOpaque_SkAlphaType : kPremul_SkAlphaType;
-        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB());
+        m_texture->ref();
+        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB(), +[](void* userData) {
+            static_cast<BitmapTexture*>(userData)->deref();
+        }, m_texture.get());
     }
     return m_cachedImage;
 }
