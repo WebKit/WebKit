@@ -108,6 +108,11 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
                     if (element == originatingElement(matchedTimeline).element().get())
                         return matchedTimeline.unsafePtr();
                 }
+                // Prefer the nearest timeline in hierarchy.
+                for (auto& matchedTimeline : matchedTimelines | std::views::reverse) {
+                    if (styleable.element.isComposedTreeDescendantOf(*originatingElement(matchedTimeline).element()))
+                        return matchedTimeline.unsafePtr();
+                }
                 // Otherwise return the last of the matching timelines per https://github.com/w3c/csswg-drafts/issues/12581.
                 return matchedTimelines.last().unsafePtr();
             }
