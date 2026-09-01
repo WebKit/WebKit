@@ -199,7 +199,7 @@ void callMemberFunction(T* object, MF U::* function, CT connection, ArgsTuple&& 
 template<typename T, typename U, typename MF, typename ArgsTuple>
 void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple)
 {
-    [&] -> Task {
+    [&] -> WTF::Task {
         Ref protectedObject { *object };
         co_await std::apply([&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
@@ -211,7 +211,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple)
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CT>
 void callMemberFunctionCoroutine(T* object, MF U::* function, CT connection, ArgsTuple&& tuple)
 {
-    [&] -> Task {
+    [&] -> WTF::Task {
         Ref protectedObject { *object };
         co_await std::apply([&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
@@ -223,7 +223,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, CT connection, Arg
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
@@ -235,7 +235,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple,
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
@@ -247,7 +247,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple,
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutine(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
@@ -259,7 +259,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection& connec
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutine(T* object, MF U::* function, Connection* connection, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
@@ -271,7 +271,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection* connec
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
@@ -284,7 +284,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tu
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
@@ -297,7 +297,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tu
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection& connection, ArgsTuple&& tuple, CompletionHandler<CH>&& completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
@@ -310,7 +310,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection& co
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
 void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection* connection, ArgsTuple&& tuple, WTF::RefCountable<WTF::CompletionHandler<CH>>* completionHandler)
 {
-    [&] (auto completionHandler) -> Task {
+    [&] (auto completionHandler) -> WTF::Task {
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {

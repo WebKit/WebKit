@@ -29,7 +29,6 @@ import struct Foundation.URL
 @_spi(Testing) import _WebKit_SwiftUI
 import SwiftUI
 import struct Swift.String
-import struct _Concurrency.Task
 private import struct TestWebKitAPILibrary.DOMRect
 import Testing
 private import TestWebKitAPILibrary
