@@ -78,10 +78,6 @@ static constexpr Quirk table[] = {
         .behaviors = {
             // amazon.com rdar://49124529
             ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
-#if PLATFORM(MAC)
-            // amazon.com rdar://128962002
-            NeedsPrimeVideoUserSelectNoneQuirk,
-#endif
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
             // amazon.com rdar://49124313
             ShouldDispatchSimulatedMouseEventsQuirk,

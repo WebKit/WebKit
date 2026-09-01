@@ -156,8 +156,6 @@ public:
 
     bool needsYahooVolumeSliderQuirk() const;
 
-    bool needsPrimeVideoUserSelectNoneQuirk() const;
-
     bool needsFacebookRemoveNotSupportedQuirk() const;
 
     bool needsScrollbarWidthThinDisabledQuirk() const;

@@ -128,9 +128,6 @@ enum class SiteSpecificQuirk {
     NeedsSuppressedPauseEventOnFullscreenExitQuirk,
     NeedsPreloadAutoQuirk,
 #endif
-#if PLATFORM(MAC)
-    NeedsPrimeVideoUserSelectNoneQuirk,
-#endif
     NeedsResettingTransitionCancelsRunningTransitionQuirk,
     NeedsReuseLiveRangeForSelectionUpdateQuirk,
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,

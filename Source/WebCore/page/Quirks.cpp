@@ -733,19 +733,6 @@ bool Quirks::needsWebExScrollabilityQuirk() const
     return false;
 #endif
 }
-
-// amazon.com rdar://128962002
-bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
-{
-#if PLATFORM(MAC)
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsPrimeVideoUserSelectNoneQuirk);
-#else
-    return false;
-#endif
-}
-
 // facebook.com https://webkit.org/b/295071
 // FIXME: https://webkit.org/b/295318
 bool Quirks::needsFacebookRemoveNotSupportedQuirk() const

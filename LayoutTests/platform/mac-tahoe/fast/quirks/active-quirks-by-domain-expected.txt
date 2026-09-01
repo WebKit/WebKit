@@ -13,16 +13,12 @@ https://actesting.org/
 https://www.airindiaexpress.com/
     NeedsAirIndiaExpressLayeringQuirk
 https://www.amazon.com/
-    NeedsPrimeVideoUserSelectNoneQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://sub.amazon.com/
-    NeedsPrimeVideoUserSelectNoneQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://www.amazon.co.uk/
-    NeedsPrimeVideoUserSelectNoneQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://amazon.design/
-    NeedsPrimeVideoUserSelectNoneQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://www.apple.com/
     EnsureCaptionVisibilityInFullscreenAndPictureInPicture

@@ -1155,15 +1155,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setUsedZIndex(2);
     }
 
-    if (documentQuirks.needsPrimeVideoUserSelectNoneQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);
-        if (m_element->hasClassName(className)) {
-            // Not redundant: we don't know which one will be used:
-            style.setWebkitUserSelect(UserSelect::None);
-            style.setUserSelect(UserSelect::None);
-        }
-    }
-
     if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {
         if (*tikTokOverflowingContentQuery == Quirks::TikTokOverflowingContentQuirkType::CommentsSectionQuirk)  {
             style.setFlexShrink({ 1 });
