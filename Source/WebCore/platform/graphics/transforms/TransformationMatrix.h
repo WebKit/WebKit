@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/CompositeOperation.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatPoint3D.h>
@@ -35,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Variant.h>
 
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;
@@ -362,6 +364,23 @@ public:
     WEBCORE_EXPORT void NODELETE flatten();
 
     WEBCORE_EXPORT AffineTransform NODELETE toAffineTransform() const;
+
+    struct Translation2DIPCData {
+        double m41 { 0 };
+        double m42 { 0 };
+    };
+    struct Translation3DIPCData {
+        double m41 { 0 };
+        double m42 { 0 };
+        double m43 { 0 };
+    };
+    struct FullIPCData {
+        std::array<double, 16> values { };
+    };
+    using IPCData = Variant<std::monostate /* identity */, Translation2DIPCData, Translation3DIPCData, AffineTransform, FullIPCData>;
+
+    WEBCORE_EXPORT IPCData ipcData() const;
+    WEBCORE_EXPORT static TransformationMatrix fromIPCData(IPCData&&);
 
     bool operator==(const TransformationMatrix& m2) const
     {

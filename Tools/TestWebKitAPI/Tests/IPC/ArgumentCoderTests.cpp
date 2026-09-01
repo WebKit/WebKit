@@ -35,6 +35,7 @@
 #include "StreamConnectionEncoder.h"
 #include "Helpers/Test.h"
 #include <WebCore/ShareableResource.h>
+#include <WebCore/TransformationMatrix.h>
 #include <limits>
 #include <wtf/StdLibExtras.h>
 
@@ -830,6 +831,62 @@ TEST(ArgumentCoderSecurityFlags, BitBelongingToNoFlagIsRejectedNotCrashed)
         auto flags = decoder->decode<WebKit::SecurityFlags>();
         EXPECT_FALSE(flags.has_value());
     }
+}
+
+template<size_t expectedDoubleCount>
+static void testTransformationMatrixCoding(const WebCore::TransformationMatrix& matrix)
+{
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << matrix;
+
+    constexpr size_t messageHeaderSize = 16;
+    size_t expectedSize = calculateEncodedSize(messageHeaderSize, EncodedValue<uint8_t, 1> { });
+    if constexpr (expectedDoubleCount)
+        expectedSize = calculateEncodedSize(expectedSize, EncodedValue<double, expectedDoubleCount> { });
+    EXPECT_EQ(expectedSize, encoder.span().size());
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+    auto decoded = decoder->decode<WebCore::TransformationMatrix>();
+    ASSERT_TRUE(decoded.has_value());
+
+    EXPECT_TRUE(matrix == *decoded);
+}
+
+TEST(ArgumentCoderTransformationMatrix, IdentityCostsOnlyTheVariantTag)
+{
+    testTransformationMatrixCoding<0>(WebCore::TransformationMatrix { });
+}
+
+TEST(ArgumentCoderTransformationMatrix, Translation2DCostsTwoDoubles)
+{
+    testTransformationMatrixCoding<2>(WebCore::TransformationMatrix { 10.5, -20.25 });
+
+    WebCore::TransformationMatrix zeroZ;
+    zeroZ.translate3d(1.0, 2.0, 0.0);
+    testTransformationMatrixCoding<2>(zeroZ);
+}
+
+TEST(ArgumentCoderTransformationMatrix, Translation3DCostsThreeDoubles)
+{
+    WebCore::TransformationMatrix translated3D;
+    translated3D.translate3d(1.0, 2.0, 3.0);
+    testTransformationMatrixCoding<3>(translated3D);
+}
+
+TEST(ArgumentCoderTransformationMatrix, AffineCostsSixDoubles)
+{
+    testTransformationMatrixCoding<6>(WebCore::TransformationMatrix { 6.0, 5.0, 4.0, 3.0, 2.0, 1.0 });
+}
+
+TEST(ArgumentCoderTransformationMatrix, NonAffineCostsSixteenDoubles)
+{
+    testTransformationMatrixCoding<16>(WebCore::TransformationMatrix {
+        16.0, 15.0, 14.0, 13.0,
+        12.0, 11.0, 10.0, 9.0,
+        8.0, 7.0, 6.0, 5.0,
+        4.0, 3.0, 2.0, 1.0
+    });
 }
 
 } // namespace TestWebKitAPI

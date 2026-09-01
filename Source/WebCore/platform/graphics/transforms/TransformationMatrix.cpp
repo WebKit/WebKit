@@ -1796,6 +1796,57 @@ AffineTransform TransformationMatrix::toAffineTransform() const
                            m_matrix[1][1], m_matrix[3][0], m_matrix[3][1]);
 }
 
+auto TransformationMatrix::ipcData() const -> IPCData
+{
+    if (isIdentity())
+        return std::monostate { };
+
+    if (isIdentityOrTranslation()) {
+        if (!m43())
+            return Translation2DIPCData { m41(), m42() };
+        return Translation3DIPCData { m41(), m42(), m43() };
+    }
+
+    if (isAffine())
+        return toAffineTransform();
+
+    return FullIPCData { { {
+        m11(), m12(), m13(), m14(),
+        m21(), m22(), m23(), m24(),
+        m31(), m32(), m33(), m34(),
+        m41(), m42(), m43(), m44(),
+    } } };
+}
+
+TransformationMatrix TransformationMatrix::fromIPCData(IPCData&& data)
+{
+    return WTF::switchOn(WTF::move(data),
+        [] (std::monostate) {
+            return TransformationMatrix { };
+        }, [] (const Translation2DIPCData& translation) {
+            TransformationMatrix matrix;
+            matrix.setM41(translation.m41);
+            matrix.setM42(translation.m42);
+            return matrix;
+        }, [] (const Translation3DIPCData& translation) {
+            TransformationMatrix matrix;
+            matrix.setM41(translation.m41);
+            matrix.setM42(translation.m42);
+            matrix.setM43(translation.m43);
+            return matrix;
+        }, [] (const AffineTransform& affineTransform) {
+            return TransformationMatrix { affineTransform };
+        }, [] (const FullIPCData& full) {
+            auto& values = full.values;
+            return TransformationMatrix {
+                values[0], values[1], values[2], values[3],
+                values[4], values[5], values[6], values[7],
+                values[8], values[9], values[10], values[11],
+                values[12], values[13], values[14], values[15]
+            };
+        });
+}
+
 static inline void NODELETE blendFloat(double& from, double to, double progress, CompositeOperation compositeOperation)
 {
     switch (compositeOperation) {
