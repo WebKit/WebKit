@@ -48,7 +48,8 @@
       ];
 
       for (const test of charsetTests) {
-        httpCookieTest(test.cookie, test.expected, test.name);
+        httpCookieTest(test.cookie, test.expected, test.name + " via HTTP headers");
+        domCookieTest(test.cookie, test.expected, test.name + " via document.cookie");
       }
     </script>
   </body>

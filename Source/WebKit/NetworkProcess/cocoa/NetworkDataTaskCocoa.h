@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,6 +106,10 @@ private:
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
     void updateFirstPartyInfoForSession(const URL&);
+
+#if HAVE(BROKEN_MONTH_BEFORE_DAY_EXPIRES_COOKIE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    void repairCookiesFromResponse(const WebCore::ResourceResponse&);
+#endif
 
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }

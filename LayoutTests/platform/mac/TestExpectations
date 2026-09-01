@@ -777,7 +777,6 @@ editing/secure-input/reset-state-on-navigation.html [ Pass Failure ]
 
 #rdar://96912160 (REGRESSION): [ Ventura ] 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
 imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
-imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
 #rdar://92629515 (REGRESSION(Ventura): [ Ventura ] media/media-can-play-av1.html is a constant text failure)
 media/media-can-play-av1.html [ Skip ]
