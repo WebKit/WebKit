@@ -2,11 +2,10 @@ let context;
 let program;
 
 function createProgram(contextType, {offscreen} = {}) {
-    if (offscreen) {
-        if (window.OffscreenCanvas)
-            context = (new OffscreenCanvas(300, 150)).getContext(contextType);
-    } else
-        context = document.createElement("canvas").getContext(contextType);
+    if (offscreen && window.OffscreenCanvas)
+        context ||= (new OffscreenCanvas(300, 150)).getContext(contextType);
+    else if (!offscreen)
+        context ||= document.createElement("canvas").getContext(contextType);
 
     program = context.createProgram();
 }
@@ -80,8 +79,15 @@ TestPage.registerInitializer(() => {
             test(resolve, reject) {
                 // This can't use `awaitEvent` since the promise resolution happens on the next tick.
                 WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                    let canvas = event.data.item;
                     whenProgramAdded((program) => {
-                        resolve();
+                        // Remove the program the page added explicitly, then wait for the ItemRemoved event to fire,
+                        // so that its events don't interfere with later tests.
+                        canvas.shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, () => {
+                            resolve();
+                        });
+
+                        InspectorTest.evaluateInPage(`deleteProgram()`);
                     });
                 });
 
