@@ -481,6 +481,12 @@ ALWAYS_INLINE void JIT::loadPtrFromMetadata(const Bytecode& bytecode, size_t off
 }
 
 template <typename Bytecode>
+ALWAYS_INLINE void JIT::loadPairPtrFromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result1, GPRReg result2)
+{
+    loadPairPtr(Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result1, result2);
+}
+
+template <typename Bytecode>
 ALWAYS_INLINE void JIT::load32FromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
     load32(Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);

@@ -1527,6 +1527,7 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
     static_assert(!(Metadata::offsetOfStructureID() % metadataPointerAlignment));
     static_assert(!(Metadata::offsetOfOperand() % metadataPointerAlignment));
     static_assert(!(Metadata::offsetOfWatchpointSet() % metadataPointerAlignment));
+    static_assert(Metadata::offsetOfOperand() == Metadata::offsetOfWatchpointSet() + sizeof(void*));
     auto metadataAddress = computeBaseAddressForMetadata<metadataPointerAlignment>(bytecode, metadataGPR);
     auto getPutInfoAddress = metadataAddress.withOffset(Metadata::offsetOfGetPutInfo());
     auto structureIDAddress = metadataAddress.withOffset(Metadata::offsetOfStructureID());
@@ -1570,7 +1571,7 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT2);
             emitVarReadOnlyCheck(resolveType, regT2);
 
-            loadPtr(operandAddress, regT2);
+            loadPairPtr(watchpointSetAddress, regT3, regT2);
 
             if (!isInitialization(bytecode.m_getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                 // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
@@ -1578,7 +1579,6 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
                 addSlowCase(branchIfEmpty(regT0));
             }
 
-            loadPtr(watchpointSetAddress, regT3);
             emitNotifyWriteWatchpoint(regT3);
 
             emitGetVirtualRegister(value, regT0);
@@ -1593,8 +1593,7 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             static_assert(noOverlap(regT0, regT2, regT3));
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT3);
 
-            loadPtr(watchpointSetAddress, regT3);
-            loadPtr(operandAddress, regT2);
+            loadPairPtr(watchpointSetAddress, regT3, regT2);
             emitNotifyWriteWatchpoint(regT3);
             emitGetVirtualRegister(value, regT0);
             emitGetVirtualRegister(scope, regT3);
