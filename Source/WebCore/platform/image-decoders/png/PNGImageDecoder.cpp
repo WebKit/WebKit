@@ -252,11 +252,12 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 
 ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
 
-    if (index >= frameCount())
-        index = frameCount() - 1;
+    if (index >= decodeIfNeededAndGetFrameCount())
+        index = decodeIfNeededAndGetFrameCount() - 1;
 
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
@@ -265,6 +266,12 @@ ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     if (!frame.isComplete())
         decode(false, index, isAllDataReceived());
     return &frame;
+}
+
+ScalableImageDecoderFrame* PNGImageDecoder::firstFrameBuffer()
+{
+    Locker locker { m_lock };
+    return frameBufferAtIndex(0);
 }
 
 void PNGImageDecoder::clear()
@@ -430,11 +437,12 @@ void PNGImageDecoder::headerAvailable()
 
 void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return;
 
     // Initialize the framebuffer if needed.
-    if (m_currentFrame >= frameCount())
+    if (m_currentFrame >= decodeIfNeededAndGetFrameCount())
         return;
     auto& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.isInvalid()) {
@@ -543,6 +551,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
 void PNGImageDecoder::pngComplete()
 {
+    assertIsHeld(m_lock);
     if (m_isAnimated) {
         if (!processingFinish() && m_frameCount == m_currentFrame)
             return;
@@ -575,6 +584,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
 
 void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 {
+    assertIsHeld(m_lock);
     if (chunk->size == 8 && spanHasPrefix(byteCast<char>(std::span { chunk->name }), "acTL"_span)) {
         if (m_hasInfo || m_isAnimated)
             return;
@@ -728,8 +738,9 @@ void PNGImageDecoder::init()
     m_sequenceNumber = 0;
 }
 
-void PNGImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
+void PNGImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return;
 
@@ -753,7 +764,8 @@ void PNGImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 
 void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
 {
-    if (frameIndex >= frameCount())
+    assertIsHeld(m_lock);
+    if (frameIndex >= decodeIfNeededAndGetFrameCount())
         return;
 
     auto& buffer = m_frameBufferCache[frameIndex];
@@ -813,7 +825,8 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
 
 void PNGImageDecoder::frameComplete()
 {
-    if (m_frameIsHidden || m_currentFrame >= frameCount())
+    assertIsHeld(m_lock);
+    if (m_frameIsHidden || m_currentFrame >= decodeIfNeededAndGetFrameCount())
         return;
 
     auto& buffer = m_frameBufferCache[m_currentFrame];

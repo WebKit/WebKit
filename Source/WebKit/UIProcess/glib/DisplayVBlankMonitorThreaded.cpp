@@ -55,6 +55,7 @@ bool DisplayVBlankMonitorThreaded::startThreadIfNeeded()
             {
                 Locker locker { m_lock };
                 m_condition.wait(m_lock, [this]() -> bool {
+                    assertIsHeld(m_lock);
                     return m_state != State::Stop;
                 });
                 if (m_state == State::Invalid || m_state == State::Failed)
@@ -107,6 +108,7 @@ void DisplayVBlankMonitorThreaded::stop()
 void DisplayVBlankMonitorThreaded::invalidate()
 {
     if (!m_thread) {
+        Locker locker { m_lock };
         m_state = State::Invalid;
         return;
     }

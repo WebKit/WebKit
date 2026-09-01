@@ -568,6 +568,7 @@ JPEGImageDecoder::~JPEGImageDecoder()
 
 ScalableImageDecoderFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     if (index)
         return 0;
 
@@ -653,6 +654,7 @@ bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
 
 bool JPEGImageDecoder::outputScanlines()
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return false;
 
@@ -703,6 +705,7 @@ bool JPEGImageDecoder::outputScanlines()
 
 void JPEGImageDecoder::jpegComplete()
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return;
 
@@ -715,6 +718,7 @@ void JPEGImageDecoder::jpegComplete()
 
 void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 

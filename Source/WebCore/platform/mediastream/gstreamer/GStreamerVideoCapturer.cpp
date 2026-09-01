@@ -108,7 +108,7 @@ void GStreamerVideoCapturer::tearDown(bool disconnectSignals)
         m_videoSrcMIMETypeFilter = nullptr;
 }
 
-void GStreamerVideoCapturer::setupPipeline()
+void GStreamerVideoCapturer::setupPipeline() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     GStreamerCapturer::setupPipeline();
     auto pad = adoptGRef(gst_element_get_static_pad(m_sink.get(), "sink"));

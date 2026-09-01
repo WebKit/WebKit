@@ -114,7 +114,7 @@ Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, Opti
 
 void BitmapTexturePool::scheduleReleaseUnusedTextures()
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_releaseUnusedTexturesTimer.isActive())
         return;
 
@@ -126,6 +126,7 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
     Locker locker { m_lock };
 
     auto hasTextures = [this] -> bool {
+        assertIsHeld(m_lock);
         if (!m_textures.isEmpty())
             return true;
 #if USE(GBM)
@@ -139,11 +140,13 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
         return;
 
     auto releaseTexturesIfNeeded = [&] {
+        assertIsHeld(m_lock);
         if (!m_textures.isEmpty()) {
             // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
             MonotonicTime minUsedTime = MonotonicTime::now() - m_releaseUnusedSecondsTolerance;
 
             auto matchCount = m_textures.removeAllMatching([this, &minUsedTime](const Entry& entry) {
+                assertIsHeld(m_lock);
                 if (entry.canBeReleased(minUsedTime)) {
                     m_poolSizeInBytes -= entry.texture->sizeInBytes();
                     return true;
@@ -179,7 +182,7 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 
 void BitmapTexturePool::enterLimitExceededModeIfNeeded()
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (m_onLimitExceededMode)
         return;
 
@@ -197,7 +200,7 @@ void BitmapTexturePool::enterLimitExceededModeIfNeeded()
 
 void BitmapTexturePool::exitLimitExceededModeIfNeeded()
 {
-    ASSERT(m_lock.isHeld());
+    assertIsHeld(m_lock);
     if (!m_onLimitExceededMode)
         return;
 

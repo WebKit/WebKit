@@ -50,6 +50,7 @@ RepetitionCount AVIFImageDecoder::repetitionCount() const
 
 size_t AVIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
 {
+    assertIsHeld(m_lock);
     // The first frame doesn't depend on any other.
     if (!frameIndex)
         return 0;
@@ -66,7 +67,8 @@ size_t AVIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
 
 ScalableImageDecoderFrame* AVIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    const size_t imageCount = frameCount();
+    assertIsHeld(m_lock);
+    const size_t imageCount = decodeIfNeededAndGetFrameCount();
     if (index >= imageCount)
         return nullptr;
 
@@ -93,6 +95,7 @@ bool AVIFImageDecoder::setFailed()
 
 bool AVIFImageDecoder::isComplete()
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return false;
 
@@ -118,6 +121,7 @@ void AVIFImageDecoder::tryDecodeSize(bool allDataReceived)
 
 void AVIFImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 {
+    assertIsHeld(m_lock);
     if (failed())
         return;
 

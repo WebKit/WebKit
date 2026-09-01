@@ -81,8 +81,9 @@ void JPEGXLImageDecoder::clear()
 #endif
 }
 
-size_t JPEGXLImageDecoder::frameCount() const
+size_t JPEGXLImageDecoder::decodeIfNeededAndGetFrameCount() const
 {
+    assertIsHeld(m_lock);
     if (!hasAnimation())
         return 1;
 
@@ -106,11 +107,12 @@ RepetitionCount JPEGXLImageDecoder::repetitionCount() const
 
 ScalableImageDecoderFrame* JPEGXLImageDecoder::frameBufferAtIndex(size_t index)
 {
+    assertIsHeld(m_lock);
     if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
 
-    if (index >= frameCount())
-        index = frameCount() - 1;
+    if (index >= decodeIfNeededAndGetFrameCount())
+        index = decodeIfNeededAndGetFrameCount() - 1;
 
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
@@ -121,8 +123,9 @@ ScalableImageDecoderFrame* JPEGXLImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
-void JPEGXLImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
+void JPEGXLImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 {
+    assertIsHeld(m_lock);
     if (m_frameBufferCache.isEmpty())
         return;
 
@@ -227,6 +230,7 @@ void JPEGXLImageDecoder::updateFrameCount()
     if (failed())
         return;
 
+    assertIsHeld(m_lock);
     decode(Query::FrameCount, 0, isAllDataReceived());
 
     if (m_frameCount != m_frameBufferCache.size())
@@ -279,6 +283,7 @@ void JPEGXLImageDecoder::decode(Query query, size_t frameIndex, bool allDataRece
 
 JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
 {
+    assertIsHeld(m_lock);
     while (true) {
         auto status = JxlDecoderProcessInput(m_decoder.get());
 
@@ -384,6 +389,7 @@ void JPEGXLImageDecoder::imageOutCallback(void* that, size_t x, size_t y, size_t
 
 void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels)
 {
+    assertIsHeld(m_lock);
     if (m_currentFrame >= m_frameBufferCache.size())
         return;
 

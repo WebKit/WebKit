@@ -92,8 +92,11 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
     if (!SourceBufferPrivateGStreamer::isContentTypeSupported(contentType))
         return MediaSourcePrivateGStreamer::AddStatus::NotSupported;
 
-    m_sourceBuffers.append(SourceBufferPrivateGStreamer::create(*this, contentType));
-    sourceBufferPrivate = m_sourceBuffers.last();
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(SourceBufferPrivateGStreamer::create(*this, contentType));
+        sourceBufferPrivate = m_sourceBuffers.last();
+    }
     sourceBufferPrivate->setMediaSourceDuration(duration());
     return MediaSourcePrivateGStreamer::AddStatus::Ok;
 }
@@ -177,10 +180,13 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
         return;
     }
 
-    for (auto& sourceBuffer : m_sourceBuffers) {
-        if (!sourceBuffer->hasReceivedFirstInitializationSegment()) {
-            GST_DEBUG_OBJECT(player->pipeline(), "There are still SourceBuffers without an initialization segment, not starting source yet.");
-            return;
+    {
+        Locker locker { m_lock };
+        for (auto& sourceBuffer : m_sourceBuffers) {
+            if (!sourceBuffer->hasReceivedFirstInitializationSegment()) {
+                GST_DEBUG_OBJECT(player->pipeline(), "There are still SourceBuffers without an initialization segment, not starting source yet.");
+                return;
+            }
         }
     }
 
@@ -188,10 +194,13 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
     m_hasAllTracks = true;
 
     Vector<RefPtr<MediaSourceTrackGStreamer>> tracks;
-    for (auto& privateSourceBuffer : m_sourceBuffers) {
-        auto sourceBuffer = downcast<SourceBufferPrivateGStreamer>(privateSourceBuffer);
-        for (auto& [_, track] : sourceBuffer->tracks())
-            tracks.append(track);
+    {
+        Locker locker { m_lock };
+        for (auto& privateSourceBuffer : m_sourceBuffers) {
+            auto sourceBuffer = downcast<SourceBufferPrivateGStreamer>(privateSourceBuffer);
+            for (auto& [_, track] : sourceBuffer->tracks())
+                tracks.append(track);
+        }
     }
     player->startSource(tracks);
 }
@@ -227,6 +236,7 @@ MediaSourcePrivateGStreamer::RegisteredTrack MediaSourcePrivateGStreamer::regist
 
 void MediaSourcePrivateGStreamer::willSeek()
 {
+    assertIsCurrent(m_dispatcher.get());
     for (auto* sourceBuffer : m_activeSourceBuffers)
         downcast<SourceBufferPrivateGStreamer>(sourceBuffer)->willSeek();
 }

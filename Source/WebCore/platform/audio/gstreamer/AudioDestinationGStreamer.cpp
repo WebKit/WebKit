@@ -330,8 +330,12 @@ void AudioDestinationGStreamer::notifyIsPlaying(bool isPlaying)
 
     GST_DEBUG("Is playing: %s", boolForPrinting(isPlaying));
     m_isPlaying = isPlaying;
-    if (m_callback)
-        m_callback->isPlayingDidChange();
+
+    {
+        Locker locker { m_callbackLock };
+        if (m_callback)
+            m_callback->isPlayingDidChange();
+    }
 }
 
 #undef GST_CAT_DEFAULT
