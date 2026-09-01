@@ -84,7 +84,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
 
     bool traceStack = false;
     JSValue optionsValue = callFrame->argument(2);
-    if (!optionsValue.isUndefined()) {
+    if (!optionsValue.isUndefinedOrNull()) {
+        if (!optionsValue.isObject())
+            return throwVMTypeError(globalObject, scope, "WebAssembly.Exception expects its third argument to be an object"_s);
         JSValue traceStackValue = optionsValue.get(globalObject, Identifier::fromString(vm, "traceStack"_s));
         RETURN_IF_EXCEPTION(scope, { });
         traceStack = traceStackValue.toBoolean(globalObject);
