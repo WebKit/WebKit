@@ -7520,6 +7520,7 @@
 		FE0D84E910484348001A179E /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0D84E810484348001A179E /* WebEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112303 /* FlexFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112403 /* FlexFormattingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1A2B3C4D5E6F0011112411 /* FlexLineBreaker.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112410 /* FlexLineBreaker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112503 /* FlexLayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112502 /* FlexLayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112505 /* FlexIntegrationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112504 /* FlexIntegrationUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1A2B3C4D5E6F0011112508 /* FlexItemContentCache.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1A2B3C4D5E6F0011112507 /* FlexItemContentCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -24067,6 +24068,8 @@
 		FE1A2B3C4D5E6F0011112302 /* FlexFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingContext.h; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112401 /* FlexFormattingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexFormattingUtils.cpp; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexFormattingUtils.h; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112410 /* FlexLineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexLineBreaker.h; sourceTree = "<group>"; };
+		FE1A2B3C4D5E6F0011112412 /* FlexLineBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexLineBreaker.cpp; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112502 /* FlexLayoutState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexLayoutState.h; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112504 /* FlexIntegrationUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexIntegrationUtils.h; sourceTree = "<group>"; };
 		FE1A2B3C4D5E6F0011112506 /* FlexIntegrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlexIntegrationUtils.cpp; sourceTree = "<group>"; };
@@ -31821,6 +31824,8 @@
 				FE1A2B3C4D5E6F0011112401 /* FlexFormattingUtils.cpp */,
 				FE1A2B3C4D5E6F0011112402 /* FlexFormattingUtils.h */,
 				FE1A2B3C4D5E6F0011112502 /* FlexLayoutState.h */,
+				FE1A2B3C4D5E6F0011112412 /* FlexLineBreaker.cpp */,
+				FE1A2B3C4D5E6F0011112410 /* FlexLineBreaker.h */,
 			);
 			path = flex;
 			sourceTree = "<group>";
@@ -45775,6 +45780,7 @@
 				FE1A2B3C4D5E6F0011112505 /* FlexIntegrationUtils.h in Headers */,
 				FE1A2B3C4D5E6F0011112508 /* FlexItemContentCache.h in Headers */,
 				FE1A2B3C4D5E6F0011112503 /* FlexLayoutState.h in Headers */,
+				FE1A2B3C4D5E6F0011112411 /* FlexLineBreaker.h in Headers */,
 				6FFDC442212EFF1700A9CA91 /* FloatAvoider.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				115CFA86208B9066001E6991 /* FloatingContext.h in Headers */,

@@ -1780,6 +1780,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/flex/FlexFormattingContext.h
     layout/formattingContexts/flex/FlexFormattingUtils.h
     layout/formattingContexts/flex/FlexLayoutState.h
+    layout/formattingContexts/flex/FlexLineBreaker.h
 
     layout/formattingContexts/grid/AxisConstraint.h
     layout/formattingContexts/grid/GridAreaLines.h

@@ -29,6 +29,7 @@
 #include "FlexFormattingUtils.h"
 #include "FlexIntegrationUtils.h"
 #include "FlexLayoutState.h"
+#include "FlexLineBreaker.h"
 #include "InspectorInstrumentation.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
@@ -155,24 +156,36 @@ FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(const F
     // fit in the inner main size. The first uncollected item is always collected, even if it does not fit.
     auto mainAxisAvailableSpace = m_constraints.mainAxisAvailableSpace;
     auto gapBetweenItems = flexFormattingUtils().computeGap(FlexFormattingUtils::GapType::BetweenItems);
+
+    Vector<LayoutUnit> itemMainAxisSizes(flexItems.size(), [&](size_t index) {
+        return flexItems[index].hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[index].hypotheticalMainSize);
+    });
+
+    // One past the last item of each line, so the last entry is flexItems.size().
+    auto lineBreaks = [&] -> Vector<size_t> {
+        if (flexItems.isEmpty())
+            return { };
+        if (!m_constraints.isMultiline)
+            return { flexItems.size() };
+        if (m_constraints.isBalance)
+            return balancedLineBreaks(itemMainAxisSizes.span(), mainAxisAvailableSpace, gapBetweenItems);
+        return greedyLineBreaks(itemMainAxisSizes.span(), mainAxisAvailableSpace, gapBetweenItems);
+    }();
+
     FlexLines flexLines;
-    size_t nextIndex = 0;
-    while (nextIndex < flexItems.size()) {
-        auto lineStartIndex = nextIndex;
+    size_t lineStartIndex = 0;
+    for (auto lineEndIndex : lineBreaks) {
         LayoutUnit sumHypotheticalMainSize;
-        for (; nextIndex < flexItems.size(); ++nextIndex) {
-            const auto& flexLayoutItem = flexItems[nextIndex];
-            if (m_constraints.isMultiline && sumHypotheticalMainSize + flexLayoutItem.hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize) > mainAxisAvailableSpace && nextIndex > lineStartIndex)
-                break;
-            sumHypotheticalMainSize += flexLayoutItem.hypotheticalMainAxisMarginBoxSize(flexBaseAndHypotheticalMainSizeList[nextIndex].hypotheticalMainSize) + gapBetweenItems;
-        }
+        for (size_t index = lineStartIndex; index < lineEndIndex; ++index)
+            sumHypotheticalMainSize += itemMainAxisSizes[index] + gapBetweenItems;
 
         // We added a gap after every item but there shouldn't be one after the last item, so subtract it here. Note
         // that the sum might be negative here due to negative margins in flex items.
         sumHypotheticalMainSize -= gapBetweenItems;
 
-        flexLines.ranges.append({ lineStartIndex, nextIndex });
+        flexLines.ranges.append({ lineStartIndex, lineEndIndex });
         flexLines.hypotheticalMainSizes.append(sumHypotheticalMainSize);
+        lineStartIndex = lineEndIndex;
     }
 
     for (auto lineRange : flexLines.ranges)

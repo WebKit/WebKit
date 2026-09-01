@@ -1,12 +1,6 @@
 
 PASS #flex > div 1
-FAIL #flex > div 2 assert_equals:
-<div data-expected-width="10" style="width: 0px; max-width: 10px; margin-left: -50px; margin-right: -50px;"></div>
-width expected 10 but got 5
-FAIL #flex > div 3 assert_equals:
-<div data-expected-width="120" style="width: 0px;"></div>
-width expected 120 but got 5
-FAIL #flex > div 4 assert_equals:
-<div data-expected-width="50" style="max-width: 50px;"></div>
-width expected 50 but got 5
+PASS #flex > div 2
+PASS #flex > div 3
+PASS #flex > div 4
 
