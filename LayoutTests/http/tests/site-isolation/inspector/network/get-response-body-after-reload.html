@@ -1,0 +1,140 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<link rel="stylesheet" href="resources/reload-memory-cached.css">
+<script src="resources/reload-memory-cached.js"></script>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    // Reloads the main frame with the inspector already open, then fetches the content of each
+    // same-origin subresource through WI.Resource.requestContent().
+    //
+    // Only a reload shows the defect: requestContentFromBackend switches from
+    // Page.getResourceContent to Network.getResponseBody once a resource has a requestIdentifier,
+    // and on the initial load the inspector attaches too late for the subresources to have one.
+    //
+    // The subresources come from the memory cache, which is the case under test, so responseSource
+    // is asserted and not only logged. The main resource is a control: a reload refetches it over
+    // the network, so it passes either way.
+    //
+    // For the same defect without a reload, see
+    // cross-origin-iframe-get-response-body-memory-cache.html.
+
+    const cssURLPart = "reload-memory-cached.css";
+    const jsURLPart = "reload-memory-cached.js";
+
+    function findResource(urlSubstring) {
+        for (let resource of WI.networkManager.mainFrame.resourceCollection) {
+            if (resource.url && resource.url.includes(urlSubstring))
+                return resource;
+        }
+        return null;
+    }
+
+    // Network events arrive on the backend target's connection while Page load events arrive on the
+    // page target's, so "test page did load" does not mean the subresources are in the frame model.
+    function waitForResource(urlSubstring) {
+        let existing = findResource(urlSubstring);
+        if (existing)
+            return Promise.resolve(existing);
+
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function settle(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    function describe(label, resource) {
+        // statusCode is deliberately not logged. Whether these loads revalidate against the disk
+        // cache depends on what earlier runs left there, so the status is 200 on a cold machine and
+        // 304 on a warm one, which is not what this test is about.
+        //
+        // responseSource is a Symbol (WI.Resource.ResponseSource), so it needs String().
+        InspectorTest.log(`${label}: responseSource=${String(resource.responseSource)}, cached=${resource.cached}, hasRequestIdentifier=${!!resource.requestIdentifier}`);
+    }
+
+    async function expectContent(label, resource, expectedSubstring) {
+        let {content, error} = await resource.requestContent();
+        if (error)
+            InspectorTest.log(`${label}: requestContent() failed with: ${error}`);
+        InspectorTest.expectThat(!error, `${label}: requestContent() should succeed.`);
+        InspectorTest.expectThat(!!content, `${label}: requestContent() should return non-empty content.`);
+        if (content)
+            InspectorTest.expectThat(content.includes(expectedSubstring), `${label}: content should contain "${expectedSubstring}".`);
+    }
+
+    let cssResource;
+    let jsResource;
+    let mainResource;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.GetResponseBodyAfterReload");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.GetResponseBodyAfterReload.Reload",
+        description: "Reload the main frame with the inspector open and locate its subresources.",
+        async test() {
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            cssResource = await waitForResource(cssURLPart);
+            jsResource = await waitForResource(jsURLPart);
+            mainResource = WI.networkManager.mainFrame.mainResource;
+
+            InspectorTest.expectThat(!!cssResource, "Stylesheet should be present in the main frame after the reload.");
+            InspectorTest.expectThat(!!jsResource, "Script should be present in the main frame after the reload.");
+            InspectorTest.expectThat(!!mainResource, "Main resource should be present after the reload.");
+
+            await settle(cssResource);
+            await settle(jsResource);
+            await settle(mainResource);
+
+            describe("Main resource", mainResource);
+            describe("Stylesheet", cssResource);
+            describe("Script", jsResource);
+
+            InspectorTest.expectEqual(cssResource.responseSource, WI.Resource.ResponseSource.MemoryCache, "Stylesheet should be served from the memory cache.");
+            InspectorTest.expectEqual(jsResource.responseSource, WI.Resource.ResponseSource.MemoryCache, "Script should be served from the memory cache.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.GetResponseBodyAfterReload.MainResource",
+        description: "The main resource is refetched by a reload, so its body should be available (control case).",
+        async test() {
+            await expectContent("Main resource", mainResource, "reload-memory-cached.css");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.GetResponseBodyAfterReload.StyleSheet",
+        description: "A memory-cached stylesheet's body should be available after a reload.",
+        async test() {
+            await expectContent("Stylesheet", cssResource, "background-color");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.GetResponseBodyAfterReload.Script",
+        description: "A memory-cached script's body should be available after a reload.",
+        async test() {
+            await expectContent("Script", jsResource, "reloadMemoryCachedScriptRan");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody returns the body of the main frame's same-origin subresources after reloading with the inspector open under Site Isolation, including subresources served from the memory cache.</p>
+</body>

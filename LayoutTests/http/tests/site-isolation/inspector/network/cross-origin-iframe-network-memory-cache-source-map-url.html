@@ -5,12 +5,17 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameMemoryCacheSourceMapURL");
 
-    // Spy on downloadSourceMap to capture the sourceMapURL that
-    // Network.requestServedFromMemoryCache forwards (via the CachedResource object),
-    // without performing the (flaky, network-dependent) source map download.
-    let capturedSourceMapURL;
-    WI.networkManager.downloadSourceMap = function(sourceMapURL) {
-        capturedSourceMapURL = sourceMapURL;
+    // Spy on downloadSourceMap to capture the sourceMapURL the backend forwarded, without
+    // performing the (flaky, network-dependent) source map download. Keyed by the resource it was
+    // forwarded for, because each case loads one URL twice and a single shared variable could not
+    // tell the cold load's value from the cached load's.
+    //
+    // The event that carries it is Network.loadingFinished, not
+    // Network.requestServedFromMemoryCache: that one only fires for a cache hit taken while style is
+    // being resolved, which is not how a <link> is loaded.
+    let sourceMapURLByResource = new Map;
+    WI.networkManager.downloadSourceMap = function(sourceMapURL, baseURL, originalSourceCode) {
+        sourceMapURLByResource.set(originalSourceCode, sourceMapURL);
     };
 
     // Add a <link> for `href` in the given frame and resolve with the resulting resource once it
@@ -44,7 +49,7 @@ function test() {
 
     suite.addTestCase({
         name: "SiteIsolation.Network.CrossOriginIFrame.MemoryCacheSourceMapURLFromHeader",
-        description: "requestServedFromMemoryCache for a cross-origin iframe stylesheet should carry the SourceMap header value.",
+        description: "A cross-origin iframe stylesheet served from the memory cache should carry the SourceMap header value.",
         async test() {
             let href = "stylesheet-with-source-map-header-cacheable.py";
 
@@ -57,12 +62,32 @@ function test() {
 
             // Loading the same URL in frame B is served from the shared memory cache.
             let frameB = await frameTargetContaining("iframe-with-stylesheet.html?b");
-            capturedSourceMapURL = undefined;
             let cached = await loadStylesheetAndAwaitResource(frameB, href);
 
             InspectorTest.expectEqual(cached.type, WI.Resource.Type.StyleSheet, "Resource should be a stylesheet.");
             InspectorTest.expectEqual(cached.responseSource, WI.Resource.ResponseSource.MemoryCache, "Resource should be served from the memory cache.");
-            InspectorTest.expectEqual(capturedSourceMapURL, "stylesheet-header.css.map", "requestServedFromMemoryCache should carry the SourceMap header value.");
+            InspectorTest.expectEqual(sourceMapURLByResource.get(cached), "stylesheet-header.css.map", "Network.loadingFinished should carry the SourceMap header value.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.MemoryCacheSourceMapURLFromInlineComment",
+        description: "A cross-origin iframe stylesheet served from the memory cache should carry the inline sourceMappingURL comment value.",
+        async test() {
+            // A SourceMap header is captured from the response, so it survives a load that delivers
+            // no body. This value is not: it is read out of the stylesheet text, so it only reaches
+            // the frontend if the body of a memory-cache hit was recovered from the cache.
+            let href = "stylesheet-with-inline-source-map.css";
+
+            let frameA = await frameTargetContaining("iframe-with-stylesheet.html?a");
+            await loadStylesheetAndAwaitResource(frameA, href);
+            InspectorTest.log("Cold load in frame A finished; loading the same URL in frame B.");
+
+            let frameB = await frameTargetContaining("iframe-with-stylesheet.html?b");
+            let cached = await loadStylesheetAndAwaitResource(frameB, href);
+
+            InspectorTest.expectEqual(cached.responseSource, WI.Resource.ResponseSource.MemoryCache, "Resource should be served from the memory cache.");
+            InspectorTest.expectEqual(sourceMapURLByResource.get(cached), "stylesheet-inline.css.map", "Network.loadingFinished should carry the inline sourceMappingURL comment value.");
         }
     });
 
@@ -71,7 +96,7 @@ function test() {
 </script>
 
 <body onload="runTest()">
-<p>Test that Network.requestServedFromMemoryCache forwards the sourceMapURL for a cross-origin iframe stylesheet served from the in-memory cache under Site Isolation.</p>
+<p>Test that the Network domain forwards the sourceMapURL for a cross-origin iframe stylesheet served from the in-memory cache under Site Isolation.</p>
 <iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?a"></iframe>
 <iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?b"></iframe>
 </body>

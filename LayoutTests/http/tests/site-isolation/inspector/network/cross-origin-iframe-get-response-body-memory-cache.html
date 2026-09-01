@@ -1,0 +1,100 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    // Checks that Network.getResponseBody returns a body for a stylesheet the memory cache served to
+    // a cross-origin frame, which under Site Isolation means it was stored by that frame's own
+    // WebContent process.
+    //
+    // Frames A and B are the same origin, so under Site Isolation they share one WebContent process
+    // and its memory cache. The stylesheet is cold-loaded in A, whose <link> stays alive so the
+    // resource stays cached, and then the same URL is loaded in B. B's load is the cache hit. It has
+    // to be a second *document* rather than a second <link> in one document, because
+    // loadedResourceFromMemoryCache early-returns on haveToldClientAboutLoad, which is per
+    // DocumentLoader, so an intra-document duplicate is never reported to the inspector at all.
+    //
+    // No reload is involved. The main frame equivalent, which needs one so that its subresources
+    // acquire a requestIdentifier, is get-response-body-after-reload.html.
+
+    // A per-run query string keeps A's load off the disk cache. That cache outlives a single test --
+    // nothing clears it between tests, and testRunner.clearMemoryCache() only reaches the memory
+    // cache -- so on a repeated run a fixed URL is served to A from disk, and A is no longer the
+    // cold load this test needs it to be.
+    const frameCSSHref = `memory-cache-frame-stylesheet.css?${Math.random()}`;
+
+    async function settle(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    async function frameTargetContaining(substring) {
+        let target = await frameTargetForURLContaining(substring);
+        InspectorTest.assert(target instanceof WI.FrameTarget, `Frame target for "${substring}" should exist.`);
+        await waitForExpressionInTarget(target, "typeof loadStylesheet === 'function'");
+        return target;
+    }
+
+    // Both frames load the same URL, so already-seen resources are skipped to be sure the second
+    // call resolves with the second frame's resource and not the first frame's.
+    let seenStylesheets = new Set;
+
+    async function loadStylesheetAndAwaitResource(frameTarget, href) {
+        let added = new Promise((resolve) => {
+            function handler(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(href) || seenStylesheets.has(resource))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, handler);
+                seenStylesheets.add(resource);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, handler);
+        });
+
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `loadStylesheet(${JSON.stringify(href)})`, objectGroup: "test"});
+        let resource = await added;
+        await settle(resource);
+        return resource;
+    }
+
+    function describe(label, resource) {
+        // responseSource is a Symbol (WI.Resource.ResponseSource), so it needs String().
+        InspectorTest.log(`${label}: statusCode=${resource.statusCode}, responseSource=${String(resource.responseSource)}, cached=${resource.cached}, hasRequestIdentifier=${!!resource.requestIdentifier}`);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBodyMemoryCache");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBodyMemoryCache",
+        description: "A stylesheet served from a cross-origin frame process's memory cache should have a retrievable body.",
+        async test() {
+            let frameA = await frameTargetContaining("iframe-with-stylesheet.html?a");
+            let coldResource = await loadStylesheetAndAwaitResource(frameA, frameCSSHref);
+            describe("Frame A stylesheet (cold)", coldResource);
+            InspectorTest.expectEqual(coldResource.responseSource, WI.Resource.ResponseSource.Network, "Frame A's load should come from the network.");
+
+            let frameB = await frameTargetContaining("iframe-with-stylesheet.html?b");
+            let cachedResource = await loadStylesheetAndAwaitResource(frameB, frameCSSHref);
+            describe("Frame B stylesheet (cached)", cachedResource);
+            InspectorTest.expectEqual(cachedResource.responseSource, WI.Resource.ResponseSource.MemoryCache, "Frame B's load should come from the memory cache.");
+
+            let {content, error} = await cachedResource.requestContent();
+            if (error)
+                InspectorTest.log(`Frame B stylesheet: requestContent() failed with: ${error}`);
+            InspectorTest.expectThat(!error, "requestContent() should succeed for the memory-cached stylesheet.");
+            InspectorTest.expectThat(!!content, "requestContent() should return non-empty content.");
+            if (content)
+                InspectorTest.expectThat(content.includes("rgb(20, 60, 120)"), "Content should be the stylesheet that was served.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody returns the body of a stylesheet served from a cross-origin frame process's memory cache under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?a"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?b"></iframe>
+</body>
