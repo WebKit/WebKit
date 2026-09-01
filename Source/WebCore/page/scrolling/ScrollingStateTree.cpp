@@ -52,13 +52,12 @@ static bool nodeTypeAndParentMatch(ScrollingStateNode& node, ScrollingNodeType n
     return node.nodeType() == nodeType && node.parent() == parentNode;
 }
 
-static void nodeWasReattachedRecursive(ScrollingStateNode& node)
+static void setAllPropertiesChangedRecursive(ScrollingStateNode& node)
 {
-    // When a node is re-attached, the ScrollingTree is recreating the ScrollingNode from scratch, so we need to set all the dirty bits.
-    node.setPropertyChangesAfterReattach();
+    node.setAllApplicablePropertiesChanged();
 
     for (auto& child : node.children())
-        nodeWasReattachedRecursive(child);
+        setAllPropertiesChangedRecursive(child);
 }
 
 ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
@@ -241,7 +240,8 @@ std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType 
         if (auto unparentedNode = m_unparentedNodes.take(newNodeID)) {
             LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode reattaching node " << newNodeID);
             newNode = unparentedNode.get();
-            nodeWasReattachedRecursive(*unparentedNode);
+            // The ScrollingTree recreates the ScrollingNode for a reattached node from scratch, so all the dirty bits have to be set.
+            setAllPropertiesChangedRecursive(*unparentedNode);
 
             if (childIndex == notFound)
                 parent->appendChild(unparentedNode.releaseNonNull());
@@ -332,6 +332,17 @@ void ScrollingStateTree::clear()
 
     m_stateNodeMap.clear();
     m_unparentedNodes.clear();
+}
+
+void ScrollingStateTree::setAllPropertiesChanged()
+{
+    if (RefPtr rootStateNode = m_rootStateNode)
+        setAllPropertiesChangedRecursive(*rootStateNode);
+
+    // Unparented nodes can be reattached by a later insertNode(), and that path only marks the
+    // nodes it actually moves, so mark them here too.
+    for (auto& node : m_unparentedNodes.values())
+        setAllPropertiesChangedRecursive(node);
 }
 
 std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)

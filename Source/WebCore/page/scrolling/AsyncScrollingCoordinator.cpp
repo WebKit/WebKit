@@ -162,6 +162,16 @@ void AsyncScrollingCoordinator::rootFrameWasRemoved(FrameIdentifier rootFrameID)
     m_scrollingStateTrees.remove(rootFrameID);
 }
 
+void AsyncScrollingCoordinator::setAllScrollingStatePropertiesChangedForRootFrameID(FrameIdentifier rootFrameID)
+{
+    auto* stateTree = m_scrollingStateTrees.get(rootFrameID);
+    if (!stateTree)
+        return;
+
+    stateTree->get().setAllPropertiesChanged();
+    scrollingStateTreePropertiesChanged();
+}
+
 ScrollingStateTree* AsyncScrollingCoordinator::stateTreeForNodeID(std::optional<ScrollingNodeID> nodeID) const
 {
     return WTF::switchOn(m_scrollingStateTrees.rawStorage(), [] (const std::monostate&) -> ScrollingStateTree* {

@@ -36,6 +36,7 @@ messages -> RemoteScrollingCoordinator {
     StopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitorDeferReason> reason);
     ScrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID nodeID, enum:uint8_t WebCore::ScrollbarOrientation orientation, bool isVisible);
     ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, enum:uint8_t WebCore::ScrollbarOrientation orientation, int minimumThumbLength);
+    RequestFullScrollingTreeCommit(WebCore::FrameIdentifier rootFrameID);
 }
 
 #endif // ENABLE(ASYNC_SCROLLING)

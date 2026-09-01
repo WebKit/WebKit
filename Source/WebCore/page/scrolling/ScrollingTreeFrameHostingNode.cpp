@@ -75,8 +75,18 @@ void ScrollingTreeFrameHostingNode::setLayerHostingContextIdentifier(std::option
 void ScrollingTreeFrameHostingNode::removeHostedChildren()
 {
     auto hostedChildren = std::exchange(m_hostedChildren, { });
-    for (auto& children : hostedChildren)
-        scrollingTree()->removeNode(children->scrollingNodeID());
+    if (hostedChildren.isEmpty())
+        return;
+
+    // Every node of the hosted subtree is registered as a hosted child, and they all come from the
+    // same commit, so any of them identifies the frame whose state tree we are discarding.
+    auto hostedFrameID = (*hostedChildren.begin())->frameIdentifier();
+
+    RefPtr scrollingTree = this->scrollingTree();
+    for (auto& child : hostedChildren)
+        scrollingTree->removeNode(child->scrollingNodeID());
+
+    scrollingTree->hostedSubtreeNeedsFullCommit(hostedFrameID);
 }
 
 void ScrollingTreeFrameHostingNode::willBeDestroyed()

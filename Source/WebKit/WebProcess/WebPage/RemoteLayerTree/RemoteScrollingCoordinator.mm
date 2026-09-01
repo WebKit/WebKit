@@ -340,6 +340,13 @@ void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarMinimumThumbLengthDid
         scrollableArea->scrollbarsController().setScrollbarMinimumThumbLength(orientation, minimumThumbLength);
 }
 
+void RemoteScrollingCoordinator::requestFullScrollingTreeCommit(FrameIdentifier rootFrameID)
+{
+    // The UI process dropped the subtree we contributed to its scrolling tree, so the properties we
+    // would send in an ordinary incremental commit are no longer enough to rebuild it.
+    setAllScrollingStatePropertiesChangedForRootFrameID(rootFrameID);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

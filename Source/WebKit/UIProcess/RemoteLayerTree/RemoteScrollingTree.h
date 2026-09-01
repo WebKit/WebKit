@@ -88,6 +88,8 @@ public:
     void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
 
     void stickyScrollingTreeNodeBeganSticking(WebCore::ScrollingNodeID) final;
+
+    void hostedSubtreeNeedsFullCommit(WebCore::FrameIdentifier) final;
 #if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
     void stickyScrollingTreeNodeEndedSticking(WebCore::ScrollingNodeID) final;
     void scrollingTreeNodeWillBeRemoved(WebCore::ScrollingNodeID) final;

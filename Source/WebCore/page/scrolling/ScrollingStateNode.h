@@ -268,7 +268,7 @@ public:
     void resetChangedProperties() { m_changedProperties = { }; }
     void setPropertyChanged(Property);
 
-    void setPropertyChangesAfterReattach();
+    void setAllApplicablePropertiesChanged();
 
     OptionSet<Property> changedProperties() const { return m_changedProperties; }
     void setChangedProperties(OptionSet<Property> changedProperties) { m_changedProperties = changedProperties; }

@@ -92,6 +92,10 @@ public:
     ScrollingStateTree* stateTreeForNodeID(std::optional<ScrollingNodeID>) const;
     std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
 
+    // Makes the next commit for this root frame self-contained instead of incremental. Called when
+    // the scrolling tree we commit to has discarded the state we previously sent it.
+    WEBCORE_EXPORT void setAllScrollingStatePropertiesChangedForRootFrameID(FrameIdentifier);
+
     WEBCORE_EXPORT void scrollableAreaWillBeDetached(ScrollableArea&) override;
 
 protected:

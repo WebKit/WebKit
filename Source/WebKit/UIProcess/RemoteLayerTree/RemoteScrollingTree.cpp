@@ -200,6 +200,12 @@ void RemoteScrollingTree::stickyScrollingTreeNodeBeganSticking(ScrollingNodeID n
         scrollingCoordinatorProxy->stickyScrollingTreeNodeBeganSticking(nodeID);
 }
 
+void RemoteScrollingTree::hostedSubtreeNeedsFullCommit(WebCore::FrameIdentifier frameID)
+{
+    if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
+        scrollingCoordinatorProxy->requestFullScrollingTreeCommitForFrame(frameID);
+}
+
 #if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
 void RemoteScrollingTree::stickyScrollingTreeNodeEndedSticking(ScrollingNodeID nodeID)
 {

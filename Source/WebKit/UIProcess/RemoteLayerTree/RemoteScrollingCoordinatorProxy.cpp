@@ -577,6 +577,11 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarVisibilityDidCha
     protect(webPageProxy())->sendToProcessContainingFrame(m_scrollingTree->frameIDForScrollingNodeID(nodeID), Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible));
 }
 
+void RemoteScrollingCoordinatorProxy::requestFullScrollingTreeCommitForFrame(WebCore::FrameIdentifier frameID)
+{
+    protect(webPageProxy())->sendToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::RequestFullScrollingTreeCommit(frameID));
+}
+
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
 {
     protect(webPageProxy())->sendToProcessContainingFrame(m_scrollingTree->frameIDForScrollingNodeID(nodeID), Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange(nodeID, orientation, minimumThumbLength));

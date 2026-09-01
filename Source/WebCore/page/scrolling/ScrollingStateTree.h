@@ -62,6 +62,8 @@ public:
     void detachAndDestroySubtree(std::optional<ScrollingNodeID>);
     void clear();
 
+    void setAllPropertiesChanged();
+
     // Copies the current tree state and clears the changed properties mask in the original.
     WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
 

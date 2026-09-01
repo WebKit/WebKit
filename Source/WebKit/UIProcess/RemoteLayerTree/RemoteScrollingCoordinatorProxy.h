@@ -209,6 +209,7 @@ public:
     
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int);
+    void requestFullScrollingTreeCommitForFrame(WebCore::FrameIdentifier);
     void receivedLastScrollingTreeNodeUpdateReply();
     bool NODELETE isMonitoringWheelEvents();
 

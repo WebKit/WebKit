@@ -306,6 +306,8 @@ public:
     void removeNode(ScrollingNodeID, ScrollingTreeFrameHostingNode* = nullptr);
     void removeFrameHostingNode(LayerHostingContextIdentifier);
 
+    virtual void hostedSubtreeNeedsFullCommit(FrameIdentifier) { }
+
     WEBCORE_EXPORT std::optional<FrameIdentifier> frameIDForScrollingNodeID(ScrollingNodeID);
 
 protected:

@@ -123,7 +123,7 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateNode::applicableProperties
     return { Property::Layer, Property::ChildNodes };
 }
 
-void ScrollingStateNode::setPropertyChangesAfterReattach()
+void ScrollingStateNode::setAllApplicablePropertiesChanged()
 {
     auto allPropertiesForNodeType = applicableProperties();
     setPropertiesChangedInternal(allPropertiesForNodeType);
