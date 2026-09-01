@@ -3364,6 +3364,66 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     }
 }
 
+TEST(ServiceWorkers, ServerTrustWithoutNetworkLoadInFrame)
+{
+    using namespace TestWebKitAPI;
+
+    __block bool removedAnyExistingData = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        removedAnyExistingData = true;
+    }];
+    Util::run(&removedAnyExistingData);
+
+    static constexpr auto main =
+    "<script>"
+    "try {"
+    "    navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "        if (reg.active) {"
+    "            alert('worker unexpectedly already active');"
+    "            return;"
+    "        }"
+    "        worker = reg.installing;"
+    "        worker.addEventListener('statechange', function() {"
+    "            if (worker.state == 'activated')"
+    "                alert('successfully registered');"
+    "        });"
+    "    }).catch(function(error) {"
+    "        alert('Registration failed with: ' + error);"
+    "    });"
+    "} catch(e) {"
+    "    alert('Exception: ' + e);"
+    "}"
+    "</script>"_s;
+    static constexpr auto js = "self.addEventListener('fetch', (event) => { event.respondWith(new Response(new Blob(['<script>alert(\"synthetic response\")</script>'], {type: 'text/html'}))); })"_s;
+
+    HTTPServer server({
+        { "/"_s, { main } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, js } },
+    }, HTTPServer::Protocol::Https);
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+
+    RetainPtr request = server.request();
+    RetainPtr registeringWebView = adoptNS([WKWebView new]);
+    registeringWebView.get().navigationDelegate = delegate.get();
+    [registeringWebView loadRequest:request.get()];
+    EXPECT_WK_STREQ([registeringWebView _test_waitForAlert], "successfully registered");
+    EXPECT_TRUE(isTestServerTrust(registeringWebView.get().serverTrust));
+
+    server.cancel();
+
+    RetainPtr webView = adoptNS([WKWebView new]);
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:request.get()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "synthetic response");
+
+    EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
+}
+
 TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];

@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
@@ -151,6 +152,39 @@ TEST(WKWebView, ServerTrustKVCWithCOOP)
     [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/path1"]];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
     EXPECT_NULL(webView.get().serverTrust);
+}
+
+TEST(WKWebView, ServerTrustAfterTwoProcessSwaps)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/source"_s, { "hi"_s } },
+        { "/destination"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/source"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    verifyCertificateAndPublicKey([webView serverTrust]);
+
+    __block pid_t firstProvisionalProcessIdentifier = 0;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *view, WKNavigation *) {
+        if (!firstProvisionalProcessIdentifier)
+            firstProvisionalProcessIdentifier = view._provisionalWebProcessIdentifier;
+    };
+    [webView loadURL:[NSURL URLWithString:@"https://example.com/destination"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    navigationDelegate.get().didStartProvisionalNavigation = nil;
+
+    EXPECT_NE(firstProvisionalProcessIdentifier, 0);
+    EXPECT_NE(firstProvisionalProcessIdentifier, [webView _webProcessIdentifier]);
+
+    EXPECT_NOT_NULL([webView serverTrust]);
+    verifyCertificateAndPublicKey([webView serverTrust]);
 }
 
 TEST(WKWebView, QualifiedServerTrustKVC)
