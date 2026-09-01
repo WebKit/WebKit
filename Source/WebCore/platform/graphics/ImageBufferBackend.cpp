@@ -83,7 +83,7 @@ void ImageBufferBackend::convertToLuminanceMaskFloat16()
 void ImageBufferBackend::convertToLuminanceMaskUint8()
 {
     IntRect sourceRect { { }, size() };
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace().platformColorSpace() };
     auto pixelBuffer = ImageBufferAllocator().createPixelBuffer(format, sourceRect.size());
     if (!pixelBuffer)
         return;
@@ -133,7 +133,7 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, std::span<con
     auto sourcePixelFormat = pixelFormat();
     unsigned sourceBytesPerRow = bytesPerRow();
     ConstPixelBufferConversionView source {
-        { AlphaPremultiplication::Premultiplied, sourcePixelFormat, colorSpace() },
+        { AlphaPremultiplication::Premultiplied, sourcePixelFormat, colorSpace().platformColorSpace() },
         sourceBytesPerRow,
         sourceData.subspan(sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * PixelBuffer::bytesPerPixel(sourcePixelFormat))
     };
@@ -179,7 +179,7 @@ void ImageBufferBackend::putPixelBuffer(const PixelBufferSourceView& sourcePixel
     auto destinationPixelFormat = pixelFormat();
     unsigned destinationBytesPerRow = bytesPerRow();
     PixelBufferConversionView destination {
-        { destinationAlphaFormat, destinationPixelFormat, colorSpace() },
+        { destinationAlphaFormat, destinationPixelFormat, colorSpace().platformColorSpace() },
         destinationBytesPerRow,
         destinationData.subspan(destinationRect.y() * destinationBytesPerRow + destinationRect.x() * PixelBuffer::bytesPerPixel(destinationPixelFormat))
     };

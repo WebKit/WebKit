@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/PlatformColorSpace.h>
 #include <optional>
 
 namespace WebCore {
@@ -44,6 +45,10 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace);
 DestinationColorSpace toExtendedDestinationColorSpace(PredefinedColorSpace);
 enum class AllowExtendedColorSpace : bool;
 DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace, AllowExtendedColorSpace);
+
+PlatformColorSpace toPlatformColorSpace(PredefinedColorSpace);
+PlatformColorSpace toExtendedPlatformColorSpace(PredefinedColorSpace);
+PlatformColorSpace toPlatformColorSpace(PredefinedColorSpace, AllowExtendedColorSpace);
 
 std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace&);
 

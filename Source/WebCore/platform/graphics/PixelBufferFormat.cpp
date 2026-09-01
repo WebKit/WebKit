@@ -26,13 +26,35 @@
 #include "config.h"
 #include "PixelBufferFormat.h"
 
+#include "DestinationColorSpace.h"
 #include <wtf/text/TextStream.h>
+
+#if USE(CG)
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+#endif
 
 namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const PixelBufferFormat& pixelBuffer)
 {
-    return ts << pixelBuffer.alphaFormat << ' ' << pixelBuffer.pixelFormat << ' ' << pixelBuffer.colorSpace;
+    ts << pixelBuffer.alphaFormat << ' ' << pixelBuffer.pixelFormat << ' ';
+#if USE(CG) || USE(SKIA)
+    if (!pixelBuffer.colorSpace)
+        return ts << "null color space"_s;
+#endif
+    return ts << DestinationColorSpace { pixelBuffer.colorSpace };
+}
+
+bool isValidPixelBufferColorSpace(const PlatformColorSpace& colorSpace)
+{
+#if USE(CG)
+    SUPPRESS_UNRETAINED_ARG return colorSpace && CGColorSpaceGetModel(colorSpace.get()) == kCGColorSpaceModelRGB;
+#elif USE(SKIA)
+    return !!colorSpace;
+#else
+    UNUSED_PARAM(colorSpace);
+    return true;
+#endif
 }
 
 }

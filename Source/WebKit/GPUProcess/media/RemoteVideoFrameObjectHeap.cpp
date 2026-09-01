@@ -145,7 +145,7 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
 
 void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, CompletionHandler<void(WebCore::DestinationColorSpace)>&& callback)
 {
-    DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
+    DestinationColorSpace destinationColorSpace { platformColorSpaceSRGB() };
     auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
 
     RefPtr<VideoFrame> frame;

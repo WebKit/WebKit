@@ -910,7 +910,7 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
     if (m_type != BlurShadow)
         return;
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, platformColorSpaceSRGB() };
     IntRect blurRect(IntPoint(), templateSize);
     auto layerData = layerImage.getPixelBuffer(format, blurRect);
     if (!layerData)

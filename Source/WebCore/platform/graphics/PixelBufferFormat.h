@@ -26,8 +26,9 @@
 #pragma once
 
 #include <WebCore/AlphaPremultiplication.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/PixelFormat.h>
+#include <WebCore/PlatformColorSpace.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -35,8 +36,13 @@ namespace WebCore {
 struct PixelBufferFormat {
     AlphaPremultiplication alphaFormat;
     PixelFormat pixelFormat;
-    DestinationColorSpace colorSpace;
+    // Note: this is the color space of the pixel data, so unlike DestinationColorSpace it is not
+    // restricted to color spaces that can be rendered to.
+    PlatformColorSpace colorSpace;
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);
+
+// Returns true if the color space can describe the contents of a pixel buffer.
+WEBCORE_EXPORT bool isValidPixelBufferColorSpace(const PlatformColorSpace&);
 }

@@ -523,7 +523,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     }));
 
     auto imageSize = pixelBuffer->size();
-    return NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
+    return NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->colorSpace().get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 }
 
 } // namespace WebCore

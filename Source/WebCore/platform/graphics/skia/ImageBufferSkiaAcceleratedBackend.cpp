@@ -345,7 +345,7 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
         ? SkAlphaType::kPremul_SkAlphaType : SkAlphaType::kUnpremul_SkAlphaType;
 
     auto destinationInfo = SkImageInfo::Make(destination.size().width(), destination.size().height(),
-        destinationColorType, destinationAlphaType, destination.format().colorSpace.platformColorSpace());
+        destinationColorType, destinationAlphaType, destination.colorSpace());
     SkPixmap pixmap(destinationInfo, destination.bytes().data(), destination.size().width() * 4);
 
     SkPixmap dstPixmap;
@@ -394,7 +394,7 @@ void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBufferSourceVi
     sourceRectClipped.setSize(destinationRect.size());
 
     auto pixelBufferInfo = SkImageInfo::Make(pixelBuffer.size().width(), pixelBuffer.size().height(),
-        colorType, alphaType, pixelBuffer.format().colorSpace.platformColorSpace());
+        colorType, alphaType, pixelBuffer.colorSpace());
     SkPixmap pixmap(pixelBufferInfo, pixelBuffer.bytes().data(), pixelBuffer.size().width() * 4);
 
     SkPixmap srcPixmap;

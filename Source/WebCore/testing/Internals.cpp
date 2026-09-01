@@ -2328,7 +2328,7 @@ ExceptionOr<RefPtr<ImageData>> Internals::snapshotNode(Node& node)
     PixelBufferFormat destinationFormat {
         AlphaPremultiplication::Unpremultiplied,
         PixelFormat::RGBA8,
-        DestinationColorSpace::SRGB()
+        platformColorSpaceSRGB()
     };
 
     auto pixelBuffer = imageBuffer->getPixelBuffer(destinationFormat, sourceRect);

@@ -167,7 +167,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
         return nullptr;
     }
 
-    auto [destinationColorSpace] = sendResult.takeReplyOr(DestinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() });
+    auto [destinationColorSpace] = sendResult.takeReplyOr(DestinationColorSpace { platformColorSpaceSRGB() });
 
     m_conversionSemaphore.wait();
 

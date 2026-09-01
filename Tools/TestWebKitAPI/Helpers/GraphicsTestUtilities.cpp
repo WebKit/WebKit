@@ -38,7 +38,7 @@ using namespace WebCore;
 
 ::testing::AssertionResult imageBufferPixelIs(Color expected, const ImageBuffer& imageBuffer, FloatPoint point)
 {
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, platformColorSpaceSRGB() };
     auto pixelBuffer = imageBuffer.getPixelBuffer(format, enclosingIntRect(FloatRect { point, FloatSize { 1, 1 } }));
     auto got = Color { SRGBA<uint8_t> { pixelBuffer->item(0), pixelBuffer->item(1), pixelBuffer->item(2), pixelBuffer->item(3) } };
     if (got != expected) {

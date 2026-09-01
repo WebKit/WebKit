@@ -223,7 +223,7 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, Alp
 
     // Color space conversion happens internally when drawing from one image buffer to another
     convertedImageBuffer->context().drawImageBuffer(imageBuffer, sourceRect);
-    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, colorSpace };
+    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, colorSpace.platformColorSpace() };
     return convertedImageBuffer->getPixelBuffer(format, sourceRect, allocator);
 }
 
@@ -232,7 +232,7 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffe
     auto sourceRect = IntRect { { } , sourcePixelBuffer.size() };
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
 
-    auto& sourceColorSpace = sourcePixelBuffer.format().colorSpace;
+    DestinationColorSpace sourceColorSpace { sourcePixelBuffer.colorSpace() };
     auto imageBuffer = allocator.createImageBuffer(clampedSize, sourceColorSpace, RenderingMode::Unaccelerated);
     if (!imageBuffer)
         return nullptr;
@@ -266,7 +266,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
     if (pixelBuffer)
         return pixelBuffer.get();
 
-    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, m_colorSpace };
+    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, m_colorSpace.platformColorSpace() };
 
     if (RefPtr imageBuffer = m_imageBuffer) {
         pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, m_absoluteImageRect.size() }, m_allocator);
@@ -301,7 +301,7 @@ RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaForm
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(sourceRect.size()));
 
-    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, colorSpace? *colorSpace : m_colorSpace };
+    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, (colorSpace ? *colorSpace : m_colorSpace).platformColorSpace() };
 
     auto pixelBuffer = m_allocator.createPixelBuffer(format, sourceRect.size());
     if (!pixelBuffer)
@@ -316,7 +316,7 @@ RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaForm
 bool FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect)
 {
     auto alphaFormat = destinationPixelBuffer.format().alphaFormat;
-    auto& colorSpace = destinationPixelBuffer.format().colorSpace;
+    DestinationColorSpace colorSpace { destinationPixelBuffer.colorSpace() };
 
     RefPtr sourcePixelBuffer = pixelBufferSlot(alphaFormat) ? pixelBufferSlot(alphaFormat).get() : nullptr;
 

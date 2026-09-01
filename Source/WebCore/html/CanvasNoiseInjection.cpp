@@ -197,7 +197,7 @@ void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer
 
     auto dirtyRect = postProcessArea == CanvasNoiseInjectionPostProcessArea::DirtyRect ? m_postProcessDirtyRect : IntRect(IntPoint::zero(), imageBuffer->truncatedLogicalSize());
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace().platformColorSpace() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, dirtyRect);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;

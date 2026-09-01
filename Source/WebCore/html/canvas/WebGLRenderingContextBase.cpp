@@ -858,7 +858,7 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, platformColorSpaceSRGB() };
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, size);
     if (!pixelBuffer)
         return nullptr;

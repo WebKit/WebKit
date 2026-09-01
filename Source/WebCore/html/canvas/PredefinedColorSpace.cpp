@@ -86,6 +86,61 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace colorSpace, A
     return (allowExtendedColorSpace == AllowExtendedColorSpace::No) ? toDestinationColorSpace(colorSpace) : toExtendedDestinationColorSpace(colorSpace);
 }
 
+PlatformColorSpace toPlatformColorSpace(PredefinedColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case PredefinedColorSpace::SRGB:
+        return platformColorSpaceSRGB();
+    case PredefinedColorSpace::SRGBLinear:
+        return platformColorSpaceLinearSRGB();
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    case PredefinedColorSpace::DisplayP3:
+        return platformColorSpaceDisplayP3();
+    case PredefinedColorSpace::DisplayP3Linear:
+        return platformColorSpaceLinearDisplayP3();
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return platformColorSpaceSRGB();
+}
+
+PlatformColorSpace toExtendedPlatformColorSpace(PredefinedColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case PredefinedColorSpace::SRGB:
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+        return platformColorSpaceExtendedSRGB();
+#else
+        return platformColorSpaceSRGB();
+#endif
+    case PredefinedColorSpace::SRGBLinear:
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+        return platformColorSpaceExtendedLinearSRGB();
+#else
+        return platformColorSpaceLinearSRGB();
+#endif
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    case PredefinedColorSpace::DisplayP3:
+        return platformColorSpaceExtendedDisplayP3();
+    case PredefinedColorSpace::DisplayP3Linear:
+        return platformColorSpaceExtendedLinearDisplayP3();
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    return platformColorSpaceExtendedSRGB();
+#else
+    return platformColorSpaceSRGB();
+#endif
+}
+
+PlatformColorSpace toPlatformColorSpace(PredefinedColorSpace colorSpace, AllowExtendedColorSpace allowExtendedColorSpace)
+{
+    return (allowExtendedColorSpace == AllowExtendedColorSpace::No) ? toPlatformColorSpace(colorSpace) : toExtendedPlatformColorSpace(colorSpace);
+}
+
 std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace& colorSpace)
 {
     if (colorSpace == DestinationColorSpace::SRGB())

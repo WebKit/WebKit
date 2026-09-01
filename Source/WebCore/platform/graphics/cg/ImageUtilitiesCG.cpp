@@ -532,7 +532,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
         return false;
 
     auto imageSize = source.size();
-    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), protect(source.format().colorSpace.platformColorSpace()).get(), static_cast<uint32_t>(kCGBitmapByteOrderDefault) | static_cast<uint32_t>(dataAlphaInfo), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    RetainPtr image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), source.colorSpace().get(), static_cast<uint32_t>(kCGBitmapByteOrderDefault) | static_cast<uint32_t>(dataAlphaInfo), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     return encode(image.get(), mimeType, quality, function);
 }

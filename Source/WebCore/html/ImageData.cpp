@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ImageData.h"
 
+#include "DestinationColorSpace.h"
 #include "ExceptionOr.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -57,7 +58,7 @@ static ImageDataPixelFormat NODELETE computePixelFormat(std::optional<ImageDataS
 Ref<ImageData> ImageData::create(Ref<ArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
 {
     auto size = pixelBuffer->size();
-    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
+    auto colorSpace = toPredefinedColorSpace(DestinationColorSpace { pixelBuffer->colorSpace() });
     return adoptRef(*new ImageData(size, ImageDataArray(WTF::move(pixelBuffer.get()).takeData()), *colorSpace, overridingPixelFormat));
 }
 
@@ -173,7 +174,7 @@ ImageData::~ImageData() = default;
 Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
 {
     Ref uint8Data = m_data.asUint8ClampedArray();
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toPlatformColorSpace(m_colorSpace) };
     return ByteArrayPixelBuffer::create(format, m_size, uint8Data.get());
 }
 
@@ -181,7 +182,7 @@ Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
 Ref<Float16ArrayPixelBuffer> ImageData::float16ArrayPixelBuffer() const
 {
     Ref float16Data = m_data.asFloat16Array();
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toExtendedDestinationColorSpace(m_colorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toExtendedPlatformColorSpace(m_colorSpace) };
     return Float16ArrayPixelBuffer::create(format, m_size, float16Data.get());
 }
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)

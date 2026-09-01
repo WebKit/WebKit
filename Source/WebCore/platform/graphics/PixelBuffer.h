@@ -55,6 +55,7 @@ public:
     virtual ~PixelBuffer() = default;
 
     const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
+    const PlatformColorSpace& colorSpace() const LIFETIME_BOUND { return m_format.colorSpace; }
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
 
     std::span<uint8_t> bytes() const { return m_bytes; }
@@ -106,6 +107,7 @@ public:
     }
 
     const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
+    const PlatformColorSpace& colorSpace() const LIFETIME_BOUND { return m_format.colorSpace; }
     IntSize size() const { return m_size; }
     std::span<const uint8_t> bytes() const LIFETIME_BOUND { return m_bytes; }
 

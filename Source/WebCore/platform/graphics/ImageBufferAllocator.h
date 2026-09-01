@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/PixelBufferFormat.h>
 #include <WebCore/RenderingMode.h>
 #include <wtf/RefPtr.h>

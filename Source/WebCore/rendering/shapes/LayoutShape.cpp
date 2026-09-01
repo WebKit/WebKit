@@ -194,7 +194,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     if (image)
         graphicsContext.drawImage(*image, IntRect({ }, snappedPhysicalImageSize));
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, platformColorSpaceSRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, snappedPhysicalImageSize });
 
     // We could get to a value where PixelBuffer could be nullptr because snappedPhysicalImageSize

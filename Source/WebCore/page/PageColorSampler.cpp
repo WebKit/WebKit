@@ -135,7 +135,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!snapshot)
         return std::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace.platformColorSpace() }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
         return std::nullopt;
 
@@ -323,7 +323,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     if (!snapshot)
         return PredominantColorType::None;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace.platformColorSpace() }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
         return PredominantColorType::None;
 

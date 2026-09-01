@@ -58,6 +58,18 @@ template<PlatformColorSpace::Name name> static const DestinationColorSpace& know
 }
 #endif
 
+#if USE(CG) || USE(SKIA)
+template<KnownColorSpaceAccessor accessor> static PlatformColorSpace knownPlatformColorSpace()
+{
+    return knownColorSpace<accessor>().platformColorSpace();
+}
+#else
+template<PlatformColorSpace::Name name> static PlatformColorSpace knownPlatformColorSpace()
+{
+    return knownColorSpace<name>().platformColorSpace();
+}
+#endif
+
 const DestinationColorSpace& DestinationColorSpace::SRGB()
 {
 #if USE(CG) || USE(SKIA)
@@ -145,6 +157,93 @@ const DestinationColorSpace& DestinationColorSpace::ExtendedRec2020()
 }
 #endif
 
+PlatformColorSpace platformColorSpaceSRGB()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<sRGBColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::SRGB>();
+#endif
+}
+
+PlatformColorSpace platformColorSpaceLinearSRGB()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<linearSRGBColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::LinearSRGB>();
+#endif
+}
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+PlatformColorSpace platformColorSpaceDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<displayP3ColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::DisplayP3>();
+#endif
+}
+
+PlatformColorSpace platformColorSpaceExtendedDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<extendedDisplayP3ColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::ExtendedDisplayP3>();
+#endif
+}
+
+PlatformColorSpace platformColorSpaceLinearDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<linearDisplayP3ColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::LinearDisplayP3>();
+#endif
+}
+
+PlatformColorSpace platformColorSpaceExtendedLinearDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<extendedLinearDisplayP3ColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::ExtendedLinearDisplayP3>();
+#endif
+}
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+PlatformColorSpace platformColorSpaceExtendedSRGB()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<extendedSRGBColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::ExtendedSRGB>();
+#endif
+}
+
+PlatformColorSpace platformColorSpaceExtendedLinearSRGB()
+{
+#if USE(CG) || USE(SKIA)
+    return knownPlatformColorSpace<extendedLinearSRGBColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::ExtendedLinearSRGB>();
+#endif
+}
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
+PlatformColorSpace platformColorSpaceExtendedRec2020()
+{
+#if USE(CG)
+    return knownPlatformColorSpace<ITUR_2020ColorSpaceSingleton>();
+#else
+    return knownPlatformColorSpace<PlatformColorSpace::Name::ExtendedRec2020>();
+#endif
+}
+#endif
+
 bool operator==(const DestinationColorSpace& a, const DestinationColorSpace& b)
 {
 #if USE(CG)
@@ -155,6 +254,19 @@ bool operator==(const DestinationColorSpace& a, const DestinationColorSpace& b)
     return SkColorSpace::Equals(a.platformColorSpace().get(), b.platformColorSpace().get());
 #else
     return a.platformColorSpace() == b.platformColorSpace();
+#endif
+}
+
+bool equalPlatformColorSpaces(const PlatformColorSpace& a, const PlatformColorSpace& b)
+{
+#if USE(CG)
+    // Do not protect the color spaces here as it is not strictly required for safety and
+    // this code is performance sensitive.
+    SUPPRESS_UNRETAINED_ARG return CGColorSpaceEqualToColorSpace(a.get(), b.get());
+#elif USE(SKIA)
+    return SkColorSpace::Equals(a.get(), b.get());
+#else
+    return a.get() == b.get();
 #endif
 }
 

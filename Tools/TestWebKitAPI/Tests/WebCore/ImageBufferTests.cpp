@@ -108,7 +108,7 @@ static RefPtr<PixelBuffer> createPixelBufferTestPattern(IntSize size, AlphaPremu
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    PixelBufferFormat testFormat { alphaFormat, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat testFormat { alphaFormat, PixelFormat::BGRA8, platformColorSpaceSRGB() };
     return pattern->getPixelBuffer(testFormat, { { }, size }); 
 }
 
@@ -272,7 +272,7 @@ TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
     drawTestPattern(*buffer, 0);
 
     // Test that ImageBuffer::getPixelBuffer() returns pixel buffer with dimensions that are scaled to resolutionScale() of the source.
-    PixelBufferFormat testFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat testFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, platformColorSpaceSRGB() };
     auto pixelBuffer = buffer->getPixelBuffer(testFormat, { { }, testSize });
     IntSize expectedSize = testSize;
     expectedSize.scale(deviceScaleFactor());
@@ -345,7 +345,7 @@ TEST(ImageBufferTests, GetPixelBufferAllZeros)
     auto getPixelBufferAllZeros = [&](const FloatRect& rect) {
         RetainPtr platformColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK));
         auto destinationColorSpace = DestinationColorSpace(WTF::move(platformColorSpace));
-        PixelBufferFormat destinationPixelFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, destinationColorSpace };
+        PixelBufferFormat destinationPixelFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, destinationColorSpace.platformColorSpace() };
 
         RefPtr pixelBuffer = imageBuffer->getPixelBuffer(destinationPixelFormat, enclosingIntRect(rect));
         EXPECT_NE(nullptr, pixelBuffer);

@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <WebCore/PlatformExportMacros.h>
+#include <wtf/Platform.h>
+
 #if USE(CG)
 #include <wtf/RetainPtr.h>
 typedef struct CGColorSpace* CGColorSpaceRef;
@@ -75,5 +78,25 @@ private:
 using PlatformColorSpaceValue = PlatformColorSpace::Name;
 
 #endif
+
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceSRGB();
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceLinearSRGB();
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceDisplayP3();
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceExtendedDisplayP3();
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceLinearDisplayP3();
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceExtendedLinearDisplayP3();
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceExtendedSRGB();
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceExtendedLinearSRGB();
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
+WEBCORE_EXPORT PlatformColorSpace platformColorSpaceExtendedRec2020();
+#endif
+
+// Compares two platform color spaces by value, i.e. two distinct objects describing the same
+// color space compare equal.
+WEBCORE_EXPORT bool equalPlatformColorSpaces(const PlatformColorSpace&, const PlatformColorSpace&);
 
 }

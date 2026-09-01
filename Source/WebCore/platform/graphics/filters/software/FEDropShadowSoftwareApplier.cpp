@@ -62,7 +62,7 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, std::span<const Re
 
     ShadowBlur contextShadow(blurRadius, absoluteOffset, m_effect->shadowColor());
 
-    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, result.colorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, result.colorSpace().platformColorSpace() };
     IntRect shadowArea(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
     if (!pixelBuffer)

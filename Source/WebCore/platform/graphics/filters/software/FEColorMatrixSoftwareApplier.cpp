@@ -272,7 +272,7 @@ bool FEColorMatrixSoftwareApplier::apply(const Filter&, std::span<const Ref<Filt
         resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
     }
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, result.colorSpace() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, result.colorSpace().platformColorSpace() };
     IntRect imageRect(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
     if (!pixelBuffer)

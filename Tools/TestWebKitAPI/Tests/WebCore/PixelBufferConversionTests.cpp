@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/PixelBufferConversion.h>
 #include <vector>
@@ -47,8 +48,8 @@ TEST(PixelBufferConversionTests, convertImagePixels)
     const std::vector<uint8_t> reorderedBytesOpaqueAlpha = { 0, 95, 191, 255 };
 
     auto convert = [&](PixelFormat sourceFormat, AlphaPremultiplication sourceAlphaPremultiplication, PixelFormat destinationFormat, AlphaPremultiplication destinationAlphaPremultiplication, bool removeAlpha = false) -> std::vector<uint8_t> {
-        const PixelBufferFormat sourcePixelBufferFormat { sourceAlphaPremultiplication, sourceFormat, DestinationColorSpace::SRGB() };
-        const PixelBufferFormat destinationPixelBufferFormat { destinationAlphaPremultiplication, destinationFormat, DestinationColorSpace::SRGB() };
+        const PixelBufferFormat sourcePixelBufferFormat { sourceAlphaPremultiplication, sourceFormat, platformColorSpaceSRGB() };
+        const PixelBufferFormat destinationPixelBufferFormat { destinationAlphaPremultiplication, destinationFormat, platformColorSpaceSRGB() };
         const std::vector<uint8_t> sourceBytes =
             pixelFormatIsOpaque(sourceFormat)
                 ? orderedBytesPremultiplied
@@ -118,8 +119,8 @@ TEST(PixelBufferConversionTests, convertImagePixels)
 TEST(PixelBufferConversionTests, convertImagePixels2)
 {
     auto convert = [&](PixelFormat sourceFormat, PixelFormat destinationFormat) -> std::vector<uint8_t> {
-        const PixelBufferFormat sourcePixelBufferFormat { AlphaPremultiplication::Unpremultiplied, sourceFormat, DestinationColorSpace::SRGB() };
-        const PixelBufferFormat destinationPixelBufferFormat { AlphaPremultiplication::Unpremultiplied, destinationFormat, DestinationColorSpace::SRGB() };
+        const PixelBufferFormat sourcePixelBufferFormat { AlphaPremultiplication::Unpremultiplied, sourceFormat, platformColorSpaceSRGB() };
+        const PixelBufferFormat destinationPixelBufferFormat { AlphaPremultiplication::Unpremultiplied, destinationFormat, platformColorSpaceSRGB() };
         const std::vector<uint8_t> sourceBytes = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
         std::vector<uint8_t> destinationBytes(8);
         constexpr int sourceBytesPerRow = 8;
@@ -159,8 +160,8 @@ static std::vector<Float16> convertFloat16s(AlphaPremultiplication sourceAlphaFo
     auto sourceBytes = byteVectorFromFloat16s(components);
     unsigned bytesPerRow = sourceBytes.size();
     std::vector<uint8_t> destinationBytes(bytesPerRow);
-    ConstPixelBufferConversionView source { PixelBufferFormat { .alphaFormat = sourceAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = sourceColorSpace }, bytesPerRow, sourceBytes };
-    PixelBufferConversionView destination { PixelBufferFormat { .alphaFormat = destinationAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = destinationDestinationColorSpace }, bytesPerRow, destinationBytes };
+    ConstPixelBufferConversionView source { PixelBufferFormat { .alphaFormat = sourceAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = sourceColorSpace.platformColorSpace() }, bytesPerRow, sourceBytes };
+    PixelBufferConversionView destination { PixelBufferFormat { .alphaFormat = destinationAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = destinationDestinationColorSpace.platformColorSpace() }, bytesPerRow, destinationBytes };
 
     convertImagePixels(source, destination, size);
 
@@ -204,7 +205,7 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16ColorSpaceConversion)
 
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16ToAndFromByte)
 {
-    const auto colorSpace = DestinationColorSpace::SRGB();
+    const PlatformColorSpace colorSpace = platformColorSpaceSRGB();
     constexpr int float16BytesPerRow = 4 * sizeof(Float16);
     constexpr int u8BytesPerRow = 4;
 
@@ -238,7 +239,7 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16ToAndFromByte)
 
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16PaddedRows)
 {
-    const auto colorSpace = DestinationColorSpace::SRGB();
+    const PlatformColorSpace colorSpace = platformColorSpaceSRGB();
     const auto sourceBytes = byteVectorFromFloat16s({
         1.0, 0.0, 0.0, 1.0, /* padding: */ 0.0, 0.0,
         0.0, 1.0, 0.0, 1.0, /* padding: */ 0.0, 0.0,

@@ -1644,7 +1644,7 @@ enum class WebCore::UseLosslessCompression : bool;
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
     WebCore::AlphaPremultiplication alphaFormat;
     WebCore::PixelFormat pixelFormat;
-    [Validator='colorSpace->usesRGBColorModel()'] WebCore::DestinationColorSpace colorSpace;
+    [Validator='WebCore::isValidPixelBufferColorSpace(*colorSpace)'] WebCore::PlatformColorSpace colorSpace;
 };
 
 [RefCounted] class WebCore::TextIndicator {

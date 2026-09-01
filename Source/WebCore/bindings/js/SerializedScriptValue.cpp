@@ -928,7 +928,7 @@ private:
         }
 
         // FIXME: We should try to avoid converting pixel format.
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, buffer->colorSpace().platformColorSpace() };
         const IntSize& logicalSize = buffer->truncatedLogicalSize();
         auto pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize }));
         if (!pixelBuffer) {
@@ -3468,7 +3468,7 @@ private:
             return JSValue();
         }
 
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace.platformColorSpace() };
         auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, imageDataSize, arrayBuffer.releaseNonNull());
         if (!pixelBuffer) {
             SERIALIZE_TRACE("FAIL deserialize");

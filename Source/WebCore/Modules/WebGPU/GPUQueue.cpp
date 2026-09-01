@@ -391,7 +391,7 @@ static void getImageBytesFromImageBuffer(const RefPtr<ImageBuffer>& imageBuffer,
     if (!size.width() || !size.height())
         return callback({ }, 0, 0);
 
-    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() }, { { }, size });
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, platformColorSpaceSRGB() }, { { }, size });
     if (!pixelBuffer)
         return callback({ }, 0, 0);
 

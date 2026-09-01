@@ -216,7 +216,7 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
 
     result.bitsPerComponent = bitsPerComponent;
     result.bitsPerPixel = bitsPerPixel;
-    result.colorSpace = format.colorSpace.platformColorSpace();
+    result.colorSpace = format.colorSpace.get();
     result.bitmapInfo = bitmapInfo;
     result.version = 0;
     result.decode = nullptr;
@@ -345,7 +345,7 @@ static constexpr ConvertImagePixelsFunctionTable<ConvertImagePixelsAcceleratedFu
 
 static bool convertImagePixelsAccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
-    if (source.format.colorSpace != destination.format.colorSpace)
+    if (!equalPlatformColorSpaces(source.format.colorSpace, destination.format.colorSpace))
         return convertImagePixelsAcceleratedAnyToAny(source, destination, destinationSize);
 
     return convertImagePixelsFunctionTable.invoke(source, destination, destinationSize);
@@ -384,7 +384,7 @@ static bool convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
         destinationSize.height(),
         *sourceSkiaColorType,
         toSkiaAlphaType(source.format.alphaFormat),
-        source.format.colorSpace.platformColorSpace()
+        source.format.colorSpace
     );
     auto destinationSkiaColorType = toSkiaColorType(destination.format.pixelFormat);
     if (!destinationSkiaColorType)
@@ -396,7 +396,7 @@ static bool convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
         destinationSize.height(),
         *destinationSkiaColorType,
         toSkiaAlphaType(destination.format.alphaFormat),
-        destination.format.colorSpace.platformColorSpace()
+        destination.format.colorSpace
     );
     // Read pixels from source to destination and convert pixels if necessary.
     sourcePixmap.readPixels(destinationImageInfo, destination.rows.data(), destination.bytesPerRow);
@@ -532,7 +532,7 @@ static bool convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
 {
     // FIXME: We don't currently support converting pixel data between different color spaces in the non-accelerated path.
     // This could be added using conversion functions from ColorConversion.h.
-    ASSERT(source.format.colorSpace == destination.format.colorSpace);
+    ASSERT(equalPlatformColorSpaces(source.format.colorSpace, destination.format.colorSpace));
 
     return convertImagePixelsFunctionTable.invoke(source, destination, destinationSize);
 }
@@ -590,7 +590,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     if (!convertImagePixelsAccelerated(source, destination, destinationSize))
         zeroImagePixels(destination, destinationSize);
 #else
-    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && equalPlatformColorSpaces(source.format.colorSpace, destination.format.colorSpace)) {
         copyImagePixels(source, destination, destinationSize);
         return;
     }

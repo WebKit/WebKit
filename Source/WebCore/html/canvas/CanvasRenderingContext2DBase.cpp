@@ -2571,7 +2571,7 @@ RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(
     // This computation can be used for cache retrieval as well as the real putImageData.
     // We're not doing RGBA -> BGRA swizzle here, as that is not needed for cache retrieval and
     // the swizzle copy can be made at the putImageData copy site.
-    auto colorSpace = toDestinationColorSpace(imageData.colorSpace());
+    auto colorSpace = toPlatformColorSpace(imageData.colorSpace());
     auto pixelFormat = toPixelFormat(imageData.pixelFormat());
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * PixelBuffer::bytesPerPixel(pixelFormat);
     PixelBufferFormat cachedFormat { AlphaPremultiplication::Premultiplied, pixelFormat, colorSpace };
@@ -2627,7 +2627,7 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
         .rows = data->span(),
     };
     PixelBufferConversionView destination {
-        .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, pixelBuffer->format().colorSpace },
+        .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, pixelBuffer->colorSpace() },
         .bytesPerRow = bytesPerRow,
         .rows = data->mutableSpan(),
     };
@@ -2665,7 +2665,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         if (!buffer)
             return Exception { ExceptionCode::InvalidStateError };
 
-        auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, buffer->colorSpace() };
+        auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, buffer->colorSpace().platformColorSpace() };
         RefPtr pixelBuffer = dynamicDowncast<ArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
         if (!pixelBuffer)
             return Exception { ExceptionCode::InvalidStateError };
@@ -2684,7 +2684,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!buffer)
         return ImageData::create(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toPlatformColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)) };
     RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
@@ -2692,7 +2692,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         return Exception { ExceptionCode::InvalidStateError };
     }
 
-    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)));
+    ASSERT(equalPlatformColorSpaces(pixelBuffer->colorSpace(), toPlatformColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat))));
 
     if (RefPtr imageData = ImageData::create(pixelBuffer.releaseNonNull(), outputImageDataPixelFormat))
         return { { imageData.releaseNonNull() } };

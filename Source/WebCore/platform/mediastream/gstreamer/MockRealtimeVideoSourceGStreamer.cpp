@@ -118,7 +118,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     if (!imageBuffer)
         return;
 
-    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, platformColorSpaceSRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
     if (!pixelBuffer)
         return;
 
