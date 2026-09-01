@@ -1400,6 +1400,13 @@ void run(const TestConfig* config)
     RUN(testFCCmpNegatedAndDouble(1.0, 2.0, 4.0, 3.0));  // !(true && false) = true
     RUN(testFCCmpNegatedAndDouble(2.0, 1.0, 4.0, 3.0));  // !(false && false) = true
 
+    RUN(testCCmpChainRollback(5, 8, 5, 5, 5, 10)); // in-bounds, expected 1
+    RUN(testCCmpChainRollback(5, 8, 1, 2, 3, 4)); // inner expr non-zero, expected 0
+    RUN(testCCmpChainRollback(5, 8, 5, 5, 5, 5)); // inner expr non-zero (both eq), expected 0
+    RUN(testCCmpChainRollback(-1, 8, 5, 5, 5, 10)); // signed i<len, expected 1
+    RUN(testCCmpChainRollback(200, 8, 5, 5, 5, 10)); // i>=len; pre-fix wrongly returns 1
+    RUN(testCCmpChainRollback(5, 8, 5, 5, 5, -10)); // c>d, expected 1
+
     RUN_UNARY(testSShrCompare32, int32OperandsMore());
     RUN_UNARY(testSShrCompare64, int64OperandsMore());
 
