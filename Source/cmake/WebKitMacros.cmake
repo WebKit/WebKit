@@ -2,8 +2,6 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
-set(SWIFT_FATAL_DIAGNOSTIC_FLAGS "-Werror ExistentialAny -Werror StrictMemorySafety -Werror ForeignReferenceType -Werror NoUseUnstructuredThrowingTask -Werror NoUsage")
-
 # Translates a definition list into one Swift can be given.
 #
 #   FOO       -> -DFOO       for every language (already valid Swift)
@@ -474,8 +472,6 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
     if (DEVELOPER_MODE_CXX_FLAGS)
         target_compile_options(${_target} PRIVATE
             "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>")
-        target_compile_options(${_target} PRIVATE
-            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")
     endif ()
 
     target_compile_definitions(${_target} PRIVATE "BUILDING_${_logical_name}")
@@ -1189,11 +1185,9 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
         list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
     endif ()
-    if (APPLE)
-        # Normalize the LangOpt that WebGPU's SafeInteropWrappers enables
-        # implicitly so PAL/WebKit hash to the same module-cache dir.
-        list(APPEND _flags -fexperimental-bounds-safety-attributes)
-    endif ()
+    # -fexperimental-bounds-safety-attributes belongs to this hash-normalizing
+    # set conceptually, but lives in WebKitSwiftFlags.cmake so it also reaches
+    # the Swift targets that never call this function.
     # Every -D the C++ compiles get, so the importer's view of layout-affecting
     # macros (NDEBUG, ASSERT_ENABLED, _LIBCPP_HARDENING_MODE, ...) matches theirs.
     _webkit_cxx_preprocessor_definitions(_cxx_defs)
@@ -1385,15 +1379,11 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # WebKit_Private framework module — matches Xcode's SWIFT_INCLUDE_PATHS
         # which is also Swift-only) can set
         # ${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY to TRUE.
-        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b")
+        list(APPEND _swift_options ${WEBKIT_SWIFT_CXX_INTEROP_FLAGS})
         _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_shared_cc_flags)
         foreach (_f IN LISTS _shared_cc_flags)
             list(APPEND _swift_options "-Xcc" "${_f}")
         endforeach ()
-        # Match Xcode's CommonBase.xcconfig SWIFT_VERSION = 6.0. The importer's
-        # apinotes version is keyed off the effective Swift language mode, so
-        # this also keeps PAL/WebGPU/WebKit on the same module-cache hash.
-        list(APPEND _swift_options "-swift-version" "6")
         if (APPLE)
             # Swift modules extend their underlying ObjC++ module.
             list(APPEND _swift_options "-import-underlying-module")
@@ -1404,13 +1394,6 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             list(APPEND _swift_options "-I${_interop_module_path}")
         else ()
             list(APPEND _swift_options "-Xcc" "-I${_interop_module_path}")
-        endif ()
-        # InternalImportsByDefault keeps unqualified `import Foo` from re-exporting Foo's
-        # types through the module's public interface. WebGPU/PAL want this; WebKit has
-        # public APIs whose signatures use Foundation/UIKit types via plain `import`,
-        # so callers can opt out by setting ${_target}_SWIFT_NO_INTERNAL_IMPORTS_BY_DEFAULT.
-        if (NOT ${_target}_SWIFT_NO_INTERNAL_IMPORTS_BY_DEFAULT)
-            list(APPEND _swift_options "-enable-upcoming-feature" "InternalImportsByDefault")
         endif ()
         # On non-Apple platforms, Swift's embedded clang doesn't automatically search
         # the compiler's C++ standard library headers (e.g. <coroutine> lives in /usr/include/c++/15/).
@@ -1444,45 +1427,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 list(APPEND _swift_options "-Xcc" "-I${_dir}")
             endforeach ()
         endif ()
-        # The clang importer must agree with C++ TUs on every layout-affecting
-        # feature check; sanitizers gate ASAN_ENABLED → ENABLE_SECURITY_ASSERTIONS
-        # → RefCountDebuggerImpl members. Without this, Swift's inline `new` of a
-        # RefCounted C++ type undersizes the allocation and the C++ ctor overflows
-        # it. -sanitize= instruments Swift codegen; the importer ignores -Xcc
-        # -fsanitize= for __has_feature(), so define __SANITIZE_*__ directly so
-        # Compiler.h's #ifdef path sets ASAN_ENABLED/TSAN_ENABLED.
-        foreach (_sanitizer IN LISTS ENABLE_SANITIZERS)
-            list(APPEND _swift_options "-sanitize=${_sanitizer}")
-            if (_sanitizer STREQUAL "address")
-                list(APPEND _swift_options "-Xcc" "-D__SANITIZE_ADDRESS__")
-            elseif (_sanitizer STREQUAL "thread")
-                list(APPEND _swift_options "-Xcc" "-D__SANITIZE_THREAD__")
-            endif ()
-        endforeach ()
-        # swiftc spawns swift-plugin-server under sandbox-exec to expand macros
-        # (e.g. SwiftUI @State). When the cmake build itself runs inside an
-        # outer sandbox that disallows nested sandbox_apply, macro expansion
-        # fails with "external macro implementation type ... could not be
-        # found". -disable-sandbox skips the inner sandbox; the macros are
-        # WebKit's own, so the isolation it provides isn't load-bearing here.
-        list(APPEND _swift_options "-disable-sandbox")
         # We'll use these options both for mainstream cmake invocations of swiftc (here)
         # and for our own invocation to output an interoperability .h file (later).
-        # target_compile_options deduplicates repeated tokens, so collapse each
-        # -Xcc <arg> into a single SHELL: entry to keep the pair together.
-        # https://bugs.webkit.org/show_bug.cgi?id=312105
-        set(_swift_only_options "")
-        set(_pending_xcc FALSE)
-        foreach (_opt IN LISTS _swift_options)
-            if (_pending_xcc)
-                list(APPEND _swift_only_options "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_opt}>")
-                set(_pending_xcc FALSE)
-            elseif (_opt STREQUAL "-Xcc")
-                set(_pending_xcc TRUE)
-            else ()
-                list(APPEND _swift_only_options "$<$<COMPILE_LANGUAGE:Swift>:${_opt}>")
-            endif ()
-        endforeach ()
+        _webkit_swift_flag_genexes(_swift_only_options ${_swift_options})
         target_compile_options(${_target} PRIVATE ${_swift_only_options})
 
         if (CMAKE_SYSTEM_NAME STREQUAL "iOS" AND CMAKE_OSX_SYSROOT)

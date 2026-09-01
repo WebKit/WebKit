@@ -106,13 +106,6 @@ if (SWIFT_REQUIRED AND APPLE)
         ${PAL_DIR}/pal/crypto/WTFExtras.swift
     )
 
-    if (APPLE)
-        # Swift compiles transitively load system frameworks whose PCM builds
-        # need our project -Xcc flags. Explicit modules let libSwiftScan
-        # pre-build PCMs with the right context.
-        set(PAL_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
-    endif ()
-
     # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
     # clang modulemaps, but sometimes skips individual C++ headers.
     set(PAL_SWIFT_INTEROP_HEADERS ${PAL_PUBLIC_HEADERS})
@@ -121,25 +114,25 @@ if (SWIFT_REQUIRED AND APPLE)
         "${PAL_HEADERS_DIR}"
         "PALSwift-Generated.h")
 
-    # SHELL: keeps multi-token groups (-swift-version 6, -Xcc -I<path>) together;
-    # without it CMake deduplicates repeated -Xcc tokens, leaving -I paths unguarded.
-    # https://bugs.webkit.org/show_bug.cgi?id=312105
-    target_compile_options(PAL PRIVATE
-        "$<$<COMPILE_LANGUAGE:Swift>:-import-underlying-module>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-strict-memory-safety>"
+    WEBKIT_TARGET_ADD_SWIFT_OPTIONS(PAL
+        -library-level spi
         # SafeInteropWrappers imports a lifetimebound std::span return as a Swift Span,
         # which is what lets the byte views hand Swift a lifetime-dependent view rather
         # than a raw pointer.
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Lifetimes>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature SafeInteropWrappers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-swift-version 6>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/WTF/Headers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/bmalloc/Headers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_DERIVED_SOURCES_DIR}>"
+        -enable-experimental-feature SafeInteropWrappers
+        -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib
+        -Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}
+        -Xcc -I${CMAKE_BINARY_DIR}/WTF/Headers
+        -Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers
+        -Xcc -I${CMAKE_BINARY_DIR}/bmalloc/Headers
+        -Xcc -I${CMAKE_BINARY_DIR}
+        -Xcc -I${PAL_DERIVED_SOURCES_DIR}
     )
+    if (NOT APPLE)
+        # On Apple platforms the interop macro already adds this; elsewhere PAL's
+        # Swift still extends its underlying module and needs it explicitly.
+        WEBKIT_TARGET_ADD_SWIFT_OPTIONS(PAL -import-underlying-module)
+    endif ()
 endif ()
 
 WEBKIT_FRAMEWORK(PAL)
@@ -151,5 +144,3 @@ if (DEFINED PAL_SWIFT_INTEROP_SOURCES)
     add_dependencies(PAL_SwiftInterop PAL_CopyHeaders)
 endif ()
 
-# Must come after WEBKIT_FRAMEWORK() which adds -warnings-as-errors.
-target_compile_options(PAL PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-no-warnings-as-errors ${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")

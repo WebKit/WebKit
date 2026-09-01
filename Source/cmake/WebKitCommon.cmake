@@ -343,6 +343,8 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wthread-safety)
     endif ()
 
+    include(WebKitSwiftFlags)
+
     # Check gperf after including OptionsXXX.cmake since gperf is required only when ENABLE_WEBCORE is true,
     # and ENABLE_WEBCORE is configured in OptionsXXX.cmake.
     if (ENABLE_WEBCORE)

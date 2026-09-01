@@ -239,26 +239,12 @@ if (SWIFT_REQUIRED)
         ${CMAKE_CURRENT_SOURCE_DIR}/StdLibExtras.swift
     )
 
-    target_compile_options(WebGPU PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${CMAKE_CURRENT_SOURCE_DIR}/Internal>")
-    target_compile_options(WebGPU PRIVATE
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature SafeInteropWrappers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature LifetimeDependence>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Lifetimes>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature ImportNonPublicCxxMembers>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-strict-memory-safety>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror StrictMemorySafety>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror ForeignReferenceType>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level spi>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-no-verify-emitted-module-interface>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib>"
+    WEBKIT_TARGET_ADD_SWIFT_OPTIONS(WebGPU
+        -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
+        -enable-experimental-feature SafeInteropWrappers
+        -library-level spi
+        -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib
     )
-
-    if (APPLE)
-        # Swift compiles transitively load system frameworks whose PCM builds
-        # need our project -Xcc flags. Explicit modules let libSwiftScan
-        # pre-build PCMs with the right context.
-        set(WebGPU_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
-    endif ()
 
     set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
 

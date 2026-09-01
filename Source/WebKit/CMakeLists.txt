@@ -999,6 +999,12 @@ WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
     "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
     "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-Generated.h")
 
+if (SWIFT_REQUIRED)
+    # should match the rest of WebKit and use -Onone, but it negatively impacts build time
+    WEBKIT_TARGET_ADD_SWIFT_OPTIONS(WebKit
+        "$<$<AND:$<COMPILE_LANGUAGE:Swift>,$<CONFIG:Debug>>:-O>")
+endif ()
+
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyHeaders
         DESTINATION ${WebKit_HEADERS_DIR}
