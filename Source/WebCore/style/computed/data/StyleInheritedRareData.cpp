@@ -40,6 +40,7 @@ InheritedRareData::InheritedRareData()
     , textStrokeColor(ComputedStyle::initialTextStrokeColor())
     , textFillColor(ComputedStyle::initialTextFillColor())
     , textEmphasisColor(ComputedStyle::initialTextEmphasisColor())
+    , colorForHighlight(Color::currentColor())
     , visitedLinkTextStrokeColor(ComputedStyle::initialTextStrokeColor())
     , visitedLinkTextFillColor(ComputedStyle::initialTextFillColor())
     , visitedLinkTextEmphasisColor(ComputedStyle::initialTextEmphasisColor())
@@ -147,6 +148,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , textStrokeColor(o.textStrokeColor)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
+    , colorForHighlight(o.colorForHighlight)
     , visitedLinkTextStrokeColor(o.visitedLinkTextStrokeColor)
     , visitedLinkTextFillColor(o.visitedLinkTextFillColor)
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
@@ -262,6 +264,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && textStrokeColor == o.textStrokeColor
         && textFillColor == o.textFillColor
         && textEmphasisColor == o.textEmphasisColor
+        && colorForHighlight == o.colorForHighlight
         && visitedLinkTextStrokeColor == o.visitedLinkTextStrokeColor
         && visitedLinkTextFillColor == o.visitedLinkTextFillColor
         && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
@@ -375,6 +378,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT(textStrokeColor);
     LOG_IF_DIFFERENT(textFillColor);
     LOG_IF_DIFFERENT(textEmphasisColor);
+    LOG_IF_DIFFERENT(colorForHighlight);
 
     LOG_IF_DIFFERENT(visitedLinkTextStrokeColor);
     LOG_IF_DIFFERENT(visitedLinkTextFillColor);

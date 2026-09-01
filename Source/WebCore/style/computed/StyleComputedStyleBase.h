@@ -483,8 +483,8 @@ public:
     inline InsideLink insideLink() const;
     inline void setInsideLink(InsideLink);
 
-    inline bool colorIsCurrentColorForHighlight() const;
-    inline void setColorIsCurrentColorForHighlight(bool);
+    inline const Color& colorForHighlight() const;
+    inline void setColorForHighlight(Color&&);
 
     inline bool isLink() const;
     inline void setIsLink(bool);

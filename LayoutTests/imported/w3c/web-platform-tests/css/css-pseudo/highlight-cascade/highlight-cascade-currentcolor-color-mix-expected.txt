@@ -1,0 +1,6 @@
+text text
+text text
+
+PASS currentcolor in a color-mix() resolves against the inheriting element's own color
+PASS The inherited color at the start of the chain is currentcolor, so it resolves per element
+

@@ -114,6 +114,11 @@ public:
     Color textStrokeColor;
     Color textFillColor;
     Color textEmphasisColor;
+    // Duplicates the color property as an unresolved Style::Color, which InheritedData::color
+    // cannot hold. A highlight pseudo-element inherits it unresolved so that currentcolor keeps
+    // resolving against each originating element down the highlight chain.
+    // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    Color colorForHighlight;
     Color visitedLinkTextStrokeColor;
     Color visitedLinkTextFillColor;
     Color visitedLinkTextEmphasisColor;

@@ -114,9 +114,9 @@ inline bool ComputedStyleBase::useTreeCountingFunctions() const
     return m_nonInheritedFlags.useTreeCountingFunctions;
 }
 
-inline bool ComputedStyleBase::colorIsCurrentColorForHighlight() const
+inline const Color& ComputedStyleBase::colorForHighlight() const
 {
-    return m_inheritedData->colorIsCurrentColorForHighlight;
+    return m_inheritedRareData->colorForHighlight;
 }
 
 inline InsideLink ComputedStyleBase::insideLink() const

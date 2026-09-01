@@ -73,10 +73,10 @@ inline void ComputedStyleBase::setUsesTreeCountingFunctions()
     m_nonInheritedFlags.useTreeCountingFunctions = true;
 }
 
-inline void ComputedStyleBase::setColorIsCurrentColorForHighlight(bool colorIsCurrentColorForHighlight)
+inline void ComputedStyleBase::setColorForHighlight(Color&& colorForHighlight)
 {
-    if (m_inheritedData->colorIsCurrentColorForHighlight != colorIsCurrentColorForHighlight)
-        m_inheritedData.access().colorIsCurrentColorForHighlight = colorIsCurrentColorForHighlight;
+    if (m_inheritedRareData->colorForHighlight != colorForHighlight)
+        m_inheritedRareData.access().colorForHighlight = WTF::move(colorForHighlight);
 }
 
 inline void ComputedStyleBase::setInsideLink(InsideLink insideLink)
