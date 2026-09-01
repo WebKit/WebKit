@@ -11,6 +11,20 @@
 
 namespace rx
 {
+namespace
+{
+mtl::TextureRef LinearColorViewIfNeeded(const mtl::TextureRef &texture,
+                                        gl::SrgbWriteControlMode srgbWriteControlMode)
+{
+    if (srgbWriteControlMode != gl::SrgbWriteControlMode::Linear || !texture ||
+        !texture->hasLinearColorView())
+    {
+        return texture;
+    }
+    return texture->getLinearColorView();
+}
+}  // namespace
+
 RenderTargetMtl::RenderTargetMtl() {}
 
 RenderTargetMtl::~RenderTargetMtl()
@@ -71,20 +85,22 @@ uint32_t RenderTargetMtl::getRenderSamples() const
     return implicitMSTex ? implicitMSTex->samples() : (tex ? tex->samples() : 1);
 }
 
-void RenderTargetMtl::toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const
+void RenderTargetMtl::toRenderPassAttachmentDesc(
+    mtl::RenderPassAttachmentDesc *rpaDescOut,
+    gl::SrgbWriteControlMode srgbWriteControlMode) const
 {
     mtl::TextureRef implicitMSTex = getImplicitMSTexture();
     mtl::TextureRef tex           = getTexture();
     if (implicitMSTex)
     {
-        rpaDescOut->texture             = implicitMSTex;
-        rpaDescOut->resolveTexture      = tex;
-        rpaDescOut->resolveLevel        = mLevelIndex;
+        rpaDescOut->texture        = LinearColorViewIfNeeded(implicitMSTex, srgbWriteControlMode);
+        rpaDescOut->resolveTexture = LinearColorViewIfNeeded(tex, srgbWriteControlMode);
+        rpaDescOut->resolveLevel   = mLevelIndex;
         rpaDescOut->resolveSliceOrDepth = mLayerIndex;
     }
     else
     {
-        rpaDescOut->texture      = tex;
+        rpaDescOut->texture      = LinearColorViewIfNeeded(tex, srgbWriteControlMode);
         rpaDescOut->level        = mLevelIndex;
         rpaDescOut->sliceOrDepth = mLayerIndex;
     }
@@ -93,11 +109,12 @@ void RenderTargetMtl::toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *
 
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
 void RenderTargetMtl::toRenderPassResolveAttachmentDesc(
-    mtl::RenderPassAttachmentDesc *rpaDescOut) const
+    mtl::RenderPassAttachmentDesc *rpaDescOut,
+    gl::SrgbWriteControlMode srgbWriteControlMode) const
 {
     ASSERT(!getImplicitMSTexture());
     ASSERT(getRenderSamples() == 1);
-    rpaDescOut->resolveTexture      = getTexture();
+    rpaDescOut->resolveTexture      = LinearColorViewIfNeeded(getTexture(), srgbWriteControlMode);
     rpaDescOut->resolveLevel        = mLevelIndex;
     rpaDescOut->resolveSliceOrDepth = mLayerIndex;
 }

@@ -330,6 +330,7 @@ class Texture final : public Resource,
     // Get stencil view
     TextureRef getStencilView();
     // Get linear color
+    bool hasLinearColorView() const;
     TextureRef getLinearColorView();
 
     TextureRef parentTexture();

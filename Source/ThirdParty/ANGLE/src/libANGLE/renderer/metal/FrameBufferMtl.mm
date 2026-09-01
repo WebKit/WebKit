@@ -776,6 +776,11 @@ angle::Result FramebufferMtl::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_SAMPLES:
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS:
                 break;
+            case gl::Framebuffer::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
+                // prepareRenderPass() below reads the mode and swaps in linear views of any
+                // sRGB color attachments, which changes the render pass descriptor and so
+                // restarts the render pass by itself.
+                break;
             default:
             {
                 static_assert(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");
@@ -1129,6 +1134,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
                                        : gl::DrawBufferMask();
     const gl::DrawBufferMask enabledDrawBuffers =
         getState().getEnabledDrawBuffers() & ~incompatibleAttachments;
+    const gl::SrgbWriteControlMode srgbWriteControlMode = mState.getWriteControlMode();
 
     mtl::RenderPassDesc &desc = *pDescOut;
 
@@ -1152,11 +1158,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
         // enabled attachments.
         if (colorRenderTarget && enabledDrawBuffers.test(colorIndexGL))
         {
-            colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
+            colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment, srgbWriteControlMode);
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
             if (colorResolveRenderTarget)
             {
-                colorResolveRenderTarget->toRenderPassResolveAttachmentDesc(&colorAttachment);
+                colorResolveRenderTarget->toRenderPassResolveAttachmentDesc(&colorAttachment,
+                                                                           srgbWriteControlMode);
             }
 #endif
 

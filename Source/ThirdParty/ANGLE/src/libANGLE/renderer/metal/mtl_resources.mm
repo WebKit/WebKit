@@ -65,6 +65,22 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
     resource->resetCPUReadMemNeedSync();
 }
 
+// Returns the linear counterpart of an sRGB color pixel format, or MTLPixelFormatInvalid if the
+// format is not an sRGB color format.
+// NOTE(hqle): Not all sRGB formats are supported yet.
+MTLPixelFormat GetLinearColorPixelFormat(MTLPixelFormat pixelFormat)
+{
+    switch (pixelFormat)
+    {
+        case MTLPixelFormatRGBA8Unorm_sRGB:
+            return MTLPixelFormatRGBA8Unorm;
+        case MTLPixelFormatBGRA8Unorm_sRGB:
+            return MTLPixelFormatBGRA8Unorm;
+        default:
+            return MTLPixelFormatInvalid;
+    }
+}
+
 MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
 {
     switch (storageMode)
@@ -186,8 +202,28 @@ angle::Result Texture::MakeMemoryLess2DMSTexture(ContextMtl *context,
         desc.textureType = MTLTextureType2DMultisample;
         desc.sampleCount = samples;
 
-        return MakeTexture(context, format, desc, 1, /*renderTargetOnly=*/true,
-                           /*allowFormatView=*/false, /*memoryLess=*/true, refOut);
+        ANGLE_TRY(MakeTexture(context, format, desc, 1, /*renderTargetOnly=*/true,
+                              /*allowFormatView=*/false, /*memoryLess=*/true, refOut));
+
+        if ((*refOut)->get().storageMode == MTLStorageModeMemoryless &&
+            (*refOut)->hasLinearColorView())
+        {
+            const Format &linearFormat =
+                context->getPixelFormat(ConvertToLinear(format.actualFormatId));
+            MTLTextureDescriptor *linearDesc =
+                [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:linearFormat.metalFormat
+                                                                   width:width
+                                                                  height:height
+                                                               mipmapped:NO];
+            linearDesc.textureType = MTLTextureType2DMultisample;
+            linearDesc.sampleCount = samples;
+
+            ANGLE_TRY(MakeTexture(context, linearFormat, linearDesc, 1, /*renderTargetOnly=*/true,
+                                  /*allowFormatView=*/false, /*memoryLess=*/true,
+                                  &(*refOut)->mLinearColorView));
+        }
+
+        return angle::Result::Continue;
     }  // ANGLE_MTL_OBJC_SCOPE
 }
 /** static */
@@ -524,6 +560,8 @@ Texture::Texture(Texture *original, MTLPixelFormat pixelFormat)
     ANGLE_MTL_OBJC_SCOPE
     {
         set(angle::adoptObjCPtr([original->get() newTextureViewWithPixelFormat:pixelFormat]));
+        // A view of a texture that must not be loaded or stored must not be either.
+        mShouldNotLoadStore = original->mShouldNotLoadStore;
         // Texture views consume no additional memory
         mEstimatedByteSize = 0;
     }
@@ -907,24 +945,18 @@ angle::Result Texture::resize(ContextMtl *context, uint32_t width, uint32_t heig
     return angle::Result::Continue;
 }
 
+bool Texture::hasLinearColorView() const
+{
+    return GetLinearColorPixelFormat(pixelFormat()) != MTLPixelFormatInvalid;
+}
+
 TextureRef Texture::getLinearColorView()
 {
-    if (mLinearColorView)
+    if (!mLinearColorView)
     {
-        return mLinearColorView;
-    }
-
-    switch (pixelFormat())
-    {
-        case MTLPixelFormatRGBA8Unorm_sRGB:
-            mLinearColorView = createViewWithCompatibleFormat(MTLPixelFormatRGBA8Unorm);
-            break;
-        case MTLPixelFormatBGRA8Unorm_sRGB:
-            mLinearColorView = createViewWithCompatibleFormat(MTLPixelFormatBGRA8Unorm);
-            break;
-        default:
-            // NOTE(hqle): Not all sRGB formats are supported yet.
-            UNREACHABLE();
+        MTLPixelFormat linearPixelFormat = GetLinearColorPixelFormat(pixelFormat());
+        ASSERT(linearPixelFormat != MTLPixelFormatInvalid);
+        mLinearColorView = createViewWithCompatibleFormat(linearPixelFormat);
     }
 
     return mLinearColorView;
