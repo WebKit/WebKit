@@ -61,8 +61,12 @@ void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algori
         if (grid.orderIterator().shouldSkipChild(*gridItem))
             continue;
 
-        auto gridArea = hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection()) ? gridAreaForDefiniteGridAxisItem(*gridItem) : gridAreaForIndefiniteGridAxisItem(*gridItem, fitTolerance);
+        bool isAutoPlacedInGridAxis = !hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection());
+        auto gridArea = isAutoPlacedInGridAxis ? gridAreaForIndefiniteGridAxisItem(*gridItem, fitTolerance) : gridAreaForDefiniteGridAxisItem(*gridItem);
         insertIntoGridAndLayoutItem(algorithm, *gridItem, gridArea, layoutPhase);
+
+        if (isAutoPlacedInGridAxis)
+            m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
     }
 }
 
@@ -139,7 +143,6 @@ void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm
     setItemContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
     updateRunningPositions(gridItem, area);
-    m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % gridAxisTracksCount();
 }
 
 LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridItem)
