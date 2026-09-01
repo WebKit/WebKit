@@ -70,6 +70,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-notype-fallback-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-notype-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-null-namespace.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-number-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-number-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-percent-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-percent-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-pseudo-elem-invalidation-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-pseudo-elem-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-pseudo-element-marker-expected.html
