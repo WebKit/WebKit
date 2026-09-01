@@ -2569,6 +2569,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Icon.h
     platform/graphics/Image.h
     platform/graphics/ImageAdapter.h
+    platform/graphics/ImageBackingStore.h
     platform/graphics/ImageBuffer.h
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
