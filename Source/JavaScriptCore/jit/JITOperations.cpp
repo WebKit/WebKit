@@ -1143,60 +1143,20 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (EncodedJSValue enc
     OPERATION_RETURN(scope);
 }
 
-ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue value, CacheableIdentifier identifier, PutByKind kind)
+ALWAYS_INLINE static void putMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSObject* baseObject, UniquedStringImpl* uid, JSValue value, PutPropertySlot& slot, PutByKind kind)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* uid = identifier.uid();
-    bool isStrict = kind == PutByKind::ByIdStrict;
-    PutPropertySlot slot(baseValue, isStrict, callFrame->codeBlock()->putByIdContext());
-
-    if (!baseValue.isObject()) [[unlikely]] {
-        if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-            repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-        scope.release();
-        baseValue.put(globalObject, uid, value, slot);
-        return;
-    }
-
-    JSObject* baseObject = asObject(baseValue);
-    Structure* structure = baseObject->structure();
-
-    if (structure->typeInfo().overridesPut()) [[unlikely]] {
-        if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-            repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-        scope.release();
-        baseValue.put(globalObject, uid, value, slot);
-        return;
-    }
-
-    {
-        JSObject* object = baseObject;
-        while (true) {
-            if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto()) [[unlikely]] {
-                if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-                    repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-                scope.release();
-                baseObject->putInlineSlow(globalObject, uid, value, slot);
-                return;
-            }
-            JSValue prototype = object->getPrototypeDirect();
-            if (prototype.isNull())
-                break;
-            object = asObject(prototype);
-            structure = object->structure();
-        }
-    }
-
     Structure* oldStructure = baseObject->structure();
-    baseObject->putInlineFast(globalObject, uid, value, slot);
+    baseObject->putInline(globalObject, uid, value, slot);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (!slot.isCacheablePut() || !oldStructure->propertyAccessesAreCacheable()) [[unlikely]] {
+    if (!slot.isCacheablePut() || !oldStructure->propertyAccessesAreCacheable() || !canUseMegamorphicPutFastPath(oldStructure)) [[unlikely]] {
         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
             repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
         return;
     }
+    ASSERT(slot.base() == baseObject);
 
     Structure* newStructure = baseObject->structure();
     if (slot.type() == PutPropertySlot::ExistingProperty) {
@@ -1222,6 +1182,26 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
     bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
     if (slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]]
         vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
+}
+
+ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue value, CacheableIdentifier identifier, PutByKind kind)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* uid = identifier.uid();
+    bool isStrict = kind == PutByKind::ByIdStrict;
+    PutPropertySlot slot(baseValue, isStrict, callFrame->codeBlock()->putByIdContext());
+
+    if (!baseValue.isObject()) [[unlikely]] {
+        if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
+            repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
+        scope.release();
+        baseValue.put(globalObject, uid, value, slot);
+        return;
+    }
+
+    scope.release();
+    putMegamorphic(globalObject, vm, callFrame, propertyCache, asObject(baseValue), uid, value, slot, kind);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictMegamorphic, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, PropertyInlineCache* propertyCache))
@@ -2030,13 +2010,10 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
     Identifier propertyName = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* baseObject = asObject(baseValue);
-    Structure* structure = baseObject->structure();
-
     PutPropertySlot slot(baseValue, isStrict);
 
     UniquedStringImpl* uid = propertyName.impl();
-    if (!canUseMegamorphicPutById(vm, uid) || structure->typeInfo().overridesPut()) [[unlikely]] {
+    if (!canUseMegamorphicPutById(vm, uid)) [[unlikely]] {
         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
             repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
         scope.release();
@@ -2044,58 +2021,8 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
         return;
     }
 
-    {
-        JSObject* object = baseObject;
-        while (true) {
-            if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto()) [[unlikely]] {
-                if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-                    repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-                scope.release();
-                baseObject->putInlineSlow(globalObject, uid, value, slot);
-                return;
-            }
-            JSValue prototype = object->getPrototypeDirect();
-            if (prototype.isNull())
-                break;
-            object = asObject(prototype);
-            structure = object->structure();
-        }
-    }
-
-    Structure* oldStructure = baseObject->structure();
-    baseObject->putInlineFast(globalObject, uid, value, slot);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    if (!slot.isCacheablePut() || !oldStructure->propertyAccessesAreCacheable()) [[unlikely]] {
-        if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-            repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-        return;
-    }
-
-    Structure* newStructure = baseObject->structure();
-    if (slot.type() == PutPropertySlot::ExistingProperty) {
-        if (oldStructure == newStructure && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
-            oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset()); // Ensure invalidating watchpoint set.
-            vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
-        }
-        return;
-    }
-
-    ASSERT(slot.type() == PutPropertySlot::NewProperty);
-    // This is not worth registering. Dictionary Structure is one-on-one to this object. And NewProperty happens only once.
-    // So this cache will be never used again.
-    if (oldStructure->isDictionary() || newStructure->isDictionary())
-        return;
-
-    if (oldStructure->mayBePrototype() || (newStructure->previousID() != oldStructure) || !newStructure->propertyAccessesAreCacheable()) [[unlikely]] {
-        if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
-            repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-        return;
-    }
-
-    bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
-    if (slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]]
-        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
+    scope.release();
+    putMegamorphic(globalObject, vm, callFrame, propertyCache, asObject(baseValue), uid, value, slot, kind);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByValStrictMegamorphic, void, (EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, PropertyInlineCache* propertyCache, ArrayProfile* profile))

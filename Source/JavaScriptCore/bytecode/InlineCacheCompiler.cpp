@@ -4590,18 +4590,6 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline bool NODELETE canUseMegamorphicPutFastPath(Structure* structure)
-{
-    while (true) {
-        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())
-            return false;
-        JSValue prototype = structure->storedPrototype();
-        if (prototype.isNull())
-            return true;
-        structure = asObject(prototype)->structure();
-    }
-}
-
 static inline ASCIILiteral categoryName(AccessType type)
 {
     switch (type) {
