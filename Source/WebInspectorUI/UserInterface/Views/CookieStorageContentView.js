@@ -385,29 +385,6 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._reloadCookies();
     }
 
-    _getCookiesForHost(cookies, host)
-    {
-        let resourceMatchesStorageDomain = (resource) => {
-            let urlComponents = resource.urlComponents;
-            return urlComponents && urlComponents.host && urlComponents.host === host;
-        };
-
-        let allResources = [];
-        for (let frame of WI.networkManager.frames) {
-            // The main resource isn't in the list of resources, so add it as a candidate.
-            allResources.push(frame.mainResource, ...frame.resourceCollection);
-        }
-
-        let resourcesForDomain = allResources.filter(resourceMatchesStorageDomain);
-
-        let cookiesForDomain = cookies.filter((cookie) => {
-            return resourcesForDomain.some((resource) => {
-                return WI.CookieStorageObject.cookieMatchesResourceURL(cookie, resource.url);
-            });
-        });
-        return cookiesForDomain;
-    }
-
     _generateSortComparator()
     {
         let sortColumnIdentifier = this._table.sortColumnIdentifier;
@@ -562,7 +539,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return Promise.resolve();
 
         return this._getCookies().then((cookies) => {
-            this._cookies = this._getCookiesForHost(cookies.map(WI.Cookie.fromPayload), this.representedObject.host);
+            this._cookies = this.representedObject.filterCookiesForHost(cookies.map(WI.Cookie.fromPayload));
             this._updateSort();
             this._updateFilteredCookies();
             this._updateEmptyFilterResultsMessage();
