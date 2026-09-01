@@ -76,6 +76,7 @@ public:
     virtual void setSizeForControllingContext(IntSize) = 0;
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
+    RefPtr<ImageBuffer> createTransparentBlackImageBuffer() const;
 
     WEBCORE_EXPORT RefPtr<NativeImage> copyNativeImage() const;
 

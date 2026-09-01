@@ -159,6 +159,10 @@ PixelFormat PlaceholderRenderingContext::pixelFormat() const
 
 RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
+    if (!m_buffer) {
+        // Transparent black bitmaps are not cached.
+        return canvas().createTransparentBlackImageBuffer();
+    }
     return m_buffer;
 }
 

@@ -96,7 +96,14 @@ RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostPro
     }
     if (!validateArea())
         return nullptr;
-    // Currently we don't cache transparent black bitmaps of canvases that do not have a context.
+    // Transparent black bitmaps are not cached.
+    return createTransparentBlackImageBuffer();
+}
+
+RefPtr<ImageBuffer> CanvasBase::createTransparentBlackImageBuffer() const
+{
+    if (!validateArea())
+        return nullptr;
     return ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 }
 
