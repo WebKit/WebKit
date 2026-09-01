@@ -10391,7 +10391,7 @@ void ErrorSet::validationErrorF(angle::EntryPoint entryPoint,
     }
 }
 
-std::unique_lock<std::mutex> ErrorSet::getLockIfNotAlready()
+std::unique_lock<std::mutex> ErrorSet::getLockIfNotAlready() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     // Avoid mutex recursion and return the lock only if it is not already locked.  This can happen
     // if device loss is generated while it is being queried.

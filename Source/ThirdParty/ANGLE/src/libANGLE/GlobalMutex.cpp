@@ -25,8 +25,8 @@ using GlobalMutexType = std::mutex;
 class GlobalMutex final : angle::NonCopyable
 {
   public:
-    ANGLE_INLINE void lock() { mMutex.lock(); }
-    ANGLE_INLINE void unlock() { mMutex.unlock(); }
+    ANGLE_INLINE void lock() ANGLE_NO_THREAD_SAFETY_ANALYSIS { mMutex.lock(); }
+    ANGLE_INLINE void unlock() ANGLE_NO_THREAD_SAFETY_ANALYSIS { mMutex.unlock(); }
 
   protected:
     GlobalMutexType mMutex;
@@ -38,7 +38,7 @@ class GlobalMutex final : angle::NonCopyable
 class GlobalMutex final : angle::NonCopyable
 {
   public:
-    ANGLE_INLINE void lock()
+    ANGLE_INLINE void lock() ANGLE_NO_THREAD_SAFETY_ANALYSIS
     {
         const angle::ThreadId threadId = angle::GetCurrentThreadId();
         ASSERT(getOwnerThreadId() != threadId);
@@ -47,7 +47,7 @@ class GlobalMutex final : angle::NonCopyable
         mOwnerThreadId.store(threadId, std::memory_order_relaxed);
     }
 
-    ANGLE_INLINE void unlock()
+    ANGLE_INLINE void unlock() ANGLE_NO_THREAD_SAFETY_ANALYSIS
     {
         ASSERT(getOwnerThreadId() == angle::GetCurrentThreadId());
         mOwnerThreadId.store(angle::InvalidThreadId(), std::memory_order_relaxed);
@@ -70,7 +70,7 @@ class GlobalMutex final : angle::NonCopyable
 class GlobalMutex final : angle::NonCopyable
 {
   public:
-    ANGLE_INLINE void lock()
+    ANGLE_INLINE void lock() ANGLE_NO_THREAD_SAFETY_ANALYSIS
     {
         const angle::ThreadId threadId = angle::GetCurrentThreadId();
         if (ANGLE_UNLIKELY(!mMutex.try_lock()))
@@ -89,7 +89,7 @@ class GlobalMutex final : angle::NonCopyable
         mLockLevel = 1;
     }
 
-    ANGLE_INLINE void unlock()
+    ANGLE_INLINE void unlock() ANGLE_NO_THREAD_SAFETY_ANALYSIS
     {
         ASSERT(getOwnerThreadId() == angle::GetCurrentThreadId());
         ASSERT(mLockLevel > 0);

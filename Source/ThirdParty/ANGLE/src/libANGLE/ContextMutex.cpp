@@ -235,7 +235,7 @@ void ContextMutex::unlock()
 }
 
 #if defined(ANGLE_ENABLE_CONTEXT_MUTEX_RECURSION)
-bool ContextMutex::tryLockImpl()
+bool ContextMutex::tryLockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     const angle::ThreadId threadId = angle::GetCurrentThreadId();
     if (ANGLE_UNLIKELY(!mMutex.try_lock()))
@@ -263,7 +263,7 @@ bool ContextMutex::tryLockImpl()
     return true;
 }
 
-void ContextMutex::lockImpl()
+void ContextMutex::lockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     const angle::ThreadId threadId = angle::GetCurrentThreadId();
     if (ANGLE_UNLIKELY(!mMutex.try_lock()))
@@ -293,7 +293,7 @@ void ContextMutex::lockImpl()
     }
 }
 
-void ContextMutex::unlockImpl()
+void ContextMutex::unlockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(mOwnerThreadId.load(std::memory_order_relaxed) == angle::GetCurrentThreadId());
     ASSERT(mLockLevel > 0);
@@ -304,7 +304,7 @@ void ContextMutex::unlockImpl()
     }
 }
 #else
-bool ContextMutex::tryLockImpl()
+bool ContextMutex::tryLockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     angle::ThreadId currentThreadId;
     ASSERT(!CheckThreadIdCurrent(mOwnerThreadId, &currentThreadId));
@@ -323,7 +323,7 @@ bool ContextMutex::tryLockImpl()
     return false;
 }
 
-void ContextMutex::lockImpl()
+void ContextMutex::lockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     angle::ThreadId currentThreadId;
     ASSERT(!CheckThreadIdCurrent(mOwnerThreadId, &currentThreadId));
@@ -341,7 +341,7 @@ void ContextMutex::lockImpl()
     }
 }
 
-void ContextMutex::unlockImpl()
+void ContextMutex::unlockImpl() ANGLE_NO_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(
         TryUpdateThreadId(&mOwnerThreadId, angle::GetCurrentThreadId(), angle::InvalidThreadId()));

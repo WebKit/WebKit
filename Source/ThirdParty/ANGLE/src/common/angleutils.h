@@ -481,6 +481,25 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
 #    define ANGLE_NO_SANITIZE_CFI_ICALL
 #endif
 
+// Clang -Wthread-safety capability annotations for functions that acquire or
+// release a capability (such as a std::mutex member) named by their argument.
+#if defined(__clang__) && __has_attribute(acquire_capability)
+#    define ANGLE_ACQUIRE_CAPABILITY(...) __attribute__((acquire_capability(__VA_ARGS__)))
+#    define ANGLE_RELEASE_CAPABILITY(...) __attribute__((release_capability(__VA_ARGS__)))
+#else
+#    define ANGLE_ACQUIRE_CAPABILITY(...)
+#    define ANGLE_RELEASE_CAPABILITY(...)
+#endif
+
+// Clang -Wthread-safety opt-out for a function whose locking discipline the
+// analyzer cannot model, such as conditional or recursive locking or lock
+// ownership transferred into a returned guard.
+#if defined(__clang__) && __has_attribute(no_thread_safety_analysis)
+#    define ANGLE_NO_THREAD_SAFETY_ANALYSIS __attribute__((no_thread_safety_analysis))
+#else
+#    define ANGLE_NO_THREAD_SAFETY_ANALYSIS
+#endif
+
 // The below inlining code lifted from V8.
 #if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
 #    define ANGLE_HAS_ATTRIBUTE_ALWAYS_INLINE (__has_attribute(always_inline))

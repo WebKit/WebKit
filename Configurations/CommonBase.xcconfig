@@ -116,7 +116,7 @@ WK_OTHER_AUDIT_SPI_FLAGS_164901718[sdk=iphoneos26.*.internal] = -DSDKDB_HAS_1649
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 GCC_THREADSAFE_STATICS = YES;
 
-WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla -Werror=unguarded-availability;
+WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla -Werror=unguarded-availability -Wthread-safety;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS) $(WK_SANITIZER_WARNING_CFLAGS);
 
 CLANG_CXX_STANDARD_LIBRARY_HARDENING = extensive;
