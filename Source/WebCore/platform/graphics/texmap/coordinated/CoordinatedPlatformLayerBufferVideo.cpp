@@ -278,7 +278,7 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
     if (m_buffer)
         return;
 
-    OptionSet<BitmapTexture::Flags> textureFlags;
+    OptionSet<BitmapTexture::Flags> textureFlags = { BitmapTexture::Flags::UseBGRALayout };
     if (GST_VIDEO_INFO_HAS_ALPHA(m_mappedVideoFrame->info()))
         textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
     auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
