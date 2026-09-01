@@ -1,0 +1,6 @@
+An APNG whose default image is hidden, and whose first animation frame is narrower than the
+canvas, must not decode more pixels than that frame's rows hold. Decoding the canvas width
+instead copies bytes from past the end of the row into the image, where a page can read them
+back out of a canvas.
+
+PASS
