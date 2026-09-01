@@ -548,8 +548,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     _selectMenu = [self createMenu];
-    _selectContextMenuPresenter->updateVisibleMenu(^UIMenu *(UIMenu *) {
-        return _selectMenu.get();
+    _selectContextMenuPresenter->updateVisibleMenu([weakSelf = WeakObjCPtr<WKSelectPicker>(self)] (UIMenu *) -> UIMenu * {
+        if (RetainPtr strongSelf = weakSelf.get())
+            return strongSelf->_selectMenu;
+        return nil;
     });
 #endif
 }
@@ -638,8 +640,9 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
 {
-    RetainPtr optionAction = [UIAction actionWithTitle:option.text.createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) {
-        [self didSelectOptionIndex:optionIndex];
+    RetainPtr optionAction = [UIAction actionWithTitle:option.text.createNSString().get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), optionIndex] (__kindof UIAction *action) {
+        if (RetainPtr strongSelf = weakSelf.get())
+            [strongSelf didSelectOptionIndex:optionIndex];
     }];
 
     if (option.disabled)
@@ -685,11 +688,9 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
     UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKSelectPicker>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return nil;
-
-        return strongSelf->_selectMenu.get();
+        if (RetainPtr strongSelf = weakSelf.get())
+            return strongSelf->_selectMenu;
+        return nil;
     };
 
     return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:actionMenuProvider];
@@ -704,8 +705,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     }
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
-        auto strongSelf = weakSelf.get();
-        if (strongSelf)
+        if (RetainPtr strongSelf = weakSelf.get())
             [[strongSelf->_view.get() webView] _didShowContextMenu];
     }];
 }
