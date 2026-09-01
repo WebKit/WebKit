@@ -585,6 +585,24 @@ FloatRect FrameView::convertToRootViewAcrossIsolatedFrames(FloatRect rect) const
     return parentView->convertToRootViewAcrossIsolatedFrames(parentRect);
 }
 
+IntRect FrameView::convertToRootViewAcrossIsolatedFrames(IntRect rect) const
+{
+    RefPtr parentView = siteIsolationAwareParentView(*this);
+    if (!parentView)
+        return rect;
+
+    IntRect parentRect;
+    if (is<LocalFrameView>(*parentView))
+        parentRect = convertToContainingView(rect);
+    else {
+        Ref frame = this->frame();
+        rect.moveBy(roundedIntPoint(parentView->childFrameOwnerContentBoxLocation(frame)));
+        parentRect = roundedIntRect(parentView->contentsToView(parentView->childFrameOwnerToRootContentTransform(frame).projectQuad(FloatQuad { rect }).boundingBox()));
+    }
+
+    return parentView->convertToRootViewAcrossIsolatedFrames(parentRect);
+}
+
 FloatQuad FrameView::convertToRootViewAcrossIsolatedFrames(const FloatQuad& quad) const
 {
     // Map each corner independently so a CSS transform (which need not preserve axis alignment) is
@@ -600,6 +618,11 @@ FloatQuad FrameView::convertToRootViewAcrossIsolatedFrames(const FloatQuad& quad
 FloatRect FrameView::rootViewToContentsAcrossIsolatedFrames(FloatRect rect) const
 {
     return viewToContents(convertFromRootViewAcrossIsolatedFrames(rect));
+}
+
+IntRect FrameView::contentsToMainFrameView(const IntRect& rect) const
+{
+    return convertToRootViewAcrossIsolatedFrames(contentsToView(rect));
 }
 
 }

@@ -46,7 +46,7 @@ WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, cons
     page->setActiveColorChooser(this);
     auto supportsAlpha = client->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToRootView(), supportsAlpha, client->suggestedColors(), client->rootFrameID()), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToMainFrameView(), supportsAlpha, client->suggestedColors(), client->rootFrameID()), page->identifier());
 }
 
 WebColorChooser::~WebColorChooser()
@@ -79,7 +79,7 @@ void WebColorChooser::reattachColorChooser(const Color& color)
 
     Ref colorChooserClient = *m_colorChooserClient;
     auto supportsAlpha = colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowColorPicker(color, colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, colorChooserClient->suggestedColors(), colorChooserClient->rootFrameID()), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowColorPicker(color, colorChooserClient->elementRectRelativeToMainFrameView(), supportsAlpha, colorChooserClient->suggestedColors(), colorChooserClient->rootFrameID()), page->identifier());
 }
 
 void WebColorChooser::setSelectedColor(const Color& color)

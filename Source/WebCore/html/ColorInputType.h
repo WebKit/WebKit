@@ -67,7 +67,7 @@ private:
 
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
-    IntRect elementRectRelativeToRootView() const final;
+    IntRect elementRectRelativeToMainFrameView() const final;
     std::optional<FrameIdentifier> rootFrameID() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
