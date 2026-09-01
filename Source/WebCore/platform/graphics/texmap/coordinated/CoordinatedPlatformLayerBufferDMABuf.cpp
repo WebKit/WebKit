@@ -38,6 +38,7 @@
 #include <epoxy/gl.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
@@ -324,7 +325,7 @@ void CoordinatedPlatformLayerBufferDMABuf::paintToTextureMapper(TextureMapper& t
 
 #else
 
-class PromiseDMABufImageContext final : public RefCounted<PromiseDMABufImageContext> {
+class PromiseDMABufImageContext final : public ThreadSafeRefCounted<PromiseDMABufImageContext> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PromiseDMABufImageContext);
 public:
     static Ref<PromiseDMABufImageContext> create(Ref<DMABufBuffer>&& buffer, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& glFence, WTF::UnixFileDescriptor&& fd)
