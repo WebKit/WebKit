@@ -513,7 +513,8 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
 void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size())
+    bool showRulers = m_showRulers || m_showRulersForNodeHighlight;
+    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size() && !showRulers)
         return;
 
     constexpr bool offsetBoundsByScroll = true;
@@ -579,6 +580,31 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
 
         if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
             highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
+    }
+
+    if (showRulers) {
+        Highlight::Bounds bounds;
+        Vector<Highlight::Bounds> boundsForGuides;
+
+        if (highlight.type == Highlight::Type::NodeList) {
+            ASSERT(highlight.quads.size() % 4 == 0);
+            for (size_t i = 0; i < highlight.quads.size(); i += 4) {
+                Highlight::Bounds boundsForNode;
+                for (size_t j = i; j < i + 4; ++j)
+                    boundsForNode.unite(highlight.quads[j].boundingBox());
+                bounds.unite(boundsForNode);
+                boundsForGuides.append(boundsForNode);
+            }
+        } else if (!highlight.quads.isEmpty()) {
+            for (auto& quad : highlight.quads)
+                bounds.unite(quad.boundingBox());
+            boundsForGuides.append(bounds);
+        }
+
+        if (auto rulerData = buildRulerData(bounds)) {
+            rulerData->boundsForGuides = WTF::move(boundsForGuides);
+            highlight.rulerData = WTF::move(rulerData);
+        }
     }
 }
 
@@ -860,48 +886,84 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
         context.fillRect(pair.second);
 }
 
+std::optional<InspectorOverlay::Highlight::RulerData> InspectorOverlay::buildRulerData(const InspectorOverlay::Highlight::Bounds& bounds) const
+{
+    RefPtr localMainFrame = page().localMainFrame();
+    if (!localMainFrame)
+        return std::nullopt;
+
+    RefPtr pageView = localMainFrame->view();
+    if (!pageView)
+        return std::nullopt;
+
+    Highlight::RulerData rulerData;
+    rulerData.bounds = bounds;
+    rulerData.viewportSize = pageView->sizeForVisibleContent();
+    rulerData.obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+    if (!pageView->delegatesScrollingToNativeView())
+        rulerData.scrollOffset = pageView->visibleContentRect().location();
+    rulerData.visualViewportSize = pageView->visualViewportRect().size();
+    rulerData.pageScaleFactor = page().pageScaleFactor();
+    rulerData.pageZoomFactor = localMainFrame->pageZoomFactor();
+    rulerData.fontFamily = page().settings().sansSerifFontFamily();
+    return rulerData;
+}
+
 void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds)
 {
-    Ref mainFrame = page().mainFrame();
-    RefPtr pageView = mainFrame->virtualView();
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+    auto rulerData = buildRulerData(bounds);
+    if (!rulerData)
+        return;
 
+    rulerData->boundsForGuides.append(bounds);
+    drawBounds(context, *rulerData, FloatPoint::zero());
+}
+
+void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::RulerData& rulerData, const FloatPoint& viewportOrigin)
+{
     Path path;
 
-    if (bounds.y() > obscuredContentInsets.top()) {
-        path.moveTo({ bounds.x(), bounds.y() });
-        path.addLineTo({ bounds.x(), obscuredContentInsets.top() });
+    for (auto bounds : rulerData.boundsForGuides) {
+        bounds.move(-viewportOrigin.x(), -viewportOrigin.y());
 
-        path.moveTo({ bounds.maxX(), bounds.y() });
-        path.addLineTo({ bounds.maxX(), obscuredContentInsets.top() });
+        if (bounds.y() > rulerData.obscuredContentInsets.top()) {
+            path.moveTo({ bounds.x(), bounds.y() });
+            path.addLineTo({ bounds.x(), rulerData.obscuredContentInsets.top() });
+
+            path.moveTo({ bounds.maxX(), bounds.y() });
+            path.addLineTo({ bounds.maxX(), rulerData.obscuredContentInsets.top() });
+        }
+
+        if (bounds.maxY() < rulerData.viewportSize.height()) {
+            path.moveTo({ bounds.x(), rulerData.viewportSize.height() });
+            path.addLineTo({ bounds.x(), bounds.maxY() });
+
+            path.moveTo({ bounds.maxX(), rulerData.viewportSize.height() });
+            path.addLineTo({ bounds.maxX(), bounds.maxY() });
+        }
+
+        if (bounds.x() > rulerData.obscuredContentInsets.left()) {
+            path.moveTo({ bounds.x(), bounds.y() });
+            path.addLineTo({ rulerData.obscuredContentInsets.left(), bounds.y() });
+
+            path.moveTo({ bounds.x(), bounds.maxY() });
+            path.addLineTo({ rulerData.obscuredContentInsets.left(), bounds.maxY() });
+        }
+
+        if (bounds.maxX() < rulerData.viewportSize.width()) {
+            path.moveTo({ bounds.maxX(), bounds.y() });
+            path.addLineTo({ rulerData.viewportSize.width(), bounds.y() });
+
+            path.moveTo({ bounds.maxX(), bounds.maxY() });
+            path.addLineTo({ rulerData.viewportSize.width(), bounds.maxY() });
+        }
     }
 
-    if (bounds.maxY() < viewportSize.height()) {
-        path.moveTo({ bounds.x(), viewportSize.height() });
-        path.addLineTo({ bounds.x(), bounds.maxY() });
-
-        path.moveTo({ bounds.maxX(), viewportSize.height() });
-        path.addLineTo({ bounds.maxX(), bounds.maxY() });
-    }
-
-    if (bounds.x() > obscuredContentInsets.left()) {
-        path.moveTo({ bounds.x(), bounds.y() });
-        path.addLineTo({ obscuredContentInsets.left(), bounds.y() });
-
-        path.moveTo({ bounds.x(), bounds.maxY() });
-        path.addLineTo({ obscuredContentInsets.left(), bounds.maxY() });
-    }
-
-    if (bounds.maxX() < viewportSize.width()) {
-        path.moveTo({ bounds.maxX(), bounds.y() });
-        path.addLineTo({ viewportSize.width(), bounds.y() });
-
-        path.moveTo({ bounds.maxX(), bounds.maxY() });
-        path.addLineTo({ viewportSize.width(), bounds.maxY() });
-    }
+    if (path.isEmpty())
+        return;
 
     GraphicsContextStateSaver stateSaver(context);
+    context.translate(viewportOrigin);
 
     context.setStrokeThickness(1);
 
@@ -913,27 +975,28 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverl
 
 void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion)
 {
+    auto rulerData = buildRulerData(rulerExclusion.bounds);
+    if (!rulerData)
+        return;
+
+    drawRulers(context, *rulerData, rulerExclusion.titlePath, FloatPoint::zero());
+}
+
+void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::Highlight::RulerData& rulerData, const Path& titlePath, const FloatPoint& viewportOrigin)
+{
     constexpr auto rulerBackgroundColor = Color::white.colorWithAlphaByte(153);
     constexpr auto lightRulerColor = Color::black.colorWithAlphaByte(51);
     constexpr auto darkRulerColor = Color::black.colorWithAlphaByte(128);
 
-    IntPoint scrollOffset;
-    RefPtr localMainFrame = page().localMainFrame();
-    if (!localMainFrame)
+    float pageFactor = rulerData.pageZoomFactor * rulerData.pageScaleFactor;
+    if (!pageFactor)
         return;
 
-    RefPtr pageView = localMainFrame->view();
-    if (!pageView->delegatesScrollingToNativeView())
-        scrollOffset = pageView->visibleContentRect().location();
+    auto bounds = rulerData.bounds;
+    bounds.move(-viewportOrigin.x(), -viewportOrigin.y());
 
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
-    float pageScaleFactor = page().pageScaleFactor();
-    float pageZoomFactor = localMainFrame->pageZoomFactor();
-
-    float pageFactor = pageZoomFactor * pageScaleFactor;
-    float scrollX = scrollOffset.x() * pageScaleFactor;
-    float scrollY = scrollOffset.y() * pageScaleFactor;
+    float scrollX = rulerData.scrollOffset.x() * rulerData.pageScaleFactor;
+    float scrollY = rulerData.scrollOffset.y() * rulerData.pageScaleFactor;
 
     const auto zoom = [&] (float value) -> float {
         return value * pageFactor;
@@ -947,8 +1010,8 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         return value - std::fmod(value, step);
     };
 
-    float width = viewportSize.width() / pageFactor;
-    float height = viewportSize.height() / pageFactor;
+    float width = rulerData.viewportSize.width() / pageFactor;
+    float height = rulerData.viewportSize.height() / pageFactor;
     float minX = unzoom(scrollX);
     float minY = unzoom(scrollY);
     float maxX = minX + width;
@@ -957,19 +1020,22 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     bool drawTopEdge = true;
     bool drawLeftEdge = true;
 
+    GraphicsContextStateSaver viewportStateSaver(context);
+    context.translate(viewportOrigin);
+
     // Determine which side (top/bottom and left/right) to draw the rulers.
     {
-        FloatRect topEdge(obscuredContentInsets.left(), obscuredContentInsets.top(), zoom(width) - obscuredContentInsets.left(), rulerSize);
-        FloatRect bottomEdge(obscuredContentInsets.left(), zoom(height) - rulerSize, zoom(width) - obscuredContentInsets.left(), rulerSize);
-        drawTopEdge = !rulerExclusion.bounds.intersects(topEdge) || rulerExclusion.bounds.intersects(bottomEdge);
+        FloatRect topEdge(rulerData.obscuredContentInsets.left(), rulerData.obscuredContentInsets.top(), zoom(width) - rulerData.obscuredContentInsets.left(), rulerSize);
+        FloatRect bottomEdge(rulerData.obscuredContentInsets.left(), zoom(height) - rulerSize, zoom(width) - rulerData.obscuredContentInsets.left(), rulerSize);
+        drawTopEdge = !bounds.intersects(topEdge) || bounds.intersects(bottomEdge);
 
-        FloatRect rightEdge(zoom(width) - rulerSize, obscuredContentInsets.top(), rulerSize, zoom(height) - obscuredContentInsets.top());
-        FloatRect leftEdge(obscuredContentInsets.left(), obscuredContentInsets.top(), rulerSize, zoom(height) - obscuredContentInsets.top());
-        drawLeftEdge = !rulerExclusion.bounds.intersects(leftEdge) || rulerExclusion.bounds.intersects(rightEdge);
+        FloatRect rightEdge(zoom(width) - rulerSize, rulerData.obscuredContentInsets.top(), rulerSize, zoom(height) - rulerData.obscuredContentInsets.top());
+        FloatRect leftEdge(rulerData.obscuredContentInsets.left(), rulerData.obscuredContentInsets.top(), rulerSize, zoom(height) - rulerData.obscuredContentInsets.top());
+        drawLeftEdge = !bounds.intersects(leftEdge) || bounds.intersects(rightEdge);
     }
 
-    float cornerX = drawLeftEdge ? obscuredContentInsets.left() : zoom(width) - rulerSize;
-    float cornerY = drawTopEdge ? obscuredContentInsets.top() : zoom(height) - rulerSize;
+    float cornerX = drawLeftEdge ? rulerData.obscuredContentInsets.left() : zoom(width) - rulerSize;
+    float cornerY = drawTopEdge ? rulerData.obscuredContentInsets.top() : zoom(height) - rulerSize;
 
     // Draw backgrounds.
     {
@@ -982,18 +1048,18 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         if (drawLeftEdge)
             context.fillRect({ cornerX + rulerSize, cornerY, zoom(width) - cornerX - rulerSize, rulerSize });
         else
-            context.fillRect({ obscuredContentInsets.left(), cornerY, cornerX - obscuredContentInsets.left(), rulerSize });
+            context.fillRect({ rulerData.obscuredContentInsets.left(), cornerY, cornerX - rulerData.obscuredContentInsets.left(), rulerSize });
 
         if (drawTopEdge)
             context.fillRect({ cornerX, cornerY + rulerSize, rulerSize, zoom(height) - cornerY - rulerSize });  
         else
-            context.fillRect({ cornerX, obscuredContentInsets.top(), rulerSize, cornerY - obscuredContentInsets.top() });
+            context.fillRect({ cornerX, rulerData.obscuredContentInsets.top(), rulerSize, cornerY - rulerData.obscuredContentInsets.top() });
     }
 
     // Draw lines.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomString { rulerData.fontFamily });
         fontDescription.setComputedSize(10);
 
         FontCascade font(WTF::move(fontDescription));
@@ -1008,7 +1074,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         {
             GraphicsContextStateSaver horizontalRulerStateSaver(context);
 
-            context.translate(obscuredContentInsets.left() - scrollX + 0.5f, cornerY - scrollY);
+            context.translate(rulerData.obscuredContentInsets.left() - scrollX + 0.5f, cornerY - scrollY);
 
             for (float x = multipleBelow(minX, rulerSubStepIncrement); x < maxX; x += rulerSubStepIncrement) {
                 if (!x && !scrollX)
@@ -1045,7 +1111,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         {
             GraphicsContextStateSaver veritcalRulerStateSaver(context);
 
-            context.translate(cornerX - scrollX, obscuredContentInsets.top() - scrollY + 0.5f);
+            context.translate(cornerX - scrollX, rulerData.obscuredContentInsets.top() - scrollY + 0.5f);
 
             for (float y = multipleBelow(minY, rulerSubStepIncrement); y < maxY; y += rulerSubStepIncrement) {
                 if (!y && !scrollY)
@@ -1083,14 +1149,13 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw viewport size.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomString { rulerData.fontFamily });
         fontDescription.setComputedSize(12);
 
         FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
-        auto viewportRect = pageView->visualViewportRect();
-        TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"_s));
+        TextRun viewportTextRun(makeString(rulerData.visualViewportSize.width() / rulerData.pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', rulerData.visualViewportSize.height() / rulerData.pageZoomFactor, "px"_s));
 
         const float margin = 4;
         const float padding = 2;
@@ -1111,19 +1176,19 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         float translateY = cornerY + (drawTopEdge ? topTranslateY : bottomTranslateY);
 
         FloatPoint translate(translateX, translateY);
-        if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+        if (titlePath.contains(viewportTextRectCenter + translate + viewportOrigin)) {
             // Try the opposite horizontal side.
-            float oppositeTranslateX = drawLeftEdge ? zoom(width) + rightTranslateX : obscuredContentInsets.left() + leftTranslateX;
+            float oppositeTranslateX = drawLeftEdge ? zoom(width) + rightTranslateX : rulerData.obscuredContentInsets.left() + leftTranslateX;
             translate.setX(oppositeTranslateX);
 
-            if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+            if (titlePath.contains(viewportTextRectCenter + translate + viewportOrigin)) {
                 translate.setX(translateX);
 
                 // Try the opposite vertical side.
-                float oppositeTranslateY = drawTopEdge ? zoom(height) + bottomTranslateY : obscuredContentInsets.top() + topTranslateY;
+                float oppositeTranslateY = drawTopEdge ? zoom(height) + bottomTranslateY : rulerData.obscuredContentInsets.top() + topTranslateY;
                 translate.setY(oppositeTranslateY);
 
-                if (rulerExclusion.titlePath.contains(viewportTextRectCenter + translate)) {
+                if (titlePath.contains(viewportTextRectCenter + translate + viewportOrigin)) {
                     // Try the opposite corner.
                     translate.setX(oppositeTranslateX);
                 }

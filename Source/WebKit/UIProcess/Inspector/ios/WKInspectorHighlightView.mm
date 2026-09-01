@@ -282,6 +282,32 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
 
     for (auto flexHighlightOverlay : _highlight->flexHighlightOverlays)
         WebCore::InspectorOverlay::drawFlexOverlay(context, flexHighlightOverlay);
+
+    if (auto rulerData = _highlight->rulerData) {
+        WebCore::FloatRect viewportRect { self.frame };
+        rulerData->viewportSize = viewportRect.size();
+        rulerData->obscuredContentInsets = { };
+        rulerData->scrollOffset = WebCore::roundedIntPoint(viewportRect.location());
+        rulerData->visualViewportSize = viewportRect.size();
+
+        // The native scroll view applies the page scale to WKContentView.
+        rulerData->pageScaleFactor = 1;
+
+        WebCore::InspectorOverlay::drawBounds(context, *rulerData, viewportRect.location());
+        WebCore::InspectorOverlay::drawRulers(context, *rulerData, WebCore::Path { }, viewportRect.location());
+    }
+}
+
+- (void)updateViewportWithScale:(double)scale frame:(const WebCore::FloatRect&)frame
+{
+    self.contentScaleFactor = scale;
+    self.frame = frame;
+
+    CGPoint layerPosition = CGPointMake(-self.frame.origin.x, -self.frame.origin.y);
+    for (CAShapeLayer *layer in _layers.get())
+        layer.position = layerPosition;
+
+    [self setNeedsDisplay];
 }
 
 - (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale frame:(const WebCore::FloatRect&)frame
@@ -290,16 +316,12 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
 
     _highlight = highlight;
 
-    self.contentScaleFactor = scale;
-    self.frame = frame;
+    [self updateViewportWithScale:scale frame:frame];
 
     if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Node || highlight.type == WebCore::InspectorOverlay::Highlight::Type::NodeList)
         [self _layoutForNodeListHighlight:highlight];
     else if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Rects)
         [self _layoutForRectsHighlight:highlight];
-
-    
-    [self setNeedsDisplay];
 }
 
 @end

@@ -52,17 +52,10 @@ Inspector::CommandResult<void> FrameDOMAgent::removeBreakpointForEventListener(i
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-#if PLATFORM(IOS_FAMILY)
-Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-#else
 Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
-#endif
 
 Inspector::CommandResult<void> FrameDOMAgent::highlightRect(int, int, int, int, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
 {
@@ -74,22 +67,6 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightQuad(Ref<JSON::Array>&&, 
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-#if PLATFORM(IOS_FAMILY)
-Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNodeList(Ref<JSON::Array>&&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-#else
 Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
@@ -104,7 +81,6 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightNodeList(Ref<JSON::Array>
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
-#endif
 
 Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
 {

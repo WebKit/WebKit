@@ -37,6 +37,7 @@ class FloatRect;
     std::optional<WebCore::InspectorOverlay::Highlight> _highlight;
 }
 - (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale frame:(const WebCore::FloatRect&)frame;
+- (void)updateViewportWithScale:(double)scale frame:(const WebCore::FloatRect&)frame;
 @end
 
 #endif
