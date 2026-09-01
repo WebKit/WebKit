@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Frame With A Nested Cross-Origin Frame</title>
+</head>
+<body>
+    <div id="child-container" data-role="child-root">
+        <p>Child frame content.</p>
+    </div>
+    <!-- Static markup, so the nested frame's owner element reaches the frontend through this
+         frame target's `DOM.setChildNodes` rather than through a `childNodeInserted` event. -->
+    <iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>
+</html>

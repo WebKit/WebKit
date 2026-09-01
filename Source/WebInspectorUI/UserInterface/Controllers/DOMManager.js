@@ -51,7 +51,6 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         this._frameTargetDOMData = new Map;
         this._unsplicedFrameDocuments = [];
-        this._pageBodyChildrenRequested = false;
 
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleEventBreakpointDisabledStateChanged, this);
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._handleEventBreakpointEditablePropertyChanged, this);
@@ -121,45 +120,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (this._trySpliceFrameDocumentIntoNode(frameDocument))
             return;
 
+        // The owner element may not have arrived yet, or may not exist at all: the main frame has
+        // none, so under Site Isolation at least one document stays pending for good. Do not search
+        // the page tree from here to find one — that delivers nodes nothing asked for, along with
+        // whatever other agents attach to them, such as CSS layout flags.
         this._unsplicedFrameDocuments.push(frameDocument);
-
-        this._ensurePageBodyChildrenLoaded();
-    }
-
-    _ensurePageBodyChildrenLoaded()
-    {
-        if (this._pageBodyChildrenRequested)
-            return;
-
-        // The page document may not be loaded yet (getDocument is deferred).
-        // Request body's children so iframe elements enter _idToDOMNode.
-        this.requestDocument((document) => {
-            if (!document)
-                return;
-
-            let body = document.body;
-            if (!body) {
-                // Need <html> children first to get <body>.
-                let docElement = document.documentElement;
-                if (!docElement)
-                    return;
-                docElement.getChildNodes(() => {
-                    body = document.body;
-                    if (body)
-                        body.getChildNodes(() => this._trySpliceUnsplicedFrameDocuments());
-                });
-                return;
-            }
-
-            if (body.children) {
-                this._trySpliceUnsplicedFrameDocuments();
-                return;
-            }
-
-            body.getChildNodes(() => this._trySpliceUnsplicedFrameDocuments());
-        });
-
-        this._pageBodyChildrenRequested = true;
     }
 
     // FIXME: <https://webkit.org/b/298980> URL-based matching is fragile (breaks with redirects,
@@ -287,6 +252,9 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         parent._setChildrenPayload(payloads);
+
+        // New iframe elements may have been loaded — try to splice pending frame documents.
+        this._trySpliceUnsplicedFrameDocuments();
     }
 
     _frameTargetDocumentUpdated(target)
@@ -922,8 +890,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             node.markDestroyed();
             delete this._idToDOMNode[id];
         }
-
-        this._pageBodyChildrenRequested = false;
 
         for (let breakpoint of this._breakpointsForEventListeners.values())
             WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
