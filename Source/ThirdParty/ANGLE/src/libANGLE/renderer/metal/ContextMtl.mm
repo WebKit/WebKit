@@ -1330,6 +1330,8 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
                 // NOTE(hqle): MSAA feature.
                 break;
             case gl::state::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
+                // gl::State also marks the draw framebuffer dirty, and FramebufferMtl::syncState()
+                // rebuilds the render pass from the new mode. Nothing to do at the context level.
                 break;
             case gl::state::DIRTY_BIT_CURRENT_VALUES:
             {

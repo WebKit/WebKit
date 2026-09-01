@@ -695,8 +695,11 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
     GL_UniformMatrix4fv(m_colorMatrixUniformLocation, 1, GL_FALSE, colorMatrix);
 
-    // Do the actual drawing.
+    if (internalFormat == GL_SRGB8_ALPHA8)
+        GL_Disable(GL_FRAMEBUFFER_SRGB_EXT);
     GL_DrawArrays(GL_TRIANGLES, 0, 6);
+    if (internalFormat == GL_SRGB8_ALPHA8)
+        GL_Enable(GL_FRAMEBUFFER_SRGB_EXT);
 
     m_knownContent.set(outputTexture, content);
     autoClearTextureOnError.release();
