@@ -8,7 +8,7 @@
 <script>
 description("Test that glTexImage2D and glTexSubImage2D accept new WebGL 2 enum values");
 
-if (window.internal)
+if (window.internals)
     internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
 var canvas = document.getElementById("canvas");
@@ -53,9 +53,13 @@ var count;
 var offset = 0;
 var index;
 var expected;
-function test(uploadArrayFunction, downloadArrayFunction, components, internalFormat, format, uploadType, downloadType) {
+function test(uploadArrayFunction, downloadArrayFunction, components, internalFormat, format, uploadType, downloadType, downloadFormat, downloadComponents) {
 	var width = 4;
 	var height = 4;
+	if (downloadFormat === undefined)
+		downloadFormat = format;
+	if (downloadComponents === undefined)
+		downloadComponents = components;
 	arrayBuffer = new uploadArrayFunction(2 * width * height * components);
 	var count = 0;
 	for (var i = 0; i < height; ++i) {
@@ -69,15 +73,15 @@ function test(uploadArrayFunction, downloadArrayFunction, components, internalFo
 	shouldBe("gl.getError()", "gl.NO_ERROR");
 	gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, uploadType, arrayBuffer);
 	shouldBe("gl.getError()", "gl.NO_ERROR");
-	receiver = new downloadArrayFunction(2 * width * height * components);
-	gl.readPixels(0, 0, width, height, format, downloadType, receiver);
+	receiver = new downloadArrayFunction(2 * width * height * downloadComponents);
+	gl.readPixels(0, 0, width, height, downloadFormat, downloadType, receiver);
 	shouldBe("gl.getError()", "gl.NO_ERROR");
 	count = 0;
 	for (var i = 0; i < height; ++i) {
 		for (var j = 0; j < width; ++j) {
 			for (var k = 0; k < components; ++k) {
 				expected = offset + count++;
-				index = (width * i + j) * components + k;
+				index = (width * i + j) * downloadComponents + k;
 				shouldBe("receiver[index]", "expected");
 			}
 		}
@@ -91,7 +95,7 @@ function test(uploadArrayFunction, downloadArrayFunction, components, internalFo
 
 // FIXME: Read from the textures in shaders
 
-test(Uint8Array, Uint8Array, 3, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Uint8Array, Uint8Array, 3, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE, gl.RGBA, 4);
 test(Uint8Array, Uint8Array, 4, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
 //test(Uint8Array, Uint8Array, 2, gl.LUMINANCE_ALPHA, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
 //test(Uint8Array, Uint8Array, 1, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
@@ -119,7 +123,7 @@ test(Int16Array, Int32Array, 2, gl.RG16I, gl.RG_INTEGER, gl.SHORT, gl.INT);
 test(Uint32Array, Uint32Array, 2, gl.RG32UI, gl.RG_INTEGER, gl.UNSIGNED_INT, gl.UNSIGNED_INT);
 test(Int32Array, Int32Array, 2, gl.RG32I, gl.RG_INTEGER, gl.INT, gl.INT);
 
-test(Uint8Array, Uint8Array, 3, gl.RGB8, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Uint8Array, Uint8Array, 3, gl.RGB8, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE, gl.RGBA, 4);
 test(Uint8Array, Uint8Array, 3, gl.SRGB8, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
 test(Int8Array, Int8Array, 3, gl.RGB8_SNORM, gl.RGB, gl.BYTE, gl.BYTE);
 test(Float32Array, Float32Array, 3, gl.RGB16F, gl.RGB, gl.FLOAT, gl.FLOAT);
