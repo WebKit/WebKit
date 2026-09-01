@@ -32,6 +32,9 @@
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSource.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/Lock.h>
+#endif
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -66,7 +69,11 @@ private:
 
     WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection();
     void postTaskToHandler(WebCore::RTCDataChannelIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&&);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     WebCore::RTCDataChannelRemoteSource* sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
+#else
+    RefPtr<WebCore::RTCDataChannelRemoteSource> sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
+#endif
 
     class RemoteHandlerConnection : public WebCore::RTCDataChannelRemoteHandlerConnection {
     public:
@@ -108,8 +115,14 @@ private:
     const Ref<IPC::Connection> m_connection;
     RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
     RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     HashMap<WebCore::RTCDataChannelLocalIdentifier, Ref<WebCore::RTCDataChannelRemoteSource>> m_sources;
     HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers;
+#else
+    Lock m_mapsLock;
+    HashMap<WebCore::RTCDataChannelLocalIdentifier, Ref<WebCore::RTCDataChannelRemoteSource>> m_sources WTF_GUARDED_BY_LOCK(m_mapsLock);
+    HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers WTF_GUARDED_BY_LOCK(m_mapsLock);
+#endif
 };
 
 } // namespace WebKit
