@@ -213,9 +213,7 @@ BEGIN {
        &xcodeSDKPlatformName
        &xcodeVersion
        DO_NOT_USE_OPEN_COMMAND
-       Mac
        USE_OPEN_COMMAND
-       iOS
    );
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
@@ -225,12 +223,7 @@ BEGIN {
 use constant {
     GTK         => "GTK",
     Haiku       => "Haiku",
-    iOS         => "iOS",
-    tvOS        => "tvOS",
-    watchOS     => "watchOS",
-    visionOS    => "visionOS",
-    Mac         => "Mac",
-    MacCatalyst => "MacCatalyst",
+    Cocoa       => "Cocoa",
     JSCOnly     => "JSCOnly",
     PlayStation => "PlayStation",
     Win         => "Win",
@@ -637,30 +630,16 @@ sub determineXcodeDestination
     my @architectures = split(' ', $architecture);
     my $generic = $xcodeSDKPlatformName =~ /os$/ || (scalar @architectures) > 1;
 
-    if (willUseIOSDeviceSDK()) {
-        $destination .= 'platform=iOS';
-    } elsif (willUseIOSSimulatorSDK()) {
-        $destination .= 'platform=iOS Simulator';
-    } elsif (willUseAppleTVDeviceSDK()) {
-        $destination .= 'platform=tvOS';
-    } elsif (willUseAppleTVSimulatorSDK()) {
-        $destination .= 'platform=tvOS Simulator';
-    } elsif (willUseWatchDeviceSDK()) {
-        $destination .= 'platform=watchOS';
-    } elsif (willUseWatchSimulatorSDK()) {
-        $destination .= 'platform=watchOS Simulator';
-    } elsif (willUseVisionDeviceSDK()) {
-        $destination .= 'platform=visionOS';
-    } elsif (willUseVisionSimulatorSDK()) {
-        $destination .= 'platform=visionOS Simulator';
-    } else {
-        $destination .= 'platform=macOS';
+    my $osName = sdkPlatformOSName();
+    $destination .= "platform=$osName";
+    $destination .= ' Simulator' if willUseSimulatorSDK();
+    if ($osName eq "macOS") {
         $destination .= ',devicetype=' . ($generic ? 'Any Mac' : 'Mac');
         $destination .= ',arch=' . $architectures[0] unless $generic;
         $destination .= ',variant=Mac Catalyst' if willUseMacCatalystSDK();
     }
 
-    if (!$generic && $xcodeSDKPlatformName =~ /simulator$/) {
+    if (!$generic && willUseSimulatorSDK()) {
         # Two goals:
         # 1. Find a simulator device to build for, to avoid building multiple architectures.
         # 2. Try to pick a simulator that's been used before (either by command-line or IDE builds) to avoid
@@ -687,7 +666,7 @@ sub determineXcodeDestination
         # If we found the previous device, check that the runtime being built has not changed (e.g. due to a
         # major SDK update). If it has changed, or if no previous device is available, fall back to the first
         # eligible device in the list.
-        my $runtime = simulatorRuntime($portName);
+        my $runtime = simulatorRuntime();
         my $device;
         if ($prevDevice && $prevDevice->{runtime} eq $runtime) {
             $device = $prevDevice;
@@ -866,8 +845,8 @@ sub argumentsForConfiguration()
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--ios-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'iphoneos');
-    push(@args, '--ios-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'iphonesimulator' && $simulatorIdiom eq "iPhone");
-    push(@args, '--ipad-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'iphonesimulator' && $simulatorIdiom eq "iPad");
+    push(@args, '--ios-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'iphonesimulator' && simulatorIdiom() eq "iPhone");
+    push(@args, '--ipad-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'iphonesimulator' && simulatorIdiom() eq "iPad");
     push(@args, '--tvos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'appletvos');
     push(@args, '--tvos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'appletvsimulator');
     push(@args, '--watchos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'watchos');
@@ -967,6 +946,27 @@ sub isValidXcodeSDKPlatformName($) {
         maccatalyst
     );
     return grep { $_ eq $name } @platforms;
+}
+
+# Which OS each SDK platform targets, as simctl and xcodebuild spell it. Mac Catalyst
+# targets macOS; use xcodeSDKPlatformName() to tell the two SDK variants apart. Must
+# cover every name isValidXcodeSDKPlatformName() accepts, so this never returns undef.
+my %osNameBySDKPlatformName = (
+    appletvos        => "tvOS",
+    appletvsimulator => "tvOS",
+    iphoneos         => "iOS",
+    iphonesimulator  => "iOS",
+    maccatalyst      => "macOS",
+    macosx           => "macOS",
+    watchos          => "watchOS",
+    watchsimulator   => "watchOS",
+    xros             => "visionOS",
+    xrsimulator      => "visionOS",
+);
+
+sub sdkPlatformOSName()
+{
+    return $osNameBySDKPlatformName{xcodeSDKPlatformName()};
 }
 
 sub determineCrossTarget {
@@ -1834,20 +1834,10 @@ sub determinePortName()
     if (isAnyWindows()) {
         $portName = Win;
     } elsif (isDarwin()) {
+        # Resolve the platform here so that its arguments are consumed from @ARGV before
+        # any caller inspects what's left.
         determineXcodeSDKPlatformName();
-        if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
-            $portName = iOS;
-        } elsif (willUseAppleTVDeviceSDK() || willUseAppleTVSimulatorSDK()) {
-            $portName = tvOS;
-        } elsif (willUseWatchDeviceSDK() || willUseWatchSimulatorSDK()) {
-            $portName = watchOS;
-        } elsif (willUseVisionDeviceSDK() || willUseVisionSimulatorSDK()) {
-            $portName = visionOS;
-        } elsif (willUseMacCatalystSDK()) {
-            $portName = MacCatalyst;
-        } else {
-            $portName = Mac;
-        }
+        $portName = Cocoa;
     } else {
         if ($unknownPortProhibited) {
             my $portsChoice = join "\n\t", qw(
@@ -2036,27 +2026,27 @@ sub isCrossCompilation()
 
 sub isIOSWebKit()
 {
-    return portName() eq iOS;
+    return isAppleCocoaWebKit() && sdkPlatformOSName() eq "iOS";
 }
 
 sub isTVOSWebKit()
 {
-    return portName() eq tvOS;
+    return isAppleCocoaWebKit() && sdkPlatformOSName() eq "tvOS";
 }
 
 sub isWatchOSWebKit()
 {
-    return portName() eq watchOS;
+    return isAppleCocoaWebKit() && sdkPlatformOSName() eq "watchOS";
 }
 
 sub isVisionOSWebKit()
 {
-    return portName() eq visionOS;
+    return isAppleCocoaWebKit() && sdkPlatformOSName() eq "visionOS";
 }
 
 sub isEmbeddedWebKit()
 {
-    return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit() || isVisionOSWebKit;
+    return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit() || isVisionOSWebKit();
 }
 
 sub isAppleWebKit()
@@ -2064,19 +2054,22 @@ sub isAppleWebKit()
     return isAppleCocoaWebKit();
 }
 
+# Mac and Mac Catalyst both target macOS, so these two check the SDK variant, not the OS.
 sub isAppleMacWebKit()
 {
-    return portName() eq Mac;
+    return isAppleCocoaWebKit() && xcodeSDKPlatformName() eq "macosx";
 }
 
 sub isMacCatalystWebKit()
 {
-    return portName() eq MacCatalyst;
+    return isAppleCocoaWebKit() && xcodeSDKPlatformName() eq "maccatalyst";
 }
 
+# The anchor for every predicate above: they resolve an Xcode SDK, which only makes
+# sense once the Cocoa port is selected.
 sub isAppleCocoaWebKit()
 {
-    return isAppleMacWebKit() || isEmbeddedWebKit() || isMacCatalystWebKit();
+    return portName() eq Cocoa;
 }
 
 sub usesCryptexPath
@@ -2177,6 +2170,18 @@ sub willUseVisionSimulatorSDK()
 sub willUseMacCatalystSDK()
 {
     return xcodeSDKPlatformName() eq "maccatalyst";
+}
+
+sub willUseSimulatorSDK()
+{
+    return xcodeSDKPlatformName() =~ /simulator$/;
+}
+
+# Only the --*-simulator arguments set an idiom; --sdk iphonesimulator leaves it unset.
+sub simulatorIdiom()
+{
+    determineXcodeSDKPlatformName();
+    return $simulatorIdiom // 'iPhone';
 }
 
 sub determineNmPath()
@@ -2911,6 +2916,7 @@ sub generateBuildSystemFromCMakeProject
 
     my @args;
     push @args, "-DPORT=\"$port\"";
+    push @args, "-DCMAKE_OSX_SYSROOT=\"" . xcodeSDK() . "\"" if isAppleCocoaWebKit();
     push @args, "-DCMAKE_INSTALL_PREFIX=\"$prefixPath\"" if $prefixPath;
     if ($config =~ /release/i) {
         push @args, "-DCMAKE_BUILD_TYPE=Release";
@@ -3517,7 +3523,7 @@ sub relaunchIOSSimulator($)
 sub iosSimulatorDeviceByName($)
 {
     my ($simulatorName) = @_;
-    my $simulatorRuntime = iosSimulatorRuntime();
+    my $simulatorRuntime = simulatorRuntime();
     my @devices = iOSSimulatorDevices();
     for my $device (@devices) {
         if ($device->{name} eq $simulatorName && $device->{runtime} eq $simulatorRuntime) {
@@ -3542,17 +3548,14 @@ sub iosSimulatorDeviceByUDID($)
     return undef;
 }
 
-sub iosSimulatorRuntime
+sub simulatorRuntime()
 {
-    return simulatorRuntime(iOS);
-}
-
-sub simulatorRuntime($)
-{
-    my $platformName = shift;
+    die "Can't find a simulator runtime because the selected SDK isn't a simulator SDK" if !willUseSimulatorSDK();
+    my $platformName = sdkPlatformOSName();
     my $xcodeSDKVersion = xcodeSDKVersion();
+    my $sdk = xcodeSDK();
 
-    my $output = `xcrun --sdk $xcodeSDK simctl list runtimes $platformName --json` or die "Failed to run find simulator runtime";
+    my $output = `xcrun --sdk $sdk simctl list runtimes $platformName --json` or die "Failed to run find simulator runtime";
     for my $runtime (@{decode_json($output)->{runtimes}}) {
         if ($runtime->{version} eq $xcodeSDKVersion) {
             return $runtime->{identifier};
@@ -3564,6 +3567,8 @@ sub simulatorRuntime($)
             return $runtime_id;
         }
     }
+
+    die "No $platformName simulator runtime matches SDK version $xcodeSDKVersion";
 }
 
 sub findOrCreateSimulatorForIOSDevice($)
@@ -3573,7 +3578,7 @@ sub findOrCreateSimulatorForIOSDevice($)
     my $simulatorDeviceType;
 
     # These should match the DEFAULT_DEVICE_TYPES in webkitpy/port/ios_simulator.py.
-    if ($simulatorIdiom eq "iPad") {
+    if (simulatorIdiom() eq "iPad") {
         $simulatorName = "iPad (9th generation) " . $simulatorNameSuffix;
         $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPad-9th-generation";
     } else {
@@ -3583,7 +3588,7 @@ sub findOrCreateSimulatorForIOSDevice($)
 
     my $simulatedDevice = iosSimulatorDeviceByName($simulatorName);
     return $simulatedDevice if $simulatedDevice;
-    return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, iosSimulatorRuntime());
+    return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, simulatorRuntime());
 }
 
 sub isIOSSimulatorSystemInstalledApp($)
