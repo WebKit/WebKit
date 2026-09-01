@@ -390,6 +390,7 @@ int Element::defaultTabIndex() const
 bool Element::isNonceable() const
 {
     // https://www.w3.org/TR/CSP3/#is-element-nonceable
+    // '<link' is not in the published algorithm yet. See https://github.com/w3c/webappsec-csp/pull/810
     if (elementRareData()->nonce().isNull())
         return false;
 
@@ -399,14 +400,17 @@ bool Element::isNonceable() const
     if (hasAttributes() && isAnyOf<HTMLScriptElement, SVGScriptElement>(*this)) {
         static constexpr auto scriptString = "<script"_s;
         static constexpr auto styleString = "<style"_s;
+        static constexpr auto linkString = "<link"_s;
 
         for (auto& attribute : attributes()) {
             auto name = attribute.localNameLowercase();
             auto value = attribute.value();
             if (name.contains(scriptString)
                 || name.contains(styleString)
+                || name.contains(linkString)
                 || value.containsIgnoringASCIICase(scriptString)
-                || value.containsIgnoringASCIICase(styleString))
+                || value.containsIgnoringASCIICase(styleString)
+                || value.containsIgnoringASCIICase(linkString))
                 return false;
         }
     }
