@@ -3025,7 +3025,7 @@ void testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle retainPage
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     if (retainPageInBundle == RetainPageInBundle::Yes)
-        [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+        [processPoolConfiguration setInjectedBundleURL:TestWebKitAPI::Util::testPlugInBundleURL()];
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     if (retainPageInBundle == RetainPageInBundle::Yes)
         [processPool _setObject:@"BundleRetainPagePlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
@@ -7528,7 +7528,7 @@ static bool hasOverlay(CALayer *layer)
 TEST(ProcessSwap, PageOverlayLayerPersistence)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
-    [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+    [processPoolConfiguration setInjectedBundleURL:TestWebKitAPI::Util::testPlugInBundleURL()];
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     [processPool _setObject:@"PageOverlayPlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
 

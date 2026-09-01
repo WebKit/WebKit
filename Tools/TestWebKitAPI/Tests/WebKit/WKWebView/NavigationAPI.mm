@@ -204,7 +204,7 @@ TEST(NavigationAPI, ClearWrappersWithNavigateEventListener)
     RetainPtr configuration = server.httpsProxyConfiguration();
 
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+    [processPoolConfiguration setInjectedBundleURL:TestWebKitAPI::Util::testPlugInBundleURL()];
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     [processPool _setObject:@"ClearWrappersNavigatePlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
     [configuration setProcessPool:processPool.get()];

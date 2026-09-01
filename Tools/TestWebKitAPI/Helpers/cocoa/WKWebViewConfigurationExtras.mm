@@ -41,7 +41,7 @@
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value
 {
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+    [processPoolConfiguration setInjectedBundleURL:TestWebKitAPI::Util::testPlugInBundleURL()];
     [processPoolConfiguration setConfigureJSCForTesting:value];
     
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);

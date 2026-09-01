@@ -3332,6 +3332,7 @@ if (APPLE)
         "LINKER:-allowable_client,InjectedBundleTestWebKitAPI"
         "LINKER:-allowable_client,TestWebCore"
         "LINKER:-allowable_client,TestWebKitAPI"
+        "LINKER:-allowable_client,TestWebKitAPIPlugIn"
         "LINKER:-allowable_client,TestWebKitLegacy"
     )
 endif ()

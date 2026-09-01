@@ -24,9 +24,8 @@
 //
 
 INFOPLIST_FILE = InjectedBundle/cocoa/WebProcessPlugIn/Info.plist;
-PRODUCT_NAME = TestWebKitAPI;
+PRODUCT_NAME = TestWebKitAPIPlugIn;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
-EXECUTABLE_SUFFIX = .bundle;
 WRAPPER_EXTENSION = wkbundle;
 WK_WEBCORE_LDFLAGS = $(WK_WEBCORE_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_WEBCORE_LDFLAGS_iphoneos = -framework WebCore;

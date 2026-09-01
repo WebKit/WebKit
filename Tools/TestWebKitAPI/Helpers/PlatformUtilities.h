@@ -50,6 +50,7 @@ typedef double NSTimeInterval;
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSImage;
+OBJC_CLASS NSURL;
 OBJC_CLASS NSWindow;
 OBJC_CLASS UIImage;
 OBJC_CLASS UIWindow;
@@ -130,6 +131,9 @@ using PlatformWindow = UIWindow;
 
 #if PLATFORM(COCOA)
 extern NSString * const TestPlugInClassNameParameter;
+
+NSURL *testPlugInBundleURL();
+
 extern RetainPtr<CGImageRef> convertToCGImage(PlatformImage *);
 #endif
 

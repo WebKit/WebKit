@@ -151,7 +151,7 @@
 		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; platformFilters = (macos, ); };
 		A1B8D76A2D67CD830045C305 /* InjectedBundleTestWebKitAPI.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A1B8D76B2D67CD9B0045C305 /* TestWebKitAPI.wkbundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1B8D76B2D67CD9B0045C305 /* TestWebKitAPIPlugIn.wkbundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A13EBB491B87339E00097110 /* TestWebKitAPIPlugIn.wkbundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1B8D76C2D67CDA20045C305 /* TestWebKitAPIResources.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
 		BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */; };
@@ -389,7 +389,7 @@
 			dstSubfolder = Resources;
 			files = (
 				A1B8D76A2D67CD830045C305 /* InjectedBundleTestWebKitAPI.bundle in Copy Resources */,
-				A1B8D76B2D67CD9B0045C305 /* TestWebKitAPI.wkbundle in Copy Resources */,
+				A1B8D76B2D67CD9B0045C305 /* TestWebKitAPIPlugIn.wkbundle in Copy Resources */,
 				A1B8D76C2D67CDA20045C305 /* TestWebKitAPIResources.bundle in Copy Resources */,
 			);
 			name = "Copy Resources";
@@ -509,7 +509,7 @@
 		7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWebKitAPI.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76FA10486AA7600D96B5E /* TestWebKitAPI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWebKitAPI; sourceTree = BUILT_PRODUCTS_DIR; };
 		97DAA8CF2DF70B91004B3040 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPI.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A13EBB491B87339E00097110 /* TestWebKitAPIPlugIn.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPIPlugIn.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		A13EBB541B8734E000097110 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugIn.mm; sourceTree = "<group>"; };
 		A176D2472D6D295400C63915 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1847,7 +1847,7 @@
 				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
 				7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */,
 				7C83DF681D0A590C00FEBCF3 /* libTestWTF.a */,
-				A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */,
+				A13EBB491B87339E00097110 /* TestWebKitAPIPlugIn.wkbundle */,
 				A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */,
 				A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */,
 				A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */,
@@ -2153,7 +2153,7 @@
 			);
 			name = WebProcessPlugIn;
 			productName = WebProcessPlugIn;
-			productReference = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */;
+			productReference = A13EBB491B87339E00097110 /* TestWebKitAPIPlugIn.wkbundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */ = {

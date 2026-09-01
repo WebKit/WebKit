@@ -251,6 +251,20 @@ WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-deprecated-declarations)
 # run-api-tests expects the binary to be named TestWebKitAPI.
 set_target_properties(TestWebKit PROPERTIES OUTPUT_NAME TestWebKitAPI)
 
+# Embed the Info.plist in the __TEXT,__info_plist section. PRODUCT_NAME and
+# PRODUCT_BUNDLE_IDENTIFIER only exist for the configure_file substitution.
+set(PRODUCT_NAME TestWebKitAPI)
+set(PRODUCT_BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
+configure_file("${TESTWEBKITAPI_DIR}/Info.plist"
+               "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+unset(PRODUCT_NAME)
+unset(PRODUCT_BUNDLE_IDENTIFIER)
+
+target_link_options(TestWebKit PRIVATE
+    "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+set_property(TARGET TestWebKit APPEND PROPERTY LINK_DEPENDS
+    "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPI-Info.plist")
+
 webkit_generate_entitlements(TestWebKit
     USING ${TESTWEBKITAPI_DIR}/Scripts/process-entitlements.sh
     BUNDLE_IDENTIFIER com.apple.WebKit.TestWebKitAPI)
@@ -380,10 +394,20 @@ target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
     ${TESTWEBKITAPI_DIR}/InjectedBundle
 )
 
+# InjectedBundleTestWebKitAPI should use its Info.plist rather than the CMake default.
+# EXECUTABLE_NAME and PRODUCT_BUNDLE_IDENTIFIER only exist for the configure_file substitution.
+set(EXECUTABLE_NAME InjectedBundleTestWebKitAPI)
+set(PRODUCT_BUNDLE_IDENTIFIER com.apple.InjectedBundleTestWebKitAPI)
+configure_file("${TESTWEBKITAPI_DIR}/InjectedBundle/InjectedBundle-Info.plist"
+               "${CMAKE_CURRENT_BINARY_DIR}/InjectedBundle-Info.plist")
+unset(EXECUTABLE_NAME)
+unset(PRODUCT_BUNDLE_IDENTIFIER)
+
 set_target_properties(TestWebKitAPIInjectedBundle PROPERTIES
     BUNDLE TRUE
     BUNDLE_EXTENSION bundle
     OUTPUT_NAME InjectedBundleTestWebKitAPI
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/InjectedBundle-Info.plist"
 )
 
 # The InjectedBundle is loaded into a WebKit process that already has WTF.
@@ -402,9 +426,8 @@ target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
 
-# TestWebKitAPI.wkbundle -- modern Cocoa WKWebProcessPlugIn bundle loaded via
-# [_WKProcessPoolConfiguration setInjectedBundleURL:] in
-# WKWebViewConfigurationExtras._test_configurationWithTestPlugInClassName:.
+# TestWebKitAPIPlugIn.wkbundle -- modern Cocoa WKWebProcessPlugIn bundle loaded via
+# [_WKProcessPoolConfiguration setInjectedBundleURL:] in Util::testPlugInBundleURL().
 # This is a separate product from InjectedBundleTestWebKitAPI.bundle above,
 # which implements the legacy C-API injected bundle.
 add_library(TestWebKitAPIWebProcessPlugIn MODULE
@@ -488,18 +511,21 @@ target_compile_definitions(TestWebKitAPIWebProcessPlugIn PRIVATE BUILDING_TestWe
 
 # configure_file substitutes ${EXECUTABLE_NAME}/${PRODUCT_NAME}/
 # ${PRODUCT_BUNDLE_IDENTIFIER} in the Info.plist shared with the Xcode build.
-set(EXECUTABLE_NAME TestWebKitAPI)
-set(PRODUCT_NAME TestWebKitAPI)
-set(PRODUCT_BUNDLE_IDENTIFIER com.apple.TestWebKitAPI)
+set(EXECUTABLE_NAME TestWebKitAPIPlugIn)
+set(PRODUCT_NAME TestWebKitAPIPlugIn)
+set(PRODUCT_BUNDLE_IDENTIFIER com.apple.TestWebKitAPIPlugIn)
 configure_file(
     "${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/Info.plist"
     "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-Info.plist"
 )
+unset(EXECUTABLE_NAME)
+unset(PRODUCT_NAME)
+unset(PRODUCT_BUNDLE_IDENTIFIER)
 
 set_target_properties(TestWebKitAPIWebProcessPlugIn PROPERTIES
     BUNDLE TRUE
     BUNDLE_EXTENSION wkbundle
-    OUTPUT_NAME TestWebKitAPI
+    OUTPUT_NAME TestWebKitAPIPlugIn
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-Info.plist"
 )
 

@@ -108,5 +108,10 @@ RetainPtr<CGImageRef> convertToCGImage(PlatformImage *image)
 
 NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
 
+NSURL *testPlugInBundleURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"TestWebKitAPIPlugIn" withExtension:@"wkbundle"];
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI

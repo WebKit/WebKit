@@ -41,14 +41,10 @@ extension WebPage.Configuration {
     ///   - configureJSCForTesting: If `true`, relaxes JSC's security hardening so that tests can freely modify JSC options, config,
     ///   and behavior that would otherwise be more secured.
     public init(testPlugInClass: (some WKWebProcessPlugIn).Type, configureJSCForTesting: Bool = true) {
-        guard let bundleURL = Bundle.main.url(forResource: "TestWebKitAPI", withExtension: "wkbundle") else {
-            preconditionFailure("No TestWebKitAPI bundle url found.")
-        }
-
         self.init()
 
         let processPoolConfiguration = _WKProcessPoolConfiguration()
-        processPoolConfiguration.injectedBundleURL = bundleURL
+        processPoolConfiguration.injectedBundleURL = Bundle.testPlugInURL
         processPoolConfiguration.configureJSCForTesting = configureJSCForTesting
 
         // This is never actually nil; `WKProcessPoolPrivate.h` does not have proper nullability annotations.

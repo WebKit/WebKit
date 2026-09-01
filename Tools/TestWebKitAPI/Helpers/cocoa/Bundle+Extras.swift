@@ -35,4 +35,13 @@ extension Bundle {
 
         return bundle
     }
+
+    /// The URL to pass to -[WKProcessPoolConfiguration setInjectedBundleURL:].
+    public static var testPlugInURL: URL {
+        guard let url = Bundle.main.url(forResource: "TestWebKitAPIPlugIn", withExtension: "wkbundle") else {
+            fatalError()
+        }
+
+        return url
+    }
 }
