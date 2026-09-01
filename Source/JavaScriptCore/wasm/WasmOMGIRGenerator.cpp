@@ -969,6 +969,10 @@ private:
     bool emitNullCheckBeforeAccess(Value*, ptrdiff_t offset);
     void emitArraySetUnchecked(TypeSignatureIndex, Value*, Value*, Value*);
     bool emitArraySetUncheckedWithoutWriteBarrier(TypeSignatureIndex, Value*, Value*, Value*);
+    static bool isConstantNonCell(Value* value)
+    {
+        return value->hasInt64() && !JSValue::decode(static_cast<EncodedJSValue>(value->asInt64())).isCell();
+    }
     // Returns true if a writeBarrier/mutatorFence is needed.
     [[nodiscard]] bool emitStructSet(bool canTrap, Value*, uint32_t, const RTT&, Value*);
     using ArraySegmentOperation = EncodedJSValue SYSV_ABI (&)(JSC::JSWebAssemblyInstance*, uint32_t, uint32_t, uint32_t, uint32_t);
@@ -3241,8 +3245,9 @@ Value* OMGIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueT
 
     m_heaps.decorateWasmStructSet(structFieldHeap(definingRTT, fieldIndex), storeValue);
 
-    // FIXME: We should be able elide this write barrier if we know we're storing jsNull();
-    return fieldType.is<Type>() && isRefType(fieldType.unpacked());
+    if (!fieldType.is<Type>() || !isRefType(fieldType.unpacked()))
+        return false;
+    return !isConstantNonCell(argument);
 }
 
 auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
@@ -3958,7 +3963,9 @@ bool OMGIRGenerator::emitArraySetUncheckedWithoutWriteBarrier(TypeSignatureIndex
         arrayref, indexValue, setValue, Ref { m_info.rtt(typeIndex) });
     m_heaps.decorateWasmArraySet(arrayElementHeap(elementType, indexValue), storeNode);
 
-    return isRefType(elementType.unpacked());
+    if (!isRefType(elementType.unpacked()))
+        return false;
+    return !isConstantNonCell(setValue);
 }
 
 void OMGIRGenerator::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value* arrayref, Value* index, Value* setValue)

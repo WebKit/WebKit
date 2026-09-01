@@ -1872,9 +1872,15 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
         m_jit.zeroExtend32ToWord(indexLocation.asGPR(), indexLocation.asGPR());
     }
 
+    bool needsWriteBarrier = isRefType(getArrayElementType(typeIndex).unpacked());
+    if (needsWriteBarrier && value.isConst()) {
+        ASSERT(!JSValue::decode(value.asI64()).isCell());
+        needsWriteBarrier = false;
+    }
+
     emitArraySetUnchecked(typeIndex, arrayref, index, value);
 
-    if (isRefType(getArrayElementType(typeIndex).unpacked()))
+    if (needsWriteBarrier)
         emitWriteBarrier(arrayLocation.asGPR());
     consume(arrayref);
 
