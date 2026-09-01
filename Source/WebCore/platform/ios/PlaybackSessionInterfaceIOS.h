@@ -79,7 +79,7 @@ public:
     void canPlayFastReverseChanged(bool) override = 0;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
-    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override = 0;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override = 0;
     void wirelessVideoPlaybackDisabledChanged(bool) override = 0;
     void mutedChanged(bool) override = 0;
     void volumeChanged(double) override = 0;

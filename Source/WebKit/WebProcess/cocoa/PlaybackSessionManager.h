@@ -101,7 +101,7 @@ private:
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
     void audioMediaSelectionIndexChanged(uint64_t) final;
     void legibleMediaSelectionIndexChanged(uint64_t) final;
-    void externalPlaybackChanged(bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
+    void externalPlaybackChanged(bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final;
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
@@ -186,7 +186,7 @@ private:
     void legibleMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
     void audioMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
-    void externalPlaybackChanged(WebCore::MediaPlayerClientIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
+    void externalPlaybackChanged(WebCore::MediaPlayerClientIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName, String localizedRouteName);
     void wirelessVideoPlaybackDisabledChanged(WebCore::MediaPlayerClientIdentifier, bool);
     void mutedChanged(WebCore::MediaPlayerClientIdentifier, bool);
     void volumeChanged(WebCore::MediaPlayerClientIdentifier, double);

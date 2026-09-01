@@ -80,7 +80,7 @@ public:
     WEBCORE_EXPORT void durationChanged(double) final;
     WEBCORE_EXPORT void currentTimeChanged(double /* currentTime */, double /* anchorTime */) final;
     WEBCORE_EXPORT void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) override;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override;
     WEBCORE_EXPORT void ensureControlsManager() override;
 
     // VideoPresentationModelClient

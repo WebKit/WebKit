@@ -36,7 +36,7 @@ messages -> PlaybackSessionManagerProxy {
     LegibleMediaSelectionOptionsChanged(WebKit::PlaybackSessionContextIdentifier contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
     AudioMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
     LegibleMediaSelectionIndexChanged(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
-    ExternalPlaybackPropertiesChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName)
+    ExternalPlaybackPropertiesChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool enabled, enum:uint8_t WebCore::PlaybackSessionModelExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
     WirelessVideoPlaybackDisabledChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool disabled)
     DurationChanged(WebKit::PlaybackSessionContextIdentifier contextId, double duration)
     PlaybackStartedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double playbackStartedTime)

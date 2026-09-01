@@ -135,6 +135,7 @@ public:
     bool externalPlaybackEnabled() const final;
     ExternalPlaybackTargetType externalPlaybackTargetType() const final;
     String externalPlaybackLocalizedDeviceName() const final;
+    String externalPlaybackLocalizedRouteName() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     bool isMuted() const final;
     double volume() const final;

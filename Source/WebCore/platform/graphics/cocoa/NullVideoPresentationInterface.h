@@ -86,7 +86,7 @@ public:
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final { }
 
     // PlaybackSessionModelClient
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&) final { }
 
     void swapFullscreenModesWith(NullVideoPresentationInterface&) { }
 

@@ -132,6 +132,7 @@ public:
     virtual bool externalPlaybackEnabled() const = 0;
     virtual ExternalPlaybackTargetType externalPlaybackTargetType() const = 0;
     virtual String externalPlaybackLocalizedDeviceName() const = 0;
+    virtual String externalPlaybackLocalizedRouteName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
     virtual double volume() const = 0;
@@ -168,7 +169,7 @@ public:
     virtual void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
     virtual void audioMediaSelectionIndexChanged(uint64_t) { }
     virtual void legibleMediaSelectionIndexChanged(uint64_t) { }
-    virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
+    virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */, const String& /* localizedRouteName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
 #if HAVE(PIP_SKIP_PREROLL)

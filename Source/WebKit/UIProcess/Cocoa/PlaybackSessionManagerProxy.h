@@ -88,7 +88,7 @@ public:
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void audioMediaSelectionIndexChanged(uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(uint64_t selectedIndex);
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&);
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&);
     void wirelessVideoPlaybackDisabledChanged(bool);
     void mutedChanged(bool);
     void volumeChanged(double);
@@ -176,6 +176,7 @@ private:
     bool externalPlaybackEnabled() const final { return m_externalPlaybackEnabled; }
     PlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
+    String externalPlaybackLocalizedRouteName() const final { return m_externalPlaybackLocalizedRouteName; }
     bool isMuted() const final { return m_muted; }
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
@@ -225,6 +226,7 @@ private:
     bool m_externalPlaybackEnabled { false };
     PlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone };
     String m_externalPlaybackLocalizedDeviceName;
+    String m_externalPlaybackLocalizedRouteName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
     double m_volume { 0 };
@@ -302,7 +304,7 @@ private:
     void legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
-    void externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
+    void externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName, String localizedRouteName);
     void wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier, bool);
     void durationChanged(PlaybackSessionContextIdentifier, double duration);
     void playbackStartedTimeChanged(PlaybackSessionContextIdentifier, double playbackStartedTime);

@@ -439,14 +439,15 @@ void PlaybackSessionModelContext::legibleMediaSelectionIndexChanged(uint64_t sel
         client->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
+void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName, const String& localizedRouteName)
 {
     m_externalPlaybackEnabled = enabled;
     m_externalPlaybackTargetType = type;
-    m_externalPlaybackLocalizedDeviceName = localizedName;
+    m_externalPlaybackLocalizedDeviceName = localizedDeviceName;
+    m_externalPlaybackLocalizedRouteName = localizedRouteName;
 
     for (CheckedRef client : m_clients)
-        client->externalPlaybackChanged(enabled, type, localizedName);
+        client->externalPlaybackChanged(enabled, type, localizedDeviceName, localizedRouteName);
 }
 
 void PlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged(bool wirelessVideoPlaybackDisabled)
@@ -773,9 +774,9 @@ void PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(PlaybackSess
     ensureModel(contextId)->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
+void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
 {
-    ensureModel(contextId)->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+    ensureModel(contextId)->externalPlaybackChanged(enabled, targetType, localizedDeviceName, localizedRouteName);
 }
 
 void PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier contextId, bool disabled)
