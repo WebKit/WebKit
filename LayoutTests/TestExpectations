@@ -5161,7 +5161,6 @@ webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Failure 
 webkit.org/b/292182 webgl/1.0.x/conformance/ogles/GL/fract/fract_001_to_006.html [ Failure Pass ]  # Flaky
 webkit.org/b/292182 webgl/1.0.x/conformance/textures/image_bitmap_from_video/tex-2d-luminance-luminance-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/copytexsubimage2d-large-partial-copy-corruption.html [ Failure Pass ]
-webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/tex-video-using-tex-unit-non-zero.html [ Failure Pass ]
 webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/texture-srgb-upload.html [ Failure Pass ]
 webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/texture-video-transparent.html [ Failure Pass ]
 webkit.org/b/292182 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Failure Pass ]
