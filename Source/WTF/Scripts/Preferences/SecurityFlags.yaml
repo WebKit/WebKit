@@ -12,5 +12,8 @@
 #
 # Sorted by radar number.
 
+radar183491061:
+  humanReadableDescription: "Enforces access to back/forward items in the UI process can only come from web content processes that own the item"
+
 radar184485266:
   humanReadableDescription: "No security fix behind this one: it is the radar for the disable switch itself, and exists to validate the mechanism end to end before anything in production depends on it"
