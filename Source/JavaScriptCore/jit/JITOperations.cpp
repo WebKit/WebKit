@@ -1831,8 +1831,8 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
             AccessType accessType = static_cast<AccessType>(propertyCache->accessType);
             PutPropertySlot slot(baseValue, isStrict, codeBlock->putByIdContext());
 
-            Structure* structure = CommonSlowPaths::originalStructureBeforePut(baseValue);
-            CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, value, slot);
+            Structure* structure = nullptr;
+            CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, value, slot, &structure);
 
             RETURN_IF_EXCEPTION(scope, void());
 

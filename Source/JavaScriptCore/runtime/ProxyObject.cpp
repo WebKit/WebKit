@@ -124,7 +124,9 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
     bool isSlotCacheable = slot.isUnset() || (slot.isCacheableValue() && slot.slotBase() == handler);
     if (isSlotCacheable) {
         JSValue handlerPrototype = handler->getPrototypeDirect();
-        bool isHandlerPrototypeChainCacheable = handler->type() == FinalObjectType && !handler->structure()->isDictionary()
+        // isHandlerTrapsCacheValid treats a matching handler StructureID as proof that the prototype is
+        // unchanged, which only holds for mono-proto: setPrototypeOf on a poly-proto object keeps its structure.
+        bool isHandlerPrototypeChainCacheable = handler->type() == FinalObjectType && handler->structure()->hasMonoProto() && !handler->structure()->isDictionary()
             && handlerPrototype.inherits<ObjectPrototype>() && !asObject(handlerPrototype)->structure()->isDictionary();
         if (isHandlerPrototypeChainCacheable) {
             ASSERT(slot.cachedOffset() != emptyHandlerTrapCache);

@@ -144,7 +144,10 @@ private:
 
 ALWAYS_INLINE bool ProxyObject::isHandlerTrapsCacheValid(JSObject* handler)
 {
-    return handler->structureID() == m_handlerStructureID.value() && asObject(handler->getPrototypeDirect())->structureID() == m_handlerPrototypeStructureID.value();
+    if (handler->structureID() != m_handlerStructureID.value())
+        return false;
+    ASSERT(handler->structure()->hasMonoProto());
+    return asObject(handler->getPrototypeDirect())->structureID() == m_handlerPrototypeStructureID.value();
 }
 
 } // namespace JSC
