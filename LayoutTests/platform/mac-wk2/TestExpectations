@@ -2468,6 +2468,19 @@ webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-inte
 [ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html [ Failure ]
 [ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.https.html [ Failure ]
 
+# webkit.org/b/323152 [Tahoe DEBUG arm64] 11x imported/w3c/web-platform-tests/encrypted-media/drm-mp4-* (layout-tests) are constant crashes.
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-playduration.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.https.html [ Failure Crash ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.html [ Failure Crash ]
+
 webkit.org/b/321323 [ Tahoe+ ] http/tests/websocket/tests/hybi/inspector/before-load.html [ Failure ]
 
 webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash ]
