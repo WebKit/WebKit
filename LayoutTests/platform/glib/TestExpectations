@@ -611,8 +611,8 @@ fast/css/accent-color/text.html [ Pass ]
 fast/events/keyboardevent-modifier.html [ Pass ]
 
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
-# Currently failing due to a different issue below.
-# media/video-with-alpha.html [ Pass ]
+media/video-with-alpha.html [ Pass ]
+media/video-with-alpha-premultiplied.html [ Pass ]
 
 # MSE text track support for formats other than WebVTT
 media/media-source/media-source-mp4ttsimple.html [ Pass ]

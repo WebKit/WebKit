@@ -1556,6 +1556,7 @@ media/video-supports-fullscreen.html [ Skip ]
 
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Skip ]
+media/video-with-alpha-premultiplied.html [ Skip ]
 
 # Support to pause with 0 rate playback seems to work only in GStreamer ports
 media/media-source/media-source-play-zero-playbackrate.html [ Skip ]
