@@ -48,7 +48,6 @@ set(WPEPlatformDRM_SOURCES_FOR_INTROSPECTION
 )
 
 add_library(WPEPlatformDRM OBJECT ${WPEPlatformDRM_SOURCES})
-target_compile_options(WPEPlatformDRM PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
 target_include_directories(WPEPlatformDRM PRIVATE ${WPEPlatformDRM_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WPEPlatformDRM SYSTEM PRIVATE ${WPEPlatformDRM_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatformDRM ${WPEPlatform_LIBRARIES} ${WPEPlatformDRM_LIBRARIES})

@@ -172,7 +172,6 @@ if (ENABLE_WPE_PLATFORM_WAYLAND)
 endif ()
 
 add_library(WPEPlatform OBJECT ${WPEPlatform_SOURCES})
-target_compile_options(WPEPlatform PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
 target_include_directories(WPEPlatform PRIVATE ${WPEPlatform_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WPEPlatform SYSTEM PRIVATE ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatform PRIVATE ${WPEPlatform_LIBRARIES})

@@ -175,10 +175,6 @@ target_include_directories(WGSLCore PUBLIC
 target_link_libraries(WGSLCore PUBLIC WebKit::JavaScriptCore)
 add_dependencies(WGSLCore wgsl-types)
 
-if (DEVELOPER_MODE_CXX_FLAGS)
-    target_compile_options(WGSLCore PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
-endif ()
-
 # wgslc executable
 set(wgslc_SOURCES wgslc.cpp)
 set(wgslc_LIBRARIES WGSLCore)

@@ -471,9 +471,11 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
     target_include_directories(${_target} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_logical_name}_SYSTEM_INCLUDE_DIRECTORIES}>")
     target_include_directories(${_target} PRIVATE "$<BUILD_INTERFACE:${${_logical_name}_PRIVATE_INCLUDE_DIRECTORIES}>")
 
-    if (DEVELOPER_MODE_CXX_FLAGS)
-        target_compile_options(${_target} PRIVATE
-            "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>")
+    # Non-Swift languages get warnings-as-errors from the global flags; swiftc
+    # spells them as diagnostic groups, so it needs its own set.
+    # FIXME: We should do this globally somehow and get rid of custom error group disablement.
+    # Right now SWIFT_ENABLED is calculated after WebKitCompilerFlags.cmake so we can't verify Swift flags.
+    if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
         target_compile_options(${_target} PRIVATE
             "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${SWIFT_FATAL_DIAGNOSTIC_FLAGS}>")
     endif ()
