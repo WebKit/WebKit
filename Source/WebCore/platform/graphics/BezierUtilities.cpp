@@ -27,6 +27,7 @@
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "FloatSize.h"
 #include "GeometryUtilities.h"
 #include "RectEdges.h"
 #include <algorithm>
@@ -252,6 +253,35 @@ Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRe
         curves = clipped;
     }
     return curves;
+}
+
+BezierSegment cubicForQuadratic(const FloatPoint& start, const FloatPoint& control, const FloatPoint& end)
+{
+    constexpr float twoThirds = 2.0f / 3.0f;
+    return {
+        start,
+        start + (control - start) * twoThirds,
+        end + (control - end) * twoThirds,
+        end
+    };
+}
+
+static constexpr unsigned maximumFlattenedBezierChords = 64;
+
+void appendFlattenedBezier(Vector<FloatPoint>& points, const BezierSegment& curve, float deviceScaleFactor, float tolerance)
+{
+    auto secondDifference = [](const FloatPoint& first, const FloatPoint& second, const FloatPoint& third) {
+        return FloatSize { first.x() - 2 * second.x() + third.x(), first.y() - 2 * second.y() + third.y() }.diagonalLength();
+    };
+    float difference = std::max(secondDifference(curve.start, curve.controlPoint1, curve.controlPoint2),
+        secondDifference(curve.controlPoint1, curve.controlPoint2, curve.end));
+
+    float scale = deviceScaleFactor > 0 ? deviceScaleFactor : 1;
+    auto chords = static_cast<unsigned>(std::ceil(std::sqrt(0.75f * difference * scale / std::max(tolerance, 0.01f))));
+    chords = std::clamp(chords, 1u, maximumFlattenedBezierChords);
+
+    for (unsigned chord = 1; chord <= chords; ++chord)
+        points.append(pointOnBezierAtParameter(curve, double(chord) / chords));
 }
 
 } // namespace WebCore

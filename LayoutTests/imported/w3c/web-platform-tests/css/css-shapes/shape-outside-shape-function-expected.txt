@@ -1,0 +1,7 @@
+
+PASS shape-outside: path() with a triangle
+PASS shape-outside: shape() with a triangle
+PASS shape-outside: path() with a mirrored triangle
+PASS shape-outside: shape() with a square
+PASS shape-outside: shape() with a quadratic curve
+

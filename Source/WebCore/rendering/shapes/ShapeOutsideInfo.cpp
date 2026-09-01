@@ -247,6 +247,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     auto shapeImageThreshold = style.shapeImageThreshold();
     auto& shapeOutside = style.shapeOutside();
     auto zoom = style.usedZoomForLength();
+    auto deviceScaleFactor = style.deviceScaleFactor();
 
     auto boxSize = computeLogicalBoxSize(renderer, isHorizontalWritingMode);
     auto borderBoxLogicalWidth = isHorizontalWritingMode ? renderer.borderBoxWidth() : renderer.borderBoxHeight();
@@ -259,11 +260,11 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     return WTF::switchOn(shapeOutside,
         [&](const Style::ShapeOutside::Shape& shape) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
+            return LayoutShape::createShape(shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom, deviceScaleFactor);
         },
         [&](const Style::ShapeOutside::ShapeAndShapeBox& shapeAndShapeBox) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
+            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom, deviceScaleFactor);
         },
         [&](const Style::ShapeOutside::Image& shapeImage) {
             ASSERT(shapeImage.isValid());

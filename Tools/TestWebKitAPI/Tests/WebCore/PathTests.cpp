@@ -26,7 +26,10 @@
 #include "config.h"
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/BezierUtilities.h>
 #include <WebCore/Path.h>
+#include <WebCore/PathUtilities.h>
+#include <limits>
 
 namespace TestWebKitAPI {
 
@@ -173,6 +176,126 @@ TEST(Path, IsEmpty)
     ASSERT_TRUE(a.isEmpty());
     ASSERT_TRUE(a.definitelyEqual(b));
 
+}
+
+TEST(PathFlattening, RectangleKeepsItsCornersAndCloses)
+{
+    Path path;
+    path.addRect({ 10, 20, 100, 50 });
+
+    auto polylines = flattenPathToPolylines(path, 1);
+    ASSERT_EQ(1u, polylines.size());
+
+    // Four corners, plus the first point repeated so the closing edge spans a consecutive pair.
+    auto& contour = polylines[0];
+    ASSERT_EQ(5u, contour.size());
+    EXPECT_EQ(contour.first(), contour.last());
+    for (auto corner : { FloatPoint { 10, 20 }, FloatPoint { 110, 20 }, FloatPoint { 110, 70 }, FloatPoint { 10, 70 } })
+        EXPECT_TRUE(contour.contains(corner));
+}
+
+TEST(PathFlattening, CurveStaysWithinTolerance)
+{
+    // A circle of radius 100: every flattened point should land on it, to within the tolerance.
+    constexpr float radius = 100;
+    FloatPoint center { 200, 200 };
+    Path path;
+    path.addEllipseInRect({ center.x() - radius, center.y() - radius, 2 * radius, 2 * radius });
+
+    for (float tolerance : { 4.f, 1.f, 0.25f }) {
+        auto polylines = flattenPathToPolylines(path, 1, tolerance);
+        ASSERT_EQ(1u, polylines.size());
+
+        float worstRadialError = 0;
+        float worstChord = 0;
+        auto& contour = polylines[0];
+        for (size_t i = 0; i < contour.size(); ++i) {
+            worstRadialError = std::max(worstRadialError, std::abs((contour[i] - center).diagonalLength() - radius));
+            if (i + 1 < contour.size())
+                worstChord = std::max(worstChord, (contour[i + 1] - contour[i]).diagonalLength());
+        }
+        // The four kappa cubics are themselves ~0.00027*radius off a true circle, so allow for that on
+        // top of the flattening tolerance rather than attributing it to the chords.
+        EXPECT_LE(worstRadialError, tolerance + 0.0003f * radius) << "tolerance " << tolerance;
+        // A finer tolerance has to actually subdivide more.
+        EXPECT_GT(worstChord, 0.f);
+    }
+
+    // Tightening the tolerance must not reduce the number of samples.
+    EXPECT_GE(flattenPathToPolylines(path, 1, 0.25f)[0].size(), flattenPathToPolylines(path, 1, 4.f)[0].size());
+}
+
+// A straight cubic needs no subdivision at all: its second differences are zero, so however long it is
+// one chord reproduces it exactly. The chord length must not drive the count.
+TEST(PathFlattening, StraightCubicNeedsOneChord)
+{
+    for (float length : { 50.f, 400.f, 4000.f }) {
+        Path path;
+        path.moveTo({ 0, 0 });
+        path.addBezierCurveTo({ length / 3, 0 }, { 2 * length / 3, 0 }, { length, 0 });
+
+        auto polylines = flattenPathToPolylines(path, 1);
+        ASSERT_EQ(1u, polylines.size());
+        // moveTo, the single chord's endpoint, and the repeated first point that closes the contour.
+        EXPECT_EQ(3u, polylines[0].size()) << "length " << length;
+    }
+}
+
+// A cusp turns hard while starting and ending in the same place, so a heuristic keyed off the distance
+// from the start point underestimates it badly. Check the flattening actually tracks the curve.
+TEST(PathFlattening, CuspStaysWithinTolerance)
+{
+    BezierSegment cusp { { 0, 0 }, { 100, 0 }, { -100, 0 }, { 0, 0 } };
+
+    for (float tolerance : { 1.f, 0.25f }) {
+        Vector<FloatPoint> chords;
+        chords.append(cusp.start);
+        appendFlattenedBezier(chords, cusp, 1, tolerance);
+
+        float worst = 0;
+        for (unsigned sample = 0; sample <= 2000; ++sample) {
+            auto onCurve = pointOnBezierAtParameter(cusp, sample / 2000.0);
+            float nearest = std::numeric_limits<float>::max();
+            for (size_t index = 0; index + 1 < chords.size(); ++index) {
+                auto span = chords[index + 1] - chords[index];
+                float lengthSquared = span.width() * span.width() + span.height() * span.height();
+                auto toPoint = onCurve - chords[index];
+                float along = lengthSquared
+                    ? std::clamp((toPoint.width() * span.width() + toPoint.height() * span.height()) / lengthSquared, 0.f, 1.f)
+                    : 0.f;
+                auto closest = chords[index] + span.scaled(along);
+                nearest = std::min(nearest, (onCurve - closest).diagonalLength());
+            }
+            worst = std::max(worst, nearest);
+        }
+        EXPECT_LE(worst, tolerance) << "tolerance " << tolerance;
+    }
+}
+
+// The device scale factor is what turns the tolerance into device pixels, so a 2x display has to subdivide
+// more finely than a 1x one for the same geometry.
+TEST(PathFlattening, HigherDeviceScaleSubdividesMore)
+{
+    Path path;
+    path.addEllipseInRect({ 0, 0, 200, 200 });
+
+    EXPECT_GT(flattenPathToPolylines(path, 2)[0].size(), flattenPathToPolylines(path, 1)[0].size());
+}
+
+TEST(PathFlattening, SeparateSubpathsStaySeparate)
+{
+    Path path;
+    path.addRect({ 0, 0, 10, 10 });
+    path.addRect({ 50, 50, 10, 10 });
+
+    auto polylines = flattenPathToPolylines(path, 1);
+    EXPECT_EQ(2u, polylines.size());
+}
+
+TEST(PathFlattening, EmptyPathHasNoPolylines)
+{
+    Path path;
+    EXPECT_TRUE(flattenPathToPolylines(path, 1).isEmpty());
 }
 
 }

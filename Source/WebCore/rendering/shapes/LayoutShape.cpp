@@ -33,6 +33,8 @@
 #include "BoxLayoutShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "PathLayoutShape.h"
+#include "PathUtilities.h"
 #include "PixelBuffer.h"
 #include "PolygonLayoutShape.h"
 #include "RasterLayoutShape.h"
@@ -90,7 +92,29 @@ static inline FloatSize NODELETE physicalSizeToLogical(const FloatSize& size, Wr
     return size.transposedSize();
 }
 
-Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, LayoutUnit borderBoxLogicalWidth, WritingMode writingMode, float logicalMargin, Style::ZoomFactor zoom)
+static Ref<LayoutShape> createPathShape(const Path& path, float logicalBoxHeight, WritingMode writingMode, const LayoutPoint& borderBoxOffset, float deviceScaleFactor)
+{
+    auto polylines = flattenPathToPolylines(path, deviceScaleFactor);
+    FloatRect bounds;
+    bool first = true;
+    for (auto& polyline : polylines) {
+        for (auto& point : polyline) {
+            point = physicalPointToLogical(point, logicalBoxHeight, writingMode);
+            point.moveBy(borderBoxOffset);
+            if (std::exchange(first, false))
+                bounds.setLocation(point);
+            else
+                bounds.extend(point);
+        }
+    }
+
+    polylines.removeAllMatching([](auto& polyline) {
+        return polyline.size() < 2;
+    });
+    return adoptRef(*new PathLayoutShape(WTF::move(polylines), bounds));
+}
+
+Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, LayoutUnit borderBoxLogicalWidth, WritingMode writingMode, float logicalMargin, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
     bool horizontalWritingMode = writingMode.isHorizontal();
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
@@ -155,11 +179,13 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
 
             return createPolygonShape(WTF::move(vertices), borderBoxLogicalWidth);
         },
-        [&](const Style::PathFunction&) -> Ref<LayoutShape> {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Style::PathFunction& pathFunction) -> Ref<LayoutShape> {
+            return createPathShape(Style::path(pathFunction, FloatRect { { }, FloatSize { boxWidth, boxHeight } }, zoom),
+                logicalBoxSize.height(), writingMode, borderBoxOffset, deviceScaleFactor);
         },
-        [&](const Style::ShapeFunction&) -> Ref<LayoutShape> {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Style::ShapeFunction& shapeFunction) -> Ref<LayoutShape> {
+            return createPathShape(Style::path(shapeFunction, FloatRect { { }, FloatSize { boxWidth, boxHeight } }, zoom),
+                logicalBoxSize.height(), writingMode, borderBoxOffset, deviceScaleFactor);
         }
     );
 

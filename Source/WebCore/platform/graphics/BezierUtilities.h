@@ -39,6 +39,12 @@ struct BezierSegment {
 
 WEBCORE_EXPORT Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect&);
 // `parameter` is the Bézier curve parameter t in [0, 1]: 0 is the start point, 1 is the end point (not arc length).
-FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter);
+WEBCORE_EXPORT FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter);
+
+constexpr float defaultFlatnessTolerance = 0.25f;
+
+WEBCORE_EXPORT void appendFlattenedBezier(Vector<FloatPoint>&, const BezierSegment& curve, float deviceScaleFactor, float tolerance = defaultFlatnessTolerance);
+
+BezierSegment cubicForQuadratic(const FloatPoint& start, const FloatPoint& control, const FloatPoint& end);
 
 } // namespace WebCore
