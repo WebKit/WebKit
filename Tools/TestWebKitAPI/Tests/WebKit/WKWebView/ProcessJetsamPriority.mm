@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
 
+#import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"

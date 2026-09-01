@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "Helpers/PlatformUtilities.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
