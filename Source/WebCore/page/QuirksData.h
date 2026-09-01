@@ -32,6 +32,7 @@ namespace WebCore {
 
 struct QuirksData {
     QuirkBitSet activeQuirks;
+    QuirkBitSet conditionalQuirks;
     QuirkSiteBitSet sites;
 
     inline bool isSite(QuirkSite candidate) const
@@ -46,7 +47,22 @@ struct QuirksData {
 
     inline bool quirkIsEnabled(SiteSpecificQuirk quirk) const
     {
-        return activeQuirks.get(static_cast<size_t>(quirk));
+        auto index = static_cast<size_t>(quirk);
+
+        return activeQuirks.get(index);
+    }
+
+    inline bool quirkMayBeEnabled(SiteSpecificQuirk quirk) const
+    {
+        auto index = static_cast<size_t>(quirk);
+        return activeQuirks.get(index) || conditionalQuirks.get(index);
+    }
+
+    inline QuirkBitSet possiblyEnabledQuirks() const
+    {
+        auto bits = activeQuirks;
+        bits.merge(conditionalQuirks);
+        return bits;
     }
 
     inline void enableQuirks()
@@ -57,24 +73,24 @@ struct QuirksData {
     constexpr void enableQuirks(std::initializer_list<SiteSpecificQuirk> quirks)
     {
         for (auto quirk : quirks)
-            activeQuirks.set(static_cast<size_t>(quirk));
+            enableQuirk(quirk);
     }
 
-    inline void enableQuirk(SiteSpecificQuirk quirk)
+    constexpr void enableQuirk(SiteSpecificQuirk quirk)
     {
-        return activeQuirks.set(static_cast<size_t>(quirk));
+        setQuirkState(quirk, true);
     }
 
-    inline void setQuirkState(SiteSpecificQuirk quirk, bool state)
+    constexpr void setQuirkState(SiteSpecificQuirk quirk, bool state)
     {
-        return activeQuirks.set(static_cast<size_t>(quirk), state);
+        activeQuirks.set(static_cast<size_t>(quirk), state);
     }
 
-    constexpr void merge(const QuirksData& other)
+    void merge(const QuirksData& other)
     {
-        auto& [otherActiveQuirks, otherSites] = other;
-        activeQuirks.merge(otherActiveQuirks);
-        sites.merge(otherSites);
+        activeQuirks.merge(other.activeQuirks);
+        conditionalQuirks.merge(other.conditionalQuirks);
+        sites.merge(other.sites);
     }
 };
 

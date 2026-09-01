@@ -26,6 +26,10 @@
 #include "config.h"
 #include "QuirkTable.h"
 
+#include "Document.h"
+#include "Element.h"
+#include "NodeInlines.h"
+#include "SelectorQuery.h"
 #include <algorithm>
 #include <array>
 #include <span>
@@ -170,6 +174,9 @@ namespace SiteSpecificQuirks {
 using enum SiteSpecificQuirk;
 using namespace URLRefinement;
 using namespace BuildCondition;
+
+static constexpr auto onSliderRole = "[role=slider], [role=slider] *"_s;
+static constexpr auto onDockPanelTabBar = ".lm-DockPanel-tabBar, .lm-DockPanel-tabBar *"_s;
 
 consteval bool isAvailable(SiteSpecificQuirk quirk)
 {
@@ -560,7 +567,7 @@ static constexpr Quirk fullTable[] = {
             // facebook.com rdar://158736355
             ShouldEnableRTCEncodedStreamsQuirk,
             // facebook.com rdar://174179871
-            ShouldDispatchSimulatedMouseEventsQuirk,
+            { ShouldDispatchSimulatedMouseEventsQuirk, onSliderRole },
         },
         .site = QuirkSite::Facebook },
 
@@ -795,9 +802,7 @@ static constexpr Quirk fullTable[] = {
 
     // mybinder.org rdar://51770057
     { .match = URLMatch::domain("mybinder.org"_s),
-        .behaviors = { ShouldDispatchSimulatedMouseEventsQuirk },
-        .site = QuirkSite::MyBinder,
-        .availableWhen = touchEvents || touchEventRegions },
+        .behaviors = { { ShouldDispatchSimulatedMouseEventsQuirk, onDockPanelTabBar } } },
 
     // naver.com rdar://48068610
     { .match = URLMatch::hostOrSubdomainOf("naver.com"_s).exceptWhen(hostIs(naverHostsWithoutSimulatedMouseEvents)),
@@ -952,7 +957,7 @@ static constexpr Quirk fullTable[] = {
             // tiktok.com rdar://174179805
             ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
             // tiktok.com rdar://174179805
-            ShouldDispatchSimulatedMouseEventsQuirk,
+            { ShouldDispatchSimulatedMouseEventsQuirk, onSliderRole },
         },
         .site = QuirkSite::TikTok },
 
@@ -1228,26 +1233,28 @@ bool QuirkURLMatch::matches(const URLMatchContext& topContext, const URLMatchCon
     return false;
 }
 
-void Quirk::apply(QuirksData& quirksData) const
+void Quirk::apply(ResolvedQuirks& resolved) const
 {
-    quirksData.activeQuirks.merge(behaviors.bits());
+    resolved.data.activeQuirks.merge(behaviors.unconditionalBits());
+    resolved.data.conditionalQuirks.merge(behaviors.conditionalBits());
+    resolved.elementConditions.append(behaviors.conditions());
 
     if (site)
-        quirksData.addSite(*site);
+        resolved.data.addSite(*site);
 }
 
-static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
+static ResolvedQuirks resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
 {
-    QuirksData quirksData;
+    ResolvedQuirks resolved;
     for (auto& quirk : SiteSpecificQuirks::table) {
         if (quirk.match.matches(topContext, documentContext, documentIsTopDocument))
-            quirk.apply(quirksData);
+            quirk.apply(resolved);
     }
 
-    return quirksData;
+    return resolved;
 }
 
-QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument documentIsTopDocument)
+ResolvedQuirks resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument documentIsTopDocument)
 {
     return resolveSiteSpecificQuirks(URLMatchContext { topURL }, URLMatchContext { documentURL }, documentIsTopDocument);
 }
@@ -1255,7 +1262,42 @@ QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, 
 QuirksData resolveTopURLQuirks(const URL& url)
 {
     URLMatchContext context { url };
-    return resolveSiteSpecificQuirks(context, context, IsTopDocument::Yes);
+    return resolveSiteSpecificQuirks(context, context, IsTopDocument::Yes).data;
+}
+
+std::span<const Quirk> quirkTableForTesting()
+{
+    return SiteSpecificQuirks::table;
+}
+
+static SelectorQuery* quirkSelectorQuery(ASCIILiteral selector, const Document& document)
+{
+    return SelectorQueryCache::singleton().add(selector, document);
+}
+
+bool quirkSelectorMatches(ASCIILiteral selector, const Node* node)
+{
+    if (!node)
+        return false;
+
+    RefPtr element = dynamicDowncast<Element>(*node);
+    if (!element)
+        element = node->parentElement();
+    if (!element)
+        return false;
+
+    auto* query = quirkSelectorQuery(selector, element->document());
+    if (!query) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return query->matches(const_cast<Element&>(*element));
+}
+
+bool quirkSelectorParsesForTesting(ASCIILiteral selector, const Document& document)
+{
+    return !!quirkSelectorQuery(selector, document);
 }
 
 } // namespace WebCore
