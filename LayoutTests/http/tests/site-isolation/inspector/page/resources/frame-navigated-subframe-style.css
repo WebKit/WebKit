@@ -1,0 +1,4 @@
+/* Distinct from resource-tree-subframe-style.css on purpose: search-in-resources-cross-origin-iframe.html
+   asserts a unique hit for that file's content, and resource state from a previous test's page load in the
+   same WebContent process can still surface in Page.searchInResources. */
+p { color: darkslategray; }

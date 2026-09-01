@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addSameOriginIFrame() {
+    // Same host on purpose: the child and its grandchild stay in the main frame's process,
+    // so both InspectorPageAgent (page target) and the per-frame PageAgentProxy see the commit.
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = "resources/same-origin-frame-with-grandchild.html";
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.FrameNavigatedSingleReport");
+
+    // Count raw Page.frameNavigated payloads per frame id. A duplicate leaves no trace in the
+    // frame model once WI.Frame.initialize() has run, so intercept at the observer.
+    let frameNavigatedCounts = new Map();
+    let originalFrameNavigated = WI.PageObserver.prototype.frameNavigated;
+    WI.PageObserver.prototype.frameNavigated = function(framePayload, ...rest) {
+        frameNavigatedCounts.set(framePayload.id, (frameNavigatedCounts.get(framePayload.id) || 0) + 1);
+        return originalFrameNavigated.call(this, framePayload, ...rest);
+    };
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.FrameNavigatedSingleReport.SameOriginNestedIFrames",
+        description: "Each frame commit should produce exactly one Page.frameNavigated, and the frontend's frame tree and resource lists should survive it.",
+        async test() {
+            InspectorTest.evaluateInPage("addSameOriginIFrame()");
+
+            // Poll until the grandchild has committed, which is the last commit of this load.
+            // WI.NetworkManager.Event.FrameWasAdded is not usable here: it fires before the frame is
+            // reachable through WI.networkManager.frames, so a listener that filters on the frame
+            // list sees nothing and no later event arrives for an already-added frame.
+            let child;
+            let grandchild;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/same-origin-frame-with-grandchild.html"));
+                grandchild = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                if (child && grandchild)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectThat(!!child, "Same-origin child frame should appear in WI.networkManager.frames.");
+            InspectorTest.expectThat(!!grandchild, "Same-origin grandchild frame should appear in WI.networkManager.frames.");
+            if (!child || !grandchild)
+                return;
+
+            // Let any second report for an already-committed frame arrive before asserting.
+            await new Promise((resolve) => setTimeout(resolve, 250));
+
+            for (let [frameId, count] of frameNavigatedCounts)
+                InspectorTest.expectEqual(count, 1, `Frame ${frameId === WI.networkManager.mainFrame.id ? "(main)" : "(subframe)"} should be reported by exactly one Page.frameNavigated, got ${count}.`);
+
+            // A duplicate for the child would run WI.Frame.initialize() a second time, which
+            // unconditionally calls removeAllChildFrames() and removeAllResources(); the
+            // grandchild and the child's stylesheet are what that would destroy.
+            InspectorTest.expectThat(child.parentFrame === WI.networkManager.mainFrame, "Child's parent should be the main frame.");
+            InspectorTest.expectThat(grandchild.parentFrame === child, "Grandchild's parent should still be the child frame.");
+            InspectorTest.expectThat(child.childFrameCollection.has(grandchild), "Child frame should still list the grandchild as a child.");
+
+            let childResources = Array.from(child.resourceCollection);
+            InspectorTest.expectThat(childResources.some((resource) => resource.url.endsWith("/frame-navigated-subframe-style.css")), "Child frame's stylesheet subresource should still be in its resource collection.");
+
+            // The page target serves this command and resolves the frontend's frameId through
+            // assertFrame(), which only succeeds if the frame was registered in this process even
+            // though the proxy is what reported it.
+            try {
+                let { content } = await WI.pageTarget.PageAgent.getResourceContent(child.id, child.url);
+                InspectorTest.expectThat(content.includes("Same-origin child that embeds"), "Page target should resolve the proxy-reported frameId and return the child frame's content.");
+            } catch (error) {
+                InspectorTest.fail(`Page target failed to resolve the proxy-reported frameId: ${error.message}`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a frame commit produces exactly one Page.frameNavigated under Site Isolation, so the frontend's frame tree and resource lists are not wiped by a duplicate.</p>
+</body>

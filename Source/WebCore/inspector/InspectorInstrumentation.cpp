@@ -907,13 +907,16 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
             enabledPageHeapAgent->mainFrameNavigated();
     }
 
-    if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
-        pageAgent->frameNavigated(frame);
-
-    // Under Site Isolation the cross-process proxy (PageAgentProxy) forwards this to the
-    // UIProcess ProxyingPageAgent, so frames hosted in non-main processes are reported too.
+    // Only one provider may report a commit: a second report makes the frontend re-initialize the
+    // frame, discarding the child frames and resources it learned about after the first. The proxy
+    // supersedes the in-process agent because it also covers frames hosted in other processes.
+    //
+    // Both getters resolve here because didCommitLoad passes the frame's InstrumentingAgents, where
+    // the proxy is registered, and its getters fall back to the page's instance, where the agent is.
     if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
         pageProxy->frameNavigated(frame);
+    else if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->frameNavigated(frame);
 
     if (auto* pageRuntimeAgent = instrumentingAgents.enabledPageRuntimeAgent())
         pageRuntimeAgent->frameNavigated(frame);

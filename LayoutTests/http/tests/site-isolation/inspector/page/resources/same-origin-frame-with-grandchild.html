@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Same-origin frame with grandchild</title>
+<link rel="stylesheet" href="frame-navigated-subframe-style.css">
+<p>Same-origin child that embeds a same-origin grandchild, plus a stylesheet subresource.</p>
+<script>
+// Stay on the same host so this frame and its grandchild are hosted by the main frame's
+// process, which is the topology where both InspectorPageAgent and PageAgentProxy see the commit.
+let iframe = document.createElement("iframe");
+iframe.name = "grandchild-frame";
+iframe.src = "resource-tree-frame.html";
+document.body.appendChild(iframe);
+</script>

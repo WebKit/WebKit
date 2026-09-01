@@ -61,6 +61,11 @@ public:
     virtual Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) = 0;
     virtual WebCore::LocalFrame* assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) = 0;
 
+    // Assigning an ID is what makes frameForId() / assertFrame() able to resolve a frame, so a
+    // caller that reports the frame to the frontend over a channel that computes the ID elsewhere
+    // must still register it here for commands served in this process to work.
+    void registerFrame(const WebCore::Frame& frame) { frameId(&frame); }
+
     // Called when a frame is detached; returns the protocol ID that was assigned.
     // Callers must ensure takeFrame is called via InspectorInstrumentation::frameDetached
     // to clean up the identifier maps. The WeakHashMap handles frame destruction gracefully,
