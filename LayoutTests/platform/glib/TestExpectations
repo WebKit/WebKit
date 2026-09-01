@@ -90,6 +90,9 @@ scrollingcoordinator/ [ Pass ]
 scrollingcoordinator/mac/ [ Skip ]
 scrollingcoordinator/ios/ [ Skip ]
 
+# Only the GLib ports build ENABLE(PDFJS).
+pdfjs [ Pass ]
+
 imported/w3c/web-platform-tests/css/CSS2/linebox/vertical-align-baseline-003.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/linebox/vertical-align-baseline-009.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-079.xht [ Pass ]

@@ -1,0 +1,10 @@
+A PDF document should finish loading, so that embedders stop showing it as still loading.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pdfDocument.readyState is "complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
