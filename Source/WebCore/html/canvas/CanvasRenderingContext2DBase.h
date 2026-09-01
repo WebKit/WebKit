@@ -413,6 +413,7 @@ protected:
     RefPtr<ImageBuffer> createCompatibleImageBuffer(GraphicsContext&, const FloatSize&) const;
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
     ImageBuffer* buffer() const;
+    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
     RefPtr<ImageBuffer> createImageForNoiseInjection() const;
     void didUpdateCanvasSizeProperties(bool) override;
@@ -499,7 +500,6 @@ private:
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
-    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
 #if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;

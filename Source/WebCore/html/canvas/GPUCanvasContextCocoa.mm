@@ -448,7 +448,7 @@ RefPtr<NativeImage> GPUCanvasContextCocoa::surfaceBufferToNativeImage(SurfaceBuf
     return m_readDisplayBufferImage;
 }
 
-RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
+RefPtr<NativeImage> GPUCanvasContextCocoa::transferToNativeImage()
 {
     RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -469,7 +469,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
         m_readDisplayBufferImage = nullptr;
         updateMemoryCost();
     }
-    return bufferRef;
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(bufferRef));
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()

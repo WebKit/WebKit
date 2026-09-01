@@ -49,6 +49,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
+#include "NativeImage.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
@@ -294,10 +295,10 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         return { RefPtr<ImageBitmap> { nullptr } };
     clearCopiedImage();
     bool bitmapOriginClean = originClean();
-    RefPtr buffer = m_context->transferToImageBuffer();
-    if (!buffer)
+    RefPtr bitmap = m_context->transferToNativeImage();
+    if (!bitmap)
         return Exception { ExceptionCode::UnknownError }; // UnknownError is used for DOM out-of-memory.
-    return { ImageBitmap::create(buffer.releaseNonNull(), bitmapOriginClean) };
+    return { ImageBitmap::create(bitmap.releaseNonNull(), bitmapOriginClean) };
 }
 
 static String toEncodingMimeType(const String& mimeType)

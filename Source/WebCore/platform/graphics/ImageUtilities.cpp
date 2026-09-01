@@ -29,6 +29,7 @@
 #include "DestinationColorSpace.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
@@ -36,6 +37,19 @@
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+RefPtr<PixelBuffer> getPixelBuffer(const NativeImage& source, const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
+{
+    auto colorSpace = source.colorSpace();
+    if (!colorSpace.supportsOutput())
+        colorSpace = DestinationColorSpace::SRGB();
+    RefPtr buffer = ImageBuffer::create(source.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    if (!buffer)
+        return nullptr;
+    FloatRect imageRect { { }, source.size() };
+    buffer->context().drawNativeImage(source, imageRect, imageRect, { CompositeOperator::Copy });
+    return buffer->getPixelBuffer(outputFormat, sourceRect);
+}
 
 Vector<uint8_t> encodeData(const NativeImage& source, const String& mimeType, std::optional<double> quality)
 {

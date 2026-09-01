@@ -75,7 +75,7 @@ public:
     std::optional<GPUCanvasConfiguration> getConfiguration() const override;
     GPUDevice* device() const override { return m_configuration ? m_configuration->device.ptr() : nullptr; }
     ExceptionOr<Ref<GPUTexture>> getCurrentTexture() override;
-    RefPtr<ImageBuffer> transferToImageBuffer() override;
+    RefPtr<NativeImage> transferToNativeImage() override;
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(PlatformDynamicRangeLimit) override;

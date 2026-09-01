@@ -125,6 +125,11 @@ bool RemoteNativeImageProxy::hasAlpha() const
     return m_hasAlpha;
 }
 
+size_t RemoteNativeImageProxy::sizeInBytes() const
+{
+    return static_cast<size_t>(m_size.unclampedArea() * 4);
+}
+
 DestinationColorSpace RemoteNativeImageProxy::colorSpace() const
 {
     // FIXME: Images are not in destination color space, they are in any color space.

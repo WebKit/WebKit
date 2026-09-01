@@ -54,6 +54,7 @@ public:
     WebCore::IntSize size() const override;
     bool hasAlpha() const override;
     WebCore::DestinationColorSpace colorSpace() const override;
+    size_t sizeInBytes() const override;
 
     // Reference tracking for images held in the RemoteSharedResourceCache. The tracker's lifetime is
     // this image's lifetime, so the shared cache does not need to track it separately.

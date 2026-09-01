@@ -1970,25 +1970,25 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
-    RefPtr buffer = imageBitmap.buffer();
-    if (!buffer)
+    RefPtr bitmap = imageBitmap.bitmap();
+    if (!bitmap)
         return { };
 
     checkOrigin(&imageBitmap);
 
     if (rectContainsCanvas(dstRect)) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*bitmap, dstRect, srcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
+        fullCanvasCompositedDrawImage(*bitmap, dstRect, srcRect, state().globalComposite);
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
         clearCanvas();
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*bitmap, dstRect, srcRect, { state().globalComposite, state().globalBlend });
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : dstRect, defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        c->drawNativeImage(*bitmap, dstRect, srcRect, { state().globalComposite, state().globalBlend });
     }
 
     return { };
@@ -2084,11 +2084,6 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
 static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
 {
     context.drawImage(image, dest, src, options);
-}
-
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
-{
-    context.drawImageBuffer(imageBuffer, dest, src, options);
 }
 
 static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
@@ -2385,11 +2380,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(W
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(ImageBitmap& imageBitmap, bool repeatX, bool repeatY)
 {
-    RefPtr<ImageBuffer> buffer = imageBitmap.buffer();
-    if (!buffer)
+    RefPtr bitmap = imageBitmap.bitmap();
+    if (!bitmap)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ buffer.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create({ bitmap.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)

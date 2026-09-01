@@ -45,6 +45,7 @@
 #include "HTMLCanvasElement.h"
 #include "IDBValue.h"
 #include "ImageBuffer.h"
+#include "ImageUtilities.h"
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
@@ -921,16 +922,17 @@ private:
             return;
         }
 
-        RefPtr buffer = imageBitmap->buffer();
-        if (!buffer) {
+        RefPtr bitmap = imageBitmap->bitmap();
+        if (!bitmap) {
             code = SerializationReturnCode::ValidationError;
             return;
         }
 
         // FIXME: We should try to avoid converting pixel format.
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
-        const IntSize& logicalSize = buffer->truncatedLogicalSize();
-        auto pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize }));
+        auto colorSpace = bitmap->colorSpace();
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
+        auto logicalSize = bitmap->size();
+        auto pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(getPixelBuffer(*bitmap, format, { IntPoint::zero(), logicalSize }));
         if (!pixelBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -953,8 +955,9 @@ private:
         write(static_cast<uint8_t>(flags.toRaw()));
         write(static_cast<int32_t>(logicalSize.width()));
         write(static_cast<int32_t>(logicalSize.height()));
-        write(static_cast<double>(buffer->resolutionScale()));
-        write(buffer->colorSpace());
+        // The bitmap is a NativeImage, so it has no resolution scale: the logical size is the pixel size.
+        write(static_cast<double>(1));
+        write(colorSpace);
 
         CheckedUint32 byteLength = arrayBuffer->byteLength();
         if (byteLength.hasOverflowed()) {
@@ -3477,8 +3480,14 @@ private:
         }
 
         buffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), logicalSize });
+        RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+        if (!nativeImage) {
+            SERIALIZE_TRACE("FAIL deserialize");
+            fail();
+            return JSValue();
+        }
         const bool originClean = true;
-        Ref bitmap = ImageBitmap::create(buffer.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha));
+        Ref bitmap = ImageBitmap::create(nativeImage.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha));
         return getJSValue(WTF::move(bitmap));
     }
 
@@ -4738,8 +4747,11 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     if (arrayBufferContentsArray.hasException())
         return arrayBufferContentsArray.releaseException();
 
-    auto detachedImageBitmaps = map(WTF::move(imageBitmaps), [](auto&& imageBitmap) -> std::optional<DetachedImageBitmap> {
-        return imageBitmap->detach();
+    RefPtr scriptExecutionContext = executionContext(&lexicalGlobalObject);
+    if (!scriptExecutionContext)
+        return Exception { ExceptionCode::DataCloneError };
+    auto detachedImageBitmaps = map(WTF::move(imageBitmaps), [&](auto&& imageBitmap) -> std::optional<DetachedImageBitmap> {
+        return imageBitmap->detach(*scriptExecutionContext);
     });
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)

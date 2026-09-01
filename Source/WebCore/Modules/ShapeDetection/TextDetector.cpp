@@ -32,11 +32,11 @@
 #include "DocumentPage.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapOptions.h"
-#include "ImageBuffer.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedText.h"
+#include "NativeImage.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
@@ -72,15 +72,14 @@ TextDetector::~TextDetector() = default;
 
 void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
-        if (imageBitmap.hasException()) {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmapValue) mutable {
+        if (imageBitmapValue.hasException()) {
             promise.resolve({ });
             return;
         }
 
-        // FIXME: This is a safer cpp false positive (rdar://160082559).
-        SUPPRESS_UNCOUNTED_ARG RefPtr imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
-        RefPtr<NativeImage> image = imageBuffer ? imageBuffer->copyNativeImage() : nullptr;
+        Ref imageBitmap = imageBitmapValue.releaseReturnValue();
+        RefPtr image = imageBitmap->takeBitmap();
         if (!image) {
             promise.resolve({ });
             return;

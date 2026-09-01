@@ -38,6 +38,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
+#include "ImageUtilities.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
@@ -245,13 +246,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             if (!image->width() || !image->height())
                 return Exception { ExceptionCode::InvalidStateError,  "Input image has a bad size"_s };
 
-            RefPtr imageBuffer = image->buffer();
-            if (!imageBuffer)
-                return Exception { ExceptionCode::InvalidStateError,  "Input image has no image buffer"_s };
+            RefPtr bitmap = image->bitmap();
+            if (!bitmap)
+                return Exception { ExceptionCode::InvalidStateError,  "Input image has no bitmap"_s };
 
-            return create(context, *imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTF::move(init));
+            return create(context, *bitmap, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTF::move(init));
         }
     );
+}
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, NativeImage& image, IntSize size, WebCodecsVideoFrame::Init&& init)
+{
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    IntRect region { IntPoint::zero(), size };
+
+    auto pixelBuffer = getPixelBuffer(image, format, region);
+    if (!pixelBuffer)
+        return Exception { ExceptionCode::InvalidStateError,  "Image has no frame"_s };
+
+    return createFromPixelBuffer(context, pixelBuffer.releaseNonNull(), WTF::move(init));
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
@@ -263,7 +276,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (!pixelBuffer)
         return Exception { ExceptionCode::InvalidStateError,  "Buffer has no frame"_s };
 
-    auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true });
+    return createFromPixelBuffer(context, pixelBuffer.releaseNonNull(), WTF::move(init));
+}
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::createFromPixelBuffer(ScriptExecutionContext& context, Ref<PixelBuffer>&& pixelBuffer, WebCodecsVideoFrame::Init&& init)
+{
+    auto videoFrame = VideoFrame::createFromPixelBuffer(WTF::move(pixelBuffer), { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true });
 
     if (!videoFrame)
         return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };

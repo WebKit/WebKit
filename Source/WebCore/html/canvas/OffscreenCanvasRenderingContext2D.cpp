@@ -39,6 +39,7 @@
 #include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "ScriptExecutionContext.h"
 #include "StyleComputedStyle.h"
 #include "StyleResolveForFont.h"
@@ -129,22 +130,15 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     }
 }
 
-RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
+RefPtr<NativeImage> OffscreenCanvasRenderingContext2D::transferToNativeImage()
 {
     if (!hasCreatedImageBuffer())
-        return allocateImageBuffer();
-    RefPtr buffer = this->buffer();
-    if (!buffer)
+        return ImageBuffer::sinkIntoNativeImage(allocateImageBuffer());
+    // The image is an immutable copy of the contents, so the canvas context state stored in the
+    // GraphicsContext owned by buffer() is left intact.
+    RefPtr result = surfaceBufferToNativeImage(SurfaceBuffer::DrawingBuffer);
+    if (!result)
         return nullptr;
-    // As the canvas context state is stored in GraphicsContext, which is owned
-    // by buffer(), to avoid resetting the context state, we have to make a copy and
-    // clear the original buffer rather than returning the original buffer.
-    RefPtr result = buffer->clone();
-#if USE(SKIA)
-    // Ensure GPU commands are flushed before the ImageBuffer may be transferred cross-thread.
-    if (result)
-        result->flushDrawingContext();
-#endif
     willUpdateEntireContents();
     clearCanvas();
     return result;
