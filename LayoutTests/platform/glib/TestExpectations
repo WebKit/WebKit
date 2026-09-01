@@ -2209,6 +2209,8 @@ webgl/webgl-modify-after-drawimage.html [ Failure ]
 webkit.org/b/318780 [ Release ] http/wpt/service-workers/offscreencanvas-in-separate-service-worker-process-cpu-fallback.https.html [ Failure Pass ]
 webkit.org/b/318780 [ Release ] http/wpt/service-workers/offscreencanvas-in-separate-service-worker-process.https.html [ Failure Pass ]
 
+webkit.org/b/323074 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
