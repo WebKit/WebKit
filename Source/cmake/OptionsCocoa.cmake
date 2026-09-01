@@ -441,21 +441,29 @@ if (WEBKIT_SDK_IS_MACOS)
     set(WEBKIT_MAX_BUNDLE_SIZE 128)
 endif ()
 
-# iOS-family framework install names. macOS relies on defaults; the iOS family
-# installs into the system framework locations so dylib ids resolve at runtime.
-if (WEBKIT_SDK_IS_IOS_FAMILY)
-    set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
-    set(JavaScriptCore_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
-    set(WebKit_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
-    set(WebCore_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
-    set(WebGPU_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
-    set(WebKitLegacy_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
+set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
+set(JavaScriptCore_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
+set(WebKit_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
+set(WebGPU_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
 
-    # Local dev builds are not part of the dyld shared cache. System-path install
-    # names would otherwise mark some frameworks "shared-cache eligible" and the
-    # linker rejects eligible->ineligible links between them. Opt every dylib out.
+# WebCore and WebKitLegacy ship as sub-frameworks of the WebKit umbrella framework
+# on macOS, but as top-level private frameworks on the iOS family.
+# This mirrors Xcode's DYLIB_INSTALL_NAME_BASE = $(NORMAL_UMBRELLA_FRAMEWORKS_DIR).
+if (WEBKIT_SDK_IS_MACOS)
+    set(WEBKIT_UMBRELLA_FRAMEWORKS_DIR "/System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks")
+else ()
+    set(WEBKIT_UMBRELLA_FRAMEWORKS_DIR "/System/Library/PrivateFrameworks")
+endif ()
+set(WebCore_INSTALL_NAME_DIR "${WEBKIT_UMBRELLA_FRAMEWORKS_DIR}" CACHE STRING "" FORCE)
+set(WebKitLegacy_INSTALL_NAME_DIR "${WEBKIT_UMBRELLA_FRAMEWORKS_DIR}" CACHE STRING "" FORCE)
+
+# Local builds are not part of the dyld shared cache, so opt out.
+# This mirrors Xcode's use of ALLOW_SHARED_CACHE=NO.
+if (ENGINEERING_BUILD)
     add_link_options("-Wl,-not_for_dyld_shared_cache")
+endif ()
 
+if (WEBKIT_SDK_IS_IOS_FAMILY)
     # Define USE_APPLE_INTERNAL_SDK for the Swift Clang-module importer. Module
     # PCMs (e.g. WebKitLegacy consumed by WebKit's Swift) are built from
     # command-line flags only and don't see wtf/PlatformUse.h's definition, so

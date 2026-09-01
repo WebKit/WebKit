@@ -652,9 +652,11 @@ target_link_options(WebKit PRIVATE
 )
 
 set(WebKit_OUTPUT_NAME WebKit)
+set_target_properties(WebKit PROPERTIES
+    INSTALL_NAME_DIR "${WebKit_INSTALL_NAME_DIR}"
+)
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set_target_properties(WebKit PROPERTIES
-        INSTALL_NAME_DIR "${WebKit_INSTALL_NAME_DIR}"
         VERSION "${WEBKIT_MAC_VERSION}"
         SOVERSION 1
     )

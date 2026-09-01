@@ -237,6 +237,10 @@ endif ()
 
 set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
 
+set_target_properties(WebKitLegacy PROPERTIES
+    INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
+)
+
 # Platform-specific configuration, selected by the target SDK.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
 
@@ -254,9 +258,6 @@ execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${CMAKE_CURR
 set(WebKitLegacy_POST_BUILD_COMMAND
     ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Info.plist
-)
-set_target_properties(WebKitLegacy PROPERTIES
-    INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
 )
 
 target_link_options(WebKitLegacy PRIVATE

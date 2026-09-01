@@ -176,13 +176,14 @@ if (NOT EXISTS ${JavaScriptCore_DERIVED_SOURCES_DIR}/InspectorProtocolObjects.h)
 endif ()
 
 
+set_target_properties(JavaScriptCore PROPERTIES
+    INSTALL_NAME_DIR "${JavaScriptCore_INSTALL_NAME_DIR}"
+)
+
 # iOS-family framework packaging (identity, versioning, Info.plist, and the
 # private headers / module maps / sandbox profile the iOS framework ships).
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.JavaScriptCore)
-    set_target_properties(JavaScriptCore PROPERTIES
-        INSTALL_NAME_DIR "${JavaScriptCore_INSTALL_NAME_DIR}"
-    )
 
     if (WTF_LIBRARY_TYPE STREQUAL "STATIC")
         target_link_options(JavaScriptCore PRIVATE

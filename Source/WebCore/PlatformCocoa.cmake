@@ -1,9 +1,7 @@
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebCore)
-if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set_target_properties(WebCore PROPERTIES
-        INSTALL_NAME_DIR "${WebCore_INSTALL_NAME_DIR}"
-    )
-endif ()
+set_target_properties(WebCore PROPERTIES
+    INSTALL_NAME_DIR "${WebCore_INSTALL_NAME_DIR}"
+)
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/WebCore/Modules")
 configure_file(${WEBCORE_DIR}/WebCore.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.modulemap COPYONLY)
