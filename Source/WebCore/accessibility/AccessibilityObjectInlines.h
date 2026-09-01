@@ -85,11 +85,6 @@ inline bool AccessibilityObject::hasTreeRole() const
     return element && hasRole(*element, "tree"_s);
 }
 
-inline AXTextMarkerRange AccessibilityObject::textMarkerRange() const
-{
-    return simpleRange();
-}
-
 inline LocalFrame* AccessibilityObject::frame() const
 {
     Node* node = this->node();

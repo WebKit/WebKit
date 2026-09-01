@@ -1,0 +1,31 @@
+Asserts that AXTextMarkerRangeForUIElement covers a text control's value rather than the
+control as a single replaced object. A genuinely replaced element still answers with itself.
+
+textarea:
+PASS: webArea.stringForTextMarkerRange(range) === "alpha\nbravo\n"
+PASS: webArea.textMarkerRangeLength(range) === 12
+
+text input:
+PASS: webArea.stringForTextMarkerRange(range) === "alpha bravo"
+PASS: webArea.textMarkerRangeLength(range) === 11
+
+search input:
+PASS: webArea.stringForTextMarkerRange(range) === "alpha bravo"
+PASS: webArea.textMarkerRangeLength(range) === 11
+
+contenteditable:
+PASS: webArea.stringForTextMarkerRange(range) === "alpha\nbravo\n"
+PASS: webArea.textMarkerRangeLength(range) === 12
+
+image:
+PASS: webArea.stringForTextMarkerRange(range) === "￼"
+PASS: webArea.textMarkerRangeLength(range) === 1
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+alpha
+bravo
+
