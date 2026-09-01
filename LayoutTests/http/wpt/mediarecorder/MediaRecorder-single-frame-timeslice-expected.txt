@@ -1,0 +1,3 @@
+
+PASS A source producing a single frame delivers data while recording
+

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder emits data for a source producing a single frame</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/#dom-mediarecorder-start">
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/#dom-mediarecorder-requestdata">
+    <link rel="help" href="https://w3c.github.io/mediacapture-fromelement/#dom-htmlcanvaselement-capturestream">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// A source that produces fewer frames than there are time slices must still deliver its media
+// data while recording, rather than have it withheld until stop().
+//
+// captureStream(0) gives a source with an exact, spec-defined frame count.
+// mediacapture-fromelement requires a captured stream to "request capture of a frame when
+// created, even if frameRequestRate is zero", and requires the [[frameCaptureRequested]] slot
+// to be cleared once that frame is captured. With no requestFrame() call and no further
+// drawing, each track below therefore produces exactly one frame for its whole recording.
+//
+// That single frame is encoded as a keyframe. A regression here holds it back indefinitely so
+// that it can start the next segment, which leaves every segment empty and means no non-empty
+// dataavailable event is ever fired.
+//
+// Data is pumped with requestData() rather than left to the time slice alone. Both go through
+// the same encoder flush, but requestData() keeps a flush in flight, so the test does not
+// depend on whether the video encoder happens to emit the lone compressed frame before the
+// first flush comes around.
+function recordSingleFrame(test)
+{
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 240;
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'green';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const stream = canvas.captureStream(0);
+    const recorder = new MediaRecorder(stream);
+    test.add_cleanup(() => {
+        if (recorder.state != 'inactive')
+            recorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+    });
+
+    const blobs = [];
+    const result = new Promise(resolve => {
+        recorder.ondataavailable = test.step_func(event => {
+            assert_true(event.data instanceof Blob, 'dataavailable carries a Blob');
+            if (!event.data.size) {
+                if (recorder.state == 'recording')
+                    recorder.requestData();
+                return;
+            }
+            blobs.push(event.data);
+            resolve({ recorder, blobs, stateWhenDataArrived: recorder.state });
+        });
+    });
+
+    recorder.start(100);
+    recorder.requestData();
+    return result;
+}
+
+promise_test(async test => {
+    const { recorder, blobs, stateWhenDataArrived } = await recordSingleFrame(test);
+    assert_equals(stateWhenDataArrived, 'recording',
+        'a non-empty dataavailable fired before the recorder was stopped');
+
+    // The recording must also be usable, not merely non-empty.
+    const stopped = new Promise(resolve => recorder.onstop = resolve);
+    recorder.stop();
+    await stopped;
+
+    const video = document.createElement('video');
+    document.body.appendChild(video);
+    test.add_cleanup(() => video.remove());
+    video.src = URL.createObjectURL(new Blob(blobs, { type: recorder.mimeType }));
+    test.add_cleanup(() => URL.revokeObjectURL(video.src));
+    await new Promise((resolve, reject) => {
+        video.onloadeddata = resolve;
+        video.onerror = () => reject(new Error('the recording failed to load'));
+    });
+    assert_equals(video.videoWidth, 320, 'recorded width');
+    assert_equals(video.videoHeight, 240, 'recorded height');
+}, 'A source producing a single frame delivers data while recording');
+</script>
+</body>
+</html>

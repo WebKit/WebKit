@@ -807,6 +807,8 @@ MediaTime MediaRecorderPrivateEncoder::flushToEndSegment(const MediaTime& flushT
                 break;
             }
         }
+        if (lastVideoKeyFrame && m_interleavedFrames.isEmpty() && m_encodedAudioFrames.isEmpty() && lastVideoKeyFrame == m_encodedVideoFrames.first().ptr())
+            lastVideoKeyFrame = nullptr;
     }
 
     // Mux all video frames until we reached the end of the queue or we reached a video frame greater than flushTime or we found a keyfram (if writer requires it).
