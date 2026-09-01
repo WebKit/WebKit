@@ -198,9 +198,11 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         unset(_resultTmp)
         unset(_outputTmp)
     else ()
+        set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}ARCSources.txt")
         execute_process(COMMAND ${Python_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
             ${gusb_args}
             "--print-all-sources"
+            --print-arc-sources "${_arcSourcesFile}"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp
             OUTPUT_VARIABLE _outputTmp)
@@ -209,7 +211,17 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
              message(FATAL_ERROR "generate-unified-source-bundles.py exited with non-zero status, exiting")
         endif ()
 
-        list(APPEND ${_framework}_SOURCES ${_outputTmp})
+        # Without bundles there is no *-ARC.mm to key off, so take the @nonARC
+        # annotations straight from the source lists to keep the ARC sources in the
+        # OBJECT library whose OBJCXX precompiled header agrees on -fobjc-arc.
+        file(STRINGS "${_arcSourcesFile}" _arcSources)
+        foreach (_file IN LISTS _outputTmp)
+            if (_file IN_LIST _arcSources)
+                list(APPEND ${_framework}_ARC_SOURCES ${_file})
+            else ()
+                list(APPEND ${_framework}_SOURCES ${_file})
+            endif ()
+        endforeach ()
         unset(_resultTmp)
         unset(_outputTmp)
     endif ()
