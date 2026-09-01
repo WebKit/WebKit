@@ -203,7 +203,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
         if (!textLength || !textNode->renderer() || allTextNodes.contains(*textNode))
             continue;
 
-        unsigned fontSizeBin = fontSizeBinningInterval * round(textNode->renderer()->style().fontDescription().computedSize() / fontSizeBinningInterval);
+        unsigned fontSizeBin = fontSizeBinningInterval * round(textNode->renderer()->style().fontDescription().usedSize() / fontSizeBinningInterval);
         if (!FontSizeCounter::isValidValue(fontSizeBin))
             continue;
 

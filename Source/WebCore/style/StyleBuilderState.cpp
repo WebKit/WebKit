@@ -217,7 +217,7 @@ void BuilderState::updateFontForTextSizeAdjust()
     if (auto* frame = document().frame(); frame && m_style.textZoom() != TextZoom::Reset)
         zoomFactor *= frame->textZoomFactor();
     newFontDescription.setSpecifiedSize(baseSize);
-    newFontDescription.setComputedSize(baseSize * zoomFactor, zoomFactor);
+    newFontDescription.setUsedSize(baseSize * zoomFactor, zoomFactor);
 
     m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
@@ -297,8 +297,8 @@ void BuilderState::updateFontForSizeChange()
 void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float size)
 {
     fontDescription.setSpecifiedSize(size);
-    auto computedFontSize = Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), style(), document());
-    fontDescription.setComputedSize(computedFontSize.size, computedFontSize.usedZoomFactor);
+    auto usedFontSize = Style::usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), style(), document());
+    fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
 }
 
 CSSPropertyID BuilderState::cssPropertyID() const

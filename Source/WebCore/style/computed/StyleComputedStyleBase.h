@@ -655,7 +655,7 @@ public:
     WEBCORE_EXPORT const Font& primaryFont() const LIFETIME_BOUND;
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
     std::pair<FontOrientation, NonCJKGlyphOrientation> NODELETE fontAndGlyphOrientation();
-    float NODELETE computedFontSize() const;
+    float NODELETE usedFontSize() const;
     inline WebkitLocale computedLocale() const;
     const LineHeight& NODELETE specifiedLineHeight() const;
 #if ENABLE(TEXT_AUTOSIZING)

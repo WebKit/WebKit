@@ -47,7 +47,7 @@ static constexpr auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
 std::optional<float> FontSizeAdjust::resolvedMetricValue(const Style::ComputedStyle& style) const
 {
     if (m_platform.shouldResolveFromFont())
-        return m_platform.resolve(style.computedFontSize(), style.metricsOfPrimaryFont());
+        return m_platform.resolve(style.usedFontSize(), style.metricsOfPrimaryFont());
     return m_platform.value;
 }
 

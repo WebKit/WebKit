@@ -287,7 +287,7 @@ class FontSizeWrapper final : public Wrapper<float> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontSizeWrapper, Animation);
 public:
     FontSizeWrapper()
-        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &ComputedStyleProperties::computedFontSize, &ComputedStyleProperties::setFontSize)
+        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &ComputedStyleProperties::usedFontSize, &ComputedStyleProperties::setFontSize)
     {
     }
 

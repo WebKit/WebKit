@@ -84,7 +84,7 @@ TEST(FontCascadeTest, EqualityWithNullFonts)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(16);
+    description.setUsedSize(16);
 
     FontCascade a(FontCascadeDescription { description });
     FontCascade b(FontCascadeDescription { description });
@@ -168,7 +168,7 @@ TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(16);
+    description.setUsedSize(16);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -189,7 +189,7 @@ TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(16);
+    description.setUsedSize(16);
     FontCascade fontCascade(WTF::move(description));
     fontCascade.update();
 

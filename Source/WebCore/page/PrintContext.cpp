@@ -412,7 +412,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
         );
     }
     if (propertyName == "font-size"_s)
-        return makeString(style->fontDescription().computedSize());
+        return makeString(style->fontDescription().usedSize());
     if (propertyName == "font-family"_s)
         return style->fontDescription().firstFamily().name;
     if (propertyName == "size"_s) {

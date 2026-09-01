@@ -110,7 +110,7 @@ static double resolveIc(const FontCascade& fontCascadeForUnit)
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto ideogramWidth = fontCascadeForUnit.metricsOfPrimaryFont().ideogramWidth();
     if (!ideogramWidth)
-        return fontDescription.unzoomedComputedSize();
+        return fontDescription.unzoomedUsedSize();
     return unzoomFontMetric(ideogramWidth.value(), fontDescription);
 }
 
@@ -705,7 +705,7 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
 {
     // These properties affect results of `resolveLength` above.
 
-    if (styleA.fontDescription().computedSize() != styleB.fontDescription().computedSize())
+    if (styleA.fontDescription().usedSize() != styleB.fontDescription().usedSize())
         return false;
     if (styleA.fontDescription().specifiedSize() != styleB.fontDescription().specifiedSize())
         return false;
@@ -732,7 +732,7 @@ double emToPxDouble(double value, const ComputedStyle& style)
 
 double emToPxDoubleZoomed(double value, const ComputedStyle& style)
 {
-    return value * style.fontCascade().fontDescription().computedSize();
+    return value * style.fontCascade().fontDescription().usedSize();
 }
 
 } // namespace Style

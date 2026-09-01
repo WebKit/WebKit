@@ -111,7 +111,7 @@ struct FontDescriptionKey {
     FontDescriptionKey() = default;
 
     FontDescriptionKey(const FontDescription& description)
-        : m_size(description.computedSize())
+        : m_size(description.usedSize())
         , m_fontSelectionRequest(description.fontSelectionRequest())
         , m_flags(makeFlagsKey(description))
         , m_locale(description.computedLocale())

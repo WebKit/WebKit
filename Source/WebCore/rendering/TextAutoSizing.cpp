@@ -220,7 +220,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     bool firstPass = true;
     for (auto& node : m_autoSizedNodes) {
         auto& renderer = *node->renderer();
-        if (renderer.style().fontDescription().computedSize() == averageSize)
+        if (renderer.style().fontDescription().usedSize() == averageSize)
             continue;
 
         float specifiedSize = renderer.style().fontDescription().specifiedSize();
@@ -238,7 +238,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         auto style = cloneRenderStyleWithState(renderer.style());
         auto fontDescription = style.fontDescription();
-        fontDescription.setComputedSize(averageSize);
+        fontDescription.setUsedSize(averageSize);
         style.setFontDescription(FontCascadeDescription { fontDescription });
         parentRenderer->setStyle(WTF::move(style));
 
@@ -297,7 +297,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             if (!firstLetterStyle)
                 continue;
             auto fontDescription = firstLetterStyle->fontDescription();
-            fontDescription.setComputedSize(averageSize * fontDescription.specifiedSize() / parentStyle.fontDescription().specifiedSize());
+            fontDescription.setUsedSize(averageSize * fontDescription.specifiedSize() / parentStyle.fontDescription().specifiedSize());
             firstLetterStyle->setFontDescription(FontCascadeDescription { fontDescription });
         }
 
@@ -326,8 +326,8 @@ void TextAutoSizingValue::reset()
         // Reset the font size back to the original specified size
         auto fontDescription = renderer->style().fontDescription();
         float originalSize = fontDescription.specifiedSize();
-        if (fontDescription.computedSize() != originalSize) {
-            fontDescription.setComputedSize(originalSize);
+        if (fontDescription.usedSize() != originalSize) {
+            fontDescription.setUsedSize(originalSize);
             auto style = cloneRenderStyleWithState(renderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
             parentRenderer->setStyle(WTF::move(style));

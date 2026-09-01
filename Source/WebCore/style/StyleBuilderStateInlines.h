@@ -77,10 +77,10 @@ inline void BuilderState::setFontDescriptionFontSize(float fontSize)
         m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedSize(fontSize);
     }
 
-    SUPPRESS_UNCOUNTED_ARG auto computedSize = Style::computedFontSizeFromSpecifiedSize(fontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), style(), document());
-    if (m_style.fontDescription().computedSize() != computedSize.size || m_style.fontDescription().usedZoomFactor() != computedSize.usedZoomFactor) {
+    SUPPRESS_UNCOUNTED_ARG auto usedFontSize = Style::usedFontSizeFromSpecifiedSize(fontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), style(), document());
+    if (m_style.fontDescription().usedSize() != usedFontSize.size || m_style.fontDescription().usedZoomFactor() != usedFontSize.zoomFactor) {
         m_fontDirty = true;
-        m_style.mutableFontDescriptionWithoutUpdate().setComputedSize(computedSize.size, computedSize.usedZoomFactor);
+        m_style.mutableFontDescriptionWithoutUpdate().setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
     }
 }
 

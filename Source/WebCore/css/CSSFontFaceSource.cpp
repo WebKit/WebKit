@@ -200,7 +200,7 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
             // null if it wasn't going to otherwise (and vice-versa).
             FontCascadeDescription fontDescription;
             fontDescription.setOneFamily(m_fontFaceName);
-            fontDescription.setComputedSize(1);
+            fontDescription.setUsedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(cssFontFace().allowUserInstalledFonts());
             success = protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, m_fontFaceName, { }, FontLookupOptions::ExactFamilyNameMatch);
             if (document && document->settings().webAPIStatisticsEnabled())

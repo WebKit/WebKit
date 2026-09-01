@@ -72,10 +72,10 @@ static std::optional<Style::ComputedStyle> styleForFirstLetter(const RenderEleme
         // Set the font to be one line too big and then ratchet back to get to a precise fit. We can't just set the desired font size based off font height metrics
         // because many fonts bake ascent into the font metrics. Therefore we have to look at actual measured cap height values in order to know when we have a good fit.
         auto newFontDescription = firstLetterStyle.fontDescription();
-        float capRatio = firstLetterStyle.metricsOfPrimaryFont().capHeight().value() / firstLetterStyle.computedFontSize();
+        float capRatio = firstLetterStyle.metricsOfPrimaryFont().capHeight().value() / firstLetterStyle.usedFontSize();
         float startingFontSize = ((firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
-        newFontDescription.setComputedSize(startingFontSize);
+        newFontDescription.setUsedSize(startingFontSize);
         firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
 
         int desiredCapHeight = (firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight();
@@ -83,7 +83,7 @@ static std::optional<Style::ComputedStyle> styleForFirstLetter(const RenderEleme
         while (actualCapHeight > desiredCapHeight) {
             auto newFontDescription = firstLetterStyle.fontDescription();
             newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
-            newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
+            newFontDescription.setUsedSize(newFontDescription.usedSize() - 1);
             firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
             actualCapHeight = firstLetterStyle.metricsOfPrimaryFont().intCapHeight();
         }

@@ -234,7 +234,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
 {
     CascadeListParameters result;
     result.locale = description.computedLocale();
-    result.size = description.computedSize();
+    result.size = description.usedSize();
     result.italic = isItalic(description.fontStyleSlope());
     result.allowUserInstalledFonts = allowUserInstalledFonts;
 

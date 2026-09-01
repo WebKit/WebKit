@@ -2665,7 +2665,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
 
     if (CheckedPtr renderer = focusedElement->renderer()) {
         information.interactionRect = rootViewInteractionBounds(*focusedElement);
-        information.nodeFontSize = protect(renderer->style())->fontDescription().computedSize();
+        information.nodeFontSize = protect(renderer->style())->fontDescription().usedSize();
 
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, MapCoordinatesMode::UseTransforms, &inFixed);

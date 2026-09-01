@@ -428,7 +428,7 @@ bool RenderBlockFlow::recomputeLogicalWidthAndColumnWidth()
 LayoutUnit RenderBlockFlow::columnGap() const
 {
     if (style().columnGap().isNormal())
-        return LayoutUnit(style().fontDescription().computedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+        return LayoutUnit(style().fontDescription().usedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
     return Style::evaluate<LayoutUnit>(style().columnGap(), contentBoxLogicalWidth(), style().usedZoomForLength());
 }
 
@@ -4616,9 +4616,9 @@ static inline float textMultiplier(RenderObject& renderer, float specifiedSize)
     return std::max((1.0f / log10f(specifiedSize) * coefficient), 1.0f);
 }
 
-void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
+void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
 {
-    LOG(TextAutosizing, "RenderBlockFlow %p adjustComputedFontSizes, size=%f visibleWidth=%f, borderBoxWidth()=%f. Bailing: %d", this, size, visibleWidth, borderBoxWidth().toFloat(), visibleWidth >= borderBoxWidth());
+    LOG(TextAutosizing, "RenderBlockFlow %p adjustFontSizes, size=%f visibleWidth=%f, borderBoxWidth()=%f. Bailing: %d", this, size, visibleWidth, borderBoxWidth().toFloat(), visibleWidth >= borderBoxWidth());
 
     // Don't do any work if the block is smaller than the visible area.
     if (visibleWidth >= borderBoxWidth())
@@ -4685,7 +4685,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
             float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, specifiedSize) : textMultiplier(text, specifiedSize);
             float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
 
-            if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
+            if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.usedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
                 protect(document())->textAutoSizing().addTextNode(*protect(text.textNode()), candidateNewSize);
         }
 

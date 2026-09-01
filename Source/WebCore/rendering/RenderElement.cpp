@@ -2638,7 +2638,7 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
     return RenderObject::FlexibleHeight;
 }
 
-void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWidth)
+void RenderElement::adjustFontSizesOnBlocks(float size, float visibleWidth)
 {
     RefPtr document = view().frameView().frame().document();
     if (!document)
@@ -2660,7 +2660,7 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
 
         int stackSize = depthStack.size();
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant); blockFlow && !blockFlow->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            blockFlow->adjustComputedFontSizes(size, visibleWidth);
+            blockFlow->adjustFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
 
@@ -2690,7 +2690,7 @@ void RenderElement::resetTextAutosizing()
 
         int stackSize = depthStack.size();
         if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant); blockFlow && !blockFlow->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            blockFlow->resetComputedFontSize();
+            blockFlow->resetFontSize();
         newFixedDepth = 0;
     }
 }

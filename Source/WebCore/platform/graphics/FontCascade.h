@@ -108,7 +108,7 @@ public:
     const FontCascadeDescription& fontDescription() const LIFETIME_BOUND { return m_fontDescription; }
     FontCascadeDescription& mutableFontDescription() const LIFETIME_BOUND { return m_fontDescription; }
 
-    float size() const { return fontDescription().computedSize(); }
+    float size() const { return fontDescription().usedSize(); }
 
     bool isCurrent(const FontSelector&) const;
     void updateFonts(Ref<FontCascadeFonts>&&) const;

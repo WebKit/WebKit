@@ -108,7 +108,7 @@ static inline float defaultGap(const Style::ComputedStyle& style)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     const float textDecorationBaseFontSize = 16.f;
-    return std::max(1.f, ceilf(style.computedFontSize() / textDecorationBaseFontSize / 2.f));
+    return std::max(1.f, ceilf(style.usedFontSize() / textDecorationBaseFontSize / 2.f));
 }
 
 static float computedUnderlineOffset(const UnderlineOffsetArguments& context, const RenderObject* renderer)
@@ -180,7 +180,7 @@ static InkOverflowForDecorations computedInkOverflowForDecorations(const Style::
     InkOverflowForDecorations overflowResult;
 
     if (decorationStyle == TextDecorationStyle::Wavy) {
-        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.computedFontSize());
+        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.usedFontSize());
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left() = strokeThickness;
         overflowResult.right() = strokeThickness;

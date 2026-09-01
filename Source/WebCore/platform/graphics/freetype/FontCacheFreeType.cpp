@@ -87,7 +87,7 @@ bool FontCache::configurePatternForFontDescription(FcPattern* pattern, const Fon
         return false;
     if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
         return false;
-    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontDescription.computedSize()))
+    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontDescription.usedSize()))
         return false;
     return true;
 }
@@ -135,7 +135,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     getFontPropertiesFromPattern(resultPattern.get(), description, { }, fixedWidth, syntheticBold, syntheticOblique);
 
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(resultPattern.get()));
-    FontPlatformData alternateFontData(fontFace.get(), WTF::move(resultPattern), description.computedSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
+    FontPlatformData alternateFontData(fontFace.get(), WTF::move(resultPattern), description.usedSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
     return fontForPlatformData(alternateFontData);
 }
 
@@ -468,7 +468,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontPlatformData platformData(fontFace.get(), WTF::move(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation(), fontCreationContext.metricsOverrides());
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.usedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
 
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently

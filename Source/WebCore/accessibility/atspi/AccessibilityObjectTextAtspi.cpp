@@ -786,7 +786,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         }
 
         addAttributeIfNeeded("family-name"_s, style.fontCascade().firstFamily().name);
-        addAttributeIfNeeded("size"_s, makeString(std::round(style.computedFontSize() * 72 / WebCore::fontDPI()), "pt"_s));
+        addAttributeIfNeeded("size"_s, makeString(std::round(style.usedFontSize() * 72 / WebCore::fontDPI()), "pt"_s));
         addAttributeIfNeeded("weight"_s, makeString(static_cast<float>(style.fontCascade().weight())));
         addAttributeIfNeeded("style"_s, style.fontCascade().fontStyleSlope() ? "italic"_s : "normal"_s);
         addAttributeIfNeeded("strikethrough"_s, style.textDecorationLine().hasLineThrough() ? "true"_s : "false"_s);

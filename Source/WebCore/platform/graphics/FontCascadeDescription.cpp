@@ -156,7 +156,7 @@ void FontCascadeDescription::resolveFontSizeAdjustFromFontIfNeeded(const Font& f
     if (!fontSizeAdjust.shouldResolveFromFont())
         return;
 
-    auto aspectValue = fontSizeAdjust.resolve(computedSize(), font.fontMetrics());
+    auto aspectValue = fontSizeAdjust.resolve(usedSize(), font.fontMetrics());
     setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
 }
 
@@ -179,7 +179,7 @@ TextStream& operator<<(TextStream& ts, const FontCascadeDescription& fontCascade
     }
 
     ts << ", specified size "_s << fontCascadeDescription.specifiedSize();
-    ts << ", computed size "_s << fontCascadeDescription.computedSize();
+    ts << ", used size "_s << fontCascadeDescription.usedSize();
     ts << ", is absolute size "_s << fontCascadeDescription.isAbsoluteSize();
     if (fontCascadeDescription.kerning() != Kerning::Auto)
         ts << ", kerning "_s << fontCascadeDescription.kerning();

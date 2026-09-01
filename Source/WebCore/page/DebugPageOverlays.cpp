@@ -225,7 +225,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setSpecifiedSize(12);
-    fontDescription.setComputedSize(12);
+    fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
     FontCascade font(WTF::move(fontDescription));
     font.update(nullptr);
@@ -506,7 +506,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setSpecifiedSize(12);
-    fontDescription.setComputedSize(12);
+    fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
     FontCascade font(WTF::move(fontDescription));
     font.update(nullptr);
@@ -621,7 +621,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         FontCascadeDescription fontDescription;
         fontDescription.setOneFamily("Helvetica"_s);
         fontDescription.setSpecifiedSize(10);
-        fontDescription.setComputedSize(10);
+        fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
         FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);

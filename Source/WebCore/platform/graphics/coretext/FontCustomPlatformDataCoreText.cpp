@@ -62,7 +62,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     bool syntheticItalic = computeSyntheticItalic(hasSlopeVariationAxis, fontDescription, fontCreationContext);
     FontPlatformData platformData(font.get(), size, syntheticBold, syntheticItalic, orientation, widthVariant, fontDescription.textRenderingMode(), fontCreationContext.metricsOverrides(), this);
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.usedSize());
     return platformData;
 }
 

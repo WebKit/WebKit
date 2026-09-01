@@ -48,7 +48,7 @@ FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText() = default;
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {
-    auto size = fontDescription.computedSize();
+    auto size = fontDescription.usedSize();
     auto& originalPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&]() {
         // FIXME: Stop creating this unnecessary CTFont once rdar://problem/105508842 is fixed.
         UnrealizedCoreTextFont unrealizedFont = { adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr)) };
@@ -59,7 +59,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
         auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, { }, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 
         auto platformData = makeUnique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
-        platformData->updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
+        platformData->updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.usedSize());
         return platformData;
     });
 

@@ -45,13 +45,13 @@ float TextDecorationThickness::resolve(const Style::ComputedStyle& style) const
 {
     return WTF::switchOn(m_value,
         [&](const CSS::Keyword::Auto&) {
-            return style.computedFontSize() / textDecorationBaseFontSize;
+            return style.usedFontSize() / textDecorationBaseFontSize;
         },
         [&](const CSS::Keyword::FromFont&) {
             return style.metricsOfPrimaryFont().underlineThickness().value_or(0);
         },
         [&](const LengthPercentage& value) {
-            return Style::evaluate<float>(value, style.computedFontSize(), style.usedZoomForLength());
+            return Style::evaluate<float>(value, style.usedFontSize(), style.usedZoomForLength());
         }
     );
 }

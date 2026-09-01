@@ -415,7 +415,7 @@ String CanvasRenderingContext2DBase::State::fontString() const
         serializedFont.append("bold "_s);
     else if (weight != normalWeightValue())
         serializedFont.append(weight, " "_s);
-    serializedFont.append(font.computedSize(), "px"_s);
+    serializedFont.append(font.usedSize(), "px"_s);
 
     for (unsigned i = 0; i < font.familyCount(); ++i) {
         auto fontFamily = font.familyAt(i);

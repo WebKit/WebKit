@@ -994,7 +994,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     {
         FontCascadeDescription fontDescription;
         fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
-        fontDescription.setComputedSize(10);
+        fontDescription.setUsedSize(10);
 
         FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
@@ -1084,7 +1084,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     {
         FontCascadeDescription fontDescription;
         fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
-        fontDescription.setComputedSize(12);
+        fontDescription.setUsedSize(12);
 
         FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);

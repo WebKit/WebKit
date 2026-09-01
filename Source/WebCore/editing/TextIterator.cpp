@@ -1058,7 +1058,7 @@ static bool shouldEmitExtraNewlineForNode(Node& node, bool emitsNewlinesPerInner
         return false;
 
     auto bottomMargin = renderBox->collapsedMarginAfter();
-    auto fontSize = renderBox->style().fontDescription().computedSize();
+    auto fontSize = renderBox->style().fontDescription().usedSize();
     return bottomMargin * 2 >= fontSize;
 }
 

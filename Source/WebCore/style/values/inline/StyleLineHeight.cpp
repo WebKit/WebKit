@@ -69,7 +69,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
     auto handlePercentage = [&](const auto& percentage) {
         auto textZoomFactor = ZoomFactor { state.zoomWithTextZoomFactor() };
-        auto percentageBasis = state.style().fontDescription().unzoomedComputedSize();
+        auto percentageBasis = state.style().fontDescription().unzoomedUsedSize();
 
         // FIXME: percentage should not be restricted to an integer here.
         auto percentageValue = static_cast<int>(percentage.value);
@@ -81,7 +81,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
     auto handleCalc = [&](const auto& calc) {
         auto textZoomFactor = ZoomFactor { state.zoomWithTextZoomFactor() };
-        auto percentageBasis = state.style().fontDescription().unzoomedComputedSize();
+        auto percentageBasis = state.style().fontDescription().unzoomedUsedSize();
 
         return CSS::clampingToRangeOf<LineHeight::Length>(
             evaluate<float>(calc, percentageBasis, textZoomFactor) * multiplier

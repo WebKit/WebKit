@@ -694,7 +694,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyLineHeight> {
                 if (state.valueType == ExtractorState::PropertyValueType::Computed)
                     return functor(number);
 
-                return functor(LineHeight::Length { number.value * state.style.fontDescription().unzoomedComputedSize() });
+                return functor(LineHeight::Length { number.value * state.style.fontDescription().unzoomedUsedSize() });
             }
         );
     }
@@ -713,7 +713,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyFontFamily> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyFontSize> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
-        return functor(Length<CSS::Nonnegative> { state.style.fontDescription().unzoomedComputedSize() });
+        return functor(Length<CSS::Nonnegative> { state.style.fontDescription().unzoomedUsedSize() });
     }
 };
 
@@ -2900,7 +2900,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontShorthand(ExtractorState& st
     if (!propertiesResetByShorthandAreExpressible())
         return computedFont;
 
-    computedFont->size = createCSSValue(state.pool, state.style, Length<> { description.unzoomedComputedSize() });
+    computedFont->size = createCSSValue(state.pool, state.style, Length<> { description.unzoomedUsedSize() });
 
     auto computedLineHeight = ExtractorGenerated::extractValue(state, CSSPropertyLineHeight);
     if (computedLineHeight && !isValueID(*computedLineHeight, CSSValueNormal))

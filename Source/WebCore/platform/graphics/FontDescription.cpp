@@ -121,7 +121,7 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode, const Atom
 float FontDescription::adjustedSizeForFontFace(float fontFaceSizeAdjust) const
 {
     // It is not worth modifying the used size with @font-face size-adjust if we are to re-adjust it later with font-size-adjust. This is because font-size-adjust will overrule this change, since size-adjust also modifies the font's metric values and thus, keeps the aspect-value unchanged.
-    return fontSizeAdjust().value ? computedSize() : fontFaceSizeAdjust * computedSize();
+    return fontSizeAdjust().value ? usedSize() : fontFaceSizeAdjust * usedSize();
 }
 
 FontVariantEastAsianValues FontDescription::variantEastAsian() const

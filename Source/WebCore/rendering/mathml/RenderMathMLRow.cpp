@@ -118,7 +118,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
     if (stretchAscent + stretchDescent <= 0) {
         // We ensure a minimal stretch size.
-        stretchAscent = style().computedFontSize();
+        stretchAscent = style().usedFontSize();
         stretchDescent = 0;
     }
 

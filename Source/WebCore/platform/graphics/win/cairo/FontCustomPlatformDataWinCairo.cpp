@@ -33,7 +33,7 @@ cairo_font_face_t* createCairoDWriteFontFace(HFONT);
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
-    auto size = fontDescription.computedSize();
+    auto size = fontDescription.usedSize();
 
     bool syntheticBold = computeSyntheticBold(false, fontDescription, fontCreationContext);
     bool syntheticItalic = computeSyntheticItalic(false, fontDescription, fontCreationContext);

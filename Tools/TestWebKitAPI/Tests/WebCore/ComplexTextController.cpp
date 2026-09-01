@@ -50,7 +50,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
@@ -96,7 +96,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -139,7 +139,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 {
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
@@ -181,7 +181,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 {
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -217,7 +217,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(48);
+    description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -265,7 +265,7 @@ TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceCompensatesFollowingMar
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
@@ -304,7 +304,7 @@ TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceDoesNotCompensateInRTL)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
@@ -347,7 +347,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(48);
+    description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -376,7 +376,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(48);
+    description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
 
@@ -419,7 +419,7 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
-    description.setComputedSize(80);
+    description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
 

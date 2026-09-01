@@ -407,7 +407,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
-    FontPlatformData platformData(WTF::move(hFont), fontDescription.computedSize(), false, false);
+    FontPlatformData platformData(WTF::move(hFont), fontDescription.usedSize(), false, false);
     return fontForPlatformData(platformData);
 }
 

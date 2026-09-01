@@ -558,8 +558,8 @@ public:
     void resetInlineContentCache();
 
 #if ENABLE(TEXT_AUTOSIZING)
-    void adjustComputedFontSizes(float size, float visibleWidth);
-    void resetComputedFontSize()
+    void adjustFontSizes(float size, float visibleWidth);
+    void resetFontSize()
     {
         m_widthForTextAutosizing = -1;
         m_lineCountForTextAutosizing = NOT_SET;

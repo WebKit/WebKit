@@ -69,7 +69,7 @@ RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, c
 FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
     if (m_externalSVGDocument)
-        return FontPlatformData(fontDescription.computedSize(), computeSyntheticBold(false, fontDescription, fontCreationContext), computeSyntheticItalic(false, fontDescription, fontCreationContext)); // FIXME: Why are we creating a bogus font here?
+        return FontPlatformData(fontDescription.usedSize(), computeSyntheticBold(false, fontDescription, fontCreationContext), computeSyntheticItalic(false, fontDescription, fontCreationContext)); // FIXME: Why are we creating a bogus font here?
     return CachedFont::platformDataFromCustomData(fontDescription, fontCreationContext);
 }
 

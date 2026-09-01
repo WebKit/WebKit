@@ -675,8 +675,8 @@ std::unique_ptr<Style::ComputedStyle> Resolver::defaultStyleForElement(const Ele
 
     auto size = fontSizeForKeyword(CSSValueMedium, false, protect(document()));
     fontDescription.setSpecifiedSize(size);
-    auto computedFontSize = computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), *style, protect(document()));
-    fontDescription.setComputedSize(computedFontSize.size, computedFontSize.usedZoomFactor);
+    auto usedFontSize = usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), *style, protect(document()));
+    fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
 
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
     style->setFontDescription(WTF::move(fontDescription));

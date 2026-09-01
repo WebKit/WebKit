@@ -2219,7 +2219,7 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
         return { };
 
     auto fontSizeChanged = [&]() {
-        return previousUnanimatedStyle && previousUnanimatedStyle->computedFontSize() != unanimatedStyle.computedFontSize();
+        return previousUnanimatedStyle && previousUnanimatedStyle->usedFontSize() != unanimatedStyle.usedFontSize();
     };
 
     auto fontWeightChanged = [&]() {

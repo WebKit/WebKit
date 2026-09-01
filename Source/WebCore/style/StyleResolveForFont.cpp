@@ -377,7 +377,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
         if (auto sizeIdentifier = fontDescription.keywordSizeAsIdentifier()) {
             auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, protectedContext->settingsValues());
             fontDescription.setSpecifiedSize(size);
-            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, protectedContext->settingsValues()));
+            fontDescription.setUsedSize(usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, protectedContext->settingsValues()));
         }
     }
 
@@ -395,7 +395,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     fontDescription.setKeywordSizeFromIdentifier(resolvedSize.keyword);
     if (resolvedSize.size > 0) {
         fontDescription.setSpecifiedSize(resolvedSize.size);
-        fontDescription.setComputedSize(resolvedSize.size);
+        fontDescription.setUsedSize(resolvedSize.size);
     }
 
     // As there is no line-height on FontCascade, there's no need to resolve it, even

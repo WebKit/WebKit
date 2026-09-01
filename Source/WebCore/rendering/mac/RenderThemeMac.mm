@@ -1171,7 +1171,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderElement& renderer) const
 
 static NSControlSize controlSizeForSystemFont(const Style::ComputedStyle& style)
 {
-    auto fontSize = style.computedFontSize();
+    auto fontSize = style.usedFontSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
@@ -1183,7 +1183,7 @@ static NSControlSize controlSizeForSystemFont(const Style::ComputedStyle& style)
 
 static NSControlSize controlSizeForFont(const Style::ComputedStyle& style)
 {
-    auto fontSize = style.computedFontSize();
+    auto fontSize = style.usedFontSize();
     if (fontSize >= 21 && supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 16)
@@ -1224,7 +1224,7 @@ static void setFontFromControlSize(Style::ComputedStyle& style, NSControlSize co
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
     fontDescription.setOneFamily("-apple-system"_s);
-    fontDescription.setComputedSize([font pointSize] * style.usedZoom(), style.usedZoom());
+    fontDescription.setUsedSize([font pointSize] * style.usedZoom(), style.usedZoom());
     fontDescription.setSpecifiedSize([font pointSize]);
 
     // Reset line height
@@ -1371,7 +1371,7 @@ Style::PaddingBox RenderThemeMac::platformPopupInternalPaddingBox(const Style::C
     }
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
-        float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
+        float arrowWidth = baseArrowWidth * (style.usedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.usedZoom());
         float leftPadding = styledPopupPaddingLeft;
 
@@ -1413,7 +1413,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(Style::ComputedStyle& style, cons
 #endif
 
     auto usedZoom = style.usedZoomForLength();
-    float fontScale = style.computedFontSize() / baseFontSize / usedZoom.value;
+    float fontScale = style.usedFontSize() / baseFontSize / usedZoom.value;
 
     style.resetPadding();
 
@@ -1637,7 +1637,7 @@ std::optional<FontCascadeDescription> RenderThemeMac::controlFont(StyleAppearanc
 
         NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
         fontDescription.setOneFamily("-apple-system"_s);
-        fontDescription.setComputedSize([nsFont pointSize] * zoomFactor, zoomFactor);
+        fontDescription.setUsedSize([nsFont pointSize] * zoomFactor, zoomFactor);
         fontDescription.setSpecifiedSize([nsFont pointSize]);
         return fontDescription;
     }

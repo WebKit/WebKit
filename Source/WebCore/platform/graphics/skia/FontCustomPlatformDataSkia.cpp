@@ -95,7 +95,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     auto features = FontCache::computeFeatures(description, fontCreationContext);
 
     FontPlatformData platformData(WTF::move(typeface), size, computeSyntheticBold(hasWeightVariationAxis, description, fontCreationContext), computeSyntheticItalic(hasSlopeVariationAxis, description, fontCreationContext), description.orientation(), description.widthVariant(), description.textRenderingMode(), WTF::move(features), fontCreationContext.metricsOverrides(), this);
-    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedSize());
+    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.usedSize());
     return platformData;
 }
 

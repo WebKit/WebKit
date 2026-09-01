@@ -608,7 +608,7 @@ static GridLanesLayout::ResolvedFitTolerance resolveFitTolerance(const RenderGri
     return tolerance.switchOn(
         [&](const CSS::Keyword::Normal&) -> LayoutUnit {
             // Normal resolves to 1em
-            return LayoutUnit { grid.style().computedFontSize() };
+            return LayoutUnit { grid.style().usedFontSize() };
         },
         [&](const Style::FitTolerance::Fixed& fixed) -> LayoutUnit {
             return LayoutUnit { fixed.resolveZoom(grid.style().usedZoomForLength()) };

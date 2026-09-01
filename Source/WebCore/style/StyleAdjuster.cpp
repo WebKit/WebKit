@@ -705,7 +705,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     if (shouldAddIntrinsicMarginToFormControls) {
         // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
         // alter fonts and heights/widths.
-        if (is<HTMLFormControlElement>(m_element) && style.computedFontSize() >= 11) {
+        if (is<HTMLFormControlElement>(m_element) && style.usedFontSize() >= 11) {
             // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
             // so we have to treat all image buttons as though they were explicitly sized.
             if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
@@ -1003,8 +1003,8 @@ void Adjuster::adjustSVGElementStyle(Style::ComputedStyle& style, const SVGEleme
         // children inherit the correct (unzoomed) computed size. The SVG root transform handles
         // the zoom scaling, consistent with other SVG content.
         auto fontDescription = style.fontDescription();
-        auto computedFontSize = computedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), /*useSVGZoomRules=*/true, style, protect(svgElement.document()));
-        fontDescription.setComputedSize(computedFontSize.size, computedFontSize.usedZoomFactor);
+        auto usedFontSize = usedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), /*useSVGZoomRules=*/true, style, protect(svgElement.document()));
+        fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
         style.setFontDescription(WTF::move(fontDescription));
     }
 
@@ -1389,14 +1389,14 @@ auto Adjuster::adjustmentForTextAutosizing(const Style::ComputedStyle& style, co
         return adjustmentForTextAutosizing;
 
     float initialScale = document->page() ? document->page()->initialScaleIgnoringContentSize() : 1;
-    auto adjustLineHeightIfNeeded = [&](auto computedFontSize) {
+    auto adjustLineHeightIfNeeded = [&](auto usedFontSize) {
         auto lineHeight = style.specifiedLineHeight();
         constexpr static unsigned eligibleFontSize = 12;
-        if (computedFontSize * initialScale >= eligibleFontSize)
+        if (usedFontSize * initialScale >= eligibleFontSize)
             return;
 
         constexpr static float boostFactor = 1.25;
-        auto minimumLineHeight = boostFactor * computedFontSize;
+        auto minimumLineHeight = boostFactor * usedFontSize;
         if (auto fixedLineHeight = lineHeight.tryFixed(); !fixedLineHeight || fixedLineHeight->resolveZoom(ZoomFactor { 1.0f }) >= minimumLineHeight)
             return;
 
@@ -1407,15 +1407,15 @@ auto Adjuster::adjustmentForTextAutosizing(const Style::ComputedStyle& style, co
     };
 
     auto& fontDescription = style.fontDescription();
-    auto initialComputedFontSize = fontDescription.computedSize();
+    auto initialUsedFontSize = fontDescription.usedSize();
     auto specifiedFontSize = fontDescription.specifiedSize();
 
     bool isCandidate = newStatus.isIdempotentTextAutosizingCandidate(style);
-    if (!isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, specifiedFontSize))
+    if (!isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, specifiedFontSize))
         return adjustmentForTextAutosizing;
 
     auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
-    if (isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, adjustedFontSize))
+    if (isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, adjustedFontSize))
         return adjustmentForTextAutosizing;
 
     if (!hasTextChild(element))
@@ -1438,7 +1438,7 @@ bool Adjuster::adjustForTextAutosizing(Style::ComputedStyle& style, AdjustmentFo
 
     if (auto newFontSize = adjustment.newFontSize) {
         auto fontDescription = style.fontDescription();
-        fontDescription.setComputedSize(*newFontSize);
+        fontDescription.setUsedSize(*newFontSize);
         style.setFontDescription(WTF::move(fontDescription));
     }
     if (auto newLineHeight = adjustment.newLineHeight)

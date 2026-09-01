@@ -139,7 +139,8 @@ void RenderThemeIOS::adjustCheckboxStyle(Style::ComputedStyle& style, const Elem
     if (!style.width().isSizingKeywordOrAuto() && !style.height().isAuto())
         return;
 
-    auto size = Style::PreferredSize::Fixed { std::max(style.computedFontSize(), 10.f) };
+    // FIXME: usedFontSize() includes zoom, if it is used, zoom will applied twice to width and height, once now, and once at layout / use time. Likely this should use `Style::emToPx<float>(1, style)`.
+    auto size = Style::PreferredSize::Fixed { std::max(style.usedFontSize(), 10.f) };
     style.setWidth(size);
     style.setHeight(size);
 }
@@ -240,7 +241,8 @@ void RenderThemeIOS::adjustRadioStyle(Style::ComputedStyle& style, const Element
     if (!style.width().isSizingKeywordOrAuto() && !style.height().isAuto())
         return;
 
-    auto size = std::max(style.computedFontSize(), 10.0f);
+    // FIXME: usedFontSize() includes zoom meaning zoom will applied twice to width and height, once now, and once at layout / use time. Likely this should use `Style::emToPx<float>(1, style)`.
+    auto size = std::max(style.usedFontSize(), 10.0f);
     style.setWidth(Style::PreferredSize::Fixed { size });
     style.setHeight(Style::PreferredSize::Fixed { size });
 
@@ -532,9 +534,11 @@ void RenderThemeIOS::adjustMenuListButtonStyle(Style::ComputedStyle& style, cons
     }
 #endif
 
+    // FIXME: fontDescription().usedSize() includes zoom meaning zoom will applied twice to logical min-height, once now, and once at layout / use time. Likely this should use `Style::emToPx<int>(MenuListBaseHeight / MenuListBaseFontSize, style)`.
+
     // Set the min-height to be at least MenuListMinHeight.
     if (style.logicalHeight().isAuto())
-        style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize()))) });
+        style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().usedSize()))) });
     else
         style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(MenuListMinHeight) });
 
@@ -958,11 +962,13 @@ void RenderThemeIOS::adjustButtonStyle(Style::ComputedStyle& style, const Elemen
     }
 #endif
 
+    // FIXME: fontDescription().usedSize() includes zoom meaning zoom will applied twice to logical min-height, once now, and once at layout / use time. Likely this should use `Style::emToPx<int>(ControlBaseHeight / ControlBaseFontSize, style)`.
+
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
     if (style.logicalWidth().isSizingKeywordOrAuto() || style.logicalHeight().isAuto()) {
-        auto minimumHeight = ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize();
+        auto minimumHeight = ControlBaseHeight / ControlBaseFontSize * style.fontDescription().usedSize();
         if (auto fixedLogicalMinHeight = style.logicalMinHeight().tryFixed())
             minimumHeight = std::max(minimumHeight, fixedLogicalMinHeight->resolveZoom(style.usedZoomForLength()));
         // FIXME: This may need to be a layout time adjustment to support various values like fit-content etc.

@@ -878,7 +878,7 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
         textAutosizingWidth = overrideWidth;
     if (!idempotentMode && !textAutosizingWidth)
         return;
-    layoutRoot.adjustComputedFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
+    layoutRoot.adjustFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
     if (!layoutRoot.needsLayout())
         return;
     LOG(TextAutosizing, "Text Autosizing: minimumZoomFontSize=%.2f textAutosizingWidth=%.2f", minimumZoomFontSize, textAutosizingWidth);

@@ -46,9 +46,9 @@ public:
 
     bool operator==(const FontDescription&) const = default;
 
-    float computedSize() const { return m_computedSize; }
+    float usedSize() const { return m_usedSize; }
     float usedZoomFactor() const { return m_usedZoomFactor; }
-    float unzoomedComputedSize() const { return m_computedSize / m_usedZoomFactor; }
+    float unzoomedUsedSize() const { return m_usedSize / m_usedZoomFactor; }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
     float NODELETE adjustedSizeForFontFace(float) const;
     std::optional<FontSelectionValue> fontStyleSlope() const { return m_fontSelectionRequest.slope; }
@@ -107,7 +107,7 @@ public:
     const FontPalette& fontPalette() const LIFETIME_BOUND { return m_fontPalette; }
     FontSizeAdjust fontSizeAdjust() const { return m_sizeAdjust; }
 
-    void setComputedSize(float s, float zoom = 1.0f) { m_computedSize = clampToFloat(s); m_usedZoomFactor = zoom; }
+    void setUsedSize(float s, float zoom = 1.0f) { m_usedSize = clampToFloat(s); m_usedZoomFactor = zoom; }
     void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
     void setTextAutospace(TextAutospace v) { m_textAutospace = v; }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontSelectionRequest.slopeAxis = axis; updatePenalizeObliqueFontSelection(); }
@@ -171,7 +171,7 @@ private:
     FontSelectionRequest m_fontSelectionRequest;
     TextSpacingTrim m_textSpacingTrim;
     TextAutospace m_textAutospace;
-    float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
+    float m_usedSize { 0 }; // Size adjusted for the minimum font size and the zoom factor.
     float m_usedZoomFactor { 1.0 };
 
     PREFERRED_TYPE(FontOrientation) unsigned m_orientation : 1; // Whether the font is rendering on a horizontal line or a vertical line.

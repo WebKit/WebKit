@@ -260,7 +260,7 @@ public:
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
 #if ENABLE(TEXT_AUTOSIZING)
-    void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
+    void adjustFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();
 #endif
 

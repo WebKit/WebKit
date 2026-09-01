@@ -42,7 +42,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 {
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.fontStyleSlope()),
-        fontDescription.computedSize() * cWindowsFontScaleFactor);
+        fontDescription.usedSize() * cWindowsFontScaleFactor);
 
     if (!hfont)
         return nullptr;
@@ -55,7 +55,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeItalic = !options.contains(FontLookupOptions::DisallowObliqueSynthesis)
         && isItalic(fontDescription.fontStyleSlope()) && !logFont.lfItalic;
 
-    auto result = makeUnique<FontPlatformData>(WTF::move(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic, fontCreationContext.metricsOverrides());
+    auto result = makeUnique<FontPlatformData>(WTF::move(hfont), fontDescription.usedSize(), synthesizeBold, synthesizeItalic, fontCreationContext.metricsOverrides());
 
     bool fontCreationFailed = !result->scaledFont();
 

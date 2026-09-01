@@ -116,7 +116,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily(DefaultFontFamily);
     fontDescription.setSpecifiedSize(DefaultFontSize);
-    fontDescription.setComputedSize(DefaultFontSize);
+    fontDescription.setUsedSize(DefaultFontSize);
 
     if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), context)) {
         ASSERT(context->cssFontSelector());

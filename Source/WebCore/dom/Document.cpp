@@ -11667,7 +11667,7 @@ const Style::ComputedStyle& Document::initialStyle() const
 
         auto initialFontFamily = FontFamily { standardFamily, FontFamilyKind::Generic };
         auto initialSpecifiedFontSize = Style::fontSizeForKeyword(CSSValueMedium, false, settingsValues(), inQuirksMode());
-        auto initialComputedFontSize = Style::computedFontSizeFromSpecifiedSize(initialSpecifiedFontSize, false, zoomForFontDescription, Style::MinimumFontSizeRule::AbsoluteAndRelative, settingsValues());
+        auto initialUsedFontSize = Style::usedFontSizeFromSpecifiedSize(initialSpecifiedFontSize, false, zoomForFontDescription, Style::MinimumFontSizeRule::AbsoluteAndRelative, settingsValues());
         auto allowUserInstalledFonts = settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
 
         FontCascadeDescription fontDescription;
@@ -11675,7 +11675,7 @@ const Style::ComputedStyle& Document::initialStyle() const
         fontDescription.setOneFamily(WTF::move(initialFontFamily));
         fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
         fontDescription.setSpecifiedSize(initialSpecifiedFontSize);
-        fontDescription.setComputedSize(initialComputedFontSize, zoomForFontDescription);
+        fontDescription.setUsedSize(initialUsedFontSize, zoomForFontDescription);
         fontDescription.setShouldAllowUserInstalledFonts(allowUserInstalledFonts);
 
         m_cachedInitialStyle->setFontDescription(WTF::move(fontDescription));

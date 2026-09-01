@@ -38,14 +38,14 @@ class ComputedStyle;
 
 enum class MinimumFontSizeRule : uint8_t { None, Absolute, AbsoluteAndRelative };
 
-struct ComputedFontSize {
+struct UsedFontSize {
     float size { 0.0f };
-    float usedZoomFactor { 1.0f };
+    float zoomFactor { 1.0f };
 };
 
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
-ComputedFontSize computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
-float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
+float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
+UsedFontSize usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
+float usedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 float NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);
 
 // Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueXxxLarge), this function will return

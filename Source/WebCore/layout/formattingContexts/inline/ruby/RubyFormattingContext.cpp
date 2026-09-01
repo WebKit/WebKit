@@ -42,7 +42,7 @@ namespace Layout {
 static inline InlineLayoutUnit NODELETE fullWidthAdvance(const Box& box)
 {
     // A fullwidth character (including fullwidth punctuation) advances one em.
-    return box.style().computedFontSize();
+    return box.style().usedFontSize();
 }
 
 static inline InlineLayoutUnit NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)

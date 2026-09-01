@@ -151,7 +151,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
 
     // @font-face size-adjust does not affect fallback font sizes, but font-size-adjust does.
     // We initialize FontPlatformData with the computed size, then apply font-size-adjust if required.
-    auto size = description.computedSize();
+    auto size = description.usedSize();
     FontPlatformData alternateFontData(WTF::move(typeface), size, syntheticBold, syntheticOblique, description.orientation(), description.widthVariant(), description.textRenderingMode(), WTF::move(features));
     alternateFontData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), size);
 
@@ -195,7 +195,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, { });
-    FontPlatformData platformData(WTF::move(typeface), fontDescription.computedSize(), syntheticBold, syntheticOblique,
+    FontPlatformData platformData(WTF::move(typeface), fontDescription.usedSize(), syntheticBold, syntheticOblique,
         fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), computeFeatures(fontDescription, { }));
     return fontForPlatformData(platformData);
 }
@@ -426,7 +426,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     auto [syntheticBold, syntheticOblique] = computeSynthesisProperties(*typeface, fontDescription, options);
     FontPlatformData platformData(WTF::move(typeface), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTF::move(features), fontCreationContext.metricsOverrides());
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.usedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
 
     return platformDataUniquePtr;

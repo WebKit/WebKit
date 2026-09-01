@@ -82,7 +82,7 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     bool wrapping;
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping, trustedType);
     FontDescription description;
-    description.setComputedSize(fontSize);
+    description.setUsedSize(fontSize);
     // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
     auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, { });
     return Font::create(WTF::move(platformData), origin);

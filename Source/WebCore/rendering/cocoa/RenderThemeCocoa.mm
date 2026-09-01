@@ -3327,8 +3327,10 @@ bool RenderThemeCocoa::adjustButtonStyleForVectorBasedControls(Style::ComputedSt
     constexpr auto controlBaseHeight = 20.0f;
     constexpr auto controlBaseFontSize = 11.0f;
 
+    // FIXME: unzoomedUsedSize() doesn't quite match 1em due to minimum font size restrictions. Likely this should use `Style::emToPx<int>(controlBaseHeight / controlBaseFontSize, style)` instead.
+
     if (!style.logicalWidth().isSpecified() || style.logicalHeight().isAuto()) {
-        auto minimumHeight = controlBaseHeight / controlBaseFontSize * style.fontDescription().unzoomedComputedSize();
+        auto minimumHeight = controlBaseHeight / controlBaseFontSize * style.fontDescription().unzoomedUsedSize();
         if (auto fixedValue = style.logicalMinHeight().tryFixed())
             minimumHeight = std::max(minimumHeight, fixedValue->resolveZoom(Style::ZoomFactor::none()));
         // FIXME: This may need to be a layout time adjustment to support various
@@ -3377,8 +3379,10 @@ bool RenderThemeCocoa::adjustMenuListButtonStyleForVectorBasedControls(Style::Co
     const float menuListBaseHeight = 20;
     const float menuListBaseFontSize = 11;
 
+    // FIXME: unzoomedUsedSize() doesn't quite match 1em due to minimum font size restrictions. Likely this should use `Style::emToPx<int>(menuListBaseHeight / menuListBaseFontSize, style)` instead.
+
     if (style.logicalHeight().isAuto())
-        style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(std::max(menuListMinHeight, static_cast<int>(menuListBaseHeight / menuListBaseFontSize * style.fontDescription().unzoomedComputedSize()))) });
+        style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(std::max(menuListMinHeight, static_cast<int>(menuListBaseHeight / menuListBaseFontSize * style.fontDescription().unzoomedUsedSize()))) });
     else
         style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(menuListMinHeight) });
 

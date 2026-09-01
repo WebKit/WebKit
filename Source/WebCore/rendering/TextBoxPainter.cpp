@@ -991,7 +991,7 @@ static float autoTextDecorationInset(const Style::ComputedStyle& style)
     // A small UA-chosen inset (relative to font size) so that two adjacent identical underlined
     // elements do not appear to share a single continuous underline (important for e.g. Chinese,
     // where underlining is a form of punctuation).
-    return style.computedFontSize() / 8;
+    return style.usedFontSize() / 8;
 }
 
 struct DecoratingBoxFragmentInlineSizes {
@@ -1133,7 +1133,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, autoTextDecorationThickness),
                 decoratingBox.style->metricsOfPrimaryFont().ascent() + 2.f,
-                wavyStrokeParameters(decoratingBox.style->computedFontSize())
+                wavyStrokeParameters(decoratingBox.style->usedFontSize())
             };
         };
 
@@ -1219,7 +1219,7 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
             , insetWidth
             , textDecorationThickness
             , linethroughCenter
-            , wavyStrokeParameters(decoratingBox.style->computedFontSize()) }, decoratingBox.textDecorationStyles);
+            , wavyStrokeParameters(decoratingBox.style->usedFontSize()) }, decoratingBox.textDecorationStyles);
     }
 
     if (m_isCombinedText)

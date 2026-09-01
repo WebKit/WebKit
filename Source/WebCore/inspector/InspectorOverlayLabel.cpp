@@ -68,7 +68,7 @@ static FontCascade systemFont()
     FontCascadeDescription fontDescription;
     fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
     fontDescription.setWeight(FontSelectionValue(500));
-    fontDescription.setComputedSize(12);
+    fontDescription.setUsedSize(12);
 
     FontCascade font(WTF::move(fontDescription));
     font.update(nullptr);

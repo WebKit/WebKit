@@ -836,7 +836,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
     CheckedRef style = renderer->style();
     return {
         extractControlStyleStatesForRendererInternal(*renderer),
-        style->computedFontSize(),
+        style->usedFontSize(),
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorApplyingColorFilter(),

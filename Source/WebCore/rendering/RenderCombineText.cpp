@@ -115,7 +115,7 @@ void RenderCombineText::combineTextIfNeeded()
         return;
 
     auto description = originalFont().fontDescription();
-    float emWidth = description.computedSize() * textCombineMargin;
+    float emWidth = description.usedSize() * textCombineMargin;
 
     RefPtr fontSelector = style().fontCascade().fontSelector();
 
@@ -169,10 +169,10 @@ void RenderCombineText::combineTextIfNeeded()
 
     if (!m_isCombined) {
         float scaleFactor = std::max(0.4f, emWidth / (emWidth + bestFitDelta));
-        float originalSize = bestFitDescription.computedSize();
+        float originalSize = bestFitDescription.usedSize();
         do {
             float computedSize = originalSize * scaleFactor;
-            bestFitDescription.setComputedSize(computedSize);
+            bestFitDescription.setUsedSize(computedSize);
             m_combineFontStyle->setFontDescription(FontCascadeDescription { bestFitDescription });
         
             FontCascade compressedFont(FontCascadeDescription { bestFitDescription }, style().fontCascade());

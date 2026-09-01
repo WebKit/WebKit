@@ -95,8 +95,8 @@ Style::ComputedStyle resolveForDocument(const Document& document)
         int size = fontSizeForKeyword(CSSValueMedium, false, document);
         fontDescription.setSpecifiedSize(size);
         bool useSVGZoomRules = document.isSVGDocument();
-        auto computedFontSize = computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle, document);
-        fontDescription.setComputedSize(computedFontSize.size, computedFontSize.usedZoomFactor);
+        auto usedFontSize = usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle, document);
+        fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
 
         auto [fontOrientation, glyphOrientation] = documentStyle.fontAndGlyphOrientation();
         fontDescription.setOrientation(fontOrientation);

@@ -42,7 +42,7 @@ namespace WebCore {
 
 namespace Style {
 
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const SettingsValues& settings)
+float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const SettingsValues& settings)
 {
     // Text with a 0px font size should not be visible and therefore needs to be
     // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
@@ -90,7 +90,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
-ComputedFontSize computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle& style, const Document& document)
+UsedFontSize usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle& style, const Document& document)
 {
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
@@ -99,12 +99,12 @@ ComputedFontSize computedFontSizeFromSpecifiedSize(float specifiedSize, bool isA
         if (frame && style.textZoom() != TextZoom::Reset)
             zoomFactor *= frame->textZoomFactor();
     }
-    return { computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
+    return { usedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
 }
 
-float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
+float usedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
 {
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
+    return usedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
 }
 
 constexpr int fontSizeTableMax = 16;

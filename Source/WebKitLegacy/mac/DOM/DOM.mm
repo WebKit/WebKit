@@ -473,7 +473,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* style = core(self)->renderStyle();
     if (!style)
         return 0.0f;
-    return style->fontDescription().computedSize();
+    return style->fontDescription().usedSize();
 }
 
 - (DOMNode *)nextFocusNode
