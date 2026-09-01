@@ -69,7 +69,58 @@ Vector<ExitTimeObjectMaterialization*, 4> materializationTable(const Bag<ExitTim
     return table;
 }
 
+void encodeValueRep(Vector<uint8_t>& bytes, const B3::ValueRep& rep)
+{
+    bytes.append(static_cast<uint8_t>(rep.kind()));
+    switch (rep.kind()) {
+    case B3::ValueRep::Register:
+        bytes.append(static_cast<uint8_t>(rep.reg().index()));
+        break;
+    case B3::ValueRep::Stack:
+        WTF::LEBEncoder::encodeInt32(bytes, rep.offsetFromFP());
+        break;
+    case B3::ValueRep::Constant:
+        WTF::LEBEncoder::encodeInt64(bytes, rep.value());
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+B3::ValueRep decodeValueRep(std::span<const uint8_t> bytes, size_t& offset)
+{
+    switch (static_cast<B3::ValueRep::Kind>(bytes[offset++])) {
+    case B3::ValueRep::Register:
+        return B3::ValueRep::reg(Reg::fromIndex(bytes[offset++]));
+    case B3::ValueRep::Stack:
+        return B3::ValueRep::stack(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset));
+    case B3::ValueRep::Constant:
+        return B3::ValueRep::constant(WTF::LEBDecoder::decodeInt64OrCrash(bytes, offset));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 } // anonymous namespace
+
+unsigned OSRExitValueReps::append(std::span<const B3::ValueRep> reps)
+{
+    unsigned offset = m_bytes.size();
+    WTF::LEBEncoder::encodeUInt32(m_bytes, reps.size());
+    for (const B3::ValueRep& rep : reps)
+        encodeValueRep(m_bytes, rep);
+    return offset;
+}
+
+FixedVector<B3::ValueRep> OSRExitValueReps::decode(unsigned offset) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    size_t position = offset;
+    unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, position);
+    return FixedVector<B3::ValueRep>::createWithSizeFromGenerator(count, [&](size_t) {
+        return decodeValueRep(bytes, position);
+    });
+}
 
 void OSRExitValues::encode(const Operands<ExitValue>& values, const Bag<ExitTimeObjectMaterialization>& materializationBag, JITCode& jitCode)
 {
@@ -219,10 +270,8 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
     const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
 {
-    FixedVector<B3::ValueRep> valueReps(params.size() - offset);
-    for (unsigned i = offset, indexInValueReps = 0; i < params.size(); ++i, ++indexInValueReps)
-        valueReps[indexInValueReps] = params[i];
-    OSRExit exit(this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex, WTF::move(valueReps));
+    unsigned valueRepsOffset = state.jitCode->osrExitValueReps.append(params.reps().subspan(offset));
+    OSRExit exit(this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex, valueRepsOffset);
     if (exitKind == WillThrowOutOfMemoryError)
         exit.m_exitCallSiteIndex = callSiteIndexForCodeOrigin(state, nodeOrigin.semantic);
 
@@ -233,11 +282,16 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
 
 OSRExit::OSRExit(
     OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOrigin codeOrigin,
-    CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, FixedVector<B3::ValueRep>&& valueReps)
+    CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset)
     : OSRExitBase(exitKind, codeOrigin, codeOriginForExitProfile, wasHoisted, dfgNodeIndex)
+    , m_valueRepsOffset(valueRepsOffset)
     , m_descriptor(descriptor)
-    , m_valueReps(WTF::move(valueReps))
 {
+}
+
+FixedVector<B3::ValueRep> OSRExit::valueReps(const JITCode& jitCode) const
+{
+    return jitCode.osrExitValueReps.decode(m_valueRepsOffset);
 }
 
 CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const

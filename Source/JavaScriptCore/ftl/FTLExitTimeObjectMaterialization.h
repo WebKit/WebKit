@@ -51,7 +51,7 @@ public:
     CodeOrigin origin() const { return m_origin; }
     
     ExitValue get(DFG::PromotedLocationDescriptor) const;
-    const Vector<ExitPropertyValue>& properties() const LIFETIME_BOUND { return m_properties; }
+    const Vector<ExitPropertyValue, 0, CrashOnOverflow, 4>& properties() const LIFETIME_BOUND { return m_properties; }
     
     void accountForLocalsOffset(int offset);
     
@@ -63,7 +63,7 @@ private:
     DFG::NodeType m_type;
     IndexingType m_indexingType;
     CodeOrigin m_origin;
-    Vector<ExitPropertyValue> m_properties;
+    Vector<ExitPropertyValue, 0, CrashOnOverflow, 4> m_properties;
 };
 
 } } // namespace JSC::FTL

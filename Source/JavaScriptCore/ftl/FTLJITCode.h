@@ -39,6 +39,11 @@ class TrackedReferences;
 
 namespace FTL {
 
+struct OSRExitStub {
+    unsigned exitIndex;
+    MacroAssemblerCodeRef<OSRExitPtrTag> code;
+};
+
 class JITCode : public JSC::JITCode {
 public:
     JITCode();
@@ -88,9 +93,11 @@ public:
     
     DFG::CommonData common;
     Vector<OSRExit> m_osrExit;
+    Vector<OSRExitStub, 0, CrashOnOverflow, 4> m_osrExitStubs;
     RegisterAtOffsetList m_calleeSaveRegisters;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
     Vector<EncodedJSValue> osrExitConstants;
+    OSRExitValueReps osrExitValueReps;
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:

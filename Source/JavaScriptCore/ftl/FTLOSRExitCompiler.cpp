@@ -144,7 +144,7 @@ static void compileRecovery(
         value.dataFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
 }
 
-static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit, const FixedOperands<ExitValue>& exitValues, CodeBlock* codeBlock)
+static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit, const FixedOperands<ExitValue>& exitValues, const FixedVector<B3::ValueRep>& valueReps, CodeBlock* codeBlock)
 {
     // This code requires framePointerRegister is the same as callFrameRegister
     static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
@@ -211,7 +211,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     auto recoverValue = [&] (const ExitValue& value) {
         compileRecovery(
             jit, value,
-            exit.m_valueReps,
+            valueReps,
             registerScratch, materializationToPointer);
     };
     
@@ -258,7 +258,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     
     // Do some value profiling.
     if (exit.m_descriptor->m_profileDataFormat != DataFormatNone) {
-        Location::forValueRep(exit.m_valueReps[0]).restoreInto(jit, registerScratch, GPRInfo::regT0);
+        Location::forValueRep(valueReps[0]).restoreInto(jit, registerScratch, GPRInfo::regT0);
         reboxAccordingToFormat(exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
@@ -417,7 +417,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 }
 
                 case ExitValueArgument:
-                    Location::forValueRep(exit.m_valueReps[value.exitArgument().argument()]).restoreInto(jit, registerScratch, GPRInfo::regT0);
+                    Location::forValueRep(valueReps[value.exitArgument().argument()]).restoreInto(jit, registerScratch, GPRInfo::regT0);
                     jit.store64(GPRInfo::regT0, CCallHelpers::Address(GPRInfo::regT3, index * sizeof(EncodedJSValue)));
                     break;
 
@@ -648,7 +648,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     adjustAndJumpToTarget(vm, jit, exit);
     
     LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::FTLOSRExit);
-    exit.m_code = FINALIZE_CODE_IF(
+    return FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer, OSRExitPtrTag, nullptr,
         "FTL OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
@@ -686,6 +686,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
     JITCode* jitCode = codeBlock->jitCode()->ftl();
     OSRExit& exit = jitCode->m_osrExit[exitID];
     FixedOperands<ExitValue> exitValues = exit.m_descriptor->values(*jitCode);
+    FixedVector<B3::ValueRep> valueReps = exit.valueReps(*jitCode);
     
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit()) {
         dataLogLn(
@@ -698,7 +699,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
             "    Exit is exception handler: ", exit.isExceptionHandler(), "\n",
             "    Is unwind handler: ", exit.isGenericUnwindHandler(), "\n",
             "    Exit values: ", exitValues, "\n",
-            "    Value reps: ", listDump(exit.m_valueReps));
+            "    Value reps: ", listDump(valueReps));
         if (!exit.m_descriptor->m_materializations.isEmpty()) {
             dataLogLn("    Materializations:");
             for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations)
@@ -706,12 +707,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
         }
     }
 
-    compileStub(vm, exitID, jitCode, exit, exitValues, codeBlock);
+    jitCode->m_osrExitStubs.append({ exitID, compileStub(vm, exitID, jitCode, exit, exitValues, valueReps, codeBlock) });
+    CodePtr<OSRExitPtrTag> code = jitCode->m_osrExitStubs.last().code.code();
 
-    MacroAssembler::repatchJump(
-        exit.codeLocationForRepatch(codeBlock), CodeLocationLabel<OSRExitPtrTag>(exit.m_code.code()));
-    
-    return exit.m_code.code().taggedPtr();
+    MacroAssembler::repatchJump(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel<OSRExitPtrTag>(code));
+    return code.taggedPtr();
 }
 
 } } // namespace JSC::FTL
