@@ -102,8 +102,10 @@ SQLiteStorageArea::~SQLiteStorageArea()
 
     bool databaseIsEmpty = isEmpty();
     close();
-    if (databaseIsEmpty)
+    if (databaseIsEmpty) {
+        RELEASE_LOG(Storage, "SQLiteStorageArea::~SQLiteStorageArea deletes empty database file %" PRIVATE_LOG_STRING, m_path.utf8().data());
         WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
+    }
 }
 
 bool SQLiteStorageArea::isEmpty()
@@ -133,6 +135,7 @@ void SQLiteStorageArea::clear()
     assertIsCurrent(m_queue.get());
 
     close();
+    RELEASE_LOG(Storage, "SQLiteStorageArea::clear deletes database file %" PRIVATE_LOG_STRING, m_path.utf8().data());
     WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
     notifyListenersAboutClear();
 }

@@ -571,10 +571,11 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
     performQuotaBasedEviction(WTF::move(originRecords));
 }
 
-void NetworkStorageManager::performEvictionForOrigin(const WebCore::SecurityOriginData& topOrigin, const AccessRecord& record, OptionSet<WebsiteDataType> types)
+void NetworkStorageManager::performEvictionForOrigin(const WebCore::SecurityOriginData& topOrigin, const AccessRecord& record, OptionSet<WebsiteDataType> types, ASCIILiteral reason)
 {
     for (auto& clientOrigin : record.clientOrigins) {
         auto origin = WebCore::ClientOrigin { topOrigin, clientOrigin };
+        RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEvictionForOrigin sessionID=%" PRIu64 " clears data for origin %" SENSITIVE_LOG_STRING " due to %" PUBLIC_LOG_STRING, this, m_sessionID.toUInt64(), clientOrigin.toString().ascii().data(), reason.characters());
         originStorageManager(origin)->deleteData(types, -WallTime::infinity());
         removeOriginStorageManagerIfPossible(origin);
     }
@@ -606,7 +607,7 @@ void NetworkStorageManager::performQuotaBasedEviction(HashMap<WebCore::SecurityO
         if (record.isActive || valueOrDefault(record.isPersisted))
             continue;
 
-        performEvictionForOrigin(topOrigin, record, allManagedTypes());
+        performEvictionForOrigin(topOrigin, record, allManagedTypes(), "quota-based eviction"_s);
         deletedDomains.append(WebCore::RegistrableDomain { topOrigin });
     }
 
@@ -731,7 +732,7 @@ void NetworkStorageManager::donePrepareForTimeBasedEviction(TimeBasedEvictionMod
         }
 
         auto types = mode == TimeBasedEvictionMode::ServiceWorkerRegistrationsOnly ? OptionSet<WebsiteDataType> { WebsiteDataType::ServiceWorkerRegistrations } : allManagedTypes();
-        performEvictionForOrigin(topOrigin, record, types);
+        performEvictionForOrigin(topOrigin, record, types, "time-based eviction"_s);
         deletedDomains.append(WebCore::RegistrableDomain { topOrigin });
     }
 

@@ -308,7 +308,7 @@ private:
     void prepareForTimeBasedEviction(TimeBasedEvictionMode, Seconds threshold);
     void donePrepareForTimeBasedEviction(TimeBasedEvictionMode, Seconds threshold, HashMap<WebCore::RegistrableDomain, WallTime>&&, Vector<WebCore::SecurityOriginData>&& pushSubscriptionOrigins);
     bool shouldPerformTimeBasedEvictionNow(std::optional<Seconds> intervalOverride);
-    void performEvictionForOrigin(const WebCore::SecurityOriginData& topOrigin, const AccessRecord&, OptionSet<WebsiteDataType>);
+    void performEvictionForOrigin(const WebCore::SecurityOriginData& topOrigin, const AccessRecord&, OptionSet<WebsiteDataType>, ASCIILiteral reason);
     const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);

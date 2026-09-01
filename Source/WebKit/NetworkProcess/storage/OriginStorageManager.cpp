@@ -428,6 +428,8 @@ void OriginStorageManager::StorageBucket::deleteLocalStorageData(WallTime time)
     if (FileSystem::fileModificationTime(currentLocalStoragePath) >= time) {
         if (m_localStorageManager)
             m_localStorageManager->clearDataOnDisk();
+
+        RELEASE_LOG(Storage, "OriginStorageManager::StorageBucket::deleteLocalStorageData deletes database file %" PRIVATE_LOG_STRING, currentLocalStoragePath.utf8().data());
         WebCore::SQLiteFileSystem::deleteDatabaseFile(currentLocalStoragePath);
     }
 
