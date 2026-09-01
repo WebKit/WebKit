@@ -1254,7 +1254,7 @@ webkit.org/b/318343 fast/events/blur-window-with-focus-in-shadow-tree-crash.html
 webkit.org/b/318344 accessibility/custom-elements/autocomplete.html [ Pass Timeout ]
 
 webkit.org/b/319054 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure Pass ]
-webkit.org/b/319055 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
+webkit.org/b/319055 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure Pass ]
 webkit.org/b/319056 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure Pass ]
 webkit.org/b/319057 [ Debug ] media/media-h264-webm-source.html [ Failure Pass ]
 webkit.org/b/319058 [ Debug ] media/media-h264-webm-error.html [ Failure Pass ]
@@ -1328,3 +1328,6 @@ webkit.org/b/322819 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/sim
 webkit.org/b/319070 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_rounding.wast.js.html [ Pass Timeout ]
 webkit.org/b/322820 [ Release ] media/video-seek-past-end-paused.html [ Failure Pass ]
 webkit.org/b/323007 [ Debug ] media/video-seek-with-negative-playback.html [ Pass Timeout Failure ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-attribute-modified.html [ Pass Crash ]
+webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/media-playback-while-not-visible-permission-policy/suspended-hide-show.tentative.sub.html?origin=cross-origin&frame=nested&visibility=zero-size [ Crash Pass ]
+webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/static-router-main-resource.https.html [ Crash Failure Pass ]
