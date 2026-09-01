@@ -151,6 +151,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/mac"
     "${WEBKIT_DIR}/GPUProcess/media/cocoa"
     "${WEBKIT_DIR}/GPUProcess/media/ios"
+    "${WEBKIT_DIR}/ModelProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/Downloads/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/Daemon"
     "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement/cocoa"
@@ -1692,6 +1693,10 @@ target_link_options(WebKit PRIVATE
     "LINKER:-weak_framework,NaturalLanguage"
     "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist"
 )
+
+if (WEBKIT_SDK_TARGET_OS STREQUAL "xros")
+    target_link_options(WebKit PRIVATE "LINKER:-weak_framework,MRUIKit")
+endif ()
 
 if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
     target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")

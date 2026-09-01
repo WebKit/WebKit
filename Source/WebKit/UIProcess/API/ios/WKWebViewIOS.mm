@@ -141,7 +141,9 @@
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 static const Seconds delayBeforeNoCommitsLogging = 5_s;
 static constexpr Seconds delayBeforeUpdatingVisibleContentRectsWhenChangingObscuredInsetsInteractively = 100_ms;
+#if ENABLE(APP_HIGHLIGHTS)
 static const unsigned highlightMargin = 5;
+#endif
 
 static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {

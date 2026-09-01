@@ -1357,6 +1357,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cg/ImageDecoderCG.h
     platform/graphics/cg/PDFDocumentImage.h
     platform/graphics/cg/PathCG.h
+    platform/graphics/cg/ShareableSpatialImage.h
+    platform/graphics/cg/SpatialImageTypes.h
     platform/graphics/cg/UTIRegistry.h
 
     platform/graphics/cocoa/AV1UtilitiesCocoa.h
