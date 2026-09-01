@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function setup()
+{
+    let shadow = document.getElementById("host").attachShadow({mode: "open"});
+    let input = document.createElement("input");
+    input.name = "Username";
+    shadow.appendChild(input);
+
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.PushNodeToFrontend");
+
+    let frameTarget = null;
+
+    async function pushNodeForExpression(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        InspectorTest.expectEqual(result.subtype, "node", "Evaluating the expression should produce a node.");
+
+        let remoteObject = WI.RemoteObject.fromPayload(result, target);
+        return await new Promise((resolve) => remoteObject.pushNodeToFrontend(resolve));
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Under site isolation the main frame has a frame target of its own, even with no subframes.",
+        async test() {
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            InspectorTest.expectEqual(frameTargets.length, 1, "Should find exactly one frame target for the main frame.");
+
+            frameTarget = frameTargets[0];
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+
+            // The page target's DOM tree must exist too, since it owns the id space that the frame
+            // target's node ids were previously (incorrectly) resolved against.
+            InspectorTest.expectNotNull(await WI.domManager.requestDocument(), "Page target should have a document.");
+
+            if (!WI.domManager.frameTargetDocumentForTarget(frameTarget))
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            InspectorTest.expectNotNull(WI.domManager.frameTargetDocumentForTarget(frameTarget), "Frame target should have a document.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeInShadowTree",
+        description: "A node inside a shadow tree pushed from a frame target should resolve to that node, not to whichever page target node happens to share the raw id.",
+        async test() {
+            let nodeId = await pushNodeForExpression(frameTarget, `document.getElementById("host").shadowRoot.querySelector("input")`);
+            InspectorTest.expectNotEqual(nodeId, 0, "Should push a node id to the frontend.");
+
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectNotNull(domNode, "nodeForId should find the pushed node.");
+            InspectorTest.expectEqual(domNode.nodeName(), "INPUT", "Pushed node should be the input inside the shadow tree.");
+            InspectorTest.expectEqual(domNode.getAttribute("name"), "Username", "Pushed node should be the shadow tree's Username input.");
+            InspectorTest.expectThat(domNode.owningTarget === frameTarget, "Pushed node should be owned by the frame target that resolved it.");
+            InspectorTest.expectThat(domNode === WI.domManager.nodeForIdInFrameTarget(nodeId.split(":").pop(), frameTarget), "nodeForId and nodeForIdInFrameTarget should agree.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeInDocumentTree",
+        description: "The same translation should apply to nodes outside of a shadow tree.",
+        async test() {
+            let nodeId = await pushNodeForExpression(frameTarget, `document.getElementById("paragraph")`);
+            InspectorTest.expectNotEqual(nodeId, 0, "Should push a node id to the frontend.");
+
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectNotNull(domNode, "nodeForId should find the pushed node.");
+            InspectorTest.expectEqual(domNode.nodeName(), "P", "Pushed node should be the paragraph.");
+            InspectorTest.expectThat(domNode.owningTarget === frameTarget, "Pushed node should be owned by the frame target that resolved it.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "PageTargetIdsAreNotScoped",
+        description: "Nodes pushed from the page target keep their unscoped ids.",
+        async test() {
+            let nodeId = await pushNodeForExpression(WI.mainTarget, `document.getElementById("paragraph")`);
+            InspectorTest.expectEqual(typeof nodeId, "number", "Page target node ids should stay numeric.");
+
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectNotNull(domNode, "nodeForId should find the pushed node.");
+            InspectorTest.expectEqual(domNode.nodeName(), "P", "Pushed node should be the paragraph.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="setup()">
+<p>Tests that a DOM node pushed to the frontend from a frame target is looked up in that frame target's node id space.</p>
+<div style="display: none">
+    <div id="host"></div>
+    <p id="paragraph">paragraph</p>
+</div>
+</body>
+</html>

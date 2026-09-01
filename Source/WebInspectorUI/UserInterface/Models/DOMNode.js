@@ -45,7 +45,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         if (frameTarget) {
             this._rawNodeId = payload.nodeId;
-            this.id = frameTarget.identifier + ":" + payload.nodeId;
+            this.id = WI.DOMManager.keyForNodeId(payload.nodeId, frameTarget);
             this._owningTarget = frameTarget;
         } else
             this.id = payload.nodeId;
