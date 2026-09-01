@@ -112,6 +112,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(VM& vm, JSGlobalObject* globalOb
 
     result.start = position;
     result.end = subpatternResults[1];
+    RELEASE_ASSERT(result.end >= result.start);
 
     unsigned numSubpatterns = regExp->numSubpatterns();
     bool hasNamedCaptures = regExp->hasNamedCaptures();
