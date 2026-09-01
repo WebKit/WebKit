@@ -2477,6 +2477,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/generic/ScrollbarsControllerGeneric.h
 
+    platform/graphics/AlphaFormat.h
     platform/graphics/AlphaPremultiplication.h
     platform/graphics/AnimationFrameRate.h
     platform/graphics/ArrayPixelBuffer.h

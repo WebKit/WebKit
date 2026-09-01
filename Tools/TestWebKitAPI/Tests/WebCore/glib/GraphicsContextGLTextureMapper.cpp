@@ -116,7 +116,7 @@ GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
     attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
-    attributes.alpha = true;
+    attributes.alphaFormat = AlphaFormat::Premultiplied;
     attributes.preserveDrawingBuffer = preserveDrawingBuffer();
     return attributes;
 }

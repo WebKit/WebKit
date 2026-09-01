@@ -152,7 +152,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessGraphicsContextGLCocoa);
 
 WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLCocoa(WTF::move(attributes), { })
-    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
+    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(attributes.alphaFormat == AlphaFormat::NoAlpha))
 {
 }
 

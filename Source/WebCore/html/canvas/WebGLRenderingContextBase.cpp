@@ -425,11 +425,13 @@ static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebG
 {
     UNUSED_PARAM(scriptExecutionContext);
     GraphicsContextGLAttributes glAttributes;
-    glAttributes.alpha = attributes.alpha;
+    if (!attributes.alpha)
+        glAttributes.alphaFormat = AlphaFormat::NoAlpha;
+    else
+        glAttributes.alphaFormat = attributes.premultipliedAlpha ? AlphaFormat::Premultiplied : AlphaFormat::Unpremultiplied;
     glAttributes.depth = attributes.depth;
     glAttributes.stencil = attributes.stencil;
     glAttributes.antialias = attributes.antialias;
-    glAttributes.premultipliedAlpha = attributes.premultipliedAlpha;
     glAttributes.preserveDrawingBuffer = attributes.preserveDrawingBuffer;
     glAttributes.powerPreference = attributes.powerPreference;
     glAttributes.isWebGL2 = isWebGL2;

@@ -27,6 +27,7 @@
 
 #include <wtf/Platform.h>
 #if ENABLE(WEBGL)
+#include <WebCore/AlphaFormat.h>
 #include <optional>
 
 namespace WebCore {
@@ -49,11 +50,10 @@ using PlatformGPUID = uint64_t;
 #endif
 
 struct GraphicsContextGLAttributes {
-    bool alpha { true };
+    AlphaFormat alphaFormat { AlphaFormat::Premultiplied };
     bool depth { true };
     bool stencil { false };
     bool antialias { true };
-    bool premultipliedAlpha { true };
     bool preserveDrawingBuffer { false };
     GraphicsContextGLPowerPreference powerPreference { GraphicsContextGLPowerPreference::Default };
     bool isWebGL2 { false };

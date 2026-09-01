@@ -382,7 +382,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 void GraphicsContextGLANGLE::validateAttributes()
 {
     auto attrs = contextAttributes();
-    m_internalColorFormat = attrs.alpha ? GL_RGBA8 : GL_RGB8;
+    m_internalColorFormat = attrs.alphaFormat != AlphaFormat::NoAlpha ? GL_RGBA8 : GL_RGB8;
     if (attrs.stencil && attrs.depth) {
         if (supportsExtensionImpl("GL_OES_packed_depth_stencil"_s))
             m_internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
@@ -422,7 +422,7 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
     auto attrs = contextAttributes();
     const int width = size.width();
     const int height = size.height();
-    GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
+    GLuint colorFormat = attrs.alphaFormat != AlphaFormat::NoAlpha ? GL_RGBA : GL_RGB;
 
     // Resize multisample FBO.
     if (attrs.antialias) {

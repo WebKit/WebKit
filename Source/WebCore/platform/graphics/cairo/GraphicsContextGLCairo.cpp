@@ -114,7 +114,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     for (size_t i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
-    if (!sourceContextAttributes.premultipliedAlpha) {
+    if (sourceContextAttributes.alphaFormat == AlphaFormat::Unpremultiplied) {
         for (size_t i = 0; i < totalBytes; i += 4) {
             pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
             pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);

@@ -399,7 +399,7 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     const auto size = getInternalFramebufferSize();
     const int width = size.width();
     const int height = size.height();
-    GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
+    GLuint colorFormat = attrs.alphaFormat != AlphaFormat::NoAlpha ? GL_RGBA : GL_RGB;
     GLenum textureTarget = GL_TEXTURE_2D;
     GLuint internalColorFormat = colorFormat;
     ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
@@ -424,7 +424,7 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 
 #if USE(COORDINATED_GRAPHICS)
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
+    if (contextAttributes().alphaFormat != AlphaFormat::NoAlpha)
         flags.add(TextureMapperFlags::ShouldBlend);
     auto fboSize = getInternalFramebufferSize();
     auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());

@@ -493,7 +493,7 @@ IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
     if (m_resourceOwner)
         surface->setOwnershipIdentity(m_resourceOwner);
 
-    const bool usingAlpha = contextAttributes().alpha;
+    const bool usingAlpha = contextAttributes().alphaFormat != AlphaFormat::NoAlpha;
     const EGLint surfaceAttributes[] = {
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
@@ -894,9 +894,9 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
 // Says how the alpha of the contents of the surface buffers is to be interpreted.
 static CGImageAlphaInfo alphaInfoForSurfaceBufferContents(const GraphicsContextGLAttributes& attributes)
 {
-    if (!attributes.alpha)
+    if (attributes.alphaFormat == AlphaFormat::NoAlpha)
         return kCGImageAlphaNoneSkipFirst;
-    if (attributes.premultipliedAlpha)
+    if (attributes.alphaFormat == AlphaFormat::Premultiplied)
         return kCGImageAlphaPremultipliedFirst;
     return kCGImageAlphaFirst;
 }

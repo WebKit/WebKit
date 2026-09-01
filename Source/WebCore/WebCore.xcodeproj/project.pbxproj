@@ -3045,6 +3045,7 @@
 		7287A84029879CF2004A50E2 /* SearchFieldResultsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 7287A83A29879695004A50E2 /* SearchFieldResultsPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728D4791279A48B700BA7C0E /* FilterEffectApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A13A9F274C5CC700E2A88E /* FilterEffectApplier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72963B6D29510A38004FF6FB /* TextAreaPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72963B6C29510287004FF6FB /* TextAreaPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6D071DB06AEAB47821168ECD /* AlphaFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = FE829344B3749078127971C6 /* AlphaFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6623D686C600CC6883 /* RenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		729D05302531424300422098 /* RenderingResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 729D052E25313E2600422098 /* RenderingResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14662,6 +14663,7 @@
 		7295D020E0F0C07C868B904C /* UnifiedSource63-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource63-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		72963B6C29510287004FF6FB /* TextAreaPart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextAreaPart.h; sourceTree = "<group>"; };
 		729661A2275960A500E7DF9B /* FilterEffectGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectGeometry.h; sourceTree = "<group>"; };
+		FE829344B3749078127971C6 /* AlphaFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaFormat.h; sourceTree = "<group>"; };
 		7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaPremultiplication.h; sourceTree = "<group>"; };
 		7299BC6623D686C600CC6883 /* RenderingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingMode.h; sourceTree = "<group>"; };
 		729D052E25313E2600422098 /* RenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingResourceIdentifier.h; sourceTree = "<group>"; };
@@ -36790,6 +36792,7 @@
 				3721493318F0B6D600156EDC /* opentype */,
 				2DD797E62ABD176000EAB71A /* re */,
 				49E911B20EF86D27009D0CAF /* transforms */,
+				FE829344B3749078127971C6 /* AlphaFormat.h */,
 				BC635E91264C4760000EF33A /* AlphaPremultiplication.cpp */,
 				7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */,
 				0F7E475125EEB79A0013F909 /* AnimationFrameRate.cpp */,
@@ -44282,6 +44285,7 @@
 				AEBAFFB02D65D478008311A5 /* AllAcceptedCredentialsOptions.h in Headers */,
 				83BB5C881D5D6F45005A71F4 /* AllDescendantsCollection.h in Headers */,
 				3AD4AB8C2C3CADF700A3E7F3 /* Allowlist.h in Headers */,
+				6D071DB06AEAB47821168ECD /* AlphaFormat.h in Headers */,
 				7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 				CE45946F24123C960078019F /* AlternativeTextContextController.h in Headers */,

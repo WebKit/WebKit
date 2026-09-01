@@ -88,7 +88,7 @@ bool GraphicsContextGLTextureMapperGBM::platformInitialize()
             && fourcc != DRM_FORMAT_ABGR16161616F;
     };
 
-    bool isOpaque = !contextAttributes().alpha;
+    bool isOpaque = contextAttributes().alphaFormat == AlphaFormat::NoAlpha;
     const auto& supportedFormats = PlatformDisplay::sharedDisplay().bufferFormats();
     for (const auto& format : supportedFormats) {
         bool matchesOpacity = isOpaqueFormat(format.fourcc) == isOpaque;
@@ -229,7 +229,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
 
     RELEASE_ASSERT(m_layerContentsDisplayDelegate);
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
+    if (contextAttributes().alphaFormat != AlphaFormat::NoAlpha)
         flags.add(TextureMapperFlags::ShouldBlend);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
 #if USE(TEXTURE_MAPPER)

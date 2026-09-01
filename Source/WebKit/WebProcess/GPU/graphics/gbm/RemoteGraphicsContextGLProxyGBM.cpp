@@ -81,7 +81,7 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
         return;
 
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
+    if (contextAttributes().alphaFormat != AlphaFormat::NoAlpha)
         flags.add(TextureMapperFlags::ShouldBlend);
 #if USE(TEXTURE_MAPPER)
     m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer), flags, WTF::move(fenceFD)));

@@ -61,18 +61,18 @@ enum SourceDataFormatBase {
     SourceFormatBaseNumFormats
 };
 
-enum AlphaFormat {
-    AlphaFormatNone = 0,
-    AlphaFormatFirst,
-    AlphaFormatLast,
-    AlphaFormatNumFormats
+enum AlphaChannelPosition {
+    AlphaChannelPositionNone = 0,
+    AlphaChannelPositionFirst,
+    AlphaChannelPositionLast,
+    AlphaChannelPositionNumPositions
 };
 
 // This returns SourceFormatNumFormats if the combination of input parameters is unsupported.
-static GraphicsContextGL::DataFormat NODELETE getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
+static GraphicsContextGL::DataFormat NODELETE getSourceDataFormat(unsigned componentsPerPixel, AlphaChannelPosition alphaChannelPosition, bool is16BitFormat, bool bigEndian)
 {
-    static const std::array formatTableBase = { // componentsPerPixel x AlphaFormat
-        //           AlphaFormatNone             AlphaFormatFirst            AlphaFormatLast
+    static const std::array formatTableBase = { // componentsPerPixel x AlphaChannelPosition
+        //           AlphaChannelPositionNone             AlphaChannelPositionFirst            AlphaChannelPositionLast
         std::array { SourceFormatBaseR,          SourceFormatBaseA,          SourceFormatBaseA          }, // 1 componentsPerPixel
         std::array { SourceFormatBaseNumFormats, SourceFormatBaseAR,         SourceFormatBaseRA         }, // 2 componentsPerPixel
         std::array { SourceFormatBaseRGB,        SourceFormatBaseNumFormats, SourceFormatBaseNumFormats }, // 3 componentsPerPixel
@@ -90,7 +90,7 @@ static GraphicsContextGL::DataFormat NODELETE getSourceDataFormat(unsigned compo
     };
 
     ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
-    SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
+    SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaChannelPosition];
     if (formatBase == SourceFormatBaseNumFormats)
         return GraphicsContextGL::DataFormat::NumFormats;
     return formatTable[formatBase][(is16BitFormat ? 2 : 0) + (bigEndian ? 1 : 0)];
@@ -418,48 +418,48 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     }
 
     m_alphaOp = AlphaOp::DoNothing;
-    AlphaFormat alphaFormat = AlphaFormatNone;
+    AlphaChannelPosition alphaChannelPosition = AlphaChannelPositionNone;
     switch (CGImageGetAlphaInfo(decodedImage->platformImage().get())) {
     case kCGImageAlphaPremultipliedFirst:
         if (!premultiplyAlpha)
             m_alphaOp = AlphaOp::DoUnmultiply;
         else if (ignoreNativeImageAlphaPremultiplication)
             m_alphaOp = AlphaOp::DoPremultiply;
-        alphaFormat = AlphaFormatFirst;
+        alphaChannelPosition = AlphaChannelPositionFirst;
         break;
     case kCGImageAlphaFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
         if (premultiplyAlpha)
             m_alphaOp = AlphaOp::DoPremultiply;
-        alphaFormat = AlphaFormatFirst;
+        alphaChannelPosition = AlphaChannelPositionFirst;
         break;
     case kCGImageAlphaNoneSkipFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
-        alphaFormat = AlphaFormatFirst;
+        alphaChannelPosition = AlphaChannelPositionFirst;
         break;
     case kCGImageAlphaPremultipliedLast:
         if (!premultiplyAlpha)
             m_alphaOp = AlphaOp::DoUnmultiply;
         else if (ignoreNativeImageAlphaPremultiplication)
             m_alphaOp = AlphaOp::DoPremultiply;
-        alphaFormat = AlphaFormatLast;
+        alphaChannelPosition = AlphaChannelPositionLast;
         break;
     case kCGImageAlphaLast:
         if (premultiplyAlpha)
             m_alphaOp = AlphaOp::DoPremultiply;
-        alphaFormat = AlphaFormatLast;
+        alphaChannelPosition = AlphaChannelPositionLast;
         break;
     case kCGImageAlphaNoneSkipLast:
-        alphaFormat = AlphaFormatLast;
+        alphaChannelPosition = AlphaChannelPositionLast;
         break;
     case kCGImageAlphaNone:
-        alphaFormat = AlphaFormatNone;
+        alphaChannelPosition = AlphaChannelPositionNone;
         break;
     default:
         return false;
     }
 
-    m_imageSourceFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, bigEndianSource);
+    m_imageSourceFormat = getSourceDataFormat(componentsPerPixel, alphaChannelPosition, bitsPerComponent == 16, bigEndianSource);
     if (m_imageSourceFormat == DataFormat::NumFormats)
         return false;
 
@@ -506,9 +506,9 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     // Input is GL_RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last.
     // GL_BGRA would be kCGBitmapByteOrder32Little | kCGImageAlpha*First.
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big;
-    if (!sourceContextAttributes.alpha)
+    if (sourceContextAttributes.alphaFormat == AlphaFormat::NoAlpha)
         bitmapInfo |= kCGImageAlphaNoneSkipLast;
-    else if (sourceContextAttributes.premultipliedAlpha)
+    else if (sourceContextAttributes.alphaFormat == AlphaFormat::Premultiplied)
         bitmapInfo |= kCGImageAlphaPremultipliedLast;
     else
         bitmapInfo |= kCGImageAlphaLast;

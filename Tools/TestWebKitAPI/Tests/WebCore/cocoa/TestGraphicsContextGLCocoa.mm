@@ -94,20 +94,18 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-// The ways the contents of a context can describe their alpha. premultipliedAlpha does not
+// The ways the contents of a context can describe their alpha. Premultiplication does not
 // apply to a context without alpha, so there are three cases and not four.
-enum class AlphaMode : uint8_t { NoAlpha, Unpremultiplied, Premultiplied };
-
-class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool, AlphaMode>> {
+class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool, AlphaFormat>> {
 protected:
     bool antialias() const { return std::get<0>(GetParam()); }
     bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
     bool isWebGL2() const { return std::get<2>(GetParam()); }
-    AlphaMode alphaMode() const { return std::get<3>(GetParam()); }
-    bool hasAlpha() const { return alphaMode() != AlphaMode::NoAlpha; }
+    AlphaFormat alphaFormat() const { return std::get<3>(GetParam()); }
+    bool hasAlpha() const { return alphaFormat() != AlphaFormat::NoAlpha; }
     // How the contents of the drawing buffer describe their alpha. Without alpha the
     // contents are opaque, so premultiplication does not apply to them.
-    AlphaPremultiplication contentsAlphaPremultiplication() const { return alphaMode() == AlphaMode::Premultiplied ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied; }
+    AlphaPremultiplication contentsAlphaPremultiplication() const { return alphaFormat() == AlphaFormat::Premultiplied ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied; }
     GraphicsContextGLAttributes attributes();
     RefPtr<TestedGraphicsContextGLCocoa> createTestContext(IntSize contextSize);
 
@@ -131,8 +129,7 @@ GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
     attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
-    attributes.alpha = hasAlpha();
-    attributes.premultipliedAlpha = alphaMode() != AlphaMode::Unpremultiplied;
+    attributes.alphaFormat = alphaFormat();
     attributes.preserveDrawingBuffer = preserveDrawingBuffer();
     return attributes;
 }
@@ -508,7 +505,7 @@ TEST_P(AnyContextAttributeTest, CopyNativeImage)
     CGImageAlphaInfo expectedAlphaInfo;
     if (!hasAlpha())
         expectedAlphaInfo = kCGImageAlphaNoneSkipFirst;
-    else if (alphaMode() == AlphaMode::Premultiplied)
+    else if (alphaFormat() == AlphaFormat::Premultiplied)
         expectedAlphaInfo = kCGImageAlphaPremultipliedFirst;
     else
         expectedAlphaInfo = kCGImageAlphaFirst;
@@ -812,20 +809,20 @@ TEST_P(AnyContextAttributeTest, WebXRBlitTest)
 
 static std::string anyContextAttributeTestName(const testing::TestParamInfo<AnyContextAttributeTest::ParamType>& info)
 {
-    auto [antialias, preserveDrawingBuffer, isWebGL2, alphaMode] = info.param;
+    auto [antialias, preserveDrawingBuffer, isWebGL2, alphaFormat] = info.param;
     std::string name = isWebGL2 ? "WebGL2" : "WebGL1";
     if (antialias)
         name += "_Antialias";
     if (preserveDrawingBuffer)
         name += "_PreserveDrawingBuffer";
-    switch (alphaMode) {
-    case AlphaMode::NoAlpha:
+    switch (alphaFormat) {
+    case AlphaFormat::NoAlpha:
         name += "_NoAlpha";
         break;
-    case AlphaMode::Unpremultiplied:
+    case AlphaFormat::Unpremultiplied:
         name += "_Unpremultiplied";
         break;
-    case AlphaMode::Premultiplied:
+    case AlphaFormat::Premultiplied:
         name += "_Premultiplied";
         break;
     }
@@ -838,7 +835,7 @@ INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
         testing::Values(true, false),
         testing::Values(true, false),
         testing::Values(true, false),
-        testing::Values(AlphaMode::NoAlpha, AlphaMode::Unpremultiplied, AlphaMode::Premultiplied)),
+        testing::Values(AlphaFormat::NoAlpha, AlphaFormat::Unpremultiplied, AlphaFormat::Premultiplied)),
     anyContextAttributeTestName);
 
 class GraphicsContextGLCocoaReadPixelsTest : public ::testing::Test {

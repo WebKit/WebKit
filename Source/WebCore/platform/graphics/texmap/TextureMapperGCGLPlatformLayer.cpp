@@ -53,7 +53,7 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
     auto attrs = m_context.contextAttributes();
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (attrs.alpha)
+    if (attrs.alphaFormat != AlphaFormat::NoAlpha)
         flags.add(TextureMapperFlags::ShouldBlend);
     textureMapper.drawTexture(m_context.m_compositorTexture, flags, targetRect, matrix, opacity);
 }

@@ -209,7 +209,7 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImage(SurfaceBuffer 
     auto attributes = contextAttributes();
     // The image contents will be published in the shared resource cache by the GPU process. Adopt it
     // into this backend's cache right away, so that drawing it needs no further set up.
-    Ref nativeImage = RemoteNativeImageProxy::create(size, m_drawingBufferColorSpace.platformColorSpace(), attributes.alpha, sharedResourceCache.releaseNonNull());
+    Ref nativeImage = RemoteNativeImageProxy::create(size, m_drawingBufferColorSpace.platformColorSpace(), attributes.alphaFormat != AlphaFormat::NoAlpha, sharedResourceCache.releaseNonNull());
     renderingBackend->cacheNativeImageFromSharedNativeImage(nativeImage);
     auto sendResult = send(Messages::RemoteGraphicsContextGL::CopyNativeImage(buffer, nativeImage->reference()));
     if (sendResult != IPC::Error::NoError) [[unlikely]] {

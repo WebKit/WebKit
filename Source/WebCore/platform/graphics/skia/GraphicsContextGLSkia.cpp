@@ -152,9 +152,9 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     ASSERT(!pixelBuffer->size().isEmpty());
     auto imageSize = pixelBuffer->size();
     SkAlphaType alphaType = kUnpremul_SkAlphaType;
-    if (!sourceContextAttributes.alpha)
+    if (sourceContextAttributes.alphaFormat == AlphaFormat::NoAlpha)
         alphaType = kOpaque_SkAlphaType;
-    else if (sourceContextAttributes.premultipliedAlpha)
+    else if (sourceContextAttributes.alphaFormat == AlphaFormat::Premultiplied)
         alphaType = kPremul_SkAlphaType;
     auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
 

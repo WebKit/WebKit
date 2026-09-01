@@ -1617,6 +1617,14 @@ enum class WebCore::AlphaPremultiplication : uint8_t {
     Unpremultiplied
 };
 
+header: <WebCore/AlphaFormat.h>
+
+enum class WebCore::AlphaFormat : uint8_t {
+    Premultiplied,
+    Unpremultiplied,
+    NoAlpha
+};
+
 enum class WebCore::PixelFormat : uint8_t {
     RGBA8,
     BGRX8,
