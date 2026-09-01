@@ -1124,14 +1124,8 @@ function(webkit_generate_platform_feature_defines_file _out_path_var)
         list(GET CMAKE_OSX_ARCHITECTURES 0 _arch)
         list(APPEND _clang_cmd "-arch" "${_arch}")
     endif ()
-    if (CMAKE_OSX_DEPLOYMENT_TARGET)
-        if (WEBKIT_SDK_IS_SIMULATOR)
-            list(APPEND _clang_cmd "-mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-        elseif (WEBKIT_SDK_IS_IOS_FAMILY)
-            list(APPEND _clang_cmd "-miphoneos-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-        else ()
-            list(APPEND _clang_cmd "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-        endif ()
+    if (WEBKIT_SDK_MIN_VERSION_FLAG)
+        list(APPEND _clang_cmd "${WEBKIT_SDK_MIN_VERSION_FLAG}")
     endif ()
     if (WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE)
         list(APPEND _clang_cmd "-ivfsoverlay" "${WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE}")
@@ -1186,7 +1180,7 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     )
     # iOS WebKit_Internal headers gate textual #imports behind this macro that
     # trip strict cross-module-import-visibility checks (bug 312083).
-    if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
         list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
     endif ()
     if (APPLE)
@@ -1225,7 +1219,8 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
     _webkit_platform_args_clang_prefix(_clang_cmd
         "${_depfile}" "${_resp_path}" "${WTF_FRAMEWORK_HEADERS_DIR}")
     if (CMAKE_OSX_SYSROOT)
-        list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}")
+        list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
+            "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
     if (CMAKE_Swift_COMPILER_TARGET)
         list(APPEND _clang_cmd "-target" "${CMAKE_Swift_COMPILER_TARGET}")
@@ -1381,10 +1376,17 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # Ask swiftc where to find the header files which support C/C++ builds
         # Right now this macro is used only once; if it's used more often then
         # we should abstract this so it's executed only once.
+        # The target has to be named: without it swiftc answers for the platform
+        # it runs on, whose runtime library directory is macosx.
+        set(_swift_target_info_args "")
+        if (CMAKE_Swift_COMPILER_TARGET)
+            list(APPEND _swift_target_info_args -target ${CMAKE_Swift_COMPILER_TARGET})
+        endif ()
         execute_process(
-            COMMAND ${ORIGINAL_Swift_COMPILER} -print-target-info
+            COMMAND ${ORIGINAL_Swift_COMPILER} -print-target-info ${_swift_target_info_args}
             OUTPUT_VARIABLE _swift_target_info
         )
+        unset(_swift_target_info_args)
         string(JSON _swift_target_paths GET ${_swift_target_info} "paths")
         string(JSON _swift_runtime_resource_path GET ${_swift_target_paths} "runtimeResourcePath")
         target_include_directories(${_target} SYSTEM AFTER PRIVATE "${_swift_runtime_resource_path}")
@@ -1516,7 +1518,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         endforeach ()
         target_compile_options(${_target} PRIVATE ${_swift_only_options})
 
-        if (CMAKE_SYSTEM_NAME STREQUAL "iOS" AND CMAKE_OSX_SYSROOT)
+        if (WEBKIT_SDK_IS_IOS_FAMILY AND CMAKE_OSX_SYSROOT)
             target_compile_options(${_target} PRIVATE
                 # Our just-built frameworks must come before the SDK's
                 # PrivateFrameworks so `<WebCore/X.h>` etc. resolve to cmake-built

@@ -30,7 +30,7 @@ set(WebKitTestRunner_FRAMEWORKS
 )
 # WKTR uses WebKit2 only and needs no WebKitLegacy (WebKit1) headers, so skip it
 # on iOS. It is kept on macOS for now; removing it there is separate cleanup.
-if (APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if (APPLE AND NOT WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebKitTestRunner_FRAMEWORKS WebKitLegacy)
 endif ()
 

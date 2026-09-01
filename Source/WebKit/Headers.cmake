@@ -163,6 +163,7 @@ if (APPLE)
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/Cocoa/WKDataDetectorTypes.h
     Shared/API/Cocoa/WKFoundation.h
+    Shared/API/Cocoa/WebKit.apinotes
     Shared/API/Cocoa/WebKit.h
 
     UIProcess/API/Cocoa/NSAttributedString.h

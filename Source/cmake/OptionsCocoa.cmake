@@ -65,7 +65,11 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO_PRESENTATION_MODE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_MOUSE_INTERACTIONS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_WHEEL_INTERACTIONS PRIVATE ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE OFF)
+if (WEBKIT_SDK_TARGET_OS STREQUAL "xros")
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ON)
+else ()
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE OFF)
+endif ()
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_API_STATISTICS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_AUTHN PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_CODECS PRIVATE ON)
@@ -402,21 +406,35 @@ if (USE_APPLE_INTERNAL_SDK)
     include(OptionsPGO)
 endif ()
 
-# Swiftc falls back to its built-in deployment target while clang honors
-# CMAKE_OSX_DEPLOYMENT_TARGET; the mismatch produces an ld warning per object.
-# The iOS-family Swift triple is set in the top-level CMakeLists.txt instead.
-if (WEBKIT_SDK_IS_MACOS AND CMAKE_OSX_DEPLOYMENT_TARGET)
+# The triples everything Apple is built and staged under, taking the first
+# architecture of a build for several, as the Platform.h preprocessing does.
+if (CMAKE_OSX_DEPLOYMENT_TARGET)
+    if (CMAKE_OSX_ARCHITECTURES)
+        list(GET CMAKE_OSX_ARCHITECTURES 0 _triple_arch)
+    else ()
+        set(_triple_arch "${CMAKE_SYSTEM_PROCESSOR}")
+    endif ()
+    set(_triple_suffix "")
+    if (WEBKIT_SDK_IS_SIMULATOR)
+        set(_triple_suffix "-simulator")
+    endif ()
+    set(WEBKIT_SDK_TARGET_TRIPLE
+        "${_triple_arch}-apple-${WEBKIT_SDK_TARGET_OS}${CMAKE_OSX_DEPLOYMENT_TARGET}${_triple_suffix}"
+        CACHE STRING "Target triple" FORCE
+    )
+    set(WEBKIT_SWIFT_MODULE_TRIPLE "${_triple_arch}-apple-${WEBKIT_SDK_MODULE_OS}${_triple_suffix}"
+        CACHE STRING "Swift module triple" FORCE)
+
+    # Swiftc falls back to its built-in deployment target while clang honors
+    # CMAKE_OSX_DEPLOYMENT_TARGET; the mismatch produces an ld warning per object.
+    # A build for several architectures has no single target to name, and swiftc
+    # is left to work it out.
     list(LENGTH CMAKE_OSX_ARCHITECTURES _arch_count)
-    if (_arch_count EQUAL 1)
-        set(_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
-    elseif (_arch_count EQUAL 0)
-        set(_swift_arch "${CMAKE_SYSTEM_PROCESSOR}")
+    if (_arch_count LESS_EQUAL 1)
+        set(CMAKE_Swift_COMPILER_TARGET "${WEBKIT_SDK_TARGET_TRIPLE}" CACHE STRING "Swift target triple" FORCE)
     endif ()
-    if (_swift_arch)
-        set(CMAKE_Swift_COMPILER_TARGET "${_swift_arch}-apple-macosx${CMAKE_OSX_DEPLOYMENT_TARGET}" CACHE STRING "Swift target triple" FORCE)
-        set(WEBKIT_SWIFT_MODULE_TRIPLE "${_swift_arch}-apple-macos" CACHE STRING "Swift module triple" FORCE)
-    endif ()
-    unset(_swift_arch)
+    unset(_triple_suffix)
+    unset(_triple_arch)
     unset(_arch_count)
 endif ()
 
@@ -448,21 +466,32 @@ if (WEBKIT_SDK_IS_MACOS)
     set(WEBKIT_MAX_BUNDLE_SIZE 128)
 endif ()
 
-# iOS-family framework install names. macOS relies on defaults; the iOS family
-# installs into the system framework locations so dylib ids resolve at runtime.
+# Frameworks install into the system framework locations so dylib ids resolve at
+# runtime, and so that a DYLD_FRAMEWORK_PATH override replaces the dyld shared
+# cache copy instead of loading alongside it.
+set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
+set(JavaScriptCore_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
+set(WebKit_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
+set(WebGPU_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
+set(_WebKit_SwiftUI_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
+
+# WebCore and WebKitLegacy ship nested inside WebKit.framework on macOS; the
+# iOS family installs them next to the other private frameworks.
+if (WEBKIT_SDK_IS_MACOS)
+    set(_wk_umbrella_frameworks_dir "/System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks")
+else ()
+    set(_wk_umbrella_frameworks_dir "/System/Library/PrivateFrameworks")
+endif ()
+set(WebCore_INSTALL_NAME_DIR "${_wk_umbrella_frameworks_dir}" CACHE STRING "" FORCE)
+set(WebKitLegacy_INSTALL_NAME_DIR "${_wk_umbrella_frameworks_dir}" CACHE STRING "" FORCE)
+unset(_wk_umbrella_frameworks_dir)
+
+# Local dev builds are not part of the dyld shared cache. System-path install
+# names would otherwise mark some frameworks "shared-cache eligible" and the
+# linker rejects eligible->ineligible links between them. Opt every dylib out.
+add_link_options("LINKER:-not_for_dyld_shared_cache")
+
 if (WEBKIT_SDK_IS_IOS_FAMILY)
-    set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
-    set(JavaScriptCore_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
-    set(WebKit_INSTALL_NAME_DIR "/System/Library/Frameworks" CACHE STRING "" FORCE)
-    set(WebCore_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
-    set(WebGPU_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
-    set(WebKitLegacy_INSTALL_NAME_DIR "/System/Library/PrivateFrameworks" CACHE STRING "" FORCE)
-
-    # Local dev builds are not part of the dyld shared cache. System-path install
-    # names would otherwise mark some frameworks "shared-cache eligible" and the
-    # linker rejects eligible->ineligible links between them. Opt every dylib out.
-    add_link_options("LINKER:-not_for_dyld_shared_cache")
-
     # Define USE_APPLE_INTERNAL_SDK for the Swift Clang-module importer. Module
     # PCMs (e.g. WebKitLegacy consumed by WebKit's Swift) are built from
     # command-line flags only and don't see wtf/PlatformUse.h's definition, so
@@ -476,7 +505,10 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     # Bare "-framework <name>" link flags (e.g. AuthKit) resolve private
     # frameworks from the SDK; add its search paths at link time. macOS resolves
     # its private frameworks via find_library(HINTS ...) so it doesn't need this.
+    # The build directory comes first: WebKit, WebCore and friends are in the SDK
+    # too, and its stubs export none of the SPI this build links against.
     if (CMAKE_OSX_SYSROOT)
+        add_link_options("-F${CMAKE_BINARY_DIR}")
         add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/Frameworks")
         add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()

@@ -121,26 +121,53 @@ else ()
         "directory (CMAKE_OSX_SYSROOT) or supported PORT variable.")
 endif ()
 
+# One entry per SDK the Cocoa port builds for, matching SUPPORTED_PLATFORMS in the
+# Xcode configurations. The fields, in order: the platform name Info.plists carry,
+# the CMAKE_SYSTEM_NAME to cross-compile with, the OS as a target triple spells it,
+# the OS as a Swift module triple spells it, and the clang deployment-target flag
+# wtf/Platform.h is evaluated against. macOS is the one platform whose two triple
+# spellings differ, and visionOS the one with no -m<os>-version-min flag.
+set(_wk_sdk_macosx           "MacOSX"           "Darwin"   "macosx"  "macos"   "-mmacosx-version-min=@VERSION@")
+set(_wk_sdk_iphoneos         "iPhoneOS"         "iOS"      "ios"     "ios"     "-miphoneos-version-min=@VERSION@")
+set(_wk_sdk_iphonesimulator  "iPhoneSimulator"  "iOS"      "ios"     "ios"     "-mios-simulator-version-min=@VERSION@")
+set(_wk_sdk_appletvos        "AppleTVOS"        "tvOS"     "tvos"    "tvos"    "-mtvos-version-min=@VERSION@")
+set(_wk_sdk_appletvsimulator "AppleTVSimulator" "tvOS"     "tvos"    "tvos"    "-mtvos-simulator-version-min=@VERSION@")
+set(_wk_sdk_watchos          "WatchOS"          "watchOS"  "watchos" "watchos" "-mwatchos-version-min=@VERSION@")
+set(_wk_sdk_watchsimulator   "WatchSimulator"   "watchOS"  "watchos" "watchos" "-mwatchos-simulator-version-min=@VERSION@")
+set(_wk_sdk_xros             "XROS"             "visionOS" "xros"    "xros"    "-mtargetos=xros@VERSION@")
+set(_wk_sdk_xrsimulator      "XRSimulator"      "visionOS" "xros"    "xros"    "-mtargetos=xros@VERSION@-simulator")
+
 # Platform detection, derived once from the resolved SDK's PLATFORM_NAME. All
 # downstream CMake branches on these booleans instead of on PORT or an ad-hoc
 # CMAKE_IOS_SIMULATOR flag, so the platform is chosen purely by the selected SDK.
+if (NOT DEFINED _wk_sdk_${WEBKIT_SDK_NAME})
+    message(FATAL_ERROR "Unsupported Apple SDK '${WEBKIT_SDK_NAME}'. Add a row for it to "
+        "the SDK table in WebKitXcodeSDK.cmake so the platform name, the system name, the "
+        "triple spellings, and the deployment-target flag that wtf/Platform.h is evaluated "
+        "against are all derived for it.")
+endif ()
+
+set(_wk_sdk_entry ${_wk_sdk_${WEBKIT_SDK_NAME}})
+list(GET _wk_sdk_entry 0 WEBKIT_PLATFORM_NAME)
+list(GET _wk_sdk_entry 1 WEBKIT_SDK_SYSTEM_NAME)
+list(GET _wk_sdk_entry 2 WEBKIT_SDK_TARGET_OS)
+list(GET _wk_sdk_entry 3 WEBKIT_SDK_MODULE_OS)
+list(GET _wk_sdk_entry 4 _wk_sdk_min_version_flag)
+unset(_wk_sdk_entry)
+
+# Cocoa is macOS plus the iOS family, the same split wtf/PlatformLegacy.h makes
+# between PLATFORM(MAC) and PLATFORM(IOS_FAMILY), so every SDK above that isn't
+# macOS belongs to the family.
 set(WEBKIT_SDK_IS_MACOS OFF)
 set(WEBKIT_SDK_IS_IOS_FAMILY OFF)
 set(WEBKIT_SDK_IS_SIMULATOR OFF)
 if (WEBKIT_SDK_NAME STREQUAL "macosx")
     set(WEBKIT_SDK_IS_MACOS ON)
-    set(WEBKIT_PLATFORM_NAME "MacOSX")
-elseif (WEBKIT_SDK_NAME STREQUAL "iphoneos")
-    set(WEBKIT_SDK_IS_IOS_FAMILY ON)
-    set(WEBKIT_PLATFORM_NAME "iPhoneOS")
-elseif (WEBKIT_SDK_NAME STREQUAL "iphonesimulator")
-    set(WEBKIT_SDK_IS_IOS_FAMILY ON)
-    set(WEBKIT_SDK_IS_SIMULATOR ON)
-    set(WEBKIT_PLATFORM_NAME "iPhoneSimulator")
 else ()
-    message(FATAL_ERROR "Unsupported Apple SDK '${WEBKIT_SDK_NAME}'. Add it above so "
-        "the platform booleans, WEBKIT_PLATFORM_NAME, and the deployment-target flag "
-        "that wtf/Platform.h is evaluated against are all derived for it.")
+    set(WEBKIT_SDK_IS_IOS_FAMILY ON)
+endif ()
+if (WEBKIT_SDK_NAME MATCHES "simulator$")
+    set(WEBKIT_SDK_IS_SIMULATOR ON)
 endif ()
 
 # Building for macOS defaults uses the host system's deployment target. Other
@@ -167,13 +194,19 @@ if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
     unset(_deployment_target)
 endif ()
 
+if (CMAKE_OSX_DEPLOYMENT_TARGET)
+    string(REPLACE "@VERSION@" "${CMAKE_OSX_DEPLOYMENT_TARGET}"
+        WEBKIT_SDK_MIN_VERSION_FLAG "${_wk_sdk_min_version_flag}")
+endif ()
+unset(_wk_sdk_min_version_flag)
+
 # Cross-compile setup for the iOS family (device or simulator). CMake doesn't
 # infer CMAKE_SYSTEM_PROCESSOR once CMAKE_SYSTEM_NAME is set, so it has to be
 # supplied explicitly. Both must be in place before project() runs. Device vs.
 # simulator is inferred by CMake from the sysroot path, so only the system name
 # differs from a macOS build here.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
-    set(CMAKE_SYSTEM_NAME iOS)
+    set(CMAKE_SYSTEM_NAME ${WEBKIT_SDK_SYSTEM_NAME})
     if (NOT CMAKE_SYSTEM_PROCESSOR)
         set(CMAKE_SYSTEM_PROCESSOR "aarch64" CACHE STRING "Target processor" FORCE)
     endif ()

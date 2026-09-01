@@ -98,4 +98,8 @@ if (APPLE)
     set(WebKitLegacy_HEADERS_DIR           "${CMAKE_BINARY_DIR}/WebKitLegacy.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}PrivateHeaders")
     set(WebKit_HEADERS_DIR                 "${CMAKE_BINARY_DIR}/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Headers")
     set(WebKit_PRIVATE_HEADERS_DIR         "${CMAKE_BINARY_DIR}/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}PrivateHeaders")
+
+    # The code generators sit alongside the private headers, which is where
+    # clients above WebKit look for them.
+    set(JavaScriptCore_SCRIPTS_DIR         "${JavaScriptCore_PRIVATE_HEADERS_DIR}")
 endif ()

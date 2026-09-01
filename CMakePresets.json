@@ -45,6 +45,36 @@
             }
         },
         {
+            "name": "cocoa",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "Cocoa"
+                },
+                "CMAKE_MAKE_PROGRAM": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
+                }
+            },
+            "environment": {
+                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
+                "CCACHE_BASEDIR": "${sourceDir}"
+            }
+        },
+        {
+            "name": "cocoa-embedded",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "ENABLE_TOOLS": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
             "name": "gtk",
             "hidden": true,
             "generator": "Ninja",
@@ -80,12 +110,8 @@
         {
             "name": "mac",
             "hidden": true,
-            "generator": "Ninja",
+            "inherits": ["cocoa"],
             "cacheVariables": {
-                "PORT": {
-                    "type": "STRING",
-                    "value": "Cocoa"
-                },
                 "CMAKE_OSX_SYSROOT": {
                     "type": "STRING",
                     "value": "macosx.internal;macosx"
@@ -93,15 +119,7 @@
                 "ENABLE_EXPERIMENTAL_FEATURES": {
                     "type": "BOOL",
                     "value": "OFF"
-                },
-                "CMAKE_MAKE_PROGRAM": {
-                    "type": "FILEPATH",
-                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
-            },
-            "environment": {
-                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
-                "CCACHE_BASEDIR": "${sourceDir}"
             }
         },
         {
@@ -262,24 +280,12 @@
         {
             "name": "ios",
             "hidden": true,
-            "generator": "Ninja",
+            "inherits": ["cocoa-embedded"],
             "cacheVariables": {
-                "PORT": {
-                    "type": "STRING",
-                    "value": "Cocoa"
-                },
                 "CMAKE_OSX_SYSROOT": {
                     "type": "LIST",
                     "value": "iphoneos.internal;iphoneos"
-                },
-                "ENABLE_TOOLS": {
-                    "type": "BOOL",
-                    "value": "OFF"
                 }
-            },
-            "environment": {
-                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
-                "CCACHE_BASEDIR": "${sourceDir}"
             }
         },
         {
@@ -313,28 +319,12 @@
         {
             "name": "ios-sim",
             "hidden": true,
-            "generator": "Ninja",
+            "inherits": ["cocoa-embedded"],
             "cacheVariables": {
-                "PORT": {
-                    "type": "STRING",
-                    "value": "Cocoa"
-                },
                 "CMAKE_OSX_SYSROOT": {
                     "type": "STRING",
                     "value": "iphonesimulator.internal;iphonesimulator"
-                },
-                "ENABLE_TOOLS": {
-                    "type": "BOOL",
-                    "value": "OFF"
-                },
-                "CMAKE_MAKE_PROGRAM": {
-                    "type": "FILEPATH",
-                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
-            },
-            "environment": {
-                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
-                "CCACHE_BASEDIR": "${sourceDir}"
             }
         },
         {
@@ -358,6 +348,144 @@
             "name": "ios-sim-dev-release",
             "displayName": "iOS Simulator Development (Release, ccache, compile_commands)",
             "inherits": ["ios-sim-release", "dev"]
+        },
+        {
+            "name": "tvos",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "appletvos.internal;appletvos"
+                }
+            }
+        },
+        {
+            "name": "tvos-release",
+            "displayName": "tvOS Release",
+            "inherits": ["tvos", "release"],
+            "binaryDir": "WebKitBuild/cmake-appletvos/Release"
+        },
+        {
+            "name": "tvos-debug",
+            "displayName": "tvOS Debug",
+            "inherits": ["tvos", "debug"],
+            "binaryDir": "WebKitBuild/cmake-appletvos/Debug"
+        },
+        {
+            "name": "tvos-sim",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "appletvsimulator.internal;appletvsimulator"
+                }
+            }
+        },
+        {
+            "name": "tvos-sim-release",
+            "displayName": "tvOS Simulator Release",
+            "inherits": ["tvos-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Release"
+        },
+        {
+            "name": "tvos-sim-debug",
+            "displayName": "tvOS Simulator Debug",
+            "inherits": ["tvos-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Debug"
+        },
+        {
+            "name": "watchos",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "watchos.internal;watchos"
+                }
+            }
+        },
+        {
+            "name": "watchos-release",
+            "displayName": "watchOS Release",
+            "inherits": ["watchos", "release"],
+            "binaryDir": "WebKitBuild/cmake-watchos/Release"
+        },
+        {
+            "name": "watchos-debug",
+            "displayName": "watchOS Debug",
+            "inherits": ["watchos", "debug"],
+            "binaryDir": "WebKitBuild/cmake-watchos/Debug"
+        },
+        {
+            "name": "watchos-sim",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "watchsimulator.internal;watchsimulator"
+                }
+            }
+        },
+        {
+            "name": "watchos-sim-release",
+            "displayName": "watchOS Simulator Release",
+            "inherits": ["watchos-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-watchsimulator/Release"
+        },
+        {
+            "name": "watchos-sim-debug",
+            "displayName": "watchOS Simulator Debug",
+            "inherits": ["watchos-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-watchsimulator/Debug"
+        },
+        {
+            "name": "xros",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "xros.internal;xros"
+                }
+            }
+        },
+        {
+            "name": "xros-release",
+            "displayName": "visionOS Release",
+            "inherits": ["xros", "release"],
+            "binaryDir": "WebKitBuild/cmake-xros/Release"
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "inherits": ["xros", "debug"],
+            "binaryDir": "WebKitBuild/cmake-xros/Debug"
+        },
+        {
+            "name": "xros-sim",
+            "hidden": true,
+            "inherits": ["cocoa-embedded"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "xrsimulator.internal;xrsimulator"
+                }
+            }
+        },
+        {
+            "name": "xros-sim-release",
+            "displayName": "visionOS Simulator Release",
+            "inherits": ["xros-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-xrsimulator/Release"
+        },
+        {
+            "name": "xros-sim-debug",
+            "displayName": "visionOS Simulator Debug",
+            "inherits": ["xros-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-xrsimulator/Debug"
         },
         {
             "name": "wpe",
@@ -518,6 +646,66 @@
             "name": "ios-sim-dev-release",
             "displayName": "iOS Simulator Development Release",
             "configurePreset": "ios-sim-dev-release"
+        },
+        {
+            "name": "tvos-release",
+            "displayName": "tvOS Release",
+            "configurePreset": "tvos-release"
+        },
+        {
+            "name": "tvos-debug",
+            "displayName": "tvOS Debug",
+            "configurePreset": "tvos-debug"
+        },
+        {
+            "name": "tvos-sim-release",
+            "displayName": "tvOS Simulator Release",
+            "configurePreset": "tvos-sim-release"
+        },
+        {
+            "name": "tvos-sim-debug",
+            "displayName": "tvOS Simulator Debug",
+            "configurePreset": "tvos-sim-debug"
+        },
+        {
+            "name": "watchos-release",
+            "displayName": "watchOS Release",
+            "configurePreset": "watchos-release"
+        },
+        {
+            "name": "watchos-debug",
+            "displayName": "watchOS Debug",
+            "configurePreset": "watchos-debug"
+        },
+        {
+            "name": "watchos-sim-release",
+            "displayName": "watchOS Simulator Release",
+            "configurePreset": "watchos-sim-release"
+        },
+        {
+            "name": "watchos-sim-debug",
+            "displayName": "watchOS Simulator Debug",
+            "configurePreset": "watchos-sim-debug"
+        },
+        {
+            "name": "xros-release",
+            "displayName": "visionOS Release",
+            "configurePreset": "xros-release"
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "configurePreset": "xros-debug"
+        },
+        {
+            "name": "xros-sim-release",
+            "displayName": "visionOS Simulator Release",
+            "configurePreset": "xros-sim-release"
+        },
+        {
+            "name": "xros-sim-debug",
+            "displayName": "visionOS Simulator Debug",
+            "configurePreset": "xros-sim-debug"
         }
     ]
 }

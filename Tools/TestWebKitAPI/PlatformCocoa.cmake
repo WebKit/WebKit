@@ -672,17 +672,19 @@ set_target_properties(TestWebKit PROPERTIES
 
 set(_twkapi_bundle_id "org.webkit.TestWebKitAPI")
 
-add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
-if (ENABLE_GPU_PROCESS)
-    add_dependencies(TestWebKit GPUExtension)
-endif ()
+if (WEBKIT_SDK_TARGET_OS STREQUAL "ios")
+    add_dependencies(TestWebKit WebContentExtension NetworkingExtension)
+    if (ENABLE_GPU_PROCESS)
+        add_dependencies(TestWebKit GPUExtension)
+    endif ()
 
-WEBKIT_EMBED_EXTENSION(TestWebKit WebContentExtension ${_twkapi_bundle_id}
-    CHANGE_EXTENSION_POINT ADD_ATS)
-WEBKIT_EMBED_EXTENSION(TestWebKit NetworkingExtension ${_twkapi_bundle_id}
-    ADD_ATS)
-if (ENABLE_GPU_PROCESS)
-    WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id})
+    WEBKIT_EMBED_EXTENSION(TestWebKit WebContentExtension ${_twkapi_bundle_id}
+        CHANGE_EXTENSION_POINT ADD_ATS)
+    WEBKIT_EMBED_EXTENSION(TestWebKit NetworkingExtension ${_twkapi_bundle_id}
+        ADD_ATS)
+    if (ENABLE_GPU_PROCESS)
+        WEBKIT_EMBED_EXTENSION(TestWebKit GPUExtension ${_twkapi_bundle_id})
+    endif ()
 endif ()
 
 set_target_properties(TestWebKit PROPERTIES LINKER_LANGUAGE CXX)

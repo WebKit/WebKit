@@ -2,7 +2,7 @@ set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")
 
 if (APPLE)
     set(is_apple TRUE)
-    if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    if (WEBKIT_SDK_IS_IOS_FAMILY)
         set(is_ios TRUE)
     else ()
         set(is_mac TRUE)

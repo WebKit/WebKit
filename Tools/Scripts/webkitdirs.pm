@@ -1185,9 +1185,18 @@ sub usesPerConfigurationBuildDirectory
     return (defined $ENV{"WEBKIT_OUTPUTDIR"});
 }
 
+# The CMake tree of the platform being built, matching the binaryDir of the
+# presets in CMakePresets.json: cmake-mac, cmake-iphoneos, cmake-iphonesimulator.
+sub cmakeCocoaTreeName
+{
+    determineXcodeSDKPlatformName();
+    return "cmake-mac" if $xcodeSDKPlatformName eq "macosx";
+    return "cmake-$xcodeSDKPlatformName";
+}
+
 # The directory Xcode builds into, whether or not this invocation selected the
 # CMake tree. Products only Xcode knows how to build (Safari and the frameworks
-# above WebKit) live here even when WebKit itself came from cmake-mac.
+# above WebKit) live here even when WebKit itself came from the CMake tree.
 sub xcodeConfigurationProductDir
 {
     determineBaseProductDir();
@@ -1214,8 +1223,7 @@ sub determineConfigurationProductDir
         my $cmakeConfiguration = $configuration;
         $cmakeConfiguration = "ASan" if asanIsEnabled();
         $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        $configurationProductDir = "$baseProductDir/cmake-mac/$cmakeConfiguration";
-        $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
+        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), $cmakeConfiguration);
     } else {
         $configurationProductDir = xcodeConfigurationProductDir();
     }
@@ -2643,7 +2651,8 @@ sub wrapperPrefixIfNeeded()
         return ();
     }
     if (isAppleCocoaWebKit()) {
-        return ("xcrun");
+        # Use tools from the active SDK and platform directory.
+        return ("xcrun", "--sdk", xcodeSDK());
     }
     if (shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
         return ();
@@ -3061,9 +3070,9 @@ sub buildCMakeProjectOrExit($$$@)
     exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
 
     determineDefaultCompiler(@cmakeArgs);
-    my $wrapper = wrapperPrefixIfNeeded();
-    my $jhbuildPrefix = jhbuildWrapperPrefix();
-    if (defined($wrapper) && defined($jhbuildPrefix) && $wrapper == $jhbuildPrefix) {
+    my @wrapper = wrapperPrefixIfNeeded();
+    my @jhbuildPrefix = jhbuildWrapperPrefix();
+    if (@wrapper && @jhbuildPrefix && "@wrapper" eq "@jhbuildPrefix") {
         if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
             system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitgtk-libs")) == 0 or die $!;
         }
@@ -3161,7 +3170,7 @@ sub determineIsCMakeBuild()
         return;
     }
 
-    # CMake macOS presets build into WebKitBuild/cmake-mac/<Configuration>. When
+    # CMake presets build into WebKitBuild/cmake-<platform>/<Configuration>. When
     # both trees exist, Xcode wins unless a caller opts into the last-built
     # tiebreaker via enableLastBuiltTiebreaker() (build drivers do not, so they
     # never auto-flip).
@@ -3175,29 +3184,30 @@ sub determineIsCMakeBuild()
         my $cmakeConfiguration = $configuration;
         $cmakeConfiguration = "ASan" if asanIsEnabled();
         $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        my $cmakeMacBuild = File::Spec->catdir($baseProductDir, "cmake-mac", $cmakeConfiguration);
-        my $xcodeBuild = File::Spec->catdir($baseProductDir, $configuration);
+        my $cmakeTreeName = cmakeCocoaTreeName();
+        my $cmakeBuild = File::Spec->catdir($baseProductDir, $cmakeTreeName, $cmakeConfiguration);
+        my $xcodeBuild = xcodeConfigurationProductDir();
 
-        if (-f File::Spec->catfile($cmakeMacBuild, "CMakeCache.txt") && !-d $xcodeBuild) {
+        if (-f File::Spec->catfile($cmakeBuild, "CMakeCache.txt") && !-d $xcodeBuild) {
             $isCMakeBuild = 1;
             return;
         }
 
         # Prefer whichever tree was built most recently, comparing each build
         # system's log rather than a product binary (which goes stale after a
-        # partial build like JSC-only): cmake-mac's .ninja_log vs Xcode's
+        # partial build like JSC-only): the CMake tree's .ninja_log vs Xcode's
         # XCBuildData/build.db. A missing log is mtime 0, degrading to the
         # Xcode-wins default. build.db is shared across Xcode configurations.
-        if ($shouldPickLastBuilt && -d $cmakeMacBuild && -d $xcodeBuild) {
-            my $cmakeMarker = File::Spec->catfile($cmakeMacBuild, ".ninja_log");
+        if ($shouldPickLastBuilt && -d $cmakeBuild && -d $xcodeBuild) {
+            my $cmakeMarker = File::Spec->catfile($cmakeBuild, ".ninja_log");
             my $xcodeMarker = File::Spec->catfile($baseProductDir, "XCBuildData", "build.db");
             my $cmakeMtime = -f $cmakeMarker ? stat($cmakeMarker)->mtime : 0;
             my $xcodeMtime = -f $xcodeMarker ? stat($xcodeMarker)->mtime : 0;
             if ($cmakeMtime > $xcodeMtime) {
                 $isCMakeBuild = 1;
-                print STDERR "Using last-built tree: cmake-mac/$cmakeConfiguration (CMake)\n";
+                print STDERR "Using last-built tree: $cmakeTreeName/$cmakeConfiguration (CMake)\n";
             } elsif ($xcodeMtime && $cmakeMtime) {
-                print STDERR "Using last-built tree: $configuration (Xcode)\n";
+                print STDERR "Using last-built tree: " . basename($xcodeBuild) . " (Xcode)\n";
             }
         }
     }

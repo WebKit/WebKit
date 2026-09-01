@@ -482,7 +482,7 @@ if (ENABLE_WEBKIT)
             Helpers/cocoa/UtilitiesCocoa.mm
             InjectedBundle/mac/InjectedBundleControllerMac.mm
         )
-        if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
             list(APPEND TestWebKitAPIInjectedBundle_SOURCES
                 Helpers/mac/PlatformUtilitiesMac.mm
             )

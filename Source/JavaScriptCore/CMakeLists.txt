@@ -196,6 +196,17 @@ set(JavaScriptCore_SCRIPTS_SOURCES_PATHS
     ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/wkbuiltins/wkbuiltins.py
 )
 
+# JavaScriptCore_SCRIPTS_DIR is the framework's PrivateHeaders here, which is where
+# clients above WebKit look for the inspector protocol generator.
+if (USE_FRAMEWORK_BUNDLES)
+    list(APPEND JavaScriptCore_SCRIPTS_SOURCES_PATHS
+        ${JAVASCRIPTCORE_DIR}/inspector/scripts/generate*.py
+        ${JAVASCRIPTCORE_DIR}/inspector/scripts/codegen/generate*.py
+        ${JAVASCRIPTCORE_DIR}/inspector/scripts/codegen/*generator*.py
+        ${JAVASCRIPTCORE_DIR}/inspector/scripts/codegen/models.py
+    )
+endif ()
+
 # The directory flattening performed below mirrors what the Mac port does with private headers.
 
 file(GLOB JavaScriptCore_SCRIPTS_SOURCES ${JavaScriptCore_SCRIPTS_SOURCES_PATHS})

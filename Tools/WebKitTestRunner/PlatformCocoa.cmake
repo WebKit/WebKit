@@ -313,19 +313,21 @@ set_target_properties(WebKitTestRunner PROPERTIES
 
 set(_wktr_bundle_id "org.webkit.WebKitTestRunner")
 
-add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension NetworkingExtension)
-if (ENABLE_GPU_PROCESS)
-    add_dependencies(WebKitTestRunner GPUExtension)
-endif ()
+if (WEBKIT_SDK_TARGET_OS STREQUAL "ios")
+    add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension NetworkingExtension)
+    if (ENABLE_GPU_PROCESS)
+        add_dependencies(WebKitTestRunner GPUExtension)
+    endif ()
 
-WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentExtension ${_wktr_bundle_id}
-    CHANGE_EXTENSION_POINT ADD_ATS)
-WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentCaptivePortalExtension ${_wktr_bundle_id}
-    CHANGE_EXTENSION_POINT ADD_ATS)
-WEBKIT_EMBED_EXTENSION(WebKitTestRunner NetworkingExtension ${_wktr_bundle_id}
-    ADD_ATS)
-if (ENABLE_GPU_PROCESS)
-    WEBKIT_EMBED_EXTENSION(WebKitTestRunner GPUExtension ${_wktr_bundle_id})
+    WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentExtension ${_wktr_bundle_id}
+        CHANGE_EXTENSION_POINT ADD_ATS)
+    WEBKIT_EMBED_EXTENSION(WebKitTestRunner WebContentCaptivePortalExtension ${_wktr_bundle_id}
+        CHANGE_EXTENSION_POINT ADD_ATS)
+    WEBKIT_EMBED_EXTENSION(WebKitTestRunner NetworkingExtension ${_wktr_bundle_id}
+        ADD_ATS)
+    if (ENABLE_GPU_PROCESS)
+        WEBKIT_EMBED_EXTENSION(WebKitTestRunner GPUExtension ${_wktr_bundle_id})
+    endif ()
 endif ()
 
 set_target_properties(WebKitTestRunner PROPERTIES LINKER_LANGUAGE CXX)

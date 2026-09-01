@@ -1,5 +1,5 @@
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebCore)
-if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if (WebCore_INSTALL_NAME_DIR)
     set_target_properties(WebCore PROPERTIES
         INSTALL_NAME_DIR "${WebCore_INSTALL_NAME_DIR}"
     )
@@ -74,7 +74,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
 )
 # FIXME: Test building on iOS and then enable on iOS.
-if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
         "SourcesCMakeCocoa.txt"
     )
@@ -169,7 +169,7 @@ if (ENABLE_AV1)
 endif ()
 
 if (NOT ENABLE_WEBGPU)
-    if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
         target_link_options(WebCore PRIVATE "LINKER:-undefined,dynamic_lookup")
     endif ()
 else ()

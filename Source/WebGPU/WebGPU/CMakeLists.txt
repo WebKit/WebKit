@@ -37,10 +37,13 @@ set_target_properties(WebGPU PROPERTIES
     OUTPUT_NAME WebGPU
 )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if (WebGPU_INSTALL_NAME_DIR)
     set_target_properties(WebGPU PROPERTIES
         INSTALL_NAME_DIR "${WebGPU_INSTALL_NAME_DIR}"
     )
+endif ()
+
+if (WEBKIT_SDK_IS_IOS_FAMILY)
     set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebGPU)
     set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
     set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
@@ -138,32 +141,23 @@ if (APPLE)
         ${CMAKE_BINARY_DIR}/WebGPU/Modules/module.private.modulemap COPYONLY)
 
     set(_webgpu_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebGPU.framework")
-    if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    if (WEBKIT_SDK_IS_IOS_FAMILY)
         file(MAKE_DIRECTORY "${_webgpu_fw}")
 
         if (SWIFT_REQUIRED)
             set(_webgpu_swiftmodule_dir "${CMAKE_BINARY_DIR}/WebGPU/Modules/WebGPU.swiftmodule")
             file(MAKE_DIRECTORY ${_webgpu_swiftmodule_dir})
             set(_webgpu_swift_output "${CMAKE_CURRENT_BINARY_DIR}")
-            set(_webgpu_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
-            if (NOT _webgpu_swift_arch)
-                set(_webgpu_swift_arch "arm64")
-            endif ()
-            if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-                set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios-simulator")
-            else ()
-                set(_webgpu_swift_triple "${_webgpu_swift_arch}-apple-ios")
-            endif ()
             set(WebGPU_POST_BUILD_COMMAND
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     "${_webgpu_swift_output}/WebGPU.swiftmodule"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftmodule"
+                    "${_webgpu_swiftmodule_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftmodule"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     "${_webgpu_swift_output}/WebGPU.swiftdoc"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.swiftdoc"
+                    "${_webgpu_swiftmodule_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.swiftdoc"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     "${_webgpu_swift_output}/WebGPU.abi.json"
-                    "${_webgpu_swiftmodule_dir}/${_webgpu_swift_triple}.abi.json"
+                    "${_webgpu_swiftmodule_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.abi.json"
             )
         endif ()
 
@@ -172,7 +166,7 @@ if (APPLE)
         # afterward would modify the framework after the seal and break
         # code-sign verification at sim runtime.
         set(_webgpu_ios_strip_artifacts "")
-        if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        if (WEBKIT_SDK_IS_IOS_FAMILY)
             set(_webgpu_ios_strip_artifacts
                 COMMAND ${CMAKE_COMMAND} -E rm -f
                     ${_webgpu_fw}/WebGPU.emit-module.d
@@ -285,7 +279,7 @@ if (SWIFT_REQUIRED)
     set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
 endif ()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if (WEBKIT_SDK_IS_IOS_FAMILY)
     # Note: WebGPU.emit-module.d / WebGPU.swiftdeps removal and dSYM hoisting
     # is now done in the main POST_BUILD chain BEFORE codesigning, above.
     # See _webgpu_ios_strip_artifacts. Doing it in a separate POST_BUILD here

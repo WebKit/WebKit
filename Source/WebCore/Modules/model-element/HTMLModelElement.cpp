@@ -30,6 +30,7 @@
 #if ENABLE(MODEL_ELEMENT)
 
 #include "ARKitBadgeSystemImage.h"
+#include "AbortSignal.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
 #include "DOMMatrixReadOnly.h"
