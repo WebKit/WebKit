@@ -85,8 +85,8 @@ private:
 
     void decode(Query, size_t frameIndex, bool allDataReceived) WTF_REQUIRES_LOCK(m_lock);
     JxlDecoderStatus processInput(Query) WTF_REQUIRES_LOCK(m_lock);
-    static void imageOutCallback(void*, size_t x, size_t y, size_t numPixels, const void* pixels);
-    void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels) WTF_REQUIRES_LOCK(m_lock);
+    static void imageOutCallback(void*, size_t x, size_t y, size_t numPixelsInRow, const void* pixels);
+    void imageOut(size_t x, size_t y, size_t numPixelsInRow, const uint8_t* pixels) WTF_REQUIRES_LOCK(m_lock);
 
     void clearColorTransform();
     void prepareColorTransform();
