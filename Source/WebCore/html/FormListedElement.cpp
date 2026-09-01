@@ -280,7 +280,7 @@ String FormListedElement::validationMessage() const
 
 void FormListedElement::setCustomValidity(const String& error)
 {
-    m_customValidationMessage = error;
+    m_customValidationMessage = makeStringBySimplifyingNewLines(error);
 }
 
 void FormListedElement::resetFormAttributeTargetObserver()

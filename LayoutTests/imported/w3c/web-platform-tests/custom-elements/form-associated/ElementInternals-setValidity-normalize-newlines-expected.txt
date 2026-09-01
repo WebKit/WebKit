@@ -1,0 +1,4 @@
+
+PASS setValidity() should normalize newlines with the customError flag set
+PASS setValidity() should normalize newlines with another validity flag set
+
