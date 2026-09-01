@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WPEQtView.h"
 
+#include "WPEQtUnderlayRenderNode.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
 #include "WPEQtViewPrivate.h"
@@ -28,7 +29,6 @@
 
 #include <QQmlEngine>
 #include <QQuickWindow>
-#include <QSGSimpleTextureNode>
 
 #include <wtf/glib/GUniquePtr.h>
 
@@ -60,8 +60,11 @@ WPEQtView::~WPEQtView()
 {
     Q_D(WPEQtView);
 
-    if (d->m_webView)
+    if (d->m_webView) {
         g_signal_handlers_disconnect_by_data(d->m_webView.get(), this);
+        auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
+        wpe_view_qtquick_invalidate_rendering(WPE_VIEW_QTQUICK(wpeView));
+    }
 }
 
 bool WPEQtView::event(QEvent* ev)
@@ -208,6 +211,8 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
 void WPEQtView::didUpdateScene()
 {
     Q_D(WPEQtView);
+    if (!d->m_webView)
+        return;
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
     wpe_view_qtquick_did_update_scene(WPE_VIEW_QTQUICK(wpeView));
 }
@@ -215,26 +220,22 @@ void WPEQtView::didUpdateScene()
 QSGNode* WPEQtView::updatePaintNode(QSGNode* node, UpdatePaintNodeData*)
 {
     Q_D(WPEQtView);
-    if (!d->m_webView)
-        return node;
-
-    auto* textureNode = static_cast<QSGSimpleTextureNode*>(node);
-    if (!textureNode)
-        textureNode = new QSGSimpleTextureNode();
-
-    auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-
-    GUniqueOutPtr<GError> error;
-    auto texture = wpe_view_qtquick_render_buffer_to_texture(WPE_VIEW_QTQUICK(wpeView), d->m_size, &error.outPtr());
-    if (!texture) {
-        g_warning("Failed to update WPEQtView paint node in scene graph: %s", error->message);
-        return node;
+    if (!d->m_webView || width() <= 0 || height() <= 0) {
+        // QQuickItem::updatePaintNode() does not delete the old node when nullptr
+        // is returned. Delete it here to detach it from the scene graph and avoid
+        // leaking it, as the base implementation does.
+        delete node;
+        return nullptr;
     }
 
-    textureNode->setTexture(texture);
-    textureNode->setRect(boundingRect());
-    triggerDidUpdateScene();
-    return textureNode;
+    auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
+    auto* renderNode = static_cast<WPEQtUnderlayRenderNode*>(node);
+    if (!renderNode)
+        renderNode = new WPEQtUnderlayRenderNode();
+    renderNode->setView(this, WPE_VIEW_QTQUICK(wpeView));
+    renderNode->setRect(boundingRect());
+    renderNode->syncFrame();
+    return renderNode;
 }
 
 QUrl WPEQtView::url() const
