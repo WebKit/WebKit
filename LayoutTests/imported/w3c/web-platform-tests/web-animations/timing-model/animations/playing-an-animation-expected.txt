@@ -11,4 +11,5 @@ PASS If a pause operation is interrupted, the ready promise is reused
 PASS A pending playback rate is used when determining auto-rewind behavior
 PASS Playing a canceled animation sets the start time
 PASS Playing a canceled animation backwards sets the start time
+PASS Resuming a paused animation after enough time has elapsed that it would have ended if playing remains running
 

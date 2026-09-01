@@ -1258,8 +1258,12 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     }
 
     // 8. If animation’s hold time is resolved, let its start time be unresolved.
-    if (m_holdTime)
+    if (m_holdTime) {
         m_startTime = std::nullopt;
+        // We also reset the pending start time since a previous call to pause() would
+        // have recorded one which is now stale.
+        m_pendingStartTime = std::nullopt;
+    }
 
     // 9. If animation has a pending play task or a pending pause task,
     //     - Cancel that task.
