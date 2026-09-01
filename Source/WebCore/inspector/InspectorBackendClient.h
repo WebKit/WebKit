@@ -62,6 +62,10 @@ public:
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;
 
+    // Frame-scoped highlight overlays under Site Isolation; default to the page-wide versions.
+    virtual void highlightFrame(LocalFrame&) { highlight(); }
+    virtual void hideHighlightForFrame(LocalFrame&) { hideHighlight(); }
+
     virtual void showInspectorIndication() { }
     virtual void hideInspectorIndication() { }
 

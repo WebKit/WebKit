@@ -52,6 +52,7 @@ class FrontendRouter;
 
 namespace WebCore {
 
+class GraphicsContext;
 class InspectorBackendClient;
 class InspectorController;
 class InspectorFrontendClient;
@@ -62,7 +63,7 @@ class PageInspectorController;
 class WebInjectedScriptManager;
 struct FrameAgentContext;
 
-class FrameInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<FrameInspectorController> {
+class FrameInspectorController final : public Inspector::InspectorEnvironment, public InspectorOverlayOwner, public CanMakeCheckedPtr<FrameInspectorController> {
     WTF_MAKE_NONCOPYABLE(FrameInspectorController);
     WTF_MAKE_TZONE_ALLOCATED(FrameInspectorController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameInspectorController);
@@ -70,15 +71,22 @@ public:
     FrameInspectorController(LocalFrame&, PageInspectorController&);
     ~FrameInspectorController() override;
 
-    // AbstractCanMakeCheckedPtr overrides
-    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
     WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
+
+    // InspectorOverlayOwner. Anchors on the frame, which owns this controller and so the overlay.
+    void overlayOwnerRef() const final { ref(); }
+    void overlayOwnerDeref() const final { deref(); }
+    Page* NODELETE overlayOwnerPage() const final;
+    LocalFrame* NODELETE overlayOwnerFrame() const final;
+    InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final;
+
+    WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+
+    // True when this frame's own overlay holds the highlight state, not the page overlay.
+    WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
@@ -111,6 +119,10 @@ private:
     const Ref<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+
+    // This frame's own overlay, distinct from the page overlay owned by PageInspectorController.
+    const UniqueRef<InspectorOverlay> m_overlay;
+
     const Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<JSC::Debugger> m_debugger;
     Inspector::AgentRegistry m_agents;
