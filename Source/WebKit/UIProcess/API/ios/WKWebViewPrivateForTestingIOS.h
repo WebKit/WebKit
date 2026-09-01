@@ -107,6 +107,10 @@
 // exercising the site-isolation conversion used to anchor Look Up / Translate / Share popovers.
 - (void)_selectionBoundingRectInMainFrameCoordinatesForTesting:(void (^)(CGRect))completionHandler;
 
+// Returns the rect that -[WKContentView _zoomToRevealFocusedElement] reveals: the selection's bounding
+// rect intersected with the focused element's interaction rect, both in main-frame coordinates.
+@property (nonatomic, readonly) CGRect _rectToRevealWhenZoomingToFocusedElementForTesting;
+
 @property (nonatomic, readonly) BOOL _hasPendingVisibleContentRectUpdateTimerForTesting;
 @property (nonatomic, readonly) CGRect _fixedClippingViewBoundsForTesting;
 

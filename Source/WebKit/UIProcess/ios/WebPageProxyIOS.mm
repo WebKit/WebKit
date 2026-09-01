@@ -975,15 +975,21 @@ void WebPageProxy::convertFocusedElementInformationRectsToMainFrameCoordinates(F
 
     Vector<FloatRect> rects;
     rects.append(information.interactionRect);
+    // The last interaction location is the tap point as delivered to the frame's own process, so it is in
+    // that frame's root-view coordinates. Convert it too, so that comparing it against interactionRect in
+    // -[WKContentView rectToRevealWhenZoomingToFocusedElement] compares points in the same space.
+    rects.append({ FloatPoint { information.lastInteractionLocation }, FloatSize { } });
     if (information.hasNextNode)
         rects.append(information.nextNodeRect);
     if (information.hasPreviousNode)
         rects.append(information.previousNodeRect);
 
-    convertRectsToMainFrameCoordinates(WTF::move(rects), frame->rootFrame()->frameID(), [information = WTF::move(information), completionHandler = WTF::move(completionHandler)](std::optional<Vector<FloatRect>> convertedRects) mutable {
-        if (convertedRects) {
+    auto expectedRectCount = rects.size();
+    convertRectsToMainFrameCoordinates(WTF::move(rects), frame->rootFrame()->frameID(), [expectedRectCount, information = WTF::move(information), completionHandler = WTF::move(completionHandler)](std::optional<Vector<FloatRect>> convertedRects) mutable {
+        if (convertedRects && convertedRects->size() == expectedRectCount) {
             size_t index = 0;
             information.interactionRect = IntRect(convertedRects->at(index++));
+            information.lastInteractionLocation = IntPoint(convertedRects->at(index++).location());
             if (information.hasNextNode)
                 information.nextNodeRect = IntRect(convertedRects->at(index++));
             if (information.hasPreviousNode)

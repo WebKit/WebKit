@@ -10666,6 +10666,55 @@ TEST(SiteIsolation, FocusingMainFrameFieldKeepsFocusAfterCrossOriginIframeField)
     EXPECT_TRUE([webView hasActiveInputSession]);
 }
 
+TEST(SiteIsolation, ZoomToRevealFocusedElementRectIsInMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><input id='input' value='hello world' style='margin: 50px; width: 200px;'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    // Allow an input session to begin when the input inside the subframe is focused.
+    bool didStartInputSession = false;
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    // Focus and select the input inside the cross-origin iframe with a user gesture (Element::focus() is a
+    // no-op for cross-origin non-main-frame iframes without one), then wait until the input session has
+    // started and the UI process tracks the subframe as the focused frame.
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus(); input.select()" inFrame:childFrame.get()];
+    Util::run(&didStartInputSession);
+    while (![childFrame _isFocused]) {
+        Util::spinRunLoop();
+        childFrame = [webView firstChildFrame];
+    }
+
+    // -[WKContentView _zoomToRevealFocusedElement] reveals the selection's bounding rect intersected with
+    // the focused element's interaction rect. Both are in main-frame coordinates, so for an input at
+    // (50, 50) inside an iframe at (100, 100) the reveal rect lands on the input rather than near the page
+    // origin, and stays within the interaction rect the zoom is anchored to.
+    CGRect revealRect = CGRectZero;
+    EXPECT_TRUE(Util::waitFor([&] {
+        revealRect = [webView _rectToRevealWhenZoomingToFocusedElementForTesting];
+        return !CGRectIsEmpty(revealRect);
+    }));
+
+    EXPECT_GE(CGRectGetMinX(revealRect), 150);
+    EXPECT_GE(CGRectGetMinY(revealRect), 150);
+    EXPECT_TRUE(CGRectContainsRect([webView _focusedElementInteractionRect], revealRect));
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS)

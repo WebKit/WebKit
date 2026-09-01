@@ -449,6 +449,11 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     completionHandler(_page->selectionBoundingRectInRootViewCoordinates());
 }
 
+- (CGRect)_rectToRevealWhenZoomingToFocusedElementForTesting
+{
+    return [_contentView rectToRevealWhenZoomingToFocusedElement];
+}
+
 - (UIGestureRecognizer *)_imageAnalysisGestureRecognizer
 {
     return [_contentView imageAnalysisGestureRecognizer];

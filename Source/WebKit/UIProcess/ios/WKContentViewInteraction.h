@@ -796,6 +796,7 @@ struct ImageAnalysisContextMenuActionData {
 - (BOOL)_hasFocusedElement;
 - (BOOL)_isSameAsFocusedElement:(const WebCore::ElementContext&)context;
 - (void)_zoomToRevealFocusedElement;
+@property (nonatomic, readonly) WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement;
 
 - (void)_keyboardWillShow;
 - (void)_keyboardDidShow;
