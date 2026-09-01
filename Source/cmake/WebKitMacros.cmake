@@ -1347,6 +1347,37 @@ endfunction()
 macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_name _interop_module_path _output_header)
     if (SWIFT_REQUIRED)
         set_target_properties(${_target} PROPERTIES Swift_MODULE_NAME ${_module_name})
+        # CMake/Ninja and swiftc make two separate incremental-build decisions.
+        #
+        # Ninja first decides whether the Swift compiler needs to run at all.
+        # Swift does not provide Ninja with dependencies for the C++ headers
+        # loaded through the Clang importer, so WebKit adds a generated stub
+        # Swift file to the target. CMake defines a custom command that makes
+        # the stub depend on the headers listed in the interop module map. When
+        # one of those headers changes, Ninja runs that command, which updates
+        # the stub's timestamp, and then runs the Swift compile command.
+        #
+        # That command receives all the Swift sources in the module, but with
+        # CMP0157 set to NEW, CMake enables swiftc's incremental mode by default.
+        # Swiftc then makes its own decision about which sources to compile. It
+        # sees that the stub changed and processes it, but the stub is only a
+        # marker: it does not identify the C++ header that changed, and the real
+        # Swift sources do not depend on any declarations from the stub.
+        #
+        # Swiftc's saved dependency information contains the module map, but not
+        # the C++ headers listed by that map. The module map itself does not
+        # change when the contents of one of those headers change, so swiftc
+        # cannot connect the header change to the Swift sources that use its
+        # declarations. It can therefore skip those sources and leave their old
+        # object files in place. Those objects may contain member offsets from
+        # the previous C++ headers and are then linked with newly compiled C++
+        # objects that use the new layout, producing an ABI-mismatched library.
+        #
+        # Whole-module mode removes swiftc's per-file incremental decision.
+        # Once the stub causes Ninja to run the Swift compiler, every Swift
+        # source is compiled against the current C++ headers.
+        # See: https://webkit.org/b/322204
+        set_target_properties(${_target} PROPERTIES Swift_COMPILATION_MODE wholemodule)
         # Ask swiftc where to find the header files which support C/C++ builds
         # Right now this macro is used only once; if it's used more often then
         # we should abstract this so it's executed only once.
