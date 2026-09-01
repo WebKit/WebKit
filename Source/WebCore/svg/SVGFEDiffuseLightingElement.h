@@ -55,6 +55,9 @@ public:
 private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
 
+    static constexpr float initialDiffuseConstantValue = 1;
+    static constexpr float initialSurfaceScaleValue = 1;
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -64,8 +67,8 @@ private:
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    const Ref<SVGAnimatedNumber> m_diffuseConstant { SVGAnimatedNumber::create(this, 1) };
-    const Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_diffuseConstant { SVGAnimatedNumber::create(this, initialDiffuseConstantValue) };
+    const Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, initialSurfaceScaleValue) };
     const Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
 };

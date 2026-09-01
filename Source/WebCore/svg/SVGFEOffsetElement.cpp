@@ -26,6 +26,7 @@
 #include "NodeName.h"
 #include "SVGFilterRenderer.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -56,10 +57,10 @@ void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     switch (name.nodeName()) {
     case AttributeNames::dxAttr:
-        m_dx->setBaseValInternal(newValue.toFloat());
+        m_dx->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::dyAttr:
-        m_dy->setBaseValInternal(newValue.toFloat());
+        m_dy->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);

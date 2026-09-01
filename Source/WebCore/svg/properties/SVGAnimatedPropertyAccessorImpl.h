@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SVGAnimatedPrimitivePropertyAccessor.h"
 #include "SVGAnimatedPropertyAccessor.h"
 #include "SVGAnimatedPropertyAnimatorImpl.h"
 #include "SVGAnimatedPropertyImpl.h"
@@ -87,14 +88,14 @@ private:
 };
 
 template<typename OwnerType>
-class SVGAnimatedIntegerAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger> {
-    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger>;
+class SVGAnimatedIntegerAccessor final : public SVGAnimatedPrimitivePropertyAccessor<OwnerType, SVGAnimatedInteger> {
+    using Base = SVGAnimatedPrimitivePropertyAccessor<OwnerType, SVGAnimatedInteger>;
 
 public:
     using Base::Base;
     using Base::property;
-    template<auto property>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerAccessor, property>(); }
+    template<auto property, int initialValue>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerAccessor, property, initialValue>(); }
 
 private:
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
@@ -156,14 +157,14 @@ private:
 };
 
 template<typename OwnerType>
-class SVGAnimatedNumberAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumber> {
-    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumber>;
+class SVGAnimatedNumberAccessor final : public SVGAnimatedPrimitivePropertyAccessor<OwnerType, SVGAnimatedNumber> {
+    using Base = SVGAnimatedPrimitivePropertyAccessor<OwnerType, SVGAnimatedNumber>;
 
 public:
     using Base::Base;
     using Base::property;
-    template<auto property>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberAccessor, property>(); }
+    template<auto property, float initialValue>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberAccessor, property, initialValue>(); }
 
 private:
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final

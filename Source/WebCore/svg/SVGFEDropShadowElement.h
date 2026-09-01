@@ -51,6 +51,10 @@ public:
 private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
 
+    static constexpr float initialDxValue = 2;
+    static constexpr float initialDyValue = 2;
+    static constexpr float initialStdDeviationValue = 2;
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -62,10 +66,10 @@ private:
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, 2) };
+    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, initialDxValue) };
+    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, initialDyValue) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, initialStdDeviationValue) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, initialStdDeviationValue) };
 };
     
 } // namespace WebCore

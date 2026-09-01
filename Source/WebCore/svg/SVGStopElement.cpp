@@ -65,12 +65,10 @@ void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomStrin
             valueView = valueView.left(valueView.length() - 1);
 
         auto parsedValue = parseNumber(valueView, SuffixSkippingPolicy::DontSkip);
-        float value = parsedValue.value_or(0);
-
         if (parsedValue && isPercentage)
-            value /= 100.0f;
+            parsedValue = *parsedValue / 100.0f;
 
-        m_offset->setBaseValInternal(value);
+        m_offset->setBaseValInternal(parsedValue);
     }
 
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

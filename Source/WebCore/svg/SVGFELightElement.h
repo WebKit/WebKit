@@ -66,6 +66,8 @@ protected:
     bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }
 
 private:
+    static constexpr float initialSpecularExponentValue = 1;
+
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
@@ -78,7 +80,7 @@ private:
     const Ref<SVGAnimatedNumber> m_pointsAtX { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_pointsAtY { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_pointsAtZ { SVGAnimatedNumber::create(this) };
-    const Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, initialSpecularExponentValue) };
     const Ref<SVGAnimatedNumber> m_limitingConeAngle { SVGAnimatedNumber::create(this) };
 };
 

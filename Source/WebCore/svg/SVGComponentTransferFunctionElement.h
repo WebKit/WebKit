@@ -103,12 +103,16 @@ protected:
     bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }
     
 private:
+    static constexpr float initialSlopeValue = 1;
+    static constexpr float initialAmplitudeValue = 1;
+    static constexpr float initialExponentValue = 1;
+
     const Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY) };
     const Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
-    const Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, initialSlopeValue) };
     const Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
-    const Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };
-    const Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, initialAmplitudeValue) };
+    const Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, initialExponentValue) };
     const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this) };
 };
 

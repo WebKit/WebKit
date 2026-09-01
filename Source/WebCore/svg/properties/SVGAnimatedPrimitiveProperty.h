@@ -55,8 +55,20 @@ public:
         return { };
     }
 
-    // Used by SVGElement::parseAttribute().
-    void setBaseValInternal(const PropertyType& baseVal) { m_baseVal->setValue(baseVal); }
+    // Used by SVGElement::parseAttribute(). An absent value means parsing produced nothing, which
+    // includes the attribute having been removed, and SVG 2 says the attribute is then assumed to
+    // have been specified as its initial value. The initial value lives on this property's
+    // accessor, so ask the registry for it rather than making every caller name it.
+    // https://w3c.github.io/svgwg/svg2-draft/types.html#syntax
+    void setBaseValInternal(const std::optional<PropertyType>& baseVal)
+    {
+        if (baseVal) {
+            m_baseVal->setValue(*baseVal);
+            return;
+        }
+        this->resetBaseValToInitialValue();
+    }
+
     const PropertyType& baseVal() const LIFETIME_BOUND { return m_baseVal->value(); }
 
     // Used by SVGAttributeAnimator::progress.

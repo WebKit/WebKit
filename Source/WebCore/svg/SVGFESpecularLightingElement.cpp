@@ -47,9 +47,9 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFESpecularLightingElement::m_in1>();
-        PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant>();
-        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent>();
-        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale>();
+        PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant, initialSpecularConstantValue>();
+        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent, initialSpecularExponentValue>();
+        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale, initialSurfaceScaleValue>();
         PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFESpecularLightingElement::m_kernelUnitLengthX, &SVGFESpecularLightingElement::m_kernelUnitLengthY>();
     }
 }
@@ -66,18 +66,21 @@ void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, c
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::surfaceScaleAttr:
-        m_surfaceScale->setBaseValInternal(newValue.toFloat());
+        m_surfaceScale->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::specularConstantAttr:
-        m_specularConstant->setBaseValInternal(newValue.toFloat());
+        m_specularConstant->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::specularExponentAttr:
-        m_specularExponent->setBaseValInternal(newValue.toFloat());
+        m_specularExponent->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::kernelUnitLengthAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
+        } else {
+            m_kernelUnitLengthX->setBaseValInternal(std::nullopt);
+            m_kernelUnitLengthY->setBaseValInternal(std::nullopt);
         }
         break;
     default:

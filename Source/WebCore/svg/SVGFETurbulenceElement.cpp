@@ -44,7 +44,7 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::baseFrequencyAttr, &SVGFETurbulenceElement::m_baseFrequencyX, &SVGFETurbulenceElement::m_baseFrequencyY>();
-        PropertyRegistry::registerProperty<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves>();
+        PropertyRegistry::registerProperty<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves, initialOctavesValue>();
         PropertyRegistry::registerProperty<SVGNames::seedAttr, &SVGFETurbulenceElement::m_seed>();
         PropertyRegistry::registerProperty<SVGNames::stitchTilesAttr, SVGStitchOptions, &SVGFETurbulenceElement::m_stitchTiles>();
         PropertyRegistry::registerProperty<SVGNames::typeAttr, TurbulenceType, &SVGFETurbulenceElement::m_type>();
@@ -69,21 +69,19 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
+        } else {
+            m_baseFrequencyX->setBaseValInternal(std::nullopt);
+            m_baseFrequencyY->setBaseValInternal(std::nullopt);
         }
         break;
     case AttributeNames::seedAttr:
-        m_seed->setBaseValInternal(newValue.toFloat());
+        m_seed->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::numOctavesAttr: {
         auto result = parseInteger<int>(newValue);
-        if (!result)
-            m_numOctaves->setBaseValInternal(initialOctavesValue);
-        else {
-            m_numOctaves->setBaseValInternal(*result);
-
-            if (*result <= 0)
-                protect(protect(document())->svgExtensions())->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
-        }
+        m_numOctaves->setBaseValInternal(result);
+        if (result && *result <= 0)
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
         break;
     }
     default:

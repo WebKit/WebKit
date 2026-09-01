@@ -42,6 +42,12 @@ public:
     virtual std::optional<String> synchronize(const QualifiedName&) const = 0;
     virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
 
+    // Puts one property back to the value it was born with. Called by
+    // SVGAnimatedPrimitiveProperty::setBaseValInternal() when parsing produced nothing, which
+    // includes the attribute having been removed.
+    // https://w3c.github.io/svgwg/svg2-draft/types.html#syntax
+    virtual void resetAnimatedPropertyBaseVal(const SVGAnimatedPropertyBase&) const = 0;
+
     virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
     virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
     virtual RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;

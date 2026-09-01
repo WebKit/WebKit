@@ -42,11 +42,26 @@ public:
     {
     }
 
+    template<typename ValueType1, typename ValueType2>
+    SVGAnimatedPropertyPairAccessor(const Ref<AnimatedPropertyType1> OwnerType::*property1, ValueType1 initialValue1, const Ref<AnimatedPropertyType2> OwnerType::*property2, ValueType2 initialValue2)
+        : m_accessor1(property1, initialValue1)
+        , m_accessor2(property2, initialValue2)
+    {
+    }
+
 protected:
     template<typename AccessorType, auto property1, auto property2>
     static SVGMemberAccessor<OwnerType>& singleton()
     {
         static NeverDestroyed<AccessorType> propertyAccessor { property1, property2 };
+        return propertyAccessor;
+    }
+
+    // Template arguments for the reason given in SVGAnimatedPrimitivePropertyAccessor::singleton().
+    template<typename AccessorType, auto property1, auto property2, auto initialValue1, auto initialValue2>
+    static SVGMemberAccessor<OwnerType>& singleton()
+    {
+        static NeverDestroyed<AccessorType> propertyAccessor { property1, initialValue1, property2, initialValue2 };
         return propertyAccessor;
     }
 
@@ -57,6 +72,12 @@ protected:
 
     const Ref<AnimatedPropertyType2>& property2(OwnerType& owner) const { return m_accessor2.property(owner); }
     const Ref<AnimatedPropertyType2>& property2(const OwnerType& owner) const { return m_accessor2.property(owner); }
+
+    void resetBaseVal(const OwnerType& owner) const override
+    {
+        m_accessor1.resetBaseVal(owner);
+        m_accessor2.resetBaseVal(owner);
+    }
 
     void detach(const OwnerType& owner) const override
     {

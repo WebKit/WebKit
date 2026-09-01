@@ -27,6 +27,7 @@
 #include "SVGAnimatedPropertyBase.h"
 
 #include "SVGElement.h"
+#include "SVGPropertyRegistry.h"
 
 namespace WebCore {
 
@@ -43,6 +44,14 @@ SVGElement* SVGAnimatedPropertyBase::contextElement() const
 SVGPropertyOwner* SVGAnimatedPropertyBase::owner() const
 {
     return m_contextElement.get();
+}
+
+void SVGAnimatedPropertyBase::resetBaseValToInitialValue()
+{
+    if (!m_contextElement)
+        return;
+    RefPtr protectedContextElement = m_contextElement.get();
+    protectedContextElement->propertyRegistry().resetAnimatedPropertyBaseVal(*this);
 }
 
 void SVGAnimatedPropertyBase::commitPropertyChange(SVGProperty*)

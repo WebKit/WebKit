@@ -14643,6 +14643,7 @@
 		726D56E1253AE0430002EF90 /* PlatformImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformImage.h; sourceTree = "<group>"; };
 		727003E5292F2DBB0094C64B /* FilterRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterRenderingMode.h; sourceTree = "<group>"; };
 		7272D336292F767D00F74D99 /* FilterStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterStyle.h; sourceTree = "<group>"; };
+		72766158303E129F00D536E5 /* SVGAnimatedPrimitivePropertyAccessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPrimitivePropertyAccessor.h; sourceTree = "<group>"; };
 		727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTsRGB.cpp; sourceTree = "<group>"; };
 		727AFED21A2EA6A0000442E8 /* EXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTsRGB.h; sourceTree = "<group>"; };
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTsRGB.idl; sourceTree = "<group>"; };
@@ -24733,6 +24734,7 @@
 			children = (
 				5553592022441A16008F5EC9 /* SVGAnimatedDecoratedProperty.h */,
 				55EE5357223B29F800FBA944 /* SVGAnimatedPrimitiveProperty.h */,
+				72766158303E129F00D536E5 /* SVGAnimatedPrimitivePropertyAccessor.h */,
 				55EE5362223B2A2300FBA944 /* SVGAnimatedProperty.h */,
 				55EE5359223B29FA00FBA944 /* SVGAnimatedPropertyAccessor.h */,
 				55EE5358223B29F900FBA944 /* SVGAnimatedPropertyAccessorImpl.h */,

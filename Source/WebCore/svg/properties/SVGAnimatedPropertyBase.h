@@ -67,6 +67,10 @@ protected:
     SVGPropertyOwner* NODELETE owner() const override;
     void commitPropertyChange(SVGProperty*) override;
 
+    // Out of line because it reaches the owner's property registry, and SVGElement is incomplete
+    // here. Same reason as commitPropertyChange() above.
+    void resetBaseValToInitialValue();
+
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
     WeakHashSet<SVGAttributeAnimator> m_animators;
 };
