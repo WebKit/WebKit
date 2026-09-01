@@ -32,7 +32,9 @@
 #include "config.h"
 #include "PageAgentProxy.h"
 
+#include "EmulationManager.h"
 #include "ProxyingPageAgentMessages.h"
+#include "WebInspectorBackend.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
@@ -204,8 +206,22 @@ void PageAgentProxy::applyUserAgentOverride(String&)
 {
 }
 
-void PageAgentProxy::applyEmulatedMedia(AtomString&)
+void PageAgentProxy::applyEmulatedMedia(AtomString& media)
 {
+    // Surface the emulated media type forwarded from the UIProcess so this process's media query
+    // evaluation matches the non-Site-Isolation InspectorPageAgent. Read the override straight from
+    // the WebProcess-side EmulationManager the backend owns, rather than caching a per-proxy copy.
+    // See webkit.org/b/308898.
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly);
+    if (!backend)
+        return;
+
+    if (const auto& emulatedMedia = backend->emulationManager().overrides().emulatedMedia)
+        media = AtomString { *emulatedMedia };
 }
 
 void PageAgentProxy::didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&)

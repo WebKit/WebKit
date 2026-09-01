@@ -12,16 +12,22 @@ let iframe;
 function addCrossOriginIFrame() {
     let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
     iframe = document.createElement("iframe");
-    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/emulation/resources/emulated-media-frame.html`;
     document.body.appendChild(iframe);
 }
 
 function test() {
     async function addIFrameAndGetTarget() {
-        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring executionContextCreated-frame-target.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
         InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-        let event = await targetAddedPromise;
-        return event.data.target;
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
     }
 
     async function getComputedColorInTarget(target) {
@@ -38,10 +44,30 @@ function test() {
         return response.result.value;
     }
 
-    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaCrossOriginIFrame");
+    // Emulation.setEmulatedMedia under Site Isolation is hosted by the UIProcess ProxyingEmulationAgent
+    // on the web-page (backend) target, so it is invoked via WI.backendTarget rather than a page
+    // sub-target, which would relay only to the main frame's WebContent process. The proxy broadcasts to every hosting
+    // process, so the override reaches cross-origin iframe processes too. The broadcast is not ordered
+    // against the cross-origin target's own RuntimeAgent channel, so the computed style may not reflect the
+    // override on the very first read. Poll silently until it settles (or give up) so the assertion stays
+    // deterministic without logging retry noise.
+    async function awaitComputedColorInTarget(target, expectedColor) {
+        let color = await getComputedColorInTarget(target);
+        for (let attempt = 0; attempt < 20 && color !== expectedColor; ++attempt) {
+            await target.RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+            color = await getComputedColorInTarget(target);
+        }
+        return color;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Emulation.SetEmulatedMediaCrossOriginIFrame");
 
     suite.addTestCase({
-        name: "SiteIsolation.Page.SetEmulatedMedia.DefaultMedia",
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.DefaultMedia",
         description: "Both the main page and cross-origin iframe should use screen media by default.",
         async test() {
             let target = await addIFrameAndGetTarget();
@@ -56,11 +82,33 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "SiteIsolation.Page.SetEmulatedMedia.EmulateAndReload",
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.EmulateExistingFrame",
+        description: "Emulating print media should propagate to a cross-origin iframe that already exists, without reloading.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+
+            let iframeColorBefore = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorBefore, "rgb(0, 0, 255)", "Existing cross-origin iframe should start with screen styles (blue).");
+
+            InspectorTest.log("Setting emulated media to print (no reload)...");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("print");
+
+            let iframeColorAfter = await awaitComputedColorInTarget(target, "rgb(0, 128, 0)");
+            InspectorTest.expectEqual(iframeColorAfter, "rgb(0, 128, 0)", "Existing cross-origin iframe should switch to print styles (green).");
+
+            InspectorTest.log("Resetting emulated media...");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("");
+            let iframeColorReset = await awaitComputedColorInTarget(target, "rgb(0, 0, 255)");
+            InspectorTest.expectEqual(iframeColorReset, "rgb(0, 0, 255)", "Existing cross-origin iframe should return to screen styles (blue).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.EmulateAndReload",
         description: "Emulating print media and reloading should apply print styles in the cross-origin iframe.",
         async test() {
             InspectorTest.log("Setting emulated media to print...");
-            await PageAgent.setEmulatedMedia("print");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("print");
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();
@@ -84,11 +132,11 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "SiteIsolation.Page.SetEmulatedMedia.ResetAndReload",
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.ResetAndReload",
         description: "Resetting emulated media and reloading should restore screen styles in both frames.",
         async test() {
             InspectorTest.log("Resetting emulated media...");
-            await PageAgent.setEmulatedMedia("");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("");
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();
@@ -116,5 +164,5 @@ function test() {
 </script>
 
 <body onload="runTest()">
-<p>Test that Page.setEmulatedMedia propagates to cross-origin iframes under site isolation.</p>
+<p>Test that Emulation.setEmulatedMedia propagates to cross-origin iframes under site isolation.</p>
 </body>

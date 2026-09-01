@@ -144,6 +144,7 @@ WI.Target = class Target extends WI.Object
     get DOMDebuggerAgent() { return this._agents.DOMDebugger; }
     get DOMStorageAgent() { return this._agents.DOMStorage; }
     get DebuggerAgent() { return this._agents.Debugger; }
+    get EmulationAgent() { return this._agents.Emulation; }
     get HeapAgent() { return this._agents.Heap; }
     get IndexedDBAgent() { return this._agents.IndexedDB; }
     get InspectorAgent() { return this._agents.Inspector; }

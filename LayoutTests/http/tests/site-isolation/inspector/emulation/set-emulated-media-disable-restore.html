@@ -1,0 +1,104 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/emulation/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    async function addIFrameAndGetTarget() {
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring set-emulated-media-cross-origin-iframe.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function getComputedColorInTarget(target) {
+        // Wait for the iframe document to fully load before checking computed styles.
+        // TargetAdded fires when the JS context is created, before DOM and CSS are ready.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
+        return response.result.value;
+    }
+
+    // The emulated-media override reaches the cross-origin iframe process via the UIProcess
+    // ProxyingEmulationAgent broadcast, which is not ordered against the cross-origin target's own
+    // RuntimeAgent channel, so the computed style may not reflect the change on the very first read.
+    // Poll silently until it settles (or give up) so the assertion stays deterministic without
+    // logging retry noise.
+    async function awaitComputedColorInTarget(target, expectedColor) {
+        let color = await getComputedColorInTarget(target);
+        for (let attempt = 0; attempt < 20 && color !== expectedColor; ++attempt) {
+            await target.RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+            color = await getComputedColorInTarget(target);
+        }
+        return color;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Emulation.SetEmulatedMediaDisableRestore");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.DisableRestoresRealMedia",
+        description: "Disabling the Emulation domain should revert a cross-origin iframe from an emulated-media override back to its real platform media, without a reload.",
+        async test() {
+            // (a) The OOPIF starts on its real (screen) media -- blue.
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let iframeColorBefore = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorBefore, "rgb(0, 0, 255)", "Cross-origin iframe should start with screen styles (blue).");
+
+            // (b) Emulate print -- the OOPIF switches to print media (green).
+            InspectorTest.log("Emulating print media...");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("print");
+            let iframeColorPrint = await awaitComputedColorInTarget(target, "rgb(0, 128, 0)");
+            InspectorTest.expectEqual(iframeColorPrint, "rgb(0, 128, 0)", "Cross-origin iframe should switch to print styles (green).");
+
+            // (c) Disable the Emulation domain on the backend target. This unwinds through the
+            // UIProcess ProxyingEmulationAgent::disable(), which broadcasts the now-empty override
+            // snapshot to every hosting process -- i.e. the domain teardown path, NOT the
+            // setEmulatedMedia("") set path (which already re-evaluates). See webkit.org/b/308898.
+            InspectorTest.log("Disabling the Emulation domain on the backend target...");
+            await WI.backendTarget.EmulationAgent.disable();
+
+            // (d) The OOPIF reverts to its real platform media (blue). The override is gone; restore is
+            // a re-evaluation against real media, not a replay of a prior override.
+            let iframeColorRestored = await awaitComputedColorInTarget(target, "rgb(0, 0, 255)");
+            InspectorTest.expectEqual(iframeColorRestored, "rgb(0, 0, 255)", "Cross-origin iframe should revert to real screen media (blue) after the Emulation domain is disabled.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that disabling the Emulation domain reverts a cross-origin iframe from an emulated-media override back to its real platform media under site isolation.</p>
+</body>

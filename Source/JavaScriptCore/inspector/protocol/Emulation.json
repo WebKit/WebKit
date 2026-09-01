@@ -1,0 +1,23 @@
+{
+    "domain": "Emulation",
+    "description": "Overrides that emulate a different browsing environment for the inspected page. Every override is page-level: it is held by the UIProcess and broadcast to all of the page's WebContent processes, so it applies to cross-origin frames under Site Isolation and is replayed to processes that join the page later.",
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables emulation overrides for the inspected page."
+        },
+        {
+            "name": "disable",
+            "description": "Disables emulation overrides for the inspected page, clearing any that are active."
+        },
+        {
+            "name": "setEmulatedMedia",
+            "description": "Emulates the given media for CSS media queries.",
+            "parameters": [
+                { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
+            ]
+        }
+    ]
+}

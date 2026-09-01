@@ -58,6 +58,11 @@ messages -> WebInspectorBackend {
     # process instead draws in its own frame's coordinate space.
     SetShowPaintRects(bool show)
 
+    # Forward the typed emulation overrides from the UIProcess as a single struct so a process
+    # joining the inspected page under Site Isolation (cross-origin frame spawn or process swap)
+    # inherits the same emulation config. See webkit.org/b/308897.
+    SetEmulationOverrides(struct Inspector::EmulationOverrides overrides)
+
     # Returns, for each requested frame that is local to this process, its committed document's
     # loaderId and cached subresources as typed data, for the UIProcess ProxyingPageAgent to build
     # Page.getResourceTree cross-process under Site Isolation. The proxy walks the frame tree and

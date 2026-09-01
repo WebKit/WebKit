@@ -45,6 +45,7 @@ class FrontendChannel;
 class FrontendRouter;
 class ProxyingNetworkAgent;
 class ProxyingPageAgent;
+class ProxyingEmulationAgent;
 }
 
 namespace WebKit {
@@ -102,6 +103,11 @@ public:
 
     void setShowPaintRects(bool);
 
+    // The page's emulation-override owner under Site Isolation, or null when the page has no
+    // Emulation agent (no frontend yet, or Site Isolation disabled). Used by the deprecated
+    // Page.setEmulatedMedia alias to forward onto the Emulation domain.
+    Inspector::ProxyingEmulationAgent* NODELETE emulationAgent() const;
+
 private:
     WebPageAgentContext NODELETE webPageAgentContext();
     void createLazyAgents();
@@ -123,6 +129,7 @@ private:
     CheckedPtr<InspectorBrowserAgent> m_enabledBrowserAgent;
     RefPtr<Inspector::ProxyingNetworkAgent> m_networkAgent;
     RefPtr<Inspector::ProxyingPageAgent> m_pageAgent;
+    RefPtr<Inspector::ProxyingEmulationAgent> m_emulationAgent;
 
     bool m_didCreateLazyAgents { false };
 };

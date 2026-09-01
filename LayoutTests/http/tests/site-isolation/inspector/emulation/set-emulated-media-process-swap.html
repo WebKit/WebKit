@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function navigateCrossOrigin() {
+    // Toggle the host so the same test page reloads at a cross-origin host, forcing a main-frame
+    // process swap under Site Isolation while keeping the frontend test harness alive.
+    location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+}
+
+function test() {
+    async function navigateAndGetSwappedMainFrameTarget() {
+        // A cross-origin MAIN-frame navigation swaps the page into a new WebContent process under
+        // Site Isolation; the frontend observes the swapped-in main-frame target when its
+        // provisional page commits.
+        let committedPromise = new Promise((resolve) => {
+            function handle(event) {
+                let { target } = event.data;
+                if (target.type === WI.TargetType.Frame) {
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                    resolve(target);
+                }
+            }
+            WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+        });
+
+        InspectorTest.deferOutputUntilTestPageIsReloaded();
+        InspectorTest.evaluateInPage("navigateCrossOrigin()");
+
+        let target = await committedPromise;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function matchesPrintInTarget(target) {
+        // The target commits before its document has finished loading and instrumentation is in
+        // place; wait for load before reading the media state.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: `matchMedia("print").matches`, objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    // The override is serialized to the swapped-in process as it joins, which is not ordered against
+    // the target's own RuntimeAgent channel, so matchMedia may not reflect the override on the very
+    // first read. Poll silently until it settles (or give up) so the assertion stays deterministic
+    // without logging retry noise.
+    async function awaitMatchesPrintInTarget(target) {
+        let matches = await matchesPrintInTarget(target);
+        for (let attempt = 0; attempt < 20 && !matches; ++attempt) {
+            await target.RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+            matches = await matchesPrintInTarget(target);
+        }
+        return matches;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Emulation.SetEmulatedMediaProcessSwap");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Emulation.SetEmulatedMedia.ProcessSwapInheritsOverride",
+        description: "An emulated media override set before a cross-origin main-frame navigation should be serialized to the swapped-in process, so it observes the override without a reload.",
+        async test() {
+            InspectorTest.log("Setting emulated media to print before the cross-origin main-frame navigation...");
+            await WI.backendTarget.EmulationAgent.setEmulatedMedia("print");
+
+            InspectorTest.log("Navigating the main frame cross-origin to force a process swap...");
+            let target = await navigateAndGetSwappedMainFrameTarget();
+
+            let matchesPrint = await awaitMatchesPrintInTarget(target);
+            InspectorTest.expectTrue(matchesPrint, "Swapped-in main-frame process should observe the print media override.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a Emulation.setEmulatedMedia override set before a cross-origin main-frame navigation is serialized to the swapped-in process under site isolation.</p>
+</body>

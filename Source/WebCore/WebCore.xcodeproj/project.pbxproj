@@ -751,6 +751,7 @@
 		1C7A6EB526F5D8F50096D8C7 /* FontPalette.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4674FD26F4843600B61273 /* FontPalette.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95A0E97330800266E07 /* PageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* PageInspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95C0E97330800266E07 /* InspectorBackendClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9580E97330800266E07 /* InspectorBackendClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		54F00963E1F6579DC877D0DD /* EmulationOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D4379A62F149F2981EB980D /* EmulationOverrides.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C9F4C1429E529660015819E /* DetectedFaceInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C38F28329E3B2BC008795CC /* DetectedFaceInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C9F4C1529E529660015819E /* BarcodeDetectorInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C38F27F29E3B27C008795CC /* BarcodeDetectorInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C9F4C1629E529660015819E /* BarcodeDetectorOptionsInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C38F28029E3B28A008795CC /* BarcodeDetectorOptionsInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9606,6 +9607,7 @@
 		1C81B9560E97330800266E07 /* PageInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageInspectorController.h; sourceTree = "<group>"; };
 		1C81B9570E97330800266E07 /* PageInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageInspectorController.cpp; sourceTree = "<group>"; };
 		1C81B9580E97330800266E07 /* InspectorBackendClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendClient.h; sourceTree = "<group>"; };
+		6D4379A62F149F2981EB980D /* EmulationOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmulationOverrides.h; sourceTree = "<group>"; };
 		1C84BE4126D3939F002D61FC /* ComposedCharacterClusterTextIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComposedCharacterClusterTextIterator.h; sourceTree = "<group>"; };
 		1C8D26D022C09CDE00D125F3 /* libcompression.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcompression.tbd; path = usr/lib/libcompression.tbd; sourceTree = SDKROOT; };
 		1C9067B6299CB44500A2B076 /* FontInterrogation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontInterrogation.h; sourceTree = "<group>"; };
@@ -26420,6 +26422,7 @@
 				9109E9C5222CABC800BB6264 /* InspectorAuditResourcesObject.h */,
 				BCD8F9E02F27D80B00B42872 /* InspectorAuditResourcesObject.idl */,
 				1C81B9580E97330800266E07 /* InspectorBackendClient.h */,
+				6D4379A62F149F2981EB980D /* EmulationOverrides.h */,
 				6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */,
 				6A22E86F1F10418600F546C3 /* InspectorCanvas.h */,
 				BC08A72E2E889885005C4CD1 /* InspectorCanvasArguments.cpp */,
@@ -46410,6 +46413,7 @@
 				9175CE5C21E281ED00DF2C27 /* InspectorAuditDOMObject.h in Headers */,
 				9109E9C8222CABCA00BB6264 /* InspectorAuditResourcesObject.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorBackendClient.h in Headers */,
+				54F00963E1F6579DC877D0DD /* EmulationOverrides.h in Headers */,
 				6A22E8701F10418600F546C3 /* InspectorCanvas.h in Headers */,
 				A5B81CA81FAA44620037D1E6 /* InspectorCanvasAgent.h in Headers */,
 				95AA571025EEED32004E9283 /* InspectorCanvasCallTracer.h in Headers */,

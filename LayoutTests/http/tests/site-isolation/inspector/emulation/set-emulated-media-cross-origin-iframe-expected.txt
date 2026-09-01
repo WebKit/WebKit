@@ -1,0 +1,30 @@
+Test that Emulation.setEmulatedMedia propagates to cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Emulation.SetEmulatedMediaCrossOriginIFrame
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.DefaultMedia
+PASS: Added target should have Frame type.
+PASS: Main page should have screen styles (blue).
+PASS: Cross-origin iframe should have screen styles (blue).
+
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.EmulateExistingFrame
+PASS: Existing cross-origin iframe should start with screen styles (blue).
+Setting emulated media to print (no reload)...
+PASS: Existing cross-origin iframe should switch to print styles (green).
+Resetting emulated media...
+PASS: Existing cross-origin iframe should return to screen styles (blue).
+
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.EmulateAndReload
+Setting emulated media to print...
+Reloading...
+PASS: Main page should have print styles (green).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have print styles (green).
+
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.ResetAndReload
+Resetting emulated media...
+Reloading...
+PASS: Main page should have screen styles restored (blue).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have screen styles restored (blue).
+
