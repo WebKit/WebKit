@@ -8,9 +8,6 @@ find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 
-list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    PAL
-)
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${UIKIT_LIBRARY})
 endif ()
