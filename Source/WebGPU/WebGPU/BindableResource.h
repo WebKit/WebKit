@@ -125,7 +125,11 @@ struct IndirectDrawData {
 
 using IndirectDrawForSlotContainer = HashMap<uint64_t, IndirectDrawData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 using DrawIndexCacheContainerKey = std::array<uint32_t, 5>;
+#else
+using DrawIndexCacheContainerKey = std::array<uint32_t, 6>;
+#endif // RC_REMOVE_SEC_ACCEL_3
 inline void add(Hasher& hasher, const DrawIndexCacheContainerKey& input)
 {
     for (auto value : input)
@@ -143,6 +147,9 @@ struct DrawIndexCacheContainerValue {
             uint32_t icb2;
         };
     };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    int32_t clampedBaseVertex { 0 };
+#endif // RC_REMOVE_SEC_ACCEL_3
     DrawIndexCacheContainerValue() { }
     DrawIndexCacheContainerValue(const DrawIndexCacheContainerKey& key)
         : firstIndex(key[0])
@@ -150,6 +157,9 @@ struct DrawIndexCacheContainerValue {
         , primitiveOffsetWithIndexType(key[2])
         , icb1(key[3])
         , icb2(key[4])
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        , clampedBaseVertex(static_cast<int32_t>(key[5]))
+#endif // RC_REMOVE_SEC_ACCEL_3
     {
     }
     uint32_t primitiveOffset() { return static_cast<MTLIndexType>(primitiveOffsetWithIndexType & 0x1); }

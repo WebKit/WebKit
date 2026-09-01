@@ -1,0 +1,90 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+
+// DrawIndexCacheContainerKey omitted baseVertex, so a draw validated with
+// baseVertex=0 populated the cache and a subsequent draw with baseVertex=-5
+// got a cache HIT on the same key, bypassing the clamp shader. The Metal
+// draw then issued baseVertex=-5, causing GPU OOB vertex attribute fetches
+// (vertex_id = index + baseVertex wraps to ~UINT32_MAX as unsigned).
+async function run() {
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter)
+        return;
+    const device = await adapter.requestDevice();
+
+    // 10 vertices * 4 bytes (float32, stride=4) = 40 bytes -> minVertexCount=10
+    const vertexBuffer = device.createBuffer({
+        size: 40, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true
+    });
+    const vb = new Float32Array(vertexBuffer.getMappedRange());
+    for (let i = 0; i < 10; i++)
+        vb[i] = i * 0.1;
+    vertexBuffer.unmap();
+
+    // Index buffer: [0,1,2,3] -- valid for baseVertex=0, OOB for baseVertex=-5
+    const indexBuffer = device.createBuffer({
+        size: 16, usage: GPUBufferUsage.INDEX, mappedAtCreation: true
+    });
+    new Uint32Array(indexBuffer.getMappedRange()).set([0, 1, 2, 3]);
+    indexBuffer.unmap();
+
+    const pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module: device.createShaderModule({ code: `
+                @vertex fn vs(@location(0) pos: f32) -> @builtin(position) vec4<f32> {
+                    return vec4<f32>(pos, 0.0, 0.0, 1.0);
+                }` }),
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 4, stepMode: 'vertex',
+                attributes: [{ shaderLocation: 0, offset: 0, format: 'float32' }] }]
+        },
+        fragment: {
+            module: device.createShaderModule({ code: `
+                @fragment fn fs() -> @location(0) vec4<f32> {
+                    return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+                }` }),
+            entryPoint: 'fs', targets: [{ format: 'bgra8unorm' }]
+        }
+    });
+
+    const colorTex = device.createTexture({
+        size: [1, 1], format: 'bgra8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT
+    });
+    const rpDesc = { colorAttachments: [{ view: colorTex.createView(),
+        clearValue: [0, 0, 0, 1], loadOp: 'clear', storeOp: 'store' }] };
+
+    function draw(baseVertex) {
+        const enc = device.createCommandEncoder();
+        const pass = enc.beginRenderPass(rpDesc);
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        pass.drawIndexed(4, 1, 0, baseVertex, 0);
+        pass.end();
+        device.queue.submit([enc.finish()]);
+        return device.queue.onSubmittedWorkDone();
+    }
+
+    // STEP 1: priming draw (baseVertex=0) -- cache miss, clamp shader runs,
+    // completion handler populates the draw-index validation cache.
+    await draw(0);
+    await new Promise(r => setTimeout(r, 500));
+
+    // STEP 2: exploit draw (baseVertex=-5). Pre-fix this got a cache HIT on
+    // the same key (baseVertex not part of the key) and the clamp shader was
+    // skipped, so Metal saw baseVertex=-5 directly and the GPU read past the
+    // bound vertex buffer. Post-fix the key includes a clamped baseVertex,
+    // so the lookup misses and the clamp shader rejects this draw.
+    await draw(-5);
+}
+
+onload = async () => {
+    try { await run(); } catch (e) { }
+    debug('Pass');
+    globalThis.testRunner?.notifyDone();
+};
+</script>
