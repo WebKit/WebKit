@@ -619,6 +619,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
             CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(argumentCount() + 1)));
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     bool haveTagRegisters = false;
     auto materializeTagRegistersIfNeeded = [&] {
         if (!haveTagRegisters) {
@@ -626,6 +627,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
             jit.emitMaterializeTagCheckRegisters();
         }
     };
+#endif
 
     // Loop backwards so we can use the first FP/GP argument as a scratch.
     FPRReg scratchFPR = Wasm::wasmCallingConvention().fprArgs[0];
@@ -639,9 +641,15 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         JIT_COMMENT(jit, "Arg ", i, " : ", type);
         switch (type.kind) {
         case Wasm::TypeKind::I32: {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             materializeTagRegistersIfNeeded();
+#endif
             jit.loadValue(jsParam, scratchJSR);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            slowPath.append(jit.branchIfNotInt32(scratchJSR, DoNotHaveTagRegisters));
+#else
             slowPath.append(jit.branchIfNotInt32(scratchJSR));
+#endif
             if (isStack) {
                 CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 jit.store32(scratchJSR.payloadGPR(), addr.withOffset(PayloadOffset));
@@ -659,7 +667,11 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         case Wasm::TypeKind::I64: {
 #if USE(JSVALUE64)
             jit.loadValue(jsParam, scratchJSR);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            slowPath.append(jit.branchIfNotCell(scratchJSR,  DoNotHaveTagRegisters));
+#else
             slowPath.append(jit.branchIfNotCell(scratchJSR));
+#endif
             slowPath.append(jit.branchIfNotHeapBigInt(scratchJSR.payloadGPR()));
             if (isStack) {
                 jit.toBigInt64(scratchJSR.payloadGPR(), stackLimitGPR);
@@ -670,7 +682,9 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 if (wasmCallInfo.params[i].location.jsr().payloadGPR() == scratch) {
                     scratch = GPRInfo::numberTagRegister;
                     // FIXME: In theory this only needs to restore the numberTagRegister not both but this is rare.
+#ifdef RC_REMOVE_SEC_ACCEL_3
                     haveTagRegisters = false;
+#endif
                 }
                 jit.toBigInt64(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR());
             }
@@ -690,7 +704,11 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 auto isNull = jit.branchIfNull(scratchJSR);
                 if (!type.isNullable())
                     slowPath.append(isNull);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                slowPath.append(jit.branchIfNotCell(scratchJSR, DoNotHaveTagRegisters));
+#else
                 slowPath.append(jit.branchIfNotCell(scratchJSR));
+#endif
 
                 jit.emitLoadStructure(scratchJSR.payloadGPR(), scratchJSR.payloadGPR());
                 jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
@@ -732,15 +750,25 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         }
         case Wasm::TypeKind::F32:
         case Wasm::TypeKind::F64: {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             materializeTagRegistersIfNeeded();
+#endif
             if (!isStack)
                 scratchFPR = wasmCallInfo.params[i].location.fpr();
 
             jit.loadValue(jsParam, scratchJSR);
 #if USE(JSVALUE64)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            slowPath.append(jit.branchIfNotNumber(scratchJSR, InvalidGPRReg, DoNotHaveTagRegisters));
+#else
             slowPath.append(jit.branchIfNotNumber(scratchJSR, InvalidGPRReg));
+#endif
 #elif USE(JSVALUE32_64)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            slowPath.append(jit.branchIfNotNumber(scratchJSR, stackLimitGPR, DoNotHaveTagRegisters));
+#else
             slowPath.append(jit.branchIfNotNumber(scratchJSR, stackLimitGPR));
+#endif
 #endif
             auto isInt32 = jit.branchIfInt32(scratchJSR);
 #if USE(JSVALUE64)
