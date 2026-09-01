@@ -25,7 +25,9 @@
 
 #include "config.h"
 
+#include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/PixelBuffer.h>
 #include <WebCore/PixelBufferConversion.h>
 #include <vector>
 #include <wtf/Float16.h>
@@ -261,5 +263,93 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16PaddedRows)
 }
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(PixelBufferTests, minimumBufferSize)
+{
+    // The last row is tightly packed, so a buffer does not need the final row's padding.
+    // This is how CoreGraphics sizes an image's data provider.
+    EXPECT_EQ(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 4, 3 }, 32).value(), 32u * 2 + 16u);
+    EXPECT_EQ(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 4, 1 }, 32).value(), 16u);
+
+    // With no padding it agrees with computeBufferSize().
+    EXPECT_EQ(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 4, 3 }, 16).value(),
+        PixelBuffer::computeBufferSize(PixelFormat::RGBA8, { 4, 3 }).value());
+
+    EXPECT_EQ(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 0, 3 }, 16).value(), 0u);
+    EXPECT_EQ(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 4, 0 }, 16).value(), 0u);
+
+    // A stride narrower than one row is not representable.
+    EXPECT_TRUE(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 4, 3 }, 15).hasOverflowed());
+    EXPECT_TRUE(PixelBuffer::minimumBufferSize(PixelFormat::RGBA8, { 1 << 30, 4 }, 1 << 30).hasOverflowed());
+    EXPECT_TRUE(PixelBuffer::tightlyPackedBytesPerRow(PixelFormat::RGBA8, -1).hasOverflowed());
+}
+
+TEST(PixelBufferTests, stridedSourceViewValidation)
+{
+    const PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    std::vector<uint8_t> bytes(1024);
+
+    // Exactly the minimum is accepted.
+    auto exact = validatedConversionView(format, { 4, 3 }, 32, std::span { bytes }.first(32 * 2 + 16));
+    ASSERT_TRUE(exact.has_value());
+    EXPECT_EQ(exact->rows.size(), 80u);
+    EXPECT_EQ(exact->bytesPerRow, 32u);
+
+    // One byte short is rejected.
+    EXPECT_FALSE(validatedConversionView(format, { 4, 3 }, 32, std::span { bytes }.first(32 * 2 + 15)).has_value());
+
+    // An oversized buffer is accepted, and narrowed so a client cannot read past the image.
+    auto oversized = validatedConversionView(format, { 4, 3 }, 32, bytes);
+    ASSERT_TRUE(oversized.has_value());
+    EXPECT_EQ(oversized->rows.size(), 80u);
+
+    // A stride narrower than a row is rejected.
+    EXPECT_FALSE(validatedConversionView(format, { 4, 3 }, 15, bytes).has_value());
+
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    // A format convertImagePixels() cannot handle is rejected.
+    const PixelBufferFormat unsupported { AlphaPremultiplication::Premultiplied, PixelFormat::RGB10, DestinationColorSpace::SRGB() };
+    EXPECT_FALSE(validatedConversionView(unsupported, { 4, 3 }, 16, bytes).has_value());
+#endif
+
+    auto tight = validatedConversionView(format, { 4, 3 }, 16, bytes);
+    ASSERT_TRUE(tight.has_value());
+    EXPECT_EQ(tight->rows.size(), 48u);
+}
+
+TEST(PixelBufferTests, stridedSourceViewSubview)
+{
+    const PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    // 4x4 pixels at a 32 byte stride, with a recognisable byte at the start of each pixel.
+    constexpr unsigned bytesPerRow = 32;
+    std::vector<uint8_t> bytes(bytesPerRow * 4);
+    for (unsigned y = 0; y < 4; ++y) {
+        for (unsigned x = 0; x < 4; ++x)
+            bytes[y * bytesPerRow + x * 4] = y * 4 + x;
+    }
+
+    auto view = validatedConversionView(format, { 4, 4 }, bytesPerRow, bytes);
+    ASSERT_TRUE(view.has_value());
+
+    // A subview keeps the parent's stride and points at the requested pixel.
+    auto sub = conversionSubview(*view, { 4, 4 }, { 1, 2, 2, 2 });
+    ASSERT_TRUE(sub.has_value());
+    EXPECT_EQ(sub->bytesPerRow, bytesPerRow);
+    EXPECT_EQ(sub->rows[0], 2u * 4 + 1);
+    EXPECT_EQ(sub->rows[bytesPerRow], 3u * 4 + 1);
+    // Narrowed to the minimum for the sub-rectangle, not to the end of the parent.
+    EXPECT_EQ(sub->rows.size(), bytesPerRow + 8u);
+
+    // The whole rect round-trips.
+    auto whole = conversionSubview(*view, { 4, 4 }, { 0, 0, 4, 4 });
+    ASSERT_TRUE(whole.has_value());
+    EXPECT_EQ(whole->rows.size(), view->rows.size());
+
+    // Anything not contained in the image is rejected.
+    EXPECT_FALSE(conversionSubview(*view, { 4, 4 }, { 1, 0, 4, 4 }).has_value());
+    EXPECT_FALSE(conversionSubview(*view, { 4, 4 }, { 0, 1, 4, 4 }).has_value());
+    EXPECT_FALSE(conversionSubview(*view, { 4, 4 }, { -1, 0, 2, 2 }).has_value());
+    EXPECT_FALSE(conversionSubview(*view, { 4, 4 }, { 0, 0, 5, 1 }).has_value());
+}
 
 } // namespace TestWebKitAPI

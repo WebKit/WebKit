@@ -28,6 +28,7 @@
 
 #include "AlphaPremultiplication.h"
 #include "DestinationColorSpace.h"
+#include "IntRect.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
@@ -538,7 +539,7 @@ static bool convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
 }
 #endif // !(USE(ACCELERATE) && USE(CG))
 
-static bool UNUSED_FUNCTION NODELETE isSupportedConversionFormat(PixelFormat pixelFormat)
+bool isSupportedPixelBufferConversionFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBA8:
@@ -573,11 +574,38 @@ static void zeroImagePixels(const PixelBufferConversionView& destination, const 
         zeroSpan(destination.rows.subspan(static_cast<size_t>(y) * destination.bytesPerRow, rowFillBytes));
 }
 
+std::optional<ConstPixelBufferConversionView> validatedConversionView(const PixelBufferFormat& format, const IntSize& size, unsigned bytesPerRow, std::span<const uint8_t> rows)
+{
+    if (!isSupportedPixelBufferConversionFormat(format.pixelFormat))
+        return std::nullopt;
+    auto minimumSize = PixelBuffer::minimumBufferSize(format.pixelFormat, size, bytesPerRow);
+    if (minimumSize.hasOverflowed() || rows.size() < minimumSize.value())
+        return std::nullopt;
+    return ConstPixelBufferConversionView { format, bytesPerRow, rows.first(minimumSize.value()) };
+}
+
+std::optional<ConstPixelBufferConversionView> conversionSubview(const ConstPixelBufferConversionView& view, const IntSize& viewSize, const IntRect& rect)
+{
+    if (!IntRect({ }, viewSize).contains(rect))
+        return std::nullopt;
+
+    auto offset = CheckedUint32 { view.bytesPerRow } * rect.y() + PixelBuffer::tightlyPackedBytesPerRow(view.format.pixelFormat, rect.x());
+    if (offset.hasOverflowed())
+        return std::nullopt;
+    auto minimumSize = PixelBuffer::minimumBufferSize(view.format.pixelFormat, rect.size(), view.bytesPerRow);
+    if (minimumSize.hasOverflowed())
+        return std::nullopt;
+    if (!isSumSmallerThanOrEqual<size_t>(offset.value(), minimumSize.value(), view.rows.size()))
+        return std::nullopt;
+
+    return ConstPixelBufferConversionView { view.format, view.bytesPerRow, view.rows.subspan(offset.value(), minimumSize.value()) };
+}
+
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     // We currently only support converting between RGBA8, BGRA8, BGRX8, and (where enabled) RGBA16F.
-    ASSERT(isSupportedConversionFormat(source.format.pixelFormat));
-    ASSERT(isSupportedConversionFormat(destination.format.pixelFormat));
+    ASSERT(isSupportedPixelBufferConversionFormat(source.format.pixelFormat));
+    ASSERT(isSupportedPixelBufferConversionFormat(destination.format.pixelFormat));
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (source.format.pixelFormat == PixelFormat::RGBA16F)

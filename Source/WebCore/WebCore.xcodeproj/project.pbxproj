@@ -10925,7 +10925,7 @@
 		376DCCE013B4F966002EBEFC /* TextRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRun.cpp; sourceTree = "<group>"; };
 		3772B09516535856000A49CA /* PopupOpeningObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupOpeningObserver.h; sourceTree = "<group>"; };
 		3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlapTestRequestClient.h; sourceTree = "<group>"; };
-		377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeImageCG.cpp; sourceTree = "<group>"; };
+		377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeImageCG.mm; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
 		379291781985EF3900F4B661 /* CredentialBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialBase.h; sourceTree = "<group>"; };
@@ -36730,7 +36730,7 @@
 				1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */,
 				1C21E57B183ED1FF001C289D /* IOSurfacePool.h */,
 				45E434C22E74E18B004BD91D /* IOSurfacePoolIdentifier.h */,
-				377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.cpp */,
+				377A3A8F15EFCE9A0059F5C7 /* NativeImageCG.mm */,
 				B27535350B053814002CE64F /* PathCG.cpp */,
 				7246F02E2A1549CB00FD74F1 /* PathCG.h */,
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,

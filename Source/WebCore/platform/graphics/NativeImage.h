@@ -29,11 +29,14 @@
 
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/GainMap.h>
+#include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/PixelBufferFormat.h>
 #include <WebCore/PlatformImage.h>
 #include <WebCore/RenderingResource.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(SKIA)
@@ -50,8 +53,12 @@ class Color;
 class DestinationColorSpace;
 class FloatRect;
 class GraphicsContext;
+class IntRect;
 class IntSize;
 class NativeImageBackend;
+class PixelBuffer;
+struct ConstPixelBufferConversionView;
+struct PixelBufferConversionView;
 struct ImageOrientation;
 struct ImagePaintingOptions;
 
@@ -82,7 +89,7 @@ public:
     WEBCORE_EXPORT virtual IntSize size() const;
     WEBCORE_EXPORT virtual bool hasAlpha() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;
-    std::optional<Color> singlePixelSolidColor() const;
+    WEBCORE_EXPORT std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT virtual DestinationColorSpace colorSpace() const;
     WEBCORE_EXPORT bool hasHDRContent() const;
     bool hasHDRGainMap() const { return m_gainMap.has_value(); }
@@ -90,6 +97,35 @@ public:
     Headroom headroom() const { return m_headroom; }
 
     RefPtr<NativeImage> rotatedImage(ImageOrientation);
+
+    // Pixel access. All of these read the base image only; a gain map is never applied.
+    //
+    // Describes the layout of the size() pixels the image already holds, without touching
+    // them. nullopt means a borrow is not possible: the image is GPU-backed, or its layout is
+    // one that PixelBufferFormat cannot name (indexed, 16-bits-per-component integer, fewer
+    // than four components). Requesting this format from withPixels() is what avoids a copy.
+    struct PixelSourceInfo {
+        PixelBufferFormat format;
+        unsigned bytesPerRow;
+    };
+    WEBCORE_EXPORT std::optional<PixelSourceInfo> pixelSourceInfo() const;
+
+    using PixelSourceFunctor = ScopedLambda<void(const ConstPixelBufferConversionView&)>;
+
+    // Calls the functor with a view of size() pixels, valid for the duration of the call only,
+    // escalating only as far as needed:
+    //   a) pixels readable -> the image's own memory, format and stride, no copy at all
+    //   b) otherwise       -> a scratch buffer filled by a draw or GPU readback
+    // `fallbackFormat` applies to (b) only, so the functor must read view.format() rather
+    // than assume it. Returns false, without calling the functor, only if both fail.
+    WEBCORE_EXPORT bool withPixels(const PixelBufferFormat& fallbackFormat, NOESCAPE const PixelSourceFunctor&) const;
+
+    // Copies `sourceRect` into caller-owned storage at the caller's own bytesPerRow,
+    // converting to the destination format. Draws only when the pixels are not readable.
+    WEBCORE_EXPORT bool copyPixels(const IntRect& sourceRect, const PixelBufferConversionView& destination) const;
+
+    // As above, into a new tightly packed PixelBuffer.
+    WEBCORE_EXPORT RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat&, const IntRect& sourceRect, const ImageBufferAllocator& = ImageBufferAllocator()) const;
 
     void clearSubimages();
 
@@ -122,6 +158,16 @@ protected:
 #endif
 
     void computeHeadroom() const WTF_REQUIRES_LOCK(m_lock);
+
+    // Platform hooks behind withPixels(). Both must be callable without holding m_lock,
+    // since a functor may re-enter the image.
+    //
+    // Borrows the platform image's own pixels and invokes the functor. Returns false,
+    // without invoking it, when they are not directly readable.
+    bool withBorrowedPixels(NOESCAPE const PixelSourceFunctor&) const;
+    // Draws or reads back the whole image into `destination` as `format`, tightly packed
+    // at `bytesPerRow`.
+    bool readPixels(const PixelBufferFormat&, std::span<uint8_t> destination, unsigned bytesPerRow) const;
 
     mutable Lock m_lock;
     mutable PlatformImagePtr m_platformImage WTF_GUARDED_BY_LOCK(m_lock);

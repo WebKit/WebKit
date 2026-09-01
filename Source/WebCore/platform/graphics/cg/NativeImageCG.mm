@@ -29,13 +29,18 @@
 #if USE(CG)
 
 #include "CGSubimageCacheWithTimer.h"
+#include "CGUtilities.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
 #include "ImageRotationSessionVT.h"
+#include "Logging.h"
+#include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Scope.h>
+#include <wtf/cf/VectorCF.h>
 
 #include "CoreVideoSoftLink.h"
 
@@ -229,24 +234,217 @@ void NativeImage::computeHeadroom() const
         m_headroom = m_baseImageHeadroom;
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+// Maps a CGImage's layout onto a PixelBufferFormat. nullopt for layouts PixelBufferFormat
+// cannot name: indexed or non-RGB color spaces, 16-bits-per-component integer, and fewer
+// than four components. Those images reach withPixels() through readPixels() instead.
+//
+// Deliberately not exported. NativeImage is meant to be the only place that maps a CGImage
+// layout to a pixel format; a shared helper would invite callers to bypass it, which is how
+// GraphicsContextGLCG, GPUQueue and ShareableBitmapCG each grew a copy of this switch.
+static std::optional<PixelBufferFormat> pixelBufferFormat(CGImageRef image)
 {
-    if (size() != IntSize(1, 1))
+    RetainPtr colorSpace = CGImageGetColorSpace(image);
+    if (!colorSpace || CGColorSpaceGetModel(colorSpace.get()) != kCGColorSpaceModelRGB)
         return std::nullopt;
 
-    std::array<uint8_t, 4> pixel; // RGBA
-    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, pixel.size(), sRGBColorSpaceSingleton(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
+    auto bitmapInfo = CGImageGetBitmapInfo(image);
+    auto alphaInfo = static_cast<CGImageAlphaInfo>(bitmapInfo & kCGBitmapAlphaInfoMask);
+    auto byteOrder = bitmapInfo & kCGBitmapByteOrderMask;
+    auto bitsPerComponent = CGImageGetBitsPerComponent(image);
+    auto bitsPerPixel = CGImageGetBitsPerPixel(image);
 
+    if (bitmapInfo & kCGBitmapFloatComponents) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        if (bitsPerComponent != 16 || bitsPerPixel != 64 || byteOrder != static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host))
+            return std::nullopt;
+        switch (alphaInfo) {
+        case kCGImageAlphaPremultipliedLast:
+            return PixelBufferFormat { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, DestinationColorSpace { colorSpace.get() } };
+        case kCGImageAlphaLast:
+            return PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, DestinationColorSpace { colorSpace.get() } };
+        default:
+            return std::nullopt;
+        }
+#else
+        return std::nullopt;
+#endif
+    }
+
+    if (bitsPerComponent != 8 || bitsPerPixel != 32)
+        return std::nullopt;
+
+    // kCGBitmapByteOrderDefault is big-endian in practice, even on little-endian
+    // architectures. This matches what the CG WebGL image extractor has always assumed.
+    bool isLittleEndian = byteOrder == static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little);
+
+    switch (alphaInfo) {
+    case kCGImageAlphaPremultipliedLast:
+        if (isLittleEndian)
+            return std::nullopt; // ABGR8: not nameable.
+        return PixelBufferFormat { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace { colorSpace.get() } };
+    case kCGImageAlphaLast:
+        if (isLittleEndian)
+            return std::nullopt; // ABGR8: not nameable.
+        return PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace { colorSpace.get() } };
+    case kCGImageAlphaPremultipliedFirst:
+        if (!isLittleEndian)
+            return std::nullopt; // ARGB8: not nameable.
+        return PixelBufferFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, DestinationColorSpace { colorSpace.get() } };
+    case kCGImageAlphaFirst:
+        if (!isLittleEndian)
+            return std::nullopt; // ARGB8: not nameable.
+        return PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace { colorSpace.get() } };
+    case kCGImageAlphaNoneSkipFirst:
+        if (!isLittleEndian)
+            return std::nullopt; // XRGB8: not nameable.
+        // BGRX8 is opaque, so its alpha format is immaterial; convertImagePixels() treats
+        // an opaque source as already premultiplied.
+        return PixelBufferFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRX8, DestinationColorSpace { colorSpace.get() } };
+    case kCGImageAlphaNone:
+    case kCGImageAlphaNoneSkipLast:
+    case kCGImageAlphaOnly:
+        return std::nullopt;
+    }
+    return std::nullopt;
+}
+
+std::optional<NativeImage::PixelSourceInfo> NativeImage::pixelSourceInfo() const
+{
+    RetainPtr image = platformImage();
+    if (!image)
+        return std::nullopt;
+
+    // A sub-image shares its parent's data provider, so it is the parent's layout that
+    // describes the pixels. Only the size, which size() reports, is the sub-image's own.
+    CGImageRef parent = nullptr;
+    CGPoint parentOrigin { };
+    if (CGImageIsSubimage(image.get(), &parent, &parentOrigin) && parent)
+        image = parent;
+
+    if (!CGImageGetDataProvider(image.get()))
+        return std::nullopt;
+    auto format = pixelBufferFormat(image.get());
+    if (!format)
+        return std::nullopt;
+
+    auto bytesPerRow = CGImageGetBytesPerRow(image.get());
+    if (bytesPerRow > std::numeric_limits<unsigned>::max())
+        return std::nullopt;
+    return PixelSourceInfo { *format, static_cast<unsigned>(bytesPerRow) };
+}
+
+bool NativeImage::withBorrowedPixels(NOESCAPE const PixelSourceFunctor& functor) const
+{
+    RetainPtr image = platformImage();
+    if (!image)
+        return false;
+
+    // Resolve sub-images to an offset within the parent's rows. `parent` is +0 and owned by
+    // the sub-image, so `subimage` must stay retained for as long as `image` is used.
+    RetainPtr subimage = image;
+    IntPoint origin;
+    CGImageRef parent = nullptr;
+    CGPoint parentOrigin { };
+    if (CGImageIsSubimage(image.get(), &parent, &parentOrigin) && parent) {
+        image = parent;
+        origin = IntPoint(parentOrigin);
+    }
+
+    auto format = pixelBufferFormat(image.get());
+    if (!format)
+        return false;
+
+    RetainPtr provider = CGImageGetDataProvider(image.get());
+    if (!provider)
+        return false;
+
+    RetainPtr<CFDataRef> data;
+    @try {
+        data = adoptCF(CGDataProviderCopyData(provider.get()));
+    } @catch (id exception) {
+        LOG_WITH_STREAM(Images, stream << "NativeImage::withBorrowedPixels() CGDataProviderCopyData raised for a "
+            << cgImageRect(image.get()).size() << " image with bytesPerRow " << CGImageGetBytesPerRow(image.get()));
+    }
+    if (!data)
+        return false;
+
+    auto bytesPerRow = CGImageGetBytesPerRow(image.get());
+    if (bytesPerRow > std::numeric_limits<unsigned>::max())
+        return false;
+
+    // Validate against the parent's geometry, then narrow to the sub-image rect. create()
+    // accepts a data provider larger than the image needs and rejects one that is too small.
+    auto parentView = validatedConversionView(*format, cgImageRect(image.get()).size(), static_cast<unsigned>(bytesPerRow), WTF::span(data.get()));
+    if (!parentView)
+        return false;
+    auto view = conversionSubview(*parentView, cgImageRect(image.get()).size(), { origin, cgImageRect(subimage.get()).size() });
+    if (!view)
+        return false;
+
+    functor(*view);
+    return true;
+}
+
+bool NativeImage::readPixels(const PixelBufferFormat& format, std::span<uint8_t> destination, unsigned bytesPerRow) const
+{
+    auto size = this->size();
+    if (size.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    // CGBitmapContext writes the whole stride, including any padding on the last row, so the
+    // destination has to hold every byte of every row rather than PixelBuffer::minimumBufferSize().
+    auto tightlyPackedBytesPerRow = PixelBuffer::tightlyPackedBytesPerRow(format.pixelFormat, size.width());
+    if (tightlyPackedBytesPerRow.hasOverflowed() || bytesPerRow < tightlyPackedBytesPerRow.value()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    auto requiredBytes = CheckedSize { bytesPerRow } * static_cast<size_t>(size.height());
+    if (requiredBytes.hasOverflowed() || destination.size() < requiredBytes.value()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    // CGBitmapContext always premultiplies, so draw premultiplied and let the caller's
+    // conversion unpremultiply if it asked for that.
+    auto bitmapInfo = [&]() -> std::optional<CGBitmapInfo> {
+        switch (format.pixelFormat) {
+        case PixelFormat::RGBA8:
+            return static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Big) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast);
+        case PixelFormat::BGRA8:
+            return static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst);
+        case PixelFormat::BGRX8:
+            return static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaNoneSkipFirst);
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        case PixelFormat::RGBA16F:
+            return static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast);
+#endif
+        default:
+            return std::nullopt;
+        }
+    }();
+    if (!bitmapInfo)
+        return false;
+
+    auto bitsPerComponent = PixelBuffer::bytesPerPixelComponent(format.pixelFormat) * 8;
+    RetainPtr bitmapContext = adoptCF(CGBitmapContextCreate(destination.data(), size.width(), size.height(), bitsPerComponent, bytesPerRow, protect(format.colorSpace.platformColorSpace()).get(), *bitmapInfo));
     if (!bitmapContext)
-        return std::nullopt;
+        return false;
 
     CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
-    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), platformImage().get());
+    CGContextSetInterpolationQuality(bitmapContext.get(), kCGInterpolationNone);
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, size.width(), size.height()), platformImage().get());
 
-    if (!pixel[3])
-        return Color::transparentBlack;
-
-    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+    // The alpha the draw produced is premultiplied. Tell withPixels() the truth by
+    // converting in place when the caller asked for unpremultiplied.
+    if (format.alphaFormat == AlphaPremultiplication::Unpremultiplied && !pixelFormatIsOpaque(format.pixelFormat)) {
+        PixelBufferFormat premultiplied { AlphaPremultiplication::Premultiplied, format.pixelFormat, format.colorSpace };
+        ConstPixelBufferConversionView source { premultiplied, bytesPerRow, destination };
+        PixelBufferConversionView unpremultiplied { format, bytesPerRow, destination };
+        convertImagePixels(source, unpremultiplied, size);
+    }
+    return true;
 }
 
 RefPtr<NativeImage> NativeImage::rotatedImage(ImageOrientation orientation)

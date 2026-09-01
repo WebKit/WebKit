@@ -26,11 +26,17 @@
 #include "config.h"
 #include "NativeImage.h"
 
+#include "Color.h"
+#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "IntRect.h"
+#include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 #include "RenderingMode.h"
 #include <wtf/Locker.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -95,6 +101,78 @@ void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage) const
     Locker locker { m_lock };
     m_platformImage = WTF::move(platformImage);
     // Intention is that the contents do not change, so properties are not recomputed.
+}
+
+bool NativeImage::withPixels(const PixelBufferFormat& fallbackFormat, NOESCAPE const PixelSourceFunctor& functor) const
+{
+    if (withBorrowedPixels(functor))
+        return true;
+
+    // The pixels cannot be read directly, so materialize them in the fallback format.
+    auto size = this->size();
+    auto bytesPerRow = PixelBuffer::tightlyPackedBytesPerRow(fallbackFormat.pixelFormat, size.width());
+    if (bytesPerRow.hasOverflowed())
+        return false;
+    auto bufferSize = PixelBuffer::minimumBufferSize(fallbackFormat.pixelFormat, size, bytesPerRow.value());
+    if (bufferSize.hasOverflowed() || !bufferSize.value())
+        return false;
+
+    auto buffer = MallocSpan<uint8_t>::tryMalloc(bufferSize.value());
+    if (!buffer)
+        return false;
+    if (!readPixels(fallbackFormat, buffer.mutableSpan(), bytesPerRow.value()))
+        return false;
+
+    auto view = validatedConversionView(fallbackFormat, size, bytesPerRow.value(), buffer.span());
+    if (!view)
+        return false;
+    functor(*view);
+    return true;
+}
+
+bool NativeImage::copyPixels(const IntRect& sourceRect, const PixelBufferConversionView& destination) const
+{
+    bool copied = false;
+    withPixels(destination.format, [&, size = this->size()](const ConstPixelBufferConversionView& view) {
+        auto source = conversionSubview(view, size, sourceRect);
+        if (!source)
+            return;
+        convertImagePixels(*source, destination, sourceRect.size());
+        copied = true;
+    });
+    return copied;
+}
+
+RefPtr<PixelBuffer> NativeImage::getPixelBuffer(const PixelBufferFormat& format, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
+{
+    auto bytesPerRow = PixelBuffer::tightlyPackedBytesPerRow(format.pixelFormat, sourceRect.width());
+    if (bytesPerRow.hasOverflowed())
+        return nullptr;
+
+    RefPtr pixelBuffer = allocator.createPixelBuffer(format, sourceRect.size());
+    if (!pixelBuffer)
+        return nullptr;
+
+    PixelBufferConversionView destination { format, bytesPerRow.value(), pixelBuffer->bytes() };
+    if (!copyPixels(sourceRect, destination))
+        return nullptr;
+    return pixelBuffer;
+}
+
+std::optional<Color> NativeImage::singlePixelSolidColor() const
+{
+    if (size() != IntSize(1, 1))
+        return std::nullopt;
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    std::array<uint8_t, 4> pixel;
+    PixelBufferConversionView destination { format, pixel.size(), pixel };
+    if (!copyPixels({ { }, { 1, 1 } }, destination))
+        return std::nullopt;
+
+    if (!pixel[3])
+        return Color::transparentBlack;
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 #if !USE(CG)

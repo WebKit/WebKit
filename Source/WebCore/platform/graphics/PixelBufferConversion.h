@@ -26,10 +26,12 @@
 #pragma once
 
 #include <WebCore/PixelBufferFormat.h>
+#include <optional>
 #include <span>
 
 namespace WebCore {
 
+class IntRect;
 class IntSize;
 
 struct PixelBufferConversionView {
@@ -43,6 +45,13 @@ struct ConstPixelBufferConversionView {
     unsigned bytesPerRow;
     std::span<const uint8_t> rows;
 };
+
+// The formats convertImagePixels() can read and write.
+WEBCORE_EXPORT bool NODELETE isSupportedPixelBufferConversionFormat(PixelFormat);
+
+WEBCORE_EXPORT std::optional<ConstPixelBufferConversionView> validatedConversionView(const PixelBufferFormat&, const IntSize&, unsigned bytesPerRow, std::span<const uint8_t> rows);
+
+WEBCORE_EXPORT std::optional<ConstPixelBufferConversionView> conversionSubview(const ConstPixelBufferConversionView&, const IntSize& viewSize, const IntRect&);
 
 WEBCORE_EXPORT void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize&);
 
