@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- AXReplaceRangeWithText resolved the character range it was handed by walking CharacterOffsets. A
+     CharacterOffset names a node and a side of it, so at a block boundary one character index belongs
+     to two of them: the position after the <br> that ends the preceding block, and the position
+     starting the next block. The walk picked the former, which is not a caret position -- a <br>
+     ending a block is collapsed out by rendering -- so it canonicalized back over the <br> and the
+     text landed one character early, swallowing a line break.
+
+     This is the shape pressing Return in a contenteditable produces, because the default paragraph
+     separator is a <div> and the block holding the typed text also carries a trailing <br>. It takes
+     three lines to see: the first Return leaves no preceding block to land in. -->
+<div id="typed" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<!-- The same rendered text in shapes that already worked, so a fix that only handles one is visible. -->
+<div id="blocks" contenteditable style="width: 200px">alpha<div>bravo</div><div><br></div></div>
+<div id="brs" contenteditable style="width: 200px">alpha<br>bravo<br><br></div>
+<!-- One line shorter. This is the shape a two-line attempt reaches, and it was always correct. -->
+<div id="short" contenteditable style="width: 200px">alpha<div><br></div></div>
+<!-- Longer, to show the answer does not drift with distance into the content. -->
+<div id="longer" contenteditable style="width: 200px">alpha<div>bravo<br></div><div>charlie<br></div><div><br></div></div>
+<!-- Ranges naming characters the value does not have. Each case gets its own element, so no
+     measurement runs against a value an earlier edit has already changed. -->
+<div id="pastEnd" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<div id="farPastEnd" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<div id="pastEndByLength" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<!-- Interior indices, correct throughout. -->
+<div id="interior" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<div id="replacing" contenteditable style="width: 200px">alpha<div>bravo<br></div><div><br></div></div>
+<!-- A field with no text still has the one position an insertion can name. -->
+<div id="empty" contenteditable style="width: 200px"></div>
+<!-- A native text control takes HTMLTextFormControlElement::setRangeText instead. -->
+<textarea id="textarea" style="width: 200px; height: 60px">alpha
+bravo
+</textarea>
+<!-- Left alone. A request that ignored its range would land wherever the caret is, which is here. -->
+<div id="bystander" contenteditable style="width: 200px">bystander</div>
+
+<script>
+var output = "Asserts that AXReplaceRangeWithText writes at the character index it is given, including the\n"
+    + "index that starts a block, and clamps a range running past the end of the value to the end\n"
+    + "rather than writing at the current selection.\n\n";
+
+// `at`/`length` are the requested range, `want` the element's innerText afterwards. `returns` defaults
+// to true.
+var cases = [
+    { id: "typed", label: "block ending in <br>, index starting the next block", at: 12, want: "alpha\nbravo\nY\n" },
+    { id: "blocks", label: "block without a trailing <br>", at: 12, want: "alpha\nbravo\nY\n" },
+    { id: "brs", label: "<br>-separated lines", at: 12, want: "alpha\nbravo\nY\n" },
+    { id: "short", label: "one line, index starting the blank second line", at: 6, want: "alpha\nY\n" },
+    { id: "longer", label: "two blocks ending in <br>", at: 20, want: "alpha\nbravo\ncharlie\nY\n" },
+    { id: "interior", label: "interior index", at: 6, want: "alpha\nYbravo\n\n" },
+    { id: "replacing", label: "replacing a run of characters", at: 6, length: 5, want: "alpha\nY\n\n" },
+    { id: "empty", label: "field with no text", at: 0, want: "Y" },
+    { id: "textarea", label: "textarea, index starting the blank final line", at: 12, want: "alpha\nbravo\nY" },
+    // A range naming characters the value does not have is clamped to the end of the value rather
+    // than refused, the way setRangeText clamps for a native control. The caller gets its text
+    // somewhere sensible in the field it addressed instead of losing it.
+    { id: "pastEnd", label: "location one past the end of the value", at: 14, want: "alpha\nbravo\nY\n" },
+    { id: "farPastEnd", label: "location far past the end of the value", at: 99, want: "alpha\nbravo\nY\n" },
+    // Replacing through the end leaves the block's own trailing line break, the same way the
+    // interior replacement above does.
+    { id: "pastEndByLength", label: "length running past the end of the value", at: 6, length: 99, want: "alpha\nY\n" },
+];
+
+var axField, field, bystander;
+
+// The editor applies an accessibility edit asynchronously, so give it a turn to land before reading
+// the DOM back. A refused request changes nothing, so there is nothing to wait for; wait a turn
+// either way and assert on the resulting text.
+function editSettled() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+function textOf(element) {
+    return element.isContentEditable ? element.innerText : element.value;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        bystander = document.getElementById("bystander");
+
+        // Park the caret outside every measured field, so a request that ignored its range would
+        // corrupt the bystander rather than land plausibly in the field it named.
+        bystander.focus();
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        var caret = document.createRange();
+        caret.selectNodeContents(bystander);
+        caret.collapse(false);
+        selection.addRange(caret);
+
+        for (var testCase of cases) {
+            field = document.getElementById(testCase.id);
+            axField = await waitForElementById(testCase.id);
+            if (!axField) {
+                output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n\n`;
+                continue;
+            }
+
+            var length = testCase.length || 0;
+            output += `${testCase.label}: value ${JSON.stringify(axField.stringAttributeValue("AXValue"))}, replacing {${testCase.at}, ${length}}\n`;
+            output += expect(`axField.replaceTextInRange("Y", ${testCase.at}, ${length})`, testCase.returns === false ? "false" : "true");
+            await editSettled();
+            output += expect("textOf(field)", JSON.stringify(testCase.want));
+            output += expect("textOf(bystander)", JSON.stringify("bystander"));
+            output += "\n";
+        }
+
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
