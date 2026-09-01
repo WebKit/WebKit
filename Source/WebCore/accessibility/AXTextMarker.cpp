@@ -931,8 +931,9 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
         return !index ? 0 : -1;
 
     // Walk lines with nextLineRange, the same helper characterRangeForLine uses, so the two APIs
-    // stay consistent: return the line whose [start, end) character range contains |index|, or -1
-    // if |index| is past the end.
+    // stay consistent: return the line whose [start, end) character range contains |index|. The
+    // index one past the last character belongs to the last line — that is where the caret sits at
+    // the end of a field. Anything beyond that is -1.
     unsigned lineStart = 0;
     unsigned lineNumber = 0;
     auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
@@ -948,7 +949,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
         if (index < lineStart + lineSpan)
             return static_cast<int>(lineNumber);
         if (!nextRange)
-            break;
+            return index == lineStart + lineSpan ? static_cast<int>(lineNumber) : -1;
         lineStart += lineSpan;
         currentLineRange = WTF::move(nextRange);
         ++lineNumber;

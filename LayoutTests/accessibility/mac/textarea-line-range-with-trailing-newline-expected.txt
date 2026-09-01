@@ -13,7 +13,8 @@ PASS: axField.stringForTextMarkerRange(lineRange) === ""
 PASS: axField.textMarkerRangeLength(lineRange) === 0
 PASS: lineEnd.isEqual(caret) === true
 PASS: axField.rangeForLine(lastLine) === "{9, 0}"
-PASS: axField.lineForIndex(indexPastEnd) === -1
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
 
 trailing newline, caret on the first line: value "one two \n", caret at 4
 PASS: axField.numberOfCharacters === 9
@@ -25,7 +26,8 @@ PASS: axField.numberOfCharacters === 14
 PASS: axField.stringForTextMarkerRange(lineRange) === "three"
 PASS: axField.textMarkerRangeLength(lineRange) === 5
 PASS: axField.rangeForLine(lastLine) === "{9, 5}"
-PASS: axField.lineForIndex(indexPastEnd) === -1
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
 
 leading newline: value "one \ntwo three", caret at 5
 PASS: axField.numberOfCharacters === 14

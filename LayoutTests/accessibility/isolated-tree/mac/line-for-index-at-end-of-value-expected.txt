@@ -1,0 +1,64 @@
+Asserts that AXLineForIndex answers for the index one past the last character, the caret's
+position at the end of a field, and only reports out of range beyond that. Also asserts that it
+agrees with AXInsertionPointLineNumber about that same position.
+
+textarea, one line: value "abc"
+PASS: axField.numberOfCharacters === 3
+PASS: axField.lineForIndex(indexPastEnd) === 0
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 0
+
+textarea, empty value: value ""
+PASS: axField.numberOfCharacters === 0
+PASS: axField.lineForIndex(indexPastEnd) === 0
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 0
+
+textarea, value ends in a newline: value "alpha\nbravo\n"
+PASS: axField.numberOfCharacters === 12
+PASS: axField.lineForIndex(indexPastEnd) === 2
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 2
+
+textarea, value does not end in a newline: value "alpha\nbravo"
+PASS: axField.numberOfCharacters === 11
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 1
+
+text input: value "abc"
+PASS: axField.numberOfCharacters === 3
+PASS: axField.lineForIndex(indexPastEnd) === 0
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 0
+
+contenteditable, <br>-separated lines: value "alpha\nbravo\n"
+PASS: axField.numberOfCharacters === 12
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 1
+
+contenteditable, blank final line: value "alpha\nbravo\n\n"
+PASS: axField.numberOfCharacters === 13
+PASS: axField.lineForIndex(indexPastEnd) === 2
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 2
+
+contenteditable, block-separated lines: value "alpha\nbravo"
+PASS: axField.numberOfCharacters === 11
+PASS: axField.lineForIndex(indexPastEnd) === 1
+PASS: axField.lineForIndex(indexBeyondEnd) === -1
+PASS: axField.insertionPointLineNumber === 1
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+alpha
+bravo
+alpha
+bravo
+
+alpha
+bravo

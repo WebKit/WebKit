@@ -6,7 +6,7 @@ PASS: lineRange === "{0, 7}"
 PASS: axField.stringForRange(0, 7) === "one two"
 PASS: lineRange === "{8, 5}"
 PASS: axField.stringForRange(8, 5) === "three"
-PASS: lineIndexes.join(',') === "0,0,0,0,0,0,0,0,1,1,1,1,1,-1"
+PASS: lineIndexes.join(',') === "0,0,0,0,0,0,0,0,1,1,1,1,1,1,-1"
 
 four block-separated lines: value "aaa\nbbb\nccc\nddd"
 PASS: axField.numberOfCharacters === 15
@@ -18,7 +18,7 @@ PASS: lineRange === "{8, 3}"
 PASS: axField.stringForRange(8, 3) === "ccc"
 PASS: lineRange === "{12, 3}"
 PASS: axField.stringForRange(12, 3) === "ddd"
-PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,-1"
 
 four <br>-separated lines: value "aaa\nbbb\nccc\nddd"
 PASS: axField.numberOfCharacters === 15
@@ -30,7 +30,7 @@ PASS: lineRange === "{8, 4}"
 PASS: axField.stringForRange(8, 4) === "ccc\n"
 PASS: lineRange === "{12, 3}"
 PASS: axField.stringForRange(12, 3) === "ddd"
-PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,-1"
 
 textarea, newlines in the value: value "aaa\nbbb\nccc\nddd"
 PASS: axField.numberOfCharacters === 15
@@ -42,7 +42,7 @@ PASS: lineRange === "{8, 4}"
 PASS: axField.stringForRange(8, 4) === "ccc\n"
 PASS: lineRange === "{12, 3}"
 PASS: axField.stringForRange(12, 3) === "ddd"
-PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,-1"
+PASS: lineIndexes.join(',') === "0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,-1"
 
 
 PASS successfullyParsed is true
