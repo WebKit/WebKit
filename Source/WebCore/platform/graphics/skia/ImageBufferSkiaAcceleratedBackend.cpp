@@ -77,6 +77,7 @@ public:
     }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaSwitchableCanvas);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferSkiaAcceleratedBackend);
 
 static inline bool shouldEnableDynamicMSAA()

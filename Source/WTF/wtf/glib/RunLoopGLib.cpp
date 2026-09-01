@@ -33,6 +33,7 @@
 #include <wtf/BubbleSort.h>
 #include <wtf/MainThread.h>
 #include <wtf/SafeStrerror.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/ActivityObserver.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -44,6 +45,8 @@
 #endif
 
 namespace WTF {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ActivityObserver);
 
 typedef struct {
     GSource source;

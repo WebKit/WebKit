@@ -35,7 +35,6 @@
 #include "Map.h"
 #include "Mutex.h"
 #include "TZoneHeap.h"
-#include <CommonCrypto/CommonDigest.h>
 #include <mutex>
 
 #if BUSE(LIBPAS)
@@ -87,9 +86,6 @@ class TZoneHeapManager {
     };
 
     static const unsigned typeNameLen = 12;
-
-    typedef uint64_t SHA256ResultAsUnsigned[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];
-    static_assert(!(CC_SHA256_DIGEST_LENGTH % sizeof(uint64_t)));
 
     struct Bucket {
         bmalloc_type type;

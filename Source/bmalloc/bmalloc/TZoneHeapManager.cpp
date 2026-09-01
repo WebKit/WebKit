@@ -29,14 +29,17 @@
 
 #include "BCompiler.h"
 #include "BPlatform.h"
+#include "CryptoRandom.h"
 #include "ProcessCheck.h"
 #include "Sizes.h"
 #include "TZoneLog.h"
 #include "bmalloc.h"
+#include <array>
+#include <cinttypes>
 
 #if BOS(DARWIN)
+#include <CommonCrypto/CommonDigest.h>
 #include <CommonCrypto/CommonHMAC.h>
-#include <array>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/sysctl.h>
@@ -156,6 +159,8 @@ void TZoneHeapManager::init()
 {
     RELEASE_BASSERT(s_state == State::Uninitialized);
 
+    alignas(uint64_t) std::array<unsigned char, 32> defaultSeed;
+
     if constexpr (verbose)
         TZONE_LOG_DEBUG("TZoneHeapManager initialization ");
 
@@ -255,13 +260,10 @@ void TZoneHeapManager::init()
         TZONE_LOG_DEBUG("\n");
     }
 
-    alignas(8) std::array<unsigned char, CC_SHA256_DIGEST_LENGTH> defaultSeed;
+    static_assert(defaultSeed.size() == CC_SHA256_DIGEST_LENGTH);
     (void)CC_SHA256(&rawSeed, rawSeedLength, defaultSeed.data());
 #else // OS(DARWIN) => !OS(DARWIN)
-    if constexpr (verbose)
-        TZONE_LOG_DEBUG("using static seed\n");
-
-    const std::array<unsigned char, CC_SHA1_DIGEST_LENGTH> defaultSeed = { "DefaultSeed\x12\x34\x56\x78\x9a\xbc\xde\xf0" };
+    cryptoRandom(defaultSeed.data(), defaultSeed.size());
 #endif // OS(DARWIN) => !OS(DARWIN)
 
     const uint64_t* seedPtr = reinterpret_cast<const uint64_t*>(defaultSeed.data());
@@ -541,8 +543,8 @@ BINLINE unsigned TZoneHeapManager::bucketForKey(const TZoneSpecification& spec, 
 
     if constexpr (verboseBucketSelection) {
         TZONE_LOG_DEBUG("Choosing Bucket heapRef: %p size: %u align: %u", spec.addressOfHeapRef, spec.size, spec.alignment);
-        TZONE_LOG_DEBUG(" seed { %llu }\n", m_tzoneKeySeed);
-        TZONE_LOG_DEBUG("Result: { %llu }  bucket: %u\n", random, bucket);
+        TZONE_LOG_DEBUG(" seed { %" PRIu64 " }\n", m_tzoneKeySeed);
+        TZONE_LOG_DEBUG("Result: { %" PRIu64 " }  bucket: %u\n", random, bucket);
     }
 
     return bucket;
