@@ -57,7 +57,7 @@ function test()
 
             InspectorTest.log("Moving #sibling-b to be a child of #sibling-a via moveBefore()...");
             await Promise.all([
-                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.Inserted),
                 InspectorTest.evaluateInPage(`moveSiblingIntoOther()`),
             ]);
             InspectorTest.log("Move complete.");
@@ -83,7 +83,7 @@ function test()
 
             InspectorTest.log("Moving #sibling-b back out to be a child of #container via moveBefore()...");
             await Promise.all([
-                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.Inserted),
                 InspectorTest.evaluateInPage(`moveChildBackToBeSibling()`),
             ]);
             InspectorTest.log("Move complete.");
@@ -106,3 +106,4 @@ function test()
 </div>
 </body>
 </html>
+

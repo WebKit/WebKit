@@ -13,16 +13,16 @@ function test() {
         return frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
     }
 
-    // NodeInserted is manager-wide and also fires for the page target, so filter by owningTarget
+    // Inserted is node-class-wide and also fires for the page target, so filter by owningTarget
     // rather than taking the first event.
     function awaitFrameTargetNodeInserted(predicate) {
         return new Promise((resolve) => {
-            WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function listener(event) {
-                let node = event.data.node;
-                if (!node || node.owningTarget !== frameTarget || !predicate(node, event.data))
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, function listener(event) {
+                let node = event.target;
+                if (!node || node.owningTarget !== frameTarget || !predicate(node))
                     return;
-                WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, listener, null);
-                resolve(event.data);
+                WI.DOMNode.removeEventListener(WI.DOMNode.Event.Inserted, listener, null);
+                resolve(node);
             });
         });
     }
@@ -64,8 +64,8 @@ function test() {
             let eventPromise = awaitFrameTargetNodeInserted((node) => node.isShadowRoot());
             evaluateInFrame("attachShadowToHost()");
 
-            let {node, parent} = await eventPromise;
-            InspectorTest.expectEqual(parent, hostNode, "Shadow root's parent should be #host.");
+            let node = await eventPromise;
+            InspectorTest.expectEqual(node.parentNode, hostNode, "Shadow root's parent should be #host.");
             InspectorTest.expectThat(node.isShadowRoot(), "Inserted node should be a shadow root.");
             InspectorTest.expectEqual(node.shadowRootType(), WI.DOMNode.ShadowRootType.Open, "Shadow root should be open.");
             InspectorTest.expectEqual(node.owningTarget, frameTarget, "Shadow root should be owned by the frame target, not the main page.");
@@ -87,3 +87,4 @@ function test() {
 <iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/shadow-root-frame.html"></iframe>
 </body>
 </html>
+

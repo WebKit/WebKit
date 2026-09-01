@@ -28,26 +28,26 @@ function test() {
     }
 
     // Only consider events whose node belongs to our frame target (ignore any page-target churn).
-    function belongsToFrame(data) {
-        return !data.node || data.node.owningTarget === frameTarget;
+    function belongsToFrame(node) {
+        return node.owningTarget === frameTarget;
     }
 
-    // Collect every matching DOMManager event into a growing array until stop() is called.
+    // Collect every matching DOMNode event into a growing array until stop() is called.
     // Returned so a single mutation that fires multiple events can be asserted on as a set,
     // which is exactly what surfaces back-to-back / duplicate / wrong-node bugs.
-    function collectDOMManagerEvents(eventType, filter) {
+    function collectDOMNodeEvents(eventType, filter) {
         let collected = [];
         let listener = (event) => {
-            if (!belongsToFrame(event.data))
+            if (!belongsToFrame(event.target))
                 return;
-            if (filter && !filter(event.data))
+            if (filter && !filter(event))
                 return;
-            collected.push(event.data);
+            collected.push(event);
         };
-        WI.domManager.addEventListener(eventType, listener);
+        WI.DOMNode.addEventListener(eventType, listener);
         return {
             events: collected,
-            stop() { WI.domManager.removeEventListener(eventType, listener); },
+            stop() { WI.DOMNode.removeEventListener(eventType, listener); },
         };
     }
 
@@ -98,7 +98,7 @@ function test() {
             InspectorTest.expectEqual(widget.customElementState(), WI.DOMNode.CustomElementState.Waiting, "<my-widget> should start 'waiting'.");
             InspectorTest.expectEqual(gadget.customElementState(), WI.DOMNode.CustomElementState.Waiting, "<my-gadget> should start 'waiting'.");
 
-            let collector = collectDOMManagerEvents(WI.DOMManager.Event.CustomElementStateChanged);
+            let collector = collectDOMNodeEvents(WI.DOMNode.Event.CustomElementStateChanged);
 
             // Fire both upgrades back-to-back in a single frame turn (no await between them).
             // Each element transitions through a transient failed/precustomized state before
@@ -108,9 +108,9 @@ function test() {
             await waitUntil(() => widget.customElementState() === WI.DOMNode.CustomElementState.Custom && gadget.customElementState() === WI.DOMNode.CustomElementState.Custom, "both custom elements to reach 'custom'");
             collector.stop();
 
-            let widgetEvents = collector.events.filter((d) => d.node === widget);
-            let gadgetEvents = collector.events.filter((d) => d.node === gadget);
-            let strayEvents = collector.events.filter((d) => d.node !== widget && d.node !== gadget);
+            let widgetEvents = collector.events.filter((event) => event.target === widget);
+            let gadgetEvents = collector.events.filter((event) => event.target === gadget);
+            let strayEvents = collector.events.filter((event) => event.target !== widget && event.target !== gadget);
 
             InspectorTest.expectThat(widgetEvents.length >= 1, "<my-widget> should receive at least one customElementStateChanged event.");
             InspectorTest.expectThat(gadgetEvents.length >= 1, "<my-gadget> should receive at least one customElementStateChanged event.");
@@ -124,7 +124,7 @@ function test() {
         name: "PseudoElements.BothCoexist",
         description: "Adding ::before then ::after should fire two pseudoElementAdded events and track both types simultaneously without clobbering.",
         async test() {
-            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+            let collector = collectDOMNodeEvents(WI.DOMNode.Event.Inserted, (event) => event.target.parentNode === hostNode);
 
             // Two separate mutations, each creating exactly one pseudo element; collect both.
             await evaluateInFrame("addHostClass('b')");
@@ -133,8 +133,8 @@ function test() {
             collector.stop();
 
             InspectorTest.expectEqual(collector.events.length, 2, "Exactly two pseudoElementAdded events should arrive for #host.");
-            for (let {node} of collector.events)
-                InspectorTest.expectThat(node.isPseudoElement(), "Each inserted node should be a pseudo element.");
+            for (let event of collector.events)
+                InspectorTest.expectThat(event.target.isPseudoElement(), "Each inserted node should be a pseudo element.");
 
             InspectorTest.expectEqual(hostNode.pseudoElements().size, 2, "#host should track two pseudo elements.");
             InspectorTest.expectEqual(pseudoNames(hostNode), "after,before", "#host should track exactly ::before and ::after.");
@@ -155,12 +155,12 @@ function test() {
             InspectorTest.expectNotNull(afterNode, "Precondition: ::after present.");
 
             let removed = null;
-            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node.isPseudoElement());
+            let collector = collectDOMNodeEvents(WI.DOMNode.Event.Removed, (event) => event.target.isPseudoElement());
 
             await evaluateInFrame("removeHostClass('b')"); // removes ::before, keeps ::after
             await waitUntil(() => collector.events.length >= 1, "one pseudoElementRemoved event");
             collector.stop();
-            removed = collector.events.length ? collector.events[0].node : null;
+            removed = collector.events.length ? collector.events[0].target : null;
 
             InspectorTest.expectEqual(collector.events.length, 1, "Exactly one pseudoElementRemoved event should fire.");
             InspectorTest.expectThat(removed === beforeNode, "The removed node should be the ::before node, not ::after.");
@@ -175,7 +175,7 @@ function test() {
         name: "PseudoElements.RemoveRemaining",
         description: "Removing ::after should leave #host with no pseudo elements.",
         async test() {
-            let collector = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node.isPseudoElement());
+            let collector = collectDOMNodeEvents(WI.DOMNode.Event.Removed, (event) => event.target.isPseudoElement());
 
             await evaluateInFrame("removeHostClass('a')");
             await waitUntil(() => collector.events.length >= 1, "one pseudoElementRemoved event");
@@ -192,7 +192,7 @@ function test() {
         description: "Add ::before, remove it, then add ::before again. The re-added node must be a fresh instance and the old node must be destroyed (no stale-node leak / duplicate-key overwrite).",
         async test() {
             // Add ::before (first instance).
-            let add1 = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+            let add1 = collectDOMNodeEvents(WI.DOMNode.Event.Inserted, (event) => event.target.parentNode === hostNode);
             await evaluateInFrame("addHostClass('b')");
             await waitUntil(() => add1.events.length >= 1, "first ::before add");
             add1.stop();
@@ -200,7 +200,7 @@ function test() {
             InspectorTest.expectNotNull(firstBefore, "First ::before should be present.");
 
             // Remove it.
-            let rem = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node === firstBefore);
+            let rem = collectDOMNodeEvents(WI.DOMNode.Event.Removed, (event) => event.target === firstBefore);
             await evaluateInFrame("removeHostClass('b')");
             await waitUntil(() => rem.events.length >= 1, "::before removal");
             rem.stop();
@@ -208,7 +208,7 @@ function test() {
             InspectorTest.expectThat(firstBefore.destroyed, "The first ::before node should be marked destroyed.");
 
             // Add ::before again (second instance).
-            let add2 = collectDOMManagerEvents(WI.DOMManager.Event.NodeInserted, (data) => data.parent === hostNode);
+            let add2 = collectDOMNodeEvents(WI.DOMNode.Event.Inserted, (event) => event.target.parentNode === hostNode);
             await evaluateInFrame("addHostClass('b')");
             await waitUntil(() => add2.events.length >= 1, "second ::before add");
             add2.stop();
@@ -221,7 +221,7 @@ function test() {
             InspectorTest.expectThat(hostNode.pseudoElements().get(Before) === secondBefore, "The Before map entry should point at the fresh node.");
 
             // Cleanup so the suite ends in a known state.
-            let cleanup = collectDOMManagerEvents(WI.DOMManager.Event.NodeRemoved, (data) => data.node === secondBefore);
+            let cleanup = collectDOMNodeEvents(WI.DOMNode.Event.Removed, (event) => event.target === secondBefore);
             await evaluateInFrame("removeHostClass('b')");
             await waitUntil(() => cleanup.events.length >= 1, "cleanup removal");
             cleanup.stop();
@@ -236,3 +236,4 @@ function test() {
 <p>Tests that a cross-origin iframe's FrameDOMAgent dispatches DOM.customElementStateChanged, DOM.pseudoElementAdded, and DOM.pseudoElementRemoved to its Frame Target under Site Isolation, including multiple, repeated, and interleaved events.</p>
 <iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/custom-elements-and-pseudo-elements-frame.html"></iframe>
 </body>
+
