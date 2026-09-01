@@ -42,9 +42,12 @@ class NativeImage;
 
 namespace TestWebKitAPI {
 
-::testing::AssertionResult imageBufferPixelIs(WebCore::Color expected, const WebCore::ImageBuffer&, WebCore::FloatPoint);
-::testing::AssertionResult imagePixelIs(WebCore::Color expected, WebCore::Image&, WebCore::FloatPoint);
-::testing::AssertionResult imagePixelIs(WebCore::Color expected, WebCore::NativeImage&, WebCore::FloatPoint);
+// Compares a pixel against the expected color. The tolerance is the difference that is allowed
+// for each component, use a non-zero one for results that depend on the color matching of the
+// platform.
+::testing::AssertionResult imageBufferPixelIs(WebCore::Color expected, const WebCore::ImageBuffer&, WebCore::FloatPoint, unsigned tolerance = 0);
+::testing::AssertionResult imagePixelIs(WebCore::Color expected, WebCore::Image&, WebCore::FloatPoint, unsigned tolerance = 0);
+::testing::AssertionResult imagePixelIs(WebCore::Color expected, WebCore::NativeImage&, WebCore::FloatPoint, unsigned tolerance = 0);
 
 }
 

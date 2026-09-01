@@ -36,35 +36,45 @@
 namespace TestWebKitAPI {
 using namespace WebCore;
 
-::testing::AssertionResult imageBufferPixelIs(Color expected, const ImageBuffer& imageBuffer, FloatPoint point)
+static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point)
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer.getPixelBuffer(format, enclosingIntRect(FloatRect { point, FloatSize { 1, 1 } }));
-    auto got = Color { SRGBA<uint8_t> { pixelBuffer->item(0), pixelBuffer->item(1), pixelBuffer->item(2), pixelBuffer->item(3) } };
-    if (got != expected) {
+    return Color { SRGBA<uint8_t> { pixelBuffer->item(0), pixelBuffer->item(1), pixelBuffer->item(2), pixelBuffer->item(3) } };
+}
+
+::testing::AssertionResult imageBufferPixelIs(Color expected, const ImageBuffer& imageBuffer, FloatPoint point, unsigned tolerance)
+{
+    auto got = imageBufferPixelAt(imageBuffer, point);
+    auto [gotRed, gotGreen, gotBlue, gotAlpha] = got.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto [expectedRed, expectedGreen, expectedBlue, expectedAlpha] = expected.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto differs = [&](uint8_t a, uint8_t b) {
+        return static_cast<unsigned>(a > b ? a - b : b - a) > tolerance;
+    };
+    if (differs(gotRed, expectedRed) || differs(gotGreen, expectedGreen) || differs(gotBlue, expectedBlue) || differs(gotAlpha, expectedAlpha)) {
         // Use this to debug the contents in the browser.
         // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().data());
-        return ::testing::AssertionFailure() << "color is not expected at " << point << ". Got: " << got << ", expected: " << expected << ".";
+        return ::testing::AssertionFailure() << "color is not expected at " << point << ". Got: " << got << ", expected: " << expected << " with tolerance " << tolerance << ".";
     }
     return ::testing::AssertionSuccess();
 }
 
-::testing::AssertionResult imagePixelIs(Color expected, Image& image, FloatPoint point)
+::testing::AssertionResult imagePixelIs(Color expected, Image& image, FloatPoint point, unsigned tolerance)
 {
     RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
-    return imageBufferPixelIs(expected, *buffer, { 0, 0 });
+    return imageBufferPixelIs(expected, *buffer, { 0, 0 }, tolerance);
 }
 
-::testing::AssertionResult imagePixelIs(Color expected, NativeImage& image, FloatPoint point)
+::testing::AssertionResult imagePixelIs(Color expected, NativeImage& image, FloatPoint point, unsigned tolerance)
 {
     RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawNativeImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
-    return imageBufferPixelIs(expected, *buffer, { 0, 0 });
+    return imageBufferPixelIs(expected, *buffer, { 0, 0 }, tolerance);
 }
 
 

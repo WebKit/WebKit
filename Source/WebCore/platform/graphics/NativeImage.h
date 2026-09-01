@@ -52,6 +52,7 @@ class FloatRect;
 class GraphicsContext;
 class IntSize;
 class NativeImageBackend;
+class PixelBuffer;
 struct ImageOrientation;
 struct ImagePaintingOptions;
 
@@ -74,6 +75,7 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>);
 #endif
+    WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool hasAlpha);
 
     WEBCORE_EXPORT virtual ~NativeImage();
 

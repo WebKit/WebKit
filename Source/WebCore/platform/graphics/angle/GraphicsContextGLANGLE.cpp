@@ -369,7 +369,8 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 {
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    auto alphaFormat = contextAttributes().premultipliedAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
+    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;
@@ -3446,7 +3447,7 @@ RefPtr<NativeImage> GraphicsContextGLANGLE::copyNativeImage(SurfaceBuffer source
         return nullptr;
     // The first row of the read results is the bottom row of the image.
     flipPixelBufferRows(*pixelBuffer);
-    return createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
+    return NativeImage::create(pixelBuffer.releaseNonNull(), contextAttributes().alpha);
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()

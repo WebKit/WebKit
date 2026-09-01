@@ -33,6 +33,8 @@
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
 #include "ImageRotationSessionVT.h"
+#include "ImageUtilities.h"
+#include "PixelBuffer.h"
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Scope.h>
@@ -178,6 +180,71 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     // backed, avoids this non-adjustment of the image color space. rdar://88804270
     CGImageSetProperty(image.get(), CFSTR("CA_IOSURFACE_IMAGE"), kCFBooleanTrue);
     return NativeImage::create(WTF::move(image));
+}
+
+static CGImageAlphaInfo alphaInfoForAlphaLast(bool hasAlpha, bool isPremultiplied)
+{
+    if (!hasAlpha)
+        return kCGImageAlphaNoneSkipLast;
+    return isPremultiplied ? kCGImageAlphaPremultipliedLast : kCGImageAlphaLast;
+}
+
+static CGImageAlphaInfo alphaInfoForAlphaFirst(bool hasAlpha, bool isPremultiplied)
+{
+    if (!hasAlpha)
+        return kCGImageAlphaNoneSkipFirst;
+    return isPremultiplied ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst;
+}
+
+RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool hasAlpha)
+{
+    if (pixelBuffer->size().isEmpty())
+        return nullptr;
+    auto format = pixelBuffer->format();
+    bool isPremultiplied = format.alphaFormat == AlphaPremultiplication::Premultiplied;
+    // RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last
+    // BGRA == kCGBitmapByteOrder32Little | kCGImageAlpha*First
+    CGBitmapInfo bitmapInfo;
+    switch (format.pixelFormat) {
+    case PixelFormat::RGBA8:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Big) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(hasAlpha, isPremultiplied));
+        break;
+    case PixelFormat::BGRA8:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(alphaInfoForAlphaFirst(hasAlpha, isPremultiplied));
+        break;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(hasAlpha, isPremultiplied));
+        break;
+#endif
+    case PixelFormat::BGRX8:
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8:
+#endif
+        ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
+        return nullptr;
+    }
+
+    auto imageSize = pixelBuffer->size();
+    RetainPtr colorSpace = format.colorSpace.platformColorSpace();
+    auto data = pixelBuffer->bytes();
+    auto bytesPerPixel = PixelBuffer::bytesPerPixel(format.pixelFormat);
+    auto bitsPerComponent = PixelBuffer::bytesPerPixelComponent(format.pixelFormat) * 8;
+
+    verifyImageBufferIsBigEnough(data);
+
+    // On success, the data provider owns the pixel buffer reference.
+    RetainPtr dataProvider = adoptCF(CGDataProviderCreateWithData(pixelBuffer.ptr(), data.data(), data.size(), [] (void* context, const void*, size_t) {
+        static_cast<PixelBuffer*>(context)->deref();
+    }));
+    if (!dataProvider)
+        return nullptr;
+    SUPPRESS_RETAINPTR_CTOR_ADOPT (void) pixelBuffer.leakRef(); // NOLINT
+
+    return NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), bitsPerComponent, bytesPerPixel * 8, bytesPerPixel * imageSize.width(), colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 }
 
 IntSize NativeImage::size() const

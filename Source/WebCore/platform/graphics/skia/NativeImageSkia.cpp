@@ -29,8 +29,11 @@
 #if USE(SKIA)
 #include "GLContext.h"
 #include "GraphicsContextSkia.h"
+#include "PixelBuffer.h"
 #include "PlatformDisplay.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win ports
+#include <skia/core/SkColorSpace.h>
+#include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -51,6 +54,54 @@ RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, GrDire
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& platformImage, GrDirectContext* grContext)
 {
     return create(WTF::move(platformImage), grContext);
+}
+
+RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool hasAlpha)
+{
+    if (pixelBuffer->size().isEmpty())
+        return nullptr;
+    auto format = pixelBuffer->format();
+    SkColorType colorType = kRGBA_8888_SkColorType;
+    switch (format.pixelFormat) {
+    case PixelFormat::RGBA8:
+        colorType = kRGBA_8888_SkColorType;
+        break;
+    case PixelFormat::BGRA8:
+        colorType = kBGRA_8888_SkColorType;
+        break;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        colorType = kRGBA_F16_SkColorType;
+        break;
+#endif
+    case PixelFormat::BGRX8:
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8:
+#endif
+        ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
+        return nullptr;
+    }
+    auto imageSize = pixelBuffer->size();
+    SkAlphaType alphaType = kUnpremul_SkAlphaType;
+    if (!hasAlpha)
+        alphaType = kOpaque_SkAlphaType;
+    else if (format.alphaFormat == AlphaPremultiplication::Premultiplied)
+        alphaType = kPremul_SkAlphaType;
+    auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), colorType, alphaType, format.colorSpace.platformColorSpace());
+
+    SkPixmap pixmap(imageInfo, pixelBuffer->bytes().data(), imageInfo.minRowBytes());
+    // On success, the image owns the pixel buffer reference.
+    auto* pixelBufferContext = pixelBuffer.ptr();
+    auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
+        static_cast<PixelBuffer*>(context)->deref();
+    }, pixelBufferContext);
+    if (!image)
+        return nullptr;
+    SUPPRESS_RETAINPTR_CTOR_ADOPT (void) pixelBuffer.leakRef(); // NOLINT
+    return create(WTF::move(image));
 }
 
 NativeImage::NativeImage(PlatformImagePtr&& platformImage, std::optional<GainMap>&& gainMap, GrDirectContext* grContext)

@@ -32,7 +32,6 @@
 #include "GraphicsContextGLImageExtractor.h"
 #include "NativeImage.h"
 #include "NotImplemented.h"
-#include "PixelBuffer.h"
 #include "PlatformDisplay.h"
 #include "SharedBuffer.h"
 #include "SkiaSpanExtras.h"
@@ -145,25 +144,6 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;
-}
-
-RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
-{
-    ASSERT(!pixelBuffer->size().isEmpty());
-    auto imageSize = pixelBuffer->size();
-    SkAlphaType alphaType = kUnpremul_SkAlphaType;
-    if (!sourceContextAttributes.alpha)
-        alphaType = kOpaque_SkAlphaType;
-    else if (sourceContextAttributes.premultipliedAlpha)
-        alphaType = kPremul_SkAlphaType;
-    auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
-
-    Ref protectedPixelBuffer = pixelBuffer;
-    SkPixmap pixmap(imageInfo, pixelBuffer->bytes().data(), imageInfo.minRowBytes());
-    auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-        static_cast<PixelBuffer*>(context)->deref();
-    }, &protectedPixelBuffer.leakRef());
-    return NativeImage::create(WTF::move(image));
 }
 
 } // namespace WebCore

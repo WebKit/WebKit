@@ -32,8 +32,6 @@
 #include "GraphicsContextCG.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
-#include "ImageUtilities.h"
-#include "PixelBuffer.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContextGLNEON.h"
@@ -498,32 +496,6 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
         m_imageSourceUnpackAlignment = 1;
     }
     return true;
-}
-
-RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
-{
-    ASSERT(!pixelBuffer->size().isEmpty());
-    // Input is GL_RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last.
-    // GL_BGRA would be kCGBitmapByteOrder32Little | kCGImageAlpha*First.
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big;
-    if (!sourceContextAttributes.alpha)
-        bitmapInfo |= kCGImageAlphaNoneSkipLast;
-    else if (sourceContextAttributes.premultipliedAlpha)
-        bitmapInfo |= kCGImageAlphaPremultipliedLast;
-    else
-        bitmapInfo |= kCGImageAlphaLast;
-
-    Ref protectedPixelBuffer = pixelBuffer;
-    auto data = pixelBuffer->bytes();
-
-    verifyImageBufferIsBigEnough(data);
-
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data.data(), data.size(), [] (void* context, const void*, size_t) {
-        static_cast<PixelBuffer*>(context)->deref();
-    }));
-
-    auto imageSize = pixelBuffer->size();
-    return NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 }
 
 } // namespace WebCore

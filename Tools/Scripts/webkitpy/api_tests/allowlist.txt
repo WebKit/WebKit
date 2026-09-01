@@ -370,6 +370,7 @@ TestWebKitAPI.MixedContentChecker
 TestWebKitAPI.MonospaceFontsTest
 TestWebKitAPI.NSResponderTests
 TestWebKitAPI.NSTextPlaceholder
+TestWebKitAPI.NativeImageTests/AnyPixelBufferFormatTest
 TestWebKitAPI.Navigation
 TestWebKitAPI.Notification
 TestWebKitAPI.NowPlayingInfoArtwork

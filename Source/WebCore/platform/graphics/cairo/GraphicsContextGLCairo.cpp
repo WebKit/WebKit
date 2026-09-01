@@ -34,7 +34,6 @@
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
-#include "PixelBuffer.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 
@@ -101,35 +100,6 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     m_imageSourceFormat = DataFormat::BGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;
-}
-
-RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
-{
-    ASSERT(!pixelBuffer->size().isEmpty());
-
-    // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
-    Ref protectedPixelBuffer = pixelBuffer;
-    size_t totalBytes = pixelBuffer->bytes().size();
-    uint8_t* pixels = pixelBuffer->bytes().data();
-    for (size_t i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-
-    if (!sourceContextAttributes.premultipliedAlpha) {
-        for (size_t i = 0; i < totalBytes; i += 4) {
-            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
-            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
-            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
-        }
-    }
-
-    auto imageSize = pixelBuffer->size();
-    RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        pixels, CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
-    static cairo_user_data_key_t dataKey;
-    cairo_surface_set_user_data(imageSurface.get(), &dataKey, &protectedPixelBuffer.leakRef(), [](void* buffer) {
-        static_cast<PixelBuffer*>(buffer)->deref();
-    });
-    return NativeImage::create(WTF::move(imageSurface));
 }
 
 } // namespace WebCore

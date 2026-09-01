@@ -259,6 +259,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MediaReorderQueue.cpp
         Tests/WebCore/MixedContentChecker.cpp
         Tests/WebCore/MonospaceFontTests.cpp
+        Tests/WebCore/NativeImageTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
         Tests/WebCore/PODIntervalTree.cpp
         Tests/WebCore/ParsedContentRange.cpp
