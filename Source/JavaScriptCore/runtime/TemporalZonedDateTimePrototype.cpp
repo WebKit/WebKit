@@ -539,7 +539,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
         auto epochNsResult = TemporalCore::interpretISODateTimeOffset(
             roundedDate, roundedTime, TemporalCore::UseStartOfDay::No,
             OffsetBehaviour::Option, TemporalOffsetDisambiguation::Prefer,
-            *curOffsetResult, TemporalCore::MatchBehaviour::MatchMinutes,
+            *curOffsetResult, TemporalCore::MatchBehaviour::MatchExactly,
             zdt->timeZone(), TemporalDisambiguation::Compatible);
         if (!epochNsResult) [[unlikely]] {
             throwTemporalError(globalObject, scope, epochNsResult.error());
