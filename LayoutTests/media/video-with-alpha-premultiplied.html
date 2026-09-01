@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>video-with-alpha-premultiplied</title>
+  <style>
+    body { background: black; margin: 0; }
+    #video { position: absolute; left: 0px; top: 0px; }
+  </style>
+  <script src=media-file.js></script>
+  <script>
+    // The video frames are fully transparent (alpha 0) but their colour plane is
+    // opaque red. GStreamer delivers straight (unpremultiplied) alpha, so compositing
+    // the frame multiplies the colour by the alpha and nothing is drawn. If the frame
+    // is instead treated as premultiplied, the red is drawn at full strength over the
+    // black background and this test renders a red square.
+    var requirePixelDump = true;
+
+    function seeked() {
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
+    }
+
+    function buffered() {
+        video.width = video.videoWidth;
+        video.height = video.videoHeight;
+        video.currentTime = .5;
+    }
+
+    function start() {
+        findMediaElement();
+        video.src = "content/video-with-alpha-red.webm";
+        video.addEventListener("seeked", seeked);
+        video.addEventListener("canplaythrough", buffered, false);
+    }
+  </script>
+  <script src=video-test.js></script>
+</head>
+<body onload="start()">
+  <video id="video"></video>
+</body>
+</html>

@@ -94,7 +94,12 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
     externalTexture.fFormat = colorType == kBGRA_8888_SkColorType ? GL_BGRA8_EXT : GL_RGBA8;
     auto backendTexture = GrBackendTextures::MakeGL(m_size.width(), m_size.height(), skgpu::Mipmapped::kNo, externalTexture);
     auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
-    auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+    auto alphaType = [&] {
+        if (!m_flags.contains(TextureMapperFlags::ShouldBlend))
+            return kOpaque_SkAlphaType;
+
+        return m_flags.contains(TextureMapperFlags::ShouldPremultiply) ? kUnpremul_SkAlphaType : kPremul_SkAlphaType;
+    }();
     return SkImages::BorrowTextureFrom(grContext, backendTexture, origin, colorType, alphaType, sRGBColorSpaceSingleton());
 }
 #endif
