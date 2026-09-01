@@ -49,8 +49,10 @@ namespace Metal {
 #define DECLARE_FORWARD_PROGRESS "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"
 #define CHECK_FORWARD_PROGRESS "if (++__wgslEnsureForwardProgress == 4294967295u) break;"
 
-#define STRINGIFY_(__x) #__x##_s
-#define STRINGIFY(__x) STRINGIFY_(__x)
+// Variadic so that helper bodies may contain top-level commas, e.g. in a
+// template parameter list
+#define STRINGIFY_(...) #__VA_ARGS__##_s
+#define STRINGIFY(...) STRINGIFY_(__VA_ARGS__)
 
 #define DEFINE_HELPER(__name, ...) \
     void emit##__name() { m_output.append(STRINGIFY(__VA_ARGS__)); } \
@@ -137,6 +139,39 @@ DEFINE_HELPER(TextureExternalSampleBaseClampToEdge, \
         auto __ycbcr = float3(__y, __cbcr); \
         return float4(__texture.ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1); \
     }\n)
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+DEFINE_HELPER(NegateInt, \
+    template<typename T>\n \
+    [[clang::always_inline]] static T __wgslNegateInt(T value)\n \
+    {\n \
+        return as_type<T>(make_unsigned_t<T>(0) - make_unsigned_t<T>(value)); \
+    }\n)
+
+DEFINE_HELPER(AddInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslAddInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs + rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) + make_unsigned_t<V>(rhs)); \
+    }\n)
+
+DEFINE_HELPER(SubInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslSubInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs - rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) - make_unsigned_t<V>(rhs)); \
+    }\n)
+
+DEFINE_HELPER(MulInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslMulInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs * rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) * make_unsigned_t<V>(rhs)); \
+    }\n)
+#endif
 
 };
 
@@ -274,6 +309,18 @@ static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
         return { };
     }
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+static bool isSignedIntegerArithmeticType(const Type* type)
+{
+    if (auto* reference = std::get_if<Types::Reference>(type))
+        type = reference->element;
+    if (auto* vector = std::get_if<Types::Vector>(type))
+        type = vector->element;
+    auto* primitive = std::get_if<Types::Primitive>(type);
+    return primitive && primitive->kind == Types::Primitive::I32;
+}
+#endif
 
 void FunctionDefinitionWriter::write()
 {
@@ -2509,6 +2556,18 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // `-x` on a signed integer must wrap rather than be assumed not to overflow.
+    if (unary.operation() == AST::UnaryOperation::Negate && isSignedIntegerArithmeticType(unary.inferredType())) {
+        if (!std::exchange(m_helperGenerator.didEmitNegateInt, true))
+            m_helperGenerator.emitNegateInt();
+        m_body.append("__wgslNegateInt("_s);
+        visit(unary.expression());
+        m_body.append(')');
+        return;
+    }
+#endif
+
     m_body.append('(');
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
@@ -2559,6 +2618,44 @@ void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, A
             return;
         }
     }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // `+`, `-` and `*` on signed integers must wrap rather than be assumed not
+    // to overflow. Both operands are checked because WGSL only declares these
+    // operators over matching element types, so a matrix operand (whose element
+    // type is always floating point) never reaches the helpers.
+    if (isSignedIntegerArithmeticType(lhs.inferredType()) && isSignedIntegerArithmeticType(rhs.inferredType())) {
+        ASCIILiteral helperFunction;
+        switch (operation) {
+        case AST::BinaryOperation::Add:
+            if (!std::exchange(m_helperGenerator.didEmitAddInt, true))
+                m_helperGenerator.emitAddInt();
+            helperFunction = "__wgslAddInt"_s;
+            break;
+        case AST::BinaryOperation::Subtract:
+            if (!std::exchange(m_helperGenerator.didEmitSubInt, true))
+                m_helperGenerator.emitSubInt();
+            helperFunction = "__wgslSubInt"_s;
+            break;
+        case AST::BinaryOperation::Multiply:
+            if (!std::exchange(m_helperGenerator.didEmitMulInt, true))
+                m_helperGenerator.emitMulInt();
+            helperFunction = "__wgslMulInt"_s;
+            break;
+        default:
+            break;
+        }
+
+        if (!helperFunction.isNull()) {
+            m_body.append(helperFunction, '(');
+            visit(lhs);
+            m_body.append(", "_s);
+            visit(rhs);
+            m_body.append(')');
+            return;
+        }
+    }
+#endif
 
     m_body.append('(');
     visit(lhs);
@@ -2827,6 +2924,7 @@ void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
 
 void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     visit(statement.expression());
     switch (statement.operation()) {
     case AST::DecrementIncrementStatement::Operation::Increment:
@@ -2836,6 +2934,23 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
         m_body.append("--"_s);
         break;
     }
+#else
+    // `x++` / `x--` on a signed integer must wrap, for the same reason `x + 1`
+    // and `x - 1` must. Performing the arithmetic in the unsigned domain carries
+    // no overflow assumption, and the compound assignment form keeps the
+    // reference evaluated exactly once, as WGSL requires.
+    bool wraps = isSignedIntegerArithmeticType(statement.expression().inferredType());
+
+    visit(statement.expression());
+    switch (statement.operation()) {
+    case AST::DecrementIncrementStatement::Operation::Increment:
+        m_body.append(wraps ? " += 1u"_s : "++"_s);
+        break;
+    case AST::DecrementIncrementStatement::Operation::Decrement:
+        m_body.append(wraps ? " -= 1u"_s : "--"_s);
+        break;
+    }
+#endif
 }
 
 void FunctionDefinitionWriter::visit(AST::DiscardStatement&)

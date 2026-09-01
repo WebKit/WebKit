@@ -1,0 +1,123 @@
+<script>
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+    const log = console.debug;
+
+    // WGSL signed-negate OOB (variant of the ANGLE signed-negate poison bug).
+    //
+    // The MSL backend emitted WGSL unary '-' on i32 as a raw '-', which
+    // Metal-clang lowers to 'sub nsw'/llvm.abs(.., is_int_min_poison=true).
+    // At a == INT_MIN that result is poison, so the optimizer may prove
+    // idx >= 0 and fold away the runtime bounds clamp on the subsequent
+    // array index, yielding a GPU-side out-of-bounds read.
+    //
+    //   var idx = -a;             // poison at a == INT_MIN
+    //   if (idx > 1) { idx = 1; } // folds to smin(idx, 1) in [0, 1]
+    //   out = input.arr[idx];     // clamp folded away => OOB
+    //
+    // The fix routes signed negation through __wgslNegate (unsigned-domain
+    // negate + bit-cast), which has defined wrapping semantics and carries no
+    // nsw assumption, so the bounds clamp survives. INT_MIN then clamps to an
+    // in-bounds index and the readback is one of the two array values.
+
+    const WGSL = `
+struct In {
+    a: i32,
+    pad: i32,
+    arr: array<u32, 2>,
+};
+struct Out {
+    result: u32,
+};
+
+@group(0) @binding(0) var<storage, read> input: In;
+@group(0) @binding(1) var<storage, read_write> output: Out;
+
+@compute @workgroup_size(1)
+fn main() {
+    var a: i32 = input.a;
+    var idx: i32 = a;
+    if (a < 0) {
+        idx = -a;
+    }
+    // user-side signed clamp — without the fix, LLVM proves idx >= 0 from the
+    // nsw poison and folds this to smin(idx, 1) in [0, 1], defeating the check.
+    if (idx > 1) {
+        idx = 1;
+    }
+    output.result = input.arr[idx];
+}
+`;
+
+    async function main() {
+        try {
+            const adapter = await navigator.gpu.requestAdapter({});
+            const device  = await adapter.requestDevice({});
+
+            device.pushErrorScope('validation');
+            const module = device.createShaderModule({ code: WGSL });
+
+            const bgl = device.createBindGroupLayout({
+                entries: [
+                    { binding: 0, buffer: { type: 'read-only-storage' }, visibility: GPUShaderStage.COMPUTE },
+                    { binding: 1, buffer: { type: 'storage' },           visibility: GPUShaderStage.COMPUTE },
+                ]
+            });
+            const pipeline = device.createComputePipeline({
+                layout: device.createPipelineLayout({ bindGroupLayouts: [bgl] }),
+                compute: { module, entryPoint: 'main' },
+            });
+
+            const inBuf = device.createBuffer({
+                size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+            });
+            // a = 0x80000000 (INT_MIN), pad = 0, arr = [0x11111111, 0x22222222]
+            device.queue.writeBuffer(inBuf, 0, new Uint32Array([
+                0x80000000, 0x00000000, 0x11111111, 0x22222222,
+            ]));
+
+            const outBuf = device.createBuffer({
+                size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+            });
+            const readBuf = device.createBuffer({
+                size: 4, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+            });
+
+            const bg = device.createBindGroup({ layout: bgl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: outBuf } },
+            ]});
+
+            const enc = device.createCommandEncoder();
+            const pass = enc.beginComputePass({});
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, bg);
+            pass.dispatchWorkgroups(1);
+            pass.end();
+            enc.copyBufferToBuffer(outBuf, 0, readBuf, 0, 4);
+            device.queue.submit([enc.finish()]);
+            await device.queue.onSubmittedWorkDone();
+
+            const validationError = await device.popErrorScope();
+            if (validationError) {
+                log(`FAIL: unexpected validation error: ${validationError.message}`);
+                globalThis.testRunner?.notifyDone();
+                return;
+            }
+
+            await readBuf.mapAsync(GPUMapMode.READ);
+            const out = new Uint32Array(readBuf.getMappedRange())[0];
+            // The bounds clamp must survive: INT_MIN indexes in-bounds after
+            // clamping, so the readback is one of the two array elements.
+            if (out === 0x11111111 || out === 0x22222222)
+                log(`PASS: bounds clamp held, readback=0x${out.toString(16)}`);
+            else
+                log(`FAIL: possible OOB read, readback=0x${out.toString(16)}`);
+        } catch (e) {
+            log('FAIL: exception: ' + e);
+        }
+        globalThis.testRunner?.notifyDone();
+    }
+
+    onload = main;
+</script>
