@@ -1119,6 +1119,20 @@ impl<'options> Generator<'options> {
         }
     }
 
+    // For structs, an id is always appended if the name is not empty.  This makes sure there is no
+    // collision between global struct names and local structs that are moved to the global scope.
+    // For global structs, an id of 0 is always used to make sure names match across shader
+    // interfaces.
+    fn struct_id_to_append(name: &Name, specialization: StructSpecialization, id: u32) -> u32 {
+        if name.name.is_empty() || specialization == StructSpecialization::InterfaceBlock {
+            SYMBOL_NAME_NO_ID
+        } else if name.source == NameSource::Temporary {
+            id
+        } else {
+            0
+        }
+    }
+
     fn legacy_param_direction(direction: FunctionParamDirection) -> ffi::ASTQualifier {
         match direction {
             FunctionParamDirection::Input => ffi::ASTQualifier::ParamIn,
@@ -1374,7 +1388,6 @@ impl<'options> Generator<'options> {
             },
             ImageDimension::External => ffi::ASTBasicType::SamplerExternalOES,
             ImageDimension::ExternalY2Y => ffi::ASTBasicType::SamplerExternal2DY2YEXT,
-            ImageDimension::Video => ffi::ASTBasicType::SamplerVideoWEBGL,
             ImageDimension::PixelLocal => match image_basic_type {
                 ImageBasicType::Float => ffi::ASTBasicType::PixelLocalANGLE,
                 ImageBasicType::Int => ffi::ASTBasicType::IPixelLocalANGLE,
@@ -1824,7 +1837,7 @@ impl ast::Target for Generator<'_> {
                         &ffi::SymbolName {
                             name: name.name,
                             symbol_type,
-                            id: Self::id_to_append(name, id.id),
+                            id: Self::struct_id_to_append(name, *specialization, id.id),
                         },
                         &fields,
                         is_interface_block,

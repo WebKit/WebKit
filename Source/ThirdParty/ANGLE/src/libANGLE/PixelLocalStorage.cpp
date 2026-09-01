@@ -733,10 +733,8 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
 
             // Specify the framebuffer width/height explicitly in case we end up rendering
             // exclusively to shader images.
-            context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH,
-                                           plsExtents.width);
-            context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT,
-                                           plsExtents.height);
+            framebuffer->setDefaultWidth(context, plsExtents.width);
+            framebuffer->setDefaultHeight(context, plsExtents.height);
         }
 
         // Guard GL state and bind a scratch framebuffer in case we need to reallocate or clear any
@@ -852,10 +850,9 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         else
         {
             // Restore the default framebuffer width/height.
-            context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH,
-                                           mSavedFramebufferDefaultWidth);
-            context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT,
-                                           mSavedFramebufferDefaultHeight);
+            Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
+            framebuffer->setDefaultWidth(context, mSavedFramebufferDefaultWidth);
+            framebuffer->setDefaultHeight(context, mSavedFramebufferDefaultHeight);
         }
 
         // We need ALL_BARRIER_BITS during end() because GL_SHADER_IMAGE_ACCESS_BARRIER_BIT doesn't

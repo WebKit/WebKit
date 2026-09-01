@@ -2852,7 +2852,6 @@ pub mod ffi {
         USampler2DRect,
         USamplerBuffer,
         USamplerCubeArray,
-        SamplerVideoWEBGL,
         Image2D,
         Image3D,
         Image2DArray,
@@ -3694,7 +3693,6 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::SamplerBuffer
                         | ffi::ASTBasicType::SamplerCubeArray
                         | ffi::ASTBasicType::SamplerCubeArrayShadow
-                        | ffi::ASTBasicType::SamplerVideoWEBGL
                         | ffi::ASTBasicType::Image2D
                         | ffi::ASTBasicType::Image3D
                         | ffi::ASTBasicType::Image2DArray
@@ -3823,8 +3821,6 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::UImageBuffer
                 ) {
                     ImageDimension::Buffer
-                } else if matches!(basic_type, ffi::ASTBasicType::SamplerVideoWEBGL) {
-                    ImageDimension::Video
                 } else if matches!(
                     basic_type,
                     ffi::ASTBasicType::PixelLocalANGLE
@@ -3859,7 +3855,6 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::SamplerBuffer
                         | ffi::ASTBasicType::SamplerCubeArray
                         | ffi::ASTBasicType::SamplerCubeArrayShadow
-                        | ffi::ASTBasicType::SamplerVideoWEBGL
                         | ffi::ASTBasicType::ISampler2D
                         | ffi::ASTBasicType::ISampler3D
                         | ffi::ASTBasicType::ISamplerCube

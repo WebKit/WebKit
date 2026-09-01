@@ -506,6 +506,7 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
 
     if (ANGLE_LIKELY(context != nullptr))
     {
+        FramebufferParameter pnamePacked = PackParam<FramebufferParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         if (context->getState().getPixelLocalStorageActivePlanes() != 0)
         {
@@ -520,7 +521,8 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid = ValidateFramebufferParameteri(
-                    context, angle::EntryPoint::GLFramebufferParameteri, target, pname, param);
+                    context, angle::EntryPoint::GLFramebufferParameteri, target, pnamePacked,
+                    param);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -532,9 +534,9 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->framebufferParameteri(target, pname, param);
+            context->framebufferParameteri(target, pnamePacked, param);
         }
-        ANGLE_CAPTURE_GL(FramebufferParameteri, isCallValid, context, target, pname, param);
+        ANGLE_CAPTURE_GL(FramebufferParameteri, isCallValid, context, target, pnamePacked, param);
     }
     else
     {
@@ -642,6 +644,7 @@ void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint
 
     if (ANGLE_LIKELY(context != nullptr))
     {
+        FramebufferParameter pnamePacked = PackParam<FramebufferParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
         if (!isCallValid)
@@ -652,7 +655,8 @@ void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid = ValidateGetFramebufferParameteriv(
-                    context, angle::EntryPoint::GLGetFramebufferParameteriv, target, pname, params);
+                    context, angle::EntryPoint::GLGetFramebufferParameteriv, target, pnamePacked,
+                    params);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -664,9 +668,10 @@ void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->getFramebufferParameteriv(target, pname, params);
+            context->getFramebufferParameteriv(target, pnamePacked, params);
         }
-        ANGLE_CAPTURE_GL(GetFramebufferParameteriv, isCallValid, context, target, pname, params);
+        ANGLE_CAPTURE_GL(GetFramebufferParameteriv, isCallValid, context, target, pnamePacked,
+                         params);
     }
     else
     {

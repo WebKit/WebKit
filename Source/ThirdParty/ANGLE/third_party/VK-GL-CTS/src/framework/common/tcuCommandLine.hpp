@@ -201,6 +201,12 @@ public:
     //! Get watchdog enable status (--deqp-watchdog)
     bool isWatchDogEnabled(void) const;
 
+    //! Get watchdog total test case time limit in seconds (--deqp-watchdog-total-time-limit)
+    int getWatchDogTotalTime(void) const;
+
+    //! Get watchdog per iteration time limit in seconds time limit in seconds (--deqp-watchdog-interval-time-limit)
+    int getWatchDogIntervalTime(void) const;
+
     //! Get crash handling enable status (--deqp-crashhandler)
     bool isCrashHandlingEnabled(void) const;
 

@@ -1,0 +1,82 @@
+Name
+
+    ANGLE_explicit_context
+
+Name Strings
+
+    GL_ANGLE_explicit_context
+
+Contributors
+
+    Geoff Lang, Google Inc
+    Brandon Jones, Intel
+
+Contacts
+
+    Geoff Lang, Google Inc (geofflang 'at' google 'dot' com)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, 2026-06-23
+
+Number
+
+    GL Extension XXX
+
+Dependencies
+
+    OpenGL ES 2.0 is required.
+
+Overview
+
+    This extension adds new OpenGL ES entry points that allow the user to pass the current EGL
+    display and context as function parameters. This allows users to skip lookup of the thread's
+    current context upon entry.
+
+New Types
+
+    typedef void* GLeglContextANGLE
+    typedef void* GLeglDisplayANGLE
+
+New Procedures and Functions
+
+    For every OpenGL ES entry point, an additional entry point is made available. The entry
+    points have the form of:
+
+    <return value> gl<entry point name>ContextANGLE(GLeglDisplayANGLE display,
+                                                    GLeglContextANGLE context,
+                                                    <entry point parameters>)
+
+    If a function already has an extension suffix, this form still applies.
+
+New Tokens
+
+    None.
+
+Additions to Chapter 2 of the OpenGL ES 1.0 Specification (OpenGL ES Operation)
+
+    The ContextANGLE entry points allow the user to pass the current EGL display and context
+    as a function parameter to provide better performance than looking up the current EGL
+    display and context at every GL entry point.
+
+    Calls made with an explicit display and context provide no additional validation for
+    the display and context parameters.
+
+    Calls made with an explicit display and context will generate errors under the same
+    conditions as they would without those parameters.
+
+    When an EGL context that is not current is explicitly passed, the resulting behavior is
+    undefined.
+
+Issues
+
+    None.
+
+Revision History
+
+    Version 1, 2026-05-23 (Geoff Lang)
+        - Initial draft, language taken from ANGLE_explicit_context_gles1

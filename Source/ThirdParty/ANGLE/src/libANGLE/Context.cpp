@@ -884,16 +884,6 @@ void Context::initializeDefaultResources()
         mZeroTextures[TextureType::External].set(this, zeroTextureExternal);
     }
 
-    // This may change native TEXTURE_2D, TEXTURE_EXTERNAL_OES and TEXTURE_RECTANGLE,
-    // binding states. Ensure state manager is aware of this when binding
-    // this texture type.
-    if (mSupportedExtensions.videoTextureWEBGL)
-    {
-        Texture *zeroTextureVideoImage =
-            new Texture(mImplementation.get(), {0}, TextureType::VideoImage);
-        mZeroTextures[TextureType::VideoImage].set(this, zeroTextureVideoImage);
-    }
-
     mState.initializeZeroTextures(this, mZeroTextures);
 
     ANGLE_CONTEXT_TRY(mImplementation->initialize(mDisplay->getImageLoadContext()));
@@ -3947,10 +3937,6 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.shaderNoperspectiveInterpolationNV = false;
         supportedExtensions.sampleVariablesOES                 = false;
 
-        // Require ES 3.1 but could likely be exposed on 3.0
-        supportedExtensions.textureCubeMapArrayEXT = false;
-        supportedExtensions.textureCubeMapArrayOES = false;
-
         // Require RED and RG formats
         supportedExtensions.textureSRGBR8EXT  = false;
         supportedExtensions.textureSRGBRG8EXT = false;
@@ -4014,6 +4000,8 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.tessellationShaderOES   = false;
         supportedExtensions.textureBufferEXT        = false;
         supportedExtensions.textureBufferOES        = false;
+        supportedExtensions.textureCubeMapArrayEXT  = false;
+        supportedExtensions.textureCubeMapArrayOES  = false;
     }
 
     if (getClientVersion() > ES_2_0)
@@ -4196,6 +4184,11 @@ Extensions Context::generateSupportedExtensions() const
             supportedExtensions.shaderNoperspectiveInterpolationNV = false;
         }
     }
+
+// Disable the explicit context extension if the entry points are not compiled.
+#if !defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    supportedExtensions.explicitContextANGLE = false;
+#endif
 
     return supportedExtensions;
 }
@@ -6750,16 +6743,18 @@ void Context::getSynciv(SyncID syncPacked,
     ANGLE_CONTEXT_TRY(QuerySynciv(this, syncObject, pname, count, length, values));
 }
 
-void Context::getFramebufferParameteriv(GLenum target, GLenum pname, GLint *params)
+void Context::getFramebufferParameteriv(GLenum target,
+                                        FramebufferParameter pnamePacked,
+                                        GLint *params)
 {
     Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
-    QueryFramebufferParameteriv(framebuffer, pname, params);
+    QueryFramebufferParameteriv(framebuffer, pnamePacked, params);
 }
 
-void Context::framebufferParameteri(GLenum target, GLenum pname, GLint param)
+void Context::framebufferParameteri(GLenum target, FramebufferParameter pnamePacked, GLint param)
 {
     Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
-    SetFramebufferParameteri(this, framebuffer, pname, param);
+    SetFramebufferParameteri(this, framebuffer, pnamePacked, param);
 }
 
 bool Context::getScratchBuffer(size_t requstedSizeBytes,
@@ -9369,16 +9364,6 @@ void Context::maxShaderCompilerThreads(GLuint count)
     mImplementation->setMaxShaderCompilerThreads(count);
 }
 
-void Context::framebufferParameteriMESA(GLenum target, GLenum pname, GLint param)
-{
-    framebufferParameteri(target, pname, param);
-}
-
-void Context::getFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params)
-{
-    getFramebufferParameteriv(target, pname, params);
-}
-
 bool Context::isGLES1() const
 {
     return mState.isGLES1();
@@ -10904,7 +10889,6 @@ void StateCache::updateValidBindTextureTypes(Context *context)
         {TextureType::Rectangle, exts.textureRectangleANGLE},
         {TextureType::CubeMap, true},
         {TextureType::CubeMapArray, isGLES32 || exts.textureCubeMapArrayAny()},
-        {TextureType::VideoImage, exts.videoTextureWEBGL},
         {TextureType::Buffer, isGLES32 || exts.textureBufferAny()},
     }};
 }

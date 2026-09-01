@@ -125,7 +125,6 @@ static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExt
 static int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
 static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
-static int WEBGL_video_texture_extension(TParseContext *context, int token);
 static int uint_constant(TParseContext *context);
 static int int_constant(TParseContext *context);
 static int float_constant(TParseContext* context, yyscan_t yyscanner);
@@ -258,7 +257,6 @@ O           [0-7]
 "isamplerBuffer"       { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, ISAMPLERBUFFER, ISAMPLERBUFFER); }
 "usamplerCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, USAMPLERCUBEARRAYOES, USAMPLERCUBEARRAYEXT); }
 "usamplerBuffer"       { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, USAMPLERBUFFER, USAMPLERBUFFER); }
-"samplerVideoWEBGL"    { return WEBGL_video_texture_extension(context, SAMPLERVIDEOWEBGL); }
 "struct"       { return STRUCT; }
 
 "layout"  { return ES2_extensions_ES3_keyword(context, TExtension::EXT_shader_framebuffer_fetch, TExtension::EXT_shader_framebuffer_fetch_non_coherent, TExtension::KHR_blend_equation_advanced, LAYOUT); }
@@ -621,22 +619,6 @@ int ES3_1_keyword(TParseContext *context, int token)
     }
 
     // Otherwise can be used as an identifier/type name
-    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
-    return check_type(yyscanner);
-}
-
-int WEBGL_video_texture_extension(TParseContext *context, int token)
-{
-    // Available with WEBGL_video_texture_extension
-    if (context->isExtensionEnabled(TExtension::WEBGL_video_texture))
-    {
-        return token;
-    }
-
-    // Otherwise can be used as an identifier/type name
-    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
-    yyscan_t yyscanner = (yyscan_t) context->getScanner();
-
     yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
     return check_type(yyscanner);
 }

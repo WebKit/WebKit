@@ -25,7 +25,7 @@ using TableBase = TSymbolTableBase;
 
 struct SymbolIdChecker
 {
-    static_assert(TSymbolTable::kFirstUserDefinedSymbolId > 2015);
+    static_assert(TSymbolTable::kFirstUserDefinedSymbolId > 2012);
 };
 
 namespace BuiltInName
@@ -380,7 +380,6 @@ constexpr const ImmutableString textureProjOffset("textureProjOffset");
 constexpr const ImmutableString textureQueryLOD("textureQueryLOD");
 constexpr const ImmutableString textureSize("textureSize");
 constexpr const ImmutableString textureSizeExt("textureSize");
-constexpr const ImmutableString textureVideoWEBGL("textureVideoWEBGL");
 constexpr const ImmutableString transpose("transpose");
 constexpr const ImmutableString trunc("trunc");
 constexpr const ImmutableString uaddCarry("uaddCarry");
@@ -997,138 +996,132 @@ constexpr const TVariable kpt00n(
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtUSamplerCubeArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00o(
-    BuiltInId::pt00o,
-    BuiltInName::_empty,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtSamplerVideoWEBGL, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00p(BuiltInId::pt00p,
+constexpr const TVariable kpt00o(BuiltInId::pt00o,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtImage2D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00q(BuiltInId::pt00q,
+constexpr const TVariable kpt00p(BuiltInId::pt00p,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtImage3D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00r(BuiltInId::pt00r,
+constexpr const TVariable kpt00q(BuiltInId::pt00q,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtImage2DArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00s(BuiltInId::pt00s,
+constexpr const TVariable kpt00r(BuiltInId::pt00r,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtImageCube, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00t(
-    BuiltInId::pt00t,
+constexpr const TVariable kpt00s(
+    BuiltInId::pt00s,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtImageCubeArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00u(BuiltInId::pt00u,
+constexpr const TVariable kpt00t(BuiltInId::pt00t,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtImageBuffer, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00v(BuiltInId::pt00v,
+constexpr const TVariable kpt00u(BuiltInId::pt00u,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtIImage2D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00w(BuiltInId::pt00w,
+constexpr const TVariable kpt00v(BuiltInId::pt00v,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtIImage3D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00x(
-    BuiltInId::pt00x,
+constexpr const TVariable kpt00w(
+    BuiltInId::pt00w,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtIImage2DArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00y(BuiltInId::pt00y,
+constexpr const TVariable kpt00x(BuiltInId::pt00x,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtIImageCube, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt00z(
-    BuiltInId::pt00z,
+constexpr const TVariable kpt00y(
+    BuiltInId::pt00y,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtIImageCubeArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01A(BuiltInId::pt01A,
+constexpr const TVariable kpt00z(BuiltInId::pt00z,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtIImageBuffer, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01B(BuiltInId::pt01B,
+constexpr const TVariable kpt01A(BuiltInId::pt01A,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtUImage2D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01C(BuiltInId::pt01C,
+constexpr const TVariable kpt01B(BuiltInId::pt01B,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtUImage3D, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01D(
-    BuiltInId::pt01D,
+constexpr const TVariable kpt01C(
+    BuiltInId::pt01C,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtUImage2DArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01E(BuiltInId::pt01E,
+constexpr const TVariable kpt01D(BuiltInId::pt01D,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtUImageCube, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01F(
-    BuiltInId::pt01F,
+constexpr const TVariable kpt01E(
+    BuiltInId::pt01E,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtUImageCubeArray, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01G(BuiltInId::pt01G,
+constexpr const TVariable kpt01F(BuiltInId::pt01F,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtUImageBuffer, EbpUndefined, EvqGlobal, 1, 1>());
+constexpr const TVariable kpt01G(
+    BuiltInId::pt01G,
+    BuiltInName::_empty,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01H(
     BuiltInId::pt01H,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
+    StaticType::Get<EbtIPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
 constexpr const TVariable kpt01I(
     BuiltInId::pt01I,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    StaticType::Get<EbtIPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01J(
-    BuiltInId::pt01J,
-    BuiltInName::_empty,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtUPixelLocalANGLE, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01K(BuiltInId::pt01K,
+constexpr const TVariable kpt01J(BuiltInId::pt01J,
                                  BuiltInName::_empty,
                                  SymbolType::BuiltIn,
                                  std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                  StaticType::Get<EbtSubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01L(
-    BuiltInId::pt01L,
+constexpr const TVariable kpt01K(
+    BuiltInId::pt01K,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtISubpassInput, EbpUndefined, EvqGlobal, 1, 1>());
-constexpr const TVariable kpt01M(
-    BuiltInId::pt01M,
+constexpr const TVariable kpt01L(
+    BuiltInId::pt01L,
     BuiltInName::_empty,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -1696,17 +1689,17 @@ constexpr const TVariable *p00H10B00C[3]    = {&BuiltInVariable::kpt00H, &BuiltI
 constexpr const TVariable *p00H10B10B10B10C[5] = {
     &BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00H10B10C00B[4]   = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00H10B10C00C[4]   = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00H10B10C00B[4] = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00H10B10C00C[4] = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00H10B10Cx400C[4] = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00H10C00C10C[4]   = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00H20B00B10C[4]   = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00H10C00C10C[4] = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00H20B00B10C[4] = {&BuiltInVariable::kpt00H, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00H20B10B10B10C[5] = {
     &BuiltInVariable::kpt00H, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
@@ -1752,15 +1745,15 @@ constexpr const TVariable *p00K20B00C[3]    = {&BuiltInVariable::kpt00K, &BuiltI
 constexpr const TVariable *p00K20B10B10B10C[5] = {
     &BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00K20B10C00B[4]   = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00K20B10C00C[4]   = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00K20B10C00B[4] = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00K20B10C00C[4] = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00K20B10Cx400C[4] = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00K20C00C10C[4]   = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00K20C00C10C[4] = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00L00C[2]       = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00L10B00B[3]    = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt10B,
                                                &BuiltInVariable::kpt00B};
@@ -1794,17 +1787,17 @@ constexpr const TVariable *p00Q10B00C[3]    = {&BuiltInVariable::kpt00Q, &BuiltI
 constexpr const TVariable *p00Q10B10B10B10C[5] = {
     &BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00Q10B10C00B[4]   = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00Q10B10C00C[4]   = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00Q10B10C00B[4] = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00Q10B10C00C[4] = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00Q10B10Cx400C[4] = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00Q10C00C10C[4]   = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00Q20B00B10C[4]   = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00Q10C00C10C[4] = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00Q20B00B10C[4] = {&BuiltInVariable::kpt00Q, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00Q20B10B10B10C[5] = {
     &BuiltInVariable::kpt00Q, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
@@ -1850,19 +1843,19 @@ constexpr const TVariable *p00T20B00C[3]    = {&BuiltInVariable::kpt00T, &BuiltI
 constexpr const TVariable *p00T20B10B10B10C[5] = {
     &BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00T20B10C00B[4]   = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00T20B10C00C[4]   = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00T20B10C00B[4] = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00T20B10C00C[4] = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00T20B10Cx400C[4] = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00T20C00C10C[4]   = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00U10C00C[3]      = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt10C,
-                                                 &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00V20C00C[3]      = {&BuiltInVariable::kpt00V, &BuiltInVariable::kpt20C,
-                                                 &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00T20C00C10C[4] = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00U10C00C[3]    = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00V20C00C[3]    = {&BuiltInVariable::kpt00V, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00W00C[2]       = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00W10B00B10C[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
@@ -1871,17 +1864,17 @@ constexpr const TVariable *p00W10B00C[3]    = {&BuiltInVariable::kpt00W, &BuiltI
 constexpr const TVariable *p00W10B10B10B10C[5] = {
     &BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00W10B10C00B[4]   = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00W10B10C00C[4]   = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00W10B10C00B[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00W10B10C00C[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00W10B10Cx400C[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00W10C00C10C[4]   = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00W20B00B10C[4]   = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00W10C00C10C[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00W20B00B10C[4] = {&BuiltInVariable::kpt00W, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00W20B10B10B10C[5] = {
     &BuiltInVariable::kpt00W, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
@@ -1927,25 +1920,25 @@ constexpr const TVariable *p00Z20B00C[3]    = {&BuiltInVariable::kpt00Z, &BuiltI
 constexpr const TVariable *p00Z20B10B10B10C[5] = {
     &BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00Z20B10C00B[4]   = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00Z20B10C00C[4]   = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00Z20B10C00B[4] = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00Z20B10C00C[4] = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt10C, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00Z20B10Cx400C[4] = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
                                                  &BuiltInVariable::kpt10Cx4,
                                                  &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00Z20C00C10C[4]   = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20C,
-                                                 &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
-constexpr const TVariable *p00a10C00C[3]      = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt10C,
-                                                 &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00b20C00C[3]      = {&BuiltInVariable::kpt00b, &BuiltInVariable::kpt20C,
-                                                 &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00c00C[2] = {&BuiltInVariable::kpt00c, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00Z20C00C10C[4] = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00a10C00C[3]    = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00b20C00C[3]    = {&BuiltInVariable::kpt00b, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00c00C[2]       = {&BuiltInVariable::kpt00c, &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00c10B00B10Cx4[4] = {&BuiltInVariable::kpt00c, &BuiltInVariable::kpt10B,
                                                  &BuiltInVariable::kpt00B,
                                                  &BuiltInVariable::kpt10Cx4};
-constexpr const TVariable *p00c20B00B10C[4]   = {&BuiltInVariable::kpt00c, &BuiltInVariable::kpt20B,
-                                                 &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00c20B00B10C[4] = {&BuiltInVariable::kpt00c, &BuiltInVariable::kpt20B,
+                                               &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00c20B10B10B10C[5] = {
     &BuiltInVariable::kpt00c, &BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
@@ -1970,8 +1963,8 @@ constexpr const TVariable *p00e10B[2]       = {&BuiltInVariable::kpt00e, &BuiltI
 constexpr const TVariable *p00e20B00B10Cx4[4] = {&BuiltInVariable::kpt00e, &BuiltInVariable::kpt20B,
                                                  &BuiltInVariable::kpt00B,
                                                  &BuiltInVariable::kpt10Cx4};
-constexpr const TVariable *p00e30B00B10C[4]   = {&BuiltInVariable::kpt00e, &BuiltInVariable::kpt30B,
-                                                 &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
+constexpr const TVariable *p00e30B00B10C[4] = {&BuiltInVariable::kpt00e, &BuiltInVariable::kpt30B,
+                                               &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10C};
 constexpr const TVariable *p00e30B10B10B10C[5] = {
     &BuiltInVariable::kpt00e, &BuiltInVariable::kpt30B, &BuiltInVariable::kpt10B,
     &BuiltInVariable::kpt10B, &BuiltInVariable::kpt10C};
@@ -2008,14 +2001,21 @@ constexpr const TVariable *p00n30B00C[3]    = {&BuiltInVariable::kpt00n, &BuiltI
                                                &BuiltInVariable::kpt00C};
 constexpr const TVariable *p00n30B20B20B[4] = {&BuiltInVariable::kpt00n, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
-constexpr const TVariable *p00o10B[2]       = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt10B};
-constexpr const TVariable *p00p10C00B[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00o10C00B[3]    = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00p10C00C00C[4] = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00o10C00C00C[4] = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00p10C00D00D[4] = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00o10C00D00D[4] = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p00p10C30B[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00o10C30B[3]    = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt30B};
+constexpr const TVariable *p00p20C00B[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00B};
+constexpr const TVariable *p00p20C00C00C[4] = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
+constexpr const TVariable *p00p20C00D00D[4] = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt20C,
+                                               &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00p20C30B[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30B};
 constexpr const TVariable *p00q20C00B[3]    = {&BuiltInVariable::kpt00q, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00B};
@@ -2041,29 +2041,29 @@ constexpr const TVariable *p00s20C00D00D[4] = {&BuiltInVariable::kpt00s, &BuiltI
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00s20C30B[3]    = {&BuiltInVariable::kpt00s, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30B};
-constexpr const TVariable *p00t20C00B[3]    = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00t00C00B[3]    = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00t20C00C00C[4] = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00t00C00C00C[4] = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00t20C00D00D[4] = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00t00C00D00D[4] = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p00t20C30B[3]    = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00t00C30B[3]    = {&BuiltInVariable::kpt00t, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt30B};
-constexpr const TVariable *p00u00C00B[3]    = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p00u10C00B[3]    = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00u00C00C00C[4] = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p00u10C00C00C[4] = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00u00C00D00D[4] = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p00u10C00D00D[4] = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p00u00C30B[3]    = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt30B};
-constexpr const TVariable *p00v10C00B[3]    = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00u10C30C[3]    = {&BuiltInVariable::kpt00u, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt30C};
+constexpr const TVariable *p00v20C00B[3]    = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00v10C00C00C[4] = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00v20C00C00C[4] = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00v10C00D00D[4] = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00v20C00D00D[4] = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p00v10C30C[3]    = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p00v20C30C[3]    = {&BuiltInVariable::kpt00v, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30C};
 constexpr const TVariable *p00w20C00B[3]    = {&BuiltInVariable::kpt00w, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00B};
@@ -2089,29 +2089,29 @@ constexpr const TVariable *p00y20C00D00D[4] = {&BuiltInVariable::kpt00y, &BuiltI
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00y20C30C[3]    = {&BuiltInVariable::kpt00y, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30C};
-constexpr const TVariable *p00z20C00B[3]    = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00z00C00B[3]    = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p00z20C00C00C[4] = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00z00C00C00C[4] = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p00z20C00D00D[4] = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00z00C00D00D[4] = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p00z20C30C[3]    = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p00z00C30C[3]    = {&BuiltInVariable::kpt00z, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt30C};
-constexpr const TVariable *p01A00C00B[3]    = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p01A10C00B[3]    = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p01A00C00C00C[4] = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p01A10C00C00C[4] = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p01A00C00D00D[4] = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt00C,
+constexpr const TVariable *p01A10C00D00D[4] = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt10C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01A00C30C[3]    = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt30C};
-constexpr const TVariable *p01B10C00B[3]    = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p01A10C30D[3]    = {&BuiltInVariable::kpt01A, &BuiltInVariable::kpt10C,
+                                               &BuiltInVariable::kpt30D};
+constexpr const TVariable *p01B20C00B[3]    = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p01B10C00C00C[4] = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p01B20C00C00C[4] = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p01B10C00D00D[4] = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p01B20C00D00D[4] = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01B10C30D[3]    = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt10C,
+constexpr const TVariable *p01B20C30D[3]    = {&BuiltInVariable::kpt01B, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30D};
 constexpr const TVariable *p01C20C00B[3]    = {&BuiltInVariable::kpt01C, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt00B};
@@ -2137,28 +2137,20 @@ constexpr const TVariable *p01E20C00D00D[4] = {&BuiltInVariable::kpt01E, &BuiltI
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p01E20C30D[3]    = {&BuiltInVariable::kpt01E, &BuiltInVariable::kpt20C,
                                                &BuiltInVariable::kpt30D};
-constexpr const TVariable *p01F20C00B[3]    = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p01F00C00B[3]    = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00B};
-constexpr const TVariable *p01F20C00C00C[4] = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p01F00C00C00C[4] = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p01F20C00D00D[4] = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p01F00C00D00D[4] = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01F20C30D[3]    = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt20C,
+constexpr const TVariable *p01F00C30D[3]    = {&BuiltInVariable::kpt01F, &BuiltInVariable::kpt00C,
                                                &BuiltInVariable::kpt30D};
-constexpr const TVariable *p01G00C00B[3]    = {&BuiltInVariable::kpt01G, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt00B};
-constexpr const TVariable *p01G00C00C00C[4] = {&BuiltInVariable::kpt01G, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt00C, &BuiltInVariable::kpt00C};
-constexpr const TVariable *p01G00C00D00D[4] = {&BuiltInVariable::kpt01G, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt00D, &BuiltInVariable::kpt00D};
-constexpr const TVariable *p01G00C30D[3]    = {&BuiltInVariable::kpt01G, &BuiltInVariable::kpt00C,
-                                               &BuiltInVariable::kpt30D};
-constexpr const TVariable *p01H30B[2]       = {&BuiltInVariable::kpt01H, &BuiltInVariable::kpt30B};
-constexpr const TVariable *p01I30C[2]       = {&BuiltInVariable::kpt01I, &BuiltInVariable::kpt30C};
-constexpr const TVariable *p01J30D[2]       = {&BuiltInVariable::kpt01J, &BuiltInVariable::kpt30D};
+constexpr const TVariable *p01G30B[2]       = {&BuiltInVariable::kpt01G, &BuiltInVariable::kpt30B};
+constexpr const TVariable *p01H30C[2]       = {&BuiltInVariable::kpt01H, &BuiltInVariable::kpt30C};
+constexpr const TVariable *p01I30D[2]       = {&BuiltInVariable::kpt01I, &BuiltInVariable::kpt30D};
+constexpr const TVariable *p01J[1]          = {&BuiltInVariable::kpt01J};
 constexpr const TVariable *p01K[1]          = {&BuiltInVariable::kpt01K};
 constexpr const TVariable *p01L[1]          = {&BuiltInVariable::kpt01L};
-constexpr const TVariable *p01M[1]          = {&BuiltInVariable::kpt01M};
 constexpr const TVariable *p10B00B00B[3]    = {&BuiltInVariable::kpt10B, &BuiltInVariable::kpt00B,
                                                &BuiltInVariable::kpt00B};
 constexpr const TVariable *p10B00C[2]       = {&BuiltInVariable::kpt10B, &BuiltInVariable::kpt00C};
@@ -6487,15 +6479,6 @@ constexpr const TFunction textureCubeGradEXT_00J20B20B20B(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCubeGradEXT,
     true);
-constexpr const TFunction textureVideoWEBGL_00o10B(
-    BuiltInId::textureVideoWEBGL_SamplerVideoWEBGL1_Float2,
-    BuiltInName::textureVideoWEBGL,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00o10B,
-    2,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
-    EOpTextureVideoWEBGL,
-    true);
 constexpr const TFunction texture2D_00H10B00B(
     BuiltInId::texture2D_Sampler2D1_Float2_Float1,
     BuiltInName::texture2D,
@@ -6855,14 +6838,6 @@ constexpr const TFunction texture_00N10B(BuiltInId::texture_Sampler2DRect1_Float
                                          std::array<TExtension, 1u>{
                                              {TExtension::ARB_texture_rectangle}},
                                          BuiltInParameters::p00N10B,
-                                         2,
-                                         StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
-                                         EOpTexture,
-                                         true);
-constexpr const TFunction texture_00o10B(BuiltInId::texture_SamplerVideoWEBGL1_Float2,
-                                         BuiltInName::texture,
-                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                         BuiltInParameters::p00o10B,
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
@@ -10882,31 +10857,55 @@ constexpr const TFunction atomicCompSwap_00C00C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpAtomicCompSwap,
     false);
-constexpr const TFunction imageSize_00p(BuiltInId::imageSize_Image2D1,
+constexpr const TFunction imageSize_00o(BuiltInId::imageSize_Image2D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p00p10C00B,
+                                        BuiltInParameters::p00o10C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00v(BuiltInId::imageSize_IImage2D1,
+constexpr const TFunction imageSize_00u(BuiltInId::imageSize_IImage2D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p00v10C00B,
+                                        BuiltInParameters::p00u10C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01B(BuiltInId::imageSize_UImage2D1,
+constexpr const TFunction imageSize_01A(BuiltInId::imageSize_UImage2D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p01B10C00B,
+                                        BuiltInParameters::p01A10C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00q(BuiltInId::imageSize_Image3D1,
+constexpr const TFunction imageSize_00p(BuiltInId::imageSize_Image3D1,
+                                        BuiltInName::imageSize,
+                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+                                        BuiltInParameters::p00p20C00B,
+                                        1,
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        EOpImageSize,
+                                        true);
+constexpr const TFunction imageSize_00v(BuiltInId::imageSize_IImage3D1,
+                                        BuiltInName::imageSize,
+                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+                                        BuiltInParameters::p00v20C00B,
+                                        1,
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        EOpImageSize,
+                                        true);
+constexpr const TFunction imageSize_01B(BuiltInId::imageSize_UImage3D1,
+                                        BuiltInName::imageSize,
+                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+                                        BuiltInParameters::p01B20C00B,
+                                        1,
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        EOpImageSize,
+                                        true);
+constexpr const TFunction imageSize_00q(BuiltInId::imageSize_Image2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00q20C00B,
@@ -10914,7 +10913,7 @@ constexpr const TFunction imageSize_00q(BuiltInId::imageSize_Image3D1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00w(BuiltInId::imageSize_IImage3D1,
+constexpr const TFunction imageSize_00w(BuiltInId::imageSize_IImage2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00w20C00B,
@@ -10922,7 +10921,7 @@ constexpr const TFunction imageSize_00w(BuiltInId::imageSize_IImage3D1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01C(BuiltInId::imageSize_UImage3D1,
+constexpr const TFunction imageSize_01C(BuiltInId::imageSize_UImage2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p01C20C00B,
@@ -10930,188 +10929,191 @@ constexpr const TFunction imageSize_01C(BuiltInId::imageSize_UImage3D1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00r(BuiltInId::imageSize_Image2DArray1,
+constexpr const TFunction imageSize_00r(BuiltInId::imageSize_ImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00r20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00x(BuiltInId::imageSize_IImage2DArray1,
+constexpr const TFunction imageSize_00x(BuiltInId::imageSize_IImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00x20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01D(BuiltInId::imageSize_UImage2DArray1,
+constexpr const TFunction imageSize_01D(BuiltInId::imageSize_UImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p01D20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00s(BuiltInId::imageSize_ImageCube1,
+constexpr const TFunction imageSize_00s(BuiltInId::imageSize_ImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00s20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00y(BuiltInId::imageSize_IImageCube1,
+constexpr const TFunction imageSize_00y(BuiltInId::imageSize_IImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p00y20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
+                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01E(BuiltInId::imageSize_UImageCube1,
+constexpr const TFunction imageSize_01E(BuiltInId::imageSize_UImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                         BuiltInParameters::p01E20C00B,
                                         1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
-                                        EOpImageSize,
-                                        true);
-constexpr const TFunction imageSize_00t(BuiltInId::imageSize_ImageCubeArray1,
-                                        BuiltInName::imageSize,
-                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p00t20C00B,
-                                        1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_00z(BuiltInId::imageSize_IImageCubeArray1,
-                                        BuiltInName::imageSize,
-                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p00z20C00B,
-                                        1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
-                                        EOpImageSize,
-                                        true);
-constexpr const TFunction imageSize_01F(BuiltInId::imageSize_UImageCubeArray1,
-                                        BuiltInName::imageSize,
-                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p01F20C00B,
-                                        1,
-                                        StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
-                                        EOpImageSize,
-                                        true);
-constexpr const TFunction imageSizeExt_00t(BuiltInId::imageSizeExt_ImageCubeArray1,
+constexpr const TFunction imageSizeExt_00s(BuiltInId::imageSizeExt_ImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
                                                {TExtension::OES_texture_cube_map_array,
                                                 TExtension::EXT_texture_cube_map_array}},
-                                           BuiltInParameters::p00t20C00B,
+                                           BuiltInParameters::p00s20C00B,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
                                            true);
-constexpr const TFunction imageSizeExt_00z(BuiltInId::imageSizeExt_IImageCubeArray1,
+constexpr const TFunction imageSizeExt_00y(BuiltInId::imageSizeExt_IImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
                                                {TExtension::OES_texture_cube_map_array,
                                                 TExtension::EXT_texture_cube_map_array}},
-                                           BuiltInParameters::p00z20C00B,
+                                           BuiltInParameters::p00y20C00B,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
                                            true);
-constexpr const TFunction imageSizeExt_01F(BuiltInId::imageSizeExt_UImageCubeArray1,
+constexpr const TFunction imageSizeExt_01E(BuiltInId::imageSizeExt_UImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
                                                {TExtension::OES_texture_cube_map_array,
                                                 TExtension::EXT_texture_cube_map_array}},
-                                           BuiltInParameters::p01F20C00B,
+                                           BuiltInParameters::p01E20C00B,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
                                            true);
-constexpr const TFunction imageSize_00u(BuiltInId::imageSize_ImageBuffer1,
+constexpr const TFunction imageSize_00t(BuiltInId::imageSize_ImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p00u00C00B,
+                                        BuiltInParameters::p00t00C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01A(BuiltInId::imageSize_IImageBuffer1,
+constexpr const TFunction imageSize_00z(BuiltInId::imageSize_IImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p01A00C00B,
+                                        BuiltInParameters::p00z00C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSize_01G(BuiltInId::imageSize_UImageBuffer1,
+constexpr const TFunction imageSize_01F(BuiltInId::imageSize_UImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                        BuiltInParameters::p01G00C00B,
+                                        BuiltInParameters::p01F00C00B,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
                                         true);
-constexpr const TFunction imageSizeExt_00u(
+constexpr const TFunction imageSizeExt_00t(
     BuiltInId::imageSizeExt_ImageBuffer1,
     BuiltInName::imageSizeExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p00u00C00B,
+    BuiltInParameters::p00t00C00B,
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
     true);
-constexpr const TFunction imageSizeExt_01A(
+constexpr const TFunction imageSizeExt_00z(
     BuiltInId::imageSizeExt_IImageBuffer1,
     BuiltInName::imageSizeExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01A00C00B,
+    BuiltInParameters::p00z00C00B,
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
     true);
-constexpr const TFunction imageSizeExt_01G(
+constexpr const TFunction imageSizeExt_01F(
     BuiltInId::imageSizeExt_UImageBuffer1,
     BuiltInName::imageSizeExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01G00C00B,
+    BuiltInParameters::p01F00C00B,
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
     true);
-constexpr const TFunction imageStore_00p10C30B(
+constexpr const TFunction imageStore_00o10C30B(
     BuiltInId::imageStore_Image2D1_Int2_Float4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C30B,
+    BuiltInParameters::p00o10C30B,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_00v10C30C(
+constexpr const TFunction imageStore_00u10C30C(
     BuiltInId::imageStore_IImage2D1_Int2_Int4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C30C,
+    BuiltInParameters::p00u10C30C,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_01B10C30D(
+constexpr const TFunction imageStore_01A10C30D(
     BuiltInId::imageStore_UImage2D1_Int2_UInt4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C30D,
+    BuiltInParameters::p01A10C30D,
+    3,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageStore,
+    false);
+constexpr const TFunction imageStore_00p20C30B(
+    BuiltInId::imageStore_Image3D1_Int3_Float4,
+    BuiltInName::imageStore,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00p20C30B,
+    3,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageStore,
+    false);
+constexpr const TFunction imageStore_00v20C30C(
+    BuiltInId::imageStore_IImage3D1_Int3_Int4,
+    BuiltInName::imageStore,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00v20C30C,
+    3,
+    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageStore,
+    false);
+constexpr const TFunction imageStore_01B20C30D(
+    BuiltInId::imageStore_UImage3D1_Int3_UInt4,
+    BuiltInName::imageStore,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01B20C30D,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00q20C30B(
-    BuiltInId::imageStore_Image3D1_Int3_Float4,
+    BuiltInId::imageStore_Image2DArray1_Int3_Float4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00q20C30B,
@@ -11120,7 +11122,7 @@ constexpr const TFunction imageStore_00q20C30B(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00w20C30C(
-    BuiltInId::imageStore_IImage3D1_Int3_Int4,
+    BuiltInId::imageStore_IImage2DArray1_Int3_Int4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00w20C30C,
@@ -11129,7 +11131,7 @@ constexpr const TFunction imageStore_00w20C30C(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_01C20C30D(
-    BuiltInId::imageStore_UImage3D1_Int3_UInt4,
+    BuiltInId::imageStore_UImage2DArray1_Int3_UInt4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01C20C30D,
@@ -11138,7 +11140,7 @@ constexpr const TFunction imageStore_01C20C30D(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00r20C30B(
-    BuiltInId::imageStore_Image2DArray1_Int3_Float4,
+    BuiltInId::imageStore_ImageCube1_Int3_Float4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C30B,
@@ -11147,7 +11149,7 @@ constexpr const TFunction imageStore_00r20C30B(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00x20C30C(
-    BuiltInId::imageStore_IImage2DArray1_Int3_Int4,
+    BuiltInId::imageStore_IImageCube1_Int3_Int4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C30C,
@@ -11156,7 +11158,7 @@ constexpr const TFunction imageStore_00x20C30C(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_01D20C30D(
-    BuiltInId::imageStore_UImage2DArray1_Int3_UInt4,
+    BuiltInId::imageStore_UImageCube1_Int3_UInt4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C30D,
@@ -11165,7 +11167,7 @@ constexpr const TFunction imageStore_01D20C30D(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00s20C30B(
-    BuiltInId::imageStore_ImageCube1_Int3_Float4,
+    BuiltInId::imageStore_ImageCubeArray1_Int3_Float4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00s20C30B,
@@ -11174,7 +11176,7 @@ constexpr const TFunction imageStore_00s20C30B(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_00y20C30C(
-    BuiltInId::imageStore_IImageCube1_Int3_Int4,
+    BuiltInId::imageStore_IImageCubeArray1_Int3_Int4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00y20C30C,
@@ -11183,7 +11185,7 @@ constexpr const TFunction imageStore_00y20C30C(
     EOpImageStore,
     false);
 constexpr const TFunction imageStore_01E20C30D(
-    BuiltInId::imageStore_UImageCube1_Int3_UInt4,
+    BuiltInId::imageStore_UImageCubeArray1_Int3_UInt4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01E20C30D,
@@ -11191,145 +11193,144 @@ constexpr const TFunction imageStore_01E20C30D(
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_00t20C30B(
-    BuiltInId::imageStore_ImageCubeArray1_Int3_Float4,
-    BuiltInName::imageStore,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C30B,
-    3,
-    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageStore,
-    false);
-constexpr const TFunction imageStore_00z20C30C(
-    BuiltInId::imageStore_IImageCubeArray1_Int3_Int4,
-    BuiltInName::imageStore,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C30C,
-    3,
-    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageStore,
-    false);
-constexpr const TFunction imageStore_01F20C30D(
-    BuiltInId::imageStore_UImageCubeArray1_Int3_UInt4,
-    BuiltInName::imageStore,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C30D,
-    3,
-    StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageStore,
-    false);
-constexpr const TFunction imageStoreExt_00t20C30B(
+constexpr const TFunction imageStoreExt_00s20C30B(
     BuiltInId::imageStoreExt_ImageCubeArray1_Int3_Float4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p00t20C30B,
+    BuiltInParameters::p00s20C30B,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStoreExt_00z20C30C(
+constexpr const TFunction imageStoreExt_00y20C30C(
     BuiltInId::imageStoreExt_IImageCubeArray1_Int3_Int4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p00z20C30C,
+    BuiltInParameters::p00y20C30C,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStoreExt_01F20C30D(
+constexpr const TFunction imageStoreExt_01E20C30D(
     BuiltInId::imageStoreExt_UImageCubeArray1_Int3_UInt4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p01F20C30D,
+    BuiltInParameters::p01E20C30D,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_00u00C30B(
+constexpr const TFunction imageStore_00t00C30B(
     BuiltInId::imageStore_ImageBuffer1_Int1_Float4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C30B,
+    BuiltInParameters::p00t00C30B,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_01A00C30C(
+constexpr const TFunction imageStore_00z00C30C(
     BuiltInId::imageStore_IImageBuffer1_Int1_Int4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C30C,
+    BuiltInParameters::p00z00C30C,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStore_01G00C30D(
+constexpr const TFunction imageStore_01F00C30D(
     BuiltInId::imageStore_UImageBuffer1_Int1_UInt4,
     BuiltInName::imageStore,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C30D,
+    BuiltInParameters::p01F00C30D,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStoreExt_00u00C30B(
+constexpr const TFunction imageStoreExt_00t00C30B(
     BuiltInId::imageStoreExt_ImageBuffer1_Int1_Float4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p00u00C30B,
+    BuiltInParameters::p00t00C30B,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStoreExt_01A00C30C(
+constexpr const TFunction imageStoreExt_00z00C30C(
     BuiltInId::imageStoreExt_IImageBuffer1_Int1_Int4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01A00C30C,
+    BuiltInParameters::p00z00C30C,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageStoreExt_01G00C30D(
+constexpr const TFunction imageStoreExt_01F00C30D(
     BuiltInId::imageStoreExt_UImageBuffer1_Int1_UInt4,
     BuiltInName::imageStoreExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01G00C30D,
+    BuiltInParameters::p01F00C30D,
     3,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageStore,
     false);
-constexpr const TFunction imageLoad_00p10C(
+constexpr const TFunction imageLoad_00o10C(
     BuiltInId::imageLoad_Image2D1_Int2,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00B,
+    BuiltInParameters::p00o10C00B,
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00v10C(BuiltInId::imageLoad_IImage2D1_Int2,
+constexpr const TFunction imageLoad_00u10C(BuiltInId::imageLoad_IImage2D1_Int2,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                           BuiltInParameters::p00v10C00B,
+                                           BuiltInParameters::p00u10C00B,
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
                                            true);
-constexpr const TFunction imageLoad_01B10C(
+constexpr const TFunction imageLoad_01A10C(
     BuiltInId::imageLoad_UImage2D1_Int2,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00B,
+    BuiltInParameters::p01A10C00B,
+    2,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpImageLoad,
+    true);
+constexpr const TFunction imageLoad_00p20C(
+    BuiltInId::imageLoad_Image3D1_Int3,
+    BuiltInName::imageLoad,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00p20C00B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpImageLoad,
+    true);
+constexpr const TFunction imageLoad_00v20C(BuiltInId::imageLoad_IImage3D1_Int3,
+                                           BuiltInName::imageLoad,
+                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+                                           BuiltInParameters::p00v20C00B,
+                                           2,
+                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
+                                           EOpImageLoad,
+                                           true);
+constexpr const TFunction imageLoad_01B20C(
+    BuiltInId::imageLoad_UImage3D1_Int3,
+    BuiltInName::imageLoad,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01B20C00B,
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
 constexpr const TFunction imageLoad_00q20C(
-    BuiltInId::imageLoad_Image3D1_Int3,
+    BuiltInId::imageLoad_Image2DArray1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00q20C00B,
@@ -11337,7 +11338,7 @@ constexpr const TFunction imageLoad_00q20C(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00w20C(BuiltInId::imageLoad_IImage3D1_Int3,
+constexpr const TFunction imageLoad_00w20C(BuiltInId::imageLoad_IImage2DArray1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                            BuiltInParameters::p00w20C00B,
@@ -11346,7 +11347,7 @@ constexpr const TFunction imageLoad_00w20C(BuiltInId::imageLoad_IImage3D1_Int3,
                                            EOpImageLoad,
                                            true);
 constexpr const TFunction imageLoad_01C20C(
-    BuiltInId::imageLoad_UImage3D1_Int3,
+    BuiltInId::imageLoad_UImage2DArray1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01C20C00B,
@@ -11355,7 +11356,7 @@ constexpr const TFunction imageLoad_01C20C(
     EOpImageLoad,
     true);
 constexpr const TFunction imageLoad_00r20C(
-    BuiltInId::imageLoad_Image2DArray1_Int3,
+    BuiltInId::imageLoad_ImageCube1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00B,
@@ -11363,7 +11364,7 @@ constexpr const TFunction imageLoad_00r20C(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00x20C(BuiltInId::imageLoad_IImage2DArray1_Int3,
+constexpr const TFunction imageLoad_00x20C(BuiltInId::imageLoad_IImageCube1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                            BuiltInParameters::p00x20C00B,
@@ -11372,7 +11373,7 @@ constexpr const TFunction imageLoad_00x20C(BuiltInId::imageLoad_IImage2DArray1_I
                                            EOpImageLoad,
                                            true);
 constexpr const TFunction imageLoad_01D20C(
-    BuiltInId::imageLoad_UImage2DArray1_Int3,
+    BuiltInId::imageLoad_UImageCube1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00B,
@@ -11381,7 +11382,7 @@ constexpr const TFunction imageLoad_01D20C(
     EOpImageLoad,
     true);
 constexpr const TFunction imageLoad_00s20C(
-    BuiltInId::imageLoad_ImageCube1_Int3,
+    BuiltInId::imageLoad_ImageCubeArray1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00s20C00B,
@@ -11389,7 +11390,7 @@ constexpr const TFunction imageLoad_00s20C(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00y20C(BuiltInId::imageLoad_IImageCube1_Int3,
+constexpr const TFunction imageLoad_00y20C(BuiltInId::imageLoad_IImageCubeArray1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                            BuiltInParameters::p00y20C00B,
@@ -11398,7 +11399,7 @@ constexpr const TFunction imageLoad_00y20C(BuiltInId::imageLoad_IImageCube1_Int3
                                            EOpImageLoad,
                                            true);
 constexpr const TFunction imageLoad_01E20C(
-    BuiltInId::imageLoad_UImageCube1_Int3,
+    BuiltInId::imageLoad_UImageCubeArray1_Int3,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01E20C00B,
@@ -11406,225 +11407,145 @@ constexpr const TFunction imageLoad_01E20C(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00t20C(
-    BuiltInId::imageLoad_ImageCubeArray1_Int3,
-    BuiltInName::imageLoad,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00B,
-    2,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
-    EOpImageLoad,
-    true);
-constexpr const TFunction imageLoad_00z20C(BuiltInId::imageLoad_IImageCubeArray1_Int3,
-                                           BuiltInName::imageLoad,
-                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                           BuiltInParameters::p00z20C00B,
-                                           2,
-                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
-                                           EOpImageLoad,
-                                           true);
-constexpr const TFunction imageLoad_01F20C(
-    BuiltInId::imageLoad_UImageCubeArray1_Int3,
-    BuiltInName::imageLoad,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00B,
-    2,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
-    EOpImageLoad,
-    true);
-constexpr const TFunction imageLoadExt_00t20C(
+constexpr const TFunction imageLoadExt_00s20C(
     BuiltInId::imageLoadExt_ImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p00t20C00B,
+    BuiltInParameters::p00s20C00B,
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoadExt_00z20C(
+constexpr const TFunction imageLoadExt_00y20C(
     BuiltInId::imageLoadExt_IImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p00z20C00B,
+    BuiltInParameters::p00y20C00B,
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoadExt_01F20C(
+constexpr const TFunction imageLoadExt_01E20C(
     BuiltInId::imageLoadExt_UImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{
         {TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array}},
-    BuiltInParameters::p01F20C00B,
+    BuiltInParameters::p01E20C00B,
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_00u00C(
+constexpr const TFunction imageLoad_00t00C(
     BuiltInId::imageLoad_ImageBuffer1_Int1,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00B,
+    BuiltInParameters::p00t00C00B,
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoad_01A00C(BuiltInId::imageLoad_IImageBuffer1_Int1,
+constexpr const TFunction imageLoad_00z00C(BuiltInId::imageLoad_IImageBuffer1_Int1,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                           BuiltInParameters::p01A00C00B,
+                                           BuiltInParameters::p00z00C00B,
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
                                            true);
-constexpr const TFunction imageLoad_01G00C(
+constexpr const TFunction imageLoad_01F00C(
     BuiltInId::imageLoad_UImageBuffer1_Int1,
     BuiltInName::imageLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00B,
+    BuiltInParameters::p01F00C00B,
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoadExt_00u00C(
+constexpr const TFunction imageLoadExt_00t00C(
     BuiltInId::imageLoadExt_ImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p00u00C00B,
+    BuiltInParameters::p00t00C00B,
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoadExt_01A00C(
+constexpr const TFunction imageLoadExt_00z00C(
     BuiltInId::imageLoadExt_IImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01A00C00B,
+    BuiltInParameters::p00z00C00B,
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageLoadExt_01G00C(
+constexpr const TFunction imageLoadExt_01F00C(
     BuiltInId::imageLoadExt_UImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
     std::array<TExtension, 2u>{{TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer}},
-    BuiltInParameters::p01G00C00B,
+    BuiltInParameters::p01F00C00B,
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
     true);
-constexpr const TFunction imageAtomicAdd_00p10C00D(
+constexpr const TFunction imageAtomicAdd_00o10C00D(
     BuiltInId::imageAtomicAdd_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00v10C00D(
+constexpr const TFunction imageAtomicAdd_00u10C00D(
     BuiltInId::imageAtomicAdd_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01B10C00D(
+constexpr const TFunction imageAtomicAdd_01A10C00D(
     BuiltInId::imageAtomicAdd_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00q20C00D(
+constexpr const TFunction imageAtomicAdd_00p20C00D(
     BuiltInId::imageAtomicAdd_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00w20C00D(
+constexpr const TFunction imageAtomicAdd_00v20C00D(
     BuiltInId::imageAtomicAdd_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01C20C00D(
+constexpr const TFunction imageAtomicAdd_01B20C00D(
     BuiltInId::imageAtomicAdd_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00s20C00D(
-    BuiltInId::imageAtomicAdd_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00y20C00D(
-    BuiltInId::imageAtomicAdd_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01E20C00D(
-    BuiltInId::imageAtomicAdd_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00u00C00D(
-    BuiltInId::imageAtomicAdd_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01A00C00D(
-    BuiltInId::imageAtomicAdd_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01G00C00D(
-    BuiltInId::imageAtomicAdd_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_00r20C00D(
-    BuiltInId::imageAtomicAdd_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAdd_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -11633,7 +11554,7 @@ constexpr const TFunction imageAtomicAdd_00r20C00D(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_00x20C00D(
-    BuiltInId::imageAtomicAdd_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAdd_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -11642,7 +11563,7 @@ constexpr const TFunction imageAtomicAdd_00x20C00D(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_01D20C00D(
-    BuiltInId::imageAtomicAdd_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAdd_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -11650,143 +11571,143 @@ constexpr const TFunction imageAtomicAdd_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00t20C00D(
+constexpr const TFunction imageAtomicAdd_00t00C00D(
+    BuiltInId::imageAtomicAdd_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00z00C00D(
+    BuiltInId::imageAtomicAdd_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_01F00C00D(
+    BuiltInId::imageAtomicAdd_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00q20C00D(
+    BuiltInId::imageAtomicAdd_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00w20C00D(
+    BuiltInId::imageAtomicAdd_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_01C20C00D(
+    BuiltInId::imageAtomicAdd_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00s20C00D(
     BuiltInId::imageAtomicAdd_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00z20C00D(
+constexpr const TFunction imageAtomicAdd_00y20C00D(
     BuiltInId::imageAtomicAdd_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01F20C00D(
+constexpr const TFunction imageAtomicAdd_01E20C00D(
     BuiltInId::imageAtomicAdd_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00p10C00C(
+constexpr const TFunction imageAtomicAdd_00o10C00C(
     BuiltInId::imageAtomicAdd_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00v10C00C(
+constexpr const TFunction imageAtomicAdd_00u10C00C(
     BuiltInId::imageAtomicAdd_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01B10C00C(
+constexpr const TFunction imageAtomicAdd_01A10C00C(
     BuiltInId::imageAtomicAdd_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00q20C00C(
+constexpr const TFunction imageAtomicAdd_00p20C00C(
     BuiltInId::imageAtomicAdd_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00w20C00C(
+constexpr const TFunction imageAtomicAdd_00v20C00C(
     BuiltInId::imageAtomicAdd_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01C20C00C(
+constexpr const TFunction imageAtomicAdd_01B20C00C(
     BuiltInId::imageAtomicAdd_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00s20C00C(
-    BuiltInId::imageAtomicAdd_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00y20C00C(
-    BuiltInId::imageAtomicAdd_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01E20C00C(
-    BuiltInId::imageAtomicAdd_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_00u00C00C(
-    BuiltInId::imageAtomicAdd_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01A00C00C(
-    BuiltInId::imageAtomicAdd_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAdd_01G00C00C(
-    BuiltInId::imageAtomicAdd_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAdd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_00r20C00C(
-    BuiltInId::imageAtomicAdd_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAdd_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -11795,7 +11716,7 @@ constexpr const TFunction imageAtomicAdd_00r20C00C(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_00x20C00C(
-    BuiltInId::imageAtomicAdd_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAdd_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -11804,7 +11725,7 @@ constexpr const TFunction imageAtomicAdd_00x20C00C(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAdd_01D20C00C(
-    BuiltInId::imageAtomicAdd_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAdd_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -11812,143 +11733,143 @@ constexpr const TFunction imageAtomicAdd_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00t20C00C(
+constexpr const TFunction imageAtomicAdd_00t00C00C(
+    BuiltInId::imageAtomicAdd_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00z00C00C(
+    BuiltInId::imageAtomicAdd_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_01F00C00C(
+    BuiltInId::imageAtomicAdd_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00q20C00C(
+    BuiltInId::imageAtomicAdd_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00w20C00C(
+    BuiltInId::imageAtomicAdd_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_01C20C00C(
+    BuiltInId::imageAtomicAdd_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAdd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAdd_00s20C00C(
     BuiltInId::imageAtomicAdd_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_00z20C00C(
+constexpr const TFunction imageAtomicAdd_00y20C00C(
     BuiltInId::imageAtomicAdd_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAdd_01F20C00C(
+constexpr const TFunction imageAtomicAdd_01E20C00C(
     BuiltInId::imageAtomicAdd_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAdd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicMin_00p10C00D(
+constexpr const TFunction imageAtomicMin_00o10C00D(
     BuiltInId::imageAtomicMin_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00v10C00D(
+constexpr const TFunction imageAtomicMin_00u10C00D(
     BuiltInId::imageAtomicMin_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01B10C00D(
+constexpr const TFunction imageAtomicMin_01A10C00D(
     BuiltInId::imageAtomicMin_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00q20C00D(
+constexpr const TFunction imageAtomicMin_00p20C00D(
     BuiltInId::imageAtomicMin_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00w20C00D(
+constexpr const TFunction imageAtomicMin_00v20C00D(
     BuiltInId::imageAtomicMin_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01C20C00D(
+constexpr const TFunction imageAtomicMin_01B20C00D(
     BuiltInId::imageAtomicMin_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00s20C00D(
-    BuiltInId::imageAtomicMin_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00y20C00D(
-    BuiltInId::imageAtomicMin_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01E20C00D(
-    BuiltInId::imageAtomicMin_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00u00C00D(
-    BuiltInId::imageAtomicMin_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01A00C00D(
-    BuiltInId::imageAtomicMin_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01G00C00D(
-    BuiltInId::imageAtomicMin_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_00r20C00D(
-    BuiltInId::imageAtomicMin_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMin_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -11957,7 +11878,7 @@ constexpr const TFunction imageAtomicMin_00r20C00D(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_00x20C00D(
-    BuiltInId::imageAtomicMin_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMin_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -11966,7 +11887,7 @@ constexpr const TFunction imageAtomicMin_00x20C00D(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_01D20C00D(
-    BuiltInId::imageAtomicMin_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMin_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -11974,143 +11895,143 @@ constexpr const TFunction imageAtomicMin_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00t20C00D(
+constexpr const TFunction imageAtomicMin_00t00C00D(
+    BuiltInId::imageAtomicMin_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00z00C00D(
+    BuiltInId::imageAtomicMin_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_01F00C00D(
+    BuiltInId::imageAtomicMin_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00q20C00D(
+    BuiltInId::imageAtomicMin_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00w20C00D(
+    BuiltInId::imageAtomicMin_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_01C20C00D(
+    BuiltInId::imageAtomicMin_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00s20C00D(
     BuiltInId::imageAtomicMin_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00z20C00D(
+constexpr const TFunction imageAtomicMin_00y20C00D(
     BuiltInId::imageAtomicMin_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01F20C00D(
+constexpr const TFunction imageAtomicMin_01E20C00D(
     BuiltInId::imageAtomicMin_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00p10C00C(
+constexpr const TFunction imageAtomicMin_00o10C00C(
     BuiltInId::imageAtomicMin_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00v10C00C(
+constexpr const TFunction imageAtomicMin_00u10C00C(
     BuiltInId::imageAtomicMin_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01B10C00C(
+constexpr const TFunction imageAtomicMin_01A10C00C(
     BuiltInId::imageAtomicMin_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00q20C00C(
+constexpr const TFunction imageAtomicMin_00p20C00C(
     BuiltInId::imageAtomicMin_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00w20C00C(
+constexpr const TFunction imageAtomicMin_00v20C00C(
     BuiltInId::imageAtomicMin_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01C20C00C(
+constexpr const TFunction imageAtomicMin_01B20C00C(
     BuiltInId::imageAtomicMin_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00s20C00C(
-    BuiltInId::imageAtomicMin_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00y20C00C(
-    BuiltInId::imageAtomicMin_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01E20C00C(
-    BuiltInId::imageAtomicMin_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_00u00C00C(
-    BuiltInId::imageAtomicMin_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01A00C00C(
-    BuiltInId::imageAtomicMin_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMin_01G00C00C(
-    BuiltInId::imageAtomicMin_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMin,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_00r20C00C(
-    BuiltInId::imageAtomicMin_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMin_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -12119,7 +12040,7 @@ constexpr const TFunction imageAtomicMin_00r20C00C(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_00x20C00C(
-    BuiltInId::imageAtomicMin_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMin_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -12128,7 +12049,7 @@ constexpr const TFunction imageAtomicMin_00x20C00C(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMin_01D20C00C(
-    BuiltInId::imageAtomicMin_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMin_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -12136,143 +12057,143 @@ constexpr const TFunction imageAtomicMin_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00t20C00C(
+constexpr const TFunction imageAtomicMin_00t00C00C(
+    BuiltInId::imageAtomicMin_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00z00C00C(
+    BuiltInId::imageAtomicMin_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_01F00C00C(
+    BuiltInId::imageAtomicMin_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00q20C00C(
+    BuiltInId::imageAtomicMin_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00w20C00C(
+    BuiltInId::imageAtomicMin_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_01C20C00C(
+    BuiltInId::imageAtomicMin_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMin,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMin_00s20C00C(
     BuiltInId::imageAtomicMin_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_00z20C00C(
+constexpr const TFunction imageAtomicMin_00y20C00C(
     BuiltInId::imageAtomicMin_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMin_01F20C00C(
+constexpr const TFunction imageAtomicMin_01E20C00C(
     BuiltInId::imageAtomicMin_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMin,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMax_00p10C00D(
+constexpr const TFunction imageAtomicMax_00o10C00D(
     BuiltInId::imageAtomicMax_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00v10C00D(
+constexpr const TFunction imageAtomicMax_00u10C00D(
     BuiltInId::imageAtomicMax_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01B10C00D(
+constexpr const TFunction imageAtomicMax_01A10C00D(
     BuiltInId::imageAtomicMax_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00q20C00D(
+constexpr const TFunction imageAtomicMax_00p20C00D(
     BuiltInId::imageAtomicMax_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00w20C00D(
+constexpr const TFunction imageAtomicMax_00v20C00D(
     BuiltInId::imageAtomicMax_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01C20C00D(
+constexpr const TFunction imageAtomicMax_01B20C00D(
     BuiltInId::imageAtomicMax_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00s20C00D(
-    BuiltInId::imageAtomicMax_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00y20C00D(
-    BuiltInId::imageAtomicMax_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01E20C00D(
-    BuiltInId::imageAtomicMax_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00u00C00D(
-    BuiltInId::imageAtomicMax_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01A00C00D(
-    BuiltInId::imageAtomicMax_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01G00C00D(
-    BuiltInId::imageAtomicMax_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_00r20C00D(
-    BuiltInId::imageAtomicMax_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMax_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -12281,7 +12202,7 @@ constexpr const TFunction imageAtomicMax_00r20C00D(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_00x20C00D(
-    BuiltInId::imageAtomicMax_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMax_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -12290,7 +12211,7 @@ constexpr const TFunction imageAtomicMax_00x20C00D(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_01D20C00D(
-    BuiltInId::imageAtomicMax_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMax_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -12298,143 +12219,143 @@ constexpr const TFunction imageAtomicMax_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00t20C00D(
+constexpr const TFunction imageAtomicMax_00t00C00D(
+    BuiltInId::imageAtomicMax_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00z00C00D(
+    BuiltInId::imageAtomicMax_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_01F00C00D(
+    BuiltInId::imageAtomicMax_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00q20C00D(
+    BuiltInId::imageAtomicMax_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00w20C00D(
+    BuiltInId::imageAtomicMax_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_01C20C00D(
+    BuiltInId::imageAtomicMax_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00s20C00D(
     BuiltInId::imageAtomicMax_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00z20C00D(
+constexpr const TFunction imageAtomicMax_00y20C00D(
     BuiltInId::imageAtomicMax_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01F20C00D(
+constexpr const TFunction imageAtomicMax_01E20C00D(
     BuiltInId::imageAtomicMax_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00p10C00C(
+constexpr const TFunction imageAtomicMax_00o10C00C(
     BuiltInId::imageAtomicMax_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00v10C00C(
+constexpr const TFunction imageAtomicMax_00u10C00C(
     BuiltInId::imageAtomicMax_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01B10C00C(
+constexpr const TFunction imageAtomicMax_01A10C00C(
     BuiltInId::imageAtomicMax_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00q20C00C(
+constexpr const TFunction imageAtomicMax_00p20C00C(
     BuiltInId::imageAtomicMax_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00w20C00C(
+constexpr const TFunction imageAtomicMax_00v20C00C(
     BuiltInId::imageAtomicMax_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01C20C00C(
+constexpr const TFunction imageAtomicMax_01B20C00C(
     BuiltInId::imageAtomicMax_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00s20C00C(
-    BuiltInId::imageAtomicMax_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00y20C00C(
-    BuiltInId::imageAtomicMax_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01E20C00C(
-    BuiltInId::imageAtomicMax_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_00u00C00C(
-    BuiltInId::imageAtomicMax_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01A00C00C(
-    BuiltInId::imageAtomicMax_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMax_01G00C00C(
-    BuiltInId::imageAtomicMax_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMax,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_00r20C00C(
-    BuiltInId::imageAtomicMax_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMax_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -12443,7 +12364,7 @@ constexpr const TFunction imageAtomicMax_00r20C00C(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_00x20C00C(
-    BuiltInId::imageAtomicMax_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMax_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -12452,7 +12373,7 @@ constexpr const TFunction imageAtomicMax_00x20C00C(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMax_01D20C00C(
-    BuiltInId::imageAtomicMax_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMax_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -12460,143 +12381,143 @@ constexpr const TFunction imageAtomicMax_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00t20C00C(
+constexpr const TFunction imageAtomicMax_00t00C00C(
+    BuiltInId::imageAtomicMax_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00z00C00C(
+    BuiltInId::imageAtomicMax_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_01F00C00C(
+    BuiltInId::imageAtomicMax_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00q20C00C(
+    BuiltInId::imageAtomicMax_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00w20C00C(
+    BuiltInId::imageAtomicMax_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_01C20C00C(
+    BuiltInId::imageAtomicMax_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMax,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMax_00s20C00C(
     BuiltInId::imageAtomicMax_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_00z20C00C(
+constexpr const TFunction imageAtomicMax_00y20C00C(
     BuiltInId::imageAtomicMax_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMax_01F20C00C(
+constexpr const TFunction imageAtomicMax_01E20C00C(
     BuiltInId::imageAtomicMax_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMax,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicAnd_00p10C00D(
+constexpr const TFunction imageAtomicAnd_00o10C00D(
     BuiltInId::imageAtomicAnd_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00v10C00D(
+constexpr const TFunction imageAtomicAnd_00u10C00D(
     BuiltInId::imageAtomicAnd_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01B10C00D(
+constexpr const TFunction imageAtomicAnd_01A10C00D(
     BuiltInId::imageAtomicAnd_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00q20C00D(
+constexpr const TFunction imageAtomicAnd_00p20C00D(
     BuiltInId::imageAtomicAnd_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00w20C00D(
+constexpr const TFunction imageAtomicAnd_00v20C00D(
     BuiltInId::imageAtomicAnd_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01C20C00D(
+constexpr const TFunction imageAtomicAnd_01B20C00D(
     BuiltInId::imageAtomicAnd_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00s20C00D(
-    BuiltInId::imageAtomicAnd_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00y20C00D(
-    BuiltInId::imageAtomicAnd_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01E20C00D(
-    BuiltInId::imageAtomicAnd_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00u00C00D(
-    BuiltInId::imageAtomicAnd_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01A00C00D(
-    BuiltInId::imageAtomicAnd_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01G00C00D(
-    BuiltInId::imageAtomicAnd_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_00r20C00D(
-    BuiltInId::imageAtomicAnd_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAnd_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -12605,7 +12526,7 @@ constexpr const TFunction imageAtomicAnd_00r20C00D(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_00x20C00D(
-    BuiltInId::imageAtomicAnd_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAnd_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -12614,7 +12535,7 @@ constexpr const TFunction imageAtomicAnd_00x20C00D(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_01D20C00D(
-    BuiltInId::imageAtomicAnd_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAnd_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -12622,143 +12543,143 @@ constexpr const TFunction imageAtomicAnd_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00t20C00D(
+constexpr const TFunction imageAtomicAnd_00t00C00D(
+    BuiltInId::imageAtomicAnd_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00z00C00D(
+    BuiltInId::imageAtomicAnd_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_01F00C00D(
+    BuiltInId::imageAtomicAnd_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00q20C00D(
+    BuiltInId::imageAtomicAnd_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00w20C00D(
+    BuiltInId::imageAtomicAnd_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_01C20C00D(
+    BuiltInId::imageAtomicAnd_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00s20C00D(
     BuiltInId::imageAtomicAnd_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00z20C00D(
+constexpr const TFunction imageAtomicAnd_00y20C00D(
     BuiltInId::imageAtomicAnd_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01F20C00D(
+constexpr const TFunction imageAtomicAnd_01E20C00D(
     BuiltInId::imageAtomicAnd_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00p10C00C(
+constexpr const TFunction imageAtomicAnd_00o10C00C(
     BuiltInId::imageAtomicAnd_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00v10C00C(
+constexpr const TFunction imageAtomicAnd_00u10C00C(
     BuiltInId::imageAtomicAnd_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01B10C00C(
+constexpr const TFunction imageAtomicAnd_01A10C00C(
     BuiltInId::imageAtomicAnd_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00q20C00C(
+constexpr const TFunction imageAtomicAnd_00p20C00C(
     BuiltInId::imageAtomicAnd_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00w20C00C(
+constexpr const TFunction imageAtomicAnd_00v20C00C(
     BuiltInId::imageAtomicAnd_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01C20C00C(
+constexpr const TFunction imageAtomicAnd_01B20C00C(
     BuiltInId::imageAtomicAnd_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00s20C00C(
-    BuiltInId::imageAtomicAnd_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00y20C00C(
-    BuiltInId::imageAtomicAnd_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01E20C00C(
-    BuiltInId::imageAtomicAnd_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_00u00C00C(
-    BuiltInId::imageAtomicAnd_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01A00C00C(
-    BuiltInId::imageAtomicAnd_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAnd_01G00C00C(
-    BuiltInId::imageAtomicAnd_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAnd,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_00r20C00C(
-    BuiltInId::imageAtomicAnd_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAnd_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -12767,7 +12688,7 @@ constexpr const TFunction imageAtomicAnd_00r20C00C(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_00x20C00C(
-    BuiltInId::imageAtomicAnd_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAnd_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -12776,7 +12697,7 @@ constexpr const TFunction imageAtomicAnd_00x20C00C(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAnd_01D20C00C(
-    BuiltInId::imageAtomicAnd_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAnd_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -12784,143 +12705,143 @@ constexpr const TFunction imageAtomicAnd_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00t20C00C(
+constexpr const TFunction imageAtomicAnd_00t00C00C(
+    BuiltInId::imageAtomicAnd_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00z00C00C(
+    BuiltInId::imageAtomicAnd_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_01F00C00C(
+    BuiltInId::imageAtomicAnd_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00q20C00C(
+    BuiltInId::imageAtomicAnd_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00w20C00C(
+    BuiltInId::imageAtomicAnd_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_01C20C00C(
+    BuiltInId::imageAtomicAnd_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAnd,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAnd_00s20C00C(
     BuiltInId::imageAtomicAnd_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_00z20C00C(
+constexpr const TFunction imageAtomicAnd_00y20C00C(
     BuiltInId::imageAtomicAnd_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAnd_01F20C00C(
+constexpr const TFunction imageAtomicAnd_01E20C00C(
     BuiltInId::imageAtomicAnd_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAnd,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicOr_00p10C00D(
+constexpr const TFunction imageAtomicOr_00o10C00D(
     BuiltInId::imageAtomicOr_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00v10C00D(
+constexpr const TFunction imageAtomicOr_00u10C00D(
     BuiltInId::imageAtomicOr_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01B10C00D(
+constexpr const TFunction imageAtomicOr_01A10C00D(
     BuiltInId::imageAtomicOr_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00q20C00D(
+constexpr const TFunction imageAtomicOr_00p20C00D(
     BuiltInId::imageAtomicOr_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00w20C00D(
+constexpr const TFunction imageAtomicOr_00v20C00D(
     BuiltInId::imageAtomicOr_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01C20C00D(
+constexpr const TFunction imageAtomicOr_01B20C00D(
     BuiltInId::imageAtomicOr_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00s20C00D(
-    BuiltInId::imageAtomicOr_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00y20C00D(
-    BuiltInId::imageAtomicOr_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01E20C00D(
-    BuiltInId::imageAtomicOr_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00u00C00D(
-    BuiltInId::imageAtomicOr_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01A00C00D(
-    BuiltInId::imageAtomicOr_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01G00C00D(
-    BuiltInId::imageAtomicOr_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_00r20C00D(
-    BuiltInId::imageAtomicOr_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOr_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -12929,7 +12850,7 @@ constexpr const TFunction imageAtomicOr_00r20C00D(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_00x20C00D(
-    BuiltInId::imageAtomicOr_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOr_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -12938,7 +12859,7 @@ constexpr const TFunction imageAtomicOr_00x20C00D(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_01D20C00D(
-    BuiltInId::imageAtomicOr_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOr_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -12946,143 +12867,143 @@ constexpr const TFunction imageAtomicOr_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00t20C00D(
+constexpr const TFunction imageAtomicOr_00t00C00D(
+    BuiltInId::imageAtomicOr_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00z00C00D(
+    BuiltInId::imageAtomicOr_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_01F00C00D(
+    BuiltInId::imageAtomicOr_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00q20C00D(
+    BuiltInId::imageAtomicOr_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00w20C00D(
+    BuiltInId::imageAtomicOr_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_01C20C00D(
+    BuiltInId::imageAtomicOr_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00s20C00D(
     BuiltInId::imageAtomicOr_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00z20C00D(
+constexpr const TFunction imageAtomicOr_00y20C00D(
     BuiltInId::imageAtomicOr_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01F20C00D(
+constexpr const TFunction imageAtomicOr_01E20C00D(
     BuiltInId::imageAtomicOr_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00p10C00C(
+constexpr const TFunction imageAtomicOr_00o10C00C(
     BuiltInId::imageAtomicOr_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00v10C00C(
+constexpr const TFunction imageAtomicOr_00u10C00C(
     BuiltInId::imageAtomicOr_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01B10C00C(
+constexpr const TFunction imageAtomicOr_01A10C00C(
     BuiltInId::imageAtomicOr_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00q20C00C(
+constexpr const TFunction imageAtomicOr_00p20C00C(
     BuiltInId::imageAtomicOr_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00w20C00C(
+constexpr const TFunction imageAtomicOr_00v20C00C(
     BuiltInId::imageAtomicOr_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01C20C00C(
+constexpr const TFunction imageAtomicOr_01B20C00C(
     BuiltInId::imageAtomicOr_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00s20C00C(
-    BuiltInId::imageAtomicOr_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00y20C00C(
-    BuiltInId::imageAtomicOr_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01E20C00C(
-    BuiltInId::imageAtomicOr_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_00u00C00C(
-    BuiltInId::imageAtomicOr_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01A00C00C(
-    BuiltInId::imageAtomicOr_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOr_01G00C00C(
-    BuiltInId::imageAtomicOr_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOr,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_00r20C00C(
-    BuiltInId::imageAtomicOr_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOr_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -13091,7 +13012,7 @@ constexpr const TFunction imageAtomicOr_00r20C00C(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_00x20C00C(
-    BuiltInId::imageAtomicOr_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOr_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -13100,7 +13021,7 @@ constexpr const TFunction imageAtomicOr_00x20C00C(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOr_01D20C00C(
-    BuiltInId::imageAtomicOr_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOr_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -13108,143 +13029,143 @@ constexpr const TFunction imageAtomicOr_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00t20C00C(
+constexpr const TFunction imageAtomicOr_00t00C00C(
+    BuiltInId::imageAtomicOr_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00z00C00C(
+    BuiltInId::imageAtomicOr_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_01F00C00C(
+    BuiltInId::imageAtomicOr_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00q20C00C(
+    BuiltInId::imageAtomicOr_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00w20C00C(
+    BuiltInId::imageAtomicOr_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_01C20C00C(
+    BuiltInId::imageAtomicOr_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOr,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOr_00s20C00C(
     BuiltInId::imageAtomicOr_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_00z20C00C(
+constexpr const TFunction imageAtomicOr_00y20C00C(
     BuiltInId::imageAtomicOr_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOr_01F20C00C(
+constexpr const TFunction imageAtomicOr_01E20C00C(
     BuiltInId::imageAtomicOr_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOr,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicXor_00p10C00D(
+constexpr const TFunction imageAtomicXor_00o10C00D(
     BuiltInId::imageAtomicXor_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00v10C00D(
+constexpr const TFunction imageAtomicXor_00u10C00D(
     BuiltInId::imageAtomicXor_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01B10C00D(
+constexpr const TFunction imageAtomicXor_01A10C00D(
     BuiltInId::imageAtomicXor_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00q20C00D(
+constexpr const TFunction imageAtomicXor_00p20C00D(
     BuiltInId::imageAtomicXor_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00w20C00D(
+constexpr const TFunction imageAtomicXor_00v20C00D(
     BuiltInId::imageAtomicXor_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01C20C00D(
+constexpr const TFunction imageAtomicXor_01B20C00D(
     BuiltInId::imageAtomicXor_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00s20C00D(
-    BuiltInId::imageAtomicXor_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00y20C00D(
-    BuiltInId::imageAtomicXor_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01E20C00D(
-    BuiltInId::imageAtomicXor_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00u00C00D(
-    BuiltInId::imageAtomicXor_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01A00C00D(
-    BuiltInId::imageAtomicXor_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01G00C00D(
-    BuiltInId::imageAtomicXor_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_00r20C00D(
-    BuiltInId::imageAtomicXor_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXor_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -13253,7 +13174,7 @@ constexpr const TFunction imageAtomicXor_00r20C00D(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_00x20C00D(
-    BuiltInId::imageAtomicXor_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXor_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -13262,7 +13183,7 @@ constexpr const TFunction imageAtomicXor_00x20C00D(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_01D20C00D(
-    BuiltInId::imageAtomicXor_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXor_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -13270,143 +13191,143 @@ constexpr const TFunction imageAtomicXor_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00t20C00D(
+constexpr const TFunction imageAtomicXor_00t00C00D(
+    BuiltInId::imageAtomicXor_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00z00C00D(
+    BuiltInId::imageAtomicXor_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_01F00C00D(
+    BuiltInId::imageAtomicXor_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00q20C00D(
+    BuiltInId::imageAtomicXor_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00w20C00D(
+    BuiltInId::imageAtomicXor_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_01C20C00D(
+    BuiltInId::imageAtomicXor_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00s20C00D(
     BuiltInId::imageAtomicXor_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00z20C00D(
+constexpr const TFunction imageAtomicXor_00y20C00D(
     BuiltInId::imageAtomicXor_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01F20C00D(
+constexpr const TFunction imageAtomicXor_01E20C00D(
     BuiltInId::imageAtomicXor_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00p10C00C(
+constexpr const TFunction imageAtomicXor_00o10C00C(
     BuiltInId::imageAtomicXor_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00v10C00C(
+constexpr const TFunction imageAtomicXor_00u10C00C(
     BuiltInId::imageAtomicXor_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01B10C00C(
+constexpr const TFunction imageAtomicXor_01A10C00C(
     BuiltInId::imageAtomicXor_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00q20C00C(
+constexpr const TFunction imageAtomicXor_00p20C00C(
     BuiltInId::imageAtomicXor_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00w20C00C(
+constexpr const TFunction imageAtomicXor_00v20C00C(
     BuiltInId::imageAtomicXor_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01C20C00C(
+constexpr const TFunction imageAtomicXor_01B20C00C(
     BuiltInId::imageAtomicXor_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00s20C00C(
-    BuiltInId::imageAtomicXor_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00y20C00C(
-    BuiltInId::imageAtomicXor_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01E20C00C(
-    BuiltInId::imageAtomicXor_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_00u00C00C(
-    BuiltInId::imageAtomicXor_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01A00C00C(
-    BuiltInId::imageAtomicXor_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXor_01G00C00C(
-    BuiltInId::imageAtomicXor_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXor,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_00r20C00C(
-    BuiltInId::imageAtomicXor_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXor_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -13415,7 +13336,7 @@ constexpr const TFunction imageAtomicXor_00r20C00C(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_00x20C00C(
-    BuiltInId::imageAtomicXor_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXor_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -13424,7 +13345,7 @@ constexpr const TFunction imageAtomicXor_00x20C00C(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXor_01D20C00C(
-    BuiltInId::imageAtomicXor_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXor_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -13432,143 +13353,143 @@ constexpr const TFunction imageAtomicXor_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00t20C00C(
+constexpr const TFunction imageAtomicXor_00t00C00C(
+    BuiltInId::imageAtomicXor_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00z00C00C(
+    BuiltInId::imageAtomicXor_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_01F00C00C(
+    BuiltInId::imageAtomicXor_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00q20C00C(
+    BuiltInId::imageAtomicXor_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00w20C00C(
+    BuiltInId::imageAtomicXor_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_01C20C00C(
+    BuiltInId::imageAtomicXor_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXor,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXor_00s20C00C(
     BuiltInId::imageAtomicXor_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_00z20C00C(
+constexpr const TFunction imageAtomicXor_00y20C00C(
     BuiltInId::imageAtomicXor_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXor_01F20C00C(
+constexpr const TFunction imageAtomicXor_01E20C00C(
     BuiltInId::imageAtomicXor_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXor,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicExchange_00p10C00D(
+constexpr const TFunction imageAtomicExchange_00o10C00D(
     BuiltInId::imageAtomicExchange_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00v10C00D(
+constexpr const TFunction imageAtomicExchange_00u10C00D(
     BuiltInId::imageAtomicExchange_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01B10C00D(
+constexpr const TFunction imageAtomicExchange_01A10C00D(
     BuiltInId::imageAtomicExchange_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00q20C00D(
+constexpr const TFunction imageAtomicExchange_00p20C00D(
     BuiltInId::imageAtomicExchange_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00w20C00D(
+constexpr const TFunction imageAtomicExchange_00v20C00D(
     BuiltInId::imageAtomicExchange_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01C20C00D(
+constexpr const TFunction imageAtomicExchange_01B20C00D(
     BuiltInId::imageAtomicExchange_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00s20C00D(
-    BuiltInId::imageAtomicExchange_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00y20C00D(
-    BuiltInId::imageAtomicExchange_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01E20C00D(
-    BuiltInId::imageAtomicExchange_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00u00C00D(
-    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01A00C00D(
-    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01G00C00D(
-    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00r20C00D(
-    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchange_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -13577,7 +13498,7 @@ constexpr const TFunction imageAtomicExchange_00r20C00D(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00x20C00D(
-    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchange_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -13586,7 +13507,7 @@ constexpr const TFunction imageAtomicExchange_00x20C00D(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_01D20C00D(
-    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchange_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -13594,143 +13515,143 @@ constexpr const TFunction imageAtomicExchange_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00t20C00D(
+constexpr const TFunction imageAtomicExchange_00t00C00D(
+    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00z00C00D(
+    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01F00C00D(
+    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00q20C00D(
+    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00w20C00D(
+    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01C20C00D(
+    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00s20C00D(
     BuiltInId::imageAtomicExchange_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00z20C00D(
+constexpr const TFunction imageAtomicExchange_00y20C00D(
     BuiltInId::imageAtomicExchange_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01F20C00D(
+constexpr const TFunction imageAtomicExchange_01E20C00D(
     BuiltInId::imageAtomicExchange_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00p10C00C(
+constexpr const TFunction imageAtomicExchange_00o10C00C(
     BuiltInId::imageAtomicExchange_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00v10C00C(
+constexpr const TFunction imageAtomicExchange_00u10C00C(
     BuiltInId::imageAtomicExchange_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01B10C00C(
+constexpr const TFunction imageAtomicExchange_01A10C00C(
     BuiltInId::imageAtomicExchange_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00q20C00C(
+constexpr const TFunction imageAtomicExchange_00p20C00C(
     BuiltInId::imageAtomicExchange_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00w20C00C(
+constexpr const TFunction imageAtomicExchange_00v20C00C(
     BuiltInId::imageAtomicExchange_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01C20C00C(
+constexpr const TFunction imageAtomicExchange_01B20C00C(
     BuiltInId::imageAtomicExchange_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00s20C00C(
-    BuiltInId::imageAtomicExchange_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00y20C00C(
-    BuiltInId::imageAtomicExchange_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01E20C00C(
-    BuiltInId::imageAtomicExchange_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00u00C00C(
-    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01A00C00C(
-    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01G00C00C(
-    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00r20C00C(
-    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchange_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -13739,7 +13660,7 @@ constexpr const TFunction imageAtomicExchange_00r20C00C(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00x20C00C(
-    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchange_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -13748,7 +13669,7 @@ constexpr const TFunction imageAtomicExchange_00x20C00C(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_01D20C00C(
-    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchange_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -13756,143 +13677,143 @@ constexpr const TFunction imageAtomicExchange_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00t20C00C(
+constexpr const TFunction imageAtomicExchange_00t00C00C(
+    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00z00C00C(
+    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01F00C00C(
+    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00q20C00C(
+    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00w20C00C(
+    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01C20C00C(
+    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00s20C00C(
     BuiltInId::imageAtomicExchange_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00z20C00C(
+constexpr const TFunction imageAtomicExchange_00y20C00C(
     BuiltInId::imageAtomicExchange_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01F20C00C(
+constexpr const TFunction imageAtomicExchange_01E20C00C(
     BuiltInId::imageAtomicExchange_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00p10C00B(
+constexpr const TFunction imageAtomicExchange_00o10C00B(
     BuiltInId::imageAtomicExchange_Image2D1_Int2_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00B,
+    BuiltInParameters::p00o10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00v10C00B(
+constexpr const TFunction imageAtomicExchange_00u10C00B(
     BuiltInId::imageAtomicExchange_IImage2D1_Int2_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00B,
+    BuiltInParameters::p00u10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01B10C00B(
+constexpr const TFunction imageAtomicExchange_01A10C00B(
     BuiltInId::imageAtomicExchange_UImage2D1_Int2_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00B,
+    BuiltInParameters::p01A10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00q20C00B(
+constexpr const TFunction imageAtomicExchange_00p20C00B(
     BuiltInId::imageAtomicExchange_Image3D1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00B,
+    BuiltInParameters::p00p20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00w20C00B(
+constexpr const TFunction imageAtomicExchange_00v20C00B(
     BuiltInId::imageAtomicExchange_IImage3D1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00B,
+    BuiltInParameters::p00v20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01C20C00B(
+constexpr const TFunction imageAtomicExchange_01B20C00B(
     BuiltInId::imageAtomicExchange_UImage3D1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00s20C00B(
-    BuiltInId::imageAtomicExchange_ImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00y20C00B(
-    BuiltInId::imageAtomicExchange_IImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01E20C00B(
-    BuiltInId::imageAtomicExchange_UImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_00u00C00B(
-    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01A00C00B(
-    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchange_01G00C00B(
-    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchange,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00B,
+    BuiltInParameters::p01B20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00r20C00B(
-    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchange_ImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00B,
@@ -13901,7 +13822,7 @@ constexpr const TFunction imageAtomicExchange_00r20C00B(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_00x20C00B(
-    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchange_IImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00B,
@@ -13910,7 +13831,7 @@ constexpr const TFunction imageAtomicExchange_00x20C00B(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchange_01D20C00B(
-    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchange_UImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00B,
@@ -13918,143 +13839,143 @@ constexpr const TFunction imageAtomicExchange_01D20C00B(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00t20C00B(
+constexpr const TFunction imageAtomicExchange_00t00C00B(
+    BuiltInId::imageAtomicExchange_ImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00z00C00B(
+    BuiltInId::imageAtomicExchange_IImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01F00C00B(
+    BuiltInId::imageAtomicExchange_UImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00q20C00B(
+    BuiltInId::imageAtomicExchange_Image2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00w20C00B(
+    BuiltInId::imageAtomicExchange_IImage2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_01C20C00B(
+    BuiltInId::imageAtomicExchange_UImage2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchange,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchange_00s20C00B(
     BuiltInId::imageAtomicExchange_ImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00B,
+    BuiltInParameters::p00s20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_00z20C00B(
+constexpr const TFunction imageAtomicExchange_00y20C00B(
     BuiltInId::imageAtomicExchange_IImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00B,
+    BuiltInParameters::p00y20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchange_01F20C00B(
+constexpr const TFunction imageAtomicExchange_01E20C00B(
     BuiltInId::imageAtomicExchange_UImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchange,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00B,
+    BuiltInParameters::p01E20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicCompSwap_00p10C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00o10C00D00D(
     BuiltInId::imageAtomicCompSwap_Image2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00v10C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00u10C00D00D(
     BuiltInId::imageAtomicCompSwap_IImage2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01B10C00D00D(
+constexpr const TFunction imageAtomicCompSwap_01A10C00D00D(
     BuiltInId::imageAtomicCompSwap_UImage2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00q20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00p20C00D00D(
     BuiltInId::imageAtomicCompSwap_Image3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00w20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00v20C00D00D(
     BuiltInId::imageAtomicCompSwap_IImage3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01C20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_01B20C00D00D(
     BuiltInId::imageAtomicCompSwap_UImage3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00s20C00D00D(
-    BuiltInId::imageAtomicCompSwap_ImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00y20C00D00D(
-    BuiltInId::imageAtomicCompSwap_IImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01E20C00D00D(
-    BuiltInId::imageAtomicCompSwap_UImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00u00C00D00D(
-    BuiltInId::imageAtomicCompSwap_ImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01A00C00D00D(
-    BuiltInId::imageAtomicCompSwap_IImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01G00C00D00D(
-    BuiltInId::imageAtomicCompSwap_UImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_00r20C00D00D(
-    BuiltInId::imageAtomicCompSwap_Image2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwap_ImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00D00D,
@@ -14063,7 +13984,7 @@ constexpr const TFunction imageAtomicCompSwap_00r20C00D00D(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_00x20C00D00D(
-    BuiltInId::imageAtomicCompSwap_IImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwap_IImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00D00D,
@@ -14072,7 +13993,7 @@ constexpr const TFunction imageAtomicCompSwap_00x20C00D00D(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_01D20C00D00D(
-    BuiltInId::imageAtomicCompSwap_UImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwap_UImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00D00D,
@@ -14080,143 +14001,143 @@ constexpr const TFunction imageAtomicCompSwap_01D20C00D00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00t20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00t00C00D00D(
+    BuiltInId::imageAtomicCompSwap_ImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00z00C00D00D(
+    BuiltInId::imageAtomicCompSwap_IImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_01F00C00D00D(
+    BuiltInId::imageAtomicCompSwap_UImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00q20C00D00D(
+    BuiltInId::imageAtomicCompSwap_Image2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00w20C00D00D(
+    BuiltInId::imageAtomicCompSwap_IImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_01C20C00D00D(
+    BuiltInId::imageAtomicCompSwap_UImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00s20C00D00D(
     BuiltInId::imageAtomicCompSwap_ImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00z20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_00y20C00D00D(
     BuiltInId::imageAtomicCompSwap_IImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01F20C00D00D(
+constexpr const TFunction imageAtomicCompSwap_01E20C00D00D(
     BuiltInId::imageAtomicCompSwap_UImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00p10C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00o10C00C00C(
     BuiltInId::imageAtomicCompSwap_Image2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00v10C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00u10C00C00C(
     BuiltInId::imageAtomicCompSwap_IImage2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01B10C00C00C(
+constexpr const TFunction imageAtomicCompSwap_01A10C00C00C(
     BuiltInId::imageAtomicCompSwap_UImage2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00q20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00p20C00C00C(
     BuiltInId::imageAtomicCompSwap_Image3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00w20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00v20C00C00C(
     BuiltInId::imageAtomicCompSwap_IImage3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01C20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_01B20C00C00C(
     BuiltInId::imageAtomicCompSwap_UImage3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01C20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00s20C00C00C(
-    BuiltInId::imageAtomicCompSwap_ImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00s20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00y20C00C00C(
-    BuiltInId::imageAtomicCompSwap_IImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00y20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01E20C00C00C(
-    BuiltInId::imageAtomicCompSwap_UImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01E20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_00u00C00C00C(
-    BuiltInId::imageAtomicCompSwap_ImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00u00C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01A00C00C00C(
-    BuiltInId::imageAtomicCompSwap_IImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01A00C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwap_01G00C00C00C(
-    BuiltInId::imageAtomicCompSwap_UImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwap,
-    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_00r20C00C00C(
-    BuiltInId::imageAtomicCompSwap_Image2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwap_ImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00r20C00C00C,
@@ -14225,7 +14146,7 @@ constexpr const TFunction imageAtomicCompSwap_00r20C00C00C(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_00x20C00C00C(
-    BuiltInId::imageAtomicCompSwap_IImage2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwap_IImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p00x20C00C00C,
@@ -14234,7 +14155,7 @@ constexpr const TFunction imageAtomicCompSwap_00x20C00C00C(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwap_01D20C00C00C(
-    BuiltInId::imageAtomicCompSwap_UImage2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwap_UImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     BuiltInParameters::p01D20C00C00C,
@@ -14242,143 +14163,143 @@ constexpr const TFunction imageAtomicCompSwap_01D20C00C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00t20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00t00C00C00C(
+    BuiltInId::imageAtomicCompSwap_ImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00t00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00z00C00C00C(
+    BuiltInId::imageAtomicCompSwap_IImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00z00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_01F00C00C00C(
+    BuiltInId::imageAtomicCompSwap_UImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01F00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00q20C00C00C(
+    BuiltInId::imageAtomicCompSwap_Image2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00q20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00w20C00C00C(
+    BuiltInId::imageAtomicCompSwap_IImage2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00w20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_01C20C00C00C(
+    BuiltInId::imageAtomicCompSwap_UImage2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwap,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p01C20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwap_00s20C00C00C(
     BuiltInId::imageAtomicCompSwap_ImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_00z20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_00y20C00C00C(
     BuiltInId::imageAtomicCompSwap_IImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwap_01F20C00C00C(
+constexpr const TFunction imageAtomicCompSwap_01E20C00C00C(
     BuiltInId::imageAtomicCompSwap_UImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwap,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicAddExt_00p10C00D(
+constexpr const TFunction imageAtomicAddExt_00o10C00D(
     BuiltInId::imageAtomicAddExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00v10C00D(
+constexpr const TFunction imageAtomicAddExt_00u10C00D(
     BuiltInId::imageAtomicAddExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01B10C00D(
+constexpr const TFunction imageAtomicAddExt_01A10C00D(
     BuiltInId::imageAtomicAddExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00q20C00D(
+constexpr const TFunction imageAtomicAddExt_00p20C00D(
     BuiltInId::imageAtomicAddExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00w20C00D(
+constexpr const TFunction imageAtomicAddExt_00v20C00D(
     BuiltInId::imageAtomicAddExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01C20C00D(
+constexpr const TFunction imageAtomicAddExt_01B20C00D(
     BuiltInId::imageAtomicAddExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00s20C00D(
-    BuiltInId::imageAtomicAddExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00y20C00D(
-    BuiltInId::imageAtomicAddExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01E20C00D(
-    BuiltInId::imageAtomicAddExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00u00C00D(
-    BuiltInId::imageAtomicAddExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01A00C00D(
-    BuiltInId::imageAtomicAddExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01G00C00D(
-    BuiltInId::imageAtomicAddExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_00r20C00D(
-    BuiltInId::imageAtomicAddExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAddExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -14387,7 +14308,7 @@ constexpr const TFunction imageAtomicAddExt_00r20C00D(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_00x20C00D(
-    BuiltInId::imageAtomicAddExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAddExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -14396,7 +14317,7 @@ constexpr const TFunction imageAtomicAddExt_00x20C00D(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_01D20C00D(
-    BuiltInId::imageAtomicAddExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAddExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -14404,143 +14325,143 @@ constexpr const TFunction imageAtomicAddExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00t20C00D(
+constexpr const TFunction imageAtomicAddExt_00t00C00D(
+    BuiltInId::imageAtomicAddExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00z00C00D(
+    BuiltInId::imageAtomicAddExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_01F00C00D(
+    BuiltInId::imageAtomicAddExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00q20C00D(
+    BuiltInId::imageAtomicAddExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00w20C00D(
+    BuiltInId::imageAtomicAddExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_01C20C00D(
+    BuiltInId::imageAtomicAddExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00s20C00D(
     BuiltInId::imageAtomicAddExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00z20C00D(
+constexpr const TFunction imageAtomicAddExt_00y20C00D(
     BuiltInId::imageAtomicAddExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01F20C00D(
+constexpr const TFunction imageAtomicAddExt_01E20C00D(
     BuiltInId::imageAtomicAddExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00p10C00C(
+constexpr const TFunction imageAtomicAddExt_00o10C00C(
     BuiltInId::imageAtomicAddExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00v10C00C(
+constexpr const TFunction imageAtomicAddExt_00u10C00C(
     BuiltInId::imageAtomicAddExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01B10C00C(
+constexpr const TFunction imageAtomicAddExt_01A10C00C(
     BuiltInId::imageAtomicAddExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00q20C00C(
+constexpr const TFunction imageAtomicAddExt_00p20C00C(
     BuiltInId::imageAtomicAddExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00w20C00C(
+constexpr const TFunction imageAtomicAddExt_00v20C00C(
     BuiltInId::imageAtomicAddExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01C20C00C(
+constexpr const TFunction imageAtomicAddExt_01B20C00C(
     BuiltInId::imageAtomicAddExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00s20C00C(
-    BuiltInId::imageAtomicAddExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00y20C00C(
-    BuiltInId::imageAtomicAddExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01E20C00C(
-    BuiltInId::imageAtomicAddExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_00u00C00C(
-    BuiltInId::imageAtomicAddExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01A00C00C(
-    BuiltInId::imageAtomicAddExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAdd,
-    false);
-constexpr const TFunction imageAtomicAddExt_01G00C00C(
-    BuiltInId::imageAtomicAddExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAddExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_00r20C00C(
-    BuiltInId::imageAtomicAddExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAddExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -14549,7 +14470,7 @@ constexpr const TFunction imageAtomicAddExt_00r20C00C(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_00x20C00C(
-    BuiltInId::imageAtomicAddExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAddExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -14558,7 +14479,7 @@ constexpr const TFunction imageAtomicAddExt_00x20C00C(
     EOpImageAtomicAdd,
     false);
 constexpr const TFunction imageAtomicAddExt_01D20C00C(
-    BuiltInId::imageAtomicAddExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAddExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -14566,143 +14487,143 @@ constexpr const TFunction imageAtomicAddExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00t20C00C(
+constexpr const TFunction imageAtomicAddExt_00t00C00C(
+    BuiltInId::imageAtomicAddExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00z00C00C(
+    BuiltInId::imageAtomicAddExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_01F00C00C(
+    BuiltInId::imageAtomicAddExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00q20C00C(
+    BuiltInId::imageAtomicAddExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00w20C00C(
+    BuiltInId::imageAtomicAddExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_01C20C00C(
+    BuiltInId::imageAtomicAddExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAddExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAdd,
+    false);
+constexpr const TFunction imageAtomicAddExt_00s20C00C(
     BuiltInId::imageAtomicAddExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_00z20C00C(
+constexpr const TFunction imageAtomicAddExt_00y20C00C(
     BuiltInId::imageAtomicAddExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicAddExt_01F20C00C(
+constexpr const TFunction imageAtomicAddExt_01E20C00C(
     BuiltInId::imageAtomicAddExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAddExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAdd,
     false);
-constexpr const TFunction imageAtomicMinExt_00p10C00D(
+constexpr const TFunction imageAtomicMinExt_00o10C00D(
     BuiltInId::imageAtomicMinExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00v10C00D(
+constexpr const TFunction imageAtomicMinExt_00u10C00D(
     BuiltInId::imageAtomicMinExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01B10C00D(
+constexpr const TFunction imageAtomicMinExt_01A10C00D(
     BuiltInId::imageAtomicMinExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00q20C00D(
+constexpr const TFunction imageAtomicMinExt_00p20C00D(
     BuiltInId::imageAtomicMinExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00w20C00D(
+constexpr const TFunction imageAtomicMinExt_00v20C00D(
     BuiltInId::imageAtomicMinExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01C20C00D(
+constexpr const TFunction imageAtomicMinExt_01B20C00D(
     BuiltInId::imageAtomicMinExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00s20C00D(
-    BuiltInId::imageAtomicMinExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00y20C00D(
-    BuiltInId::imageAtomicMinExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01E20C00D(
-    BuiltInId::imageAtomicMinExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00u00C00D(
-    BuiltInId::imageAtomicMinExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01A00C00D(
-    BuiltInId::imageAtomicMinExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01G00C00D(
-    BuiltInId::imageAtomicMinExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_00r20C00D(
-    BuiltInId::imageAtomicMinExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMinExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -14711,7 +14632,7 @@ constexpr const TFunction imageAtomicMinExt_00r20C00D(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_00x20C00D(
-    BuiltInId::imageAtomicMinExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMinExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -14720,7 +14641,7 @@ constexpr const TFunction imageAtomicMinExt_00x20C00D(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_01D20C00D(
-    BuiltInId::imageAtomicMinExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMinExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -14728,143 +14649,143 @@ constexpr const TFunction imageAtomicMinExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00t20C00D(
+constexpr const TFunction imageAtomicMinExt_00t00C00D(
+    BuiltInId::imageAtomicMinExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00z00C00D(
+    BuiltInId::imageAtomicMinExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_01F00C00D(
+    BuiltInId::imageAtomicMinExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00q20C00D(
+    BuiltInId::imageAtomicMinExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00w20C00D(
+    BuiltInId::imageAtomicMinExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_01C20C00D(
+    BuiltInId::imageAtomicMinExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00s20C00D(
     BuiltInId::imageAtomicMinExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00z20C00D(
+constexpr const TFunction imageAtomicMinExt_00y20C00D(
     BuiltInId::imageAtomicMinExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01F20C00D(
+constexpr const TFunction imageAtomicMinExt_01E20C00D(
     BuiltInId::imageAtomicMinExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00p10C00C(
+constexpr const TFunction imageAtomicMinExt_00o10C00C(
     BuiltInId::imageAtomicMinExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00v10C00C(
+constexpr const TFunction imageAtomicMinExt_00u10C00C(
     BuiltInId::imageAtomicMinExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01B10C00C(
+constexpr const TFunction imageAtomicMinExt_01A10C00C(
     BuiltInId::imageAtomicMinExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00q20C00C(
+constexpr const TFunction imageAtomicMinExt_00p20C00C(
     BuiltInId::imageAtomicMinExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00w20C00C(
+constexpr const TFunction imageAtomicMinExt_00v20C00C(
     BuiltInId::imageAtomicMinExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01C20C00C(
+constexpr const TFunction imageAtomicMinExt_01B20C00C(
     BuiltInId::imageAtomicMinExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00s20C00C(
-    BuiltInId::imageAtomicMinExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00y20C00C(
-    BuiltInId::imageAtomicMinExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01E20C00C(
-    BuiltInId::imageAtomicMinExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_00u00C00C(
-    BuiltInId::imageAtomicMinExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01A00C00C(
-    BuiltInId::imageAtomicMinExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMin,
-    false);
-constexpr const TFunction imageAtomicMinExt_01G00C00C(
-    BuiltInId::imageAtomicMinExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMinExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_00r20C00C(
-    BuiltInId::imageAtomicMinExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMinExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -14873,7 +14794,7 @@ constexpr const TFunction imageAtomicMinExt_00r20C00C(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_00x20C00C(
-    BuiltInId::imageAtomicMinExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMinExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -14882,7 +14803,7 @@ constexpr const TFunction imageAtomicMinExt_00x20C00C(
     EOpImageAtomicMin,
     false);
 constexpr const TFunction imageAtomicMinExt_01D20C00C(
-    BuiltInId::imageAtomicMinExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMinExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -14890,143 +14811,143 @@ constexpr const TFunction imageAtomicMinExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00t20C00C(
+constexpr const TFunction imageAtomicMinExt_00t00C00C(
+    BuiltInId::imageAtomicMinExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00z00C00C(
+    BuiltInId::imageAtomicMinExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_01F00C00C(
+    BuiltInId::imageAtomicMinExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00q20C00C(
+    BuiltInId::imageAtomicMinExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00w20C00C(
+    BuiltInId::imageAtomicMinExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_01C20C00C(
+    BuiltInId::imageAtomicMinExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMinExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMin,
+    false);
+constexpr const TFunction imageAtomicMinExt_00s20C00C(
     BuiltInId::imageAtomicMinExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_00z20C00C(
+constexpr const TFunction imageAtomicMinExt_00y20C00C(
     BuiltInId::imageAtomicMinExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMinExt_01F20C00C(
+constexpr const TFunction imageAtomicMinExt_01E20C00C(
     BuiltInId::imageAtomicMinExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMinExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMin,
     false);
-constexpr const TFunction imageAtomicMaxExt_00p10C00D(
+constexpr const TFunction imageAtomicMaxExt_00o10C00D(
     BuiltInId::imageAtomicMaxExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00v10C00D(
+constexpr const TFunction imageAtomicMaxExt_00u10C00D(
     BuiltInId::imageAtomicMaxExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01B10C00D(
+constexpr const TFunction imageAtomicMaxExt_01A10C00D(
     BuiltInId::imageAtomicMaxExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00q20C00D(
+constexpr const TFunction imageAtomicMaxExt_00p20C00D(
     BuiltInId::imageAtomicMaxExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00w20C00D(
+constexpr const TFunction imageAtomicMaxExt_00v20C00D(
     BuiltInId::imageAtomicMaxExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01C20C00D(
+constexpr const TFunction imageAtomicMaxExt_01B20C00D(
     BuiltInId::imageAtomicMaxExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00s20C00D(
-    BuiltInId::imageAtomicMaxExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00y20C00D(
-    BuiltInId::imageAtomicMaxExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01E20C00D(
-    BuiltInId::imageAtomicMaxExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00u00C00D(
-    BuiltInId::imageAtomicMaxExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01A00C00D(
-    BuiltInId::imageAtomicMaxExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01G00C00D(
-    BuiltInId::imageAtomicMaxExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_00r20C00D(
-    BuiltInId::imageAtomicMaxExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMaxExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -15035,7 +14956,7 @@ constexpr const TFunction imageAtomicMaxExt_00r20C00D(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_00x20C00D(
-    BuiltInId::imageAtomicMaxExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMaxExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -15044,7 +14965,7 @@ constexpr const TFunction imageAtomicMaxExt_00x20C00D(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_01D20C00D(
-    BuiltInId::imageAtomicMaxExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicMaxExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -15052,143 +14973,143 @@ constexpr const TFunction imageAtomicMaxExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00t20C00D(
+constexpr const TFunction imageAtomicMaxExt_00t00C00D(
+    BuiltInId::imageAtomicMaxExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00z00C00D(
+    BuiltInId::imageAtomicMaxExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_01F00C00D(
+    BuiltInId::imageAtomicMaxExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00q20C00D(
+    BuiltInId::imageAtomicMaxExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00w20C00D(
+    BuiltInId::imageAtomicMaxExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_01C20C00D(
+    BuiltInId::imageAtomicMaxExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00s20C00D(
     BuiltInId::imageAtomicMaxExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00z20C00D(
+constexpr const TFunction imageAtomicMaxExt_00y20C00D(
     BuiltInId::imageAtomicMaxExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01F20C00D(
+constexpr const TFunction imageAtomicMaxExt_01E20C00D(
     BuiltInId::imageAtomicMaxExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00p10C00C(
+constexpr const TFunction imageAtomicMaxExt_00o10C00C(
     BuiltInId::imageAtomicMaxExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00v10C00C(
+constexpr const TFunction imageAtomicMaxExt_00u10C00C(
     BuiltInId::imageAtomicMaxExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01B10C00C(
+constexpr const TFunction imageAtomicMaxExt_01A10C00C(
     BuiltInId::imageAtomicMaxExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00q20C00C(
+constexpr const TFunction imageAtomicMaxExt_00p20C00C(
     BuiltInId::imageAtomicMaxExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00w20C00C(
+constexpr const TFunction imageAtomicMaxExt_00v20C00C(
     BuiltInId::imageAtomicMaxExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01C20C00C(
+constexpr const TFunction imageAtomicMaxExt_01B20C00C(
     BuiltInId::imageAtomicMaxExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00s20C00C(
-    BuiltInId::imageAtomicMaxExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00y20C00C(
-    BuiltInId::imageAtomicMaxExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01E20C00C(
-    BuiltInId::imageAtomicMaxExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_00u00C00C(
-    BuiltInId::imageAtomicMaxExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01A00C00C(
-    BuiltInId::imageAtomicMaxExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicMax,
-    false);
-constexpr const TFunction imageAtomicMaxExt_01G00C00C(
-    BuiltInId::imageAtomicMaxExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicMaxExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_00r20C00C(
-    BuiltInId::imageAtomicMaxExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMaxExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -15197,7 +15118,7 @@ constexpr const TFunction imageAtomicMaxExt_00r20C00C(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_00x20C00C(
-    BuiltInId::imageAtomicMaxExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMaxExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -15206,7 +15127,7 @@ constexpr const TFunction imageAtomicMaxExt_00x20C00C(
     EOpImageAtomicMax,
     false);
 constexpr const TFunction imageAtomicMaxExt_01D20C00C(
-    BuiltInId::imageAtomicMaxExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicMaxExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -15214,143 +15135,143 @@ constexpr const TFunction imageAtomicMaxExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00t20C00C(
+constexpr const TFunction imageAtomicMaxExt_00t00C00C(
+    BuiltInId::imageAtomicMaxExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00z00C00C(
+    BuiltInId::imageAtomicMaxExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_01F00C00C(
+    BuiltInId::imageAtomicMaxExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00q20C00C(
+    BuiltInId::imageAtomicMaxExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00w20C00C(
+    BuiltInId::imageAtomicMaxExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_01C20C00C(
+    BuiltInId::imageAtomicMaxExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicMaxExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicMax,
+    false);
+constexpr const TFunction imageAtomicMaxExt_00s20C00C(
     BuiltInId::imageAtomicMaxExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_00z20C00C(
+constexpr const TFunction imageAtomicMaxExt_00y20C00C(
     BuiltInId::imageAtomicMaxExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicMaxExt_01F20C00C(
+constexpr const TFunction imageAtomicMaxExt_01E20C00C(
     BuiltInId::imageAtomicMaxExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicMaxExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicMax,
     false);
-constexpr const TFunction imageAtomicAndExt_00p10C00D(
+constexpr const TFunction imageAtomicAndExt_00o10C00D(
     BuiltInId::imageAtomicAndExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00v10C00D(
+constexpr const TFunction imageAtomicAndExt_00u10C00D(
     BuiltInId::imageAtomicAndExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01B10C00D(
+constexpr const TFunction imageAtomicAndExt_01A10C00D(
     BuiltInId::imageAtomicAndExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00q20C00D(
+constexpr const TFunction imageAtomicAndExt_00p20C00D(
     BuiltInId::imageAtomicAndExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00w20C00D(
+constexpr const TFunction imageAtomicAndExt_00v20C00D(
     BuiltInId::imageAtomicAndExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01C20C00D(
+constexpr const TFunction imageAtomicAndExt_01B20C00D(
     BuiltInId::imageAtomicAndExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00s20C00D(
-    BuiltInId::imageAtomicAndExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00y20C00D(
-    BuiltInId::imageAtomicAndExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01E20C00D(
-    BuiltInId::imageAtomicAndExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00u00C00D(
-    BuiltInId::imageAtomicAndExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01A00C00D(
-    BuiltInId::imageAtomicAndExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01G00C00D(
-    BuiltInId::imageAtomicAndExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_00r20C00D(
-    BuiltInId::imageAtomicAndExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAndExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -15359,7 +15280,7 @@ constexpr const TFunction imageAtomicAndExt_00r20C00D(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_00x20C00D(
-    BuiltInId::imageAtomicAndExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAndExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -15368,7 +15289,7 @@ constexpr const TFunction imageAtomicAndExt_00x20C00D(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_01D20C00D(
-    BuiltInId::imageAtomicAndExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicAndExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -15376,143 +15297,143 @@ constexpr const TFunction imageAtomicAndExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00t20C00D(
+constexpr const TFunction imageAtomicAndExt_00t00C00D(
+    BuiltInId::imageAtomicAndExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00z00C00D(
+    BuiltInId::imageAtomicAndExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_01F00C00D(
+    BuiltInId::imageAtomicAndExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00q20C00D(
+    BuiltInId::imageAtomicAndExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00w20C00D(
+    BuiltInId::imageAtomicAndExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_01C20C00D(
+    BuiltInId::imageAtomicAndExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00s20C00D(
     BuiltInId::imageAtomicAndExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00z20C00D(
+constexpr const TFunction imageAtomicAndExt_00y20C00D(
     BuiltInId::imageAtomicAndExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01F20C00D(
+constexpr const TFunction imageAtomicAndExt_01E20C00D(
     BuiltInId::imageAtomicAndExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00p10C00C(
+constexpr const TFunction imageAtomicAndExt_00o10C00C(
     BuiltInId::imageAtomicAndExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00v10C00C(
+constexpr const TFunction imageAtomicAndExt_00u10C00C(
     BuiltInId::imageAtomicAndExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01B10C00C(
+constexpr const TFunction imageAtomicAndExt_01A10C00C(
     BuiltInId::imageAtomicAndExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00q20C00C(
+constexpr const TFunction imageAtomicAndExt_00p20C00C(
     BuiltInId::imageAtomicAndExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00w20C00C(
+constexpr const TFunction imageAtomicAndExt_00v20C00C(
     BuiltInId::imageAtomicAndExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01C20C00C(
+constexpr const TFunction imageAtomicAndExt_01B20C00C(
     BuiltInId::imageAtomicAndExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00s20C00C(
-    BuiltInId::imageAtomicAndExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00y20C00C(
-    BuiltInId::imageAtomicAndExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01E20C00C(
-    BuiltInId::imageAtomicAndExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_00u00C00C(
-    BuiltInId::imageAtomicAndExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01A00C00C(
-    BuiltInId::imageAtomicAndExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicAnd,
-    false);
-constexpr const TFunction imageAtomicAndExt_01G00C00C(
-    BuiltInId::imageAtomicAndExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicAndExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_00r20C00C(
-    BuiltInId::imageAtomicAndExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAndExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -15521,7 +15442,7 @@ constexpr const TFunction imageAtomicAndExt_00r20C00C(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_00x20C00C(
-    BuiltInId::imageAtomicAndExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAndExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -15530,7 +15451,7 @@ constexpr const TFunction imageAtomicAndExt_00x20C00C(
     EOpImageAtomicAnd,
     false);
 constexpr const TFunction imageAtomicAndExt_01D20C00C(
-    BuiltInId::imageAtomicAndExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicAndExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -15538,143 +15459,143 @@ constexpr const TFunction imageAtomicAndExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00t20C00C(
+constexpr const TFunction imageAtomicAndExt_00t00C00C(
+    BuiltInId::imageAtomicAndExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00z00C00C(
+    BuiltInId::imageAtomicAndExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_01F00C00C(
+    BuiltInId::imageAtomicAndExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00q20C00C(
+    BuiltInId::imageAtomicAndExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00w20C00C(
+    BuiltInId::imageAtomicAndExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_01C20C00C(
+    BuiltInId::imageAtomicAndExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicAndExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicAnd,
+    false);
+constexpr const TFunction imageAtomicAndExt_00s20C00C(
     BuiltInId::imageAtomicAndExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_00z20C00C(
+constexpr const TFunction imageAtomicAndExt_00y20C00C(
     BuiltInId::imageAtomicAndExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicAndExt_01F20C00C(
+constexpr const TFunction imageAtomicAndExt_01E20C00C(
     BuiltInId::imageAtomicAndExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicAndExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicAnd,
     false);
-constexpr const TFunction imageAtomicOrExt_00p10C00D(
+constexpr const TFunction imageAtomicOrExt_00o10C00D(
     BuiltInId::imageAtomicOrExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00v10C00D(
+constexpr const TFunction imageAtomicOrExt_00u10C00D(
     BuiltInId::imageAtomicOrExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01B10C00D(
+constexpr const TFunction imageAtomicOrExt_01A10C00D(
     BuiltInId::imageAtomicOrExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00q20C00D(
+constexpr const TFunction imageAtomicOrExt_00p20C00D(
     BuiltInId::imageAtomicOrExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00w20C00D(
+constexpr const TFunction imageAtomicOrExt_00v20C00D(
     BuiltInId::imageAtomicOrExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01C20C00D(
+constexpr const TFunction imageAtomicOrExt_01B20C00D(
     BuiltInId::imageAtomicOrExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00s20C00D(
-    BuiltInId::imageAtomicOrExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00y20C00D(
-    BuiltInId::imageAtomicOrExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01E20C00D(
-    BuiltInId::imageAtomicOrExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00u00C00D(
-    BuiltInId::imageAtomicOrExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01A00C00D(
-    BuiltInId::imageAtomicOrExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01G00C00D(
-    BuiltInId::imageAtomicOrExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_00r20C00D(
-    BuiltInId::imageAtomicOrExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOrExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -15683,7 +15604,7 @@ constexpr const TFunction imageAtomicOrExt_00r20C00D(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_00x20C00D(
-    BuiltInId::imageAtomicOrExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOrExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -15692,7 +15613,7 @@ constexpr const TFunction imageAtomicOrExt_00x20C00D(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_01D20C00D(
-    BuiltInId::imageAtomicOrExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicOrExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -15700,143 +15621,143 @@ constexpr const TFunction imageAtomicOrExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00t20C00D(
+constexpr const TFunction imageAtomicOrExt_00t00C00D(
+    BuiltInId::imageAtomicOrExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00z00C00D(
+    BuiltInId::imageAtomicOrExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_01F00C00D(
+    BuiltInId::imageAtomicOrExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00q20C00D(
+    BuiltInId::imageAtomicOrExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00w20C00D(
+    BuiltInId::imageAtomicOrExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_01C20C00D(
+    BuiltInId::imageAtomicOrExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00s20C00D(
     BuiltInId::imageAtomicOrExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00z20C00D(
+constexpr const TFunction imageAtomicOrExt_00y20C00D(
     BuiltInId::imageAtomicOrExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01F20C00D(
+constexpr const TFunction imageAtomicOrExt_01E20C00D(
     BuiltInId::imageAtomicOrExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00p10C00C(
+constexpr const TFunction imageAtomicOrExt_00o10C00C(
     BuiltInId::imageAtomicOrExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00v10C00C(
+constexpr const TFunction imageAtomicOrExt_00u10C00C(
     BuiltInId::imageAtomicOrExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01B10C00C(
+constexpr const TFunction imageAtomicOrExt_01A10C00C(
     BuiltInId::imageAtomicOrExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00q20C00C(
+constexpr const TFunction imageAtomicOrExt_00p20C00C(
     BuiltInId::imageAtomicOrExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00w20C00C(
+constexpr const TFunction imageAtomicOrExt_00v20C00C(
     BuiltInId::imageAtomicOrExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01C20C00C(
+constexpr const TFunction imageAtomicOrExt_01B20C00C(
     BuiltInId::imageAtomicOrExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00s20C00C(
-    BuiltInId::imageAtomicOrExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00y20C00C(
-    BuiltInId::imageAtomicOrExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01E20C00C(
-    BuiltInId::imageAtomicOrExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_00u00C00C(
-    BuiltInId::imageAtomicOrExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01A00C00C(
-    BuiltInId::imageAtomicOrExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicOr,
-    false);
-constexpr const TFunction imageAtomicOrExt_01G00C00C(
-    BuiltInId::imageAtomicOrExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicOrExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_00r20C00C(
-    BuiltInId::imageAtomicOrExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOrExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -15845,7 +15766,7 @@ constexpr const TFunction imageAtomicOrExt_00r20C00C(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_00x20C00C(
-    BuiltInId::imageAtomicOrExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOrExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -15854,7 +15775,7 @@ constexpr const TFunction imageAtomicOrExt_00x20C00C(
     EOpImageAtomicOr,
     false);
 constexpr const TFunction imageAtomicOrExt_01D20C00C(
-    BuiltInId::imageAtomicOrExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicOrExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -15862,143 +15783,143 @@ constexpr const TFunction imageAtomicOrExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00t20C00C(
+constexpr const TFunction imageAtomicOrExt_00t00C00C(
+    BuiltInId::imageAtomicOrExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00z00C00C(
+    BuiltInId::imageAtomicOrExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_01F00C00C(
+    BuiltInId::imageAtomicOrExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00q20C00C(
+    BuiltInId::imageAtomicOrExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00w20C00C(
+    BuiltInId::imageAtomicOrExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_01C20C00C(
+    BuiltInId::imageAtomicOrExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicOrExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicOr,
+    false);
+constexpr const TFunction imageAtomicOrExt_00s20C00C(
     BuiltInId::imageAtomicOrExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_00z20C00C(
+constexpr const TFunction imageAtomicOrExt_00y20C00C(
     BuiltInId::imageAtomicOrExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicOrExt_01F20C00C(
+constexpr const TFunction imageAtomicOrExt_01E20C00C(
     BuiltInId::imageAtomicOrExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicOrExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicOr,
     false);
-constexpr const TFunction imageAtomicXorExt_00p10C00D(
+constexpr const TFunction imageAtomicXorExt_00o10C00D(
     BuiltInId::imageAtomicXorExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00v10C00D(
+constexpr const TFunction imageAtomicXorExt_00u10C00D(
     BuiltInId::imageAtomicXorExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01B10C00D(
+constexpr const TFunction imageAtomicXorExt_01A10C00D(
     BuiltInId::imageAtomicXorExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00q20C00D(
+constexpr const TFunction imageAtomicXorExt_00p20C00D(
     BuiltInId::imageAtomicXorExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00w20C00D(
+constexpr const TFunction imageAtomicXorExt_00v20C00D(
     BuiltInId::imageAtomicXorExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01C20C00D(
+constexpr const TFunction imageAtomicXorExt_01B20C00D(
     BuiltInId::imageAtomicXorExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00s20C00D(
-    BuiltInId::imageAtomicXorExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00y20C00D(
-    BuiltInId::imageAtomicXorExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01E20C00D(
-    BuiltInId::imageAtomicXorExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00u00C00D(
-    BuiltInId::imageAtomicXorExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01A00C00D(
-    BuiltInId::imageAtomicXorExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01G00C00D(
-    BuiltInId::imageAtomicXorExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_00r20C00D(
-    BuiltInId::imageAtomicXorExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXorExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -16007,7 +15928,7 @@ constexpr const TFunction imageAtomicXorExt_00r20C00D(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_00x20C00D(
-    BuiltInId::imageAtomicXorExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXorExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -16016,7 +15937,7 @@ constexpr const TFunction imageAtomicXorExt_00x20C00D(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_01D20C00D(
-    BuiltInId::imageAtomicXorExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicXorExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -16024,143 +15945,143 @@ constexpr const TFunction imageAtomicXorExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00t20C00D(
+constexpr const TFunction imageAtomicXorExt_00t00C00D(
+    BuiltInId::imageAtomicXorExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00z00C00D(
+    BuiltInId::imageAtomicXorExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_01F00C00D(
+    BuiltInId::imageAtomicXorExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00q20C00D(
+    BuiltInId::imageAtomicXorExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00w20C00D(
+    BuiltInId::imageAtomicXorExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_01C20C00D(
+    BuiltInId::imageAtomicXorExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00s20C00D(
     BuiltInId::imageAtomicXorExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00z20C00D(
+constexpr const TFunction imageAtomicXorExt_00y20C00D(
     BuiltInId::imageAtomicXorExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01F20C00D(
+constexpr const TFunction imageAtomicXorExt_01E20C00D(
     BuiltInId::imageAtomicXorExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00p10C00C(
+constexpr const TFunction imageAtomicXorExt_00o10C00C(
     BuiltInId::imageAtomicXorExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00v10C00C(
+constexpr const TFunction imageAtomicXorExt_00u10C00C(
     BuiltInId::imageAtomicXorExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01B10C00C(
+constexpr const TFunction imageAtomicXorExt_01A10C00C(
     BuiltInId::imageAtomicXorExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00q20C00C(
+constexpr const TFunction imageAtomicXorExt_00p20C00C(
     BuiltInId::imageAtomicXorExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00w20C00C(
+constexpr const TFunction imageAtomicXorExt_00v20C00C(
     BuiltInId::imageAtomicXorExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01C20C00C(
+constexpr const TFunction imageAtomicXorExt_01B20C00C(
     BuiltInId::imageAtomicXorExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00s20C00C(
-    BuiltInId::imageAtomicXorExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00y20C00C(
-    BuiltInId::imageAtomicXorExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01E20C00C(
-    BuiltInId::imageAtomicXorExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_00u00C00C(
-    BuiltInId::imageAtomicXorExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01A00C00C(
-    BuiltInId::imageAtomicXorExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicXor,
-    false);
-constexpr const TFunction imageAtomicXorExt_01G00C00C(
-    BuiltInId::imageAtomicXorExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicXorExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_00r20C00C(
-    BuiltInId::imageAtomicXorExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXorExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -16169,7 +16090,7 @@ constexpr const TFunction imageAtomicXorExt_00r20C00C(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_00x20C00C(
-    BuiltInId::imageAtomicXorExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXorExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -16178,7 +16099,7 @@ constexpr const TFunction imageAtomicXorExt_00x20C00C(
     EOpImageAtomicXor,
     false);
 constexpr const TFunction imageAtomicXorExt_01D20C00C(
-    BuiltInId::imageAtomicXorExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicXorExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -16186,143 +16107,143 @@ constexpr const TFunction imageAtomicXorExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00t20C00C(
+constexpr const TFunction imageAtomicXorExt_00t00C00C(
+    BuiltInId::imageAtomicXorExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00z00C00C(
+    BuiltInId::imageAtomicXorExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_01F00C00C(
+    BuiltInId::imageAtomicXorExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00q20C00C(
+    BuiltInId::imageAtomicXorExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00w20C00C(
+    BuiltInId::imageAtomicXorExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_01C20C00C(
+    BuiltInId::imageAtomicXorExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicXorExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicXor,
+    false);
+constexpr const TFunction imageAtomicXorExt_00s20C00C(
     BuiltInId::imageAtomicXorExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_00z20C00C(
+constexpr const TFunction imageAtomicXorExt_00y20C00C(
     BuiltInId::imageAtomicXorExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicXorExt_01F20C00C(
+constexpr const TFunction imageAtomicXorExt_01E20C00C(
     BuiltInId::imageAtomicXorExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicXorExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicXor,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00p10C00D(
+constexpr const TFunction imageAtomicExchangeExt_00o10C00D(
     BuiltInId::imageAtomicExchangeExt_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00v10C00D(
+constexpr const TFunction imageAtomicExchangeExt_00u10C00D(
     BuiltInId::imageAtomicExchangeExt_IImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01B10C00D(
+constexpr const TFunction imageAtomicExchangeExt_01A10C00D(
     BuiltInId::imageAtomicExchangeExt_UImage2D1_Int2_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00q20C00D(
+constexpr const TFunction imageAtomicExchangeExt_00p20C00D(
     BuiltInId::imageAtomicExchangeExt_Image3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00w20C00D(
+constexpr const TFunction imageAtomicExchangeExt_00v20C00D(
     BuiltInId::imageAtomicExchangeExt_IImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01C20C00D(
+constexpr const TFunction imageAtomicExchangeExt_01B20C00D(
     BuiltInId::imageAtomicExchangeExt_UImage3D1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00s20C00D(
-    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00y20C00D(
-    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01E20C00D(
-    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00u00C00D(
-    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01A00C00D(
-    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    3,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01G00C00D(
-    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_UInt1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00r20C00D(
-    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -16331,7 +16252,7 @@ constexpr const TFunction imageAtomicExchangeExt_00r20C00D(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00x20C00D(
-    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -16340,7 +16261,7 @@ constexpr const TFunction imageAtomicExchangeExt_00x20C00D(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_01D20C00D(
-    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_UInt1,
+    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -16348,143 +16269,143 @@ constexpr const TFunction imageAtomicExchangeExt_01D20C00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00t20C00D(
+constexpr const TFunction imageAtomicExchangeExt_00t00C00D(
+    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00z00C00D(
+    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01F00C00D(
+    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00q20C00D(
+    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00w20C00D(
+    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01C20C00D(
+    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_UInt1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    3,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00s20C00D(
     BuiltInId::imageAtomicExchangeExt_ImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00z20C00D(
+constexpr const TFunction imageAtomicExchangeExt_00y20C00D(
     BuiltInId::imageAtomicExchangeExt_IImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01F20C00D(
+constexpr const TFunction imageAtomicExchangeExt_01E20C00D(
     BuiltInId::imageAtomicExchangeExt_UImageCubeArray1_Int3_UInt1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00p10C00C(
+constexpr const TFunction imageAtomicExchangeExt_00o10C00C(
     BuiltInId::imageAtomicExchangeExt_Image2D1_Int2_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00v10C00C(
+constexpr const TFunction imageAtomicExchangeExt_00u10C00C(
     BuiltInId::imageAtomicExchangeExt_IImage2D1_Int2_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01B10C00C(
+constexpr const TFunction imageAtomicExchangeExt_01A10C00C(
     BuiltInId::imageAtomicExchangeExt_UImage2D1_Int2_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00q20C00C(
+constexpr const TFunction imageAtomicExchangeExt_00p20C00C(
     BuiltInId::imageAtomicExchangeExt_Image3D1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00w20C00C(
+constexpr const TFunction imageAtomicExchangeExt_00v20C00C(
     BuiltInId::imageAtomicExchangeExt_IImage3D1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01C20C00C(
+constexpr const TFunction imageAtomicExchangeExt_01B20C00C(
     BuiltInId::imageAtomicExchangeExt_UImage3D1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00s20C00C(
-    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00y20C00C(
-    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01E20C00C(
-    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00u00C00C(
-    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01A00C00C(
-    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    3,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01G00C00C(
-    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_Int1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00r20C00C(
-    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -16493,7 +16414,7 @@ constexpr const TFunction imageAtomicExchangeExt_00r20C00C(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00x20C00C(
-    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -16502,7 +16423,7 @@ constexpr const TFunction imageAtomicExchangeExt_00x20C00C(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_01D20C00C(
-    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_Int1,
+    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -16510,143 +16431,143 @@ constexpr const TFunction imageAtomicExchangeExt_01D20C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00t20C00C(
+constexpr const TFunction imageAtomicExchangeExt_00t00C00C(
+    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00z00C00C(
+    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01F00C00C(
+    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00q20C00C(
+    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00w20C00C(
+    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01C20C00C(
+    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_Int1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    3,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00s20C00C(
     BuiltInId::imageAtomicExchangeExt_ImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00z20C00C(
+constexpr const TFunction imageAtomicExchangeExt_00y20C00C(
     BuiltInId::imageAtomicExchangeExt_IImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01F20C00C(
+constexpr const TFunction imageAtomicExchangeExt_01E20C00C(
     BuiltInId::imageAtomicExchangeExt_UImageCubeArray1_Int3_Int1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00p10C00B(
+constexpr const TFunction imageAtomicExchangeExt_00o10C00B(
     BuiltInId::imageAtomicExchangeExt_Image2D1_Int2_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00B,
+    BuiltInParameters::p00o10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00v10C00B(
+constexpr const TFunction imageAtomicExchangeExt_00u10C00B(
     BuiltInId::imageAtomicExchangeExt_IImage2D1_Int2_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00B,
+    BuiltInParameters::p00u10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01B10C00B(
+constexpr const TFunction imageAtomicExchangeExt_01A10C00B(
     BuiltInId::imageAtomicExchangeExt_UImage2D1_Int2_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00B,
+    BuiltInParameters::p01A10C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00q20C00B(
+constexpr const TFunction imageAtomicExchangeExt_00p20C00B(
     BuiltInId::imageAtomicExchangeExt_Image3D1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00B,
+    BuiltInParameters::p00p20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00w20C00B(
+constexpr const TFunction imageAtomicExchangeExt_00v20C00B(
     BuiltInId::imageAtomicExchangeExt_IImage3D1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00B,
+    BuiltInParameters::p00v20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01C20C00B(
+constexpr const TFunction imageAtomicExchangeExt_01B20C00B(
     BuiltInId::imageAtomicExchangeExt_UImage3D1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00s20C00B(
-    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00y20C00B(
-    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01E20C00B(
-    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_00u00C00B(
-    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01A00C00B(
-    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00B,
-    3,
-    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicExchange,
-    false);
-constexpr const TFunction imageAtomicExchangeExt_01G00C00B(
-    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_Float1,
-    BuiltInName::imageAtomicExchangeExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00B,
+    BuiltInParameters::p01B20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00r20C00B(
-    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchangeExt_ImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00B,
@@ -16655,7 +16576,7 @@ constexpr const TFunction imageAtomicExchangeExt_00r20C00B(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_00x20C00B(
-    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchangeExt_IImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00B,
@@ -16664,7 +16585,7 @@ constexpr const TFunction imageAtomicExchangeExt_00x20C00B(
     EOpImageAtomicExchange,
     false);
 constexpr const TFunction imageAtomicExchangeExt_01D20C00B(
-    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_Float1,
+    BuiltInId::imageAtomicExchangeExt_UImageCube1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00B,
@@ -16672,143 +16593,143 @@ constexpr const TFunction imageAtomicExchangeExt_01D20C00B(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00t20C00B(
+constexpr const TFunction imageAtomicExchangeExt_00t00C00B(
+    BuiltInId::imageAtomicExchangeExt_ImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00z00C00B(
+    BuiltInId::imageAtomicExchangeExt_IImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01F00C00B(
+    BuiltInId::imageAtomicExchangeExt_UImageBuffer1_Int1_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00q20C00B(
+    BuiltInId::imageAtomicExchangeExt_Image2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00w20C00B(
+    BuiltInId::imageAtomicExchangeExt_IImage2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_01C20C00B(
+    BuiltInId::imageAtomicExchangeExt_UImage2DArray1_Int3_Float1,
+    BuiltInName::imageAtomicExchangeExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00B,
+    3,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicExchange,
+    false);
+constexpr const TFunction imageAtomicExchangeExt_00s20C00B(
     BuiltInId::imageAtomicExchangeExt_ImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00B,
+    BuiltInParameters::p00s20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_00z20C00B(
+constexpr const TFunction imageAtomicExchangeExt_00y20C00B(
     BuiltInId::imageAtomicExchangeExt_IImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00B,
+    BuiltInParameters::p00y20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicExchangeExt_01F20C00B(
+constexpr const TFunction imageAtomicExchangeExt_01E20C00B(
     BuiltInId::imageAtomicExchangeExt_UImageCubeArray1_Int3_Float1,
     BuiltInName::imageAtomicExchangeExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00B,
+    BuiltInParameters::p01E20C00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicExchange,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00p10C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00o10C00D00D(
     BuiltInId::imageAtomicCompSwapExt_Image2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00D00D,
+    BuiltInParameters::p00o10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00v10C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00u10C00D00D(
     BuiltInId::imageAtomicCompSwapExt_IImage2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00D00D,
+    BuiltInParameters::p00u10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01B10C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_01A10C00D00D(
     BuiltInId::imageAtomicCompSwapExt_UImage2D1_Int2_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00D00D,
+    BuiltInParameters::p01A10C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00q20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00p20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_Image3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00D00D,
+    BuiltInParameters::p00p20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00w20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00v20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_IImage3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00D00D,
+    BuiltInParameters::p00v20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01C20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_01B20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_UImage3D1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00s20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_ImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00y20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_IImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01E20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_UImageCube1_Int3_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00u00C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_ImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01A00C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_IImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00D00D,
-    4,
-    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01G00C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_UImageBuffer1_Int1_UInt1_UInt1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00D00D,
+    BuiltInParameters::p01B20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_00r20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_Image2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwapExt_ImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00D00D,
@@ -16817,7 +16738,7 @@ constexpr const TFunction imageAtomicCompSwapExt_00r20C00D00D(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_00x20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_IImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwapExt_IImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00D00D,
@@ -16826,7 +16747,7 @@ constexpr const TFunction imageAtomicCompSwapExt_00x20C00D00D(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_01D20C00D00D(
-    BuiltInId::imageAtomicCompSwapExt_UImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInId::imageAtomicCompSwapExt_UImageCube1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00D00D,
@@ -16834,143 +16755,143 @@ constexpr const TFunction imageAtomicCompSwapExt_01D20C00D00D(
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00t20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00t00C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_ImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00z00C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_IImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_01F00C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_UImageBuffer1_Int1_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00q20C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_Image2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00w20C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_IImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_01C20C00D00D(
+    BuiltInId::imageAtomicCompSwapExt_UImage2DArray1_Int3_UInt1_UInt1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00D00D,
+    4,
+    StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00s20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_ImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00D00D,
+    BuiltInParameters::p00s20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00z20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_00y20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_IImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00D00D,
+    BuiltInParameters::p00y20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01F20C00D00D(
+constexpr const TFunction imageAtomicCompSwapExt_01E20C00D00D(
     BuiltInId::imageAtomicCompSwapExt_UImageCubeArray1_Int3_UInt1_UInt1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00D00D,
+    BuiltInParameters::p01E20C00D00D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00p10C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00o10C00C00C(
     BuiltInId::imageAtomicCompSwapExt_Image2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00p10C00C00C,
+    BuiltInParameters::p00o10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00v10C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00u10C00C00C(
     BuiltInId::imageAtomicCompSwapExt_IImage2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00v10C00C00C,
+    BuiltInParameters::p00u10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01B10C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_01A10C00C00C(
     BuiltInId::imageAtomicCompSwapExt_UImage2D1_Int2_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01B10C00C00C,
+    BuiltInParameters::p01A10C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00q20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00p20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_Image3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00q20C00C00C,
+    BuiltInParameters::p00p20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00w20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00v20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_IImage3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00w20C00C00C,
+    BuiltInParameters::p00v20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01C20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_01B20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_UImage3D1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01C20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00s20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_ImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00s20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00y20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_IImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00y20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01E20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_UImageCube1_Int3_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01E20C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_00u00C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_ImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00u00C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01A00C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_IImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01A00C00C00C,
-    4,
-    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
-    EOpImageAtomicCompSwap,
-    false);
-constexpr const TFunction imageAtomicCompSwapExt_01G00C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_UImageBuffer1_Int1_Int1_Int1,
-    BuiltInName::imageAtomicCompSwapExt,
-    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01G00C00C00C,
+    BuiltInParameters::p01B20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_00r20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_Image2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwapExt_ImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00r20C00C00C,
@@ -16979,7 +16900,7 @@ constexpr const TFunction imageAtomicCompSwapExt_00r20C00C00C(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_00x20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_IImage2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwapExt_IImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p00x20C00C00C,
@@ -16988,7 +16909,7 @@ constexpr const TFunction imageAtomicCompSwapExt_00x20C00C00C(
     EOpImageAtomicCompSwap,
     false);
 constexpr const TFunction imageAtomicCompSwapExt_01D20C00C00C(
-    BuiltInId::imageAtomicCompSwapExt_UImage2DArray1_Int3_Int1_Int1,
+    BuiltInId::imageAtomicCompSwapExt_UImageCube1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
     BuiltInParameters::p01D20C00C00C,
@@ -16996,83 +16917,137 @@ constexpr const TFunction imageAtomicCompSwapExt_01D20C00C00C(
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00t20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00t00C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_ImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00t00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00z00C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_IImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00z00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_01F00C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_UImageBuffer1_Int1_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01F00C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00q20C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_Image2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00q20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00w20C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_IImage2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p00w20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_01C20C00C00C(
+    BuiltInId::imageAtomicCompSwapExt_UImage2DArray1_Int3_Int1_Int1,
+    BuiltInName::imageAtomicCompSwapExt,
+    std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
+    BuiltInParameters::p01C20C00C00C,
+    4,
+    StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpImageAtomicCompSwap,
+    false);
+constexpr const TFunction imageAtomicCompSwapExt_00s20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_ImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00t20C00C00C,
+    BuiltInParameters::p00s20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_00z20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_00y20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_IImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p00z20C00C00C,
+    BuiltInParameters::p00y20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction imageAtomicCompSwapExt_01F20C00C00C(
+constexpr const TFunction imageAtomicCompSwapExt_01E20C00C00C(
     BuiltInId::imageAtomicCompSwapExt_UImageCubeArray1_Int3_Int1_Int1,
     BuiltInName::imageAtomicCompSwapExt,
     std::array<TExtension, 1u>{{TExtension::OES_shader_image_atomic}},
-    BuiltInParameters::p01F20C00C00C,
+    BuiltInParameters::p01E20C00C00C,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageAtomicCompSwap,
     false);
-constexpr const TFunction pixelLocalLoadANGLE_01H(
+constexpr const TFunction pixelLocalLoadANGLE_01G(
     BuiltInId::pixelLocalLoadANGLE_PixelLocalANGLE1,
     BuiltInName::pixelLocalLoadANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01H30B,
+    BuiltInParameters::p01G30B,
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
     true);
-constexpr const TFunction pixelLocalLoadANGLE_01I(
+constexpr const TFunction pixelLocalLoadANGLE_01H(
     BuiltInId::pixelLocalLoadANGLE_IPixelLocalANGLE1,
     BuiltInName::pixelLocalLoadANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01I30C,
+    BuiltInParameters::p01H30C,
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
     true);
-constexpr const TFunction pixelLocalLoadANGLE_01J(
+constexpr const TFunction pixelLocalLoadANGLE_01I(
     BuiltInId::pixelLocalLoadANGLE_UPixelLocalANGLE1,
     BuiltInName::pixelLocalLoadANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01J30D,
+    BuiltInParameters::p01I30D,
     1,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
     true);
-constexpr const TFunction pixelLocalStoreANGLE_01H30B(
+constexpr const TFunction pixelLocalStoreANGLE_01G30B(
     BuiltInId::pixelLocalStoreANGLE_PixelLocalANGLE1_Float4,
     BuiltInName::pixelLocalStoreANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01H30B,
+    BuiltInParameters::p01G30B,
     2,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpPixelLocalStoreANGLE,
     false);
-constexpr const TFunction pixelLocalStoreANGLE_01I30C(
+constexpr const TFunction pixelLocalStoreANGLE_01H30C(
     BuiltInId::pixelLocalStoreANGLE_IPixelLocalANGLE1_Int4,
     BuiltInName::pixelLocalStoreANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01I30C,
+    BuiltInParameters::p01H30C,
     2,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpPixelLocalStoreANGLE,
     false);
-constexpr const TFunction pixelLocalStoreANGLE_01J30D(
+constexpr const TFunction pixelLocalStoreANGLE_01I30D(
     BuiltInId::pixelLocalStoreANGLE_UPixelLocalANGLE1_UInt4,
     BuiltInName::pixelLocalStoreANGLE,
     std::array<TExtension, 1u>{{TExtension::ANGLE_shader_pixel_local_storage}},
-    BuiltInParameters::p01J30D,
+    BuiltInParameters::p01I30D,
     2,
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpPixelLocalStoreANGLE,
@@ -17238,27 +17213,27 @@ constexpr const TFunction EndPrimitiveES3_2_(
     StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpEndPrimitive,
     false);
-constexpr const TFunction subpassLoad_01K(
+constexpr const TFunction subpassLoad_01J(
     BuiltInId::subpassLoad_SubpassInput1,
     BuiltInName::subpassLoad,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-    BuiltInParameters::p01K,
+    BuiltInParameters::p01J,
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
     true);
-constexpr const TFunction subpassLoad_01L(BuiltInId::subpassLoad_ISubpassInput1,
+constexpr const TFunction subpassLoad_01K(BuiltInId::subpassLoad_ISubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                          BuiltInParameters::p01L,
+                                          BuiltInParameters::p01K,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
                                           true);
-constexpr const TFunction subpassLoad_01M(BuiltInId::subpassLoad_USubpassInput1,
+constexpr const TFunction subpassLoad_01L(BuiltInId::subpassLoad_USubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
-                                          BuiltInParameters::p01M,
+                                          BuiltInParameters::p01L,
                                           1,
                                           StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
@@ -17879,7 +17854,6 @@ constexpr SymbolRule kRules[] = {
         &texture2DProjGradEXT_00H30B10B10B),
     Rule::Get<100, Shader::ALL, EXT_INDEX(EXT_shader_texture_lod)>(
         &textureCubeGradEXT_00J20B20B20B),
-    Rule::Get<100, Shader::ALL, 0>(&textureVideoWEBGL_00o10B),
     Rule::Get<100, Shader::FRAGMENT, 0>(&texture2D_00H10B00B),
     Rule::Get<100, Shader::FRAGMENT, 0>(&texture2DProj_00H20B00B),
     Rule::Get<100, Shader::FRAGMENT, 0>(&texture2DProj_00H30B00B),
@@ -17929,7 +17903,6 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<300, Shader::ALL, EXT_INDEX(OES_EGL_image_external_essl3)>(&texture_00L10B),
     Rule::Get<300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&texture_00M10B),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ARB_texture_rectangle)>(&texture_00N10B),
-    Rule::Get<300, Shader::ALL, 0>(&texture_00o10B),
     Rule::Get<300, Shader::ALL, 0>(&textureProj_00H20B),
     Rule::Get<300, Shader::ALL, 0>(&textureProj_00Q20B),
     Rule::Get<300, Shader::ALL, 0>(&textureProj_00W20B),
@@ -18460,6 +18433,9 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, 0>(&atomicExchange_00C00C),
     Rule::Get<310, Shader::ALL, 0>(&atomicCompSwap_00D00D00D),
     Rule::Get<310, Shader::ALL, 0>(&atomicCompSwap_00C00C00C),
+    Rule::Get<310, Shader::ALL, 0>(&imageSize_00o),
+    Rule::Get<310, Shader::ALL, 0>(&imageSize_00u),
+    Rule::Get<310, Shader::ALL, 0>(&imageSize_01A),
     Rule::Get<310, Shader::ALL, 0>(&imageSize_00p),
     Rule::Get<310, Shader::ALL, 0>(&imageSize_00v),
     Rule::Get<310, Shader::ALL, 0>(&imageSize_01B),
@@ -18469,93 +18445,108 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, 0>(&imageSize_00r),
     Rule::Get<310, Shader::ALL, 0>(&imageSize_00x),
     Rule::Get<310, Shader::ALL, 0>(&imageSize_01D),
-    Rule::Get<310, Shader::ALL, 0>(&imageSize_00s),
-    Rule::Get<310, Shader::ALL, 0>(&imageSize_00y),
-    Rule::Get<310, Shader::ALL, 0>(&imageSize_01E),
+    Rule::Get<320, Shader::ALL, 0>(&imageSize_00s),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_00s),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_00s),
+    Rule::Get<320, Shader::ALL, 0>(&imageSize_00y),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_00y),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_00y),
+    Rule::Get<320, Shader::ALL, 0>(&imageSize_01E),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_01E),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_01E),
     Rule::Get<320, Shader::ALL, 0>(&imageSize_00t),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_00t),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_00t),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_00t),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_00t),
     Rule::Get<320, Shader::ALL, 0>(&imageSize_00z),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_00z),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_00z),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_00z),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_00z),
     Rule::Get<320, Shader::ALL, 0>(&imageSize_01F),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageSizeExt_01F),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageSizeExt_01F),
-    Rule::Get<320, Shader::ALL, 0>(&imageSize_00u),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_00u),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_00u),
-    Rule::Get<320, Shader::ALL, 0>(&imageSize_01A),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_01A),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_01A),
-    Rule::Get<320, Shader::ALL, 0>(&imageSize_01G),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_01G),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_01G),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_00p10C30B),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_00v10C30C),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_01B10C30D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageSizeExt_01F),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageSizeExt_01F),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_00o10C30B),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_00u10C30C),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_01A10C30D),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_00p20C30B),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_00v20C30C),
+    Rule::Get<310, Shader::ALL, 0>(&imageStore_01B20C30D),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_00q20C30B),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_00w20C30C),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_01C20C30D),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_00r20C30B),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_00x20C30C),
     Rule::Get<310, Shader::ALL, 0>(&imageStore_01D20C30D),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_00s20C30B),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_00y20C30C),
-    Rule::Get<310, Shader::ALL, 0>(&imageStore_01E20C30D),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_00t20C30B),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_00t20C30B),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_00t20C30B),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_00z20C30C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_00z20C30C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_00z20C30C),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_01F20C30D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_01F20C30D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_01F20C30D),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_00u00C30B),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_00u00C30B),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_00u00C30B),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_01A00C30C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_01A00C30C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_01A00C30C),
-    Rule::Get<320, Shader::ALL, 0>(&imageStore_01G00C30D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_01G00C30D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_01G00C30D),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00p10C),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00v10C),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_01B10C),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_00s20C30B),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_00s20C30B),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_00s20C30B),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_00y20C30C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_00y20C30C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_00y20C30C),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_01E20C30D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageStoreExt_01E20C30D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageStoreExt_01E20C30D),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_00t00C30B),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_00t00C30B),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_00t00C30B),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_00z00C30C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_00z00C30C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_00z00C30C),
+    Rule::Get<320, Shader::ALL, 0>(&imageStore_01F00C30D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageStoreExt_01F00C30D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageStoreExt_01F00C30D),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00o10C),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00u10C),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_01A10C),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00p20C),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00v20C),
+    Rule::Get<310, Shader::ALL, 0>(&imageLoad_01B20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_00q20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_00w20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_01C20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_00r20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_00x20C),
     Rule::Get<310, Shader::ALL, 0>(&imageLoad_01D20C),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00s20C),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_00y20C),
-    Rule::Get<310, Shader::ALL, 0>(&imageLoad_01E20C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00t20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_00t20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_00t20C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00z20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_00z20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_00z20C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_01F20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_01F20C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_01F20C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00u00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_00u00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_00u00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_01A00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_01A00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_01A00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageLoad_01G00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_01G00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_01G00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00s20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_00s20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_00s20C),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00y20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_00y20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_00y20C),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_01E20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_cube_map_array)>(&imageLoadExt_01E20C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_cube_map_array)>(&imageLoadExt_01E20C),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00t00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_00t00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_00t00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_00z00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_00z00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_00z00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageLoad_01F00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_buffer)>(&imageLoadExt_01F00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(EXT_texture_buffer)>(&imageLoadExt_01F00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00w20C00D),
@@ -18568,30 +18559,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00w20C00C),
@@ -18604,30 +18595,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAdd_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAddExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00w20C00D),
@@ -18640,30 +18631,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00w20C00C),
@@ -18676,30 +18667,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMin_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMinExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00w20C00D),
@@ -18712,30 +18703,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00w20C00C),
@@ -18748,30 +18739,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicMax_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicMaxExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00w20C00D),
@@ -18784,30 +18775,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00w20C00C),
@@ -18820,30 +18811,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicAnd_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicAndExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00w20C00D),
@@ -18856,30 +18847,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00w20C00C),
@@ -18892,30 +18883,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicOr_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicOrExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00p10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00v10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01B10C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01B10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00o10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00u10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01A10C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00q20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00w20C00D),
@@ -18928,30 +18919,30 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00y20C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00u00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01A00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01G00C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00r20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00x20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01D20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00t20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00z20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01F20C00D),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00p10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00v10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01B10C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01B10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00o10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00u10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01A10C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00p20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00v20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01B20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00r20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00x20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01D20C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00t00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00z00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01F00C00C),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00q20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00w20C00C),
@@ -18964,33 +18955,42 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00y20C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00u00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01A00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01G00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00r20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00x20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01D20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00t20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_00z20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicXor_01F20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(&imageAtomicXorExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00o10C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00p10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v10C00D),
+        &imageAtomicExchangeExt_00o10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u10C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00v10C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B10C00D),
+        &imageAtomicExchangeExt_00u10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A10C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01B10C00D),
+        &imageAtomicExchangeExt_01A10C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00p20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00v20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_01B20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00r20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00x20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_01D20C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00t00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_00z00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F00C00D),
+    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
+        &imageAtomicExchangeExt_01F00C00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00q20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00q20C00D),
@@ -19009,42 +19009,42 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01E20C00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u00C00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00o10C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00u00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A00C00D),
+        &imageAtomicExchangeExt_00o10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u10C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01A00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01G00C00D),
+        &imageAtomicExchangeExt_00u10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A10C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01G00C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00D),
+        &imageAtomicExchangeExt_01A10C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00r20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00D),
+        &imageAtomicExchangeExt_00p20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00x20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00D),
+        &imageAtomicExchangeExt_00v20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01D20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t20C00D),
+        &imageAtomicExchangeExt_01B20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00t20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z20C00D),
+        &imageAtomicExchangeExt_00r20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00z20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F20C00D),
+        &imageAtomicExchangeExt_00x20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01F20C00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p10C00C),
+        &imageAtomicExchangeExt_01D20C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00p10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v10C00C),
+        &imageAtomicExchangeExt_00t00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00v10C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B10C00C),
+        &imageAtomicExchangeExt_00z00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01B10C00C),
+        &imageAtomicExchangeExt_01F00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00q20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00q20C00C),
@@ -19063,42 +19063,42 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01E20C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00o10C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00u00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A00C00C),
+        &imageAtomicExchangeExt_00o10C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u10C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01A00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01G00C00C),
+        &imageAtomicExchangeExt_00u10C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A10C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01G00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00C),
+        &imageAtomicExchangeExt_01A10C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00r20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00C),
+        &imageAtomicExchangeExt_00p20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00x20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00C),
+        &imageAtomicExchangeExt_00v20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01D20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t20C00C),
+        &imageAtomicExchangeExt_01B20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00t20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z20C00C),
+        &imageAtomicExchangeExt_00r20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00z20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F20C00C),
+        &imageAtomicExchangeExt_00x20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01F20C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00p10C00B),
+        &imageAtomicExchangeExt_01D20C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t00C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00p10C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00v10C00B),
+        &imageAtomicExchangeExt_00t00C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z00C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00v10C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01B10C00B),
+        &imageAtomicExchangeExt_00z00C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F00C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01B10C00B),
+        &imageAtomicExchangeExt_01F00C00B),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00q20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00q20C00B),
@@ -19117,42 +19117,42 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01E20C00B),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00u00C00B),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00o10C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00u00C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01A00C00B),
+        &imageAtomicCompSwapExt_00o10C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00u10C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01A00C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01G00C00B),
+        &imageAtomicCompSwapExt_00u10C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01A10C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01G00C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00r20C00B),
+        &imageAtomicCompSwapExt_01A10C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00p20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00r20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00x20C00B),
+        &imageAtomicCompSwapExt_00p20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00v20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00x20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01D20C00B),
+        &imageAtomicCompSwapExt_00v20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01B20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01D20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00t20C00B),
+        &imageAtomicCompSwapExt_01B20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00r20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00t20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_00z20C00B),
+        &imageAtomicCompSwapExt_00r20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00x20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_00z20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicExchange_01F20C00B),
+        &imageAtomicCompSwapExt_00x20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01D20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicExchangeExt_01F20C00B),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00p10C00D00D),
+        &imageAtomicCompSwapExt_01D20C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00t00C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00p10C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00v10C00D00D),
+        &imageAtomicCompSwapExt_00t00C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00z00C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00v10C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01B10C00D00D),
+        &imageAtomicCompSwapExt_00z00C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01F00C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01B10C00D00D),
+        &imageAtomicCompSwapExt_01F00C00D00D),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00q20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_00q20C00D00D),
@@ -19171,42 +19171,42 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01E20C00D00D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01E20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00u00C00D00D),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00o10C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00u00C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01A00C00D00D),
+        &imageAtomicCompSwapExt_00o10C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00u10C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01A00C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01G00C00D00D),
+        &imageAtomicCompSwapExt_00u10C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01A10C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01G00C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00r20C00D00D),
+        &imageAtomicCompSwapExt_01A10C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00p20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00r20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00x20C00D00D),
+        &imageAtomicCompSwapExt_00p20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00v20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00x20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01D20C00D00D),
+        &imageAtomicCompSwapExt_00v20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01B20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01D20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00t20C00D00D),
+        &imageAtomicCompSwapExt_01B20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00r20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00t20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00z20C00D00D),
+        &imageAtomicCompSwapExt_00r20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00x20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00z20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01F20C00D00D),
+        &imageAtomicCompSwapExt_00x20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01D20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01F20C00D00D),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00p10C00C00C),
+        &imageAtomicCompSwapExt_01D20C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00t00C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00p10C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00v10C00C00C),
+        &imageAtomicCompSwapExt_00t00C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00z00C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00v10C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01B10C00C00C),
+        &imageAtomicCompSwapExt_00z00C00C00C),
+    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01F00C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01B10C00C00C),
+        &imageAtomicCompSwapExt_01F00C00C00C),
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00q20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_00q20C00C00C),
@@ -19225,45 +19225,18 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01E20C00C00C),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01E20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00u00C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00u00C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01A00C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01A00C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01G00C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01G00C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00r20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00r20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00x20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00x20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01D20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01D20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00t20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00t20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_00z20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_00z20C00C00C),
-    Rule::Get<320, Shader::ALL, 0>(&imageAtomicCompSwap_01F20C00C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
-        &imageAtomicCompSwapExt_01F20C00C00C),
+    Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
+        &pixelLocalLoadANGLE_01G),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
         &pixelLocalLoadANGLE_01H),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
         &pixelLocalLoadANGLE_01I),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
-        &pixelLocalLoadANGLE_01J),
+        &pixelLocalStoreANGLE_01G30B),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
-        &pixelLocalStoreANGLE_01H30B),
+        &pixelLocalStoreANGLE_01H30C),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
-        &pixelLocalStoreANGLE_01I30C),
-    Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_shader_pixel_local_storage)>(
-        &pixelLocalStoreANGLE_01J30D),
+        &pixelLocalStoreANGLE_01I30D),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&beginInvocationInterlockNV_),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&endInvocationInterlockNV_),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&beginFragmentShaderOrderingINTEL_),
@@ -19285,9 +19258,9 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::GEOMETRY, 0>(&EndPrimitiveES3_2_),
     Rule::Get<310, Shader::GEOMETRY, EXT_INDEX(EXT_geometry_shader)>(&EndPrimitive_),
     Rule::Get<310, Shader::GEOMETRY, EXT_INDEX(OES_geometry_shader)>(&EndPrimitive_),
+    Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01J),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01K),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01L),
-    Rule::Get<kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01M),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(&numSamples_),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(&samplePosition_00D),
     Rule::Get<kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(&interpolateAtCenter_00B),
@@ -20194,7 +20167,6 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "texture2DProjGradEXT(00H20B10B10B",
                                          "texture2DProjGradEXT(00H30B10B10B",
                                          "textureCubeGradEXT(00J20B20B20B",
-                                         "textureVideoWEBGL(00o10B",
                                          "texture2D(00H10B00B",
                                          "texture2DProj(00H20B00B",
                                          "texture2DProj(00H30B00B",
@@ -20233,7 +20205,6 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "texture(00L10B",
                                          "texture(00M10B",
                                          "texture(00N10B",
-                                         "texture(00o10B",
                                          "textureProj(00H20B",
                                          "textureProj(00Q20B",
                                          "textureProj(00W20B",
@@ -20605,6 +20576,9 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "atomicExchange(00C00C",
                                          "atomicCompSwap(00D00D00D",
                                          "atomicCompSwap(00C00C00C",
+                                         "imageSize(00o",
+                                         "imageSize(00u",
+                                         "imageSize(01A",
                                          "imageSize(00p",
                                          "imageSize(00v",
                                          "imageSize(01B",
@@ -20620,12 +20594,12 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "imageSize(00t",
                                          "imageSize(00z",
                                          "imageSize(01F",
-                                         "imageSize(00u",
-                                         "imageSize(01A",
-                                         "imageSize(01G",
-                                         "imageStore(00p10C30B",
-                                         "imageStore(00v10C30C",
-                                         "imageStore(01B10C30D",
+                                         "imageStore(00o10C30B",
+                                         "imageStore(00u10C30C",
+                                         "imageStore(01A10C30D",
+                                         "imageStore(00p20C30B",
+                                         "imageStore(00v20C30C",
+                                         "imageStore(01B20C30D",
                                          "imageStore(00q20C30B",
                                          "imageStore(00w20C30C",
                                          "imageStore(01C20C30D",
@@ -20635,15 +20609,15 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "imageStore(00s20C30B",
                                          "imageStore(00y20C30C",
                                          "imageStore(01E20C30D",
-                                         "imageStore(00t20C30B",
-                                         "imageStore(00z20C30C",
-                                         "imageStore(01F20C30D",
-                                         "imageStore(00u00C30B",
-                                         "imageStore(01A00C30C",
-                                         "imageStore(01G00C30D",
-                                         "imageLoad(00p10C",
-                                         "imageLoad(00v10C",
-                                         "imageLoad(01B10C",
+                                         "imageStore(00t00C30B",
+                                         "imageStore(00z00C30C",
+                                         "imageStore(01F00C30D",
+                                         "imageLoad(00o10C",
+                                         "imageLoad(00u10C",
+                                         "imageLoad(01A10C",
+                                         "imageLoad(00p20C",
+                                         "imageLoad(00v20C",
+                                         "imageLoad(01B20C",
                                          "imageLoad(00q20C",
                                          "imageLoad(00w20C",
                                          "imageLoad(01C20C",
@@ -20653,324 +20627,321 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "imageLoad(00s20C",
                                          "imageLoad(00y20C",
                                          "imageLoad(01E20C",
-                                         "imageLoad(00t20C",
-                                         "imageLoad(00z20C",
-                                         "imageLoad(01F20C",
-                                         "imageLoad(00u00C",
-                                         "imageLoad(01A00C",
-                                         "imageLoad(01G00C",
-                                         "imageAtomicAdd(00p10C00D",
-                                         "imageAtomicAdd(00v10C00D",
-                                         "imageAtomicAdd(01B10C00D",
+                                         "imageLoad(00t00C",
+                                         "imageLoad(00z00C",
+                                         "imageLoad(01F00C",
+                                         "imageAtomicAdd(00o10C00D",
+                                         "imageAtomicAdd(00u10C00D",
+                                         "imageAtomicAdd(01A10C00D",
+                                         "imageAtomicAdd(00p20C00D",
+                                         "imageAtomicAdd(00v20C00D",
+                                         "imageAtomicAdd(01B20C00D",
+                                         "imageAtomicAdd(00r20C00D",
+                                         "imageAtomicAdd(00x20C00D",
+                                         "imageAtomicAdd(01D20C00D",
+                                         "imageAtomicAdd(00t00C00D",
+                                         "imageAtomicAdd(00z00C00D",
+                                         "imageAtomicAdd(01F00C00D",
                                          "imageAtomicAdd(00q20C00D",
                                          "imageAtomicAdd(00w20C00D",
                                          "imageAtomicAdd(01C20C00D",
                                          "imageAtomicAdd(00s20C00D",
                                          "imageAtomicAdd(00y20C00D",
                                          "imageAtomicAdd(01E20C00D",
-                                         "imageAtomicAdd(00u00C00D",
-                                         "imageAtomicAdd(01A00C00D",
-                                         "imageAtomicAdd(01G00C00D",
-                                         "imageAtomicAdd(00r20C00D",
-                                         "imageAtomicAdd(00x20C00D",
-                                         "imageAtomicAdd(01D20C00D",
-                                         "imageAtomicAdd(00t20C00D",
-                                         "imageAtomicAdd(00z20C00D",
-                                         "imageAtomicAdd(01F20C00D",
-                                         "imageAtomicAdd(00p10C00C",
-                                         "imageAtomicAdd(00v10C00C",
-                                         "imageAtomicAdd(01B10C00C",
+                                         "imageAtomicAdd(00o10C00C",
+                                         "imageAtomicAdd(00u10C00C",
+                                         "imageAtomicAdd(01A10C00C",
+                                         "imageAtomicAdd(00p20C00C",
+                                         "imageAtomicAdd(00v20C00C",
+                                         "imageAtomicAdd(01B20C00C",
+                                         "imageAtomicAdd(00r20C00C",
+                                         "imageAtomicAdd(00x20C00C",
+                                         "imageAtomicAdd(01D20C00C",
+                                         "imageAtomicAdd(00t00C00C",
+                                         "imageAtomicAdd(00z00C00C",
+                                         "imageAtomicAdd(01F00C00C",
                                          "imageAtomicAdd(00q20C00C",
                                          "imageAtomicAdd(00w20C00C",
                                          "imageAtomicAdd(01C20C00C",
                                          "imageAtomicAdd(00s20C00C",
                                          "imageAtomicAdd(00y20C00C",
                                          "imageAtomicAdd(01E20C00C",
-                                         "imageAtomicAdd(00u00C00C",
-                                         "imageAtomicAdd(01A00C00C",
-                                         "imageAtomicAdd(01G00C00C",
-                                         "imageAtomicAdd(00r20C00C",
-                                         "imageAtomicAdd(00x20C00C",
-                                         "imageAtomicAdd(01D20C00C",
-                                         "imageAtomicAdd(00t20C00C",
-                                         "imageAtomicAdd(00z20C00C",
-                                         "imageAtomicAdd(01F20C00C",
-                                         "imageAtomicMin(00p10C00D",
-                                         "imageAtomicMin(00v10C00D",
-                                         "imageAtomicMin(01B10C00D",
+                                         "imageAtomicMin(00o10C00D",
+                                         "imageAtomicMin(00u10C00D",
+                                         "imageAtomicMin(01A10C00D",
+                                         "imageAtomicMin(00p20C00D",
+                                         "imageAtomicMin(00v20C00D",
+                                         "imageAtomicMin(01B20C00D",
+                                         "imageAtomicMin(00r20C00D",
+                                         "imageAtomicMin(00x20C00D",
+                                         "imageAtomicMin(01D20C00D",
+                                         "imageAtomicMin(00t00C00D",
+                                         "imageAtomicMin(00z00C00D",
+                                         "imageAtomicMin(01F00C00D",
                                          "imageAtomicMin(00q20C00D",
                                          "imageAtomicMin(00w20C00D",
                                          "imageAtomicMin(01C20C00D",
                                          "imageAtomicMin(00s20C00D",
                                          "imageAtomicMin(00y20C00D",
                                          "imageAtomicMin(01E20C00D",
-                                         "imageAtomicMin(00u00C00D",
-                                         "imageAtomicMin(01A00C00D",
-                                         "imageAtomicMin(01G00C00D",
-                                         "imageAtomicMin(00r20C00D",
-                                         "imageAtomicMin(00x20C00D",
-                                         "imageAtomicMin(01D20C00D",
-                                         "imageAtomicMin(00t20C00D",
-                                         "imageAtomicMin(00z20C00D",
-                                         "imageAtomicMin(01F20C00D",
-                                         "imageAtomicMin(00p10C00C",
-                                         "imageAtomicMin(00v10C00C",
-                                         "imageAtomicMin(01B10C00C",
+                                         "imageAtomicMin(00o10C00C",
+                                         "imageAtomicMin(00u10C00C",
+                                         "imageAtomicMin(01A10C00C",
+                                         "imageAtomicMin(00p20C00C",
+                                         "imageAtomicMin(00v20C00C",
+                                         "imageAtomicMin(01B20C00C",
+                                         "imageAtomicMin(00r20C00C",
+                                         "imageAtomicMin(00x20C00C",
+                                         "imageAtomicMin(01D20C00C",
+                                         "imageAtomicMin(00t00C00C",
+                                         "imageAtomicMin(00z00C00C",
+                                         "imageAtomicMin(01F00C00C",
                                          "imageAtomicMin(00q20C00C",
                                          "imageAtomicMin(00w20C00C",
                                          "imageAtomicMin(01C20C00C",
                                          "imageAtomicMin(00s20C00C",
                                          "imageAtomicMin(00y20C00C",
                                          "imageAtomicMin(01E20C00C",
-                                         "imageAtomicMin(00u00C00C",
-                                         "imageAtomicMin(01A00C00C",
-                                         "imageAtomicMin(01G00C00C",
-                                         "imageAtomicMin(00r20C00C",
-                                         "imageAtomicMin(00x20C00C",
-                                         "imageAtomicMin(01D20C00C",
-                                         "imageAtomicMin(00t20C00C",
-                                         "imageAtomicMin(00z20C00C",
-                                         "imageAtomicMin(01F20C00C",
-                                         "imageAtomicMax(00p10C00D",
-                                         "imageAtomicMax(00v10C00D",
-                                         "imageAtomicMax(01B10C00D",
+                                         "imageAtomicMax(00o10C00D",
+                                         "imageAtomicMax(00u10C00D",
+                                         "imageAtomicMax(01A10C00D",
+                                         "imageAtomicMax(00p20C00D",
+                                         "imageAtomicMax(00v20C00D",
+                                         "imageAtomicMax(01B20C00D",
+                                         "imageAtomicMax(00r20C00D",
+                                         "imageAtomicMax(00x20C00D",
+                                         "imageAtomicMax(01D20C00D",
+                                         "imageAtomicMax(00t00C00D",
+                                         "imageAtomicMax(00z00C00D",
+                                         "imageAtomicMax(01F00C00D",
                                          "imageAtomicMax(00q20C00D",
                                          "imageAtomicMax(00w20C00D",
                                          "imageAtomicMax(01C20C00D",
                                          "imageAtomicMax(00s20C00D",
                                          "imageAtomicMax(00y20C00D",
                                          "imageAtomicMax(01E20C00D",
-                                         "imageAtomicMax(00u00C00D",
-                                         "imageAtomicMax(01A00C00D",
-                                         "imageAtomicMax(01G00C00D",
-                                         "imageAtomicMax(00r20C00D",
-                                         "imageAtomicMax(00x20C00D",
-                                         "imageAtomicMax(01D20C00D",
-                                         "imageAtomicMax(00t20C00D",
-                                         "imageAtomicMax(00z20C00D",
-                                         "imageAtomicMax(01F20C00D",
-                                         "imageAtomicMax(00p10C00C",
-                                         "imageAtomicMax(00v10C00C",
-                                         "imageAtomicMax(01B10C00C",
+                                         "imageAtomicMax(00o10C00C",
+                                         "imageAtomicMax(00u10C00C",
+                                         "imageAtomicMax(01A10C00C",
+                                         "imageAtomicMax(00p20C00C",
+                                         "imageAtomicMax(00v20C00C",
+                                         "imageAtomicMax(01B20C00C",
+                                         "imageAtomicMax(00r20C00C",
+                                         "imageAtomicMax(00x20C00C",
+                                         "imageAtomicMax(01D20C00C",
+                                         "imageAtomicMax(00t00C00C",
+                                         "imageAtomicMax(00z00C00C",
+                                         "imageAtomicMax(01F00C00C",
                                          "imageAtomicMax(00q20C00C",
                                          "imageAtomicMax(00w20C00C",
                                          "imageAtomicMax(01C20C00C",
                                          "imageAtomicMax(00s20C00C",
                                          "imageAtomicMax(00y20C00C",
                                          "imageAtomicMax(01E20C00C",
-                                         "imageAtomicMax(00u00C00C",
-                                         "imageAtomicMax(01A00C00C",
-                                         "imageAtomicMax(01G00C00C",
-                                         "imageAtomicMax(00r20C00C",
-                                         "imageAtomicMax(00x20C00C",
-                                         "imageAtomicMax(01D20C00C",
-                                         "imageAtomicMax(00t20C00C",
-                                         "imageAtomicMax(00z20C00C",
-                                         "imageAtomicMax(01F20C00C",
-                                         "imageAtomicAnd(00p10C00D",
-                                         "imageAtomicAnd(00v10C00D",
-                                         "imageAtomicAnd(01B10C00D",
+                                         "imageAtomicAnd(00o10C00D",
+                                         "imageAtomicAnd(00u10C00D",
+                                         "imageAtomicAnd(01A10C00D",
+                                         "imageAtomicAnd(00p20C00D",
+                                         "imageAtomicAnd(00v20C00D",
+                                         "imageAtomicAnd(01B20C00D",
+                                         "imageAtomicAnd(00r20C00D",
+                                         "imageAtomicAnd(00x20C00D",
+                                         "imageAtomicAnd(01D20C00D",
+                                         "imageAtomicAnd(00t00C00D",
+                                         "imageAtomicAnd(00z00C00D",
+                                         "imageAtomicAnd(01F00C00D",
                                          "imageAtomicAnd(00q20C00D",
                                          "imageAtomicAnd(00w20C00D",
                                          "imageAtomicAnd(01C20C00D",
                                          "imageAtomicAnd(00s20C00D",
                                          "imageAtomicAnd(00y20C00D",
                                          "imageAtomicAnd(01E20C00D",
-                                         "imageAtomicAnd(00u00C00D",
-                                         "imageAtomicAnd(01A00C00D",
-                                         "imageAtomicAnd(01G00C00D",
-                                         "imageAtomicAnd(00r20C00D",
-                                         "imageAtomicAnd(00x20C00D",
-                                         "imageAtomicAnd(01D20C00D",
-                                         "imageAtomicAnd(00t20C00D",
-                                         "imageAtomicAnd(00z20C00D",
-                                         "imageAtomicAnd(01F20C00D",
-                                         "imageAtomicAnd(00p10C00C",
-                                         "imageAtomicAnd(00v10C00C",
-                                         "imageAtomicAnd(01B10C00C",
+                                         "imageAtomicAnd(00o10C00C",
+                                         "imageAtomicAnd(00u10C00C",
+                                         "imageAtomicAnd(01A10C00C",
+                                         "imageAtomicAnd(00p20C00C",
+                                         "imageAtomicAnd(00v20C00C",
+                                         "imageAtomicAnd(01B20C00C",
+                                         "imageAtomicAnd(00r20C00C",
+                                         "imageAtomicAnd(00x20C00C",
+                                         "imageAtomicAnd(01D20C00C",
+                                         "imageAtomicAnd(00t00C00C",
+                                         "imageAtomicAnd(00z00C00C",
+                                         "imageAtomicAnd(01F00C00C",
                                          "imageAtomicAnd(00q20C00C",
                                          "imageAtomicAnd(00w20C00C",
                                          "imageAtomicAnd(01C20C00C",
                                          "imageAtomicAnd(00s20C00C",
                                          "imageAtomicAnd(00y20C00C",
                                          "imageAtomicAnd(01E20C00C",
-                                         "imageAtomicAnd(00u00C00C",
-                                         "imageAtomicAnd(01A00C00C",
-                                         "imageAtomicAnd(01G00C00C",
-                                         "imageAtomicAnd(00r20C00C",
-                                         "imageAtomicAnd(00x20C00C",
-                                         "imageAtomicAnd(01D20C00C",
-                                         "imageAtomicAnd(00t20C00C",
-                                         "imageAtomicAnd(00z20C00C",
-                                         "imageAtomicAnd(01F20C00C",
-                                         "imageAtomicOr(00p10C00D",
-                                         "imageAtomicOr(00v10C00D",
-                                         "imageAtomicOr(01B10C00D",
+                                         "imageAtomicOr(00o10C00D",
+                                         "imageAtomicOr(00u10C00D",
+                                         "imageAtomicOr(01A10C00D",
+                                         "imageAtomicOr(00p20C00D",
+                                         "imageAtomicOr(00v20C00D",
+                                         "imageAtomicOr(01B20C00D",
+                                         "imageAtomicOr(00r20C00D",
+                                         "imageAtomicOr(00x20C00D",
+                                         "imageAtomicOr(01D20C00D",
+                                         "imageAtomicOr(00t00C00D",
+                                         "imageAtomicOr(00z00C00D",
+                                         "imageAtomicOr(01F00C00D",
                                          "imageAtomicOr(00q20C00D",
                                          "imageAtomicOr(00w20C00D",
                                          "imageAtomicOr(01C20C00D",
                                          "imageAtomicOr(00s20C00D",
                                          "imageAtomicOr(00y20C00D",
                                          "imageAtomicOr(01E20C00D",
-                                         "imageAtomicOr(00u00C00D",
-                                         "imageAtomicOr(01A00C00D",
-                                         "imageAtomicOr(01G00C00D",
-                                         "imageAtomicOr(00r20C00D",
-                                         "imageAtomicOr(00x20C00D",
-                                         "imageAtomicOr(01D20C00D",
-                                         "imageAtomicOr(00t20C00D",
-                                         "imageAtomicOr(00z20C00D",
-                                         "imageAtomicOr(01F20C00D",
-                                         "imageAtomicOr(00p10C00C",
-                                         "imageAtomicOr(00v10C00C",
-                                         "imageAtomicOr(01B10C00C",
+                                         "imageAtomicOr(00o10C00C",
+                                         "imageAtomicOr(00u10C00C",
+                                         "imageAtomicOr(01A10C00C",
+                                         "imageAtomicOr(00p20C00C",
+                                         "imageAtomicOr(00v20C00C",
+                                         "imageAtomicOr(01B20C00C",
+                                         "imageAtomicOr(00r20C00C",
+                                         "imageAtomicOr(00x20C00C",
+                                         "imageAtomicOr(01D20C00C",
+                                         "imageAtomicOr(00t00C00C",
+                                         "imageAtomicOr(00z00C00C",
+                                         "imageAtomicOr(01F00C00C",
                                          "imageAtomicOr(00q20C00C",
                                          "imageAtomicOr(00w20C00C",
                                          "imageAtomicOr(01C20C00C",
                                          "imageAtomicOr(00s20C00C",
                                          "imageAtomicOr(00y20C00C",
                                          "imageAtomicOr(01E20C00C",
-                                         "imageAtomicOr(00u00C00C",
-                                         "imageAtomicOr(01A00C00C",
-                                         "imageAtomicOr(01G00C00C",
-                                         "imageAtomicOr(00r20C00C",
-                                         "imageAtomicOr(00x20C00C",
-                                         "imageAtomicOr(01D20C00C",
-                                         "imageAtomicOr(00t20C00C",
-                                         "imageAtomicOr(00z20C00C",
-                                         "imageAtomicOr(01F20C00C",
-                                         "imageAtomicXor(00p10C00D",
-                                         "imageAtomicXor(00v10C00D",
-                                         "imageAtomicXor(01B10C00D",
+                                         "imageAtomicXor(00o10C00D",
+                                         "imageAtomicXor(00u10C00D",
+                                         "imageAtomicXor(01A10C00D",
+                                         "imageAtomicXor(00p20C00D",
+                                         "imageAtomicXor(00v20C00D",
+                                         "imageAtomicXor(01B20C00D",
+                                         "imageAtomicXor(00r20C00D",
+                                         "imageAtomicXor(00x20C00D",
+                                         "imageAtomicXor(01D20C00D",
+                                         "imageAtomicXor(00t00C00D",
+                                         "imageAtomicXor(00z00C00D",
+                                         "imageAtomicXor(01F00C00D",
                                          "imageAtomicXor(00q20C00D",
                                          "imageAtomicXor(00w20C00D",
                                          "imageAtomicXor(01C20C00D",
                                          "imageAtomicXor(00s20C00D",
                                          "imageAtomicXor(00y20C00D",
                                          "imageAtomicXor(01E20C00D",
-                                         "imageAtomicXor(00u00C00D",
-                                         "imageAtomicXor(01A00C00D",
-                                         "imageAtomicXor(01G00C00D",
-                                         "imageAtomicXor(00r20C00D",
-                                         "imageAtomicXor(00x20C00D",
-                                         "imageAtomicXor(01D20C00D",
-                                         "imageAtomicXor(00t20C00D",
-                                         "imageAtomicXor(00z20C00D",
-                                         "imageAtomicXor(01F20C00D",
-                                         "imageAtomicXor(00p10C00C",
-                                         "imageAtomicXor(00v10C00C",
-                                         "imageAtomicXor(01B10C00C",
+                                         "imageAtomicXor(00o10C00C",
+                                         "imageAtomicXor(00u10C00C",
+                                         "imageAtomicXor(01A10C00C",
+                                         "imageAtomicXor(00p20C00C",
+                                         "imageAtomicXor(00v20C00C",
+                                         "imageAtomicXor(01B20C00C",
+                                         "imageAtomicXor(00r20C00C",
+                                         "imageAtomicXor(00x20C00C",
+                                         "imageAtomicXor(01D20C00C",
+                                         "imageAtomicXor(00t00C00C",
+                                         "imageAtomicXor(00z00C00C",
+                                         "imageAtomicXor(01F00C00C",
                                          "imageAtomicXor(00q20C00C",
                                          "imageAtomicXor(00w20C00C",
                                          "imageAtomicXor(01C20C00C",
                                          "imageAtomicXor(00s20C00C",
                                          "imageAtomicXor(00y20C00C",
                                          "imageAtomicXor(01E20C00C",
-                                         "imageAtomicXor(00u00C00C",
-                                         "imageAtomicXor(01A00C00C",
-                                         "imageAtomicXor(01G00C00C",
-                                         "imageAtomicXor(00r20C00C",
-                                         "imageAtomicXor(00x20C00C",
-                                         "imageAtomicXor(01D20C00C",
-                                         "imageAtomicXor(00t20C00C",
-                                         "imageAtomicXor(00z20C00C",
-                                         "imageAtomicXor(01F20C00C",
-                                         "imageAtomicExchange(00p10C00D",
-                                         "imageAtomicExchange(00v10C00D",
-                                         "imageAtomicExchange(01B10C00D",
+                                         "imageAtomicExchange(00o10C00D",
+                                         "imageAtomicExchange(00u10C00D",
+                                         "imageAtomicExchange(01A10C00D",
+                                         "imageAtomicExchange(00p20C00D",
+                                         "imageAtomicExchange(00v20C00D",
+                                         "imageAtomicExchange(01B20C00D",
+                                         "imageAtomicExchange(00r20C00D",
+                                         "imageAtomicExchange(00x20C00D",
+                                         "imageAtomicExchange(01D20C00D",
+                                         "imageAtomicExchange(00t00C00D",
+                                         "imageAtomicExchange(00z00C00D",
+                                         "imageAtomicExchange(01F00C00D",
                                          "imageAtomicExchange(00q20C00D",
                                          "imageAtomicExchange(00w20C00D",
                                          "imageAtomicExchange(01C20C00D",
                                          "imageAtomicExchange(00s20C00D",
                                          "imageAtomicExchange(00y20C00D",
                                          "imageAtomicExchange(01E20C00D",
-                                         "imageAtomicExchange(00u00C00D",
-                                         "imageAtomicExchange(01A00C00D",
-                                         "imageAtomicExchange(01G00C00D",
-                                         "imageAtomicExchange(00r20C00D",
-                                         "imageAtomicExchange(00x20C00D",
-                                         "imageAtomicExchange(01D20C00D",
-                                         "imageAtomicExchange(00t20C00D",
-                                         "imageAtomicExchange(00z20C00D",
-                                         "imageAtomicExchange(01F20C00D",
-                                         "imageAtomicExchange(00p10C00C",
-                                         "imageAtomicExchange(00v10C00C",
-                                         "imageAtomicExchange(01B10C00C",
+                                         "imageAtomicExchange(00o10C00C",
+                                         "imageAtomicExchange(00u10C00C",
+                                         "imageAtomicExchange(01A10C00C",
+                                         "imageAtomicExchange(00p20C00C",
+                                         "imageAtomicExchange(00v20C00C",
+                                         "imageAtomicExchange(01B20C00C",
+                                         "imageAtomicExchange(00r20C00C",
+                                         "imageAtomicExchange(00x20C00C",
+                                         "imageAtomicExchange(01D20C00C",
+                                         "imageAtomicExchange(00t00C00C",
+                                         "imageAtomicExchange(00z00C00C",
+                                         "imageAtomicExchange(01F00C00C",
                                          "imageAtomicExchange(00q20C00C",
                                          "imageAtomicExchange(00w20C00C",
                                          "imageAtomicExchange(01C20C00C",
                                          "imageAtomicExchange(00s20C00C",
                                          "imageAtomicExchange(00y20C00C",
                                          "imageAtomicExchange(01E20C00C",
-                                         "imageAtomicExchange(00u00C00C",
-                                         "imageAtomicExchange(01A00C00C",
-                                         "imageAtomicExchange(01G00C00C",
-                                         "imageAtomicExchange(00r20C00C",
-                                         "imageAtomicExchange(00x20C00C",
-                                         "imageAtomicExchange(01D20C00C",
-                                         "imageAtomicExchange(00t20C00C",
-                                         "imageAtomicExchange(00z20C00C",
-                                         "imageAtomicExchange(01F20C00C",
-                                         "imageAtomicExchange(00p10C00B",
-                                         "imageAtomicExchange(00v10C00B",
-                                         "imageAtomicExchange(01B10C00B",
+                                         "imageAtomicExchange(00o10C00B",
+                                         "imageAtomicExchange(00u10C00B",
+                                         "imageAtomicExchange(01A10C00B",
+                                         "imageAtomicExchange(00p20C00B",
+                                         "imageAtomicExchange(00v20C00B",
+                                         "imageAtomicExchange(01B20C00B",
+                                         "imageAtomicExchange(00r20C00B",
+                                         "imageAtomicExchange(00x20C00B",
+                                         "imageAtomicExchange(01D20C00B",
+                                         "imageAtomicExchange(00t00C00B",
+                                         "imageAtomicExchange(00z00C00B",
+                                         "imageAtomicExchange(01F00C00B",
                                          "imageAtomicExchange(00q20C00B",
                                          "imageAtomicExchange(00w20C00B",
                                          "imageAtomicExchange(01C20C00B",
                                          "imageAtomicExchange(00s20C00B",
                                          "imageAtomicExchange(00y20C00B",
                                          "imageAtomicExchange(01E20C00B",
-                                         "imageAtomicExchange(00u00C00B",
-                                         "imageAtomicExchange(01A00C00B",
-                                         "imageAtomicExchange(01G00C00B",
-                                         "imageAtomicExchange(00r20C00B",
-                                         "imageAtomicExchange(00x20C00B",
-                                         "imageAtomicExchange(01D20C00B",
-                                         "imageAtomicExchange(00t20C00B",
-                                         "imageAtomicExchange(00z20C00B",
-                                         "imageAtomicExchange(01F20C00B",
-                                         "imageAtomicCompSwap(00p10C00D00D",
-                                         "imageAtomicCompSwap(00v10C00D00D",
-                                         "imageAtomicCompSwap(01B10C00D00D",
+                                         "imageAtomicCompSwap(00o10C00D00D",
+                                         "imageAtomicCompSwap(00u10C00D00D",
+                                         "imageAtomicCompSwap(01A10C00D00D",
+                                         "imageAtomicCompSwap(00p20C00D00D",
+                                         "imageAtomicCompSwap(00v20C00D00D",
+                                         "imageAtomicCompSwap(01B20C00D00D",
+                                         "imageAtomicCompSwap(00r20C00D00D",
+                                         "imageAtomicCompSwap(00x20C00D00D",
+                                         "imageAtomicCompSwap(01D20C00D00D",
+                                         "imageAtomicCompSwap(00t00C00D00D",
+                                         "imageAtomicCompSwap(00z00C00D00D",
+                                         "imageAtomicCompSwap(01F00C00D00D",
                                          "imageAtomicCompSwap(00q20C00D00D",
                                          "imageAtomicCompSwap(00w20C00D00D",
                                          "imageAtomicCompSwap(01C20C00D00D",
                                          "imageAtomicCompSwap(00s20C00D00D",
                                          "imageAtomicCompSwap(00y20C00D00D",
                                          "imageAtomicCompSwap(01E20C00D00D",
-                                         "imageAtomicCompSwap(00u00C00D00D",
-                                         "imageAtomicCompSwap(01A00C00D00D",
-                                         "imageAtomicCompSwap(01G00C00D00D",
-                                         "imageAtomicCompSwap(00r20C00D00D",
-                                         "imageAtomicCompSwap(00x20C00D00D",
-                                         "imageAtomicCompSwap(01D20C00D00D",
-                                         "imageAtomicCompSwap(00t20C00D00D",
-                                         "imageAtomicCompSwap(00z20C00D00D",
-                                         "imageAtomicCompSwap(01F20C00D00D",
-                                         "imageAtomicCompSwap(00p10C00C00C",
-                                         "imageAtomicCompSwap(00v10C00C00C",
-                                         "imageAtomicCompSwap(01B10C00C00C",
+                                         "imageAtomicCompSwap(00o10C00C00C",
+                                         "imageAtomicCompSwap(00u10C00C00C",
+                                         "imageAtomicCompSwap(01A10C00C00C",
+                                         "imageAtomicCompSwap(00p20C00C00C",
+                                         "imageAtomicCompSwap(00v20C00C00C",
+                                         "imageAtomicCompSwap(01B20C00C00C",
+                                         "imageAtomicCompSwap(00r20C00C00C",
+                                         "imageAtomicCompSwap(00x20C00C00C",
+                                         "imageAtomicCompSwap(01D20C00C00C",
+                                         "imageAtomicCompSwap(00t00C00C00C",
+                                         "imageAtomicCompSwap(00z00C00C00C",
+                                         "imageAtomicCompSwap(01F00C00C00C",
                                          "imageAtomicCompSwap(00q20C00C00C",
                                          "imageAtomicCompSwap(00w20C00C00C",
                                          "imageAtomicCompSwap(01C20C00C00C",
                                          "imageAtomicCompSwap(00s20C00C00C",
                                          "imageAtomicCompSwap(00y20C00C00C",
                                          "imageAtomicCompSwap(01E20C00C00C",
-                                         "imageAtomicCompSwap(00u00C00C00C",
-                                         "imageAtomicCompSwap(01A00C00C00C",
-                                         "imageAtomicCompSwap(01G00C00C00C",
-                                         "imageAtomicCompSwap(00r20C00C00C",
-                                         "imageAtomicCompSwap(00x20C00C00C",
-                                         "imageAtomicCompSwap(01D20C00C00C",
-                                         "imageAtomicCompSwap(00t20C00C00C",
-                                         "imageAtomicCompSwap(00z20C00C00C",
-                                         "imageAtomicCompSwap(01F20C00C00C",
+                                         "pixelLocalLoadANGLE(01G",
                                          "pixelLocalLoadANGLE(01H",
                                          "pixelLocalLoadANGLE(01I",
-                                         "pixelLocalLoadANGLE(01J",
-                                         "pixelLocalStoreANGLE(01H30B",
-                                         "pixelLocalStoreANGLE(01I30C",
-                                         "pixelLocalStoreANGLE(01J30D",
+                                         "pixelLocalStoreANGLE(01G30B",
+                                         "pixelLocalStoreANGLE(01H30C",
+                                         "pixelLocalStoreANGLE(01I30D",
                                          "beginInvocationInterlockNV(",
                                          "endInvocationInterlockNV(",
                                          "beginFragmentShaderOrderingINTEL(",
@@ -20985,9 +20956,9 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "groupMemoryBarrier(",
                                          "EmitVertex(",
                                          "EndPrimitive(",
+                                         "subpassLoad(01J",
                                          "subpassLoad(01K",
                                          "subpassLoad(01L",
-                                         "subpassLoad(01M",
                                          "numSamples(",
                                          "samplePosition(00D",
                                          "interpolateAtCenter(00B",
@@ -21623,934 +21594,932 @@ constexpr uint16_t kMangledOffsets[] = {
     506,   // texture2DProjGradEXT_00H20B10B10B
     507,   // texture2DProjGradEXT_00H30B10B10B
     508,   // textureCubeGradEXT_00J20B20B20B
-    509,   // textureVideoWEBGL_00o10B
-    510,   // texture2D_00H10B00B
-    511,   // texture2DProj_00H20B00B
-    512,   // texture2DProj_00H30B00B
-    513,   // textureCube_00J20B00B
-    514,   // texture3D_00I20B00B
-    515,   // texture3DProj_00I30B00B
-    516,   // texture3DLod_00I20B00B
-    517,   // texture3DProjLod_00I30B00B
-    518,   // texture2DLod_00H10B00B
-    519,   // texture2DProjLod_00H20B00B
-    520,   // texture2DProjLod_00H30B00B
-    521,   // textureCubeLod_00J20B00B
-    522,   // texture2DLodEXT_00H10B00B
-    523,   // texture2DProjLodEXT_00H20B00B
-    524,   // texture2DProjLodEXT_00H30B00B
-    525,   // textureCubeLodEXT_00J20B00B
-    526,   // texture_00H10B
-    527,   // texture_00Q10B
-    528,   // texture_00W10B
-    529,   // texture_00I20B
-    530,   // texture_00R20B
-    531,   // texture_00X20B
-    532,   // texture_00J20B
-    533,   // texture_00S20B
-    534,   // texture_00Y20B
-    535,   // texture_00K20B
-    536,   // texture_00T20B
-    537,   // texture_00Z20B
-    538,   // texture_00c20B
-    539,   // texture_00d30B
-    540,   // texture_00e30B
-    541,   // texture_00g30B
-    544,   // texture_00k30B
-    547,   // texture_00n30B
-    550,   // texture_00h30B00B
-    553,   // texture_00L10B
-    554,   // texture_00M10B
-    555,   // texture_00N10B
-    556,   // texture_00o10B
-    557,   // textureProj_00H20B
-    558,   // textureProj_00Q20B
-    559,   // textureProj_00W20B
-    560,   // textureProj_00H30B
-    561,   // textureProj_00Q30B
-    562,   // textureProj_00W30B
-    563,   // textureProj_00I30B
-    564,   // textureProj_00R30B
-    565,   // textureProj_00X30B
-    566,   // textureProj_00c30B
-    567,   // textureProj_00L20B
-    568,   // textureProj_00L30B
-    569,   // textureProj_00M20B
-    570,   // textureProj_00M30B
-    571,   // textureProj_00N20B
-    572,   // textureProj_00N30B
-    573,   // textureLod_00H10B00B
-    574,   // textureLod_00Q10B00B
-    575,   // textureLod_00W10B00B
-    576,   // textureLod_00I20B00B
-    577,   // textureLod_00R20B00B
-    578,   // textureLod_00X20B00B
-    579,   // textureLod_00J20B00B
-    580,   // textureLod_00S20B00B
-    581,   // textureLod_00Y20B00B
-    582,   // textureLod_00K20B00B
-    583,   // textureLod_00T20B00B
-    584,   // textureLod_00Z20B00B
-    585,   // textureLod_00c20B00B
-    586,   // textureLod_00d30B00B
-    587,   // textureLod_00e30B00B
-    588,   // textureLod_00h30B00B00B
-    589,   // textureLod_00g30B00B
-    592,   // textureLod_00k30B00B
-    595,   // textureLod_00n30B00B
-    598,   // textureSize_00H00C
-    599,   // textureSize_00Q00C
-    600,   // textureSize_00W00C
-    601,   // textureSize_00I00C
-    602,   // textureSize_00R00C
-    603,   // textureSize_00X00C
-    604,   // textureSize_00J00C
-    605,   // textureSize_00S00C
-    606,   // textureSize_00Y00C
-    607,   // textureSize_00K00C
-    608,   // textureSize_00T00C
-    609,   // textureSize_00Z00C
-    610,   // textureSize_00c00C
-    611,   // textureSize_00d00C
-    612,   // textureSize_00e00C
-    613,   // textureSize_00g00C
-    616,   // textureSize_00k00C
-    619,   // textureSize_00n00C
-    622,   // textureSize_00h00C
-    625,   // textureSize_00f
-    628,   // textureSize_00j
-    631,   // textureSize_00m
-    634,   // textureSize_00O
-    636,   // textureSize_00U
-    638,   // textureSize_00a
-    640,   // textureSize_00P
-    642,   // textureSize_00V
-    644,   // textureSize_00b
-    646,   // textureSize_00L00C
-    647,   // textureSize_00M00C
-    648,   // textureProjLod_00H20B00B
-    649,   // textureProjLod_00Q20B00B
-    650,   // textureProjLod_00W20B00B
-    651,   // textureProjLod_00H30B00B
-    652,   // textureProjLod_00Q30B00B
-    653,   // textureProjLod_00W30B00B
-    654,   // textureProjLod_00I30B00B
-    655,   // textureProjLod_00R30B00B
-    656,   // textureProjLod_00X30B00B
-    657,   // textureProjLod_00c30B00B
-    658,   // texelFetch_00H10C00C
-    659,   // texelFetch_00Q10C00C
-    660,   // texelFetch_00W10C00C
-    661,   // texelFetch_00I20C00C
-    662,   // texelFetch_00R20C00C
-    663,   // texelFetch_00X20C00C
-    664,   // texelFetch_00K20C00C
-    665,   // texelFetch_00T20C00C
-    666,   // texelFetch_00Z20C00C
-    667,   // texelFetch_00f00C
-    670,   // texelFetch_00j00C
-    673,   // texelFetch_00m00C
-    676,   // texelFetch_00O10C00C
-    678,   // texelFetch_00U10C00C
-    680,   // texelFetch_00a10C00C
-    682,   // texelFetch_00P20C00C
-    684,   // texelFetch_00V20C00C
-    686,   // texelFetch_00b20C00C
-    688,   // texelFetch_00L10C00C
-    689,   // texelFetch_00M10C00C
-    690,   // textureGrad_00H10B10B10B
-    691,   // textureGrad_00Q10B10B10B
-    692,   // textureGrad_00W10B10B10B
-    693,   // textureGrad_00I20B20B20B
-    694,   // textureGrad_00R20B20B20B
-    695,   // textureGrad_00X20B20B20B
-    696,   // textureGrad_00J20B20B20B
-    697,   // textureGrad_00S20B20B20B
-    698,   // textureGrad_00Y20B20B20B
-    699,   // textureGrad_00c20B10B10B
-    700,   // textureGrad_00d30B20B20B
-    701,   // textureGrad_00K20B10B10B
-    702,   // textureGrad_00T20B10B10B
-    703,   // textureGrad_00Z20B10B10B
-    704,   // textureGrad_00e30B10B10B
-    705,   // textureGrad_00g30B20B20B
-    708,   // textureGrad_00k30B20B20B
-    711,   // textureGrad_00n30B20B20B
-    714,   // textureProjGrad_00H20B10B10B
-    715,   // textureProjGrad_00Q20B10B10B
-    716,   // textureProjGrad_00W20B10B10B
-    717,   // textureProjGrad_00H30B10B10B
-    718,   // textureProjGrad_00Q30B10B10B
-    719,   // textureProjGrad_00W30B10B10B
-    720,   // textureProjGrad_00I30B20B20B
-    721,   // textureProjGrad_00R30B20B20B
-    722,   // textureProjGrad_00X30B20B20B
-    723,   // textureProjGrad_00c30B10B10B
-    724,   // texture_00H10B00B
-    725,   // texture_00Q10B00B
-    726,   // texture_00W10B00B
-    727,   // texture_00I20B00B
-    728,   // texture_00R20B00B
-    729,   // texture_00X20B00B
-    730,   // texture_00J20B00B
-    731,   // texture_00S20B00B
-    732,   // texture_00Y20B00B
-    733,   // texture_00K20B00B
-    734,   // texture_00T20B00B
-    735,   // texture_00Z20B00B
-    736,   // textureProj_00H20B00B
-    737,   // textureProj_00Q20B00B
-    738,   // textureProj_00W20B00B
-    739,   // textureProj_00H30B00B
-    740,   // textureProj_00Q30B00B
-    741,   // textureProj_00W30B00B
-    742,   // textureProj_00I30B00B
-    743,   // textureProj_00R30B00B
-    744,   // textureProj_00X30B00B
-    745,   // texture_00c20B00B
-    746,   // texture_00d30B00B
-    747,   // textureProj_00c30B00B
-    748,   // texture_00e30B00B
-    749,   // texture_00g30B00B
-    752,   // texture_00k30B00B
-    755,   // texture_00n30B00B
-    758,   // texture_00h30B00B00B
-    759,   // texture_00L10B00B
-    760,   // textureProj_00L20B00B
-    761,   // textureProj_00L30B00B
-    762,   // texture_00M10B00B
-    763,   // textureProj_00M20B00B
-    764,   // textureProj_00M30B00B
-    765,   // textureOffset_00H10B10C
-    766,   // textureOffset_00Q10B10C
-    767,   // textureOffset_00W10B10C
-    768,   // textureOffset_00I20B20C
-    769,   // textureOffset_00R20B20C
-    770,   // textureOffset_00X20B20C
-    771,   // textureOffset_00c20B10C
-    772,   // textureOffset_00K20B10C
-    773,   // textureOffset_00T20B10C
-    774,   // textureOffset_00Z20B10C
-    775,   // textureOffset_00e30B10C
-    776,   // textureProjOffset_00H20B10C
-    777,   // textureProjOffset_00Q20B10C
-    778,   // textureProjOffset_00W20B10C
-    779,   // textureProjOffset_00H30B10C
-    780,   // textureProjOffset_00Q30B10C
-    781,   // textureProjOffset_00W30B10C
-    782,   // textureProjOffset_00I30B20C
-    783,   // textureProjOffset_00R30B20C
-    784,   // textureProjOffset_00X30B20C
-    785,   // textureProjOffset_00c30B10C
-    786,   // textureLodOffset_00H10B00B10C
-    787,   // textureLodOffset_00Q10B00B10C
-    788,   // textureLodOffset_00W10B00B10C
-    789,   // textureLodOffset_00I20B00B20C
-    790,   // textureLodOffset_00R20B00B20C
-    791,   // textureLodOffset_00X20B00B20C
-    792,   // textureLodOffset_00c20B00B10C
-    793,   // textureLodOffset_00K20B00B10C
-    794,   // textureLodOffset_00T20B00B10C
-    795,   // textureLodOffset_00Z20B00B10C
-    796,   // textureLodOffset_00e30B00B10C
-    797,   // textureProjLodOffset_00H20B00B10C
-    798,   // textureProjLodOffset_00Q20B00B10C
-    799,   // textureProjLodOffset_00W20B00B10C
-    800,   // textureProjLodOffset_00H30B00B10C
-    801,   // textureProjLodOffset_00Q30B00B10C
-    802,   // textureProjLodOffset_00W30B00B10C
-    803,   // textureProjLodOffset_00I30B00B20C
-    804,   // textureProjLodOffset_00R30B00B20C
-    805,   // textureProjLodOffset_00X30B00B20C
-    806,   // textureProjLodOffset_00c30B00B10C
-    807,   // texelFetchOffset_00H10C00C10C
-    808,   // texelFetchOffset_00Q10C00C10C
-    809,   // texelFetchOffset_00W10C00C10C
-    810,   // texelFetchOffset_00I20C00C20C
-    811,   // texelFetchOffset_00R20C00C20C
-    812,   // texelFetchOffset_00X20C00C20C
-    813,   // texelFetchOffset_00K20C00C10C
-    814,   // texelFetchOffset_00T20C00C10C
-    815,   // texelFetchOffset_00Z20C00C10C
-    816,   // textureGradOffset_00H10B10B10B10C
-    817,   // textureGradOffset_00Q10B10B10B10C
-    818,   // textureGradOffset_00W10B10B10B10C
-    819,   // textureGradOffset_00I20B20B20B20C
-    820,   // textureGradOffset_00R20B20B20B20C
-    821,   // textureGradOffset_00X20B20B20B20C
-    822,   // textureGradOffset_00c20B10B10B10C
-    823,   // textureGradOffset_00K20B10B10B10C
-    824,   // textureGradOffset_00T20B10B10B10C
-    825,   // textureGradOffset_00Z20B10B10B10C
-    826,   // textureGradOffset_00e30B10B10B10C
-    827,   // textureProjGradOffset_00H20B10B10B10C
-    828,   // textureProjGradOffset_00Q20B10B10B10C
-    829,   // textureProjGradOffset_00W20B10B10B10C
-    830,   // textureProjGradOffset_00H30B10B10B10C
-    831,   // textureProjGradOffset_00Q30B10B10B10C
-    832,   // textureProjGradOffset_00W30B10B10B10C
-    833,   // textureProjGradOffset_00I30B20B20B20C
-    834,   // textureProjGradOffset_00R30B20B20B20C
-    835,   // textureProjGradOffset_00X30B20B20B20C
-    836,   // textureProjGradOffset_00c30B10B10B10C
-    837,   // textureOffset_00H10B10C00B
-    838,   // textureOffset_00Q10B10C00B
-    839,   // textureOffset_00W10B10C00B
-    840,   // textureOffset_00I20B20C00B
-    841,   // textureOffset_00R20B20C00B
-    842,   // textureOffset_00X20B20C00B
-    843,   // textureOffset_00c20B10C00B
-    844,   // textureOffset_00K20B10C00B
-    845,   // textureOffset_00T20B10C00B
-    846,   // textureOffset_00Z20B10C00B
-    847,   // textureOffset_00e30B10C00B
-    848,   // textureProjOffset_00H20B10C00B
-    849,   // textureProjOffset_00Q20B10C00B
-    850,   // textureProjOffset_00W20B10C00B
-    851,   // textureProjOffset_00H30B10C00B
-    852,   // textureProjOffset_00Q30B10C00B
-    853,   // textureProjOffset_00W30B10C00B
-    854,   // textureProjOffset_00I30B20C00B
-    855,   // textureProjOffset_00R30B20C00B
-    856,   // textureProjOffset_00X30B20C00B
-    857,   // textureProjOffset_00c30B10C00B
-    858,   // textureGather_00H10B
-    859,   // textureGather_00Q10B
-    860,   // textureGather_00W10B
-    861,   // textureGather_00K20B
-    862,   // textureGather_00T20B
-    863,   // textureGather_00Z20B
-    864,   // textureGather_00J20B
-    865,   // textureGather_00S20B
-    866,   // textureGather_00Y20B
-    867,   // textureGather_00g30B
-    870,   // textureGather_00k30B
-    873,   // textureGather_00n30B
-    876,   // textureGather_00H10B00C
-    877,   // textureGather_00Q10B00C
-    878,   // textureGather_00W10B00C
-    879,   // textureGather_00K20B00C
-    880,   // textureGather_00T20B00C
-    881,   // textureGather_00Z20B00C
-    882,   // textureGather_00J20B00C
-    883,   // textureGather_00S20B00C
-    884,   // textureGather_00Y20B00C
-    885,   // textureGather_00g30B00C
-    888,   // textureGather_00k30B00C
-    891,   // textureGather_00n30B00C
-    894,   // textureGather_00h30B00B
-    897,   // textureGather_00c10B00B
-    898,   // textureGather_00e20B00B
-    899,   // textureGather_00d20B00B
-    900,   // textureGatherOffset_00H10B10C
-    901,   // textureGatherOffset_00Q10B10C
-    902,   // textureGatherOffset_00W10B10C
-    903,   // textureGatherOffset_00K20B10C
-    904,   // textureGatherOffset_00T20B10C
-    905,   // textureGatherOffset_00Z20B10C
-    906,   // textureGatherOffset_00H10B10C00C
-    907,   // textureGatherOffset_00Q10B10C00C
-    908,   // textureGatherOffset_00W10B10C00C
-    909,   // textureGatherOffset_00K20B10C00C
-    910,   // textureGatherOffset_00T20B10C00C
-    911,   // textureGatherOffset_00Z20B10C00C
-    912,   // textureGatherOffset_00c10B00B10C
-    913,   // textureGatherOffset_00e20B00B10C
-    914,   // textureGatherOffsets_00H10B10Cx4
-    917,   // textureGatherOffsets_00Q10B10Cx4
-    920,   // textureGatherOffsets_00W10B10Cx4
-    923,   // textureGatherOffsets_00K20B10Cx4
-    926,   // textureGatherOffsets_00T20B10Cx4
-    929,   // textureGatherOffsets_00Z20B10Cx4
-    932,   // textureGatherOffsets_00H10B10Cx400C
-    935,   // textureGatherOffsets_00Q10B10Cx400C
-    938,   // textureGatherOffsets_00W10B10Cx400C
-    941,   // textureGatherOffsets_00K20B10Cx400C
-    944,   // textureGatherOffsets_00T20B10Cx400C
-    947,   // textureGatherOffsets_00Z20B10Cx400C
-    950,   // textureGatherOffsets_00c10B00B10Cx4
-    953,   // textureGatherOffsets_00e20B00B10Cx4
-    956,   // textureQueryLOD_00H10B
-    957,   // textureQueryLOD_00Q10B
-    958,   // textureQueryLOD_00W10B
-    959,   // textureQueryLOD_00I20B
-    960,   // textureQueryLOD_00R20B
-    961,   // textureQueryLOD_00X20B
-    962,   // textureQueryLOD_00J20B
-    963,   // textureQueryLOD_00S20B
-    964,   // textureQueryLOD_00Y20B
-    965,   // textureQueryLOD_00K10B
-    966,   // textureQueryLOD_00T10B
-    967,   // textureQueryLOD_00Z10B
-    968,   // textureQueryLOD_00c10B
-    969,   // textureQueryLOD_00d20B
-    970,   // textureQueryLOD_00e10B
-    971,   // textureQueryLOD_00g20B
-    972,   // textureQueryLOD_00k20B
-    973,   // textureQueryLOD_00n20B
-    974,   // textureQueryLOD_00h20B
-    975,   // rgb_2_yuv_20B00G
-    976,   // yuv_2_rgb_20B00G
-    977,   // dFdx_00B
-    979,   // dFdx_10B
-    981,   // dFdx_20B
-    983,   // dFdx_30B
-    985,   // dFdy_00B
-    987,   // dFdy_10B
-    989,   // dFdy_20B
-    991,   // dFdy_30B
-    993,   // fwidth_00B
-    995,   // fwidth_10B
-    997,   // fwidth_20B
-    999,   // fwidth_30B
-    1001,  // interpolateAtCentroid_00B
-    1003,  // interpolateAtCentroid_10B
-    1005,  // interpolateAtCentroid_20B
-    1007,  // interpolateAtCentroid_30B
-    1009,  // interpolateAtSample_00B00C
-    1011,  // interpolateAtSample_10B00C
-    1013,  // interpolateAtSample_20B00C
-    1015,  // interpolateAtSample_30B00C
-    1017,  // interpolateAtOffset_00B10B
-    1019,  // interpolateAtOffset_10B10B
-    1021,  // interpolateAtOffset_20B10B
-    1023,  // interpolateAtOffset_30B10B
-    1025,  // atomicCounter_00F
-    1026,  // atomicCounterIncrement_00F
-    1027,  // atomicCounterDecrement_00F
-    1028,  // atomicAdd_00D00D
-    1029,  // atomicAdd_00C00C
-    1030,  // atomicMin_00D00D
-    1031,  // atomicMin_00C00C
-    1032,  // atomicMax_00D00D
-    1033,  // atomicMax_00C00C
-    1034,  // atomicAnd_00D00D
-    1035,  // atomicAnd_00C00C
-    1036,  // atomicOr_00D00D
-    1037,  // atomicOr_00C00C
-    1038,  // atomicXor_00D00D
-    1039,  // atomicXor_00C00C
-    1040,  // atomicExchange_00D00D
-    1041,  // atomicExchange_00C00C
-    1042,  // atomicCompSwap_00D00D00D
-    1043,  // atomicCompSwap_00C00C00C
-    1044,  // imageSize_00p
-    1045,  // imageSize_00v
-    1046,  // imageSize_01B
-    1047,  // imageSize_00q
-    1048,  // imageSize_00w
-    1049,  // imageSize_01C
-    1050,  // imageSize_00r
-    1051,  // imageSize_00x
-    1052,  // imageSize_01D
-    1053,  // imageSize_00s
-    1054,  // imageSize_00y
-    1055,  // imageSize_01E
-    1056,  // imageSize_00t
-    1059,  // imageSize_00z
-    1062,  // imageSize_01F
-    1065,  // imageSize_00u
-    1068,  // imageSize_01A
-    1071,  // imageSize_01G
-    1074,  // imageStore_00p10C30B
-    1075,  // imageStore_00v10C30C
-    1076,  // imageStore_01B10C30D
-    1077,  // imageStore_00q20C30B
-    1078,  // imageStore_00w20C30C
-    1079,  // imageStore_01C20C30D
-    1080,  // imageStore_00r20C30B
-    1081,  // imageStore_00x20C30C
-    1082,  // imageStore_01D20C30D
-    1083,  // imageStore_00s20C30B
-    1084,  // imageStore_00y20C30C
-    1085,  // imageStore_01E20C30D
-    1086,  // imageStore_00t20C30B
-    1089,  // imageStore_00z20C30C
-    1092,  // imageStore_01F20C30D
-    1095,  // imageStore_00u00C30B
-    1098,  // imageStore_01A00C30C
-    1101,  // imageStore_01G00C30D
-    1104,  // imageLoad_00p10C
-    1105,  // imageLoad_00v10C
-    1106,  // imageLoad_01B10C
-    1107,  // imageLoad_00q20C
-    1108,  // imageLoad_00w20C
-    1109,  // imageLoad_01C20C
-    1110,  // imageLoad_00r20C
-    1111,  // imageLoad_00x20C
-    1112,  // imageLoad_01D20C
-    1113,  // imageLoad_00s20C
-    1114,  // imageLoad_00y20C
-    1115,  // imageLoad_01E20C
-    1116,  // imageLoad_00t20C
-    1119,  // imageLoad_00z20C
-    1122,  // imageLoad_01F20C
-    1125,  // imageLoad_00u00C
-    1128,  // imageLoad_01A00C
-    1131,  // imageLoad_01G00C
-    1134,  // imageAtomicAdd_00p10C00D
-    1136,  // imageAtomicAdd_00v10C00D
-    1138,  // imageAtomicAdd_01B10C00D
-    1140,  // imageAtomicAdd_00q20C00D
-    1142,  // imageAtomicAdd_00w20C00D
-    1144,  // imageAtomicAdd_01C20C00D
-    1146,  // imageAtomicAdd_00s20C00D
-    1148,  // imageAtomicAdd_00y20C00D
-    1150,  // imageAtomicAdd_01E20C00D
-    1152,  // imageAtomicAdd_00u00C00D
-    1154,  // imageAtomicAdd_01A00C00D
-    1156,  // imageAtomicAdd_01G00C00D
-    1158,  // imageAtomicAdd_00r20C00D
-    1160,  // imageAtomicAdd_00x20C00D
-    1162,  // imageAtomicAdd_01D20C00D
-    1164,  // imageAtomicAdd_00t20C00D
-    1166,  // imageAtomicAdd_00z20C00D
-    1168,  // imageAtomicAdd_01F20C00D
-    1170,  // imageAtomicAdd_00p10C00C
-    1172,  // imageAtomicAdd_00v10C00C
-    1174,  // imageAtomicAdd_01B10C00C
-    1176,  // imageAtomicAdd_00q20C00C
-    1178,  // imageAtomicAdd_00w20C00C
-    1180,  // imageAtomicAdd_01C20C00C
-    1182,  // imageAtomicAdd_00s20C00C
-    1184,  // imageAtomicAdd_00y20C00C
-    1186,  // imageAtomicAdd_01E20C00C
-    1188,  // imageAtomicAdd_00u00C00C
-    1190,  // imageAtomicAdd_01A00C00C
-    1192,  // imageAtomicAdd_01G00C00C
-    1194,  // imageAtomicAdd_00r20C00C
-    1196,  // imageAtomicAdd_00x20C00C
-    1198,  // imageAtomicAdd_01D20C00C
-    1200,  // imageAtomicAdd_00t20C00C
-    1202,  // imageAtomicAdd_00z20C00C
-    1204,  // imageAtomicAdd_01F20C00C
-    1206,  // imageAtomicMin_00p10C00D
-    1208,  // imageAtomicMin_00v10C00D
-    1210,  // imageAtomicMin_01B10C00D
-    1212,  // imageAtomicMin_00q20C00D
-    1214,  // imageAtomicMin_00w20C00D
-    1216,  // imageAtomicMin_01C20C00D
-    1218,  // imageAtomicMin_00s20C00D
-    1220,  // imageAtomicMin_00y20C00D
-    1222,  // imageAtomicMin_01E20C00D
-    1224,  // imageAtomicMin_00u00C00D
-    1226,  // imageAtomicMin_01A00C00D
-    1228,  // imageAtomicMin_01G00C00D
-    1230,  // imageAtomicMin_00r20C00D
-    1232,  // imageAtomicMin_00x20C00D
-    1234,  // imageAtomicMin_01D20C00D
-    1236,  // imageAtomicMin_00t20C00D
-    1238,  // imageAtomicMin_00z20C00D
-    1240,  // imageAtomicMin_01F20C00D
-    1242,  // imageAtomicMin_00p10C00C
-    1244,  // imageAtomicMin_00v10C00C
-    1246,  // imageAtomicMin_01B10C00C
-    1248,  // imageAtomicMin_00q20C00C
-    1250,  // imageAtomicMin_00w20C00C
-    1252,  // imageAtomicMin_01C20C00C
-    1254,  // imageAtomicMin_00s20C00C
-    1256,  // imageAtomicMin_00y20C00C
-    1258,  // imageAtomicMin_01E20C00C
-    1260,  // imageAtomicMin_00u00C00C
-    1262,  // imageAtomicMin_01A00C00C
-    1264,  // imageAtomicMin_01G00C00C
-    1266,  // imageAtomicMin_00r20C00C
-    1268,  // imageAtomicMin_00x20C00C
-    1270,  // imageAtomicMin_01D20C00C
-    1272,  // imageAtomicMin_00t20C00C
-    1274,  // imageAtomicMin_00z20C00C
-    1276,  // imageAtomicMin_01F20C00C
-    1278,  // imageAtomicMax_00p10C00D
-    1280,  // imageAtomicMax_00v10C00D
-    1282,  // imageAtomicMax_01B10C00D
-    1284,  // imageAtomicMax_00q20C00D
-    1286,  // imageAtomicMax_00w20C00D
-    1288,  // imageAtomicMax_01C20C00D
-    1290,  // imageAtomicMax_00s20C00D
-    1292,  // imageAtomicMax_00y20C00D
-    1294,  // imageAtomicMax_01E20C00D
-    1296,  // imageAtomicMax_00u00C00D
-    1298,  // imageAtomicMax_01A00C00D
-    1300,  // imageAtomicMax_01G00C00D
-    1302,  // imageAtomicMax_00r20C00D
-    1304,  // imageAtomicMax_00x20C00D
-    1306,  // imageAtomicMax_01D20C00D
-    1308,  // imageAtomicMax_00t20C00D
-    1310,  // imageAtomicMax_00z20C00D
-    1312,  // imageAtomicMax_01F20C00D
-    1314,  // imageAtomicMax_00p10C00C
-    1316,  // imageAtomicMax_00v10C00C
-    1318,  // imageAtomicMax_01B10C00C
-    1320,  // imageAtomicMax_00q20C00C
-    1322,  // imageAtomicMax_00w20C00C
-    1324,  // imageAtomicMax_01C20C00C
-    1326,  // imageAtomicMax_00s20C00C
-    1328,  // imageAtomicMax_00y20C00C
-    1330,  // imageAtomicMax_01E20C00C
-    1332,  // imageAtomicMax_00u00C00C
-    1334,  // imageAtomicMax_01A00C00C
-    1336,  // imageAtomicMax_01G00C00C
-    1338,  // imageAtomicMax_00r20C00C
-    1340,  // imageAtomicMax_00x20C00C
-    1342,  // imageAtomicMax_01D20C00C
-    1344,  // imageAtomicMax_00t20C00C
-    1346,  // imageAtomicMax_00z20C00C
-    1348,  // imageAtomicMax_01F20C00C
-    1350,  // imageAtomicAnd_00p10C00D
-    1352,  // imageAtomicAnd_00v10C00D
-    1354,  // imageAtomicAnd_01B10C00D
-    1356,  // imageAtomicAnd_00q20C00D
-    1358,  // imageAtomicAnd_00w20C00D
-    1360,  // imageAtomicAnd_01C20C00D
-    1362,  // imageAtomicAnd_00s20C00D
-    1364,  // imageAtomicAnd_00y20C00D
-    1366,  // imageAtomicAnd_01E20C00D
-    1368,  // imageAtomicAnd_00u00C00D
-    1370,  // imageAtomicAnd_01A00C00D
-    1372,  // imageAtomicAnd_01G00C00D
-    1374,  // imageAtomicAnd_00r20C00D
-    1376,  // imageAtomicAnd_00x20C00D
-    1378,  // imageAtomicAnd_01D20C00D
-    1380,  // imageAtomicAnd_00t20C00D
-    1382,  // imageAtomicAnd_00z20C00D
-    1384,  // imageAtomicAnd_01F20C00D
-    1386,  // imageAtomicAnd_00p10C00C
-    1388,  // imageAtomicAnd_00v10C00C
-    1390,  // imageAtomicAnd_01B10C00C
-    1392,  // imageAtomicAnd_00q20C00C
-    1394,  // imageAtomicAnd_00w20C00C
-    1396,  // imageAtomicAnd_01C20C00C
-    1398,  // imageAtomicAnd_00s20C00C
-    1400,  // imageAtomicAnd_00y20C00C
-    1402,  // imageAtomicAnd_01E20C00C
-    1404,  // imageAtomicAnd_00u00C00C
-    1406,  // imageAtomicAnd_01A00C00C
-    1408,  // imageAtomicAnd_01G00C00C
-    1410,  // imageAtomicAnd_00r20C00C
-    1412,  // imageAtomicAnd_00x20C00C
-    1414,  // imageAtomicAnd_01D20C00C
-    1416,  // imageAtomicAnd_00t20C00C
-    1418,  // imageAtomicAnd_00z20C00C
-    1420,  // imageAtomicAnd_01F20C00C
-    1422,  // imageAtomicOr_00p10C00D
-    1424,  // imageAtomicOr_00v10C00D
-    1426,  // imageAtomicOr_01B10C00D
-    1428,  // imageAtomicOr_00q20C00D
-    1430,  // imageAtomicOr_00w20C00D
-    1432,  // imageAtomicOr_01C20C00D
-    1434,  // imageAtomicOr_00s20C00D
-    1436,  // imageAtomicOr_00y20C00D
-    1438,  // imageAtomicOr_01E20C00D
-    1440,  // imageAtomicOr_00u00C00D
-    1442,  // imageAtomicOr_01A00C00D
-    1444,  // imageAtomicOr_01G00C00D
-    1446,  // imageAtomicOr_00r20C00D
-    1448,  // imageAtomicOr_00x20C00D
-    1450,  // imageAtomicOr_01D20C00D
-    1452,  // imageAtomicOr_00t20C00D
-    1454,  // imageAtomicOr_00z20C00D
-    1456,  // imageAtomicOr_01F20C00D
-    1458,  // imageAtomicOr_00p10C00C
-    1460,  // imageAtomicOr_00v10C00C
-    1462,  // imageAtomicOr_01B10C00C
-    1464,  // imageAtomicOr_00q20C00C
-    1466,  // imageAtomicOr_00w20C00C
-    1468,  // imageAtomicOr_01C20C00C
-    1470,  // imageAtomicOr_00s20C00C
-    1472,  // imageAtomicOr_00y20C00C
-    1474,  // imageAtomicOr_01E20C00C
-    1476,  // imageAtomicOr_00u00C00C
-    1478,  // imageAtomicOr_01A00C00C
-    1480,  // imageAtomicOr_01G00C00C
-    1482,  // imageAtomicOr_00r20C00C
-    1484,  // imageAtomicOr_00x20C00C
-    1486,  // imageAtomicOr_01D20C00C
-    1488,  // imageAtomicOr_00t20C00C
-    1490,  // imageAtomicOr_00z20C00C
-    1492,  // imageAtomicOr_01F20C00C
-    1494,  // imageAtomicXor_00p10C00D
-    1496,  // imageAtomicXor_00v10C00D
-    1498,  // imageAtomicXor_01B10C00D
-    1500,  // imageAtomicXor_00q20C00D
-    1502,  // imageAtomicXor_00w20C00D
-    1504,  // imageAtomicXor_01C20C00D
-    1506,  // imageAtomicXor_00s20C00D
-    1508,  // imageAtomicXor_00y20C00D
-    1510,  // imageAtomicXor_01E20C00D
-    1512,  // imageAtomicXor_00u00C00D
-    1514,  // imageAtomicXor_01A00C00D
-    1516,  // imageAtomicXor_01G00C00D
-    1518,  // imageAtomicXor_00r20C00D
-    1520,  // imageAtomicXor_00x20C00D
-    1522,  // imageAtomicXor_01D20C00D
-    1524,  // imageAtomicXor_00t20C00D
-    1526,  // imageAtomicXor_00z20C00D
-    1528,  // imageAtomicXor_01F20C00D
-    1530,  // imageAtomicXor_00p10C00C
-    1532,  // imageAtomicXor_00v10C00C
-    1534,  // imageAtomicXor_01B10C00C
-    1536,  // imageAtomicXor_00q20C00C
-    1538,  // imageAtomicXor_00w20C00C
-    1540,  // imageAtomicXor_01C20C00C
-    1542,  // imageAtomicXor_00s20C00C
-    1544,  // imageAtomicXor_00y20C00C
-    1546,  // imageAtomicXor_01E20C00C
-    1548,  // imageAtomicXor_00u00C00C
-    1550,  // imageAtomicXor_01A00C00C
-    1552,  // imageAtomicXor_01G00C00C
-    1554,  // imageAtomicXor_00r20C00C
-    1556,  // imageAtomicXor_00x20C00C
-    1558,  // imageAtomicXor_01D20C00C
-    1560,  // imageAtomicXor_00t20C00C
-    1562,  // imageAtomicXor_00z20C00C
-    1564,  // imageAtomicXor_01F20C00C
-    1566,  // imageAtomicExchange_00p10C00D
-    1568,  // imageAtomicExchange_00v10C00D
-    1570,  // imageAtomicExchange_01B10C00D
-    1572,  // imageAtomicExchange_00q20C00D
-    1574,  // imageAtomicExchange_00w20C00D
-    1576,  // imageAtomicExchange_01C20C00D
-    1578,  // imageAtomicExchange_00s20C00D
-    1580,  // imageAtomicExchange_00y20C00D
-    1582,  // imageAtomicExchange_01E20C00D
-    1584,  // imageAtomicExchange_00u00C00D
-    1586,  // imageAtomicExchange_01A00C00D
-    1588,  // imageAtomicExchange_01G00C00D
-    1590,  // imageAtomicExchange_00r20C00D
-    1592,  // imageAtomicExchange_00x20C00D
-    1594,  // imageAtomicExchange_01D20C00D
-    1596,  // imageAtomicExchange_00t20C00D
-    1598,  // imageAtomicExchange_00z20C00D
-    1600,  // imageAtomicExchange_01F20C00D
-    1602,  // imageAtomicExchange_00p10C00C
-    1604,  // imageAtomicExchange_00v10C00C
-    1606,  // imageAtomicExchange_01B10C00C
-    1608,  // imageAtomicExchange_00q20C00C
-    1610,  // imageAtomicExchange_00w20C00C
-    1612,  // imageAtomicExchange_01C20C00C
-    1614,  // imageAtomicExchange_00s20C00C
-    1616,  // imageAtomicExchange_00y20C00C
-    1618,  // imageAtomicExchange_01E20C00C
-    1620,  // imageAtomicExchange_00u00C00C
-    1622,  // imageAtomicExchange_01A00C00C
-    1624,  // imageAtomicExchange_01G00C00C
-    1626,  // imageAtomicExchange_00r20C00C
-    1628,  // imageAtomicExchange_00x20C00C
-    1630,  // imageAtomicExchange_01D20C00C
-    1632,  // imageAtomicExchange_00t20C00C
-    1634,  // imageAtomicExchange_00z20C00C
-    1636,  // imageAtomicExchange_01F20C00C
-    1638,  // imageAtomicExchange_00p10C00B
-    1640,  // imageAtomicExchange_00v10C00B
-    1642,  // imageAtomicExchange_01B10C00B
-    1644,  // imageAtomicExchange_00q20C00B
-    1646,  // imageAtomicExchange_00w20C00B
-    1648,  // imageAtomicExchange_01C20C00B
-    1650,  // imageAtomicExchange_00s20C00B
-    1652,  // imageAtomicExchange_00y20C00B
-    1654,  // imageAtomicExchange_01E20C00B
-    1656,  // imageAtomicExchange_00u00C00B
-    1658,  // imageAtomicExchange_01A00C00B
-    1660,  // imageAtomicExchange_01G00C00B
-    1662,  // imageAtomicExchange_00r20C00B
-    1664,  // imageAtomicExchange_00x20C00B
-    1666,  // imageAtomicExchange_01D20C00B
-    1668,  // imageAtomicExchange_00t20C00B
-    1670,  // imageAtomicExchange_00z20C00B
-    1672,  // imageAtomicExchange_01F20C00B
-    1674,  // imageAtomicCompSwap_00p10C00D00D
-    1676,  // imageAtomicCompSwap_00v10C00D00D
-    1678,  // imageAtomicCompSwap_01B10C00D00D
-    1680,  // imageAtomicCompSwap_00q20C00D00D
-    1682,  // imageAtomicCompSwap_00w20C00D00D
-    1684,  // imageAtomicCompSwap_01C20C00D00D
-    1686,  // imageAtomicCompSwap_00s20C00D00D
-    1688,  // imageAtomicCompSwap_00y20C00D00D
-    1690,  // imageAtomicCompSwap_01E20C00D00D
-    1692,  // imageAtomicCompSwap_00u00C00D00D
-    1694,  // imageAtomicCompSwap_01A00C00D00D
-    1696,  // imageAtomicCompSwap_01G00C00D00D
-    1698,  // imageAtomicCompSwap_00r20C00D00D
-    1700,  // imageAtomicCompSwap_00x20C00D00D
-    1702,  // imageAtomicCompSwap_01D20C00D00D
-    1704,  // imageAtomicCompSwap_00t20C00D00D
-    1706,  // imageAtomicCompSwap_00z20C00D00D
-    1708,  // imageAtomicCompSwap_01F20C00D00D
-    1710,  // imageAtomicCompSwap_00p10C00C00C
-    1712,  // imageAtomicCompSwap_00v10C00C00C
-    1714,  // imageAtomicCompSwap_01B10C00C00C
-    1716,  // imageAtomicCompSwap_00q20C00C00C
-    1718,  // imageAtomicCompSwap_00w20C00C00C
-    1720,  // imageAtomicCompSwap_01C20C00C00C
-    1722,  // imageAtomicCompSwap_00s20C00C00C
-    1724,  // imageAtomicCompSwap_00y20C00C00C
-    1726,  // imageAtomicCompSwap_01E20C00C00C
-    1728,  // imageAtomicCompSwap_00u00C00C00C
-    1730,  // imageAtomicCompSwap_01A00C00C00C
-    1732,  // imageAtomicCompSwap_01G00C00C00C
-    1734,  // imageAtomicCompSwap_00r20C00C00C
-    1736,  // imageAtomicCompSwap_00x20C00C00C
-    1738,  // imageAtomicCompSwap_01D20C00C00C
-    1740,  // imageAtomicCompSwap_00t20C00C00C
-    1742,  // imageAtomicCompSwap_00z20C00C00C
-    1744,  // imageAtomicCompSwap_01F20C00C00C
-    1746,  // pixelLocalLoadANGLE_01H
-    1747,  // pixelLocalLoadANGLE_01I
-    1748,  // pixelLocalLoadANGLE_01J
-    1749,  // pixelLocalStoreANGLE_01H30B
-    1750,  // pixelLocalStoreANGLE_01I30C
-    1751,  // pixelLocalStoreANGLE_01J30D
-    1752,  // beginInvocationInterlockNV_
-    1753,  // endInvocationInterlockNV_
-    1754,  // beginFragmentShaderOrderingINTEL_
-    1755,  // beginInvocationInterlockARB_
-    1756,  // endInvocationInterlockARB_
-    1757,  // memoryBarrier_
-    1758,  // memoryBarrierAtomicCounter_
-    1759,  // memoryBarrierBuffer_
-    1760,  // memoryBarrierImage_
-    1761,  // barrier_
-    1765,  // memoryBarrierShared_
-    1766,  // groupMemoryBarrier_
-    1767,  // EmitVertex_
-    1770,  // EndPrimitive_
-    1773,  // subpassLoad_01K
-    1774,  // subpassLoad_01L
-    1775,  // subpassLoad_01M
-    1776,  // numSamples_
-    1777,  // samplePosition_00D
-    1778,  // interpolateAtCenter_00B
-    1779,  // interpolateAtCenter_10B
-    1780,  // interpolateAtCenter_20B
-    1781,  // interpolateAtCenter_30B
-    1782,  // loopForwardProgress_
-    1783,  // saturate_00B
-    1784,  // saturate_10B
-    1785,  // saturate_20B
-    1786,  // saturate_30B
-    1787,  // gl_DepthRangeParameters
-    1788,  // gl_DepthRange
-    1789,  // gl_NumSamples
-    1791,  // gl_MaxVertexAttribs
-    1792,  // gl_MaxVertexUniformVectors
-    1793,  // gl_MaxVertexTextureImageUnits
-    1794,  // gl_MaxCombinedTextureImageUnits
-    1795,  // gl_MaxTextureImageUnits
-    1796,  // gl_MaxFragmentUniformVectors
-    1797,  // gl_MaxVaryingVectors
-    1798,  // gl_MaxDrawBuffers
-    1799,  // gl_MaxDualSourceDrawBuffersEXT
-    1800,  // gl_MaxVertexOutputVectors
-    1801,  // gl_MaxFragmentInputVectors
-    1802,  // gl_MinProgramTexelOffset
-    1803,  // gl_MaxProgramTexelOffset
-    1804,  // gl_MaxImageUnits
-    1805,  // gl_MaxVertexImageUniforms
-    1806,  // gl_MaxFragmentImageUniforms
-    1807,  // gl_MaxComputeImageUniforms
-    1808,  // gl_MaxCombinedImageUniforms
-    1809,  // gl_MaxCombinedShaderOutputResources
-    1810,  // gl_MaxComputeWorkGroupCount
-    1811,  // gl_MaxComputeWorkGroupSize
-    1812,  // gl_MaxComputeUniformComponents
-    1813,  // gl_MaxComputeTextureImageUnits
-    1814,  // gl_MaxComputeAtomicCounters
-    1815,  // gl_MaxComputeAtomicCounterBuffers
-    1816,  // gl_MaxVertexAtomicCounters
-    1817,  // gl_MaxFragmentAtomicCounters
-    1818,  // gl_MaxCombinedAtomicCounters
-    1819,  // gl_MaxAtomicCounterBindings
-    1820,  // gl_MaxVertexAtomicCounterBuffers
-    1821,  // gl_MaxFragmentAtomicCounterBuffers
-    1822,  // gl_MaxCombinedAtomicCounterBuffers
-    1823,  // gl_MaxAtomicCounterBufferSize
-    1824,  // gl_ShadingRateFlag2VerticalPixelsEXT
-    1825,  // gl_ShadingRateFlag4VerticalPixelsEXT
-    1826,  // gl_ShadingRateFlag2HorizontalPixelsEXT
-    1827,  // gl_ShadingRateFlag4HorizontalPixelsEXT
-    1828,  // gl_MaxGeometryInputComponents
-    1831,  // gl_MaxGeometryOutputComponents
-    1834,  // gl_MaxGeometryImageUniforms
-    1837,  // gl_MaxGeometryTextureImageUnits
-    1840,  // gl_MaxGeometryOutputVertices
-    1843,  // gl_MaxGeometryTotalOutputComponents
-    1846,  // gl_MaxGeometryUniformComponents
-    1849,  // gl_MaxGeometryAtomicCounters
-    1852,  // gl_MaxGeometryAtomicCounterBuffers
-    1855,  // gl_MaxTessControlInputComponents
-    1858,  // gl_MaxTessControlOutputComponents
-    1861,  // gl_MaxTessControlTextureImageUnits
-    1864,  // gl_MaxTessControlUniformComponents
-    1867,  // gl_MaxTessControlTotalOutputComponents
-    1870,  // gl_MaxTessControlImageUniforms
-    1873,  // gl_MaxTessControlAtomicCounters
-    1876,  // gl_MaxTessControlAtomicCounterBuffers
-    1879,  // gl_MaxTessPatchComponents
-    1882,  // gl_MaxPatchVertices
-    1885,  // gl_MaxTessGenLevel
-    1888,  // gl_MaxTessEvaluationInputComponents
-    1891,  // gl_MaxTessEvaluationOutputComponents
-    1894,  // gl_MaxTessEvaluationTextureImageUnits
-    1897,  // gl_MaxTessEvaluationUniformComponents
-    1900,  // gl_MaxTessEvaluationImageUniforms
-    1903,  // gl_MaxTessEvaluationAtomicCounters
-    1906,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    1909,  // gl_MaxSamples
-    1911,  // gl_MaxClipDistances
-    1914,  // gl_MaxCullDistances
-    1916,  // gl_MaxCombinedClipAndCullDistances
-    1918,  // gl_FragCoord
-    1920,  // gl_FrontFacing
-    1921,  // gl_PointCoord
-    1922,  // gl_FragColor
-    1923,  // gl_FragData
-    1924,  // gl_FragDepth
-    1925,  // gl_HelperInvocation
-    1926,  // gl_SecondaryFragColorEXT
-    1927,  // gl_SecondaryFragDataEXT
-    1928,  // gl_FragDepthEXT
-    1929,  // gl_LastFragData
-    1931,  // gl_LastFragColorARM
-    1932,  // gl_LastFragDepthARM
-    1933,  // gl_LastFragStencilARM
-    1934,  // gl_PrimitiveID
-    1946,  // gl_Layer
-    1953,  // gl_ShadingRateEXT
-    1954,  // gl_SampleID
-    1956,  // gl_SamplePosition
-    1958,  // gl_SampleMaskIn
-    1960,  // gl_SampleMask
-    1962,  // gl_Position
-    1969,  // gl_PointSize
-    1971,  // gl_InstanceID
-    1972,  // gl_InstanceIndex
-    1973,  // gl_VertexID
-    1974,  // gl_VertexIndex
-    1975,  // gl_DrawID
-    1976,  // gl_BaseVertex
-    1977,  // gl_BaseInstance
-    1978,  // gl_ClipDistance
-    1981,  // gl_PrimitiveShadingRateEXT
-    1983,  // gl_NumWorkGroups
-    1984,  // gl_WorkGroupSize
-    1985,  // gl_WorkGroupID
-    1986,  // gl_LocalInvocationID
-    1987,  // gl_GlobalInvocationID
-    1988,  // gl_LocalInvocationIndex
-    1989,  // gl_PrimitiveIDIn
-    1992,  // gl_InvocationID
-    1998,  // gl_PerVertex
-    2007,  // gl_in
-    2016,  // gl_PatchVerticesIn
-    2022,  // gl_TessLevelOuter
-    2028,  // gl_TessLevelInner
-    2034,  // gl_out
-    2037,  // gl_BoundingBox
-    2040,  // gl_BoundingBoxEXT
-    2043,  // gl_BoundingBoxOES
-    2046,  // gl_TessCoord
-    2047,  // gl_ViewID_OVR
-    2048,  // gl_CullDistance
+    509,   // texture2D_00H10B00B
+    510,   // texture2DProj_00H20B00B
+    511,   // texture2DProj_00H30B00B
+    512,   // textureCube_00J20B00B
+    513,   // texture3D_00I20B00B
+    514,   // texture3DProj_00I30B00B
+    515,   // texture3DLod_00I20B00B
+    516,   // texture3DProjLod_00I30B00B
+    517,   // texture2DLod_00H10B00B
+    518,   // texture2DProjLod_00H20B00B
+    519,   // texture2DProjLod_00H30B00B
+    520,   // textureCubeLod_00J20B00B
+    521,   // texture2DLodEXT_00H10B00B
+    522,   // texture2DProjLodEXT_00H20B00B
+    523,   // texture2DProjLodEXT_00H30B00B
+    524,   // textureCubeLodEXT_00J20B00B
+    525,   // texture_00H10B
+    526,   // texture_00Q10B
+    527,   // texture_00W10B
+    528,   // texture_00I20B
+    529,   // texture_00R20B
+    530,   // texture_00X20B
+    531,   // texture_00J20B
+    532,   // texture_00S20B
+    533,   // texture_00Y20B
+    534,   // texture_00K20B
+    535,   // texture_00T20B
+    536,   // texture_00Z20B
+    537,   // texture_00c20B
+    538,   // texture_00d30B
+    539,   // texture_00e30B
+    540,   // texture_00g30B
+    543,   // texture_00k30B
+    546,   // texture_00n30B
+    549,   // texture_00h30B00B
+    552,   // texture_00L10B
+    553,   // texture_00M10B
+    554,   // texture_00N10B
+    555,   // textureProj_00H20B
+    556,   // textureProj_00Q20B
+    557,   // textureProj_00W20B
+    558,   // textureProj_00H30B
+    559,   // textureProj_00Q30B
+    560,   // textureProj_00W30B
+    561,   // textureProj_00I30B
+    562,   // textureProj_00R30B
+    563,   // textureProj_00X30B
+    564,   // textureProj_00c30B
+    565,   // textureProj_00L20B
+    566,   // textureProj_00L30B
+    567,   // textureProj_00M20B
+    568,   // textureProj_00M30B
+    569,   // textureProj_00N20B
+    570,   // textureProj_00N30B
+    571,   // textureLod_00H10B00B
+    572,   // textureLod_00Q10B00B
+    573,   // textureLod_00W10B00B
+    574,   // textureLod_00I20B00B
+    575,   // textureLod_00R20B00B
+    576,   // textureLod_00X20B00B
+    577,   // textureLod_00J20B00B
+    578,   // textureLod_00S20B00B
+    579,   // textureLod_00Y20B00B
+    580,   // textureLod_00K20B00B
+    581,   // textureLod_00T20B00B
+    582,   // textureLod_00Z20B00B
+    583,   // textureLod_00c20B00B
+    584,   // textureLod_00d30B00B
+    585,   // textureLod_00e30B00B
+    586,   // textureLod_00h30B00B00B
+    587,   // textureLod_00g30B00B
+    590,   // textureLod_00k30B00B
+    593,   // textureLod_00n30B00B
+    596,   // textureSize_00H00C
+    597,   // textureSize_00Q00C
+    598,   // textureSize_00W00C
+    599,   // textureSize_00I00C
+    600,   // textureSize_00R00C
+    601,   // textureSize_00X00C
+    602,   // textureSize_00J00C
+    603,   // textureSize_00S00C
+    604,   // textureSize_00Y00C
+    605,   // textureSize_00K00C
+    606,   // textureSize_00T00C
+    607,   // textureSize_00Z00C
+    608,   // textureSize_00c00C
+    609,   // textureSize_00d00C
+    610,   // textureSize_00e00C
+    611,   // textureSize_00g00C
+    614,   // textureSize_00k00C
+    617,   // textureSize_00n00C
+    620,   // textureSize_00h00C
+    623,   // textureSize_00f
+    626,   // textureSize_00j
+    629,   // textureSize_00m
+    632,   // textureSize_00O
+    634,   // textureSize_00U
+    636,   // textureSize_00a
+    638,   // textureSize_00P
+    640,   // textureSize_00V
+    642,   // textureSize_00b
+    644,   // textureSize_00L00C
+    645,   // textureSize_00M00C
+    646,   // textureProjLod_00H20B00B
+    647,   // textureProjLod_00Q20B00B
+    648,   // textureProjLod_00W20B00B
+    649,   // textureProjLod_00H30B00B
+    650,   // textureProjLod_00Q30B00B
+    651,   // textureProjLod_00W30B00B
+    652,   // textureProjLod_00I30B00B
+    653,   // textureProjLod_00R30B00B
+    654,   // textureProjLod_00X30B00B
+    655,   // textureProjLod_00c30B00B
+    656,   // texelFetch_00H10C00C
+    657,   // texelFetch_00Q10C00C
+    658,   // texelFetch_00W10C00C
+    659,   // texelFetch_00I20C00C
+    660,   // texelFetch_00R20C00C
+    661,   // texelFetch_00X20C00C
+    662,   // texelFetch_00K20C00C
+    663,   // texelFetch_00T20C00C
+    664,   // texelFetch_00Z20C00C
+    665,   // texelFetch_00f00C
+    668,   // texelFetch_00j00C
+    671,   // texelFetch_00m00C
+    674,   // texelFetch_00O10C00C
+    676,   // texelFetch_00U10C00C
+    678,   // texelFetch_00a10C00C
+    680,   // texelFetch_00P20C00C
+    682,   // texelFetch_00V20C00C
+    684,   // texelFetch_00b20C00C
+    686,   // texelFetch_00L10C00C
+    687,   // texelFetch_00M10C00C
+    688,   // textureGrad_00H10B10B10B
+    689,   // textureGrad_00Q10B10B10B
+    690,   // textureGrad_00W10B10B10B
+    691,   // textureGrad_00I20B20B20B
+    692,   // textureGrad_00R20B20B20B
+    693,   // textureGrad_00X20B20B20B
+    694,   // textureGrad_00J20B20B20B
+    695,   // textureGrad_00S20B20B20B
+    696,   // textureGrad_00Y20B20B20B
+    697,   // textureGrad_00c20B10B10B
+    698,   // textureGrad_00d30B20B20B
+    699,   // textureGrad_00K20B10B10B
+    700,   // textureGrad_00T20B10B10B
+    701,   // textureGrad_00Z20B10B10B
+    702,   // textureGrad_00e30B10B10B
+    703,   // textureGrad_00g30B20B20B
+    706,   // textureGrad_00k30B20B20B
+    709,   // textureGrad_00n30B20B20B
+    712,   // textureProjGrad_00H20B10B10B
+    713,   // textureProjGrad_00Q20B10B10B
+    714,   // textureProjGrad_00W20B10B10B
+    715,   // textureProjGrad_00H30B10B10B
+    716,   // textureProjGrad_00Q30B10B10B
+    717,   // textureProjGrad_00W30B10B10B
+    718,   // textureProjGrad_00I30B20B20B
+    719,   // textureProjGrad_00R30B20B20B
+    720,   // textureProjGrad_00X30B20B20B
+    721,   // textureProjGrad_00c30B10B10B
+    722,   // texture_00H10B00B
+    723,   // texture_00Q10B00B
+    724,   // texture_00W10B00B
+    725,   // texture_00I20B00B
+    726,   // texture_00R20B00B
+    727,   // texture_00X20B00B
+    728,   // texture_00J20B00B
+    729,   // texture_00S20B00B
+    730,   // texture_00Y20B00B
+    731,   // texture_00K20B00B
+    732,   // texture_00T20B00B
+    733,   // texture_00Z20B00B
+    734,   // textureProj_00H20B00B
+    735,   // textureProj_00Q20B00B
+    736,   // textureProj_00W20B00B
+    737,   // textureProj_00H30B00B
+    738,   // textureProj_00Q30B00B
+    739,   // textureProj_00W30B00B
+    740,   // textureProj_00I30B00B
+    741,   // textureProj_00R30B00B
+    742,   // textureProj_00X30B00B
+    743,   // texture_00c20B00B
+    744,   // texture_00d30B00B
+    745,   // textureProj_00c30B00B
+    746,   // texture_00e30B00B
+    747,   // texture_00g30B00B
+    750,   // texture_00k30B00B
+    753,   // texture_00n30B00B
+    756,   // texture_00h30B00B00B
+    757,   // texture_00L10B00B
+    758,   // textureProj_00L20B00B
+    759,   // textureProj_00L30B00B
+    760,   // texture_00M10B00B
+    761,   // textureProj_00M20B00B
+    762,   // textureProj_00M30B00B
+    763,   // textureOffset_00H10B10C
+    764,   // textureOffset_00Q10B10C
+    765,   // textureOffset_00W10B10C
+    766,   // textureOffset_00I20B20C
+    767,   // textureOffset_00R20B20C
+    768,   // textureOffset_00X20B20C
+    769,   // textureOffset_00c20B10C
+    770,   // textureOffset_00K20B10C
+    771,   // textureOffset_00T20B10C
+    772,   // textureOffset_00Z20B10C
+    773,   // textureOffset_00e30B10C
+    774,   // textureProjOffset_00H20B10C
+    775,   // textureProjOffset_00Q20B10C
+    776,   // textureProjOffset_00W20B10C
+    777,   // textureProjOffset_00H30B10C
+    778,   // textureProjOffset_00Q30B10C
+    779,   // textureProjOffset_00W30B10C
+    780,   // textureProjOffset_00I30B20C
+    781,   // textureProjOffset_00R30B20C
+    782,   // textureProjOffset_00X30B20C
+    783,   // textureProjOffset_00c30B10C
+    784,   // textureLodOffset_00H10B00B10C
+    785,   // textureLodOffset_00Q10B00B10C
+    786,   // textureLodOffset_00W10B00B10C
+    787,   // textureLodOffset_00I20B00B20C
+    788,   // textureLodOffset_00R20B00B20C
+    789,   // textureLodOffset_00X20B00B20C
+    790,   // textureLodOffset_00c20B00B10C
+    791,   // textureLodOffset_00K20B00B10C
+    792,   // textureLodOffset_00T20B00B10C
+    793,   // textureLodOffset_00Z20B00B10C
+    794,   // textureLodOffset_00e30B00B10C
+    795,   // textureProjLodOffset_00H20B00B10C
+    796,   // textureProjLodOffset_00Q20B00B10C
+    797,   // textureProjLodOffset_00W20B00B10C
+    798,   // textureProjLodOffset_00H30B00B10C
+    799,   // textureProjLodOffset_00Q30B00B10C
+    800,   // textureProjLodOffset_00W30B00B10C
+    801,   // textureProjLodOffset_00I30B00B20C
+    802,   // textureProjLodOffset_00R30B00B20C
+    803,   // textureProjLodOffset_00X30B00B20C
+    804,   // textureProjLodOffset_00c30B00B10C
+    805,   // texelFetchOffset_00H10C00C10C
+    806,   // texelFetchOffset_00Q10C00C10C
+    807,   // texelFetchOffset_00W10C00C10C
+    808,   // texelFetchOffset_00I20C00C20C
+    809,   // texelFetchOffset_00R20C00C20C
+    810,   // texelFetchOffset_00X20C00C20C
+    811,   // texelFetchOffset_00K20C00C10C
+    812,   // texelFetchOffset_00T20C00C10C
+    813,   // texelFetchOffset_00Z20C00C10C
+    814,   // textureGradOffset_00H10B10B10B10C
+    815,   // textureGradOffset_00Q10B10B10B10C
+    816,   // textureGradOffset_00W10B10B10B10C
+    817,   // textureGradOffset_00I20B20B20B20C
+    818,   // textureGradOffset_00R20B20B20B20C
+    819,   // textureGradOffset_00X20B20B20B20C
+    820,   // textureGradOffset_00c20B10B10B10C
+    821,   // textureGradOffset_00K20B10B10B10C
+    822,   // textureGradOffset_00T20B10B10B10C
+    823,   // textureGradOffset_00Z20B10B10B10C
+    824,   // textureGradOffset_00e30B10B10B10C
+    825,   // textureProjGradOffset_00H20B10B10B10C
+    826,   // textureProjGradOffset_00Q20B10B10B10C
+    827,   // textureProjGradOffset_00W20B10B10B10C
+    828,   // textureProjGradOffset_00H30B10B10B10C
+    829,   // textureProjGradOffset_00Q30B10B10B10C
+    830,   // textureProjGradOffset_00W30B10B10B10C
+    831,   // textureProjGradOffset_00I30B20B20B20C
+    832,   // textureProjGradOffset_00R30B20B20B20C
+    833,   // textureProjGradOffset_00X30B20B20B20C
+    834,   // textureProjGradOffset_00c30B10B10B10C
+    835,   // textureOffset_00H10B10C00B
+    836,   // textureOffset_00Q10B10C00B
+    837,   // textureOffset_00W10B10C00B
+    838,   // textureOffset_00I20B20C00B
+    839,   // textureOffset_00R20B20C00B
+    840,   // textureOffset_00X20B20C00B
+    841,   // textureOffset_00c20B10C00B
+    842,   // textureOffset_00K20B10C00B
+    843,   // textureOffset_00T20B10C00B
+    844,   // textureOffset_00Z20B10C00B
+    845,   // textureOffset_00e30B10C00B
+    846,   // textureProjOffset_00H20B10C00B
+    847,   // textureProjOffset_00Q20B10C00B
+    848,   // textureProjOffset_00W20B10C00B
+    849,   // textureProjOffset_00H30B10C00B
+    850,   // textureProjOffset_00Q30B10C00B
+    851,   // textureProjOffset_00W30B10C00B
+    852,   // textureProjOffset_00I30B20C00B
+    853,   // textureProjOffset_00R30B20C00B
+    854,   // textureProjOffset_00X30B20C00B
+    855,   // textureProjOffset_00c30B10C00B
+    856,   // textureGather_00H10B
+    857,   // textureGather_00Q10B
+    858,   // textureGather_00W10B
+    859,   // textureGather_00K20B
+    860,   // textureGather_00T20B
+    861,   // textureGather_00Z20B
+    862,   // textureGather_00J20B
+    863,   // textureGather_00S20B
+    864,   // textureGather_00Y20B
+    865,   // textureGather_00g30B
+    868,   // textureGather_00k30B
+    871,   // textureGather_00n30B
+    874,   // textureGather_00H10B00C
+    875,   // textureGather_00Q10B00C
+    876,   // textureGather_00W10B00C
+    877,   // textureGather_00K20B00C
+    878,   // textureGather_00T20B00C
+    879,   // textureGather_00Z20B00C
+    880,   // textureGather_00J20B00C
+    881,   // textureGather_00S20B00C
+    882,   // textureGather_00Y20B00C
+    883,   // textureGather_00g30B00C
+    886,   // textureGather_00k30B00C
+    889,   // textureGather_00n30B00C
+    892,   // textureGather_00h30B00B
+    895,   // textureGather_00c10B00B
+    896,   // textureGather_00e20B00B
+    897,   // textureGather_00d20B00B
+    898,   // textureGatherOffset_00H10B10C
+    899,   // textureGatherOffset_00Q10B10C
+    900,   // textureGatherOffset_00W10B10C
+    901,   // textureGatherOffset_00K20B10C
+    902,   // textureGatherOffset_00T20B10C
+    903,   // textureGatherOffset_00Z20B10C
+    904,   // textureGatherOffset_00H10B10C00C
+    905,   // textureGatherOffset_00Q10B10C00C
+    906,   // textureGatherOffset_00W10B10C00C
+    907,   // textureGatherOffset_00K20B10C00C
+    908,   // textureGatherOffset_00T20B10C00C
+    909,   // textureGatherOffset_00Z20B10C00C
+    910,   // textureGatherOffset_00c10B00B10C
+    911,   // textureGatherOffset_00e20B00B10C
+    912,   // textureGatherOffsets_00H10B10Cx4
+    915,   // textureGatherOffsets_00Q10B10Cx4
+    918,   // textureGatherOffsets_00W10B10Cx4
+    921,   // textureGatherOffsets_00K20B10Cx4
+    924,   // textureGatherOffsets_00T20B10Cx4
+    927,   // textureGatherOffsets_00Z20B10Cx4
+    930,   // textureGatherOffsets_00H10B10Cx400C
+    933,   // textureGatherOffsets_00Q10B10Cx400C
+    936,   // textureGatherOffsets_00W10B10Cx400C
+    939,   // textureGatherOffsets_00K20B10Cx400C
+    942,   // textureGatherOffsets_00T20B10Cx400C
+    945,   // textureGatherOffsets_00Z20B10Cx400C
+    948,   // textureGatherOffsets_00c10B00B10Cx4
+    951,   // textureGatherOffsets_00e20B00B10Cx4
+    954,   // textureQueryLOD_00H10B
+    955,   // textureQueryLOD_00Q10B
+    956,   // textureQueryLOD_00W10B
+    957,   // textureQueryLOD_00I20B
+    958,   // textureQueryLOD_00R20B
+    959,   // textureQueryLOD_00X20B
+    960,   // textureQueryLOD_00J20B
+    961,   // textureQueryLOD_00S20B
+    962,   // textureQueryLOD_00Y20B
+    963,   // textureQueryLOD_00K10B
+    964,   // textureQueryLOD_00T10B
+    965,   // textureQueryLOD_00Z10B
+    966,   // textureQueryLOD_00c10B
+    967,   // textureQueryLOD_00d20B
+    968,   // textureQueryLOD_00e10B
+    969,   // textureQueryLOD_00g20B
+    970,   // textureQueryLOD_00k20B
+    971,   // textureQueryLOD_00n20B
+    972,   // textureQueryLOD_00h20B
+    973,   // rgb_2_yuv_20B00G
+    974,   // yuv_2_rgb_20B00G
+    975,   // dFdx_00B
+    977,   // dFdx_10B
+    979,   // dFdx_20B
+    981,   // dFdx_30B
+    983,   // dFdy_00B
+    985,   // dFdy_10B
+    987,   // dFdy_20B
+    989,   // dFdy_30B
+    991,   // fwidth_00B
+    993,   // fwidth_10B
+    995,   // fwidth_20B
+    997,   // fwidth_30B
+    999,   // interpolateAtCentroid_00B
+    1001,  // interpolateAtCentroid_10B
+    1003,  // interpolateAtCentroid_20B
+    1005,  // interpolateAtCentroid_30B
+    1007,  // interpolateAtSample_00B00C
+    1009,  // interpolateAtSample_10B00C
+    1011,  // interpolateAtSample_20B00C
+    1013,  // interpolateAtSample_30B00C
+    1015,  // interpolateAtOffset_00B10B
+    1017,  // interpolateAtOffset_10B10B
+    1019,  // interpolateAtOffset_20B10B
+    1021,  // interpolateAtOffset_30B10B
+    1023,  // atomicCounter_00F
+    1024,  // atomicCounterIncrement_00F
+    1025,  // atomicCounterDecrement_00F
+    1026,  // atomicAdd_00D00D
+    1027,  // atomicAdd_00C00C
+    1028,  // atomicMin_00D00D
+    1029,  // atomicMin_00C00C
+    1030,  // atomicMax_00D00D
+    1031,  // atomicMax_00C00C
+    1032,  // atomicAnd_00D00D
+    1033,  // atomicAnd_00C00C
+    1034,  // atomicOr_00D00D
+    1035,  // atomicOr_00C00C
+    1036,  // atomicXor_00D00D
+    1037,  // atomicXor_00C00C
+    1038,  // atomicExchange_00D00D
+    1039,  // atomicExchange_00C00C
+    1040,  // atomicCompSwap_00D00D00D
+    1041,  // atomicCompSwap_00C00C00C
+    1042,  // imageSize_00o
+    1043,  // imageSize_00u
+    1044,  // imageSize_01A
+    1045,  // imageSize_00p
+    1046,  // imageSize_00v
+    1047,  // imageSize_01B
+    1048,  // imageSize_00q
+    1049,  // imageSize_00w
+    1050,  // imageSize_01C
+    1051,  // imageSize_00r
+    1052,  // imageSize_00x
+    1053,  // imageSize_01D
+    1054,  // imageSize_00s
+    1057,  // imageSize_00y
+    1060,  // imageSize_01E
+    1063,  // imageSize_00t
+    1066,  // imageSize_00z
+    1069,  // imageSize_01F
+    1072,  // imageStore_00o10C30B
+    1073,  // imageStore_00u10C30C
+    1074,  // imageStore_01A10C30D
+    1075,  // imageStore_00p20C30B
+    1076,  // imageStore_00v20C30C
+    1077,  // imageStore_01B20C30D
+    1078,  // imageStore_00q20C30B
+    1079,  // imageStore_00w20C30C
+    1080,  // imageStore_01C20C30D
+    1081,  // imageStore_00r20C30B
+    1082,  // imageStore_00x20C30C
+    1083,  // imageStore_01D20C30D
+    1084,  // imageStore_00s20C30B
+    1087,  // imageStore_00y20C30C
+    1090,  // imageStore_01E20C30D
+    1093,  // imageStore_00t00C30B
+    1096,  // imageStore_00z00C30C
+    1099,  // imageStore_01F00C30D
+    1102,  // imageLoad_00o10C
+    1103,  // imageLoad_00u10C
+    1104,  // imageLoad_01A10C
+    1105,  // imageLoad_00p20C
+    1106,  // imageLoad_00v20C
+    1107,  // imageLoad_01B20C
+    1108,  // imageLoad_00q20C
+    1109,  // imageLoad_00w20C
+    1110,  // imageLoad_01C20C
+    1111,  // imageLoad_00r20C
+    1112,  // imageLoad_00x20C
+    1113,  // imageLoad_01D20C
+    1114,  // imageLoad_00s20C
+    1117,  // imageLoad_00y20C
+    1120,  // imageLoad_01E20C
+    1123,  // imageLoad_00t00C
+    1126,  // imageLoad_00z00C
+    1129,  // imageLoad_01F00C
+    1132,  // imageAtomicAdd_00o10C00D
+    1134,  // imageAtomicAdd_00u10C00D
+    1136,  // imageAtomicAdd_01A10C00D
+    1138,  // imageAtomicAdd_00p20C00D
+    1140,  // imageAtomicAdd_00v20C00D
+    1142,  // imageAtomicAdd_01B20C00D
+    1144,  // imageAtomicAdd_00r20C00D
+    1146,  // imageAtomicAdd_00x20C00D
+    1148,  // imageAtomicAdd_01D20C00D
+    1150,  // imageAtomicAdd_00t00C00D
+    1152,  // imageAtomicAdd_00z00C00D
+    1154,  // imageAtomicAdd_01F00C00D
+    1156,  // imageAtomicAdd_00q20C00D
+    1158,  // imageAtomicAdd_00w20C00D
+    1160,  // imageAtomicAdd_01C20C00D
+    1162,  // imageAtomicAdd_00s20C00D
+    1164,  // imageAtomicAdd_00y20C00D
+    1166,  // imageAtomicAdd_01E20C00D
+    1168,  // imageAtomicAdd_00o10C00C
+    1170,  // imageAtomicAdd_00u10C00C
+    1172,  // imageAtomicAdd_01A10C00C
+    1174,  // imageAtomicAdd_00p20C00C
+    1176,  // imageAtomicAdd_00v20C00C
+    1178,  // imageAtomicAdd_01B20C00C
+    1180,  // imageAtomicAdd_00r20C00C
+    1182,  // imageAtomicAdd_00x20C00C
+    1184,  // imageAtomicAdd_01D20C00C
+    1186,  // imageAtomicAdd_00t00C00C
+    1188,  // imageAtomicAdd_00z00C00C
+    1190,  // imageAtomicAdd_01F00C00C
+    1192,  // imageAtomicAdd_00q20C00C
+    1194,  // imageAtomicAdd_00w20C00C
+    1196,  // imageAtomicAdd_01C20C00C
+    1198,  // imageAtomicAdd_00s20C00C
+    1200,  // imageAtomicAdd_00y20C00C
+    1202,  // imageAtomicAdd_01E20C00C
+    1204,  // imageAtomicMin_00o10C00D
+    1206,  // imageAtomicMin_00u10C00D
+    1208,  // imageAtomicMin_01A10C00D
+    1210,  // imageAtomicMin_00p20C00D
+    1212,  // imageAtomicMin_00v20C00D
+    1214,  // imageAtomicMin_01B20C00D
+    1216,  // imageAtomicMin_00r20C00D
+    1218,  // imageAtomicMin_00x20C00D
+    1220,  // imageAtomicMin_01D20C00D
+    1222,  // imageAtomicMin_00t00C00D
+    1224,  // imageAtomicMin_00z00C00D
+    1226,  // imageAtomicMin_01F00C00D
+    1228,  // imageAtomicMin_00q20C00D
+    1230,  // imageAtomicMin_00w20C00D
+    1232,  // imageAtomicMin_01C20C00D
+    1234,  // imageAtomicMin_00s20C00D
+    1236,  // imageAtomicMin_00y20C00D
+    1238,  // imageAtomicMin_01E20C00D
+    1240,  // imageAtomicMin_00o10C00C
+    1242,  // imageAtomicMin_00u10C00C
+    1244,  // imageAtomicMin_01A10C00C
+    1246,  // imageAtomicMin_00p20C00C
+    1248,  // imageAtomicMin_00v20C00C
+    1250,  // imageAtomicMin_01B20C00C
+    1252,  // imageAtomicMin_00r20C00C
+    1254,  // imageAtomicMin_00x20C00C
+    1256,  // imageAtomicMin_01D20C00C
+    1258,  // imageAtomicMin_00t00C00C
+    1260,  // imageAtomicMin_00z00C00C
+    1262,  // imageAtomicMin_01F00C00C
+    1264,  // imageAtomicMin_00q20C00C
+    1266,  // imageAtomicMin_00w20C00C
+    1268,  // imageAtomicMin_01C20C00C
+    1270,  // imageAtomicMin_00s20C00C
+    1272,  // imageAtomicMin_00y20C00C
+    1274,  // imageAtomicMin_01E20C00C
+    1276,  // imageAtomicMax_00o10C00D
+    1278,  // imageAtomicMax_00u10C00D
+    1280,  // imageAtomicMax_01A10C00D
+    1282,  // imageAtomicMax_00p20C00D
+    1284,  // imageAtomicMax_00v20C00D
+    1286,  // imageAtomicMax_01B20C00D
+    1288,  // imageAtomicMax_00r20C00D
+    1290,  // imageAtomicMax_00x20C00D
+    1292,  // imageAtomicMax_01D20C00D
+    1294,  // imageAtomicMax_00t00C00D
+    1296,  // imageAtomicMax_00z00C00D
+    1298,  // imageAtomicMax_01F00C00D
+    1300,  // imageAtomicMax_00q20C00D
+    1302,  // imageAtomicMax_00w20C00D
+    1304,  // imageAtomicMax_01C20C00D
+    1306,  // imageAtomicMax_00s20C00D
+    1308,  // imageAtomicMax_00y20C00D
+    1310,  // imageAtomicMax_01E20C00D
+    1312,  // imageAtomicMax_00o10C00C
+    1314,  // imageAtomicMax_00u10C00C
+    1316,  // imageAtomicMax_01A10C00C
+    1318,  // imageAtomicMax_00p20C00C
+    1320,  // imageAtomicMax_00v20C00C
+    1322,  // imageAtomicMax_01B20C00C
+    1324,  // imageAtomicMax_00r20C00C
+    1326,  // imageAtomicMax_00x20C00C
+    1328,  // imageAtomicMax_01D20C00C
+    1330,  // imageAtomicMax_00t00C00C
+    1332,  // imageAtomicMax_00z00C00C
+    1334,  // imageAtomicMax_01F00C00C
+    1336,  // imageAtomicMax_00q20C00C
+    1338,  // imageAtomicMax_00w20C00C
+    1340,  // imageAtomicMax_01C20C00C
+    1342,  // imageAtomicMax_00s20C00C
+    1344,  // imageAtomicMax_00y20C00C
+    1346,  // imageAtomicMax_01E20C00C
+    1348,  // imageAtomicAnd_00o10C00D
+    1350,  // imageAtomicAnd_00u10C00D
+    1352,  // imageAtomicAnd_01A10C00D
+    1354,  // imageAtomicAnd_00p20C00D
+    1356,  // imageAtomicAnd_00v20C00D
+    1358,  // imageAtomicAnd_01B20C00D
+    1360,  // imageAtomicAnd_00r20C00D
+    1362,  // imageAtomicAnd_00x20C00D
+    1364,  // imageAtomicAnd_01D20C00D
+    1366,  // imageAtomicAnd_00t00C00D
+    1368,  // imageAtomicAnd_00z00C00D
+    1370,  // imageAtomicAnd_01F00C00D
+    1372,  // imageAtomicAnd_00q20C00D
+    1374,  // imageAtomicAnd_00w20C00D
+    1376,  // imageAtomicAnd_01C20C00D
+    1378,  // imageAtomicAnd_00s20C00D
+    1380,  // imageAtomicAnd_00y20C00D
+    1382,  // imageAtomicAnd_01E20C00D
+    1384,  // imageAtomicAnd_00o10C00C
+    1386,  // imageAtomicAnd_00u10C00C
+    1388,  // imageAtomicAnd_01A10C00C
+    1390,  // imageAtomicAnd_00p20C00C
+    1392,  // imageAtomicAnd_00v20C00C
+    1394,  // imageAtomicAnd_01B20C00C
+    1396,  // imageAtomicAnd_00r20C00C
+    1398,  // imageAtomicAnd_00x20C00C
+    1400,  // imageAtomicAnd_01D20C00C
+    1402,  // imageAtomicAnd_00t00C00C
+    1404,  // imageAtomicAnd_00z00C00C
+    1406,  // imageAtomicAnd_01F00C00C
+    1408,  // imageAtomicAnd_00q20C00C
+    1410,  // imageAtomicAnd_00w20C00C
+    1412,  // imageAtomicAnd_01C20C00C
+    1414,  // imageAtomicAnd_00s20C00C
+    1416,  // imageAtomicAnd_00y20C00C
+    1418,  // imageAtomicAnd_01E20C00C
+    1420,  // imageAtomicOr_00o10C00D
+    1422,  // imageAtomicOr_00u10C00D
+    1424,  // imageAtomicOr_01A10C00D
+    1426,  // imageAtomicOr_00p20C00D
+    1428,  // imageAtomicOr_00v20C00D
+    1430,  // imageAtomicOr_01B20C00D
+    1432,  // imageAtomicOr_00r20C00D
+    1434,  // imageAtomicOr_00x20C00D
+    1436,  // imageAtomicOr_01D20C00D
+    1438,  // imageAtomicOr_00t00C00D
+    1440,  // imageAtomicOr_00z00C00D
+    1442,  // imageAtomicOr_01F00C00D
+    1444,  // imageAtomicOr_00q20C00D
+    1446,  // imageAtomicOr_00w20C00D
+    1448,  // imageAtomicOr_01C20C00D
+    1450,  // imageAtomicOr_00s20C00D
+    1452,  // imageAtomicOr_00y20C00D
+    1454,  // imageAtomicOr_01E20C00D
+    1456,  // imageAtomicOr_00o10C00C
+    1458,  // imageAtomicOr_00u10C00C
+    1460,  // imageAtomicOr_01A10C00C
+    1462,  // imageAtomicOr_00p20C00C
+    1464,  // imageAtomicOr_00v20C00C
+    1466,  // imageAtomicOr_01B20C00C
+    1468,  // imageAtomicOr_00r20C00C
+    1470,  // imageAtomicOr_00x20C00C
+    1472,  // imageAtomicOr_01D20C00C
+    1474,  // imageAtomicOr_00t00C00C
+    1476,  // imageAtomicOr_00z00C00C
+    1478,  // imageAtomicOr_01F00C00C
+    1480,  // imageAtomicOr_00q20C00C
+    1482,  // imageAtomicOr_00w20C00C
+    1484,  // imageAtomicOr_01C20C00C
+    1486,  // imageAtomicOr_00s20C00C
+    1488,  // imageAtomicOr_00y20C00C
+    1490,  // imageAtomicOr_01E20C00C
+    1492,  // imageAtomicXor_00o10C00D
+    1494,  // imageAtomicXor_00u10C00D
+    1496,  // imageAtomicXor_01A10C00D
+    1498,  // imageAtomicXor_00p20C00D
+    1500,  // imageAtomicXor_00v20C00D
+    1502,  // imageAtomicXor_01B20C00D
+    1504,  // imageAtomicXor_00r20C00D
+    1506,  // imageAtomicXor_00x20C00D
+    1508,  // imageAtomicXor_01D20C00D
+    1510,  // imageAtomicXor_00t00C00D
+    1512,  // imageAtomicXor_00z00C00D
+    1514,  // imageAtomicXor_01F00C00D
+    1516,  // imageAtomicXor_00q20C00D
+    1518,  // imageAtomicXor_00w20C00D
+    1520,  // imageAtomicXor_01C20C00D
+    1522,  // imageAtomicXor_00s20C00D
+    1524,  // imageAtomicXor_00y20C00D
+    1526,  // imageAtomicXor_01E20C00D
+    1528,  // imageAtomicXor_00o10C00C
+    1530,  // imageAtomicXor_00u10C00C
+    1532,  // imageAtomicXor_01A10C00C
+    1534,  // imageAtomicXor_00p20C00C
+    1536,  // imageAtomicXor_00v20C00C
+    1538,  // imageAtomicXor_01B20C00C
+    1540,  // imageAtomicXor_00r20C00C
+    1542,  // imageAtomicXor_00x20C00C
+    1544,  // imageAtomicXor_01D20C00C
+    1546,  // imageAtomicXor_00t00C00C
+    1548,  // imageAtomicXor_00z00C00C
+    1550,  // imageAtomicXor_01F00C00C
+    1552,  // imageAtomicXor_00q20C00C
+    1554,  // imageAtomicXor_00w20C00C
+    1556,  // imageAtomicXor_01C20C00C
+    1558,  // imageAtomicXor_00s20C00C
+    1560,  // imageAtomicXor_00y20C00C
+    1562,  // imageAtomicXor_01E20C00C
+    1564,  // imageAtomicExchange_00o10C00D
+    1566,  // imageAtomicExchange_00u10C00D
+    1568,  // imageAtomicExchange_01A10C00D
+    1570,  // imageAtomicExchange_00p20C00D
+    1572,  // imageAtomicExchange_00v20C00D
+    1574,  // imageAtomicExchange_01B20C00D
+    1576,  // imageAtomicExchange_00r20C00D
+    1578,  // imageAtomicExchange_00x20C00D
+    1580,  // imageAtomicExchange_01D20C00D
+    1582,  // imageAtomicExchange_00t00C00D
+    1584,  // imageAtomicExchange_00z00C00D
+    1586,  // imageAtomicExchange_01F00C00D
+    1588,  // imageAtomicExchange_00q20C00D
+    1590,  // imageAtomicExchange_00w20C00D
+    1592,  // imageAtomicExchange_01C20C00D
+    1594,  // imageAtomicExchange_00s20C00D
+    1596,  // imageAtomicExchange_00y20C00D
+    1598,  // imageAtomicExchange_01E20C00D
+    1600,  // imageAtomicExchange_00o10C00C
+    1602,  // imageAtomicExchange_00u10C00C
+    1604,  // imageAtomicExchange_01A10C00C
+    1606,  // imageAtomicExchange_00p20C00C
+    1608,  // imageAtomicExchange_00v20C00C
+    1610,  // imageAtomicExchange_01B20C00C
+    1612,  // imageAtomicExchange_00r20C00C
+    1614,  // imageAtomicExchange_00x20C00C
+    1616,  // imageAtomicExchange_01D20C00C
+    1618,  // imageAtomicExchange_00t00C00C
+    1620,  // imageAtomicExchange_00z00C00C
+    1622,  // imageAtomicExchange_01F00C00C
+    1624,  // imageAtomicExchange_00q20C00C
+    1626,  // imageAtomicExchange_00w20C00C
+    1628,  // imageAtomicExchange_01C20C00C
+    1630,  // imageAtomicExchange_00s20C00C
+    1632,  // imageAtomicExchange_00y20C00C
+    1634,  // imageAtomicExchange_01E20C00C
+    1636,  // imageAtomicExchange_00o10C00B
+    1638,  // imageAtomicExchange_00u10C00B
+    1640,  // imageAtomicExchange_01A10C00B
+    1642,  // imageAtomicExchange_00p20C00B
+    1644,  // imageAtomicExchange_00v20C00B
+    1646,  // imageAtomicExchange_01B20C00B
+    1648,  // imageAtomicExchange_00r20C00B
+    1650,  // imageAtomicExchange_00x20C00B
+    1652,  // imageAtomicExchange_01D20C00B
+    1654,  // imageAtomicExchange_00t00C00B
+    1656,  // imageAtomicExchange_00z00C00B
+    1658,  // imageAtomicExchange_01F00C00B
+    1660,  // imageAtomicExchange_00q20C00B
+    1662,  // imageAtomicExchange_00w20C00B
+    1664,  // imageAtomicExchange_01C20C00B
+    1666,  // imageAtomicExchange_00s20C00B
+    1668,  // imageAtomicExchange_00y20C00B
+    1670,  // imageAtomicExchange_01E20C00B
+    1672,  // imageAtomicCompSwap_00o10C00D00D
+    1674,  // imageAtomicCompSwap_00u10C00D00D
+    1676,  // imageAtomicCompSwap_01A10C00D00D
+    1678,  // imageAtomicCompSwap_00p20C00D00D
+    1680,  // imageAtomicCompSwap_00v20C00D00D
+    1682,  // imageAtomicCompSwap_01B20C00D00D
+    1684,  // imageAtomicCompSwap_00r20C00D00D
+    1686,  // imageAtomicCompSwap_00x20C00D00D
+    1688,  // imageAtomicCompSwap_01D20C00D00D
+    1690,  // imageAtomicCompSwap_00t00C00D00D
+    1692,  // imageAtomicCompSwap_00z00C00D00D
+    1694,  // imageAtomicCompSwap_01F00C00D00D
+    1696,  // imageAtomicCompSwap_00q20C00D00D
+    1698,  // imageAtomicCompSwap_00w20C00D00D
+    1700,  // imageAtomicCompSwap_01C20C00D00D
+    1702,  // imageAtomicCompSwap_00s20C00D00D
+    1704,  // imageAtomicCompSwap_00y20C00D00D
+    1706,  // imageAtomicCompSwap_01E20C00D00D
+    1708,  // imageAtomicCompSwap_00o10C00C00C
+    1710,  // imageAtomicCompSwap_00u10C00C00C
+    1712,  // imageAtomicCompSwap_01A10C00C00C
+    1714,  // imageAtomicCompSwap_00p20C00C00C
+    1716,  // imageAtomicCompSwap_00v20C00C00C
+    1718,  // imageAtomicCompSwap_01B20C00C00C
+    1720,  // imageAtomicCompSwap_00r20C00C00C
+    1722,  // imageAtomicCompSwap_00x20C00C00C
+    1724,  // imageAtomicCompSwap_01D20C00C00C
+    1726,  // imageAtomicCompSwap_00t00C00C00C
+    1728,  // imageAtomicCompSwap_00z00C00C00C
+    1730,  // imageAtomicCompSwap_01F00C00C00C
+    1732,  // imageAtomicCompSwap_00q20C00C00C
+    1734,  // imageAtomicCompSwap_00w20C00C00C
+    1736,  // imageAtomicCompSwap_01C20C00C00C
+    1738,  // imageAtomicCompSwap_00s20C00C00C
+    1740,  // imageAtomicCompSwap_00y20C00C00C
+    1742,  // imageAtomicCompSwap_01E20C00C00C
+    1744,  // pixelLocalLoadANGLE_01G
+    1745,  // pixelLocalLoadANGLE_01H
+    1746,  // pixelLocalLoadANGLE_01I
+    1747,  // pixelLocalStoreANGLE_01G30B
+    1748,  // pixelLocalStoreANGLE_01H30C
+    1749,  // pixelLocalStoreANGLE_01I30D
+    1750,  // beginInvocationInterlockNV_
+    1751,  // endInvocationInterlockNV_
+    1752,  // beginFragmentShaderOrderingINTEL_
+    1753,  // beginInvocationInterlockARB_
+    1754,  // endInvocationInterlockARB_
+    1755,  // memoryBarrier_
+    1756,  // memoryBarrierAtomicCounter_
+    1757,  // memoryBarrierBuffer_
+    1758,  // memoryBarrierImage_
+    1759,  // barrier_
+    1763,  // memoryBarrierShared_
+    1764,  // groupMemoryBarrier_
+    1765,  // EmitVertex_
+    1768,  // EndPrimitive_
+    1771,  // subpassLoad_01J
+    1772,  // subpassLoad_01K
+    1773,  // subpassLoad_01L
+    1774,  // numSamples_
+    1775,  // samplePosition_00D
+    1776,  // interpolateAtCenter_00B
+    1777,  // interpolateAtCenter_10B
+    1778,  // interpolateAtCenter_20B
+    1779,  // interpolateAtCenter_30B
+    1780,  // loopForwardProgress_
+    1781,  // saturate_00B
+    1782,  // saturate_10B
+    1783,  // saturate_20B
+    1784,  // saturate_30B
+    1785,  // gl_DepthRangeParameters
+    1786,  // gl_DepthRange
+    1787,  // gl_NumSamples
+    1789,  // gl_MaxVertexAttribs
+    1790,  // gl_MaxVertexUniformVectors
+    1791,  // gl_MaxVertexTextureImageUnits
+    1792,  // gl_MaxCombinedTextureImageUnits
+    1793,  // gl_MaxTextureImageUnits
+    1794,  // gl_MaxFragmentUniformVectors
+    1795,  // gl_MaxVaryingVectors
+    1796,  // gl_MaxDrawBuffers
+    1797,  // gl_MaxDualSourceDrawBuffersEXT
+    1798,  // gl_MaxVertexOutputVectors
+    1799,  // gl_MaxFragmentInputVectors
+    1800,  // gl_MinProgramTexelOffset
+    1801,  // gl_MaxProgramTexelOffset
+    1802,  // gl_MaxImageUnits
+    1803,  // gl_MaxVertexImageUniforms
+    1804,  // gl_MaxFragmentImageUniforms
+    1805,  // gl_MaxComputeImageUniforms
+    1806,  // gl_MaxCombinedImageUniforms
+    1807,  // gl_MaxCombinedShaderOutputResources
+    1808,  // gl_MaxComputeWorkGroupCount
+    1809,  // gl_MaxComputeWorkGroupSize
+    1810,  // gl_MaxComputeUniformComponents
+    1811,  // gl_MaxComputeTextureImageUnits
+    1812,  // gl_MaxComputeAtomicCounters
+    1813,  // gl_MaxComputeAtomicCounterBuffers
+    1814,  // gl_MaxVertexAtomicCounters
+    1815,  // gl_MaxFragmentAtomicCounters
+    1816,  // gl_MaxCombinedAtomicCounters
+    1817,  // gl_MaxAtomicCounterBindings
+    1818,  // gl_MaxVertexAtomicCounterBuffers
+    1819,  // gl_MaxFragmentAtomicCounterBuffers
+    1820,  // gl_MaxCombinedAtomicCounterBuffers
+    1821,  // gl_MaxAtomicCounterBufferSize
+    1822,  // gl_ShadingRateFlag2VerticalPixelsEXT
+    1823,  // gl_ShadingRateFlag4VerticalPixelsEXT
+    1824,  // gl_ShadingRateFlag2HorizontalPixelsEXT
+    1825,  // gl_ShadingRateFlag4HorizontalPixelsEXT
+    1826,  // gl_MaxGeometryInputComponents
+    1829,  // gl_MaxGeometryOutputComponents
+    1832,  // gl_MaxGeometryImageUniforms
+    1835,  // gl_MaxGeometryTextureImageUnits
+    1838,  // gl_MaxGeometryOutputVertices
+    1841,  // gl_MaxGeometryTotalOutputComponents
+    1844,  // gl_MaxGeometryUniformComponents
+    1847,  // gl_MaxGeometryAtomicCounters
+    1850,  // gl_MaxGeometryAtomicCounterBuffers
+    1853,  // gl_MaxTessControlInputComponents
+    1856,  // gl_MaxTessControlOutputComponents
+    1859,  // gl_MaxTessControlTextureImageUnits
+    1862,  // gl_MaxTessControlUniformComponents
+    1865,  // gl_MaxTessControlTotalOutputComponents
+    1868,  // gl_MaxTessControlImageUniforms
+    1871,  // gl_MaxTessControlAtomicCounters
+    1874,  // gl_MaxTessControlAtomicCounterBuffers
+    1877,  // gl_MaxTessPatchComponents
+    1880,  // gl_MaxPatchVertices
+    1883,  // gl_MaxTessGenLevel
+    1886,  // gl_MaxTessEvaluationInputComponents
+    1889,  // gl_MaxTessEvaluationOutputComponents
+    1892,  // gl_MaxTessEvaluationTextureImageUnits
+    1895,  // gl_MaxTessEvaluationUniformComponents
+    1898,  // gl_MaxTessEvaluationImageUniforms
+    1901,  // gl_MaxTessEvaluationAtomicCounters
+    1904,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    1907,  // gl_MaxSamples
+    1909,  // gl_MaxClipDistances
+    1912,  // gl_MaxCullDistances
+    1914,  // gl_MaxCombinedClipAndCullDistances
+    1916,  // gl_FragCoord
+    1918,  // gl_FrontFacing
+    1919,  // gl_PointCoord
+    1920,  // gl_FragColor
+    1921,  // gl_FragData
+    1922,  // gl_FragDepth
+    1923,  // gl_HelperInvocation
+    1924,  // gl_SecondaryFragColorEXT
+    1925,  // gl_SecondaryFragDataEXT
+    1926,  // gl_FragDepthEXT
+    1927,  // gl_LastFragData
+    1929,  // gl_LastFragColorARM
+    1930,  // gl_LastFragDepthARM
+    1931,  // gl_LastFragStencilARM
+    1932,  // gl_PrimitiveID
+    1944,  // gl_Layer
+    1951,  // gl_ShadingRateEXT
+    1952,  // gl_SampleID
+    1954,  // gl_SamplePosition
+    1956,  // gl_SampleMaskIn
+    1958,  // gl_SampleMask
+    1960,  // gl_Position
+    1967,  // gl_PointSize
+    1969,  // gl_InstanceID
+    1970,  // gl_InstanceIndex
+    1971,  // gl_VertexID
+    1972,  // gl_VertexIndex
+    1973,  // gl_DrawID
+    1974,  // gl_BaseVertex
+    1975,  // gl_BaseInstance
+    1976,  // gl_ClipDistance
+    1979,  // gl_PrimitiveShadingRateEXT
+    1981,  // gl_NumWorkGroups
+    1982,  // gl_WorkGroupSize
+    1983,  // gl_WorkGroupID
+    1984,  // gl_LocalInvocationID
+    1985,  // gl_GlobalInvocationID
+    1986,  // gl_LocalInvocationIndex
+    1987,  // gl_PrimitiveIDIn
+    1990,  // gl_InvocationID
+    1996,  // gl_PerVertex
+    2005,  // gl_in
+    2014,  // gl_PatchVerticesIn
+    2020,  // gl_TessLevelOuter
+    2026,  // gl_TessLevelInner
+    2032,  // gl_out
+    2035,  // gl_BoundingBox
+    2038,  // gl_BoundingBoxEXT
+    2041,  // gl_BoundingBoxOES
+    2044,  // gl_TessCoord
+    2045,  // gl_ViewID_OVR
+    2046,  // gl_CullDistance
 };
 
 using Ext = TExtension;
@@ -22662,7 +22631,6 @@ constexpr UnmangledEntry unmangled[] = {
      Shader::ALL},
     {"textureCubeGradEXT", std::array<TExtension, 1>{{Ext::EXT_shader_texture_lod}}, 100,
      Shader::ALL},
-    {"textureVideoWEBGL", std::array<TExtension, 1>{{Ext::UNDEFINED}}, 100, Shader::ALL},
     {"texture3DLod", std::array<TExtension, 1>{{Ext::OES_texture_3D}}, 100, Shader::ALL},
     {"texture3DProjLod", std::array<TExtension, 1>{{Ext::OES_texture_3D}}, 100, Shader::ALL},
     {"texture2DLod", std::array<TExtension, 1>{{Ext::UNDEFINED}}, 100, Shader::VERTEX},
@@ -24096,8 +24064,10 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 1426 - 1)
+    if (nameHash == 1424 - 1)
+    {
         return ArraySize(BuiltInArray::kRules);
+    }
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
 }  // namespace
@@ -24105,15 +24075,21 @@ uint16_t GetNextRuleIndex(uint32_t nameHash)
 const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shaderVersion) const
 {
     if (name.length() > 40)
+    {
         return nullptr;
+    }
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 1426)
+    if (nameHash >= 1424)
+    {
         return nullptr;
+    }
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];
     if (name != actualName)
+    {
         return nullptr;
+    }
 
     uint16_t startIndex = BuiltInArray::kMangledOffsets[nameHash];
     uint16_t nextIndex  = GetNextRuleIndex(nameHash);
@@ -24127,11 +24103,15 @@ bool TSymbolTable::isUnmangledBuiltInName(const ImmutableString &name,
                                           const TExtensionBehavior &extensions) const
 {
     if (name.length() > 32)
+    {
         return false;
+    }
 
     uint32_t nameHash = name.unmangledNameHash();
-    if (nameHash >= 180)
+    if (nameHash >= 179)
+    {
         return false;
+    }
 
     return BuiltInArray::unmangled[nameHash].matches(name, mShaderSpec, shaderVersion, mShaderType,
                                                      extensions);

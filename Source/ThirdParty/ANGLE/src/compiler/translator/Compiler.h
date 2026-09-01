@@ -128,6 +128,7 @@ class TCompiler : public TShHandleBase
 
     ShHashFunction64 getHashFunction() const { return mResources.HashFunction; }
     char getUserVariableNamePrefix() const { return mResources.UserVariableNamePrefix; }
+    char getUserBlockNamePrefix() const { return mResources.UserBlockNamePrefix; }
     NameMap &getNameMap() { return mNameMap; }
     TSymbolTable &getSymbolTable() { return mSymbolTable; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
@@ -135,7 +136,7 @@ class TCompiler : public TShHandleBase
     const ShBuiltInResources &getBuiltInResources() const { return mResources; }
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
 
-    bool shouldRunLoopAndIndexingValidation(const ShCompileOptions &compileOptions) const;
+    bool shouldRunLoopAndIndexingValidation() const;
 
     // Get the resources set by InitBuiltInSymbolTable
     const ShBuiltInResources &getResources() const;

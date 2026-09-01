@@ -215,7 +215,6 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_vertex_array_object](https://khronos.org/registry/OpenGL/extensions/OES/OES_vertex_array_object.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_vertex_half_float](https://khronos.org/registry/OpenGL/extensions/OES/OES_vertex_half_float.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_vertex_type_10_10_10_2](https://khronos.org/registry/OpenGL/extensions/OES/OES_vertex_type_10_10_10_2.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
-| [GL_WEBGL_video_texture](https://khronos.org/registry/OpenGL/extensions/WEBGL/WEBGL_video_texture.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_YUV_target](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_YUV_target.txt) |  |  |  |  |  |  |  |
 
 ## ANGLE unofficial extension support
@@ -237,6 +236,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_CHROMIUM_copy_compressed_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_compressed_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_CHROMIUM_copy_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_copy_texture_3d](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_copy_texture_3d.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_ANGLE_explicit_context](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_explicit_context.txt) |  |  |  |  |  |  |  |
 | [GL_WEBKIT_explicit_resolve_target](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/WEBKIT_explicit_resolve_target.txt) |  |  |  |  |  |  |  |
 | [GL_CHROMIUM_framebuffer_mixed_samples](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_framebuffer_mixed_samples.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_framebuffer_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_framebuffer_multisample.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

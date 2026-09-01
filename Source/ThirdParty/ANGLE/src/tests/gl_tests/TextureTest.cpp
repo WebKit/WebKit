@@ -12,6 +12,7 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
+#include <array>
 #include <cstdint>
 #include <limits>
 #include <vector>
@@ -104,6 +105,14 @@ GLColor32F SliceFormatColor32F(GLenum format, GLColor32F full)
             return GLColor32F(1.0f, 1.0f, 1.0f, 1.0f);
     }
 }
+
+struct ImageLoadOutputData
+{
+    std::array<GLfloat, 4> load_float4;
+    std::array<GLint, 4> load_int4;
+    std::array<GLfloat, 4> load_float1;
+    std::array<GLint, 4> load_int1;
+};
 
 class TexCoordDrawTest : public ANGLETest<>
 {
@@ -533,6 +542,9 @@ class Texture2DTestES3RobustInit : public Texture2DTestES3
   protected:
     Texture2DTestES3RobustInit() : Texture2DTestES3() { setRobustResourceInit(true); }
 };
+
+class Texture2DTestES3PBO : public Texture2DTestES3
+{};
 
 class Texture2DTestES3Foveation : public Texture2DTestES3
 {
@@ -2191,6 +2203,332 @@ TEST_P(Texture2DTest, SimpleUpload)
     EXPECT_EQ(pixelsRed, output);
 }
 
+// Tests updating textures with various internal formats with incompatible format/type combinations,
+// which should fail.
+TEST_P(Texture2DTest, InvalidFormatTypeCombosShouldFail)
+{
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+
+    constexpr size_t kMaxPixelSize = 32;
+    constexpr size_t kWidth        = 4;
+    constexpr size_t kHeight       = 4;
+    std::vector<uint8_t> data(kMaxPixelSize * kWidth * kHeight, 0xAA);
+
+    const std::vector<GLenum> testFormats = {
+        GL_RGBA, GL_RGB, GL_ALPHA, GL_LUMINANCE, GL_LUMINANCE_ALPHA,
+    };
+    std::vector<GLenum> testTypes = {
+        GL_UNSIGNED_BYTE,
+        GL_UNSIGNED_SHORT_5_6_5,
+        GL_UNSIGNED_SHORT_4_4_4_4,
+        GL_UNSIGNED_SHORT_5_5_5_1,
+    };
+    if (IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"))
+    {
+        testTypes.push_back(GL_UNSIGNED_INT_2_10_10_10_REV_EXT);
+    }
+
+    auto combinationTest = [=](GLenum internalformat,
+                               std::vector<std::pair<GLenum, GLenum>> acceptableCombos) {
+        // Update the texture using various format/type combinations.
+        for (const GLenum &format : testFormats)
+        {
+            for (const GLenum &type : testTypes)
+            {
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, format, type, data.data());
+
+                // A failing combination will result in GL_INVALID_OPERATION. If the combination is
+                // included in the acceptable list, there should be no error.
+                GLenum err = glGetError();
+                std::pair<GLenum, GLenum> testCombo(format, type);
+                GLenum expectedError = std::find(acceptableCombos.begin(), acceptableCombos.end(),
+                                                 testCombo) == acceptableCombos.end()
+                                           ? GL_INVALID_OPERATION
+                                           : GL_NO_ERROR;
+                EXPECT_TRUE(err == expectedError)
+                    << "Unexpected error code: 0x" << std::hex << err << " | Internalformat: 0x"
+                    << std::hex << internalformat << " | Format: 0x" << std::hex << format
+                    << " | Type: 0x" << std::hex << type;
+            }
+        }
+    };
+
+    // Test combinations for RGBA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA8 = {{GL_RGBA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_RGBA8, acceptableCombosForRGBA8);
+
+    // Test combinations for RGBA4
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA4 = {
+        {GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+    {
+        acceptableCombosForRGBA4.emplace_back(std::make_pair(GL_RGBA, GL_UNSIGNED_BYTE));
+    }
+    combinationTest(GL_RGBA4, acceptableCombosForRGBA4);
+
+    // Test combinations for RGB5A1
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB5A1 = {
+        {GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1}, {GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+    {
+        acceptableCombosForRGB5A1.emplace_back(std::make_pair(GL_RGBA, GL_UNSIGNED_BYTE));
+        if (IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"))
+        {
+            acceptableCombosForRGB5A1.emplace_back(
+                std::make_pair(GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV_EXT));
+        }
+    }
+    combinationTest(GL_RGB5_A1, acceptableCombosForRGB5A1);
+
+    // Test combinations for RGB8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kWidth, kHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB8 = {
+        {GL_RGB, GL_UNSIGNED_BYTE}, {GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat") &&
+        IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"))
+    {
+        acceptableCombosForRGB8.emplace_back(
+            std::make_pair(GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV_EXT));
+    }
+    combinationTest(GL_RGB8, acceptableCombosForRGB8);
+
+    // Test combinations for RGB565
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kWidth, kHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB565 = {
+        {GL_RGB, GL_UNSIGNED_SHORT_5_6_5}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+    {
+        acceptableCombosForRGB565.emplace_back(std::make_pair(GL_RGB, GL_UNSIGNED_BYTE));
+        if (IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"))
+        {
+            acceptableCombosForRGB565.emplace_back(
+                std::make_pair(GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV_EXT));
+        }
+    }
+    combinationTest(GL_RGB565, acceptableCombosForRGB565);
+
+    // Test combinations for LUMINANCE8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, kWidth, kHeight, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForL8 = {
+        {GL_LUMINANCE, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_LUMINANCE8_EXT, acceptableCombosForL8);
+
+    // Test combinations for ALPHA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, kWidth, kHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForA8 = {{GL_ALPHA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_ALPHA8_EXT, acceptableCombosForA8);
+
+    // Test combinations for LUMINANCE8_ALPHA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, kWidth, kHeight, 0, GL_LUMINANCE_ALPHA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForLA8 = {
+        {GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_LUMINANCE8_ALPHA8_EXT, acceptableCombosForLA8);
+
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat") &&
+        IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"))
+    {
+        // Test combinations for RGB10A2_REV
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, kWidth, kHeight, 0, GL_RGBA,
+                     GL_UNSIGNED_INT_2_10_10_10_REV, nullptr);
+        ASSERT_GL_NO_ERROR();
+        std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB10A2REV = {
+            {GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV_EXT}};
+        combinationTest(GL_UNSIGNED_INT_2_10_10_10_REV_EXT, acceptableCombosForRGB10A2REV);
+    }
+}
+
+// Tests updating an RGB5A1 texture with RGB10A2_REV data.
+TEST_P(Texture2DTest, FormatRGB10A2REVToRGB5A1)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB5A1
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF83F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using RGB10A2 (REV)
+    std::vector<uint32_t> colorYellow(4 * 4, 0xC00FFFFF);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV,
+                    colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Tests updating an RGB565 texture with RGB10A2 REV.
+TEST_P(Texture2DTest, FormatRGB10A2REVToRGB565)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB565
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF81F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using RGB10A2 (REV)
+    std::vector<uint32_t> colorYellow(4 * 4, 0xC00FFFFF);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV,
+                    colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Tests updating an RGB8 texture with RGB10A2 REV.
+TEST_P(Texture2DTest, FormatRGB10A2REVToRGB8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB565
+    std::vector<GLColorRGB> colorMagenta(4 * 4, GLColorRGB::magenta);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using RGB10A2 (REV)
+    std::vector<uint32_t> colorYellow(4 * 4, 0xC00FFFFF);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV,
+                    colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Tests updating an RGB5A1 texture with byte data.
+TEST_P(Texture2DTest, FormatBytesToRGB5A1)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB5A1
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF83F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using bytes
+    std::vector<GLColor> colorYellow(4 * 4, GLColor::yellow);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Tests updating an RGB565 texture with bytes.
+TEST_P(Texture2DTest, FormatBytesToRGB565)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB565
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF81F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using bytes
+    std::vector<GLColorRGB> colorYellow(4 * 4, GLColorRGB::yellow);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGB, GL_UNSIGNED_BYTE, colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
 // Test that interleaved superseded updates work as expected
 TEST_P(Texture2DTest, InterleavedSupersedingTextureUpdates)
 {
@@ -3132,6 +3470,247 @@ TEST_P(Texture2DTest, PBOWithMultipleDraws)
     EXPECT_EQ(expected, actual);
 }
 
+// Tests updating textures with various internal formats with incompatible format/type combinations,
+// which should fail.
+TEST_P(Texture2DTestES3, InvalidFormatTypeCombosShouldFail)
+{
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+
+    constexpr size_t kMaxPixelSize = 32;
+    constexpr size_t kWidth        = 4;
+    constexpr size_t kHeight       = 4;
+    std::vector<uint8_t> data(kMaxPixelSize * kWidth * kHeight, 0xAA);
+
+    const std::vector<GLenum> testFormats = {
+        GL_RED,
+        GL_RGBA,
+        GL_RGB,
+        GL_ALPHA,
+        GL_LUMINANCE,
+        GL_LUMINANCE_ALPHA,
+        GL_DEPTH_COMPONENT,
+        GL_DEPTH_STENCIL,
+    };
+    const std::vector<GLenum> testTypes = {
+        GL_UNSIGNED_BYTE,
+        GL_UNSIGNED_SHORT,
+        GL_UNSIGNED_SHORT_5_6_5,
+        GL_UNSIGNED_SHORT_4_4_4_4,
+        GL_UNSIGNED_SHORT_5_5_5_1,
+        GL_FLOAT,
+        GL_HALF_FLOAT,
+        GL_UNSIGNED_INT,
+        GL_UNSIGNED_INT_24_8,
+        GL_UNSIGNED_INT_2_10_10_10_REV,
+    };
+
+    auto combinationTest = [=](GLenum internalformat,
+                               std::vector<std::pair<GLenum, GLenum>> acceptableCombos) {
+        // Update the texture using various format/type combinations.
+        for (const GLenum &format : testFormats)
+        {
+            for (const GLenum &type : testTypes)
+            {
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, format, type, data.data());
+
+                // A failing combination will result in GL_INVALID_OPERATION. If the combination is
+                // included in the acceptable list, there should be no error.
+                GLenum err = glGetError();
+                std::pair<GLenum, GLenum> testCombo(format, type);
+                GLenum expectedError = std::find(acceptableCombos.begin(), acceptableCombos.end(),
+                                                 testCombo) == acceptableCombos.end()
+                                           ? GL_INVALID_OPERATION
+                                           : GL_NO_ERROR;
+                EXPECT_TRUE(err == expectedError)
+                    << "Unexpected error code: 0x" << std::hex << err << " | Internalformat: 0x"
+                    << std::hex << internalformat << " | Format: 0x" << std::hex << format
+                    << " | Type: 0x" << std::hex << type;
+            }
+        }
+    };
+
+    // Test combinations for RGBA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA8 = {{GL_RGBA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_RGBA8, acceptableCombosForRGBA8);
+
+    // Test combinations for RGBA4
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA4 = {
+        {GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4}, {GL_RGBA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_RGBA4, acceptableCombosForRGBA4);
+
+    // Test combinations for RGB5A1
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB5A1 = {
+        {GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1},
+        {GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV}};
+    combinationTest(GL_RGB5_A1, acceptableCombosForRGB5A1);
+
+    // Test combinations for RGBA16F
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, kWidth, kHeight, 0, GL_RGBA, GL_HALF_FLOAT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA16F = {{GL_RGBA, GL_HALF_FLOAT},
+                                                                         {GL_RGBA, GL_FLOAT}};
+    combinationTest(GL_RGBA16F, acceptableCombosForRGBA16F);
+
+    // Test combinations for RGBA32F
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, kWidth, kHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGBA32F = {{GL_RGBA, GL_FLOAT}};
+    combinationTest(GL_RGBA32F, acceptableCombosForRGBA32F);
+
+    // Test combinations for RGB8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kWidth, kHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB8 = {{GL_RGB, GL_UNSIGNED_BYTE}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+    {
+        acceptableCombosForRGB8.emplace_back(
+            std::make_pair(GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV));
+    }
+    combinationTest(GL_RGB8, acceptableCombosForRGB8);
+
+    // Test combinations for RGB565
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kWidth, kHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB565 = {
+        {GL_RGB, GL_UNSIGNED_SHORT_5_6_5}, {GL_RGB, GL_UNSIGNED_BYTE}};
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+    {
+        acceptableCombosForRGB565.emplace_back(
+            std::make_pair(GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV));
+    }
+    combinationTest(GL_RGB565, acceptableCombosForRGB565);
+
+    // Test combinations for LUMINANCE8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, kWidth, kHeight, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForL8 = {
+        {GL_LUMINANCE, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_LUMINANCE8_EXT, acceptableCombosForL8);
+
+    // Test combinations for ALPHA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, kWidth, kHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForA8 = {{GL_ALPHA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_ALPHA8_EXT, acceptableCombosForA8);
+
+    // Test combinations for R8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, kWidth, kHeight, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForR8 = {{GL_RED, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_R8, acceptableCombosForR8);
+
+    // Test combinations for LUMINANCE8_ALPHA8
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, kWidth, kHeight, 0, GL_LUMINANCE_ALPHA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForLA8 = {
+        {GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE}};
+    combinationTest(GL_LUMINANCE8_ALPHA8_EXT, acceptableCombosForLA8);
+
+    // Test combinations for DEPTH_COMPONENT
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, kWidth, kHeight, 0, GL_DEPTH_COMPONENT,
+                 GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForD16 = {
+        {GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT}, {GL_DEPTH_COMPONENT, GL_UNSIGNED_INT}};
+    combinationTest(GL_DEPTH_COMPONENT16, acceptableCombosForD16);
+
+    // Test combinations for DEPTH_STENCIL
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL, kWidth, kHeight, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForD24S8 = {
+        {GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8}};
+    combinationTest(GL_DEPTH24_STENCIL8, acceptableCombosForD24S8);
+
+    // Test combinations for RGB10A2_REV
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, kWidth, kHeight, 0, GL_RGBA,
+                 GL_UNSIGNED_INT_2_10_10_10_REV, nullptr);
+    ASSERT_GL_NO_ERROR();
+    std::vector<std::pair<GLenum, GLenum>> acceptableCombosForRGB10A2REV = {
+        {GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV}};
+    combinationTest(GL_UNSIGNED_INT_2_10_10_10_REV, acceptableCombosForRGB10A2REV);
+}
+
+// Tests updating an RGB5A1 texture with bytes.
+TEST_P(Texture2DTestES3, FormatBytesToRGB5A1)
+{
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB5A1
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF83F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using bytes
+    std::vector<GLColor> colorYellow(4 * 4, GLColor::yellow);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Tests updating an RGB5A1 texture with RGB10A2_REV data.
+TEST_P(Texture2DTestES3, FormatRGB10A2REVToRGB5A1)
+{
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Create texture program
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT_GL_NO_ERROR();
+    GLint texLocation = glGetUniformLocation(drawTexture, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(drawTexture);
+    glUniform1i(texLocation, 0);
+
+    // Create a texture using RGB5A1
+    std::vector<uint16_t> colorMagenta(4 * 4, 0xF83F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                 colorMagenta.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+
+    // Update the texture using RGB10A2 (REV)
+    std::vector<uint32_t> colorYellow(4 * 4, 0xC00FFFFF);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV,
+                    colorYellow.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
 // Regression test for TextureMtl::mFormat becoming mismatched with the native storage format when
 // updating mips outside of the storage.
 TEST_P(Texture2DTestES3, StaleFormatCacheOutOrRangeMip)
@@ -3833,9 +4412,6 @@ TEST_P(Texture2DTestES3, TexImageWithDepthPBO)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/42263861
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
-
     constexpr GLsizei kSize = 4;
 
     // Set up the framebuffer.
@@ -4046,9 +4622,6 @@ TEST_P(Texture2DTestES3, TexImageWithStencilPBO)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/42263861
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
-
     constexpr GLsizei kSize = 4;
 
     // Set up the framebuffer.
@@ -4114,9 +4687,6 @@ TEST_P(Texture2DTestES3, TexImageWithDepthStencilPBO)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
-
-    // http://anglebug.com/42263861
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr GLsizei kSize = 4;
 
@@ -6315,12 +6885,6 @@ TEST_P(Texture2DTestES3, FramebufferTextureChangingBaselevel)
 // preserves the other mips' data.
 TEST_P(Texture2DBaseMaxTestES3, ExtendMipChainAfterRedefine)
 {
-    // http://anglebug.com/42263298
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
-
-    // http://anglebug.com/42263714
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA() && IsMac());
-
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -6385,9 +6949,6 @@ void Texture2DBaseMaxTestES3::testPingPongBaseLevel(bool immutable)
 
     // http://anglebug.com/42263311
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
-
-    // http://anglebug.com/42263301
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     initTest(immutable);
 
@@ -6572,9 +7133,6 @@ TEST_P(Texture2DBaseMaxTestES3, RedefineEveryLevelToAnotherFormat)
 // Test that generating mipmaps after change base level.
 TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRebase)
 {
-    // http://anglebug.com/42264421
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     testGenerateMipmapAfterRebase(false);
 }
 
@@ -6584,8 +7142,6 @@ TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRebaseImmutable)
     ANGLE_SKIP_TEST_IF(IsD3D());
     // http://anglebug.com/42264332
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
-    // http://anglebug.com/42264421
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     testGenerateMipmapAfterRebase(true);
 }
@@ -6698,9 +7254,6 @@ TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRedefineAndRebase)
 
     // http://crbug.com/1100613
     ANGLE_SKIP_TEST_IF(IsNVIDIAShield());
-
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     initTest(false);
 
@@ -6891,9 +7444,6 @@ TEST_P(Texture2DBaseMaxTestES3, RedefineMutableToImmutable)
 {
     // http://anglebug.com/42263310
     ANGLE_SKIP_TEST_IF(IsD3D());
-
-    // http://anglebug.com/42263301
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     constexpr uint32_t kBaseLevel          = 1;
     const GLColor kNewMipColors[kMipCount] = {
@@ -10055,8 +10605,6 @@ TEST_P(Texture2DTest, CopyAfterCompressed)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB8UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8UI, 1, 1, 0, GL_RGB_INTEGER, GL_UNSIGNED_BYTE, nullptr);
@@ -10073,8 +10621,6 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB8UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB8IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
 
@@ -10092,8 +10638,6 @@ TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB8IImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB16UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16UI, 1, 1, 0, GL_RGB_INTEGER, GL_UNSIGNED_SHORT, nullptr);
@@ -10110,8 +10654,6 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB16UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB16IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16I, 1, 1, 0, GL_RGB_INTEGER, GL_SHORT, nullptr);
@@ -10128,8 +10670,6 @@ TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB16IImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB32UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, 1, 1, 0, GL_RGB_INTEGER, GL_UNSIGNED_INT, nullptr);
@@ -10146,8 +10686,6 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB32UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB32IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32I, 1, 1, 0, GL_RGB_INTEGER, GL_INT, nullptr);
@@ -10193,9 +10731,6 @@ TEST_P(Texture2DTestES3, TextureRGB9E5ImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DTestES3, TextureCOMPRESSEDRGB8ETC2ImplicitAlpha1)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB8_ETC2, 1, 1, 0, 8, nullptr);
@@ -10210,9 +10745,6 @@ TEST_P(Texture2DTestES3, TextureCOMPRESSEDRGB8ETC2ImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DTestES3, TextureCOMPRESSEDSRGB8ETC2ImplicitAlpha1)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_SRGB8_ETC2, 1, 1, 0, 8, nullptr);
@@ -10251,6 +10783,79 @@ TEST_P(Texture2DTestES3RobustInit, TextureCOMPRESSEDSRGB8A1ETC2)
     drawQuad(mProgram, "position", 0.5f);
 
     EXPECT_PIXEL_ALPHA_EQ(0, 0, 255);
+}
+
+// Test that full level 0 PBO uploads with height > 1 correctly upload the last line when split.
+TEST_P(Texture2DTestES3PBO, SplitUploadLastLine)
+{
+    constexpr GLuint kWidth  = 8;
+    constexpr GLuint kHeight = 8;
+
+    std::vector<GLColor> pixelData(kWidth * kHeight, GLColor::green);
+    for (GLuint x = 0; x < kWidth; ++x)
+    {
+        pixelData[(kHeight - 1) * kWidth + x] = GLColor::red;
+    }
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_NO_ERROR();
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, pixelData.size() * sizeof(GLColor), pixelData.data(),
+                 GL_STATIC_DRAW);
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight - 1, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, kHeight - 1, kWidth, 1, GLColor::red);
+}
+
+// Test that full level 0 PBO uploads with height == 1 correctly upload the last pixel when split.
+TEST_P(Texture2DTestES3PBO, SplitUploadLastPixel)
+{
+    constexpr GLuint kWidth  = 8;
+    constexpr GLuint kHeight = 1;
+
+    std::vector<GLColor> pixelData(kWidth * kHeight, GLColor::blue);
+    pixelData[kWidth - 1] = GLColor::yellow;
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_NO_ERROR();
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, pixelData.size() * sizeof(GLColor), pixelData.data(),
+                 GL_STATIC_DRAW);
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth - 1, 1, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(kWidth - 1, 0, 1, 1, GLColor::yellow);
 }
 
 // Test that compressed textures ignore the pixel unpack state.
@@ -10680,7 +11285,7 @@ TEST_P(Texture2DTestES3, SampleThenFullUpdateThenSampleAgainCompressed)
     glViewport(0, 0, kWidth, kHeight);
 
     // Based on https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.html#ASTC, a 4x4
-    // block of constant format has the following pattern:
+    // block of constant color has the following pattern:
     // 0xFC, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, r, r, g, g, b, b, a, a
     constexpr uint8_t block1[16] = {0xFC, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                                     0x7F, 0x7F, 0x3F, 0x3F, 0xBF, 0xBF, 0xFF, 0xFF};
@@ -13115,25 +13720,16 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16SNORMTextureTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16R16RenderTest)
 {
-    // http://anglebug.com/42263714
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
-
     testNorm16RenderAndReadPixels(GL_R16_EXT, GL_RED, GL_UNSIGNED_SHORT);
 }
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16RenderTest)
 {
-    // http://anglebug.com/42263714
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
-
     testNorm16RenderAndReadPixels(GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT);
 }
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16RenderTest)
 {
-    // http://anglebug.com/42263714
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
-
     testNorm16RenderAndReadPixels(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
 }
 
@@ -13625,9 +14221,6 @@ TEST_P(Texture2DFloatTestES2, TextureHalfFloatSampleLegacyTest)
 // Test linear sampling for ES3 32F formats
 TEST_P(Texture2DFloatTestES3, TextureFloatLinearTest)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
 
     testFloatTextureLinear(GL_RGBA32F, GL_RGBA, GL_FLOAT);
@@ -13636,9 +14229,6 @@ TEST_P(Texture2DFloatTestES3, TextureFloatLinearTest)
 // Test linear sampling for ES2 32F formats
 TEST_P(Texture2DFloatTestES2, TextureFloatLinearTest)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
@@ -13664,9 +14254,6 @@ TEST_P(Texture2DFloatTestES2, TextureHalfFloatLinearTest)
 // Test linear sampling for legacy GLES 2.0 32F formats in ES3
 TEST_P(Texture2DFloatTestES3, TextureFloatLinearLegacyTest)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
 
@@ -13684,9 +14271,6 @@ TEST_P(Texture2DFloatTestES3, TextureFloatLinearLegacyTest)
 // Test linear sampling for legacy GLES 2.0 32F formats in ES2
 TEST_P(Texture2DFloatTestES2, TextureFloatLinearLegacyTest)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
 
@@ -13961,9 +14545,6 @@ TEST_P(Texture2DTestES3, UnpackCompatibleFormatButDifferentType)
 TEST_P(Texture2DTestES3, UnpackOverlappingRowsFromUnpackBuffer)
 {
     ANGLE_SKIP_TEST_IF(IsD3D11());
-
-    // Incorrect rendering results seen on OSX AMD.
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsAMD());
 
     const GLuint width            = 8u;
     const GLuint height           = 8u;
@@ -17346,9 +17927,6 @@ TEST_P(Texture2DIntegerTestES3, IntegerTextureNonZeroBaseLevel)
 // the texture is output.
 TEST_P(TextureCubeIntegerTestES3, IntegerCubeTextureNonZeroBaseLevel)
 {
-    // All output checks returned black, rather than the texture color.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureCube);
@@ -17452,9 +18030,6 @@ TEST_P(Texture2DIntegerProjectiveOffsetTestES3, NonZeroBaseLevel)
 // texture is output.
 TEST_P(Texture2DArrayIntegerTestES3, NonZeroBaseLevel)
 {
-    // Test fail: http://anglebug.com/42264492
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D_ARRAY, m2DArrayTexture);
     int width     = getWindowWidth();
@@ -17503,8 +18078,6 @@ TEST_P(Texture3DIntegerTestES3, NonZeroBaseLevel)
 
 void PBOCompressedTextureTest::runCompressedSubImage()
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
     // http://anglebug.com/42262750
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsDesktopOpenGL());
     ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows() && IsDesktopOpenGL());
@@ -17660,9 +18233,6 @@ void main()
 // Test using ETC1_RGB8 with subimage updates
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedSubImage)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_texture_storage"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
@@ -17705,9 +18275,6 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedSubImage)
 // MAX_LEVEL and draw.  This used to cause Vulkan validation errors.
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageNPOT)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
 
@@ -17756,9 +18323,6 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageNPOT)
 // that have not been flushed.
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageDraws)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
 
@@ -17840,9 +18404,6 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageDraws)
 // MAX_LEVEL and draw.  This used to cause Vulkan validation errors.
 TEST_P(ETC1CompressedTextureTest, ETC1ShrinkThenGrowMaxLevels)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
 
@@ -20941,6 +21502,434 @@ void main()
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::magenta, 1.0);
 }
 
+// Test that imageLoad from unbound image units in a vertex shader should not crash.
+// Uses a framebuffer with no color attachments.
+TEST_P(TextureTestES31, VertexShaderLoadUnboundImageUnits)
+{
+    // Requires at least 4 vertex image uniforms (shader uses binding 0-3).
+    GLint maxVertexImageUniforms = 0;
+    glGetIntegerv(GL_MAX_VERTEX_IMAGE_UNIFORMS, &maxVertexImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxVertexImageUniforms <= 3);
+
+    // Vertex shader loads from 4 unbound image units and writes results into an SSBO.
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+
+in vec4 position;
+uniform highp ivec2 coord;
+
+layout (binding=0, rgba32f) readonly uniform highp image2D  img_float4;
+layout (binding=1, rgba32i) readonly uniform highp iimage2D img_int4;
+layout (binding=2, r32f)             uniform highp image2D  img_float1;
+layout (binding=3, r32i)             uniform highp iimage2D img_int1;
+
+layout(std140, binding=0) buffer Output
+{
+    vec4  load_float4;
+    ivec4 load_int4;
+    vec4  load_float1;
+    ivec4 load_int1;
+};
+
+void main()
+{
+    load_float4 = imageLoad(img_float4, coord);
+    load_int4   = imageLoad(img_int4, coord);
+    load_float1 = imageLoad(img_float1, coord);
+    imageStore(img_float1, coord, vec4(1.0));
+    load_int1   = imageLoad(img_int1, coord);
+    imageStore(img_int1, coord, ivec4(1));
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Set up an FBO with no color attachments.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 1);
+    glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glViewport(0, 0, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Prefill SSBO with 0xFF so un-written values are detectable.
+    const std::vector<GLubyte> kPrefillData(sizeof(ImageLoadOutputData), 0xFF);
+
+    GLBuffer ssbo;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kPrefillData.size(), kPrefillData.data(),
+                 GL_STREAM_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLint coordLoc = glGetUniformLocation(program, "coord");
+    ASSERT_NE(-1, coordLoc);
+    glUniform2i(coordLoc, 0, 0);
+    ASSERT_GL_NO_ERROR();
+
+    GLint posLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, posLoc);
+    std::array<GLfloat, 4> singleVertex = {0.0f, 0.0f, 0.0f, 1.0f};
+    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, singleVertex.data());
+    glEnableVertexAttribArray(posLoc);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glDisableVertexAttribArray(posLoc);
+    ASSERT_GL_NO_ERROR();
+
+    // Ensure SSBO writes are visible to glMapBufferRange.
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Map the SSBO and verify imageLoad from unbound units returns 0 (first 3 components each).
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const ImageLoadOutputData *mapped =
+        reinterpret_cast<const ImageLoadOutputData *>(glMapBufferRange(
+            GL_SHADER_STORAGE_BUFFER, 0, sizeof(ImageLoadOutputData), GL_MAP_READ_BIT));
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(mapped, nullptr);
+
+    EXPECT_EQ(mapped->load_float4[0], 0.0f);
+    EXPECT_EQ(mapped->load_float4[1], 0.0f);
+    EXPECT_EQ(mapped->load_float4[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int4[0], 0);
+    EXPECT_EQ(mapped->load_int4[1], 0);
+    EXPECT_EQ(mapped->load_int4[2], 0);
+
+    EXPECT_EQ(mapped->load_float1[0], 0.0f);
+    EXPECT_EQ(mapped->load_float1[1], 0.0f);
+    EXPECT_EQ(mapped->load_float1[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int1[0], 0);
+    EXPECT_EQ(mapped->load_int1[1], 0);
+    EXPECT_EQ(mapped->load_int1[2], 0);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that imageLoad from unbound image units in a fragment shader should not crash.
+TEST_P(TextureTestES31, FragmentShaderLoadUnboundImageUnits)
+{
+    // Requires at least 4 fragment image uniforms (shader uses binding 0-3).
+    GLint maxFragmentImageUniforms = 0;
+    glGetIntegerv(GL_MAX_FRAGMENT_IMAGE_UNIFORMS, &maxFragmentImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxFragmentImageUniforms <= 3);
+
+    constexpr char kVS[] = R"(#version 310 es
+in vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    // Fragment shader loads from 4 unbound image units and writes results into an SSBO.
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+
+uniform highp ivec2 coord;
+
+layout (binding=0, rgba32f) readonly uniform highp image2D  img_float4;
+layout (binding=1, rgba32i) readonly uniform highp iimage2D img_int4;
+layout (binding=2, r32f)             uniform highp image2D  img_float1;
+layout (binding=3, r32i)             uniform highp iimage2D img_int1;
+
+layout(std140, binding=0) buffer Output
+{
+    vec4  load_float4;
+    ivec4 load_int4;
+    vec4  load_float1;
+    ivec4 load_int1;
+};
+
+out vec4 fragColor;
+
+void main()
+{
+    load_float4 = imageLoad(img_float4, coord);
+    load_int4   = imageLoad(img_int4, coord);
+    load_float1 = imageLoad(img_float1, coord);
+    imageStore(img_float1, coord, vec4(1.0));
+    load_int1   = imageLoad(img_int1, coord);
+    imageStore(img_int1, coord, ivec4(1));
+    fragColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Unlike the vertex shader variant, the fragment shader needs an actual color attachment for
+    // the fragment to be executed. To avoid being skipped due to optimization.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glViewport(0, 0, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    const std::vector<GLubyte> kPrefillData(sizeof(ImageLoadOutputData), 0xFF);
+
+    GLBuffer ssbo;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kPrefillData.size(), kPrefillData.data(),
+                 GL_STREAM_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLint coordLoc = glGetUniformLocation(program, "coord");
+    ASSERT_NE(-1, coordLoc);
+    glUniform2i(coordLoc, 0, 0);
+    ASSERT_GL_NO_ERROR();
+
+    GLint posLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, posLoc);
+    std::array<GLfloat, 4> singleVertex = {0.0f, 0.0f, 0.0f, 1.0f};
+    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, singleVertex.data());
+    glEnableVertexAttribArray(posLoc);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glDisableVertexAttribArray(posLoc);
+    ASSERT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const ImageLoadOutputData *mapped =
+        reinterpret_cast<const ImageLoadOutputData *>(glMapBufferRange(
+            GL_SHADER_STORAGE_BUFFER, 0, sizeof(ImageLoadOutputData), GL_MAP_READ_BIT));
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(mapped, nullptr);
+
+    EXPECT_EQ(mapped->load_float4[0], 0.0f);
+    EXPECT_EQ(mapped->load_float4[1], 0.0f);
+    EXPECT_EQ(mapped->load_float4[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int4[0], 0);
+    EXPECT_EQ(mapped->load_int4[1], 0);
+    EXPECT_EQ(mapped->load_int4[2], 0);
+
+    EXPECT_EQ(mapped->load_float1[0], 0.0f);
+    EXPECT_EQ(mapped->load_float1[1], 0.0f);
+    EXPECT_EQ(mapped->load_float1[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int1[0], 0);
+    EXPECT_EQ(mapped->load_int1[1], 0);
+    EXPECT_EQ(mapped->load_int1[2], 0);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that imageLoad from unbound image units in a compute shader should not crash.
+TEST_P(TextureTestES31, ComputeShaderLoadUnboundImageUnits)
+{
+    GLint maxComputeImageUniforms = 0;
+    glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxComputeImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxComputeImageUniforms <= 3);
+
+    // Compute shader loads from 4 unbound image units and writes results into an SSBO.
+    constexpr char kCS[] = R"(#version 310 es
+precision highp float;
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+uniform highp ivec2 coord;
+
+layout (binding=0, rgba32f) readonly uniform highp image2D  img_float4;
+layout (binding=1, rgba32i) readonly uniform highp iimage2D img_int4;
+layout (binding=2, r32f)             uniform highp image2D  img_float1;
+layout (binding=3, r32i)             uniform highp iimage2D img_int1;
+
+layout(std140, binding=0) buffer Output
+{
+    vec4  load_float4;
+    ivec4 load_int4;
+    vec4  load_float1;
+    ivec4 load_int1;
+};
+
+void main()
+{
+    load_float4 = imageLoad(img_float4, coord);
+    load_int4   = imageLoad(img_int4, coord);
+    load_float1 = imageLoad(img_float1, coord);
+    imageStore(img_float1, coord, vec4(1.0));
+    load_int1   = imageLoad(img_int1, coord);
+    imageStore(img_int1, coord, ivec4(1));
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    const std::vector<GLubyte> kPrefillData(sizeof(ImageLoadOutputData), 0xFF);
+
+    GLBuffer ssbo;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kPrefillData.size(), kPrefillData.data(),
+                 GL_STREAM_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLint coordLoc = glGetUniformLocation(program, "coord");
+    ASSERT_NE(-1, coordLoc);
+    glUniform2i(coordLoc, 0, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glDispatchCompute(1, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const ImageLoadOutputData *mapped =
+        reinterpret_cast<const ImageLoadOutputData *>(glMapBufferRange(
+            GL_SHADER_STORAGE_BUFFER, 0, sizeof(ImageLoadOutputData), GL_MAP_READ_BIT));
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(mapped, nullptr);
+
+    EXPECT_EQ(mapped->load_float4[0], 0.0f);
+    EXPECT_EQ(mapped->load_float4[1], 0.0f);
+    EXPECT_EQ(mapped->load_float4[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int4[0], 0);
+    EXPECT_EQ(mapped->load_int4[1], 0);
+    EXPECT_EQ(mapped->load_int4[2], 0);
+
+    EXPECT_EQ(mapped->load_float1[0], 0.0f);
+    EXPECT_EQ(mapped->load_float1[1], 0.0f);
+    EXPECT_EQ(mapped->load_float1[2], 0.0f);
+
+    EXPECT_EQ(mapped->load_int1[0], 0);
+    EXPECT_EQ(mapped->load_int1[1], 0);
+    EXPECT_EQ(mapped->load_int1[2], 0);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that imageLoad/imageStore in a compute shader works correctly when only some of the image
+// units (0 and 2) have real textures bound to them while the others (1 and 3) are left unbound.
+TEST_P(TextureTestES31, ComputeShaderLoadPartiallyBoundImageUnits)
+{
+    GLint maxComputeImageUniforms = 0;
+    glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxComputeImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxComputeImageUniforms <= 3);
+
+    constexpr char kCS[] = R"(#version 310 es
+precision highp float;
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+uniform highp ivec2 coord;
+
+layout (binding=0, rgba32f) readonly uniform highp image2D  img_float4;
+layout (binding=1, rgba32i) readonly uniform highp iimage2D img_int4;
+layout (binding=2, r32f)             uniform highp image2D  img_float1;
+layout (binding=3, r32i)             uniform highp iimage2D img_int1;
+
+layout(std140, binding=0) buffer Output
+{
+    vec4  load_float4;
+    ivec4 load_int4;
+    vec4  load_float1;
+    ivec4 load_int1;
+};
+
+void main()
+{
+    load_float4 = imageLoad(img_float4, coord);
+    load_int4   = imageLoad(img_int4, coord);
+    load_float1 = imageLoad(img_float1, coord);
+    imageStore(img_float1, coord, vec4(2.0));
+    load_int1   = imageLoad(img_int1, coord);
+    imageStore(img_int1, coord, ivec4(1));
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind a real texture with known contents to image unit 0 (img_float4, read-only).
+    std::array<GLfloat, 4> kFloat4Data = {1.0f, 2.0f, 3.0f, 4.0f};
+    GLTexture texFloat4;
+    glBindTexture(GL_TEXTURE_2D, texFloat4);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_FLOAT, kFloat4Data.data());
+    glBindImageTexture(0, texFloat4, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+
+    // Bind a real texture with known contents to image unit 2 (img_float1, read-write).
+    constexpr GLfloat kFloat1Data = 7.0f;
+    GLTexture texFloat1;
+    glBindTexture(GL_TEXTURE_2D, texFloat1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, &kFloat1Data);
+    glBindImageTexture(2, texFloat1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+
+    // Image units 1 (img_int4) and 3 (img_int1) are intentionally left unbound.
+    ASSERT_GL_NO_ERROR();
+
+    const std::vector<GLubyte> kPrefillData(sizeof(ImageLoadOutputData), 0xFF);
+
+    GLBuffer ssbo;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kPrefillData.size(), kPrefillData.data(),
+                 GL_STREAM_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLint coordLoc = glGetUniformLocation(program, "coord");
+    ASSERT_NE(-1, coordLoc);
+    glUniform2i(coordLoc, 0, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glDispatchCompute(1, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const ImageLoadOutputData *mapped =
+        reinterpret_cast<const ImageLoadOutputData *>(glMapBufferRange(
+            GL_SHADER_STORAGE_BUFFER, 0, sizeof(ImageLoadOutputData), GL_MAP_READ_BIT));
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(mapped, nullptr);
+
+    // Bound unit 0: should read back the real texture contents.
+    EXPECT_EQ(mapped->load_float4[0], 1.0f);
+    EXPECT_EQ(mapped->load_float4[1], 2.0f);
+    EXPECT_EQ(mapped->load_float4[2], 3.0f);
+    EXPECT_EQ(mapped->load_float4[3], 4.0f);
+
+    // Unbound unit 1: should read back zero.
+    EXPECT_EQ(mapped->load_int4[0], 0);
+    EXPECT_EQ(mapped->load_int4[1], 0);
+    EXPECT_EQ(mapped->load_int4[2], 0);
+
+    // Bound unit 2: should read back the real texture contents, before being overwritten.
+    EXPECT_EQ(mapped->load_float1[0], 7.0f);
+
+    // Unbound unit 3: should read back zero.
+    EXPECT_EQ(mapped->load_int1[0], 0);
+    EXPECT_EQ(mapped->load_int1[1], 0);
+    EXPECT_EQ(mapped->load_int1[2], 0);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test repeated calls to glBindImageTexture on a texture buffer with format respecification
 TEST_P(TextureBufferTestES32, BindImageTextureBufferWithFormatRespecification)
 {
@@ -21067,6 +22056,11 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3YUV,
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3RobustInit);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DTestES3RobustInit);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3PBO);
+ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3PBO,
+                               ES3_OPENGL().enable(Feature::SplitLevel0PboFullSubImage2D),
+                               ES3_OPENGLES().enable(Feature::SplitLevel0PboFullSubImage2D));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3Foveation);
 ANGLE_INSTANTIATE_TEST_ES3_AND(

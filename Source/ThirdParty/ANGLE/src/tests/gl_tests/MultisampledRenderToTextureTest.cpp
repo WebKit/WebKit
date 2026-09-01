@@ -4497,6 +4497,122 @@ TEST_P(MSRTTES3Test, RenderToTextureMidRenderPassDepthClear)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test depth-only rendering
+TEST_P(MSRTTES3Test, RenderToTextureDepthOnly)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize = 6;
+
+    // Create multisampled framebuffer with only depth attachments.
+    GLRenderbuffer depthStencilMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilMS);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilMS);
+    ASSERT_GL_NO_ERROR();
+
+    // Render to depth
+    glClearDepthf(0.0);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    // depthValue = 1/2 * 0.5f + 1/2 = 0.75f
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Blit depth to verify it
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+    // Verify depth
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glDepthFunc(GL_LESS);
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.49);
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.51);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test stencil-only rendering
+TEST_P(MSRTTES3Test, RenderToTextureStencilOnly)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize = 6;
+
+    // Create multisampled framebuffer with only stencil attachments.
+    GLRenderbuffer depthStencilMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilMS);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencilMS);
+    ASSERT_GL_NO_ERROR();
+
+    // Render to stencil
+    glClearStencil(0x55);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xA4, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Blit stencil to verify it
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+
+    // Verify stencil
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glStencilFunc(GL_EQUAL, 0xA4, 0xFF);
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that MSRTT rendering to cubemap faces work.
 TEST_P(MSRTTES3Test, CubeMap)
 {

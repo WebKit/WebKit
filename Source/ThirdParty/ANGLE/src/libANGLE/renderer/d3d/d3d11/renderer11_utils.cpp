@@ -1381,7 +1381,6 @@ void GenerateCaps(ID3D11Device *device,
     extensions->baseVertexBaseInstanceShaderBuiltinANGLE = true;
     extensions->drawElementsBaseVertexOES                = true;
     extensions->drawElementsBaseVertexEXT                = true;
-    extensions->videoTextureWEBGL = true;
 
     // D3D11 cannot support reading depth texture as a luminance texture.
     // It treats it as a red-channel-only texture.
@@ -1451,14 +1450,6 @@ void GenerateCaps(ID3D11Device *device,
         // this maybe touble for RGB32 format.
         caps->textureBufferOffsetAlignment = 16;
     }
-
-#ifdef ANGLE_ENABLE_WINDOWS_UWP
-    // Setting a non-zero divisor on attribute zero doesn't work on certain Windows Phone 8-era
-    // devices. We should prevent developers from doing this on ALL Windows Store devices. This will
-    // maintain consistency across all Windows devices. We allow non-zero divisors on attribute zero
-    // if the Client Version >= 3, since devices affected by this issue don't support ES3+.
-    limitations->attributeZeroRequiresZeroDivisorInEXT = true;
-#endif
 }
 
 }  // namespace d3d11_gl

@@ -129,7 +129,7 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uFoo
+struct _uFoo_0
 {
   _ux : f32,
   _uy : f32,
@@ -152,12 +152,12 @@ struct ANGLEUniformBlock
 ;
 ;
 
-fn _udoFoo(_ufoo : _uFoo, _uzw : f32) -> vec4<f32>
+fn _udoFoo(_ufoo : _uFoo_0, _uzw : f32) -> vec4<f32>
 {
   return vec4<f32>((_ufoo)._ux, (_ufoo)._uy, _uzw, _uzw);
 }
 
-fn _ureturnFoo(_ufoo : _uFoo) -> _uFoo
+fn _ureturnFoo(_ufoo : _uFoo_0) -> _uFoo_0
 {
   return _ufoo;
 }
@@ -174,7 +174,7 @@ fn _utakeArgs(_ux : vec2<f32>, _uy : f32) -> f32
 
 fn _umain()
 {
-  var _ufoo : _uFoo;
+  var _ufoo : _uFoo_0;
   ((_ufoo)._ux) = (2.0f);
   ((_ufoo)._uy) = (2.0f);
   ((_ufoo)._umultiArray) = (array<array<vec3<f32>, 3>, 2>(array<vec3<f32>, 3>(vec3<f32>(1.0f, 2.0f, 3.0f), vec3<f32>(1.0f, 2.0f, 3.0f), vec3<f32>(1.0f, 2.0f, 3.0f)), array<vec3<f32>, 3>(vec3<f32>(4.0f, 5.0f, 6.0f), vec3<f32>(4.0f, 5.0f, 6.0f), vec3<f32>(4.0f, 5.0f, 6.0f))));
@@ -297,7 +297,7 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uFoo
+struct _uFoo_0
 {
   _ux : f32,
   _uy : f32,
@@ -319,57 +319,57 @@ struct ANGLEUniformBlock
 
 ;
 
-fn _udoFoo(_ufoo : _uFoo) -> vec4<f32>
+fn _udoFoo(_ufoo : _uFoo_0) -> vec4<f32>
 {
   return vec4<f32>((_ufoo)._ux, (_ufoo)._uy, 0.0f, 0.0f);
 }
 
-fn ANGLEfunc3006_udoFoo(_ufoo : _uFoo, _uzw : f32) -> vec4<f32>
+fn ANGLEfunc3006_udoFoo(_ufoo : _uFoo_0, _uzw : f32) -> vec4<f32>
 {
   return vec4<f32>((_ufoo)._ux, (_ufoo)._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3009_udoFoo(_ufoo : array<_uFoo, 2>, _uzw : f32) -> vec4<f32>
+fn ANGLEfunc3009_udoFoo(_ufoo : array<_uFoo_0, 2>, _uzw : f32) -> vec4<f32>
 {
   return vec4<f32>(((_ufoo)[0i])._ux, ((_ufoo)[0i])._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3012_udoFoo(_ufoo : array<_uFoo, 3>, _uzw : f32) -> vec4<f32>
+fn ANGLEfunc3012_udoFoo(_ufoo : array<_uFoo_0, 3>, _uzw : f32) -> vec4<f32>
 {
   return vec4<f32>(((_ufoo)[0i])._ux, ((_ufoo)[0i])._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3015_udoFoo(_ufoo : array<array<_uFoo, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>) -> vec4<f32>
+fn ANGLEfunc3015_udoFoo(_ufoo : array<array<_uFoo_0, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>) -> vec4<f32>
 {
   return vec4<f32>((((_ufoo)[0i])[0i])._ux, (((_ufoo)[0i])[0i])._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3019_udoFoo(_ufoo : array<array<_uFoo, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<bool>) -> vec4<f32>
+fn ANGLEfunc3019_udoFoo(_ufoo : array<array<_uFoo_0, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<bool>) -> vec4<f32>
 {
   return vec4<f32>((((_ufoo)[0i])[0i])._ux, (((_ufoo)[0i])[0i])._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3024_udoFoo(_ufoo : array<array<_uFoo, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<i32>) -> vec4<f32>
+fn ANGLEfunc3024_udoFoo(_ufoo : array<array<_uFoo_0, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<i32>) -> vec4<f32>
 {
   return vec4<f32>((((_ufoo)[0i])[0i])._ux, (((_ufoo)[0i])[0i])._uy, _uzw, _uzw);
 }
 
-fn ANGLEfunc3029_udoFoo(_ufoo : array<array<_uFoo, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<u32>) -> vec4<f32>
+fn ANGLEfunc3029_udoFoo(_ufoo : array<array<_uFoo_0, 2>, 2>, _uzw : f32, _ua : mat2x2<f32>, _ub : vec2<u32>) -> vec4<f32>
 {
   return vec4<f32>((((_ufoo)[0i])[0i])._ux, (((_ufoo)[0i])[0i])._uy, _uzw, _uzw);
 }
 
 fn _umain()
 {
-  var _ufoo : _uFoo;
+  var _ufoo : _uFoo_0;
   _udoFoo(_ufoo);
   ANGLEfunc3006_udoFoo(_ufoo, 3.0f);
-  ANGLEfunc3009_udoFoo(array<_uFoo, 2>(_ufoo, _ufoo), 3.0f);
-  ANGLEfunc3012_udoFoo(array<_uFoo, 3>(_ufoo, _ufoo, _ufoo), 3.0f);
-  ANGLEfunc3015_udoFoo(array<array<_uFoo, 2>, 2>(array<_uFoo, 2>(_ufoo, _ufoo), array<_uFoo, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f));
-  ANGLEfunc3019_udoFoo(array<array<_uFoo, 2>, 2>(array<_uFoo, 2>(_ufoo, _ufoo), array<_uFoo, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<bool>(true, false));
-  ANGLEfunc3024_udoFoo(array<array<_uFoo, 2>, 2>(array<_uFoo, 2>(_ufoo, _ufoo), array<_uFoo, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<i32>(1i, 2i));
-  ANGLEfunc3029_udoFoo(array<array<_uFoo, 2>, 2>(array<_uFoo, 2>(_ufoo, _ufoo), array<_uFoo, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<u32>(1u, 2u));
+  ANGLEfunc3009_udoFoo(array<_uFoo_0, 2>(_ufoo, _ufoo), 3.0f);
+  ANGLEfunc3012_udoFoo(array<_uFoo_0, 3>(_ufoo, _ufoo, _ufoo), 3.0f);
+  ANGLEfunc3015_udoFoo(array<array<_uFoo_0, 2>, 2>(array<_uFoo_0, 2>(_ufoo, _ufoo), array<_uFoo_0, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f));
+  ANGLEfunc3019_udoFoo(array<array<_uFoo_0, 2>, 2>(array<_uFoo_0, 2>(_ufoo, _ufoo), array<_uFoo_0, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<bool>(true, false));
+  ANGLEfunc3024_udoFoo(array<array<_uFoo_0, 2>, 2>(array<_uFoo_0, 2>(_ufoo, _ufoo), array<_uFoo_0, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<i32>(1i, 2i));
+  ANGLEfunc3029_udoFoo(array<array<_uFoo_0, 2>, 2>(array<_uFoo_0, 2>(_ufoo, _ufoo), array<_uFoo_0, 2>(_ufoo, _ufoo)), 3.0f, mat2x2<f32>(1.0f, 0.0f, 0.0f, 1.0f), vec2<u32>(1u, 2u));
   (ANGLE_output_global._uoutColor) = (vec4<f32>((_ufoo)._ux, 0.0f, 0.0f, 0.0f));
 }
 @fragment
@@ -449,7 +449,7 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uFoo
+struct _uFoo_0
 {
   _ux : f32,
   _uy : f32,
@@ -469,32 +469,32 @@ struct ANGLEUniformBlock
 
 ;
 
-fn _udoFoo(_ufoo : _uFoo, _uzw : f32) -> vec4<f32>
+fn _udoFoo(_ufoo : _uFoo_0, _uzw : f32) -> vec4<f32>
 {
-  var sbc8 : _uFoo = (_ufoo);
-  ((sbc8)._ux) = ((sbc8)._uy);
-  return vec4<f32>((sbc8)._ux, (sbc8)._uy, _uzw, _uzw);
+  var sbc9 : _uFoo_0 = (_ufoo);
+  ((sbc9)._ux) = ((sbc9)._uy);
+  return vec4<f32>((sbc9)._ux, (sbc9)._uy, _uzw, _uzw);
 }
 
 fn _ureturnFloat(_ux : f32) -> f32
 {
-  var sbc9 : f32 = (_ux);
-  (sbc9) += (5.0f);
-  return sbc9;
+  var sbca : f32 = (_ux);
+  (sbca) += (5.0f);
+  return sbca;
 }
 
 fn _utakeArgs(_ux : vec2<f32>, _uy : f32, _uz : f32) -> f32
 {
-  var sbca : f32 = (_uy);
-  var sbcb : f32 = (_uz);
-  (sbca) -= ((_ux).x);
-  (sbcb) -= (1.0f);
-  return sbca;
+  var sbcb : f32 = (_uy);
+  var sbcc : f32 = (_uz);
+  (sbcb) -= ((_ux).x);
+  (sbcc) -= (1.0f);
+  return sbcb;
 }
 
 fn _umain()
 {
-  var _ufoo : _uFoo;
+  var _ufoo : _uFoo_0;
   ((_ufoo)._ux) = (2.0f);
   ((_ufoo)._uy) = (2.0f);
   _udoFoo(_ufoo, _ureturnFloat(3.0f));
@@ -1204,14 +1204,14 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uNestedUniforms
+struct _uNestedUniforms_0
 {
   @align(16) _ux : f32,
 };
 
-struct _uUniforms
+struct _uUniforms_0
 {
-  @align(16) _ua : _uNestedUniforms,
+  @align(16) _ua : _uNestedUniforms_0,
   @align(16) _ub : f32,
   _uc : f32,
   @align(16) _ud : array<ANGLE_wrapped_float, 5>,
@@ -1237,7 +1237,7 @@ struct ANGLEUniformBlock
 
 struct ANGLE_DefaultUniformBlock
 {
-  @align(16) _uunis : _uUniforms,
+  @align(16) _uunis : _uUniforms_0,
 };
 
 ;
@@ -1246,10 +1246,10 @@ fn _umain()
 {
   var _udCopy : array<f32, 5> = (ANGLE_Convert_Array5_ANGLE_wrapped_float_ElementsTo_float_Elements(((ANGLE_defaultUniformBlock)._uunis)._ud));
   (ANGLE_output_global._ufragColor) = (vec4<f32>((((ANGLE_defaultUniformBlock)._uunis)._ua)._ux, ((ANGLE_defaultUniformBlock)._uunis)._ub, ((ANGLE_defaultUniformBlock)._uunis)._uc, (_udCopy)[1i]));
-  (ANGLE_output_global._ufragColor) += (vec4<f32>(((ANGLE_defaultUniformBlock)._uunis)._ud[2i].elem, ((ANGLE_defaultUniformBlock)._uunis)._ue, ((((ANGLE_defaultUniformBlock)._uunis)._uf)[0i])[2i], (sbc1())[1i]));
+  (ANGLE_output_global._ufragColor) += (vec4<f32>(((ANGLE_defaultUniformBlock)._uunis)._ud[2i].elem, ((ANGLE_defaultUniformBlock)._uunis)._ue, ((((ANGLE_defaultUniformBlock)._uunis)._uf)[0i])[2i], (sbc3())[1i]));
 }
 
-fn sbc1() -> array<f32, 5>
+fn sbc3() -> array<f32, 5>
 {
   if ((((ANGLE_defaultUniformBlock)._uunis)._ue) > (0.5f))
   {
@@ -1844,7 +1844,7 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uUniforms
+struct _uUniforms_0
 {
   @align(16) _ua : array<ANGLE_wrapped_vec2, 2>,
   @align(16) _ub : array<ANGLE_wrapped_vec2, 3>,
@@ -1870,7 +1870,7 @@ struct ANGLEUniformBlock
 
 struct ANGLE_DefaultUniformBlock
 {
-  @align(16) _uunis : _uUniforms,
+  @align(16) _uunis : _uUniforms_0,
 };
 
 ;
@@ -1958,7 +1958,7 @@ struct ANGLEDepthRangeParams
   diff : f32,
 };
 
-struct _uUniforms
+struct _uUniforms_0
 {
   @align(16) _ua : u32,
   @align(16) _uaArr : array<ANGLE_wrapped_uint, 2>,
@@ -1980,7 +1980,7 @@ struct ANGLEUniformBlock
 
 struct ANGLE_DefaultUniformBlock
 {
-  @align(16) _uunis : _uUniforms,
+  @align(16) _uunis : _uUniforms_0,
 };
 
 ;

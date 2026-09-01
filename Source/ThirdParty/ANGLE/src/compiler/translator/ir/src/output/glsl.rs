@@ -128,7 +128,6 @@ impl Generator {
             ImageDimension::Buffer => "Buffer",
             ImageDimension::External => "ExternalOES",
             ImageDimension::ExternalY2Y => "External2DY2YEXT",
-            ImageDimension::Video => "VideoWEBGL",
             ImageDimension::PixelLocal => {
                 base_name = "pixelLocalANGLE";
                 ""
@@ -342,7 +341,7 @@ impl Generator {
             "{}{}{}",
             match name.source {
                 // Make sure unnamed interface blocks remain unnamed.
-                NameSource::ShaderInterface if !name.name.is_empty() => USER_SYMBOL_PREFIX,
+                NameSource::ShaderInterface if !name.name.is_empty() => "_u",
                 NameSource::Temporary => temp_prefix,
                 _ => "",
             },

@@ -2103,12 +2103,12 @@ angle::CallCapture CaptureReadnPixelsKHR(const State &glState,
 angle::CallCapture CaptureFramebufferParameteriMESA(const State &glState,
                                                     bool isCallValid,
                                                     GLenum target,
-                                                    GLenum pname,
+                                                    FramebufferParameter pnamePacked,
                                                     GLint param);
 angle::CallCapture CaptureGetFramebufferParameterivMESA(const State &glState,
                                                         bool isCallValid,
                                                         GLenum target,
-                                                        GLenum pname,
+                                                        FramebufferParameter pnamePacked,
                                                         GLint *params);
 
 // GL_NV_fence
@@ -4697,7 +4697,7 @@ void CaptureReadnPixelsKHR_data(const State &glState,
                                 angle::ParamCapture *paramCapture);
 void CaptureGetFramebufferParameterivMESA_params(const State &glState,
                                                  GLenum target,
-                                                 GLenum pname,
+                                                 FramebufferParameter pnamePacked,
                                                  GLint *params,
                                                  angle::ParamCapture *paramCapture);
 void CaptureDeleteFencesNV_fencesPacked(const State &glState,

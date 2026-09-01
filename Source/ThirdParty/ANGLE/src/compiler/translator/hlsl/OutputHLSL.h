@@ -113,8 +113,6 @@ class OutputHLSL : public TIntermTraverser
     bool visitLoop(Visit visit, TIntermLoop *) override;
     bool visitBranch(Visit visit, TIntermBranch *) override;
 
-    bool handleExcessiveLoop(TInfoSinkBase &out, TIntermLoop *node);
-
     // Emit one of three strings depending on traverse phase. Called with literal strings so using
     // const char* instead of TString.
     void outputTriplet(TInfoSinkBase &out,
@@ -235,8 +233,6 @@ class OutputHLSL : public TIntermTraverser
     bool mOutputLod0Function;
     bool mInsideDiscontinuousLoop;
     int mNestedLoopDepth;
-
-    TIntermSymbol *mExcessiveLoopIndex;
 
     TString structInitializerString(int indent, const TType &type, const TString &name) const;
 

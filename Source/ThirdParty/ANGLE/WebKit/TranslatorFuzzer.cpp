@@ -267,8 +267,6 @@ ShShaderOutput resolveShaderOutput(ShShaderOutput output)
             return SH_GLSL_440_CORE_OUTPUT;
         case 0x8B88:
             return SH_GLSL_450_CORE_OUTPUT;
-        case 0x8B48:
-            return SH_HLSL_3_0_OUTPUT;
         case 0x8B49:
             return SH_HLSL_4_1_OUTPUT;
         case 0x8B4B:

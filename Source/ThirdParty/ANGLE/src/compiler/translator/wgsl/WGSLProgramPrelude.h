@@ -30,7 +30,7 @@ class WGSLProgramPrelude
 
     WGSLWrapperFunction assign(const TType &dest, const TType &src, TOperator op);
 
-    void outputPrelude(TInfoSinkBase &sink);
+    void outputPrelude(TInfoSinkBase &sink, const ShBuiltInResources &resources);
 
   private:
     using FuncId = uint64_t;

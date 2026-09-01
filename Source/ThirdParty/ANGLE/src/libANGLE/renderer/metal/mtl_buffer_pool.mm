@@ -9,14 +9,45 @@
 
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 
+#include <atomic>
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
 
 namespace mtl
 {
+
+namespace
+{
+void UpdateBufferPoolMetrics(int64_t totalMemoryDelta,
+                             int64_t freeMemoryDelta,
+                             int64_t totalBuffersDelta)
+{
+#if defined(ANGLE_ENABLE_PLATFORM_TRACE_EVENTS)
+    static std::atomic<int64_t> s_BufferPoolTotalMemory(0);
+    static std::atomic<int64_t> s_BufferPoolFreeMemory(0);
+    static std::atomic<int64_t> s_BufferPoolTotalBuffers(0);
+
+    int64_t newTotalMemory =
+        s_BufferPoolTotalMemory.fetch_add(totalMemoryDelta, std::memory_order_relaxed) +
+        totalMemoryDelta;
+    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolTotalMemoryKb", newTotalMemory / 1024);
+
+    int64_t newFreeMemory =
+        s_BufferPoolFreeMemory.fetch_add(freeMemoryDelta, std::memory_order_relaxed) +
+        freeMemoryDelta;
+    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolFreeMemoryKb", newFreeMemory / 1024);
+
+    int64_t newTotalBuffers =
+        s_BufferPoolTotalBuffers.fetch_add(totalBuffersDelta, std::memory_order_relaxed) +
+        totalBuffersDelta;
+    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolTotalBuffers", newTotalBuffers);
+#endif
+}
+}  // namespace
 
 // BufferPool implementation.
 BufferPool::BufferPool() : BufferPool(false) {}
@@ -40,6 +71,14 @@ angle::Result BufferPool::reset(ContextMtl *contextMtl,
         // memory re-allocations
         if (maxBuffers && mBufferFreeList.size() > maxBuffers)
         {
+            for (size_t i = maxBuffers; i < mBufferFreeList.size(); ++i)
+            {
+                if (mBufferFreeList[i])
+                {
+                    int64_t size = static_cast<int64_t>(mBufferFreeList[i]->size());
+                    UpdateBufferPoolMetrics(-size, -size, -1);
+                }
+            }
             mBufferFreeList.resize(maxBuffers);
             mBuffersAllocated = maxBuffers;
         }
@@ -55,8 +94,7 @@ angle::Result BufferPool::reset(ContextMtl *contextMtl,
             }
             if (IsError(buffer->reset(contextMtl, storageMode(contextMtl), mSize)))
             {
-                mBufferFreeList.clear();
-                mBuffersAllocated = 0;
+                destroyBufferList(contextMtl, &mBufferFreeList, true);
                 mSize             = 0;
                 break;
             }
@@ -64,8 +102,7 @@ angle::Result BufferPool::reset(ContextMtl *contextMtl,
     }
     else
     {
-        mBufferFreeList.clear();
-        mBuffersAllocated = 0;
+        destroyBufferList(contextMtl, &mBufferFreeList, true);
     }
 
     mInitialSize = initialSize;
@@ -95,7 +132,28 @@ void BufferPool::initialize(Context *context,
     updateAlignment(context, alignment);
 }
 
-BufferPool::~BufferPool() {}
+BufferPool::~BufferPool()
+{
+    if (mBuffer)
+    {
+        UpdateBufferPoolMetrics(-static_cast<int64_t>(mBuffer->size()), 0, -1);
+    }
+    for (auto &buffer : mInFlightBuffers)
+    {
+        if (buffer)
+        {
+            UpdateBufferPoolMetrics(-static_cast<int64_t>(buffer->size()), 0, -1);
+        }
+    }
+    for (auto &buffer : mBufferFreeList)
+    {
+        if (buffer)
+        {
+            int64_t size = static_cast<int64_t>(buffer->size());
+            UpdateBufferPoolMetrics(-size, -size, -1);
+        }
+    }
+}
 
 MTLStorageMode BufferPool::storageMode(ContextMtl *contextMtl) const
 {
@@ -135,6 +193,8 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
         mBuffer = mBufferFreeList.front();
         mBufferFreeList.erase(mBufferFreeList.begin());
 
+        UpdateBufferPoolMetrics(0, -static_cast<int64_t>(mBuffer->size()), 0);
+
         return angle::Result::Continue;
     }
 
@@ -142,6 +202,8 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
         Buffer::MakeBufferWithStorageMode(contextMtl, storageMode(contextMtl), mSize, &mBuffer));
 
     ASSERT(mBuffer);
+
+    UpdateBufferPoolMetrics(mBuffer->size(), 0, 1);
 
     mBuffersAllocated++;
 
@@ -184,7 +246,7 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
             mSize = std::max(mInitialSize, sizeToAllocate);
 
             // Clear the free list since the free buffers are now too small.
-            destroyBufferList(contextMtl, &mBufferFreeList);
+            destroyBufferList(contextMtl, &mBufferFreeList, true);
         }
 
         // The front of the free list should be the oldest. Thus if it is in use the rest of the
@@ -197,6 +259,7 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
         {
             mBuffer = mBufferFreeList.front();
             mBufferFreeList.erase(mBufferFreeList.begin());
+            UpdateBufferPoolMetrics(0, -static_cast<int64_t>(mBuffer->size()), 0);
         }
 
         ASSERT(mBuffer->size() == mSize);
@@ -262,6 +325,7 @@ void BufferPool::releaseInFlightBuffers(ContextMtl *contextMtl)
 #endif
         )
         {
+            UpdateBufferPoolMetrics(-static_cast<int64_t>(toRelease->size()), 0, -1);
             toRelease = nullptr;
             mBuffersAllocated--;
         }
@@ -281,32 +345,45 @@ void BufferPool::releaseInFlightBuffers(ContextMtl *contextMtl)
         else if (toRelease->isBeingUsedByGPU(contextMtl))
         {
             mBufferFreeList.push_back(toRelease);
+            UpdateBufferPoolMetrics(0, toRelease->size(), 0);
         }
         else
         {
             mBufferFreeList.push_front(toRelease);
+            UpdateBufferPoolMetrics(0, toRelease->size(), 0);
         }
     }
 
     mInFlightBuffers.clear();
 }
 
-void BufferPool::destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers)
+void BufferPool::destroyBufferList(ContextMtl *contextMtl,
+                                   std::deque<BufferRef> *buffers,
+                                   bool isFreeList)
 {
     ASSERT(mBuffersAllocated >= buffers->size());
     mBuffersAllocated -= buffers->size();
+    for (auto &buffer : *buffers)
+    {
+        if (buffer)
+        {
+            int64_t size = static_cast<int64_t>(buffer->size());
+            UpdateBufferPoolMetrics(-size, isFreeList ? -size : 0, -1);
+        }
+    }
     buffers->clear();
 }
 
 void BufferPool::destroy(ContextMtl *contextMtl)
 {
-    destroyBufferList(contextMtl, &mInFlightBuffers);
-    destroyBufferList(contextMtl, &mBufferFreeList);
+    destroyBufferList(contextMtl, &mInFlightBuffers, false);
+    destroyBufferList(contextMtl, &mBufferFreeList, true);
 
     reset();
 
     if (mBuffer)
     {
+        UpdateBufferPoolMetrics(-static_cast<int64_t>(mBuffer->size()), 0, -1);
         mBuffer->unmap(contextMtl);
 
         mBuffer = nullptr;

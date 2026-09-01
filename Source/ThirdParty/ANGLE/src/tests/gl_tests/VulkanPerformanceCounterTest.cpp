@@ -1602,60 +1602,6 @@ TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapIncompleteInit)
     EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
 }
 
-// Tests that mutable cubemap array texture is uploaded with appropriate mip level attributes.
-TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapArrayCompatibleMipLevelsInit)
-{
-    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
-
-    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded + 1;
-
-    std::vector<GLColor> mip0Color(4 * 4 * 6, GLColor::red);
-    std::vector<GLColor> mip1Color(2 * 2 * 6, GLColor::red);
-
-    GLTexture texture1;
-    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture1);
-    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGBA, 4, 4, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 mip0Color.data());
-    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA, 2, 2, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 mip1Color.data());
-
-    EXPECT_GL_NO_ERROR();
-
-    GLTexture texture2;
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 GLColor::green.data());
-    EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
-}
-
-// Tests that mutable cubemap array texture is not uploaded with different layer-faces.
-TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapArrayDifferentLayerFacesNoInit)
-{
-    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
-
-    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
-
-    std::vector<GLColor> mip0Color(4 * 4 * 6, GLColor::red);
-    std::vector<GLColor> mip1Color(2 * 2 * 12, GLColor::red);
-
-    GLTexture texture1;
-    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture1);
-    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGBA, 4, 4, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 mip0Color.data());
-    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA, 2, 2, 12, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 mip1Color.data());
-
-    EXPECT_GL_NO_ERROR();
-
-    GLTexture texture2;
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 GLColor::green.data());
-    EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
-}
-
 // Tests that RGB texture should not break renderpass.
 TEST_P(VulkanPerformanceCounterTest, SampleFromRGBTextureDoesNotBreakRenderPass)
 {
@@ -1841,6 +1787,62 @@ TEST_P(VulkanPerformanceCounterTest, IndependentBufferCopiesShareSingleBarrier)
 
     uint64_t actualFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
     EXPECT_EQ(expectedFlushCount, actualFlushCount);
+}
+
+// Tests that mutable cubemap array texture is uploaded with appropriate mip level attributes.
+TEST_P(VulkanPerformanceCounterTest_ES31, MutableTextureCubemapArrayCompatibleMipLevelsInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded + 1;
+
+    std::vector<GLColor> mip0Color(4 * 4 * 6, GLColor::red);
+    std::vector<GLColor> mip1Color(2 * 2 * 6, GLColor::red);
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture1);
+    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGBA, 4, 4, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 mip0Color.data());
+    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA, 2, 2, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 mip1Color.data());
+
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
+// Tests that mutable cubemap array texture is not uploaded with different layer-faces.
+TEST_P(VulkanPerformanceCounterTest_ES31, MutableTextureCubemapArrayDifferentLayerFacesNoInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
+
+    std::vector<GLColor> mip0Color(4 * 4 * 6, GLColor::red);
+    std::vector<GLColor> mip1Color(2 * 2 * 12, GLColor::red);
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture1);
+    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGBA, 4, 4, 6, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 mip0Color.data());
+    glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA, 2, 2, 12, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 mip1Color.data());
+
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
 }
 
 // Test resolving a multisampled texture with blit doesn't break the render pass so a subpass can be

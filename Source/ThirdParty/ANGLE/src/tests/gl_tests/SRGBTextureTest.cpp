@@ -1057,7 +1057,7 @@ TEST_P(SRGBTextureTestES3, SRGBFormatCombinationValidation)
 // Test that mipmaps are generated correctly for sRGB textures
 TEST_P(SRGBTextureTestES3, GenerateMipmaps)
 {
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && ((IsIntel() && IsMac()) || IsAMD()));
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD());
 
     auto createAndReadBackTexture = [this](GLenum internalFormat, const GLColor &color) {
         constexpr GLsizei width  = 128;

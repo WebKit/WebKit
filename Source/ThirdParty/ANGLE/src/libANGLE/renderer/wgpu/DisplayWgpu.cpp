@@ -22,20 +22,17 @@
 #include "libANGLE/renderer/wgpu/SurfaceWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_proc_utils.h"
 
-#if defined(ANGLE_PLATFORM_LINUX)
-#    if defined(ANGLE_USE_X11)
-#        define ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE 1
-#        define ANGLE_WEBGPU_WINDOW_SYSTEM angle::NativeWindowSystem::X11
-#    elif defined(ANGLE_USE_WAYLAND)
-#        define ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE 1
-#        define ANGLE_WEBGPU_WINDOW_SYSTEM angle::NativeWindowSystem::Wayland
-#    else
-#        define ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE 0
-#        define ANGLE_WEBGPU_WINDOW_SYSTEM angle::NativeWindowSystem::Other
-#    endif
+#include "EGL/eglext.h"
+
+// The wgpu backend only provides a window surface when a window system is available. On Linux
+// that requires X11 or Wayland; every other supported platform always has one. When it is
+// unavailable (e.g. the ChromeOS wgpu build) CreateWgpuWindowSurface is stubbed out below and no
+// EGL_WINDOW_BIT config is advertised. Unlike the rest of the backend, X11 vs Wayland is chosen at
+// runtime (see DisplayWgpu::initialize) because a single Linux build commonly enables both.
+#if defined(ANGLE_PLATFORM_LINUX) && !defined(ANGLE_USE_X11) && !defined(ANGLE_USE_WAYLAND)
+#    define ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE 0
 #else
 #    define ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE 1
-#    define ANGLE_WEBGPU_WINDOW_SYSTEM angle::NativeWindowSystem::Other
 #endif
 
 namespace rx
@@ -96,6 +93,29 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
     mLimitsWgpu = WGPU_LIMITS_INIT;
     mProcTable.deviceGetLimits(mDevice.get(), &mLimitsWgpu);
+
+    mWindowSystem = angle::NativeWindowSystem::Other;
+#if defined(ANGLE_USE_X11) || defined(ANGLE_USE_WAYLAND)
+    {
+        // The front-end fills in EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE from the
+        // environment when the app leaves it unset (Display::UpdateAttribsFromEnvironment), so it
+        // already reflects the same default the front-end picks. Anything other than X11/Wayland
+        // (no window system) leaves mWindowSystem as Other.
+        EGLAttrib platformType = attribs.get(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, 0);
+#    if defined(ANGLE_USE_X11)
+        if (platformType == EGL_PLATFORM_X11_EXT)
+        {
+            mWindowSystem = angle::NativeWindowSystem::X11;
+        }
+#    endif
+#    if defined(ANGLE_USE_WAYLAND)
+        if (platformType == EGL_PLATFORM_WAYLAND_EXT)
+        {
+            mWindowSystem = angle::NativeWindowSystem::Wayland;
+        }
+#    endif
+    }
+#endif
 
     initializeFeatures();
 
@@ -278,7 +298,24 @@ SurfaceImpl *DisplayWgpu::createWindowSurface(const egl::SurfaceState &state,
                                               EGLNativeWindowType window,
                                               const egl::AttributeMap &attribs)
 {
+#if defined(ANGLE_USE_X11)
+    if (mWindowSystem == angle::NativeWindowSystem::X11)
+    {
+        return CreateWgpuX11WindowSurface(state, window);
+    }
+#endif
+#if defined(ANGLE_USE_WAYLAND)
+    if (mWindowSystem == angle::NativeWindowSystem::Wayland)
+    {
+        return CreateWgpuWaylandWindowSurface(state, window);
+    }
+#endif
+#if !defined(ANGLE_USE_X11) && !defined(ANGLE_USE_WAYLAND)
     return CreateWgpuWindowSurface(state, window);
+#else
+    UNIMPLEMENTED();
+    return nullptr;
+#endif
 }
 
 SurfaceImpl *DisplayWgpu::createPbufferSurface(const egl::SurfaceState &state,
@@ -354,7 +391,7 @@ void DisplayWgpu::populateFeatureList(angle::FeatureList *features)
 
 angle::NativeWindowSystem DisplayWgpu::getWindowSystem() const
 {
-    return ANGLE_WEBGPU_WINDOW_SYSTEM;
+    return mWindowSystem;
 }
 
 const webgpu::Format *DisplayWgpu::getFormatForImportedTexture(const egl::AttributeMap &attribs,

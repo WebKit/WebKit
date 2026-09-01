@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 412
+#if ANGLE_SH_VERSION != 417
 #    error Check if there are added options and update this check.
 #endif
 
@@ -41,7 +41,7 @@
     MACRO(sourcePath, 2, any, none)                                           \
     MACRO(intermediateTree, 3, any, none)                                     \
     MACRO(validateAST, 4, none, any)                                          \
-    MACRO(validateLoopIndexing, 5, any, none)                                 \
+    MACRO(unused3, 5, any, none)                                              \
     MACRO(lineDirectives, 6, any, none)                                       \
     MACRO(removeInvariantAndCentroidForESSL3, 7, glsl, none)                  \
     MACRO(emulateAbsIntFunction, 8, glsl, none)                               \
@@ -77,7 +77,7 @@
     MACRO(forceDeferNonConstGlobalInitializers, 40, msl, none)                \
     MACRO(emulateGLBaseVertexBaseInstance, 41, any, none)                     \
     MACRO(wrapSwitchInIfTrue, 42, spirvVk, none)                              \
-    MACRO(takeVideoTextureAsExternalOES, 43, glsl, none)                      \
+    MACRO(unused4, 43, any, none)                                             \
     MACRO(addBaseVertexToVertexID, 44, any, none)                             \
     MACRO(removeDynamicIndexingOfSwizzledVector, 45, glsl, none)              \
     MACRO(allowTranslateUniformBlockToStructuredBuffer, 46, hlsl, none)       \
@@ -153,7 +153,6 @@ ShShaderOutput resolveShaderOutput(ShShaderOutput output);
     MACRO(ANGLE_texture_multisample, !msl)                     \
     MACRO(ANGLE_multi_draw, !msl)                              \
     MACRO(ANGLE_base_vertex_base_instance, any)                \
-    MACRO(WEBGL_video_texture, !msl)                           \
     MACRO(APPLE_clip_distance, any)                            \
     MACRO(OES_texture_cube_map_array, !msl)                    \
     MACRO(EXT_texture_cube_map_array, !msl)                    \

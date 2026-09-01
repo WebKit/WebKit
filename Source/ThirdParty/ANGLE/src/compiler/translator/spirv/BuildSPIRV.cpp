@@ -731,8 +731,6 @@ SpirvType SPIRVBuilder::getSpirvType(const TType &type, const SpirvTypeSpec &typ
         // External textures are treated as 2D textures in the vulkan back-end.
         case EbtSamplerExternalOES:
         case EbtSamplerExternal2DY2YEXT:
-        // WEBGL video textures too.
-        case EbtSamplerVideoWEBGL:
             spirvType.type = EbtSampler2D;
             break;
         // yuvCscStandardEXT is just a uint under the hood.
@@ -1395,7 +1393,6 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
             break;
         case EbtSamplerExternalOES:
         case EbtSamplerExternal2DY2YEXT:
-        case EbtSamplerVideoWEBGL:
             // These must have already been converted to EbtSampler2D.
             UNREACHABLE();
             break;

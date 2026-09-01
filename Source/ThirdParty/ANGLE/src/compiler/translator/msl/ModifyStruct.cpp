@@ -234,8 +234,9 @@ class ConvertStructState : angle::NonCopyable
             ModifiedAccess *modified = &AccessField(modifiedParam, info.modifiedFieldName);
             if (useAttributeAliasing)
             {
-                std::ostringstream aliasedName;
-                aliasedName << "ANGLE_ALIASED_" << info.modifiedFieldName;
+                TInfoSinkBase aliasedName;
+                aliasedName << "ANGLE_ALIASED_";
+                info.modifiedFieldName.emit(aliasedName, mCompiler.getUserVariableNamePrefix());
 
                 TType *placeholderType = new TType(modified->getType());
                 placeholderType->setQualifier(EvqSpecConst);

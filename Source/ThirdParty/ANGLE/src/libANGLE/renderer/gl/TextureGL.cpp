@@ -381,6 +381,38 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
                .lumaWorkaround.enabled);
 
     stateManager->bindTexture(getType(), mTextureID);
+    const gl::ImageDesc &desc = mState.getImageDesc(index);
+    const bool isFullImage    = area.x == 0 && area.y == 0 && area.width == desc.size.width &&
+                                area.height == desc.size.height;
+
+    if (features.splitLevel0PboFullSubImage2D.enabled && level == 0 && unpackBuffer &&
+        nativegl::UseTexImage2D(getType()) && isFullImage && (area.width > 1 || area.height > 1))
+    {
+        GLuint rowBytes   = 0;
+        GLuint imageBytes = 0;
+        GLuint skipBytes  = 0;
+        ANGLE_CHECK_GL_MATH(contextGL, originalInternalFormatInfo.computeRowDepthSkipBytes(
+                                           type, area.width, area.height, unpack, /*is3D=*/false,
+                                           &rowBytes, &imageBytes, &skipBytes));
+
+        size_t maxBytesUploadedPerChunk = 0;
+        if (area.height > 1)
+        {
+            maxBytesUploadedPerChunk = static_cast<size_t>(area.height - 1) * rowBytes;
+        }
+        else
+        {
+            ASSERT(area.height == 1 && area.width > 1);
+            GLuint pixelBytes        = originalInternalFormatInfo.computePixelBytes(type);
+            maxBytesUploadedPerChunk = static_cast<size_t>(area.width - 1) * pixelBytes;
+        }
+
+        ANGLE_TRY(setSubImageRowByRowWorkaround(context, target, level, area, format, type, unpack,
+                                                unpackBuffer, maxBytesUploadedPerChunk, pixels));
+        contextGL->markWorkSubmitted();
+        return angle::Result::Continue;
+    }
+
     if (features.unpackOverlappingRowsSeparatelyUnpackBuffer.enabled && unpackBuffer &&
         unpack.rowLength != 0 && unpack.rowLength < area.width)
     {
@@ -508,15 +540,35 @@ angle::Result TextureGL::setSubImageRowByRowWorkaround(const gl::Context *contex
     else
     {
         ASSERT(nativegl::UseTexImage2D(getType()));
-        for (GLint row = 0; row < area.height; row += rowsPerChunk)
+        if (area.height == 1 && maxBytesUploadedPerChunk > 0 && maxBytesUploadedPerChunk < rowBytes)
         {
-            GLint height             = std::min(rowsPerChunk, area.height - row);
-            GLint byteOffset         = row * rowBytes;
-            const GLubyte *rowPixels = ANGLE_UNSAFE_TODO(pixelsWithSkip + byteOffset);
-            ANGLE_GL_TRY(context, functions->texSubImage2D(
-                                      ToGLenum(target), static_cast<GLint>(level), area.x,
-                                      row + area.y, area.width, height, texSubImageFormat.format,
-                                      texSubImageFormat.type, rowPixels));
+            GLuint pixelBytes    = glFormat.computePixelBytes(type);
+            GLint pixelsPerChunk = std::min(
+                std::max(static_cast<GLint>(maxBytesUploadedPerChunk / pixelBytes), 1), area.width);
+            for (GLint col = 0; col < area.width; col += pixelsPerChunk)
+            {
+                GLint width              = std::min(pixelsPerChunk, area.width - col);
+                GLint byteOffset         = col * pixelBytes;
+                const GLubyte *colPixels = ANGLE_UNSAFE_TODO(pixelsWithSkip + byteOffset);
+                ANGLE_GL_TRY(context, functions->texSubImage2D(
+                                          ToGLenum(target), static_cast<GLint>(level), area.x + col,
+                                          area.y, width, 1, texSubImageFormat.format,
+                                          texSubImageFormat.type, colPixels));
+            }
+        }
+        else
+        {
+            for (GLint row = 0; row < area.height; row += rowsPerChunk)
+            {
+                GLint height             = std::min(rowsPerChunk, area.height - row);
+                GLint byteOffset         = row * rowBytes;
+                const GLubyte *rowPixels = ANGLE_UNSAFE_TODO(pixelsWithSkip + byteOffset);
+                ANGLE_GL_TRY(context,
+                             functions->texSubImage2D(ToGLenum(target), static_cast<GLint>(level),
+                                                      area.x, row + area.y, area.width, height,
+                                                      texSubImageFormat.format,
+                                                      texSubImageFormat.type, rowPixels));
+            }
         }
     }
     return angle::Result::Continue;

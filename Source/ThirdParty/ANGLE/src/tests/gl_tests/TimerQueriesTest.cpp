@@ -87,13 +87,7 @@ TEST_P(TimerQueriesTest, ProcAddresses)
 // Tests the time elapsed query
 TEST_P(TimerQueriesTest, TimeElapsed)
 {
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
-
-    // http://anglebug.com/42263715
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLint queryTimeElapsedBits = 0;
     glGetQueryivEXT(GL_TIME_ELAPSED_EXT, GL_QUERY_COUNTER_BITS_EXT, &queryTimeElapsedBits);
@@ -176,9 +170,6 @@ TEST_P(TimerQueriesTest, TimeElapsed)
 // Tests time elapsed for a non draw call (texture upload)
 TEST_P(TimerQueriesTest, TimeElapsedTextureTest)
 {
-    // OSX drivers don't seem to properly time non-draw calls so we skip the test on Mac
-    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
-
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
     GLint queryTimeElapsedBits = 0;
@@ -281,9 +272,6 @@ TEST_P(TimerQueriesTest, TimeElapsedMulticontextTest)
     // TODO(jmadill): Figure out why this test is flaky on AMD/OpenGL.
     // http://anglebug.com/42260520
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
-
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 

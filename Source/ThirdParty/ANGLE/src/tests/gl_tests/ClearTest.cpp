@@ -1503,9 +1503,6 @@ TEST_P(ClearTest, DefaultFramebuffer)
 // This forces down path that uses draw to do clear
 TEST_P(ClearTest, EmptyScissor)
 {
-    // These configs have bug that fails this test.
-    // These configs are unmaintained so skipping.
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
     glClearColor(0.25f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
@@ -1732,9 +1729,6 @@ TEST_P(ClearTest, ChangeFramebufferAttachmentFromRGBAtoRGB)
 {
     // http://anglebug.com/40096508
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
-
-    // http://anglebug.com/40644765
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL() && IsIntel());
 
     ANGLE_GL_PROGRAM(program, angle::essl1_shaders::vs::Simple(),
                      angle::essl1_shaders::fs::UniformColor());
@@ -3373,9 +3367,6 @@ TEST_P(ClearTest, DrawThenInceptionScissorClears)
 // assert.
 TEST_P(ClearTestES3, ClearDisabledNonZeroAttachmentNoAssert)
 {
-    // http://anglebug.com/40644728
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     GLFramebuffer fb;
     glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
@@ -3405,8 +3396,6 @@ TEST_P(ClearTestES3, ClearDisabledNonZeroAttachmentNoAssert)
 // stencil works.
 TEST_P(ClearTestES3, ClearMaxAttachments)
 {
-    // http://anglebug.com/40644728
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
     // http://anglebug.com/42263935
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
 
@@ -3494,9 +3483,6 @@ TEST_P(ClearTestES3, ClearMaxAttachments)
 // stencil after a draw call works.
 TEST_P(ClearTestES3, ClearMaxAttachmentsAfterDraw)
 {
-    // http://anglebug.com/40644728
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     constexpr GLsizei kSize = 16;
 
     GLint maxDrawBuffers = 0;
@@ -3676,9 +3662,6 @@ TEST_P(ClearTestES3, ClearThenMixedMaskedClear)
 // Test that clearing stencil after a draw call works.
 TEST_P(ClearTestES3, ClearStencilAfterDraw)
 {
-    // http://anglebug.com/40644728
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     constexpr GLsizei kSize = 16;
 
     GLint maxDrawBuffers = 0;
@@ -3781,9 +3764,6 @@ TEST_P(ClearTestES3, ClearStencilAfterDraw)
 // Test that mid-render pass clearing of mixed used and unused color attachments works.
 TEST_P(ClearTestES3, MixedRenderPassClearMixedUsedUnusedAttachments)
 {
-    // http://anglebug.com/40644728
-    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-
     constexpr GLsizei kSize = 16;
 
     // Setup framebuffer.

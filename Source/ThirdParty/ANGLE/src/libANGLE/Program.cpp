@@ -343,7 +343,21 @@ ProgramBindings::~ProgramBindings() {}
 
 void ProgramBindings::bindLocation(GLuint index, const std::string &name)
 {
-    mBindings[name] = index;
+    if (name.find('[') != std::string::npos)
+    {
+        if (angle::EndsWith(name, "[0]") && (name.find(']') == name.length() - 1))
+        {
+            mBindings[name.substr(0, name.length() - 3)] = index;
+        }
+        else
+        {
+            return;
+        }
+    }
+    else
+    {
+        mBindings[name] = index;
+    }
 }
 
 int ProgramBindings::getBindingByName(const std::string &name) const
@@ -378,8 +392,16 @@ ProgramAliasedBindings::ProgramAliasedBindings() {}
 
 ProgramAliasedBindings::~ProgramAliasedBindings() {}
 
-void ProgramAliasedBindings::bindLocation(GLuint index, const std::string &name)
+void ProgramAliasedBindings::bindLocation(GLuint index,
+                                          const std::string &name,
+                                          BindLocationPolicy policy)
 {
+    if (policy == BindLocationPolicy::IgnoreIndexing && name.find('[') != std::string::npos &&
+        (!angle::EndsWith(name, "[0]") || name.find(']') != name.length() - 1))
+    {
+        return;
+    }
+
     mBindings[name] = ProgramBinding(index);
 
     // EXT_blend_func_extended spec: "If it specifies the base name of an array,
@@ -853,19 +875,20 @@ void Program::bindUniformLocation(const Context *context,
                                   const char *name)
 {
     ASSERT(!mLinkingState);
-    mState.mUniformLocationBindings.bindLocation(location.value, name);
+    mState.mUniformLocationBindings.bindLocation(location.value, name,
+                                                 BindLocationPolicy::AcceptIndexing);
 }
 
 void Program::bindFragmentOutputLocation(const Context *context, GLuint index, const char *name)
 {
     ASSERT(!mLinkingState);
-    mState.mFragmentOutputLocations.bindLocation(index, name);
+    mState.mFragmentOutputLocations.bindLocation(index, name, BindLocationPolicy::IgnoreIndexing);
 }
 
 void Program::bindFragmentOutputIndex(const Context *context, GLuint index, const char *name)
 {
     ASSERT(!mLinkingState);
-    mState.mFragmentOutputIndexes.bindLocation(index, name);
+    mState.mFragmentOutputIndexes.bindLocation(index, name, BindLocationPolicy::IgnoreIndexing);
 }
 
 void Program::makeNewExecutable(const Context *context)

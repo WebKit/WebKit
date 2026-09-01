@@ -45,7 +45,7 @@ class ETCTextureTest : public ANGLETest<>
 // Tests a cube map array texture with compressed ETC2 RGB8 format
 TEST_P(ETCTextureTest, ETC2RGB8_CubeMapValidation)
 {
-    ANGLE_SKIP_TEST_IF(!(IsGLExtensionEnabled("GL_EXT_texture_cube_map_array") &&
+    ANGLE_SKIP_TEST_IF(!(IsGLExtensionEnabled("GL_EXT_texture_cube_map_array") ||
                          (getClientMajorVersion() >= 3 && getClientMinorVersion() > 1)));
 
     constexpr GLsizei kInvalidTextureWidth  = 8;
@@ -64,8 +64,6 @@ TEST_P(ETCTextureTest, ETC2RGB8_CubeMapValidation)
 
     constexpr GLenum kFormat = GL_COMPRESSED_RGB8_ETC2;
 
-    std::vector<GLubyte> arrayData;
-
     constexpr GLuint kWidth       = 4u;
     constexpr GLuint kHeight      = 4u;
     constexpr GLuint kDepth       = 6u;
@@ -77,19 +75,26 @@ TEST_P(ETCTextureTest, ETC2RGB8_CubeMapValidation)
     constexpr GLuint kNumBlocksHigh = (kHeight + kBlockHeight - 1u) / kBlockHeight;
     constexpr GLuint kBytes         = kNumBlocksWide * kNumBlocksHigh * kPixelBytes * kDepth;
 
-    arrayData.reserve(kBytes);
+    std::vector<GLubyte> arrayData(kBytes, 0);
 
     glCompressedTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, kFormat, kWidth, kHeight, kDepth, 0,
                            kBytes, arrayData.data());
     EXPECT_GL_NO_ERROR();
 
+    // Invalid Dimensions
     glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kInvalidTextureWidth,
-                              kInvalidTextureHeight, kDepth, GL_RGB, kInvalidTextureData.size(),
-                              kInvalidTextureData.data());
-    glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kInvalidTextureWidth,
-                              kInvalidTextureHeight, kDepth, GL_RGB, kInvalidTextureData.size(),
-                              kInvalidTextureData.data());
+                              kInvalidTextureHeight, kDepth, kFormat, kBytes, arrayData.data());
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    // Invalid Format
+    glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kWidth, kHeight, kDepth,
+                              GL_RGB, kBytes, arrayData.data());
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Invalid Data Size
+    glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kWidth, kHeight, kDepth,
+                              kFormat, kInvalidTextureData.size(), kInvalidTextureData.data());
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
 // Tests that uploading compressed texture from a PBO with a misaligned offset doesn't crash.
@@ -98,7 +103,7 @@ TEST_P(ETCTextureTest, PBOWithMisalignedOffset)
     // Need ES 3.0 for PBOs.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
-    // Check if ETC2 is supported. Not supported, for example, on ANGLE/OpenGL on macOS.
+    // Check if ETC2 is supported.
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture") &&
                        !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
 
@@ -563,7 +568,7 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8a1UnormToBC1)
     }
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ETCTextureTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_ES32(ETCTextureTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(ETCToBCTextureTest,
                                ES3_VULKAN().enable(Feature::SupportsComputeTranscodeEtcToBc));
 }  // anonymous namespace

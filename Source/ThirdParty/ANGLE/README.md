@@ -27,7 +27,7 @@ ES 3.0 with [known issues][ES1].
 |-------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:--------------------:|:----------:|
 | Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |                      |            |
 | Linux        |                |                |   complete    |             |   complete  |                      |            |
-| Mac OS X     |                |                |   complete    |             |             | complete [1]         |            |
+| Mac OS X     |                |                |  deprecated   |             |             | complete [1]         |            |
 | iOS          |                |                |               |             |             | complete [2]         |            |
 | Chrome OS    |                |                |               |   complete  |   planned   |                      |            |
 | Android      |                |                |               |   complete  |   complete  |                      |            |

@@ -70,7 +70,10 @@ if (angle_use_wayland) {
 }
 
 if (angle_use_x11 || angle_use_wayland) {
-  _util_sources += [ "linux/LinuxWindow.cpp" ]
+  _util_sources += [
+    "linux/LinuxWindow.cpp",
+    "linux/LinuxWindow.h",
+  ]
 }
 
 if (is_fuchsia) {

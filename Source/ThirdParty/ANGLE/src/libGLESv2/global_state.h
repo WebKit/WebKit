@@ -152,6 +152,20 @@ ANGLE_INLINE Context *GetValidGlobalContext()
 #endif
 }
 
+ANGLE_INLINE Context *GetContext(GLeglDisplayANGLE dpy, GLeglContextANGLE ctx)
+{
+    egl::Display *dpyPacked = egl::PackParam<egl::Display *>(static_cast<EGLDisplay>(dpy));
+    ASSERT(dpyPacked);
+    ContextID ctxPacked = egl::PackParam<ContextID>(static_cast<EGLContext>(ctx));
+    return dpyPacked->getContext(ctxPacked);
+}
+
+ANGLE_INLINE Context *GetValidContext(GLeglDisplayANGLE dpy, GLeglContextANGLE ctx)
+{
+    Context *context = GetContext(dpy, ctx);
+    return (context && !context->isContextLost()) ? context : nullptr;
+}
+
 // Generate a context lost error on the context if it is non-null and lost.
 void GenerateContextLostErrorOnCurrentGlobalContext(angle::EntryPoint entryPoint);
 

@@ -39,8 +39,19 @@ ImmutableString Str(const SymbolName &name)
 {
     constexpr uint32_t kNoId = 0xFFFF'FFFF;
     const bool appendId      = name.id != kNoId;
-    ImmutableStringBuilder builder(name.name.length() + (appendId ? 1 + 11 : 0));
-    builder << ImmutableString(name.name.data(), name.name.length());
+    const uint32_t appendExtraChars = appendId ? 1 + 11 : 0;  // underscore + 32-bit number
+    ImmutableStringBuilder builder(name.name.length() + appendExtraChars);
+    // If appending ID and the name is too long, cut off the end of the name.  The ID makes it
+    // unique anyway.
+    //
+    // Note: this is technically not true for global structs, which get appended _0 instead of _id
+    // because they might need to match between shaders.  If two structs have a very long name and
+    // they differ only in the last characters, this causes a name collision and the shader fails
+    // compilation in the backend.  If this ever becomes a practical issue, those long names can be
+    // hashed to become smaller.
+    builder << ImmutableString(
+        name.name.data(),
+        std::min<size_t>(name.name.length(), kESSLMaxIdentifierLength - appendExtraChars));
     if (appendId)
     {
         builder << '_';
@@ -1485,10 +1496,6 @@ TIntermTyped *built_in_texture(TCompiler *compiler,
                 break;
             case EbtSampler2DShadow:
                 builtIn = isProj ? "shadow2DProjEXT" : "shadow2DEXT";
-                break;
-            case EbtSamplerVideoWEBGL:
-                ASSERT(!isProj);
-                builtIn = "textureVideoWEBGL";
                 break;
             default:
                 ASSERT(false);

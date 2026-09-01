@@ -1266,6 +1266,13 @@ void ContextVk::onDestroy(const gl::Context *context)
     mDefaultUniformStorage.release(this);
     mEmptyBuffer.release(this);
 
+    for (auto &entry : mNullStorageImages)
+    {
+        entry.second->view.destroy(device);
+        entry.second->image.destroy(mRenderer);
+    }
+    mNullStorageImages.clear();
+
     for (vk::DynamicBuffer &defaultBuffer : mStreamedVertexBuffers)
     {
         defaultBuffer.destroy(mRenderer);
@@ -1332,6 +1339,55 @@ angle::Result ContextVk::getIncompleteTexture(const gl::Context *context,
                                               gl::Texture **textureOut)
 {
     return mIncompleteTextures.getIncompleteTexture(context, type, format, this, textureOut);
+}
+
+angle::Result ContextVk::getOrCreateNullStorageImageView(GLenum shaderFormat,
+                                                         VkImageView *imageViewOut,
+                                                         vk::ImageOrBufferViewSerial *serialOut)
+{
+    auto it = mNullStorageImages.find(shaderFormat);
+    if (it != mNullStorageImages.end())
+    {
+        *imageViewOut = it->second->view.getHandle();
+        *serialOut    = it->second->serial;
+        return angle::Result::Continue;
+    }
+
+    auto entry = std::make_unique<NullStorageImageEntry>();
+
+    angle::FormatID formatID = angle::Format::InternalFormatToID(shaderFormat);
+    if (mRenderer->getFeatures().emulateR32fImageAtomicExchange.enabled &&
+        formatID == angle::FormatID::R32_FLOAT)
+    {
+        formatID = angle::FormatID::R32_UINT;
+    }
+    const vk::Format &imageFormat = mRenderer->getFormat(formatID);
+    const VkExtent3D extent       = {1, 1, 1};
+
+    ANGLE_TRY(entry->image.init(this, gl::TextureType::_2D, extent, imageFormat, 1,
+                                VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+                                gl::LevelIndex(0), 1, 1, false, false, vk::TileMemory::Prohibited));
+    ANGLE_TRY(entry->image.initMemoryAndNonZeroFillIfNeeded(
+        this, mState.hasProtectedContent(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        vk::MemoryAllocationType::TextureImage));
+    ANGLE_TRY(entry->image.initLayerImageViewWithUsage(
+        this, gl::TextureType::_2D, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(), &entry->view,
+        vk::LevelIndex(0), 1, 0, 1, VK_IMAGE_USAGE_STORAGE_BIT, GL_NONE));
+
+    const VkClearValue zeroClear = {};
+    entry->image.stageClear(gl::ImageIndex::Make2D(0), VK_IMAGE_ASPECT_COLOR_BIT, zeroClear);
+    ANGLE_TRY(entry->image.flushAllStagedUpdates(this));
+
+    entry->image.recordWriteBarrier(this, VK_IMAGE_ASPECT_COLOR_BIT,
+                                    vk::ImageAccess::AllGraphicsShadersWrite, gl::LevelIndex(0), 1,
+                                    0, 1, mOutsideRenderPassCommands);
+    entry->serial = mRenderer->getResourceSerialFactory().generateImageOrBufferViewSerial();
+
+    *imageViewOut = entry->view.getHandle();
+    *serialOut    = entry->serial;
+
+    mNullStorageImages.emplace(shaderFormat, std::move(entry));
+    return angle::Result::Continue;
 }
 
 angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadContext)
@@ -3084,7 +3140,7 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
     const gl::ProgramExecutable *executable = mState.getProgramExecutable();
     ASSERT(executable);
 
-    if (!executable->hasTransformFeedbackOutput() || !mState.isTransformFeedbackActive())
+    if (!executable->hasTransformFeedbackOutput() || !mState.isTransformFeedbackActiveUnpaused())
     {
         return angle::Result::Continue;
     }
@@ -3130,11 +3186,6 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
     mRenderPassCommandBuffer->bindTransformFeedbackBuffers(
         0, static_cast<uint32_t>(bufferCount), bufferHandles.data(), bufferOffsets.data(),
         bufferSizes.data());
-
-    if (!mState.isTransformFeedbackActiveUnpaused())
-    {
-        return angle::Result::Continue;
-    }
 
     // We should have same number of counter buffers as xfb buffers have
     const gl::TransformFeedbackBuffersArray<VkBuffer> &counterBufferHandles =

@@ -86,6 +86,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo packLargeRowLengthSeparatelyPackBuffer = {
+        "packLargeRowLengthSeparatelyPackBuffer",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo initializeCurrentVertexAttributes = {
         "initializeCurrentVertexAttributes",
         FeatureCategory::OpenGLWorkarounds,
@@ -298,12 +304,6 @@ struct FeaturesGL : FeatureSetBase
 
     FeatureInfo preAddTexelFetchOffsets = {
         "preAddTexelFetchOffsets",
-        FeatureCategory::OpenGLWorkarounds,
-        &members,
-    };
-
-    FeatureInfo regenerateStructNames = {
-        "regenerateStructNames",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };
@@ -706,6 +706,12 @@ struct FeaturesGL : FeatureSetBase
 
     FeatureInfo disableClearTexture = {
         "disableClearTexture",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo splitLevel0PboFullSubImage2D = {
+        "splitLevel0PboFullSubImage2D",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };

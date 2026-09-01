@@ -183,6 +183,15 @@ class TStructure : public TSymbol, public TFieldListCollection
     void setAtGlobalScope(bool atGlobalScope) { mAtGlobalScope = atGlobalScope; }
     bool atGlobalScope() const { return mAtGlobalScope; }
 
+    // This function is temporary while transition to IR is happening.  It allows the AST to promote
+    // structs to the global scope at the end of parse.  Do not use.
+    void setName(const ImmutableString &name);
+    // This function is temporary while transition to IR is happening.  Used by
+    // ReduceInterfaceBlocks to indicate that this struct used to be an interface block.  This
+    // information is used to disambiguate the prefix.
+    void setImplementingInterfaceBlock() { mImplementingInterfaceBlock = true; }
+    bool isImplementingInterfaceBlock() const { return mImplementingInterfaceBlock; }
+
   private:
     friend class TSymbolTable;
     // For creating built-in structs.
@@ -195,7 +204,9 @@ class TStructure : public TSymbol, public TFieldListCollection
                   SymbolType::BuiltIn,
                   std::array<TExtension, 1u>{{extension}},
                   SymbolClass::Struct),
-          TFieldListCollection(fields)
+          TFieldListCollection(fields),
+          mAtGlobalScope(true),
+          mImplementingInterfaceBlock(false)
     {}
 
     template <size_t ExtensionCount>
@@ -204,16 +215,13 @@ class TStructure : public TSymbol, public TFieldListCollection
                const std::array<TExtension, ExtensionCount> &extensions,
                const TFieldList *fields)
         : TSymbol(id, name, SymbolType::BuiltIn, extensions, SymbolClass::Struct),
-          TFieldListCollection(fields)
+          TFieldListCollection(fields),
+          mAtGlobalScope(true),
+          mImplementingInterfaceBlock(false)
     {}
 
-    // TODO(zmo): Find a way to get rid of the const_cast in function
-    // setName().  At the moment keep this function private so only
-    // friend class RegenerateStructNames may call it.
-    friend class RegenerateStructNamesTraverser;
-    void setName(const ImmutableString &name);
-
     bool mAtGlobalScope;
+    bool mImplementingInterfaceBlock;
 };
 
 // Interface block. Note that this contains the block name, not the instance name. Interface block

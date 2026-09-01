@@ -147,12 +147,12 @@ WGSLWrapperFunction WGSLProgramPrelude::assign(const TType &dest, const TType &s
     }
 }
 
-void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink)
+void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink, const ShBuiltInResources &resources)
 {
     auto genPreIncOrDec = [&](ImmutableString addressSpace, const TType &type, ImmutableString op,
                               ImmutableString funcName) {
         TStringStream typeStr;
-        WriteWgslType(typeStr, type, {});
+        WriteWgslType(typeStr, resources, type, {});
 
         sink << "fn " << funcName << "(x : ptr<" << addressSpace << ", " << typeStr.str()
              << ">) -> " << typeStr.str() << " {\n";
@@ -190,7 +190,7 @@ void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink)
     auto genPostIncOrDec = [&](ImmutableString addressSpace, const TType &type, ImmutableString op,
                                ImmutableString funcName) {
         TStringStream typeStr;
-        WriteWgslType(typeStr, type, {});
+        WriteWgslType(typeStr, resources, type, {});
 
         sink << "fn " << funcName << "(x : ptr<" << addressSpace << ", " << typeStr.str()
              << ">) -> " << typeStr.str() << " {\n";
@@ -228,9 +228,9 @@ void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink)
     {
         auto genAssignment = [&](ImmutableString addressSpace, ImmutableString funcName) {
             TStringStream destTypeStr;
-            WriteWgslType(destTypeStr, assigned.first.dest, {});
+            WriteWgslType(destTypeStr, resources, assigned.first.dest, {});
             TStringStream srcTypeStr;
-            WriteWgslType(srcTypeStr, assigned.first.src, {});
+            WriteWgslType(srcTypeStr, resources, assigned.first.src, {});
 
             sink << "fn " << funcName << "(dest : ptr<" << addressSpace << ", " << destTypeStr.str()
                  << ">, src : " << srcTypeStr.str() << ") -> " << destTypeStr.str() << "  {\n";

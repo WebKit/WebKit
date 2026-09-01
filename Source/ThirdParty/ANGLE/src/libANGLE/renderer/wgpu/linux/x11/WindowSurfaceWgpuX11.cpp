@@ -66,8 +66,8 @@ angle::Result WindowSurfaceWgpuX11::getCurrentWindowSize(const egl::Display *dis
     return angle::Result::Continue;
 }
 
-WindowSurfaceWgpu *CreateWgpuWindowSurface(const egl::SurfaceState &surfaceState,
-                                           EGLNativeWindowType window)
+WindowSurfaceWgpu *CreateWgpuX11WindowSurface(const egl::SurfaceState &surfaceState,
+                                              EGLNativeWindowType window)
 {
     return new WindowSurfaceWgpuX11(surfaceState, window);
 }

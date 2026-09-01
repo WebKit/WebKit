@@ -301,8 +301,6 @@ GROUP BEGIN Texture {"queryFunction": true}
       vec4 texture2DProjGradEXT(sampler2D, vec3, vec2, vec2);
       vec4 texture2DProjGradEXT(sampler2D, vec4, vec2, vec2);
       vec4 textureCubeGradEXT(samplerCube, vec3, vec3, vec3);
-    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "extension": "WEBGL_video_texture"}
-      vec4 textureVideoWEBGL(samplerVideoWEBGL, vec2);
 
     // Variants with bias are limited to fragment shaders
     GROUP BEGIN Bias {"shader_type": "FRAGMENT", "opSuffix": "Bias"}
@@ -369,8 +367,6 @@ GROUP BEGIN Texture {"queryFunction": true}
       // rectangle texture in desktop OpenGL, they should be sampled with a "texture" overload in
       // GLSL version that have such an overload. This is the case for ESSL3 and above.
       vec4 texture(sampler2DRect, vec2);
-    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "extension": "WEBGL_video_texture"}
-      vec4 texture(samplerVideoWEBGL, vec2);
     DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS"}
       gvec4 textureProj(gsampler2D, vec3);
       gvec4 textureProj(gsampler2D, vec4);

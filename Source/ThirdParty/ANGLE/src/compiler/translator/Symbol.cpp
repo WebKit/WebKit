@@ -122,7 +122,10 @@ TStructure::TStructure(TSymbolTable *symbolTable,
                        const ImmutableString &name,
                        const TFieldList *fields,
                        SymbolType symbolType)
-    : TSymbol(symbolTable, name, symbolType, SymbolClass::Struct), TFieldListCollection(fields)
+    : TSymbol(symbolTable, name, symbolType, SymbolClass::Struct),
+      TFieldListCollection(fields),
+      mAtGlobalScope(false),
+      mImplementingInterfaceBlock(false)
 {}
 
 void TStructure::createSamplerSymbols(const char *namePrefix,

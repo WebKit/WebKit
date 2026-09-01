@@ -34,7 +34,6 @@ class ProgramD3DMetadata final : angle::NonCopyable
                        int shaderVersion);
     ~ProgramD3DMetadata();
 
-    int getRendererMajorShaderModel() const;
     bool usesBroadcast(const gl::Version &clientVersion) const;
     bool usesSecondaryColor() const;
     bool usesPointCoord() const;
@@ -58,7 +57,6 @@ class ProgramD3DMetadata final : angle::NonCopyable
     uint8_t getCullDistanceArraySize() const;
 
   private:
-    const int mRendererMajorShaderModel;
     const bool mUsesViewScale;
     const bool mCanSelectViewInVertexShader;
     gl::SharedCompiledShaderState mFragmentShader;

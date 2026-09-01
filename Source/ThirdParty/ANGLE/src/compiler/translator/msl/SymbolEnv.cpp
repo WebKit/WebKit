@@ -512,7 +512,6 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
         case EbtSampler2DRect:
         case EbtSampler2DMS:
         case EbtSampler2DMSArray:
-        case EbtSamplerVideoWEBGL:
         case EbtSampler2DShadow:
         case EbtSamplerCubeShadow:
         case EbtSampler2DArrayShadow:
@@ -656,7 +655,6 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
         // Extentions
         case EbtSamplerExternalOES:       // Only valid if OES_EGL_image_external exists:
         case EbtSamplerExternal2DY2YEXT:  // Only valid if GL_EXT_YUV_target exists:
-        case EbtSamplerVideoWEBGL:
             UNIMPLEMENTED();
             HANDLE_TEXTURE_NAME("TODO");
             break;

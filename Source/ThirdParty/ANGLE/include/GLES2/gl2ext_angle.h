@@ -481,12 +481,6 @@ GL_APICALL void GL_APIENTRY glGetRenderbufferImageANGLE (GLenum target, GLenum f
 #endif
 #endif /* GL_ANGLE_get_image */
 
-#ifndef GL_WEBGL_video_texture
-#define GL_WEBGL_video_texture 1
-#define GL_TEXTURE_VIDEO_IMAGE_WEBGL 0x9248
-#define GL_SAMPLER_VIDEO_IMAGE_WEBGL 0x9249
-#endif /* GL_WEBGL_video_texture */
-
 #ifndef GL_ANGLE_memory_object_flags
 #define GL_ANGLE_memory_object_flags 1
 #define GL_CREATE_SPARSE_BINDING_BIT_ANGLE                    0x00000001
@@ -733,5 +727,11 @@ typedef void (GL_APIENTRYP PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC) (GLuint,
 GL_APICALL void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLuint framebuffer, GLMTLRasterizationRateMapANGLE map);
 #endif
 #endif /* GL_ANGLE_variable_rasterization_rate_metal */
+
+#ifndef GL_ANGLE_explicit_context
+#define GL_ANGLE_explicit_context
+typedef void *GLeglDisplayANGLE;
+typedef void *GLeglContextANGLE;
+#endif /* GL_ANGLE_explicit_context */
 
 #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_

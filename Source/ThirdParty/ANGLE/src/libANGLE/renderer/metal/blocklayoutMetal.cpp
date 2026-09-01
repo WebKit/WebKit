@@ -116,7 +116,6 @@ size_t GetMetalSizeForGLType(GLenum type)
         case GL_UNSIGNED_INT_SAMPLER_BUFFER:
         case GL_UNSIGNED_INT_IMAGE_BUFFER:
         case GL_UNSIGNED_INT_ATOMIC_COUNTER:
-        case GL_SAMPLER_VIDEO_IMAGE_WEBGL:
         case GL_SAMPLER_EXTERNAL_2D_Y2Y_EXT:
             UNREACHABLE();
             break;
@@ -226,7 +225,6 @@ size_t GetMetalAlignmentForGLType(GLenum type)
         case GL_UNSIGNED_INT_SAMPLER_BUFFER:
         case GL_UNSIGNED_INT_IMAGE_BUFFER:
         case GL_UNSIGNED_INT_ATOMIC_COUNTER:
-        case GL_SAMPLER_VIDEO_IMAGE_WEBGL:
         case GL_SAMPLER_EXTERNAL_2D_Y2Y_EXT:
             UNREACHABLE();
             break;

@@ -82,6 +82,8 @@ DE_DECLARE_COMMAND_LINE_OPT(RunMode, tcu::RunMode);
 DE_DECLARE_COMMAND_LINE_OPT(ExportFilenamePattern, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(MustpassSpec, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(WatchDog, bool);
+DE_DECLARE_COMMAND_LINE_OPT(WatchDogTotalTime, int);
+DE_DECLARE_COMMAND_LINE_OPT(WatchDogIntervalTime, int);
 DE_DECLARE_COMMAND_LINE_OPT(CrashHandler, bool);
 DE_DECLARE_COMMAND_LINE_OPT(BaseSeed, int);
 DE_DECLARE_COMMAND_LINE_OPT(TestIterationCount, int);
@@ -236,6 +238,10 @@ void registerOptions(de::cmdline::Parser &parser)
                                 "(used with --deqp-runmode=gen-mustpass)",
                                 "")
         << Option<WatchDog>(nullptr, "deqp-watchdog", "Enable test watchdog", s_enableNames, "disable")
+        << Option<WatchDogTotalTime>(nullptr, "deqp-watchdog-total-time-limit", "Total test case time limit in seconds",
+                                     "300")
+        << Option<WatchDogIntervalTime>(nullptr, "deqp-watchdog-interval-time-limit",
+                                        "Per iteration time limit in seconds", "30")
         << Option<CrashHandler>(nullptr, "deqp-crashhandler", "Enable crash handling", s_enableNames, "disable")
         << Option<BaseSeed>(nullptr, "deqp-base-seed", "Base seed for test cases that use randomization", "0")
         << Option<TestIterationCount>(nullptr, "deqp-test-iteration-count",
@@ -1261,6 +1267,14 @@ WindowVisibility CommandLine::getVisibility(void) const
 bool CommandLine::isWatchDogEnabled(void) const
 {
     return m_cmdLine.getOption<opt::WatchDog>();
+}
+int CommandLine::getWatchDogTotalTime(void) const
+{
+    return m_cmdLine.getOption<opt::WatchDogTotalTime>();
+}
+int CommandLine::getWatchDogIntervalTime(void) const
+{
+    return m_cmdLine.getOption<opt::WatchDogIntervalTime>();
 }
 bool CommandLine::isCrashHandlingEnabled(void) const
 {

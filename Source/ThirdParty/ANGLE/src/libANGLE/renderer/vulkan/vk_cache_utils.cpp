@@ -6717,8 +6717,30 @@ angle::Result DescriptorSetDescBuilder::updateImages(
                 GLuint imageUnit             = imageBinding.boundImageUnits[arrayElement];
                 const gl::ImageUnit &binding = imageUnits[imageUnit];
                 TextureVk *textureVk         = activeImages[imageUnit];
+
+                uint32_t infoIndex = writeDescriptorDescs[info.binding].descriptorInfoIndex +
+                                     arrayElement + imageUniform.getOuterArrayOffset();
+
                 if (!textureVk)
                 {
+                    DescriptorInfoDesc &nullInfoDesc = mDesc.getInfoDesc(infoIndex);
+                    SetBitField(nullInfoDesc.imageLayoutOrRange, VK_IMAGE_LAYOUT_GENERAL);
+                    nullInfoDesc.imageSubresourceRange = 0;
+
+                    VkImageView nullView = VK_NULL_HANDLE;
+                    vk::ImageOrBufferViewSerial nullSerial;
+
+                    GLenum shaderFormat = imageUniform.getImageUnitFormat();
+                    if (shaderFormat == GL_NONE)
+                    {
+                        shaderFormat = GL_RGBA8;
+                    }
+                    ANGLE_TRY(contextVk->getOrCreateNullStorageImageView(shaderFormat, &nullView,
+                                                                         &nullSerial));
+                    nullInfoDesc.imageViewSerialOrOffset = nullSerial.getValue();
+                    nullInfoDesc.samplerOrBufferSerialOrStorageFormat =
+                        static_cast<uint64_t>(shaderFormat);
+                    mHandles[infoIndex].imageView = nullView;
                     continue;
                 }
 
@@ -6729,9 +6751,6 @@ angle::Result DescriptorSetDescBuilder::updateImages(
                     textureVk->getStorageImageViewSerial(binding);
 
                 ANGLE_TRY(textureVk->getStorageImageView(contextVk, binding, &imageView));
-
-                uint32_t infoIndex = writeDescriptorDescs[info.binding].descriptorInfoIndex +
-                                     arrayElement + imageUniform.getOuterArrayOffset();
 
                 // Note: binding.access is unused because it is implied by the shader.
 

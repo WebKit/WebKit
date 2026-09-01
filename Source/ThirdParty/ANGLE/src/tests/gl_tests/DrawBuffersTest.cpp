@@ -284,9 +284,6 @@ TEST_P(DrawBuffersTest, BlendWithGaps)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    // http://anglebug.com/42263715
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
-
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mTextures[0], 0);
 
@@ -1290,9 +1287,6 @@ TEST_P(DrawBuffersTestES3, CubeMapArrayTextures)
 TEST_P(DrawBuffersTestES3, BlendWithDrawBufferAndFramebufferChanges)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
-
-    // http://anglebug.com/42263715
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
     // Create two framebuffers, one with 3 attachments (fbo3), one with 4 (fbo4).  The test issues
     // draw calls on fbo3 with different attachments enabled, then switches to fbo4 (without

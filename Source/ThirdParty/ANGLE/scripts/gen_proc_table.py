@@ -126,6 +126,7 @@ includes_gles = """#include "libANGLE/Thread.h"
 #include "libGLESv2/entry_points_gles_3_1_autogen.h"
 #include "libGLESv2/entry_points_gles_3_2_autogen.h"
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
+#include "libGLESv2/entry_points_gles_ext_explicit_context_autogen.h"
 #include "platform/PlatformMethods.h"
 
 #include <iterator>
@@ -193,15 +194,24 @@ def main():
     all_functions = {}
     for function in gles_data:
         if function.startswith("gl"):
-            all_functions[function] = "GL_" + function[2:]
+            all_functions[function] = {"function": "GL_" + function[2:]}
+            all_functions[function + "ContextANGLE"] = {
+                "function": "GL_" + function[2:] + "ContextANGLE",
+                "defines": ["ANGLE_ENABLE_EXPLICIT_CONTEXT"]
+            }
         elif function.startswith("egl"):
-            all_functions[function] = "EGL_" + function[3:]
+            all_functions[function] = {"function": "EGL_" + function[3:]}
         else:
-            all_functions[function] = function
+            all_functions[function] = {"function": function}
 
     proc_data = []
     for func, angle_func in sorted(all_functions.items()):
-        proc_data.append('    {"%s", P(%s)},' % (func, angle_func))
+        defines = angle_func.get("defines", [])
+        for define in defines:
+            proc_data.append('#if defined(%s)' % (define))
+        proc_data.append('    {"%s", P(%s)},' % (func, angle_func['function']))
+        for define in defines:
+            proc_data.append('#endif // defined(%s)' % (define))
 
     with open(out_file_name_gles, 'w') as out_file:
         output_cpp = template_cpp.format(

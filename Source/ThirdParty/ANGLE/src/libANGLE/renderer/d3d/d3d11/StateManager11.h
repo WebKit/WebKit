@@ -64,8 +64,6 @@ class ShaderConstants11 : angle::NonCopyable
     {
         Vertex()
             : depthRange{.0f},
-              viewAdjust{.0f},
-              viewCoords{.0f},
               viewScale{.0f},
               clipControlOrigin{-1.0f},
               clipControlZeroToOne{.0f},
@@ -75,8 +73,6 @@ class ShaderConstants11 : angle::NonCopyable
         {}
 
         float depthRange[4];
-        float viewAdjust[4];
-        float viewCoords[4];
         float viewScale[2];
 
         // EXT_clip_control
@@ -174,7 +170,7 @@ class StateManager11 final : angle::NonCopyable
     // The Context is allowed to be nullptr for these methods, when called in EGL init code.
     void invalidateRenderTarget();
 
-    // Called by instanced point sprite emulation.
+    // Invalidates all current vertex buffer bindings.
     void invalidateVertexBuffer();
 
     // Called by Framebuffer11::syncState for the default sized viewport.
@@ -250,10 +246,6 @@ class StateManager11 final : angle::NonCopyable
     void setScissorRectD3D(const D3D11_RECT &d3dRect);
 
     void setIndexBuffer(ID3D11Buffer *buffer, DXGI_FORMAT indexFormat, unsigned int offset);
-
-    angle::Result updateVertexOffsetsForPointSpritesEmulation(const gl::Context *context,
-                                                              GLint startVertex,
-                                                              GLsizei emulatedInstanceId);
 
     // Only used in testing.
     InputLayoutCache *getInputLayoutCache() { return &mInputLayoutCache; }

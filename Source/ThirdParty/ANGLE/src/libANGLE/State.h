@@ -1640,7 +1640,10 @@ class State : angle::NonCopyable
         return (this->*handlers[dirtyObject])(context, command);
     }
 
-    // Robust init must happen before Framebuffer init for the Vulkan back-end.
+    // Robust init must happen before Framebuffer init for the Vulkan back-end.  If deferred clears
+    // can be made to work in the Vulkan back-end such that textures could be sync'ed before the
+    // framebuffer, then TEXTURES_INIT and IMAGES_INIT can be removed since robust init happens
+    // during texture sync as well.
     static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
                   "init order");
     static_assert(state::DIRTY_OBJECT_TEXTURES_INIT < state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,

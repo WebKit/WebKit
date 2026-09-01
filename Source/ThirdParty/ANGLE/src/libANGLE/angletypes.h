@@ -236,6 +236,10 @@ using Extents = angle::Extents<int>;
 using Offset  = angle::Offset<int>;
 constexpr Offset kOffsetZero(0, 0, 0);
 
+// Compute the size of a mip level based on a the size of a base level and a relative offset.
+// Handles array texture types using the same depth for all levels.
+Extents ComputeMipSize(const Extents &baseSize, int relativeLevel, gl::TextureType textureType);
+
 struct Box
 {
     Box() : x(0), y(0), z(0), width(0), height(0), depth(0) {}

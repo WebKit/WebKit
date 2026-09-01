@@ -580,6 +580,39 @@ angle::Result TextureWgpu::setImageExternal(const gl::Context *context,
 
 angle::Result TextureWgpu::generateMipmap(const gl::Context *context)
 {
+    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+
+    gl::LevelIndex baseLevel           = gl::LevelIndex(mState.getEffectiveBaseLevel());
+    const gl::ImageDesc &baseLevelDesc = mState.getBaseLevelDesc();
+    const webgpu::Format &format =
+        contextWgpu->getFormat(baseLevelDesc.format.info->sizedInternalFormat);
+
+    gl::LevelIndex maxLevel = gl::LevelIndex(mState.getMipmapMaxLevel());
+    ASSERT(maxLevel.get() != 0);
+
+    for (gl::LevelIndex sourceLevel = baseLevel; sourceLevel < maxLevel; ++sourceLevel)
+    {
+        webgpu::TextureViewHandle srcView;
+        ANGLE_TRY(mImage->createTextureViewSingleLevel(
+            sourceLevel, 0, srcView, WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
+        gl::Extents sourceSize =
+            ComputeMipSize(baseLevelDesc.size, sourceLevel - baseLevel, mState.getType());
+        gl::Rectangle sourceRect(0, 0, sourceSize.width, sourceSize.height);
+
+        gl::LevelIndex destLevel = sourceLevel + 1;
+        webgpu::TextureViewHandle dstView;
+        ANGLE_TRY(mImage->createTextureViewSingleLevel(destLevel, 0, dstView, WGPUTextureAspect_All,
+                                                       WGPUTextureFormat_Undefined));
+        gl::Extents destSize =
+            ComputeMipSize(baseLevelDesc.size, destLevel - baseLevel, mState.getType());
+        gl::Rectangle destRect(0, 0, destSize.width, destSize.height);
+
+        ANGLE_TRY(contextWgpu->getUtils()->blit(
+            contextWgpu, srcView, dstView, sourceRect, destRect, gl_wgpu::GetExtent3D(sourceSize),
+            gl_wgpu::GetExtent3D(destSize), GL_LINEAR, false, false, 1, format.getIntendedFormat(),
+            format.getIntendedFormatID(), format.getActualImageFormatID(), nullptr));
+    }
+
     return angle::Result::Continue;
 }
 
@@ -935,10 +968,10 @@ void TextureWgpu::prepareForGenerateMipmap(ContextWgpu *contextWgpu)
     // Remove staged updates to the range that's being respecified (which is all the mips except
     // baseLevel).
     gl::LevelIndex firstGeneratedLevel = baseLevel + 1;
-    for (GLuint levelToRemove = mState.getEffectiveBaseLevel();
-         levelToRemove < mState.getMipmapMaxLevel(); levelToRemove++)
+    for (gl::LevelIndex levelToRemove = firstGeneratedLevel;
+         levelToRemove < gl::LevelIndex(mState.getMipmapMaxLevel()); ++levelToRemove)
     {
-        mImage->removeStagedUpdates(gl::LevelIndex(levelToRemove));
+        mImage->removeStagedUpdates(levelToRemove);
     }
 
     TextureRedefineGenerateMipmapLevels(baseLevel, maxLevel, firstGeneratedLevel,

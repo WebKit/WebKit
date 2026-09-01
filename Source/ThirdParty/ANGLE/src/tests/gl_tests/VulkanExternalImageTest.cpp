@@ -490,17 +490,23 @@ void RunShouldClearTestRGB565(bool useMemoryObjectFlags,
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_GL_NO_ERROR();
 
         const uint16_t rgb565Cyan = 0x7FF;
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, &rgb565Cyan);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+        ASSERT_GL_NO_ERROR();
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE,
-                        &GLColorRGB::yellow);
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+        // Updating an RGB565 texture with unsigned byte is not supported in ES2 without the
+        // required extension.
+        if (EnsureGLExtensionEnabled("GL_OES_required_internalformat"))
+        {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE,
+                            &GLColorRGB::yellow);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+            ASSERT_GL_NO_ERROR();
+        }
     }
-
-    EXPECT_GL_NO_ERROR();
 
     vkDestroyImage(helper.getDevice(), image, nullptr);
     vkFreeMemory(helper.getDevice(), deviceMemory, nullptr);

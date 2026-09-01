@@ -463,9 +463,6 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UShort)
 // This test will initialize a depth texture, clear it and read it back, if possible
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 {
-    // http://anglebug.com/40644772
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
-
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
         GL_DEPTH_ATTACHMENT,
@@ -482,9 +479,6 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 // This test will initialize a depth texture, clear it and read it back, if possible
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_Float)
 {
-    // http://anglebug.com/40644772
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
-
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
         GL_DEPTH_ATTACHMENT,

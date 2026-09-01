@@ -534,7 +534,6 @@ pub fn trace_back_to_variable(ir_meta: &IRMeta, id: Id) -> Option<VariableId> {
 // into `while` loops.  In particular:
 //
 // * ESSL 100 needs this to comply with the spec, as the output is passed to the OpenGL ES driver.
-// * HLSL needs this for D3D9.
 //
 // This function checks whether the block ends in loop in the above form.  If so, the information
 // needed to reconstruct the for loop is returned.

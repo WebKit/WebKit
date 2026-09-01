@@ -108,9 +108,6 @@ struct Limitations
 
     Limitations &operator=(const Limitations &other);
 
-    // In glVertexAttribDivisorANGLE, attribute zero must have a zero divisor
-    bool attributeZeroRequiresZeroDivisorInEXT = false;
-
     // Unable to support different values for front and back faces for stencil refs and masks
     bool noSeparateStencilRefsAndMasks = false;
 

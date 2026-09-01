@@ -246,6 +246,10 @@ class SourceLayer : public SourceIndex<uint32_t>
     // Convenience helpers
     SourceLayer operator+(uint32_t offset) const { return SourceLayer(mIndex + offset); }
 
+    // Helper while code is being transitioned to using SourceLayer consistently.  Remove once done.
+    // TODO(http://anglebug.com/525079760)
+    static SourceLayer VerifiedSourceLayer(uint32_t layer) { return SourceLayer(layer); }
+
   protected:
     friend struct egl::ImageSourceAttributes;
     friend class SourceImageIndex;

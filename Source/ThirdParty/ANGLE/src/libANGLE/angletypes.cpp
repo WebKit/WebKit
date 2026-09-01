@@ -958,6 +958,15 @@ void ExtendRectangle(const Rectangle &source, const Rectangle &extend, Rectangle
     extended->height = y1 - y0;
 }
 
+Extents ComputeMipSize(const Extents &baseSize, int relativeLevel, gl::TextureType textureType)
+{
+    return Extents(std::max<int>(baseSize.width >> relativeLevel, 1),
+                   std::max<int>(baseSize.height >> relativeLevel, 1),
+                   (IsArrayTextureType(textureType))
+                       ? baseSize.depth
+                       : std::max<int>(baseSize.depth >> relativeLevel, 1));
+}
+
 bool Box::valid() const
 {
     return width != 0 && height != 0 && depth != 0;

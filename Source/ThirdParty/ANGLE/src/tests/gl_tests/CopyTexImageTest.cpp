@@ -1784,8 +1784,10 @@ TEST_P(CopyTexImageTestES3, Snorm3DTextureNonZeroOffset)
     glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGB8_SNORM, kWidth, kHeight, kDepth);
 
     std::vector<uint8_t> colorWhiteRGB8Snorm(kWidth * kHeight * kDepth * 3, 0x7F);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kWidth, kHeight, kDepth, GL_RGB, GL_BYTE,
                     colorWhiteRGB8Snorm.data());
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, kZOffset, 0, 0, kWidth, kHeight);
     ASSERT_GL_NO_ERROR();
 

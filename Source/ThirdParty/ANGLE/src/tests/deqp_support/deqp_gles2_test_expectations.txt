@@ -136,98 +136,8 @@
 42261982 OPENGL INTEL LINUX : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_repeat = FAIL
 42261982 OPENGL INTEL LINUX : dEQP-GLES2.functional.texture.vertex.cube.wrap.repeat_repeat = FAIL
 
-// Mac OpenGL specific failures
-42262130 MAC OPENGL : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = SKIP
-42262096 MAC OPENGL : dEQP-GLES2.functional.shaders.preprocessor.pragmas.pragma_vertex = FAIL
-42260153 MAC OPENGL : dEQP-GLES2.functional.shaders.scoping.valid.local_int_variable_hides_struct_type_* = FAIL
-42260153 MAC OPENGL : dEQP-GLES2.functional.shaders.scoping.valid.local_struct_variable_hides_struct_type_* = FAIL
-42260153 MAC OPENGL : dEQP-GLES2.functional.shaders.scoping.valid.function_parameter_hides_struct_type_* = FAIL
-42260153 MAC OPENGL : dEQP-GLES2.functional.shaders.random.trigonometric.vertex.65 = FAIL
-40096505 MAC OPENGL : dEQP-GLES2.functional.shaders.operator.sequence.side_effects.affect_* = FAIL
-42261996 MAC OPENGL : dEQP-GLES2.functional.shaders.linkage.varying_4 = FAIL
-42267041 MAC OPENGL : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond* = FAIL
-
-// MAC OPENGL INTEL specific
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.long_masked_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.long_masked_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.masked_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.masked_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.masked_scissored_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.masked_scissored_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.scissored_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.scissored_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.short_scissored_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.polygon_offset.default_render_with_units = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.polygon_offset.fixed16_render_with_units = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_alpha = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_luminance = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_luminance_alpha = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_rgb = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_rgba = FAIL
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.discard.dynamic_loop_never = SKIP
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.discard.function_static_loop_never = SKIP
-40096462 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.discard.static_loop_never = SKIP
-
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.highp.common_subexpression_1 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.highp.common_subexpression_3 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.mediump.common_subexpression_1 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.mediump.common_subexpression_3 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.lowp.common_subexpression_1 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.shaders.invariance.lowp.common_subexpression_3 = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_clamp_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_clamp_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_clamp_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_clamp_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_repeat_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_repeat_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_repeat_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_repeat_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_mirror_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_mirror_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_mirror_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.2d.linear_nearest_mirror_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_clamp_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_clamp_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_clamp_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_clamp_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_repeat_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_repeat_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_repeat_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_repeat_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_mirror_rgba8888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_mirror_rgb888_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_mirror_rgba4444_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.filtering.cube.linear_nearest_mirror_l8_pot = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.vertex.2d.filtering.linear_nearest_* = FAIL
-42261996 MAC OPENGL INTEL : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_nearest_* = FAIL
-
-40096594 MAC OPENGL INTEL : dEQP-GLES2.functional.fbo.render.color_clear.tex2d_rgb = FAIL
-40096594 MAC OPENGL INTEL : dEQP-GLES2.functional.fbo.render.color_clear.tex2d_rgb_depth_component16 = FAIL
-40096594 MAC OPENGL INTEL : dEQP-GLES2.functional.fbo.render.color_clear.tex2d_rgb_stencil_index8 = FAIL
-40096594 MAC OPENGL INTEL : dEQP-GLES2.functional.fbo.render.stencil_clear.tex2d_rgb_stencil_index8 = FAIL
-
-// Mac AMD OpenGL specific
-40096462 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip = FAIL
-42261996 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_center = FAIL
-42261996 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_corner = FAIL
-
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.draw.draw_elements.indices.user_ptr.index_byte = FAIL
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.dither.* = FAIL
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.draw.random.* = FAIL
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_depth_funcs.stencil* = FAIL
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.shaders.fragdata.* = FAIL
-42263733 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.* = FAIL
-
 // Apple M2
 42266214 MAC APPLE : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_* = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_clamp = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_clamp = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_mirror = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_repeat = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_nearest_mirror = FAIL
-42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.cube.projected.nearest_linear = FAIL
 42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_clamp = FAIL
 42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_repeat = FAIL
 42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_clamp = FAIL
@@ -481,6 +391,7 @@
 // Unfortunately Intel and AMD GPUs on Mac fail texture filtering tests.
 389145696 WGPU MAC INTEL : dEQP-GLES2.functional.texture.filtering.2d.* = FAIL
 389145696 WGPU MAC AMD : dEQP-GLES2.functional.texture.filtering.2d.* = FAIL
+389145696 WGPU MAC AMD : dEQP-GLES2.functional.texture.mipmap.2d.* = SKIP
 // 2D filtering tests pass but cube textures do not work yet.
 389145696 WGPU : dEQP-GLES2.functional.texture.filtering.cube.* = SKIP
 // Except luminance format doesn't work
@@ -488,8 +399,10 @@
 389145696 WGPU : dEQP-GLES2.functional.texture.wrap.*_l8* = FAIL
 // Cube textures not yet supported
 389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.cube.* = SKIP
-// Mipmap generation not supported
-389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.* = SKIP
+// Mipmap generation not supported for luma textures
+389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.a8* = SKIP
+389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.l8* = SKIP
+389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.la88* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.format.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.size.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.specification.* = SKIP

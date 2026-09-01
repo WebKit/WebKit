@@ -68,7 +68,8 @@ gl::SourceImageIndex ImageSourceAttributes::toSourceIndex(const gl::OwnImageInde
 
     // If this is an EGL image target, it must be a renderbuffer or 2D texture, in which case it's
     // level and layer are both 0.
-    ASSERT(!ownIndex.getUntranslated().hasLayer() &&
+    ASSERT((!ownIndex.getUntranslated().hasLayer() ||
+            ownIndex.getUntranslated().getLayerIndex() == 0) &&
            ownIndex.getUntranslated().getLevelIndex() == 0);
     return gl::SourceImageIndex(gl::ImageIndex::MakeFromType(type, level, zoffset));
 }

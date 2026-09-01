@@ -571,9 +571,6 @@ TEST_P(OcclusionQueriesTest, MultiQueries)
     // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsOpenGL() || IsD3D11());
 
-    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
-
     GLQueryEXT query[5];
 
     // First query

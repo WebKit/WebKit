@@ -19,6 +19,7 @@
 #include "libGLESv2/entry_points_gles_3_1_autogen.h"
 #include "libGLESv2/entry_points_gles_3_2_autogen.h"
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
+#include "libGLESv2/entry_points_gles_ext_explicit_context_autogen.h"
 #include "platform/PlatformMethods.h"
 
 #include <iterator>
@@ -161,834 +162,3321 @@ const ProcEntry g_procTable[] = {
     {"eglWaitSyncKHR", P(EGL_WaitSyncKHR)},
     {"eglWaitUntilWorkScheduledANGLE", P(EGL_WaitUntilWorkScheduledANGLE)},
     {"glAcquireTexturesANGLE", P(GL_AcquireTexturesANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glAcquireTexturesANGLEContextANGLE", P(GL_AcquireTexturesANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glActiveShaderProgram", P(GL_ActiveShaderProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glActiveShaderProgramContextANGLE", P(GL_ActiveShaderProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glActiveShaderProgramEXT", P(GL_ActiveShaderProgramEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glActiveShaderProgramEXTContextANGLE", P(GL_ActiveShaderProgramEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glActiveTexture", P(GL_ActiveTexture)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glActiveTextureContextANGLE", P(GL_ActiveTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glAlphaFunc", P(GL_AlphaFunc)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glAlphaFuncContextANGLE", P(GL_AlphaFuncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glAlphaFuncx", P(GL_AlphaFuncx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glAlphaFuncxContextANGLE", P(GL_AlphaFuncxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glAttachShader", P(GL_AttachShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glAttachShaderContextANGLE", P(GL_AttachShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBeginPerfMonitorAMD", P(GL_BeginPerfMonitorAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBeginPerfMonitorAMDContextANGLE", P(GL_BeginPerfMonitorAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBeginPixelLocalStorageANGLE", P(GL_BeginPixelLocalStorageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBeginPixelLocalStorageANGLEContextANGLE", P(GL_BeginPixelLocalStorageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBeginQuery", P(GL_BeginQuery)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBeginQueryContextANGLE", P(GL_BeginQueryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBeginQueryEXT", P(GL_BeginQueryEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBeginQueryEXTContextANGLE", P(GL_BeginQueryEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBeginTransformFeedback", P(GL_BeginTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBeginTransformFeedbackContextANGLE", P(GL_BeginTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindAttribLocation", P(GL_BindAttribLocation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindAttribLocationContextANGLE", P(GL_BindAttribLocationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindBuffer", P(GL_BindBuffer)},
     {"glBindBufferBase", P(GL_BindBufferBase)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindBufferBaseContextANGLE", P(GL_BindBufferBaseContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindBufferContextANGLE", P(GL_BindBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindBufferRange", P(GL_BindBufferRange)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindBufferRangeContextANGLE", P(GL_BindBufferRangeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindFragDataLocationEXT", P(GL_BindFragDataLocationEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindFragDataLocationEXTContextANGLE", P(GL_BindFragDataLocationEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindFragDataLocationIndexedEXT", P(GL_BindFragDataLocationIndexedEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindFragDataLocationIndexedEXTContextANGLE", P(GL_BindFragDataLocationIndexedEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindFramebuffer", P(GL_BindFramebuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindFramebufferContextANGLE", P(GL_BindFramebufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindFramebufferOESContextANGLE", P(GL_BindFramebufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindImageTexture", P(GL_BindImageTexture)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindImageTextureContextANGLE", P(GL_BindImageTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindMetalRasterizationRateMapANGLEContextANGLE", P(GL_BindMetalRasterizationRateMapANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindProgramPipelineContextANGLE", P(GL_BindProgramPipelineContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindProgramPipelineEXTContextANGLE", P(GL_BindProgramPipelineEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindRenderbufferContextANGLE", P(GL_BindRenderbufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindRenderbufferOES", P(GL_BindRenderbufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindRenderbufferOESContextANGLE", P(GL_BindRenderbufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindSampler", P(GL_BindSampler)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindSamplerContextANGLE", P(GL_BindSamplerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindTexture", P(GL_BindTexture)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindTextureContextANGLE", P(GL_BindTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindTransformFeedback", P(GL_BindTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindTransformFeedbackContextANGLE", P(GL_BindTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindUniformLocationCHROMIUM", P(GL_BindUniformLocationCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindUniformLocationCHROMIUMContextANGLE", P(GL_BindUniformLocationCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindVertexArray", P(GL_BindVertexArray)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindVertexArrayContextANGLE", P(GL_BindVertexArrayContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindVertexArrayOES", P(GL_BindVertexArrayOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindVertexArrayOESContextANGLE", P(GL_BindVertexArrayOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBindVertexBuffer", P(GL_BindVertexBuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBindVertexBufferContextANGLE", P(GL_BindVertexBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendBarrier", P(GL_BlendBarrier)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendBarrierContextANGLE", P(GL_BlendBarrierContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendBarrierKHR", P(GL_BlendBarrierKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendBarrierKHRContextANGLE", P(GL_BlendBarrierKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendColor", P(GL_BlendColor)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendColorContextANGLE", P(GL_BlendColorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquation", P(GL_BlendEquation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationContextANGLE", P(GL_BlendEquationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationOES", P(GL_BlendEquationOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationOESContextANGLE", P(GL_BlendEquationOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationSeparate", P(GL_BlendEquationSeparate)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationSeparateContextANGLE", P(GL_BlendEquationSeparateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationSeparatei", P(GL_BlendEquationSeparatei)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationSeparateiContextANGLE", P(GL_BlendEquationSeparateiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationSeparateiEXT", P(GL_BlendEquationSeparateiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationSeparateiEXTContextANGLE", P(GL_BlendEquationSeparateiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationSeparateiOES", P(GL_BlendEquationSeparateiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationSeparateiOESContextANGLE", P(GL_BlendEquationSeparateiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationi", P(GL_BlendEquationi)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationiContextANGLE", P(GL_BlendEquationiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationiEXT", P(GL_BlendEquationiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationiEXTContextANGLE", P(GL_BlendEquationiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendEquationiOES", P(GL_BlendEquationiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendEquationiOESContextANGLE", P(GL_BlendEquationiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFunc", P(GL_BlendFunc)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFuncContextANGLE", P(GL_BlendFuncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFuncSeparate", P(GL_BlendFuncSeparate)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFuncSeparateContextANGLE", P(GL_BlendFuncSeparateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFuncSeparatei", P(GL_BlendFuncSeparatei)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFuncSeparateiContextANGLE", P(GL_BlendFuncSeparateiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFuncSeparateiEXT", P(GL_BlendFuncSeparateiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFuncSeparateiEXTContextANGLE", P(GL_BlendFuncSeparateiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFuncSeparateiOES", P(GL_BlendFuncSeparateiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFuncSeparateiOESContextANGLE", P(GL_BlendFuncSeparateiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFunci", P(GL_BlendFunci)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFunciContextANGLE", P(GL_BlendFunciContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFunciEXT", P(GL_BlendFunciEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFunciEXTContextANGLE", P(GL_BlendFunciEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlendFunciOES", P(GL_BlendFunciOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlendFunciOESContextANGLE", P(GL_BlendFunciOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlitFramebuffer", P(GL_BlitFramebuffer)},
     {"glBlitFramebufferANGLE", P(GL_BlitFramebufferANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlitFramebufferANGLEContextANGLE", P(GL_BlitFramebufferANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlitFramebufferContextANGLE", P(GL_BlitFramebufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlitFramebufferNV", P(GL_BlitFramebufferNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlitFramebufferNVContextANGLE", P(GL_BlitFramebufferNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBlobCacheCallbacksANGLE", P(GL_BlobCacheCallbacksANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBlobCacheCallbacksANGLEContextANGLE", P(GL_BlobCacheCallbacksANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBufferData", P(GL_BufferData)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBufferDataContextANGLE", P(GL_BufferDataContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBufferStorageEXT", P(GL_BufferStorageEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBufferStorageEXTContextANGLE", P(GL_BufferStorageEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBufferStorageExternalEXT", P(GL_BufferStorageExternalEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBufferStorageExternalEXTContextANGLE", P(GL_BufferStorageExternalEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBufferStorageMemEXT", P(GL_BufferStorageMemEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBufferStorageMemEXTContextANGLE", P(GL_BufferStorageMemEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glBufferSubData", P(GL_BufferSubData)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glBufferSubDataContextANGLE", P(GL_BufferSubDataContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCheckFramebufferStatus", P(GL_CheckFramebufferStatus)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCheckFramebufferStatusContextANGLE", P(GL_CheckFramebufferStatusContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCheckFramebufferStatusOES", P(GL_CheckFramebufferStatusOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCheckFramebufferStatusOESContextANGLE", P(GL_CheckFramebufferStatusOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClear", P(GL_Clear)},
     {"glClearBufferfi", P(GL_ClearBufferfi)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearBufferfiContextANGLE", P(GL_ClearBufferfiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearBufferfv", P(GL_ClearBufferfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearBufferfvContextANGLE", P(GL_ClearBufferfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearBufferiv", P(GL_ClearBufferiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearBufferivContextANGLE", P(GL_ClearBufferivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearBufferuiv", P(GL_ClearBufferuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearBufferuivContextANGLE", P(GL_ClearBufferuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearColor", P(GL_ClearColor)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearColorContextANGLE", P(GL_ClearColorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearColorx", P(GL_ClearColorx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearColorxContextANGLE", P(GL_ClearColorxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearContextANGLE", P(GL_ClearContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearDepthf", P(GL_ClearDepthf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearDepthfContextANGLE", P(GL_ClearDepthfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearDepthx", P(GL_ClearDepthx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearDepthxContextANGLE", P(GL_ClearDepthxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearStencil", P(GL_ClearStencil)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearStencilContextANGLE", P(GL_ClearStencilContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearTexImageEXT", P(GL_ClearTexImageEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearTexImageEXTContextANGLE", P(GL_ClearTexImageEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClearTexSubImageEXT", P(GL_ClearTexSubImageEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClearTexSubImageEXTContextANGLE", P(GL_ClearTexSubImageEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClientActiveTexture", P(GL_ClientActiveTexture)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClientActiveTextureContextANGLE", P(GL_ClientActiveTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClientWaitSync", P(GL_ClientWaitSync)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClientWaitSyncContextANGLE", P(GL_ClientWaitSyncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClipControlEXT", P(GL_ClipControlEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClipControlEXTContextANGLE", P(GL_ClipControlEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClipPlanef", P(GL_ClipPlanef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClipPlanefContextANGLE", P(GL_ClipPlanefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glClipPlanex", P(GL_ClipPlanex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glClipPlanexContextANGLE", P(GL_ClipPlanexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColor4f", P(GL_Color4f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColor4fContextANGLE", P(GL_Color4fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColor4ub", P(GL_Color4ub)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColor4ubContextANGLE", P(GL_Color4ubContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColor4x", P(GL_Color4x)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColor4xContextANGLE", P(GL_Color4xContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColorMask", P(GL_ColorMask)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColorMaskContextANGLE", P(GL_ColorMaskContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColorMaski", P(GL_ColorMaski)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColorMaskiContextANGLE", P(GL_ColorMaskiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColorMaskiEXT", P(GL_ColorMaskiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColorMaskiEXTContextANGLE", P(GL_ColorMaskiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColorMaskiOES", P(GL_ColorMaskiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColorMaskiOESContextANGLE", P(GL_ColorMaskiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glColorPointer", P(GL_ColorPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glColorPointerContextANGLE", P(GL_ColorPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompileShader", P(GL_CompileShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompileShaderContextANGLE", P(GL_CompileShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedCopyTextureCHROMIUM", P(GL_CompressedCopyTextureCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedCopyTextureCHROMIUMContextANGLE", P(GL_CompressedCopyTextureCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexImage2D", P(GL_CompressedTexImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexImage2DContextANGLE", P(GL_CompressedTexImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexImage3D", P(GL_CompressedTexImage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexImage3DContextANGLE", P(GL_CompressedTexImage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexImage3DOES", P(GL_CompressedTexImage3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexImage3DOESContextANGLE", P(GL_CompressedTexImage3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexSubImage2D", P(GL_CompressedTexSubImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexSubImage2DContextANGLE", P(GL_CompressedTexSubImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexSubImage3D", P(GL_CompressedTexSubImage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexSubImage3DContextANGLE", P(GL_CompressedTexSubImage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCompressedTexSubImage3DOES", P(GL_CompressedTexSubImage3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCompressedTexSubImage3DOESContextANGLE", P(GL_CompressedTexSubImage3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyBufferSubData", P(GL_CopyBufferSubData)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyBufferSubDataContextANGLE", P(GL_CopyBufferSubDataContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyImageSubData", P(GL_CopyImageSubData)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyImageSubDataContextANGLE", P(GL_CopyImageSubDataContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyImageSubDataEXT", P(GL_CopyImageSubDataEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyImageSubDataEXTContextANGLE", P(GL_CopyImageSubDataEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyImageSubDataOES", P(GL_CopyImageSubDataOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyImageSubDataOESContextANGLE", P(GL_CopyImageSubDataOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopySubTexture3DANGLE", P(GL_CopySubTexture3DANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopySubTexture3DANGLEContextANGLE", P(GL_CopySubTexture3DANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopySubTextureCHROMIUM", P(GL_CopySubTextureCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopySubTextureCHROMIUMContextANGLE", P(GL_CopySubTextureCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTexImage2D", P(GL_CopyTexImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTexImage2DContextANGLE", P(GL_CopyTexImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTexSubImage2D", P(GL_CopyTexSubImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTexSubImage2DContextANGLE", P(GL_CopyTexSubImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTexSubImage3D", P(GL_CopyTexSubImage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTexSubImage3DContextANGLE", P(GL_CopyTexSubImage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTexSubImage3DOES", P(GL_CopyTexSubImage3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTexSubImage3DOESContextANGLE", P(GL_CopyTexSubImage3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTexture3DANGLE", P(GL_CopyTexture3DANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTexture3DANGLEContextANGLE", P(GL_CopyTexture3DANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTextureCHROMIUM", P(GL_CopyTextureCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCopyTextureCHROMIUMContextANGLE", P(GL_CopyTextureCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCoverageModulationCHROMIUM", P(GL_CoverageModulationCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCoverageModulationCHROMIUMContextANGLE", P(GL_CoverageModulationCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateMemoryObjectsEXT", P(GL_CreateMemoryObjectsEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCreateMemoryObjectsEXTContextANGLE", P(GL_CreateMemoryObjectsEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateProgram", P(GL_CreateProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCreateProgramContextANGLE", P(GL_CreateProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateShader", P(GL_CreateShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCreateShaderContextANGLE", P(GL_CreateShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateShaderProgramv", P(GL_CreateShaderProgramv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCreateShaderProgramvContextANGLE", P(GL_CreateShaderProgramvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateShaderProgramvEXT", P(GL_CreateShaderProgramvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCreateShaderProgramvEXTContextANGLE", P(GL_CreateShaderProgramvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCullFace", P(GL_CullFace)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCullFaceContextANGLE", P(GL_CullFaceContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCurrentPaletteMatrixOES", P(GL_CurrentPaletteMatrixOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glCurrentPaletteMatrixOESContextANGLE", P(GL_CurrentPaletteMatrixOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageCallback", P(GL_DebugMessageCallback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageCallbackContextANGLE", P(GL_DebugMessageCallbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageCallbackKHR", P(GL_DebugMessageCallbackKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageCallbackKHRContextANGLE", P(GL_DebugMessageCallbackKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageControl", P(GL_DebugMessageControl)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageControlContextANGLE", P(GL_DebugMessageControlContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageControlKHR", P(GL_DebugMessageControlKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageControlKHRContextANGLE", P(GL_DebugMessageControlKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageInsert", P(GL_DebugMessageInsert)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageInsertContextANGLE", P(GL_DebugMessageInsertContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDebugMessageInsertKHR", P(GL_DebugMessageInsertKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDebugMessageInsertKHRContextANGLE", P(GL_DebugMessageInsertKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteBuffers", P(GL_DeleteBuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteBuffersContextANGLE", P(GL_DeleteBuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteFencesNV", P(GL_DeleteFencesNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteFencesNVContextANGLE", P(GL_DeleteFencesNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteFramebuffers", P(GL_DeleteFramebuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteFramebuffersContextANGLE", P(GL_DeleteFramebuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteFramebuffersOES", P(GL_DeleteFramebuffersOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteFramebuffersOESContextANGLE", P(GL_DeleteFramebuffersOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteMemoryObjectsEXT", P(GL_DeleteMemoryObjectsEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteMemoryObjectsEXTContextANGLE", P(GL_DeleteMemoryObjectsEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeletePerfMonitorsAMD", P(GL_DeletePerfMonitorsAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeletePerfMonitorsAMDContextANGLE", P(GL_DeletePerfMonitorsAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteProgram", P(GL_DeleteProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteProgramContextANGLE", P(GL_DeleteProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteProgramPipelines", P(GL_DeleteProgramPipelines)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteProgramPipelinesContextANGLE", P(GL_DeleteProgramPipelinesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteProgramPipelinesEXT", P(GL_DeleteProgramPipelinesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteProgramPipelinesEXTContextANGLE", P(GL_DeleteProgramPipelinesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteQueries", P(GL_DeleteQueries)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteQueriesContextANGLE", P(GL_DeleteQueriesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteQueriesEXT", P(GL_DeleteQueriesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteQueriesEXTContextANGLE", P(GL_DeleteQueriesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteRenderbuffers", P(GL_DeleteRenderbuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteRenderbuffersContextANGLE", P(GL_DeleteRenderbuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteRenderbuffersOES", P(GL_DeleteRenderbuffersOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteRenderbuffersOESContextANGLE", P(GL_DeleteRenderbuffersOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteSamplers", P(GL_DeleteSamplers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteSamplersContextANGLE", P(GL_DeleteSamplersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteSemaphoresEXT", P(GL_DeleteSemaphoresEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteSemaphoresEXTContextANGLE", P(GL_DeleteSemaphoresEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteShader", P(GL_DeleteShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteShaderContextANGLE", P(GL_DeleteShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteSync", P(GL_DeleteSync)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteSyncContextANGLE", P(GL_DeleteSyncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteTextures", P(GL_DeleteTextures)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteTexturesContextANGLE", P(GL_DeleteTexturesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteTransformFeedbacks", P(GL_DeleteTransformFeedbacks)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteTransformFeedbacksContextANGLE", P(GL_DeleteTransformFeedbacksContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteVertexArrays", P(GL_DeleteVertexArrays)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteVertexArraysContextANGLE", P(GL_DeleteVertexArraysContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDeleteVertexArraysOES", P(GL_DeleteVertexArraysOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDeleteVertexArraysOESContextANGLE", P(GL_DeleteVertexArraysOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDepthFunc", P(GL_DepthFunc)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDepthFuncContextANGLE", P(GL_DepthFuncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDepthMask", P(GL_DepthMask)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDepthMaskContextANGLE", P(GL_DepthMaskContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDepthRangef", P(GL_DepthRangef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDepthRangefContextANGLE", P(GL_DepthRangefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDepthRangex", P(GL_DepthRangex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDepthRangexContextANGLE", P(GL_DepthRangexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDetachShader", P(GL_DetachShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDetachShaderContextANGLE", P(GL_DetachShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDisable", P(GL_Disable)},
     {"glDisableClientState", P(GL_DisableClientState)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableClientStateContextANGLE", P(GL_DisableClientStateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableContextANGLE", P(GL_DisableContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDisableVertexAttribArray", P(GL_DisableVertexAttribArray)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableVertexAttribArrayContextANGLE", P(GL_DisableVertexAttribArrayContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDisablei", P(GL_Disablei)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableiContextANGLE", P(GL_DisableiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDisableiEXT", P(GL_DisableiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableiEXTContextANGLE", P(GL_DisableiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDisableiOES", P(GL_DisableiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDisableiOESContextANGLE", P(GL_DisableiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDiscardFramebufferEXT", P(GL_DiscardFramebufferEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDiscardFramebufferEXTContextANGLE", P(GL_DiscardFramebufferEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDispatchCompute", P(GL_DispatchCompute)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDispatchComputeContextANGLE", P(GL_DispatchComputeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDispatchComputeIndirect", P(GL_DispatchComputeIndirect)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDispatchComputeIndirectContextANGLE", P(GL_DispatchComputeIndirectContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArrays", P(GL_DrawArrays)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysContextANGLE", P(GL_DrawArraysContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArraysIndirect", P(GL_DrawArraysIndirect)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysIndirectContextANGLE", P(GL_DrawArraysIndirectContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArraysInstanced", P(GL_DrawArraysInstanced)},
     {"glDrawArraysInstancedANGLE", P(GL_DrawArraysInstancedANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysInstancedANGLEContextANGLE", P(GL_DrawArraysInstancedANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArraysInstancedBaseInstanceANGLE", P(GL_DrawArraysInstancedBaseInstanceANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysInstancedBaseInstanceANGLEContextANGLE", P(GL_DrawArraysInstancedBaseInstanceANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArraysInstancedBaseInstanceEXT", P(GL_DrawArraysInstancedBaseInstanceEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysInstancedBaseInstanceEXTContextANGLE", P(GL_DrawArraysInstancedBaseInstanceEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysInstancedContextANGLE", P(GL_DrawArraysInstancedContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawArraysInstancedEXT", P(GL_DrawArraysInstancedEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawArraysInstancedEXTContextANGLE", P(GL_DrawArraysInstancedEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawBuffers", P(GL_DrawBuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawBuffersContextANGLE", P(GL_DrawBuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawBuffersEXT", P(GL_DrawBuffersEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawBuffersEXTContextANGLE", P(GL_DrawBuffersEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElements", P(GL_DrawElements)},
     {"glDrawElementsBaseVertex", P(GL_DrawElementsBaseVertex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsBaseVertexContextANGLE", P(GL_DrawElementsBaseVertexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsBaseVertexEXT", P(GL_DrawElementsBaseVertexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsBaseVertexEXTContextANGLE", P(GL_DrawElementsBaseVertexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsBaseVertexOES", P(GL_DrawElementsBaseVertexOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsBaseVertexOESContextANGLE", P(GL_DrawElementsBaseVertexOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsContextANGLE", P(GL_DrawElementsContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsIndirect", P(GL_DrawElementsIndirect)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsIndirectContextANGLE", P(GL_DrawElementsIndirectContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstanced", P(GL_DrawElementsInstanced)},
     {"glDrawElementsInstancedANGLE", P(GL_DrawElementsInstancedANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedANGLEContextANGLE", P(GL_DrawElementsInstancedANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedBaseInstanceEXT", P(GL_DrawElementsInstancedBaseInstanceEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseInstanceEXTContextANGLE", P(GL_DrawElementsInstancedBaseInstanceEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedBaseVertex", P(GL_DrawElementsInstancedBaseVertex)},
     {"glDrawElementsInstancedBaseVertexBaseInstanceANGLE", P(GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE", P(GL_DrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedBaseVertexBaseInstanceEXT", P(GL_DrawElementsInstancedBaseVertexBaseInstanceEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseVertexBaseInstanceEXTContextANGLE", P(GL_DrawElementsInstancedBaseVertexBaseInstanceEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseVertexContextANGLE", P(GL_DrawElementsInstancedBaseVertexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedBaseVertexEXT", P(GL_DrawElementsInstancedBaseVertexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseVertexEXTContextANGLE", P(GL_DrawElementsInstancedBaseVertexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedBaseVertexOES", P(GL_DrawElementsInstancedBaseVertexOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedBaseVertexOESContextANGLE", P(GL_DrawElementsInstancedBaseVertexOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedContextANGLE", P(GL_DrawElementsInstancedContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawElementsInstancedEXT", P(GL_DrawElementsInstancedEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawElementsInstancedEXTContextANGLE", P(GL_DrawElementsInstancedEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawRangeElements", P(GL_DrawRangeElements)},
     {"glDrawRangeElementsBaseVertex", P(GL_DrawRangeElementsBaseVertex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawRangeElementsBaseVertexContextANGLE", P(GL_DrawRangeElementsBaseVertexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawRangeElementsBaseVertexEXT", P(GL_DrawRangeElementsBaseVertexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawRangeElementsBaseVertexEXTContextANGLE", P(GL_DrawRangeElementsBaseVertexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawRangeElementsBaseVertexOES", P(GL_DrawRangeElementsBaseVertexOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawRangeElementsBaseVertexOESContextANGLE", P(GL_DrawRangeElementsBaseVertexOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawRangeElementsContextANGLE", P(GL_DrawRangeElementsContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexfOES", P(GL_DrawTexfOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexfOESContextANGLE", P(GL_DrawTexfOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexfvOES", P(GL_DrawTexfvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexfvOESContextANGLE", P(GL_DrawTexfvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexiOES", P(GL_DrawTexiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexiOESContextANGLE", P(GL_DrawTexiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexivOES", P(GL_DrawTexivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexivOESContextANGLE", P(GL_DrawTexivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexsOES", P(GL_DrawTexsOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexsOESContextANGLE", P(GL_DrawTexsOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexsvOES", P(GL_DrawTexsvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexsvOESContextANGLE", P(GL_DrawTexsvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexxOES", P(GL_DrawTexxOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexxOESContextANGLE", P(GL_DrawTexxOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glDrawTexxvOES", P(GL_DrawTexxvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glDrawTexxvOESContextANGLE", P(GL_DrawTexxvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEGLImageTargetRenderbufferStorageOES", P(GL_EGLImageTargetRenderbufferStorageOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEGLImageTargetRenderbufferStorageOESContextANGLE", P(GL_EGLImageTargetRenderbufferStorageOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEGLImageTargetTexStorageEXT", P(GL_EGLImageTargetTexStorageEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEGLImageTargetTexStorageEXTContextANGLE", P(GL_EGLImageTargetTexStorageEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEGLImageTargetTexture2DOES", P(GL_EGLImageTargetTexture2DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEGLImageTargetTexture2DOESContextANGLE", P(GL_EGLImageTargetTexture2DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEnable", P(GL_Enable)},
     {"glEnableClientState", P(GL_EnableClientState)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableClientStateContextANGLE", P(GL_EnableClientStateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableContextANGLE", P(GL_EnableContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEnableVertexAttribArray", P(GL_EnableVertexAttribArray)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableVertexAttribArrayContextANGLE", P(GL_EnableVertexAttribArrayContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEnablei", P(GL_Enablei)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableiContextANGLE", P(GL_EnableiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEnableiEXT", P(GL_EnableiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableiEXTContextANGLE", P(GL_EnableiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEnableiOES", P(GL_EnableiOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEnableiOESContextANGLE", P(GL_EnableiOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndPerfMonitorAMD", P(GL_EndPerfMonitorAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndPerfMonitorAMDContextANGLE", P(GL_EndPerfMonitorAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndPixelLocalStorageANGLE", P(GL_EndPixelLocalStorageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndPixelLocalStorageANGLEContextANGLE", P(GL_EndPixelLocalStorageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndPixelLocalStorageImplicitANGLE", P(GL_EndPixelLocalStorageImplicitANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndPixelLocalStorageImplicitANGLEContextANGLE", P(GL_EndPixelLocalStorageImplicitANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndQuery", P(GL_EndQuery)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndQueryContextANGLE", P(GL_EndQueryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndQueryEXT", P(GL_EndQueryEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndQueryEXTContextANGLE", P(GL_EndQueryEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndTilingQCOM", P(GL_EndTilingQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndTilingQCOMContextANGLE", P(GL_EndTilingQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glEndTransformFeedback", P(GL_EndTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glEndTransformFeedbackContextANGLE", P(GL_EndTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFenceSync", P(GL_FenceSync)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFenceSyncContextANGLE", P(GL_FenceSyncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFinish", P(GL_Finish)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFinishContextANGLE", P(GL_FinishContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFinishFenceNV", P(GL_FinishFenceNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFinishFenceNVContextANGLE", P(GL_FinishFenceNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFlush", P(GL_Flush)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFlushContextANGLE", P(GL_FlushContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFlushMappedBufferRange", P(GL_FlushMappedBufferRange)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFlushMappedBufferRangeContextANGLE", P(GL_FlushMappedBufferRangeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFlushMappedBufferRangeEXT", P(GL_FlushMappedBufferRangeEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFlushMappedBufferRangeEXTContextANGLE", P(GL_FlushMappedBufferRangeEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFogf", P(GL_Fogf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFogfContextANGLE", P(GL_FogfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFogfv", P(GL_Fogfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFogfvContextANGLE", P(GL_FogfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFogx", P(GL_Fogx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFogxContextANGLE", P(GL_FogxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFogxv", P(GL_Fogxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFogxvContextANGLE", P(GL_FogxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferFetchBarrierEXT", P(GL_FramebufferFetchBarrierEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferFetchBarrierEXTContextANGLE", P(GL_FramebufferFetchBarrierEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferFoveationConfigQCOM", P(GL_FramebufferFoveationConfigQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferFoveationConfigQCOMContextANGLE", P(GL_FramebufferFoveationConfigQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferFoveationParametersQCOM", P(GL_FramebufferFoveationParametersQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferFoveationParametersQCOMContextANGLE", P(GL_FramebufferFoveationParametersQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferMemorylessPixelLocalStorageANGLE", P(GL_FramebufferMemorylessPixelLocalStorageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferMemorylessPixelLocalStorageANGLEContextANGLE", P(GL_FramebufferMemorylessPixelLocalStorageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferParameteri", P(GL_FramebufferParameteri)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferParameteriContextANGLE", P(GL_FramebufferParameteriContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferParameteriMESA", P(GL_FramebufferParameteriMESA)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferParameteriMESAContextANGLE", P(GL_FramebufferParameteriMESAContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferPixelLocalClearValuefvANGLE", P(GL_FramebufferPixelLocalClearValuefvANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferPixelLocalClearValuefvANGLEContextANGLE", P(GL_FramebufferPixelLocalClearValuefvANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferPixelLocalClearValueivANGLE", P(GL_FramebufferPixelLocalClearValueivANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferPixelLocalClearValueivANGLEContextANGLE", P(GL_FramebufferPixelLocalClearValueivANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferPixelLocalClearValueuivANGLE", P(GL_FramebufferPixelLocalClearValueuivANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferPixelLocalClearValueuivANGLEContextANGLE", P(GL_FramebufferPixelLocalClearValueuivANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferPixelLocalStorageInterruptANGLE", P(GL_FramebufferPixelLocalStorageInterruptANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferPixelLocalStorageInterruptANGLEContextANGLE", P(GL_FramebufferPixelLocalStorageInterruptANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferPixelLocalStorageRestoreANGLEContextANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferRenderbufferContextANGLE", P(GL_FramebufferRenderbufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferRenderbufferOESContextANGLE", P(GL_FramebufferRenderbufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferResolveRenderbufferWEBKIT", P(GL_FramebufferResolveRenderbufferWEBKIT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferResolveRenderbufferWEBKITContextANGLE", P(GL_FramebufferResolveRenderbufferWEBKITContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferShadingRateEXT", P(GL_FramebufferShadingRateEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferShadingRateEXTContextANGLE", P(GL_FramebufferShadingRateEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTexture", P(GL_FramebufferTexture)},
     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTexture2DContextANGLE", P(GL_FramebufferTexture2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTexture2DMultisampleEXT", P(GL_FramebufferTexture2DMultisampleEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTexture2DMultisampleEXTContextANGLE", P(GL_FramebufferTexture2DMultisampleEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTexture2DOES", P(GL_FramebufferTexture2DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTexture2DOESContextANGLE", P(GL_FramebufferTexture2DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTexture3DOES", P(GL_FramebufferTexture3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTexture3DOESContextANGLE", P(GL_FramebufferTexture3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureContextANGLE", P(GL_FramebufferTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTextureEXT", P(GL_FramebufferTextureEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureEXTContextANGLE", P(GL_FramebufferTextureEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTextureLayer", P(GL_FramebufferTextureLayer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureLayerContextANGLE", P(GL_FramebufferTextureLayerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTextureMultisampleMultiviewOVR", P(GL_FramebufferTextureMultisampleMultiviewOVR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureMultisampleMultiviewOVRContextANGLE", P(GL_FramebufferTextureMultisampleMultiviewOVRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTextureMultiviewOVR", P(GL_FramebufferTextureMultiviewOVR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureMultiviewOVRContextANGLE", P(GL_FramebufferTextureMultiviewOVRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTextureOES", P(GL_FramebufferTextureOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTextureOESContextANGLE", P(GL_FramebufferTextureOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFramebufferTexturePixelLocalStorageANGLE", P(GL_FramebufferTexturePixelLocalStorageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFramebufferTexturePixelLocalStorageANGLEContextANGLE", P(GL_FramebufferTexturePixelLocalStorageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFrontFace", P(GL_FrontFace)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFrontFaceContextANGLE", P(GL_FrontFaceContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFrustumf", P(GL_Frustumf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFrustumfContextANGLE", P(GL_FrustumfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glFrustumx", P(GL_Frustumx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glFrustumxContextANGLE", P(GL_FrustumxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenBuffers", P(GL_GenBuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenBuffersContextANGLE", P(GL_GenBuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenFencesNV", P(GL_GenFencesNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenFencesNVContextANGLE", P(GL_GenFencesNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenFramebuffers", P(GL_GenFramebuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenFramebuffersContextANGLE", P(GL_GenFramebuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenFramebuffersOES", P(GL_GenFramebuffersOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenFramebuffersOESContextANGLE", P(GL_GenFramebuffersOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenPerfMonitorsAMD", P(GL_GenPerfMonitorsAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenPerfMonitorsAMDContextANGLE", P(GL_GenPerfMonitorsAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenProgramPipelines", P(GL_GenProgramPipelines)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenProgramPipelinesContextANGLE", P(GL_GenProgramPipelinesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenProgramPipelinesEXT", P(GL_GenProgramPipelinesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenProgramPipelinesEXTContextANGLE", P(GL_GenProgramPipelinesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenQueries", P(GL_GenQueries)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenQueriesContextANGLE", P(GL_GenQueriesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenQueriesEXT", P(GL_GenQueriesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenQueriesEXTContextANGLE", P(GL_GenQueriesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenRenderbuffers", P(GL_GenRenderbuffers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenRenderbuffersContextANGLE", P(GL_GenRenderbuffersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenRenderbuffersOES", P(GL_GenRenderbuffersOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenRenderbuffersOESContextANGLE", P(GL_GenRenderbuffersOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenSamplers", P(GL_GenSamplers)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenSamplersContextANGLE", P(GL_GenSamplersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenSemaphoresEXT", P(GL_GenSemaphoresEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenSemaphoresEXTContextANGLE", P(GL_GenSemaphoresEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenTextures", P(GL_GenTextures)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenTexturesContextANGLE", P(GL_GenTexturesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenTransformFeedbacks", P(GL_GenTransformFeedbacks)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenTransformFeedbacksContextANGLE", P(GL_GenTransformFeedbacksContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenVertexArrays", P(GL_GenVertexArrays)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenVertexArraysContextANGLE", P(GL_GenVertexArraysContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenVertexArraysOES", P(GL_GenVertexArraysOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenVertexArraysOESContextANGLE", P(GL_GenVertexArraysOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenerateMipmap", P(GL_GenerateMipmap)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenerateMipmapContextANGLE", P(GL_GenerateMipmapContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGenerateMipmapOES", P(GL_GenerateMipmapOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGenerateMipmapOESContextANGLE", P(GL_GenerateMipmapOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetActiveAttrib", P(GL_GetActiveAttrib)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveAttribContextANGLE", P(GL_GetActiveAttribContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetActiveUniform", P(GL_GetActiveUniform)},
     {"glGetActiveUniformBlockName", P(GL_GetActiveUniformBlockName)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveUniformBlockNameContextANGLE", P(GL_GetActiveUniformBlockNameContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetActiveUniformBlockiv", P(GL_GetActiveUniformBlockiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveUniformBlockivContextANGLE", P(GL_GetActiveUniformBlockivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetActiveUniformBlockivRobustANGLE", P(GL_GetActiveUniformBlockivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveUniformBlockivRobustANGLEContextANGLE", P(GL_GetActiveUniformBlockivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveUniformContextANGLE", P(GL_GetActiveUniformContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetActiveUniformsiv", P(GL_GetActiveUniformsiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetActiveUniformsivContextANGLE", P(GL_GetActiveUniformsivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetAttachedShaders", P(GL_GetAttachedShaders)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetAttachedShadersContextANGLE", P(GL_GetAttachedShadersContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetAttribLocation", P(GL_GetAttribLocation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetAttribLocationContextANGLE", P(GL_GetAttribLocationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBooleani_v", P(GL_GetBooleani_v)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBooleani_vContextANGLE", P(GL_GetBooleani_vContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBooleanv", P(GL_GetBooleanv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBooleanvContextANGLE", P(GL_GetBooleanvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBooleanvRobustANGLE", P(GL_GetBooleanvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBooleanvRobustANGLEContextANGLE", P(GL_GetBooleanvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferParameteri64v", P(GL_GetBufferParameteri64v)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferParameteri64vContextANGLE", P(GL_GetBufferParameteri64vContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferParameteri64vRobustANGLE", P(GL_GetBufferParameteri64vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferParameteri64vRobustANGLEContextANGLE", P(GL_GetBufferParameteri64vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferParameteriv", P(GL_GetBufferParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferParameterivContextANGLE", P(GL_GetBufferParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferParameterivRobustANGLE", P(GL_GetBufferParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferParameterivRobustANGLEContextANGLE", P(GL_GetBufferParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferPointerv", P(GL_GetBufferPointerv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferPointervContextANGLE", P(GL_GetBufferPointervContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferPointervOES", P(GL_GetBufferPointervOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferPointervOESContextANGLE", P(GL_GetBufferPointervOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetBufferPointervRobustANGLE", P(GL_GetBufferPointervRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetBufferPointervRobustANGLEContextANGLE", P(GL_GetBufferPointervRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetClipPlanef", P(GL_GetClipPlanef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetClipPlanefContextANGLE", P(GL_GetClipPlanefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetClipPlanex", P(GL_GetClipPlanex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetClipPlanexContextANGLE", P(GL_GetClipPlanexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetCompressedTexImageANGLE", P(GL_GetCompressedTexImageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetCompressedTexImageANGLEContextANGLE", P(GL_GetCompressedTexImageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetDebugMessageLog", P(GL_GetDebugMessageLog)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetDebugMessageLogContextANGLE", P(GL_GetDebugMessageLogContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetDebugMessageLogKHR", P(GL_GetDebugMessageLogKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetDebugMessageLogKHRContextANGLE", P(GL_GetDebugMessageLogKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetError", P(GL_GetError)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetErrorContextANGLE", P(GL_GetErrorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFenceivNV", P(GL_GetFenceivNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFenceivNVContextANGLE", P(GL_GetFenceivNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFixedv", P(GL_GetFixedv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFixedvContextANGLE", P(GL_GetFixedvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFloatv", P(GL_GetFloatv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFloatvContextANGLE", P(GL_GetFloatvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFloatvRobustANGLE", P(GL_GetFloatvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFloatvRobustANGLEContextANGLE", P(GL_GetFloatvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFragDataIndexEXT", P(GL_GetFragDataIndexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFragDataIndexEXTContextANGLE", P(GL_GetFragDataIndexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFragDataLocation", P(GL_GetFragDataLocation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFragDataLocationContextANGLE", P(GL_GetFragDataLocationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFragmentShadingRatesEXT", P(GL_GetFragmentShadingRatesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFragmentShadingRatesEXTContextANGLE", P(GL_GetFragmentShadingRatesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferAttachmentParameteriv", P(GL_GetFramebufferAttachmentParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferAttachmentParameterivContextANGLE", P(GL_GetFramebufferAttachmentParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferAttachmentParameterivOES", P(GL_GetFramebufferAttachmentParameterivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferAttachmentParameterivOESContextANGLE", P(GL_GetFramebufferAttachmentParameterivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferAttachmentParameterivRobustANGLE", P(GL_GetFramebufferAttachmentParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferAttachmentParameterivRobustANGLEContextANGLE", P(GL_GetFramebufferAttachmentParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferParameteriv", P(GL_GetFramebufferParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferParameterivContextANGLE", P(GL_GetFramebufferParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferParameterivMESA", P(GL_GetFramebufferParameterivMESA)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferParameterivMESAContextANGLE", P(GL_GetFramebufferParameterivMESAContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameterfvANGLE", P(GL_GetFramebufferPixelLocalStorageParameterfvANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameterfvANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameterfvANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameterfvRobustANGLE", P(GL_GetFramebufferPixelLocalStorageParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameterfvRobustANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameterivANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameterivANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameterivRobustANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameterivRobustANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameteruivANGLE", P(GL_GetFramebufferPixelLocalStorageParameteruivANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameteruivANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameteruivANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetFramebufferPixelLocalStorageParameteruivRobustANGLE", P(GL_GetFramebufferPixelLocalStorageParameteruivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetFramebufferPixelLocalStorageParameteruivRobustANGLEContextANGLE", P(GL_GetFramebufferPixelLocalStorageParameteruivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetGraphicsResetStatus", P(GL_GetGraphicsResetStatus)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetGraphicsResetStatusContextANGLE", P(GL_GetGraphicsResetStatusContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetGraphicsResetStatusEXT", P(GL_GetGraphicsResetStatusEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetGraphicsResetStatusEXTContextANGLE", P(GL_GetGraphicsResetStatusEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetGraphicsResetStatusKHR", P(GL_GetGraphicsResetStatusKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetGraphicsResetStatusKHRContextANGLE", P(GL_GetGraphicsResetStatusKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInteger64i_v", P(GL_GetInteger64i_v)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInteger64i_vContextANGLE", P(GL_GetInteger64i_vContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInteger64i_vRobustANGLE", P(GL_GetInteger64i_vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInteger64i_vRobustANGLEContextANGLE", P(GL_GetInteger64i_vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInteger64v", P(GL_GetInteger64v)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInteger64vContextANGLE", P(GL_GetInteger64vContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInteger64vEXT", P(GL_GetInteger64vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInteger64vEXTContextANGLE", P(GL_GetInteger64vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInteger64vRobustANGLE", P(GL_GetInteger64vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInteger64vRobustANGLEContextANGLE", P(GL_GetInteger64vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetIntegeri_v", P(GL_GetIntegeri_v)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetIntegeri_vContextANGLE", P(GL_GetIntegeri_vContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetIntegeri_vRobustANGLE", P(GL_GetIntegeri_vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetIntegeri_vRobustANGLEContextANGLE", P(GL_GetIntegeri_vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetIntegerv", P(GL_GetIntegerv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetIntegervContextANGLE", P(GL_GetIntegervContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetIntegervRobustANGLE", P(GL_GetIntegervRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetIntegervRobustANGLEContextANGLE", P(GL_GetIntegervRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInternalformativ", P(GL_GetInternalformativ)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInternalformativContextANGLE", P(GL_GetInternalformativContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetInternalformativRobustANGLE", P(GL_GetInternalformativRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetInternalformativRobustANGLEContextANGLE", P(GL_GetInternalformativRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetLightfv", P(GL_GetLightfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetLightfvContextANGLE", P(GL_GetLightfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetLightxv", P(GL_GetLightxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetLightxvContextANGLE", P(GL_GetLightxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetMaterialfv", P(GL_GetMaterialfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMaterialfvContextANGLE", P(GL_GetMaterialfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetMaterialxv", P(GL_GetMaterialxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMaterialxvContextANGLE", P(GL_GetMaterialxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetMemoryObjectParameterivEXT", P(GL_GetMemoryObjectParameterivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMemoryObjectParameterivEXTContextANGLE", P(GL_GetMemoryObjectParameterivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetMultisamplefv", P(GL_GetMultisamplefv)},
     {"glGetMultisamplefvANGLE", P(GL_GetMultisamplefvANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMultisamplefvANGLEContextANGLE", P(GL_GetMultisamplefvANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMultisamplefvContextANGLE", P(GL_GetMultisamplefvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetMultisamplefvRobustANGLE", P(GL_GetMultisamplefvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetMultisamplefvRobustANGLEContextANGLE", P(GL_GetMultisamplefvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetObjectLabel", P(GL_GetObjectLabel)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetObjectLabelContextANGLE", P(GL_GetObjectLabelContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetObjectLabelEXT", P(GL_GetObjectLabelEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetObjectLabelEXTContextANGLE", P(GL_GetObjectLabelEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetObjectLabelKHR", P(GL_GetObjectLabelKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetObjectLabelKHRContextANGLE", P(GL_GetObjectLabelKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetObjectPtrLabel", P(GL_GetObjectPtrLabel)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetObjectPtrLabelContextANGLE", P(GL_GetObjectPtrLabelContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetObjectPtrLabelKHR", P(GL_GetObjectPtrLabelKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetObjectPtrLabelKHRContextANGLE", P(GL_GetObjectPtrLabelKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorCounterDataAMD", P(GL_GetPerfMonitorCounterDataAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorCounterDataAMDContextANGLE", P(GL_GetPerfMonitorCounterDataAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorCounterInfoAMD", P(GL_GetPerfMonitorCounterInfoAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorCounterInfoAMDContextANGLE", P(GL_GetPerfMonitorCounterInfoAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorCounterStringAMD", P(GL_GetPerfMonitorCounterStringAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorCounterStringAMDContextANGLE", P(GL_GetPerfMonitorCounterStringAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorCountersAMD", P(GL_GetPerfMonitorCountersAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorCountersAMDContextANGLE", P(GL_GetPerfMonitorCountersAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorGroupStringAMD", P(GL_GetPerfMonitorGroupStringAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorGroupStringAMDContextANGLE", P(GL_GetPerfMonitorGroupStringAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPerfMonitorGroupsAMD", P(GL_GetPerfMonitorGroupsAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPerfMonitorGroupsAMDContextANGLE", P(GL_GetPerfMonitorGroupsAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPointerv", P(GL_GetPointerv)},
     {"glGetPointervANGLE", P(GL_GetPointervANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPointervANGLEContextANGLE", P(GL_GetPointervANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPointervContextANGLE", P(GL_GetPointervContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetPointervKHR", P(GL_GetPointervKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetPointervKHRContextANGLE", P(GL_GetPointervKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramBinary", P(GL_GetProgramBinary)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramBinaryContextANGLE", P(GL_GetProgramBinaryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramBinaryOES", P(GL_GetProgramBinaryOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramBinaryOESContextANGLE", P(GL_GetProgramBinaryOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramInfoLog", P(GL_GetProgramInfoLog)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramInfoLogContextANGLE", P(GL_GetProgramInfoLogContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramInterfaceiv", P(GL_GetProgramInterfaceiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramInterfaceivContextANGLE", P(GL_GetProgramInterfaceivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramPipelineInfoLog", P(GL_GetProgramPipelineInfoLog)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramPipelineInfoLogContextANGLE", P(GL_GetProgramPipelineInfoLogContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramPipelineInfoLogEXT", P(GL_GetProgramPipelineInfoLogEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramPipelineInfoLogEXTContextANGLE", P(GL_GetProgramPipelineInfoLogEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramPipelineiv", P(GL_GetProgramPipelineiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramPipelineivContextANGLE", P(GL_GetProgramPipelineivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramPipelineivEXT", P(GL_GetProgramPipelineivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramPipelineivEXTContextANGLE", P(GL_GetProgramPipelineivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramResourceIndex", P(GL_GetProgramResourceIndex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramResourceIndexContextANGLE", P(GL_GetProgramResourceIndexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramResourceLocation", P(GL_GetProgramResourceLocation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramResourceLocationContextANGLE", P(GL_GetProgramResourceLocationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramResourceLocationIndexEXT", P(GL_GetProgramResourceLocationIndexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramResourceLocationIndexEXTContextANGLE", P(GL_GetProgramResourceLocationIndexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramResourceName", P(GL_GetProgramResourceName)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramResourceNameContextANGLE", P(GL_GetProgramResourceNameContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramResourceiv", P(GL_GetProgramResourceiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramResourceivContextANGLE", P(GL_GetProgramResourceivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramiv", P(GL_GetProgramiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramivContextANGLE", P(GL_GetProgramivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetProgramivRobustANGLE", P(GL_GetProgramivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetProgramivRobustANGLEContextANGLE", P(GL_GetProgramivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjecti64vEXT", P(GL_GetQueryObjecti64vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjecti64vEXTContextANGLE", P(GL_GetQueryObjecti64vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjecti64vRobustANGLE", P(GL_GetQueryObjecti64vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjecti64vRobustANGLEContextANGLE", P(GL_GetQueryObjecti64vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectivEXT", P(GL_GetQueryObjectivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectivEXTContextANGLE", P(GL_GetQueryObjectivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectivRobustANGLE", P(GL_GetQueryObjectivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectivRobustANGLEContextANGLE", P(GL_GetQueryObjectivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectui64vEXT", P(GL_GetQueryObjectui64vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectui64vEXTContextANGLE", P(GL_GetQueryObjectui64vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectui64vRobustANGLE", P(GL_GetQueryObjectui64vRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectui64vRobustANGLEContextANGLE", P(GL_GetQueryObjectui64vRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectuiv", P(GL_GetQueryObjectuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectuivContextANGLE", P(GL_GetQueryObjectuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectuivEXT", P(GL_GetQueryObjectuivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectuivEXTContextANGLE", P(GL_GetQueryObjectuivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryObjectuivRobustANGLE", P(GL_GetQueryObjectuivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryObjectuivRobustANGLEContextANGLE", P(GL_GetQueryObjectuivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryiv", P(GL_GetQueryiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryivContextANGLE", P(GL_GetQueryivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryivEXT", P(GL_GetQueryivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryivEXTContextANGLE", P(GL_GetQueryivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetQueryivRobustANGLE", P(GL_GetQueryivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetQueryivRobustANGLEContextANGLE", P(GL_GetQueryivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetRenderbufferImageANGLE", P(GL_GetRenderbufferImageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetRenderbufferImageANGLEContextANGLE", P(GL_GetRenderbufferImageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetRenderbufferParameteriv", P(GL_GetRenderbufferParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetRenderbufferParameterivContextANGLE", P(GL_GetRenderbufferParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetRenderbufferParameterivOES", P(GL_GetRenderbufferParameterivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetRenderbufferParameterivOESContextANGLE", P(GL_GetRenderbufferParameterivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetRenderbufferParameterivRobustANGLE", P(GL_GetRenderbufferParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetRenderbufferParameterivRobustANGLEContextANGLE", P(GL_GetRenderbufferParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIiv", P(GL_GetSamplerParameterIiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIivContextANGLE", P(GL_GetSamplerParameterIivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIivEXT", P(GL_GetSamplerParameterIivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIivEXTContextANGLE", P(GL_GetSamplerParameterIivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIivOES", P(GL_GetSamplerParameterIivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIivOESContextANGLE", P(GL_GetSamplerParameterIivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIuiv", P(GL_GetSamplerParameterIuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIuivContextANGLE", P(GL_GetSamplerParameterIuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIuivEXT", P(GL_GetSamplerParameterIuivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIuivEXTContextANGLE", P(GL_GetSamplerParameterIuivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterIuivOES", P(GL_GetSamplerParameterIuivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterIuivOESContextANGLE", P(GL_GetSamplerParameterIuivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterfv", P(GL_GetSamplerParameterfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterfvContextANGLE", P(GL_GetSamplerParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterfvRobustANGLE", P(GL_GetSamplerParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterfvRobustANGLEContextANGLE", P(GL_GetSamplerParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameteriv", P(GL_GetSamplerParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterivContextANGLE", P(GL_GetSamplerParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSamplerParameterivRobustANGLE", P(GL_GetSamplerParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSamplerParameterivRobustANGLEContextANGLE", P(GL_GetSamplerParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSemaphoreParameterui64vEXT", P(GL_GetSemaphoreParameterui64vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSemaphoreParameterui64vEXTContextANGLE", P(GL_GetSemaphoreParameterui64vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetShaderInfoLog", P(GL_GetShaderInfoLog)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetShaderInfoLogContextANGLE", P(GL_GetShaderInfoLogContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetShaderPrecisionFormat", P(GL_GetShaderPrecisionFormat)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetShaderPrecisionFormatContextANGLE", P(GL_GetShaderPrecisionFormatContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetShaderSource", P(GL_GetShaderSource)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetShaderSourceContextANGLE", P(GL_GetShaderSourceContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetShaderiv", P(GL_GetShaderiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetShaderivContextANGLE", P(GL_GetShaderivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetShaderivRobustANGLE", P(GL_GetShaderivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetShaderivRobustANGLEContextANGLE", P(GL_GetShaderivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetString", P(GL_GetString)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetStringContextANGLE", P(GL_GetStringContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetStringi", P(GL_GetStringi)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetStringiContextANGLE", P(GL_GetStringiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetSynciv", P(GL_GetSynciv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetSyncivContextANGLE", P(GL_GetSyncivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexEnvfv", P(GL_GetTexEnvfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexEnvfvContextANGLE", P(GL_GetTexEnvfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexEnviv", P(GL_GetTexEnviv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexEnvivContextANGLE", P(GL_GetTexEnvivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexEnvxv", P(GL_GetTexEnvxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexEnvxvContextANGLE", P(GL_GetTexEnvxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexGenfvOES", P(GL_GetTexGenfvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexGenfvOESContextANGLE", P(GL_GetTexGenfvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexGenivOES", P(GL_GetTexGenivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexGenivOESContextANGLE", P(GL_GetTexGenivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexGenxvOES", P(GL_GetTexGenxvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexGenxvOESContextANGLE", P(GL_GetTexGenxvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexImageANGLE", P(GL_GetTexImageANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexImageANGLEContextANGLE", P(GL_GetTexImageANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexLevelParameterfv", P(GL_GetTexLevelParameterfv)},
     {"glGetTexLevelParameterfvANGLE", P(GL_GetTexLevelParameterfvANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterfvANGLEContextANGLE", P(GL_GetTexLevelParameterfvANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterfvContextANGLE", P(GL_GetTexLevelParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexLevelParameterfvRobustANGLE", P(GL_GetTexLevelParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterfvRobustANGLEContextANGLE", P(GL_GetTexLevelParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexLevelParameteriv", P(GL_GetTexLevelParameteriv)},
     {"glGetTexLevelParameterivANGLE", P(GL_GetTexLevelParameterivANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterivANGLEContextANGLE", P(GL_GetTexLevelParameterivANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterivContextANGLE", P(GL_GetTexLevelParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexLevelParameterivRobustANGLE", P(GL_GetTexLevelParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexLevelParameterivRobustANGLEContextANGLE", P(GL_GetTexLevelParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIiv", P(GL_GetTexParameterIiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIivContextANGLE", P(GL_GetTexParameterIivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIivEXT", P(GL_GetTexParameterIivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIivEXTContextANGLE", P(GL_GetTexParameterIivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIivOES", P(GL_GetTexParameterIivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIivOESContextANGLE", P(GL_GetTexParameterIivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIuiv", P(GL_GetTexParameterIuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIuivContextANGLE", P(GL_GetTexParameterIuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIuivEXT", P(GL_GetTexParameterIuivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIuivEXTContextANGLE", P(GL_GetTexParameterIuivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterIuivOES", P(GL_GetTexParameterIuivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterIuivOESContextANGLE", P(GL_GetTexParameterIuivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterfv", P(GL_GetTexParameterfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterfvContextANGLE", P(GL_GetTexParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterfvRobustANGLE", P(GL_GetTexParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterfvRobustANGLEContextANGLE", P(GL_GetTexParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameteriv", P(GL_GetTexParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterivContextANGLE", P(GL_GetTexParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterivRobustANGLE", P(GL_GetTexParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterivRobustANGLEContextANGLE", P(GL_GetTexParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTexParameterxv", P(GL_GetTexParameterxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTexParameterxvContextANGLE", P(GL_GetTexParameterxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTransformFeedbackVarying", P(GL_GetTransformFeedbackVarying)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTransformFeedbackVaryingContextANGLE", P(GL_GetTransformFeedbackVaryingContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetTranslatedShaderSourceANGLE", P(GL_GetTranslatedShaderSourceANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetTranslatedShaderSourceANGLEContextANGLE", P(GL_GetTranslatedShaderSourceANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformBlockIndex", P(GL_GetUniformBlockIndex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformBlockIndexContextANGLE", P(GL_GetUniformBlockIndexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformIndices", P(GL_GetUniformIndices)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformIndicesContextANGLE", P(GL_GetUniformIndicesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformLocation", P(GL_GetUniformLocation)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformLocationContextANGLE", P(GL_GetUniformLocationContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformfv", P(GL_GetUniformfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformfvContextANGLE", P(GL_GetUniformfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformfvRobustANGLE", P(GL_GetUniformfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformfvRobustANGLEContextANGLE", P(GL_GetUniformfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformiv", P(GL_GetUniformiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformivContextANGLE", P(GL_GetUniformivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformivRobustANGLE", P(GL_GetUniformivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformivRobustANGLEContextANGLE", P(GL_GetUniformivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformuiv", P(GL_GetUniformuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformuivContextANGLE", P(GL_GetUniformuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUniformuivRobustANGLE", P(GL_GetUniformuivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUniformuivRobustANGLEContextANGLE", P(GL_GetUniformuivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUnsignedBytei_vEXT", P(GL_GetUnsignedBytei_vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUnsignedBytei_vEXTContextANGLE", P(GL_GetUnsignedBytei_vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetUnsignedBytevEXT", P(GL_GetUnsignedBytevEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetUnsignedBytevEXTContextANGLE", P(GL_GetUnsignedBytevEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribIiv", P(GL_GetVertexAttribIiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribIivContextANGLE", P(GL_GetVertexAttribIivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribIivRobustANGLE", P(GL_GetVertexAttribIivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribIivRobustANGLEContextANGLE", P(GL_GetVertexAttribIivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribIuiv", P(GL_GetVertexAttribIuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribIuivContextANGLE", P(GL_GetVertexAttribIuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribIuivRobustANGLE", P(GL_GetVertexAttribIuivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribIuivRobustANGLEContextANGLE", P(GL_GetVertexAttribIuivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribPointerv", P(GL_GetVertexAttribPointerv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribPointervContextANGLE", P(GL_GetVertexAttribPointervContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribPointervRobustANGLE", P(GL_GetVertexAttribPointervRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribPointervRobustANGLEContextANGLE", P(GL_GetVertexAttribPointervRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribfv", P(GL_GetVertexAttribfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribfvContextANGLE", P(GL_GetVertexAttribfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribfvRobustANGLE", P(GL_GetVertexAttribfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribfvRobustANGLEContextANGLE", P(GL_GetVertexAttribfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribiv", P(GL_GetVertexAttribiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribivContextANGLE", P(GL_GetVertexAttribivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetVertexAttribivRobustANGLE", P(GL_GetVertexAttribivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetVertexAttribivRobustANGLEContextANGLE", P(GL_GetVertexAttribivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformfv", P(GL_GetnUniformfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformfvContextANGLE", P(GL_GetnUniformfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformfvEXT", P(GL_GetnUniformfvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformfvEXTContextANGLE", P(GL_GetnUniformfvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformfvKHR", P(GL_GetnUniformfvKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformfvKHRContextANGLE", P(GL_GetnUniformfvKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformiv", P(GL_GetnUniformiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformivContextANGLE", P(GL_GetnUniformivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformivEXT", P(GL_GetnUniformivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformivEXTContextANGLE", P(GL_GetnUniformivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformivKHR", P(GL_GetnUniformivKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformivKHRContextANGLE", P(GL_GetnUniformivKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformuiv", P(GL_GetnUniformuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformuivContextANGLE", P(GL_GetnUniformuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glGetnUniformuivKHR", P(GL_GetnUniformuivKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glGetnUniformuivKHRContextANGLE", P(GL_GetnUniformuivKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glHint", P(GL_Hint)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glHintContextANGLE", P(GL_HintContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glImportMemoryFdEXT", P(GL_ImportMemoryFdEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glImportMemoryFdEXTContextANGLE", P(GL_ImportMemoryFdEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glImportMemoryZirconHandleANGLE", P(GL_ImportMemoryZirconHandleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glImportMemoryZirconHandleANGLEContextANGLE", P(GL_ImportMemoryZirconHandleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glImportSemaphoreFdEXT", P(GL_ImportSemaphoreFdEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glImportSemaphoreFdEXTContextANGLE", P(GL_ImportSemaphoreFdEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glImportSemaphoreZirconHandleANGLE", P(GL_ImportSemaphoreZirconHandleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glImportSemaphoreZirconHandleANGLEContextANGLE", P(GL_ImportSemaphoreZirconHandleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glInsertEventMarkerEXT", P(GL_InsertEventMarkerEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glInsertEventMarkerEXTContextANGLE", P(GL_InsertEventMarkerEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glInvalidateFramebuffer", P(GL_InvalidateFramebuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glInvalidateFramebufferContextANGLE", P(GL_InvalidateFramebufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glInvalidateSubFramebuffer", P(GL_InvalidateSubFramebuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glInvalidateSubFramebufferContextANGLE", P(GL_InvalidateSubFramebufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsBuffer", P(GL_IsBuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsBufferContextANGLE", P(GL_IsBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsEnabled", P(GL_IsEnabled)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsEnabledContextANGLE", P(GL_IsEnabledContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsEnabledi", P(GL_IsEnabledi)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsEnablediContextANGLE", P(GL_IsEnablediContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsEnablediEXT", P(GL_IsEnablediEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsEnablediEXTContextANGLE", P(GL_IsEnablediEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsEnablediOES", P(GL_IsEnablediOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsEnablediOESContextANGLE", P(GL_IsEnablediOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsFenceNV", P(GL_IsFenceNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsFenceNVContextANGLE", P(GL_IsFenceNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsFramebuffer", P(GL_IsFramebuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsFramebufferContextANGLE", P(GL_IsFramebufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsFramebufferOES", P(GL_IsFramebufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsFramebufferOESContextANGLE", P(GL_IsFramebufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsMemoryObjectEXT", P(GL_IsMemoryObjectEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsMemoryObjectEXTContextANGLE", P(GL_IsMemoryObjectEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsProgram", P(GL_IsProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsProgramContextANGLE", P(GL_IsProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsProgramPipeline", P(GL_IsProgramPipeline)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsProgramPipelineContextANGLE", P(GL_IsProgramPipelineContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsProgramPipelineEXT", P(GL_IsProgramPipelineEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsProgramPipelineEXTContextANGLE", P(GL_IsProgramPipelineEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsQuery", P(GL_IsQuery)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsQueryContextANGLE", P(GL_IsQueryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsQueryEXT", P(GL_IsQueryEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsQueryEXTContextANGLE", P(GL_IsQueryEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsRenderbuffer", P(GL_IsRenderbuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsRenderbufferContextANGLE", P(GL_IsRenderbufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsRenderbufferOES", P(GL_IsRenderbufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsRenderbufferOESContextANGLE", P(GL_IsRenderbufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsSampler", P(GL_IsSampler)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsSamplerContextANGLE", P(GL_IsSamplerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsSemaphoreEXT", P(GL_IsSemaphoreEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsSemaphoreEXTContextANGLE", P(GL_IsSemaphoreEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsShader", P(GL_IsShader)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsShaderContextANGLE", P(GL_IsShaderContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsSync", P(GL_IsSync)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsSyncContextANGLE", P(GL_IsSyncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsTexture", P(GL_IsTexture)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsTextureContextANGLE", P(GL_IsTextureContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsTransformFeedback", P(GL_IsTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsTransformFeedbackContextANGLE", P(GL_IsTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsVertexArray", P(GL_IsVertexArray)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsVertexArrayContextANGLE", P(GL_IsVertexArrayContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glIsVertexArrayOES", P(GL_IsVertexArrayOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glIsVertexArrayOESContextANGLE", P(GL_IsVertexArrayOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLabelObjectEXT", P(GL_LabelObjectEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLabelObjectEXTContextANGLE", P(GL_LabelObjectEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightModelf", P(GL_LightModelf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightModelfContextANGLE", P(GL_LightModelfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightModelfv", P(GL_LightModelfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightModelfvContextANGLE", P(GL_LightModelfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightModelx", P(GL_LightModelx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightModelxContextANGLE", P(GL_LightModelxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightModelxv", P(GL_LightModelxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightModelxvContextANGLE", P(GL_LightModelxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightf", P(GL_Lightf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightfContextANGLE", P(GL_LightfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightfv", P(GL_Lightfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightfvContextANGLE", P(GL_LightfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightx", P(GL_Lightx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightxContextANGLE", P(GL_LightxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLightxv", P(GL_Lightxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLightxvContextANGLE", P(GL_LightxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLineWidth", P(GL_LineWidth)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLineWidthContextANGLE", P(GL_LineWidthContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLineWidthx", P(GL_LineWidthx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLineWidthxContextANGLE", P(GL_LineWidthxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLinkProgram", P(GL_LinkProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLinkProgramContextANGLE", P(GL_LinkProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLoadIdentity", P(GL_LoadIdentity)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLoadIdentityContextANGLE", P(GL_LoadIdentityContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLoadMatrixf", P(GL_LoadMatrixf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLoadMatrixfContextANGLE", P(GL_LoadMatrixfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLoadMatrixx", P(GL_LoadMatrixx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLoadMatrixxContextANGLE", P(GL_LoadMatrixxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLoadPaletteFromModelViewMatrixOES", P(GL_LoadPaletteFromModelViewMatrixOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLoadPaletteFromModelViewMatrixOESContextANGLE", P(GL_LoadPaletteFromModelViewMatrixOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLogicOp", P(GL_LogicOp)},
     {"glLogicOpANGLE", P(GL_LogicOpANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLogicOpANGLEContextANGLE", P(GL_LogicOpANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLogicOpContextANGLE", P(GL_LogicOpContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glLoseContextCHROMIUM", P(GL_LoseContextCHROMIUM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glLoseContextCHROMIUMContextANGLE", P(GL_LoseContextCHROMIUMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMapBufferOES", P(GL_MapBufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMapBufferOESContextANGLE", P(GL_MapBufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMapBufferRange", P(GL_MapBufferRange)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMapBufferRangeContextANGLE", P(GL_MapBufferRangeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMapBufferRangeEXT", P(GL_MapBufferRangeEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMapBufferRangeEXTContextANGLE", P(GL_MapBufferRangeEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMaterialf", P(GL_Materialf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMaterialfContextANGLE", P(GL_MaterialfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMaterialfv", P(GL_Materialfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMaterialfvContextANGLE", P(GL_MaterialfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMaterialx", P(GL_Materialx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMaterialxContextANGLE", P(GL_MaterialxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMaterialxv", P(GL_Materialxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMaterialxvContextANGLE", P(GL_MaterialxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMatrixIndexPointerOES", P(GL_MatrixIndexPointerOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMatrixIndexPointerOESContextANGLE", P(GL_MatrixIndexPointerOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMatrixMode", P(GL_MatrixMode)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMatrixModeContextANGLE", P(GL_MatrixModeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMaxShaderCompilerThreadsKHR", P(GL_MaxShaderCompilerThreadsKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMaxShaderCompilerThreadsKHRContextANGLE", P(GL_MaxShaderCompilerThreadsKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMemoryBarrier", P(GL_MemoryBarrier)},
     {"glMemoryBarrierByRegion", P(GL_MemoryBarrierByRegion)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMemoryBarrierByRegionContextANGLE", P(GL_MemoryBarrierByRegionContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMemoryBarrierContextANGLE", P(GL_MemoryBarrierContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMemoryObjectParameterivEXT", P(GL_MemoryObjectParameterivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMemoryObjectParameterivEXTContextANGLE", P(GL_MemoryObjectParameterivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMinSampleShading", P(GL_MinSampleShading)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMinSampleShadingContextANGLE", P(GL_MinSampleShadingContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMinSampleShadingOES", P(GL_MinSampleShadingOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMinSampleShadingOESContextANGLE", P(GL_MinSampleShadingOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultMatrixf", P(GL_MultMatrixf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultMatrixfContextANGLE", P(GL_MultMatrixfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultMatrixx", P(GL_MultMatrixx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultMatrixxContextANGLE", P(GL_MultMatrixxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawArraysANGLE", P(GL_MultiDrawArraysANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawArraysANGLEContextANGLE", P(GL_MultiDrawArraysANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawArraysEXT", P(GL_MultiDrawArraysEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawArraysEXTContextANGLE", P(GL_MultiDrawArraysEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawArraysIndirectEXT", P(GL_MultiDrawArraysIndirectEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawArraysIndirectEXTContextANGLE", P(GL_MultiDrawArraysIndirectEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawArraysInstancedANGLE", P(GL_MultiDrawArraysInstancedANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawArraysInstancedANGLEContextANGLE", P(GL_MultiDrawArraysInstancedANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawArraysInstancedBaseInstanceANGLE", P(GL_MultiDrawArraysInstancedBaseInstanceANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawArraysInstancedBaseInstanceANGLEContextANGLE", P(GL_MultiDrawArraysInstancedBaseInstanceANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsANGLE", P(GL_MultiDrawElementsANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsANGLEContextANGLE", P(GL_MultiDrawElementsANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsBaseVertexEXT", P(GL_MultiDrawElementsBaseVertexEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsBaseVertexEXTContextANGLE", P(GL_MultiDrawElementsBaseVertexEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsEXT", P(GL_MultiDrawElementsEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsEXTContextANGLE", P(GL_MultiDrawElementsEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsIndirectEXT", P(GL_MultiDrawElementsIndirectEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsIndirectEXTContextANGLE", P(GL_MultiDrawElementsIndirectEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsInstancedANGLE", P(GL_MultiDrawElementsInstancedANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsInstancedANGLEContextANGLE", P(GL_MultiDrawElementsInstancedANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE", P(GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE", P(GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiTexCoord4f", P(GL_MultiTexCoord4f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiTexCoord4fContextANGLE", P(GL_MultiTexCoord4fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glMultiTexCoord4x", P(GL_MultiTexCoord4x)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glMultiTexCoord4xContextANGLE", P(GL_MultiTexCoord4xContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glNormal3f", P(GL_Normal3f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glNormal3fContextANGLE", P(GL_Normal3fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glNormal3x", P(GL_Normal3x)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glNormal3xContextANGLE", P(GL_Normal3xContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glNormalPointer", P(GL_NormalPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glNormalPointerContextANGLE", P(GL_NormalPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glObjectLabel", P(GL_ObjectLabel)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glObjectLabelContextANGLE", P(GL_ObjectLabelContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glObjectLabelKHR", P(GL_ObjectLabelKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glObjectLabelKHRContextANGLE", P(GL_ObjectLabelKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glObjectPtrLabel", P(GL_ObjectPtrLabel)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glObjectPtrLabelContextANGLE", P(GL_ObjectPtrLabelContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glObjectPtrLabelKHR", P(GL_ObjectPtrLabelKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glObjectPtrLabelKHRContextANGLE", P(GL_ObjectPtrLabelKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glOrthof", P(GL_Orthof)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glOrthofContextANGLE", P(GL_OrthofContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glOrthox", P(GL_Orthox)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glOrthoxContextANGLE", P(GL_OrthoxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPatchParameteri", P(GL_PatchParameteri)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPatchParameteriContextANGLE", P(GL_PatchParameteriContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPatchParameteriEXT", P(GL_PatchParameteriEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPatchParameteriEXTContextANGLE", P(GL_PatchParameteriEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPatchParameteriOES", P(GL_PatchParameteriOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPatchParameteriOESContextANGLE", P(GL_PatchParameteriOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPauseTransformFeedback", P(GL_PauseTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPauseTransformFeedbackContextANGLE", P(GL_PauseTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPixelLocalStorageBarrierANGLE", P(GL_PixelLocalStorageBarrierANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPixelLocalStorageBarrierANGLEContextANGLE", P(GL_PixelLocalStorageBarrierANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPixelStorei", P(GL_PixelStorei)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPixelStoreiContextANGLE", P(GL_PixelStoreiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointParameterf", P(GL_PointParameterf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointParameterfContextANGLE", P(GL_PointParameterfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointParameterfv", P(GL_PointParameterfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointParameterfvContextANGLE", P(GL_PointParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointParameterx", P(GL_PointParameterx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointParameterxContextANGLE", P(GL_PointParameterxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointParameterxv", P(GL_PointParameterxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointParameterxvContextANGLE", P(GL_PointParameterxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointSize", P(GL_PointSize)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointSizeContextANGLE", P(GL_PointSizeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointSizePointerOES", P(GL_PointSizePointerOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointSizePointerOESContextANGLE", P(GL_PointSizePointerOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPointSizex", P(GL_PointSizex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPointSizexContextANGLE", P(GL_PointSizexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPolygonModeANGLE", P(GL_PolygonModeANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPolygonModeANGLEContextANGLE", P(GL_PolygonModeANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPolygonModeNV", P(GL_PolygonModeNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPolygonModeNVContextANGLE", P(GL_PolygonModeNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPolygonOffset", P(GL_PolygonOffset)},
     {"glPolygonOffsetClampEXT", P(GL_PolygonOffsetClampEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPolygonOffsetClampEXTContextANGLE", P(GL_PolygonOffsetClampEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPolygonOffsetContextANGLE", P(GL_PolygonOffsetContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPolygonOffsetx", P(GL_PolygonOffsetx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPolygonOffsetxContextANGLE", P(GL_PolygonOffsetxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPopDebugGroup", P(GL_PopDebugGroup)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPopDebugGroupContextANGLE", P(GL_PopDebugGroupContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPopDebugGroupKHR", P(GL_PopDebugGroupKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPopDebugGroupKHRContextANGLE", P(GL_PopDebugGroupKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPopGroupMarkerEXT", P(GL_PopGroupMarkerEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPopGroupMarkerEXTContextANGLE", P(GL_PopGroupMarkerEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPopMatrix", P(GL_PopMatrix)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPopMatrixContextANGLE", P(GL_PopMatrixContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPrimitiveBoundingBox", P(GL_PrimitiveBoundingBox)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPrimitiveBoundingBoxContextANGLE", P(GL_PrimitiveBoundingBoxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPrimitiveBoundingBoxEXT", P(GL_PrimitiveBoundingBoxEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPrimitiveBoundingBoxEXTContextANGLE", P(GL_PrimitiveBoundingBoxEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPrimitiveBoundingBoxOES", P(GL_PrimitiveBoundingBoxOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPrimitiveBoundingBoxOESContextANGLE", P(GL_PrimitiveBoundingBoxOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramBinary", P(GL_ProgramBinary)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramBinaryContextANGLE", P(GL_ProgramBinaryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramBinaryOES", P(GL_ProgramBinaryOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramBinaryOESContextANGLE", P(GL_ProgramBinaryOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramParameteri", P(GL_ProgramParameteri)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramParameteriContextANGLE", P(GL_ProgramParameteriContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramParameteriEXT", P(GL_ProgramParameteriEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramParameteriEXTContextANGLE", P(GL_ProgramParameteriEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1f", P(GL_ProgramUniform1f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1fContextANGLE", P(GL_ProgramUniform1fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1fEXT", P(GL_ProgramUniform1fEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1fEXTContextANGLE", P(GL_ProgramUniform1fEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1fv", P(GL_ProgramUniform1fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1fvContextANGLE", P(GL_ProgramUniform1fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1fvEXT", P(GL_ProgramUniform1fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1fvEXTContextANGLE", P(GL_ProgramUniform1fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1i", P(GL_ProgramUniform1i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1iContextANGLE", P(GL_ProgramUniform1iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1iEXT", P(GL_ProgramUniform1iEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1iEXTContextANGLE", P(GL_ProgramUniform1iEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1iv", P(GL_ProgramUniform1iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1ivContextANGLE", P(GL_ProgramUniform1ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1ivEXT", P(GL_ProgramUniform1ivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1ivEXTContextANGLE", P(GL_ProgramUniform1ivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1ui", P(GL_ProgramUniform1ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1uiContextANGLE", P(GL_ProgramUniform1uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1uiEXT", P(GL_ProgramUniform1uiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1uiEXTContextANGLE", P(GL_ProgramUniform1uiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1uiv", P(GL_ProgramUniform1uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1uivContextANGLE", P(GL_ProgramUniform1uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform1uivEXT", P(GL_ProgramUniform1uivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform1uivEXTContextANGLE", P(GL_ProgramUniform1uivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2f", P(GL_ProgramUniform2f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2fContextANGLE", P(GL_ProgramUniform2fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2fEXT", P(GL_ProgramUniform2fEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2fEXTContextANGLE", P(GL_ProgramUniform2fEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2fv", P(GL_ProgramUniform2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2fvContextANGLE", P(GL_ProgramUniform2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2fvEXT", P(GL_ProgramUniform2fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2fvEXTContextANGLE", P(GL_ProgramUniform2fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2i", P(GL_ProgramUniform2i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2iContextANGLE", P(GL_ProgramUniform2iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2iEXT", P(GL_ProgramUniform2iEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2iEXTContextANGLE", P(GL_ProgramUniform2iEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2iv", P(GL_ProgramUniform2iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2ivContextANGLE", P(GL_ProgramUniform2ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2ivEXT", P(GL_ProgramUniform2ivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2ivEXTContextANGLE", P(GL_ProgramUniform2ivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2ui", P(GL_ProgramUniform2ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2uiContextANGLE", P(GL_ProgramUniform2uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2uiEXT", P(GL_ProgramUniform2uiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2uiEXTContextANGLE", P(GL_ProgramUniform2uiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2uiv", P(GL_ProgramUniform2uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2uivContextANGLE", P(GL_ProgramUniform2uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform2uivEXT", P(GL_ProgramUniform2uivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform2uivEXTContextANGLE", P(GL_ProgramUniform2uivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3f", P(GL_ProgramUniform3f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3fContextANGLE", P(GL_ProgramUniform3fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3fEXT", P(GL_ProgramUniform3fEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3fEXTContextANGLE", P(GL_ProgramUniform3fEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3fv", P(GL_ProgramUniform3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3fvContextANGLE", P(GL_ProgramUniform3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3fvEXT", P(GL_ProgramUniform3fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3fvEXTContextANGLE", P(GL_ProgramUniform3fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3i", P(GL_ProgramUniform3i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3iContextANGLE", P(GL_ProgramUniform3iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3iEXT", P(GL_ProgramUniform3iEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3iEXTContextANGLE", P(GL_ProgramUniform3iEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3iv", P(GL_ProgramUniform3iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3ivContextANGLE", P(GL_ProgramUniform3ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3ivEXT", P(GL_ProgramUniform3ivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3ivEXTContextANGLE", P(GL_ProgramUniform3ivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3ui", P(GL_ProgramUniform3ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3uiContextANGLE", P(GL_ProgramUniform3uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3uiEXT", P(GL_ProgramUniform3uiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3uiEXTContextANGLE", P(GL_ProgramUniform3uiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3uiv", P(GL_ProgramUniform3uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3uivContextANGLE", P(GL_ProgramUniform3uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform3uivEXT", P(GL_ProgramUniform3uivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform3uivEXTContextANGLE", P(GL_ProgramUniform3uivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4f", P(GL_ProgramUniform4f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4fContextANGLE", P(GL_ProgramUniform4fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4fEXT", P(GL_ProgramUniform4fEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4fEXTContextANGLE", P(GL_ProgramUniform4fEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4fv", P(GL_ProgramUniform4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4fvContextANGLE", P(GL_ProgramUniform4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4fvEXT", P(GL_ProgramUniform4fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4fvEXTContextANGLE", P(GL_ProgramUniform4fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4i", P(GL_ProgramUniform4i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4iContextANGLE", P(GL_ProgramUniform4iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4iEXT", P(GL_ProgramUniform4iEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4iEXTContextANGLE", P(GL_ProgramUniform4iEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4iv", P(GL_ProgramUniform4iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4ivContextANGLE", P(GL_ProgramUniform4ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4ivEXT", P(GL_ProgramUniform4ivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4ivEXTContextANGLE", P(GL_ProgramUniform4ivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4ui", P(GL_ProgramUniform4ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4uiContextANGLE", P(GL_ProgramUniform4uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4uiEXT", P(GL_ProgramUniform4uiEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4uiEXTContextANGLE", P(GL_ProgramUniform4uiEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4uiv", P(GL_ProgramUniform4uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4uivContextANGLE", P(GL_ProgramUniform4uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniform4uivEXT", P(GL_ProgramUniform4uivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniform4uivEXTContextANGLE", P(GL_ProgramUniform4uivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2fv", P(GL_ProgramUniformMatrix2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2fvContextANGLE", P(GL_ProgramUniformMatrix2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2fvEXT", P(GL_ProgramUniformMatrix2fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2fvEXTContextANGLE", P(GL_ProgramUniformMatrix2fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2x3fv", P(GL_ProgramUniformMatrix2x3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2x3fvContextANGLE", P(GL_ProgramUniformMatrix2x3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2x3fvEXT", P(GL_ProgramUniformMatrix2x3fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2x3fvEXTContextANGLE", P(GL_ProgramUniformMatrix2x3fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2x4fv", P(GL_ProgramUniformMatrix2x4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2x4fvContextANGLE", P(GL_ProgramUniformMatrix2x4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix2x4fvEXT", P(GL_ProgramUniformMatrix2x4fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix2x4fvEXTContextANGLE", P(GL_ProgramUniformMatrix2x4fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3fv", P(GL_ProgramUniformMatrix3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3fvContextANGLE", P(GL_ProgramUniformMatrix3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3fvEXT", P(GL_ProgramUniformMatrix3fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3fvEXTContextANGLE", P(GL_ProgramUniformMatrix3fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3x2fv", P(GL_ProgramUniformMatrix3x2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3x2fvContextANGLE", P(GL_ProgramUniformMatrix3x2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3x2fvEXT", P(GL_ProgramUniformMatrix3x2fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3x2fvEXTContextANGLE", P(GL_ProgramUniformMatrix3x2fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3x4fv", P(GL_ProgramUniformMatrix3x4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3x4fvContextANGLE", P(GL_ProgramUniformMatrix3x4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix3x4fvEXT", P(GL_ProgramUniformMatrix3x4fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix3x4fvEXTContextANGLE", P(GL_ProgramUniformMatrix3x4fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4fv", P(GL_ProgramUniformMatrix4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4fvContextANGLE", P(GL_ProgramUniformMatrix4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4fvEXT", P(GL_ProgramUniformMatrix4fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4fvEXTContextANGLE", P(GL_ProgramUniformMatrix4fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4x2fv", P(GL_ProgramUniformMatrix4x2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4x2fvContextANGLE", P(GL_ProgramUniformMatrix4x2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4x2fvEXT", P(GL_ProgramUniformMatrix4x2fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4x2fvEXTContextANGLE", P(GL_ProgramUniformMatrix4x2fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4x3fv", P(GL_ProgramUniformMatrix4x3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4x3fvContextANGLE", P(GL_ProgramUniformMatrix4x3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProgramUniformMatrix4x3fvEXT", P(GL_ProgramUniformMatrix4x3fvEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProgramUniformMatrix4x3fvEXTContextANGLE", P(GL_ProgramUniformMatrix4x3fvEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glProvokingVertexANGLE", P(GL_ProvokingVertexANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glProvokingVertexANGLEContextANGLE", P(GL_ProvokingVertexANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPushDebugGroup", P(GL_PushDebugGroup)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPushDebugGroupContextANGLE", P(GL_PushDebugGroupContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPushDebugGroupKHR", P(GL_PushDebugGroupKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPushDebugGroupKHRContextANGLE", P(GL_PushDebugGroupKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPushGroupMarkerEXT", P(GL_PushGroupMarkerEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPushGroupMarkerEXTContextANGLE", P(GL_PushGroupMarkerEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glPushMatrix", P(GL_PushMatrix)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glPushMatrixContextANGLE", P(GL_PushMatrixContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glQueryCounterEXT", P(GL_QueryCounterEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glQueryCounterEXTContextANGLE", P(GL_QueryCounterEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glQueryMatrixxOES", P(GL_QueryMatrixxOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glQueryMatrixxOESContextANGLE", P(GL_QueryMatrixxOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadBuffer", P(GL_ReadBuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadBufferContextANGLE", P(GL_ReadBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadPixels", P(GL_ReadPixels)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadPixelsContextANGLE", P(GL_ReadPixelsContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadPixelsRobustANGLE", P(GL_ReadPixelsRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadPixelsRobustANGLEContextANGLE", P(GL_ReadPixelsRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadnPixels", P(GL_ReadnPixels)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadnPixelsContextANGLE", P(GL_ReadnPixelsContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadnPixelsEXT", P(GL_ReadnPixelsEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadnPixelsEXTContextANGLE", P(GL_ReadnPixelsEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReadnPixelsKHR", P(GL_ReadnPixelsKHR)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReadnPixelsKHRContextANGLE", P(GL_ReadnPixelsKHRContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReleaseShaderCompiler", P(GL_ReleaseShaderCompiler)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReleaseShaderCompilerContextANGLE", P(GL_ReleaseShaderCompilerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glReleaseTexturesANGLE", P(GL_ReleaseTexturesANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glReleaseTexturesANGLEContextANGLE", P(GL_ReleaseTexturesANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRenderbufferStorage", P(GL_RenderbufferStorage)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRenderbufferStorageContextANGLE", P(GL_RenderbufferStorageContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRenderbufferStorageMultisample", P(GL_RenderbufferStorageMultisample)},
     {"glRenderbufferStorageMultisampleANGLE", P(GL_RenderbufferStorageMultisampleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRenderbufferStorageMultisampleANGLEContextANGLE", P(GL_RenderbufferStorageMultisampleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRenderbufferStorageMultisampleContextANGLE", P(GL_RenderbufferStorageMultisampleContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRenderbufferStorageMultisampleEXT", P(GL_RenderbufferStorageMultisampleEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRenderbufferStorageMultisampleEXTContextANGLE", P(GL_RenderbufferStorageMultisampleEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRenderbufferStorageOES", P(GL_RenderbufferStorageOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRenderbufferStorageOESContextANGLE", P(GL_RenderbufferStorageOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRequestExtensionANGLE", P(GL_RequestExtensionANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRequestExtensionANGLEContextANGLE", P(GL_RequestExtensionANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glResumeTransformFeedback", P(GL_ResumeTransformFeedback)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glResumeTransformFeedbackContextANGLE", P(GL_ResumeTransformFeedbackContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRotatef", P(GL_Rotatef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRotatefContextANGLE", P(GL_RotatefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glRotatex", P(GL_Rotatex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glRotatexContextANGLE", P(GL_RotatexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSampleCoverage", P(GL_SampleCoverage)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSampleCoverageContextANGLE", P(GL_SampleCoverageContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSampleCoveragex", P(GL_SampleCoveragex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSampleCoveragexContextANGLE", P(GL_SampleCoveragexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSampleMaski", P(GL_SampleMaski)},
     {"glSampleMaskiANGLE", P(GL_SampleMaskiANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSampleMaskiANGLEContextANGLE", P(GL_SampleMaskiANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSampleMaskiContextANGLE", P(GL_SampleMaskiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIiv", P(GL_SamplerParameterIiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIivContextANGLE", P(GL_SamplerParameterIivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIivEXT", P(GL_SamplerParameterIivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIivEXTContextANGLE", P(GL_SamplerParameterIivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIivOES", P(GL_SamplerParameterIivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIivOESContextANGLE", P(GL_SamplerParameterIivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIuiv", P(GL_SamplerParameterIuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIuivContextANGLE", P(GL_SamplerParameterIuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIuivEXT", P(GL_SamplerParameterIuivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIuivEXTContextANGLE", P(GL_SamplerParameterIuivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterIuivOES", P(GL_SamplerParameterIuivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterIuivOESContextANGLE", P(GL_SamplerParameterIuivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterf", P(GL_SamplerParameterf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterfContextANGLE", P(GL_SamplerParameterfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterfv", P(GL_SamplerParameterfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterfvContextANGLE", P(GL_SamplerParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterfvRobustANGLE", P(GL_SamplerParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterfvRobustANGLEContextANGLE", P(GL_SamplerParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameteri", P(GL_SamplerParameteri)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameteriContextANGLE", P(GL_SamplerParameteriContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameteriv", P(GL_SamplerParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterivContextANGLE", P(GL_SamplerParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSamplerParameterivRobustANGLE", P(GL_SamplerParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSamplerParameterivRobustANGLEContextANGLE", P(GL_SamplerParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glScalef", P(GL_Scalef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glScalefContextANGLE", P(GL_ScalefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glScalex", P(GL_Scalex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glScalexContextANGLE", P(GL_ScalexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glScissor", P(GL_Scissor)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glScissorContextANGLE", P(GL_ScissorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSelectPerfMonitorCountersAMD", P(GL_SelectPerfMonitorCountersAMD)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSelectPerfMonitorCountersAMDContextANGLE", P(GL_SelectPerfMonitorCountersAMDContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSemaphoreParameterui64vEXT", P(GL_SemaphoreParameterui64vEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSemaphoreParameterui64vEXTContextANGLE", P(GL_SemaphoreParameterui64vEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSetFenceNV", P(GL_SetFenceNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSetFenceNVContextANGLE", P(GL_SetFenceNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShadeModel", P(GL_ShadeModel)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShadeModelContextANGLE", P(GL_ShadeModelContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShaderBinary", P(GL_ShaderBinary)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShaderBinaryContextANGLE", P(GL_ShaderBinaryContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShaderSource", P(GL_ShaderSource)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShaderSourceContextANGLE", P(GL_ShaderSourceContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShadingRateCombinerOpsEXT", P(GL_ShadingRateCombinerOpsEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShadingRateCombinerOpsEXTContextANGLE", P(GL_ShadingRateCombinerOpsEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShadingRateEXT", P(GL_ShadingRateEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShadingRateEXTContextANGLE", P(GL_ShadingRateEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glShadingRateQCOM", P(GL_ShadingRateQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glShadingRateQCOMContextANGLE", P(GL_ShadingRateQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glSignalSemaphoreEXT", P(GL_SignalSemaphoreEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glSignalSemaphoreEXTContextANGLE", P(GL_SignalSemaphoreEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStartTilingQCOM", P(GL_StartTilingQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStartTilingQCOMContextANGLE", P(GL_StartTilingQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilFunc", P(GL_StencilFunc)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilFuncContextANGLE", P(GL_StencilFuncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilFuncSeparate", P(GL_StencilFuncSeparate)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilFuncSeparateContextANGLE", P(GL_StencilFuncSeparateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilMask", P(GL_StencilMask)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilMaskContextANGLE", P(GL_StencilMaskContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilMaskSeparate", P(GL_StencilMaskSeparate)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilMaskSeparateContextANGLE", P(GL_StencilMaskSeparateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilOp", P(GL_StencilOp)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilOpContextANGLE", P(GL_StencilOpContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glStencilOpSeparate", P(GL_StencilOpSeparate)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glStencilOpSeparateContextANGLE", P(GL_StencilOpSeparateContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTestFenceNV", P(GL_TestFenceNV)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTestFenceNVContextANGLE", P(GL_TestFenceNVContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBuffer", P(GL_TexBuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferContextANGLE", P(GL_TexBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBufferEXT", P(GL_TexBufferEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferEXTContextANGLE", P(GL_TexBufferEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBufferOES", P(GL_TexBufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferOESContextANGLE", P(GL_TexBufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBufferRange", P(GL_TexBufferRange)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferRangeContextANGLE", P(GL_TexBufferRangeContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBufferRangeEXT", P(GL_TexBufferRangeEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferRangeEXTContextANGLE", P(GL_TexBufferRangeEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexBufferRangeOES", P(GL_TexBufferRangeOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexBufferRangeOESContextANGLE", P(GL_TexBufferRangeOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexCoordPointer", P(GL_TexCoordPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexCoordPointerContextANGLE", P(GL_TexCoordPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnvf", P(GL_TexEnvf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnvfContextANGLE", P(GL_TexEnvfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnvfv", P(GL_TexEnvfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnvfvContextANGLE", P(GL_TexEnvfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnvi", P(GL_TexEnvi)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnviContextANGLE", P(GL_TexEnviContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnviv", P(GL_TexEnviv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnvivContextANGLE", P(GL_TexEnvivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnvx", P(GL_TexEnvx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnvxContextANGLE", P(GL_TexEnvxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexEnvxv", P(GL_TexEnvxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexEnvxvContextANGLE", P(GL_TexEnvxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGenfOES", P(GL_TexGenfOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGenfOESContextANGLE", P(GL_TexGenfOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGenfvOES", P(GL_TexGenfvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGenfvOESContextANGLE", P(GL_TexGenfvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGeniOES", P(GL_TexGeniOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGeniOESContextANGLE", P(GL_TexGeniOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGenivOES", P(GL_TexGenivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGenivOESContextANGLE", P(GL_TexGenivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGenxOES", P(GL_TexGenxOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGenxOESContextANGLE", P(GL_TexGenxOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexGenxvOES", P(GL_TexGenxvOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexGenxvOESContextANGLE", P(GL_TexGenxvOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexImage2D", P(GL_TexImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexImage2DContextANGLE", P(GL_TexImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexImage2DRobustANGLE", P(GL_TexImage2DRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexImage2DRobustANGLEContextANGLE", P(GL_TexImage2DRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexImage3D", P(GL_TexImage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexImage3DContextANGLE", P(GL_TexImage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexImage3DOES", P(GL_TexImage3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexImage3DOESContextANGLE", P(GL_TexImage3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexImage3DRobustANGLE", P(GL_TexImage3DRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexImage3DRobustANGLEContextANGLE", P(GL_TexImage3DRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIiv", P(GL_TexParameterIiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIivContextANGLE", P(GL_TexParameterIivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIivEXT", P(GL_TexParameterIivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIivEXTContextANGLE", P(GL_TexParameterIivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIivOES", P(GL_TexParameterIivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIivOESContextANGLE", P(GL_TexParameterIivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIuiv", P(GL_TexParameterIuiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIuivContextANGLE", P(GL_TexParameterIuivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIuivEXT", P(GL_TexParameterIuivEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIuivEXTContextANGLE", P(GL_TexParameterIuivEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterIuivOES", P(GL_TexParameterIuivOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterIuivOESContextANGLE", P(GL_TexParameterIuivOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterf", P(GL_TexParameterf)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterfContextANGLE", P(GL_TexParameterfContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterfv", P(GL_TexParameterfv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterfvContextANGLE", P(GL_TexParameterfvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterfvRobustANGLE", P(GL_TexParameterfvRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterfvRobustANGLEContextANGLE", P(GL_TexParameterfvRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameteri", P(GL_TexParameteri)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameteriContextANGLE", P(GL_TexParameteriContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameteriv", P(GL_TexParameteriv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterivContextANGLE", P(GL_TexParameterivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterivRobustANGLE", P(GL_TexParameterivRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterivRobustANGLEContextANGLE", P(GL_TexParameterivRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterx", P(GL_TexParameterx)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterxContextANGLE", P(GL_TexParameterxContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexParameterxv", P(GL_TexParameterxv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexParameterxvContextANGLE", P(GL_TexParameterxvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage2D", P(GL_TexStorage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage2DContextANGLE", P(GL_TexStorage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage2DEXT", P(GL_TexStorage2DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage2DEXTContextANGLE", P(GL_TexStorage2DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage2DMultisample", P(GL_TexStorage2DMultisample)},
     {"glTexStorage2DMultisampleANGLE", P(GL_TexStorage2DMultisampleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage2DMultisampleANGLEContextANGLE", P(GL_TexStorage2DMultisampleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage2DMultisampleContextANGLE", P(GL_TexStorage2DMultisampleContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage3D", P(GL_TexStorage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage3DContextANGLE", P(GL_TexStorage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage3DEXT", P(GL_TexStorage3DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage3DEXTContextANGLE", P(GL_TexStorage3DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage3DMultisample", P(GL_TexStorage3DMultisample)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage3DMultisampleContextANGLE", P(GL_TexStorage3DMultisampleContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorage3DMultisampleOES", P(GL_TexStorage3DMultisampleOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorage3DMultisampleOESContextANGLE", P(GL_TexStorage3DMultisampleOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageAttribs2DEXT", P(GL_TexStorageAttribs2DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageAttribs2DEXTContextANGLE", P(GL_TexStorageAttribs2DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageAttribs3DEXT", P(GL_TexStorageAttribs3DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageAttribs3DEXTContextANGLE", P(GL_TexStorageAttribs3DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMem2DEXT", P(GL_TexStorageMem2DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMem2DEXTContextANGLE", P(GL_TexStorageMem2DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMem2DMultisampleEXT", P(GL_TexStorageMem2DMultisampleEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMem2DMultisampleEXTContextANGLE", P(GL_TexStorageMem2DMultisampleEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMem3DEXT", P(GL_TexStorageMem3DEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMem3DEXTContextANGLE", P(GL_TexStorageMem3DEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMem3DMultisampleEXT", P(GL_TexStorageMem3DMultisampleEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMem3DMultisampleEXTContextANGLE", P(GL_TexStorageMem3DMultisampleEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMemFlags2DANGLE", P(GL_TexStorageMemFlags2DANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMemFlags2DANGLEContextANGLE", P(GL_TexStorageMemFlags2DANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMemFlags2DMultisampleANGLE", P(GL_TexStorageMemFlags2DMultisampleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMemFlags2DMultisampleANGLEContextANGLE", P(GL_TexStorageMemFlags2DMultisampleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMemFlags3DANGLE", P(GL_TexStorageMemFlags3DANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMemFlags3DANGLEContextANGLE", P(GL_TexStorageMemFlags3DANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexStorageMemFlags3DMultisampleANGLE", P(GL_TexStorageMemFlags3DMultisampleANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexStorageMemFlags3DMultisampleANGLEContextANGLE", P(GL_TexStorageMemFlags3DMultisampleANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexSubImage2D", P(GL_TexSubImage2D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexSubImage2DContextANGLE", P(GL_TexSubImage2DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexSubImage2DRobustANGLE", P(GL_TexSubImage2DRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexSubImage2DRobustANGLEContextANGLE", P(GL_TexSubImage2DRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexSubImage3D", P(GL_TexSubImage3D)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexSubImage3DContextANGLE", P(GL_TexSubImage3DContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexSubImage3DOES", P(GL_TexSubImage3DOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexSubImage3DOESContextANGLE", P(GL_TexSubImage3DOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTexSubImage3DRobustANGLE", P(GL_TexSubImage3DRobustANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTexSubImage3DRobustANGLEContextANGLE", P(GL_TexSubImage3DRobustANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTextureFoveationParametersQCOM", P(GL_TextureFoveationParametersQCOM)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTextureFoveationParametersQCOMContextANGLE", P(GL_TextureFoveationParametersQCOMContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTransformFeedbackVaryings", P(GL_TransformFeedbackVaryings)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTransformFeedbackVaryingsContextANGLE", P(GL_TransformFeedbackVaryingsContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTranslatef", P(GL_Translatef)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTranslatefContextANGLE", P(GL_TranslatefContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glTranslatex", P(GL_Translatex)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glTranslatexContextANGLE", P(GL_TranslatexContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1f", P(GL_Uniform1f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1fContextANGLE", P(GL_Uniform1fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1fv", P(GL_Uniform1fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1fvContextANGLE", P(GL_Uniform1fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1i", P(GL_Uniform1i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1iContextANGLE", P(GL_Uniform1iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1iv", P(GL_Uniform1iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1ivContextANGLE", P(GL_Uniform1ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1ui", P(GL_Uniform1ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1uiContextANGLE", P(GL_Uniform1uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform1uiv", P(GL_Uniform1uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform1uivContextANGLE", P(GL_Uniform1uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2f", P(GL_Uniform2f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2fContextANGLE", P(GL_Uniform2fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2fv", P(GL_Uniform2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2fvContextANGLE", P(GL_Uniform2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2i", P(GL_Uniform2i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2iContextANGLE", P(GL_Uniform2iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2iv", P(GL_Uniform2iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2ivContextANGLE", P(GL_Uniform2ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2ui", P(GL_Uniform2ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2uiContextANGLE", P(GL_Uniform2uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform2uiv", P(GL_Uniform2uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform2uivContextANGLE", P(GL_Uniform2uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3f", P(GL_Uniform3f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3fContextANGLE", P(GL_Uniform3fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3fv", P(GL_Uniform3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3fvContextANGLE", P(GL_Uniform3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3i", P(GL_Uniform3i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3iContextANGLE", P(GL_Uniform3iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3iv", P(GL_Uniform3iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3ivContextANGLE", P(GL_Uniform3ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3ui", P(GL_Uniform3ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3uiContextANGLE", P(GL_Uniform3uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform3uiv", P(GL_Uniform3uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform3uivContextANGLE", P(GL_Uniform3uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4f", P(GL_Uniform4f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4fContextANGLE", P(GL_Uniform4fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4fv", P(GL_Uniform4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4fvContextANGLE", P(GL_Uniform4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4i", P(GL_Uniform4i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4iContextANGLE", P(GL_Uniform4iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4iv", P(GL_Uniform4iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4ivContextANGLE", P(GL_Uniform4ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4ui", P(GL_Uniform4ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4uiContextANGLE", P(GL_Uniform4uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniform4uiv", P(GL_Uniform4uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniform4uivContextANGLE", P(GL_Uniform4uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformBlockBinding", P(GL_UniformBlockBinding)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformBlockBindingContextANGLE", P(GL_UniformBlockBindingContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix2fv", P(GL_UniformMatrix2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix2fvContextANGLE", P(GL_UniformMatrix2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix2x3fv", P(GL_UniformMatrix2x3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix2x3fvContextANGLE", P(GL_UniformMatrix2x3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix2x4fv", P(GL_UniformMatrix2x4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix2x4fvContextANGLE", P(GL_UniformMatrix2x4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix3fv", P(GL_UniformMatrix3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix3fvContextANGLE", P(GL_UniformMatrix3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix3x2fv", P(GL_UniformMatrix3x2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix3x2fvContextANGLE", P(GL_UniformMatrix3x2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix3x4fv", P(GL_UniformMatrix3x4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix3x4fvContextANGLE", P(GL_UniformMatrix3x4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix4fv", P(GL_UniformMatrix4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix4fvContextANGLE", P(GL_UniformMatrix4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix4x2fv", P(GL_UniformMatrix4x2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix4x2fvContextANGLE", P(GL_UniformMatrix4x2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUniformMatrix4x3fv", P(GL_UniformMatrix4x3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUniformMatrix4x3fvContextANGLE", P(GL_UniformMatrix4x3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUnmapBuffer", P(GL_UnmapBuffer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUnmapBufferContextANGLE", P(GL_UnmapBufferContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUnmapBufferOES", P(GL_UnmapBufferOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUnmapBufferOESContextANGLE", P(GL_UnmapBufferOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUseProgram", P(GL_UseProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUseProgramContextANGLE", P(GL_UseProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUseProgramStages", P(GL_UseProgramStages)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUseProgramStagesContextANGLE", P(GL_UseProgramStagesContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glUseProgramStagesEXT", P(GL_UseProgramStagesEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glUseProgramStagesEXTContextANGLE", P(GL_UseProgramStagesEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glValidateProgram", P(GL_ValidateProgram)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glValidateProgramContextANGLE", P(GL_ValidateProgramContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glValidateProgramPipeline", P(GL_ValidateProgramPipeline)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glValidateProgramPipelineContextANGLE", P(GL_ValidateProgramPipelineContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glValidateProgramPipelineEXT", P(GL_ValidateProgramPipelineEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glValidateProgramPipelineEXTContextANGLE", P(GL_ValidateProgramPipelineEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib1f", P(GL_VertexAttrib1f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib1fContextANGLE", P(GL_VertexAttrib1fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib1fv", P(GL_VertexAttrib1fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib1fvContextANGLE", P(GL_VertexAttrib1fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib2f", P(GL_VertexAttrib2f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib2fContextANGLE", P(GL_VertexAttrib2fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib2fv", P(GL_VertexAttrib2fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib2fvContextANGLE", P(GL_VertexAttrib2fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib3f", P(GL_VertexAttrib3f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib3fContextANGLE", P(GL_VertexAttrib3fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib3fv", P(GL_VertexAttrib3fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib3fvContextANGLE", P(GL_VertexAttrib3fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib4f", P(GL_VertexAttrib4f)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib4fContextANGLE", P(GL_VertexAttrib4fContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttrib4fv", P(GL_VertexAttrib4fv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttrib4fvContextANGLE", P(GL_VertexAttrib4fvContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribBinding", P(GL_VertexAttribBinding)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribBindingContextANGLE", P(GL_VertexAttribBindingContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribDivisor", P(GL_VertexAttribDivisor)},
     {"glVertexAttribDivisorANGLE", P(GL_VertexAttribDivisorANGLE)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribDivisorANGLEContextANGLE", P(GL_VertexAttribDivisorANGLEContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribDivisorContextANGLE", P(GL_VertexAttribDivisorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribDivisorEXT", P(GL_VertexAttribDivisorEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribDivisorEXTContextANGLE", P(GL_VertexAttribDivisorEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribFormat", P(GL_VertexAttribFormat)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribFormatContextANGLE", P(GL_VertexAttribFormatContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribI4i", P(GL_VertexAttribI4i)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribI4iContextANGLE", P(GL_VertexAttribI4iContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribI4iv", P(GL_VertexAttribI4iv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribI4ivContextANGLE", P(GL_VertexAttribI4ivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribI4ui", P(GL_VertexAttribI4ui)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribI4uiContextANGLE", P(GL_VertexAttribI4uiContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribI4uiv", P(GL_VertexAttribI4uiv)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribI4uivContextANGLE", P(GL_VertexAttribI4uivContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribIFormat", P(GL_VertexAttribIFormat)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribIFormatContextANGLE", P(GL_VertexAttribIFormatContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribIPointer", P(GL_VertexAttribIPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribIPointerContextANGLE", P(GL_VertexAttribIPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexAttribPointer", P(GL_VertexAttribPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexAttribPointerContextANGLE", P(GL_VertexAttribPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexBindingDivisor", P(GL_VertexBindingDivisor)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexBindingDivisorContextANGLE", P(GL_VertexBindingDivisorContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glVertexPointer", P(GL_VertexPointer)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glVertexPointerContextANGLE", P(GL_VertexPointerContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glViewport", P(GL_Viewport)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glViewportContextANGLE", P(GL_ViewportContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glWaitSemaphoreEXT", P(GL_WaitSemaphoreEXT)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glWaitSemaphoreEXTContextANGLE", P(GL_WaitSemaphoreEXTContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glWaitSync", P(GL_WaitSync)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glWaitSyncContextANGLE", P(GL_WaitSyncContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glWeightPointerOES", P(GL_WeightPointerOES)},
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+    {"glWeightPointerOESContextANGLE", P(GL_WeightPointerOESContextANGLE)},
+#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
 };
 // clang-format on
 }  // anonymous namespace

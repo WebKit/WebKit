@@ -19,15 +19,15 @@ namespace gl
 
 inline GLint GetUniformElementComponents(UniformTypeIndex index)
 {
-    static constexpr std::array<uint8_t, 77> kElementComponents = {
+    static constexpr std::array<uint8_t, 76> kElementComponents = {
         0, 1, 2, 3, 4, 1, 4, 6, 8, 9, 6, 12, 16, 8, 12, 2, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  2, 3,  4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1, 1,  1, 1, 1, 1, 1, 2, 3, 4, 1, 1};
-    ASSERT(index.value >= 0 && index.value < 77);
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1, 1,  1, 1, 1, 1, 1, 2, 3, 4, 1};
+    ASSERT(index.value >= 0 && index.value < 76);
     return kElementComponents[index.value];
 }
 
-extern const std::array<UniformTypeInfo, 77> kUniformInfoTable;
+extern const std::array<UniformTypeInfo, 76> kUniformInfoTable;
 
 }  // namespace gl
 #endif  // COMMON_UNIFORM_TYPE_INFO_AUTOGEN_H_

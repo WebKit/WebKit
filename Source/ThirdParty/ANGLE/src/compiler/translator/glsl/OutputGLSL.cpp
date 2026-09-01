@@ -82,24 +82,6 @@ void TOutputGLSL::visitSymbol(TIntermSymbol *node)
 ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &name,
                                                       const ShCompileOptions &option)
 {
-    // Check WEBGL_video_texture invocation first.
-    if (name == "textureVideoWEBGL")
-    {
-        if (option.takeVideoTextureAsExternalOES)
-        {
-            // TODO(http://anglebug.com/42262534): Implement external image situation.
-            UNIMPLEMENTED();
-            return ImmutableString("");
-        }
-        else
-        {
-            // Use "texture" instead of "texture2D" to match the translation
-            // of samplerVideoWEBGL to sampler2D and the GLSL version's texture function naming.
-            ASSERT(sh::IsGLSL150OrNewer(getShaderOutput()));
-            return ImmutableString("texture");
-        }
-    }
-
     ASSERT(sh::IsGLSL150OrNewer(getShaderOutput()));
     static const char *legacyToCoreRename[] = {
         "texture2D", "texture", "texture2DProj", "textureProj", "texture2DLod", "textureLod",
