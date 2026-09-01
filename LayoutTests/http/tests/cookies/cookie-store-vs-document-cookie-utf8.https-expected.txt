@@ -1,0 +1,30 @@
+Tests that cookieStore.set() and document.cookie store identical cookie state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cookieStore.set() preserved cjk value
+PASS document.cookie preserved cjk value
+PASS cookieStore and document.cookie agree for cjk
+PASS cookieStore.set() preserved cyr value
+PASS document.cookie preserved cyr value
+PASS cookieStore and document.cookie agree for cyr
+PASS cookieStore.set() preserved mixed value
+PASS document.cookie preserved mixed value
+PASS cookieStore and document.cookie agree for mixed
+PASS cookieStore.set() preserved dev value
+PASS document.cookie preserved dev value
+PASS cookieStore and document.cookie agree for dev
+PASS cookieStore.set() preserved bomlead value
+PASS document.cookie preserved bomlead value
+PASS cookieStore and document.cookie agree for bomlead
+PASS cookieStore.set() preserved bomtrail value
+PASS document.cookie preserved bomtrail value
+PASS cookieStore and document.cookie agree for bomtrail
+PASS cookieStore.set() preserved latin1 value
+PASS document.cookie preserved latin1 value
+PASS cookieStore and document.cookie agree for latin1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

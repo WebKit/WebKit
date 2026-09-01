@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -199,6 +199,11 @@ public:
     ~NetworkStorageSession();
 
     NetworkingContext* context() const;
+#endif
+
+#if HAVE(BROKEN_MONTH_BEFORE_DAY_EXPIRES_COOKIE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    // FIXME: Remove after rdar://134953231 and rdar://185837942 are resolved.
+    WEBCORE_EXPORT void repairCookiesFromHTTPResponse(const URL& firstParty, const URL&, const SameSiteInfo&, const String& setCookieHeaderValue, ThirdPartyCookieBlockingDecision) const;
 #endif
 
     WEBCORE_EXPORT HTTPCookieAcceptPolicy cookieAcceptPolicy() const;

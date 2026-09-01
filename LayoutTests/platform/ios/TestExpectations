@@ -7080,7 +7080,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 
 # rdar://96912160 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
 imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
-imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
 #rdar://95420649 ([BLOCKED] 2X fast/canvas/canvas-createPattern-video (layout-tests) are constant text failures)
 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]

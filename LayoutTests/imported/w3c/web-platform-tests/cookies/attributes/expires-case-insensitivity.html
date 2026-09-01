@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Test that expires attribute day and month names are matched case-insensitively</title>
+    <meta name=help href="https://tools.ietf.org/html/rfc6265#section-5.1.1">
+    <meta name="timeout" content="long">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+    <script src="/cookies/resources/cookie-test.js"></script>
+  </head>
+  <body>
+    <div id=log></div>
+    <script>
+      // RFC 6265 section 5.1.1 matches the month by its first three characters case-insensitively,
+      // and says the day-of-week is to be ignored rather than validated, so the casing of either
+      // name cannot change how a date parses.
+      //
+      // Every case below uses a past expiration, because only that distinguishes a conforming
+      // implementation: one that rejects the date drops the Expires attribute, which stores the
+      // cookie as a session cookie and therefore leaves it present. A future expiration looks
+      // identical either way.
+      //
+      // These live in their own file rather than in expires.html because each case costs two
+      // subtests -- one per delivery mechanism -- and expires.html was already close enough to its
+      // "long" timeout budget that adding them made it time out intermittently.
+      //
+      // Cookie names continue the numbering used by expires.html so that the two files stay easy
+      // to read side by side.
+      const caseTests = [
+        // The month and the day-of-week are asserted separately, and in both directions, because
+        // an implementation can easily match one case-insensitively and the other not.
+        {
+          cookie: "test=13; Expires=Thu, 10 APR 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with an uppercase month in an expires in the past",
+        },
+        {
+          cookie: "test=14; Expires=Thu, 10 apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with a lowercase month in an expires in the past",
+        },
+        {
+          cookie: "test=15; Expires=THU, 10 Apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with an uppercase day name in an expires in the past",
+        },
+        {
+          cookie: "test=16; Expires=thu, 10 Apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with a lowercase day name in an expires in the past",
+        },
+        // Section 5.1.1 matches a month on its first three characters, so the full name has to be
+        // accepted as well, and its casing must not matter either.
+        {
+          cookie: "test=17; Expires=THURSDAY, 10 APRIL 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase full day and month names in an expires in the past",
+        },
+        // The dd-Mon-yyyy form writes the month between dashes rather than spaces, so an
+        // implementation that finds the month by splitting on whitespace can miss it here.
+        {
+          cookie: "test=18; Expires=THU, 10-APR-1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase names and a dash separated date in an expires in the past",
+        },
+        // No comma and month-first, which is the shape an implementation reaches after reordering
+        // a Date.prototype.toString() value. Combines the casing question with the ordering one.
+        {
+          cookie: "test=19; Expires=THU APR 10 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase names and no comma in an expires in the past",
+        },
+      ];
+
+      // These tests evaluate setting cookies with expiration via HTTP headers.
+      for (const test of caseTests) {
+        httpCookieTest(test.cookie, test.expected, test.name + " via HTTP headers");
+      }
+
+      // These tests evaluate setting cookies with expiration via document.cookie.
+      for (const test of caseTests) {
+        domCookieTest(test.cookie, test.expected, test.name + " via document.cookie");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('Tests that cookieStore.set() and document.cookie store identical cookie state.');
+jsTestIsAsync = true;
+
+function readDocumentCookie(name)
+{
+    const found = document.cookie.split(/;\s*/).find(c => c.indexOf(name + '=') === 0);
+    return found === undefined ? null : found.slice(name.length + 1);
+}
+
+const cases = [
+    { tag: 'cjk',   value: '北京' },
+    { tag: 'cyr',   value: 'Москва' },
+    { tag: 'mixed', value: 'abc北京def' },
+    { tag: 'dev',   value: 'दिल्ली' },
+    // A leading U+FEFF is an ordinary character here, but every NSHTTPCookie property dictionary
+    // discards one, and neither API can avoid going through such a dictionary. Both paths have to
+    // compensate or they disagree with each other. A trailing mark is never touched, so it is the
+    // control for that workaround.
+    { tag: 'bomlead',  value: '﻿value' },
+    { tag: 'bomtrail', value: 'value﻿' },
+    // Entirely within Latin-1, so the string parser can represent it. This one is the control:
+    // if it ever starts failing, the defect has grown rather than shrunk.
+    { tag: 'latin1', value: 'caféño' },
+];
+
+onload = async () => {
+    for (const testCase of cases) {
+        const storeName = 'store_' + testCase.tag;
+        const domName = 'dom_' + testCase.tag;
+
+        // The structural path, which works today.
+        await cookieStore.set({ name: storeName, value: testCase.value, path: '/' });
+        const viaStore = readDocumentCookie(storeName);
+        if (viaStore === testCase.value)
+            testPassed('cookieStore.set() preserved ' + testCase.tag + ' value');
+        else
+            testFailed('cookieStore.set() changed ' + testCase.tag + ' value: expected "' + testCase.value + '" but got "' + viaStore + '"');
+
+        // The string-parser path, which mangles anything above U+00FF.
+        document.cookie = domName + '=' + testCase.value + '; path=/';
+        const viaDocument = readDocumentCookie(domName);
+        if (viaDocument === testCase.value)
+            testPassed('document.cookie preserved ' + testCase.tag + ' value');
+        else
+            testFailed('document.cookie changed ' + testCase.tag + ' value: expected "' + testCase.value + '" but got "' + viaDocument + '"');
+
+        // The asymmetry itself: the same value written through the two APIs, read back through
+        // one API, must compare equal. This is what a site sees when it mixes the two.
+        if (viaStore === viaDocument)
+            testPassed('cookieStore and document.cookie agree for ' + testCase.tag);
+        else
+            testFailed('cookieStore and document.cookie disagree for ' + testCase.tag + ': "' + viaStore + '" vs "' + viaDocument + '"');
+    }
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>
