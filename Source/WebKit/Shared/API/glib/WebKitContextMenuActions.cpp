@@ -136,6 +136,26 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
     case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK:
     case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK:
         return ContextMenuItemTagDownloadMediaToDisk;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_AUTO_SIZE:
+        return ContextMenuItemPDFAutoSize;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_IN:
+        return ContextMenuItemPDFZoomIn;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_OUT:
+        return ContextMenuItemPDFZoomOut;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ACTUAL_SIZE:
+        return ContextMenuItemPDFActualSize;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE:
+        return ContextMenuItemPDFSinglePage;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE_CONTINUOUS:
+        return ContextMenuItemPDFSinglePageContinuous;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES:
+        return ContextMenuItemPDFTwoPages;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES_CONTINUOUS:
+        return ContextMenuItemPDFTwoPagesContinuous;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_NEXT_PAGE:
+        return ContextMenuItemPDFNextPage;
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_PREVIOUS_PAGE:
+        return ContextMenuItemPDFPreviousPage;
     case WEBKIT_CONTEXT_MENU_ACTION_CUSTOM:
         return ContextMenuItemBaseApplicationTag;
     default:
@@ -240,6 +260,26 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     case ContextMenuItemTagDownloadMediaToDisk:
         return menuItem.title() == contextMenuItemTagDownloadVideoToDisk() ?
             WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK : WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK;
+    case ContextMenuItemPDFAutoSize:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_AUTO_SIZE;
+    case ContextMenuItemPDFZoomIn:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_IN;
+    case ContextMenuItemPDFZoomOut:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_OUT;
+    case ContextMenuItemPDFActualSize:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_ACTUAL_SIZE;
+    case ContextMenuItemPDFSinglePage:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE;
+    case ContextMenuItemPDFSinglePageContinuous:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE_CONTINUOUS;
+    case ContextMenuItemPDFTwoPages:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES;
+    case ContextMenuItemPDFTwoPagesContinuous:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES_CONTINUOUS;
+    case ContextMenuItemPDFNextPage:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_NEXT_PAGE;
+    case ContextMenuItemPDFPreviousPage:
+        return WEBKIT_CONTEXT_MENU_ACTION_PDF_PREVIOUS_PAGE;
     case ContextMenuItemBaseApplicationTag:
         return WEBKIT_CONTEXT_MENU_ACTION_CUSTOM;
     default:
@@ -247,6 +287,41 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     }
 
     return WEBKIT_CONTEXT_MENU_ACTION_CUSTOM;
+}
+
+// The labels are only compiled in when PDF.js is, but the actions are always part of the API,
+// so an application may still ask for one of them.
+static String pdfContextMenuActionLabel(WebKitContextMenuAction action)
+{
+#if ENABLE(PDFJS)
+    switch (action) {
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_AUTO_SIZE:
+        return contextMenuItemPDFAutoSize();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_IN:
+        return contextMenuItemPDFZoomIn();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_OUT:
+        return contextMenuItemPDFZoomOut();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ACTUAL_SIZE:
+        return contextMenuItemPDFActualSize();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE:
+        return contextMenuItemPDFSinglePage();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE_CONTINUOUS:
+        return contextMenuItemPDFSinglePageContinuous();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES:
+        return contextMenuItemPDFTwoPages();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES_CONTINUOUS:
+        return contextMenuItemPDFTwoPagesContinuous();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_NEXT_PAGE:
+        return contextMenuItemPDFNextPage();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_PREVIOUS_PAGE:
+        return contextMenuItemPDFPreviousPage();
+    default:
+        break;
+    }
+#else
+    UNUSED_PARAM(action);
+#endif
+    return String();
 }
 
 String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
@@ -344,6 +419,17 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagDownloadVideoToDisk();
     case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK:
         return contextMenuItemTagDownloadAudioToDisk();
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_AUTO_SIZE:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_IN:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ZOOM_OUT:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_ACTUAL_SIZE:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_SINGLE_PAGE_CONTINUOUS:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_TWO_PAGES_CONTINUOUS:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_NEXT_PAGE:
+    case WEBKIT_CONTEXT_MENU_ACTION_PDF_PREVIOUS_PAGE:
+        return pdfContextMenuActionLabel(action);
     case WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION:
     case WEBKIT_CONTEXT_MENU_ACTION_CUSTOM:
     case WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS:
