@@ -677,7 +677,6 @@ private:
                 if (ch == '-')
                     m_errorCode = ErrorCode::InvalidClassSetOperation;
                 else {
-                    m_delegate.atomCharacterClassAtom(m_character);
                     switchFromDefaultOpToUnionOpIfNeeded();
                     processCharacter();
                 }
