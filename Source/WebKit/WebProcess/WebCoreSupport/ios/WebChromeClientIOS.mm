@@ -115,16 +115,6 @@ bool WebChromeClient::hasStablePageScaleFactor() const
     return page && page->hasStablePageScaleFactor();
 }
 
-void WebChromeClient::suppressFormNotifications()
-{
-    notImplemented();
-}
-
-void WebChromeClient::restoreFormNotifications()
-{
-    notImplemented();
-}
-
 void WebChromeClient::addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool, bool)
 {
     notImplemented();
