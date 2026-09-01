@@ -696,7 +696,10 @@ class Sequence
                 raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}"
             end
         }
-        result = riscLowerTest(result)
+        result = riscLowerTest(result) {
+            | node |
+            not arm64TestBitBranchOperands(node.opcode, node.operands).nil?
+        }
         result = arm64FixSpecialRegisterArithmeticMode(result)
         result = assignRegistersToTemporaries(result, :gpr, ARM64_EXTRA_GPRS)
         result = assignRegistersToTemporaries(result, :fpr, ARM64_EXTRA_FPRS)
@@ -896,6 +899,28 @@ end
 def emitARM64Branch(opcode, operands, kind, branchOpcode)
     emitARM64Unflipped(opcode, operands[0..-2], kind)
     $asm.puts "#{branchOpcode} #{operands[-1].asmLabel}"
+end
+
+def arm64TestBitBranchOperands(opcode, operands)
+    return nil unless opcode =~ /^bt[ibpq]n?z$/ and operands.size == 3 and operands[2].is_a? LocalLabelReference
+    if operands[0].immediate? and operands[1].register?
+        mask = operands[0]
+        register = operands[1]
+    elsif operands[1].immediate? and operands[0].register?
+        register = operands[0]
+        mask = operands[1]
+    else
+        return nil
+    end
+    return nil unless isPowerOfTwo(mask.value)
+    [register, mask.value.bit_length - 1, operands[2]]
+end
+
+def emitARM64TestBitBranch(opcode, operands, kind)
+    register, bit, label = arm64TestBitBranchOperands(opcode, operands)
+    width = (kind == :quad or (kind == :ptr and $currentSettings["ADDRESS64"])) ? 64 : 32
+    raise "Bit #{bit} does not fit in #{width} bits" unless bit < width
+    $asm.puts "#{opcode =~ /nz$/ ? "tbnz" : "tbz"} #{register.arm64Operand(bit < 32 ? :word : :quad)}, ##{bit}, #{label.asmLabel}"
 end
 
 def emitARM64CompareFP(operands, kind, compareCode)
@@ -1273,6 +1298,12 @@ class Instruction
             else
                 emitARM64Branch("subs xzr, ", operands, :quad, "b.ne")
             end
+        when "btiz", "btinz", "btbz", "btbnz"
+            emitARM64TestBitBranch(opcode, operands, :word)
+        when "btpz", "btpnz"
+            emitARM64TestBitBranch(opcode, operands, :ptr)
+        when "btqz", "btqnz"
+            emitARM64TestBitBranch(opcode, operands, :quad)
         when "bia", "bba"
             emitARM64Branch("subs wzr, ", operands, :word, "b.hi")
         when "bpa"
