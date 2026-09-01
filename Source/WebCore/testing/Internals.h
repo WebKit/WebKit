@@ -156,6 +156,7 @@ class XMLHttpRequest;
 struct VideoConfiguration;
 
 enum class DocumentMarkerType : uint32_t;
+enum class IPAddressSpace : uint8_t;
 
 #if ENABLE(ENCRYPTED_MEDIA)
 class MediaKeys;
@@ -999,6 +1000,8 @@ public:
     RefPtr<File> createFile(const String&);
     void asyncCreateFile(const String&, DOMPromiseDeferred<IDLInterface<File>>&&);
     String createTemporaryFile(const String& name, const String& contents);
+
+    String documentIPAddressSpace() const;
 
     void queueMicroTask(int);
     bool testPreloaderSettingViewport();

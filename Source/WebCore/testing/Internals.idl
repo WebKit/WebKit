@@ -1179,6 +1179,8 @@ enum ContentsFormat {
     Promise<File> asyncCreateFile(DOMString url);
     DOMString createTemporaryFile(DOMString name, DOMString contents);
 
+    DOMString documentIPAddressSpace();
+
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
 

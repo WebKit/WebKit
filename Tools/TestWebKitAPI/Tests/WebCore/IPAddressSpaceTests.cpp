@@ -293,6 +293,38 @@ TEST(IPAddressSpace, IPv6PublicAddresses)
 }
 
 // Test non-IP addresses (hostnames)
+// morePublicOf() is what a blob: document's address space is chosen with: HTML offers two sources for it
+// (the navigation initiator and the blob URL entry's environment) and they can disagree, so the more
+// public of the two is taken because that can only add Local Network Access checks, never skip them.
+TEST(IPAddressSpace, MorePublicOfPicksTheHigherRank)
+{
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Loopback));
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Public));
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Local));
+    EXPECT_EQ(WebCore::IPAddressSpace::Local, WebCore::morePublicOf(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Loopback));
+    EXPECT_EQ(WebCore::IPAddressSpace::Local, WebCore::morePublicOf(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Local));
+
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Public));
+    EXPECT_EQ(WebCore::IPAddressSpace::Local, WebCore::morePublicOf(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Local));
+    EXPECT_EQ(WebCore::IPAddressSpace::Loopback, WebCore::morePublicOf(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Loopback));
+}
+
+// Unknown ranks alongside Loopback, so a plain maximum would let a missing value win and drag the answer
+// to the most private space. It has to mean "no opinion" instead, or a blob URL whose creator is in
+// another process would silently read as loopback.
+TEST(IPAddressSpace, MorePublicOfTreatsUnknownAsNoOpinion)
+{
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Unknown, WebCore::IPAddressSpace::Public));
+    EXPECT_EQ(WebCore::IPAddressSpace::Public, WebCore::morePublicOf(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Unknown));
+    EXPECT_EQ(WebCore::IPAddressSpace::Local, WebCore::morePublicOf(WebCore::IPAddressSpace::Unknown, WebCore::IPAddressSpace::Local));
+    EXPECT_EQ(WebCore::IPAddressSpace::Local, WebCore::morePublicOf(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Unknown));
+
+    EXPECT_EQ(WebCore::IPAddressSpace::Loopback, WebCore::morePublicOf(WebCore::IPAddressSpace::Unknown, WebCore::IPAddressSpace::Loopback));
+    EXPECT_EQ(WebCore::IPAddressSpace::Loopback, WebCore::morePublicOf(WebCore::IPAddressSpace::Loopback, WebCore::IPAddressSpace::Unknown));
+
+    EXPECT_EQ(WebCore::IPAddressSpace::Unknown, WebCore::morePublicOf(WebCore::IPAddressSpace::Unknown, WebCore::IPAddressSpace::Unknown));
+}
+
 TEST(IPAddressSpace, HostnameAddresses)
 {
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://example.com/"_s)), WebCore::IPAddressSpace::Public);

@@ -58,6 +58,18 @@ inline bool isLessPublicThan(IPAddressSpace a, IPAddressSpace b)
     return publicnessRank(a) < publicnessRank(b);
 }
 
+// Unknown is treated as "no opinion" rather than compared, because publicnessRank ranks it alongside
+// Loopback: taking the maximum directly would let an absent value pull the result towards the most
+// private answer, which is the opposite of what a caller choosing the more public space wants.
+inline IPAddressSpace morePublicOf(IPAddressSpace a, IPAddressSpace b)
+{
+    if (a == IPAddressSpace::Unknown)
+        return b;
+    if (b == IPAddressSpace::Unknown)
+        return a;
+    return publicnessRank(a) >= publicnessRank(b) ? a : b;
+}
+
 WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
 WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const Site&);
 

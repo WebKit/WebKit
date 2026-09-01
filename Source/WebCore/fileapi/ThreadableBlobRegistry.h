@@ -41,6 +41,8 @@ class SecurityOrigin;
 class SecurityOriginData;
 class URLKeepingBlobAlive;
 
+enum class IPAddressSpace : uint8_t;
+
 struct PolicyContainer;
 
 class ThreadableBlobRegistry {
@@ -63,6 +65,10 @@ public:
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
     // in the blob URL.
     static RefPtr<SecurityOrigin> getCachedOrigin(const URL&);
+
+    // Returns the address space of the environment that created the given blob URL, or Unknown if it
+    // was created by another process or has been revoked.
+    WEBCORE_EXPORT static IPAddressSpace cachedIPAddressSpace(const URL&);
 };
 
 } // namespace WebCore
