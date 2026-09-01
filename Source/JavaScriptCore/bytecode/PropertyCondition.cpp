@@ -147,12 +147,19 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (structure->hasNonReifiedStaticProperties()) {
             if (structure->findPropertyHashEntry(uid())) {
                 dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists in the non-reified static property table: ", uid(), ".");
                 return false;
             }
         }
+#else
+        if (structure->hasNonReifiedStaticProperty(uid())) {
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists in the non-reified static property table: ", uid(), ".");
+            return false;
+        }
+#endif
 
         if (structure->storedPrototypeObject() != prototype()) {
             dataLogLnIf(PropertyConditionInternal::verbose,
