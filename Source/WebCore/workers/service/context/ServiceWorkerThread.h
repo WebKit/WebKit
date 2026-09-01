@@ -114,6 +114,8 @@ private:
     void heartBeatTimerFired();
     void installEventTimerFired();
 
+    void queueTaskToFireEvent(Function<void(ServiceWorkerGlobalScope&)>&&);
+
     ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     std::optional<ServiceWorkerJobDataIdentifier> m_jobDataIdentifier;
     std::optional<ServiceWorkerContextData> m_contextData; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
