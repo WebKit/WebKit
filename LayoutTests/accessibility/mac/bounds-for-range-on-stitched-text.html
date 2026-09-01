@@ -1,0 +1,42 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="s">The quick <strong>brown</strong> fox jumps over the lazy dog.</p>
+<div id="trailing">Alpha beta gamma <button>Go</button> delta epsilon zeta.</div>
+
+<script>
+var output = "This test ensures AXBoundsForRange spans the full text of a stitch-group representative, and does not escape the group when the range is out of bounds.\n\n";
+
+if (window.accessibilityController) {
+    // The three inline pieces stitch into one StaticText whose value is the whole sentence. The first run
+    // is "The quick " (0-9), "brown" is the second member (10-14), the rest is the third. Position is
+    // masked to (-1, -1) in the test harness, so only width and height are asserted.
+    var t = accessibilityController.accessibleElementById("s").childAtIndex(0);
+
+    // "The quick ", the first run.
+    output += expectRectWithVariance("t.boundsForRange(0, 10)", -1, -1, 69, 18, /* allowedVariance */ 2);
+    // "brown", the second member; it starts at the first run's boundary, where the bug collapsed the rect (webkit.org/b/323121).
+    output += expectRectWithVariance("t.boundsForRange(10, 5)", -1, -1, 47, 18, /* allowedVariance */ 2);
+    // "fox", inside the third member, well past the first inline boundary.
+    output += expectRectWithVariance("t.boundsForRange(16, 3)", -1, -1, 23, 18, /* allowedVariance */ 2);
+    // "dog", the last word.
+    output += expectRectWithVariance("t.boundsForRange(40, 3)", -1, -1, 26, 18, /* allowedVariance */ 2);
+    // The whole stitched line, wider than any single word above.
+    output += expectRectWithVariance("t.boundsForRange(0, 44)", -1, -1, 301, 18, /* allowedVariance */ 2);
+
+    // "Alpha beta gamma " is one representative, followed by a button and a second group in the same block
+    // flow. An out-of-bounds range must clamp to this text (width 126), not grow into what follows.
+    var g = accessibilityController.accessibleElementById("trailing").childAtIndex(0);
+    output += expectRectWithVariance("g.boundsForRange(0, 17)", -1, -1, 126, 19, /* allowedVariance */ 2);
+    output += expectRectWithVariance("g.boundsForRange(0, 1000)", -1, -1, 126, 19, /* allowedVariance */ 2);
+
+    debug(output);
+}
+</script>
+</body>
+</html>
