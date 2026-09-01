@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin: 0">
+<div style="height: 200px"></div>
+<iframe id="testFrame" frameborder="0" style="display: block; width: 50%; height: 240px; margin-left: 25%"
+    src="http://localhost:8000/media/resources/media-controls-context-menu-anchor-in-iframe-frame.html"></iframe>
+<p>The anchor rect for the media controls context menu of a video in an iframe should be in top-level page
+coordinates.</p>
+<div style="height: 1200px"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const tolerance = 1;
+
+function anchorRectIsInTopLevelPageCoordinates(rects)
+{
+    if (!rects || !window.internals)
+        return false;
+
+    const { anchor, local } = rects;
+
+    const frameRect = internals.boundingBoxInRootViewCoordinates(document.getElementById("testFrame"));
+
+    return Math.abs(anchor.x - local.x - frameRect.x) <= tolerance
+        && Math.abs(anchor.y - local.y - frameRect.y) <= tolerance;
+}
+
+function poll()
+{
+    document.getElementById("testFrame").contentWindow.postMessage("report", "*");
+}
+
+addEventListener("message", (event) => {
+    if (!anchorRectIsInTopLevelPageCoordinates(event.data)) {
+        requestAnimationFrame(poll);
+        return;
+    }
+
+    document.body.textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+addEventListener("load", () => {
+    scrollTo(0, 120);
+    poll();
+});
+</script>
+</body>

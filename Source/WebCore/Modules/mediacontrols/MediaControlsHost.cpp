@@ -38,8 +38,10 @@
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
+#include "DOMRect.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
+#include "DocumentView.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -51,6 +53,8 @@
 #include "HTMLVideoElement.h"
 #include "JSValueInWrappedObjectInlines.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
@@ -601,6 +605,26 @@ enum class MediaControlsHost::PlaybackSpeed {
 enum class MediaControlsHost::PictureInPictureTag { IncludePictureInPicture };
 enum class MediaControlsHost::ShowMediaStatsTag { IncludeShowMediaStats };
 
+static FloatRect contextMenuAnchorRect(HTMLElement& target)
+{
+    auto bounds = FloatRect { target.boundsInRootViewSpace() };
+
+    RefPtr localFrame = target.document().frame();
+    if (!localFrame)
+        return bounds;
+
+    RefPtr localRootView = localFrame->rootFrame().view();
+    if (!localRootView)
+        return bounds;
+
+    return localRootView->convertToRootViewAcrossIsolatedFrames(bounds);
+}
+
+Ref<DOMRect> MediaControlsHost::mediaControlsContextMenuAnchorRectForBindings(HTMLElement& target)
+{
+    return DOMRect::create(contextMenuAnchorRect(target));
+}
+
 auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString) -> std::pair<Vector<MenuItem>, MenuDataMap>
 {
 #if USE(UICONTEXTMENU) || (ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS))
@@ -907,12 +931,11 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     };
 
-    auto bounds = target.boundsInRootViewSpace();
 #if USE(UICONTEXTMENU)
-    page->chrome().client().showMediaControlsContextMenu(bounds, WTF::move(items), mediaElement.get(), WTF::move(handleItemSelected));
+    page->chrome().client().showMediaControlsContextMenu(contextMenuAnchorRect(target), WTF::move(items), mediaElement.get(), WTF::move(handleItemSelected));
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
     target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(mediaElement->identifier(), WTF::move(items), WTF::move(handleItemSelected))), { { /*capture */ true }, /* passive */ std::nullopt, /* once */ true, nullptr, false });
-    page->contextMenuController().showContextMenuAt(*protect(target.document().frame()), bounds.center());
+    page->contextMenuController().showContextMenuAt(*protect(target.document().frame()), target.boundsInRootViewSpace().center());
 #endif
 
     return true;

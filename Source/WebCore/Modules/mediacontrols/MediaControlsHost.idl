@@ -93,6 +93,7 @@ enum DeviceType {
     DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled, ImplementedAs=mediaControlsContextMenuItemsForBindings] sequence<MediaControlsContextMenuItem> mediaControlsContextMenuItems(JSON options);
+    [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled, ImplementedAs=mediaControlsContextMenuAnchorRectForBindings] DOMRect mediaControlsContextMenuAnchorRect(HTMLElement target);
 
     [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
 

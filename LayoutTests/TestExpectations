@@ -8517,3 +8517,6 @@ fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html [ ImageOnlyF
 fast/shadow-dom/svg-pattern-href-in-shadow-tree.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/as-image/sprite-sheet-fractional-size.html [ ImageOnlyFailure ]
+
+# Media controls context menus are only implemented on WK2 Cocoa platforms.
+http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Skip ]

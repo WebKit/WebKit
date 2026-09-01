@@ -41,6 +41,7 @@ class AudioTrack;
 class AudioTrackList;
 class ContextMenuItem;
 class DOMPromise;
+class DOMRect;
 class Element;
 class WeakPtrImplWithEventTargetData;
 class HTMLElement;
@@ -138,6 +139,7 @@ public:
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     Vector<MediaControlsContextMenuItem> mediaControlsContextMenuItemsForBindings(String&& optionsJSONString);
+    Ref<DOMRect> mediaControlsContextMenuAnchorRectForBindings(HTMLElement&);
     bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
     void showCaptionDisplaySettingsPreview();
     void hideCaptionDisplaySettingsPreview();

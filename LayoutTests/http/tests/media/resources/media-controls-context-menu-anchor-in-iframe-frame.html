@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<video id="video" style="width: 100%" muted playsinline controls src="/media-resources/content/test.mp4"></video>
+<script>
+const video = document.getElementById("video");
+
+function anchorAndLocalRects()
+{
+    if (!window.internals)
+        return null;
+
+    const controlsHost = internals.controlsHostForMediaElement(video);
+    if (!controlsHost || !controlsHost.mediaControlsContextMenuAnchorRect)
+        return null;
+
+    const localRect = video.getBoundingClientRect();
+    if (!localRect.width || !localRect.height)
+        return null;
+
+    const anchorRect = controlsHost.mediaControlsContextMenuAnchorRect(video);
+    if (!anchorRect.width || !anchorRect.height)
+        return null;
+
+    return {
+        anchor: { x: anchorRect.x, y: anchorRect.y },
+        local: { x: localRect.x, y: localRect.y },
+    };
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data === "report")
+        window.parent.postMessage(anchorAndLocalRects(), "*");
+});
+</script>
+</body>
