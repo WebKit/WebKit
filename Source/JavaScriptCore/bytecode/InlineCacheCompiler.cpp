@@ -4088,7 +4088,7 @@ void InlineCacheCompiler::emitDOMJITGetter(JSGlobalObject* globalObjectForDOMJIT
     // same to valueGPR, and not include it in the used registers since it will be changed.
     RegisterSet usedRegisters;
     for (auto& value : regs) {
-        SnippetReg reg = value.reg();
+        Reg reg = value.reg();
         if (reg.isGPR())
             usedRegisters.add(reg.gpr(), IgnoreVectors);
         else

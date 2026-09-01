@@ -32,7 +32,7 @@
 
 #include <JavaScriptCore/CCallHelpers.h>
 #include <JavaScriptCore/JITOperations.h>
-#include <JavaScriptCore/SnippetReg.h>
+#include <JavaScriptCore/Reg.h>
 #include <JavaScriptCore/SnippetSlowPathCalls.h>
 
 namespace JSC {
@@ -44,12 +44,12 @@ public:
 
     class Value {
     public:
-        Value(SnippetReg reg)
+        Value(Reg reg)
             : m_reg(reg)
         {
         }
 
-        Value(SnippetReg reg, JSValue value)
+        Value(Reg reg, JSValue value)
             : m_reg(reg)
             , m_value(value)
         {
@@ -60,7 +60,7 @@ public:
         GPRReg gpr() const { return m_reg.gpr(); }
         FPRReg fpr() const { return m_reg.fpr(); }
 
-        SnippetReg reg() const
+        Reg reg() const
         {
             return m_reg;
         }
@@ -71,7 +71,7 @@ public:
         }
 
     private:
-        SnippetReg m_reg;
+        Reg m_reg;
         JSValue m_value;
     };
 
