@@ -35,11 +35,10 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 
-#include <QOpenGLFunctions>
-#include <QQuickWindow>
-#include <QSGTexture>
-#include <QSize>
+#include <QOpenGLContext>
 #include <QCursor>
+#include <QQuickWindow>
+#include <QSGRendererInterface>
 
 #include <string_view>
 
@@ -52,8 +51,6 @@ struct _WPEViewQtQuickPrivate {
     GRefPtr<WPEBuffer> committedBuffer;
     GRefPtr<WPEBuffer> previousCommittedBuffer;
     GRefPtr<WPEBuffer> bufferAwaitingAck;
-    GLuint textureId;
-    QOpenGLContext* context;
     WPEQtView* wpeQtView;
 
     // Event handling
@@ -61,8 +58,6 @@ struct _WPEViewQtQuickPrivate {
     std::optional<QPointF> lastMousePosition;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewQtQuick, wpe_view_qtquick, WPE_TYPE_VIEW, WPEView)
-
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
 static void wpeViewQtQuickScheduleUpdate(WPEViewQtQuickPrivate* priv)
 {
@@ -182,21 +177,19 @@ gboolean wpe_view_qtquick_initialize_rendering(WPEViewQtQuick* view, WPEQtView* 
     }
 
     auto* priv = WPE_VIEW_QTQUICK(view)->priv;
-    priv->context = context;
     priv->wpeQtView = wpeQtView;
-
-    if (!imageTargetTexture2DOES && !(imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES")))) {
-        g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to initialize rendering: Cannot resolve glEGLImageTargetTexture2DOES");
-        return FALSE;
-    }
 
     return TRUE;
 }
 
-WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outImage, GError** error)
+WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outImage, gboolean* didPromote, GError** error)
 {
     auto* priv = view->priv;
 
+    if (didPromote)
+        *didPromote = FALSE;
+
+    // Reuse the committed buffer while its previous frame is awaiting acknowledgement.
     auto frameBuffer = priv->pendingBuffer && !priv->bufferAwaitingAck ? priv->pendingBuffer : priv->committedBuffer;
     if (!frameBuffer)
         return nullptr;
@@ -215,11 +208,30 @@ WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outIma
         priv->previousCommittedBuffer = WTF::move(priv->committedBuffer);
         priv->committedBuffer = WTF::move(priv->pendingBuffer);
         priv->bufferAwaitingAck = priv->committedBuffer;
+        if (didPromote)
+            *didPromote = TRUE;
     }
 
     *outImage = eglImage;
 
     return frameBuffer.leakRef();
+}
+
+void wpe_view_qtquick_rollback_frame(WPEViewQtQuick* view)
+{
+    auto* priv = view->priv;
+    if (!priv->bufferAwaitingAck)
+        return;
+
+    GRefPtr<WPEBuffer> failedBuffer = WTF::move(priv->committedBuffer);
+    ASSERT(!priv->pendingBuffer);
+
+    priv->pendingBuffer = WTF::move(failedBuffer);
+    priv->committedBuffer = WTF::move(priv->previousCommittedBuffer);
+    priv->bufferAwaitingAck = nullptr;
+
+    if (priv->wpeQtView)
+        priv->wpeQtView->triggerUpdateScene();
 }
 
 void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
@@ -240,56 +252,13 @@ void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
         wpe_view_buffer_released(WPE_VIEW(view), pendingBuffer.get());
     }
 
-    if (priv->textureId && priv->context) {
-        if (auto* glFunctions = priv->context->functions())
-            glFunctions->glDeleteTextures(1, &priv->textureId);
-        priv->textureId = 0;
-    }
-    priv->context = nullptr;
     priv->wpeQtView = nullptr;
 }
 
-QSGTexture* wpe_view_qtquick_render_buffer_to_texture(WPEViewQtQuick* view, QSize size, GError** error)
+void wpe_view_qtquick_set_frame_release_fence(WPEViewQtQuick* view, int fd)
 {
-    auto* priv = WPE_VIEW_QTQUICK(view)->priv;
-    if (!priv->context) {
-        if (error)
-            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render: OpenGL context is unavailable");
-        return nullptr;
-    }
-
-    EGLImage eglImage = nullptr;
-    GUniqueOutPtr<GError> bufferError;
-    GRefPtr<WPEBuffer> frameBuffer = adoptGRef(wpe_view_qtquick_acquire_frame(view, &eglImage, &bufferError.outPtr()));
-    if (!frameBuffer) {
-        if (error && bufferError)
-            g_propagate_error(error, bufferError.release());
-        else if (error)
-            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to acquire WPE buffer");
-        return nullptr;
-    }
-
-    RELEASE_ASSERT(priv->wpeQtView->window());
-    auto* glFunctions = priv->context->functions();
-    if (!priv->textureId) {
-        glFunctions->glGenTextures(1, &priv->textureId);
-        glFunctions->glBindTexture(GL_TEXTURE_2D, priv->textureId);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glFunctions->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr); // Passed size doesn't matter.
-        glFunctions->glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    RELEASE_ASSERT(priv->textureId);
-    glFunctions->glBindTexture(GL_TEXTURE_2D, priv->textureId);
-    imageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
-
-    auto texture = QNativeInterface::QSGOpenGLTexture::fromNative(priv->textureId, priv->wpeQtView->window(), size, QQuickWindow::TextureHasAlphaChannel);
-    RELEASE_ASSERT(texture);
-
-    return texture;
+    if (view->priv->committedBuffer)
+        wpe_buffer_set_release_fence(view->priv->committedBuffer.get(), fd);
 }
 
 void wpe_view_qtquick_did_update_scene(WPEViewQtQuick* view)
