@@ -1812,6 +1812,11 @@ bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
         return topContext().m_parsedProperties.size() != oldPropertiesCount;
     };
 
+    // In @page, `size` aliases the always-exposed `page-size` descriptor; remap
+    // before the isExposed() check so gating the shorthand can't disable it.
+    if (ruleType == StyleRuleType::Page && propertyID == CSSPropertySize)
+        propertyID = CSSPropertyPageSize;
+
     if (!isExposed(propertyID, &m_context.propertySettings))
         propertyID = CSSPropertyInvalid;
 

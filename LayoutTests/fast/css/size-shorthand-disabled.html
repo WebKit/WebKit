@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSSizeShorthandEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<style id="pageStyle">@page { size: a4; }</style>
+</head>
+<body>
+<div id="target" style="display: none"></div>
+<script>
+description("Tests that the size shorthand is not exposed across the parser, CSSOM, Typed OM and animation surfaces when CSSSizeShorthandEnabled is disabled, while the width/height longhands and the @page size descriptor keep working.");
+
+var target = document.getElementById('target');
+
+debug("1. The size shorthand must not be exposed:");
+shouldBeFalse("'size' in document.documentElement.style");
+shouldBeFalse("'size' in getComputedStyle(target)");
+shouldBeFalse("CSS.supports('size', '10px')");
+shouldBeFalse("CSS.supports('size', '10px 20px')");
+shouldBeFalse("CSS.supports('size: 10px 20px')");
+
+debug("");
+debug("2. The CSSOM write API is a no-op for size and never touches width/height:");
+target.style.cssText = "size: 10px 20px";
+shouldBeEqualToString("target.style.getPropertyValue('size')", "");
+shouldBeEqualToString("target.style.getPropertyValue('width')", "");
+shouldBeEqualToString("target.style.getPropertyValue('height')", "");
+shouldBeEqualToString("target.style.cssText", "");
+target.style.setProperty('size', '10px 20px');
+shouldBeEqualToString("target.style.getPropertyValue('size')", "");
+shouldBeEqualToString("target.style.getPropertyPriority('size')", "");
+shouldBeEqualToString("target.style.removeProperty('size')", "");
+
+debug("");
+debug("3. The width and height longhands remain fully functional:");
+shouldBeTrue("CSS.supports('width', '10px')");
+shouldBeTrue("CSS.supports('height', '20px')");
+target.style.cssText = "width: 10px; height: 20px";
+shouldBeEqualToString("target.style.getPropertyValue('width')", "10px");
+shouldBeEqualToString("target.style.getPropertyValue('height')", "20px");
+
+debug("");
+debug("4. width and height must not collapse into the size shorthand when serializing:");
+shouldBeEqualToString("target.style.cssText", "width: 10px; height: 20px;");
+shouldBeEqualToString("target.style.getPropertyValue('size')", "");
+
+debug("");
+debug("5. The disabled shorthand never appears in style enumeration:");
+shouldBe("target.style.length", "2");
+shouldBeEqualToString("target.style.item(0)", "width");
+shouldBeEqualToString("target.style.item(1)", "height");
+
+debug("");
+debug("6. size is dropped from @keyframes when disabled, while width is preserved:");
+var keyframesStyle = document.createElement('style');
+keyframesStyle.textContent = '@keyframes grow { from { size: 10px 20px; width: 30px; } }';
+document.head.appendChild(keyframesStyle);
+var keyframe = keyframesStyle.sheet.cssRules[0].cssRules[0];
+shouldBeEqualToString("keyframe.style.getPropertyValue('size')", "");
+shouldBeEqualToString("keyframe.style.getPropertyValue('width')", "30px");
+
+debug("");
+debug("7. Typed OM rejects the size shorthand when disabled, but not the longhands:");
+shouldThrow("target.attributeStyleMap.set('size', '10px 20px')");
+shouldThrow("target.attributeStyleMap.get('size')");
+shouldThrow("target.computedStyleMap().get('size')");
+shouldNotThrow("target.attributeStyleMap.set('width', '10px')");
+shouldNotThrow("target.attributeStyleMap.get('width')");
+
+debug("");
+debug("8. The @page size descriptor is unaffected (it maps to the internal page-size descriptor):");
+var pageDescriptors = document.getElementById('pageStyle').sheet.cssRules[0].style;
+shouldBeEqualToString("pageDescriptors.getPropertyValue('size')", "a4");
+shouldBeEqualToString("pageDescriptors.size", "a4");
+
+debug("");
+debug("9. The @page size descriptor can also be written even when the shorthand is disabled:");
+pageDescriptors.setProperty('size', 'a5');
+shouldBeEqualToString("pageDescriptors.getPropertyValue('size')", "a5");
+pageDescriptors.size = 'a3';
+shouldBeEqualToString("pageDescriptors.size", "a3");
+shouldBeEqualToString("pageDescriptors.removeProperty('size')", "a3");
+shouldBeEqualToString("pageDescriptors.getPropertyValue('size')", "");
+</script>
+</body>
+</html>

@@ -741,10 +741,6 @@ bool consumePageDescriptor(CSSParserTokenRange& range, const CSSParserContext& c
     if (property == CSSPropertyPage)
         return false;
 
-    // Inside @page, `size` is an alias for the `page-size` descriptor.
-    if (property == CSSPropertySize)
-        property = CSSPropertyPageSize;
-
     auto state = CSS::PropertyParserState {
         .context = context,
         .currentRule = StyleRuleType::Page,

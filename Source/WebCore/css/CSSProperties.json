@@ -13983,6 +13983,7 @@
             "codegen-properties": {
                 "longhands": ["width", "height"],
                 "shorthand-pattern": "CoalescingPair",
+                "settings-flag": "cssSizeShorthandEnabled",
                 "parser-grammar-unused": "<'width'>{1,2}",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },

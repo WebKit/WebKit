@@ -1,0 +1,7 @@
+
+PASS width and height longhands do not collapse into the size shorthand when serializing
+PASS Equal width and height longhands do not collapse into the size shorthand when serializing
+PASS The size shorthand expands to the width and height longhands
+PASS Content authored with size serializes back as the width and height longhands, not as size
+PASS The size shorthand value is still available via getPropertyValue
+

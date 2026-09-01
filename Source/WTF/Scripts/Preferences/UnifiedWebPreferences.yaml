@@ -1657,6 +1657,20 @@ CSSSelectorJITCompilerEnabled:
     WebCore:
       default: true
 
+CSSSizeShorthandEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "CSS size shorthand"
+  humanReadableDescription: "Enable the size shorthand for the width and height properties"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextDecorationInsetEnabled:
   type: bool
   status: stable

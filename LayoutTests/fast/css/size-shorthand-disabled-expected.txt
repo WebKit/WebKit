@@ -1,0 +1,60 @@
+Tests that the size shorthand is not exposed across the parser, CSSOM, Typed OM and animation surfaces when CSSSizeShorthandEnabled is disabled, while the width/height longhands and the @page size descriptor keep working.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1. The size shorthand must not be exposed:
+PASS 'size' in document.documentElement.style is false
+PASS 'size' in getComputedStyle(target) is false
+PASS CSS.supports('size', '10px') is false
+PASS CSS.supports('size', '10px 20px') is false
+PASS CSS.supports('size: 10px 20px') is false
+
+2. The CSSOM write API is a no-op for size and never touches width/height:
+PASS target.style.getPropertyValue('size') is ""
+PASS target.style.getPropertyValue('width') is ""
+PASS target.style.getPropertyValue('height') is ""
+PASS target.style.cssText is ""
+PASS target.style.getPropertyValue('size') is ""
+PASS target.style.getPropertyPriority('size') is ""
+PASS target.style.removeProperty('size') is ""
+
+3. The width and height longhands remain fully functional:
+PASS CSS.supports('width', '10px') is true
+PASS CSS.supports('height', '20px') is true
+PASS target.style.getPropertyValue('width') is "10px"
+PASS target.style.getPropertyValue('height') is "20px"
+
+4. width and height must not collapse into the size shorthand when serializing:
+PASS target.style.cssText is "width: 10px; height: 20px;"
+PASS target.style.getPropertyValue('size') is ""
+
+5. The disabled shorthand never appears in style enumeration:
+PASS target.style.length is 2
+PASS target.style.item(0) is "width"
+PASS target.style.item(1) is "height"
+
+6. size is dropped from @keyframes when disabled, while width is preserved:
+PASS keyframe.style.getPropertyValue('size') is ""
+PASS keyframe.style.getPropertyValue('width') is "30px"
+
+7. Typed OM rejects the size shorthand when disabled, but not the longhands:
+PASS target.attributeStyleMap.set('size', '10px 20px') threw exception TypeError: Invalid property size.
+PASS target.attributeStyleMap.get('size') threw exception TypeError: Invalid property size.
+PASS target.computedStyleMap().get('size') threw exception TypeError: Invalid property size.
+PASS target.attributeStyleMap.set('width', '10px') did not throw exception.
+PASS target.attributeStyleMap.get('width') did not throw exception.
+
+8. The @page size descriptor is unaffected (it maps to the internal page-size descriptor):
+PASS pageDescriptors.getPropertyValue('size') is "a4"
+PASS pageDescriptors.size is "a4"
+
+9. The @page size descriptor can also be written even when the shorthand is disabled:
+PASS pageDescriptors.getPropertyValue('size') is "a5"
+PASS pageDescriptors.size is "a3"
+PASS pageDescriptors.removeProperty('size') is "a3"
+PASS pageDescriptors.getPropertyValue('size') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
