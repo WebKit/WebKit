@@ -1753,51 +1753,6 @@ static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x
 
     return GDK_EVENT_PROPAGATE;
 }
-
-static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GtkEventController*)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->dialog)
-        return;
-
-#if ENABLE(DEVELOPER_MODE)
-    // Do not send mouse move events to the WebProcess for crossing events during testing.
-    // WTR never generates crossing events and they can confuse tests.
-    // https://bugs.webkit.org/show_bug.cgi?id=185072.
-    if (priv->pageProxy->configuration().processPool().configuration().fullySynchronousModeIsAllowedForTesting()) [[unlikely]]
-        return;
-#endif
-
-    if (!priv->lastMotionEvent)
-        return;
-
-    // We need to synthesize a fake mouse event here to let WebCore know that the mouse has left the
-    // web view. Let's compute a point outside the web view that is close to the previous
-    // coordinates of the pointer before it left the web view. First we'll figure out which
-    // coordinate is closest to an edge of the web view, then we'll adjust the coordinate to be one
-    // pixel outside the view. This is not necessarily the closest point outside the web view, but
-    // it's simple to calculate and surely good enough.
-
-    int previousX = std::round(priv->lastMotionEvent->position.x());
-    int previousY = std::round(priv->lastMotionEvent->position.y());
-    int width = gtk_widget_get_width(GTK_WIDGET(webViewBase));
-    int height = gtk_widget_get_height(GTK_WIDGET(webViewBase));
-    int xDistanceFromRightEdge = width - previousX;
-    int yDistanceFromBottomEdge = height - previousY;
-
-    if (previousX <= xDistanceFromRightEdge && previousX <= previousY && previousX <= yDistanceFromBottomEdge)
-        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(DoublePoint(-1, previousY)));
-    else if (xDistanceFromRightEdge <= previousX && xDistanceFromRightEdge <= previousY && xDistanceFromRightEdge <= yDistanceFromBottomEdge)
-        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(DoublePoint(width, previousY)));
-    else if (previousY <= previousX && previousY <= xDistanceFromRightEdge && previousY <= yDistanceFromBottomEdge)
-        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(DoublePoint(previousX, -1)));
-    else {
-        ASSERT(yDistanceFromBottomEdge <= previousX);
-        ASSERT(yDistanceFromBottomEdge <= previousY);
-        ASSERT(yDistanceFromBottomEdge <= xDistanceFromRightEdge);
-        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(DoublePoint(previousX, height)));
-    }
-}
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2335,7 +2290,6 @@ static void webkitWebViewBaseConstructed(GObject* object)
     controller = gtk_event_controller_motion_new();
     g_signal_connect_object(controller, "enter", G_CALLBACK(webkitWebViewBaseEnter), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(controller, "motion", G_CALLBACK(webkitWebViewBaseMotion), viewWidget, G_CONNECT_SWAPPED);
-    g_signal_connect_object(controller, "leave", G_CALLBACK(webkitWebViewBaseLeave), viewWidget, G_CONNECT_SWAPPED);
     gtk_widget_add_controller(viewWidget, controller);
 
     controller = gtk_event_controller_focus_new();
