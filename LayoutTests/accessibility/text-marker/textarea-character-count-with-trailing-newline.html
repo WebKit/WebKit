@@ -19,6 +19,12 @@
 <textarea id="ta3" style="width: 200px; height: 60px"></textarea>
 <textarea id="ta4" style="width: 200px; height: 60px"></textarea>
 <textarea id="ta5" style="width: 200px; height: 60px"></textarea>
+<!-- These two are typed into after the accessibility tree exists. Editing represents the newline that
+     rendering adds for the empty final line as a text node holding just that newline, where
+     setInnerTextValue appends a placeholder <br> — the value's character count must come out the same
+     either way. -->
+<textarea id="ta6" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta7" style="width: 200px; height: 60px"></textarea>
 <!-- An ARIA textbox is not a native text control: its text has no collapsed trailing line break, so
      a trailing newline in it *is* a character and must still be counted. -->
 <div id="ce0" contenteditable role="textbox" style="width: 200px; white-space: pre-wrap"></div>
@@ -36,11 +42,15 @@ var cases = [
     { id: "ta3", label: "only a newline", value: "\n" },
     { id: "ta4", label: "two trailing newlines", value: "a\n\n" },
     { id: "ta5", label: "whitespace either side of a newline", value: "  \n  " },
+    { id: "ta6", label: "trailing newline, typed", value: "one two \n", typed: true },
+    { id: "ta7", label: "two trailing newlines, typed", value: "a\n\n", typed: true },
     { id: "ce0", label: "ARIA textbox, trailing newline", value: "one two \n" },
 ];
 
 for (var testCase of cases) {
     var field = document.getElementById(testCase.id);
+    if (testCase.typed)
+        continue;
     if (field.isContentEditable)
         field.textContent = testCase.value;
     else
@@ -50,7 +60,23 @@ for (var testCase of cases) {
 }
 
 // expect() evaluates its expressions in its own scope, so the values it reads are globals.
-var axField;
+var axField, webArea;
+
+// Types |value| one character at a time, the way a user would, then waits for the accessibility tree
+// to catch up. The selection notification is a safe gate for the value: the two are updated together.
+async function typeValue(field, value) {
+    field.focus();
+    for (var character of value) {
+        if (character === "\n")
+            document.execCommand("insertLineBreak");
+        else
+            document.execCommand("insertText", false, character);
+    }
+    // Typing leaves the caret at the end, so moving it to the start is always a real change.
+    await waitForNotification(webArea, "AXSelectedTextChanged", () => {
+        field.setSelectionRange(0, 0);
+    });
+}
 
 async function checkCase(testCase) {
     axField = await waitForElementById(testCase.id);
@@ -58,6 +84,9 @@ async function checkCase(testCase) {
         output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n`;
         return;
     }
+
+    if (testCase.typed)
+        await typeValue(document.getElementById(testCase.id), testCase.value);
 
     output += `${testCase.label}: value ${JSON.stringify(testCase.value)}\n`;
     output += expect("axField.numberOfCharacters", `${testCase.value.length}`);
@@ -68,6 +97,8 @@ if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
     setTimeout(async function() {
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+
         for (var testCase of cases)
             await checkCase(testCase);
 

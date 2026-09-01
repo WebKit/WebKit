@@ -18,6 +18,12 @@ PASS: axField.numberOfCharacters === 3
 whitespace either side of a newline: value "  \n  "
 PASS: axField.numberOfCharacters === 5
 
+trailing newline, typed: value "one two \n"
+PASS: axField.numberOfCharacters === 9
+
+two trailing newlines, typed: value "a\n\n"
+PASS: axField.numberOfCharacters === 3
+
 ARIA textbox, trailing newline: value "one two \n"
 PASS: axField.numberOfCharacters === 9
 

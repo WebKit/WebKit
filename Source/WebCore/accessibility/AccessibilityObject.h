@@ -441,7 +441,7 @@ public:
     TextEmissionBehavior textEmissionBehavior() const override { return TextEmissionBehavior::None; }
     bool isReplacedElementForTextEmission() const final;
     bool isInUserAgentShadowTree() const final;
-    bool isCollapsedTrailingLineBreak() const final;
+    bool isInsideNativeTextControl() const final;
     AXTextRunLineID listMarkerLineID() const override { return { }; }
     String listMarkerText() const override { return { }; }
     FontOrientation fontOrientation() const final;

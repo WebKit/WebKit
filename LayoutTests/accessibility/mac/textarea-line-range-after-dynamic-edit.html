@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A text control whose value ends in a line break renders an empty final line, whose newline is not
+     a character of the value — innerTextValueFrom() strips one trailing newline "that's collapsed out
+     by rendering" — so the control's character count and its line ranges must not count it. Editing
+     represents that newline in shapes setInnerTextValue never produces, which is what these cases
+     cover; values set in markup are in textarea-line-range-with-trailing-newline.html. -->
+<!-- The caret's line range is checked here rather than in the cross-platform character-count test
+     because it needs AXSelectedTextMarkerRange, which the iOS test runner doesn't implement (see
+     AccessibilityUIElement::selectedTextMarkerRange, which only mac overrides). -->
+<textarea id="warmup" style="width: 200px; height: 60px"></textarea>
+<!-- Typed into after the accessibility tree exists, because editing represents the newline that
+     rendering adds for the empty final line as a text node holding just that newline, where
+     setInnerTextValue appends a placeholder <br>. The caret's line must come out the same either way. -->
+<textarea id="typed" style="width: 200px; height: 60px"></textarea>
+<!-- Built through AXReplaceRangeWithText, the way VoiceOver inserts text. That path leaves the whole
+     value in one text node with the newline rendering adds for the empty final line at its end, so the
+     collapsed newline is neither a <br> nor a node of its own.
+
+     This isn't an accessibility-only shape: AXReplaceRangeWithText is one of many callers of
+     Editor::replaceSelectionWithText, so pasting a value that ends in a line break produces the same
+     text node and reproduced the same bug. The insertion is driven through the accessibility API here
+     only because that needs no pasteboard. -->
+<textarea id="inserted" style="width: 200px; height: 60px"></textarea>
+
+<script>
+var output = "Asserts the line APIs for text control values edited after the accessibility tree was built:\n"
+    + "the caret's line range, and, where a case names one, the last line's character range and the line\n"
+    + "of the index one past the end of the value.\n\n";
+
+var cases = [
+    { id: "typed", label: "trailing newline typed, caret on the blank final line", value: "one two \n", caret: 9, lineString: "", lineLength: 0, lastLine: 1, lastLineRange: "{9, 0}", typed: true },
+    // Inserting "\n" and then more text is where VoiceOver's own insertions used to leave the count and
+    // the line one character long: the value ends without a line break, but the control still renders
+    // one, and it sits at the end of the same text node as the rest of the value.
+    { id: "inserted", label: "inserted through AXReplaceRangeWithText, caret at the end", value: "one two \nthree", caret: 14, lineString: "three", lineLength: 5, lastLine: 1, lastLineRange: "{9, 5}", inserted: [[0, 0, "one "], [4, 0, "two "], [8, 0, "\n"], [9, 0, "three"]] },
+];
+
+// expect() evaluates its expressions in its own scope, so the values it reads are globals.
+var axField, caret, lineRange, lineEnd, webArea, lastLine, indexPastEnd;
+
+// The id of the text control the document's accessibility selection currently sits in, or null.
+function idOfFieldHoldingAccessibilitySelection() {
+    var selection = axField.selectedTextMarkerRange();
+    if (!selection)
+        return null;
+    var element = axField.accessibilityElementForTextMarker(axField.startTextMarkerForTextMarkerRange(selection));
+    // The marker points into the control's inner text, so walk out to the control itself.
+    while (element && !element.domIdentifier)
+        element = element.parentElement();
+    return element ? element.domIdentifier : null;
+}
+
+// Types |value| one character at a time, the way a user would, leaving the caret somewhere other than
+// |caret| so that placing it there below is a real change and posts the notification the gate waits for.
+function typeValue(field, value, caret) {
+    field.focus();
+    for (var character of value) {
+        if (character === "\n")
+            document.execCommand("insertLineBreak");
+        else
+            document.execCommand("insertText", false, character);
+    }
+    var elsewhere = caret ? 0 : value.length;
+    field.setSelectionRange(elsewhere, elsewhere);
+}
+
+async function checkCase(testCase) {
+    var field = document.getElementById(testCase.id);
+    if (testCase.typed)
+        typeValue(field, testCase.value, testCase.caret);
+    if (testCase.inserted) {
+        // AXReplaceRangeWithText needs the field focused, the way VoiceOver leaves it.
+        field.focus();
+        var axFieldForInsertion = await waitForElementById(testCase.id);
+        for (var [location, length, text] of testCase.inserted)
+            axFieldForInsertion.replaceTextInRange(text, location, length);
+        // Leave the caret somewhere else so placing it below posts the notification the gate waits for.
+        field.setSelectionRange(0, 0);
+    }
+    axField = await waitForElementById(testCase.id);
+    if (!axField) {
+        output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n`;
+        return;
+    }
+
+    // The accessibility layer learns of the selection through a notification, so place the caret
+    // inside waitForNotification: that notification is the point at which the accessibility
+    // selection — which the text marker below is read from — has caught up. Waiting on this field's
+    // AXSelectedTextRange instead would be too weak, because that reflects the control's own
+    // selection, which setSelectionRange updates synchronously, so it can be satisfied while the
+    // accessibility selection still points into the field measured before this one.
+    await waitForNotification(webArea, "AXSelectedTextChanged", () => {
+        field.focus();
+        field.setSelectionRange(testCase.caret, testCase.caret);
+    });
+    var selectionFieldId = idOfFieldHoldingAccessibilitySelection();
+    if (selectionFieldId !== testCase.id) {
+        output += `FAIL: ${testCase.label}: the accessibility selection reached #${selectionFieldId}, not #${testCase.id}\n`;
+        return;
+    }
+
+    caret = axField.startTextMarkerForTextMarkerRange(axField.selectedTextMarkerRange());
+    lineRange = axField.lineTextMarkerRangeForTextMarker(caret);
+    lineEnd = axField.endTextMarkerForTextMarkerRange(lineRange);
+
+    output += `${testCase.label}: value ${JSON.stringify(testCase.value)}, caret at ${testCase.caret}\n`;
+    output += expect("axField.numberOfCharacters", `${testCase.value.length}`);
+    output += expect("axField.stringForTextMarkerRange(lineRange)", JSON.stringify(testCase.lineString));
+    output += expect("axField.textMarkerRangeLength(lineRange)", `${testCase.lineLength}`);
+    // A caret on the blank final line has nothing after it, so the line it reports must end where
+    // the caret is. Otherwise the line names a character past the end of the value.
+    if (!testCase.lineLength)
+        output += expect("lineEnd.isEqual(caret)", "true");
+    if (testCase.lastLineRange) {
+        lastLine = testCase.lastLine;
+        indexPastEnd = testCase.value.length;
+        output += expect("axField.rangeForLine(lastLine)", JSON.stringify(testCase.lastLineRange));
+        output += expect("axField.lineForIndex(indexPastEnd)", "-1");
+    }
+    output += "\n";
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        // Warm up the selection machinery on a field this test doesn't measure, so that the first
+        // measured case doesn't race the accessibility tree's first selection update.
+        var warmUpField = document.getElementById("warmup");
+        await waitForElementById("warmup");
+        await waitForNotification(webArea, "AXSelectedTextChanged", () => {
+            warmUpField.focus();
+            warmUpField.setSelectionRange(0, 0);
+        });
+
+        for (var testCase of cases)
+            await checkCase(testCase);
+
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

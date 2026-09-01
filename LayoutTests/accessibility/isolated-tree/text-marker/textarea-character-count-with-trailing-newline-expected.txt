@@ -1,0 +1,34 @@
+Asserts the character count of text control values that end in a line break.
+
+no trailing newline: value "one two "
+PASS: axField.numberOfCharacters === 8
+
+trailing newline: value "one two \n"
+PASS: axField.numberOfCharacters === 9
+
+two lines, no trailing newline: value "one two \nthree"
+PASS: axField.numberOfCharacters === 14
+
+only a newline: value "\n"
+PASS: axField.numberOfCharacters === 1
+
+two trailing newlines: value "a\n\n"
+PASS: axField.numberOfCharacters === 3
+
+whitespace either side of a newline: value "  \n  "
+PASS: axField.numberOfCharacters === 5
+
+trailing newline, typed: value "one two \n"
+PASS: axField.numberOfCharacters === 9
+
+two trailing newlines, typed: value "a\n\n"
+PASS: axField.numberOfCharacters === 3
+
+ARIA textbox, trailing newline: value "one two \n"
+PASS: axField.numberOfCharacters === 9
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

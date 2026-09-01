@@ -327,6 +327,13 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     AXTextMarkerRange range { thisMarker, thisMarker };
     auto startMarker = thisMarker.toTextRunMarker(stopAtID);
     auto endMarker = startMarker.findLastBefore(stopAtID);
+    // A native text control renders one more trailing newline than its value contains, so end before
+    // it to keep this range's text and length equal to the value.
+    if (RefPtr endObject = endMarker.isolatedObject()) {
+        auto collapsedOffset = Accessibility::offsetOfCollapsedTrailingNewline(*endObject, endObject->textRuns());
+        if (collapsedOffset && endMarker.offset() > *collapsedOffset)
+            endMarker = AXTextMarker { *endObject, *collapsedOffset };
+    }
     if (endMarker.isValid() && endMarker.isInTextRun()) {
         // One or more of our descendants have text, so let's form a range from the first and last text positions.
         range = { WTF::move(startMarker), WTF::move(endMarker) };
@@ -368,20 +375,19 @@ unsigned AXIsolatedObject::textLength() const
     AX_ASSERT(isTextControl());
     AX_ASSERT(!isMainThread());
 
-    // The marker range spans this control's rendered inner text, which is one character longer than
-    // its value when the value ends in a line break: rendering adds a placeholder <br> for the empty
-    // final line, and the text walks emit its newline. The main-thread implementation measures the
-    // value, so leave that newline out. See isCollapsedTrailingLineBreak().
+    // The marker range spans the control's rendered inner text, one character longer than the value
+    // when the value ends in a line break, so leave that newline out to match the main thread's count.
     auto range = textMarkerRange();
-    auto lastMarker = range.end().toTextRunMarker();
-    RefPtr lastObject = lastMarker.isolatedObject();
-    // Ask the range's last object rather than testing the text for a trailing newline: a control
-    // that isn't a native text control (an ARIA textbox, say) has no placeholder, so a newline
-    // ending its text is a character of it.
-    bool endsWithPlaceholderNewline = lastObject && lastObject->isCollapsedTrailingLineBreak() && lastMarker.offset();
     unsigned length = range.length();
-    AX_ASSERT(!endsWithPlaceholderNewline || length);
-    return endsWithPlaceholderNewline && length ? length - 1 : length;
+    auto lastMarker = range.end().toTextRunMarker();
+    if (RefPtr lastObject = lastMarker.isolatedObject()) {
+        auto collapsedOffset = Accessibility::offsetOfCollapsedTrailingNewline(*lastObject, lastObject->textRuns());
+        if (collapsedOffset && lastMarker.offset() > *collapsedOffset) {
+            AX_ASSERT(length);
+            return length ? length - 1 : 0;
+        }
+    }
+    return length;
 }
 
 RetainPtr<id> AXIsolatedObject::remoteFramePlatformElement() const
