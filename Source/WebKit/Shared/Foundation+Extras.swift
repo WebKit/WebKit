@@ -47,23 +47,3 @@ extension Comparable {
         min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
-
-/// A type that can be used to uniquely own an instance of `Value` while being copyable.
-final class CopyableBox<Value: ~Copyable> {
-    /// The value contained in this copyable box.
-    var value: Value?
-
-    /// Initializes a value of this copyable box with the given value.
-    ///
-    /// - Parameter value: The value to initialize the copyable box with.
-    init(value: consuming Value) {
-        self.value = consume value
-    }
-
-    /// Consumes the box's value and returns the instance of Value that was within the box.
-    ///
-    /// - Returns: The value in this box.
-    func take() -> Value? {
-        value.take()
-    }
-}

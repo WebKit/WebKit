@@ -27,7 +27,6 @@
 
 #include "TransferString.h"
 #include <wtf/HashMap.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
@@ -39,10 +38,7 @@ enum class RemoveTransientActivation : bool;
 
 namespace WebKit {
 
-// `SWIFT_NONCOPYABLE` is required here because `JavaScriptEvaluationResult` is non-copyable,
-// and `WTF::Vector<T>` doesn't have any requirements on its copy constructor requiring `T` to be copyable.
-// FIXME: Remove `SWIFT_NONCOPYABLE` once rdar://186141869 is fixed.
-struct SWIFT_NONCOPYABLE RunJavaScriptParameters {
+struct RunJavaScriptParameters {
     IPC::TransferString source;
     JSC::SourceTaintedOrigin taintedness;
     URL sourceURL;
