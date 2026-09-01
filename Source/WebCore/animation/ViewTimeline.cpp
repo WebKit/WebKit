@@ -306,7 +306,8 @@ void ViewTimeline::cacheCurrentTime()
         };
     }();
 
-    auto metricsChanged = previousCurrentTimeData.scrollContainerSize != m_cachedCurrentTimeData.scrollContainerSize
+    auto metricsChanged = previousCurrentTimeData.maxScrollOffset != m_cachedCurrentTimeData.maxScrollOffset
+        || previousCurrentTimeData.scrollContainerSize != m_cachedCurrentTimeData.scrollContainerSize
         || previousCurrentTimeData.subjectOffset != m_cachedCurrentTimeData.subjectOffset
         || previousCurrentTimeData.subjectSize != m_cachedCurrentTimeData.subjectSize
         || previousCurrentTimeData.insetStart != m_cachedCurrentTimeData.insetStart
