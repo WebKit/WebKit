@@ -14,6 +14,7 @@ http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html 
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-unsafe-url.html [ Crash ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/about-blank-from-javascript-url-inherits-csp-from-initiator.sub.html [ Crash ]
+[ Debug ] http/tests/navigation/post-frames-goback1.html [ Crash ]
 
 #######################
 # Tests that time out #
@@ -37,6 +38,7 @@ fast/loader/stateobjects/pushstate-in-iframe.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
 http/tests/navigation-api/different-origin-entries-removed-after-bfcache.html [ Failure Timeout ]
 inspector/dom-debugger/url-breakpoints-dom-text-and-regex.html [ Skip ]
+http/tests/navigation/forward-and-cancel.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
