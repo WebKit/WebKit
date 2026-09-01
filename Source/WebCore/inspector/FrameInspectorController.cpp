@@ -74,6 +74,7 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspec
     , m_injectedScriptManager(WebInjectedScriptManager::create(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &parentPageController.backendDispatcher()))
+    , m_overlay(makeUniqueRefWithoutRefCountedCheck<InspectorOverlay>(*this))
     , m_executionStopwatch(Stopwatch::create())
 {
     if (frame.settings().siteIsolationEnabled())
@@ -93,6 +94,33 @@ void FrameInspectorController::ref() const
 void FrameInspectorController::deref() const
 {
     m_frame->deref();
+}
+
+Page* FrameInspectorController::overlayOwnerPage() const
+{
+    return m_frame->page();
+}
+
+LocalFrame* FrameInspectorController::overlayOwnerFrame() const
+{
+    return m_frame.ptr();
+}
+
+InspectorBackendClient* FrameInspectorController::overlayOwnerBackendClient() const
+{
+    // Not cached: inspectedPageDestroyed() destroys the client before frames detach.
+    RefPtr page = m_frame->page();
+    return page ? page->inspectorController().inspectorBackendClient() : nullptr;
+}
+
+void FrameInspectorController::drawHighlight(GraphicsContext& context) const
+{
+    m_overlay->paint(context);
+}
+
+bool FrameInspectorController::hasOverlayContentToDraw() const
+{
+    return m_overlay->shouldShowOverlay();
 }
 
 FrameAgentContext FrameInspectorController::frameAgentContext()
@@ -151,7 +179,7 @@ void FrameInspectorController::createLazyAgents()
 
     auto context = frameAgentContext();
     m_agents.append(makeUniqueRef<FrameDebuggerAgent>(context));
-    m_agents.append(makeUniqueRef<FrameDOMAgent>(context));
+    m_agents.append(makeUniqueRef<FrameDOMAgent>(context, m_overlay.get()));
     m_agents.append(makeUniqueRef<FrameDOMStorageAgent>(context));
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
