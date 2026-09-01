@@ -4195,8 +4195,13 @@ auto OMGIRGenerator::addArrayInitElem(TypeSignatureIndex, TypedExpression dst, E
     return { };
 }
 
-auto OMGIRGenerator::addArrayInitData(TypeSignatureIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+auto OMGIRGenerator::addArrayInitData(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
 {
+    StorageType elementType;
+    getArrayElementType(dstTypeIndex, elementType);
+    size_t elementSize = elementType.elementSize();
+    ASSERT(!isRefType(elementType.unpacked()));
+
     auto dstValue = get(dst);
     auto dstOffsetValue = get(dstOffset);
     auto srcOffsetValue = get(srcOffset);
@@ -4205,21 +4210,80 @@ auto OMGIRGenerator::addArrayInitData(TypeSignatureIndex, TypedExpression dst, E
     if (dst.type().isNullable())
         emitNullCheck(dstValue, ExceptionType::NullArrayInitData);
 
-    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayInitData,
-        instanceValue(),
-        dstValue, dstOffsetValue,
-        constant(Int32, srcDataIndex), srcOffsetValue,
-        sizeValue);
+    auto emitCCall = [&] {
+        Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayInitData,
+            instanceValue(),
+            dstValue, dstOffsetValue,
+            constant(Int32, srcDataIndex), srcOffsetValue,
+            sizeValue);
 
-    {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, constant(Int32, 0)));
-
         check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsArrayInitData);
         });
+    };
+
+    constexpr unsigned maxInlinePassiveBits = sizeof(void*) * 8 - 1;
+    if (srcDataIndex >= maxInlinePassiveBits) {
+        emitCCall();
+        return { };
     }
 
+    auto* bits = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfPassiveDataSegments()));
+    auto* isInline = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), static_cast<uintptr_t>(1) << maxInlinePassiveBits));
+
+    auto* inlinePath = m_proc.addBlock();
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isInline,
+        FrequentedBlock(inlinePath), FrequentedBlock(slowPath, FrequencyClass::Rare));
+    inlinePath->addPredecessor(m_currentBlock);
+    slowPath->addPredecessor(m_currentBlock);
+
+    m_currentBlock = inlinePath;
+    emitArrayRangeCheck(emitGetArraySize(dstValue, false), dstOffsetValue, sizeValue, ExceptionType::OutOfBoundsArrayInitData);
+
+    auto* srcOffsetPtr = pointerOfInt32(srcOffsetValue);
+    auto* byteCount = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), pointerOfInt32(sizeValue),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementSize));
+    auto* srcSum = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), srcOffsetPtr, byteCount);
+    auto* dropped = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), static_cast<uintptr_t>(1) << srcDataIndex)),
+        constant(pointerType(), 0));
+    auto* segmentSize = m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), dropped,
+        constant(pointerType(), 0),
+        constant(pointerType(), m_info.data[srcDataIndex]->sizeInBytes()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Below, origin(), srcSum, srcOffsetPtr),
+        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), srcSum, segmentSize));
+    if (elementSize > 1) {
+        outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Above, origin(), pointerOfInt32(sizeValue),
+                constant(pointerType(), static_cast<uintptr_t>(-1) / elementSize)),
+            outOfBounds);
+    }
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
+    check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsArrayInitData);
+    });
+
+    m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryCopy, origin(),
+        emitArrayElementAddress(elementType, dstValue, dstOffsetValue),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(),
+            constant(pointerType(), std::bit_cast<uintptr_t>(m_info.data[srcDataIndex]->span().data())),
+            srcOffsetPtr),
+        byteCount);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    emitCCall();
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
     return { };
 }
 
