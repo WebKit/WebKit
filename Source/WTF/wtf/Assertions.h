@@ -110,7 +110,12 @@
 #define VERBOSE_RELEASE_LOG (ENABLE(JOURNALD_LOG) || OS(ANDROID))
 #endif
 
-#define WTF_PRETTY_FUNCTION __PRETTY_FUNCTION__
+// __func__ rather than __PRETTY_FUNCTION__: in a template or lambda, __PRETTY_FUNCTION__ expands to
+// the fully instantiated signature, so a single assert in a widely-instantiated header template emits
+// a distinct multi-hundred-byte string per instantiation. __func__ is the unqualified name, so all
+// instantiations share one literal. The instantiated types remain visible in the crashing frame's
+// mangled symbol name, and __FILE__/__LINE__ still identify the assert.
+#define WTF_PRETTY_FUNCTION __func__
 
 #if USE(CF)
 #define WTF_ATTRIBUTE_NSSTRING(formatStringArgument, extraArguments) __attribute__((__format__(__NSString__, formatStringArgument, extraArguments)))
