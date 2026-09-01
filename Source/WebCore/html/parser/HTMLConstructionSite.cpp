@@ -133,19 +133,29 @@ static inline bool NODELETE causesFosterParenting(const HTMLStackItem& item)
     }
 }
 
+// Resolves the DOM-derived part of the foster site recorded by recordFosterSite(): script can move
+// or remove the table before the task runs.
+static inline void resolveFosterSite(HTMLConstructionSiteTask& task)
+{
+    if (!task.nextChild) [[likely]]
+        return;
+
+    if (RefPtr referenceParent = task.nextChild->parentNode())
+        task.parent = referenceParent;
+    else
+        task.nextChild = nullptr;
+}
+
 static inline void insert(HTMLConstructionSiteTask& task)
 {
+    resolveFosterSite(task);
+
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) [[unlikely]] {
         task.parent = templateElement->fragmentForInsertion();
         task.nextChild = nullptr;
-    } else {
-        if (task.nextChild && task.nextChild->parentNode() != task.parent) [[unlikely]]
+    } else if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
+        if (!document->canAcceptChild(*task.child, task.nextChild.get(), AcceptChildOperation::InsertOrAdd))
             return;
-
-        if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
-            if (!document->canAcceptChild(*task.child, task.nextChild.get(), AcceptChildOperation::InsertOrAdd))
-                return;
-        }
     }
 
     Ref child = *task.child;
@@ -704,8 +714,11 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
     task.parent = currentNode();
 
-    if (shouldFosterParent())
-        findFosterSite(task);
+    if (shouldFosterParent()) {
+        recordFosterSite(task);
+        // The parent is read below and these tasks run inline, so resolve now rather than in insert().
+        resolveFosterSite(task);
+    }
 
     unsigned currentPosition = 0;
     unsigned lengthLimit = shouldUseLengthLimit(*task.parent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
@@ -770,7 +783,7 @@ void HTMLConstructionSite::insertAlreadyParsedChild(HTMLStackItem& newParent, HT
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::InsertAlreadyParsedChild);
     if (causesFosterParenting(newParent)) {
-        findFosterSite(task);
+        recordFosterSite(task);
         ASSERT(task.parent);
     } else
         task.parent = newParent.node();
@@ -972,11 +985,13 @@ void HTMLConstructionSite::generateImpliedEndTags()
         m_openElements.pop();
 }
 
-// Adjusts |task| to match the "adjusted insertion location" determined by the foster parenting algorithm,
-// laid out as the substeps of step 2 of https://html.spec.whatwg.org/#appropriate-place-for-inserting-a-node
-void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
+// Records the stack-derived part of the "adjusted insertion location" for foster parenting, the
+// substeps of step 3 of https://html.spec.whatwg.org/#appropriate-place-for-inserting-a-node
+// resolveFosterSite() derives the rest from the DOM, so task.parent is not final here.
+void HTMLConstructionSite::recordFosterSite(HTMLConstructionSiteTask& task)
 {
-    // When a node is to be foster parented, the last template element with no table element is below it in the stack of open elements is the foster parent element (NOT the template's parent!)
+    // If the last template or table element on the stack of open elements is a template, that
+    // element is the foster parent, not its parent.
     auto* lastTemplate = m_openElements.topmost(HTML::template_);
     auto* lastTable = m_openElements.topmost(HTML::table);
     if (lastTemplate && (!lastTable || lastTemplate->isAbove(*lastTable))) {
@@ -990,13 +1005,11 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
         return;
     }
 
-    if (RefPtr parent = lastTable->element().parentNode()) {
-        task.parent = parent;
-        task.nextChild = lastTable->element();
-        return;
-    }
-
-    task.parent = lastTable->next()->element();
+    // The table's parent is read when the task runs, so record the element immediately above the
+    // table in the stack of open elements as the fallback for when it has no parent by then.
+    ASSERT(lastTable->next());
+    task.parent = lastTable->next()->node();
+    task.nextChild = lastTable->element();
 }
 
 bool HTMLConstructionSite::shouldFosterParent() const
@@ -1007,7 +1020,7 @@ bool HTMLConstructionSite::shouldFosterParent() const
 void HTMLConstructionSite::fosterParent(Ref<Node>&& node)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
-    findFosterSite(task);
+    recordFosterSite(task);
     task.child = WTF::move(node);
     ASSERT(task.parent);
 
