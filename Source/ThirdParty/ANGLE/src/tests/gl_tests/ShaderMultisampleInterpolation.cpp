@@ -491,6 +491,94 @@ void main()
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 128, 0, 255), 1);
 }
 
+// Test that array references to interpolants compile and draw correctly.
+TEST_P(SampleMultisampleInterpolationTest, CompileArrayInterpolantReferences)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_shader_multisample_interpolation"));
+
+    constexpr char kVS[] = R"(#version 300 es
+#extension GL_OES_shader_multisample_interpolation : require
+
+in vec4 a_position;
+
+out vec3 interpolantArray[2];
+centroid out vec3 interpolantCentroidArray[2];
+sample out vec3 interpolantSampleArray[2];
+
+void main()
+{
+    gl_Position = a_position;
+
+    // Keep constant so that every read returns the same value.
+    interpolantArray[0] = vec3(10.0);
+    interpolantArray[1] = vec3(11.0);
+    interpolantCentroidArray[0] = vec3(20.0);
+    interpolantCentroidArray[1] = vec3(21.0);
+    interpolantSampleArray[0] = vec3(30.0);
+    interpolantSampleArray[1] = vec3(31.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_shader_multisample_interpolation : require
+
+precision highp float;
+
+in vec3 interpolantArray[2];
+centroid in vec3 interpolantCentroidArray[2];
+sample in vec3 interpolantSampleArray[2];
+
+out vec4 color;
+
+bool eq(vec3 a, vec3 b)
+{
+    return all(lessThan(abs(a - b), vec3(0.01)));
+}
+
+bool check(vec3 values[2], float base)
+{
+    return eq(values[0], vec3(base)) && eq(values[1], vec3(base + 1.0));
+}
+
+void main()
+{
+    // Marks each input as an interpolant, which is what made the uses below crash.
+    bool ok = eq(interpolateAtCentroid(interpolantArray[0]), vec3(10.0)) &&
+              eq(interpolateAtCentroid(interpolantCentroidArray[0]), vec3(20.0)) &&
+              eq(interpolateAtCentroid(interpolantSampleArray[0]), vec3(30.0));
+
+    // Test by assigning the array.
+    vec3 localArray[2];
+    vec3 localCentroidArray[2];
+    vec3 localSampleArray[2];
+    localArray         = interpolantArray;
+    localCentroidArray = interpolantCentroidArray;
+    localSampleArray   = interpolantSampleArray;
+    ok = ok && check(localArray, 10.0) && check(localCentroidArray, 20.0) &&
+         check(localSampleArray, 30.0);
+
+    // Test by passing the array to a function.
+    ok = ok && check(interpolantArray, 10.0) && check(interpolantCentroidArray, 20.0) &&
+         check(interpolantSampleArray, 30.0);
+
+    // Test by initializing from the array.
+    vec3 initArray[2]         = interpolantArray;
+    vec3 initCentroidArray[2] = interpolantCentroidArray;
+    vec3 initSampleArray[2]   = interpolantSampleArray;
+    ok = ok && check(initArray, 10.0) && check(initCentroidArray, 20.0) &&
+         check(initSampleArray, 30.0);
+
+    // Green indicates every check above passed.
+    color = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    // Green only if every read matched what the vertex shader wrote.
+    drawQuad(program, "a_position", 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 class SampleMultisampleInterpolationTest31 : public SampleMultisampleInterpolationTest
 {};
 
