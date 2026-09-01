@@ -39,7 +39,7 @@ class VarField
     ANGLE_INLINE bool operator==(const VarField &other) const
     {
         const int thisVarId  = mVariable ? mVariable->uniqueId().get() : -1;
-        const int otherVarId = other.mVariable ? mVariable->uniqueId().get() : -1;
+        const int otherVarId = other.mVariable ? other.mVariable->uniqueId().get() : -1;
         return thisVarId == otherVarId && mField == other.mField;
     }
 
