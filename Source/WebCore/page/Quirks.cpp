@@ -722,6 +722,18 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+// webex.com rdar://143715630
+bool Quirks::needsWebExScrollabilityQuirk() const
+{
+#if PLATFORM(IOS_FAMILY) && ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::NeedsWebExScrollabilityQuirk);
+#else
+    return false;
+#endif
+}
+
 // amazon.com rdar://128962002
 bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
 {

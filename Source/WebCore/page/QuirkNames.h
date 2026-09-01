@@ -278,6 +278,7 @@ enum class SiteSpecificQuirk {
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk,
 #endif
 #if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    NeedsWebExScrollabilityQuirk,
     ShouldSupportHoverMediaQueriesQuirk,
 #endif
 #if PLATFORM(IOS_FAMILY)

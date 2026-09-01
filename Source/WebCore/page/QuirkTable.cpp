@@ -824,6 +824,8 @@ static constexpr Quirk table[] = {
     { .match = URLMatch::domain("webex.com"_s),
         .behaviors = {
             NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
+            // webex.com rdar://143715630
+            NeedsWebExScrollabilityQuirk,
         },
         .site = QuirkSite::WebEx },
 #endif

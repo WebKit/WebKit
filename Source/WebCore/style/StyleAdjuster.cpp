@@ -1088,6 +1088,24 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setOverflowY(Overflow::Auto);
     }
 
+    if (documentQuirks.needsWebExScrollabilityQuirk()) {
+        // Ignore overflow: hidden on the body and #wrapper so the page remains
+        // scrollable, and drop the width constraints on #wrapper so the desktop
+        // layout fits the viewport.
+        static MainThreadNeverDestroyed<const AtomString> wrapperID("wrapper"_s);
+        bool isWrapper = m_element->idForStyleResolution() == wrapperID;
+        if (m_element->hasTagName(bodyTag) || isWrapper) {
+            if (style.overflowX() == Overflow::Hidden)
+                style.setOverflowX(Overflow::Auto);
+            if (style.overflowY() == Overflow::Hidden)
+                style.setOverflowY(Overflow::Auto);
+        }
+        if (isWrapper) {
+            style.setMinWidth(CSS::Keyword::Auto { });
+            style.setMaxWidth(CSS::Keyword::None { });
+        }
+    }
+
     if (documentQuirks.needsGeforcenowWarningDisplayNoneQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> overlayClassName("cdk-overlay-container"_s);
         static MainThreadNeverDestroyed<const AtomString> unsupportedClassName("unsupported-scenario-container"_s);

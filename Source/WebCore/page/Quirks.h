@@ -145,6 +145,7 @@ public:
 
     bool NODELETE needsGMailOverflowScrollQuirk() const;
     bool NODELETE needsYouTubeOverflowScrollQuirk() const;
+    bool NODELETE needsWebExScrollabilityQuirk() const;
     bool NODELETE needsFullscreenDisplayNoneQuirk() const;
     bool NODELETE needsFullscreenObjectFitQuirk() const;
     bool needsZomatoEmailLoginLabelQuirk() const;
