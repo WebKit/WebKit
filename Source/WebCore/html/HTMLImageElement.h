@@ -42,6 +42,7 @@ class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
 class Image;
+class LayoutSize;
 class SecurityOrigin;
 
 struct ImageCandidate;
@@ -241,6 +242,8 @@ private:
     ImageCandidate bestFitSourceFromPictureElement();
 
     std::optional<float> autoSizesLayoutWidth() const;
+
+    LayoutSize densityCorrectedNaturalSize() const;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

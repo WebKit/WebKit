@@ -1,0 +1,31 @@
+
+PASS no width/height attributes
+PASS width and height attributes
+PASS width attribute only
+PASS height attribute only
+PASS unparseable width attribute
+PASS no src, with width/height attributes
+PASS not in the Image Button state
+PASS SVG image with neither a natural width nor a natural height
+FAIL SVG image with a natural aspect ratio only assert_array_equals: width and height when not rendered expected property 0 to be 300 but got 600 (expected array [300, 100] got [600, 200])
+FAIL SVG image with a natural aspect ratio only, and a width attribute assert_array_equals: width and height when not rendered expected property 1 to be 100 but got 200 (expected array [30, 100] got [30, 200])
+FAIL SVG image with a natural width only assert_array_equals: width and height when not rendered expected property 0 to be 60 but got 300 (expected array [60, 150] got [300, 150])
+FAIL SVG image with a natural height only assert_array_equals: width and height when not rendered expected property 1 to be 60 but got 150 (expected array [300, 60] got [300, 150])
+PASS width and height attribute value "10" when not rendered
+PASS width and height attribute value "0" when not rendered
+PASS width and height attribute value "010" when not rendered
+PASS width and height attribute value "+10" when not rendered
+PASS width and height attribute value " 10 " when not rendered
+PASS width and height attribute value "\n10" when not rendered
+PASS width and height attribute value "10px" when not rendered
+PASS width and height attribute value "50%" when not rendered
+PASS width and height attribute value "1.9" when not rendered
+PASS width and height attribute value "2147483647" when not rendered
+PASS width and height attribute value "-10" when not rendered
+PASS width and height attribute value "" when not rendered
+PASS width and height attribute value "abc" when not rendered
+FAIL never rendered, no width/height attributes assert_array_equals: expected property 0 to be 100 but got 0 (expected array [100, 100] got [0, 0])
+PASS never rendered, with width/height attributes
+PASS detached input, with width/height attributes
+PASS detached input, no attributes and no image
+
