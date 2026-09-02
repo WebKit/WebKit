@@ -28,7 +28,7 @@
 ] interface WebExtensionAPIPort {
 
     readonly attribute DOMString name;
-    readonly attribute any sender;
+    [NeedsScriptContext] readonly attribute any sender;
     readonly attribute any error;
 
     [RaisesException, NeedsFrame] void postMessage([Serialization=JSON] any message);

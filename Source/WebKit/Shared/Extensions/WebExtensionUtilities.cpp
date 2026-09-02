@@ -320,6 +320,15 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
     return errorString.isEmpty();
 }
 
+void callAfterRandomDelay(Function<void()>&& callback)
+{
+    // Random delay between 100 and 500 milliseconds.
+    auto delay = Seconds::fromMilliseconds(100) + Seconds::fromMilliseconds((weakRandomNumber<uint32_t>() / static_cast<double>(UINT32_MAX)) * 400);
+    RunLoop::mainSingleton().dispatchAfter(delay, [callback = WTF::move(callback)]() {
+        callback();
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

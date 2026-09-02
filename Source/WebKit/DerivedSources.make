@@ -1085,7 +1085,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIOffscreen \
     WebExtensionAPIPermissions \
     WebExtensionAPIPort \
-    WebExtensionAPIRuntime \
     WebExtensionAPIScripting \
     WebExtensionAPISidePanel \
     WebExtensionAPISidebarAction \
@@ -1094,7 +1093,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPITabs \
     WebExtensionAPIWebNavigation \
     WebExtensionAPIWebNavigationEvent \
-    WebExtensionAPIWebPageRuntime \
     WebExtensionAPIWebRequest \
     WebExtensionAPIWebRequestEvent \
     WebExtensionAPIWindows \
@@ -1104,8 +1102,10 @@ EXTENSION_INTERFACES = \
 CPP_EXTENSION_INTERFACES = \
 	WebExtensionAPIAlarms \
 	WebExtensionAPINamespace \
+    WebExtensionAPIRuntime \
     WebExtensionAPITest \
 	WebExtensionAPIWebPageNamespace \
+    WebExtensionAPIWebPageRuntime \
 #
 
 $(IDL_FILE_NAMES_LIST) : $(EXTENSION_INTERFACES:%=%.idl)

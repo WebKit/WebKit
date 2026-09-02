@@ -25,10 +25,11 @@
 
 [
     Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted
+    ReturnsPromiseWhenCallbackIsOmitted,
+    UseCPPAPI
 ] interface WebExtensionAPIWebPageRuntime {
 
-    [RaisesException, NeedsPage, NeedsFrame, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPage, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(DOMString extensionId, [Optional, NSDictionary] any options);
+    [RaisesStringException, NeedsPage, NeedsFrame, ProcessArgumentsLeftToRight] void sendMessage(DOMString extensionId, [Serialization=JSON] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
+    [RaisesStringException, NeedsPage, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect(DOMString extensionId, [Optional, JSONValue] any options);
 
 };

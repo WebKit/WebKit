@@ -29,13 +29,10 @@
 
 #include "JSWebExtensionAPIRuntime.h"
 #include "JSWebExtensionAPIWebPageRuntime.h"
+#include "Protected.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 #include "WebPageProxyIdentifier.h"
-
-OBJC_CLASS NSDictionary;
-OBJC_CLASS NSString;
-OBJC_CLASS NSURL;
 
 namespace WebKit {
 
@@ -44,17 +41,15 @@ class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
 public:
-    JSValue *reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
-    JSValue *reportError(const String& errorMessage, WebExtensionCallbackHandler&);
+    JSValueRef reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
+    JSValueRef reportError(const String& errorMessage, WebExtensionCallbackHandler&);
 
 private:
     friend class WebExtensionAPIRuntime;
 
     bool m_lastErrorAccessed = false;
 
-#if PLATFORM(COCOA)
-    RetainPtr<JSValue> m_lastError;
-#endif
+    Protected<JSValueRef> m_lastError;
 };
 
 class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
@@ -63,16 +58,15 @@ class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtension
 public:
     WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
 
-#if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    NSURL *getURL(const String& resourcePath, NSString **outExceptionString);
+    URL getURL(const String& resourcePath, String& outExceptionString);
     RefPtr<JSON::Object> getManifest();
     String getVersion();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
-    double getFrameId(JSValue *);
-    String getDocumentId(JSValue *, NSString **outExceptionString);
+    double getFrameId(JSContextRef, JSValueRef);
+    String getDocumentId(JSContextRef, JSValueRef, String& outExceptionString);
 
     void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
 
@@ -81,10 +75,10 @@ public:
 
     String NODELETE runtimeIdentifier();
 
-    JSValue *NODELETE lastError();
+    JSValueRef NODELETE lastError();
 
-    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const String& messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, NSDictionary *options, NSString **outExceptionString);
+    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 
     void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);
     RefPtr<WebExtensionAPIPort> connectNative(WebPageProxyIdentifier, JSContextRef, const String& applicationID);
@@ -99,7 +93,7 @@ public:
 private:
     friend class WebExtensionAPIWebPageRuntime;
 
-    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, const String& sourceKey, NSString **outExceptionString);
+    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, const String& sourceKey, String& outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onConnect;
     RefPtr<WebExtensionAPIEvent> m_onInstalled;
@@ -107,7 +101,6 @@ private:
     RefPtr<WebExtensionAPIEvent> m_onStartup;
     RefPtr<WebExtensionAPIEvent> m_onConnectExternal;
     RefPtr<WebExtensionAPIEvent> m_onMessageExternal;
-#endif
 };
 
 class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
@@ -116,13 +109,11 @@ class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebEx
 public:
     WebExtensionAPIWebPageRuntime& runtime() const final { return const_cast<WebExtensionAPIWebPageRuntime&>(*this); }
 
-#if PLATFORM(COCOA)
-    void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, NSDictionary *options, NSString **outExceptionString);
-#endif
+    void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 };
 
-NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters&);
+JSValueRef toWebAPI(JSContextRef, const WebExtensionMessageSenderParameters&);
 
 } // namespace WebKit
 

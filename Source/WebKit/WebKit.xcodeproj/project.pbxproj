@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -4390,7 +4390,6 @@
 		1C5DC460290B1C440061EC62 /* JSWebExtensionAPIExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIExtension.mm; sourceTree = "<group>"; };
 		1C5DC461290B1C470061EC62 /* JSWebExtensionAPIRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIRuntime.h; sourceTree = "<group>"; };
 		1C5DC462290B1C470061EC62 /* JSWebExtensionAPIExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIExtension.h; sourceTree = "<group>"; };
-		1C5DC463290B1C470061EC62 /* JSWebExtensionAPIRuntime.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIRuntime.mm; sourceTree = "<group>"; };
 		1C5DC464290B23890061EC62 /* WebExtensionAPIRuntimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIRuntimeCocoa.mm; sourceTree = "<group>"; };
 		1C5DC465290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIExtensionCocoa.mm; sourceTree = "<group>"; };
 		1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIExtension.h; sourceTree = "<group>"; };
@@ -7286,6 +7285,8 @@
 		7D1A8A0C2D405B34001715DF /* WebExtensionStorageSQLiteStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionStorageSQLiteStore.h; sourceTree = "<group>"; };
 		7D1A8A0D2D405B34001715DF /* WebExtensionStorageSQLiteStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionStorageSQLiteStore.cpp; sourceTree = "<group>"; };
 		7D2F27C3301C10470043C2CE /* JSWebExtensionAPIUnified.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIUnified.cpp; sourceTree = "<group>"; };
+		7D3D13B1304398C400289ABF /* JSWebExtensionAPIRuntime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIRuntime.cpp; sourceTree = "<group>"; };
+		7D3D22B63043A7E200289ABF /* JSWebExtensionAPIWebPageRuntime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIWebPageRuntime.cpp; sourceTree = "<group>"; };
 		7D3E8A4A2FEFB4D800C57922 /* JSWebExtensionAPINamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPINamespace.cpp; sourceTree = "<group>"; };
 		7D3E8A4B2FEFB4D800C57922 /* JSWebExtensionAPIWebPageNamespace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIWebPageNamespace.cpp; sourceTree = "<group>"; };
 		7D3FF7012ECBBDB100A26C20 /* JSWebExtensionAPIAlarms.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIAlarms.cpp; sourceTree = "<group>"; };
@@ -7964,7 +7965,6 @@
 		B62FB8622AA9180C00E61418 /* WebExtensionAPIScripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIScripting.h; sourceTree = "<group>"; };
 		B63403F814910D57001070B5 /* APIObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIObject.cpp; sourceTree = "<group>"; };
 		B63A99732B7EA000004611FD /* JSWebExtensionAPIWebPageRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIWebPageRuntime.h; sourceTree = "<group>"; };
-		B63A99752B7EA001004611FD /* JSWebExtensionAPIWebPageRuntime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIWebPageRuntime.mm; sourceTree = "<group>"; };
 		B63C10322B51C09C004A69B8 /* JSWebExtensionAPIStorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIStorageArea.h; sourceTree = "<group>"; };
 		B63C10332B51C09C004A69B8 /* JSWebExtensionAPIStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIStorage.mm; sourceTree = "<group>"; };
 		B63C10362B51C0E5004A69B8 /* JSWebExtensionAPIStorageArea.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIStorageArea.mm; sourceTree = "<group>"; };
@@ -17404,8 +17404,8 @@
 				B61AFA4729510D0F008220B1 /* JSWebExtensionAPIPermissions.mm */,
 				1C9A15CC2ABDF1E1002CC12A /* JSWebExtensionAPIPort.h */,
 				1C9A15CD2ABDF1E2002CC12A /* JSWebExtensionAPIPort.mm */,
+				7D3D13B1304398C400289ABF /* JSWebExtensionAPIRuntime.cpp */,
 				1C5DC461290B1C470061EC62 /* JSWebExtensionAPIRuntime.h */,
-				1C5DC463290B1C470061EC62 /* JSWebExtensionAPIRuntime.mm */,
 				B63E9A6C2AAF2B2D005F4561 /* JSWebExtensionAPIScripting.h */,
 				B63E9A6D2AAF2B2D005F4561 /* JSWebExtensionAPIScripting.mm */,
 				029D6BAD2C407AA30068CF99 /* JSWebExtensionAPISidebarAction.h */,
@@ -17428,8 +17428,8 @@
 				33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */,
 				7D3E8A4B2FEFB4D800C57922 /* JSWebExtensionAPIWebPageNamespace.cpp */,
 				B64AF4E32B7D7E6300357639 /* JSWebExtensionAPIWebPageNamespace.h */,
+				7D3D22B63043A7E200289ABF /* JSWebExtensionAPIWebPageRuntime.cpp */,
 				B63A99732B7EA000004611FD /* JSWebExtensionAPIWebPageRuntime.h */,
-				B63A99752B7EA001004611FD /* JSWebExtensionAPIWebPageRuntime.mm */,
 				3399E1512B59EFD7008BFB60 /* JSWebExtensionAPIWebRequest.h */,
 				3399E1502B59EFD7008BFB60 /* JSWebExtensionAPIWebRequest.mm */,
 				337042012B58A0880077FF78 /* JSWebExtensionAPIWebRequestEvent.h */,

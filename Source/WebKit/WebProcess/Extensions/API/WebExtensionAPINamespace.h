@@ -89,7 +89,9 @@ public:
 #endif
     WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
+#endif
     WebExtensionAPIRuntime& runtime() const final;
+#if PLATFORM(COCOA)
     WebExtensionAPIScripting& scripting();
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     WebExtensionAPISidePanel& sidePanel();

@@ -273,6 +273,13 @@ JSValueRef toJSValueRef(JSContextRef context, const String& string, NullOrEmptyS
     }
 }
 
+JSValueRef toJSValueRef(JSContextRef context, URL url, NullOrEmptyString nullOrEmptyString)
+{
+    ASSERT(context);
+
+    return toJSValueRef(context, url.string(), nullOrEmptyString);
+}
+
 JSObjectRef toJSError(JSContextRef context, const String& string)
 {
     ASSERT(context);

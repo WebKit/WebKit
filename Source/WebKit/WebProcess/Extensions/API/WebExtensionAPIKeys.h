@@ -182,13 +182,11 @@ static NSString * const populateKey = @"populate";
 static NSString * const popupKey = @"popup";
 static NSString * const portKey = @"port";
 static NSString * const previousTabIdKey = @"previousTabId";
-static NSString * const previousVersionKey = @"previousVersion";
 static NSString * const qualityKey = @"quality";
 static NSString * const queryKey = @"query";
 static NSString * const radioKey = @"radio";
 static NSString * const rawKey = @"raw";
 static NSString * const realmKey = @"realm";
-static NSString * const reasonKey = @"reason";
 static NSString * const redirectURLKey = @"redirectUrl";
 static NSString * const regexIsCaseSensitiveKey = @"isCaseSensitive";
 static NSString * const regexKey = @"regex";
@@ -236,7 +234,6 @@ static NSString * const urlKey = @"url";
 static NSString * const userValue = @"user";
 static NSString * const valueKey = @"value";
 static NSString * const variantsKey = @"variants";
-static NSString * const versionKey = @"version";
 static NSString * const videoKey = @"video";
 static NSString * const visibleKey = @"visible";
 static NSString * const wasCheckedKey = @"wasChecked";
@@ -251,6 +248,10 @@ static NSString * const justificationKey = @"justification";
 static NSString * const reasonsKey = @"reasons";
 #endif
 
+#else
+
+static constexpr auto nameKey = "name"_s;
+
 #endif
 
 static constexpr auto delayInMinutesKey = "delayInMinutes"_s;
@@ -258,3 +259,6 @@ static constexpr auto emptyAlarmName = ""_s;
 static constexpr auto periodInMinutesKey = "periodInMinutes"_s;
 static constexpr auto scheduledTimeKey = "scheduledTime"_s;
 static constexpr auto whenKey = "when"_s;
+static constexpr auto versionKey = "version"_s;
+static constexpr auto reasonKey = "reason"_s;
+static constexpr auto previousVersionKey = "previousVersion"_s;

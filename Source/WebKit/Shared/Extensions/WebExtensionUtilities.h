@@ -105,6 +105,11 @@ static JSObjectRef toWebAPI(JSContextRef context, const Vector<T>& data)
 
 bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey, Vector<String> requiredKeys, HashMap<String, JSON::Value::Type> keyTypes, String& outExceptionString);
 
+/// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
+JSObjectRef toJSRejectedPromise(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
+
+void callAfterRandomDelay(Function<void()>&&);
+
 #ifdef __OBJC__
 
 /// Verifies that a dictionary:
@@ -126,9 +131,6 @@ bool validateDictionary(NSDictionary<NSString *, id> *, NSString *sourceKey, NSA
 ///  - The `callingAPIName` and `sourceKey` parameters are used to reference the object within a larger context. When an error occurs, this key helps identify the source of the problem in the `outExceptionString`.
 /// If the object is valid, returns `YES`. Otherwise returns `NO` and sets `outExceptionString` to a message describing what validation failed.
 bool validateObject(NSObject *, NSString *sourceKey, id valueTypes, NSString **outExceptionString);
-
-/// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
-JSObjectRef toJSRejectedPromise(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
 
 NSString *toWebAPI(NSLocale *);
 

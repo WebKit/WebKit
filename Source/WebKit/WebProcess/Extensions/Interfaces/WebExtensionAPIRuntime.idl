@@ -51,15 +51,16 @@ dictionary WebExtensionSendMessageOptions {
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
+    UseCPPAPI
 ] interface WebExtensionAPIRuntime {
 
     [ImplementedAs=runtimeIdentifier] readonly attribute DOMString id;
 
-    [URL, ConvertNullStringTo=Null, RaisesException] DOMString getURL(DOMString resourcePath);
-    [NSDictionary] any getManifest();
+    [URL, ConvertNullStringTo=Null, RaisesStringException] DOMString getURL(DOMString resourcePath);
+    [JSONValue] any getManifest();
     DOMString getVersion();
-    double getFrameId(any target);
-    [RaisesException] DOMString getDocumentId(any target);
+    [NeedsScriptContext] double getFrameId(any target);
+    [RaisesStringException, NeedsScriptContext] DOMString getDocumentId(any target);
 
     [MainWorldOnly] void getPlatformInfo([Optional, CallbackHandler] function callback);
     [MainWorldOnly] void getBackgroundPage([Optional, CallbackHandler] function callback);
@@ -71,8 +72,8 @@ dictionary WebExtensionSendMessageOptions {
 
     [MainWorldOnly] readonly attribute any lastError;
 
-    [ProcessArgumentsLeftToRight, RaisesException, NeedsPageIdentifier, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
-    [RaisesException, NeedsPageIdentifier, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect([Optional] DOMString extensionID, [Optional, NSDictionary] any options);
+    [ProcessArgumentsLeftToRight, RaisesStringException, NeedsPageIdentifier, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=JSON] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
+    [RaisesStringException, NeedsPageIdentifier, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect([Optional] DOMString extensionID, [Optional, JSONValue] any options);
 
     [MainWorldOnly, Dynamic, NeedsFrame] void sendNativeMessage([Optional] DOMString applicationID, [Serialization=JSON] any message, [Optional, CallbackHandler] function callback);
     [MainWorldOnly, Dynamic, NeedsPageIdentifier, NeedsScriptContext] WebExtensionAPIPort connectNative([Optional] DOMString applicationID);

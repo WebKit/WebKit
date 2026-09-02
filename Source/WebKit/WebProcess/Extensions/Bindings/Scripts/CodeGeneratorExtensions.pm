@@ -676,8 +676,8 @@ EOF
                     }
 
                     push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
-                    push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"};
-                    push(@parameters, $parameter->name) unless ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"});
+                    push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"};
+                    push(@parameters, $parameter->name) unless ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
                 }
             }
 
@@ -757,7 +757,7 @@ EOF
                 push(@contents, "    if (!page) [[unlikely]] {\n");
                 push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
                 push(@contents, "        if (promiseResult)\n") if $returnsPromise;
-                push(@contents, "            promiseResult = toJSRejectedPromise(context, @\"${call}\", nil, @\"an unknown error occurred\");\n") if $returnsPromise;
+                push(@contents, "            promiseResult = toJSRejectedPromise(context, \"${call}\"_s, nullString(), \"an unknown error occurred\"_s);\n") if $returnsPromise;
                 push(@contents, "        return ${defaultReturnValue};\n");
                 push(@contents, "    }\n\n");
             }
@@ -767,7 +767,7 @@ EOF
                 push(@contents, "    if (!frame) [[unlikely]] {\n");
                 push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
                 push(@contents, "        if (promiseResult)\n") if $returnsPromise;
-                push(@contents, "            promiseResult = toJSRejectedPromise(context, @\"${call}\", nil, @\"an unknown error occurred\");\n") if $returnsPromise;
+                push(@contents, "            promiseResult = toJSRejectedPromise(context, \"${call}\"_s, nullString(), \"an unknown error occurred\"_s);\n") if $returnsPromise;
                 push(@contents, "        return ${defaultReturnValue};\n");
                 push(@contents, "    }\n\n");
             }
@@ -796,6 +796,19 @@ EOF
     }
 
     return ${defaultReturnValue};
+}
+EOF
+            } elsif ($needsExceptionString && !$isVoidReturn) {
+                push(@contents, <<EOF);
+    String exceptionString;
+    JSValueRef result = ${returnExpression};
+
+    if (!exceptionString.isEmpty()) [[unlikely]] {
+        *exception = toJSError(context, "${call}"_s, nullString(), String(exceptionString));
+        return ${defaultEarlyReturnValue};
+    }
+
+    return result;
 }
 EOF
             } elsif ($needsExceptionString && $isVoidReturn) {
@@ -1253,7 +1266,7 @@ sub _installAutomaticExceptions
 EOF
     }
 
-    if ($$self{codeGenerator}->IsStringType($signature->type) && !$signature->extendedAttributes->{"Optional"}) {
+    if ($$self{codeGenerator}->IsStringType($signature->type) && !$signature->extendedAttributes->{"Optional"} && ($signature->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"})) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1346,7 +1359,7 @@ EOF
 EOF
     }
 
-    if ($signature->extendedAttributes->{"URL"}) {
+    if ($signature->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"}) {
         $hasExceptions = 1;
 
         # FIXME: rdar://problem/58428135 Consider allowing local file access if the extension claimed it in
@@ -1355,6 +1368,21 @@ EOF
         push(@$contents, <<EOF);
 
     if (${variable}.isFileURL) [[unlikely]] {
+        *exception = toJSError(context, "${call}"_s, "${variableLabel}"_s, "it cannot be a local file URL"_s);
+        return ${result};
+    }
+EOF
+    }
+ 
+    if ($signature->extendedAttributes->{"URL"} && $interface->extendedAttributes->{"UseCPPAPI"}){
+        $hasExceptions = 1;
+
+        # FIXME: rdar://problem/58428135 Consider allowing local file access if the extension claimed it in
+        # its manifest and the user opted in explicity in some way.
+
+        push(@$contents, <<EOF);
+
+    if (${variable}.protocolIsFile()) [[unlikely]] {
         *exception = toJSError(context, "${call}"_s, "${variableLabel}"_s, "it cannot be a local file URL"_s);
         return ${result};
     }
@@ -1486,7 +1514,8 @@ sub _platformType
 
     return unless ref($idlType) eq "IDLType";
 
-    return "NSURL" if $$self{codeGenerator}->IsStringType($idlType) && $signature && $signature->extendedAttributes->{"URL"};
+    return "NSURL" if !$interface->extendedAttributes->{"UseCPPAPI"} && $$self{codeGenerator}->IsStringType($idlType) && $signature && $signature->extendedAttributes->{"URL"};
+    return "URL" if $interface->extendedAttributes->{"UseCPPAPI"} && $$self{codeGenerator}->IsStringType($idlType) && $signature && $signature->extendedAttributes->{"URL"};
     return "String" if $$self{codeGenerator}->IsStringType($idlType);
     return "double" if $$self{codeGenerator}->IsPrimitiveType($idlType);
 
@@ -1531,7 +1560,8 @@ sub _platformTypeConstructor
 
     return unless ref($idlType) eq "IDLType";
 
-    return "[NSURL URLWithString:toString(context, $argumentName, $nullStringPolicy).createNSString().get()]" if $$self{codeGenerator}->IsStringType($idlType) && $signature->extendedAttributes->{"URL"};
+    return "[NSURL URLWithString:toString(context, $argumentName, $nullStringPolicy).createNSString().get()]" if !$interface->extendedAttributes->{"UseCPPAPI"} && $$self{codeGenerator}->IsStringType($idlType) && $signature->extendedAttributes->{"URL"};
+    return "URL { toString(context, $argumentName, $nullStringPolicy) }" if $interface->extendedAttributes->{"UseCPPAPI"} && $$self{codeGenerator}->IsStringType($idlType) && $signature->extendedAttributes->{"URL"};
     return "toString(context, $argumentName, $nullStringPolicy)" if $$self{codeGenerator}->IsStringType($idlType);
     return "JSValueToNumber(context, $argumentName, nullptr)" if $$self{codeGenerator}->IsPrimitiveType($idlType);
     return "to" . _implementationClassName($idlType) . "(context, $argumentName)";
@@ -1562,6 +1592,7 @@ sub _platformTypeVariableDeclaration
     $nullValue = "nil" if $isObjCType;
     $nullValue = "nullString()" if $platformType eq "String";
     $nullValue = "JSValueMakeUndefined(context)" if $platformType eq "JSValueRef";
+    $nullValue = "{  }" if $signature->extendedAttributes->{"URL"} && $interface->extendedAttributes->{"UseCPPAPI"};
 
     my $defaultValue = $signature->extendedAttributes->{"DefaultValue"};
     if (defined $defaultValue && $platformType eq "double") {
@@ -1570,7 +1601,7 @@ sub _platformTypeVariableDeclaration
         die "DefaultValue extended attribute is currently only supported for numeric types";
     }
 
-    if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "RefPtr<JSON::Value>" or $platformType eq "double" or $platformType eq "bool" or $platformType eq "String" or $signature->extendedAttributes->{"Vector"}) {
+    if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "RefPtr<JSON::Value>" or $platformType eq "double" or $platformType eq "bool" or $platformType eq "String" or $signature->extendedAttributes->{"Vector"} or ($interface->extendedAttributes->{"UseCPPAPI"} && $signature->extendedAttributes->{"URL"})) {
         $platformType .= " ";
     } else {
         $platformType .= $isObjCType ? " *" : "* ";

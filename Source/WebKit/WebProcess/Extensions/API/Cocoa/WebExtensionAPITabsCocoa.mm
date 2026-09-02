@@ -1059,7 +1059,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         if (result)
             return;
 
-        port->setError(protect(runtime())->reportError(result.error().createNSString().get(), globalContext.get()));
+        port->setError(globalContext.get(), protect(runtime())->reportError(result.error().createNSString().get(), globalContext.get()));
         port->disconnect();
     }, extensionContext().identifier());
 

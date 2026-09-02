@@ -109,19 +109,21 @@ NSString *WebExtensionAPIPort::name()
     return m_name.createNSString().autorelease();
 }
 
-NSDictionary *WebExtensionAPIPort::sender()
+JSValueRef WebExtensionAPIPort::sender(JSContextRef context)
 {
-    return m_senderParameters ? toWebAPI(m_senderParameters.value()) : nil;
+    return m_senderParameters ? toWebAPI(context, m_senderParameters.value()) : JSValueMakeNull(context);
 }
 
 JSValue *WebExtensionAPIPort::error()
 {
-    return m_error.get();
+    if (!m_error)
+        return nil;
+    return [JSValue valueWithJSValueRef:m_error.get() inContext:toJSContext(m_error.context().get())];
 }
 
-void WebExtensionAPIPort::setError(JSValue *error)
+void WebExtensionAPIPort::setError(JSContextRef context, JSValueRef error)
 {
-    m_error = error;
+    m_error = Protected(JSContextGetGlobalContext(context), error);
 }
 
 void WebExtensionAPIPort::postMessage(WebFrame& frame, const String& message, NSString **outExceptionString)

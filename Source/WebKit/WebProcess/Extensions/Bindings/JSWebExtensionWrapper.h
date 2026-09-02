@@ -203,6 +203,7 @@ JSValueRef fromJSON(JSContextRef, RefPtr<JSON::Value>);
 JSValueRef fromObject(JSContextRef, HashMap<String, Protected<JSValueRef>>&&);
 
 JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
+JSValueRef toJSValueRef(JSContextRef, URL, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 
 JSValueRef toWindowObject(JSContextRef, WebFrame&);
 JSValueRef toWindowObject(JSContextRef, WebPage&);

@@ -212,6 +212,7 @@ private:
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
     void dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason, String previousVersion);
     void dispatchRuntimeStartupEvent();
+    bool matchesTarget(WebFrame&, const std::optional<WebExtensionMessageTargetParameters>&);
 
     // Storage
     void setStorageAccessLevel(WebExtensionDataType, WebExtensionStorageAccessLevel);

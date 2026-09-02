@@ -440,13 +440,6 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
     return result;
 }
 
-void callAfterRandomDelay(Function<void()>&& completionHandler)
-{
-    // Random delay between 100 and 500 milliseconds.
-    auto delay = Seconds::fromMilliseconds(100) + Seconds::fromMilliseconds((static_cast<double>(arc4random()) / static_cast<double>(UINT32_MAX)) * 400);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), mainDispatchQueueSingleton(), makeBlockPtr(WTF::move(completionHandler)).get());
-}
-
 NSDate *toAPI(const WallTime& time)
 {
     if (time.isNaN())
