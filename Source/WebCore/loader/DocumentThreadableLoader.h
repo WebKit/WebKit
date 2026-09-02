@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -131,21 +131,21 @@ class CachedRawResource;
         WeakPtr<ThreadableLoaderClient> m_client;
         WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
         ThreadableLoaderOptions m_options;
-        bool m_responsesCanBeOpaque { true };
         RefPtr<SecurityOrigin> m_origin;
         String m_referrer;
-        bool m_sameOriginRequest;
-        bool m_simpleRequest;
-        bool m_async;
-        bool m_delayCallbacksForIntegrityCheck;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
         std::optional<CrossOriginEmbedderPolicy> m_crossOriginEmbedderPolicy;
         RefPtr<CrossOriginPreflightChecker> m_preflightChecker;
         std::optional<HTTPHeaderMap> m_originalHeaders;
         URL m_responseURL;
-
-        ShouldLogError m_shouldLogError;
         std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
+
+        bool m_responsesCanBeOpaque { true };
+        bool m_sameOriginRequest;
+        bool m_simpleRequest;
+        bool m_async;
+        bool m_delayCallbacksForIntegrityCheck;
+        ShouldLogError m_shouldLogError;
     };
 
 } // namespace WebCore

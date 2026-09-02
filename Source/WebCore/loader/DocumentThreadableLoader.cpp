@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
- * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -124,12 +124,12 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_options(options)
     , m_origin(WTF::move(origin))
     , m_referrer(WTF::move(referrer))
+    , m_contentSecurityPolicy(WTF::move(contentSecurityPolicy))
+    , m_crossOriginEmbedderPolicy(WTF::move(crossOriginEmbedderPolicy))
     , m_sameOriginRequest(protect(securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()))
     , m_simpleRequest(true)
     , m_async(blockingBehavior == LoadAsynchronously)
     , m_delayCallbacksForIntegrityCheck(!m_options.integrity.isEmpty())
-    , m_contentSecurityPolicy(WTF::move(contentSecurityPolicy))
-    , m_crossOriginEmbedderPolicy(WTF::move(crossOriginEmbedderPolicy))
     , m_shouldLogError(shouldLogError)
 {
     // Setting a referrer header is only supported in the async code path.
