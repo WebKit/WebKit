@@ -44,6 +44,12 @@ static RemoteCommandListener::CreationFunction& remoteCommandListenerCreationFun
     return creationFunction;
 }
 
+static bool s_mediaPlaybackEnabled { false };
+void RemoteCommandListener::enableMediaPlayback()
+{
+    s_mediaPlaybackEnabled = true;
+}
+
 void RemoteCommandListener::setCreationFunction(CreationFunction&& function)
 {
     remoteCommandListenerCreationFunction() = WTF::move(function);
@@ -65,8 +71,12 @@ void RemoteCommandListener::resetCreationFunction()
 
 RefPtr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
+    if (!s_mediaPlaybackEnabled)
+        return nullptr;
+
     if (!remoteCommandListenerCreationFunction())
         resetCreationFunction();
+
     return remoteCommandListenerCreationFunction()(client);
 }
 

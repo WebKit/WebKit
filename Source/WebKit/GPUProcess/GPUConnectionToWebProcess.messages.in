@@ -55,8 +55,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
-    CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
-    ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+    [EnabledBy=MediaPlaybackEnabled] CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+    [EnabledBy=MediaPlaybackEnabled] ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
     ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
 #if USE(GRAPHICS_LAYER_WC)
     CreateWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering) AllowedWhenWaitingForSyncReply

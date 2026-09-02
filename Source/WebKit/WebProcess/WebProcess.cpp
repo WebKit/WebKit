@@ -2671,6 +2671,8 @@ void WebProcess::enableMediaPlayback()
 #if ENABLE(ROUTING_ARBITRATION)
     lazyInitialize(m_routingArbitrator, makeUniqueWithoutRefCountedCheck<AudioSessionRoutingArbitrator>(*this));
 #endif
+
+    RemoteCommandListener::enableMediaPlayback();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

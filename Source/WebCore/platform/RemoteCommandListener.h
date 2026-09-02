@@ -46,6 +46,7 @@ public:
     using CreationFunction = Function<RefPtr<RemoteCommandListener>(RemoteCommandListenerClient&)>;
     static void setCreationFunction(CreationFunction&&);
     static void resetCreationFunction();
+    static void enableMediaPlayback();
 
     void addSupportedCommand(PlatformMediaSessionRemoteControlCommandType);
     void removeSupportedCommand(PlatformMediaSessionRemoteControlCommandType);
