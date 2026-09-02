@@ -138,7 +138,7 @@ void vp9_highbd_mbpost_proc_across_ip_c(uint16_t *src, int pitch, int rows,
       d[c & 15] = s[c];
 
       if (sumsq * 15 - sum * sum < flimit) {
-        d[c & 15] = (8 + sum + s[c]) >> 4;
+        d[c & 15] = (uint16_t)((8 + sum + s[c]) >> 4);
       }
 
       s[c - 8] = d[(c - 8) & 15];
@@ -173,7 +173,7 @@ void vp9_highbd_mbpost_proc_down_c(uint16_t *dst, int pitch, int rows, int cols,
       d[r & 15] = s[0];
 
       if (sumsq * 15 - sum * sum < flimit) {
-        d[r & 15] = (rv2[r & 127] + sum + s[0]) >> 4;
+        d[r & 15] = (uint16_t)((rv2[r & 127] + sum + s[0]) >> 4);
       }
 
       s[-8 * pitch] = d[(r - 8) & 15];
@@ -302,7 +302,9 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
   const int q = VPXMIN(105, cm->lf.filter_level * 2);
   YV12_BUFFER_CONFIG *const ppbuf = &cm->post_proc_buffer;
   struct postproc_state *const ppstate = &cm->postproc_state;
-  const int generated_noise_size = unscaled_width + 256;
+  int generated_noise_size = unscaled_width + 256;
+  int pp_width = cm->width;
+  int pp_height = cm->height;
 
   if (!cm->frame_to_show) return -1;
 
@@ -342,31 +344,33 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
     ppstate->prev_mi = ppstate->prev_mip + cm->mi_stride + 1;
   }
 
-  // Allocate post_proc_buffer_int if needed.
-  if ((flags & VP9D_MFQE) && !cm->post_proc_buffer_int.buffer_alloc) {
-    if ((flags & VP9D_DEMACROBLOCK) || (flags & VP9D_DEBLOCK)) {
-      const int width = ALIGN_POWER_OF_TWO(cm->width, 4);
-      const int height = ALIGN_POWER_OF_TWO(cm->height, 4);
+  // Allocate/resize post_proc_buffer_int if needed.
+  if ((flags & VP9D_MFQE) &&
+      ((flags & VP9D_DEMACROBLOCK) || (flags & VP9D_DEBLOCK))) {
+    // Keep postproc and noise buffer sizes in sync as the dimensions from the
+    // buffers are used interchangeably.
+    pp_width = ALIGN_POWER_OF_TWO(cm->width, 4);
+    pp_height = ALIGN_POWER_OF_TWO(cm->height, 4);
+    generated_noise_size = pp_width + 256;
 
-      if (vpx_alloc_frame_buffer(&cm->post_proc_buffer_int, width, height,
-                                 cm->subsampling_x, cm->subsampling_y,
+    if (vpx_alloc_frame_buffer(&cm->post_proc_buffer_int, pp_width, pp_height,
+                               cm->subsampling_x, cm->subsampling_y,
 #if CONFIG_VP9_HIGHBITDEPTH
-                                 cm->use_highbitdepth,
+                               cm->use_highbitdepth,
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-                                 VP9_ENC_BORDER_IN_PIXELS,
-                                 cm->byte_alignment) < 0) {
-        vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
-                           "Failed to allocate MFQE framebuffer");
-      }
-
-      // Ensure that postproc is set to flat image so that post proc
-      // doesn't pull random data in from edge.
-      memset(cm->post_proc_buffer_int.buffer_alloc, 128,
-             cm->post_proc_buffer_int.frame_size);
+                               VP9_ENC_BORDER_IN_PIXELS,
+                               cm->byte_alignment) < 0) {
+      vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
+                         "Failed to allocate MFQE framebuffer");
     }
+
+    // Ensure that postproc is set to flat image so that post proc
+    // doesn't pull random data in from edge.
+    memset(cm->post_proc_buffer_int.buffer_alloc, 128,
+           cm->post_proc_buffer_int.frame_size);
   }
 
-  if (vpx_realloc_frame_buffer(&cm->post_proc_buffer, cm->width, cm->height,
+  if (vpx_realloc_frame_buffer(&cm->post_proc_buffer, pp_width, pp_height,
                                cm->subsampling_x, cm->subsampling_y,
 #if CONFIG_VP9_HIGHBITDEPTH
                                cm->use_highbitdepth,
@@ -380,13 +384,14 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
          cm->post_proc_buffer.frame_size);
 
   if (flags & (VP9D_DEMACROBLOCK | VP9D_DEBLOCK)) {
+    const int limits_size = ALIGN_POWER_OF_TWO(unscaled_width, 4);
     if (!cm->postproc_state.limits ||
-        cm->postproc_state.limits_size < unscaled_width) {
+        cm->postproc_state.limits_size < limits_size) {
       if (cm->postproc_state.limits) vpx_free(cm->postproc_state.limits);
       cm->postproc_state.limits =
-          vpx_calloc(unscaled_width, sizeof(*cm->postproc_state.limits));
+          vpx_calloc(limits_size, sizeof(*cm->postproc_state.limits));
       if (!cm->postproc_state.limits) return 1;
-      cm->postproc_state.limits_size = unscaled_width;
+      cm->postproc_state.limits_size = limits_size;
     }
   }
 
@@ -402,7 +407,8 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
   }
 
   if ((flags & VP9D_MFQE) && cm->current_video_frame >= 2 &&
-      ppstate->last_frame_valid && cm->bit_depth == 8 &&
+      ppstate->last_frame_valid && cm->width == cm->prev_frame->buf.y_width &&
+      cm->height == cm->prev_frame->buf.y_height && cm->bit_depth == 8 &&
       ppstate->last_base_qindex <= last_q_thresh &&
       cm->base_qindex - ppstate->last_base_qindex >= q_diff_thresh) {
     vp9_mfqe(cm);
@@ -446,8 +452,8 @@ int vp9_post_proc_frame(struct VP9Common *cm, YV12_BUFFER_CONFIG *dest,
       ppstate->last_noise = noise_level;
     }
     vpx_plane_add_noise(ppbuf->y_buffer, ppstate->generated_noise,
-                        ppstate->clamp, ppstate->clamp, ppbuf->y_width,
-                        ppbuf->y_height, ppbuf->y_stride);
+                        ppstate->clamp, ppstate->clamp, ppbuf->y_crop_width,
+                        ppbuf->y_crop_height, ppbuf->y_stride);
   }
 
   *dest = *ppbuf;

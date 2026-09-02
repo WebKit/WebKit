@@ -13,6 +13,17 @@
 #include "./vpx_dsp_rtcd.h"
 #include "vpx_dsp/mips/macros_msa.h"
 
+static INLINE void add_noise(uint8_t *pos, const int8_t *ref, int blackclamp,
+                             int whiteclamp, int bothclamp) {
+  int v = *pos;
+
+  v = clamp(v - blackclamp, 0, 255);
+  v = clamp(v + bothclamp, 0, 255);
+  v = clamp(v - whiteclamp, 0, 255);
+
+  *pos = v + *ref;
+}
+
 void vpx_plane_add_noise_msa(uint8_t *start_ptr, const int8_t *noise,
                              int blackclamp, int whiteclamp, int width,
                              int height, int32_t pitch) {
@@ -49,6 +60,21 @@ void vpx_plane_add_noise_msa(uint8_t *start_ptr, const int8_t *noise,
       pos1_ptr += 16;
       ref0_ptr += 16;
       ref1_ptr += 16;
+    }
+
+    const int tail_width = width & 15;
+    if (tail_width) {
+      const int bothclamp = blackclamp + whiteclamp;
+      int k = 0;
+      do {
+        add_noise(pos0_ptr, ref0_ptr, blackclamp, whiteclamp, bothclamp);
+        ++pos0_ptr;
+        ++ref0_ptr;
+
+        add_noise(pos1_ptr, ref1_ptr, blackclamp, whiteclamp, bothclamp);
+        ++pos1_ptr;
+        ++ref1_ptr;
+      } while (++k != tail_width);
     }
   }
 }

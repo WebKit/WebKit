@@ -68,6 +68,7 @@ TEST(VpxImageTest, VpxImgAllocNv12) {
   vpx_img_fmt_t format = VPX_IMG_FMT_NV12;
   unsigned int align = 32;
   EXPECT_EQ(vpx_img_alloc(&img, format, kWidth, kHeight, align), &img);
+  EXPECT_EQ(img.x_chroma_shift, 1u);
   EXPECT_EQ(img.stride[VPX_PLANE_U], img.stride[VPX_PLANE_Y]);
   EXPECT_EQ(img.stride[VPX_PLANE_V], img.stride[VPX_PLANE_U]);
   EXPECT_EQ(img.planes[VPX_PLANE_V], img.planes[VPX_PLANE_U] + 1);

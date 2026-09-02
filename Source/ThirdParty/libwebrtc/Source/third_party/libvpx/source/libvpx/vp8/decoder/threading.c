@@ -47,6 +47,15 @@ static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
   for (i = 0; i < count; ++i) {
     MACROBLOCKD *mbd = &mbrd[i].mbd;
+
+    // The worker MACROBLOCKDs persist across frames, so reset the per-frame
+    // error state in line with the main thread (see vp8_decode_frame()).
+    // This should only be done for keyframes or when error concealment
+    // is active.
+    if (pc->frame_type == KEY_FRAME || pbi->ec_active) {
+      mbd->corrupted = 0;
+    }
+
     mbd->subpixel_predict = xd->subpixel_predict;
     mbd->subpixel_predict8x4 = xd->subpixel_predict8x4;
     mbd->subpixel_predict8x8 = xd->subpixel_predict8x8;
@@ -228,7 +237,7 @@ static void mt_decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
           vp8_short_inv_walsh4x4(&b->dqcoeff[0], xd->qcoeff);
           memset(b->qcoeff, 0, 16 * sizeof(b->qcoeff[0]));
         } else {
-          b->dqcoeff[0] = b->qcoeff[0] * xd->dequant_y2[0];
+          b->dqcoeff[0] = (short)(b->qcoeff[0] * xd->dequant_y2[0]);
           vp8_short_inv_walsh4x4_1(&b->dqcoeff[0], xd->qcoeff);
           memset(b->qcoeff, 0, 2 * sizeof(b->qcoeff[0]));
         }

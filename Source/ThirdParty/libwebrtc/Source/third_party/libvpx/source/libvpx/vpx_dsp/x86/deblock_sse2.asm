@@ -11,6 +11,8 @@
 
 %include "vpx_ports/x86_abi_support.asm"
 
+extern sym(vpx_post_proc_down_and_across_mb_row_c)
+
 ;macro in deblock functions
 %macro FIRST_2_ROWS 0
         movdqa      xmm4,       xmm0
@@ -97,6 +99,15 @@ SECTION .text
 ;)
 globalsym(vpx_post_proc_down_and_across_mb_row_sse2)
 sym(vpx_post_proc_down_and_across_mb_row_sse2):
+%if ABI_IS_32BIT
+    test        dword [esp + 20], 15
+%elif LIBVPX_YASM_WIN64
+    test        dword [rsp + 40], 15
+%else
+    test        r8d, 15
+%endif
+    jnz         .dispatch_c
+
     push        rbp
     mov         rbp, rsp
     SHADOW_ARGS_TO_STACK 7
@@ -230,6 +241,9 @@ sym(vpx_post_proc_down_and_across_mb_row_sse2):
     UNSHADOW_ARGS
     pop         rbp
     ret
+
+.dispatch_c:
+    jmp         sym(vpx_post_proc_down_and_across_mb_row_c) WRT_PLT
 %undef flimit
 
 

@@ -19,7 +19,7 @@ void vp8_dequantize_b_c(BLOCKD *d, short *DQC) {
   short *Q = d->qcoeff;
 
   for (i = 0; i < 16; ++i) {
-    DQ[i] = Q[i] * DQC[i];
+    DQ[i] = (short)(Q[i] * DQC[i]);
   }
 }
 

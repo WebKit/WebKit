@@ -50,6 +50,8 @@ sym(vpx_plane_add_noise_sse2):
     movsxd  rcx, dword arg(4) ;[Width]
     mov     rsi, arg(0) ;Pos
     xor     rax, rax
+    and     rcx, -16
+    jz      .addnoise_tail_loop
 
 .addnoise_nextset:
       movdqu      xmm1,[rsi+rax]         ; get the source
@@ -65,8 +67,34 @@ sym(vpx_plane_add_noise_sse2):
       add         rax,16                 ; move to the next line
 
       cmp         rax, rcx
-      jl          .addnoise_nextset
+      jne         .addnoise_nextset
 
+    xor     rcx, rcx
+
+.addnoise_tail_loop:
+    cmp     eax, dword arg(4)
+    jge     .addnoise_next_row
+
+    movzx   edx, byte [rsi+rax]
+
+    sub     edx, dword arg(2)  ; subtract black clamp
+    cmovs   edx, ecx
+
+    add     edx, dword arg(2)
+    add     edx, dword arg(3)  ; add both clamp
+    cmp     edx, 255
+    cmovg   edx, dword [GLOBAL(max255_val)]
+
+    sub     edx, dword arg(3)  ; subtract white clamp
+    cmovs   edx, ecx
+
+    add     dl, byte [rdi+rax] ; add noise
+    mov     [rsi+rax], dl
+
+    inc     rax
+    jmp     .addnoise_tail_loop
+
+.addnoise_next_row:
     movsxd  rax, dword arg(6) ; Pitch
     add     arg(0), rax ; Start += Pitch
     sub     dword arg(5), 1   ; Height -= 1
@@ -82,6 +110,8 @@ sym(vpx_plane_add_noise_sse2):
 
 SECTION_RODATA
 align 16
+max255_val:
+    dd 255
 rd42:
     times 8 dw 0x04
 four8s:

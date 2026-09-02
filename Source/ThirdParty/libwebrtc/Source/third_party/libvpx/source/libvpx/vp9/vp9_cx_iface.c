@@ -2186,6 +2186,7 @@ static vpx_codec_err_t ctrl_set_quantizer_one_pass(vpx_codec_alg_priv_t *ctx,
   struct vp9_extracfg extra_cfg = ctx->extra_cfg;
   vpx_codec_err_t res;
 
+  if (cfg->g_pass != VPX_RC_ONE_PASS) return VPX_CODEC_INVALID_PARAM;
   if (qp < 0 || qp > 63) return VPX_CODEC_INVALID_PARAM;
 
   cfg->rc_min_quantizer = cfg->rc_max_quantizer = qp;
