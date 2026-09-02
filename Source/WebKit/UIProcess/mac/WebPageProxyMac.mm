@@ -32,6 +32,7 @@
 #import "APIWebsitePolicies.h"
 #import "CocoaImage.h"
 #import "Connection.h"
+#import "FirstPartyAuthority.h"
 #import "FrameInfoData.h"
 #import "ImageAnalysisUtilities.h"
 #import "InsertTextOptions.h"
@@ -263,7 +264,10 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), WTF::move(callbackFunction), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), [callbackFunction = WTF::move(callbackFunction)](IPC::Untrusted<WebCore::AttributedString>&& untrustedString, const EditingRange& range) mutable {
+        // Attributed text of the page's own contents; the URLs in it are its links.
+        callbackFunction(WTF::move(untrustedString).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive), range);
+    }, webPageIDInMainFrameProcess());
 }
 
 static constexpr auto timeoutForPasteboardSyncIPC = 5_s;
@@ -941,18 +945,20 @@ void WebPageProxy::pdfToggleAccessibilityDisplayMode(PDFPluginIdentifier identif
 
 void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SavePDF(identifier), Messages::WebPage::SavePDF::Reply { [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
-        savePDFToFileInDownloadsFolder(WTF::move(suggestedFilename), WTF::move(originatingURL), dataReference);
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SavePDF(identifier), Messages::WebPage::SavePDF::Reply { [this, protectedThis = Ref { *this }] (String&& suggestedFilename, IPC::Untrusted<URL>&& untrustedOriginatingURL, std::span<const uint8_t> dataReference) {
+        // Recorded as the where-from of the file the user is saving.
+        savePDFToFileInDownloadsFolder(WTF::move(suggestedFilename), WTF::move(untrustedOriginatingURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive), dataReference);
     } });
 }
 
 // FIXME: This is a misnomer since we conflate Preview.app with the default PDF viewer. Consider renaming.
 void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::OpenPDFWithPreview(identifier), Messages::WebPage::OpenPDFWithPreview::Reply { [this, protectedThis = Ref { *this }](String&& suggestedFilename, std::optional<FrameInfoData>&& frameInfo, std::span<const uint8_t> data) {
-        if (!frameInfo)
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::OpenPDFWithPreview(identifier), Messages::WebPage::OpenPDFWithPreview::Reply { [this, protectedThis = Ref { *this }, frameID](String&& suggestedFilename, IPC::Untrusted<std::optional<FrameInfoData>>&& untrustedFrameInfo, std::span<const uint8_t> data) {
+        auto validatedFrameInfo = WTF::move(untrustedFrameInfo).validate(FirstPartyStructAuthority { processContainingFrame(frameID) });
+        if (!validatedFrameInfo || !*validatedFrameInfo)
             return;
-        savePDFToTemporaryFolderAndOpenWithNativeApplication(WTF::move(suggestedFilename), WTF::move(*frameInfo), data);
+        savePDFToTemporaryFolderAndOpenWithNativeApplication(WTF::move(suggestedFilename), WTF::move(**validatedFrameInfo), data);
     } });
 }
 

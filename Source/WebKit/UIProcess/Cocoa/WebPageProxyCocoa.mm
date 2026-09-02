@@ -926,7 +926,10 @@ void WebPageProxy::createTextFragmentDirectiveFromSelection(CompletionHandler<vo
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CreateTextFragmentDirectiveFromSelection(), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CreateTextFragmentDirectiveFromSelection(), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<URL>&& untrustedURL) mutable {
+        // A link to the page's own selection, produced for the user to copy.
+        completionHandler(WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::getTextFragmentRanges(CompletionHandler<void(const Vector<EditingRange>&&)>&& completionHandler)
@@ -1516,7 +1519,10 @@ WebCore::WritingTools::Behavior WebPageProxy::writingToolsBehavior() const
 
 void WebPageProxy::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, Vector<WebCore::JSHandleIdentifier>&& preservedNodeIdentifiers, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::WillBeginWritingToolsSession(session, WTF::move(preservedNodeIdentifiers)), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::WillBeginWritingToolsSession(session, WTF::move(preservedNodeIdentifiers)), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<Vector<WebCore::WritingTools::Context>>&& untrustedContexts) mutable {
+        // Attributed text of the page's own contents, handed to Writing Tools.
+        completionHandler(WTF::move(untrustedContexts).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
@@ -2035,7 +2041,9 @@ void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame,
 
     for (auto& [process, frameIDs] : processFrames) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](IPC::Untrusted<HashMap<FrameIdentifier, Ref<LegacyWebArchive>>>&& untrustedResult) {
+            // An archive of the page's own contents, handed to the client that asked for it.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (result.size() > frameIDs.size())
                 return;
 
@@ -2146,7 +2154,9 @@ void WebPageProxy::getAttributedStringsForRemoteFrames(IPC::Connection& connecti
     Ref aggregator = AttributedStringMapCallbackAggregator::create(WTF::move(completionHandler));
     for (auto& [process, frameIDs] : processFrames) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedStringForFrames(frameIDs), [frameIDs, aggregator](auto&& result) {
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedStringForFrames(frameIDs), [frameIDs, aggregator](IPC::Untrusted<HashMap<FrameIdentifier, AttributedString>>&& untrustedResult) {
+            // Attributed text of the page's own contents; the URLs in it are its links.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (result.size() <= frameIDs.size())
                 aggregator->addResult(WTF::move(result));
         }, webPageIDInProcess(protectedProcess));

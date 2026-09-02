@@ -194,7 +194,10 @@ void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const
     if (!hasRunningProcess())
         return callback({ });
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), WTF::move(callback), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), [callback = WTF::move(callback)](IPC::Untrusted<std::optional<FocusedElementInformation>>&& untrustedInformation) mutable {
+        // Describes the focused form element so the UI process can present an input view for it.
+        callback(WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
@@ -1333,7 +1336,10 @@ void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextR
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<DocumentEditingContext>&& untrustedContext) mutable {
+        // The text around the selection, handed to the keyboard as editing context.
+        completionHandler(WTF::move(untrustedContext).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 #if ENABLE(DRAG_SUPPORT)

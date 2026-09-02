@@ -184,11 +184,12 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
     std::optional<std::span<const uint8_t>> ipcData;
     if (data)
         ipcData = data->span();
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTF::move(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](bool wasProcessed, std::optional<NotificationPayload>&& resultPayload) mutable {
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTF::move(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](bool wasProcessed, IPC::Untrusted<std::optional<NotificationPayload>>&& untrustedResultPayload) mutable {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !--protectedThis->m_processingFunctionalEventCount)
             protectedThis->sendToParentProcess(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { protectedThis->webProcessIdentifier() });
 
-        callback(wasProcessed, WTF::move(resultPayload));
+        // The only URL is where clicking the notification will navigate.
+        callback(wasProcessed, WTF::move(untrustedResultPayload).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget));
     });
 }
 

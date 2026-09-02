@@ -4706,9 +4706,9 @@ void WebPageProxy::handleMouseEvent(Ref<NativeWebMouseEvent>&& event)
 
 void WebPageProxy::dispatchMouseDidMoveOverElementAsynchronously(Ref<NativeWebMouseEvent>&& event)
 {
-    sendWithAsyncReply(Messages::WebPage::PerformHitTestForMouseEvent { WTF::move(event) }, [this, protectedThis = Ref { *this }] (IPC::Connection* connection, WebHitTestResultData&& hitTestResult, OptionSet<WebEventModifier> modifiers) {
+    sendWithAsyncReply(Messages::WebPage::PerformHitTestForMouseEvent { WTF::move(event) }, [this, protectedThis = Ref { *this }] (IPC::Connection* connection, IPC::Untrusted<WebHitTestResultData>&& untrustedHitTestResult, OptionSet<WebEventModifier> modifiers) {
         if (connection && !isClosed())
-            mouseDidMoveOverElement(*connection, IPC::Untrusted<WebHitTestResultData> { WTF::move(hitTestResult) }, modifiers);
+            mouseDidMoveOverElement(*connection, WTF::move(untrustedHitTestResult), modifiers);
     });
 }
 
@@ -7676,13 +7676,14 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         activity = protect(processContainingFrame(frameID)->throttler())->foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
 #endif
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldDataForProcess(processContainingFrame(frameID)), wantsResult), [activity = WTF::move(activity), loggingIdentifier, callbackFunction = WTF::move(callbackFunction)] (auto&& result) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldDataForProcess(processContainingFrame(frameID)), wantsResult), [activity = WTF::move(activity), loggingIdentifier, callbackFunction = WTF::move(callbackFunction)] (IPC::Untrusted<std::expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>>&& untrustedResult) mutable {
 #if PLATFORM(COCOA)
         WTFEndSignpost(loggingIdentifier, EvaluateJavaScript);
 #else
         UNUSED_PARAM(loggingIdentifier);
 #endif
-        callbackFunction(WTF::move(result));
+        // The result of a script the client asked to run; the UI process reads nothing out of it.
+        callbackFunction(WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
     });
 }
 
@@ -7719,8 +7720,9 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const We
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedString(), [completionHandler = WTF::move(completionHandler), activity = protect(legacyMainFrameProcess().throttler())->foregroundActivity("getContentsAsAttributedString"_s)](const WebCore::AttributedString& string) mutable {
-        completionHandler(string);
+    sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedString(), [completionHandler = WTF::move(completionHandler), activity = protect(legacyMainFrameProcess().throttler())->foregroundActivity("getContentsAsAttributedString"_s)](IPC::Untrusted<WebCore::AttributedString>&& untrustedString) mutable {
+        // Attributed text of the page's own contents; the URLs in it are its links.
+        completionHandler(WTF::move(untrustedString).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
     });
 }
 #endif
@@ -7755,7 +7757,10 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
 
     Ref aggregator = FrameTreeCallbackAggregator::create(WTF::move(completionHandler));
     forEachWebContentProcess([&] (auto& process, auto pageID) {
-        process.sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (std::optional<FrameTreeNodeData>&& data) {
+        process.sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (IPC::Untrusted<std::optional<FrameTreeNodeData>>&& untrustedData) {
+        // A frame tree describes frames in other processes as well as this one's own, so no single
+        // authority speaks for all of its origins.
+        auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::MixedFieldAuthority);
             if (data)
                 aggregator->addFrameTree(WTF::move(*data));
         }, pageID);
@@ -7790,7 +7795,10 @@ void WebPageProxy::getFrameTreesForBackForwardItem(int relativeIndex, Completion
     auto query = [&] (WebProcessProxy& process, WebCore::PageIdentifier pageID) {
         if (!visitedProcesses.add(process.coreProcessIdentifier()).isNewEntry)
             return;
-        process.sendWithAsyncReply(Messages::WebPage::GetFrameTreeForBackForwardCacheEntry(mainFrameItemID), [aggregator] (std::optional<FrameTreeNodeData>&& data) {
+        process.sendWithAsyncReply(Messages::WebPage::GetFrameTreeForBackForwardCacheEntry(mainFrameItemID), [aggregator] (IPC::Untrusted<std::optional<FrameTreeNodeData>>&& untrustedData) {
+        // A frame tree describes frames in other processes as well as this one's own, so no single
+        // authority speaks for all of its origins.
+        auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::MixedFieldAuthority);
             if (data)
                 aggregator->addFrameTree(WTF::move(*data));
         }, pageID);
@@ -12293,7 +12301,9 @@ void WebPageProxy::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::o
 
     if (!hasRunningProcess())
         launchProcess(Site(aboutBlankURL()), ProcessLaunchReason::InitialProcess);
-    sendWithAsyncReply(Messages::WebPage::LoadAndDecodeImage(request, sizeConstraint, maximumBytesFromNetwork), [preventProcessShutdownScope = protect(legacyMainFrameProcess())->shutdownPreventingScope(), completionHandler = WTF::move(completionHandler)] (std::expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError>&& result) mutable {
+    sendWithAsyncReply(Messages::WebPage::LoadAndDecodeImage(request, sizeConstraint, maximumBytesFromNetwork), [preventProcessShutdownScope = protect(legacyMainFrameProcess())->shutdownPreventingScope(), completionHandler = WTF::move(completionHandler)] (IPC::Untrusted<std::expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError>>&& untrustedResult) mutable {
+        // The only URL is the failing URL of an error report for a load the UI process asked for.
+        auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
         completionHandler(WTF::move(result));
     });
 }
@@ -16208,7 +16218,16 @@ Awaitable<std::optional<WebCore::FloatRect>> WebPageProxy::convertRectToMainFram
 
 void WebPageProxy::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, API::ContentWorld& world, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completionHandler)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point, world.worldDataForProcess(processContainingFrame(frameID))), [weakThis = WeakPtr { *this }, world = Ref { world }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point, world.worldDataForProcess(processContainingFrame(frameID))), [weakThis = WeakPtr { *this }, world = Ref { world }, frameID, completionHandler = WTF::move(completionHandler)] (IPC::Untrusted<NodeHitTestResult>&& untrustedResult) mutable {
+        RefPtr validatingThis = weakThis.get();
+        if (!validatingThis)
+            return completionHandler(std::nullopt);
+
+        auto validatedResult = WTF::move(untrustedResult).validate(FirstPartyStructAuthority { validatingThis->processContainingFrame(frameID) });
+        if (!validatedResult)
+            return completionHandler(std::nullopt);
+
+        auto result = WTF::move(*validatedResult);
         WTF::switchOn(WTF::move(result.variant), [&] (std::monostate) {
             completionHandler(std::nullopt);
         }, [&] (WebKit::NodeHitTestResult::RemoteFrameInfo&& info) {
@@ -16351,14 +16370,22 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback));
 }
 #elif PLATFORM(GTK)
+// A printing failure names only the URL that could not be printed.
+CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, IPC::Untrusted<WebCore::ResourceError>&&)> WebPageProxy::printingErrorReply(CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, WebCore::ResourceError&&)>&& callback)
+{
+    return [callback = WTF::move(callback)](std::optional<WebCore::SharedMemoryHandle>&& data, IPC::Untrusted<WebCore::ResourceError>&& untrustedError) mutable {
+        callback(WTF::move(data), WTF::move(untrustedError).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    };
+}
+
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy& frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
     auto frameID = frame.frameID();
     m_printingFrameID = frameID;
     if (m_isPerformingDOMPrintOperation)
-        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frameID, printInfo), printingErrorReply(WTF::move(callback)), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
-        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrinting(frameID, printInfo), WTF::move(callback));
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrinting(frameID, printInfo), printingErrorReply(WTF::move(callback)));
 }
 #endif
 
@@ -17390,7 +17417,9 @@ void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection,
             return;
         }
         if (auto parentFrameID = result.frameInfo->parentFrameID) {
-            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, WebCore::DictionaryPopupInfo popupInfo) mutable {
+            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, IPC::Untrusted<WebCore::DictionaryPopupInfo>&& untrustedPopupInfo) mutable {
+                // Describes a dictionary lookup of a word in the page's own text.
+                auto popupInfo = WTF::move(untrustedPopupInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
                 result.dictionaryPopupInfo = popupInfo;
                 if (!connection)
                     return;
@@ -18202,7 +18231,11 @@ Ref<API::Attachment> WebPageProxy::ensureAttachment(const String& identifier)
 #if ENABLE(APPLICATION_MANIFEST)
 void WebPageProxy::getApplicationManifest(CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::GetApplicationManifest(), WTF::move(callback));
+    sendWithAsyncReply(Messages::WebPage::GetApplicationManifest(), [callback = WTF::move(callback)](IPC::Untrusted<std::optional<WebCore::ApplicationManifest>>&& untrustedManifest) mutable {
+        // The page's own manifest, whose URLs may legitimately name other origins, handed to the
+        // client that asked for it.
+        callback(WTF::move(untrustedManifest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    });
 }
 #endif
 
@@ -18824,7 +18857,10 @@ void WebPageProxy::getLoadedSubresourceDomains(CompletionHandler<void(Vector<Reg
 
     Ref callbackAggregator = GetLoadedSubresourceDomainsCallbackAggregator::create(WTF::move(completionHandler));
     forEachWebContentProcess([callbackAggregator](auto& process, auto pageID) {
-        process.sendWithAsyncReply(Messages::WebPage::GetLoadedSubresourceDomains(), [callbackAggregator](Vector<RegistrableDomain>&& subresourceDomains) {
+        process.sendWithAsyncReply(Messages::WebPage::GetLoadedSubresourceDomains(), [callbackAggregator](IPC::Untrusted<Vector<RegistrableDomain>>&& untrustedSubresourceDomains) {
+            // The point of the question is the domains the page loaded from, which are other
+            // origins by nature.
+            auto subresourceDomains = WTF::move(untrustedSubresourceDomains).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             callbackAggregator->didGetLoadedSubresourceDomains(WTF::move(subresourceDomains));
         }, pageID);
     });
@@ -19742,7 +19778,9 @@ void WebPageProxy::requestTargetedElement(const API::TargetedElementRequest& req
     if (!hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebPage::RequestTargetedElement(request.makeRequest(*this)), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
+    sendWithAsyncReply(Messages::WebPage::RequestTargetedElement(request.makeRequest(*this)), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](IPC::Untrusted<Vector<WebCore::TargetedElementInfo>>&& untrustedElements) mutable {
+        // Describes elements of the page's own content for the client that asked about them.
+        auto elements = WTF::move(untrustedElements).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completion({ });
@@ -19758,7 +19796,9 @@ void WebPageProxy::requestAllTargetableElements(float hitTestingInterval, Comple
     if (!hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebPage::RequestAllTargetableElements(hitTestingInterval), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](Vector<Vector<WebCore::TargetedElementInfo>>&& elements) mutable {
+    sendWithAsyncReply(Messages::WebPage::RequestAllTargetableElements(hitTestingInterval), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](IPC::Untrusted<Vector<Vector<WebCore::TargetedElementInfo>>>&& untrustedElements) mutable {
+        // Describes elements of the page's own content for the client that asked about them.
+        auto elements = WTF::move(untrustedElements).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completion({ });
