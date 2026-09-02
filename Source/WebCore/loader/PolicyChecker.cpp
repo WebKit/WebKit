@@ -420,7 +420,11 @@ void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
 
 } // namespace WebCore
 
-#undef IS_ALLOWED
 #undef PAGE_ID
+#undef PAGE_ID_WITH_THIS
 #undef FRAME_ID
+#undef FRAME_ID_WITH_THIS
+#undef POLICYCHECKER_RELEASE_LOG_WITH_THIS
 #undef POLICYCHECKER_RELEASE_LOG
+#undef POLICYCHECKER_RELEASE_LOG_FORWARDABLE
+#undef POLICYCHECKER_RELEASE_LOG_FORWARDABLE_WITH_THIS
