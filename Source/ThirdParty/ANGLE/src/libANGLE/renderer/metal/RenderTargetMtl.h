@@ -50,9 +50,13 @@ class RenderTargetMtl final : public FramebufferAttachmentRenderTarget
     uint32_t getRenderSamples() const;
     const mtl::Format &getFormat() const { return mFormat; }
 
-    void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
+    void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut,
+                                    gl::SrgbWriteControlMode srgbWriteControlMode =
+                                        gl::SrgbWriteControlMode::Default) const;
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
-    void toRenderPassResolveAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
+    void toRenderPassResolveAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut,
+                                           gl::SrgbWriteControlMode srgbWriteControlMode =
+                                               gl::SrgbWriteControlMode::Default) const;
 #endif
 
   private:

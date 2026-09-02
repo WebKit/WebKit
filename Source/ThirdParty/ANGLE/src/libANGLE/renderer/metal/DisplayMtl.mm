@@ -945,6 +945,7 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.textureMirrorClampToEdgeEXT   = true;
     mNativeExtensions.depthClampEXT                 = true;
     mNativeExtensions.rgbxInternalFormatANGLE       = mFeatures.hasTextureSwizzle.enabled;
+    mNativeExtensions.sRGBWriteControlEXT           = true;
 
     // EXT_debug_marker is not implemented yet, but the entry points must be exposed for the
     // Metal backend to be used in Chrome (http://anglebug.com/42263519)
