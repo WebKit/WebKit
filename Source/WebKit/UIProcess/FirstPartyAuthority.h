@@ -60,21 +60,30 @@ public:
 
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData& origin) const
     {
-        return checkUntrustedDomain(WebCore::RegistrableDomain { origin });
+        return checkUntrustedDomain([&] {
+            return WebCore::RegistrableDomain { origin };
+        });
     }
 
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain& domain) const
     {
-        return checkUntrustedDomain(domain);
+        return checkUntrustedDomain([&]() -> const WebCore::RegistrableDomain& {
+            return domain;
+        });
     }
 
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site& site) const
     {
-        return checkUntrustedDomain(site.domain());
+        return checkUntrustedDomain([&]() -> const WebCore::RegistrableDomain& {
+            return site.domain();
+        });
     }
 
 private:
-    std::optional<IPC::ValidationFailure> checkUntrustedDomain(const WebCore::RegistrableDomain& domain) const
+    // Takes the domain as a function rather than a value because deriving one from an origin
+    // consults the public suffix list under a global lock, and the guard below usually discards it.
+    template<typename DomainFunction>
+    std::optional<IPC::ValidationFailure> checkUntrustedDomain(NOESCAPE DomainFunction&& domain) const
     {
         // Without site isolation, WebProcessProxy records only the main frame's site while the
         // process hosts every site the page pulls in, so this question has no useful answer for a
@@ -87,7 +96,7 @@ private:
         if (!preferences.siteIsolationEnabled || preferences.usesSingleWebProcess)
             return std::nullopt;
 
-        return checkFirstPartyAccess(*process, domain);
+        return checkFirstPartyAccess(*process, domain());
     }
 
     // Weak, so that constructing a validator cannot extend a process's life, and a validator that
