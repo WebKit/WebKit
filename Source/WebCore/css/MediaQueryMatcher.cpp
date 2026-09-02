@@ -20,6 +20,8 @@
 #include "config.h"
 #include "MediaQueryMatcher.h"
 
+#include "ContextDestructionObserverInlines.h"
+#include "Document.h"
 #include "DocumentView.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -40,35 +42,42 @@
 namespace WebCore {
 
 MediaQueryMatcher::MediaQueryMatcher(Document& document)
-    : m_document(document)
+    : ContextDestructionObserver(&document)
 {
 }
 
 MediaQueryMatcher::~MediaQueryMatcher() = default;
 
-void MediaQueryMatcher::documentDestroyed()
+void MediaQueryMatcher::contextDestroyed()
 {
-    m_document = nullptr;
     auto mediaQueryLists = std::exchange(m_mediaQueryLists, { });
     for (auto& mediaQueryList : mediaQueryLists) {
         if (mediaQueryList)
             mediaQueryList->detachFromMatcher();
     }
+    ContextDestructionObserver::contextDestroyed();
+}
+
+Document* MediaQueryMatcher::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 AtomString MediaQueryMatcher::mediaType() const
 {
-    if (!m_document || !m_document->frame() || !m_document->frame()->view())
+    RefPtr document = this->document();
+    if (!document || !document->frame() || !document->frame()->view())
         return nullAtom();
 
-    return protect(m_document->frame()->view())->mediaType();
+    return document->frame()->view()->mediaType();
 }
 
 bool MediaQueryMatcher::evaluate(const MQ::MediaQueryList& queries)
 {
-    if (!m_document)
+    RefPtr document = this->document();
+    if (!document)
         return false;
-    return MQ::MediaQueryEvaluator { mediaType(), *m_document }.evaluate(queries);
+    return MQ::MediaQueryEvaluator { mediaType(), *document }.evaluate(queries);
 }
 
 void MediaQueryMatcher::addMediaQueryList(MediaQueryList& list)
@@ -84,34 +93,33 @@ void MediaQueryMatcher::removeMediaQueryList(MediaQueryList& list)
 
 RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
 {
-    if (!m_document)
+    RefPtr document = this->document();
+    if (!document)
         return nullptr;
 
-    auto queries = MQ::MediaQueryParser::parse(query, protect(m_document)->cssParserContext());
+    auto queries = MQ::MediaQueryParser::parse(query, document->cssParserContext());
     bool matches = evaluate(queries);
-    return MediaQueryList::create(protect(*m_document), *this, WTF::move(queries), matches);
+    return MediaQueryList::create(*document, *this, WTF::move(queries), matches);
 }
 
 void MediaQueryMatcher::evaluateAll(EventMode eventMode)
 {
-    ASSERT(m_document);
+    RefPtr document = this->document();
+    ASSERT(document);
 
     ++m_evaluationRound;
 
-    if (!m_document)
+    if (!document)
         return;
 
-    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryMatcher::styleResolverChanged " << m_document->url());
+    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryMatcher::styleResolverChanged " << document->url());
 
-    MQ::MediaQueryEvaluator evaluator { mediaType(), *m_document };
+    MQ::MediaQueryEvaluator evaluator { mediaType(), *document };
 
     auto mediaQueryLists = m_mediaQueryLists;
     for (auto& list : mediaQueryLists) {
-        if (RefPtr protectedList = list.get()) {
+        if (RefPtr protectedList = list.get())
             protectedList->evaluate(evaluator, eventMode);
-            if (!m_document)
-                break;
-        }
     }
 }
 
