@@ -76,7 +76,7 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 #if USE(GRAPHICS_LAYER_WC)
 uint64_t WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl&>(pageClient()).viewWidget();
+    return static_cast<PageClientImpl&>(*pageClient()).viewWidget();
 }
 #endif
 
