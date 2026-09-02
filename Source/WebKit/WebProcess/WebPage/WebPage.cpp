@@ -1455,6 +1455,7 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 
     case FrameTreeSyncDataType::FrameGeometry:
         updateChildFrameVisibleRectsFromParent(*coreFrame);
+        updateRemoteIntersectionObservers();
         break;
 
     default:

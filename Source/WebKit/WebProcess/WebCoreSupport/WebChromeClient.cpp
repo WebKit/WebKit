@@ -2617,10 +2617,4 @@ void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame
 }
 #endif
 
-void WebChromeClient::updateRemoteIntersectionObserversInOtherWebProcesses()
-{
-    if (RefPtr page = m_page.get())
-        page->send(Messages::WebPageProxy::UpdateRemoteIntersectionObserversInOtherWebProcesses());
-}
-
 } // namespace WebKit

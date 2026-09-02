@@ -1009,5 +1009,4 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ExitImmersive() -> ()
 #endif
 
-    UpdateRemoteIntersectionObservers();
 }

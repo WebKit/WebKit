@@ -692,7 +692,6 @@ messages -> WebPageProxy {
     ShowCaptionDisplaySettings(WebCore::MediaPlayerClientIdentifier identifier, struct WebCore::ResolvedCaptionDisplaySettingsOptions options) -> (std::expected<void, WebCore::ExceptionData> response)
 #endif
 
-    UpdateRemoteIntersectionObserversInOtherWebProcesses();
 
     DidCacheBackForwardItem(WebCore::BackForwardItemIdentifier itemID) -> (bool success)
     DidEvictBackForwardItem(WebCore::BackForwardItemIdentifier itemID)

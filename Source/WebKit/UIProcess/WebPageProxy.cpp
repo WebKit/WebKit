@@ -20191,19 +20191,6 @@ WebBackForwardListMessageForwarder& WebPageProxy::backForwardListMessageReceiver
 
 #endif
 
-void WebPageProxy::updateRemoteIntersectionObserversInOtherWebProcesses(IPC::Connection& connection)
-{
-    Ref originWebProcess = WebProcessProxy::fromConnection(connection);
-
-    forEachWebContentProcess([&] (WebProcessProxy& webProcess, WebCore::PageIdentifier pageID) {
-        // Don't send the message back to where it comes from
-        if (originWebProcess == webProcess)
-            return;
-
-        webProcess.send(Messages::WebPage::UpdateRemoteIntersectionObservers(), pageID);
-    });
-}
-
 void WebPageProxy::receivedQualifiedServerTrust(WebCore::CertificateInfo&& serverTrust, WebCore::CertificateInfo&& qualifiedServerTrust)
 {
     Ref pageLoadState = this->pageLoadState();

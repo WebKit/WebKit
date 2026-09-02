@@ -1778,8 +1778,8 @@ public:
     unsigned numberOfIntersectionObservers() const { return m_localIntersectionObservers.size() + m_remoteIntersectionObservers.size(); }
 
     // Update ONLY remote intersection observers registered to this document.
-    // When the main frame updates its rendering, it sends an IPC message to request its child documents
-    // to update their remote observers, which ends up calling this.
+    // This is called when an ancestor frame in another process updates geometry that could affect
+    // IntersectionObservers in this document.
     WEBCORE_EXPORT void updateRemoteIntersectionObservers();
 
     // Update local and remote intersection observers that are registered to this document.

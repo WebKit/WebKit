@@ -881,6 +881,8 @@ public:
     // clipping rects from a parent frame process.
     void updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreFrame);
 
+    void updateRemoteIntersectionObservers();
+
     void updateUserActivationState(const Vector<WebCore::FrameIdentifier>&, MonotonicTime);
     void consumeUserActivations(const Vector<WebCore::FrameIdentifier>&);
     void updateLastHandledUserGestureTimestamp(const Vector<WebCore::FrameIdentifier>&, MonotonicTime);
@@ -2255,8 +2257,6 @@ public:
     bool isPopup() const { return m_isPopup; }
 
     RefPtr<WebCore::Element> focusedElement() const { return m_focusedElement; }
-
-    void updateRemoteIntersectionObservers();
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

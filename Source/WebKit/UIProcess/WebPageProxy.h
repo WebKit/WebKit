@@ -3064,7 +3064,6 @@ public:
     friend class TextExtractionAssertionScope;
     UniqueRef<TextExtractionAssertionScope> NODELETE createTextExtractionAssertionScope();
 
-    void updateRemoteIntersectionObserversInOtherWebProcesses(IPC::Connection&);
 
     bool shouldUseBackForwardCache() const;
 
