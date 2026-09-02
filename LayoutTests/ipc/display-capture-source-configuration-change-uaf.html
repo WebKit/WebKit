@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setUserMediaPermission(true);
+}
+if (window.internals)
+    internals.settings.setScreenCaptureEnabled(true);
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function done() { window.testRunner?.notifyDone(); }
+
+async function main() {
+    if (!window.IPC || !window.testRunner)
+        return done();
+
+    const { CoreIPC, IPCWireTap } = await import('./coreipc.js');
+
+    let idA = null;
+    const tap = new IPCWireTap('GPU', 'Outgoing');
+    tap.tapAll((proc, dest, name, typed, parsed) => {
+        if (name === IPC.messages.UserMediaCaptureManagerProxy_CreateMediaSourceForCaptureDeviceWithConstraints.name)
+            idA = parsed.id;
+    });
+
+    let stream;
+    internals.withUserGesture(() => {
+        stream = navigator.mediaDevices.getDisplayMedia({ video: { width: { max: 3000 }, height: { max: 2000 } } });
+    });
+    await stream;
+    await sleep(300);
+
+    if (idA === null)
+        return done();
+
+    CoreIPC.GPU.UserMediaCaptureManagerProxy.StopProducingData(0, { id: idA });
+    await sleep(100);
+
+    const idB = idA + 1000n;
+    CoreIPC.GPU.UserMediaCaptureManagerProxy.Clone(0, { clonedID: idA, cloneID: idB, pageIdentifier: IPC.pageID });
+    await sleep(50);
+
+    CoreIPC.GPU.UserMediaCaptureManagerProxy.StartProducingData(0, { id: idB, pageIdentifier: IPC.pageID });
+    await sleep(200);
+
+    testRunner.triggerMockCaptureConfigurationChange(false, false, true);
+    await sleep(400);
+
+    CoreIPC.GPU.UserMediaCaptureManagerProxy.RemoveSource(0, { id: idA });
+    await sleep(2000);
+
+    done();
+}
+
+setTimeout(() => { main().catch(done); }, 100);
+setTimeout(done, 30000);
+</script>
+</body>
+</html>
