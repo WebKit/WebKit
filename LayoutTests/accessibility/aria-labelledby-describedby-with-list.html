@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<!-- When a node is referenced by aria-labelledby or aria-describedby, accname step 2F requires the
+     text of its whole subtree, whether or not the descendant roles support name-from-content. So
+     nested lists and tables should contribute their contents, even though the heuristic in
+     shouldUseAccessibilityObjectInnerText() skips such containers when computing a name from
+     content in the ordinary way. -->
+
+<div id="label1"><p>This is a note</p><ol><li>First item</li><li>Second item</li></ol></div>
+<input id="labelledby-list" type="text" aria-labelledby="label1">
+
+<div id="label2"><p>This is a note</p><ol><li>First item</li><li>Second item</li></ol></div>
+<input id="describedby-list" type="text" aria-describedby="label2">
+
+<div id="label3"><ol><li>First item</li><li>Second item</li></ol></div>
+<input id="describedby-list-only" type="text" aria-describedby="label3">
+
+<div id="label4"><p>This is a note</p><ul><li>Bullet item</li></ul></div>
+<input id="labelledby-unordered-list" type="text" aria-labelledby="label4">
+
+<div id="label5"><p>This is a note</p><table><tr><th>Heading</th></tr><tr><td>Cell one</td></tr></table></div>
+<input id="describedby-data-table" type="text" aria-describedby="label5">
+
+<!-- Controls. These already behaved correctly, and narrow the failure to container descendants of
+     the referenced node. -->
+
+<div id="label6"><p>This is a note</p><div>Nested sentence</div></div>
+<input id="describedby-nested-divs" type="text" aria-describedby="label6">
+
+<ol id="label7"><li>First item</li><li>Second item</li></ol>
+<input id="describedby-list-directly" type="text" aria-describedby="label7">
+
+</div>
+
+<script>
+var output = "This test ensures a node referenced by aria-labelledby or aria-describedby contributes the text of nested lists and tables, not just its non-container children.\n\n";
+
+// The point of this test is which text is present, not how it is separated, so collapse whitespace.
+function collapseWhitespace(text)
+{
+    return text.replace(/\s+/g, " ").trim();
+}
+
+function nameFor(id)
+{
+    return collapseWhitespace(platformValueForW3CName(accessibilityController.accessibleElementById(id)));
+}
+
+// The label text an aria-labelledby target contributes reaches the platform through two separate
+// WebCore strings: the one nameFor() reads, and the LabelByElement text that titleAttributeValue()
+// exposes. macOS reads the latter as AXTitle, and it is what ATSPI reports as the accessible name,
+// so assert it too rather than leaving one of the two paths uncovered.
+function labelTextFor(id)
+{
+    return collapseWhitespace(stripAXPrefix(accessibilityController.accessibleElementById(id).title));
+}
+
+function descriptionFor(id)
+{
+    // Cocoa platforms expose aria-describedby as custom content rather than as help text.
+    var axElement = accessibilityController.accessibleElementById(id);
+    var isCocoa = accessibilityController.platformName == "mac" || accessibilityController.platformName == "ios";
+    var raw = isCocoa ? axElement.customContent : axElement.helpText;
+    return collapseWhitespace(raw.split(": ").slice(1).join(": "));
+}
+
+if (window.accessibilityController) {
+    output += expect("nameFor('labelledby-list')", "'This is a note First item Second item'");
+    output += expect("labelTextFor('labelledby-list')", "'This is a note First item Second item'");
+    output += expect("descriptionFor('describedby-list')", "'This is a note First item Second item'");
+    output += expect("descriptionFor('describedby-list-only')", "'First item Second item'");
+    output += expect("nameFor('labelledby-unordered-list')", "'This is a note Bullet item'");
+    output += expect("labelTextFor('labelledby-unordered-list')", "'This is a note Bullet item'");
+    output += expect("descriptionFor('describedby-data-table')", "'This is a note Heading Cell one'");
+    output += expect("descriptionFor('describedby-nested-divs')", "'This is a note Nested sentence'");
+    output += expect("descriptionFor('describedby-list-directly')", "'First item Second item'");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This test ensures a node referenced by aria-labelledby or aria-describedby contributes the text of nested lists and tables, not just its non-container children.
+
+PASS: nameFor('labelledby-list') === 'This is a note First item Second item'
+PASS: labelTextFor('labelledby-list') === 'This is a note First item Second item'
+PASS: descriptionFor('describedby-list') === 'This is a note First item Second item'
+PASS: descriptionFor('describedby-list-only') === 'First item Second item'
+PASS: nameFor('labelledby-unordered-list') === 'This is a note Bullet item'
+PASS: labelTextFor('labelledby-unordered-list') === 'This is a note Bullet item'
+PASS: descriptionFor('describedby-data-table') === 'This is a note Heading Cell one'
+PASS: descriptionFor('describedby-nested-divs') === 'This is a note Nested sentence'
+PASS: descriptionFor('describedby-list-directly') === 'First item Second item'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -304,7 +304,7 @@ protected:
     bool isLabelable() const;
     AccessibilityObject* controlForLabelElement() const final;
     String textAsLabelFor(const AccessibilityObject&) const;
-    String textForLabelElements(Vector<Ref<HTMLElement>>&&) const;
+    String textForLabelElements(Vector<Ref<HTMLElement>>&&, DescendIntoContainers = DescendIntoContainers::No) const;
     HTMLLabelElement* labelElementContainer() const;
 
     Vector<Ref<Element>> ariaLabeledByElements() const;

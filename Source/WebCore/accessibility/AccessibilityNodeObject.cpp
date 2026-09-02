@@ -142,7 +142,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr);
+static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr, DescendIntoContainers = DescendIntoContainers::No);
 static void appendNameToStringBuilder(StringBuilder&, String&&, bool prependSpace = true, bool prependNewline = false);
 
 AccessibilityNodeObject::AccessibilityNodeObject(AXID axID, Node* node, AXObjectCache& cache)
@@ -3325,7 +3325,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
     return textUnderElement();
 }
 
-String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& labelElements) const
+String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& labelElements, DescendIntoContainers descendIntoContainers) const
 {
     // https://www.w3.org/TR/html-aam-1.0/#input-type-text-input-type-password-input-type-number-input-type-search-input-type-tel-input-type-email-input-type-url-and-textarea-element-accessible-name-computation
     // "...if more than one label is associated; concatenate by DOM order, delimited by spaces."
@@ -3351,7 +3351,7 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
             appendNameToStringBuilder(result, axLabel->textAsLabelFor(*this));
 #endif
         else
-            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.get(), /* labelledByNode */ protect(node())));
+            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.get(), /* labelledByNode */ protect(node()), descendIntoContainers));
     }
 
     return result.toString();
@@ -3387,10 +3387,14 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
             return RefPtr { dynamicDowncast<HTMLElement>(axLabel->element()) };
         }));
     }
+    // Labels sourced from aria-labelledby are an accname relation traversal, so the text of the
+    // whole referenced subtree counts, containers included. Native <label> elements keep the
+    // ordinary name-from-content behavior.
+    auto descendIntoContainers = elementLabels.size() ? DescendIntoContainers::Yes : DescendIntoContainers::No;
     if (!elementLabels.size())
         elementLabels = Accessibility::labelsForElement(element.get());
 
-    String label = textForLabelElements(WTF::move(elementLabels));
+    String label = textForLabelElements(WTF::move(elementLabels), descendIntoContainers);
     if (!label.isEmpty()) {
         textOrder.append({ WTF::move(label), isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement });
         return;
@@ -4378,7 +4382,7 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 
 // This function implements the ARIA accessible name as described by the Mozilla
 // ARIA Implementer's Guide.
-static String accessibleNameForNode(Node& node, Node* labelledbyNode)
+static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendIntoContainers descendIntoContainers)
 {
     auto* element = dynamicDowncast<Element>(node);
 
@@ -4421,7 +4425,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
 
         StringBuilder builder;
         for (const auto& child : selectedChildren)
-            appendNameToStringBuilder(builder, accessibleNameForNode(protect(*child->node())));
+            appendNameToStringBuilder(builder, accessibleNameForNode(protect(*child->node()), nullptr, descendIntoContainers));
 
         String childText = builder.toString();
         if (!childText.isEmpty())
@@ -4435,7 +4439,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
             if (!labels.isEmpty()) {
                 StringBuilder builder;
                 for (auto& label : labels)
-                    appendNameToStringBuilder(builder, accessibleNameForNode(label.get()));
+                    appendNameToStringBuilder(builder, accessibleNameForNode(label.get(), nullptr, descendIntoContainers));
                 String labelText = builder.toString();
                 if (!labelText.isEmpty())
                     return labelText;
@@ -4467,7 +4471,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
                 RefPtr assignedElement = dynamicDowncast<Element>(assignedNode.get());
                 if (assignedElement && isRenderHidden(safeStyleFrom(*assignedElement)))
                     continue;
-                appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode));
+                appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode, nullptr, descendIntoContainers));
             }
 
             auto assignedNodesText = builder.toString();
@@ -4479,7 +4483,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
     String text;
     if (axObject) {
         if (axObject->accessibleNameDerivesFromContent())
-            text = axObject->textUnderElement({ TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, true, false, IncludeListMarkerText::No, DescendIntoContainers::No, TrimWhitespace::Yes, labelledbyNode });
+            text = axObject->textUnderElement({ TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, true, false, IncludeListMarkerText::No, descendIntoContainers, TrimWhitespace::Yes, labelledbyNode });
     } else
         text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isASCIIWhitespace);
 
@@ -4498,7 +4502,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
         if (RefPtr shadowRoot = shadowRootIgnoringUserAgentShadow(node)) {
             StringBuilder builder;
             for (RefPtr child = shadowRoot->firstChild(); child; child = child->nextSibling())
-                appendNameToStringBuilder(builder, accessibleNameForNode(*child));
+                appendNameToStringBuilder(builder, accessibleNameForNode(*child, nullptr, descendIntoContainers));
 
             String shadowText = builder.toString();
             if (!shadowText.isEmpty())
@@ -4538,8 +4542,11 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
 String AccessibilityNodeObject::descriptionForElements(const Vector<Ref<Element>>& elements) const
 {
     StringBuilder builder;
-    for (auto& element : elements)
-        appendNameToStringBuilder(builder, accessibleNameForNode(element.get(), protect(node())));
+    for (auto& element : elements) {
+        // This is the aria-labelledby / aria-describedby traversal, so descend into containers
+        // such as lists and tables to match the spec.
+        appendNameToStringBuilder(builder, accessibleNameForNode(element.get(), protect(node()), DescendIntoContainers::Yes));
+    }
     return builder.toString();
 }
 
