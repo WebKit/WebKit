@@ -263,6 +263,12 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
     bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
     bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
     setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
+
+#if HAVE(NW_PROXY_CONFIG)
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())))
+        sessionCocoa->applyProxyConfigurationToNWParametersForWebTransport(parameters.get());
+#endif
+
     return parameters;
 }
 #endif // HAVE(WEB_TRANSPORT)
@@ -270,6 +276,12 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
 #if HAVE(WEB_TRANSPORT)
+
+#if HAVE(NW_PROXY_CONFIG)
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())); sessionCocoa && sessionCocoa->proxyConfigurationRequiresTCPProtocols())
+        return nullptr;
+#endif
+
     RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().data()));
     if (!endpoint) {
         ASSERT_NOT_REACHED();
