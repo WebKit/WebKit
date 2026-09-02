@@ -501,6 +501,11 @@ class PullRequest(Command):
             for commit in commits
             for issue in commit.issues
         ]
+        if not issues:
+            sys.stderr.write('Could not find any issues associated with this commit.\n')
+            sys.stderr.write('Run `git-webkit commit --amend` to populate the commit template.\n')
+            sys.stderr.write('Aborting pull request.\n')
+            return 1
 
         unreviewed = re.compile(r'(Unreviewed|Versioning.)', re.IGNORECASE)
         reviewed = re.compile(r'^Reviewed by .+', re.IGNORECASE | re.MULTILINE)
