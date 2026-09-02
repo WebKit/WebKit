@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -65,11 +65,4 @@
 
     // Non-standard: We should eventually drop this since no other browser supports it
     undefined expand(optional DOMString unit);
-
-    // Non-standard: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
-    short compareNode(Node node);
-    const unsigned short NODE_BEFORE = 0;
-    const unsigned short NODE_AFTER = 1;
-    const unsigned short NODE_BEFORE_AND_AFTER = 2;
-    const unsigned short NODE_INSIDE = 3;
 };

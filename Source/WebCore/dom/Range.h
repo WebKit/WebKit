@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,7 +99,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> expand(const String&);
 
     enum CompareResults : uint8_t { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
-    WEBCORE_EXPORT ExceptionOr<CompareResults> compareNode(Node&) const;
 
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);

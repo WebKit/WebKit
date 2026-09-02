@@ -205,40 +205,6 @@ ExceptionOr<short> Range::comparePoint(Node& container, unsigned offset) const
     return Exception { ExceptionCode::WrongDocumentError };
 }
 
-ExceptionOr<Range::CompareResults> Range::compareNode(Node& node) const
-{
-    // FIXME: This deprecated function should be removed.
-    // We originally added it for interoperability with Firefox.
-    // Recent versions of Firefox have removed it.
-
-    // http://developer.mozilla.org/en/docs/DOM:range.compareNode
-    // This method returns 0, 1, 2, or 3 based on if the node is before, after,
-    // before and after(surrounds), or inside the range, respectively.
-
-    if (!node.isConnected() || &node.document() != m_ownerDocument.ptr()) {
-        // Match historical Firefox behavior.
-        return NODE_BEFORE;
-    }
-
-    auto nodeRange = makeRangeSelectingNode(node);
-    if (!nodeRange) {
-        // Match historical Firefox behavior.
-        return Exception { ExceptionCode::NotFoundError };
-    }
-
-    auto startOrdering = treeOrder(nodeRange->start, makeBoundaryPoint(m_start));
-    auto endOrdering = treeOrder(nodeRange->end, makeBoundaryPoint(m_end));
-    if (is_gteq(startOrdering) && is_lteq(endOrdering))
-        return NODE_INSIDE;
-    if (is_lteq(startOrdering) && is_gteq(endOrdering))
-        return NODE_BEFORE_AND_AFTER;
-    if (is_lteq(startOrdering))
-        return NODE_BEFORE;
-    if (is_gteq(endOrdering))
-        return NODE_AFTER;
-    return Exception { ExceptionCode::WrongDocumentError };
-}
-
 ExceptionOr<short> Range::compareBoundaryPoints(unsigned short how, const Range& sourceRange) const
 {
     const RangeBoundaryPoint* thisPoint;

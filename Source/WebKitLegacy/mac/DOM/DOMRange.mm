@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -237,10 +237,7 @@
 
 - (short)compareNode:(DOMNode *)refNode
 {
-    WebCore::JSMainThreadNullState state;
-    if (!refNode)
-        raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->compareNode(*core(refNode)));
+    return 0;
 }
 
 - (BOOL)intersectsNode:(DOMNode *)refNode

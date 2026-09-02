@@ -7,7 +7,7 @@ PASS range.setEndAfter(shadowNode); collapsedRangeNode(range) is shadowRoot
 PASS bodyRange().isPointInRange(shadowNode, 0) is false
 PASS bodyRange().comparePoint(shadowNode, 0) threw exception WrongDocumentError: The object is in the wrong document..
 PASS bodyRange().intersectsNode(shadowNode) is false
-PASS bodyRange().compareNode(shadowNode) threw exception WrongDocumentError: The object is in the wrong document..
+PASS bodyRange().compareNode(shadowNode) threw exception TypeError: bodyRange().compareNode is not a function. (In 'bodyRange().compareNode(shadowNode)', 'bodyRange().compareNode' is undefined).
 PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_DISCONNECTED is Node.DOCUMENT_POSITION_DISCONNECTED
 PASS (document.body.compareDocumentPosition(shadowNode) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_FOLLOWING)) != 0 is true
 PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_CONTAINS is 0

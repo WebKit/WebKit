@@ -489,19 +489,7 @@ WebKitDOMDocumentFragment* webkit_dom_range_create_contextual_fragment(WebKitDOM
 
 gshort webkit_dom_range_compare_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_RANGE(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_NODE(refNode), 0);
-    g_return_val_if_fail(!error || !*error, 0);
-    WebCore::Range* item = WebKit::core(self);
-    WebCore::Node* convertedRefNode = WebKit::core(refNode);
-    auto result = item->compareNode(*convertedRefNode);
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-        return 0;
-    }
-    return result.releaseReturnValue();
+    return 0;
 }
 
 gboolean webkit_dom_range_intersects_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error)

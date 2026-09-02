@@ -38,7 +38,7 @@
         shouldBeFalse("bodyRange().isPointInRange(shadowNode, 0)");
         shouldThrowErrorName("bodyRange().comparePoint(shadowNode, 0)", "WrongDocumentError");
         shouldBeFalse("bodyRange().intersectsNode(shadowNode)");
-        shouldThrowErrorName("bodyRange().compareNode(shadowNode)", "WrongDocumentError");
+        shouldThrowErrorName("bodyRange().compareNode(shadowNode)", "TypeError");
 
         // FIXME: These are Node methods, not Range, so we might want to move them into a separate test.
 
