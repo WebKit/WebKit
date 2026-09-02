@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ConsoleGroup = class ConsoleGroup extends WI.Object
+WI.ConsoleGroup = class ConsoleGroup extends WI.ConsoleEntryView
 {
     constructor(parentGroup)
     {
@@ -83,33 +83,33 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
     }
     
     // FIXME: <https://webkit.org/b/264489> We should merge this logic with `WI.ConsoleMessageView.prototype.render`
-    setMessageLevel(messageLevel)
-    {
-        console.assert(this._element);
-  
-        switch (messageLevel) {
-        case WI.ConsoleMessage.MessageLevel.Log:
-            this._element.classList.add("console-log-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Log: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Info:
-            this._element.classList.add("console-info-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Info: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Debug:
-            this._element.classList.add("console-debug-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Debug: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Warning:
-            this._element.classList.add("console-warning-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Warning: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Error:
-            this._element.classList.add("console-error-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
-            break;
-        }
-    }
+  //   setMessageLevel(messageLevel)
+  //   {
+  //       console.assert(this._element);
+  // 
+  //       switch (messageLevel) {
+  //       case WI.ConsoleMessage.MessageLevel.Log:
+  //           this._element.classList.add("console-log-level");
+  //           this._element.setAttribute("data-labelprefix", WI.UIString("Log: "));
+  //           break;
+  //       case WI.ConsoleMessage.MessageLevel.Info:
+  //           this._element.classList.add("console-info-level");
+  //           this._element.setAttribute("data-labelprefix", WI.UIString("Info: "));
+  //           break;
+  //       case WI.ConsoleMessage.MessageLevel.Debug:
+  //           this._element.classList.add("console-debug-level");
+  //           this._element.setAttribute("data-labelprefix", WI.UIString("Debug: "));
+  //           break;
+  //       case WI.ConsoleMessage.MessageLevel.Warning:
+  //           this._element.classList.add("console-warning-level");
+  //           this._element.setAttribute("data-labelprefix", WI.UIString("Warning: "));
+  //           break;
+  //       case WI.ConsoleMessage.MessageLevel.Error:
+  //           this._element.classList.add("console-error-level");
+  //           this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
+  //           break;
+  //       }
+  //   }
 
     // Private
 
