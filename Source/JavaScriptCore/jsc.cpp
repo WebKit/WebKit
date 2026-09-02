@@ -125,10 +125,8 @@
 
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/cocoa/CrashReporter.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#include <wtf/darwin/DispatchExtras.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -4647,11 +4645,7 @@ int jscmain(int argc, char** argv)
 
 #if PLATFORM(COCOA)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    {
-        // FIXME: This is a false positive. rdar://160931336
-        SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", serialQueueWithAutoreleasePoolAttrSingleton()));
-        memoryPressureHandler.setDispatchQueue(WTF::move(queue));
-    }
+    memoryPressureHandler.setDispatchQueueWithLabel("jsc shell memory pressure handler"_s);
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);
     Box<Synchronous> memoryPressureSynchronousState = Box<Synchronous>::create(Synchronous::No);
     memoryPressureHandler.setLowMemoryHandler([=] (Critical critical, Synchronous synchronous) {

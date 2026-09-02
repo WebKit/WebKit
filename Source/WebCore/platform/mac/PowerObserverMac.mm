@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 #import "PowerObserverMac.h"
+
 #import <wtf/CheckedPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -41,8 +42,7 @@ PowerObserver::PowerObserver(Function<void()>&& powerOnHander)
     , m_notificationPort(nullptr)
     , m_notifierReference(0)
 {
-    // FIXME: This is a false positive for dispatch_queue_create. rdar://160931336
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_dispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.PowerObserver", serialQueueWithAutoreleasePoolAttrSingleton()));
+    m_dispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.PowerObserver", serialQueueWithAutoreleasePoolAttrSingleton()));
     m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, [](void* context, io_service_t service, uint32_t messageType, void* messageArgument) {
         static_cast<PowerObserver*>(context)->didReceiveSystemPowerNotification(service, messageType, messageArgument);
     }, &m_notifierReference);

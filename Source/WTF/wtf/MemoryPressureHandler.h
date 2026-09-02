@@ -138,6 +138,8 @@ public:
         RELEASE_ASSERT(!m_installed);
         m_dispatchQueue = WTF::move(queue);
     }
+
+    WTF_EXPORT_PRIVATE void setDispatchQueueWithLabel(ASCIILiteral);
 #endif
 
     class ReliefLogger {

@@ -12019,7 +12019,7 @@
 		46273CAE260E59DF006FAA91 /* SWScriptStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWScriptStorage.cpp; sourceTree = "<group>"; };
 		462E4C4D2616A801003A2C67 /* ScriptBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBuffer.h; sourceTree = "<group>"; };
 		462E4C4F2616A801003A2C67 /* ScriptBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptBuffer.cpp; sourceTree = "<group>"; };
-		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
+		4634592B1AC2271000ECB71C /* PowerObserverMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PowerObserverMac.mm; sourceTree = "<group>"; };
 		463521AA2081090B00C28922 /* WindowProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowProxy.h; sourceTree = "<group>"; };
 		463521AC2081090E00C28922 /* WindowProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowProxy.cpp; sourceTree = "<group>"; };
 		463642A329687D47003D43F2 /* CoreHapticsSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreHapticsSoftLink.h; sourceTree = "<group>"; };
@@ -31140,8 +31140,8 @@
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */,
 				CDA29A141CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm */,
-				4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */,
 				46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */,
+				4634592B1AC2271000ECB71C /* PowerObserverMac.mm */,
 				F49532D828FB4FA600D52F09 /* RevealUtilities.h */,
 				F49532D928FB4FA600D52F09 /* RevealUtilities.mm */,
 				0F38186C2708D20200414F32 /* ScrollAnimationRubberBand.h */,

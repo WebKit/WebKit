@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
 #include "config.h"
 #include <wtf/WorkQueue.h>
 
@@ -56,12 +60,11 @@ void WorkQueueBase::dispatch(Function<void()>&& function)
 
 void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS qos)
 {
-    // FIXME: This is a false positive. rdar://160931336
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto blockWithQOS = adoptOSObject(dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTF::move(function)] () mutable {
+    dispatch_block_t blockWithQOS = dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTF::move(function)] () mutable {
         function();
         function = { };
-    }).get()));
-    dispatch_async(m_dispatchQueue.get(), blockWithQOS.get());
+    }).get());
+    dispatch_async(m_dispatchQueue.get(), blockWithQOS);
 }
 
 void WorkQueueBase::dispatchAfter(Seconds duration, Function<void()>&& function)
@@ -84,8 +87,7 @@ void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? concurrentQueueWithAutoreleasePoolAttrSingleton() : serialQueueWithAutoreleasePoolAttrSingleton();
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
-    // FIXME: This is a false positive. rdar://160931336
-    SUPPRESS_RETAINPTR_CTOR_ADOPT lazyInitialize(m_dispatchQueue, adoptOSObject(dispatch_queue_create(name, attr)));
+    lazyInitialize(m_dispatchQueue, OSObjectPtr<dispatch_queue_t> { dispatch_queue_create(name, attr) });
     dispatch_set_context(m_dispatchQueue.get(), this);
     // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
     // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.

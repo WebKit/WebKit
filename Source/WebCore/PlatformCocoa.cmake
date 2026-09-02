@@ -608,7 +608,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformEventFactoryMac.mm
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
-    platform/mac/PowerObserverMac.cpp
+    platform/mac/PowerObserverMac.mm
     platform/mac/RevealUtilities.mm
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollViewMac.mm

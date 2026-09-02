@@ -42,7 +42,7 @@ list(APPEND WTF_SOURCES
     cocoa/TimeZoneCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/UUIDCocoa.mm
-    cocoa/WorkQueueCocoa.cpp
+    cocoa/WorkQueueCocoa.mm
 
     darwin/LibraryPathDiagnostics.mm
 
@@ -175,5 +175,9 @@ else ()
         ios/WebCoreThread.h
     )
 endif ()
+
+# Matches CLANG_ENABLE_OBJC_ARC in the Xcode build. Set before the prefix header below so the
+# OBJCXX precompiled header is built with the same flag as the sources that use it.
+target_compile_options(WTF PRIVATE $<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fobjc-arc>)
 
 WEBKIT_ADD_PREFIX_HEADER(WTF WTFPrefix.h PREFIX_LANGUAGES CXX OBJCXX PREFIX_NO_CODEGEN)

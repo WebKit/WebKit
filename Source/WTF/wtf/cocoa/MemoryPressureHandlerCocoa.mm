@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
 #import "config.h"
 #import <wtf/MemoryPressureHandler.h>
 
@@ -31,6 +35,7 @@
 #import <malloc/malloc.h>
 #import <notify.h>
 #import <wtf/Logging.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/DispatchSPI.h>
 
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
@@ -38,6 +43,11 @@
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
 
 namespace WTF {
+
+void MemoryPressureHandler::setDispatchQueueWithLabel(ASCIILiteral label)
+{
+    setDispatchQueue(dispatch_queue_create(label, serialQueueWithAutoreleasePoolAttrSingleton()));
+}
 
 void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
@@ -83,8 +93,7 @@ void MemoryPressureHandler::install()
 
     dispatch_async(m_dispatchQueue.get(), ^{
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
-        // FIXME: This is a false positive. rdar://160931336
-        SUPPRESS_RETAINPTR_CTOR_ADOPT memoryPressureEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get()));
+        memoryPressureEventSource() = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get());
 
         dispatch_source_set_event_handler(memoryPressureEventSource().get(), ^{
             auto status = dispatch_source_get_data(memoryPressureEventSource().get());
@@ -197,8 +206,7 @@ void MemoryPressureHandler::uninstall()
 void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     dispatch_async(m_dispatchQueue.get(), ^{
-        // FIXME: This is a false positive. rdar://160931336
-        SUPPRESS_RETAINPTR_CTOR_ADOPT timerEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get()));
+        timerEventSource() = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get());
         if (timerEventSource()) {
             dispatch_set_context(timerEventSource().get(), this);
             // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.
