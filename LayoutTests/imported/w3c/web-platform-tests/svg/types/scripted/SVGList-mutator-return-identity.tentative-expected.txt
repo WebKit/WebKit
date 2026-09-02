@@ -1,0 +1,20 @@
+
+PASS SVGNumberList (text rotate): appendItem returns the element it appended
+PASS SVGNumberList (text rotate): insertItemBefore returns the element it inserted
+PASS SVGNumberList (text rotate): replaceItem returns the element it placed
+PASS SVGNumberList (text rotate): initialize returns the element it placed
+PASS SVGLengthList (text dx): appendItem returns the element it appended
+PASS SVGLengthList (text dx): insertItemBefore returns the element it inserted
+PASS SVGLengthList (text dx): replaceItem returns the element it placed
+PASS SVGLengthList (text dx): initialize returns the element it placed
+PASS SVGPointList (polyline points): appendItem returns the element it appended
+PASS SVGPointList (polyline points): insertItemBefore returns the element it inserted
+PASS SVGPointList (polyline points): replaceItem returns the element it placed
+PASS SVGPointList (polyline points): initialize returns the element it placed
+PASS SVGTransformList (rect transform): appendItem returns the element it appended
+PASS SVGTransformList (rect transform): insertItemBefore returns the element it inserted
+PASS SVGTransformList (rect transform): replaceItem returns the element it placed
+PASS SVGTransformList (rect transform): initialize returns the element it placed
+PASS SVGStringList: appendItem returns the string it appended
+PASS An item that is already in a list is copied on insertion, not moved
+

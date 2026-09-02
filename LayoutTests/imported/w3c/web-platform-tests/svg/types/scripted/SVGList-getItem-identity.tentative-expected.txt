@@ -1,0 +1,20 @@
+
+PASS SVGNumberList (text rotate): getItem returns the same object for the same index
+PASS SVGNumberList (text rotate): two getItem calls for one index report the same value
+PASS SVGNumberList (text rotate): the indexed getter returns the same object as getItem
+PASS SVGNumberList (text rotate): different indices return different objects
+PASS SVGLengthList (text x): getItem returns the same object for the same index
+PASS SVGLengthList (text x): two getItem calls for one index report the same value
+PASS SVGLengthList (text x): the indexed getter returns the same object as getItem
+PASS SVGLengthList (text x): different indices return different objects
+PASS SVGPointList (polyline points): getItem returns the same object for the same index
+PASS SVGPointList (polyline points): two getItem calls for one index report the same value
+PASS SVGPointList (polyline points): the indexed getter returns the same object as getItem
+PASS SVGPointList (polyline points): different indices return different objects
+PASS SVGTransformList (rect transform): getItem returns the same object for the same index
+PASS SVGTransformList (rect transform): two getItem calls for one index report the same value
+PASS SVGTransformList (rect transform): the indexed getter returns the same object as getItem
+PASS SVGTransformList (rect transform): different indices return different objects
+PASS SVGLengthList: item objects are not shared between elements
+PASS SVGStringList: getItem returns a string, so identity is not a meaningful question
+
