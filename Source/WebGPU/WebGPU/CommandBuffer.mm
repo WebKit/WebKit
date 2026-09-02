@@ -27,6 +27,7 @@
 #import "CommandBuffer.h"
 
 #import "APIConversions.h"
+#import "Instance.h"
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
@@ -117,12 +118,17 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
         [m_commandBuffer encodeSignalEvent:m_sharedEvent value:m_sharedEventSignalValue];
 
     m_cachedCommandBuffer = m_commandBuffer;
+    if (RefPtr instance = m_device->instance())
+        instance->retainCommandBuffer(*this, m_commandBuffer);
     [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> completedCommandBuffer) {
         double kernelStartTime = completedCommandBuffer.kernelStartTime;
         double kernelEndTime = completedCommandBuffer.kernelEndTime;
         protectedThis->m_gpuExecutionDurationSeconds.store(kernelEndTime - kernelStartTime, std::memory_order_relaxed);
         protectedThis->m_commandBufferComplete.signal();
-        protectedThis->m_device->getQueue()->scheduleWork([protectedThis, kernelStartTime, kernelEndTime]() mutable {
+        protectedThis->m_device->getQueue()->scheduleWork([weakThis = ThreadSafeWeakPtr { protectedThis.get() }, kernelStartTime, kernelEndTime]() mutable {
+            RefPtr protectedThis { weakThis.get() };
+            if (!protectedThis)
+                return;
             protectedThis->m_cachedCommandBuffer = nil;
             if (RefPtr commandEncoder = protectedThis->m_commandEncoder) {
                 commandEncoder->recordGPUExecutionWindowOnCanvasTextures(kernelStartTime, kernelEndTime);
