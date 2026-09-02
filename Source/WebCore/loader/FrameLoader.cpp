@@ -1006,30 +1006,42 @@ void FrameLoader::checkCompleted()
         return;
     }
 
-    // Are we still parsing?
-    if (document->parsing())
-        return;
-
     // Still waiting for images/scripts?
     if (document->cachedResourceLoader().requestCount())
         return;
 
-    // Still waiting for elements that don't go through a FrameLoader?
-    if (document->isDelayingLoadEvent())
-        return;
+    auto isBlockedFromCompleting = [&] {
+        if (document->parsing())
+            return true;
 
-    RefPtr scriptableParser = document->scriptableDocumentParser();
-    if (scriptableParser && scriptableParser->hasScriptsWaitingForStylesheets())
-        return;
+        // Still waiting for elements that don't go through a FrameLoader?
+        if (document->isDelayingLoadEvent())
+            return true;
 
-    // Any frame that hasn't completed yet?
-    if (!allChildrenAreComplete())
+        RefPtr scriptableParser = document->scriptableDocumentParser();
+        if (scriptableParser && scriptableParser->hasScriptsWaitingForStylesheets())
+            return true;
+
+        // Any frame that hasn't completed yet?
+        return !allChildrenAreComplete();
+    };
+
+    if (isBlockedFromCompleting())
         return;
 
     // OK, completed.
-    m_isComplete = true;
     m_requestedHistoryItem = nullptr;
     document->setReadyState(Document::ReadyState::Complete);
+
+    // The readystatechange dispatch above ran author script, so both of these can have changed
+    // underneath us.
+    if (m_isComplete)
+        return;
+
+    if (isBlockedFromCompleting())
+        return;
+
+    m_isComplete = true;
 
     checkCallImplicitClose(); // if we didn't do it before
 
