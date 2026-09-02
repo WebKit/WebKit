@@ -47,6 +47,7 @@ extension WebKit.WebPageProxy {
         let value: WebKit.JavaScriptEvaluationResult
     }
 
+    @available(anyAppleOSAndDownlevels 27.0, *)
     @MainActor
     func runJavaScriptInMainFrame(
         source: IPC.TransferString,
