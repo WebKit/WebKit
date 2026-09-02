@@ -192,6 +192,8 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
     Ref imageBuffer = RemoteImageBuffer::sinkIntoImageBuffer(remoteImageBuffer.releaseNonNull());
     MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
     imageBuffer->replaceFontsWithRebuildData();
+    // Avoid leaking cross-RemoteRenderingBackend state through context by releasing the context.
+    imageBuffer->releaseGraphicsContext();
     bool success = m_sharedResourceCache->addSerializedImageBuffer(serializedIdentifier, WTF::move(imageBuffer));
     MESSAGE_CHECK(success, "Duplicate SerializedImageBuffer");
 }
