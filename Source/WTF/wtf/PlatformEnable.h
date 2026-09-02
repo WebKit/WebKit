@@ -722,6 +722,13 @@
 #if !CPU(ADDRESS64)
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
+/* Disable WEBASSEMBLY as well, because it doesn't build without JIT anymore */
+#undef ENABLE_WEBASSEMBLY
+#define ENABLE_WEBASSEMBLY 0
+#undef ENABLE_WEBASSEMBLY_OMGJIT
+#define ENABLE_WEBASSEMBLY_OMGJIT 0
+#undef ENABLE_WEBASSEMBLY_BBQJIT
+#define ENABLE_WEBASSEMBLY_BBQJIT 0
 #endif
 
 #if CPU(RISCV64)
