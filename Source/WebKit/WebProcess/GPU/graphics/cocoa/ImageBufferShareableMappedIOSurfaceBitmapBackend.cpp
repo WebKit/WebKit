@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/IOSurfacePool.h>
+#include <WebCore/PixelBuffer.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -185,9 +186,10 @@ void ImageBufferShareableMappedIOSurfaceBitmapBackend::transferToNewContext(cons
     ASSERT_NOT_REACHED(); // Not applicable for LayerBacking.
 }
 
-void ImageBufferShareableMappedIOSurfaceBitmapBackend::getPixelBuffer(const IntRect&, PixelBuffer&)
+void ImageBufferShareableMappedIOSurfaceBitmapBackend::getPixelBuffer(const IntRect&, PixelBuffer& destination)
 {
     ASSERT_NOT_REACHED(); // Not applicable for LayerBacking.
+    destination.zeroFill();
 }
 
 void ImageBufferShareableMappedIOSurfaceBitmapBackend::putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication)

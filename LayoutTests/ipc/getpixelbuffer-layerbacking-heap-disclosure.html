@@ -1,0 +1,106 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const log = (s) => { document.getElementById('log').textContent += s + '\n'; };
+
+// The fix rejects the forged read, cancelling the IPC reply. Depending on timing this can arrive
+// as a rejected promise; swallow it so it does not pollute the test output.
+window.addEventListener('unhandledrejection', (e) => { e.preventDefault(); });
+
+window.setTimeout(async () => {
+    if (!window.IPC) {
+        log("PASS");
+        return window.testRunner?.notifyDone();
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const PF = {};
+    for (const e of IPC.serializedEnumInfo['WebCore::PixelFormat'].valueMap) PF[e.name] = e.value;
+    const CS = {};
+    for (const e of IPC.serializedEnumInfo['WebCore::ColorSpace'].valueMap) CS[e.name] = e.value;
+    const RP = {};
+    for (const e of IPC.serializedEnumInfo['WebCore::RenderingPurpose'].valueMap) RP[e.name] = e.value;
+
+    if (PF.BGRA8 === undefined || RP.LayerBacking === undefined) {
+        log("PASS");
+        return window.testRunner?.notifyDone();
+    }
+
+    // Allow the bool discriminator in std::optional<CoreIPCCGColorSpace>.
+    CoreIPC.typeInfo['WebCore::PlatformColorSpace'] = [
+        { type: 'std::optional<WebKit::CoreIPCCGColorSpace>', name: 'alias' }
+    ];
+    const SRGB_CS = {
+        serializableColorSpace: { alias: { optionalValue: {
+            m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: CS.SRGB } }
+        } } }
+    };
+
+    const W = 16, H = 16;
+    const NBYTES = W * H * 4;
+
+    const sc = CoreIPC.newStreamConnection();
+    const rbId = Math.floor(Math.random() * 0x1000000);
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: rbId,
+        connectionHandle: sc
+    });
+    const rb = sc.newInterface('RemoteRenderingBackend', rbId);
+    try {
+        sc.connection.waitForMessage(rbId, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+    } catch (e) { }
+
+    // Accelerated + LayerBacking + area <= 64*64 + BGRA8 makes isSmallLayerBacking() select
+    // ImageBufferShareableMappedIOSurfaceBitmapBackend, whose getPixelBuffer() is a no-op.
+    const bufId = Math.floor(Math.random() * 0x1000000);
+    const ctxId = Math.floor(Math.random() * 0x1000000);
+    rb.CreateImageBuffer({
+        logicalSize: { width: W, height: H },
+        renderingMode: 1,
+        renderingPurpose: RP.LayerBacking,
+        resolutionScale: 1.0,
+        colorSpace: SRGB_CS,
+        bufferFormat: { pixelFormat: PF.BGRA8, useLosslessCompression: 0 },
+        identifier: bufId,
+        contextIdentifier: ctxId
+    });
+    const ib = sc.newInterface('RemoteImageBuffer', bufId);
+
+    // Seed WebContent-shared memory with a 0xAA sentinel, then ask the GPU process to read pixels
+    // back into it. A no-op backend leaves the returned PixelBuffer uninitialized, so the GPU
+    // process would disclose its own heap by copying it into this shared memory. The fix rejects
+    // the read for a LayerBacking backend, leaving the sentinel untouched.
+    const shm = IPC.createSharedMemory(NBYTES);
+    shm.writeBytes(new Uint8Array(NBYTES).fill(0xAA));
+    // GetPixelBufferWithNewMemory is synchronous; when the fix rejects the read the reply is
+    // cancelled, which surfaces here as a throw. Either way the destination is in its final
+    // state once the call returns, so swallow the rejection and inspect the sentinel.
+    try {
+        ib.GetPixelBufferWithNewMemory({
+            handle: { handle: shm, protection: 'ReadWrite' },
+            outputFormat: { alphaFormat: 1, pixelFormat: PF.BGRA8, colorSpace: SRGB_CS },
+            srcPoint: { x: 0, y: 0 },
+            srcSize: { width: W, height: H }
+        }, () => {});
+    } catch (e) { }
+
+    setTimeout(() => {
+        const u8 = new Uint8Array(shm.readBytes(0, NBYTES));
+        let modified = 0;
+        for (let i = 0; i < NBYTES; ++i) {
+            if (u8[i] !== 0xAA)
+                modified++;
+        }
+        if (!modified)
+            log("PASS");
+        else
+            log(`FAIL: getPixelBuffer on a LayerBacking backend was not blocked; ${modified}/${NBYTES} destination bytes overwritten with GPU-process heap`);
+        window.testRunner?.notifyDone();
+    }, 500);
+}, 20);
+</script>
