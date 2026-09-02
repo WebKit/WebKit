@@ -14,7 +14,6 @@ project.xcworkspace
 xcuserdata
 *.xcresult
 DerivedData
-.mailmap
 results
 
 # Ignore Buildstream local files
