@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script>
+// Stalled-abort arrangement from delete-database-with-stalled-abort-crash.html, with the teardown
+// coming from website data deletion instead of the page.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setOriginQuotaRatioEnabled(false);
+}
+
+const databaseName = "clear-data-with-stalled-abort-crash";
+const openRequest = indexedDB.open(databaseName, 1);
+
+openRequest.onupgradeneeded = event => {
+    const store = event.target.result.createObjectStore("store");
+    for (let i = 0; i < 3; ++i)
+        store.put("value" + i, i);
+};
+
+openRequest.onsuccess = () => {
+    const database = openRequest.result;
+    const transaction = database.transaction("store", "readwrite");
+    const store = transaction.objectStore("store");
+    let openedCursors = 0;
+
+    const burst = () => {
+        // Each over-quota put costs another UI process round trip, widening the stall.
+        for (let i = 0; i < 12; ++i)
+            store.put(new Uint8Array(16 * 1024 * 1024), 999 + i);
+        testRunner?.clearAllDatabases();
+        setTimeout(() => testRunner?.notifyDone(), 500);
+    };
+
+    // Firing from inside a cursor callback keeps the transaction active with cursors registered.
+    const churnCursor = () => {
+        const cursorRequest = store.openCursor();
+        cursorRequest.onsuccess = event => {
+            if (++openedCursors == 5) {
+                burst();
+                return;
+            }
+            const cursor = event.target.result;
+            if (cursor)
+                cursor.continue();
+            else
+                churnCursor();
+        };
+        cursorRequest.onerror = () => { };
+    };
+    churnCursor();
+};
+
+openRequest.onerror = () => testRunner?.notifyDone();
+</script>
+<div>
+    This test passes if it doesn't crash.
+</div>
