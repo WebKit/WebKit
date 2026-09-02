@@ -46,14 +46,15 @@ class GridLayout;
 class GridArea;
 class RenderGridLayoutState;
 class GridLanesLayout;
+class GridLanesResult;
 class GridSpan;
 class LayoutRange;
 
-// A grid lanes layout only exists for the duration of a single layout (or intrinsic width
-// computation) of a grid lanes container, so it is threaded through the layout call chain as a
-// non-owning observer rather than living on the renderer. It is std::nullopt for grids which are
+// The result of a grid lanes placement only exists for the duration of a single layout (or intrinsic
+// width computation) of a grid lanes container, so it is threaded through the layout call chain as a
+// non-owning reference rather than living on the renderer. It is std::nullopt for grids which are
 // not performing a grid lanes layout.
-using GridLanesLayoutRef = std::optional<std::reference_wrapper<const GridLanesLayout>>;
+using GridLanesResultRef = std::optional<std::reference_wrapper<const GridLanesResult>>;
 
 struct ContentAlignmentData {
     LayoutUnit positionOffset;
@@ -156,9 +157,9 @@ public:
     LayoutUnit gridGap(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     // The stacking axis content size produced by the most recent grid lanes layout. Unlike the rest of
-    // the GridLanesLayout state this has to outlive layout, because the web inspector's grid overlay
-    // reads it at paint time. Nothing in layout should use this; layout threads the GridLanesLayout
-    // itself through as a GridLanesLayoutRef instead.
+    // the GridLanesResult this has to outlive layout, because the web inspector's grid overlay reads it
+    // at paint time. Nothing in layout should use this; layout threads the result itself through as a
+    // GridLanesResultRef instead.
     LayoutUnit NODELETE gridLanesContentSizeForWebInspectorOverlay() const { return m_gridLanesContentSizeForWebInspectorOverlay; }
 
     void updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
@@ -233,23 +234,23 @@ private:
 
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState&);
 
-    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, RenderGridLayoutState&, GridLanesLayoutRef);
+    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, RenderGridLayoutState&, GridLanesResultRef);
 
-    void layoutGridItems(RenderGridLayoutState&, GridLanesLayoutRef);
-    void layoutGridLanesItems(RenderGridLayoutState&, const GridLanesLayout&);
+    void layoutGridItems(RenderGridLayoutState&, GridLanesResultRef);
+    void layoutGridLanesItems(RenderGridLayoutState&, const GridLanesResult&);
 
-    void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, GridLanesLayoutRef);
+    void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, GridLanesResultRef);
 
     LayoutRange gridAreaRangeForOutOfFlow(const RenderBox&, Style::GridTrackSizingDirection) const;
     std::pair<LayoutUnit, LayoutUnit> gridAreaPositionForInFlowGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
 
     GridAxisPosition columnAxisPositionForGridItem(const RenderBox&) const;
     GridAxisPosition rowAxisPositionForGridItem(const RenderBox&) const;
-    LayoutUnit columnAxisOffsetForGridItem(const RenderBox&, GridLanesLayoutRef) const;
-    LayoutUnit rowAxisOffsetForGridItem(const RenderBox&, GridLanesLayoutRef) const;
+    LayoutUnit columnAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
+    LayoutUnit rowAxisOffsetForGridItem(const RenderBox&, GridLanesResultRef) const;
     ContentAlignmentData computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
-    void setLogicalPositionForGridItem(RenderBox&, GridLanesLayoutRef) const;
-    LayoutUnit logicalOffsetForGridItem(const RenderBox&, Style::GridTrackSizingDirection, GridLanesLayoutRef) const;
+    void setLogicalPositionForGridItem(RenderBox&, GridLanesResultRef) const;
+    LayoutUnit logicalOffsetForGridItem(const RenderBox&, Style::GridTrackSizingDirection, GridLanesResultRef) const;
 
     LayoutUnit gridAreaBreadthForGridItemIncludingAlignmentOffsets(const RenderBox&, Style::GridTrackSizingDirection) const;
 

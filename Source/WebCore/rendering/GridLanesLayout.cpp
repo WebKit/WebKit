@@ -44,17 +44,20 @@ GridLanesLayout::GridLanesLayout(RenderGrid& renderGrid, unsigned gridAxisTracks
     m_renderGrid->populateExplicitGridAndOrderIterator();
 }
 
-void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
+GridLanesResult GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
     // 4.4 Grid Lanes Layout and Placement Algorithm
     // https://drafts.csswg.org/css-grid-3/#grid-lanes-layout-algorithm
-    placeGridLanesItems(algorithm, fitTolerance, layoutPhase);
+    return placeGridLanesItems(algorithm, fitTolerance, layoutPhase);
 }
 
-void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
+GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
     if (!gridAxisTracksCount())
-        return;
+        return { };
+
+    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> stackingAxisOffsets;
+    LayoutUnit gridContentSize;
 
     auto& grid = m_renderGrid->currentGrid();
     for (CheckedPtr gridItem = grid.orderIterator().first(); gridItem; gridItem = grid.orderIterator().next()) {
@@ -63,11 +66,16 @@ void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algori
 
         bool isAutoPlacedInGridAxis = !hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection());
         auto gridArea = isAutoPlacedInGridAxis ? gridAreaForIndefiniteGridAxisItem(*gridItem, fitTolerance) : gridAreaForDefiniteGridAxisItem(*gridItem);
-        insertIntoGridAndLayoutItem(algorithm, *gridItem, gridArea, layoutPhase);
+        auto placement = insertIntoGridAndLayoutItem(algorithm, *gridItem, gridArea, layoutPhase);
 
         if (isAutoPlacedInGridAxis)
             m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
+
+        stackingAxisOffsets.set(*gridItem, placement.marginBoxStart);
+        gridContentSize = std::max(gridContentSize, placement.marginBoxEnd);
     }
+
+    return { WTF::move(stackingAxisOffsets), gridContentSize };
 }
 
 GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
@@ -116,7 +124,7 @@ void GridLanesLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgo
     gridItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
 }
 
-void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, Phase layoutPhase)
+GridLanesLayout::StackingAxisPlacement GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, Phase layoutPhase)
 {
     auto shouldOverrideLogicalWidth = [&](RenderBox& gridItem, Phase layoutPhase) {
         if (layoutPhase == Phase::Layout)
@@ -142,7 +150,7 @@ void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm
     m_renderGrid->currentGrid().insert(gridItem, area);
     setItemContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
-    updateRunningPositions(gridItem, area);
+    return updateRunningPositions(gridItem, area);
 }
 
 LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridItem)
@@ -163,7 +171,7 @@ LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridIt
     return marginBoxSize;
 }
 
-void GridLanesLayout::updateRunningPositions(const RenderBox& gridItem, const GridArea& area)
+GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(const RenderBox& gridItem, const GridArea& area)
 {
     auto gridAxisSpan = gridAxisSpanFromArea(area);
     ASSERT(gridAxisSpan.startLine() < m_runningPositions.size() && gridAxisSpan.endLine() <= m_runningPositions.size());
@@ -173,19 +181,12 @@ void GridLanesLayout::updateRunningPositions(const RenderBox& gridItem, const Gr
     for (auto line : gridAxisSpan)
         previousRunningPosition = std::max(previousRunningPosition, m_runningPositions[line]);
 
-    auto newRunningPosition = stackingAxisMarginBoxForItem(gridItem) + previousRunningPosition + m_stackingAxisGridGap;
-    m_gridContentSize = std::max(m_gridContentSize, newRunningPosition - m_stackingAxisGridGap);
+    auto marginBoxEnd = previousRunningPosition + stackingAxisMarginBoxForItem(gridItem);
 
     for (auto span : gridAxisSpan)
-        m_runningPositions[span] = newRunningPosition;
+        m_runningPositions[span] = marginBoxEnd + m_stackingAxisGridGap;
 
-    updateItemOffset(gridItem, previousRunningPosition);
-}
-
-void GridLanesLayout::updateItemOffset(const RenderBox& gridItem, LayoutUnit offset)
-{
-    // We set() and not add() to update the value if the |gridItem| is already inserted
-    m_itemOffsets.set(gridItem, offset);
+    return { previousRunningPosition, marginBoxEnd };
 }
 
 LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
@@ -242,12 +243,9 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     return gridAreaFromGridAxisSpan(gridAxisPosition);
 }
 
-LayoutUnit GridLanesLayout::offsetForGridItem(const RenderBox& gridItem) const
+LayoutUnit GridLanesResult::stackingAxisOffsetForGridItem(const RenderBox& gridItem) const
 {
-    const auto& offsetIter = m_itemOffsets.find(gridItem);
-    if (offsetIter == m_itemOffsets.end())
-        return 0_lu;
-    return offsetIter->value;
+    return m_stackingAxisOffsets.getOptional(gridItem).value_or(0_lu);
 }
 
 inline Style::GridTrackSizingDirection GridLanesLayout::gridAxisDirection() const

@@ -39,6 +39,25 @@ enum class GridTrackSizingDirection : bool;
 
 class RenderGrid;
 
+class GridLanesResult {
+public:
+    GridLanesResult() = default;
+    GridLanesResult(HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit>&& stackingAxisOffsets, LayoutUnit gridContentSize)
+        : m_stackingAxisOffsets(WTF::move(stackingAxisOffsets))
+        , m_gridContentSize(gridContentSize)
+    {
+    }
+
+    LayoutUnit NODELETE stackingAxisOffsetForGridItem(const RenderBox&) const;
+
+    LayoutUnit gridContentSize() const { return m_gridContentSize; }
+
+private:
+    // Offset of the item's margin box.
+    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_stackingAxisOffsets;
+    LayoutUnit m_gridContentSize;
+};
+
 class GridLanesLayout {
 public:
     // Construction repopulates the grid, so it has to happen immediately before placement.
@@ -52,22 +71,24 @@ public:
 
     using ResolvedFitTolerance = Variant<LayoutUnit, CSS::Keyword::Infinite>;
 
-    void performGridLanesPlacement(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
-    LayoutUnit NODELETE offsetForGridItem(const RenderBox&) const;
-    LayoutUnit gridContentSize() const { return m_gridContentSize; };
+    GridLanesResult performGridLanesPlacement(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
 
 private:
     GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item, ResolvedFitTolerance);
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
-    void placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
+    struct StackingAxisPlacement {
+        LayoutUnit marginBoxStart;
+        LayoutUnit marginBoxEnd;
+    };
+
+    GridLanesResult placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
-    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
+    StackingAxisPlacement insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
     LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
 
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
-    void updateRunningPositions(const RenderBox& gridItem, const GridArea&);
-    void updateItemOffset(const RenderBox& gridItem, LayoutUnit offset);
+    StackingAxisPlacement updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     inline Style::GridTrackSizingDirection NODELETE gridAxisDirection() const;
 
@@ -78,10 +99,8 @@ private:
     GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
 
     Vector<LayoutUnit> m_runningPositions;
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
     const CheckedRef<RenderGrid> m_renderGrid;
     const LayoutUnit m_stackingAxisGridGap;
-    LayoutUnit m_gridContentSize;
 
     const Style::GridTrackSizingDirection m_stackingAxisDirection;
 

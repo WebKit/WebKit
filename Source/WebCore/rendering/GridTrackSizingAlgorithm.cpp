@@ -236,7 +236,7 @@ LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
 {
     // A grid lanes container's content size in the stacking axis comes from placement rather than from
     // track sizing, and run() returns early for the stacking axis, so no caller reaches this in that
-    // direction. The callers which need the placed size read it from the GridLanesLayout directly.
+    // direction. The callers which need the placed size read it from the GridLanesResult directly.
     ASSERT(!isDirectionInStackingAxis());
 
     WTF::Range<size_t> rangeToIgnore;
