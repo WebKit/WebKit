@@ -2013,24 +2013,22 @@ void NV21ToARGBRow_LASX(const uint8_t* src_y,
   }
 }
 
-#ifndef ArgbConstants
-struct ArgbConstants {
-  uint8_t kRGBToY[4];
-  uint16_t kAddY;
-  uint16_t pad;
-};
-#define ArgbConstants ArgbConstants
-
 // RGB to JPeg coefficients
 // B * 0.1140 coefficient = 29
 // G * 0.5870 coefficient = 150
 // R * 0.2990 coefficient = 77
 // Add 0.5 = 0x80
 static const struct ArgbConstants kRgb24JPEGConstants = {{29, 150, 77, 0},
-                                                        128,
-                                                        0};
+                                                         {0},
+                                                         {0},
+                                                         {128},
+                                                         {0}};
 
-static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0}, 128, 0};
+static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0},
+                                                       {0},
+                                                       {0},
+                                                       {128},
+                                                       {0}};
 
 // RGB to BT.601 coefficients
 // B * 0.1016 coefficient = 25
@@ -2039,25 +2037,29 @@ static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0}, 128, 0}
 // Add 16.5 = 0x1080
 
 static const struct ArgbConstants kRgb24I601Constants = {{25, 129, 66, 0},
-                                                        0x1080,
-                                                        0};
+                                                         {0},
+                                                         {0},
+                                                         {0x1080},
+                                                         {0}};
 
 static const struct ArgbConstants kRawI601Constants = {{66, 129, 25, 0},
-                                                      0x1080,
-                                                      0};
-#endif  // ArgbConstants
+                                                       {0},
+                                                       {0},
+                                                       {0x1080},
+                                                       {0}};
 
 // ARGB expects first 3 values to contain RGB and 4th value is ignored.
 void ARGBToYMatrixRow_LASX(const uint8_t* src_argb,
-                                  uint8_t* dst_y,
-                                  int width,
-                                  const struct ArgbConstants* c) {
+                           uint8_t* dst_y,
+                           int width,
+                           const struct ArgbConstants* c) {
   int32_t shuff[8] = {0, 4, 1, 5, 2, 6, 3, 7};
   asm volatile(
       "xvldrepl.b      $xr0,  %3,    0             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr1,  %3,    1             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr2,  %3,    2             \n\t"  // load rgbconstants
-      "xvldrepl.h      $xr3,  %3,    4             \n\t"  // load rgbconstants
+      "xvldrepl.b      $xr21, %3,    3             \n\t"  // load rgbconstants
+      "xvldrepl.h      $xr3,  %3,    96            \n\t"  // load rgbconstants
       "xvld            $xr20, %4,    0             \n\t"  // load shuff
       "1:                                          \n\t"
       "xvld            $xr4,  %0,    0             \n\t"
@@ -2079,6 +2081,8 @@ void ARGBToYMatrixRow_LASX(const uint8_t* src_argb,
       "xvmaddwev.h.bu  $xr13, $xr11, $xr1          \n\t"
       "xvmaddwod.h.bu  $xr12, $xr8,  $xr2          \n\t"  // R
       "xvmaddwod.h.bu  $xr13, $xr10, $xr2          \n\t"
+      "xvmaddwod.h.bu  $xr12, $xr9,  $xr21         \n\t"  // A
+      "xvmaddwod.h.bu  $xr13, $xr11, $xr21         \n\t"
       "addi.d          %0,    %0,    128           \n\t"
       "xvpickod.b      $xr10, $xr13, $xr12         \n\t"
       "xvperm.w        $xr11, $xr10, $xr20         \n\t"
@@ -2119,7 +2123,7 @@ static void RGBAToYMatrixRow_LASX(const uint8_t* src_rgba,
       "xvldrepl.b      $xr0,  %3,    0             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr1,  %3,    1             \n\t"  // load rgbconstants
       "xvldrepl.b      $xr2,  %3,    2             \n\t"  // load rgbconstants
-      "xvldrepl.h      $xr3,  %3,    4             \n\t"  // load rgbconstants
+      "xvldrepl.h      $xr3,  %3,    96            \n\t"  // load rgbconstants
       "xvld            $xr20, %4,    0             \n\t"  // load shuff
       "1:                                          \n\t"
       "xvld            $xr4,  %0,    0             \n\t"
@@ -2216,17 +2220,13 @@ static void RGBToYMatrixRow_LASX(const uint8_t* src_rgba,
       "xvst            $xr10, %1,    0             \n\t"
       "addi.d          %1,    %1,    32            \n\t"
       "bnez            %2,    1b                   \n\t"
-      : "+&r"(src_rgba),    // %0
-        "+&r"(dst_y),       // %1
-        "+&r"(width)        // %2
-      : "r"(c),  // %3
-        "r"(shuff)          // %4
+      : "+&r"(src_rgba),  // %0
+        "+&r"(dst_y),     // %1
+        "+&r"(width)      // %2
+      : "r"(c),           // %3
+        "r"(shuff)        // %4
       : "memory");
 }
-
-
-
-
 
 void ARGBToUVJRow_LASX(const uint8_t* src_argb,
                        int src_stride_argb,

@@ -1,4 +1,7 @@
 # This is the Android makefile for libyuv for NDK.
+
+# Ignore this file during non-NDK builds.
+ifdef NDK_ROOT
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
@@ -104,3 +107,4 @@ LOCAL_SRC_FILES := \
 
 LOCAL_MODULE := libyuv_unittest
 include $(BUILD_NATIVE_TEST)
+endif  # NDK_ROOT

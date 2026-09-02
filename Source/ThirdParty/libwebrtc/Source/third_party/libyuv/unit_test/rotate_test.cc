@@ -20,7 +20,7 @@
 
 namespace libyuv {
 
-#define SUBSAMPLE(v, a) ((((v) + (a)-1)) / (a))
+#define SUBSAMPLE(v, a) ((((v) + (a) - 1)) / (a))
 
 static void I420TestRotate(int src_width,
                            int src_height,
@@ -495,15 +495,15 @@ TEST_F(LibYUVRotateTest, NV12Rotate270_Invert) {
     const int kHeight = benchmark_height_;                                    \
     const int kSizeUV =                                                       \
         SUBSAMPLE(kWidth, SRC_SUBSAMP_X) * SUBSAMPLE(kHeight, SRC_SUBSAMP_Y); \
-    align_buffer_page_end(src_y, kWidth* kHeight + OFF);                      \
+    align_buffer_page_end(src_y, kWidth * kHeight + OFF);                     \
     align_buffer_page_end(src_uv,                                             \
-                          kSizeUV*((PIXEL_STRIDE == 3) ? 3 : 2) + OFF);       \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight);                          \
+                          kSizeUV * ((PIXEL_STRIDE == 3) ? 3 : 2) + OFF);     \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight);                         \
     align_buffer_page_end(dst_u_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
                                        SUBSAMPLE(kHeight, SUBSAMP_Y));        \
     align_buffer_page_end(dst_v_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
                                        SUBSAMPLE(kHeight, SUBSAMP_Y));        \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                        \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight);                       \
     align_buffer_page_end(dst_u_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
                                          SUBSAMPLE(kHeight, SUBSAMP_Y));      \
     align_buffer_page_end(dst_v_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
@@ -522,12 +522,12 @@ TEST_F(LibYUVRotateTest, NV12Rotate270_Invert) {
             (fastrand() & 0xff);                                              \
       }                                                                       \
     }                                                                         \
-    memset(dst_y_c, 1, kWidth* kHeight);                                      \
+    memset(dst_y_c, 1, kWidth * kHeight);                                     \
     memset(dst_u_c, 2,                                                        \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
     memset(dst_v_c, 3,                                                        \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
-    memset(dst_y_opt, 101, kWidth* kHeight);                                  \
+    memset(dst_y_opt, 101, kWidth * kHeight);                                 \
     memset(dst_u_opt, 102,                                                    \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
     memset(dst_v_opt, 103,                                                    \

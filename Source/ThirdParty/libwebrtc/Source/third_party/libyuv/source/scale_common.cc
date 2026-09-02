@@ -792,10 +792,10 @@ void ScaleFilterCols64_C(uint8_t* dst_ptr,
 #undef BLENDER
 
 // Same as 8 bit arm blender but return is cast to uint16_t
-#define BLENDER(a, b, f) \
-  (uint16_t)(            \
-      (int)(a) +         \
-      (int)((((int64_t)((f)) * ((int64_t)(b) - (int)(a))) + 0x8000) >> 16))
+#define BLENDER(a, b, f)                                                      \
+  (uint16_t)((int)(a) +                                                       \
+             (int)((((int64_t)((f)) * ((int64_t)(b) - (int)(a))) + 0x8000) >> \
+                   16))
 
 void ScaleFilterCols_16_C(uint16_t* dst_ptr,
                           const uint16_t* src_ptr,
@@ -1196,7 +1196,7 @@ void ScaleARGBColsUp2_C(uint8_t* dst_argb,
 
 // TODO(fbarchard): Replace 0x7f ^ f with 128-f.  bug=607.
 // Mimics SSSE3 blender
-#define BLENDER1(a, b, f) ((a) * (0x7f ^ f) + (b)*f) >> 7
+#define BLENDER1(a, b, f) ((a) * (0x7f ^ f) + (b) * f) >> 7
 #define BLENDERC(a, b, f, s) \
   (uint32_t)(BLENDER1(((a) >> s) & 255, ((b) >> s) & 255, f) << s)
 #define BLENDER(a, b, f)                                                 \

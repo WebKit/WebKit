@@ -2798,24 +2798,23 @@ void HalfFloatRow_LSX(const uint16_t* src,
   }
 }
 
-#ifndef ArgbConstants
-struct ArgbConstants {
-  uint8_t kRGBToY[4];
-  uint16_t kAddY;
-  uint16_t pad;
-};
-#define ArgbConstants ArgbConstants
-
 // RGB to JPeg coefficients
 // B * 0.1140 coefficient = 29
 // G * 0.5870 coefficient = 150
 // R * 0.2990 coefficient = 77
 // Add 0.5 = 0x80
-static const struct ArgbConstants kRgb24JPEGConstants = {{29, 150, 77, 0},
-                                                        128,
-                                                        0};
 
-static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0}, 128, 0};
+static const struct ArgbConstants kRgb24JPEGConstants = {{29, 150, 77, 0},
+                                                         {0},
+                                                         {0},
+                                                         {128},
+                                                         {0}};
+
+static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0},
+                                                       {0},
+                                                       {0},
+                                                       {128},
+                                                       {0}};
 
 // RGB to BT.601 coefficients
 // B * 0.1016 coefficient = 25
@@ -2824,24 +2823,28 @@ static const struct ArgbConstants kRawJPEGConstants = {{77, 150, 29, 0}, 128, 0}
 // Add 16.5 = 0x1080
 
 static const struct ArgbConstants kRgb24I601Constants = {{25, 129, 66, 0},
-                                                        0x1080,
-                                                        0};
+                                                         {0},
+                                                         {0},
+                                                         {0x1080},
+                                                         {0}};
 
 static const struct ArgbConstants kRawI601Constants = {{66, 129, 25, 0},
-                                                      0x1080,
-                                                      0};
-#endif  // ArgbConstants
+                                                       {0},
+                                                       {0},
+                                                       {0x1080},
+                                                       {0}};
 
 // ARGB expects first 3 values to contain RGB and 4th value is ignored.
 void ARGBToYMatrixRow_LSX(const uint8_t* src_argb,
-                                 uint8_t* dst_y,
-                                 int width,
-                                 const struct ArgbConstants* c) {
+                          uint8_t* dst_y,
+                          int width,
+                          const struct ArgbConstants* c) {
   asm volatile(
       "vldrepl.b      $vr0,  %3,    0             \n\t"  // load rgbconstants
       "vldrepl.b      $vr1,  %3,    1             \n\t"  // load rgbconstants
       "vldrepl.b      $vr2,  %3,    2             \n\t"  // load rgbconstants
-      "vldrepl.h      $vr3,  %3,    4             \n\t"  // load rgbconstants
+      "vldrepl.b      $vr20, %3,    3             \n\t"  // load rgbconstants
+      "vldrepl.h      $vr3,  %3,    96            \n\t"  // load rgbconstants
       "1:                                         \n\t"
       "vld            $vr4,  %0,    0             \n\t"
       "vld            $vr5,  %0,    16            \n\t"
@@ -2862,6 +2865,8 @@ void ARGBToYMatrixRow_LSX(const uint8_t* src_argb,
       "vmaddwev.h.bu  $vr13, $vr11, $vr1          \n\t"
       "vmaddwod.h.bu  $vr12, $vr8,  $vr2          \n\t"  // R
       "vmaddwod.h.bu  $vr13, $vr10, $vr2          \n\t"
+      "vmaddwod.h.bu  $vr12, $vr9,  $vr20         \n\t"  // A
+      "vmaddwod.h.bu  $vr13, $vr11, $vr20         \n\t"
       "addi.d         %0,    %0,    64            \n\t"
       "vpickod.b      $vr10, $vr13, $vr12         \n\t"
       "vst            $vr10, %1,    0             \n\t"
@@ -2900,7 +2905,7 @@ static void RGBAToYMatrixRow_LSX(const uint8_t* src_rgba,
       "vldrepl.b      $vr0,  %3,    0             \n\t"  // load rgbconstants
       "vldrepl.b      $vr1,  %3,    1             \n\t"  // load rgbconstants
       "vldrepl.b      $vr2,  %3,    2             \n\t"  // load rgbconstants
-      "vldrepl.h      $vr3,  %3,    4             \n\t"  // load rgbconstants
+      "vldrepl.h      $vr3,  %3,    96            \n\t"  // load rgbconstants
       "1:                                         \n\t"
       "vld            $vr4,  %0,    0             \n\t"
       "vld            $vr5,  %0,    16            \n\t"
@@ -2987,17 +2992,13 @@ static void RGBToYMatrixRow_LSX(const uint8_t* src_rgba,
       "vst            $vr10, %1,    0             \n\t"
       "addi.d         %1,    %1,    16            \n\t"
       "bnez           %2,    1b                   \n\t"
-      : "+&r"(src_rgba),    // %0
-        "+&r"(dst_y),       // %1
-        "+&r"(width)        // %2
-      : "r"(c),  // %3
-        "r"(shuff)          // %4
+      : "+&r"(src_rgba),  // %0
+        "+&r"(dst_y),     // %1
+        "+&r"(width)      // %2
+      : "r"(c),           // %3
+        "r"(shuff)        // %4
       : "memory");
 }
-
-
-
-
 
 // undef for unified sources build
 #undef YUVTORGB_SETUP

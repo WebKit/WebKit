@@ -189,6 +189,7 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
     int has_avxvnni = TestCpuFlag(kCpuHasAVXVNNI);
     int has_avxvnniint8 = TestCpuFlag(kCpuHasAVXVNNIINT8);
     int has_amxint8 = TestCpuFlag(kCpuHasAMXINT8);
+    int has_avx512bmm = TestCpuFlag(kCpuHasAVX512BMM);
     printf("Has X86 0x%x\n", has_x86);
     printf("Has SSE2 0x%x\n", has_sse2);
     printf("Has SSSE3 0x%x\n", has_ssse3);
@@ -211,6 +212,7 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
     printf("HAS AVXVNNI 0x%x\n", has_avxvnni);
     printf("Has AVXVNNIINT8 0x%x\n", has_avxvnniint8);
     printf("Has AMXINT8 0x%x\n", has_amxint8);
+    printf("Has AVX512BMM 0x%x\n", has_avx512bmm);
   }
 #endif  // defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) ||
         // defined(_M_X64)

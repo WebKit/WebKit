@@ -51,9 +51,9 @@ namespace libyuv {
 #define ABGRToABGR ARGBCopy
 
 // subsample amount uses a divide.
-#define SUBSAMPLE(v, a) ((((v) + (a)-1)) / (a))
+#define SUBSAMPLE(v, a) ((((v) + (a) - 1)) / (a))
 
-#define ALIGNINT(V, ALIGN) (((V) + (ALIGN)-1) / (ALIGN) * (ALIGN))
+#define ALIGNINT(V, ALIGN) (((V) + (ALIGN) - 1) / (ALIGN) * (ALIGN))
 
 // Planar test
 
@@ -78,17 +78,19 @@ namespace libyuv {
     const int kSrcHalfHeight = SUBSAMPLE(kHeight, SRC_SUBSAMP_Y);             \
     const int kDstHalfWidth = SUBSAMPLE(kWidth, DST_SUBSAMP_X);               \
     const int kDstHalfHeight = SUBSAMPLE(kHeight, DST_SUBSAMP_Y);             \
-    align_buffer_page_end(src_y, kWidth* kHeight* SRC_BPC + OFF);             \
+    align_buffer_page_end(src_y, kWidth * kHeight * SRC_BPC + OFF);           \
     align_buffer_page_end(src_u,                                              \
-                          kSrcHalfWidth* kSrcHalfHeight* SRC_BPC + OFF);      \
+                          kSrcHalfWidth * kSrcHalfHeight * SRC_BPC + OFF);    \
     align_buffer_page_end(src_v,                                              \
-                          kSrcHalfWidth* kSrcHalfHeight* SRC_BPC + OFF);      \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight* DST_BPC);                 \
-    align_buffer_page_end(dst_u_c, kDstHalfWidth* kDstHalfHeight* DST_BPC);   \
-    align_buffer_page_end(dst_v_c, kDstHalfWidth* kDstHalfHeight* DST_BPC);   \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight* DST_BPC);               \
-    align_buffer_page_end(dst_u_opt, kDstHalfWidth* kDstHalfHeight* DST_BPC); \
-    align_buffer_page_end(dst_v_opt, kDstHalfWidth* kDstHalfHeight* DST_BPC); \
+                          kSrcHalfWidth * kSrcHalfHeight * SRC_BPC + OFF);    \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight * DST_BPC);               \
+    align_buffer_page_end(dst_u_c, kDstHalfWidth * kDstHalfHeight * DST_BPC); \
+    align_buffer_page_end(dst_v_c, kDstHalfWidth * kDstHalfHeight * DST_BPC); \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight * DST_BPC);             \
+    align_buffer_page_end(dst_u_opt,                                          \
+                          kDstHalfWidth * kDstHalfHeight * DST_BPC);          \
+    align_buffer_page_end(dst_v_opt,                                          \
+                          kDstHalfWidth * kDstHalfHeight * DST_BPC);          \
     MemRandomize(src_y + OFF, kWidth * kHeight * SRC_BPC);                    \
     MemRandomize(src_u + OFF, kSrcHalfWidth * kSrcHalfHeight * SRC_BPC);      \
     MemRandomize(src_v + OFF, kSrcHalfWidth * kSrcHalfHeight * SRC_BPC);      \
@@ -102,12 +104,12 @@ namespace libyuv {
       src_u_p[i] = src_u_p[i] & ((1 << SRC_DEPTH) - 1);                       \
       src_v_p[i] = src_v_p[i] & ((1 << SRC_DEPTH) - 1);                       \
     }                                                                         \
-    memset(dst_y_c, 1, kWidth* kHeight* DST_BPC);                             \
-    memset(dst_u_c, 2, kDstHalfWidth* kDstHalfHeight* DST_BPC);               \
-    memset(dst_v_c, 3, kDstHalfWidth* kDstHalfHeight* DST_BPC);               \
-    memset(dst_y_opt, 101, kWidth* kHeight* DST_BPC);                         \
-    memset(dst_u_opt, 102, kDstHalfWidth* kDstHalfHeight* DST_BPC);           \
-    memset(dst_v_opt, 103, kDstHalfWidth* kDstHalfHeight* DST_BPC);           \
+    memset(dst_y_c, 1, kWidth * kHeight * DST_BPC);                           \
+    memset(dst_u_c, 2, kDstHalfWidth * kDstHalfHeight * DST_BPC);             \
+    memset(dst_v_c, 3, kDstHalfWidth * kDstHalfHeight * DST_BPC);             \
+    memset(dst_y_opt, 101, kWidth * kHeight * DST_BPC);                       \
+    memset(dst_u_opt, 102, kDstHalfWidth * kDstHalfHeight * DST_BPC);         \
+    memset(dst_v_opt, 103, kDstHalfWidth * kDstHalfHeight * DST_BPC);         \
     MaskCpuFlags(disable_cpu_flags_);                                         \
     SRC_FMT_PLANAR##To##FMT_PLANAR(                                           \
         src_y_p, kWidth, src_u_p, kSrcHalfWidth, src_v_p, kSrcHalfWidth,      \
@@ -212,15 +214,15 @@ TESTPLANARTOP(I412, uint16_t, 2, 1, 1, I444, uint8_t, 1, 1, 1, 12)
     const int kHeight = benchmark_height_;                                    \
     const int kSizeUV =                                                       \
         SUBSAMPLE(kWidth, SRC_SUBSAMP_X) * SUBSAMPLE(kHeight, SRC_SUBSAMP_Y); \
-    align_buffer_page_end(src_y, kWidth* kHeight + OFF);                      \
+    align_buffer_page_end(src_y, kWidth * kHeight + OFF);                     \
     align_buffer_page_end(src_uv,                                             \
-                          kSizeUV*((PIXEL_STRIDE == 3) ? 3 : 2) + OFF);       \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight);                          \
+                          kSizeUV * ((PIXEL_STRIDE == 3) ? 3 : 2) + OFF);     \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight);                         \
     align_buffer_page_end(dst_u_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
                                        SUBSAMPLE(kHeight, SUBSAMP_Y));        \
     align_buffer_page_end(dst_v_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
                                        SUBSAMPLE(kHeight, SUBSAMP_Y));        \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                        \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight);                       \
     align_buffer_page_end(dst_u_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
                                          SUBSAMPLE(kHeight, SUBSAMP_Y));      \
     align_buffer_page_end(dst_v_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
@@ -239,12 +241,12 @@ TESTPLANARTOP(I412, uint16_t, 2, 1, 1, I444, uint8_t, 1, 1, 1, 12)
             (fastrand() & 0xff);                                              \
       }                                                                       \
     }                                                                         \
-    memset(dst_y_c, 1, kWidth* kHeight);                                      \
+    memset(dst_y_c, 1, kWidth * kHeight);                                     \
     memset(dst_u_c, 2,                                                        \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
     memset(dst_v_c, 3,                                                        \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
-    memset(dst_y_opt, 101, kWidth* kHeight);                                  \
+    memset(dst_y_opt, 101, kWidth * kHeight);                                 \
     memset(dst_u_opt, 102,                                                    \
            SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
     memset(dst_v_opt, 103,                                                    \
@@ -359,17 +361,17 @@ static int I400ToNV21(const uint8_t* src_y,
     const int kSrcHalfHeight = SUBSAMPLE(kHeight, SRC_SUBSAMP_Y);             \
     const int kDstHalfWidth = SUBSAMPLE(kWidth, DST_SUBSAMP_X);               \
     const int kDstHalfHeight = SUBSAMPLE(kHeight, DST_SUBSAMP_Y);             \
-    align_buffer_page_end(src_y, kWidth* kHeight* SRC_BPC + OFF);             \
+    align_buffer_page_end(src_y, kWidth * kHeight * SRC_BPC + OFF);           \
     align_buffer_page_end(src_u,                                              \
-                          kSrcHalfWidth* kSrcHalfHeight* SRC_BPC + OFF);      \
+                          kSrcHalfWidth * kSrcHalfHeight * SRC_BPC + OFF);    \
     align_buffer_page_end(src_v,                                              \
-                          kSrcHalfWidth* kSrcHalfHeight* SRC_BPC + OFF);      \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight* DST_BPC);                 \
+                          kSrcHalfWidth * kSrcHalfHeight * SRC_BPC + OFF);    \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight * DST_BPC);               \
     align_buffer_page_end(dst_uv_c,                                           \
-                          kDstHalfWidth* kDstHalfHeight* DST_BPC * 2);        \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight* DST_BPC);               \
+                          kDstHalfWidth * kDstHalfHeight * DST_BPC * 2);      \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight * DST_BPC);             \
     align_buffer_page_end(dst_uv_opt,                                         \
-                          kDstHalfWidth* kDstHalfHeight* DST_BPC * 2);        \
+                          kDstHalfWidth * kDstHalfHeight * DST_BPC * 2);      \
     MemRandomize(src_y + OFF, kWidth * kHeight * SRC_BPC);                    \
     MemRandomize(src_u + OFF, kSrcHalfWidth * kSrcHalfHeight * SRC_BPC);      \
     MemRandomize(src_v + OFF, kSrcHalfWidth * kSrcHalfHeight * SRC_BPC);      \
@@ -383,10 +385,10 @@ static int I400ToNV21(const uint8_t* src_y,
       src_u_p[i] = src_u_p[i] & ((1 << SRC_DEPTH) - 1);                       \
       src_v_p[i] = src_v_p[i] & ((1 << SRC_DEPTH) - 1);                       \
     }                                                                         \
-    memset(dst_y_c, 1, kWidth* kHeight* DST_BPC);                             \
-    memset(dst_uv_c, 2, kDstHalfWidth* kDstHalfHeight* DST_BPC * 2);          \
-    memset(dst_y_opt, 101, kWidth* kHeight* DST_BPC);                         \
-    memset(dst_uv_opt, 102, kDstHalfWidth* kDstHalfHeight* DST_BPC * 2);      \
+    memset(dst_y_c, 1, kWidth * kHeight * DST_BPC);                           \
+    memset(dst_uv_c, 2, kDstHalfWidth * kDstHalfHeight * DST_BPC * 2);        \
+    memset(dst_y_opt, 101, kWidth * kHeight * DST_BPC);                       \
+    memset(dst_uv_opt, 102, kDstHalfWidth * kDstHalfHeight * DST_BPC * 2);    \
     MaskCpuFlags(disable_cpu_flags_);                                         \
     SRC_FMT_PLANAR##To##FMT_PLANAR(src_y_p, kWidth, src_u_p, kSrcHalfWidth,   \
                                    src_v_p, kSrcHalfWidth,                    \
@@ -478,14 +480,15 @@ TESTPLANARTOBP(I212, uint16_t, 2, 2, 1, P212, uint16_t, 2, 2, 1, 12)
         (kHeight + (TILE_HEIGHT - 1)) & ~(TILE_HEIGHT - 1);                   \
     const int kSrcHalfPaddedWidth = SUBSAMPLE(kPaddedWidth, SRC_SUBSAMP_X);   \
     const int kSrcHalfPaddedHeight = SUBSAMPLE(kPaddedHeight, SRC_SUBSAMP_Y); \
-    align_buffer_page_end(src_y, kPaddedWidth* kPaddedHeight* SRC_BPC + OFF); \
+    align_buffer_page_end(src_y,                                              \
+                          kPaddedWidth * kPaddedHeight * SRC_BPC + OFF);      \
     align_buffer_page_end(                                                    \
         src_uv,                                                               \
         2 * kSrcHalfPaddedWidth * kSrcHalfPaddedHeight * SRC_BPC + OFF);      \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight* DST_BPC);                 \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight * DST_BPC);               \
     align_buffer_page_end(dst_uv_c,                                           \
                           2 * kDstHalfWidth * kDstHalfHeight * DST_BPC);      \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight* DST_BPC);               \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight * DST_BPC);             \
     align_buffer_page_end(dst_uv_opt,                                         \
                           2 * kDstHalfWidth * kDstHalfHeight * DST_BPC);      \
     SRC_T* src_y_p = reinterpret_cast<SRC_T*>(src_y + OFF);                   \
@@ -502,13 +505,13 @@ TESTPLANARTOBP(I212, uint16_t, 2, 2, 1, P212, uint16_t, 2, 2, 1, 12)
       src_uv_p[i] =                                                           \
           (fastrand() & (((SRC_T)(-1)) << ((8 * SRC_BPC) - SRC_DEPTH)));      \
     }                                                                         \
-    memset(dst_y_c, 1, kWidth* kHeight* DST_BPC);                             \
+    memset(dst_y_c, 1, kWidth * kHeight * DST_BPC);                           \
     memset(dst_uv_c, 2, 2 * kDstHalfWidth * kDstHalfHeight * DST_BPC);        \
-    memset(dst_y_opt, 101, kWidth* kHeight* DST_BPC);                         \
+    memset(dst_y_opt, 101, kWidth * kHeight * DST_BPC);                       \
     memset(dst_uv_opt, 102, 2 * kDstHalfWidth * kDstHalfHeight * DST_BPC);    \
     MaskCpuFlags(disable_cpu_flags_);                                         \
     SRC_FMT_PLANAR##To##FMT_PLANAR(                                           \
-        src_y_p, kWidth* SRC_BPC / (int)sizeof(SRC_T), src_uv_p,              \
+        src_y_p, kWidth * SRC_BPC / (int)sizeof(SRC_T), src_uv_p,             \
         2 * kSrcHalfWidth * SRC_BPC / (int)sizeof(SRC_T),                     \
         DOY ? reinterpret_cast<DST_T*>(dst_y_c) : NULL, kWidth,               \
         reinterpret_cast<DST_T*>(dst_uv_c), 2 * kDstHalfWidth, kWidth,        \
@@ -516,7 +519,7 @@ TESTPLANARTOBP(I212, uint16_t, 2, 2, 1, P212, uint16_t, 2, 2, 1, 12)
     MaskCpuFlags(benchmark_cpu_info_);                                        \
     for (int i = 0; i < benchmark_iterations_; ++i) {                         \
       SRC_FMT_PLANAR##To##FMT_PLANAR(                                         \
-          src_y_p, kWidth* SRC_BPC / (int)sizeof(SRC_T), src_uv_p,            \
+          src_y_p, kWidth * SRC_BPC / (int)sizeof(SRC_T), src_uv_p,           \
           2 * kSrcHalfWidth * SRC_BPC / (int)sizeof(SRC_T),                   \
           DOY ? reinterpret_cast<DST_T*>(dst_y_opt) : NULL, kWidth,           \
           reinterpret_cast<DST_T*>(dst_uv_opt), 2 * kDstHalfWidth, kWidth,    \
@@ -598,16 +601,16 @@ TESTBPTOBP(P010, uint16_t, 2, 2, 2, NV12, uint8_t, 1, 2, 2, 8, 1, 1)
     const int kHeight = ALIGNINT(benchmark_height_, YALIGN);                   \
     const int kStrideUV = SUBSAMPLE(kWidth, SUBSAMP_X);                        \
     const int kStride = (kStrideUV * SUBSAMP_X * 8 * BPP_A + 7) / 8;           \
-    align_buffer_page_end(src_argb, kStride* kHeight + OFF);                   \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight);                           \
+    align_buffer_page_end(src_argb, kStride * kHeight + OFF);                  \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight);                          \
     align_buffer_page_end(dst_uv_c,                                            \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));      \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                         \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight);                        \
     align_buffer_page_end(dst_uv_opt,                                          \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));      \
-    memset(dst_y_c, 1, kWidth* kHeight);                                       \
+    memset(dst_y_c, 1, kWidth * kHeight);                                      \
     memset(dst_uv_c, 2, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));        \
-    memset(dst_y_opt, 101, kWidth* kHeight);                                   \
+    memset(dst_y_opt, 101, kWidth * kHeight);                                  \
     memset(dst_uv_opt, 102, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));    \
     for (int i = 0; i < kHeight; ++i)                                          \
       for (int j = 0; j < kStride; ++j)                                        \
@@ -691,20 +694,20 @@ TESTATOPLANAR(YUY2, 2, 1, I422, 2, 1)
     const int kHeight = ALIGNINT(benchmark_height_, YALIGN);                   \
     const int kStrideUV = SUBSAMPLE(kWidth, SUBSAMP_X);                        \
     const int kStride = (kStrideUV * SUBSAMP_X * 8 * BPP_A + 7) / 8;           \
-    align_buffer_page_end(src_argb, kStride* kHeight + OFF);                   \
-    align_buffer_page_end(dst_a_c, kWidth* kHeight);                           \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight);                           \
+    align_buffer_page_end(src_argb, kStride * kHeight + OFF);                  \
+    align_buffer_page_end(dst_a_c, kWidth * kHeight);                          \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight);                          \
     align_buffer_page_end(dst_uv_c,                                            \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));      \
-    align_buffer_page_end(dst_a_opt, kWidth* kHeight);                         \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                         \
+    align_buffer_page_end(dst_a_opt, kWidth * kHeight);                        \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight);                        \
     align_buffer_page_end(dst_uv_opt,                                          \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));      \
-    memset(dst_a_c, 1, kWidth* kHeight);                                       \
-    memset(dst_y_c, 2, kWidth* kHeight);                                       \
+    memset(dst_a_c, 1, kWidth * kHeight);                                      \
+    memset(dst_y_c, 2, kWidth * kHeight);                                      \
     memset(dst_uv_c, 3, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));        \
-    memset(dst_a_opt, 101, kWidth* kHeight);                                   \
-    memset(dst_y_opt, 102, kWidth* kHeight);                                   \
+    memset(dst_a_opt, 101, kWidth * kHeight);                                  \
+    memset(dst_y_opt, 102, kWidth * kHeight);                                  \
     memset(dst_uv_opt, 103, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));    \
     for (int i = 0; i < kHeight; ++i)                                          \
       for (int j = 0; j < kStride; ++j)                                        \
@@ -765,19 +768,19 @@ TESTATOPLANARA(ARGB, 4, 1, I420Alpha, 2, 2)
     const int kHeight = benchmark_height_;                                    \
     const int kStride = SUBSAMPLE(kWidth, SUB_A) * BPP_A;                     \
     const int kStrideUV = SUBSAMPLE(kWidth, SUBSAMP_X);                       \
-    align_buffer_page_end(src_argb, kStride* kHeight + OFF);                  \
-    align_buffer_page_end(dst_y_c, kWidth* kHeight);                          \
+    align_buffer_page_end(src_argb, kStride * kHeight + OFF);                 \
+    align_buffer_page_end(dst_y_c, kWidth * kHeight);                         \
     align_buffer_page_end(dst_uv_c,                                           \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
-    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                        \
+    align_buffer_page_end(dst_y_opt, kWidth * kHeight);                       \
     align_buffer_page_end(dst_uv_opt,                                         \
                           kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
     for (int i = 0; i < kHeight; ++i)                                         \
       for (int j = 0; j < kStride; ++j)                                       \
         src_argb[(i * kStride) + j + OFF] = (fastrand() & 0xff);              \
-    memset(dst_y_c, 1, kWidth* kHeight);                                      \
+    memset(dst_y_c, 1, kWidth * kHeight);                                     \
     memset(dst_uv_c, 2, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));       \
-    memset(dst_y_opt, 101, kWidth* kHeight);                                  \
+    memset(dst_y_opt, 101, kWidth * kHeight);                                 \
     memset(dst_uv_opt, 102, kStrideUV * 2 * SUBSAMPLE(kHeight, SUBSAMP_Y));   \
     MaskCpuFlags(disable_cpu_flags_);                                         \
     FMT_A##To##FMT_PLANAR(src_argb + OFF, kStride, dst_y_c, kWidth, dst_uv_c, \
@@ -1950,17 +1953,17 @@ TEST_F(LibYUVConvertTest, I420CropOddY) {
     const int kHeight = benchmark_height_;                                    \
                                                                               \
     align_buffer_page_end(orig_uyvy, 4 * SUBSAMPLE(kWidth, 2) * kHeight);     \
-    align_buffer_page_end(orig_y, kWidth* kHeight);                           \
+    align_buffer_page_end(orig_y, kWidth * kHeight);                          \
     align_buffer_page_end(orig_u,                                             \
                           SUBSAMPLE(kWidth, 2) * SUBSAMPLE(kHeight, 2));      \
     align_buffer_page_end(orig_v,                                             \
                           SUBSAMPLE(kWidth, 2) * SUBSAMPLE(kHeight, 2));      \
                                                                               \
-    align_buffer_page_end(dst_y_orig, kWidth* kHeight);                       \
+    align_buffer_page_end(dst_y_orig, kWidth * kHeight);                      \
     align_buffer_page_end(dst_uv_orig,                                        \
                           2 * SUBSAMPLE(kWidth, 2) * SUBSAMPLE(kHeight, 2));  \
                                                                               \
-    align_buffer_page_end(dst_y, kWidth* kHeight);                            \
+    align_buffer_page_end(dst_y, kWidth * kHeight);                           \
     align_buffer_page_end(dst_uv,                                             \
                           2 * SUBSAMPLE(kWidth, 2) * SUBSAMPLE(kHeight, 2));  \
                                                                               \
@@ -2173,6 +2176,46 @@ TEST_F(LibYUVConvertTest, TestABGRToI420Matrix) {
   free_aligned_buffer_page_end(ref_v);
 }
 
+TEST_F(LibYUVConvertTest, TestRAWToI420) {
+  const int kWidth = 16;
+  const int kHeight = 16;
+  align_buffer_page_end(src_raw, kWidth * kHeight * 3);
+  align_buffer_page_end(dst_y, kWidth * kHeight);
+  align_buffer_page_end(dst_u, kWidth / 2 * kHeight / 2);
+  align_buffer_page_end(dst_v, kWidth / 2 * kHeight / 2);
+  align_buffer_page_end(src_argb, kWidth * kHeight * 4);
+  align_buffer_page_end(ref_y, kWidth * kHeight);
+  align_buffer_page_end(ref_u, kWidth / 2 * kHeight / 2);
+  align_buffer_page_end(ref_v, kWidth / 2 * kHeight / 2);
+
+  MemRandomize(src_raw, kWidth * kHeight * 3);
+
+  RAWToI420(src_raw, kWidth * 3, dst_y, kWidth, dst_u, kWidth / 2, dst_v,
+            kWidth / 2, kWidth, kHeight);
+
+  // Verify against RAWToARGB + ARGBToI420
+  RAWToARGB(src_raw, kWidth * 3, src_argb, kWidth * 4, kWidth, kHeight);
+  ARGBToI420(src_argb, kWidth * 4, ref_y, kWidth, ref_u, kWidth / 2, ref_v,
+             kWidth / 2, kWidth, kHeight);
+
+  for (int i = 0; i < kWidth * kHeight; ++i) {
+    ASSERT_EQ(dst_y[i], ref_y[i]);
+  }
+  for (int i = 0; i < kWidth / 2 * kHeight / 2; ++i) {
+    ASSERT_EQ(dst_u[i], ref_u[i]);
+    ASSERT_EQ(dst_v[i], ref_v[i]);
+  }
+
+  free_aligned_buffer_page_end(src_raw);
+  free_aligned_buffer_page_end(dst_y);
+  free_aligned_buffer_page_end(dst_u);
+  free_aligned_buffer_page_end(dst_v);
+  free_aligned_buffer_page_end(src_argb);
+  free_aligned_buffer_page_end(ref_y);
+  free_aligned_buffer_page_end(ref_u);
+  free_aligned_buffer_page_end(ref_v);
+}
+
 TEST_F(LibYUVConvertTest, TestARGBToNV12Matrix) {
   const int kWidth = 16;
   const int kHeight = 16;
@@ -2287,12 +2330,13 @@ TEST_F(LibYUVConvertTest, TestARGBToI420Matrix) {
                    dst_v, kWidth / 2, &kArgbU2020Constants, kWidth, kHeight);
 
   // Reference BT.709 (limited range)
-  // Y = round(0.2126 * 219 / 255 * R + 0.7152 * 219 / 255 * G + 0.0722 * 219 / 255 * B + 16)
-  // Y = round(0.1826 * R + 0.6142 * G + 0.0620 * B + 16)
-  // 47 * 255 + 157 * 255 + 16 * 255 + 4224 = 11985 + 40035 + 4080 + 4224 = 60324
-  // 60324 / 256 = 235.64 -> 235. Correct.
+  // Y = round(0.2126 * 219 / 255 * R + 0.7152 * 219 / 255 * G + 0.0722 * 219 /
+  // 255 * B + 16) Y = round(0.1826 * R + 0.6142 * G + 0.0620 * B + 16) 47 * 255
+  // + 157 * 255 + 16 * 255 + 4224 = 11985 + 40035 + 4080 + 4224 = 60324 60324 /
+  // 256 = 235.64 -> 235. Correct.
 
-  for (int i = 0; i < kWidth * kHeight * 4; ++i) src_argb[i] = 255;
+  for (int i = 0; i < kWidth * kHeight * 4; ++i)
+    src_argb[i] = 255;
   ARGBToI420Matrix(src_argb, kWidth * 4, dst_y, kWidth, dst_u, kWidth / 2,
                    dst_v, kWidth / 2, &kArgbH709Constants, kWidth, kHeight);
   ASSERT_EQ(dst_y[0], 235);
@@ -2421,6 +2465,132 @@ TEST_F(LibYUVConvertTest, TestARGBToI444Matrix) {
   free_aligned_buffer_page_end(ref_y);
   free_aligned_buffer_page_end(ref_u);
   free_aligned_buffer_page_end(ref_v);
+}
+
+template <typename ConvertToYUV, typename ConvertToARGB>
+static void TestRGBToI420(ConvertToYUV convert_to_yuv,
+                          ConvertToARGB convert_to_argb,
+                          int width,
+                          int height,
+                          int disable_cpu_flags,
+                          int benchmark_cpu_info) {
+  align_buffer_page_end(src_rgb, width * height * 4);
+  align_buffer_page_end(dst_y, width * height);
+  align_buffer_page_end(dst_u, (width + 1) / 2 * (height + 1) / 2);
+  align_buffer_page_end(dst_v, (width + 1) / 2 * (height + 1) / 2);
+
+  align_buffer_page_end(tmp_argb, width * height * 4);
+  align_buffer_page_end(ref_y, width * height);
+  align_buffer_page_end(ref_u, (width + 1) / 2 * (height + 1) / 2);
+  align_buffer_page_end(ref_v, (width + 1) / 2 * (height + 1) / 2);
+
+  MemRandomize(src_rgb, width * height * 4);
+
+  {
+    SCOPED_TRACE("C_Version");
+    MaskCpuFlags(disable_cpu_flags);
+
+    // Clear buffers
+    memset(dst_y, 0, width * height);
+    memset(dst_u, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(dst_v, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(ref_y, 0, width * height);
+    memset(ref_u, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(ref_v, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(tmp_argb, 0, width * height * 4);
+
+    int r1 =
+        convert_to_yuv(src_rgb, width * 4, dst_y, width, dst_u, (width + 1) / 2,
+                       dst_v, (width + 1) / 2, width, height);
+    ASSERT_EQ(r1, 0);
+
+    int r2 =
+        convert_to_argb(src_rgb, width * 4, tmp_argb, width * 4, width, height);
+    ASSERT_EQ(r2, 0);
+
+    int r3 = ARGBToI420(tmp_argb, width * 4, ref_y, width, ref_u,
+                        (width + 1) / 2, ref_v, (width + 1) / 2, width, height);
+    ASSERT_EQ(r3, 0);
+
+    for (int i = 0; i < width * height; ++i) {
+      ASSERT_EQ(dst_y[i], ref_y[i]);
+    }
+    for (int i = 0; i < (width + 1) / 2 * (height + 1) / 2; ++i) {
+      ASSERT_EQ(dst_u[i], ref_u[i]);
+      ASSERT_EQ(dst_v[i], ref_v[i]);
+    }
+  }
+
+  {
+    SCOPED_TRACE("SIMD_Version");
+    MaskCpuFlags(benchmark_cpu_info);
+
+    // Clear buffers
+    memset(dst_y, 0, width * height);
+    memset(dst_u, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(dst_v, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(ref_y, 0, width * height);
+    memset(ref_u, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(ref_v, 0, (width + 1) / 2 * (height + 1) / 2);
+    memset(tmp_argb, 0, width * height * 4);
+
+    int r1 =
+        convert_to_yuv(src_rgb, width * 4, dst_y, width, dst_u, (width + 1) / 2,
+                       dst_v, (width + 1) / 2, width, height);
+    ASSERT_EQ(r1, 0);
+
+    int r2 =
+        convert_to_argb(src_rgb, width * 4, tmp_argb, width * 4, width, height);
+    ASSERT_EQ(r2, 0);
+
+    int r3 = ARGBToI420(tmp_argb, width * 4, ref_y, width, ref_u,
+                        (width + 1) / 2, ref_v, (width + 1) / 2, width, height);
+    ASSERT_EQ(r3, 0);
+
+    for (int i = 0; i < width * height; ++i) {
+      ASSERT_EQ(dst_y[i], ref_y[i]);
+    }
+    for (int i = 0; i < (width + 1) / 2 * (height + 1) / 2; ++i) {
+      ASSERT_EQ(dst_u[i], ref_u[i]);
+      ASSERT_EQ(dst_v[i], ref_v[i]);
+    }
+  }
+
+  free_aligned_buffer_page_end(src_rgb);
+  free_aligned_buffer_page_end(dst_y);
+  free_aligned_buffer_page_end(dst_u);
+  free_aligned_buffer_page_end(dst_v);
+  free_aligned_buffer_page_end(tmp_argb);
+  free_aligned_buffer_page_end(ref_y);
+  free_aligned_buffer_page_end(ref_u);
+  free_aligned_buffer_page_end(ref_v);
+}
+
+TEST_F(LibYUVConvertTest, BGRAToI420_Check) {
+  TestRGBToI420(BGRAToI420, BGRAToARGB, 16, 16, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(BGRAToI420, BGRAToARGB, 17, 17, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(BGRAToI420, BGRAToARGB, 1280, 720, disable_cpu_flags_,
+                benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVConvertTest, RGBAToI420_Check) {
+  TestRGBToI420(RGBAToI420, RGBAToARGB, 16, 16, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(RGBAToI420, RGBAToARGB, 17, 17, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(RGBAToI420, RGBAToARGB, 1280, 720, disable_cpu_flags_,
+                benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVConvertTest, ABGRToI420_Check) {
+  TestRGBToI420(ABGRToI420, ABGRToARGB, 16, 16, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(ABGRToI420, ABGRToARGB, 17, 17, disable_cpu_flags_,
+                benchmark_cpu_info_);
+  TestRGBToI420(ABGRToI420, ABGRToARGB, 1280, 720, disable_cpu_flags_,
+                benchmark_cpu_info_);
 }
 
 #endif  // !defined(LEAN_TESTS)

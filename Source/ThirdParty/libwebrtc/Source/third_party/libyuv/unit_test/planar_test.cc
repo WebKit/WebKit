@@ -1212,10 +1212,10 @@ TEST_F(LibYUVPlanarTest, TestInterpolatePlane_16) {
         (kWidth * BPP_A + STRIDE_A - 1) / STRIDE_A * STRIDE_A;                \
     const int kStrideB =                                                      \
         (kWidth * BPP_B + STRIDE_B - 1) / STRIDE_B * STRIDE_B;                \
-    align_buffer_page_end(src_argb_a, kStrideA* kHeight + OFF);               \
-    align_buffer_page_end(src_argb_b, kStrideA* kHeight + OFF);               \
-    align_buffer_page_end(dst_argb_c, kStrideB* kHeight);                     \
-    align_buffer_page_end(dst_argb_opt, kStrideB* kHeight);                   \
+    align_buffer_page_end(src_argb_a, kStrideA * kHeight + OFF);              \
+    align_buffer_page_end(src_argb_b, kStrideA * kHeight + OFF);              \
+    align_buffer_page_end(dst_argb_c, kStrideB * kHeight);                    \
+    align_buffer_page_end(dst_argb_opt, kStrideB * kHeight);                  \
     for (int i = 0; i < kStrideA * kHeight; ++i) {                            \
       src_argb_a[i + OFF] = (fastrand() & 0xff);                              \
       src_argb_b[i + OFF] = (fastrand() & 0xff);                              \
@@ -1418,7 +1418,7 @@ TEST_F(LibYUVPlanarTest, BlendPlane_Invert) {
                  disable_cpu_flags_, benchmark_cpu_info_, -1, 1);
 }
 
-#define SUBSAMPLE(v, a) ((((v) + (a)-1)) / (a))
+#define SUBSAMPLE(v, a) ((((v) + (a) - 1)) / (a))
 
 static void TestI420Blend(int width,
                           int height,

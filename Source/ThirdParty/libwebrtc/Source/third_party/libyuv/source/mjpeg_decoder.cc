@@ -127,7 +127,7 @@ LIBYUV_BOOL MJpegDecoder::LoadFrame(const uint8_t* src, size_t src_len) {
     int scanlines_size = GetComponentScanlinesPerImcuRow(i);
     if (scanlines_sizes_[i] != scanlines_size) {
       if (scanlines_[i]) {
-        delete scanlines_[i];
+        delete[] scanlines_[i];
       }
       scanlines_[i] = new uint8_t*[scanlines_size];
       scanlines_sizes_[i] = scanlines_size;
@@ -143,7 +143,7 @@ LIBYUV_BOOL MJpegDecoder::LoadFrame(const uint8_t* src, size_t src_len) {
     int databuf_size = scanlines_size * databuf_stride;
     if (databuf_strides_[i] != databuf_stride) {
       if (databuf_[i]) {
-        delete databuf_[i];
+        delete[] databuf_[i];
       }
       databuf_[i] = new uint8_t[databuf_size];
       databuf_strides_[i] = databuf_stride;

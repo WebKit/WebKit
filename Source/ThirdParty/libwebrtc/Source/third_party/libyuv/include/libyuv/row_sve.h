@@ -631,8 +631,8 @@ static inline void I422ToRGB565Row_SVE_SC(
       // Calculate a predicate for the final iteration to deal with the tail.
       "cnth     %[vl]                                   \n"
       "whilelt  p1.b, wzr, %w[width]                    \n"  //
-      READYUV422_SVE_2X I422TORGB_SVE_2X RGBTOARGB8_SVE_TOP_2X
-          RGB8TORGB565_SVE_FROM_TOP_2X
+      READYUV422_SVE_2X I422TORGB_SVE_2X
+          RGBTOARGB8_SVE_TOP_2X RGB8TORGB565_SVE_FROM_TOP_2X
       // Need to permute the data on the final iteration such that the
       // predicates (.b) line up with the 16-bit element data.
       "trn1     z20.b, z18.b, z19.b                     \n"
@@ -694,8 +694,8 @@ static inline void I422ToARGB1555Row_SVE_SC(
       // Calculate a predicate for the final iteration to deal with the tail.
       "cnth     %[vl]                                   \n"
       "whilelt  p1.b, wzr, %w[width]                    \n"  //
-      READYUV422_SVE_2X I422TORGB_SVE_2X RGBTOARGB8_SVE_TOP_2X
-          RGB8TOARGB1555_SVE_FROM_TOP_2X
+      READYUV422_SVE_2X I422TORGB_SVE_2X
+          RGBTOARGB8_SVE_TOP_2X RGB8TOARGB1555_SVE_FROM_TOP_2X
       "st2h     {z0.h, z1.h}, p1, [%[dst]] \n"
 
       "99:                                              \n"
@@ -753,8 +753,8 @@ static inline void I422ToARGB4444Row_SVE_SC(
       // Calculate a predicate for the final iteration to deal with the tail.
       "cnth     %[vl]                                   \n"
       "whilelt  p1.b, wzr, %w[width]                    \n"  //
-      READYUV422_SVE_2X I422TORGB_SVE_2X RGBTOARGB8_SVE_TOP_2X
-          RGB8TOARGB4444_SVE_FROM_TOP_2X
+      READYUV422_SVE_2X I422TORGB_SVE_2X
+          RGBTOARGB8_SVE_TOP_2X RGB8TOARGB4444_SVE_FROM_TOP_2X
       "st2h     {z0.h, z1.h}, p1, [%[dst]] \n"
 
       "99:                                              \n"

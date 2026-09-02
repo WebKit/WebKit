@@ -757,7 +757,7 @@ static int NV12TestFilter(int src_width,
   int src_height_uv = (Abs(src_height) + 1) >> 1;
 
   int64_t src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
-  int64_t src_uv_plane_size = (src_width_uv) * (src_height_uv)*2;
+  int64_t src_uv_plane_size = (src_width_uv) * (src_height_uv) * 2;
 
   int src_stride_y = Abs(src_width);
   int src_stride_uv = src_width_uv * 2;
@@ -775,7 +775,7 @@ static int NV12TestFilter(int src_width,
   int dst_height_uv = (dst_height + 1) >> 1;
 
   int64_t dst_y_plane_size = (dst_width) * (dst_height);
-  int64_t dst_uv_plane_size = (dst_width_uv) * (dst_height_uv)*2;
+  int64_t dst_uv_plane_size = (dst_width_uv) * (dst_height_uv) * 2;
 
   int dst_stride_y = dst_width;
   int dst_stride_uv = dst_width_uv * 2;

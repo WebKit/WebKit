@@ -42,8 +42,8 @@ int RGBScale(const uint8_t* src_rgb,
              enum FilterMode filtering) {
   int r;
   if (!src_rgb || !dst_rgb || src_width <= 0 || src_width > INT_MAX / 4 ||
-      src_height == 0 || dst_width <= 0 || dst_width > INT_MAX / 4 ||
-      dst_height <= 0) {
+      src_height == 0 || src_height == INT_MIN || dst_width <= 0 ||
+      dst_width > INT_MAX / 4 || dst_height <= 0) {
     return -1;
   }
   const int abs_src_height = (src_height < 0) ? -src_height : src_height;
@@ -53,9 +53,11 @@ int RGBScale(const uint8_t* src_rgb,
     return -1;  // Invalid size.
   }
   const uint64_t argb_size = src_argb_size + dst_argb_size;
+#if UINT64_MAX > SIZE_MAX
   if (argb_size > SIZE_MAX) {
     return -1;  // Invalid size.
   }
+#endif
   uint8_t* src_argb = (uint8_t*)malloc((size_t)argb_size);
   if (!src_argb) {
     return 1;  // Out of memory runtime error.

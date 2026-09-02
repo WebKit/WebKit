@@ -431,13 +431,13 @@ static void FillRamp(uint8_t* buf,
 
 // Test scaling with C vs Opt and return maximum pixel difference. 0 = exact.
 static void YUVToARGBTestFilter(int src_width,
-                               int src_height,
-                               int dst_width,
-                               int dst_height,
-                               FilterMode f,
-                               int benchmark_iterations,
-                               int error_threshold,
-                               int* max_diff_out) {
+                                int src_height,
+                                int dst_width,
+                                int dst_height,
+                                FilterMode f,
+                                int benchmark_iterations,
+                                int error_threshold,
+                                int* max_diff_out) {
   int64_t src_y_plane_size = Abs(src_width) * Abs(src_height);
   int64_t src_uv_plane_size =
       ((Abs(src_width) + 1) / 2) * ((Abs(src_height) + 1) / 2);
@@ -448,8 +448,8 @@ static void YUVToARGBTestFilter(int src_width,
   align_buffer_page_end(src_u, src_uv_plane_size);
   align_buffer_page_end(src_v, src_uv_plane_size);
 
-  int64_t dst_argb_plane_size = (dst_width) * (dst_height)*4LL;
-  int dst_stride_argb = (dst_width)*4;
+  int64_t dst_argb_plane_size = (dst_width) * (dst_height) * 4LL;
+  int dst_stride_argb = (dst_width) * 4;
   align_buffer_page_end(dst_argb_c, dst_argb_plane_size);
   align_buffer_page_end(dst_argb_opt, dst_argb_plane_size);
   if (!dst_argb_c || !dst_argb_opt || !src_y || !src_u || !src_v) {
@@ -516,10 +516,10 @@ TEST_F(LibYUVScaleTest, YUVToRGBScaleUp) {
 
 TEST_F(LibYUVScaleTest, YUVToRGBScaleDown) {
   int diff = 0;
-  YUVToARGBTestFilter(
-      benchmark_width_ * 3 / 2, benchmark_height_ * 3 / 2, benchmark_width_,
-      benchmark_height_, libyuv::kFilterBilinear, benchmark_iterations_, 10,
-      &diff);
+  YUVToARGBTestFilter(benchmark_width_ * 3 / 2, benchmark_height_ * 3 / 2,
+                      benchmark_width_, benchmark_height_,
+                      libyuv::kFilterBilinear, benchmark_iterations_, 10,
+                      &diff);
   ASSERT_LE(diff, 10);
 }
 
