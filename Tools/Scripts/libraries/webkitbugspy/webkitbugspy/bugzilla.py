@@ -238,10 +238,23 @@ class Tracker(GenericTracker):
         return None
 
     def credentials(self, required=True, validate=False):
-        def validater(username, password):
+        def prompt():
+            api_url = 'https://bugs.webkit.org/userprefs.cgi?tab=apikey'
+            result = "Bugzilla API\nProvide {} username and API key to view and modify bugs".format('bugs.webkit.org')
+            if webkitcorepy.Terminal.open_url(
+                api_url,
+                prompt='Please press Return key to open the Bugzilla API key generation web page.\n'
+                       'Check "Generate a new API key with optional description" and click "Submit Changes": ',
+            ):
+                return result
+            return '''{}
+Please go to {token_url} and generate a new API Key by checking
+"Generate a new API key with optional description" and click "Submit Changes"'''.format(result, token_url=api_url)
+
+        def validater(username, api_key):
             quoted_username = requests.utils.quote(username)
             response = self.session.get(
-                '{}/rest/user/{}?login={}&password={}'.format(self.url, quoted_username, quoted_username, requests.utils.quote(password)),
+                '{}/rest/user/{}?api_key={}'.format(self.url, quoted_username, requests.utils.quote(api_key)),
                 timeout=self.timeout,
             )
             if response.status_code == 200:
@@ -252,7 +265,8 @@ class Tracker(GenericTracker):
         return webkitcorepy.credentials(
             url=self.url,
             required=required,
-            prompt=self.url.split('//')[-1],
+            prompt=prompt,
+            key_name='key',
             validater=validater,
             validate_existing_credentials=validate
         )
@@ -263,12 +277,11 @@ class Tracker(GenericTracker):
                 raise RuntimeError('Exhausted login attempts')
             return '?{}'.format(query) if query else ''
 
-        username, password = self.credentials(required=required)
-        if not username or not password:
+        username, api_key = self.credentials(required=required)
+        if not username or not api_key:
             return '?{}'.format(query) if query else ''
-        return '?login={username}&password={password}{query}'.format(
-            username=requests.utils.quote(username),
-            password=requests.utils.quote(password),
+        return '?api_key={api_key}{query}'.format(
+            api_key=requests.utils.quote(api_key),
             query='&{}'.format(query) if query else '',
         )
 
