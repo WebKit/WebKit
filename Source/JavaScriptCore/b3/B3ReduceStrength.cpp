@@ -3284,7 +3284,23 @@ private:
                         && (value->child(1)->isConstant() || value->child(2)->isConstant());
                 });
             
-            if (select) {
+            if (!select)
+                break;
+
+            // All values between Select and Check must be cloneable.
+            bool canClone = true;
+            for (unsigned i = m_index; ; --i) {
+                Value* value = m_block->at(i);
+                if (value->kind().isCloningForbidden()) {
+                    canClone = false;
+                    break;
+                }
+                if (value == select)
+                    break;
+                RELEASE_ASSERT(i); // Select should be found
+            }
+
+            if (canClone) {
                 specializeSelect(select);
                 m_didSpecializeSelect = true;
                 break;
