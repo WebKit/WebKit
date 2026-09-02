@@ -1996,7 +1996,8 @@ http/wpt/webcodecs/encoder-decoder-vp9-I420.html [ Failure ]
 
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
-webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
+webkit.org/b/298925 [ x86_64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
+webkit.org/b/298925 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass ]
 
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
 
@@ -2704,7 +2705,6 @@ webgl/webgl-backend-type.html [ Skip ]
 
 # Failing with ANGLE backend
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
@@ -2833,7 +2833,6 @@ webkit.org/b/251107 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Failure ]
 webkit.org/b/308025 [ x86_64 ] webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Failure ]
 webkit.org/b/308025 [ arm64 ] webgl/2.0.y/conformance2/query/occlusion-query-scissor.html [ Pass ]
-webkit.org/b/251107 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -4138,7 +4137,6 @@ webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ 
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure Timeout ]
 
 webkit.org/b/306026 media/video-unmuted-after-play-holds-sleep-assertion.html [ Failure Timeout ]
-webkit.org/b/306026 media/video-muted-holds-sleep-assertion.html [ Failure Timeout ]
 
 webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
 
