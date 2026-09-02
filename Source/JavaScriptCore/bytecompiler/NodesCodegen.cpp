@@ -4872,19 +4872,28 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
             labelVector.append(generator.newLabel());
         generator.beginSwitch(switchExpression, switchType);
     } else {
+        RefPtr<RegisterID> preservedSwitchExpression;
+        RegisterID* originalSwitchExpression = switchExpression;
+
+        // We have to preserve the `switchExpression` to avoid being affected by side effects produced by case expressions.
+        if (!switchExpression->isTemporary()) {
+            preservedSwitchExpression = generator.move(generator.newTemporary(), switchExpression);
+            originalSwitchExpression = preservedSwitchExpression.get();
+        }
+
         // Setup jumps
         for (ClauseListNode* list = m_list1; list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.emitNode(list->getClause()->expr());
             Ref<Label> clauseLabel = generator.newLabel();
             labelVector.append(clauseLabel);
-            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), originalSwitchExpression), clauseLabel.get());
         }
         
         for (ClauseListNode* list = m_list2; list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.emitNode(list->getClause()->expr());
             Ref<Label> clauseLabel = generator.newLabel();
             labelVector.append(clauseLabel);
-            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), switchExpression), clauseLabel.get());
+            generator.emitJumpIfTrue(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), clauseVal.get(), originalSwitchExpression), clauseLabel.get());
         }
         generator.emitJump(defaultLabel.get());
     }

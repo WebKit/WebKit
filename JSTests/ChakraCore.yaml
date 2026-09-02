@@ -256,8 +256,7 @@
 - path: ChakraCore/test/Basics/StringSubstring.js
   cmd: runChakra :baseline, "NoException", "StringSubstring.baseline", []
 - path: ChakraCore/test/Basics/switch.js
-  # JSC doesn't handle computed case statements.
-  cmd: runChakra :skip, "NoException", "switch.baseline", []
+  cmd: runChakra :baseline, "NoException", "switch.baseline", []
 - path: ChakraCore/test/Basics/Switch2.js
   cmd: runChakra :baseline, "NoException", "switch2.baseline", []
 - path: ChakraCore/test/Basics/typeof.js
