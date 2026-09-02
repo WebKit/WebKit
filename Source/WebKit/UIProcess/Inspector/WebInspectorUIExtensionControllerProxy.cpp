@@ -171,7 +171,10 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
             return;
         }
 
-        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTF::move(completionHandler)](RunJavaScriptResult&& result, const std::optional<Inspector::ExtensionError> error) mutable {
+        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<RunJavaScriptResult>&& untrustedResult, const std::optional<Inspector::ExtensionError> error) mutable {
+            // The evaluation result is relayed to the inspector extension that asked for it; the
+            // UI process reads nothing out of it.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (error)
                 return completionHandler(makeUnexpected(error.value()));
 
@@ -233,7 +236,10 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
             return;
         }
 
-        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTF::move(completionHandler)](RunJavaScriptResult&& result, const std::optional<Inspector::ExtensionError>& error) mutable {
+        protect(protect(weakThis->m_inspectorPage)->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<RunJavaScriptResult>&& untrustedResult, const std::optional<Inspector::ExtensionError>& error) mutable {
+            // The evaluation result is relayed to the inspector extension that asked for it; the
+            // UI process reads nothing out of it.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (error)
                 return completionHandler(makeUnexpected(error.value()));
             completionHandler(WTF::move(result));

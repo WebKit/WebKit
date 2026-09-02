@@ -2267,9 +2267,8 @@ void WebPageProxy::selectWithGesture(std::optional<WebCore::FrameIdentifier> fra
     } });
 }
 
-void WebPageProxy::didReceivePositionInformation(IPC::Untrusted<InteractionInformationAtPosition>&& untrustedInfo, std::optional<WebCore::FrameIdentifier> frameID)
+void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info, std::optional<WebCore::FrameIdentifier> frameID)
 {
-    auto info = WTF::move(untrustedInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (RefPtr pageClient = this->pageClient())
         pageClient->positionInformationDidChange(info, frameID);
 }
@@ -2301,7 +2300,8 @@ void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::Fram
     requestInFrame.point = pointInFrameRootViewCoordinates;
 
     Ref process = processContainingFrame(frameID);
-    auto replyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(frameID, requestInFrame), [weakThis = WeakPtr { *this }, frameID, request] (auto&& reply) {
+    auto replyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(frameID, requestInFrame), [weakThis = WeakPtr { *this }, frameID, request] (IPC::Untrusted<Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData>>&& untrustedReply) {
+        auto reply = WTF::move(untrustedReply).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -2315,7 +2315,7 @@ void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::Fram
             // back into main frame coordinates. Report it exactly as it was asked instead, so that
             // callers can match the information against their own request.
             information.request = request;
-            protectedThis->didReceivePositionInformation(IPC::Untrusted<InteractionInformationAtPosition> { WTF::move(information) }, frameID);
+            protectedThis->didReceivePositionInformation(information, frameID);
         }, [&](WebCore::RemoteUserInputEventData&& remoteUserInputEventData) {
             protectedThis->requestPositionInformationInFrame(remoteUserInputEventData.targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), request);
         });

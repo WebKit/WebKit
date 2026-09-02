@@ -47,7 +47,7 @@ messages -> WebAutomationSessionProxy {
 
     SnapshotRectForScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport) -> (std::optional<String> errorType, WebCore::IntRect rect)
 
-    GetCookiesForFrame(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<String> errorType, Vector<WebCore::Cookie> cookies)
+    GetCookiesForFrame(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<String> errorType, IPC::Untrusted<Vector<WebCore::Cookie>> cookies)
     DeleteCookie(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (std::optional<String> errorType)
 
 #if ENABLE(WEBDRIVER_BIDI)

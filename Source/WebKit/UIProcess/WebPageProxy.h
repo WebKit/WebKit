@@ -1262,7 +1262,7 @@ public:
     using SelectWithGestureCompletionHandler = CompletionHandler<void(SelectWithGestureResult)>;
     void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, SelectWithGestureCompletionHandler&&);
 
-    void didReceivePositionInformation(IPC::Untrusted<InteractionInformationAtPosition>&&, std::optional<WebCore::FrameIdentifier>);
+    void didReceivePositionInformation(const InteractionInformationAtPosition&, std::optional<WebCore::FrameIdentifier>);
     void requestPositionInformation(const InteractionInformationRequest&);
     void requestPositionInformationInFrame(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint pointInFrameRootViewCoordinates, const InteractionInformationRequest&);
 

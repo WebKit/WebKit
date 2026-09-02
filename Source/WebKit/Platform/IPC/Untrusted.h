@@ -37,6 +37,7 @@
 namespace IPC {
 
 template<typename> struct ArgumentCoder;
+template<typename> struct AsyncReplyError;
 
 enum class ValidationFailure : uint8_t {
     // An expected race rather than evidence of an attack; ignore the message.
@@ -46,6 +47,7 @@ enum class ValidationFailure : uint8_t {
 };
 
 template<typename Derived> class CanValidateUntrusted;
+template<typename T> class Untrusted;
 
 // The outcome of a validation procedure: either the value, or why it was rejected.
 template<typename T>
@@ -63,6 +65,9 @@ public:
 private:
     // This is the reason this isn't just "using ... = std::expected<...>"
     template<typename> friend class CanValidateUntrusted;
+    // Untrusted needs this for the one value it holds that no validation procedure can speak to:
+    // a reply that never arrived, and so was never chosen by web content.
+    template<typename> friend class Untrusted;
 
     explicit Validated(T&& value)
         : m_result(WTF::move(value))
@@ -123,7 +128,7 @@ concept ValidationProcedure = IsValidationProcedureFor<std::remove_cvref_t<Valid
     && ProducesValidated<Validator, T>;
 
 // Wraps a value a web content process sent to a privileged process, so it cannot be used until
-// a designated validation procedure has confirmed the sender was entitled to name it.
+// a designated validation procedure has confirmed the sending process was entitled to name it.
 template<typename T>
 class Untrusted {
 public:
@@ -132,15 +137,33 @@ public:
     {
     }
 
-    template<typename Validator> requires ValidationProcedure<Validator, T>
-    Validated<T> validate(const Validator& validator) && { return validator.validateUntrusted(WTF::move(m_value)); }
+    template<typename Validator>
+    Validated<T> validate(const Validator& validator) && requires (ValidationProcedure<Validator, T>)
+    {
+        if (m_provenance == Provenance::MadeUpLocally)
+            return Validated<T> { WTF::move(m_value) };
+        return validator.validateUntrusted(WTF::move(m_value));
+    }
 
     T unsafeExtractWithoutValidation(UnvalidatedReason) && { return WTF::move(m_value); }
 
 private:
     friend struct ArgumentCoder<Untrusted<T>>;
+    friend struct AsyncReplyError<Untrusted<T>>;
+
+    enum class Provenance : bool { FromWebContent, MadeUpLocally };
+
+    // Stands in for a reply that never arrived. See AsyncReplyError<Untrusted<T>> below.
+    static Untrusted replyThatNeverArrived(T&& value) { return Untrusted { WTF::move(value), Provenance::MadeUpLocally }; }
+
+    Untrusted(T&& value, Provenance provenance)
+        : m_value(WTF::move(value))
+        , m_provenance(provenance)
+    {
+    }
 
     T m_value;
+    Provenance m_provenance { Provenance::FromWebContent };
 };
 
 template<typename T> struct ArgumentCoder<Untrusted<T>> {
@@ -158,6 +181,32 @@ template<typename T> struct ArgumentCoder<Untrusted<T>> {
             return std::nullopt;
         return Untrusted<T> { WTF::move(*value) };
     }
+};
+
+// A reply is wrapped as it is decoded rather than as it is sent, so that the discipline falls on
+// the privileged process that asked the question and the process that answers is unaffected.
+// These map the tuple a reply decodes into back onto the one the replying process supplies.
+template<typename T> struct WithoutUntrustedWrapper {
+    using Type = T;
+};
+
+template<typename T> struct WithoutUntrustedWrapper<Untrusted<T>> {
+    using Type = T;
+};
+
+template<typename> struct SuppliedArguments;
+
+template<typename... Ts> struct SuppliedArguments<std::tuple<Ts...>> {
+    using Type = std::tuple<typename WithoutUntrustedWrapper<Ts>::Type...>;
+};
+
+// A reply that never arrived, because the connection failed or the reply would not decode. The
+// value it carries was made up here rather than chosen by web content, so a validation procedure
+// has nothing to check and passes it straight through.
+template<typename> struct AsyncReplyError;
+
+template<typename T> struct AsyncReplyError<Untrusted<T>> {
+    static Untrusted<T> create() { return Untrusted<T>::replyThatNeverArrived(AsyncReplyError<T>::create()); }
 };
 
 // Records that a value needs no check in this context. The reason is not used at runtime; it
