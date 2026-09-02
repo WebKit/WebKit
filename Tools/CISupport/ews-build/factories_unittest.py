@@ -22,7 +22,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from . import loadConfig
-from .steps import ResultsDatabase, ResultsDBReportMixin, RunJavaScriptCoreTests
+from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests
 import os
 import unittest
 
@@ -1002,7 +1002,12 @@ class TestExpectedBuildSteps(unittest.TestCase):
                 if not issubclass(step_class, ResultsDBReportMixin) or not step_class.reports_to_results_db:
                     continue
 
-                expected_suite = 'javascriptcore-tests' if issubclass(step_class, RunJavaScriptCoreTests) else 'layout-tests'
+                if issubclass(step_class, RunJavaScriptCoreTests):
+                    expected_suite = 'javascriptcore-tests'
+                elif issubclass(step_class, RunAPITests):
+                    expected_suite = 'api-tests'
+                else:
+                    expected_suite = 'layout-tests'
                 self.assertIn(step_class.suite, ResultsDatabase.SUITES, msg='%s reports %s to the unknown suite %r' % (
                     builder['name'], step_class.__name__, step_class.suite,
                 ))

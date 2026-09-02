@@ -30,7 +30,7 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import Any, Generator
+from typing import Any, Generator, Optional
 from unittest import skip as skipTest
 from unittest.mock import call, create_autospec, patch
 
@@ -153,8 +153,8 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
         self._expected_local_commands = []
         self.setup_test_reactor()
 
-        # Test steps report to the results database as they run, so stub the one network call they
-        # make rather than each step that makes it.
+        # Test steps report to the results database as they run, so stub the network calls they make
+        # rather than each step that makes it.
         self.results_db_reports = []
 
         def record_report_ews(suite=None, results=None, flaky_type=None, commits=None, configuration=None, details=None, timestamp=None, logger=None):
@@ -165,6 +165,8 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
             return defer.succeed(True)
 
         self.patch(ResultsDatabase, 'report_ews', record_report_ews)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({test: FlakyVerdict() for test in tests}, ''))))
 
         self._temp_directory = tempfile.mkdtemp()
         os.chdir(self._temp_directory)
@@ -3852,6 +3854,219 @@ class TestReportToResultsDB(BuildStepMixinAdditions, unittest.TestCase):
         )
 
 
+class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.TestCase):
+    """The read lives in AnalyzeAPITestsResults: excusing a failure in the first run's step would
+    empty its filtered failures, so the clean-tree run that produces the evidence for the verdict
+    would never be queued."""
+
+    def setUp(self) -> defer.Deferred:
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self) -> defer.Deferred:
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, first_run: list, second_run: list, clean_tree: list) -> AnalyzeAPITestsResults:
+        self.setup_step(AnalyzeAPITestsResults())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('os_version', '14.6.1')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('got_revision', 'def456')
+        self.setProperty('commit_timestamp', 1599000000)
+        self.setProperty('api_first_run_failures', first_run)
+        self.setProperty('api_second_run_failures', second_run)
+        self.setProperty('api_clean_tree_run_failures', clean_tree)
+        self.setProperty('api_first_run_results', {test: {'actual': 'FAIL'} for test in first_run})
+        self.setProperty('api_second_run_results', {test: {'actual': 'FAIL'} for test in second_run})
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        return step
+
+    @staticmethod
+    def fake_verdicts(verdicts: dict, queried: Optional[list] = None) -> classmethod:
+        def flaky_verdicts_for(cls, tests: list, configuration: Optional[dict] = None, suite: Optional[str] = None) -> defer.Deferred:
+            if queried is not None:
+                queried.append((sorted(tests), configuration, suite))
+            return defer.succeed(({test: verdicts.get(test, FlakyVerdict()) for test in tests}, ''))
+        return classmethod(flaky_verdicts_for)
+
+    @defer.inlineCallbacks
+    def test_a_verdict_outside_the_included_set_changes_nothing(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'], [])
+        step.INCLUDED_FLAKY_VERDICTS = frozenset({'DirtyTree'})
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='BetweenBuilds', build_urls={'https://build.webkit.org/#/builders/1/builds/11'})}))
+
+        result = yield step.run()
+
+        self.assertEqual(result, FAILURE)
+        self.assertEqual(self.build.text, ['Found 1 new API test failure: suite.flaky'])
+        self.assertEqual(self.getProperty('new_api_failures_introduced_by_patch'), ['suite.flaky'])
+        self.assertEqual(self.getProperty('results-db_api_flaky'), {'suite.flaky': 'BetweenBuilds'})
+        self.assertEqual([sorted(report['results']) for report in self.results_db_reports], [['suite.flaky']])
+
+    @defer.inlineCallbacks
+    def test_an_included_verdict_removes_the_failure(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'], [])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        result = yield step.run()
+
+        self.assertEqual(result, SUCCESS)
+        self.assertIsNone(self.getProperty('new_api_failures_introduced_by_patch'))
+        self.assertEqual([sorted(report['results']) for report in self.results_db_reports], [['suite.flaky']])
+
+    @defer.inlineCallbacks
+    def test_an_excused_build_names_the_ignored_test_in_the_summary(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'], [])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        result = yield step.run()
+
+        self.assertEqual(result, SUCCESS)
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored flaky tests: suite.flaky based on results-db')
+        self.assertIn('Ignored flaky tests: suite.flaky based on results-db', self.build.text[0])
+
+    @defer.inlineCallbacks
+    def test_a_clean_tree_only_build_sets_no_build_summary(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.pre_existing'], ['suite.pre_existing'], ['suite.pre_existing'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts({}))
+
+        result = yield step.run()
+
+        self.assertEqual(result, SUCCESS)
+        self.assertIsNone(self.getProperty('build_summary'))
+
+    @defer.inlineCallbacks
+    def test_only_the_failures_the_clean_tree_did_not_explain_are_queried(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(
+            ['suite.new', 'suite.pre_existing'], ['suite.new', 'suite.pre_existing'], ['suite.pre_existing'],
+        )
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts({}, queried))
+
+        yield step.run()
+
+        self.assertEqual(queried, [(['suite.new'], {'platform': 'mac', 'style': 'release'}, 'api-tests')])
+
+    @defer.inlineCallbacks
+    def test_a_test_flaky_only_between_builds_without_intra_build_evidence_is_unsupported(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.a', 'suite.b'], ['suite.a', 'suite.b'], [])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts({
+            'suite.a': FlakyVerdict(flaky_type='BetweenBuilds'),
+            'suite.b': FlakyVerdict(flaky_type='BetweenBuilds', intra_build_evidence=True),
+        }))
+
+        result = yield step.run()
+
+        self.assertEqual(self.getProperty('results-db_api_flaky_unsupported'), ['suite.a'])
+        self.assertEqual(result, FAILURE)
+        self.assertEqual(self.getProperty('new_api_failures_introduced_by_patch'), ['suite.a'])
+
+    @defer.inlineCallbacks
+    def test_a_failed_request_is_recorded_as_unknown(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.new'], ['suite.new'], [])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({test: FlakyVerdict(request_failed=True) for test in tests}, ''))))
+
+        result = yield step.run()
+
+        self.assertEqual(result, FAILURE)
+        self.assertEqual(self.getProperty('results-db_api_flaky_unknown'), ['suite.new'])
+        self.assertEqual(self.getProperty('results-db_api_flaky'), {})
+
+    @defer.inlineCallbacks
+    def test_caps_the_number_of_results_db_queries(self) -> Generator[Any, Any, None]:
+        queried = []
+        cap = AnalyzeAPITestsResults.MAX_FAILURES_TO_CHECK_RESULTS_DB
+        failures = [f'suite.test{index}' for index in range(cap + 10)]
+        step = self.configureStep(failures, failures, [])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts({}, queried))
+
+        yield step.run()
+
+        self.assertEqual([len(tests) for tests, _, _ in queried], [cap])
+
+
+class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
+    """Every exit of AnalyzeAPITestsResults ends the build, so a step queued after it never runs."""
+
+    SECOND_RUN_JSON = '{"Failed":[{"name":"suite.b"},{"name":"suite.both"}],"Timedout":[],"Crashed":[],"results":{"suite.b":{"actual":"FAIL"},"suite.both":{"actual":"FAIL"}}}'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, StepClass):
+        self.setup_step(StepClass())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('os_version', '14.6.1')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('got_revision', 'def456')
+        self.setProperty('commit_timestamp', 1599000000)
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        return step
+
+    def reported(self):
+        return [
+            (report['flaky_type'], sorted(report['results']), report['suite'])
+            for report in self.results_db_reports
+        ]
+
+    @defer.inlineCallbacks
+    def test_api_properties_do_not_collide_with_the_layout_ones(self):
+        # Both suites run in one build for API-Tests-* queues, and the names were byte for byte
+        # identical, so an unprefixed API run would overwrite the layout run's failures.
+        step = self.configureStep(RunAPITests)
+        step.log_observer_json = TestLayoutTestStepsReportAsTheyRun.FakeLogObserver(self.SECOND_RUN_JSON)
+
+        yield step.parse_and_set_failures()
+
+        self.assertEqual(self.getProperty('api_first_run_failures'), ['suite.b', 'suite.both'])
+        self.assertIsNone(self.getProperty('first_run_failures'))
+        self.assertIsNone(self.getProperty('first_run_results'))
+
+    @defer.inlineCallbacks
+    def test_the_rerun_reports_what_differed_from_the_first_run(self):
+        step = self.configureStep(ReRunAPITests)
+        step.log_observer_json = TestLayoutTestStepsReportAsTheyRun.FakeLogObserver(self.SECOND_RUN_JSON)
+        self.setProperty('api_first_run_failures', ['suite.a', 'suite.both'])
+        self.setProperty('api_first_run_results', {'suite.a': dict(actual='FAIL'), 'suite.both': dict(actual='FAIL')})
+
+        yield step.parse_and_set_failures()
+
+        # suite.both failed both runs, so it is a consistent failure rather than flakiness.
+        self.assertEqual(self.reported(), [('BetweenStepsDirtyTree', ['suite.a', 'suite.b'], 'api-tests')])
+
+    @defer.inlineCallbacks
+    def test_the_analyze_step_reports_the_failures_it_attributes_to_the_change(self):
+        step = self.configureStep(AnalyzeAPITestsResults)
+        self.setProperty('api_first_run_failures', ['suite.new'])
+        self.setProperty('api_second_run_failures', ['suite.new'])
+        self.setProperty('api_clean_tree_run_failures', [])
+        self.setProperty('api_first_run_results', {'suite.new': dict(actual='FAIL')})
+        self.setProperty('api_second_run_results', {'suite.new': dict(actual='TIMEOUT')})
+
+        yield step.run()
+
+        # No flaky_type: a failure attributed to the change is not flakiness.
+        self.assertEqual(self.reported(), [(None, ['suite.new'], 'api-tests')])
+        self.assertEqual(
+            self.results_db_reports[0]['results']['suite.new']['actual_by_run'],
+            {'first-run': 'FAIL', 'second-run': 'TIMEOUT'},
+        )
+
+
 class TestLayoutTestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
     """Each report has to leave the step that derived it: the analyze steps end the build outright,
     so anything queued behind them never runs."""
@@ -6571,8 +6786,8 @@ class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
         self.setProperty('buildnumber', '11525')
         self.setProperty('workername', 'ews155')
-        self.setProperty('first_run_failures', ['suite.test1', 'suite.test2', 'suite.test3'])
-        self.setProperty('second_run_failures', ['suite.test3', 'suite.test4', 'suite.test5'])
+        self.setProperty('api_first_run_failures', ['suite.test1', 'suite.test2', 'suite.test3'])
+        self.setProperty('api_second_run_failures', ['suite.test3', 'suite.test4', 'suite.test5'])
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -6605,8 +6820,8 @@ All tests successfully passed!
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
         self.setProperty('buildnumber', '11525')
         self.setProperty('workername', 'ews155')
-        self.setProperty('first_run_failures', ['suite.test1(foo:)', 'suite.test2'])
-        self.setProperty('second_run_failures', ['suite.test1(foo:)', 'suite.test3'])
+        self.setProperty('api_first_run_failures', ['suite.test1(foo:)', 'suite.test2'])
+        self.setProperty('api_second_run_failures', ['suite.test1(foo:)', 'suite.test3'])
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -6639,8 +6854,8 @@ All tests successfully passed!
         self.setProperty('buildername', 'API-Tests-iOS-EWS')
         self.setProperty('buildnumber', '123')
         self.setProperty('workername', 'ews156')
-        self.setProperty('first_run_failures', ['suite.test-one-failure1'])
-        self.setProperty('second_run_failures', ['suite.test-one-failure2'])
+        self.setProperty('api_first_run_failures', ['suite.test-one-failure1'])
+        self.setProperty('api_second_run_failures', ['suite.test-one-failure2'])
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -6774,28 +6989,28 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(AnalyzeAPITestsResults())
-        self.setProperty('clean_tree_run_failures', [])
+        self.setProperty('api_clean_tree_run_failures', [])
 
     def test_new_failure_introduced_by_change(self):
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.test1'])
-        self.setProperty('second_run_failures', ['suite.test1'])
+        self.setProperty('api_first_run_failures', ['suite.test1'])
+        self.setProperty('api_second_run_failures', ['suite.test1'])
         self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.test1 (failure)')
         return self.run_step()
 
     def test_pre_existing_failure_on_clean_tree(self):
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.test1'])
-        self.setProperty('second_run_failures', ['suite.test1'])
-        self.setProperty('clean_tree_run_failures', ['suite.test1'])
+        self.setProperty('api_first_run_failures', ['suite.test1'])
+        self.setProperty('api_second_run_failures', ['suite.test1'])
+        self.setProperty('api_clean_tree_run_failures', ['suite.test1'])
         self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
         return self.run_step()
 
     def test_flaky_failure(self):
         # test1 and test2 fail in different runs (never both), so they are flaky, not new failures.
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.test1'])
-        self.setProperty('second_run_failures', ['suite.test2'])
+        self.setProperty('api_first_run_failures', ['suite.test1'])
+        self.setProperty('api_second_run_failures', ['suite.test2'])
         self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
         return self.run_step()
 
@@ -6803,8 +7018,8 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
         # This step runs only after both runs failed, so empty failure lists mean the results could
         # not be parsed (an infrastructure issue), which should retry.
         self.configureStep()
-        self.setProperty('first_run_failures', [])
-        self.setProperty('second_run_failures', [])
+        self.setProperty('api_first_run_failures', [])
+        self.setProperty('api_second_run_failures', [])
         self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
         return self.run_step()
 
@@ -6817,7 +7032,7 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_retry_when_second_run_results_missing(self):
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.test1'])
+        self.setProperty('api_first_run_failures', ['suite.test1'])
         self.expect_outcome(result=RETRY, state_string='analyze-api-tests-results (retry)')
         return self.run_step()
 
@@ -6825,41 +7040,41 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
         # A pre-existing flaky failure fails in both runs but passes on the clean tree. It is stripped
         # from the *_filtered lists by results-db, so it must not be reported as a new failure.
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
-        self.setProperty('second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
-        self.setProperty('first_run_failures_filtered', ['suite.real_failure'])
-        self.setProperty('second_run_failures_filtered', ['suite.real_failure'])
-        self.setProperty('clean_tree_run_failures', ['suite.real_failure'])
+        self.setProperty('api_first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('api_second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('api_first_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('api_second_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('api_clean_tree_run_failures', ['suite.real_failure'])
         self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
         return self.run_step()
 
     def test_new_failure_still_reported_with_filtered_lists(self):
         # A genuinely new failure remains in the *_filtered lists, so it must still be reported.
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
-        self.setProperty('second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
-        self.setProperty('first_run_failures_filtered', ['suite.real_failure'])
-        self.setProperty('second_run_failures_filtered', ['suite.real_failure'])
-        self.setProperty('clean_tree_run_failures', [])
+        self.setProperty('api_first_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('api_second_run_failures', ['suite.MultipleAccounts', 'suite.real_failure'])
+        self.setProperty('api_first_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('api_second_run_failures_filtered', ['suite.real_failure'])
+        self.setProperty('api_clean_tree_run_failures', [])
         self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.real_failure (failure)')
         return self.run_step()
 
     def test_all_failures_pre_existing_filtered_lists_empty(self):
         # If every failure was pre-existing, both *_filtered lists are empty and the build passes.
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.MultipleAccounts'])
-        self.setProperty('second_run_failures', ['suite.MultipleAccounts'])
-        self.setProperty('first_run_failures_filtered', [])
-        self.setProperty('second_run_failures_filtered', [])
-        self.setProperty('clean_tree_run_failures', [])
+        self.setProperty('api_first_run_failures', ['suite.MultipleAccounts'])
+        self.setProperty('api_second_run_failures', ['suite.MultipleAccounts'])
+        self.setProperty('api_first_run_failures_filtered', [])
+        self.setProperty('api_second_run_failures_filtered', [])
+        self.setProperty('api_clean_tree_run_failures', [])
         self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
         return self.run_step()
 
     def test_falls_back_to_unfiltered_when_filtered_absent(self):
         # When the *_filtered properties are absent, behavior degrades to the unfiltered lists.
         self.configureStep()
-        self.setProperty('first_run_failures', ['suite.test1'])
-        self.setProperty('second_run_failures', ['suite.test1'])
+        self.setProperty('api_first_run_failures', ['suite.test1'])
+        self.setProperty('api_second_run_failures', ['suite.test1'])
         self.expect_outcome(result=FAILURE, state_string='Found 1 new API test failure: suite.test1 (failure)')
         return self.run_step()
 

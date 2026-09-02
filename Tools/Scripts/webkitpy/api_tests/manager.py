@@ -493,6 +493,25 @@ class Manager(object):
                 result_dictionary['UnexpectedPasses'].append({'name': test})
             self._stream.writeln('')
 
+        status_to_test_result = {
+            runner.STATUS_PASSED: None,
+            runner.STATUS_FAILED: Upload.Expectations.FAIL,
+            runner.STATUS_CRASHED: Upload.Expectations.CRASH,
+            runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
+        }
+        upload_results = {}
+        for test, test_result in iteritems(runner.results):
+            if test_result[0] not in status_to_test_result:
+                continue
+            upload_results[test] = Upload.create_test_result(
+                expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
+                actual=status_to_test_result[test_result[0]],
+                time=int(test_result[2] * 1000),
+            )
+
+        # A passing test has no 'actual' and passing tests are not worth the size when reporting.
+        result_dictionary['results'] = {test: test_result for test, test_result in upload_results.items() if test_result.get('actual')}
+
         if json_output:
             self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
 
@@ -500,21 +519,6 @@ class Manager(object):
             self._stream.writeln('\n')
             self._stream.write_update('Preparing upload data ...')
 
-            status_to_test_result = {
-                runner.STATUS_PASSED: None,
-                runner.STATUS_FAILED: Upload.Expectations.FAIL,
-                runner.STATUS_CRASHED: Upload.Expectations.CRASH,
-                runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
-            }
-            upload_results = {}
-            for test, test_result in iteritems(runner.results):
-                if test_result[0] not in status_to_test_result:
-                    continue
-                upload_results[test] = Upload.create_test_result(
-                    expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
-                    actual=status_to_test_result[test_result[0]],
-                    time=int(test_result[2] * 1000),
-                )
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
                 configuration=configuration_for_upload,

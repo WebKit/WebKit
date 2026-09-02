@@ -27,6 +27,7 @@ from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from datetime import date
 from shlex import quote
+from typing import Any, Generator
 from unittest import mock
 
 from twisted.internet import defer, reactor, task
@@ -5726,15 +5727,16 @@ class ExtractBuiltProduct(shell.ShellCommand):
         super().__init__(logEnviron=False, **kwargs)
 
 
-class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
+class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     name = 'run-api-tests'
+    suite = 'api-tests'
     description = ['api tests running']
     descriptionDone = ['api-tests']
     jsonFileName = 'api_test_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
-    suffix = 'first_run'
+    suffix = 'api_first_run'
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
     command = ['python3', 'Tools/Scripts/run-api-tests', '--timestamps', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
@@ -5772,8 +5774,8 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
             self.command += additionalArguments
 
         if self.name == RunAPITestsWithoutChange.name:
-            first_results_failing_tests = set(self.getProperty('first_run_failures', set()))
-            second_results_failing_tests = set(self.getProperty('second_run_failures', set()))
+            first_results_failing_tests = set(self.getProperty('api_first_run_failures', set()))
+            second_results_failing_tests = set(self.getProperty('api_second_run_failures', set()))
             list_failed_tests_with_change = sorted(first_results_failing_tests.union(second_results_failing_tests))
             if list_failed_tests_with_change:
                 self.command = self.command + [quote(t) for t in list_failed_tests_with_change]
@@ -5805,7 +5807,7 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
         if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
             if self.name == ReRunAPITests.name:
-                first_results_failing_tests = self.getProperty('first_run_failures', [])
+                first_results_failing_tests = self.getProperty('api_first_run_failures', [])
                 flaky_failures_string = ', '.join(first_results_failing_tests)
                 pluralSuffix = 's' if len(first_results_failing_tests) > 1 else ''
                 message = f'Found flaky test{pluralSuffix}: {flaky_failures_string}'
@@ -5868,7 +5870,10 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
     @defer.inlineCallbacks
     def parse_and_set_failures(self):
         yield self._addToLog('json', '\n')
-        failures = self.parse_api_failures_from_string(self.log_observer_json.getStdout().rstrip())
+        results = self.parse_api_test_json(self.log_observer_json.getStdout().rstrip())
+        failures = self.api_failures_from_json(results)
+        if results.get('results'):
+            self.setProperty(f'{self.suffix}_results', results['results'])
         self.setProperty(f'{self.suffix}_failures', sorted(failures))
         defer.returnValue(failures)
 
@@ -5888,8 +5893,17 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
         ]
 
     def parse_api_failures_from_string(self, string):
+        return self.api_failures_from_json(self.parse_api_test_json(string))
+
+    @staticmethod
+    def api_failures_from_json(result):
+        return ([failure.get('name') for failure in result.get('Timedout', [])] +
+                [failure.get('name') for failure in result.get('Crashed', [])] +
+                [failure.get('name') for failure in result.get('Failed', [])])
+
+    def parse_api_test_json(self, string):
         if not string:
-            return []
+            return {}
         try:
             # Workaround for https://github.com/buildbot/buildbot/issues/4906
             string = ''.join(string.splitlines())
@@ -5903,15 +5917,12 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
                 result = json.loads(string)
             except Exception as e:
                 print(f'ERROR: unable to parse data, exception: {e}')
-                return []
+                return {}
         except Exception as e:
             print(f'ERROR: unexcepted error while parsing data: {e}')
-            return []
+            return {}
 
-        failures = ([failure.get('name') for failure in result.get('Timedout', [])] +
-                    [failure.get('name') for failure in result.get('Crashed', [])] +
-                    [failure.get('name') for failure in result.get('Failed', [])])
-        return failures
+        return result
 
     @defer.inlineCallbacks
     def filter_api_test_failures_using_results_db(self, failing_tests):
@@ -5946,7 +5957,20 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
 
 class ReRunAPITests(RunAPITests):
     name = 're-run-api-tests'
-    suffix = 'second_run'
+    suffix = 'api_second_run'
+
+    @defer.inlineCallbacks
+    def parse_and_set_failures(self):
+        failures = yield super().parse_and_set_failures()
+
+        # A test failing one of the two runs and passing the other flaked across the steps.
+        if (first_run_failures := self.getProperty('api_first_run_failures', None)) is not None:
+            results = self.merged_results(set(first_run_failures) ^ set(failures), {
+                'first-run': 'api_first_run_results',
+                'second-run': 'api_second_run_results',
+            })
+            yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
+        defer.returnValue(failures)
 
     def doOnFailure(self):
         self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
@@ -5969,7 +5993,7 @@ class ReRunAPITests(RunAPITests):
 
 class RunAPITestsWithoutChange(RunAPITests):
     name = 'run-api-tests-without-change'
-    suffix = 'clean_tree_run'
+    suffix = 'api_clean_tree_run'
 
     def doOnFailure(self):
         pass
@@ -5978,16 +6002,23 @@ class RunAPITestsWithoutChange(RunAPITests):
         pass
 
 
-class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
+class AnalyzeAPITestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLogMixin):
     name = 'analyze-api-tests-results'
+    suite = 'api-tests'
     description = ['analyze-api-test-results']
     descriptionDone = ['analyze-api-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
+    MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
+    INCLUDED_FLAKY_VERDICTS = frozenset({
+        ResultsDatabase.CLEAN_TREE_VERDICT,
+        ResultsDatabase.DIRTY_TREE_VERDICT,
+        ResultsDatabase.BETWEEN_BUILDS_VERDICT,
+    })
 
     @defer.inlineCallbacks
     def run(self):
-        first_run_failures = set(self.getProperty('first_run_failures', []))
-        second_run_failures = set(self.getProperty('second_run_failures', []))
+        first_run_failures = set(self.getProperty('api_first_run_failures', []))
+        second_run_failures = set(self.getProperty('api_second_run_failures', []))
 
         # This step runs only after both runs failed, so a missing or empty failure list means a run
         # failed without producing parseable results: an infrastructure issue that should retry.
@@ -5999,14 +6030,14 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
 
         # Prefer the results-db-filtered lists (pre-existing failures already removed) so a known
         # pre-existing flaky failure is not reported as new even if it passed on the clean tree.
-        first_run_failures_filtered = self.getProperty('first_run_failures_filtered', None)
+        first_run_failures_filtered = self.getProperty('api_first_run_failures_filtered', None)
         if first_run_failures_filtered is not None:
             first_run_failures = set(first_run_failures_filtered)
-        second_run_failures_filtered = self.getProperty('second_run_failures_filtered', None)
+        second_run_failures_filtered = self.getProperty('api_second_run_failures_filtered', None)
         if second_run_failures_filtered is not None:
             second_run_failures = set(second_run_failures_filtered)
 
-        clean_tree_failures = set(self.getProperty('clean_tree_run_failures', []))
+        clean_tree_failures = set(self.getProperty('api_clean_tree_run_failures', []))
         clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         clean_tree_failures_string = ', '.join(clean_tree_failures_to_display)
 
@@ -6015,6 +6046,15 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
         flaky_failures = list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         new_failures = failures_with_patch - clean_tree_failures
+        ignored_flaky_failures = set()
+        if new_failures:
+            ignored_flaky_failures = yield self.flaky_new_failures_using_results_db(new_failures)
+            results = self.merged_results(new_failures, {
+                'first-run': 'api_first_run_results',
+                'second-run': 'api_second_run_results',
+            })
+            yield self.report_to_results_db(results)
+            new_failures = new_failures - ignored_flaky_failures
         new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         new_failures_string = ', '.join(new_failures_to_display)
 
@@ -6025,6 +6065,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
 
         if new_failures:
             yield self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures_string))
+            self.setProperty('new_api_failures_introduced_by_patch', sorted(new_failures))
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             message = 'Found {} new API test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
@@ -6049,8 +6090,56 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
                 message += ' Found flaky tests: {}'.format(flaky_failures_string)
                 for flaky_failure in flaky_failures:
                     self.send_email_for_flaky_failure(flaky_failure)
+            if ignored_flaky_failures:
+                message += f" Ignored flaky tests: {', '.join(sorted(ignored_flaky_failures))} based on results-db"
+                self.setProperty('build_summary', message.strip())
             self.build.buildFinished([message], SUCCESS)
             defer.returnValue(SUCCESS)
+
+    @defer.inlineCallbacks
+    def flaky_new_failures_using_results_db(self, new_failures: set[str]) -> Generator[Any, Any, set[str]]:
+        """
+        Verdicts for the failures the clean-tree run did not explain, returning the ones with a
+        verdict in INCLUDED_FLAKY_VERDICTS.
+        """
+        tests = sorted(new_failures)[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
+        configuration = self.results_db_query_configuration()
+        yield self._addToLog(self.results_db_log_name, f'Checking Results database for flakiness of {len(tests)} new failure(s). Configuration: {configuration}\n')
+
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(tests, configuration=configuration, suite=self.suite)
+        if flake_logs:
+            yield self._addToLog(self.results_db_log_name, flake_logs)
+
+        flaky, unsupported, unknown, ignored, shadowed = {}, [], [], [], []
+        for test in tests:
+            flake = flakes.get(test, FlakyVerdict(request_failed=True))
+            flake_summary = 'False'
+            if flake.is_flaky:
+                flaky[test] = flake.flaky_type
+                if flake.flaky_type == ResultsDatabase.BETWEEN_BUILDS_VERDICT and not flake.intra_build_evidence:
+                    unsupported.append(test)
+                flake_summary = f'{flake.flaky_type}: {flake.evidence}'
+                if flake.flaky_type in self.INCLUDED_FLAKY_VERDICTS and test not in unsupported:
+                    ignored.append(test)
+                else:
+                    shadowed.append(test)
+            elif flake.request_failed:
+                unknown.append(test)
+                flake_summary = 'Unknown'
+
+            yield self._addToLog(self.results_db_log_name, f'\n{test}: pre-existing-flake={flake_summary}\n')
+
+        self.setProperty('results-db_api_flaky', flaky)
+        self.setProperty('results-db_api_flaky_unsupported', sorted(unsupported))
+        self.setProperty('results-db_api_flaky_unknown', sorted(unknown))
+
+        for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
+            if acted_on:
+                yield self._addToLog(
+                    self.results_db_log_name,
+                    f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
+                )
+        defer.returnValue(set(ignored))
 
     def send_email_for_flaky_failure(self, test_name):
         try:
