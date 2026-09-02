@@ -26,7 +26,9 @@
 
 from __future__ import print_function
 import errno
+import filecmp
 import fnmatch
+import json
 import optparse
 import os
 import shutil
@@ -138,6 +140,46 @@ def removeDirectoryIfExists(thinDirectory, platform):
 
 def copyBuildFiles(source, destination, patterns):
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*patterns))
+
+
+def swiftRuntimeIsRequired(buildDirectory):
+    with open(os.path.join(buildDirectory, 'cmakeconfig.h')) as configuration:
+        enabledDefinitions = set(line.strip() for line in configuration)
+    return any(
+        '#define {} 1'.format(feature) in enabledDefinitions
+        for feature in ('ENABLE_BACK_FORWARD_LIST_SWIFT', 'ENABLE_SWIFT_DEMO_URI_SCHEME')
+    )
+
+
+def copySwiftRuntimeLibraries(destination):
+    swiftCompiler = shutil.which('swiftc')
+    if not swiftCompiler:
+        raise RuntimeError('Could not find swiftc while archiving the Windows build')
+
+    targetInfo = json.loads(subprocess.check_output([swiftCompiler, '-print-target-info'], text=True))
+    runtimeBinDirectory = next((
+        path for path in targetInfo['paths']['runtimeLibraryPaths']
+        if os.path.isfile(os.path.join(path, 'swiftCore.dll'))
+    ), None)
+    if not runtimeBinDirectory:
+        raise RuntimeError('Could not find the Swift runtime bin directory')
+    runtimeLibraries = [
+        os.path.join(runtimeBinDirectory, filename)
+        for filename in sorted(os.listdir(runtimeBinDirectory))
+        if filename.lower().endswith('.dll')
+    ]
+    if not runtimeLibraries:
+        raise RuntimeError('Could not find Swift runtime libraries in {}'.format(runtimeBinDirectory))
+
+    print('Copying Swift runtime libraries from: {}'.format(runtimeBinDirectory))
+    for runtimeLibrary in runtimeLibraries:
+        destinationLibrary = os.path.join(destination, os.path.basename(runtimeLibrary))
+        if os.path.exists(destinationLibrary):
+            if not filecmp.cmp(runtimeLibrary, destinationLibrary, shallow=False):
+                raise RuntimeError('Swift runtime library conflicts with existing file: {}'.format(destinationLibrary))
+            print('Swift runtime library already present: {}'.format(destinationLibrary))
+            continue
+        shutil.copy2(runtimeLibrary, destinationLibrary)
 
 
 def createZipFromList(listToZip, configuration, excludePatterns=None):
@@ -281,6 +323,8 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
         removeDirectoryIfExists(thinDirectory, platform)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
+        if swiftRuntimeIsRequired(_configurationBuildDirectory):
+            copySwiftRuntimeLibraries(thinBinDirectory)
 
         if createZip(thinDirectory, configuration):
             return 1
