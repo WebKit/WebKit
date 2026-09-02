@@ -47,9 +47,10 @@
             this._mirrorTrack.mode = 'hidden';
             this._captionObserver = null;
             this._waitObserver = null;
+            this._observedCaptionContainer = null;
 
-            this._onCaptionsTrackListChanged = () => this._syncTrackList();
-            this._onCaptionsChanged = () => this._syncTrackList();
+            this._onCaptionsTrackListChanged = () => this._handleCaptionStateChanged();
+            this._onCaptionsChanged = () => this._handleCaptionStateChanged();
             this._player.addEventListener('onCaptionsTrackListChanged', this._onCaptionsTrackListChanged);
             this._player.addEventListener('captionschanged', this._onCaptionsChanged);
 
@@ -58,6 +59,9 @@
 
             this._onPresentationModeChanged = () => this._handlePresentationModeChanged();
             this._video.addEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+
+            this._onEmptied = () => this._handleResourceChanged();
+            this._video.addEventListener('emptied', this._onEmptied);
 
             this._attachCaptionWindowObserver();
 
@@ -73,13 +77,26 @@
                 this._waitObserver.disconnect();
                 this._waitObserver = null;
             }
+            this._observedCaptionContainer = null;
             this._mirrorTrack.mode = 'disabled';
             this._player.removeEventListener('onCaptionsTrackListChanged', this._onCaptionsTrackListChanged);
             this._player.removeEventListener('captionschanged', this._onCaptionsChanged);
             this._video.removeEventListener('webkitpresentationmodechanged', this._onPresentationModeChanged);
+            this._video.removeEventListener('emptied', this._onEmptied);
         }
 
         // Private methods:
+        _handleCaptionStateChanged() {
+            this._syncTrackList();
+            this._updateCues();
+        }
+
+        _handleResourceChanged() {
+            this._removeAllCues();
+            this._detachCaptionObserver();
+            this._attachCaptionWindowObserver();
+        }
+
         _syncTrackList() {
             var trackList = this._getTrackList();
             var activeTrack = this._getActiveTrack();
@@ -89,9 +106,28 @@
             navigator.mediaSession.captionsEnabled = this._player.isSubtitlesOn();
         }
 
-        _syncCues(captionWindowContainer) {
+        _updateCues() {
+            var container = this._player.querySelector(this._captionWindowSelector);
+            if (!container) {
+                this._removeAllCues();
+                this._detachCaptionObserver();
+                this._attachCaptionWindowObserver();
+                return;
+            }
+
+            if (container !== this._observedCaptionContainer)
+                this._attachCaptionObserver(container);
+
+            this._syncCues(container);
+        }
+
+        _removeAllCues() {
             while (this._mirrorTrack.cues?.length)
                 this._mirrorTrack.removeCue(this._mirrorTrack.cues[0]);
+        }
+
+        _syncCues(captionWindowContainer) {
+            this._removeAllCues();
             for (var captionWindow of captionWindowContainer.querySelectorAll('.caption-window')) {
                 var text = Array.from(captionWindow.querySelectorAll('.captions-text > span')).map(span => span.textContent).join('\n');
                 if (!text)
@@ -133,28 +169,38 @@
 
         _attachCaptionWindowObserver() {
             var container = this._player.querySelector(this._captionWindowSelector);
-            if (container)
+            if (container) {
                 this._attachCaptionObserver(container);
-            else {
-                this._waitObserver = new MutationObserver(() => {
-                    var container = this._player.querySelector(this._captionWindowSelector);
-                    if (container) {
-                        this._attachCaptionObserver(container);
-                        this._waitObserver.disconnect();
-                        this._waitObserver = null;
-                    }
-                });
-                this._waitObserver.observe(this._player, { childList: true, subtree: true });
+                return;
             }
+
+            if (this._waitObserver)
+                return;
+
+            this._waitObserver = new MutationObserver(() => {
+                var container = this._player.querySelector(this._captionWindowSelector);
+                if (container) {
+                    this._attachCaptionObserver(container);
+                    this._waitObserver.disconnect();
+                    this._waitObserver = null;
+                    this._syncCues(container);
+                }
+            });
+            this._waitObserver.observe(this._player, { childList: true, subtree: true });
+        }
+
+        _detachCaptionObserver() {
+            if (this._captionObserver) {
+                this._captionObserver.disconnect();
+                this._captionObserver = null;
+            }
+            this._observedCaptionContainer = null;
         }
 
         _attachCaptionObserver(container) {
-            if (this._captionObserver)
-                this._captionObserver.disconnect();
-            this._captionObserver = new MutationObserver(() => {
-                var container = this._player.querySelector(this._captionWindowSelector);
-                if (container) this._syncCues(container);
-            });
+            this._detachCaptionObserver();
+            this._observedCaptionContainer = container;
+            this._captionObserver = new MutationObserver(() => this._updateCues());
             this._captionObserver.observe(container, {
                 childList: true,
                 subtree: true,
@@ -169,17 +215,20 @@
         }
 
         _handlePresentationModeChanged() {
-            var captionContainer = this._player.querySelector(this._captionWindowSelector);
-            if (this._getIsInline()) {
-                this._mirrorTrack.mode = 'hidden';
-                if (captionContainer)
-                    captionContainer.style.removeProperty('visibility');
-                return;
-            }
+            var isInline = this._getIsInline();
+            if (!isInline)
+                this._player.loadModule('captions');
 
-            this._player.loadModule('captions');
-            this._mirrorTrack.mode = 'showing';
-            if (captionContainer)
+            this._updateCues();
+            this._mirrorTrack.mode = isInline ? 'hidden' : 'showing';
+
+            var captionContainer = this._player.querySelector(this._captionWindowSelector);
+            if (!captionContainer)
+                return;
+
+            if (isInline)
+                captionContainer.style.removeProperty('visibility');
+            else
                 captionContainer.style.setProperty('visibility', 'hidden', 'important');
         }
 
