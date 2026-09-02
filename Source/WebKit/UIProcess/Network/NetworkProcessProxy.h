@@ -298,6 +298,8 @@ public:
 #endif
 
     void isStorageSuspendedForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void canPrefetchDNSForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;

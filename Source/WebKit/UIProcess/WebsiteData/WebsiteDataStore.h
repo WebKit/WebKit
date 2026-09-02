@@ -532,6 +532,8 @@ public:
     void setStorageAccessPermissionForTesting(bool, WebPageProxyIdentifier, const String& topFrameDomain, const String& subFrameDomain, CompletionHandler<void()>&&);
     void clearStorageAccessForTesting(CompletionHandler<void()>&&);
     void isStorageSuspendedForTesting(CompletionHandler<void(bool)>&&) const;
+    void canPrefetchDNSForTesting(CompletionHandler<void(bool)>&&) const;
+    void prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&&) const;
 
     void trackEnhancedSecurityForDomain(WebCore::RegistrableDomain&&, EnhancedSecurity);
     void fetchEnhancedSecurityOnlyDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);

@@ -2982,6 +2982,16 @@ void WebsiteDataStore::isStorageSuspendedForTesting(CompletionHandler<void(bool)
     protectedNetworkProcess()->isStorageSuspendedForTesting(m_sessionID, WTF::move(completionHandler));
 }
 
+void WebsiteDataStore::canPrefetchDNSForTesting(CompletionHandler<void(bool)>&& completionHandler) const
+{
+    protect(networkProcess())->canPrefetchDNSForTesting(m_sessionID, WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler) const
+{
+    protect(networkProcess())->prefetchedDNSHostnameCountForTesting(WTF::move(completionHandler));
+}
+
 #if !PLATFORM(COCOA)
 
 void WebsiteDataStore::removeEnhancedSecuritySites(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& completionHandler)
