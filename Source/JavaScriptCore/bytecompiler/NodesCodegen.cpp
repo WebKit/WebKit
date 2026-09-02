@@ -4923,7 +4923,8 @@ void SwitchNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Switch);
 
-    RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
+    RefPtr<RegisterID> r0 = generator.newTemporary();
+    generator.emitNode(r0.get(), m_expr);
 
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::DoNotOptimize, BytecodeGenerator::NestedScopeType::IsNested);
 
