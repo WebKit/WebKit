@@ -1126,7 +1126,9 @@ void WebPasteboardProxy::createOneWebArchiveFromFrames(WebProcessProxy& requeste
 
     for (auto& [process, frameIDs] : frameByProcess) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](IPC::Untrusted<HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>>&& untrustedResult) {
+            // An archive of the page's own contents, on its way to the pasteboard.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (result.size() > frameIDs.size())
                 return;
             callbackAggregator->addResult(WTF::move(result));

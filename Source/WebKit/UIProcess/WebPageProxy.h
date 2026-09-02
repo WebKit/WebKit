@@ -2087,6 +2087,7 @@ public:
 #endif
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(WebFrameProxy&, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
+    static CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, IPC::Untrusted<WebCore::ResourceError>&&)> printingErrorReply(CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
 #endif
 
     const PageLoadState& LEGACY_NODELETE pageLoadState() const LIFETIME_BOUND;
