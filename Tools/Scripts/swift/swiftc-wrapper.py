@@ -79,6 +79,21 @@ def _unescape(path):
     return path.replace("\\ ", " ")
 
 
+def _canonical(path):
+    """A spelling-insensitive key for paths that name the same file."""
+    return os.path.normcase(os.path.normpath(path)).replace("\\", "/")
+
+
+def excluded_paths(request):
+    """Canonical keys of everything that must not appear in the depfile."""
+    excludes = {_canonical(exclude): exclude for exclude in request.excludes}
+    # A depfile may never list its own target or itself, whatever the caller
+    # asked to exclude.
+    excludes.setdefault(_canonical(request.target), request.target)
+    excludes.setdefault(_canonical(request.path), request.path)
+    return excludes
+
+
 def parse_depfile(path):
     """Yield the dependencies recorded in one Makefile-syntax depfile."""
     text = Path(path).read_text(errors="replace").replace("\\\n", " ")
@@ -114,11 +129,12 @@ def write_ninja_depfile(request, output_file_map):
             "can't track Swift header dependencies"
         )
 
+    excludes = excluded_paths(request)
     deps = dict.fromkeys(
         dep
         for source in sources
         for dep in parse_depfile(source)
-        if dep not in request.excludes
+        if _canonical(dep) not in excludes
     )
 
     lines = [f"{_escape(request.target)}:"]
