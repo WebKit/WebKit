@@ -244,6 +244,8 @@ public:
     {
         m_commandEncoderMap.remove(identifier);
     }
+    // Invalid encoders take an identifier from here too, so that they never alias a live encoder. rdar://178679545
+    uint64_t generateCommandEncoderId() { return m_commandEncoderId++; }
     bool supportsResidencySets() { return m_capabilities.baseCapabilities.supportsResidencySets; }
     bool NODELETE isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
     void setCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
