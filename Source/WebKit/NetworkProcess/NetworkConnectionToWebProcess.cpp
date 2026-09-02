@@ -974,8 +974,7 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
 {
     auto access = validateCookieAccess("setRawCookie"_s, firstParty, url, nullptr);
     MESSAGE_CHECK(access != CookieAccess::Terminate);
-    MESSAGE_CHECK(RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(firstParty));
-    MESSAGE_CHECK(RegistrableDomain(url).matches(firstParty));
+    MESSAGE_CHECK(RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(url));
     if (access != CookieAccess::Allow)
         return;
 

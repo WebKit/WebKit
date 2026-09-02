@@ -1,0 +1,4 @@
+
+PASS SetRawCookie rejects cross-origin cookie.domain via MESSAGE_CHECK
+PASS SetRawCookie rejects cross-origin url via MESSAGE_CHECK
+

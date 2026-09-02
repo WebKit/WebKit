@@ -1,0 +1,107 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that SetRawCookie validates cookie.domain and url against firstParty via MESSAGE_CHECK</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async (t) => {
+    if (!window.IPC) {
+        done();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const ownOrigin = location.origin + '/';
+    const victimURL = 'http://victim-bank.test/';
+
+    function makeCookie(domain) {
+        return {
+            name:         'injected-by-poc',
+            value:        'session-fixation-payload',
+            domain:       domain,
+            path:         '/',
+            partitionKey: '',
+            created:      0,
+            expires:      {},
+            httpOnly:     true,
+            secure:       false,
+            session:      true,
+            comment:      '',
+            commentURL:   { string: '' },
+            ports:        [],
+            sameSite:     0,
+        };
+    }
+
+    // Drain any pending invalid-message string.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
+
+    // cookie.domain is cross-origin from firstParty -> MESSAGE_CHECK at
+    // NetworkConnectionToWebProcess::setRawCookie should fail.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.SetRawCookie(0, {
+        firstParty: { string: ownOrigin },
+        url:        { string: ownOrigin },
+        cookie:     makeCookie('victim-bank.test'),
+        shouldPartitionCookie: 0,
+    });
+
+    let messageCheck = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {},
+        reply => messageCheck = reply.error);
+
+    assert_true(!!messageCheck && messageCheck.includes('Message check failed'),
+        'SetRawCookie with cross-origin cookie.domain should trigger MESSAGE_CHECK, got: "' + messageCheck + '"');
+}, 'SetRawCookie rejects cross-origin cookie.domain via MESSAGE_CHECK');
+
+promise_test(async (t) => {
+    if (!window.IPC) {
+        done();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const ownOrigin = location.origin + '/';
+    const victimURL = 'http://victim-bank.test/';
+
+    function makeCookie(domain) {
+        return {
+            name:         'injected-by-poc',
+            value:        'session-fixation-payload',
+            domain:       domain,
+            path:         '/',
+            partitionKey: '',
+            created:      0,
+            expires:      {},
+            httpOnly:     true,
+            secure:       false,
+            session:      true,
+            comment:      '',
+            commentURL:   { string: '' },
+            ports:        [],
+            sameSite:     0,
+        };
+    }
+
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
+
+    // url is cross-origin from firstParty -> MESSAGE_CHECK should fail.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.SetRawCookie(0, {
+        firstParty: { string: ownOrigin },
+        url:        { string: victimURL },
+        cookie:     makeCookie(new URL(ownOrigin).host),
+        shouldPartitionCookie: 0,
+    });
+
+    let messageCheck = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {},
+        reply => messageCheck = reply.error);
+
+    assert_true(!!messageCheck && messageCheck.includes('Message check failed'),
+        'SetRawCookie with cross-origin url should trigger MESSAGE_CHECK, got: "' + messageCheck + '"');
+}, 'SetRawCookie rejects cross-origin url via MESSAGE_CHECK');
+
+done();
+</script>
+</body>
