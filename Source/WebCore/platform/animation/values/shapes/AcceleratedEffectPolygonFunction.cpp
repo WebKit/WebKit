@@ -30,6 +30,7 @@
 
 #include "AcceleratedEffectAnimationUtilities.h"
 #include "Path.h"
+#include <wtf/Lock.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/ZippedRange.h>
 
@@ -55,8 +56,13 @@ public:
     }
 };
 
-static const WebCore::Path& cachedAcceleratedEffectPolygonPath(const Vector<FloatPoint>& points)
+static WebCore::Path cachedAcceleratedEffectPolygonPath(const Vector<FloatPoint>& points)
 {
+    // This may be reached on the main run loop and the ScrollingThread concurrently
+    // (via RemoteLayerTreeEventDispatcher::updateAnimations), so the global cache
+    // must be guarded and the result copied out under the lock.
+    static Lock cacheLock;
+    Locker locker { cacheLock };
     static NeverDestroyed<TinyLRUCache<Vector<FloatPoint>, WebCore::Path, 4, AcceleratedEffectPolygonPathPolicy>> cache;
     return cache.get().get(points);
 }
