@@ -20,12 +20,45 @@
 #include "config.h"
 
 #include "TestMain.h"
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebKitTestServer.h"
+#endif
 #include <gio/gio.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/JSONValues.h>
+#endif
 #include <wtf/UUID.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
+#endif
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/SocketConnection.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/UTF8CStringView.h>
+
+#if ENABLE(WEBDRIVER_BIDI)
+static std::unique_ptr<WebKitTestServer> s_iframeRealmEnumerationServer;
+
+static void iframeRealmEnumerationServerCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+{
+    static constexpr auto parentDocument = "<!doctype html><iframe src='/iframe.html'></iframe>";
+    static constexpr auto iframeDocument = "<!doctype html><p>iframe document</p>";
+
+    const char* content;
+    if (g_str_equal(path, "/iframe-realm-enumeration.html"))
+        content = parentDocument;
+    else if (g_str_equal(path, "/iframe.html"))
+        content = iframeDocument;
+    else {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        return;
+    }
+
+    soup_server_message_set_response(message, "text/html", SOUP_MEMORY_STATIC, content, strlen(content));
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+}
+#endif
 
 class AutomationTest: public Test {
 public:
@@ -78,6 +111,17 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
+#if ENABLE(WEBDRIVER_BIDI)
+        auto transportValue = JSON::Value::parseJSON(String::fromUTF8(message));
+        auto transportMessage = transportValue ? transportValue->asObject() : nullptr;
+        if (transportMessage && transportMessage->getString("method"_s) == "Automation.bidiMessageSent"_s) {
+            if (auto parameters = transportMessage->getObject("params"_s)) {
+                auto bidiValue = JSON::Value::parseJSON(parameters->getString("message"_s));
+                if (auto bidiMessage = bidiValue ? bidiValue->asObject() : nullptr)
+                    m_bidiMessages.append(bidiMessage.releaseNonNull());
+            }
+        }
+#endif
         m_message = UTF8CString::unsafeFromUTF8(message);
         g_main_loop_quit(m_mainLoop.get());
     }
@@ -92,6 +136,99 @@ public:
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8()));
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    String browsingContextHandleFromLastResponse() const
+    {
+        auto responseValue = JSON::Value::parseJSON(String::fromUTF8(m_message.span()));
+        g_assert_true(!!responseValue);
+        auto response = responseValue->asObject();
+        g_assert_true(!!response);
+        auto result = response->getObject("result"_s);
+        g_assert_true(!!result);
+        auto browsingContext = result->getString("handle"_s);
+        g_assert_false(browsingContext.isEmpty());
+        return browsingContext;
+    }
+
+    void loadURIAndWait(WebKitWebView* webView, const char* uri)
+    {
+        m_loadFinished = false;
+        auto loadChangedHandler = g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView*, WebKitLoadEvent loadEvent, AutomationTest* test) {
+            if (loadEvent != WEBKIT_LOAD_FINISHED)
+                return;
+            test->m_loadFinished = true;
+            g_main_loop_quit(test->m_mainLoop.get());
+        }), this);
+
+        webkit_web_view_load_uri(webView, uri);
+        while (!m_loadFinished)
+            g_main_loop_run(m_mainLoop.get());
+        g_signal_handler_disconnect(webView, loadChangedHandler);
+    }
+
+    Ref<JSON::Object> sendBidiCommandAndWait(int commandIdentifier, const String& method, Ref<JSON::Object>&& parameters)
+    {
+        auto command = JSON::Object::create();
+        command->setInteger("id"_s, commandIdentifier);
+        command->setString("method"_s, method);
+        command->setObject("params"_s, WTF::move(parameters));
+
+        auto automationParameters = JSON::Object::create();
+        automationParameters->setString("message"_s, command->toJSONString());
+        sendCommandToBackend("processBidiMessage"_s, automationParameters->toJSONString());
+
+        auto response = waitForBidiMessage([commandIdentifier](const JSON::Object& message) {
+            auto responseIdentifier = message.getInteger("id"_s);
+            return responseIdentifier && *responseIdentifier == commandIdentifier;
+        });
+        g_assert_true(!!response);
+        g_assert_true(response->getString("type"_s) == "success"_s);
+        return response.releaseNonNull();
+    }
+
+    template<typename Predicate>
+    RefPtr<JSON::Object> takeBidiMessage(Predicate&& predicate)
+    {
+        for (size_t index = 0; index < m_bidiMessages.size(); ++index) {
+            if (!predicate(m_bidiMessages[index].get()))
+                continue;
+            auto message = m_bidiMessages[index].copyRef();
+            m_bidiMessages.removeAt(index);
+            return message;
+        }
+        return nullptr;
+    }
+
+    template<typename Predicate>
+    RefPtr<JSON::Object> waitForBidiMessage(Predicate&& predicate)
+    {
+        struct WaitState {
+            GMainLoop* mainLoop;
+            bool timedOut { false };
+        } waitState { m_mainLoop.get() };
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& waitState = *static_cast<WaitState*>(userData);
+            waitState.timedOut = true;
+            g_main_loop_quit(waitState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &waitState);
+
+        while (!waitState.timedOut) {
+            if (auto message = takeBidiMessage(predicate)) {
+                g_source_remove(timeoutID);
+                return message;
+            }
+            g_main_loop_run(m_mainLoop.get());
+        }
+
+        for (auto& message : m_bidiMessages) {
+            auto serializedMessage = message->toJSONString().utf8();
+            g_test_message("Unmatched BiDi message: %s", serializedMessage.legacyCStringPointer());
+        }
+        return nullptr;
+    }
+#endif
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
     {
@@ -251,6 +388,10 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     UTF8CString m_message;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool m_loadFinished { false };
+    Vector<Ref<JSON::Object>> m_bidiMessages;
+#endif
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -295,6 +436,129 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
         }}
     }
 };
+
+#if ENABLE(WEBDRIVER_BIDI)
+struct IframeRealm {
+    String identifier;
+    String browsingContext;
+};
+
+static Ref<JSON::Array> getRealms(AutomationTest& test, int commandIdentifier, Ref<JSON::Object>&& parameters = JSON::Object::create())
+{
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "script.getRealms"_s, WTF::move(parameters));
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    auto realms = result->getArray("realms"_s);
+    g_assert_true(!!realms);
+    return realms.releaseNonNull();
+}
+
+static String getIframeBrowsingContext(AutomationTest& test, int commandIdentifier, const String& topLevelBrowsingContext)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("root"_s, topLevelBrowsingContext);
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "browsingContext.getTree"_s, WTF::move(parameters));
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    auto contexts = result->getArray("contexts"_s);
+    g_assert_true(!!contexts);
+    g_assert_cmpuint(contexts->length(), ==, 1);
+    auto topLevelContext = contexts->get(0)->asObject();
+    g_assert_true(!!topLevelContext);
+    g_assert_true(topLevelContext->getString("context"_s) == topLevelBrowsingContext);
+    auto children = topLevelContext->getArray("children"_s);
+    g_assert_true(!!children);
+    g_assert_cmpuint(children->length(), ==, 1);
+    auto iframeContext = children->get(0)->asObject();
+    g_assert_true(!!iframeContext);
+    auto iframeBrowsingContext = iframeContext->getString("context"_s);
+    g_assert_false(iframeBrowsingContext.isEmpty());
+    return iframeBrowsingContext;
+}
+
+static void verifyIframeRealmEnumeration(AutomationTest& test, WebKitWebView* webView, const String& topLevelBrowsingContext)
+{
+    auto pageURI = s_iframeRealmEnumerationServer->getURIForPath("/iframe-realm-enumeration.html");
+    auto expectedOrigin = URL { String::fromUTF8(pageURI.span()) }.protocolHostAndPort();
+    test.loadURIAndWait(webView, pageURI.legacyCStringPointer());
+
+    auto iframeBrowsingContext = getIframeBrowsingContext(test, 1, topLevelBrowsingContext);
+    // No script command has run in the iframe, so getRealms must create its normal-world realm.
+    auto realms = getRealms(test, 2);
+    g_assert_cmpuint(realms->length(), ==, 2);
+
+    bool foundTopLevelRealm = false;
+    std::optional<IframeRealm> iframeRealm;
+    for (size_t index = 0; index < realms->length(); ++index) {
+        auto realm = realms->get(index)->asObject();
+        g_assert_true(!!realm);
+        g_assert_true(realm->getString("type"_s) == "window"_s);
+        g_assert_true(realm->getString("origin"_s) == expectedOrigin);
+
+        auto browsingContext = realm->getString("context"_s);
+        if (browsingContext == topLevelBrowsingContext) {
+            foundTopLevelRealm = true;
+            continue;
+        }
+
+        g_assert_false(!!iframeRealm);
+        iframeRealm = IframeRealm { realm->getString("realm"_s), WTF::move(browsingContext) };
+    }
+
+    g_assert_true(foundTopLevelRealm);
+    g_assert_true(!!iframeRealm);
+    g_assert_false(iframeRealm->identifier.isEmpty());
+    g_assert_false(iframeRealm->browsingContext.isEmpty());
+    g_assert_true(iframeRealm->browsingContext == iframeBrowsingContext);
+
+    auto filterParameters = JSON::Object::create();
+    filterParameters->setString("context"_s, iframeRealm->browsingContext);
+    auto filteredRealms = getRealms(test, 3, WTF::move(filterParameters));
+    g_assert_cmpuint(filteredRealms->length(), ==, 1);
+    auto filteredRealm = filteredRealms->get(0)->asObject();
+    g_assert_true(!!filteredRealm);
+    g_assert_true(filteredRealm->getString("realm"_s) == iframeRealm->identifier);
+    g_assert_true(filteredRealm->getString("context"_s) == iframeRealm->browsingContext);
+
+    auto evaluateParameters = JSON::Object::create();
+    evaluateParameters->setString("expression"_s, "1 + 2"_s);
+    evaluateParameters->setBoolean("awaitPromise"_s, false);
+    auto evaluateTarget = JSON::Object::create();
+    evaluateTarget->setString("context"_s, iframeRealm->browsingContext);
+    evaluateParameters->setObject("target"_s, WTF::move(evaluateTarget));
+    auto evaluateResponse = test.sendBidiCommandAndWait(4, "script.evaluate"_s, WTF::move(evaluateParameters));
+    auto evaluateResult = evaluateResponse->getObject("result"_s);
+    g_assert_true(!!evaluateResult);
+    g_assert_true(evaluateResult->getString("realm"_s) == iframeRealm->identifier);
+
+    // Use a new scriptless iframe so callFunction, rather than getRealms, creates this realm.
+    test.loadURIAndWait(webView, pageURI.legacyCStringPointer());
+    auto callFunctionIframeBrowsingContext = getIframeBrowsingContext(test, 5, topLevelBrowsingContext);
+    g_assert_true(callFunctionIframeBrowsingContext != iframeBrowsingContext);
+
+    auto callFunctionParameters = JSON::Object::create();
+    callFunctionParameters->setString("functionDeclaration"_s, "() => 1"_s);
+    callFunctionParameters->setBoolean("awaitPromise"_s, false);
+    auto callFunctionTarget = JSON::Object::create();
+    callFunctionTarget->setString("context"_s, callFunctionIframeBrowsingContext);
+    callFunctionParameters->setObject("target"_s, WTF::move(callFunctionTarget));
+    auto callFunctionResponse = test.sendBidiCommandAndWait(6, "script.callFunction"_s, WTF::move(callFunctionParameters));
+    auto callFunctionResult = callFunctionResponse->getObject("result"_s);
+    g_assert_true(!!callFunctionResult);
+    auto callFunctionRealm = callFunctionResult->getString("realm"_s);
+    g_assert_false(callFunctionRealm.isEmpty());
+
+    auto callFunctionFilterParameters = JSON::Object::create();
+    callFunctionFilterParameters->setString("context"_s, callFunctionIframeBrowsingContext);
+    auto callFunctionRealms = getRealms(test, 7, WTF::move(callFunctionFilterParameters));
+    g_assert_cmpuint(callFunctionRealms->length(), ==, 1);
+    auto callFunctionRealmInfo = callFunctionRealms->get(0)->asObject();
+    g_assert_true(!!callFunctionRealmInfo);
+    g_assert_true(callFunctionRealmInfo->getString("realm"_s) == callFunctionRealm);
+    g_assert_true(callFunctionRealmInfo->getString("context"_s) == callFunctionIframeBrowsingContext);
+    g_assert_true(callFunctionRealmInfo->getString("origin"_s) == expectedOrigin);
+}
+#endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
@@ -350,6 +614,10 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+#if ENABLE(WEBDRIVER_BIDI)
+    auto topLevelBrowsingContext = test->browsingContextHandleFromLastResponse();
+    verifyIframeRealmEnumeration(*test, webView.get(), topLevelBrowsingContext);
+#endif
 
     auto newWebViewInWindow = test->createWebView(
         "is-controlled-by-automation", TRUE,
@@ -402,11 +670,19 @@ void beforeAll()
 {
     g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229", TRUE);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    s_iframeRealmEnumerationServer = makeUnique<WebKitTestServer>();
+    s_iframeRealmEnumerationServer->run(iframeRealmEnumerationServerCallback);
+#endif
+
     AutomationTest::add("WebKitAutomationSession", "request-session", testAutomationSessionRequestSession);
     Test::add("WebKitAutomationSession", "application-info", testAutomationSessionApplicationInfo);
 }
 
 void afterAll()
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    s_iframeRealmEnumerationServer = nullptr;
+#endif
     g_unsetenv("WEBKIT_INSPECTOR_SERVER");
 }
