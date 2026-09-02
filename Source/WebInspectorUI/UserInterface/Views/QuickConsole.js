@@ -255,6 +255,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         if (this._canUseExecutionContextOfInspectedNode()) {
             let executionContextForInspectedNode = this._resolveDesiredActiveExecutionContext(true);
             contextMenu.appendCheckboxItem(WI.UIString("Auto \u2014 %s").format(this._displayNameForExecutionContext(executionContextForInspectedNode, maxLength)), () => {
+                this._restoreSelectedExecutionContextForFrame = null;
                 this._useExecutionContextOfInspectedNode = true;
                 this._setActiveExecutionContext(executionContextForInspectedNode);
             }, this._useExecutionContextOfInspectedNode);
@@ -270,6 +271,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
             // Mimic macOS `-[NSMenuItem setIndentationLevel]`.
             contextMenu.appendCheckboxItem("   ".repeat(indent + additionalIndent) + this._displayNameForExecutionContext(context, maxLength), () => {
+                this._restoreSelectedExecutionContextForFrame = null;
                 this._useExecutionContextOfInspectedNode = false;
                 this._setActiveExecutionContext(context);
             }, activeExecutionContext === context);
