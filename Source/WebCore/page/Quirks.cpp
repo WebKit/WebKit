@@ -805,6 +805,18 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+// webex.com rdar://143715630
+bool Quirks::needsWebExScrollabilityQuirk() const
+{
+#if PLATFORM(IOS_FAMILY) && ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsWebExScrollabilityQuirk);
+#else
+    return false;
+#endif
+}
+
 // amazon.com rdar://128962002
 bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
 {
@@ -3047,11 +3059,13 @@ static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& 
 }
 
 #if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
-static void handleScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirksData& quirksData, const URL& /* quirksURL */, const String& topDomain, const URL& /* documentURL */)
+static void handleWebExQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& topDomain, const URL& /* documentURL */)
 {
     if (topDomain == "webex.com"_s) {
         quirksData.isWebEx = true;
         quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
+        // webex.com rdar://143715630
+        quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsWebExScrollabilityQuirk);
     }
 }
 #endif
@@ -4312,7 +4326,7 @@ void Quirks::determineRelevantQuirks()
         { "weather"_s, &handleWeatherQuirks },
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
-        { "webex"_s, &handleScriptToEvaluateBeforeRunningScriptFromURLQuirk },
+        { "webex"_s, &handleWebExQuirks },
 #endif
         { "weebly"_s, &handleWeeblyQuirks },
         { "workspaces"_s, &handleWorkspacesQuirks },
