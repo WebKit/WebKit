@@ -46,13 +46,14 @@ class Dashboard {
         });
     }
 
-    constructor(title, suite, parameters, warnAfter=null, expireAfter=null) {
+    constructor(title, suite, parameters, warnAfter=null, expireAfter=null, sequentialFailures=null) {
         this.title = title;
         this.suite = suite;
         this.parameters = parameters;
 
         this.warnAfter = warnAfter ? warnAfter : 12;
         this.expireAfter = expireAfter ? expireAfter : 7*24;
+        this.sequentialFailures = sequentialFailures ? 2;
 
         this.willFilterExpected = false;
 
@@ -383,10 +384,18 @@ class Dashboard {
             if (latestResult.uuid / 100 < now - this.expireAfter * 60 * 60)
                 continue;
 
-            // For now, do the easy thing and only consider the latest run
-            // In the future, we can consider more sophisticated algorithms
-            const latestStatus = this.failureForBuild(latestResult);
-            let configStatus = latestStatus;
+            // Check the first few statuses, in an attempt to supress 1-off failures
+            let configStatus = this.failureForBuild(latestResult);
+            let i = 2;
+            while (!this.showPassing && i <= this.sequentialFailures && i <= this.requestData[key].length) {
+                const result = this.requestData[key][this.requestData[key].length - i][1];
+                const statusForResult = this.failureForBuild(result);
+                if (statusForResult >= Expectations.stringToStateId('PASS')) {
+                    configStatus = statusForResult;
+                    break;
+                }
+                ++i;
+            }
             
             if (latestResult.uuid / 100 < now - this.warnAfter * 60 * 60)
                 configStatus = Math.min(configStatus, Expectations.stringToStateId('WARNING'));;
