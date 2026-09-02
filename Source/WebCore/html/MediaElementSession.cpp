@@ -60,6 +60,7 @@
 #include "SourceBuffer.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include "UserGestureIndicator.h"
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
@@ -522,6 +523,15 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
         && !element->paused() && state == MediaPlaybackState::Paused
         && !document->processingUserGestureForMedia())
         return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in Picture-in-Picture"_s);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (document->quirks().requiresUserGestureToPauseInFullscreenAfterOrientationChange()
+        && element->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModeStandard
+        && !element->paused() && state == MediaPlaybackState::Paused
+        && !UserGestureIndicator::processingUserGestureForMedia()
+        && (MonotonicTime::now() - page->lastOrientationChangeTime()) < 500_ms)
+        return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Quirk requires user gesture to pause in fullscreen after an orientation change"_s);
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (mainFrameDocument && mainFrameDocument->quirks().requiresUserGestureToPlayInFullscreen() && document->fullscreen().fullscreenElement() && state == MediaPlaybackState::Playing && element->paused()) {

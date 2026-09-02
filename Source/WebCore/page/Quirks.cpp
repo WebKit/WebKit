@@ -1550,6 +1550,18 @@ bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 #endif
 }
 
+// sports.yahoo.com: rdar://148284059
+bool Quirks::requiresUserGestureToPauseInFullscreenAfterOrientationChange() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk);
+#else
+    return false;
+#endif
+}
+
 // youtube.com: rdar://178769976
 bool Quirks::requiresUserGestureToPlayInFullscreen() const
 {

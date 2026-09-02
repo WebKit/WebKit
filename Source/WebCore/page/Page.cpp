@@ -4702,6 +4702,11 @@ void Page::clearDeviceOrientationAndMotionPermissions()
 }
 #endif
 
+void Page::orientationDidChange()
+{
+    m_lastOrientationChangeTime = MonotonicTime::now();
+}
+
 bool Page::findMatchingLocalDocument(NOESCAPE const Function<bool(Document&)>& functor) const
 {
     for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {

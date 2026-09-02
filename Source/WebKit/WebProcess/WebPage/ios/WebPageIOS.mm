@@ -2920,6 +2920,7 @@ void WebPage::setDeviceOrientation(IntDegrees deviceOrientation)
     if (deviceOrientation == m_deviceOrientation)
         return;
     m_deviceOrientation = deviceOrientation;
+    protect(m_page)->orientationDidChange();
 #if ENABLE(ORIENTATION_EVENTS)
     if (RefPtr localMainFrame = protect(m_page)->localMainFrame())
         localMainFrame->orientationChanged();

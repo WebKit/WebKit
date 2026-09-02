@@ -158,6 +158,7 @@ enum class SiteSpecificQuirk {
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RequiresUserGestureToLoadInPictureInPictureQuirk,
+    RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk,
     RequiresUserGestureToPauseInPictureInPictureQuirk,
 #endif
 #if ENABLE(FULLSCREEN_API)

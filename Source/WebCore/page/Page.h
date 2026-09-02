@@ -1188,6 +1188,9 @@ public:
     WEBCORE_EXPORT void clearDeviceOrientationAndMotionPermissions();
 #endif
 
+    MonotonicTime lastOrientationChangeTime() const { return m_lastOrientationChangeTime; }
+    WEBCORE_EXPORT void orientationDidChange();
+
     WEBCORE_EXPORT void forEachDocument(NOESCAPE const Function<void(Document&)>&) const;
     bool findMatchingLocalDocument(NOESCAPE const Function<bool(Document&)>&) const;
     void forEachRenderableDocument(NOESCAPE const Function<void(Document&)>&) const;
@@ -1898,6 +1901,7 @@ private:
     bool m_shouldDeferScrollEvents { false };
     bool m_shouldDeferIntersectionObservations { false };
     MonotonicTime m_lastResizeTimeForIOQuirk;
+    MonotonicTime m_lastOrientationChangeTime;
 
     Ref<DocumentSyncData> m_topDocumentSyncData;
 

@@ -890,6 +890,12 @@ static constexpr Quirk table[] = {
 #endif
         } },
 
+#if ENABLE(VIDEO_PRESENTATION_MODE) && PLATFORM(IOS)
+    // yahoo.com: rdar://148284059
+    { .match = QuirkURLMatch::embeddedDocumentInTopMatch(URLMatch::anyTopLevelDomain("yahoo"_s), URLMatch::domain("yimg.com"_s)),
+        .behaviors = { RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk } },
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
     // news.ycombinator.com: rdar://127246368
     { .match = URLMatch::host("news.ycombinator.com"_s),
