@@ -82,6 +82,45 @@ NSString *readHTMLStringFromPasteboard()
 
 #endif
 
+static RetainPtr<NSData> readWebArchiveDataFromPasteboard()
+{
+#if PLATFORM(MAC)
+    return [NSPasteboard.generalPasteboard dataForType:UTTypeWebArchive.identifier];
+#else
+    return [UIPasteboard.generalPasteboard dataForPasteboardType:UTTypeWebArchive.identifier];
+#endif
+}
+
+// When a frameset document is copied, LegacyWebArchive::createFromSelection wraps the frameset in an
+// <iframe> so it can be pasted into a document that has its own body/frameset. The wrapper markup must
+// use a single-percent width/height ("98%"), not a printf-style escaped "98%%".
+TEST(CopyHTML, FramesetSelectionIframeWrapperUsesSinglePercent)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<frameset rows=\"50%,50%\">"
+        "<frame src=\"about:blank\">"
+        "<frame src=\"about:blank\">"
+        "</frameset>" baseURL:[NSURL URLWithString:@"https://webkit.org/frameset.html"]];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.documentElement)"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr archiveData = readWebArchiveDataFromPasteboard();
+    EXPECT_GT([archiveData length], 0U);
+
+    RetainPtr archive = dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:archiveData.get() options:0 format:nullptr error:nullptr]);
+    RetainPtr mainResourceData = dynamic_objc_cast<NSData>([[archive objectForKey:@"WebMainResource"] objectForKey:@"WebResourceData"]);
+    RetainPtr mainMarkup = adoptNS([[NSString alloc] initWithData:mainResourceData.get() encoding:NSUTF8StringEncoding]);
+
+    EXPECT_TRUE([mainMarkup containsString:@"<iframe"]);
+    EXPECT_TRUE([mainMarkup containsString:@"width=\"98%\""]);
+    EXPECT_TRUE([mainMarkup containsString:@"height=\"98%\""]);
+    EXPECT_FALSE([mainMarkup containsString:@"98%%"]);
+
+    // The frameset itself is preserved as a subframe archive of the iframe wrapper.
+    EXPECT_NOT_NULL([archive objectForKey:@"WebSubframeArchives"]);
+}
+
 TEST(CopyHTML, Sanitizes)
 {
     auto webView = createWebViewWithCustomPasteboardDataEnabled();
