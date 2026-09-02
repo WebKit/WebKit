@@ -458,6 +458,7 @@ protected:
     HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglImages;
     HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglSyncs;
     IntSize m_maxInternalFramebufferSize;
+    bool m_useBlitFallback { false };
 };
 
 
