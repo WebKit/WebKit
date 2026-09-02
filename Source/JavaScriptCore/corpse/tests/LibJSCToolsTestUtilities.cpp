@@ -35,6 +35,7 @@
 #include <pthread.h>
 #include <string>
 #include <unistd.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSCToolsTest {
@@ -43,13 +44,39 @@ unsigned assertionsRun = 0;
 unsigned assertionsFailed = 0;
 unsigned suitesSkipped = 0;
 const char* suiteFilter = nullptr;
+bool verbose = false;
 
-bool beginSuite(const char* name)
+static Seconds s_totalSuiteTime;
+
+SuiteTracer::SuiteTracer(const char* name)
+    : m_name(name)
+    , m_shouldRun(!suiteFilter || std::string_view(name).contains(std::string_view(suiteFilter)))
 {
-    if (suiteFilter && !std::string_view(name).contains(std::string_view(suiteFilter)))
-        return false;
-    dataLogLn("--- ", name);
-    return true;
+    if (!m_shouldRun)
+        return;
+    dataLogLn("--- ", m_name);
+    m_start = MonotonicTime::now();
+}
+
+SuiteTracer::~SuiteTracer()
+{
+    if (!m_shouldRun)
+        return;
+
+    Seconds elapsed = MonotonicTime::now() - m_start;
+    s_totalSuiteTime += elapsed;
+    if (!verbose)
+        return;
+
+    uint64_t microseconds = static_cast<uint64_t>(elapsed.microseconds());
+    uint64_t fraction = microseconds % 1000;
+    dataLogLn("    ran for ", microseconds / 1000, ".",
+        fraction < 100 ? "0" : "", fraction < 10 ? "0" : "", fraction, " ms");
+}
+
+Seconds totalSuiteTime()
+{
+    return s_totalSuiteTime;
 }
 
 void skipSuite(const char* name, const char* why)

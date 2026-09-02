@@ -31,27 +31,43 @@
 #include "LibJSCToolsTestUtilities.h"
 
 #include <JavaScriptCore/CorpseProcess.h>
+#include <errno.h>
 #include <signal.h>
 #include <spawn.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/text/CString.h>
 
 namespace JSCToolsTest {
 
 using JSC::Corpse::Process;
 
-// A pid that is certainly not in use: a child that has been reaped. Returns 0 if
-// no child could be made.
+// A pid that is certainly not in use: a child that has been reaped. Returns 0 if no
+// child could be made, reporting why, since the caller only sees the missing pid.
 static pid_t reapedChildPid()
 {
     pid_t child = fork();
     if (!child)
         _exit(0);
-    if (child < 0)
+    if (child < 0) {
+        dataLogLn("    could not fork: ", safeStrerror(errno));
         return 0;
+    }
+
+    // EINTR leaves the child unreaped, so resume rather than report a failure.
     int status = 0;
-    if (waitpid(child, &status, 0) != child)
+    pid_t waited = 0;
+    do {
+        waited = waitpid(child, &status, 0);
+    } while (waited < 0 && errno == EINTR);
+
+    if (waited != child) {
+        dataLogLn("    could not reap child ", child, ": waitpid returned ", waited,
+            ", errno ", errno, " (", safeStrerror(errno), ")");
         return 0;
+    }
     return child;
 }
 
@@ -86,7 +102,8 @@ static pid_t spawnTranslatedChild()
 
 void testProcess()
 {
-    if (!beginSuite("Process"))
+    SuiteTracer tracer("Process");
+    if (!tracer.shouldRun())
         return;
 
     {
@@ -186,7 +203,7 @@ void testProcess()
             TEST_ASSERT(process->isTranslated(), "a process running x86_64 code is translated");
             kill(translated, SIGKILL);
             int status = 0;
-            waitpid(translated, &status, 0);
+            while (waitpid(translated, &status, 0) < 0 && errno == EINTR) { }
         }
     }
 #endif // CPU(ARM64)

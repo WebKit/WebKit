@@ -42,7 +42,8 @@ using JSC::Corpse::Snapshot;
 
 void testSnapshot()
 {
-    if (!beginSuite("Snapshot"))
+    SuiteTracer tracer("Snapshot");
+    if (!tracer.shouldRun())
         return;
 
     RefPtr<Process> process = Process::create(getpid());

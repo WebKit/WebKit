@@ -46,7 +46,8 @@ using JSC::Corpse::Region;
 
 void testRegion()
 {
-    if (!beginSuite("Region"))
+    SuiteTracer tracer("Region");
+    if (!tracer.shouldRun())
         return;
 
     size_t pageSize = static_cast<size_t>(getpagesize());

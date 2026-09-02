@@ -44,7 +44,8 @@ using JSC::Corpse::Address;
 
 void testAddress()
 {
-    if (!beginSuite("Address"))
+    SuiteTracer tracer("Address");
+    if (!tracer.shouldRun())
         return;
 
     {

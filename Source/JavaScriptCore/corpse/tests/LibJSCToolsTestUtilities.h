@@ -34,7 +34,9 @@
 #include <string_view>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -54,8 +56,31 @@ extern unsigned suitesSkipped;
 // Only suites whose name contains this substring run. Null runs all of them.
 extern const char* suiteFilter;
 
-bool beginSuite(const char* name);
+extern bool verbose;
+
 void skipSuite(const char* name, const char* why);
+
+// Announces a suite, times it, and reports on the way out. Destroyed on every path out
+// of a suite, including the early returns a suite takes when it cannot set itself up.
+class SuiteTracer {
+public:
+    explicit SuiteTracer(const char* name);
+    ~SuiteTracer();
+
+    SuiteTracer(const SuiteTracer&) = delete;
+    SuiteTracer& operator=(const SuiteTracer&) = delete;
+    SuiteTracer(SuiteTracer&&) = delete;
+    SuiteTracer& operator=(SuiteTracer&&) = delete;
+
+    bool shouldRun() const { return m_shouldRun; }
+
+private:
+    const char* m_name;
+    MonotonicTime m_start;
+    bool m_shouldRun;
+};
+
+Seconds totalSuiteTime();
 
 // Nothing is printed for a passing assertion: a passing run should be quiet, and
 // a failing one should say only what failed.

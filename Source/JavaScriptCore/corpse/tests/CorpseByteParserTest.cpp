@@ -39,7 +39,8 @@ using JSC::Corpse::ByteParser;
 
 void testByteParser()
 {
-    if (!beginSuite("ByteParser"))
+    SuiteTracer tracer("ByteParser");
+    if (!tracer.shouldRun())
         return;
 
     {

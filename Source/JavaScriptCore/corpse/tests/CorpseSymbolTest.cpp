@@ -56,7 +56,8 @@ using JSC::Corpse::Symbol;
 // space. That makes every look up below checkable against ground truth.
 void testSymbol()
 {
-    if (!beginSuite("Symbol"))
+    SuiteTracer tracer("Symbol");
+    if (!tracer.shouldRun())
         return;
 
     SelfSnapshot self;

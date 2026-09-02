@@ -686,7 +686,8 @@ static void testWalkIsBounded()
 
 void testExportsTrie()
 {
-    if (!beginSuite("ExportsTrie"))
+    SuiteTracer tracer("ExportsTrie");
+    if (!tracer.shouldRun())
         return;
 
     testFoundExports();
@@ -749,7 +750,8 @@ static void* fuzzWatchdog(void*)
 
 void fuzzExportsTrie(uint64_t seed, unsigned iterations)
 {
-    if (!beginSuite("ExportsTrie fuzz"))
+    SuiteTracer tracer("ExportsTrie fuzz");
+    if (!tracer.shouldRun())
         return;
     dataLogLn("    seed ", RawHex(seed), ", ", iterations, " iterations");
 

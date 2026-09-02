@@ -42,7 +42,8 @@ using JSC::Corpse::Thread;
 
 void testThreads()
 {
-    if (!beginSuite("Thread"))
+    SuiteTracer tracer("Thread");
+    if (!tracer.shouldRun())
         return;
 
     static constexpr const char* alphaName = "jsctools alpha";

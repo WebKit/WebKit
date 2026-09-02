@@ -56,7 +56,7 @@ constexpr unsigned defaultFuzzIterations = 20000;
 
 void printUsage()
 {
-    dataLogLn("Usage: testLibJSCTools [<suite filter>]");
+    dataLogLn("Usage: testLibJSCTools [--verbose] [<suite filter>]");
     dataLogLn("       testLibJSCTools --fuzz-trie [<seed> [<iterations>]]");
     dataLogLn("");
     dataLogLn("  Runs the tests for libJavaScriptCoreTools. With a filter, only the");
@@ -90,6 +90,10 @@ int main(int argc, char** argv)
         if (argument == "--help" || argument == "-h") {
             printUsage();
             return 0;
+        }
+        if (argument == "--verbose") {
+            JSCToolsTest::verbose = true;
+            continue;
         }
         if (argument == "--fuzz-trie") {
             fuzzOnly = true;
@@ -126,7 +130,8 @@ int main(int argc, char** argv)
 
     dataLogLn("Ran ", JSCToolsTest::assertionsRun, " assertions, ",
         JSCToolsTest::assertionsFailed, " failed, ",
-        JSCToolsTest::suitesSkipped, " suites skipped");
+        JSCToolsTest::suitesSkipped, " suites skipped, in ",
+        static_cast<uint64_t>(JSCToolsTest::totalSuiteTime().milliseconds()), " ms");
 
     if (JSCToolsTest::assertionsFailed) {
         dataLogLn("Some libJavaScriptCoreTools tests FAILED!");
