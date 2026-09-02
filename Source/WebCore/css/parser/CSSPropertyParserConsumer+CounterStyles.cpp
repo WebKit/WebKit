@@ -138,6 +138,11 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, CSS::Prop
             CSSValueInternalSimplifiedChineseFormal,
             CSSValueInternalTraditionalChineseInformal,
             CSSValueInternalTraditionalChineseFormal,
+            CSSValueInternalJapaneseInformal,
+            CSSValueInternalJapaneseFormal,
+            CSSValueInternalKoreanHangulFormal,
+            CSSValueInternalKoreanHanjaInformal,
+            CSSValueInternalKoreanHanjaFormal,
             CSSValueInternalEthiopicNumeric
         >(range);
         if (internalKeyword)

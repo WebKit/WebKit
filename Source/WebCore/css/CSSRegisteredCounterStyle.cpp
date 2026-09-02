@@ -154,91 +154,141 @@ String CSSRegisteredCounterStyle::counterForSystemAdditive(unsigned value) const
 }
 
 enum class Formality : bool { Informal, Formal };
+enum class CJKLanguage : uint8_t { Chinese, Japanese, Korean };
 
-// This table format was derived from an old draft of the CSS specification: 3 group markers, 3 digit markers, 10 digits, negative sign.
-static String counterForSystemCJK(int number, const std::array<char16_t, 17>& table, Formality formality)
+struct CJKCharacters {
+    std::array<char16_t, 10> digits;
+    std::array<char16_t, 3> digitMarkers;
+    // The simplified Chinese styles spell the fourth group marker with two characters, so a group
+    // marker is a one or two character sequence padded with a null character.
+    std::array<std::array<char16_t, 2>, 3> groupMarkers;
+};
+
+// https://drafts.csswg.org/css-counter-styles/#extended-range-optional
+static String counterForSystemCJK(unsigned number, const CJKCharacters& characters, CJKLanguage language, Formality formality)
 {
-    enum AbstractCJKCharacter {
-        NoChar,
-        SecondGroupMarker, ThirdGroupMarker, FourthGroupMarker,
+    enum AbstractCJKCharacter : uint8_t {
+        NoCharacter,
+        Digit0, Digit1, Digit2, Digit3, Digit4, Digit5, Digit6, Digit7, Digit8, Digit9,
         SecondDigitMarker, ThirdDigitMarker, FourthDigitMarker,
-        Digit0, Digit1, Digit2, Digit3, Digit4,
-        Digit5, Digit6, Digit7, Digit8, Digit9,
-        NegativeSign
+        SecondGroupMarker, ThirdGroupMarker, FourthGroupMarker,
+        GroupSeparator
     };
 
     if (!number)
-        return span(table[Digit0 - 1]);
+        return span(characters.digits[0]);
 
-    ASSERT(number != std::numeric_limits<int>::min());
-    bool needsNegativeSign = number < 0;
-    if (needsNegativeSign)
-        number = -number;
-
-    constexpr unsigned groupLength = 8; // 4 digits, 3 digit markers, and a group marker
-    constexpr unsigned bufferLength = 4 * groupLength;
+    // Slots within a group, in output order: thousands digit and its marker, hundreds digit and
+    // its marker, tens digit and its marker, ones digit, the group marker, and the separator that
+    // the Korean styles put between groups.
+    constexpr unsigned groupLength = 9;
+    constexpr unsigned groupCount = 4;
+    constexpr unsigned bufferLength = groupCount * groupLength;
     std::array<AbstractCJKCharacter, bufferLength> buffer;
-    buffer.fill(NoChar);
+    buffer.fill(NoCharacter);
 
-    for (int i = 0; i < 4; ++i) {
-        int groupValue = number % 10000;
+    bool hasLessSignificantGroup = false;
+    for (unsigned groupIndex = 0; groupIndex < groupCount; ++groupIndex) {
+        unsigned groupValue = number % 10000;
         number /= 10000;
 
-        // Process least-significant group first, but put it in the buffer last.
-        auto group = std::span { buffer }.subspan((3 - i) * groupLength);
+        // Process the least-significant group first, but put it in the buffer last.
+        auto group = std::span { buffer }.subspan((groupCount - 1 - groupIndex) * groupLength, groupLength);
 
-        if (groupValue && i)
-            group[7] = static_cast<AbstractCJKCharacter>(SecondGroupMarker - 1 + i);
+        if (groupValue) {
+            if (groupIndex)
+                group[7] = static_cast<AbstractCJKCharacter>(SecondGroupMarker - 1 + groupIndex);
+            if (language == CJKLanguage::Korean && hasLessSignificantGroup)
+                group[8] = GroupSeparator;
+            hasLessSignificantGroup = true;
+        }
 
-        // Put in the four digits and digit markers for any non-zero digits.
-        group[6] = static_cast<AbstractCJKCharacter>(Digit0 + (groupValue % 10));
+        group[6] = static_cast<AbstractCJKCharacter>(Digit0 + groupValue % 10);
         if (number || groupValue > 9) {
-            int digitValue = ((groupValue / 10) % 10);
+            unsigned digitValue = (groupValue / 10) % 10;
             group[4] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
                 group[5] = SecondDigitMarker;
         }
         if (number || groupValue > 99) {
-            int digitValue = ((groupValue / 100) % 10);
+            unsigned digitValue = (groupValue / 100) % 10;
             group[2] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
                 group[3] = ThirdDigitMarker;
         }
         if (number || groupValue > 999) {
-            int digitValue = groupValue / 1000;
+            unsigned digitValue = groupValue / 1000;
             group[0] = static_cast<AbstractCJKCharacter>(Digit0 + digitValue);
             if (digitValue)
                 group[1] = FourthDigitMarker;
         }
 
-        if (formality == Formality::Informal && groupValue < 20) {
-            // Remove the tens digit, but leave the marker.
-            ASSERT(group[4] == NoChar || group[4] == Digit0 || group[4] == Digit1);
-            group[4] = NoChar;
+        if (formality == Formality::Informal) {
+            if (language == CJKLanguage::Chinese) {
+                if (groupValue >= 10 && groupValue <= 19)
+                    group[4] = NoCharacter;
+            } else {
+                for (unsigned digitSlot : { 0u, 2u, 4u }) {
+                    if (group[digitSlot] == Digit1 && group[digitSlot + 1] != NoCharacter)
+                        group[digitSlot] = NoCharacter;
+                }
+                if (language == CJKLanguage::Korean && groupIndex == 1 && groupValue == 1)
+                    group[6] = NoCharacter;
+            }
+        }
+
+        if (language == CJKLanguage::Chinese) {
+            if (groupValue) {
+                for (unsigned slot = 7; slot-- > 0;) {
+                    if (group[slot] == NoCharacter)
+                        continue;
+                    if (group[slot] != Digit0)
+                        break;
+                    group[slot] = NoCharacter;
+                }
+            }
+        } else {
+            for (unsigned digitSlot : { 0u, 2u, 4u, 6u }) {
+                if (group[digitSlot] == Digit0)
+                    group[digitSlot] = NoCharacter;
+            }
         }
 
         if (!number)
             break;
     }
 
-    // Convert into characters, omitting consecutive runs of digit0 and trailing digit0.
-    unsigned length = 0;
-    std::array<char16_t, bufferLength + 1> characters;
-    auto last = NoChar;
-    if (needsNegativeSign)
-        characters[length++] = table[NegativeSign - 1];
-    for (unsigned i = 0; i < bufferLength; ++i) {
-        auto character = buffer[i];
-        if (character != NoChar) {
-            if (character != Digit0 || last != Digit0)
-                characters[length++] = table[character - 1];
-            last = character;
-        }
+    std::array<AbstractCJKCharacter, bufferLength> abstractCharacters;
+    unsigned abstractCharacterCount = 0;
+    auto lastKept = NoCharacter;
+    for (auto abstractCharacter : buffer) {
+        if (abstractCharacter == NoCharacter)
+            continue;
+        // The Chinese styles collapse each run of zeros, across groups, into a single zero.
+        if (language == CJKLanguage::Chinese && abstractCharacter == Digit0 && lastKept == Digit0)
+            continue;
+        abstractCharacters[abstractCharacterCount++] = abstractCharacter;
+        lastKept = abstractCharacter;
     }
-    if (last == Digit0)
-        --length;
+    if (language == CJKLanguage::Chinese && abstractCharacterCount && abstractCharacters[abstractCharacterCount - 1] == Digit0)
+        --abstractCharacterCount;
 
-    return std::span<const char16_t> { characters }.first(length);
+    StringBuilder result;
+    result.reserveCapacity(abstractCharacterCount + 1);
+    for (auto abstractCharacter : std::span { abstractCharacters }.first(abstractCharacterCount)) {
+        if (abstractCharacter == GroupSeparator)
+            result.append(space);
+        else if (abstractCharacter >= SecondGroupMarker) {
+            for (auto character : characters.groupMarkers[abstractCharacter - SecondGroupMarker]) {
+                if (character)
+                    result.append(character);
+            }
+        } else if (abstractCharacter >= SecondDigitMarker)
+            result.append(characters.digitMarkers[abstractCharacter - SecondDigitMarker]);
+        else
+            result.append(characters.digits[abstractCharacter - Digit0]);
+    }
+    return result.toString();
 }
 
 String CSSRegisteredCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
@@ -264,52 +314,94 @@ String CSSRegisteredCounterStyle::counterForSystemDisclosureOpen(WritingMode wri
     return { };
 }
 
-String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
+String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseInformal(unsigned value)
 {
-    static constexpr std::array<char16_t, 17> simplifiedChineseInformalTable {
-        0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
-        0x5341, 0x767E, 0x5343,
-        0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
-        0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D,
-        0x8D1F
+    static constexpr CJKCharacters simplifiedChineseInformal {
+        { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x5341, 0x767E, 0x5343 },
+        { { { 0x4E07 }, { 0x4EBF }, { 0x4E07, 0x4EBF } } }
     };
-    return counterForSystemCJK(value, simplifiedChineseInformalTable, Formality::Informal);
+    return counterForSystemCJK(value, simplifiedChineseInformal, CJKLanguage::Chinese, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseFormal(int value)
+String CSSRegisteredCounterStyle::counterForSystemSimplifiedChineseFormal(unsigned value)
 {
-    static constexpr std::array<char16_t, 17> simplifiedChineseFormalTable {
-        0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
-        0x62FE, 0x4F70, 0x4EDF,
-        0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086,
-        0x4F0D, 0x9646, 0x67D2, 0x634C, 0x7396,
-        0x8D1F
+    static constexpr CJKCharacters simplifiedChineseFormal {
+        { 0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086, 0x4F0D, 0x9646, 0x67D2, 0x634C, 0x7396 },
+        { 0x62FE, 0x4F70, 0x4EDF },
+        { { { 0x4E07 }, { 0x4EBF }, { 0x4E07, 0x4EBF } } }
     };
-    return counterForSystemCJK(value, simplifiedChineseFormalTable, Formality::Formal);
+    return counterForSystemCJK(value, simplifiedChineseFormal, CJKLanguage::Chinese, Formality::Formal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseInformal(int value)
+String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseInformal(unsigned value)
 {
-    static constexpr std::array<char16_t, 17> traditionalChineseInformalTable {
-        0x842C, 0x5104, 0x5146,
-        0x5341, 0x767E, 0x5343,
-        0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
-        0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D,
-        0x8CA0
+    static constexpr CJKCharacters traditionalChineseInformal {
+        { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x5341, 0x767E, 0x5343 },
+        { { { 0x842C }, { 0x5104 }, { 0x5146 } } }
     };
-    return counterForSystemCJK(value, traditionalChineseInformalTable, Formality::Informal);
+    return counterForSystemCJK(value, traditionalChineseInformal, CJKLanguage::Chinese, Formality::Informal);
 }
 
-String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseFormal(int value)
+String CSSRegisteredCounterStyle::counterForSystemTraditionalChineseFormal(unsigned value)
 {
-    static constexpr std::array<char16_t, 17> traditionalChineseFormalTable {
-        0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
-        0x62FE, 0x4F70, 0x4EDF,
-        0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086,
-        0x4F0D, 0x9678, 0x67D2, 0x634C, 0x7396,
-        0x8CA0
+    static constexpr CJKCharacters traditionalChineseFormal {
+        { 0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086, 0x4F0D, 0x9678, 0x67D2, 0x634C, 0x7396 },
+        { 0x62FE, 0x4F70, 0x4EDF },
+        { { { 0x842C }, { 0x5104 }, { 0x5146 } } }
     };
-    return counterForSystemCJK(value, traditionalChineseFormalTable, Formality::Formal);
+    return counterForSystemCJK(value, traditionalChineseFormal, CJKLanguage::Chinese, Formality::Formal);
+}
+
+String CSSRegisteredCounterStyle::counterForSystemJapaneseInformal(unsigned value)
+{
+    static constexpr CJKCharacters japaneseInformal {
+        { 0x3007, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x5341, 0x767E, 0x5343 },
+        { { { 0x4E07 }, { 0x5104 }, { 0x5146 } } }
+    };
+    return counterForSystemCJK(value, japaneseInformal, CJKLanguage::Japanese, Formality::Informal);
+}
+
+String CSSRegisteredCounterStyle::counterForSystemJapaneseFormal(unsigned value)
+{
+    static constexpr CJKCharacters japaneseFormal {
+        { 0x96F6, 0x58F1, 0x5F10, 0x53C2, 0x56DB, 0x4F0D, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x62FE, 0x767E, 0x9621 },
+        { { { 0x842C }, { 0x5104 }, { 0x5146 } } }
+    };
+    return counterForSystemCJK(value, japaneseFormal, CJKLanguage::Japanese, Formality::Formal);
+}
+
+String CSSRegisteredCounterStyle::counterForSystemKoreanHangulFormal(unsigned value)
+{
+    static constexpr CJKCharacters koreanHangulFormal {
+        { 0xC601, 0xC77C, 0xC774, 0xC0BC, 0xC0AC, 0xC624, 0xC721, 0xCE60, 0xD314, 0xAD6C },
+        { 0xC2ED, 0xBC31, 0xCC9C },
+        { { { 0xB9CC }, { 0xC5B5 }, { 0xC870 } } }
+    };
+    return counterForSystemCJK(value, koreanHangulFormal, CJKLanguage::Korean, Formality::Formal);
+}
+
+String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaInformal(unsigned value)
+{
+    static constexpr CJKCharacters koreanHanjaInformal {
+        { 0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x5341, 0x767E, 0x5343 },
+        { { { 0x842C }, { 0x5104 }, { 0x5146 } } }
+    };
+    return counterForSystemCJK(value, koreanHanjaInformal, CJKLanguage::Korean, Formality::Informal);
+}
+
+String CSSRegisteredCounterStyle::counterForSystemKoreanHanjaFormal(unsigned value)
+{
+    static constexpr CJKCharacters koreanHanjaFormal {
+        { 0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D },
+        { 0x62FE, 0x767E, 0x4EDF },
+        { { { 0x842C }, { 0x5104 }, { 0x5146 } } }
+    };
+    return counterForSystemCJK(value, koreanHanjaFormal, CJKLanguage::Korean, Formality::Formal);
 }
 
 String CSSRegisteredCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
@@ -356,7 +448,7 @@ String CSSRegisteredCounterStyle::counterForSystemEthiopicNumeric(unsigned value
 
 String CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode writingMode) const
 {
-    unsigned absoluteValue = std::abs(value);
+    unsigned absoluteValue = value < 0 ? -static_cast<unsigned>(value) : static_cast<unsigned>(value);
     switch (system()) {
     case CSSCounterStyleDescriptors::System::Cyclic:
         return counterForSystemCyclic(value);
@@ -375,13 +467,23 @@ String CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode w
     case CSSCounterStyleDescriptors::System::DisclosureOpen:
         return counterForSystemDisclosureOpen(writingMode);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
-        return counterForSystemSimplifiedChineseInformal(value);
+        return counterForSystemSimplifiedChineseInformal(absoluteValue);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
-        return counterForSystemSimplifiedChineseFormal(value);
+        return counterForSystemSimplifiedChineseFormal(absoluteValue);
     case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
-        return counterForSystemTraditionalChineseInformal(value);
+        return counterForSystemTraditionalChineseInformal(absoluteValue);
     case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
-        return counterForSystemTraditionalChineseFormal(value);
+        return counterForSystemTraditionalChineseFormal(absoluteValue);
+    case CSSCounterStyleDescriptors::System::JapaneseInformal:
+        return counterForSystemJapaneseInformal(absoluteValue);
+    case CSSCounterStyleDescriptors::System::JapaneseFormal:
+        return counterForSystemJapaneseFormal(absoluteValue);
+    case CSSCounterStyleDescriptors::System::KoreanHangulFormal:
+        return counterForSystemKoreanHangulFormal(absoluteValue);
+    case CSSCounterStyleDescriptors::System::KoreanHanjaInformal:
+        return counterForSystemKoreanHanjaInformal(absoluteValue);
+    case CSSCounterStyleDescriptors::System::KoreanHanjaFormal:
+        return counterForSystemKoreanHanjaFormal(absoluteValue);
     case CSSCounterStyleDescriptors::System::EthiopicNumeric:
         return counterForSystemEthiopicNumeric(value);
     case CSSCounterStyleDescriptors::System::Extends:
@@ -422,8 +524,32 @@ String CSSRegisteredCounterStyle::text(int value, WritingMode writingMode)
 
 bool CSSRegisteredCounterStyle::shouldApplyNegativeSymbols(int value) const
 {
-    auto system = this->system();
-    return value < 0 && (system == CSSCounterStyleDescriptors::System::Symbolic || system == CSSCounterStyleDescriptors::System::Numeric || system == CSSCounterStyleDescriptors::System::Alphabetic || system == CSSCounterStyleDescriptors::System::Additive);
+    if (value >= 0)
+        return false;
+    switch (system()) {
+    case CSSCounterStyleDescriptors::System::Symbolic:
+    case CSSCounterStyleDescriptors::System::Numeric:
+    case CSSCounterStyleDescriptors::System::Alphabetic:
+    case CSSCounterStyleDescriptors::System::Additive:
+    case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
+    case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
+    case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
+    case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
+    case CSSCounterStyleDescriptors::System::JapaneseInformal:
+    case CSSCounterStyleDescriptors::System::JapaneseFormal:
+    case CSSCounterStyleDescriptors::System::KoreanHangulFormal:
+    case CSSCounterStyleDescriptors::System::KoreanHanjaInformal:
+    case CSSCounterStyleDescriptors::System::KoreanHanjaFormal:
+        return true;
+    case CSSCounterStyleDescriptors::System::Cyclic:
+    case CSSCounterStyleDescriptors::System::Fixed:
+    case CSSCounterStyleDescriptors::System::DisclosureClosed:
+    case CSSCounterStyleDescriptors::System::DisclosureOpen:
+    case CSSCounterStyleDescriptors::System::EthiopicNumeric:
+    case CSSCounterStyleDescriptors::System::Extends:
+        return false;
+    }
+    return false;
 }
 
 void CSSRegisteredCounterStyle::applyNegativeSymbols(String& text) const
@@ -470,6 +596,15 @@ bool CSSRegisteredCounterStyle::isInRange(int value) const
         case CSSCounterStyleDescriptors::System::Fixed:
         case CSSCounterStyleDescriptors::System::DisclosureClosed:
         case CSSCounterStyleDescriptors::System::DisclosureOpen:
+        case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
+        case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
+        case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
+        case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
+        case CSSCounterStyleDescriptors::System::JapaneseInformal:
+        case CSSCounterStyleDescriptors::System::JapaneseFormal:
+        case CSSCounterStyleDescriptors::System::KoreanHangulFormal:
+        case CSSCounterStyleDescriptors::System::KoreanHanjaInformal:
+        case CSSCounterStyleDescriptors::System::KoreanHanjaFormal:
             return true;
         case CSSCounterStyleDescriptors::System::Alphabetic:
         case CSSCounterStyleDescriptors::System::Symbolic:
@@ -477,11 +612,6 @@ bool CSSRegisteredCounterStyle::isInRange(int value) const
             return value >= 1;
         case CSSCounterStyleDescriptors::System::Additive:
             return value >= 0;
-        case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
-        case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
-        case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
-        case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
-            return value >= -9999 && value <= 9999;
         case CSSCounterStyleDescriptors::System::Extends:
             ASSERT_NOT_REACHED();
             return true;

@@ -94,6 +94,16 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         return CSSCounterStyleDescriptors::System::TraditionalChineseInformal;
     case CSSValueInternalTraditionalChineseFormal:
         return CSSCounterStyleDescriptors::System::TraditionalChineseFormal;
+    case CSSValueInternalJapaneseInformal:
+        return CSSCounterStyleDescriptors::System::JapaneseInformal;
+    case CSSValueInternalJapaneseFormal:
+        return CSSCounterStyleDescriptors::System::JapaneseFormal;
+    case CSSValueInternalKoreanHangulFormal:
+        return CSSCounterStyleDescriptors::System::KoreanHangulFormal;
+    case CSSValueInternalKoreanHanjaInformal:
+        return CSSCounterStyleDescriptors::System::KoreanHanjaInformal;
+    case CSSValueInternalKoreanHanjaFormal:
+        return CSSCounterStyleDescriptors::System::KoreanHanjaFormal;
     case CSSValueInternalEthiopicNumeric:
         return CSSCounterStyleDescriptors::System::EthiopicNumeric;
     case CSSValueExtends:
