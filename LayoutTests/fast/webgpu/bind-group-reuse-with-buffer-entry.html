@@ -1,0 +1,49 @@
+<script>
+globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+const log = console.debug;
+
+// GPUDevice.createBindGroup() returns the previously created bind group, with only its external
+// texture refreshed, when every other entry in the descriptor compares equal. Reuse is therefore
+// observable as object identity.
+onload = async () => {
+    const adapter = await navigator.gpu.requestAdapter({});
+    const device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'green';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const layout = device.createBindGroupLayout({ entries: [
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+        { binding: 1, visibility: GPUShaderStage.FRAGMENT, externalTexture: { } },
+    ]});
+
+    const buffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.UNIFORM });
+    const otherBuffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.UNIFORM });
+    const externalTexture = device.importExternalTexture({ source: new VideoFrame(canvas, { timestamp: 0 }) });
+
+    const bindGroup = bufferResource => device.createBindGroup({ layout, entries: [
+        { binding: 0, resource: bufferResource },
+        { binding: 1, resource: externalTexture },
+    ]});
+
+    // A buffer bound directly as a GPUBuffer. This used to always compare unequal, so the bind
+    // group was recreated from scratch every time.
+    log(`bare GPUBuffer reused: ${bindGroup(buffer) === bindGroup(buffer)}`);
+
+    // The same buffer bound as a GPUBufferBinding, which has always been compared.
+    log(`GPUBufferBinding reused: ${bindGroup({ buffer }) === bindGroup({ buffer })}`);
+
+    // A different buffer must still force a new bind group.
+    log(`different GPUBuffer reused: ${bindGroup(buffer) === bindGroup(otherBuffer)}`);
+
+    const error = await device.popErrorScope();
+    log(error ? error.message : 'no validation error');
+    globalThis.testRunner?.notifyDone();
+};
+</script>

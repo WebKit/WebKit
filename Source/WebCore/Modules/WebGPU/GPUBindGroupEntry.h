@@ -160,6 +160,30 @@ struct GPUBindGroupEntry {
     {
         return (!a && !b) || (b && a == *b);
     }
+    static bool equal(const GPUBuffer& entry, const GPUBindingResource& otherEntry)
+    {
+        return WTF::switchOn(otherEntry,
+            [](const Ref<GPUSampler>&) {
+                return false;
+            },
+            [](const Ref<GPUTexture>&) {
+                return false;
+            },
+            [](const Ref<GPUTextureView>&) {
+                return false;
+            },
+            [&](const Ref<GPUBuffer>& buffer) {
+                return buffer.ptr() == &entry;
+            },
+            [&](const GPUBufferBinding& bufferBinding) {
+                // A bare buffer binds its entire contents, so it only matches a binding with no offset covering the whole buffer.
+                return bufferBinding.buffer.ptr() == &entry && !bufferBinding.offset && equalSizes(entry.size(), bufferBinding.size);
+            },
+            [](const Ref<GPUExternalTexture>&) {
+                return false;
+            }
+        );
+    }
     static bool equal(const GPUBufferBinding& entry, const GPUBindingResource& otherEntry)
     {
         return WTF::switchOn(otherEntry,
@@ -221,8 +245,8 @@ struct GPUBindGroupEntry {
             [&](const Ref<GPUTextureView>& textureView) {
                 return equal(textureView, otherEntry.resource);
             },
-            [](const Ref<GPUBuffer>&) {
-                return false;
+            [&](const Ref<GPUBuffer>& buffer) {
+                return equal(buffer, otherEntry.resource);
             },
             [&](const GPUBufferBinding& bufferBinding) {
                 return equal(bufferBinding, otherEntry.resource);
