@@ -527,6 +527,15 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 }
 
+static bool pixelFormatContainsAlpha(OSType pixelFormat)
+{
+    RetainPtr description = adoptCF(CVPixelFormatDescriptionCreateWithPixelFormatType(kCFAllocatorDefault, pixelFormat));
+    if (!description)
+        return false;
+    RetainPtr containsAlpha = dynamic_cf_cast<CFBooleanRef>(CFDictionaryGetValue(description.get(), kCVPixelFormatContainsAlpha));
+    return containsAlpha && CFBooleanGetValue(containsAlpha.get());
+}
+
 bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& videoFrame, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY unpackFlipY)
 {
     RetainPtr<CVPixelBufferRef> convertedImage;
@@ -540,6 +549,10 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange
 #endif
         ) {
+        if (pixelFormatContainsAlpha(pixelFormat)) {
+            LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - declining an image with an alpha channel, pixel format ('%s').", this, FourCC(pixelFormat).string().data());
+            return false;
+        }
         convertedImage = convertPixelBuffer(image.get());
         if (!convertedImage) {
             LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());

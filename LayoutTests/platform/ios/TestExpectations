@@ -9772,7 +9772,7 @@ http/tests/fetch/fetch-in-worker-crash.html [ Pass Crash ] # rdar://178215065
 webgl/1.0.x/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ] # rdar://178215090
 webgl/1.0.x/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ] # rdar://178215090
 
-webgl/1.0.x/conformance/textures/misc/texture-video-transparent.html [ Pass Timeout Failure ] # rdar://178215258
+webgl/1.0.x/conformance/textures/misc/texture-video-transparent.html [ Pass Timeout ] # rdar://178215258
 
 webgl/2.0.y/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ] # rdar://178215120
 webgl/2.0.y/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ] # rdar://178215120
@@ -9842,7 +9842,7 @@ http/tests/fast/events/touch/ios/content-observation/opacity-change-happens-on-t
 media/modern-media-controls/tracks-support/audio-text-tracks-not-shown.html [ Pass Timeout ] # rdar://178339636
 media/modern-media-controls/tracks-support/audio-multiple-tracks.html [ Pass Timeout ] # rdar://178339636
 
-webgl/2.0.y/conformance/textures/misc/texture-video-transparent.html [ Pass Timeout Failure ] # rdar://178339927
+webgl/2.0.y/conformance/textures/misc/texture-video-transparent.html [ Pass Timeout ] # rdar://178339927
 
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.html [ Crash ] # rdar://178339739
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-delete.https.any.html [ Crash ] # rdar://178339739
