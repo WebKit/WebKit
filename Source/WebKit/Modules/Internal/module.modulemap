@@ -59,6 +59,18 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module JavaScriptEvaluationResultCxxInteropSupport {
+        requires cplusplus23
+        header "../../Shared/JavaScriptEvaluationResultCxxInteropSupport.h"
+        export *
+    }
+
+    module RunJavaScriptParameters {
+        requires cplusplus23
+        header "../../Shared/RunJavaScriptParameters.h"
+        export *
+    }
+
     module RunJavaScriptResult {
         requires cplusplus20
         header "../../Shared/RunJavaScriptResult.h"
