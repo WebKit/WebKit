@@ -463,8 +463,10 @@ public:
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToASCIIUppercase();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocale();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex16Bit(unsigned);
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocale();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocaleStartingAtFailingIndex16Bit(unsigned);
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(const AtomString& localeIdentifier);
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(const AtomString& localeIdentifier);
 
@@ -575,6 +577,7 @@ private:
     template<typename CharacterType> static Ref<StringImpl> createInternal(std::span<const CharacterType>);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
     Ref<StringImpl> convertToUppercaseWithoutLocaleUpconvert();
+    Ref<StringImpl> convertToUppercaseWithoutLocale16Bit(std::span<const char16_t> source, unsigned failingIndex);
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static constexpr uint32_t s_refCountFlagIsStaticString = 0x1;

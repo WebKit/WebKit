@@ -21131,26 +21131,21 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LBasicBlock notRope = m_out.newBlock();
         LBasicBlock is8Bit = m_out.newBlock();
-        LBasicBlock loopTop = m_out.newBlock();
-        LBasicBlock loopBody = m_out.newBlock();
+        LBasicBlock loop8Top = m_out.newBlock();
+        LBasicBlock loop8Body = m_out.newBlock();
+        LBasicBlock is16Bit = m_out.newBlock();
+        LBasicBlock loop16Top = m_out.newBlock();
+        LBasicBlock loop16Body = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LValue string = lowString(m_node->child1());
-        ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
         ValueFromBlock startIndexForCall = m_out.anchor(m_out.constInt32(0));
         m_out.branch(isRopeString(string, m_node->child1()),
             rarely(slowPath), usually(notRope));
 
         LBasicBlock lastNext = m_out.appendTo(notRope, is8Bit);
         LValue impl = m_out.loadPtr(string, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.testIsZero32(
-                m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
-                m_out.constInt32(StringImpl::flagIs8Bit())),
-            unsure(slowPath), unsure(is8Bit));
-
-        m_out.appendTo(is8Bit, loopTop);
         LValue length;
         if (auto stringLength = tryGetConstantStringLength(m_node->child1()))
             length = m_out.constInt32(*stringLength);
@@ -21158,27 +21153,45 @@ IGNORE_CLANG_WARNINGS_END
             length = m_out.load32(impl, m_heaps.StringImpl_length);
         LValue buffer = m_out.loadPtr(impl, m_heaps.StringImpl_data);
         ValueFromBlock fastResult = m_out.anchor(string);
-        m_out.jump(loopTop);
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(is16Bit), unsure(is8Bit));
 
-        m_out.appendTo(loopTop, loopBody);
-        LValue index = m_out.phi(Int32, startIndex);
-        ValueFromBlock indexFromBlock = m_out.anchor(index);
-        m_out.branch(m_out.below(index, length),
-            unsure(loopBody), unsure(continuation));
+        Vector<ValueFromBlock, 3> slowPathIndices;
+        slowPathIndices.append(startIndexForCall);
 
-        m_out.appendTo(loopBody, slowPath);
+        // 16-bit strings need this scan as much as 8-bit ones: one non-Latin1 character anywhere in
+        // a document makes every string derived from it 16 bit, ASCII content and all.
+        auto emitScanForCharacterNeedingConversion = [&](LBasicBlock entry, LBasicBlock top, LBasicBlock body, LBasicBlock nextBlock, bool is8BitString) {
+            m_out.appendTo(entry, top);
+            ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
+            m_out.jump(top);
 
-        // FIXME: Strings needs to be caged.
-        // https://bugs.webkit.org/show_bug.cgi?id=174924
-        LValue byte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, m_out.zeroExtPtr(index)));
-        LValue isInvalidAsciiRange = m_out.bitAnd(byte, m_out.constInt32(~0x7F));
-        LValue isLowerCase = m_out.belowOrEqual(m_out.sub(byte, m_out.constInt32('a')), m_out.constInt32('z' - 'a'));
-        LValue isBadCharacter = m_out.bitOr(isInvalidAsciiRange, isLowerCase);
-        m_out.addIncomingToPhi(index, m_out.anchor(m_out.add(index, m_out.int32One)));
-        m_out.branch(isBadCharacter, unsure(slowPath), unsure(loopTop));
+            m_out.appendTo(top, body);
+            LValue index = m_out.phi(Int32, startIndex);
+            slowPathIndices.append(m_out.anchor(index));
+            m_out.branch(m_out.below(index, length),
+                unsure(body), unsure(continuation));
+
+            m_out.appendTo(body, nextBlock);
+            LValue offset = m_out.zeroExtPtr(index);
+            LValue character = is8BitString
+                ? m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, offset))
+                : m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, buffer, offset));
+            LValue isInvalidAsciiRange = m_out.bitAnd(character, m_out.constInt32(~0x7F));
+            LValue isLowerCase = m_out.belowOrEqual(m_out.sub(character, m_out.constInt32('a')), m_out.constInt32('z' - 'a'));
+            LValue isBadCharacter = m_out.bitOr(isInvalidAsciiRange, isLowerCase);
+            m_out.addIncomingToPhi(index, m_out.anchor(m_out.add(index, m_out.int32One)));
+            m_out.branch(isBadCharacter, unsure(slowPath), unsure(top));
+        };
+
+        emitScanForCharacterNeedingConversion(is8Bit, loop8Top, loop8Body, is16Bit, true);
+        emitScanForCharacterNeedingConversion(is16Bit, loop16Top, loop16Body, slowPath, false);
 
         m_out.appendTo(slowPath, continuation);
-        LValue slowPathIndex = m_out.phi(Int32, startIndexForCall, indexFromBlock);
+        LValue slowPathIndex = m_out.phi(Int32, slowPathIndices);
         ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationToUpperCase, weakPointer(globalObject), string, slowPathIndex));
         m_out.jump(continuation);
 
@@ -21191,26 +21204,21 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LBasicBlock notRope = m_out.newBlock();
         LBasicBlock is8Bit = m_out.newBlock();
-        LBasicBlock loopTop = m_out.newBlock();
-        LBasicBlock loopBody = m_out.newBlock();
+        LBasicBlock loop8Top = m_out.newBlock();
+        LBasicBlock loop8Body = m_out.newBlock();
+        LBasicBlock is16Bit = m_out.newBlock();
+        LBasicBlock loop16Top = m_out.newBlock();
+        LBasicBlock loop16Body = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LValue string = lowString(m_node->child1());
-        ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
         ValueFromBlock startIndexForCall = m_out.anchor(m_out.constInt32(0));
         m_out.branch(isRopeString(string, m_node->child1()),
             rarely(slowPath), usually(notRope));
 
         LBasicBlock lastNext = m_out.appendTo(notRope, is8Bit);
         LValue impl = m_out.loadPtr(string, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.testIsZero32(
-                m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
-                m_out.constInt32(StringImpl::flagIs8Bit())),
-            unsure(slowPath), unsure(is8Bit));
-
-        m_out.appendTo(is8Bit, loopTop);
         LValue length;
         if (auto stringLength = tryGetConstantStringLength(m_node->child1()))
             length = m_out.constInt32(*stringLength);
@@ -21218,27 +21226,45 @@ IGNORE_CLANG_WARNINGS_END
             length = m_out.load32(impl, m_heaps.StringImpl_length);
         LValue buffer = m_out.loadPtr(impl, m_heaps.StringImpl_data);
         ValueFromBlock fastResult = m_out.anchor(string);
-        m_out.jump(loopTop);
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(is16Bit), unsure(is8Bit));
 
-        m_out.appendTo(loopTop, loopBody);
-        LValue index = m_out.phi(Int32, startIndex);
-        ValueFromBlock indexFromBlock = m_out.anchor(index);
-        m_out.branch(m_out.below(index, length),
-            unsure(loopBody), unsure(continuation));
+        Vector<ValueFromBlock, 3> slowPathIndices;
+        slowPathIndices.append(startIndexForCall);
 
-        m_out.appendTo(loopBody, slowPath);
+        // 16-bit strings need this scan as much as 8-bit ones: one non-Latin1 character anywhere in
+        // a document makes every string derived from it 16 bit, ASCII content and all.
+        auto emitScanForCharacterNeedingConversion = [&](LBasicBlock entry, LBasicBlock top, LBasicBlock body, LBasicBlock nextBlock, bool is8BitString) {
+            m_out.appendTo(entry, top);
+            ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
+            m_out.jump(top);
 
-        // FIXME: Strings needs to be caged.
-        // https://bugs.webkit.org/show_bug.cgi?id=174924
-        LValue byte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, m_out.zeroExtPtr(index)));
-        LValue isInvalidAsciiRange = m_out.bitAnd(byte, m_out.constInt32(~0x7F));
-        LValue isUpperCase = m_out.belowOrEqual(m_out.sub(byte, m_out.constInt32('A')), m_out.constInt32('Z' - 'A'));
-        LValue isBadCharacter = m_out.bitOr(isInvalidAsciiRange, isUpperCase);
-        m_out.addIncomingToPhi(index, m_out.anchor(m_out.add(index, m_out.int32One)));
-        m_out.branch(isBadCharacter, unsure(slowPath), unsure(loopTop));
+            m_out.appendTo(top, body);
+            LValue index = m_out.phi(Int32, startIndex);
+            slowPathIndices.append(m_out.anchor(index));
+            m_out.branch(m_out.below(index, length),
+                unsure(body), unsure(continuation));
+
+            m_out.appendTo(body, nextBlock);
+            LValue offset = m_out.zeroExtPtr(index);
+            LValue character = is8BitString
+                ? m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, offset))
+                : m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, buffer, offset));
+            LValue isInvalidAsciiRange = m_out.bitAnd(character, m_out.constInt32(~0x7F));
+            LValue isUpperCase = m_out.belowOrEqual(m_out.sub(character, m_out.constInt32('A')), m_out.constInt32('Z' - 'A'));
+            LValue isBadCharacter = m_out.bitOr(isInvalidAsciiRange, isUpperCase);
+            m_out.addIncomingToPhi(index, m_out.anchor(m_out.add(index, m_out.int32One)));
+            m_out.branch(isBadCharacter, unsure(slowPath), unsure(top));
+        };
+
+        emitScanForCharacterNeedingConversion(is8Bit, loop8Top, loop8Body, is16Bit, true);
+        emitScanForCharacterNeedingConversion(is16Bit, loop16Top, loop16Body, slowPath, false);
 
         m_out.appendTo(slowPath, continuation);
-        LValue slowPathIndex = m_out.phi(Int32, startIndexForCall, indexFromBlock);
+        LValue slowPathIndex = m_out.phi(Int32, slowPathIndices);
         ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationToLowerCase, weakPointer(globalObject), string, slowPathIndex));
         m_out.jump(continuation);
 

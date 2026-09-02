@@ -1713,40 +1713,56 @@ void SpeculativeJIT::compileToUpperCase(Node* node)
     ASSERT(node->op() == ToUpperCase);
     SpeculateCellOperand string(this, node->child1());
     GPRTemporary temp(this);
+    GPRTemporary data(this);
     GPRTemporary index(this);
     GPRTemporary charReg(this);
     GPRTemporary length(this);
 
     GPRReg stringGPR = string.gpr();
     GPRReg tempGPR = temp.gpr();
+    GPRReg dataGPR = data.gpr();
     GPRReg indexGPR = index.gpr();
     GPRReg charGPR = charReg.gpr();
     GPRReg lengthGPR = length.gpr();
 
-    speculateString(node->child1(), stringGPR);
-
     JumpList slowPath;
+    JumpList loopDone;
+
+    speculateString(node->child1(), stringGPR);
 
     move(TrustedImmPtr(nullptr), indexGPR);
 
     loadPtr(Address(stringGPR, JSString::offsetOfValue()), tempGPR);
     if (canBeRope(node->child1()))
         slowPath.append(branchIfRopeStringImpl(tempGPR));
-    slowPath.append(branchTest32(
-        Zero, Address(tempGPR, StringImpl::flagsOffset()),
-        TrustedImm32(StringImpl::flagIs8Bit())));
     load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
-    loadPtr(Address(tempGPR, StringImpl::dataOffset()), tempGPR);
+    loadPtr(Address(tempGPR, StringImpl::dataOffset()), dataGPR);
+    auto is16Bit = branchTest32(
+        Zero, Address(tempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit()));
 
-    auto loopStart = label();
-    auto loopDone = branch32(AboveOrEqual, indexGPR, lengthGPR);
-    load8(BaseIndex(tempGPR, indexGPR, TimesOne), charGPR);
-    slowPath.append(branchTest32(NonZero, charGPR, TrustedImm32(~0x7F)));
-    sub32(TrustedImm32('a'), charGPR);
-    slowPath.append(branch32(BelowOrEqual, charGPR, TrustedImm32('z' - 'a')));
+    // 16-bit strings need this scan as much as 8-bit ones: one non-Latin1 character anywhere in a
+    // document makes every string derived from it 16 bit, ASCII content and all.
+    auto emitScanForCharacterNeedingConversion = [&](auto emitLoadCharacter) {
+        auto loopStart = label();
+        loopDone.append(branch32(AboveOrEqual, indexGPR, lengthGPR));
+        emitLoadCharacter();
+        slowPath.append(branchTest32(NonZero, charGPR, TrustedImm32(~0x7F)));
+        sub32(TrustedImm32('a'), charGPR);
+        slowPath.append(branch32(BelowOrEqual, charGPR, TrustedImm32('z' - 'a')));
 
-    add32(TrustedImm32(1), indexGPR);
-    jump().linkTo(loopStart, this);
+        add32(TrustedImm32(1), indexGPR);
+        jump().linkTo(loopStart, this);
+    };
+
+    emitScanForCharacterNeedingConversion([&] {
+        load8(BaseIndex(dataGPR, indexGPR, TimesOne), charGPR);
+    });
+
+    is16Bit.link(this);
+    emitScanForCharacterNeedingConversion([&] {
+        load16(BaseIndex(dataGPR, indexGPR, TimesTwo), charGPR);
+    });
 
     slowPath.link(this);
     callOperationWithSilentSpill(operationToUpperCase, lengthGPR, LinkableConstant::globalObject(*this, node), stringGPR, indexGPR);
@@ -1764,41 +1780,57 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     ASSERT(node->op() == ToLowerCase);
     SpeculateCellOperand string(this, node->child1());
     GPRTemporary temp(this);
+    GPRTemporary data(this);
     GPRTemporary index(this);
     GPRTemporary charReg(this);
     GPRTemporary length(this);
 
     GPRReg stringGPR = string.gpr();
     GPRReg tempGPR = temp.gpr();
+    GPRReg dataGPR = data.gpr();
     GPRReg indexGPR = index.gpr();
     GPRReg charGPR = charReg.gpr();
     GPRReg lengthGPR = length.gpr();
 
-    speculateString(node->child1(), stringGPR);
-
     JumpList slowPath;
+    JumpList loopDone;
+
+    speculateString(node->child1(), stringGPR);
 
     move(TrustedImmPtr(nullptr), indexGPR);
 
     loadPtr(Address(stringGPR, JSString::offsetOfValue()), tempGPR);
     if (canBeRope(node->child1()))
         slowPath.append(branchIfRopeStringImpl(tempGPR));
-    slowPath.append(branchTest32(
-        Zero, Address(tempGPR, StringImpl::flagsOffset()),
-        TrustedImm32(StringImpl::flagIs8Bit())));
     load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
-    loadPtr(Address(tempGPR, StringImpl::dataOffset()), tempGPR);
+    loadPtr(Address(tempGPR, StringImpl::dataOffset()), dataGPR);
+    auto is16Bit = branchTest32(
+        Zero, Address(tempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit()));
 
-    auto loopStart = label();
-    auto loopDone = branch32(AboveOrEqual, indexGPR, lengthGPR);
-    load8(BaseIndex(tempGPR, indexGPR, TimesOne), charGPR);
-    slowPath.append(branchTest32(NonZero, charGPR, TrustedImm32(~0x7F)));
-    sub32(TrustedImm32('A'), charGPR);
-    slowPath.append(branch32(BelowOrEqual, charGPR, TrustedImm32('Z' - 'A')));
+    // 16-bit strings need this scan as much as 8-bit ones: one non-Latin1 character anywhere in a
+    // document makes every string derived from it 16 bit, ASCII content and all.
+    auto emitScanForCharacterNeedingConversion = [&](auto emitLoadCharacter) {
+        auto loopStart = label();
+        loopDone.append(branch32(AboveOrEqual, indexGPR, lengthGPR));
+        emitLoadCharacter();
+        slowPath.append(branchTest32(NonZero, charGPR, TrustedImm32(~0x7F)));
+        sub32(TrustedImm32('A'), charGPR);
+        slowPath.append(branch32(BelowOrEqual, charGPR, TrustedImm32('Z' - 'A')));
 
-    add32(TrustedImm32(1), indexGPR);
-    jump().linkTo(loopStart, this);
-    
+        add32(TrustedImm32(1), indexGPR);
+        jump().linkTo(loopStart, this);
+    };
+
+    emitScanForCharacterNeedingConversion([&] {
+        load8(BaseIndex(dataGPR, indexGPR, TimesOne), charGPR);
+    });
+
+    is16Bit.link(this);
+    emitScanForCharacterNeedingConversion([&] {
+        load16(BaseIndex(dataGPR, indexGPR, TimesTwo), charGPR);
+    });
+
     slowPath.link(this);
     callOperationWithSilentSpill(operationToLowerCase, lengthGPR, LinkableConstant::globalObject(*this, node), stringGPR, indexGPR);
     auto done = jump();
