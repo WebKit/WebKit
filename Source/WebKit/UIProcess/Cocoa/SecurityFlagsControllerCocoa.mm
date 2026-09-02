@@ -27,10 +27,30 @@
 #import "SecurityFlagsController.h"
 
 #import "Logging.h"
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RunLoop.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#import <pal/cocoa/WebPrivacySoftLink.h>
+#endif
+
 namespace WebKit {
+
+#if (defined(ENGINEERING_BUILD) && ENGINEERING_BUILD) || ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+static Vector<String> flagNamesFrom(NSArray *names)
+{
+    return makeVector(names, [](id name) -> std::optional<String> {
+        if (RetainPtr string = dynamic_objc_cast<NSString>(name))
+            return String { string.get() };
+        return std::nullopt;
+    });
+}
+
+#endif
 
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
 
@@ -52,11 +72,7 @@ Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
         return { };
     }
 
-    return makeVector(names.get(), [](id name) -> std::optional<String> {
-        if (RetainPtr string = dynamic_objc_cast<NSString>(name))
-            return String { string.get() };
-        return std::nullopt;
-    });
+    return flagNamesFrom(names.get());
 }
 
 #else
@@ -67,5 +83,66 @@ Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 }
 
 #endif // ENGINEERING_BUILD
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+bool SecurityFlagsController::platformRequestRemoteList(uint64_t generation)
+{
+    static bool canRequestDisabledFlagNames = PAL::isWebPrivacyFrameworkAvailable()
+        && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestDisabledSecurityFlags:)];
+
+    if (!canRequestDisabledFlagNames) {
+        RELEASE_LOG_INFO(Process, "SecurityFlagsController: WebPrivacy cannot serve the disabled security flags, so every flag stays enforced");
+        return false;
+    }
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestDisabledSecurityFlags:^(NSArray<NSString *> *names, NSError *error) {
+        // Which queue WebPrivacy answers on is its own choice, and the flags may only be written on the main one.
+        ensureOnMainRunLoop([generation, names = RetainPtr { names }, error = RetainPtr { error }] {
+            if (!names) {
+                RELEASE_LOG_ERROR(Process, "SecurityFlagsController: WebPrivacy failed to answer with the disabled security flags: %{public}@", error.get());
+                singleton().didReceiveRemoteList(generation, std::nullopt);
+                return;
+            }
+
+            singleton().didReceiveRemoteList(generation, flagNamesFrom(names.get()));
+        });
+    }];
+
+    return true;
+}
+
+void SecurityFlagsController::platformObserveRemoteListChanges()
+{
+    // First, because canLoad_ below loads the framework in the mode that release-asserts when it is not installed.
+    if (!PAL::isWebPrivacyFrameworkAvailable())
+        return;
+
+    if (!PAL::canLoad_WebPrivacy_WPDisabledSecurityFlagsChangedNotificationName()) {
+        RELEASE_LOG_INFO(Process, "SecurityFlagsController: WebPrivacy does not announce security flag changes, so a change will only be seen at the next launch");
+        return;
+    }
+
+    static NeverDestroyed<RetainPtr<id>> observer;
+    if (observer->get())
+        return;
+
+    observer.get() = [[NSNotificationCenter defaultCenter] addObserverForName:PAL::get_WebPrivacy_WPDisabledSecurityFlagsChangedNotificationNameSingleton() object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *) {
+        singleton().requestRemoteList();
+    }];
+}
+
+#else
+
+bool SecurityFlagsController::platformRequestRemoteList(uint64_t)
+{
+    return false;
+}
+
+void SecurityFlagsController::platformObserveRemoteListChanges()
+{
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 } // namespace WebKit
