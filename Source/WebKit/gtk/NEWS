@@ -1,4 +1,18 @@
 =================
+WebKitGTK 2.53.92
+=================
+
+What's new in WebKitGTK 2.53.92?
+
+  - Fix opacity animation not damaging descendant layers.
+  - Fix expiration date of favicons in the icon database.
+  - Fix webkit_web_view_get_tls_info() that sometimes returned FALSE for valid HTTPS connections.
+  - Fix documentation of webkit_web_view_call_async_javascript_function.
+  - Use a Chrome user agent for PrimeVideo.
+  - Fix the build with USE_SPIEL=ON.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK 2.53.91
 =================
 
