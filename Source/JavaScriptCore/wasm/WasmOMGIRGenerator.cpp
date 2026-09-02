@@ -5489,6 +5489,7 @@ auto OMGIRGenerator::addReturn(const ControlData&, std::span<const TypedExpressi
         params.code().emitEpilogue(jit);
     });
     patch->effects.terminal = true;
+    patch->clobber(RegisterSet::macroClobberedGPRs());
 
     RELEASE_ASSERT(returnValues.size() >= wasmCallInfo.results.size());
     unsigned offset = returnValues.size() - wasmCallInfo.results.size();
