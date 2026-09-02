@@ -2215,11 +2215,20 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
         }
     };
 
-    bool result = [usageFeed performNetworkDomainsActionWithOptions:options reply:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSDictionary *reply, NSError *error) mutable {
+    auto callOnMainRunLoop = [completionHandler = WTF::move(completionHandler)]() mutable {
+        ensureOnMainRunLoop(WTF::move(completionHandler));
+    };
+    // -performNetworkDomainsActionWithOptions: does not always invoke the block passed to it, such as when it returns false.
+    // The finalizer keeps the completion handler we were given from being dropped in that case.
+    auto handler = CompletionHandlerWithFinalizer<void()>(WTF::move(callOnMainRunLoop), [](Function<void()>& completionHandler) {
+        completionHandler();
+    }, CompletionHandlerCallThread::AnyThread);
+
+    bool result = [usageFeed performNetworkDomainsActionWithOptions:options reply:makeBlockPtr([handler = WTF::move(handler)](NSDictionary *reply, NSError *error) mutable {
         if (error)
             RELEASE_LOG_DEBUG(NetworkSession, "Error deleting network domain data %" PUBLIC_LOG_STRING, error.localizedDescription.UTF8String);
 
-        completionHandler();
+        handler();
     }).get()];
 
     if (!result)
