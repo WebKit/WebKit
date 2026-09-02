@@ -2478,7 +2478,7 @@
         },
         "baseline-shift": {
             "animation-type": "by computed value",
-            "initial": "baseline",
+            "initial": "0px",
             "values": [
                 "baseline",
                 "sub",
