@@ -630,6 +630,7 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
     RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     viewConfiguration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
     viewConfiguration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    viewConfiguration.get().preferences.siteSpecificQuirksModeEnabled = NO;
     auto webView = webViewWithOpenInspector(viewConfiguration.get(), uiDelegate);
 
     for (_WKFeature *feature in [WKPreferences _features]) {

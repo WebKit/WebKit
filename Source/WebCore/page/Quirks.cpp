@@ -2869,6 +2869,9 @@ void Quirks::logQuirksToConsoleIfNecessary() const
     if (!document)
         return;
 
+    if (!needsQuirks())
+        return;
+
     // FIXME: should we use log english sentences instead of the quirk enum names?
     const auto quirks = activeQuirks();
     if (quirks.isEmpty())
