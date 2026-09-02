@@ -531,6 +531,20 @@ static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookie
     return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
 }
 
+// The (name, domain, path) triple identifies a cookie. Name and path are case-sensitive, domain is
+// not.
+static bool isSameCookieIdentity(NSHTTPCookie *a, NSHTTPCookie *b)
+{
+    return [a.name isEqualToString:b.name]
+        && [a.path isEqualToString:b.path]
+        && [a.domain caseInsensitiveCompare:b.domain] == NSOrderedSame;
+}
+
+static bool cookieIsAlreadyExpired(NSHTTPCookie *cookie)
+{
+    return cookie.expiresDate && cookie.expiresDate.timeIntervalSinceNow <= 0;
+}
+
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
@@ -582,7 +596,25 @@ bool NetworkStorageSession::setCookieFromDOM(const URL& firstParty, const SameSi
 #endif
 
     setHTTPCookiesForURL(cookieStorage().get(), @[ nshttpCookie.get() ], url.createNSURL().get(), firstParty.createNSURL().get(), partition.get(), sameSiteInfo, thirdPartyCookieBlockingDecision);
-    return true;
+
+    // setHTTPCookiesForURL() is void, and CFNetwork silently ignores writes it declines -- notably a
+    // script-originated write over an existing HttpOnly cookie (RFC 6265bis section 5.6). Read the
+    // store back so the result reflects what was actually stored rather than what we asked for.
+    RetainPtr storedCookies = httpCookiesForURL(cookieStorage().get(), firstParty.createNSURL().get(), sameSiteInfo, url.createNSURL().get(), thirdPartyCookieBlockingDecision);
+    bool identityIsPresent = false;
+    bool valueMatches = false;
+    for (NSHTTPCookie *storedCookie in storedCookies.get()) {
+        if (!isSameCookieIdentity(storedCookie, nshttpCookie.get()))
+            continue;
+        identityIsPresent = true;
+        valueMatches = [storedCookie.value isEqualToString:[nshttpCookie value]];
+        break;
+    }
+
+    // A write whose expiry is already in the past is a deletion, so success means it is gone.
+    if (cookieIsAlreadyExpired(nshttpCookie.get()))
+        return !identityIsPresent;
+    return valueMatches;
 
     END_BLOCK_OBJC_EXCEPTIONS
     return false;
