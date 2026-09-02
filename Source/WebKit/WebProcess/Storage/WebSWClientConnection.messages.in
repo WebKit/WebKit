@@ -45,7 +45,7 @@ messages -> WebSWClientConnection {
 
     SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
 
-    FocusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier) -> (struct std::optional<WebCore::ServiceWorkerClientData> result)
+    FocusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier) -> (struct IPC::Untrusted<std::optional<WebCore::ServiceWorkerClientData>> result)
 
     NotifyRecordResponseBodyChunk(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, IPC::SharedBufferReference data);
     NotifyRecordResponseBodyEnd(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError error);

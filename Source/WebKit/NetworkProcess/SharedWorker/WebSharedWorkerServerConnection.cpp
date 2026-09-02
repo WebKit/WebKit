@@ -140,7 +140,12 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(IPC::Untrusted<W
 void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<WebCore::WorkerFetchResult>&& untrustedFetchResult, IPC::Untrusted<WebCore::WorkerInitializationData>&& untrustedInitializationData) mutable {
+        // Both are relayed to the process that will run the worker. The worker's own origin comes
+        // from the SharedWorkerKey this connection was already checked for, not from these.
+        completionHandler(WTF::move(untrustedFetchResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive),
+            WTF::move(untrustedInitializationData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    });
 }
 
 void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)

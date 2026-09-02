@@ -995,7 +995,16 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTF::move(callback));
+    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](IPC::Untrusted<std::optional<ServiceWorkerClientData>>&& untrustedClientData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return callback({ });
+
+        auto validatedClientData = WTF::move(untrustedClientData).validate(ServiceWorkerClientOriginAuthority { *protectedThis });
+        if (!validatedClientData)
+            return callback({ });
+        callback(WTF::move(*validatedClientData));
+    });
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration, const WebCore::ResourceRequest& request)

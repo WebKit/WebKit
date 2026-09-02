@@ -112,6 +112,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
+    using SuppliedReply = CompletionHandler<void(int64_t)>;
     explicit SendStringSync(const String& url)
         : m_url(url)
     {
@@ -132,7 +133,7 @@ private:
 
 namespace CompletionHandlers {
 namespace TestWithStreamSwift {
-using SendStringSyncCompletionHandler = WTF::RefCountable<Messages::TestWithStreamSwift::SendStringSync::Reply>;
+using SendStringSyncCompletionHandler = WTF::RefCountable<Messages::TestWithStreamSwift::SendStringSync::SuppliedReply>;
 } // namespace TestWithStreamSwift
 } // namespace CompletionHandlers
 

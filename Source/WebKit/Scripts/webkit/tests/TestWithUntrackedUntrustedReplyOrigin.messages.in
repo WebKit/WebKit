@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,15 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Negative test: an origin a privileged process asks web content for comes back over the same
+# connection as any other web content value, so the reply parameter must be declared as
+# IPC::Untrusted<T> too. Generating a receiver from this file must fail.
+
 [
-    DispatchedFrom=Networking,
+    ExceptionForEnabledBy,
+    DispatchedFrom=UI,
     DispatchedTo=WebContent
 ]
-messages -> WebSharedWorkerObjectConnection {
-    FetchScriptInClient(URL url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, struct WebCore::WorkerOptions workerOptions) -> (struct IPC::Untrusted<WebCore::WorkerFetchResult> fetchResult, struct IPC::Untrusted<WebCore::WorkerInitializationData> initializationData)
-    NotifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::ResourceError error)
-    PostErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, String errorMessage, int lineNumber, int columnNumber, String sourceURL, bool isErrorEvent)
-#if ENABLE(CONTENT_EXTENSIONS)
-    ReportNetworkUsageToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, uint64_t bytesTransferredOverNetwork)
-#endif
+messages -> TestWithUntrackedUntrustedReplyOrigin {
+    AskWebContentForAnOrigin() -> (WebCore::SecurityOriginData origin)
 }

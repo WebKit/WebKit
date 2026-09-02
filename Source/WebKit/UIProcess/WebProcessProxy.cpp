@@ -2095,11 +2095,13 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Taking a background assertion because the Web process is fetching Website data");
 
-    sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (auto reply) mutable {
+    sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (IPC::Untrusted<WebsiteData>&& untrustedReply) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
-        completionHandler(WTF::move(reply));
+        // Names the origins of the resources in this process's own memory cache, which legitimately
+        // includes cross-origin subresources; the UI process only lists them for the API client.
+        completionHandler(WTF::move(untrustedReply).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Releasing a background assertion because the Web process is done fetching Website data");
     });
 }

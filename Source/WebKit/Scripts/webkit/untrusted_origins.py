@@ -28,6 +28,10 @@ process. Wrapping such a parameter in IPC::Untrusted<T> makes that untrustedness
 part of the type: the receiving handler cannot reach the value without running one
 of the designated validation procedures (see Platform/IPC/Untrusted.h), which
 confirm that the sending process had authority over the origin or domain.
+
+This applies in both directions of travel: to the parameters of a message web content
+sends to a privileged process, and to the parameters of a reply web content sends back
+to a privileged process that asked it a question.
 """
 
 import os
@@ -277,6 +281,17 @@ def is_privileged_receiver(receiver):
             and any(name in PRIVILEGED_PROCESSES for name in _process_names(receiver.receiver_dispatched_to)))
 
 
+def replies_to_privileged_sender(receiver):
+    """True if the receiver's replies travel from web content back into a privileged process.
+
+    The mirror of is_privileged_receiver. A privileged process asking web content a question is
+    no better placed to trust the answer than to trust an unsolicited message: the reply is
+    whatever the web process chose to put in it.
+    """
+    return ('WebContent' in _process_names(receiver.receiver_dispatched_to)
+            and any(name in PRIVILEGED_PROCESSES for name in _process_names(receiver.receiver_dispatched_from)))
+
+
 if __name__ == '__main__':
     import unittest
 
@@ -346,6 +361,31 @@ if __name__ == '__main__':
             self.assertEqual(_split_template_parameters('HashMap<String, URL>, int'), ['HashMap<String, URL>', 'int'])
             self.assertEqual(_split_template_parameters('URL'), ['URL'])
             self.assertEqual(_split_template_parameters(''), [])
+
+        def test_direction_of_travel(self):
+            class FakeReceiver(object):
+                def __init__(self, dispatched_from, dispatched_to):
+                    self.receiver_dispatched_from = dispatched_from
+                    self.receiver_dispatched_to = dispatched_to
+
+            web_content_to_ui = FakeReceiver('WebContent', 'UI')
+            self.assertTrue(is_privileged_receiver(web_content_to_ui))
+            self.assertFalse(replies_to_privileged_sender(web_content_to_ui))
+
+            ui_to_web_content = FakeReceiver('UI', 'WebContent')
+            self.assertFalse(is_privileged_receiver(ui_to_web_content))
+            self.assertTrue(replies_to_privileged_sender(ui_to_web_content))
+
+            # Either end may name several processes, and one privileged end is enough.
+            self.assertTrue(replies_to_privileged_sender(FakeReceiver('GPU|WebContent', 'WebContent|Model')))
+            self.assertTrue(is_privileged_receiver(FakeReceiver('WebContent|Model', 'Networking')))
+
+            # Neither end is web content, or neither is privileged.
+            self.assertFalse(is_privileged_receiver(FakeReceiver('UI', 'Networking')))
+            self.assertFalse(replies_to_privileged_sender(FakeReceiver('UI', 'Networking')))
+            self.assertFalse(replies_to_privileged_sender(FakeReceiver('WebContent', 'WebContent')))
+            self.assertFalse(is_privileged_receiver(FakeReceiver(None, None)))
+            self.assertFalse(replies_to_privileged_sender(FakeReceiver(None, None)))
 
         def test_validation_procedures_are_confined(self):
             source_root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))

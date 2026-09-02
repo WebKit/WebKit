@@ -79,6 +79,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
+    using SuppliedReply = CompletionHandler<void(uint8_t)>;
     explicit TestSyncMessage(uint32_t param)
         : m_param(param)
     {

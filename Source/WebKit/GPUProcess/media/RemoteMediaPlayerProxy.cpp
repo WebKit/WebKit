@@ -548,7 +548,10 @@ String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
 
 void RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL& url, WebCore::MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
-    protect(m_webProcessConnection)->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::GetRawCookies(url), WTF::move(completionHandler), m_id);
+    protect(m_webProcessConnection)->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::GetRawCookies(url), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<Vector<WebCore::Cookie>>&& untrustedCookies) mutable {
+        // Handed straight back to the media stack loading this web process's own resource.
+        completionHandler(WTF::move(untrustedCookies).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, m_id);
 }
 #endif
 
