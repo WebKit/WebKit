@@ -41,6 +41,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWindowFeaturesPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -592,4 +593,61 @@ TEST(WEBKIT, NavigationActionHasOpener14)
 TEST(WEBKIT, NavigationActionHasOpener15)
 {
     runHasOpenerTest(@"<form action='https://www.apple.com' target='_blank' rel='opener'><input id='testButton' type='submit'></form><script>function runTest() { document.getElementById('testButton').click(); }</script>", true);
+}
+
+// Each click chooses its own navigable, so holding every decision must leave every check outstanding rather
+// than letting a newer one cancel the last.
+TEST(WebKit, TargetBlankPolicyChecksDoNotCancelEachOther)
+{
+    static constexpr NSUInteger linkCount = 5;
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block RetainPtr heldDecisions = adoptNS([NSMutableArray new]);
+    __block bool everyCheckIsOutstanding = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        // A null target frame is a new window.
+        if (action.targetFrame) {
+            decisionHandler(WKNavigationActionPolicyAllow);
+            return;
+        }
+        [heldDecisions addObject:makeBlockPtr(decisionHandler).get()];
+        if ([heldDecisions count] == linkCount)
+            everyCheckIsOutstanding = true;
+    };
+
+    __block RetainPtr openedWebViews = adoptNS([NSMutableArray new]);
+    __block bool everyWindowWasCreated = false;
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *openedConfiguration, WKNavigationAction *, WKWindowFeatures *) {
+        [openedWebViews addObject:adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:openedConfiguration]).get()];
+        if ([openedWebViews count] == linkCount)
+            everyWindowWasCreated = true;
+        return [openedWebViews lastObject];
+    };
+
+    [webView synchronouslyLoadHTMLString:@"<script>function runTest() {"
+        "for (let i = 0; i < 5; i++) {"
+        "    let a = document.createElement('a');"
+        "    a.target = '_blank';"
+        "    a.href = 'https://webkit.org/' + i;"
+        "    document.body.appendChild(a);"
+        "    a.click();"
+        "}"
+        "}</script>"];
+    [webView evaluateJavaScript:@"runTest()" completionHandler:nil];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&everyCheckIsOutstanding, 5_s));
+    EXPECT_EQ(linkCount, [heldDecisions count]);
+
+    for (void (^decisionHandler)(WKNavigationActionPolicy) in heldDecisions.get())
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+    TestWebKitAPI::Util::runFor(&everyWindowWasCreated, 5_s);
+    EXPECT_EQ(linkCount, [openedWebViews count]);
 }

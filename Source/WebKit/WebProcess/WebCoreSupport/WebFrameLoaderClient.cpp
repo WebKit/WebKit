@@ -219,7 +219,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             downloadAttributePolicyDocumentLoader = localFrame->loader().policyDocumentLoader();
         }
     }
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument, WTF::move(downloadAttributePolicyDocumentLoader));
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument ? WebFrame::PolicyCheckKind::DownloadAttribute : WebFrame::PolicyCheckKind::Navigation, downloadAttributeInitiatingDocument, WTF::move(downloadAttributePolicyDocumentLoader));
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {

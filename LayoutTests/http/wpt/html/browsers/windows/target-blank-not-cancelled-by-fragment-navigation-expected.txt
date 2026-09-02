@@ -1,0 +1,3 @@
+
+PASS A same-task fragment navigation does not cancel a target=_blank window
+

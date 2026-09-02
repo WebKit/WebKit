@@ -393,12 +393,13 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, PolicyCheckKind kind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader)
 {
     auto policyListenerID = generateListenerID();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
         forNavigationAction,
-        downloadAttributeInitiatingDocument,
+        kind,
+        initiatingDocument,
         WTF::move(downloadAttributePolicyDocumentLoader),
         WTF::move(policyFunction)
     });
@@ -406,18 +407,18 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
     return policyListenerID;
 }
 
-// Unlike a navigation check, a download check is not cancelled by what this frame does next, so it can be
-// answered once the frame is no longer in a page - which startDownload() requires - or once another
-// document has committed. The document matters because PolicyChecker::checkNavigationPolicy() decides
-// against live frame state, including the sandbox allow-downloads flag that
-// LocalFrame::effectiveSandboxFlags() takes from the current document.
-bool WebFrame::shouldHonorDownloadAttributePolicyCheck(const PolicyCheck& policyCheck) const
+// Unlike a navigation check, a check that does not navigate this frame is not cancelled by what the frame does
+// next, so it can be answered once the frame is no longer in a page - which startDownload() requires - or once
+// another document has committed. The document matters because PolicyChecker decides against live frame state:
+// for a download, the sandbox allow-downloads flag that LocalFrame::effectiveSandboxFlags() takes from the
+// current document; for a new window, whether that document is allowed to open one at all.
+bool WebFrame::initiatingDocumentIsStillCurrent(const PolicyCheck& policyCheck) const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame || !localFrame->page())
         return false;
     RefPtr document = localFrame->document();
-    return document && document->identifier() == policyCheck.downloadAttributeInitiatingDocument;
+    return document && document->identifier() == policyCheck.initiatingDocument;
 }
 
 // A download check outliving the navigation that started it also means its decision can arrive once a newer
@@ -665,7 +666,7 @@ void WebFrame::invalidatePolicyListeners()
 
     HashMap<uint64_t, PolicyCheck> policyChecksToCancel;
     for (auto& [listenerID, policyCheck] : std::exchange(m_pendingPolicyChecks, { })) {
-        if (policyCheck.downloadAttributeInitiatingDocument && shouldHonorDownloadAttributePolicyCheck(policyCheck))
+        if (policyCheck.kind != PolicyCheckKind::Navigation && initiatingDocumentIsStillCurrent(policyCheck))
             m_pendingPolicyChecks.add(listenerID, WTF::move(policyCheck));
         else
             policyChecksToCancel.add(listenerID, WTF::move(policyCheck));
@@ -701,7 +702,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     FramePolicyFunction function = WTF::move(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
 
-    if (policyCheck.downloadAttributeInitiatingDocument && !shouldHonorDownloadAttributePolicyCheck(policyCheck))
+    if (policyCheck.kind != PolicyCheckKind::Navigation && !initiatingDocumentIsStillCurrent(policyCheck))
         return function(PolicyAction::Ignore);
 
     // Nothing below is the download's to apply once a newer navigation owns the load this check was made for.
@@ -709,7 +710,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     // client allowed it for. Only a download is still meaningful, so answer anything else Ignore, which
     // FrameLoader::loadWithDocumentLoader() drops rather than continue with, since it no longer owns the
     // policy document loader.
-    bool newerNavigationOwnsTheLoad = policyCheck.downloadAttributeInitiatingDocument && newerNavigationOwnsDownloadAttributePolicyCheckLoad(policyCheck);
+    bool newerNavigationOwnsTheLoad = policyCheck.kind == PolicyCheckKind::DownloadAttribute && newerNavigationOwnsDownloadAttributePolicyCheckLoad(policyCheck);
     if (newerNavigationOwnsTheLoad && policyDecision.policyAction != PolicyAction::Download)
         return function(PolicyAction::Ignore);
 
@@ -721,9 +722,10 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     }
 
     m_policyDownloadID = policyDecision.downloadID;
-    // Only a download skips this: a download attribute link the client answered Use for is a
-    // navigation like any other, and m_policyDocumentLoader is its own.
-    if (policyDecision.policyAction != PolicyAction::Download) {
+    // Only a download skips this: a download attribute link the client answered Use for is a navigation like
+    // any other, and m_policyDocumentLoader is its own. A new window skips it too, since its navigation state
+    // belongs to the window being opened rather than to this frame.
+    if (policyDecision.policyAction != PolicyAction::Download && policyCheck.kind != PolicyCheckKind::NewWindow) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
             auto& loader = localFrame->loader();
             if (RefPtr policyDocumentLoader = loader.policyDocumentLoader()) {

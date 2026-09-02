@@ -254,10 +254,10 @@ void WebFrameProxy::webProcessWillShutDown()
         m_activeListener = nullptr;
     }
 
-    // Download checks survive navigation, but not the frame itself.
-    auto activeDownloadListeners = std::exchange(m_activeDownloadListeners, { });
-    for (Ref downloadListener : activeDownloadListeners.values())
-        downloadListener->ignore();
+    // A check that does not navigate this frame survives navigation, but not the frame itself.
+    auto activeNonNavigationListeners = std::exchange(m_activeNonNavigationListeners, { });
+    for (Ref listener : activeNonNavigationListeners.values())
+        listener->ignore();
 
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
@@ -430,12 +430,12 @@ void WebFrameProxy::didChangeTitle(String&& title)
     m_title = WTF::move(title);
 }
 
-WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&& completionHandler, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck, IsDownloadPolicyCheck isDownloadPolicyCheck)
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&& completionHandler, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLinkCheck, NavigatesThisFrame navigatesThisFrame)
 {
-    bool isDownload = isDownloadPolicyCheck == IsDownloadPolicyCheck::Yes;
-    auto downloadListenerID = isDownload ? ++m_nextDownloadListenerID : 0;
+    bool isNavigation = navigatesThisFrame == NavigatesThisFrame::Yes;
+    auto listenerID = isNavigation ? 0 : ++m_nextNonNavigationListenerID;
 
-    if (!isDownload) {
+    if (isNavigation) {
         if (RefPtr previousListener = m_activeListener)
             previousListener->ignore();
     }
@@ -444,23 +444,23 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionH
         this,
         protectedThis = Ref { *this },
         completionHandler = WTF::move(completionHandler),
-        isDownload,
-        downloadListenerID
+        isNavigation,
+        listenerID
     ] (PolicyAction action, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         if (action != PolicyAction::Use && m_navigateCallback)
             m_navigateCallback(pageIdentifier(), frameID());
 
         completionHandler(action, policies, processSwapRequestedByClient, isNavigatingToAppBoundDomain, wasNavigationIntercepted);
 
-        if (isDownload)
-            m_activeDownloadListeners.remove(downloadListenerID);
-        else
+        if (isNavigation)
             m_activeListener = nullptr;
+        else
+            m_activeNonNavigationListeners.remove(listenerID);
     };
 
-    if (isDownload) {
-        m_activeDownloadListeners.add(downloadListenerID, WebFramePolicyListenerProxy::create(WTF::move(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLinkCheck));
-        return *m_activeDownloadListeners.get(downloadListenerID);
+    if (!isNavigation) {
+        m_activeNonNavigationListeners.add(listenerID, WebFramePolicyListenerProxy::create(WTF::move(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLinkCheck));
+        return *m_activeNonNavigationListeners.get(listenerID);
     }
 
     m_activeListener = WebFramePolicyListenerProxy::create(WTF::move(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLinkCheck);
