@@ -35,6 +35,7 @@
 #import "LocalService.h"
 #import "Logging.h"
 #import "PageClient.h"
+#import "RelatedOriginsValidator.h"
 #import "WKError.h"
 #import "WKWebView.h"
 #import "WebAuthenticationRequestData.h"
@@ -54,6 +55,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/UnknownCredentialOptions.h>
 #import <WebCore/WebAuthenticationUtils.h>
+#import <WebCore/WellKnownOriginList.h>
 #import <ranges>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -582,16 +584,69 @@ static inline AuthenticatorAttachment NODELETE fromASAuthorizationPublicKeyCrede
 
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
 
+static String relyingPartyIdentifierForRequest(const WebAuthenticationRequestData& requestData)
+{
+    return WTF::switchOn(requestData.options, [](const PublicKeyCredentialCreationOptions& options) {
+        return options.rp.id;
+    }, [](const PublicKeyCredentialRequestOptions& options) {
+        return options.rpId;
+    });
+}
+
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
 {
-    if (m_webPageProxy->configuration().backgroundTextExtractionEnabled()) {
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy) {
+        handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+        return;
+    }
+
+    auto relyingPartyIdentifier = relyingPartyIdentifierForRequest(requestData);
+
+    if (!requestData.frameInfo) {
+        RELEASE_LOG_ERROR(WebAuthn, "No frame info for a Web Authentication request.");
+        handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document could not be determined."_s });
+        return;
+    }
+
+    auto callerOrigin = requestData.frameInfo->securityOrigin;
+    if (relyingPartyIdentifier.isEmpty() || callerOrigin.securityOrigin()->isMatchingRegistrableDomainSuffix(relyingPartyIdentifier)) {
+        performRequestWithValidatedRelyingPartyIdentifier(WTF::move(requestData), WTF::move(handler));
+        return;
+    }
+
+    RelatedOriginsValidation::validate(*webPageProxy, callerOrigin, relyingPartyIdentifier, [weakThis = WeakPtr { *this }, requestData = WTF::move(requestData), handler = WTF::move(handler)](RelatedOriginsValidation::Result&& result) mutable {
+        if (!result.isRelated) {
+            RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not authorized for the provided RP ID.");
+            handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
+            return;
+        }
+
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
+
+        protectedThis->performRequestWithValidatedRelyingPartyIdentifier(WTF::move(requestData), WTF::move(handler));
+    });
+}
+
+void WebAuthenticatorCoordinatorProxy::performRequestWithValidatedRelyingPartyIdentifier(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
+{
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy) {
+        handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+        return;
+    }
+
+    if (webPageProxy->configuration().backgroundTextExtractionEnabled()) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
         return;
     }
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
-    RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !protect(webPageProxy->preferences())->webAuthenticationASEnabled()) {
+    if (!protect(webPageProxy->preferences())->webAuthenticationASEnabled()) {
         auto context = contextForRequest(WTF::move(requestData));
         if (context.get() == nullptr) {
             handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
@@ -1313,10 +1368,26 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const Web
     });
 }
 
+static constexpr auto relatedOriginsCapability = "relatedOrigins"_s;
+
+static void setRelatedOriginsCapability(Vector<KeyValuePair<String, bool>>& capabilities)
+{
+    auto index = capabilities.findIf([](auto& capability) {
+        return capability.key == relatedOriginsCapability;
+    });
+    if (index != notFound) {
+        capabilities[index].value = true;
+        return;
+    }
+
+    capabilities.append({ relatedOriginsCapability, true });
+}
+
 void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::SecurityOriginData& originData, CapabilitiesCompletionHandler&& handler)
 {
     if (![getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getClientCapabilitiesForRelyingParty:withCompletionHandler:)]) {
         Vector<KeyValuePair<String, bool>> capabilities;
+        setRelatedOriginsCapability(capabilities);
         handler(WTF::move(capabilities));
         return;
     }
@@ -1325,6 +1396,7 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::Secu
         Vector<KeyValuePair<String, bool>> capabilities;
         for (NSString *key in result)
             capabilities.append({ key, result[key].boolValue });
+        setRelatedOriginsCapability(capabilities);
         std::ranges::sort(capabilities, codePointCompareLessThan, &KeyValuePair<String, bool>::key);
 
         ensureOnMainRunLoop([handler = WTF::move(handler), capabilities = WTF::move(capabilities)] () mutable {
