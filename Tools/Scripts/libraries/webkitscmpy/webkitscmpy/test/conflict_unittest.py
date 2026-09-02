@@ -67,7 +67,7 @@ class TestConflict(testing.PathTestCase):
                 path=self.path,
             ))
 
-            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found with branch integration/conflict/1234\n')
+            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull requests found for rdar://1234\n')
 
     def test_conflict_found(self):
         with (
