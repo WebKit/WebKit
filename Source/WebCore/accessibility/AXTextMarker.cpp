@@ -796,9 +796,15 @@ int AXTextMarker::lineIndex() const
     while (currentLineID && currentLineID != targetLineID) {
         auto newMarker = currentMarker.nextLineEnd();
         auto newLineID = newMarker.lineID();
-        ++index;
+        // nextLineEnd can advance without reaching a new line, specifically when a <br> sits on the
+        // line it breaks and so carries that line's ID, making the position just past its newline
+        // another end of the line we came from. Count only a line we actually left, or every line
+        // after a <br> would report one too high, disagreeing with markerRangeForLineIndex.
+        bool reachedNewLine = currentLineID != newLineID;
+        if (reachedNewLine)
+            ++index;
 
-        if (currentLineID == newLineID && currentMarker == newMarker) {
+        if (!reachedNewLine && currentMarker.hasSameObjectAndOffset(newMarker)) {
             // nextLineEnd() returned its input, so break. The line walk would loop
             // forever otherwise, causing a hang. This indicates a bug elsewhere
             // (e.g. a sibling lineID collision the caller couldn't disambiguate).
@@ -879,7 +885,7 @@ static AXTextMarkerRange lineRangeWithout(const AXTextMarkerRange& lineRange, Op
 }
 
 // Advances |lineRange| to the following line: the range from the start of the next line through
-// its end. Returns an invalid range when there is no next line (nextLineEnd does not advance),
+// its end. Returns an invalid range when there is no next line (nextLineEnd reaches no new line),
 // which ends the line walks in characterRangeForLine, markerRangeForLineIndex, and
 // lineNumberForIndex. |includeTrailingLineBreak| and |stopAtID| select the caller's line semantics.
 static AXTextMarkerRange nextLineRange(const AXTextMarkerRange& lineRange, IncludeTrailingLineBreak includeTrailingLineBreak, std::optional<AXID> stopAtID)
@@ -888,6 +894,20 @@ static AXTextMarkerRange nextLineRange(const AXTextMarkerRange& lineRange, Inclu
     auto nextLineEndMarker = lineEnd.nextLineEnd(includeTrailingLineBreak, stopAtID);
     if (nextLineEndMarker == lineEnd)
         return { };
+
+    // A <br> carries the line ID of the line it breaks, so the position just past its newline is
+    // another end of the line we came from. That's what nextLineEnd returns here, matching the live
+    // tree. Keep going, or a <br>-ended line gets reported once without its trailing break, then again with it.
+    auto currentLineID = lineEnd.lineID();
+    while (currentLineID && currentLineID == nextLineEndMarker.lineID()) {
+        auto followingLineEndMarker = nextLineEndMarker.nextLineEnd(includeTrailingLineBreak, stopAtID);
+        if (followingLineEndMarker.hasSameObjectAndOffset(nextLineEndMarker)) {
+            // The walk can't leave this line, so there is no next line.
+            return { };
+        }
+        nextLineEndMarker = WTF::move(followingLineEndMarker);
+    }
+
     return { nextLineEndMarker.previousLineStart(stopAtID), WTF::move(nextLineEndMarker) };
 }
 

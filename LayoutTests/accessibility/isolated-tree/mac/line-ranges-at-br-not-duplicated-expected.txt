@@ -1,0 +1,16 @@
+This test ensures a br element ends the line it breaks rather than adding a line of its own.
+
+PASS: lineText(1) === 'Alpha'
+PASS: lineText(2) === 'Bravo'
+PASS: webArea.textMarkerRangeLength(lineRange(1)) === 5
+PASS: lineText(3) === 'Charlie'
+PASS: lineText(4) === 'Delta'
+PASS: lineText(5) === 'Echo'
+PASS: lineText(6) === ''
+PASS: webArea.lineIndexForTextMarker(markerInLine3) === 2
+PASS: lineText(webArea.lineIndexForTextMarker(markerInLine3) + 1) === 'Charlie'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

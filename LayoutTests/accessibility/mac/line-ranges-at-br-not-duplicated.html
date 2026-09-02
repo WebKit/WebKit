@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="oneBreak">Alpha<br>Bravo</p>
+<p id="twoBreaks">Charlie<br>Delta<br>Echo</p>
+
+<script>
+var output = "This test ensures a br element ends the line it breaks rather than adding a line of its own.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    function lineRange(oneBasedLine)
+    {
+        return webArea.textMarkerRangeForLine(oneBasedLine);
+    }
+
+    function lineText(oneBasedLine)
+    {
+        return webArea.stringForTextMarkerRange(lineRange(oneBasedLine));
+    }
+
+    output += expect("lineText(1)", "'Alpha'");
+    output += expect("lineText(2)", "'Bravo'");
+    // The range ends before the break, so its length matches the text it yields.
+    output += expect("webArea.textMarkerRangeLength(lineRange(1))", "5");
+
+    // Each break ends a line, so these three lines follow the two above rather than being
+    // shifted by a line per break.
+    output += expect("lineText(3)", "'Charlie'");
+    output += expect("lineText(4)", "'Delta'");
+    output += expect("lineText(5)", "'Echo'");
+
+    // Nothing follows the last line.
+    output += expect("lineText(6)", "''");
+
+    // AXLineForTextMarker counts the same lines, so a marker taken out of line three's range reports
+    // the index that maps back to line three. This walks across the br-ended lines of the first
+    // paragraph, which must each be counted exactly once.
+    var markerInLine3 = webArea.nextTextMarker(webArea.startTextMarkerForTextMarkerRange(lineRange(3)));
+
+    output += expect("webArea.lineIndexForTextMarker(markerInLine3)", "2");
+    output += expect("lineText(webArea.lineIndexForTextMarker(markerInLine3) + 1)", "'Charlie'");
+
+    for (var paragraph of document.querySelectorAll("p"))
+        paragraph.style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
