@@ -53,6 +53,8 @@ void testSnapshot()
     }
 
     unsigned firstId = 0;
+    mach_port_t firstCorpsePort = MACH_PORT_NULL;
+    mach_port_t secondCorpsePort = MACH_PORT_NULL;
     {
         Snapshot snapshot(process);
         TEST_ASSERT(snapshot.isValid(), "a snapshot of this process is valid");
@@ -60,13 +62,19 @@ void testSnapshot()
         TEST_ASSERT(snapshot.process() == process.get(), "a snapshot keeps the process it came from");
         firstId = snapshot.id();
         TEST_ASSERT(firstId, "a snapshot has an identifier");
+        firstCorpsePort = snapshot.corpsePort();
 
         Snapshot second(process);
         TEST_ASSERT(second.isValid(), "a second snapshot of the same process is valid");
         TEST_ASSERT(second.id() > firstId, "identifiers increase");
         TEST_ASSERT(second.corpsePort() != snapshot.corpsePort(),
             "two snapshots hold two different corpses");
+        secondCorpsePort = second.corpsePort();
     }
+    TEST_ASSERT_EQ(machPortSendRightCount(firstCorpsePort), 0u,
+        "destroying a snapshot gives its corpse port back");
+    TEST_ASSERT_EQ(machPortSendRightCount(secondCorpsePort), 0u,
+        "and so does destroying the second");
     {
         // The two above are gone; their identifiers must not come back.
         Snapshot later(process);
@@ -91,23 +99,29 @@ void testSnapshot()
     }
 
     {
-        // A corpse and the threads read out of it are Mach ports. Taking many
-        // snapshots must not leave any of them behind.
-        static constexpr unsigned rounds = 100;
-        unsigned before = machPortNameCount();
-        for (unsigned round = 0; round < rounds; ++round) {
+        // A corpse and the thread rights read out of it are Mach ports. Taking a snapshot
+        // must not leave any of them behind.
+        unsigned namesBefore = machPortNameCount();
+        mach_port_t corpsePort = MACH_PORT_NULL;
+        {
             Snapshot snapshot(process);
-            if (!snapshot.isValid())
-                continue;
+            if (!snapshot.isValid()) {
+                TEST_ASSERT(false, "a snapshot of this process is valid");
+                return;
+            }
+            corpsePort = snapshot.corpsePort();
+            TEST_ASSERT(machPortSendRightCount(corpsePort), "a snapshot holds a right to its corpse");
+
+            unsigned namesBeforeThreads = machPortNameCount();
             snapshot.threads();
+            TEST_ASSERT_EQ(machPortNameCount(), namesBeforeThreads,
+                "reading the thread list gives back every thread right it took");
         }
-        unsigned after = machPortNameCount();
-        // A handful of names may come and go for reasons of their own; a leak of
-        // one port per round would be a hundred.
-        static constexpr unsigned allowedDrift = 8;
-        TEST_ASSERT(after <= before + allowedDrift, "taking and dropping snapshots leaks no Mach port");
-        if (after > before + allowedDrift)
-            dataLogLn("    port names before ", before, ", after ", after, ", over ", rounds, " snapshots");
+
+        TEST_ASSERT_EQ(machPortSendRightCount(corpsePort), static_cast<unsigned>(0),
+            "destroying a snapshot gives back the right to its corpse");
+        TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
+            "and leaves no port name behind");
     }
 }
 

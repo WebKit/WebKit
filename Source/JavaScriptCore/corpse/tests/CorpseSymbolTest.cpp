@@ -78,15 +78,15 @@ void testSymbol()
     {
         // A function in the shared cache, where __LINKEDIT is shared between images
         // and the trie is reached by a different route.
-        void* expected = dlsym(RTLD_DEFAULT, "malloc");
-        TEST_ASSERT(expected, "malloc can be looked up locally");
-        Address found = snapshot.symbol("malloc");
+        void* expected = dlsym(RTLD_DEFAULT, "tolower");
+        TEST_ASSERT(expected, "tolower can be looked up locally");
+        Address found = snapshot.symbol("tolower");
         TEST_ASSERT(found, "a symbol exported by a shared cache image is found");
         // A function pointer arrives signed on arm64e; only the address it names is
         // being compared here.
         TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
             Address(expected).stripped().toMachVMAddress(),
-            "malloc resolves to the address this process uses for it");
+            "tolower resolves to the address this process uses for it");
     }
     {
         // A data symbol in the shared cache.
