@@ -256,15 +256,6 @@ if (SWIFT_REQUIRED)
 
     set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
 
-    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
-    # clang modulemaps, but sometimes skips individual C++ headers.
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Internal/module.modulemap" _mm_lines REGEX "header \"")
-    foreach (_l IN LISTS _mm_lines)
-        string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
-        cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Internal" NORMALIZE)
-        list(APPEND WebGPU_SWIFT_INTEROP_HEADERS "${_h}")
-    endforeach ()
-
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
         "${WebGPU_FRAMEWORK_HEADERS_DIR}/WebGPU"
         "WebGPUSwift-Generated.h")

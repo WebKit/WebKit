@@ -70,7 +70,6 @@ list(APPEND WTF_SOURCES
 
 list(APPEND WTF_PUBLIC_HEADERS
     PlatformEnableCocoa.h
-    module.modulemap
 
     cf/CFTypeTraits.h
     cf/CFURLExtras.h

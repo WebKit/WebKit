@@ -984,15 +984,6 @@ if (SWIFT_REQUIRED)
         cmake_path(GET _f FILENAME _fn)
         list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|[/\\\\])${_fn}( |$)")
     endforeach ()
-
-    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
-    # clang modulemaps, but sometimes skips individual C++ headers.
-    file(STRINGS "${WebKit_SWIFT_INTEROP_MODULE_PATH}/module.modulemap" _mm_lines REGEX "header \"")
-    foreach (_l IN LISTS _mm_lines)
-        string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
-        cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${WebKit_SWIFT_INTEROP_MODULE_PATH}" NORMALIZE)
-        list(APPEND WebKit_SWIFT_INTEROP_HEADERS "${_h}")
-    endforeach ()
 endif ()
 
 WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit

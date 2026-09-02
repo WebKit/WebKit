@@ -3,6 +3,7 @@
 #   - filters one benign diagnostic out of stderr
 #   - relays the command line through a response file on Windows
 #   - forwards the MSVC-style linker switches that CMake's own defaults inject
+#   - merges per-frontend depfiles into one depfile for the whole module
 #
 # Flags that swiftc cannot accept are kept off the Swift command line by the
 # CMake configuration, using $<COMPILE_LANGUAGE:Swift> / $<LINK_LANGUAGE:Swift>
@@ -14,11 +15,14 @@
 # real compiler. CMake does not appear to call this script when set as a
 # CMAKE_Swift_COMPILER_LAUNCHER.
 
+import json
 import os
 import re
 import subprocess
 import sys
 import tempfile
+from collections import namedtuple
+from pathlib import Path
 
 # Swift's C++ interop changes which imported members are @unsafe between
 # toolchain versions, so an `unsafe` that is required on one toolchain emits
@@ -27,10 +31,6 @@ import tempfile
 # escalate severity (-Werror/-Wwarning <group>) -- there is no per-group
 # suppression, and -suppress-warnings would hide everything -- so filter this
 # one diagnostic (and its multi-line source snippet) out of stderr instead.
-#
-# FIXME: This is the only reason the wrapper exists on non-Windows hosts. Once
-# the toolchain range WebKit builds against agrees on which imported members are
-# @unsafe, or Swift gains per-group warning suppression, drop this.
 _BENIGN_WARNING = re.compile(r": warning: no unsafe operations occur within .unsafe. expression")
 _SOURCE_SNIPPET = re.compile(r"^[ \t]*[0-9]*[ \t]*\|")
 
@@ -60,6 +60,84 @@ def quote_response_file_token(arg):
     return '"' + escaped + '"'
 
 
+# Where to write the merged depfile, which output to key it on, and which
+# dependencies to drop. Populated from the --*ninja-depfile* flags that
+# WebKitMacros.cmake passes; absent when the caller didn't ask for a depfile.
+DepfileRequest = namedtuple("DepfileRequest", "path target excludes")
+
+# Depfiles are Makefile syntax, not shell syntax: a space is escaped with a
+# backslash, and a backslash before anything else stays literal so that Windows
+# paths survive. Implement Make-style quoting rules instead of using shlex.
+_UNESCAPED_SPACE = re.compile(r"(?<!\\)\s+")
+
+
+def _escape(path):
+    return path.replace(" ", "\\ ")
+
+
+def _unescape(path):
+    return path.replace("\\ ", " ")
+
+
+def parse_depfile(path):
+    """Yield the dependencies recorded in one Makefile-syntax depfile."""
+    text = Path(path).read_text(errors="replace").replace("\\\n", " ")
+    for rule in text.splitlines():
+        _, _, deps = rule.partition(" : ")
+        for dep in _UNESCAPED_SPACE.split(deps.strip()):
+            if dep:
+                yield _unescape(dep)
+
+
+def dependency_files(output_file_map):
+    """The depfiles swiftc wrote for this compile, per its output-file-map."""
+    try:
+        with open(output_file_map) as f:
+            entries = json.load(f)
+    except (OSError, ValueError):
+        return []
+
+    paths = [entry["dependencies"] for entry in entries.values() if "dependencies" in entry]
+    # The driver derives the emit-module job's depfile name instead of taking it
+    # from the output-file-map, and that one has the fullest view of the
+    # module's imports, so pick it up from the map's own directory.
+    paths += (str(path) for path in Path(output_file_map).parent.glob("*.emit-module.d"))
+    return [path for path in paths if os.path.exists(path)]
+
+
+def write_ninja_depfile(request, output_file_map):
+    sources = dependency_files(output_file_map) if output_file_map else []
+    if not sources:
+        sys.exit(
+            f"{Path(__file__).name}: error: no dependency files named by "
+            f"{output_file_map or '-output-file-map'}; "
+            "can't track Swift header dependencies"
+        )
+
+    deps = dict.fromkeys(
+        dep
+        for source in sources
+        for dep in parse_depfile(source)
+        if dep not in request.excludes
+    )
+
+    lines = [f"{_escape(request.target)}:"]
+    lines += (f"  {_escape(dep)}" for dep in deps)
+    content = " \\\n".join(lines) + "\n"
+
+    try:
+        # Only rewrite the depfile when it changes, otherwise the rebuild
+        # trigger causes the module to rebuild forever.
+        if Path(request.path).read_text() == content:
+            return
+    except OSError:
+        pass
+
+    scratch = request.path + ".tmp"
+    Path(scratch).write_text(content)
+    os.replace(scratch, request.path)
+
+
 def write_response_file(args):
     fd, path = tempfile.mkstemp(prefix="swiftc-wrapper-", suffix=".rsp")
     with os.fdopen(fd, "w") as f:
@@ -72,9 +150,20 @@ def write_response_file(args):
 def main(argv):
     real_swiftc = "swiftc"
     args = []
+    linking = any(arg in ("-emit-library", "-emit-executable") for arg in argv)
+
+    depfile_path = None
+    depfile_target = None
+    depfile_excludes = []
     for arg in argv:
         if arg.startswith("--original-swift-compiler="):
             real_swiftc = arg[len("--original-swift-compiler="):]
+        elif arg.startswith("--emit-ninja-depfile="):
+            depfile_path = arg[len("--emit-ninja-depfile="):]
+        elif arg.startswith("--ninja-depfile-target="):
+            depfile_target = arg[len("--ninja-depfile-target="):]
+        elif arg.startswith("--ninja-depfile-exclude="):
+            depfile_excludes.append(arg[len("--ninja-depfile-exclude="):])
         elif os.name == "nt" and arg.startswith("/") and len(arg) > 1:
             # Work around a bug in CMake: Its MSVC defaults
             # (Platform/Windows-MSVC.cmake) put raw linker switches like
@@ -82,6 +171,10 @@ def main(argv):
             args.extend(["-Xlinker", arg])
         else:
             args.append(arg)
+
+    depfile = None
+    if depfile_path and depfile_target and not linking:
+        depfile = DepfileRequest(depfile_path, depfile_target, frozenset(depfile_excludes))
 
     flat_command = [real_swiftc] + args
 
@@ -103,6 +196,7 @@ def main(argv):
         command = flat_command
         response_file = None
 
+    rc = None
     try:
         # Relay stderr line by line while the compiler runs.
         with subprocess.Popen(
@@ -115,10 +209,13 @@ def main(argv):
             for line in filter_benign_warnings(process.stderr):
                 sys.stderr.write(line)
                 sys.stderr.flush()
-            return process.wait()
+            rc = process.wait()
+            return rc
     finally:
         if response_file:
             os.remove(response_file)
+        if depfile and rc == 0:
+            write_ninja_depfile(depfile, args[args.index('-output-file-map') + 1])
 
 
 if __name__ == "__main__":

@@ -113,10 +113,6 @@ if (SWIFT_REQUIRED AND APPLE)
         set(PAL_SWIFT_EXPLICIT_MODULE_BUILD TRUE)
     endif ()
 
-    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
-    # clang modulemaps, but sometimes skips individual C++ headers.
-    set(PAL_SWIFT_INTEROP_HEADERS ${PAL_PUBLIC_HEADERS})
-
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(PAL pal
         "${PAL_HEADERS_DIR}"
         "PALSwift-Generated.h")

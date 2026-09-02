@@ -1547,26 +1547,54 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # target_compile_options via _swift_only_options earlier in the macro.
         _webkit_generate_platform_swift_args(${_target} "${_resp_path}")
 
-        # Trigger source whose mtime tracks the resp (and the emit-clang-header
-        # stamp / INTEROP_HEADERS when applicable). target_sources is how we
-        # plumb file-level deps in since CMake's Swift compile ignores
-        # OBJECT_DEPENDS. Created eagerly so the resp's add_custom_command
-        # has an in-graph consumer even when the typecheck path is skipped.
+        # Create a file whose mtime tracks various build changes that should
+        # cause swift's driver to rerun.
         set(_trigger_path "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftRebuildTrigger.swift")
         if (NOT EXISTS "${_trigger_path}")
             file(WRITE "${_trigger_path}" "// Auto-generated; mtime tracks ${_target}'s Swift inputs.\n")
         endif ()
-        set(_trigger_deps "${_resp_path}")
-        if (DEFINED ${_target}_SWIFT_INTEROP_SOURCES)
-            list(APPEND _trigger_deps ${${_target}_SWIFT_INTEROP_HEADERS})
-        elseif (NOT _skip_swift_cxx_header)
+
+        # Form a flat depfile for the whole module by merging per-object
+        # dependencies produced by the driver invocation. Refer to depfile
+        # logic in `swift-wrapper.py` for the merge implementation.
+        set(_swift_depfile "${CMAKE_CURRENT_BINARY_DIR}/${_target}.swift-deps.d")
+        # cmake_transform_depfile warns when the depfile is missing, so seed an
+        # empty one for the first build.
+        if (NOT EXISTS "${_swift_depfile}")
+            file(WRITE "${_swift_depfile}" "")
+        endif ()
+        target_compile_options(${_target} PRIVATE
+            # Used by swift-wrapper.py to merge per-object dependencies into a
+            # depfile for the whole driver.
+            "$<$<COMPILE_LANGUAGE:Swift>:-emit-dependencies>"
+            # Needed because WebKit's modules are marked [system].
+            "$<$<COMPILE_LANGUAGE:Swift>:-track-system-dependencies>"
+            # Controls for swift-wrapper.py's depfile merging logic. Namely,
+            # avoid listing metadata files in the depfile output that will
+            # always be invalidated.
+            "$<$<COMPILE_LANGUAGE:Swift>:--emit-ninja-depfile=${_swift_depfile}>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-target=${_trigger_path}>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_trigger_path}>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_header_tmp_path}>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_header_path}>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule>")
+        # Trigger when the .resp file of platform flags changes.
+        #
+        # Also trigger when the depfile itself changes, which is needed to
+        # cause Ninja to ingest changes made to it. swiftc-wrapper.py only
+        # rewrites the file when it actually changes, so this settles instead
+        # of looping.
+        set(_trigger_deps "${_resp_path}" "${_swift_depfile}")
+        if (NOT (DEFINED ${_target}_SWIFT_INTEROP_SOURCES OR
+            _skip_swift_cxx_header))
             list(APPEND _trigger_deps "${_header_stamp_path}")
         endif ()
         add_custom_command(
             OUTPUT "${_trigger_path}"
             DEPENDS ${_trigger_deps}
+            DEPFILE "${_swift_depfile}"
             COMMAND ${CMAKE_COMMAND} -E touch "${_trigger_path}"
-            COMMENT "Refreshing ${_target} Swift rebuild trigger"
+            COMMENT "Propagating ${_target} Swift dependencies"
         )
         target_sources(${_target} PRIVATE "${_trigger_path}")
         add_custom_target(${_target}_SwiftRebuildTrigger DEPENDS "${_trigger_path}")
