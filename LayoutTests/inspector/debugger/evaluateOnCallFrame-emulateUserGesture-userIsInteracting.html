@@ -33,7 +33,7 @@ function test()
 
             InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
 
-            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: false}, (error, resultValue, wasThrown) => {
+            WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: false}, (error, resultValue, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
             });
 
@@ -56,7 +56,7 @@ function test()
 
             InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
 
-            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: true}, (error, resultValue, wasThrown) => {
+            WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: true}, (error, resultValue, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
             });
 

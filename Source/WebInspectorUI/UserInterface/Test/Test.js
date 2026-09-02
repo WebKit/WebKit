@@ -216,6 +216,14 @@ WI.isSiteIsolationEnabled = () => WI.targets.some((x) => x instanceof WI.FrameTa
 
 window.InspectorTest = new FrontendTestHarness();
 
+Object.defineProperty(InspectorTest, "mainFrameTarget",
+{
+    get() {
+        let mainFrame = WI.networkManager.mainFrame;
+        return mainFrame && WI.targets.find((target) => target instanceof WI.FrameTarget && target.executionContext?.frame === mainFrame) || WI.mainTarget;
+    }
+});
+
 InspectorTest.redirectConsoleToTestOutput();
 
 WI.reportInternalError = (e) => { console.error(e); };

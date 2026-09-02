@@ -25,9 +25,21 @@ TestPage.registerInitializer(() => {
 
     window.findScript = function(regex) {
         for (let resource of WI.networkManager.mainFrame.resourceCollection) {
-            if (regex.test(resource.url))
+            // A matching resource can have no scripts: WI.Script resolves its resource once, at
+            // construction, and under site isolation that can miss with nothing retrying, leaving
+            // the two unassociated for good. Keep looking rather than giving up here.
+            if (regex.test(resource.url) && resource.scripts.length)
                 return resource.scripts[0];
         }
+
+        // Fall back to the targets' script lists, which do not need that association.
+        for (let target of WI.targets) {
+            for (let script of WI.debuggerManager.dataForTarget(target).scripts) {
+                if (script.url && regex.test(script.url))
+                    return script;
+            }
+        }
+
         return null;
     }
 
@@ -75,7 +87,7 @@ TestPage.registerInitializer(() => {
             if (/BREAKPOINT/.test(line)) {
                 let lastPathComponent = parseURL(resource.url).lastPathComponent;
                 InspectorTest.log(`Setting Breakpoint: ${lastPathComponent}:${i}:0`);
-                promises.push(DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: i, columnNumber: 0}));
+                promises.push(InspectorTest.mainFrameTarget.DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: i, columnNumber: 0}));
             }
         }
 

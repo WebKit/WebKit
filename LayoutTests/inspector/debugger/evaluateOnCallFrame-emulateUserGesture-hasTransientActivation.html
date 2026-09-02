@@ -33,7 +33,7 @@ function test()
             await pausedPromise;
 
             InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
-            await DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: false});
+            await WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: false});
 
             InspectorTest.log("Resuming...");
             await Promise.all([
@@ -57,7 +57,7 @@ function test()
             await pausedPromise;
 
             InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
-            await DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: true});
+            await WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: true});
 
             InspectorTest.log("Resuming...");
             await Promise.all([

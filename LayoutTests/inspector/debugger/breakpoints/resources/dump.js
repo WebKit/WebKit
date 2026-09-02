@@ -32,7 +32,7 @@ TestPage.registerInitializer(() => {
                     for (let line = script.range.startLine; line <= script.range.endLine; ++line) {
                         let max = lines[line].length;
                         for (let column = 0; column <= max; ++column) {
-                            DebuggerAgent.setBreakpoint(createLocation(script, line, column), (error, breakpointId, location) => {
+                            script.target.DebuggerAgent.setBreakpoint(createLocation(script, line, column), (error, breakpointId, location) => {
                                 if (error)
                                     return;
                                 let key = JSON.stringify(location);
@@ -43,8 +43,10 @@ TestPage.registerInitializer(() => {
                         }
                     }
 
-                    // Log the unique locations and the first input that produced it.
-                    InspectorBackend.runAfterPendingDispatches(() => {
+                    // Log the unique locations and the first input that produced it. The barrier
+                    // has to be the script target's own connection; InspectorBackend's version
+                    // only tracks the main target's, which frame-target commands never go over.
+                    script.target.connection.runAfterPendingDispatches(() => {
                         InspectorTest.log("");
                         for (let [inputLocation, payload] of pauseLocations) {
                             InspectorTest.log(`INSERTING AT: ${inputLocation.lineNumber}:${inputLocation.columnNumber}`);
@@ -75,7 +77,7 @@ TestPage.registerInitializer(() => {
                         for (let line = script.range.startLine; line <= script.range.endLine; ++line) {
                             let max = lines[line].length;
                             for (let column = 0; column <= max; ++column) {
-                                DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: line, columnNumber: column}, (error, breakpointId, locations) => {
+                                script.target.DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: line, columnNumber: column}, (error, breakpointId, locations) => {
                                     if (error)
                                         return;
                                     if (!locations.length)
@@ -90,7 +92,7 @@ TestPage.registerInitializer(() => {
                         }
 
                         // Log the unique locations and the first input that produced it.
-                        InspectorBackend.runAfterPendingDispatches(() => {
+                        script.target.connection.runAfterPendingDispatches(() => {
                             InspectorTest.log("");
                             for (let [inputLocation, payload] of pauseLocations) {
                                 InspectorTest.log(`INSERTING AT: ${inputLocation.lineNumber}:${inputLocation.columnNumber}`);
@@ -117,7 +119,7 @@ TestPage.registerInitializer(() => {
                 window.loadLinesFromSourceCode(script).then((lines) => {
                     // Set one breakpoint per line.
                     for (let line = script.range.startLine; line <= script.range.endLine; ++line) {
-                        DebuggerAgent.setBreakpoint(createLocation(script, line, 0), (error, breakpointId, payload) => {
+                        script.target.DebuggerAgent.setBreakpoint(createLocation(script, line, 0), (error, breakpointId, payload) => {
                             InspectorTest.log("");
                             if (error) {
                                 InspectorTest.log(`INSERTING AT: ${line}:0`);
@@ -133,7 +135,7 @@ TestPage.registerInitializer(() => {
 
                         let start = createLocation(script, line, 0);
                         let end = createLocation(script, line, lines[line].length);
-                        DebuggerAgent.getBreakpointLocations(start, end, (error, locations) => {
+                        script.target.DebuggerAgent.getBreakpointLocations(start, end, (error, locations) => {
                             InspectorTest.log(`LOCATIONS FROM ${start.lineNumber}:${start.columnNumber} to ${end.lineNumber}:${end.columnNumber}`);
                             if (error)
                                 InspectorTest.log(`PRODUCES: ${error}`);
@@ -142,12 +144,12 @@ TestPage.registerInitializer(() => {
                         });
 
                         // Clear the breakpoint we just set without knowing its breakpoint identifier.
-                        DebuggerAgent.disable();
-                        DebuggerAgent.enable();
+                        script.target.DebuggerAgent.disable();
+                        script.target.DebuggerAgent.enable();
                     }
 
                     // Resolve after all lines have been tried.
-                    InspectorBackend.runAfterPendingDispatches(() => {
+                    script.target.connection.runAfterPendingDispatches(() => {
                         resolve();
                     });
                 });

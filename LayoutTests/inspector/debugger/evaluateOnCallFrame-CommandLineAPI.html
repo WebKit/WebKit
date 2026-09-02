@@ -32,7 +32,7 @@ function test()
 
     function testEvaluateOnCallFrame(callFrame, expression, callback) {
         let callFrameId = callFrame.id;
-        DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+        callFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
             InspectorTest.assert(!error, "Should not be a protocol error.");
             InspectorTest.assert(!wasThrown, "Should not be a runtime error.");
             if (callback)
@@ -42,7 +42,7 @@ function test()
 
     function testEvaluateOnCallFrameThrows(callFrame, expression, callback) {
         let callFrameId = callFrame.id;
-        DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+        callFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
             InspectorTest.assert(!error, "Should not be a protocol error.");
             InspectorTest.assert(wasThrown, "Should be a runtime error.");
             if (callback)

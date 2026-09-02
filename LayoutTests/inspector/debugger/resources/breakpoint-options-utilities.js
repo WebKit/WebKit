@@ -68,7 +68,9 @@ TestPage.registerInitializer(() => {
                 });
 
                 InspectorTest.log("Adding saved console value 'false'...");
-                let firstEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                // `$n` lives in the InjectedScript of the target that saved it, so the value has to
+                // be created in the same target that will evaluate the breakpoint condition.
+                let firstEvaluateResult = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({
                     expression: "false",
                     objectGroup: "test",
                     includeCommandLineAPI: true,
@@ -90,7 +92,7 @@ TestPage.registerInitializer(() => {
                         InspectorTest.newline();
 
                         InspectorTest.log("Adding saved console value 'true'...");
-                        let secondEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                        let secondEvaluateResult = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({
                             expression: "true",
                             objectGroup: "test",
                             includeCommandLineAPI: true,
@@ -282,7 +284,9 @@ TestPage.registerInitializer(() => {
                 });
 
                 InspectorTest.log("Adding saved console value '1'...");
-                let firstEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                // `$n` lives in the InjectedScript of the target that saved it, so the value has to
+                // be created in the same target that will run the breakpoint action.
+                let firstEvaluateResult = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({
                     expression: "1",
                     objectGroup: "test",
                     includeCommandLineAPI: true,
@@ -305,7 +309,7 @@ TestPage.registerInitializer(() => {
                         InspectorTest.newline();
 
                         InspectorTest.log(`Adding saved console value '${i}'...`);
-                        let secondEvaluateResult = await RuntimeAgent.evaluate.invoke({
+                        let secondEvaluateResult = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({
                             expression: String(i),
                             objectGroup: "test",
                             includeCommandLineAPI: true,
