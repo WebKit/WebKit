@@ -58,6 +58,7 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     Vector<Connection> connections;
     Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
     String lastRequestCookies;
+    bool sawAuthorizationHeader { false };
 };
 
 static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol protocol)
@@ -314,6 +315,11 @@ String HTTPServer::lastRequestCookies() const
     return m_requestData->lastRequestCookies;
 }
 
+bool HTTPServer::sawAuthorizationHeader() const
+{
+    return m_requestData->sawAuthorizationHeader;
+}
+
 static ASCIILiteral statusText(unsigned statusCode)
 {
     switch (statusCode) {
@@ -331,6 +337,8 @@ static ASCIILiteral statusText(unsigned statusCode)
         return "See Other"_s;
     case 304:
         return "Not Modified"_s;
+    case 401:
+        return "Unauthorized"_s;
     case 404:
         return "Not Found"_s;
     case 503:
@@ -381,23 +389,32 @@ String HTTPServer::parsePath(const Vector<char>& request)
     return request.subspan(pathPrefixLength, pathLength);
 }
 
-String HTTPServer::parseCookies(const Vector<char>& characters)
+static String parseHeaderValue(const Vector<char>& characters, ASCIILiteral headerPrefix)
 {
     if (!characters.size())
         return { };
 
     String request { characters.span() };
-    ASCIILiteral cookiePrefix = "Cookie: "_s;
-    size_t cookieStringStart = request.find(cookiePrefix);
-    if (cookieStringStart == notFound)
+    size_t valueStart = request.find(headerPrefix);
+    if (valueStart == notFound)
         return { };
-    cookieStringStart += cookiePrefix.length();
+    valueStart += headerPrefix.length();
 
-    size_t cookieStringEnd = request.find("\r\n"_s, cookieStringStart);
-    if (cookieStringEnd == notFound)
+    size_t valueEnd = request.find("\r\n"_s, valueStart);
+    if (valueEnd == notFound)
         return { };
 
-    return request.substring(cookieStringStart, cookieStringEnd - cookieStringStart);
+    return request.substring(valueStart, valueEnd - valueStart);
+}
+
+String HTTPServer::parseCookies(const Vector<char>& characters)
+{
+    return parseHeaderValue(characters, "Cookie: "_s);
+}
+
+String HTTPServer::parseAuthorization(const Vector<char>& characters)
+{
+    return parseHeaderValue(characters, "Authorization: "_s);
 }
 
 String HTTPServer::parseBody(const Vector<char>& request)
@@ -433,6 +450,8 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
 
         requestData->requestCount++;
         requestData->lastRequestCookies = parseCookies(request);
+        if (!parseAuthorization(request).isEmpty())
+            requestData->sawAuthorizationHeader = true;
 
         auto path = parsePath(request);
         ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());

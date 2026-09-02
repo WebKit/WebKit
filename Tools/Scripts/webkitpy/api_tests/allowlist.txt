@@ -473,6 +473,7 @@ TestWebKitAPI.WKWebViewSuspendAllMediaPlayback
 TestWebKitAPI.WKWebViewThemeColor
 TestWebKitAPI.WKWebViewTitlebarSeparatorTests
 TestWebKitAPI.WTF
+TestWebKitAPI.WebAuthnRelatedOriginsFetch
 TestWebKitAPI.WebContentRestrictions
 TestWebKitAPI.WebCore
 TestWebKitAPI.WebCoreHTMLParser
@@ -490,6 +491,7 @@ TestWebKitAPI.WebKitLegacyStringWidth
 TestWebKitAPI.WebLocks
 TestWebKitAPI.WebSQL
 TestWebKitAPI.Webkit
+TestWebKitAPI.WellKnownOriginList
 TestWebKitAPI.WritingMode
 TestWebKitAPI.WritingSuggestionsWebAPI
 TestWebKitAPI.WritingToolsContextGeneration

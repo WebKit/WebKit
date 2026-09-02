@@ -103,6 +103,7 @@ Tests/WebKitCocoa/Copying.mm @nonARC
 Tests/WebKitCocoa/CreateWebArchive.mm @nonARC
 Tests/WebKitCocoa/CustomUserAgent.mm @nonARC
 Tests/WebKitCocoa/DataDetection.mm @nonARC
+Tests/WebKitCocoa/WebAuthnRelatedOriginsFetch.mm @nonARC
 Tests/WebKitCocoa/WritingTools.mm @nonARC
 Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm @nonARC
 Tests/WebKitCocoa/DeviceManagementRestrictions.mm @nonARC
