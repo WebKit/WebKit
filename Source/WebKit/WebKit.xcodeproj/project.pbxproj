@@ -3261,13 +3261,6 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit;
 		};
-		EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
-			remoteInfo = "Derived Sources";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -20406,7 +20399,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				EB4E56622B16547200CDB9C6 /* PBXTargetDependency */,
 			);
 			name = WebKitSwift;
 			productName = WebKitSwift;
@@ -23039,11 +23031,6 @@
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = E3B746A62A9E586C0024BFAE /* PBXContainerItemProxy */;
-		};
-		EB4E56622B16547200CDB9C6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
-			targetProxy = EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
