@@ -86,7 +86,10 @@ RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(Resourc
 
 void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoaderProxy::SendH2Ping(url), WTF::move(completionHandler), identifier());
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoaderProxy::SendH2Ping(url), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<std::expected<Seconds, ResourceError>>&& untrustedResult) mutable {
+        // The only URL is the failing URL of an error report for a ping the GPU process asked for.
+        completionHandler(WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, identifier());
 }
 
 void RemoteMediaResourceLoader::addMediaResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, RemoteMediaResource& remoteMediaResource)

@@ -86,6 +86,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     using Reply = CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>;
+    using SuppliedReply = CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>;
     using Promise = WTF::NativePromise<RetainPtr<CVPixelBufferRef>, IPC::Error>;
     ReceiveCVPixelBuffer()
     {

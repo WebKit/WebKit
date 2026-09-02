@@ -32,7 +32,7 @@
 messages -> RemoteMediaResourceLoaderProxy {
     RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, unsigned options)
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier) -> () Async
-    SendH2Ping(URL url) -> (std::expected<Seconds, WebCore::ResourceError> result)
+    SendH2Ping(URL url) -> (IPC::Untrusted<std::expected<Seconds, WebCore::ResourceError>> result)
 }
 
 #endif
