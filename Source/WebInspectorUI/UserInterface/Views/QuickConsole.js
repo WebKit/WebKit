@@ -435,7 +435,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         // If this frame is navigating and it is selected in the UI we want to reselect its new item after navigation,
         // however when `_useExecutionContextOfInspectedNode` is true, we should keep the execution context set to `Auto`.
-        if (committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame && !this._useExecutionContextOfInspectedNode) {
+        if (!this._restoreSelectedExecutionContextForFrame && !this._useExecutionContextOfInspectedNode && (committingProvisionalLoad || WI.networkManager.frameForIdentifier(event.target.id) === event.target)) {
             this._restoreSelectedExecutionContextForFrame = event.target;
 
             // As a fail safe, if the frame never gets an execution context, clear the restore value.
