@@ -1,16 +1,9 @@
-//@ skip
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=318362
-// Skipped: exposes a known, deferred bug (see the FIXME in
-// DateInstanceCache::reset). Companion to
-// intl-datetimeformat-stale-data-across-tz-change.js, which covers the case
-// where the DateInstance's DateInstanceData is still resident in a cache slot
-// when the time zone changes. This one covers the eviction case: the
-// DateInstanceData is evicted from its slot (its slot overwritten by another
-// ms) but stays alive via DateInstance::m_data, so DateCache::reset() never
-// reaches it and the held Date keeps its stale local time.
-//
-// Remove the //@ skip (and add the "skip if $hostOS == playstation" guard the
-// sibling tests use) once the eviction case is fixed.
+//@ skip if $hostOS == "playstation"
+
+// Companion to intl-datetimeformat-stale-data-across-tz-change.js. That one holds a Date whose
+// broken-down local time is the only one the VM has cached; this one first pushes that breakdown
+// out of the cross-instance memo with other time values, so the held Date is reachable only from
+// the instance itself.
 
 function expect(label, got, want)
 {
@@ -28,15 +21,14 @@ setTimeout(() => {
     const heldMs = Date.UTC(2024, 5, 15, 0, 0);
     const heldDate = new Date(heldMs);
 
-    // Populate heldDate.m_data with LA-relative cached values.
+    // Populate heldDate's cached breakdown with LA-relative values.
     expect("LA hours",  heldDate.getHours(), 17);
     expect("LA offset", heldDate.getTimezoneOffset(), 420);
     expect("LA date",   heldDate.getDate(), 14);
     expect("LA day",    heldDate.getDay(), 5); // Friday
 
-    // Flood the 16-slot direct-mapped DateInstanceCache with distinct ms so
-    // heldDate's slot is overwritten. Its DateInstanceData is now evicted from
-    // the cache but still referenced by heldDate.m_data.
+    // Flood the cross-instance memo with distinct ms so heldDate's entry is evicted from it and
+    // the only surviving copy of the LA breakdown is the one inside heldDate.
     for (let i = 1; i <= 256; i++)
         new Date(heldMs + i * 86400000).getHours();
 

@@ -1114,7 +1114,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DOMAnnotation.h
     runtime/DataView.h
     runtime/DateInstance.h
-    runtime/DateInstanceCache.h
     runtime/DeferredWorkTimer.h
     runtime/DeferTermination.h
     runtime/DefinePropertyAttributes.h
@@ -1361,6 +1360,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PageCount.h
     runtime/ParseInt.h
     runtime/PinballCompletion.h
+    runtime/PlainGregorianDateTime.h
     runtime/PrivateFieldPutKind.h
     runtime/PrivateName.h
     runtime/ProfilerSupport.h

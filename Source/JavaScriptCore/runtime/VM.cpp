@@ -44,6 +44,7 @@
 #include "CrossTaskToken.h"
 #include "CustomGetterSetterInlines.h"
 #include "DOMAttributeGetterSetterInlines.h"
+#include "DateInstance.h"
 #include "Debugger.h"
 #include "DeferredWorkTimer.h"
 #include "Disassembler.h"
@@ -60,6 +61,7 @@
 #include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
 #include "Heap.h"
+#include "HeapIterationScope.h"
 #include "HeapProfiler.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
@@ -1787,6 +1789,13 @@ void VM::executeEntryScopeServicesOnEntry()
     if (dateCache.hasTimeZoneChange()) [[unlikely]] {
         intlCache().clearForTimeZoneChange();
         dateCache.clearForTimeZoneChange();
+        if (dateCache.takeMayHaveCachedLocalGregorianDateTime()) {
+            HeapIterationScope iterationScope(heap);
+            heap.dateInstanceSpace.forEachLiveCell([](HeapCell* cell, HeapCell::Kind) {
+                SUPPRESS_MEMORY_UNSAFE_CAST auto* date = static_cast<DateInstance*>(cell);
+                date->invalidateCachedLocalGregorianDateTime();
+            });
+        }
     }
 
     if (intlCache().hasLanguageChange()) [[unlikely]]

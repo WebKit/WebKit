@@ -6312,212 +6312,22 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDateNow, double, (void))
     return jsCurrentTime();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDateGetFullYear, EncodedJSValue, (VM* vmPointer, DateInstance* date))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDateGetStorage, uint64_t, (VM* vmPointer, DateInstance* date))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->year())));
+    return date->gregorianDateTime(vm.dateCache).payload();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCFullYear, EncodedJSValue, (VM* vmPointer, DateInstance* date))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDateGetStorageUTC, uint64_t, (VM* vmPointer, DateInstance* date))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->year())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetMonth, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->month())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCMonth, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->month())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetDate, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->monthDay())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCDate, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->monthDay())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetDay, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->weekDay())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCDay, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->weekDay())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetHours, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->hour())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCHours, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->hour())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetMinutes, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->minute())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCMinutes, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->minute())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetSeconds, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->second())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetUTCSeconds, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTimeUTC(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->second())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetTimezoneOffset, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(-gregorianDateTime->utcOffsetInMinute())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM* vmPointer, DateInstance* date))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const GregorianDateTime* gregorianDateTime = date->gregorianDateTime(vm.dateCache);
-    if (!gregorianDateTime)
-        OPERATION_RETURN(scope, JSValue::encode(jsNaN()));
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(gregorianDateTime->year() - 1900)));
+    return date->gregorianDateTimeUTC(vm.dateCache).payload();
 }
 
 JSC_DEFINE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject* globalObject, int64_t value))
@@ -6603,7 +6413,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerReoptimizationNow, void, (Code
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
     DeferGCForAWhile deferGC(codeBlock->vm());
-    
+
     sanitizeStackForVM(codeBlock->vm());
 
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered reoptimize");
@@ -6678,17 +6488,17 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
         jitCode->optimizeAfterWarmUp(codeBlock);
         return;
     }
-    
+
     JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
         vm, JITCompilationKey(codeBlock->baselineVersion(), JITCompilationMode::FTL));
-    
+
     if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
         jitCode->setOptimizationThresholdBasedOnCompilationResult(
             codeBlock, CompilationResult::CompilationDeferred);
         return;
     }
-    
+
     if (codeBlock->hasOptimizedReplacement()) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("has replacement"));
         // That's great, we've compiled the code - next time we call this function,
@@ -6696,7 +6506,7 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
         jitCode->optimizeSoon(codeBlock);
         return;
     }
-    
+
     if (worklistState == JITWorklist::Compiled) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("compiled and failed"));
         // This means that we finished compiling, but failed somehow; in that case the

@@ -24,8 +24,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/PlainGregorianDateTime.h>
 #include <wtf/Forward.h>
-#include <wtf/GregorianDateTime.h>
 
 namespace JSC {
 
@@ -37,6 +37,6 @@ enum class DateTimeFormat {
     DateAndTime = Date | Time
 };
 
-JS_EXPORT_PRIVATE WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant, DateCache&);
+JS_EXPORT_PRIVATE WTF::String formatDateTime(PlainGregorianDateTime, DateTimeFormat, bool asUTCVariant, DateCache&);
 
 } // namespace JSC

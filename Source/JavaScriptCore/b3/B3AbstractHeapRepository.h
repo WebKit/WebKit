@@ -55,25 +55,8 @@ namespace JSC::B3 {
     macro(ConcatKeyAtomStringCache_quickCache1_key, ConcatKeyAtomStringCache::offsetOfQuickCache1() + ConcatKeyAtomStringCache::CacheEntry::offsetOfKey(), Mutability::Mutable) \
     macro(ConcatKeyAtomStringCache_quickCache1_value, ConcatKeyAtomStringCache::offsetOfQuickCache1() + ConcatKeyAtomStringCache::CacheEntry::offsetOfValue(), Mutability::Mutable) \
     macro(DateInstance_internalNumber, DateInstance::offsetOfInternalNumber(), Mutability::Mutable) \
-    macro(DateInstance_data, DateInstance::offsetOfData(), Mutability::Mutable) \
-    macro(DateInstanceData_gregorianDateTimeCachedForMS, DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), Mutability::Mutable) \
-    macro(DateInstanceData_gregorianDateTimeUTCCachedForMS, DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_year, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfYear(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_year, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfYear(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_month, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMonth(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_month, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMonth(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_monthDay, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMonthDay(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_monthDay, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMonthDay(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_weekDay, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfWeekDay(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_weekDay, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfWeekDay(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_hour, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfHour(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_hour, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfHour(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_minute, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMinute(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_minute, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMinute(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_second, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfSecond(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_second, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfSecond(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTime_utcOffsetInMinute, DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfUTCOffsetInMinute(), Mutability::Mutable) \
-    macro(DateInstanceData_cachedGregorianDateTimeUTC_utcOffsetInMinute, DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfUTCOffsetInMinute(), Mutability::Mutable) \
+    macro(DateInstance_cachedGregorianDateTime, DateInstance::offsetOfCachedGregorianDateTime(), Mutability::Mutable) \
+    macro(DateInstance_cachedGregorianDateTimeUTC, DateInstance::offsetOfCachedGregorianDateTimeUTC(), Mutability::Mutable) \
     macro(DirectArguments_callee, DirectArguments::offsetOfCallee(), Mutability::Mutable) \
     macro(DirectArguments_length, DirectArguments::offsetOfLength(), Mutability::Mutable) \
     macro(DirectArguments_minCapacity, DirectArguments::offsetOfMinCapacity(), Mutability::Mutable) \

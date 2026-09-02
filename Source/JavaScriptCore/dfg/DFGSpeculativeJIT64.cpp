@@ -6587,9 +6587,20 @@ void SpeculativeJIT::compile(Node* node)
         compileDateNow(node);
         break;
 
+    case DateGetStorage:
+        compileDateGetStorage(node);
+        break;
+
     case DateGetInt32OrNaN:
+        compileDateGetInt32OrNaN(node);
+        break;
+
+    case DateGetMilliseconds:
+        compileDateGetMilliseconds(node);
+        break;
+
     case DateGetTime:
-        compileDateGet(node);
+        compileDateGetTime(node);
         break;
 
     case DateSetTime:
@@ -7125,141 +7136,162 @@ void SpeculativeJIT::compileArithRandom(Node* node)
     doubleResult(result.fpr(), node);
 }
 
-
-void SpeculativeJIT::compileDateGet(Node* node)
+void SpeculativeJIT::compileDateGetStorage(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+
     GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+
     speculateDateObject(node->child1(), baseGPR);
 
-    auto emitGetCodeWithCallback = [&] (ptrdiff_t cachedDoubleOffset, ptrdiff_t cachedDataOffset, auto* operation, auto callback) {
-        GPRTemporary result(this);
-        FPRTemporary temp1(this);
-        FPRTemporary temp2(this);
+    load64(Address(baseGPR, node->isUTC() ? DateInstance::offsetOfCachedGregorianDateTimeUTC() : DateInstance::offsetOfCachedGregorianDateTime()), resultGPR);
+    auto slowCase = branchTest64(Zero, resultGPR, TrustedImm64(PlainGregorianDateTime::validityMask));
 
-        GPRReg resultGPR = result.gpr();
-        FPRReg temp1FPR = temp1.fpr();
-        FPRReg temp2FPR = temp2.fpr();
+    addSlowPathGenerator(slowPathCall(slowCase, this, node->isUTC() ? operationDateGetStorageUTC : operationDateGetStorage, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGPR, TrustedImmPtr(&vm()), baseGPR));
 
-        JumpList slowCases;
+    storageResult(resultGPR, node);
+}
 
-        loadPtr(Address(baseGPR, DateInstance::offsetOfData()), resultGPR);
-        slowCases.append(branchTestPtr(Zero, resultGPR));
-        loadDouble(Address(baseGPR, DateInstance::offsetOfInternalNumber()), temp1FPR);
-        loadDouble(Address(resultGPR, cachedDoubleOffset), temp2FPR);
-        slowCases.append(branchDouble(DoubleNotEqualOrUnordered, temp1FPR, temp2FPR));
-        load32(Address(resultGPR, cachedDataOffset), resultGPR);
+void SpeculativeJIT::compileDateGetInt32OrNaN(Node* node)
+{
+    StorageOperand storage(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg storageGPR = storage.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    auto emitGetCodeWithCallback = [&] (unsigned fieldOffset, uint64_t fieldMask, unsigned fieldWidth, bool isSigned, auto callback) {
+        moveTrustedValue(jsNaN(), resultGPR);
+        auto isInvalid = branchTest64(Zero, storageGPR);
+
+        if (isSigned) {
+#if CPU(ARM64)
+            UNUSED_PARAM(fieldMask);
+            extractSignedBitfield64(storageGPR, TrustedImm32(fieldOffset), TrustedImm32(fieldWidth), resultGPR);
+#else
+            move(storageGPR, resultGPR);
+            lshift64(TrustedImm32(64 - fieldWidth - fieldOffset), resultGPR);
+            rshift64(TrustedImm32(64 - fieldWidth), resultGPR);
+#endif
+        } else {
+#if CPU(ARM64)
+            UNUSED_PARAM(fieldMask);
+            extractUnsignedBitfield64(storageGPR, TrustedImm32(fieldOffset), TrustedImm32(fieldWidth), resultGPR);
+#else
+            move(storageGPR, resultGPR);
+            urshift64(TrustedImm32(fieldOffset), resultGPR);
+            and64(TrustedImm32(static_cast<int32_t>(fieldMask)), resultGPR);
+#endif
+        }
         callback(resultGPR);
+        // A signed field arrives sign-extended across all 64 bits, and boxInt32 only ORs in the
+        // number tag, so the high half has to be cleared or the boxed value is non-canonical.
+        if (isSigned)
+            zeroExtend32ToWord(resultGPR, resultGPR);
         boxInt32(resultGPR, resultGPR);
 
-        addSlowPathGenerator(slowPathCall(slowCases, this, operation, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGPR, TrustedImmPtr(&vm()), baseGPR));
-
+        isInvalid.link(this);
         jsValueResult(resultGPR, node);
     };
 
-    auto emitGetCode = [&] (ptrdiff_t cachedDoubleOffset, ptrdiff_t cachedDataOffset, auto* operation) {
-        emitGetCodeWithCallback(cachedDoubleOffset, cachedDataOffset, operation, [] (GPRReg) { });
+    auto emitGetCode = [&] (unsigned fieldOffset, uint64_t fieldMask, unsigned fieldWidth, bool isSigned) {
+        emitGetCodeWithCallback(fieldOffset, fieldMask, fieldWidth, isSigned, [](GPRReg) { });
     };
 
     switch (node->intrinsic()) {
-    case DatePrototypeGetTimeIntrinsic: {
-        FPRTemporary result(this);
-        FPRReg resultFPR = result.fpr();
-        loadDouble(Address(baseGPR, DateInstance::offsetOfInternalNumber()), resultFPR);
-        doubleResult(resultFPR, node);
-        break;
-    }
-
-    // We do not have any timezone offset which affects on milliseconds.
-    // So Date#getMilliseconds and Date#getUTCMilliseconds have the same implementation.
-    case DatePrototypeGetMillisecondsIntrinsic:
-    case DatePrototypeGetUTCMillisecondsIntrinsic: {
-        GPRTemporary result(this);
-        FPRTemporary temp1(this);
-        FPRTemporary temp2(this);
-        FPRTemporary temp3(this);
-        GPRReg resultGPR = result.gpr();
-        FPRReg temp1FPR = temp1.fpr();
-        FPRReg temp2FPR = temp2.fpr();
-        FPRReg temp3FPR = temp3.fpr();
-
-        moveTrustedValue(jsNaN(), resultGPR);
-        loadDouble(Address(baseGPR, DateInstance::offsetOfInternalNumber()), temp1FPR);
-        auto isNaN = branchIfNaN(temp1FPR);
-
-        move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(static_cast<double>(msPerSecond))), temp2FPR);
-        divDouble(temp1FPR, temp2FPR, temp3FPR);
-        floorDouble(temp3FPR, temp3FPR);
-        mulDouble(temp3FPR, temp2FPR, temp3FPR);
-        subDouble(temp1FPR, temp3FPR, temp1FPR);
-        truncateDoubleToInt32(temp1FPR, resultGPR);
-        boxInt32(resultGPR, resultGPR);
-
-        isNaN.link(this);
-        jsValueResult(resultGPR, node);
-        break;
-    }
-
     case DatePrototypeGetFullYearIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfYear(), operationDateGetFullYear);
-        break;
     case DatePrototypeGetUTCFullYearIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfYear(), operationDateGetUTCFullYear);
+        emitGetCode(PlainGregorianDateTime::yearOffset, PlainGregorianDateTime::yearMask, PlainGregorianDateTime::yearWidth, /* isSigned */ true);
         break;
     case DatePrototypeGetMonthIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMonth(), operationDateGetMonth);
-        break;
     case DatePrototypeGetUTCMonthIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMonth(), operationDateGetUTCMonth);
+        emitGetCode(PlainGregorianDateTime::monthOffset, PlainGregorianDateTime::monthMask, PlainGregorianDateTime::monthWidth, /* isSigned */ false);
         break;
     case DatePrototypeGetDateIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMonthDay(), operationDateGetDate);
-        break;
     case DatePrototypeGetUTCDateIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMonthDay(), operationDateGetUTCDate);
+        emitGetCode(PlainGregorianDateTime::monthDayOffset, PlainGregorianDateTime::monthDayMask, PlainGregorianDateTime::monthDayWidth, /* isSigned */ false);
         break;
     case DatePrototypeGetDayIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfWeekDay(), operationDateGetDay);
-        break;
     case DatePrototypeGetUTCDayIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfWeekDay(), operationDateGetUTCDay);
+        emitGetCode(PlainGregorianDateTime::weekDayOffset, PlainGregorianDateTime::weekDayMask, PlainGregorianDateTime::weekDayWidth, /* isSigned */ false);
         break;
     case DatePrototypeGetHoursIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfHour(), operationDateGetHours);
-        break;
     case DatePrototypeGetUTCHoursIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfHour(), operationDateGetUTCHours);
+        emitGetCode(PlainGregorianDateTime::hourOffset, PlainGregorianDateTime::hourMask, PlainGregorianDateTime::hourWidth, /* isSigned */ false);
         break;
     case DatePrototypeGetMinutesIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfMinute(), operationDateGetMinutes);
-        break;
     case DatePrototypeGetUTCMinutesIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfMinute(), operationDateGetUTCMinutes);
+        emitGetCode(PlainGregorianDateTime::minuteOffset, PlainGregorianDateTime::minuteMask, PlainGregorianDateTime::minuteWidth, /* isSigned */ false);
         break;
     case DatePrototypeGetSecondsIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfSecond(), operationDateGetSeconds);
-        break;
     case DatePrototypeGetUTCSecondsIntrinsic:
-        emitGetCode(DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTimeUTC() + GregorianDateTime::offsetOfSecond(), operationDateGetUTCSeconds);
+        emitGetCode(PlainGregorianDateTime::secondOffset, PlainGregorianDateTime::secondMask, PlainGregorianDateTime::secondWidth, /* isSigned */ false);
         break;
 
-    case DatePrototypeGetTimezoneOffsetIntrinsic: {
-        emitGetCodeWithCallback(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfUTCOffsetInMinute(), operationDateGetTimezoneOffset, [&] (GPRReg offsetGPR) {
+    case DatePrototypeGetTimezoneOffsetIntrinsic:
+        emitGetCodeWithCallback(PlainGregorianDateTime::utcOffsetInMinuteOffset, PlainGregorianDateTime::utcOffsetInMinuteMask, PlainGregorianDateTime::utcOffsetInMinuteWidth, /* isSigned */ true, [&](GPRReg offsetGPR) {
             neg32(offsetGPR);
         });
         break;
-    }
 
-    case DatePrototypeGetYearIntrinsic: {
-        emitGetCodeWithCallback(DateInstanceData::offsetOfGregorianDateTimeCachedForMS(), DateInstanceData::offsetOfCachedGregorianDateTime() + GregorianDateTime::offsetOfYear(), operationDateGetYear, [&] (GPRReg yearGPR) {
+    case DatePrototypeGetYearIntrinsic:
+        emitGetCodeWithCallback(PlainGregorianDateTime::yearOffset, PlainGregorianDateTime::yearMask, PlainGregorianDateTime::yearWidth, /* isSigned */ true, [&](GPRReg yearGPR) {
             sub32(TrustedImm32(1900), yearGPR);
         });
         break;
-    }
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+// No time zone offset is ever a sub-second amount, so the local and UTC forms agree.
+void SpeculativeJIT::compileDateGetMilliseconds(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+    FPRTemporary temp1(this);
+    FPRTemporary temp2(this);
+    FPRTemporary temp3(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+    FPRReg temp1FPR = temp1.fpr();
+    FPRReg temp2FPR = temp2.fpr();
+    FPRReg temp3FPR = temp3.fpr();
+
+    speculateDateObject(node->child1(), baseGPR);
+
+    moveTrustedValue(jsNaN(), resultGPR);
+    loadDouble(Address(baseGPR, DateInstance::offsetOfInternalNumber()), temp1FPR);
+    auto isNaN = branchIfNaN(temp1FPR);
+
+    move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(static_cast<double>(msPerSecond))), temp2FPR);
+    divDouble(temp1FPR, temp2FPR, temp3FPR);
+    floorDouble(temp3FPR, temp3FPR);
+    mulDouble(temp3FPR, temp2FPR, temp3FPR);
+    subDouble(temp1FPR, temp3FPR, temp1FPR);
+    truncateDoubleToInt32(temp1FPR, resultGPR);
+    boxInt32(resultGPR, resultGPR);
+
+    isNaN.link(this);
+    jsValueResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileDateGetTime(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    FPRTemporary result(this);
+
+    GPRReg baseGPR = base.gpr();
+    FPRReg resultFPR = result.fpr();
+
+    speculateDateObject(node->child1(), baseGPR);
+
+    loadDouble(Address(baseGPR, DateInstance::offsetOfInternalNumber()), resultFPR);
+    doubleResult(resultFPR, node);
 }
 
 void SpeculativeJIT::compileDateSet(Node* node)
@@ -7291,6 +7323,8 @@ void SpeculativeJIT::compileDateSet(Node* node)
     moveDoubleConditionallyDouble(DoubleGreaterThanOrUnordered, scratch2FPR, scratch3FPR, scratch4FPR, scratch1FPR, scratch1FPR);
 
     storeDouble(scratch1FPR, Address(baseGPR, DateInstance::offsetOfInternalNumber()));
+    store64(TrustedImm64(PlainGregorianDateTime::staleMarker().payload()), Address(baseGPR, DateInstance::offsetOfCachedGregorianDateTime()));
+    store64(TrustedImm64(PlainGregorianDateTime::staleMarker().payload()), Address(baseGPR, DateInstance::offsetOfCachedGregorianDateTimeUTC()));
     doubleResult(scratch1FPR, node);
 }
 

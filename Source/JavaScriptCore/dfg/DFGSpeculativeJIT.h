@@ -1687,7 +1687,10 @@ public:
     void compileStringMatch(Node*);
     void compileStringSearch(Node*);
     void compileDateNow(Node*);
-    void compileDateGet(Node*);
+    void compileDateGetStorage(Node*);
+    void compileDateGetInt32OrNaN(Node*);
+    void compileDateGetMilliseconds(Node*);
+    void compileDateGetTime(Node*);
     void compileDateSet(Node*);
     void compileGlobalIsNaN(Node*);
     void compileNumberIsNaN(Node*);

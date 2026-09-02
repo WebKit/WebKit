@@ -667,7 +667,9 @@ namespace JSC { namespace DFG {
     macro(DataViewGetByteLengthAsInt52, NodeResultInt52) \
     /* Date access */ \
     macro(DateNow, NodeMustGenerate | NodeResultDouble) \
+    macro(DateGetStorage, NodeResultStorage) \
     macro(DateGetInt32OrNaN, NodeResultJS) \
+    macro(DateGetMilliseconds, NodeResultJS) \
     macro(DateGetTime, NodeResultDouble) \
     macro(DateSetTime, NodeMustGenerate | NodeResultDouble) \
     /* Promise */ \

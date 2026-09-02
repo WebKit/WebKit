@@ -41,36 +41,33 @@ void DateInstance::finishCreation(VM& vm, double time)
     m_internalNumber = timeClip(time);
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTime(DateCache& cache) const
+// An instance that has never decomposed anything still holds the time value it was built with, so
+// some other Date may well have decomposed the same value already. Once it has been walked forward
+// its values are its own and the shared memo can only miss.
+static DateCache::UseSharedCache useSharedCacheFor(PlainGregorianDateTime cached)
 {
-    double milli = internalNumber();
-    if (std::isnan(milli))
-        return nullptr;
-
-    if (!m_data)
-        m_data = cache.cachedDateInstanceData(milli);
-
-    if (m_data->m_gregorianDateTimeCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, TimeType::LocalTime, m_data->m_cachedGregorianDateTime);
-        m_data->m_gregorianDateTimeCachedForMS = milli;
-    }
-    return &m_data->m_cachedGregorianDateTime;
+    return cached.hasNeverBeenComputed() ? DateCache::UseSharedCache::Yes : DateCache::UseSharedCache::No;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(DateCache& cache) const
+PlainGregorianDateTime DateInstance::calculateGregorianDateTime(DateCache& cache) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
-        return nullptr;
+        return { };
 
-    if (!m_data)
-        m_data = cache.cachedDateInstanceData(milli);
+    m_cachedGregorianDateTime = cache.msToGregorianDateTime(milli, TimeType::LocalTime, useSharedCacheFor(m_cachedGregorianDateTime));
+    cache.noteCachedLocalGregorianDateTime();
+    return m_cachedGregorianDateTime;
+}
 
-    if (m_data->m_gregorianDateTimeUTCCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, TimeType::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
-        m_data->m_gregorianDateTimeUTCCachedForMS = milli;
-    }
-    return &m_data->m_cachedGregorianDateTimeUTC;
+PlainGregorianDateTime DateInstance::calculateGregorianDateTimeUTC(DateCache& cache) const
+{
+    double milli = internalNumber();
+    if (std::isnan(milli))
+        return { };
+
+    m_cachedGregorianDateTimeUTC = cache.msToGregorianDateTime(milli, TimeType::UTCTime, useSharedCacheFor(m_cachedGregorianDateTimeUTC));
+    return m_cachedGregorianDateTimeUTC;
 }
 
 } // namespace JSC

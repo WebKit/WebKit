@@ -5886,7 +5886,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case DateGetInt32OrNaN: {
+    case DateGetStorage: {
+        clearForNode(node);
+        break;
+    }
+
+    case DateGetInt32OrNaN:
+    case DateGetMilliseconds: {
         setNonCellTypeForNode(node, SpecInt32Only | SpecDoublePureNaN);
         break;
     }

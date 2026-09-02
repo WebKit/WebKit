@@ -42,7 +42,7 @@ setTimeout(() => {
     expect("PST offset (hit)", pstUTC.getTimezoneOffset(), 480);
     expect("PDT offset (hit)", pdtUTC.getTimezoneOffset(), 420);
 
-    // --- DateInstanceCache (m_dateInstanceCache) ---
+    // --- Cached broken-down date ---
     // Re-querying the same Date should be consistent.
     expect("PST hours",        pstUTC.getHours(), 1);
     expect("PST hours (hit)",  pstUTC.getHours(), 1);

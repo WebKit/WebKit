@@ -480,22 +480,8 @@ JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterflyWithIndexingHeaderAndVe
 JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo*, JSFunction*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationDateNow, double, (void));
-JSC_DECLARE_JIT_OPERATION(operationDateGetFullYear, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCFullYear, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetMonth, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCMonth, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetDate, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCDate, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetDay, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCDay, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetHours, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCHours, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetMinutes, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCMinutes, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetSeconds, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetUTCSeconds, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetTimezoneOffset, EncodedJSValue, (VM*, DateInstance*));
-JSC_DECLARE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM*, DateInstance*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationDateGetStorage, uint64_t, (VM*, DateInstance*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationDateGetStorageUTC, uint64_t, (VM*, DateInstance*));
 
 JSC_DECLARE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject*, int64_t));
 JSC_DECLARE_JIT_OPERATION(operationUInt64ToBigInt, EncodedJSValue, (JSGlobalObject*, uint64_t));

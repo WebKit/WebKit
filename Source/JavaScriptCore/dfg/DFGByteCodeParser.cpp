@@ -5106,27 +5106,50 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case DatePrototypeGetFullYearIntrinsic:
-        case DatePrototypeGetUTCFullYearIntrinsic:
-        case DatePrototypeGetMonthIntrinsic:
-        case DatePrototypeGetUTCMonthIntrinsic:
-        case DatePrototypeGetDateIntrinsic:
-        case DatePrototypeGetUTCDateIntrinsic:
-        case DatePrototypeGetDayIntrinsic:
-        case DatePrototypeGetUTCDayIntrinsic:
-        case DatePrototypeGetHoursIntrinsic:
-        case DatePrototypeGetUTCHoursIntrinsic:
-        case DatePrototypeGetMinutesIntrinsic:
-        case DatePrototypeGetUTCMinutesIntrinsic:
-        case DatePrototypeGetSecondsIntrinsic:
-        case DatePrototypeGetUTCSecondsIntrinsic:
         case DatePrototypeGetMillisecondsIntrinsic:
-        case DatePrototypeGetUTCMillisecondsIntrinsic:
+        case DatePrototypeGetUTCMillisecondsIntrinsic: {
+            insertChecks();
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            setResult(addToGraph(DateGetMilliseconds, OpInfo(), OpInfo(prediction), base));
+            return CallOptimizationResult::Inlined;
+        }
+
+        case DatePrototypeGetUTCFullYearIntrinsic:
+        case DatePrototypeGetUTCMonthIntrinsic:
+        case DatePrototypeGetUTCDateIntrinsic:
+        case DatePrototypeGetUTCDayIntrinsic:
+        case DatePrototypeGetUTCHoursIntrinsic:
+        case DatePrototypeGetUTCMinutesIntrinsic:
+        case DatePrototypeGetUTCSecondsIntrinsic:
+        case DatePrototypeGetFullYearIntrinsic:
+        case DatePrototypeGetMonthIntrinsic:
+        case DatePrototypeGetDateIntrinsic:
+        case DatePrototypeGetDayIntrinsic:
+        case DatePrototypeGetHoursIntrinsic:
+        case DatePrototypeGetMinutesIntrinsic:
+        case DatePrototypeGetSecondsIntrinsic:
         case DatePrototypeGetTimezoneOffsetIntrinsic:
         case DatePrototypeGetYearIntrinsic: {
             insertChecks();
+            // Every field comes out of one packed word, so the load and its validity check are a
+            // separate node that all the accessors on a Date share.
+            bool isUTC = false;
+            switch (intrinsic) {
+            case DatePrototypeGetUTCFullYearIntrinsic:
+            case DatePrototypeGetUTCMonthIntrinsic:
+            case DatePrototypeGetUTCDateIntrinsic:
+            case DatePrototypeGetUTCDayIntrinsic:
+            case DatePrototypeGetUTCHoursIntrinsic:
+            case DatePrototypeGetUTCMinutesIntrinsic:
+            case DatePrototypeGetUTCSecondsIntrinsic:
+                isUTC = true;
+                break;
+            default:
+                break;
+            }
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
-            setResult(addToGraph(DateGetInt32OrNaN, OpInfo(intrinsic), OpInfo(prediction), base));
+            Node* storage = addToGraph(DateGetStorage, OpInfo(isUTC), OpInfo(), base);
+            setResult(addToGraph(DateGetInt32OrNaN, OpInfo(intrinsic), OpInfo(prediction), Edge(storage, KnownStorageUse)));
             return CallOptimizationResult::Inlined;
         }
 

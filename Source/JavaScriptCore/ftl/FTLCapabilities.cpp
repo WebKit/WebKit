@@ -523,7 +523,9 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case DataViewGetFloat:
     case DataViewSet:
     case DateNow:
+    case DateGetStorage:
     case DateGetInt32OrNaN:
+    case DateGetMilliseconds:
     case DateGetTime:
     case DateSetTime:
     case ResolvePromiseFirstResolving:

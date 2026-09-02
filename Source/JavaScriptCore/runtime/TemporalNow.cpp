@@ -131,8 +131,7 @@ static ISO8601::PlainDateTime systemDateTime(JSGlobalObject* globalObject, JSVal
     if (!tzOpt) {
         // Fast path for system tz: use DateCache's cached offset directly,
         // then decompose via the canonical exactTimeToLocalDateAndTime.
-        GregorianDateTime dt;
-        vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, dt);
+        auto dt = vm.dateCache.msToGregorianDateTime(static_cast<double>(exactTime.floorEpochMilliseconds()), TimeType::LocalTime, DateCache::UseSharedCache::No);
         int64_t offsetNs = static_cast<int64_t>(dt.utcOffsetInMinute()) * WTF::Int64Milliseconds::msPerMinute * static_cast<int64_t>(ISO8601::ExactTime::nsPerMillisecond);
         return TemporalCore::exactTimeToLocalDateAndTime(exactTime, offsetNs);
     }

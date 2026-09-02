@@ -39,6 +39,14 @@
 
 namespace JSC { namespace DFG {
 
+// The independently cached pieces of a Date, used to keep their heap locations apart.
+enum class DateField : int64_t {
+    LocalBreakdown,
+    UTCBreakdown,
+    TimeValue,
+    Milliseconds,
+};
+
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
 void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
 {
@@ -2638,10 +2646,23 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node, node->validRadixConstant()));
         return;
 
-    case DateGetTime:
-    case DateGetInt32OrNaN: {
+    case DateGetStorage: {
         read(JSDateFields);
-        def(HeapLocation(DateFieldLoc, AbstractHeap(JSDateFields, static_cast<uint64_t>(node->intrinsic())), node->child1()), LazyNode(node));
+        def(HeapLocation(DateFieldLoc, AbstractHeap(JSDateFields, static_cast<int64_t>(node->isUTC() ? DateField::UTCBreakdown : DateField::LocalBreakdown)), node->child1()), LazyNode(node));
+        return;
+    }
+
+    // The individual fields are extracted from the storage node's payload, so they carry no
+    // dependency on the Date beyond it.
+    case DateGetInt32OrNaN: {
+        def(PureValue(node, static_cast<uint64_t>(node->intrinsic())));
+        return;
+    }
+
+    case DateGetTime:
+    case DateGetMilliseconds: {
+        read(JSDateFields);
+        def(HeapLocation(DateFieldLoc, AbstractHeap(JSDateFields, static_cast<int64_t>(node->op() == DateGetTime ? DateField::TimeValue : DateField::Milliseconds)), node->child1()), LazyNode(node));
         return;
     }
 

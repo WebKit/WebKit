@@ -21,18 +21,13 @@
 #pragma once
 
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/PlainGregorianDateTime.h>
 
 namespace JSC {
 
 class DateInstance final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
-    static void destroy(JSCell* cell)
-    {
-        static_cast<DateInstance*>(cell)->DateInstance::~DateInstance();
-    }
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -55,39 +50,54 @@ public:
     }
 
     double internalNumber() const { return m_internalNumber; }
-    void setInternalNumber(double value) { m_internalNumber = value; }
+    void setInternalNumber(double value)
+    {
+        // Marked stale rather than cleared: a cleared payload means this instance has never
+        // decomposed anything, which is what tells DateCache its shared memo is worth probing.
+        m_internalNumber = value;
+        m_cachedGregorianDateTime = PlainGregorianDateTime::staleMarker();
+        m_cachedGregorianDateTimeUTC = PlainGregorianDateTime::staleMarker();
+    }
 
     DECLARE_EXPORT_INFO;
 
-    const GregorianDateTime* gregorianDateTime(DateCache& cache) const
+    PlainGregorianDateTime gregorianDateTime(DateCache& cache) const
     {
-        if (m_data && m_data->m_gregorianDateTimeCachedForMS == internalNumber())
-            return &m_data->m_cachedGregorianDateTime;
+        if (m_cachedGregorianDateTime)
+            return m_cachedGregorianDateTime;
         return calculateGregorianDateTime(cache);
     }
 
-    const GregorianDateTime* gregorianDateTimeUTC(DateCache& cache) const
+    PlainGregorianDateTime gregorianDateTimeUTC(DateCache& cache) const
     {
-        if (m_data && m_data->m_gregorianDateTimeUTCCachedForMS == internalNumber())
-            return &m_data->m_cachedGregorianDateTimeUTC;
+        if (m_cachedGregorianDateTimeUTC)
+            return m_cachedGregorianDateTimeUTC;
         return calculateGregorianDateTimeUTC(cache);
     }
+
+    // A cached local-time breakdown is only valid for the time zone it was computed in, and
+    // nothing tracks which instances hold one, so every live Date is swept on a zone change.
+    // Cleared rather than marked stale: DateCache has just dropped its shared memo too, so the
+    // next decomposition may as well repopulate it.
+    void invalidateCachedLocalGregorianDateTime() { m_cachedGregorianDateTime = { }; }
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static constexpr ptrdiff_t offsetOfInternalNumber() { return OBJECT_OFFSETOF(DateInstance, m_internalNumber); }
-    static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
+    static constexpr ptrdiff_t offsetOfCachedGregorianDateTime() { return OBJECT_OFFSETOF(DateInstance, m_cachedGregorianDateTime); }
+    static constexpr ptrdiff_t offsetOfCachedGregorianDateTimeUTC() { return OBJECT_OFFSETOF(DateInstance, m_cachedGregorianDateTimeUTC); }
 
 private:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
 
     DECLARE_DEFAULT_FINISH_CREATION;
     JS_EXPORT_PRIVATE void finishCreation(VM&, double);
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(DateCache&) const;
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(DateCache&) const;
+    JS_EXPORT_PRIVATE PlainGregorianDateTime calculateGregorianDateTime(DateCache&) const;
+    JS_EXPORT_PRIVATE PlainGregorianDateTime calculateGregorianDateTimeUTC(DateCache&) const;
 
     double m_internalNumber { PNaN };
-    mutable RefPtr<DateInstanceData> m_data;
+    mutable PlainGregorianDateTime m_cachedGregorianDateTime;
+    mutable PlainGregorianDateTime m_cachedGregorianDateTimeUTC;
 };
 
 } // namespace JSC

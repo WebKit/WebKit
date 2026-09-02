@@ -1,6 +1,6 @@
 //@ skip
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=318362
-// Skipped: exposes a known, deferred bug. Distinct from the DateInstanceData
+// Skipped: exposes a known, deferred bug. Distinct from the cached-breakdown
 // staleness covered by intl-datetimeformat-stale-data-*-across-tz-change.js:
 // there the stale state is a held Date instance's cached GregorianDateTime,
 // while here even a freshly created Date is affected. The per-global default
@@ -46,7 +46,7 @@ setTimeout(() => {
         expect("post-change tz",
             new Intl.DateTimeFormat().resolvedOptions().timeZone, "Asia/Tokyo");
 
-        // A fresh Date cannot carry stale DateInstanceData; any disagreement
+        // A fresh Date cannot carry a stale cached breakdown; any disagreement
         // below belongs to the default formatters.
         const fresh = new Date(ms);
         expect("fresh JST hours", fresh.getHours(), 9);

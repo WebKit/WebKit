@@ -760,7 +760,6 @@
 		148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A7BEE1B82975A002D9157 /* InlineCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1498CAD6214BF36D00710879 /* GetByIdMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 1498CAD5214BF36D00710879 /* GetByIdMetadata.h */; };
-		14A1563210966365006FA260 /* DateInstanceCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A1563010966365006FA260 /* DateInstanceCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14A4680C216FA565000D2B1A /* Instruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A4680A216FA535000D2B1A /* Instruction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14A4680D216FA56A000D2B1A /* OpcodeSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A4680B216FA535000D2B1A /* OpcodeSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14AB66761DECF40900A56C26 /* UnlinkedSourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AB66751DECF40900A56C26 /* UnlinkedSourceCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -830,6 +829,7 @@
 		23968F0E2F295B1B001AED63 /* WebAssemblySuspending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */; };
 		23968F0F2F295B1B001AED63 /* WebAssemblyPromising.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0A2F295B1B001AED63 /* WebAssemblyPromising.h */; };
 		23A356912E9790F40039C82A /* PinballCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A3568E2E9790F40039C82A /* PinballCompletion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		710F1F95C1B741FAAF6A6D72 /* PlainGregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 43EB284C77A74A0FA1BAE8B5 /* PlainGregorianDateTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23A9696C2E95A903005A36F5 /* EvacuatedStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A969692E95A903005A36F5 /* EvacuatedStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23D7A3E22F3D0F4C00A27B88 /* JSPIContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D7A3E02F3D0F4C00A27B88 /* JSPIContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23D7A3E32F3D0F4C00A27B88 /* JSPIContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D7A3E12F3D0F4C00A27B88 /* JSPIContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4114,7 +4114,6 @@
 		1498CAD5214BF36D00710879 /* GetByIdMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByIdMetadata.h; sourceTree = "<group>"; };
 		149B24FF0D8AF6D1009CB8C7 /* Register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Register.h; sourceTree = "<group>"; };
 		149DAAF212EB559D0083B12B /* ConservativeRoots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConservativeRoots.h; sourceTree = "<group>"; };
-		14A1563010966365006FA260 /* DateInstanceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstanceCache.h; sourceTree = "<group>"; };
 		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
 		14A46809216FA534000D2B1A /* Fits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fits.h; sourceTree = "<group>"; };
 		14A4680A216FA535000D2B1A /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruction.h; sourceTree = "<group>"; };
@@ -4249,6 +4248,7 @@
 		23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspending.h; path = js/WebAssemblySuspending.h; sourceTree = "<group>"; };
 		23968F0D2F295B1B001AED63 /* WebAssemblySuspending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspending.cpp; path = js/WebAssemblySuspending.cpp; sourceTree = "<group>"; };
 		23A3568E2E9790F40039C82A /* PinballCompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinballCompletion.h; sourceTree = "<group>"; };
+		43EB284C77A74A0FA1BAE8B5 /* PlainGregorianDateTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlainGregorianDateTime.h; sourceTree = "<group>"; };
 		23A3568F2E9790F40039C82A /* PinballCompletion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PinballCompletion.cpp; sourceTree = "<group>"; };
 		23A969692E95A903005A36F5 /* EvacuatedStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EvacuatedStack.h; sourceTree = "<group>"; };
 		23A9696A2E95A903005A36F5 /* EvacuatedStack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EvacuatedStack.cpp; sourceTree = "<group>"; };
@@ -8975,7 +8975,6 @@
 				D21202290AD4310C00ED79B6 /* DateConversion.h */,
 				BC1166000E1997B1008066DD /* DateInstance.cpp */,
 				BC1166010E1997B1008066DD /* DateInstance.h */,
-				14A1563010966365006FA260 /* DateInstanceCache.h */,
 				276B38AA2A71D1E700252F4E /* DateInstanceInlines.h */,
 				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
 				BCD203480E17135E002C7E82 /* DatePrototype.h */,
@@ -9612,6 +9611,7 @@
 				23A3568E2E9790F40039C82A /* PinballCompletion.h */,
 				23CD2E2C2F908FC900119878 /* PinballHandlerContext.cpp */,
 				8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */,
+				43EB284C77A74A0FA1BAE8B5 /* PlainGregorianDateTime.h */,
 				CE20BD02237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.cpp */,
 				CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */,
 				86B8690224B8A20800487C95 /* PrivateFieldPutKind.cpp */,
@@ -11707,7 +11707,6 @@
 				276B38A92A71D1CB00252F4E /* DateConstructorInlines.h in Headers */,
 				41359CF30FDD89AD00206180 /* DateConversion.h in Headers */,
 				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
-				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
 				276B38AD2A71D1E800252F4E /* DateInstanceInlines.h in Headers */,
 				BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */,
 				276B38AE2A71D1E800252F4E /* DatePrototypeInlines.h in Headers */,
@@ -12725,6 +12724,7 @@
 				23A356912E9790F40039C82A /* PinballCompletion.h in Headers */,
 				F04DFCBEDED74A4E92B8A9DA /* PinballHandlerContext.h in Headers */,
 				FFF79F9A2FB2F1B2003FF02A /* PlainDateTimeCore.h in Headers */,
+				710F1F95C1B741FAAF6A6D72 /* PlainGregorianDateTime.h in Headers */,
 				0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */,
 				521131F71F82BF14007CCEEE /* PolyProtoAccessChain.h in Headers */,
 				0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */,

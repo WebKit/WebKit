@@ -106,13 +106,13 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
         return throwVMTypeError(globalObject, scope);
 
     Integrity::auditStructureID(thisDateObj->structureID());
-    const GregorianDateTime* gregorianDateTime = asUTCVariant
+    auto gregorianDateTime = asUTCVariant
         ? thisDateObj->gregorianDateTimeUTC(cache)
         : thisDateObj->gregorianDateTime(cache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
 
-    return JSValue::encode(jsNontrivialString(vm, formatDateTime(*gregorianDateTime, format, asUTCVariant, cache)));
+    return JSValue::encode(jsNontrivialString(vm, formatDateTime(gregorianDateTime, format, asUTCVariant, cache)));
 }
 
 
@@ -128,11 +128,34 @@ static void applyToNumberToOtherwiseIgnoredArguments(JSGlobalObject* globalObjec
     }
 }
 
+// The broken-down date a setter builds its new time value from. It is deliberately not a
+// PlainGregorianDateTime: that type is packed and range-checked, while these fields have to hold
+// whatever out-of-range year or month the caller passed before the result is clipped.
+struct BrokenDownDate {
+    BrokenDownDate() = default;
+    explicit BrokenDownDate(PlainGregorianDateTime t)
+        : year(t.year())
+        , month(t.month())
+        , monthDay(t.monthDay())
+        , hour(t.hour())
+        , minute(t.minute())
+        , second(t.second())
+    {
+    }
+
+    int year { 0 };
+    int month { 0 };
+    int monthDay { 0 };
+    int hour { 0 };
+    int minute { 0 };
+    int second { 0 };
+};
+
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
 // ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
 //
 // Format of member function: f([hour,] [min,] [sec,] [ms])
-static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs, double* ms, GregorianDateTime* t)
+static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs, double* ms, BrokenDownDate* t)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -143,7 +166,7 @@ static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame*
 
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
-        t->setHour(0);
+        t->hour = 0;
         double hours = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         milliseconds += hours * msPerHour;
@@ -151,7 +174,7 @@ static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame*
 
     // minutes
     if (maxArgs >= 3 && idx < numArgs) {
-        t->setMinute(0);
+        t->minute = 0;
         double minutes = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         milliseconds += minutes * msPerMinute;
@@ -159,7 +182,7 @@ static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame*
 
     // seconds
     if (maxArgs >= 2 && idx < numArgs) {
-        t->setSecond(0);
+        t->second = 0;
         double seconds = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         milliseconds += seconds * msPerSecond;
@@ -181,7 +204,7 @@ static bool fillStructuresUsingTimeArgs(JSGlobalObject* globalObject, CallFrame*
 // ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
 //
 // Format of member function: f([years,] [months,] [days])
-static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs, double *ms, GregorianDateTime *t)
+static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs, double *ms, BrokenDownDate* t)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -189,17 +212,17 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
     bool ok = true;
     unsigned idx = 0;
     unsigned numArgs = std::min<unsigned>(callFrame->argumentCount(), maxArgs);
-  
+
     // years
     if (maxArgs >= 3 && idx < numArgs) {
         double years = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
 
-        // The GregorianDateTime class represents `years` as `int`.
+        // The broken-down date represents `years` as `int`.
         // Therefore, if the `years` exceeds the maximum representable `int`, date calculations may produce incorrect results.
         // The condidtion, `std::abs(years) <= msToYear(WTF::maxECMAScriptTime)`, is used as a safeguard before `timeClip(double)`.
         ok = ok && std::isfinite(years) && std::abs(years) <= msToYear(WTF::maxECMAScriptTime);
-        t->setYear(toInt32(years));
+        t->year = toInt32(years);
     }
     // months
     if (maxArgs >= 2 && idx < numArgs) {
@@ -207,17 +230,17 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
         RETURN_IF_EXCEPTION(scope, false);
         double years = months / 12;
         ok = ok && std::isfinite(months) && std::abs(years) <= msToYear(WTF::maxECMAScriptTime);
-        t->setMonth(toInt32(months));
+        t->month = toInt32(months);
     }
     // days
     if (idx < numArgs) {
         double days = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         ok = ok && std::isfinite(days);
-        t->setMonthDay(0);
+        t->monthDay = 0;
         *ms += days * msPerDay;
     }
-    
+
     return ok;
 }
 
@@ -327,7 +350,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
     if (!std::isfinite(thisDateObj->internalNumber()))
         return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid Date"_s));
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
 
@@ -338,12 +361,12 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
     if (ms < 0)
         ms += msPerSecond;
 
-    int year = gregorianDateTime->year();
-    int month = gregorianDateTime->month() + 1;
-    int day = gregorianDateTime->monthDay();
-    int hour = gregorianDateTime->hour();
-    int minute = gregorianDateTime->minute();
-    int second = gregorianDateTime->second();
+    int year = gregorianDateTime.year();
+    int month = gregorianDateTime.month() + 1;
+    int day = gregorianDateTime.monthDay();
+    int hour = gregorianDateTime.hour();
+    int minute = gregorianDateTime.minute();
+    int second = gregorianDateTime.second();
 
     String prefix;
     auto yearDigits = 4;
@@ -412,10 +435,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetFullYear, (JSGlobalObject* globalObject
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->year()));
+    return JSValue::encode(jsNumber(gregorianDateTime.year()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCFullYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -427,10 +450,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCFullYear, (JSGlobalObject* globalObj
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->year()));
+    return JSValue::encode(jsNumber(gregorianDateTime.year()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -442,10 +465,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMonth, (JSGlobalObject* globalObject, C
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->month()));
+    return JSValue::encode(jsNumber(gregorianDateTime.month()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -457,10 +480,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMonth, (JSGlobalObject* globalObject
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->month()));
+    return JSValue::encode(jsNumber(gregorianDateTime.month()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -472,10 +495,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDate, (JSGlobalObject* globalObject, Ca
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->monthDay()));
+    return JSValue::encode(jsNumber(gregorianDateTime.monthDay()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -487,10 +510,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDate, (JSGlobalObject* globalObject,
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->monthDay()));
+    return JSValue::encode(jsNumber(gregorianDateTime.monthDay()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDay, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -502,10 +525,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDay, (JSGlobalObject* globalObject, Cal
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->weekDay()));
+    return JSValue::encode(jsNumber(gregorianDateTime.weekDay()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDay, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -517,10 +540,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDay, (JSGlobalObject* globalObject, 
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->weekDay()));
+    return JSValue::encode(jsNumber(gregorianDateTime.weekDay()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -532,10 +555,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetHours, (JSGlobalObject* globalObject, C
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->hour()));
+    return JSValue::encode(jsNumber(gregorianDateTime.hour()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -547,10 +570,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCHours, (JSGlobalObject* globalObject
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->hour()));
+    return JSValue::encode(jsNumber(gregorianDateTime.hour()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -562,10 +585,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMinutes, (JSGlobalObject* globalObject,
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->minute()));
+    return JSValue::encode(jsNumber(gregorianDateTime.minute()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -577,10 +600,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMinutes, (JSGlobalObject* globalObje
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->minute()));
+    return JSValue::encode(jsNumber(gregorianDateTime.minute()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -592,10 +615,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetSeconds, (JSGlobalObject* globalObject,
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->second()));
+    return JSValue::encode(jsNumber(gregorianDateTime.second()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -607,10 +630,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCSeconds, (JSGlobalObject* globalObje
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(gregorianDateTime->second()));
+    return JSValue::encode(jsNumber(gregorianDateTime.second()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMilliSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -660,10 +683,10 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetTimezoneOffset, (JSGlobalObject* global
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
-    return JSValue::encode(jsNumber(-gregorianDateTime->utcOffsetInMinute()));
+    return JSValue::encode(jsNumber(-gregorianDateTime.utcOffsetInMinute()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -705,11 +728,11 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
             thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
     }
-     
+
     double secs = floor(milli / msPerSecond);
     double ms = milli - secs * msPerSecond;
 
-    const GregorianDateTime* other = inputTimeType == TimeType::UTCTime
+    auto other = inputTimeType == TimeType::UTCTime
         ? thisDateObj->gregorianDateTimeUTC(cache)
         : thisDateObj->gregorianDateTime(cache);
     if (!other) {
@@ -718,15 +741,15 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
         return JSValue::encode(jsNaN());
     }
 
-    GregorianDateTime gregorianDateTime(*other);
+    BrokenDownDate gregorianDateTime(other);
     bool success = fillStructuresUsingTimeArgs(globalObject, callFrame, numArgsToUse, &ms, &gregorianDateTime);
     RETURN_IF_EXCEPTION(scope, { });
     if (!success) {
         thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
-    } 
+    }
 
-    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime, ms, inputTimeType);
+    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime.year, gregorianDateTime.month, gregorianDateTime.monthDay, gregorianDateTime.hour, gregorianDateTime.minute, gregorianDateTime.second, ms, inputTimeType);
     double result = timeClip(newUTCDate);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
@@ -749,14 +772,14 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
     }
 
     double milli = thisDateObj->internalNumber();
-    double ms = 0; 
+    double ms = 0;
 
-    GregorianDateTime gregorianDateTime; 
-    if (numArgsToUse == 3 && std::isnan(milli)) 
-        cache.msToGregorianDateTime(0, TimeType::UTCTime, gregorianDateTime);
-    else { 
-        ms = milli - floor(milli / msPerSecond) * msPerSecond; 
-        const GregorianDateTime* other = inputTimeType == TimeType::UTCTime
+    BrokenDownDate gregorianDateTime;
+    if (numArgsToUse == 3 && std::isnan(milli))
+        gregorianDateTime = BrokenDownDate(cache.msToGregorianDateTime(0, TimeType::UTCTime));
+    else {
+        ms = milli - floor(milli / msPerSecond) * msPerSecond;
+        auto other = inputTimeType == TimeType::UTCTime
             ? thisDateObj->gregorianDateTimeUTC(cache)
             : thisDateObj->gregorianDateTime(cache);
         if (!other) {
@@ -764,17 +787,17 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
             RETURN_IF_EXCEPTION(scope, { });
             return JSValue::encode(jsNaN());
         }
-        gregorianDateTime = *other;
+        gregorianDateTime = BrokenDownDate(other);
     }
-    
+
     bool success = fillStructuresUsingDateArgs(globalObject, callFrame, numArgsToUse, &ms, &gregorianDateTime);
     RETURN_IF_EXCEPTION(scope, { });
     if (!success) {
         thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
-    } 
+    }
 
-    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime, ms, inputTimeType);
+    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime.year, gregorianDateTime.month, gregorianDateTime.monthDay, gregorianDateTime.hour, gregorianDateTime.minute, gregorianDateTime.second, ms, inputTimeType);
     double result = timeClip(newUTCDate);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
@@ -869,16 +892,15 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
     double milli = thisDateObj->internalNumber();
     double ms = 0;
 
-    GregorianDateTime gregorianDateTime;
+    BrokenDownDate gregorianDateTime;
     if (std::isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN.
-        cache.msToGregorianDateTime(0, TimeType::UTCTime, gregorianDateTime);
+        gregorianDateTime = BrokenDownDate(cache.msToGregorianDateTime(0, TimeType::UTCTime));
     else {
         double secs = floor(milli / msPerSecond);
         ms = milli - secs * msPerSecond;
-        if (const GregorianDateTime* other = thisDateObj->gregorianDateTime(cache))
-            gregorianDateTime = *other;
+        gregorianDateTime = BrokenDownDate(thisDateObj->gregorianDateTime(cache));
     }
 
     double year = callFrame->argument(0).toIntegerPreserveNaN(globalObject);
@@ -888,8 +910,8 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsNaN());
     }
 
-    gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
-    double timeInMilliseconds = cache.gregorianDateTimeToMS(gregorianDateTime, ms, TimeType::LocalTime);
+    gregorianDateTime.year = toInt32((year >= 0 && year <= 99) ? (year + 1900) : year);
+    double timeInMilliseconds = cache.gregorianDateTimeToMS(gregorianDateTime.year, gregorianDateTime.month, gregorianDateTime.monthDay, gregorianDateTime.hour, gregorianDateTime.minute, gregorianDateTime.second, ms, TimeType::LocalTime);
     double result = timeClip(timeInMilliseconds);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
@@ -904,12 +926,12 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetYear, (JSGlobalObject* globalObject, Ca
     if (!thisDateObj) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
+    auto gregorianDateTime = thisDateObj->gregorianDateTime(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNaN());
 
     // NOTE: IE returns the full year even in getYear.
-    return JSValue::encode(jsNumber(gregorianDateTime->year() - 1900));
+    return JSValue::encode(jsNumber(gregorianDateTime.year() - 1900));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))

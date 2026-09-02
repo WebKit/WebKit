@@ -29,6 +29,7 @@
 #include "ISO8601.h"
 #include "TemporalObject.h"
 #include <wtf/DateMath.h>
+#include <wtf/GregorianDateTime.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 

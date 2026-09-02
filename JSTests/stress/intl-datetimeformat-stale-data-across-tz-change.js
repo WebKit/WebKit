@@ -3,14 +3,9 @@
 // Regression coverage for stale-cached-GregorianDateTime on a DateInstance
 // across a time zone change.
 //
-// DateInstance lazily fetches a DateInstanceData from m_dateInstanceCache on
-// the first accessor call and stores it in m_data. Subsequent accessors (in
-// both the C++ slow path and the DFG/FTL inline fast paths) only re-compute
-// when the receiver's ms changes (`m_gregorianDateTimeCachedForMS != milli`).
-// After a TZ change, DateCache::clearForTimeZoneChange poisons that sentinel on
-// the DateInstanceData still resident in the cache slots, so a DateInstance
-// pointing at one of them takes a forced miss and recomputes against the new
-// local zone.
+// A DateInstance caches the broken-down local time it last computed, and both the C++ slow path
+// and the DFG/FTL inline fast paths hand that copy back without recomputing. It is only valid for
+// the zone it was computed in, so a host zone change has to drop it.
 
 // Spec: ECMA-262 LocalTime(t) uses "the LocalTZA of the current host
 // environment", so the same Date must reflect the new TZ after the change.

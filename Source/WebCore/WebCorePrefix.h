@@ -323,7 +323,6 @@
 #include <JavaScriptCore/DFGDoesGCCheck.h>
 #include <JavaScriptCore/DOMAnnotation.h>
 #include <JavaScriptCore/DOMAttributeGetterSetter.h>
-#include <JavaScriptCore/DateInstanceCache.h>
 #include <JavaScriptCore/DeferGC.h>
 #include <JavaScriptCore/DefinePropertyAttributes.h>
 #include <JavaScriptCore/DeleteAllCodeEffort.h>
