@@ -188,8 +188,11 @@ def main(args=None):
 
     processor = HookProcessor(checkout=checkout, database=database) if args.hooks else None
 
+    import gunicorn
+    gunicorn_path = os.path.abspath(os.path.join(gunicorn.__path__[0], '../../../../bin/gunicorn'))
+
     with subprocess.Popen(
-        [shutil.which('gunicorn'), 'reporelaypy.webserver:app'],
+        [gunicorn_path, 'reporelaypy.webserver:app'],
         cwd=os.path.dirname(os.path.dirname(reporelaypy.__file__)),
         env=passenv,
     ) as webserver:
