@@ -1471,17 +1471,21 @@ DidTearDown AXIsolatedTree::applyPendingChangesOrTearDown()
 {
     AX_ASSERT(!isMainThread());
 
-    if (!hasPendingChanges())
-        return DidTearDown::No;
-
     PendingChanges committedChanges;
     {
         Locker locker { m_changeLogLock };
 
+        // Check for destruction before consulting m_hasPendingChanges. Any other thread can consume
+        // that flag via applyPendingChanges() between queueForDestruction() and this sweep, and if it
+        // does, the tree would never be torn down: the sweep clears s_anyTreeNeedsTearDown afterwards,
+        // so the teardown signal is lost for good and the stale tree keeps serving clients forever.
         if (m_queuedForDestruction) [[unlikely]] {
             clearTreeContentsLocked();
             return DidTearDown::Yes;
         }
+
+        if (!hasPendingChanges())
+            return DidTearDown::No;
 
         committedChanges = takeCommittedChangesLocked();
     }

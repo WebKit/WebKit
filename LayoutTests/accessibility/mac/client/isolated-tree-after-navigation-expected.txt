@@ -1,0 +1,11 @@
+Checks that a new document's accessibility tree is served after a navigation, rather than the previous document's stale isolated tree. The first page builds an isolated tree, then navigates here.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: the accessibility tree serves the current document
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Second Page Heading
