@@ -2444,7 +2444,7 @@ public:
     void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&&);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
-    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, IPC::Untrusted<FrameInfoData>&&,  WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItemID)>&&);
+    void showMediaControlsContextMenu(IPC::Connection&, WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, IPC::Untrusted<FrameInfoData>&&,  WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItemID)>&&);
 #endif
 
     static RefPtr<WebPageProxy> nonEphemeralWebPageProxy();
@@ -3358,7 +3358,7 @@ private:
     void runJavaScriptConfirm(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, String&&, CompletionHandler<void(bool)>&&);
     void runJavaScriptPrompt(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, String&&, String&&, CompletionHandler<void(const String&)>&&);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(IPC::Untrusted<WebHitTestResultData>&&, OptionSet<WebEventModifier>);
+    void mouseDidMoveOverElement(IPC::Connection&, IPC::Untrusted<WebHitTestResultData>&&, OptionSet<WebEventModifier>);
     void performHitTestForModifierFlagsChangeInFrame(WebCore::FrameIdentifier, Ref<WebMouseEvent>&&);
 
     void LEGACY_NODELETE getIsViewVisible(bool&);
@@ -3512,7 +3512,7 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    void showContextMenuFromFrame(IPC::Untrusted<FrameInfoData>&&, IPC::Untrusted<ContextMenuContextData>&&, UserData&&);
+    void showContextMenuFromFrame(IPC::Connection&, IPC::Untrusted<FrameInfoData>&&, IPC::Untrusted<ContextMenuContextData>&&, UserData&&);
 #endif
 
 #if ENABLE(CONTEXT_MENU_EVENT)

@@ -4899,11 +4899,12 @@ void WebPageProxy::dispatchMouseDidMoveOverElementForModifierFlagsChange(Ref<Nat
 
 void WebPageProxy::performHitTestForModifierFlagsChangeInFrame(FrameIdentifier frameID, Ref<WebMouseEvent>&& event)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformHitTestForModifierFlagsChangeOnMouseEvent { frameID, event }, [this, protectedThis = Ref { *this }, event] (Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, OptionSet<WebEventModifier> modifiers) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformHitTestForModifierFlagsChangeOnMouseEvent { frameID, event }, [this, protectedThis = Ref { *this }, event] (IPC::Connection* connection, Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, OptionSet<WebEventModifier> modifiers) mutable {
         if (isClosed())
             return;
         WTF::switchOn(WTF::move(resultOrRemoteData), [&] (WebHitTestResultData&& hitTestResult) {
-            mouseDidMoveOverElement(IPC::Untrusted<WebHitTestResultData> { WTF::move(hitTestResult) }, modifiers);
+            if (connection)
+                mouseDidMoveOverElement(*connection, IPC::Untrusted<WebHitTestResultData> { WTF::move(hitTestResult) }, modifiers);
         }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
             event->setPosition(remoteUserInputEventData.transformedPoint);
             performHitTestForModifierFlagsChangeInFrame(remoteUserInputEventData.targetFrameID, WTF::move(event));
@@ -10410,9 +10411,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
 
 void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, IPC::Untrusted<URL>&& untrustedURL, const UserData& userData)
 {
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(url, untrustedURL, ProcessSpeaksForDomain);
 
     RefPtr protectedPageClient { pageClient() };
 
@@ -12466,11 +12465,9 @@ void WebPageProxy::setStatusText(const String& text)
     m_uiClient->setStatusText(this, text);
 }
 
-void WebPageProxy::mouseDidMoveOverElement(IPC::Untrusted<WebHitTestResultData>&& untrustedHitTestResultData, OptionSet<WebEventModifier> modifiers)
+void WebPageProxy::mouseDidMoveOverElement(IPC::Connection& connection, IPC::Untrusted<WebHitTestResultData>&& untrustedHitTestResultData, OptionSet<WebEventModifier> modifiers)
 {
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto hitTestResultData = WTF::move(untrustedHitTestResultData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(hitTestResultData, untrustedHitTestResultData, FirstPartyStructAuthority);
 #if PLATFORM(MAC)
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData, this);
 #endif
@@ -14015,14 +14012,10 @@ void WebPageProxy::hidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
 
-void WebPageProxy::showContextMenuFromFrame(IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, IPC::Untrusted<ContextMenuContextData>&& untrustedContextMenuContextData, UserData&& userData)
+void WebPageProxy::showContextMenuFromFrame(IPC::Connection& connection, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, IPC::Untrusted<ContextMenuContextData>&& untrustedContextMenuContextData, UserData&& userData)
 {
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto contextMenuContextData = WTF::move(untrustedContextMenuContextData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(contextMenuContextData, untrustedContextMenuContextData, FirstPartyStructAuthority);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(frameInfo, untrustedFrameInfo, FirstPartyStructAuthority);
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref protectedThis { *this };
 
@@ -16538,9 +16531,8 @@ private:
 
 void WebPageProxy::validateCaptureStateUpdate(IPC::Connection& connection, WebCore::UserMediaRequestIdentifier requestIdentifier, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo,
+        completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "invalid frame"_s }), FirstPartyStructAuthority);
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(clientOrigin, untrustedClientOrigin,
         completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "invalid client origin"_s }), ProcessCommittedClientOrigin);
 
@@ -16833,11 +16825,9 @@ MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermiss
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
-void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, HTMLMediaElementIdentifier identifier, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
+void WebPageProxy::showMediaControlsContextMenu(IPC::Connection& connection, FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, HTMLMediaElementIdentifier identifier, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
 {
-    // FIXME: this validated a value belonging to the sending frame against the main frame's
-    // process, which is the wrong authority under site isolation. Restored in a later commit.
-    auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, completionHandler(MediaControlsContextMenuItem::invalidID), FirstPartyStructAuthority);
     if (RefPtr pageClient = this->pageClient())
         pageClient->showMediaControlsContextMenu(WTF::move(targetFrame), WTF::move(items), frameInfo, identifier, WTF::move(completionHandler));
 }
