@@ -81,9 +81,23 @@ AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
 
 AudioWorkletMessagingProxy::~AudioWorkletMessagingProxy()
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_workletThread->stop();
     m_workletThread->clearProxies();
+#else
+    ASSERT(isMainThread());
+
+    m_workletThread->stop();
+#endif
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+void AudioWorkletMessagingProxy::detachFromThread()
+{
+    ASSERT(isMainThread());
+    m_workletThread->clearProxies();
+}
+#endif
 
 bool AudioWorkletMessagingProxy::postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
