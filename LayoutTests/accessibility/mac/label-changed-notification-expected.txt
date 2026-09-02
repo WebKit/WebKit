@@ -1,0 +1,12 @@
+This tests that changing a label's text posts AXTitleChanged, and that the labeled control already resolves to the new label text when the notification arrives.
+
+PASS: labelTextForControl() === 'Original label'
+PASS: titleChangedDeliveries() >= 1 === true
+document.getElementById('label').textContent = 'Updated label';
+PASS: titleChangedDeliveries() === 1
+PASS: labelTextAtDelivery === 'Updated label'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

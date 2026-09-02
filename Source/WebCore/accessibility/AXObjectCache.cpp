@@ -6171,6 +6171,12 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXNotification::PopoverTargetChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXProperty::SupportsExpanded, AXProperty::IsExpanded } });
             break;
+        case AXNotification::PressDidSucceed:
+            // The only presses that post this toggle a select's picker, so the expanded state
+            // has just changed. Refresh it in the same batch that posts the notification so
+            // an AT that queries in response gets the right value.
+            tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::IsExpanded });
+            break;
         case AXNotification::SelectedTextChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::SelectedTextRange });
             break;

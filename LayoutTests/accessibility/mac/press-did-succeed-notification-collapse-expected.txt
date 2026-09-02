@@ -1,0 +1,11 @@
+This tests that pressing an expanded select posts AXPressDidSucceed, and that it already reports itself collapsed when the notification arrives.
+
+PASS: pressDidSucceedDeliveries() === 0
+PASS: pressDidSucceedDeliveries() === 1
+PASS: pressDidSucceedDeliveries() === 2
+PASS: expandedAtDelivery === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
