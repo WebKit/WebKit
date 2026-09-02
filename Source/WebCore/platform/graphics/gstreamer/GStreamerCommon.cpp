@@ -39,6 +39,7 @@
 #include "VideoSinkGStreamer.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include <fnmatch.h>
+#include <gst/audio/audio-converter.h>
 #include <mutex>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -1819,6 +1820,24 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
 {
     auto colorimetry = colorimetryFromColorSpace(colorSpace);
     GST_VIDEO_INFO_COLORIMETRY(info) = colorimetry;
+}
+
+std::optional<size_t> gstAudioConverterInputFramesForOutput(GstAudioConverter* converter, size_t outputFrames, size_t availableFrames)
+{
+    // gst_audio_converter_get_in_frames() derives its answer from the resampler phase and leaves out the
+    // filter history the resampler has yet to accumulate, so on its own it asks for fewer frames than a
+    // whole chunk needs and the resampler then reads past the end of its input. Only get_out_frames()
+    // accounts for that history, so it decides both whether a chunk fits and how large it has to be.
+    if (gst_audio_converter_get_out_frames(converter, availableFrames) < outputFrames)
+        return std::nullopt;
+
+    // With a fractional ratio the phase estimate can also sit one frame above what the accumulated
+    // history makes sufficient, so never start the search beyond the frames actually available.
+    auto inputFrames = std::min<size_t>(gst_audio_converter_get_in_frames(converter, outputFrames), availableFrames);
+    while (gst_audio_converter_get_out_frames(converter, inputFrames) < outputFrames)
+        inputFrames++;
+
+    return inputFrames;
 }
 
 void configureAudioDecoderForHarnessing(const GRefPtr<GstElement>& element)

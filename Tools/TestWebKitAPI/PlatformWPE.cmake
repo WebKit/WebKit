@@ -46,6 +46,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/glib/UserAgentQuirks.cpp
 
     Tests/WebCore/gstreamer/GStreamerTest.cpp
+    Tests/WebCore/gstreamer/GstAudioConverterChunking.cpp
     Tests/WebCore/gstreamer/GstElementHarness.cpp
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp
 )

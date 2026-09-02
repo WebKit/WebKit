@@ -39,6 +39,8 @@
 #include "GraphicsTypesGL.h"
 #endif
 
+typedef struct _GstAudioConverter GstAudioConverter;
+
 namespace WebCore {
 
 class FloatSize;
@@ -285,6 +287,10 @@ bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
 
 GstElement* createAutoAudioSink(const String& role);
 GstElement* createPlatformAudioSink(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+
+// Number of input frames to hand to the converter for it to produce exactly outputFrames, or nullopt
+// when availableFrames is not enough for a whole chunk yet.
+std::optional<size_t> gstAudioConverterInputFramesForOutput(GstAudioConverter*, size_t outputFrames, size_t availableFrames);
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
     return true;
