@@ -167,6 +167,7 @@
 		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		F5971BD071D50EA78EF87EE5 /* UnifiedSource53-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DBC072EC3DC8EA98F7B7BEE /* UnifiedSource53-nonARC.mm */; };
 		FE9CD7E42D10CE7500266FDD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
+		2B7E14D63A5F60718293C1A3 /* SyntheticNSEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -541,6 +542,8 @@
 		DDB3724528ECE32F00A2F32D /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDF3A82928930475005920CF /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gtest.xcodeproj; path = ../../Source/ThirdParty/gtest/xcode/gtest.xcodeproj; sourceTree = SOURCE_ROOT; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B7E14D63A5F60718293C1A1 /* SyntheticNSEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyntheticNSEvent.h; path = ../TestRunnerShared/mac/SyntheticNSEvent.h; sourceTree = "<group>"; };
+		2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyntheticNSEvent.mm; path = ../TestRunnerShared/mac/SyntheticNSEvent.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1123,6 +1126,7 @@
 				WebKit/WKWebView/mac/WindowlessWebViewWithMedia.mm,
 				WebKit/WKWebView/mac/WKWebViewCoders.mm,
 				WebKit/WKWebView/mac/WKWebViewMacEditingTests.mm,
+				WebKit/WKWebView/mac/WKWebViewMagnification.mm,
 				WebKit/WKWebView/mac/WKWebViewTitlebarSeparatorTests.mm,
 				WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm,
 				WebKit/WKWebView/MediaLoading.mm,
@@ -1998,6 +2002,8 @@
 		DD7024AE302CE42A009B6CC0 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				2B7E14D63A5F60718293C1A1 /* SyntheticNSEvent.h */,
+				2B7E14D63A5F60718293C1A2 /* SyntheticNSEvent.mm */,
 				CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */,
 			);
 			name = Shared;
@@ -2495,6 +2501,7 @@
 		7CCE7E881A41144E00447C4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				2B7E14D63A5F60718293C1A3 /* SyntheticNSEvent.mm in Sources */,
 				5C9D922C22D7DE12008E9266 /* UnifiedSource1-nonARC.mm in Sources */,
 				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,
 				5C9D922D22D7DE19008E9266 /* UnifiedSource2-nonARC.mm in Sources */,

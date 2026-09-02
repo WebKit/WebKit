@@ -419,6 +419,10 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     auto transientZoomOrigin = std::exchange(m_transientZoomOriginInLayerForPageScale, { });
     m_transientZoomOriginInVisibleRect = { };
 
+    // From now until sendCommitTransientZoom() applies it, the page scale factor still describes
+    // the scale from before the gesture, so we account for it and report this instead.
+    m_committedTransientZoomScale = scale;
+
     auto rootScrollingNodeID = scrollingCoordinatorProxy->rootScrollingNodeID();
     if (rootScrollingNodeID)
         scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(rootScrollingNodeID, WheelEventTestMonitorDeferReason::CommittingTransientZoom);
@@ -490,6 +494,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
 void RemoteLayerTreeDrawingAreaProxyMac::sendCommitTransientZoom(double scale, FloatPoint origin, std::optional<WebCore::ScrollingNodeID> rootNodeID)
 {
     updateZoomTransactionID();
+
+    m_committedTransientZoomScale = std::nullopt;
 
     RefPtr webPageProxy = page();
     if (!webPageProxy)

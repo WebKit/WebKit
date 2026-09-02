@@ -114,4 +114,5 @@ Tests/WebKit/WKWebView/mac/WillSendSubmitEvent.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/WindowlessWebViewWithMedia.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/WKWebViewCoders.mm @nonARC
 Tests/WebKit/WKWebView/mac/WKWebViewMacEditingTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WKWebViewMagnification.mm @nonARC
 Tests/WebKit/WKWebView/mac/WKWebViewTitlebarSeparatorTests.mm @nonARC

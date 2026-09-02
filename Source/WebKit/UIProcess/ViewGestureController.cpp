@@ -826,7 +826,7 @@ void ViewGestureController::prepareMagnificationGesture(FloatPoint origin)
     if (!page)
         return;
 
-    m_magnification = page->pageScaleFactor();
+    m_magnification = magnification();
     protect(page->legacyMainFrameProcess())->send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), page->webPageIDInMainFrameProcess());
 
     m_initialMagnification = m_magnification;
@@ -882,8 +882,16 @@ double ViewGestureController::magnification() const
     if (m_activeGestureType == ViewGestureType::Magnification)
         return m_magnification;
 
-    auto* page = m_webPageProxy.get();
-    return page ? page->pageScaleFactor() : 1;
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return 1;
+
+    if (RefPtr drawingArea = page->drawingArea()) {
+        if (auto committedTransientZoomScale = drawingArea->committedTransientZoomScale())
+            return *committedTransientZoomScale;
+    }
+
+    return page->pageScaleFactor();
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

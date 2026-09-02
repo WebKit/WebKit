@@ -145,6 +145,8 @@ set(TestWebKit_UNIFIED_SOURCE_EXCLUDES
 
 # Files compiled outside unified sources (Xcode membershipExceptions).
 list(APPEND TestWebKit_SOURCES
+    ${TOOLS_DIR}/TestRunnerShared/mac/SyntheticNSEvent.mm
+
     Helpers/Counters.cpp
     Helpers/DeprecatedGlobalValues.cpp
     Helpers/GraphicsTestUtilities.cpp
@@ -202,6 +204,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${WebKit_FRAMEWORK_HEADERS_DIR}
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
     ${TOOLS_DIR}/TestRunnerShared/cocoa
+    ${TOOLS_DIR}/TestRunnerShared/mac
     ${TOOLS_DIR}/TestRunnerShared/spi
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
     ${TESTWEBKITAPI_DIR}/Helpers

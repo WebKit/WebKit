@@ -263,6 +263,16 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return _page->pageScaleFactor();
 }
 
+- (CGFloat)_minMagnification
+{
+    return _page->minPageZoomFactor();
+}
+
+- (CGFloat)_maxMagnification
+{
+    return _page->maxPageZoomFactor();
+}
+
 - (void)_setContinuousSpellCheckingEnabledForTesting:(BOOL)enabled
 {
 #if PLATFORM(IOS_FAMILY)

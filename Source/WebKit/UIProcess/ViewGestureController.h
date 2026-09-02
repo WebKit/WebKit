@@ -159,7 +159,7 @@ public:
 
     bool isPhysicallySwipingLeft(SwipeDirection) const;
 
-    double NODELETE magnification() const;
+    double magnification() const;
 
     void prepareMagnificationGesture(WebCore::FloatPoint);
     void applyMagnification();

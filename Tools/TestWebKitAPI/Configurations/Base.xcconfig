@@ -41,7 +41,7 @@ CLANG_WARN_CXX0X_EXTENSIONS = NO;
 ALTERNATE_HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS_$(SDK_VARIANT));
 ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/include
 
-PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform/cocoa $(PROJECT_HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH)) $(SRCROOT)/../TestRunnerShared/spi $(SRCROOT)/../TestRunnerShared/cocoa $(SRCROOT)/../../Source/WebKit/Platform/spi/Cocoa;
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform/cocoa $(PROJECT_HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH)) $(SRCROOT)/../TestRunnerShared/spi $(SRCROOT)/../TestRunnerShared/cocoa $(SRCROOT)/../TestRunnerShared/mac $(SRCROOT)/../../Source/WebKit/Platform/spi/Cocoa;
 PROJECT_HEADER_SEARCH_PATHS_cocoatouch = $(inherited) $(SRCROOT)/../../Source/WebKit/Platform/spi/ios $(SRCROOT)/../../Source/WebKit/UIProcess/ios $(SRCROOT)/../../Source/WebKit/Shared/ios;
 
 // Needed to resolve the SPI modules WebKit's Swift interface publicly imports on public SDKs.

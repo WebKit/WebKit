@@ -102,6 +102,7 @@ public:
 
     virtual void adjustTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */, WebCore::FloatPoint /* originInVisibleRect */) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */) { }
+    virtual std::optional<double> committedTransientZoomScale() const { return std::nullopt; }
 
     virtual void viewIsBecomingVisible() { }
     virtual void viewIsBecomingInvisible() { }
