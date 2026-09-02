@@ -192,4 +192,11 @@ if (SWIFT_REQUIRED)
         # Single list item to avoid deduplication problems
         list(APPEND WebKit_PLATFORM_SWIFT_CLANG_FLAG_PAIRS "-Xcc -ivfsoverlay -Xcc ${_win_vfs_overlay}")
     endif ()
+    # The CONFIGURE_DEPENDS glob above makes Ninja re-check globs on every
+    # build, so this block can rerun in an environment that differs from the
+    # one the original configure saw. Log what it found, so two non-matching
+    # copies of these lines in one bot log expose that.
+    # https://bugs.webkit.org/show_bug.cgi?id=BUGNUMBER
+    message(STATUS "SwiftTrigger[Win]: SDKROOT=[$ENV{SDKROOT}] VCToolsInstallDir=[$ENV{VCToolsInstallDir}]")
+    message(STATUS "SwiftTrigger[Win]: modulemap_result=${_win_mm_result} vfs_overlay=[${_win_vfs_overlay}]")
 endif ()

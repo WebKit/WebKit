@@ -79,6 +79,37 @@ def _unescape(path):
     return path.replace("\\ ", " ")
 
 
+def _canonical(path):
+    """A spelling-insensitive key for paths that name the same file."""
+    return os.path.normcase(os.path.normpath(path)).replace("\\", "/")
+
+
+def report_leaked_excludes(request, deps):
+    """Warn about deps that name an excluded file but spell it differently.
+
+    The exclude test below is an exact string match, so a dependency swiftc
+    spelled another way -- backslashes, a differently cased drive letter, an
+    unnormalized path -- survives it. CMake's depfile transform and Ninja then
+    normalize that spelling back onto the node the exclude meant to drop, and
+    the dependency reappears in the graph. For request.target, which is the
+    depfile's own output, that is a self-cycle: Ninja reports "dependency
+    cycle: X -> X" and fails before running anything.
+    https://bugs.webkit.org/show_bug.cgi?id=BUGNUMBER
+    """
+    expected = {_canonical(exclude): exclude for exclude in request.excludes}
+    expected.setdefault(_canonical(request.target), request.target)
+    expected.setdefault(_canonical(request.path), request.path)
+    for dep in deps:
+        wanted = expected.get(_canonical(dep))
+        if wanted is not None and dep != wanted:
+            print(
+                f"{Path(__file__).name}: warning: dependency [{dep}] escaped the "
+                f"exclude for [{wanted}]; the two spellings name one file, so "
+                f"Ninja will re-add it as a dependency of [{request.target}]",
+                file=sys.stderr,
+            )
+
+
 def parse_depfile(path):
     """Yield the dependencies recorded in one Makefile-syntax depfile."""
     text = Path(path).read_text(errors="replace").replace("\\\n", " ")
@@ -120,6 +151,8 @@ def write_ninja_depfile(request, output_file_map):
         for dep in parse_depfile(source)
         if dep not in request.excludes
     )
+
+    report_leaked_excludes(request, deps)
 
     lines = [f"{_escape(request.target)}:"]
     lines += (f"  {_escape(dep)}" for dep in deps)

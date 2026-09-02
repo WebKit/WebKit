@@ -1210,6 +1210,26 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     set(${_outvar} ${_flags} PARENT_SCOPE)
 endfunction()
 
+# Diagnostics for the intermittent Windows "dependency cycle:
+# WebKit_SwiftRebuildTrigger.swift -> WebKit_SwiftRebuildTrigger.swift" failure.
+# https://bugs.webkit.org/show_bug.cgi?id=BUGNUMBER
+#
+# Interposes a named stamp between the Swift rebuild trigger and one group of
+# its dependencies. Ninja names every node on a cycle it reports, so routing
+# each group through a distinctly named stamp makes the error message say which
+# group closes the loop. A cycle that still reads as a bare trigger -> trigger
+# came in through the trigger's DEPFILE rather than through any of these.
+function(_webkit_swift_trigger_gate _target _label _outvar)
+    set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftTriggerGate_${_label}.stamp")
+    add_custom_command(
+        OUTPUT "${_stamp}"
+        DEPENDS ${ARGN}
+        COMMAND ${CMAKE_COMMAND} -E touch "${_stamp}"
+        COMMENT "Swift rebuild trigger gate: ${_target} ${_label}"
+        VERBATIM)
+    set(${_outvar} "${_stamp}" PARENT_SCOPE)
+endfunction()
+
 # Generates ${_resp_path}, a swiftc @-response file with the platform-derived
 # flags. Mirrors the Xcode "Generate Swift platform args" build phase.
 # Format (one token per line): -DNAME for truthy HAVE_/USE_/ENABLE_/
@@ -1550,7 +1570,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # Create a file whose mtime tracks various build changes that should
         # cause swift's driver to rerun.
         set(_trigger_path "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftRebuildTrigger.swift")
+        set(_trigger_existed TRUE)
         if (NOT EXISTS "${_trigger_path}")
+            set(_trigger_existed FALSE)
             file(WRITE "${_trigger_path}" "// Auto-generated; mtime tracks ${_target}'s Swift inputs.\n")
         endif ()
 
@@ -1584,10 +1606,17 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # cause Ninja to ingest changes made to it. swiftc-wrapper.py only
         # rewrites the file when it actually changes, so this settles instead
         # of looping.
-        set(_trigger_deps "${_resp_path}" "${_swift_depfile}")
+        #
+        # Each group goes through a named gate stamp so that a dependency-cycle
+        # error identifies the group. See _webkit_swift_trigger_gate.
+        _webkit_swift_trigger_gate(${_target} resp _gate_resp "${_resp_path}")
+        _webkit_swift_trigger_gate(${_target} swift-depfile _gate_depfile "${_swift_depfile}")
+        set(_trigger_deps "${_gate_resp}" "${_gate_depfile}")
         if (NOT (DEFINED ${_target}_SWIFT_INTEROP_SOURCES OR
             _skip_swift_cxx_header))
-            list(APPEND _trigger_deps "${_header_stamp_path}")
+            _webkit_swift_trigger_gate(${_target} cxx-header-stamp _gate_header
+                "${_header_stamp_path}")
+            list(APPEND _trigger_deps "${_gate_header}")
         endif ()
         add_custom_command(
             OUTPUT "${_trigger_path}"
@@ -1598,6 +1627,39 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         )
         target_sources(${_target} PRIVATE "${_trigger_path}")
         add_custom_target(${_target}_SwiftRebuildTrigger DEPENDS "${_trigger_path}")
+
+        # Fingerprint for the intermittent Windows dependency-cycle failure
+        # (https://bugs.webkit.org/show_bug.cgi?id=BUGNUMBER). Ninja reports a
+        # cycle before running any edge, so only configure-time output and
+        # Ninja's own error message survive a failing run. Paths are bracketed
+        # and unnormalized on purpose: the leading hypothesis is that two
+        # spellings of one path collapse onto a single Ninja node on Windows,
+        # which is invisible once the spelling has been cleaned up.
+        if (POLICY CMP0157)
+            cmake_policy(GET CMP0157 _cmp0157)
+        else ()
+            set(_cmp0157 "ABSENT")
+        endif ()
+        get_target_property(_swift_module_dir ${_target} Swift_MODULE_DIRECTORY)
+        set(_interop_defined FALSE)
+        if (DEFINED ${_target}_SWIFT_INTEROP_SOURCES)
+            set(_interop_defined TRUE)
+        endif ()
+        message(STATUS "SwiftTrigger[${_target}]: cmake=${CMAKE_VERSION} generator=${CMAKE_GENERATOR} "
+                       "CMP0157=[${_cmp0157}] swiftc=${CMAKE_Swift_COMPILER_VERSION}")
+        message(STATUS "SwiftTrigger[${_target}]: interop_sources_defined=${_interop_defined} "
+                       "skip_cxx_header=${_skip_swift_cxx_header} trigger_pre_existed=${_trigger_existed}")
+        message(STATUS "SwiftTrigger[${_target}]: trigger=[${_trigger_path}]")
+        message(STATUS "SwiftTrigger[${_target}]: depfile=[${_swift_depfile}]")
+        message(STATUS "SwiftTrigger[${_target}]: resp=[${_resp_path}]")
+        message(STATUS "SwiftTrigger[${_target}]: header_stamp=[${_header_stamp_path}]")
+        message(STATUS "SwiftTrigger[${_target}]: header_tmp=[${_header_tmp_path}]")
+        message(STATUS "SwiftTrigger[${_target}]: swiftmodule=[${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule]")
+        message(STATUS "SwiftTrigger[${_target}]: module_dir=[${_swift_module_dir}]")
+        message(STATUS "SwiftTrigger[${_target}]: trigger_deps=[${_trigger_deps}]")
+        unset(_cmp0157)
+        unset(_swift_module_dir)
+        unset(_interop_defined)
 
         if (NOT _skip_swift_cxx_header)
             # WebKit-Swift-Generated.h.tmp must be written by exactly one target: the one
