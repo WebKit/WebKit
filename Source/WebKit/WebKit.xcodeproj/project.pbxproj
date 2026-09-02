@@ -359,6 +359,7 @@
 		1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */; };
 		1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */; };
 		1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */; };
+		C7A41E912E8F1A0100D3B841 /* Untrusted.h in Headers */ = {isa = PBXBuildFile; fileRef = C7A41E902E8F1A0100D3B841 /* Untrusted.h */; };
 		1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A445B9E184D5FB5004B3414 /* WKContextInjectedBundleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2608,6 +2609,7 @@
 		F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */; };
 		F41D73EC2EFF607700FD1ECB /* TextExtractionAssertionScope.h in Headers */ = {isa = PBXBuildFile; fileRef = F41D73E92EFF607700FD1ECB /* TextExtractionAssertionScope.h */; };
 		F422427A2E8C389800C1143F /* opaque_ipc_types.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = F42242782E8C37AB00C1143F /* opaque_ipc_types.py */; };
+		C7A41E932E8F1A0100D3B841 /* untrusted_origins.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = C7A41E922E8F1A0100D3B841 /* untrusted_origins.py */; };
 		F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = F4299506270E234C0032298B /* StreamMessageReceiver.h */; };
 		F42A04712CA1B328000D3118 /* _WKTextRunInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F42A04702CA1B328000D3118 /* _WKTextRunInternal.h */; };
 		F42A04722CA1B3FC000D3118 /* _WKTextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = F42A046C2CA1B2A4000D3118 /* _WKTextRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3317,6 +3319,7 @@
 				F422427A2E8C389800C1143F /* opaque_ipc_types.py in Copy Message Generation Scripts */,
 				F4B8E3282ECBD62E00A9A484 /* opaque_ipc_types.tracking.in in Copy Message Generation Scripts */,
 				1A07D2FB1919B3A900ECDA16 /* parser.py in Copy Message Generation Scripts */,
+				C7A41E932E8F1A0100D3B841 /* untrusted_origins.py in Copy Message Generation Scripts */,
 			);
 			name = "Copy Message Generation Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3914,6 +3917,7 @@
 		1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageReceiverMap.cpp; sourceTree = "<group>"; };
 		1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiverMap.h; sourceTree = "<group>"; };
 		1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiver.h; sourceTree = "<group>"; };
+		C7A41E902E8F1A0100D3B841 /* Untrusted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Untrusted.h; sourceTree = "<group>"; };
 		1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHistoryDelegatePrivate.h; sourceTree = "<group>"; };
 		1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKProcessPoolConfiguration.mm; sourceTree = "<group>"; };
 		1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKProcessPoolConfiguration.h; sourceTree = "<group>"; };
@@ -8978,6 +8982,7 @@
 		F4217F1C2E8EFF8A0036AAC1 /* TextExtractionToStringConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextExtractionToStringConversion.h; sourceTree = "<group>"; };
 		F4217F1D2E8EFF8A0036AAC1 /* TextExtractionToStringConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextExtractionToStringConversion.cpp; sourceTree = "<group>"; };
 		F42242782E8C37AB00C1143F /* opaque_ipc_types.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = opaque_ipc_types.py; path = webkit/opaque_ipc_types.py; sourceTree = "<group>"; };
+		C7A41E922E8F1A0100D3B841 /* untrusted_origins.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = untrusted_origins.py; path = webkit/untrusted_origins.py; sourceTree = "<group>"; };
 		F4299506270E234C0032298B /* StreamMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamMessageReceiver.h; sourceTree = "<group>"; };
 		F42A046C2CA1B2A4000D3118 /* _WKTextRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextRun.h; sourceTree = "<group>"; };
 		F42A046D2CA1B2A4000D3118 /* _WKTextRun.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextRun.mm; sourceTree = "<group>"; };
@@ -11128,6 +11133,7 @@
 				F48570A22644BEC400C05F71 /* Timeout.h */,
 				7B8486832ED9C1D500E34DC1 /* TransferString.cpp */,
 				7B8486822ED9C1D500E34DC1 /* TransferString.h */,
+				C7A41E902E8F1A0100D3B841 /* Untrusted.h */,
 				7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */,
 			);
 			path = IPC;
@@ -17482,6 +17488,7 @@
 				F4B8E3272ECBD61000A9A484 /* opaque_ipc_types.tracking.in */,
 				0FC08571187CE0A900780D86 /* parser.py */,
 				53B1640F2203715000EC4166 /* process-entitlements.sh */,
+				C7A41E922E8F1A0100D3B841 /* untrusted_origins.py */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -18997,6 +19004,7 @@
 				EE7371602EE2555C009F354F /* UIWindowScene+Extras.h in Headers */,
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
+				C7A41E912E8F1A0100D3B841 /* Untrusted.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */,

@@ -55,6 +55,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithDeferSendingOption_MultipleIndices>(globalObject, decoder);
     case MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin:
+        return jsValueForDecodedMessage<MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin>(globalObject, decoder);
     case MessageName::TestWithEnabledBy_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithEnabledBy_ConditionallyEnabled:
@@ -681,6 +683,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     case MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
+        };
+    case MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin:
+        return Vector<ArgumentDescription> {
+            { "origin"_s, "IPC::Untrusted<WebCore::SecurityOriginData>"_s },
         };
     case MessageName::TestWithEnabledBy_AlwaysEnabled:
         return Vector<ArgumentDescription> {

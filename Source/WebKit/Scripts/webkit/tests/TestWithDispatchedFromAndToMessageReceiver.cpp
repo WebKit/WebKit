@@ -29,6 +29,8 @@
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithDispatchedFromAndToMessages.h" // NOLINT
+#include "Untrusted.h" // NOLINT
+#include <WebCore/SecurityOriginData.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
@@ -41,6 +43,10 @@ void TestWithDispatchedFromAndTo::didReceiveMessage(IPC::Connection& connection,
 {
     if (decoder.messageName() == Messages::TestWithDispatchedFromAndTo::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithDispatchedFromAndTo::AlwaysEnabled>(connection, decoder, this, &TestWithDispatchedFromAndTo::alwaysEnabled);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithDispatchedFromAndTo::UntrustedOrigin::name()) {
+        IPC::handleMessage<Messages::TestWithDispatchedFromAndTo::UntrustedOrigin>(connection, decoder, this, &TestWithDispatchedFromAndTo::untrustedOrigin);
         return;
     }
     UNUSED_PARAM(connection);
@@ -57,6 +63,10 @@ namespace IPC {
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithDispatchedFromAndTo_AlwaysEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithDispatchedFromAndTo::AlwaysEnabled::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithDispatchedFromAndTo_UntrustedOrigin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithDispatchedFromAndTo::UntrustedOrigin::Arguments>(globalObject, decoder);
 }
 
 }

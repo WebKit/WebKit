@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,15 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Negative test: an origin arriving from web content in a privileged process must be
+# declared as IPC::Untrusted<T>. Generating a receiver from this file must fail.
+
 [
+    ExceptionForEnabledBy,
     DispatchedFrom=WebContent,
-    DispatchedTo=UI,
-    EnabledBy=WebLocksAPIEnabled
+    DispatchedTo=UI
 ]
-messages -> WebLockRegistryProxy {
-    RequestLock(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name, enum:bool WebCore::WebLockMode mode, bool steal, bool ifAvailable)
-    ReleaseLock(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name)
-    AbortLockRequest(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name) -> (bool wasAborted)
-    Snapshot(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin) -> (struct WebCore::WebLockManagerSnapshot snapshot)
-    ClientIsGoingAway(struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, WebCore::ScriptExecutionContextIdentifier clientId)
+messages -> TestWithUntrackedUntrustedOrigin {
+    TrustsWebContentOrigin(WebCore::SecurityOriginData origin)
 }

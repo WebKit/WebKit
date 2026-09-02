@@ -583,6 +583,7 @@ class ArgumentSerializer {
                     return ArgumentSerializer.serializeHashMap(innerType, argument);
                 case 'Ref':
                 case 'UniqueRef':
+                case 'IPC::Untrusted':
                     return ArgumentSerializer.serializeArgument({type: innerType, name: argumentDefinition.name}, argument);
                 default:
                     throw new SerializationError(`Don't know how to serialize template '${ templateType }'`);
@@ -1100,7 +1101,8 @@ class ArgumentParser {
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}]
                 }
                 case 'Ref':
-                case 'UniqueRef': {
+                case 'UniqueRef':
+                case 'IPC::Untrusted': {
                     return ArgumentParser.parseArgument(buffer, position, {type: innerType, name: argumentDefinition.name});
                 }
                 case 'HashMap':

@@ -28,7 +28,7 @@
 messages -> WebAutomationSession {
     LogEntryAdded(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
 #if ENABLE(WEBDRIVER_BIDI)
-    ScriptRealmCreated(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier, WebCore::SecurityOriginData origin)
+    ScriptRealmCreated(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
     ScriptRealmDestroyed(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier)
 #endif
 }

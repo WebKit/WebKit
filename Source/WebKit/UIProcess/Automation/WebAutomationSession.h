@@ -33,6 +33,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SimulatedInputDispatcher.h"
+#include "Untrusted.h"
 #include "WebEvent.h"
 #include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -375,7 +376,7 @@ private:
     // Called by WebAutomationSession messages.
     void logEntryAdded(const JSC::MessageSource&, const JSC::MessageLevel&, const String& messageText, const JSC::MessageType&, const WallTime&);
 #if ENABLE(WEBDRIVER_BIDI)
-    void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, const WebCore::SecurityOriginData&);
+    void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
 #endif
 

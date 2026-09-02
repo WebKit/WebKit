@@ -357,6 +357,7 @@ GENERATE_MESSAGE_RECEIVER_SCRIPTS = \
     $(WebKit2)/Scripts/webkit/parser.py \
     $(WebKit2)/Scripts/webkit/opaque_ipc_types.py \
     $(WebKit2)/Scripts/webkit/opaque_ipc_types.tracking.in \
+    $(WebKit2)/Scripts/webkit/untrusted_origins.py \
     $(WebKit2)/DerivedSources.make \
 #
 

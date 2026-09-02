@@ -26,6 +26,7 @@ import re
 import sys
 
 from webkit.opaque_ipc_types import opaque_ipc_types
+from webkit.untrusted_origins import unwrap_if_untrusted, unwrap_untrusted
 from webkit import parser
 from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
 
@@ -226,7 +227,10 @@ builtin_types = frozenset([
     'WebCore::TrackID',
 ])
 
+
 def function_parameter_type(type, kind, for_reply=False):
+    type = unwrap_if_untrusted(type)
+
     # Don't use references for built-in types.
     if type in builtin_types:
         return type
@@ -241,6 +245,7 @@ def function_parameter_type(type, kind, for_reply=False):
 
 
 def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=False):
+    type = unwrap_if_untrusted(type)
     return not (
         type in builtin_types or
         kind.startswith('enum:') or
@@ -249,7 +254,7 @@ def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=Fals
 
 
 def arguments_constructor_name(type, name):
-    if type in types_that_must_be_moved():
+    if unwrap_if_untrusted(type) in types_that_must_be_moved():
         return 'WTF::move(%s)' % name
 
     return name
@@ -328,15 +333,15 @@ def message_to_struct_declaration(receiver, message):
         if message.is_async_reply:
             # Extract original message name (remove 'Reply' suffix)
             original_message_name = message.name[:-5] if message.name.endswith('Reply') else message.name
-            if not opaque_ipc_types.reply_webcontent_dispatchable(receiver.name, original_message_name, parameter.name, parameter.type):
+            if not opaque_ipc_types.reply_webcontent_dispatchable(receiver.name, original_message_name, parameter.name, unwrap_if_untrusted(parameter.type)):
                 result.append('        ASSERT(!isInWebProcess());\n')
         else:
-            if not opaque_ipc_types.webcontent_dispatchable(receiver.name, message.name, parameter.name, parameter.type):
+            if not opaque_ipc_types.webcontent_dispatchable(receiver.name, message.name, parameter.name, unwrap_if_untrusted(parameter.type)):
                 result.append('        ASSERT(!isInWebProcess());\n')
         result.append('        ')
         if requires_suppress_forward_decl[i]:
             result.append('SUPPRESS_FORWARD_DECL_ARG ')
-        if parameter.type in types_that_must_be_moved():
+        if unwrap_if_untrusted(parameter.type) in types_that_must_be_moved():
             result.append('encoder << WTF::move(m_%s);\n' % parameter.name)
         else:
             result.append('encoder << m_%s;\n' % parameter.name)
@@ -790,6 +795,13 @@ def forward_declarations_and_headers(receiver):
         kind = parameter.kind
         type = parameter.type
 
+        # The message class deals in the wrapped type, so forward declare that; the
+        # wrapper's own header is still needed for the Arguments tuple.
+        unwrapped_type = unwrap_untrusted(type)
+        if unwrapped_type:
+            headers.update(headers_for_type(type))
+            type = unwrapped_type
+
         if type.startswith('std::optional<') and type.endswith('>'):
             type = type[14: len(type) - 1]
 
@@ -1081,6 +1093,7 @@ def class_template_headers(template_string):
         'std::tuple': {'headers': ['<tuple>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Variant': {'headers': ['<wtf/Variant.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReferenceTuple': {'headers': ['"ArrayReferenceTuple.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'IPC::Untrusted': {'headers': ['"Untrusted.h"'], 'argument_coder_headers': ['"Untrusted.h"']},
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},

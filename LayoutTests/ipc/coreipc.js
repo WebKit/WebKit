@@ -595,6 +595,7 @@ export class ArgumentSerializer {
                     return ArgumentSerializer.serializeHashMap(innerType, argument);
                 case 'Ref':
                 case 'UniqueRef':
+                case 'IPC::Untrusted':
                     return ArgumentSerializer.serializeArgument({type: innerType, name: argumentDefinition.name}, argument);
                 default:
                     // A wrapper class such as sk_sp<SkColorSpace> is a template, but the
@@ -1123,7 +1124,8 @@ export class ArgumentParser {
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}]
                 }
                 case 'Ref':
-                case 'UniqueRef': {
+                case 'UniqueRef':
+                case 'IPC::Untrusted': {
                     return ArgumentParser.parseArgument(buffer, position, {type: innerType, name: argumentDefinition.name});
                 }
                 case 'HashMap':

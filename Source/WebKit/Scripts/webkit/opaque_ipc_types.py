@@ -88,6 +88,7 @@ TRANSPARENT_CONTAINERS = {
     # Simple wrappers - preserve opaque context from parent
     "std::optional": {"check_params": "first", "propagate_context": True},
     "RetainPtr": {"check_params": "first", "propagate_context": True},
+    "IPC::Untrusted": {"check_params": "first", "propagate_context": True},
 
     "std::expected": {"check_params": "selective", "selective_indices": [0], "propagate_context": False},
     "Variant": {"check_params": "all", "propagate_context": False},

@@ -29,5 +29,5 @@
     DispatchedTo=UI
 ]
 messages -> WebPermissionControllerProxy {
-    Query(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor, std::optional<WebKit::WebPageProxyIdentifier> identifier, enum:uint8_t WebCore::PermissionQuerySource source) -> (enum:uint8_t std::optional<WebCore::PermissionState> state)
+    Query(struct IPC::Untrusted<WebCore::ClientOrigin> origin, struct WebCore::PermissionDescriptor descriptor, std::optional<WebKit::WebPageProxyIdentifier> identifier, enum:uint8_t WebCore::PermissionQuerySource source) -> (enum:uint8_t std::optional<WebCore::PermissionState> state)
 }

@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "Untrusted.h"
 #include "WebContextSupplement.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/GeolocationPositionData.h>
@@ -85,9 +86,9 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC messages.
-    void startUpdating(IPC::Connection&, const WebCore::RegistrableDomain&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);
-    void stopUpdating(IPC::Connection&, const WebCore::RegistrableDomain&);
-    void setEnableHighAccuracy(IPC::Connection&, const WebCore::RegistrableDomain&, bool);
+    void startUpdating(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);
+    void stopUpdating(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&);
+    void setEnableHighAccuracy(IPC::Connection&, IPC::Untrusted<WebCore::RegistrableDomain>&&, bool);
 
     void startUpdatingWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);
     void stopUpdatingWithProxy(WebProcessProxy&, const WebCore::RegistrableDomain&);

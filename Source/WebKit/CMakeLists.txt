@@ -1071,7 +1071,10 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
             ${WEBKIT_DIR}/Scripts/webkit/__init__.py
             ${WEBKIT_DIR}/Scripts/webkit/messages.py
             ${WEBKIT_DIR}/Scripts/webkit/model.py
+            ${WEBKIT_DIR}/Scripts/webkit/opaque_ipc_types.py
+            ${WEBKIT_DIR}/Scripts/webkit/opaque_ipc_types.tracking.in
             ${WEBKIT_DIR}/Scripts/webkit/parser.py
+            ${WEBKIT_DIR}/Scripts/webkit/untrusted_origins.py
             ${_input_files}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_messages_stage_dir}
         COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py --preserve-subdirs ${WEBKIT_DIR} ${_inputs} --output-dir ${_messages_stage_dir}
