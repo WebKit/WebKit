@@ -620,8 +620,7 @@ bool InputType::shouldSubmitImplicitly(Event& event)
 RenderPtr<RenderElement> InputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
-    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return RenderPtr<RenderElement>(RenderElement::createFor(*protect(element()), WTF::move(style)));
+    return RenderPtr<RenderElement>(RenderElement::createFor(*protect(element()), WTF::move(style)));
 }
 
 void InputType::blur()

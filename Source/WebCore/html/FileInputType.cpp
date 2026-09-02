@@ -186,8 +186,7 @@ bool FileInputType::allowsShowPickerAcrossFrames()
 RenderPtr<RenderElement> FileInputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
-    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFileUploadControl>(*protect(element()), WTF::move(style));
+    return createRenderer<RenderFileUploadControl>(*protect(element()), WTF::move(style));
 }
 
 bool FileInputType::canSetStringValue() const

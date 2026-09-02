@@ -271,8 +271,7 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
-    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderSearchField>(*protect(element()), WTF::move(style));
+    return createRenderer<RenderSearchField>(*protect(element()), WTF::move(style));
 }
 
 const AtomString& SearchInputType::formControlType() const

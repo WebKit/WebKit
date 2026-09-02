@@ -58,8 +58,7 @@ bool HTMLFrameElement::rendererIsNeeded(const Style::ComputedStyle& style)
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
-    // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFrame>(*this, WTF::move(style));
+    return createRenderer<RenderFrame>(*this, WTF::move(style));
 }
 
 bool HTMLFrameElement::noResize() const
