@@ -892,9 +892,9 @@ LValue Output::load(TypedPointer pointer, LoadType type)
     case Load8ZeroExt32:
         return load8ZeroExt32(pointer);
     case Load16SignExt32:
-        return load8SignExt32(pointer);
+        return load16SignExt32(pointer);
     case Load16ZeroExt32:
-        return load8ZeroExt32(pointer);
+        return load16ZeroExt32(pointer);
     case Load32:
         return load32(pointer);
     case Load64:
