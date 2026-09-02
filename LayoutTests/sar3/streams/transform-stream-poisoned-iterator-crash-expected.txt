@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: poisoned next called
+CONSOLE MESSAGE: poisoned next called
+Tests that constructing a TransformStream does not crash when Array.prototype[Symbol.iterator] has been poisoned to return wrong-type objects.
+WebKit should not crash, and you should see PASS below.
+
+PASS: plain-object substitution did not throw
+PASS: object-reference substitution did not throw
+FAIL: truncated iterator threw TypeError: Internal TransformStream creation returned an unexpected result
