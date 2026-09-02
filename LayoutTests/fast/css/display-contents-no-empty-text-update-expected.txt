@@ -1,0 +1,18 @@
+Text children of a display: contents element should only be part of the style update when the imaginary wrapper style actually changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sizes[0] is 1
+PASS sizes[1] is 2
+PASS sizes[2] is 2
+PASS sizes[3] is 1
+PASS sizes[4] is 1
+PASS sizes[5] is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a b
+a
+b
+Text child of a display: contents element.
