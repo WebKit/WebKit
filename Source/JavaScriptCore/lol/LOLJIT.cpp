@@ -961,17 +961,18 @@ ALWAYS_INLINE void LOLJIT::emitCompareImpl(VirtualRegister op1, GPRReg op1GPR, V
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
-    constexpr bool disallowAllocation = false;
     auto handleConstantCharOperand = [&](VirtualRegister left, GPRReg rightGPR, RelationalCondition cond) {
         if (!isOperandConstantChar(left))
             return false;
+        JSString* string = asString(getConstantOperand(left));
+        RELEASE_ASSERT(!string->isRope());
 
         addSlowCase(branchIfNotCell(rightGPR));
         JumpList failures;
         // FIXME: We could deduplicate the String's data load in emitLoadCharacterString if we had an extra scratch but we'd have to teach the register allocator about constants to do that unless we wanted to have the scratch in all cases, which doesn't seem worth it.
         emitLoadCharacterString(rightGPR, s_scratch, failures);
         addSlowCase(failures);
-        emitCompare(commute(cond), s_scratch, Imm32(asString(getConstantOperand(left))->tryGetValue(disallowAllocation).data[0]));
+        emitCompare(commute(cond), s_scratch, Imm32(string->tryGetValueImpl()->at(0)));
         return true;
     };
 

@@ -36,6 +36,9 @@ void setTopGCOwnedDataScopeIfNeeded(const JSCell* cell, const void* scope)
 {
     if (!cell)
         return;
+    ASSERT(!isCompilationThread());
+    if (Thread::mayBeGCThread())
+        return;
     if (!cell->vm().heap.m_topGCOwnedDataScope)
         cell->vm().heap.m_topGCOwnedDataScope = scope;
 }
@@ -43,6 +46,9 @@ void setTopGCOwnedDataScopeIfNeeded(const JSCell* cell, const void* scope)
 void clearTopGCOwnedDataScopeIfNeeded(const JSCell* cell, const void* scope)
 {
     if (!cell)
+        return;
+    ASSERT(!isCompilationThread());
+    if (Thread::mayBeGCThread())
         return;
     if (cell->vm().heap.m_topGCOwnedDataScope == scope)
         cell->vm().heap.m_topGCOwnedDataScope = nullptr;

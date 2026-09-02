@@ -233,17 +233,18 @@ ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
-    constexpr bool disallowAllocation = false;
     auto handleConstantCharOperand = [&](VirtualRegister left, VirtualRegister right, RelationalCondition cond) {
         if (!isOperandConstantChar(left))
             return false;
+        JSString* string = asString(getConstantOperand(left));
+        RELEASE_ASSERT(!string->isRope());
 
         emitGetVirtualRegister(right, regT0);
         addSlowCase(branchIfNotCell(regT0));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
-        emitCompare(commute(cond), regT0, Imm32(asString(getConstantOperand(left))->tryGetValue(disallowAllocation).data[0]));
+        emitCompare(commute(cond), regT0, Imm32(string->tryGetValueImpl()->at(0)));
         return true;
     };
 
