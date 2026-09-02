@@ -3751,11 +3751,22 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         m_videoDecoderPlatform = GstVideoDecoderPlatform::OpenMAX;
     else if (gstElementFactoryEquals(decoder, "qtic2vdec"_s) || startsWith(name.span(), "c2vdec"_s))
         m_videoDecoderPlatform = GstVideoDecoderPlatform::Qualcomm;
-    else if (gstElementMatchesFactoryAndHasProperty(decoder, "avdec*"_s, "max-threads"_s)) {
+
+    if (gstElementMatchesFactoryAndHasProperty(decoder, "avdec*"_s, "max-threads"_s)) {
         // Set the decoder maximum number of threads to a low, fixed value, not depending on the
         // platform. This also helps with processing metrics gathering. When using the default value
         // the decoder introduces artificial processing latency reflecting the maximum number of threads.
         g_object_set(decoder, "max-threads", 2, nullptr);
+    } else {
+        // WebKitMediaSrc is emitting still-frame events to work around stalls caused by avdec_* decoders.
+        // It does so regardless of the decoder we are actually using (see details in the comment there).
+        // For any other decoder, we need to attach a probe dropping these events.
+        GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(decoder, "sink"));
+        auto probe = PadProbeHandle<MediaPlayerPrivateGStreamer>::create(*this, WTF::move(sinkPad), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [](const RefPtr<MediaPlayerPrivateGStreamer>, const GRefPtr<GstPad>&, auto info) -> GstPadProbeReturn {
+            if (gst_video_event_parse_still_frame(gst_pad_probe_info_get_event(info), nullptr))
+                return GST_PAD_PROBE_DROP;
+            return GST_PAD_PROBE_OK;
+        });
     }
 
     if (gstObjectHasProperty(decoder, "max-errors"_s))

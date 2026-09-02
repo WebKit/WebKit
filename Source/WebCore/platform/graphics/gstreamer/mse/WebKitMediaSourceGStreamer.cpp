@@ -176,6 +176,8 @@ struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
         // Flushes before any buffer has been popped from the queue and sent downstream can be avoided just
         // by clearing the queue.
         bool hasPoppedFirstObject { false };
+
+        MonotonicTime stillFrameWorkaroundTime { MonotonicTime::infinity() };
     };
     DataMutex<StreamingMembers> streamingMembersDataMutex;
 };
@@ -549,9 +551,37 @@ static void webKitMediaSrcLoop(void* userData)
     }
 
     // Wait to receive an object from the queue (if we didn't get one already) or flush.
-    streamingMembers->queueChangedOrFlushedCondition.wait(streamingMembers.mutex(), [&]() {
-        return streamingMembers->isFlushing || object;
-    });
+    while (TRUE) {
+        auto timeout = (stream->track->type() == GStreamerTrackType::Video) ? streamingMembers->stillFrameWorkaroundTime : MonotonicTime::infinity();
+
+        streamingMembers->queueChangedOrFlushedCondition.waitUntil(streamingMembers.mutex(), timeout, [&]() {
+            return streamingMembers->isFlushing || object;
+        });
+
+        if (streamingMembers->isFlushing || object)
+            break;
+
+        // As of currently (GStreamer 1.28) avdec_* elements don't start a task (thread) in their srcpads, so
+        // decoded frames are only propagated downstream when an encoded frame or EOS event is fed
+        // to the sinkpad.
+        // This may cause the presentation time that reaches the sink to not match the end time of
+        // a buffered range that doesn't correspond to an end of stream.
+        // Ideally, the avdec elements would be improved to use a thread in their srcpads so that decoded
+        // frames are available as soon as they're decoded, as is the case with v4l2 decoder elements.
+        //
+        // For now, we can mitigate this by sending a still-frame event that drains the decoder.
+        // It is easiest to send on any video pad that hasn't pushed buffers for some time,
+        // regardless of the decoder used, and drop the element using a probe
+        // on unaffected decoder elements.
+        // Trying to emit still-frame events only if we know we have a libav decoder is prone
+        // to race conditions, and doesn't work well with changeType().
+        GST_DEBUG_OBJECT(pad, "No buffers have been pushed for some time, sending still-frame event as workaround to drain libav decoder");
+        GRefPtr<GstEvent> event = adoptGRef(gst_video_event_new_still_frame(TRUE));
+        gst_pad_push_event(pad, event.leakRef());
+
+        streamingMembers->stillFrameWorkaroundTime = MonotonicTime::infinity();
+    }
+
     {
         // Ensure that notifyWhenNotEmpty()'s callback (if any) is cleared after this point.
         DataMutexLocker queue { stream->track->queueDataMutex() };
@@ -609,6 +639,8 @@ static void webKitMediaSrcLoop(void* userData)
             streamingMembers->hasPushedFirstBuffer = true;
         }
 
+        streamingMembers->stillFrameWorkaroundTime = MonotonicTime::now() + Seconds::fromMilliseconds(100);
+
         // Push the buffer without the streamingMembers lock so that flushes can happen while it travels downstream.
         streamingMembers.unlockEarly();
 
@@ -633,12 +665,15 @@ static void webKitMediaSrcLoop(void* userData)
         GRefPtr<GstEvent> event = GRefPtr<GstEvent>(GST_EVENT(object.leakRef()));
         IGNORE_WARNINGS_END;
 
-        if (GST_EVENT_TYPE(event.get()) == GST_EVENT_EOS && !streamingMembers->hasPushedFirstBuffer) {
-            // parsebin emits errors if it receives EOS without prior buffer and those errors bubble
-            // up to our media player, leading to false-positive errors. Even if this parsebin
-            // behavior is acceptable in the general case, it is problematic for MSE.
-            GST_DEBUG_OBJECT(pad, "Ignoring EOS on non-prerolled pad");
-            return;
+        if (GST_EVENT_TYPE(event.get()) == GST_EVENT_EOS) {
+            if (!streamingMembers->hasPushedFirstBuffer) {
+                // parsebin emits errors if it receives EOS without prior buffer and those errors bubble
+                // up to our media player, leading to false-positive errors. Even if this parsebin
+                // behavior is acceptable in the general case, it is problematic for MSE.
+                GST_DEBUG_OBJECT(pad, "Ignoring EOS on non-prerolled pad");
+                return;
+            }
+            streamingMembers->stillFrameWorkaroundTime = MonotonicTime::infinity();
         }
         streamingMembers.unlockEarly();
         GST_DEBUG_OBJECT(pad, "Pushing event downstream: %" GST_PTR_FORMAT, event.get());
