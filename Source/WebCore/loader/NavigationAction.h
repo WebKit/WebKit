@@ -144,7 +144,7 @@ private:
     std::optional<PrivateClickMeasurement> m_privateClickMeasurement;
     std::function<bool()> m_pendingDispatchNavigateEvent;
 
-    NavigationType m_type;
+    NavigationType m_type { NavigationType::Other };
     std::optional<NavigationNavigationType> m_navigationAPIType;
 
     bool m_hasOpenedFrames { false };
