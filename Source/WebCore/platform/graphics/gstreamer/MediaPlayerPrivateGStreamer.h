@@ -550,6 +550,7 @@ private:
     void purgeOldDownloadFiles(const String& downloadFilePrefixPath);
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
+    static void multiqueueUnderrunCallback(MediaPlayerPrivateGStreamer*, GstElement*);
 
     void configureAudioDecoder(GstElement*);
     void configureVideoDecoder(GstElement*);
