@@ -75,7 +75,10 @@ void ExternalTexture::destroy()
 
 void ExternalTexture::undestroy()
 {
-    m_commandEncoders.clear();
+    if (!m_destroyed)
+        return;
+
+    m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
     m_destroyed = false;
 }
 

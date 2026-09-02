@@ -1,0 +1,4 @@
+This test passes if RemoteExternalTexture::Undestroy() on a non-destroyed external texture does not disarm the open-encoder guard in BindGroup::updateExternalTextures().
+
+PASS
+
