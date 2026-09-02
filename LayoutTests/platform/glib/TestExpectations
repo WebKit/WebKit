@@ -2257,6 +2257,8 @@ http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevale
 
 webkit.org/b/296787 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
 webkit.org/b/296787 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Failure ]
+webkit.org/b/296787 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-short-frequency-with-user-interaction-7-days-ago.html [ Failure ]
+webkit.org/b/296787 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-30-days-ago.html [ Failure ]
 
 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass ]
 

@@ -696,6 +696,7 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
     m_operatingDatesSize = 0;
     m_shortWindowOperatingDate = std::nullopt;
     m_longWindowOperatingDate = std::nullopt;
+    m_lastTimeDataRecordsWereRemoved = { };
 }
 
 void ResourceLoadStatisticsStore::logTestingEvent(String&& event)

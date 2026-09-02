@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+    <script src="resources/website-data-removal-checks.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<br>
+<div id="output"></div>
+<br>
+<script>
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    const httpOnlyCookieName = "http-only-cookie";
+    const serverSideCookieName = "server-side-cookie";
+    const clientSideCookieName = "client-side-cookie";
+    const localStorageName = "test";
+    const localStorageValue = "value";
+    const dbName = "TestDatabase";
+
+    const originUnderTest = "http://127.0.0.1:8000";
+    const otherOrigin = "http://localhost:8000";
+    const topFrameOrigin = "http://127.0.0.2:8000";
+    const timeStamp = Math.round((new Date()).getTime() / 1000);
+
+    async function runTest() {
+        // setEnableFeature is deliberately not used, so parameters().isRunningTest stays false and
+        // data deletion is not skipped. 3600 keeps the guard in
+        // registrableDomainsToDeleteOrRestrictWebsiteDataFor() meaningful.
+        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(3600);
+        // Merge a statistic with no user interaction to check the -1 case.
+        await new Promise((resolve) => testRunner.setStatisticsMergeStatistic(otherOrigin, topFrameOrigin, "", timeStamp, false, -1, false, false, false, 0, resolve));
+        await new Promise((resolve) => testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, resolve));
+        await new Promise((resolve) => testRunner.setStatisticsExpiredStatistic(originUnderTest,
+            30,    // numberOfOperatingDaysPassed (== operatingDatesWindowLong)
+            true,  // hasUserInteraction
+            false, // isScheduledForAllButCookieDataRemoval
+            false, // isPrevalent
+            resolve));
+
+        await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
+        await fetch("/cookies/resources/setCookies.cgi", { headers: { "X-Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
+        // path=/ so the server-side check can see this cookie.
+        document.cookie = clientSideCookieName + "=1; path=/";
+        localStorage.setItem(localStorageName, localStorageValue);
+        await rdcCreateIDBAndClose(dbName);
+
+        await rdcCheckCookie("Before statistics processing", httpOnlyCookieName, false);
+        await rdcCheckCookie("Before statistics processing", serverSideCookieName, false);
+        await rdcCheckCookie("Before statistics processing", clientSideCookieName, false);
+        await rdcCheckLocalStorage("Before statistics processing", originUnderTest, localStorageName, localStorageValue, false);
+        await rdcCheckIDB("Before statistics processing", dbName, false);
+
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+
+        // Only script-written storage is removed; HttpOnly and server-set cookies are retained
+        // (IncludeHttpOnlyCookies::No, ScriptWrittenCookiesOnly::Yes).
+        await rdcCheckCookie("After statistics processing", httpOnlyCookieName, false);
+        await rdcCheckCookie("After statistics processing", serverSideCookieName, false);
+        await rdcCheckCookie("After statistics processing", clientSideCookieName, true);
+        await rdcCheckLocalStorage("After statistics processing", originUnderTest, localStorageName, localStorageValue, true);
+        await rdcCheckIDB("After statistics processing", dbName, true);
+
+        // Long-window expiry also clears the user interaction record; the short window does not.
+        rdcAddOutput("After statistics processing: user interaction "
+            + (testRunner.isStatisticsHasHadUserInteraction(originUnderTest) ? "still exists" : "was cleared") + ".");
+
+        await resetCookiesITP();
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
+    }
+</script>
+</body>
+</html>
