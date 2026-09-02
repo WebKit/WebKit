@@ -104,14 +104,14 @@ void SimulatedXRDevice::setViewerOrigin(const std::optional<PlatformXR::FrameDat
 
 void SimulatedXRDevice::setVisibilityState(XRVisibilityState visibilityState)
 {
-    if (m_trackingAndRenderingClient)
-        m_trackingAndRenderingClient->updateSessionVisibilityState(visibilityState);
+    if (RefPtr client = m_trackingAndRenderingClient)
+        client->updateSessionVisibilityState(visibilityState);
 }
 
 void SimulatedXRDevice::simulateShutdownCompleted()
 {
-    if (m_trackingAndRenderingClient)
-        m_trackingAndRenderingClient->sessionDidEnd();
+    if (RefPtr client = m_trackingAndRenderingClient)
+        client->sessionDidEnd();
 }
 
 WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMode)
@@ -131,8 +131,8 @@ void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOr
             auto protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            if (m_trackingAndRenderingClient)
-                m_trackingAndRenderingClient->sessionDidInitializeInputSources({ });
+            if (RefPtr client = m_trackingAndRenderingClient)
+                client->sessionDidInitializeInputSources({ });
         });
     }
     m_frameData.environmentBlendMode = (sessionMode == PlatformXR::SessionMode::ImmersiveAr) ? PlatformXR::XREnvironmentBlendMode::AlphaBlend : PlatformXR::XREnvironmentBlendMode::Opaque;

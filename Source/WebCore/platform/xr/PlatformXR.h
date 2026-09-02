@@ -26,6 +26,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/TransformationMatrix.h>
 #include <memory>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
@@ -56,15 +57,6 @@
 #if ENABLE(WEBXR_LAYERS)
 #include <WebCore/FloatSize.h>
 #endif
-
-namespace PlatformXR {
-class TrackingAndRenderingClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<PlatformXR::TrackingAndRenderingClient> : std::true_type { };
-}
 
 namespace WebCore {
 enum class XRHitTestTrackableType : uint8_t;
@@ -630,7 +622,7 @@ protected:
 
 using DeviceList = Vector<Ref<Device>>;
 
-class TrackingAndRenderingClient : public CanMakeWeakPtr<TrackingAndRenderingClient> {
+class TrackingAndRenderingClient : public AbstractRefCountedAndCanMakeWeakPtr<TrackingAndRenderingClient> {
 public:
     virtual ~TrackingAndRenderingClient() = default;
 

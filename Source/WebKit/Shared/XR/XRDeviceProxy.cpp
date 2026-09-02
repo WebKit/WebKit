@@ -71,20 +71,20 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
 
 void XRDeviceProxy::sessionDidEnd()
 {
-    if (trackingAndRenderingClient())
-        trackingAndRenderingClient()->sessionDidEnd();
+    if (RefPtr client = trackingAndRenderingClient())
+        client->sessionDidEnd();
 }
 
 void XRDeviceProxy::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
 {
-    if (trackingAndRenderingClient())
-        trackingAndRenderingClient()->updateSessionVisibilityState(visibilityState);
+    if (RefPtr client = trackingAndRenderingClient())
+        client->updateSessionVisibilityState(visibilityState);
 }
 
 void XRDeviceProxy::sessionDidInitializeRendering(uint32_t width, uint32_t height, uint32_t arrayLength)
 {
-    if (trackingAndRenderingClient())
-        trackingAndRenderingClient()->sessionDidInitializeRendering(width, height, arrayLength);
+    if (RefPtr client = trackingAndRenderingClient())
+        client->sessionDidInitializeRendering(width, height, arrayLength);
 }
 
 void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList& requestedFeatures, std::optional<WebCore::XRCanvasConfiguration>&& init)
@@ -106,8 +106,8 @@ void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOrigin
         if (!protectedThis)
             return;
 
-        if (trackingAndRenderingClient())
-            trackingAndRenderingClient()->sessionDidInitializeInputSources({ });
+        if (RefPtr client = trackingAndRenderingClient())
+            client->sessionDidInitializeInputSources({ });
     });
 }
 
