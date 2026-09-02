@@ -77,8 +77,7 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
     for (VNComputeStage computeStage in supportedComputeStageDevices.get()) {
         bool set = false;
         for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
-            // FIXME: This is a safer cpp false positive (rdar://160259918).
-            SUPPRESS_UNRETAINED_ARG if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
+            if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
                 [request setComputeDevice:device forComputeStage:computeStage];
                 set = true;
                 break;
@@ -86,8 +85,7 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
         }
         if (!set) {
             for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
-                // FIXME: This is a safer cpp false positive (rdar://160259918).
-                SUPPRESS_UNRETAINED_ARG if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
+                if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
                     [request setComputeDevice:device forComputeStage:computeStage];
                     break;
                 }

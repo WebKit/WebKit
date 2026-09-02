@@ -151,8 +151,7 @@ static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
 
 static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstallmentItem*, id arrayElement)
 {
-    // FIXME: This is a static analysis false positive (rdar://160259918).
-    SUPPRESS_UNRETAINED_ARG if (![arrayElement isKindOfClass:PAL::getPKPaymentInstallmentItemClassSingleton()])
+    if (![arrayElement isKindOfClass:PAL::getPKPaymentInstallmentItemClassSingleton()])
         return std::nullopt;
 
     PKPaymentInstallmentItem *item = arrayElement;
