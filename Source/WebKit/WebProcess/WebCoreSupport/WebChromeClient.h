@@ -256,6 +256,7 @@ private:
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&) final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
+    void contentRuleListDidBlockLoad(const WebCore::ContentRuleListBlockedLoadInfo&) final;
     void contentRuleListMatchedRule(const WebCore::ContentRuleListMatchedRule&) final;
 
     bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply() final;

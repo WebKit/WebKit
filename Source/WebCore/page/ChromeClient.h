@@ -157,6 +157,7 @@ struct ApplePayAMSUIRequest;
 struct AriaNotifyData;
 struct CharacterRange;
 struct ContactsRequestData;
+struct ContentRuleListBlockedLoadInfo;
 struct ContentRuleListMatchedRule;
 struct ContentRuleListResults;
 struct DataDetectorElementInfo;
@@ -582,6 +583,7 @@ public:
     virtual void disableSuddenTermination() { }
 
     virtual void contentRuleListNotification(const URL&, const ContentRuleListResults&) { };
+    virtual void contentRuleListDidBlockLoad(const ContentRuleListBlockedLoadInfo&) { };
     virtual void contentRuleListMatchedRule(const ContentRuleListMatchedRule&) { };
 
 #if PLATFORM(WIN)

@@ -5057,6 +5057,7 @@
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5B65874186FDE4C009C26E8 /* RenderPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = ADE16736181050C300463A2E /* RenderPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B7A16E17C1048000E4AA0A /* ElementData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B5C381C0AE2187EE9DB58B96 /* ContentRuleListBlockedLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 81C71BB55DE07F0C78F8DC8F /* ContentRuleListBlockedLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B656626E120B1227006EA85C /* JSIDBTransaction.h */; };
 		B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA01522EF3A00DD5595 /* JSRadioNodeList.h */; };
 		B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA41522EFAA00DD5595 /* RadioNodeList.h */; };
@@ -15600,6 +15601,7 @@
 		81AC6C34131C57C20009A7E0 /* StringCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StringCallback.idl; sourceTree = "<group>"; };
 		81AC6C35131C57D30009A7E0 /* StringCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCallback.h; sourceTree = "<group>"; };
 		81BE20A811F4B66F00915DFA /* JSIDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBCursor.h; sourceTree = "<group>"; };
+		81C71BB55DE07F0C78F8DC8F /* ContentRuleListBlockedLoadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentRuleListBlockedLoadInfo.h; sourceTree = "<group>"; };
 		81F65FF513788FAA00FF6F2D /* DragState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragState.h; sourceTree = "<group>"; };
 		8225432CA9D4B4CF4628EC7F /* JSBeforeUnloadEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBeforeUnloadEvent.cpp; sourceTree = "<group>"; };
 		82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorStyleSheet.cpp; sourceTree = "<group>"; };
@@ -26850,6 +26852,7 @@
 				5C2C01992734398E00F89D37 /* ContentExtensionStringSerialization.h */,
 				51FB67D91AE6B5E400D06C5A /* ContentExtensionStyleSheet.cpp */,
 				51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */,
+				81C71BB55DE07F0C78F8DC8F /* ContentRuleListBlockedLoadInfo.h */,
 				E7AA0A0B2E45139300ABEF7F /* ContentRuleListMatchedRule.h */,
 				5C9C2DB32241A67300996B0B /* ContentRuleListResults.h */,
 				267725F61A5B3AD9003C24DD /* DFA.cpp */,
@@ -44883,6 +44886,7 @@
 				CA7E9B4924361DC5004E89F6 /* ContentfulPaintChecker.h in Headers */,
 				A1C7D7C22AB7AD010055AD62 /* ContentKeyGroupDataSource.h in Headers */,
 				A1038D472AB2165900F57BA4 /* ContentKeyGroupFactoryAVFObjC.h in Headers */,
+				B5C381C0AE2187EE9DB58B96 /* ContentRuleListBlockedLoadInfo.h in Headers */,
 				E7AA0A0C2E4519DF00ABEF7F /* ContentRuleListMatchedRule.h in Headers */,
 				5C9C2DB52241A67B00996B0B /* ContentRuleListResults.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,

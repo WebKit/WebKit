@@ -65,8 +65,10 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "WKWebsiteDataStorePrivate.h"
 #import "WKWindowFeaturesPrivate.h"
+#import "WebErrors.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionConstants.h"
+#import "WebExtensionContentRuleListBlockedLoadInfo.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionDataType.h"
 #import "WebExtensionDynamicScripts.h"
@@ -1854,6 +1856,41 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
         sendToProcessesForEvents({ errorOccurredType, completedType }, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
     });
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageProxyIdentifier pageID, const WebExtensionContentRuleListBlockedLoadInfo& info)
+{
+    RefPtr tab = getTab(pageID);
+
+    ResourceLoadInfo loadInfo {
+        NetworkResourceLoadIdentifier::generate(),
+        info.frameID,
+        info.parentFrameID,
+        { },
+        info.url,
+        info.httpMethod,
+        WallTime::now(),
+        false,
+        info.type
+    };
+
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), info.url, loadInfo))
+        return;
+
+    RefPtr window = tab->window();
+    auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+
+    constexpr auto beforeRequestType = WebExtensionEventListenerType::WebRequestOnBeforeRequest;
+    constexpr auto errorOccurredType = WebExtensionEventListenerType::WebRequestOnErrorOccurred;
+
+    auto error = blockedByContentBlockerError(WebCore::ResourceRequest { URL { info.url } });
+
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ beforeRequestType, errorOccurredType }, [=, this, protectedThis = Ref { *this }] mutable {
+        sendToProcessesForEvent(beforeRequestType, Messages::WebExtensionContextProxy::ResourceLoadDidBlockBeforeRequest(tab->identifier(), windowIdentifier, loadInfo));
+        sendToProcessesForEvent(errorOccurredType, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, WebCore::ResourceResponse { }, error, loadInfo));
+    });
+}
+#endif
 
 WebExtensionAction& WebExtensionContext::defaultAction()
 {

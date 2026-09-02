@@ -669,6 +669,7 @@ struct UserMessage;
 struct ViewWindowCoordinates;
 struct WebAutocorrectionContext;
 struct WebAutocorrectionData;
+struct WebExtensionContentRuleListBlockedLoadInfo;
 struct WebFoundTextRange;
 struct WebHitTestResultData;
 struct WebNavigationDataStore;
@@ -3207,6 +3208,10 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentRuleListNotification(URL&&, WebCore::ContentRuleListResults&&);
     void contentRuleListMatchedRule(WebCore::ContentRuleListMatchedRule&&);
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS)
+    void contentRuleListDidBlockLoad(WebExtensionContentRuleListBlockedLoadInfo&&);
 #endif
 
     void applyMonitorUnloadToFrameOwner(WebCore::FrameIdentifier, WebCore::IFrameUnloadReason);

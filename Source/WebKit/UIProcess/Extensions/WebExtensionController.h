@@ -72,6 +72,7 @@ class WebExtensionDataRecord;
 class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
+struct WebExtensionContentRuleListBlockedLoadInfo;
 struct WebExtensionControllerParameters;
 struct WebExtensionFrameParameters;
 
@@ -190,6 +191,10 @@ public:
     void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::AuthenticationChallenge&);
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void resourceLoadWasBlockedByContentRuleList(WebPageProxyIdentifier, const WebExtensionContentRuleListBlockedLoadInfo&);
+#endif
 
     bool isShowingActionPopup() { return m_showingActionPopup; };
     void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };

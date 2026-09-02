@@ -148,6 +148,7 @@ class ContextMenuContextData;
 class ProcessThrottlerActivity;
 class WebExtension;
 class WebUserContentControllerProxy;
+struct WebExtensionContentRuleListBlockedLoadInfo;
 struct WebExtensionContextParameters;
 struct WebExtensionCookieFilterParameters;
 struct WebExtensionCookieParameters;
@@ -527,6 +528,10 @@ public:
     void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::AuthenticationChallenge&);
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void resourceLoadWasBlockedByDeclarativeNetRequest(WebPageProxyIdentifier, const WebExtensionContentRuleListBlockedLoadInfo&);
+#endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);

@@ -40,6 +40,7 @@
 #import "WKPreferences.h"
 #import "WKPreferencesPrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WebExtensionContentRuleListBlockedLoadInfo.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionDataRecord.h"
 #import "WebPageProxy.h"
@@ -381,6 +382,20 @@ void WebExtensionController::resourceLoadDidCompleteWithError(WebPageProxyIdenti
     for (Ref context : m_extensionContexts)
         context->resourceLoadDidCompleteWithError(pageID, loadInfo, response, error);
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebExtensionController::resourceLoadWasBlockedByContentRuleList(WebPageProxyIdentifier pageID, const WebExtensionContentRuleListBlockedLoadInfo& info)
+{
+    for (auto& identifier : info.blockingContentRuleListIdentifiers) {
+        for (Ref context : m_extensionContexts) {
+            if (context->uniqueIdentifier() == identifier) {
+                context->resourceLoadWasBlockedByDeclarativeNetRequest(pageID, info);
+                break;
+            }
+        }
+    }
+}
+#endif
 
 // MARK: Inspector
 

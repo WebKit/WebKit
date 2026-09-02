@@ -469,6 +469,10 @@
 #include "WebExtensionController.h"
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS)
+#include "WebExtensionContentRuleListBlockedLoadInfo.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -10826,6 +10830,16 @@ void WebPageProxy::contentRuleListNotification(URL&& url, ContentRuleListResults
 void WebPageProxy::contentRuleListMatchedRule(WebCore::ContentRuleListMatchedRule&& matchedRule)
 {
     m_navigationClient->contentRuleListMatchedRule(*this, WTF::move(matchedRule));
+}
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS)
+void WebPageProxy::contentRuleListDidBlockLoad(WebExtensionContentRuleListBlockedLoadInfo&& info)
+{
+#if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadWasBlockedByContentRuleList(identifier(), WTF::move(info));
+#endif
 }
 #endif
 

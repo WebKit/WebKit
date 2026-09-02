@@ -3950,6 +3950,17 @@ struct WebCore::ContentRuleListMatchedRule {
 
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS)
+struct WebKit::WebExtensionContentRuleListBlockedLoadInfo {
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
+    URL url;
+    String httpMethod;
+    WebKit::ResourceLoadInfo::Type type;
+    Vector<String> blockingContentRuleListIdentifiers;
+};
+#endif
+
 enum class WebCore::PolicyAction : uint8_t {
     Use,
     Download,

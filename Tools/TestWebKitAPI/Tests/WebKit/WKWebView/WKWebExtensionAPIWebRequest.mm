@@ -893,6 +893,55 @@ TEST(WKWebExtensionAPIWebRequest, ErrorOccurredEvent)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, WebRequestFiresForDeclarativeNetRequestBlockedLoad)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/blocked"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"webRequest", @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{ @"id": @"block", @"enabled": @YES, @"path": @"rules.json" } ]
+        }
+    };
+
+    auto *rules = @"[ { \"id\": 1, \"priority\": 1, \"action\": { \"type\": \"block\" }, \"condition\": { \"urlFilter\": \"blocked\", \"resourceTypes\": [\"main_frame\"] } } ]";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"let beforeRequestFired = false",
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (!details.url.includes('/blocked')) return",
+        @"  beforeRequestFired = true",
+        @"  browser.test.assertEq(details.type, 'main_frame', 'onBeforeRequest type')",
+        @"  browser.test.assertEq(details.method, 'GET', 'onBeforeRequest method')",
+        @"}, { urls: [ '<all_urls>' ] })",
+        @"browser.webRequest.onErrorOccurred.addListener((details) => {",
+        @"  if (!details.url.includes('/blocked')) return",
+        @"  browser.test.assertTrue(beforeRequestFired, 'onBeforeRequest fired before onErrorOccurred')",
+        @"  browser.test.assertEq(details.type, 'main_frame', 'onErrorOccurred type')",
+        @"  browser.test.assertEq(typeof details.error, 'string', 'error is a string')",
+        @"  browser.test.assertTrue(details.error.includes('content blocker'), 'error mentions content blocker')",
+        @"  browser.test.notifyPass()",
+        @"}, { urls: [ '<all_urls>' ] })",
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript, @"rules.json": rules });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+
+    auto *urlRequest = server.requestWithLocalhost("/blocked"_s);
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebRequest, RedirectOccurredEvent)
 {
     TestWebKitAPI::HTTPServer server({

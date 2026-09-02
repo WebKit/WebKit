@@ -31,6 +31,9 @@
 #include "ResourceLoader.h"
 
 #include "AuthenticationChallenge.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ContentRuleListBlockedLoadInfo.h"
 #include "ContentRuleListResults.h"
 #include "DNS.h"
 #include "DataURLDecoder.h"
@@ -404,9 +407,17 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (!redirectResponse.isNull() && frameLoader && page && userContentProvider && documentLoader) {
         auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
         bool shouldBlock = results.shouldBlock();
+        Vector<String> blockingIdentifiers;
+        if (shouldBlock) {
+            for (auto& pair : results.results) {
+                if (pair.second.blockedLoad)
+                    blockingIdentifiers.append(pair.first);
+            }
+        }
         ContentExtensions::applyResultsToRequest(WTF::move(results), page.get(), request);
         if (shouldBlock) {
             RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of content blocker");
+            page->chrome().client().contentRuleListDidBlockLoad({ frameLoader->frame().frameID(), request.url(), request.httpMethod(), m_resourceType, WTF::move(blockingIdentifiers) });
             didFail(blockedByContentBlockerError());
             completionHandler({ });
             return;

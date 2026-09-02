@@ -318,6 +318,17 @@ void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentif
     });
 }
 
+void WebExtensionContextProxy::resourceLoadDidBlockBeforeRequest(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const ResourceLoadInfo& resourceLoad)
+{
+    auto *details = webRequestDetailsForResourceLoad(resourceLoad, tabID);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.webRequest().onBeforeRequest().enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto&) {
+            listener.call(toJSValueRef(listener.globalContext(), details));
+        });
+    });
+}
+
 void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const ResourceLoadInfo& resourceLoad, const WebCore::ResourceRequest& newRequest)
 {
     auto *details = headersReceivedDetails(resourceLoad, tabID, response);
@@ -410,7 +421,7 @@ void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabI
     if (!error.isNull()) {
         [details addEntriesFromDictionary:@{
             @"tabId": @(toWebAPI(tabID)),
-            errorKey: @"net::ERR_ABORTED"
+            errorKey: error.localizedDescription().createNSString().get()
         }];
 
         enumerateNamespaceObjects([&](auto& namespaceObject) {

@@ -59,6 +59,8 @@
 #include "WebColorChooser.h"
 #include "WebDataListSuggestionPicker.h"
 #include "WebDateTimeChooser.h"
+#include "WebExtensionContentRuleListBlockedLoadInfo.h"
+#include "WebExtensionControllerProxy.h"
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
@@ -84,6 +86,7 @@
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include <WebCore/ContentChangeObserver.h>
 #endif
+#include <WebCore/ContentRuleListBlockedLoadInfo.h>
 #include <WebCore/ContentRuleListMatchedRule.h>
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/DataListSuggestionPicker.h>
@@ -104,6 +107,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLNames.h>
@@ -1387,6 +1391,71 @@ void WebChromeClient::contentRuleListNotification(const URL& url, const ContentR
 #if ENABLE(CONTENT_EXTENSIONS)
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::ContentRuleListNotification(url, results));
+#endif
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS)
+static ResourceLoadInfo::Type toResourceLoadInfoType(OptionSet<WebCore::ContentExtensions::ResourceType> type)
+{
+    using WebCore::ContentExtensions::ResourceType;
+    if (type.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
+        return ResourceLoadInfo::Type::Document;
+    if (type.contains(ResourceType::Image))
+        return ResourceLoadInfo::Type::Image;
+    if (type.contains(ResourceType::StyleSheet))
+        return ResourceLoadInfo::Type::Stylesheet;
+    if (type.contains(ResourceType::Script))
+        return ResourceLoadInfo::Type::Script;
+    if (type.contains(ResourceType::Font))
+        return ResourceLoadInfo::Type::Font;
+    if (type.contains(ResourceType::Media))
+        return ResourceLoadInfo::Type::Media;
+    if (type.contains(ResourceType::Ping))
+        return ResourceLoadInfo::Type::Ping;
+    if (type.contains(ResourceType::Fetch))
+        return ResourceLoadInfo::Type::Fetch;
+    if (type.contains(ResourceType::CSPReport))
+        return ResourceLoadInfo::Type::CSPReport;
+    return ResourceLoadInfo::Type::Other;
+}
+
+static std::optional<WebCore::FrameIdentifier> parentFrameIDForBlockedLoad(WebCore::FrameIdentifier frameID)
+{
+    RefPtr webFrame = WebFrame::webFrame(frameID);
+    RefPtr coreFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    if (!coreFrame)
+        return std::nullopt;
+    RefPtr ownerElement = coreFrame->ownerElement();
+    if (!ownerElement)
+        return std::nullopt;
+    RefPtr parentFrame = ownerElement->document().frame();
+    if (!parentFrame)
+        return std::nullopt;
+    return parentFrame->loader().frameID();
+}
+#endif
+
+void WebChromeClient::contentRuleListDidBlockLoad(const ContentRuleListBlockedLoadInfo& info)
+{
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(CONTENT_EXTENSIONS) && PLATFORM(COCOA)
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr extensionControllerProxy = page->webExtensionControllerProxy();
+    if (!extensionControllerProxy || !extensionControllerProxy->hasLoadedContexts())
+        return;
+
+    page->send(Messages::WebPageProxy::ContentRuleListDidBlockLoad(WebExtensionContentRuleListBlockedLoadInfo {
+        info.frameID,
+        parentFrameIDForBlockedLoad(info.frameID),
+        info.url,
+        info.httpMethod,
+        toResourceLoadInfoType(info.resourceType),
+        info.blockingContentRuleListIdentifiers
+    }));
+#else
+    UNUSED_PARAM(info);
 #endif
 }
 

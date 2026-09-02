@@ -42,6 +42,7 @@
 #include "ChromeClient.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
+#include "ContentRuleListBlockedLoadInfo.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
@@ -1116,6 +1117,18 @@ static bool NODELETE computeMayAddToMemoryCache(const CachedResourceRequest& new
     return !existingResource || !existingResource->isPreloaded() || newRequest.options().serviceWorkersMode != ServiceWorkersMode::None || existingResource->options().serviceWorkersMode == ServiceWorkersMode::None;
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+static Vector<String> blockingContentRuleListIdentifiers(const ContentRuleListResults& results)
+{
+    Vector<String> identifiers;
+    for (auto& pair : results.results) {
+        if (pair.second.blockedLoad)
+            identifiers.append(pair.first);
+    }
+    return identifiers;
+}
+#endif
+
 ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, ImageLoading imageLoading)
 {
     URL url = request.resourceRequest().url();
@@ -1208,15 +1221,18 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
         if (request.options().shouldEnableContentExtensionsCheck == ShouldEnableContentExtensionsCheck::Yes && userContentProvider) {
             RegistrableDomain originalDomain { resourceRequest.url() };
             const URL& redirectFromURL = (documentLoader->isContinuingLoadAfterNavigationPolicyDecision() && documentLoader->originalRequest().url() != resourceRequest.url()) ? documentLoader->originalRequest().url() : URL { };
-            auto results = userContentProvider->processContentRuleListsForLoad(page, resourceRequest.url(), ContentExtensions::toResourceType(type, request.resourceRequest().requester(), frame->isMainFrame()), *documentLoader, redirectFromURL);
+            auto resourceType = ContentExtensions::toResourceType(type, request.resourceRequest().requester(), frame->isMainFrame());
+            auto results = userContentProvider->processContentRuleListsForLoad(page, resourceRequest.url(), resourceType, *documentLoader, redirectFromURL);
             madeHTTPS = results.summary.madeHTTPS;
             bool shouldBlock = results.shouldBlock();
+            Vector<String> blockingIdentifiers = shouldBlock ? blockingContentRuleListIdentifiers(results) : Vector<String> { };
             std::optional<String> consoleMessage;
             if (shouldBlock && document)
                 consoleMessage = ContentExtensions::customTrackerBlockingMessageForConsole(results, resourceRequest.url());
             request.applyResults(WTF::move(results), page.ptr());
             if (shouldBlock) {
                 CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Resource blocked by content blocker", frame.get());
+                page->chrome().client().contentRuleListDidBlockLoad({ frame->frameID(), resourceRequest.url(), resourceRequest.httpMethod(), resourceType, WTF::move(blockingIdentifiers) });
                 if (type == CachedResource::Type::MainResource) {
                     auto resource = createResource(type, WTF::move(request), page->sessionID(), protect(page->cookieJar()).ptr(), page->settings(), document.get());
                     resource->error(CachedResource::Status::LoadError);

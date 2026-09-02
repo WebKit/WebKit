@@ -2827,6 +2827,7 @@
 		FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */; };
 		FF0F70902E8242DB00D52BE1 /* WasmDebuggerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F708D2E8242DB00D52BE1 /* WasmDebuggerDebuggable.h */; };
 		FFCC7DFE2E95876C00D4A715 /* WasmDebuggerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC7DFB2E95876C00D4A715 /* WasmDebuggerDispatcher.h */; };
+		FFFED26F705F4826140E9F75 /* WebExtensionContentRuleListBlockedLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -9369,6 +9370,7 @@
 		FF0F708E2E8242DB00D52BE1 /* WasmDebuggerDebuggable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebuggerDebuggable.cpp; sourceTree = "<group>"; };
 		FFCC7DFB2E95876C00D4A715 /* WasmDebuggerDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmDebuggerDispatcher.h; sourceTree = "<group>"; };
 		FFCC7DFC2E95876C00D4A715 /* WasmDebuggerDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebuggerDispatcher.cpp; sourceTree = "<group>"; };
+		FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContentRuleListBlockedLoadInfo.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -15822,6 +15824,7 @@
 				1C8ECFED2AFC8355007BAA62 /* WebExtensionCommandParameters.h */,
 				1C8ECFEF2AFC8363007BAA62 /* WebExtensionCommandParameters.serialization.in */,
 				335698F52B19307700C7FEE4 /* WebExtensionConstants.h */,
+				FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */,
 				1C4A14C92ABCB8F500A1018C /* WebExtensionContentWorldType.h */,
 				1C4A14CC2ABCB94400A1018C /* WebExtensionContentWorldType.serialization.in */,
 				2DA301A92B036CDA00F3B129 /* WebExtensionContext.serialization.in */,
@@ -19169,6 +19172,7 @@
 				1C974FE52AFAD137009DE8FC /* WebExtensionCommand.h in Headers */,
 				1C8ECFEE2AFC8355007BAA62 /* WebExtensionCommandParameters.h in Headers */,
 				335698F62B19307700C7FEE4 /* WebExtensionConstants.h in Headers */,
+				FFFED26F705F4826140E9F75 /* WebExtensionContentRuleListBlockedLoadInfo.h in Headers */,
 				1C4A14F12ABDDD6800A1018C /* WebExtensionContentWorldType.h in Headers */,
 				07E065282F1A09AC00ECDA2E /* WebExtensionContext.h in Headers */,
 				1C0234D928A01B1C00AC1E5B /* WebExtensionContextIdentifier.h in Headers */,
