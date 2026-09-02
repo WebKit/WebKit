@@ -1356,10 +1356,19 @@ angle::Result FramebufferGL::ensureAttachmentsInitialized(
     bool depth,
     bool stencil)
 {
-    if (colorAttachments != getState().getEnabledDrawBuffers())
+    const gl::FramebufferState &state                  = getState();
+    const gl::FramebufferAttachment *depthAttachment   = state.getDepthAttachment();
+    const gl::FramebufferAttachment *stencilAttachment = state.getStencilAttachment();
+
+    const bool isPartialDepthStencilInit =
+        depthAttachment && stencilAttachment &&
+        depthAttachment->getResource() == stencilAttachment->getResource() && depth != stencil;
+
+    if (colorAttachments != state.getEnabledDrawBuffers() || isPartialDepthStencilInit)
     {
         // Fall back to the default implementation when there are gaps in the enabled draw buffers
-        // to avoid modifying the draw buffer state.
+        // to avoid modifying the draw buffer state, or when we are performing a partial clear of a
+        // packed depth-stencil attachment.
         return FramebufferImpl::ensureAttachmentsInitialized(context, colorAttachments, depth,
                                                              stencil);
     }
@@ -1665,8 +1674,8 @@ angle::Result FramebufferGL::readPixelsRowByRow(const gl::Context *context,
     ANGLE_UNSAFE_TODO(readbackPixels += skipBytes);
     for (GLint y = area.y; y < area.y + area.height; ++y)
     {
-        ANGLE_GL_TRY(context,
-                     functions->readPixels(area.x, y, area.width, 1, format, type, readbackPixels));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, functions->readPixels(area.x, y, area.width, 1, format, type, readbackPixels));
         ANGLE_UNSAFE_TODO(readbackPixels += rowBytes);
     }
 
@@ -1714,8 +1723,9 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
     if (height > 0)
     {
         ANGLE_TRY(stateManager->setPixelPackState(context, pack));
-        ANGLE_GL_TRY(context, functions->readPixels(area.x, area.y, area.width, height, format,
-                                                    type, workaround.Pixels()));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, functions->readPixels(area.x, area.y, area.width, height, format, type,
+                                           workaround.Pixels()));
     }
 
     if (readLastRowSeparately)
@@ -1726,8 +1736,9 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
 
         GLubyte *readbackPixels = workaround.Pixels();
         ANGLE_UNSAFE_TODO(readbackPixels += skipBytes + (area.height - 1) * rowBytes);
-        ANGLE_GL_TRY(context, functions->readPixels(area.x, area.y + area.height - 1, area.width, 1,
-                                                    format, type, readbackPixels));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, functions->readPixels(area.x, area.y + area.height - 1, area.width, 1, format,
+                                           type, readbackPixels));
     }
 
     if (workaround.IsEnabled())

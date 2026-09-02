@@ -35,6 +35,11 @@ bool FrameCaptureBinaryData::isSwapMode() const
 
 void FrameCaptureBinaryData::storeResidentBlocks()
 {
+    if (mData.empty())
+    {
+        return;
+    }
+
     // Write out all resident binary data blocks by calling storeBlock on each, deleting
     // front() from vector
     if (!isSwapMode())
@@ -502,8 +507,11 @@ void FrameCaptureBinaryData::initializeBinaryDataLoader()
         loadBlock(i);
     }
 
-    // Initialize getData cache
-    updateGetDataCache(0);
+    if (!mReplayBlockDescriptions.empty())
+    {
+        // Initialize getData cache
+        updateGetDataCache(0);
+    }
 }
 
 // Load a single data block into memory

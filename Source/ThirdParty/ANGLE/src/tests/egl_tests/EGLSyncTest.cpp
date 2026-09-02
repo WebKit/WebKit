@@ -740,6 +740,97 @@ void main(void)
     EXPECT_EGL_TRUE(eglDestroyContext(display, context2));
 }
 
+// Test functionality of EGL_ANGLE_global_fence_sync in the presence of multiple threads.
+TEST_P(EGLSyncTest, GlobalFenceSyncMultithreaded)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_global_fence_sync"));
+
+    // Create a second context
+    EGLContext context1     = eglGetCurrentContext();
+    EGLSurface drawSurface1 = eglGetCurrentSurface(EGL_DRAW);
+    EGLSurface readSurface1 = eglGetCurrentSurface(EGL_READ);
+    EGLConfig config        = getEGLWindow()->getConfig();
+
+    const EGLint contextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, getEGLWindow()->getClientMajorVersion(),
+        EGL_CONTEXT_MINOR_VERSION_KHR, getEGLWindow()->getClientMinorVersion(), EGL_NONE};
+
+    EGLContext context2 = eglCreateContext(display, config, context1, contextAttribs);
+    ASSERT_NE(EGL_NO_CONTEXT, context2);
+
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, getWindowWidth(), EGL_HEIGHT, getWindowHeight(),
+                                     EGL_NONE};
+    EGLSurface drawSurface2       = eglCreatePbufferSurface(display, config, pbufferAttribs);
+    ASSERT_NE(EGL_NO_SURFACE, drawSurface2);
+
+    EGLSyncKHR sync2 = EGL_NO_SYNC_KHR;
+
+    // Do an expensive draw in context 2, in a thread
+    std::thread slowSubmit([&]() {
+        eglMakeCurrent(display, drawSurface2, drawSurface2, context2);
+
+        constexpr char kCostlyVS[] = R"(attribute highp vec4 position;
+    varying highp vec4 testPos;
+    void main(void)
+    {
+        testPos     = position;
+        gl_Position = position;
+    })";
+
+        constexpr char kCostlyFS[] = R"(precision highp float;
+    varying highp vec4 testPos;
+    void main(void)
+    {
+        vec4 test = testPos;
+        for (int i = 0; i < 500; i++)
+        {
+            test = sqrt(test);
+        }
+        gl_FragColor = test;
+    })";
+
+        ANGLE_GL_PROGRAM(expensiveProgram, kCostlyVS, kCostlyFS);
+        drawQuad(expensiveProgram, "position", 0.0f);
+
+        // Signal a fence sync for testing
+        sync2 = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+
+        // Release the context.  In the Vulkan backend, this frees the queue index assigned to the
+        // context.
+        eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    });
+    slowSubmit.join();
+
+    // Re-make-current the context.  In the Vulkan backend, this realloces the queue index assigned
+    // to the context.
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglMakeCurrent(display, drawSurface1, readSurface1, context1);
+
+    // Create a global fence sync
+    EGLSyncKHR sync1 = eglCreateSyncKHR(display, EGL_SYNC_GLOBAL_FENCE_ANGLE, nullptr);
+
+    // Wait for the global fence sync to finish.
+    constexpr GLuint64 kTimeout = 2'000'000'000;  // 2 seconds
+    ASSERT_EQ(EGL_CONDITION_SATISFIED_KHR, eglClientWaitSyncKHR(display, sync1, 0, kTimeout));
+
+    // If the global fence sync is signaled, then the signal from context2 must also be signaled.
+    // Note that if sync1 was an EGL_SYNC_FENCE_KHR, this would not necessarily be true.
+    EGLint value = 0;
+    EXPECT_EGL_TRUE(eglGetSyncAttribKHR(display, sync2, EGL_SYNC_STATUS_KHR, &value));
+    EXPECT_EQ(value, EGL_SIGNALED_KHR);
+
+    EXPECT_EQ(EGL_CONDITION_SATISFIED_KHR, eglClientWaitSyncKHR(display, sync2, 0, 0));
+
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync1));
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync2));
+
+    EXPECT_EGL_TRUE(eglDestroySurface(display, drawSurface2));
+    EXPECT_EGL_TRUE(eglDestroyContext(display, context2));
+}
+
 // Test that leaked fences are cleaned up in a safe way. Regression test for sync objects using tail
 // calls for destruction.
 TEST_P(EGLSyncTest, DISABLED_LeakSyncToDisplayDestruction)

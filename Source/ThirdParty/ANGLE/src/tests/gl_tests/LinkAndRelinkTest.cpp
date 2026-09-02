@@ -956,6 +956,106 @@ void main()
     glDeleteProgramPipelines(1, &pipeline);
 }
 
+// Test relinking a program with a shader that uses fewer textures.
+TEST_P(LinkAndRelinkTestES3, RelinkRemovesOneTexture)
+{
+    // Create a program with two textures, then relink it with a shader that removes one of the
+    // textures.
+    constexpr char kFS1[] = R"(#version 300 es
+precision mediump float;
+uniform sampler2D t0;
+uniform sampler2D t1;
+out vec4 color;
+void main()
+{
+    color = texture(t0, vec2(0)) + texture(t1, vec2(0));
+})";
+    constexpr char kFS2[] = R"(#version 300 es
+precision mediump float;
+uniform sampler2D t0;
+out vec4 color;
+void main()
+{
+    color = texture(t0, vec2(0));
+})";
+
+    GLuint program = glCreateProgram();
+
+    GLuint vs  = CompileShader(GL_VERTEX_SHADER, essl3_shaders::vs::Simple());
+    GLuint fs1 = CompileShader(GL_FRAGMENT_SHADER, kFS1);
+    GLuint fs2 = CompileShader(GL_FRAGMENT_SHADER, kFS2);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs1);
+    EXPECT_NE(0u, fs2);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs1);
+    glLinkProgram(program);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "t0"), 0);
+    glUniform1i(glGetUniformLocation(program, "t1"), 1);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLColor kTexture0Color = GLColor(20, 30, 0, 100);
+    constexpr GLColor kTexture1Color = GLColor(70, 10, 55, 50);
+
+    GLTexture texture0;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture0);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &kTexture0Color);
+
+    GLTexture texture1;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &kTexture1Color);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Draw once, which sums the two textures.
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Mark texture1 dirty so it's tracked for getting synced.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+    // Attach the second fragment shader and relink the program
+    glDetachShader(program, fs1);
+    glAttachShader(program, fs2);
+    glLinkProgram(program);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "t0"), 0);
+
+    // Delete the texture and bind another one in its place.
+    texture1.reset();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &kTexture1Color);
+
+    // Draw again, which accumulates the color from the first texture.
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    constexpr GLColor kExpect(
+        kTexture0Color.R * 2 + kTexture1Color.R, kTexture0Color.G * 2 + kTexture1Color.G,
+        kTexture0Color.B * 2 + kTexture1Color.B, kTexture0Color.A * 2 + kTexture1Color.A);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 9);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs1);
+    glDeleteShader(fs2);
+    glDeleteProgram(program);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(LinkAndRelinkTest);
 
 ANGLE_INSTANTIATE_TEST_ES3(LinkAndRelinkTestES3);

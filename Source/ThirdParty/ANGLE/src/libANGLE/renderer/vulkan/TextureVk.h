@@ -201,7 +201,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result initializeContentsWithBlack(const gl::Context *context,
                                               GLenum binding,
-                                              const gl::ImageIndex &imageIndex);
+                                              const gl::SourceImageIndex &imageIndex);
 
     GLint getRequiredExternalTextureImageUnits([[maybe_unused]] const gl::Context *context) override
     {
@@ -490,7 +490,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result generateMipmapLevelsWithCPU(ContextVk *contextVk,
                                               const angle::Format &sourceFormat,
-                                              GLuint layer,
+                                              gl::SourceLayer layer,
                                               gl::SourceLevel firstMipLevel,
                                               gl::SourceLevel maxMipLevel,
                                               const size_t sourceWidth,

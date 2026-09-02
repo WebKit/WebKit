@@ -5528,6 +5528,40 @@ TEST_P(TransformFeedbackTest, BindBufferBaseWhileActive)
     EXPECT_GL_NO_ERROR();
 }
 
+class HardenedTransformFeedbackTest : public TransformFeedbackTest
+{
+  public:
+    HardenedTransformFeedbackTest() { setHardenedContextEnabled(true); }
+};
+
+// Using a buffer as both transform feedback output and vertex input is undefined behaviour.
+// Hardened contexts should reject this like WebGL contexts do.
+TEST_P(HardenedTransformFeedbackTest, VertexBufferBoundForTransformFeedback)
+{
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+
+    glUseProgram(mProgram);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(GLfloat), nullptr, GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer);
+    glBeginTransformFeedback(GL_POINTS);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);  // should return GL_INVALID_OPERATION
+
+    glEndTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND_ES32_AND(
     TransformFeedbackTest,
@@ -5578,4 +5612,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestVkEvent);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     TransformFeedbackTestVkEvent,
     ES3_VULKAN().enable(Feature::UseVkEventForBufferBarrier).disable(Feature::RecycleVkEvent));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedTransformFeedbackTest);
+ANGLE_INSTANTIATE_TEST_ES3(HardenedTransformFeedbackTest);
+
 }  // anonymous namespace

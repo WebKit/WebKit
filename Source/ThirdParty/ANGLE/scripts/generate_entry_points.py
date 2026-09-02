@@ -191,7 +191,6 @@ CONTEXT_PRIVATE_LIST = [
     'glClipControl',
     'glColorMask',
     'glColorMaski',
-    'glCoverageModulation',
     'glCullFace',
     'glDepthFunc',
     'glDepthMask',

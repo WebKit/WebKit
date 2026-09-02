@@ -208,8 +208,43 @@ TEST_P(VulkanDescriptorSetLayoutDescTest, Basic)
     mDescriptorSetLayoutCache.destroy(contextVk->getRenderer());
 }
 
+// Verify that DynamicDescriptorPool::destroy tears down cleanly even when descriptor sets that
+// were returned to the pool are still tagged with an outstanding queue serial.
+TEST_P(VulkanDescriptorSetLayoutDescTest, DestroyWithPendingGarbage)
+{
+    rx::ContextVk *contextVk = hackANGLE();
+
+    rx::vk::DescriptorSetLayoutDesc desc;
+    addBindings({0}, &desc);
+
+    rx::vk::DescriptorSetLayoutPtr descriptorSetLayout;
+    angle::Result result =
+        mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, desc, &descriptorSetLayout);
+    ASSERT_EQ(result, angle::Result::Continue);
+
+    VkDescriptorPoolSize poolSize = {VK_DESCRIPTOR_TYPE_SAMPLER, 1};
+    rx::vk::DynamicDescriptorPool dynamicPool;
+    result = dynamicPool.init(contextVk, &poolSize, 1, *descriptorSetLayout);
+    ASSERT_EQ(result, angle::Result::Continue);
+
+    rx::vk::DescriptorSetPointer descriptorSet;
+    result = dynamicPool.allocateDescriptorSet(contextVk, *descriptorSetLayout, &descriptorSet);
+    ASSERT_EQ(result, angle::Result::Continue);
+    ASSERT_TRUE(descriptorSet);
+
+    // Tag the descriptor set with a queue serial that has not been reached so that it stays on the
+    // pool's pending garbage list once released.
+    descriptorSet->setQueueSerial(rx::QueueSerial(0, rx::Serial::Infinite()));
+    descriptorSet.reset();
+
+    dynamicPool.destroy(contextVk->getDevice());
+
+    descriptorSetLayout.reset();
+    mDescriptorSetLayoutCache.destroy(contextVk->getRenderer());
+}
+
 ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetTest, ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER());
-ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetLayoutDescTest, ES31_VULKAN());
+ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetLayoutDescTest, ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER());
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanDescriptorSetLayoutDescTest);
 
 }  // namespace

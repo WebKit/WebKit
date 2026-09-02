@@ -2903,11 +2903,6 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glTestFenceNV", testFenceNV);
     }
 
-    if (extensions.count("GL_NV_framebuffer_mixed_samples") != 0)
-    {
-        ASSIGN("glCoverageModulationNV", coverageModulationNV);
-    }
-
     if (extensions.count("GL_NV_internalformat_sample_query") != 0)
     {
         ASSIGN("glGetInternalformatSampleivNV", getInternalformatSampleivNV);

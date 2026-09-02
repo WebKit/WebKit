@@ -26,8 +26,9 @@ void WindowSurfaceVkWayland::ResizeCallback(wl_egl_window *eglWindow, void *payl
 }
 
 WindowSurfaceVkWayland::WindowSurfaceVkWayland(const egl::SurfaceState &surfaceState,
-                                               EGLNativeWindowType window)
-    : WindowSurfaceVk(surfaceState, window)
+                                               EGLNativeWindowType window,
+                                               wl_display *waylandDisplay)
+    : WindowSurfaceVk(surfaceState, window), mWaylandDisplay(waylandDisplay)
 {
     wl_egl_window *eglWindow   = reinterpret_cast<wl_egl_window *>(window);
     eglWindow->resize_callback = WindowSurfaceVkWayland::ResizeCallback;
@@ -42,11 +43,12 @@ angle::Result WindowSurfaceVkWayland::createSurfaceVk(vk::ErrorContext *context)
 
     // VkWaylandSurfaceCreateInfoKHR::display and ::surface must share a
     // wl_display connection -- vkCreateSwapchainKHR calls wl_proxy_set_queue
-    // which asserts proxy->display == queue->display. Derive the display
-    // from the surface so this holds structurally regardless of how the EGL
-    // display was initialized.
-    wl_display *surfaceDisplay = static_cast<wl_display *>(
-        wl_proxy_get_display(reinterpret_cast<wl_proxy *>(eglWindow->surface)));
+    // which asserts proxy->display == queue->display. mWaylandDisplay is the
+    // connection the EGL display was initialized with, and it owns the app's
+    // wl_surface, so the two match. Using it (instead of wl_proxy_get_display,
+    // which was only added in libwayland 1.20) keeps the build working against
+    // older system wayland headers -- see https://anglebug.com/534371626.
+    wl_display *surfaceDisplay = mWaylandDisplay;
 
     ANGLE_VK_CHECK(context,
                    vkGetPhysicalDeviceWaylandPresentationSupportKHR(

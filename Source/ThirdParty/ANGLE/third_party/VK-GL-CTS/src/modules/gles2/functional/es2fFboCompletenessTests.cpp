@@ -86,7 +86,13 @@ static const FormatKey s_oesTextureHalfFloatFormats[] = {
 };
 
 // GL_EXT_color_buffer_half_float
+static const FormatKey s_extColorBufferHalfFloatUnsizedRequired[] = {
+    GLS_UNSIZED_FORMATKEY(GL_RGBA, GL_HALF_FLOAT_OES),
+};
 static const FormatKey s_extColorBufferHalfFloatUnsized[] = {
+    GLS_UNSIZED_FORMATKEY(GL_RED, GL_HALF_FLOAT_OES),
+    GLS_UNSIZED_FORMATKEY(GL_RG, GL_HALF_FLOAT_OES),
+    GLS_UNSIZED_FORMATKEY(GL_RGB, GL_HALF_FLOAT_OES),
     GLS_UNSIZED_FORMATKEY(GL_RGBA, GL_HALF_FLOAT_OES),
 };
 
@@ -134,10 +140,11 @@ static const FormatExtEntry s_es2ExtFormats[] = {
     // The extension does not specify these to be color-renderable.
     {"GL_OES_texture_float", (uint32_t)TEXTURE_VALID, GLS_ARRAY_RANGE(s_oesTextureFloatFormats)},
     {"GL_OES_texture_half_float", (uint32_t)TEXTURE_VALID, GLS_ARRAY_RANGE(s_oesTextureHalfFloatFormats)},
-    // However GL_EXT_color_buffer_half_float does say explicitly
-    // that the RGBA variant should be renderable.
+    // However GL_EXT_color_buffer_half_float does say explicitly that the RGBA variant should
+    // be renderable with GL_OES_texture_half_float and other variants can be renderable
     {"GL_OES_texture_half_float GL_EXT_color_buffer_half_float", (uint32_t)(REQUIRED_RENDERABLE | COLOR_RENDERABLE),
-     GLS_ARRAY_RANGE(s_extColorBufferHalfFloatUnsized)},
+     GLS_ARRAY_RANGE(s_extColorBufferHalfFloatUnsizedRequired)},
+    {"GL_EXT_color_buffer_half_float", (uint32_t)COLOR_RENDERABLE, GLS_ARRAY_RANGE(s_extColorBufferHalfFloatUnsized)},
 
     // GL_EXT_sRGB_write_control makes SRGB8_ALPHA8 color-renderable
     {"GL_EXT_sRGB_write_control",

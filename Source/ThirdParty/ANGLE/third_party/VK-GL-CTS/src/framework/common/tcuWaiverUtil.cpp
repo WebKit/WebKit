@@ -271,10 +271,12 @@ bool WaiverTreeBuilder::readWaivedTestsFromXML()
             if (strcmp(elemName, "waiver") == 0)
             {
                 // when we found proper waiver we can copy memorized cases and update waiver info
-                if (vendorFound && deviceFound)
+                // waiver test list may be empty when no testcases from waivers file match the package name
+                // (e.g. waivers are for GLES3, but the package is GLES2)
+                if (vendorFound && deviceFound && !waiverTestList.empty())
                 {
-                    // each waiver must have a url and at least one test
-                    DE_ASSERT(!waiverTestList.empty() && !waiverUrl.empty());
+                    // each waiver must have a url
+                    DE_ASSERT(!waiverUrl.empty());
 
                     std::string &urls = m_sessionInfo.m_waiverUrls;
                     m_testList.insert(m_testList.end(), waiverTestList.begin(), waiverTestList.end());

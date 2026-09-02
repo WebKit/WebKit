@@ -513,106 +513,6 @@ static bool DetermineETC1RGB8TextureSupport(const TextureCapsMap &textureCaps)
     return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
 }
 
-// Check for OES_compressed_ETC2_RGB8_texture support
-static bool DetermineETC2RGB8TextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_RGB8_ETC2,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_ETC2_sRGB8_texture support
-static bool DetermineETC2sRGB8TextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_SRGB8_ETC2,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_ETC2_punchthroughA_RGBA8_texture support
-static bool DetermineETC2PunchthroughARGB8TextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_ETC2_punchthroughA_sRGB8_alpha_texture support
-static bool DetermineETC2PunchthroughAsRGB8AlphaTextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_ETC2_RGBA8_texture support
-static bool DetermineETC2RGBA8TextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_RGBA8_ETC2_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_ETC2_sRGB8_alpha8_texture support
-static bool DetermineETC2sRGB8Alpha8TextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_EAC_R11_unsigned_texture support
-static bool DetermineEACR11UnsignedTextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_R11_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_EAC_R11_signed_texture support
-static bool DetermineEACR11SignedTextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_SIGNED_R11_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_EAC_RG11_unsigned_texture support
-static bool DetermineEACRG11UnsignedTextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_RG11_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
-// Check for OES_compressed_EAC_RG11_signed_texture support
-static bool DetermineEACRG11SignedTextureSupport(const TextureCapsMap &textureCaps)
-{
-    constexpr GLenum requiredFormats[] = {
-        GL_COMPRESSED_SIGNED_RG11_EAC,
-    };
-
-    return GetFormatSupport(textureCaps, requiredFormats, true, true, false, false, false);
-}
-
 // Check for GL_EXT_sRGB support
 static bool DetermineSRGBTextureSupport(const TextureCapsMap &textureCaps)
 {
@@ -900,18 +800,6 @@ void Extensions::setTextureExtensionSupport(const TextureCapsMap &textureCaps)
     textureCompressionAstcLdrKHR  = DetermineASTCLDRTextureSupport(textureCaps);
     textureCompressionAstcOES     = DetermineASTCOESTExtureSupport(textureCaps);
     compressedETC1RGB8TextureOES  = DetermineETC1RGB8TextureSupport(textureCaps);
-    compressedETC2RGB8TextureOES  = DetermineETC2RGB8TextureSupport(textureCaps);
-    compressedETC2SRGB8TextureOES = DetermineETC2sRGB8TextureSupport(textureCaps);
-    compressedETC2PunchthroughARGBA8TextureOES =
-        DetermineETC2PunchthroughARGB8TextureSupport(textureCaps);
-    compressedETC2PunchthroughASRGB8AlphaTextureOES =
-        DetermineETC2PunchthroughAsRGB8AlphaTextureSupport(textureCaps);
-    compressedETC2RGBA8TextureOES       = DetermineETC2RGBA8TextureSupport(textureCaps);
-    compressedETC2SRGB8Alpha8TextureOES = DetermineETC2sRGB8Alpha8TextureSupport(textureCaps);
-    compressedEACR11UnsignedTextureOES  = DetermineEACR11UnsignedTextureSupport(textureCaps);
-    compressedEACR11SignedTextureOES    = DetermineEACR11SignedTextureSupport(textureCaps);
-    compressedEACRG11UnsignedTextureOES = DetermineEACRG11UnsignedTextureSupport(textureCaps);
-    compressedEACRG11SignedTextureOES   = DetermineEACRG11SignedTextureSupport(textureCaps);
     sRGBEXT                             = DetermineSRGBTextureSupport(textureCaps);
     textureSRGBR8EXT                    = DetermineSRGBR8TextureSupport(textureCaps);
     textureSRGBRG8EXT                   = DetermineSRGBRG8TextureSupport(textureCaps);

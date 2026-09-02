@@ -786,6 +786,18 @@ FormatID Format::InternalFormatToID(GLenum internalFormat)
 
 #if defined(ANGLE_ENABLE_CL)
 // static
+FormatID Format::CLAFormatToID(cl_channel_type internalChannelType)
+{
+    switch (internalChannelType)
+    {
+        case CL_UNORM_INT8:
+            return FormatID::A8_UNORM;
+        default:
+            return FormatID::NONE;
+    }
+}
+
+// static
 FormatID Format::CLRFormatToID(cl_channel_type internalChannelType)
 {
     switch (internalChannelType)

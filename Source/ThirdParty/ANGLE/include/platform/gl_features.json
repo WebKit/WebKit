@@ -309,6 +309,33 @@
             "issue": "https://crbug.com/705865"
         },
         {
+            "name": "reset_base_level_for_ASTC_sub_image",
+            "category": "Workarounds",
+            "description": [
+                "Reset texture base level before calling glCompressedTexSubImage2D for ASTC textures to ",
+                "work around PowerVR driver bug."
+            ],
+            "issue": "https://crbug.com/528131939"
+        },
+        {
+            "name": "recreate_immutable_texture_on_base_level_increase",
+            "category": "Workarounds",
+            "description": [
+                "Recreate native storage for immutable textures when TEXTURE_BASE_LEVEL is increased to ",
+                "work around PowerVR sparse page map OOB driver bug."
+            ],
+            "issue": "https://crbug.com/528131119"
+        },
+        {
+            "name": "use_temp_for_non_zero_base_level_GenMipmap_using_CopyImageSubData",
+            "category": "Workarounds",
+            "description": [
+                "Allocate a temporary texture when generating mipmaps on an immutable texture with a ",
+                "non-zero base level to avoid driver bugs."
+            ],
+            "issue": "https://crbug.com/534923522"
+        },
+        {
             "name": "limit_max_3d_array_texture_size_to_1024",
             "category": "Workarounds",
             "description": [
@@ -933,6 +960,31 @@
                 "Split full-image level 0 PBO uploads via TexSubImage2D into two calls to work around driver bugs."
             ],
             "issue": "http://crbug.com/496807874"
+        },
+        {
+            "name": "limit_output_varyings_to_256_at_compile_time",
+            "category": "Workarounds",
+            "description": [
+                "Limit the number of declared varying components at compile time to work around a PowerVR driver bug."
+            ],
+            "issue": "http://crbug.com/529991907"
+        },
+        {
+            "name": "avoid_complex_expressions_in_struct_constructor",
+            "category": "Workarounds",
+            "description": [
+                "Remove complex expressions from struct constructors."
+            ],
+            "issue": "http://crbug.com/529509587"
+        },
+        {
+            "name": "flush_queries_before_deleting_or_unbinding_fbo",
+            "category": "Workarounds",
+            "description": [
+                "Flush pending GPU jobs/queries before unbinding or deleting a user framebuffer ",
+                "object on ARM Mali Valhall/Avalon GPUs to avoid driver crash."
+            ],
+            "issue": "http://crbug.com/534468209"
         }
     ]
 }

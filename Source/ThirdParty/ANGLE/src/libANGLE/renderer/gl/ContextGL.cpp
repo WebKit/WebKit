@@ -13,7 +13,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/PixelLocalStorage.h"
-#include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/gl/BufferGL.h"
 #include "libANGLE/renderer/gl/CompilerGL.h"
 #include "libANGLE/renderer/gl/FenceNVGL.h"
@@ -266,12 +265,6 @@ SemaphoreImpl *ContextGL::createSemaphore()
     functions->genSemaphoresEXT(1, &semaphore);
 
     return new SemaphoreGL(semaphore);
-}
-
-OverlayImpl *ContextGL::createOverlay(const gl::OverlayState &state)
-{
-    // Not implemented.
-    return new OverlayImpl(state);
 }
 
 angle::Result ContextGL::flush(const gl::Context *context)

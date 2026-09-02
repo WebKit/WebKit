@@ -488,10 +488,12 @@ TextureUploadParams ES3VulkanParams(bool webglCompat)
     return params;
 }
 
-TextureUploadParams MetalPBOParams(GLsizei baseSize, GLsizei subImageSize)
+TextureUploadParams ES3MetalPBOParams(GLsizei baseSize, GLsizei subImageSize)
 {
     TextureUploadParams params;
     params.eglParameters = egl_platform::METAL();
+    params.majorVersion  = 3;
+    params.minorVersion  = 0;
     params.webgl         = false;
     params.trackGpuTime  = false;
     params.baseSize      = baseSize;
@@ -499,10 +501,12 @@ TextureUploadParams MetalPBOParams(GLsizei baseSize, GLsizei subImageSize)
     return params;
 }
 
-TextureUploadParams VulkanPBOParams(GLsizei baseSize, GLsizei subImageSize)
+TextureUploadParams ES3VulkanPBOParams(GLsizei baseSize, GLsizei subImageSize)
 {
     TextureUploadParams params;
     params.eglParameters = egl_platform::VULKAN();
+    params.majorVersion  = 3;
+    params.minorVersion  = 0;
     params.webgl         = false;
     params.trackGpuTime  = false;
     params.baseSize      = baseSize;
@@ -579,11 +583,11 @@ ANGLE_INSTANTIATE_TEST(TextureUploadFullMipBenchmark,
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PBOSubImageBenchmark);
 ANGLE_INSTANTIATE_TEST(PBOSubImageBenchmark,
                        ES3OpenGLPBOParams(1024, 128),
-                       MetalPBOParams(1024, 128),
-                       VulkanPBOParams(1024, 128));
+                       ES3MetalPBOParams(1024, 128),
+                       ES3VulkanPBOParams(1024, 128));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PBOCompressedSubImageBenchmark);
 ANGLE_INSTANTIATE_TEST(PBOCompressedSubImageBenchmark,
                        ES3OpenGLPBOParams(128, 128),
-                       MetalPBOParams(128, 128),
-                       VulkanPBOParams(128, 128));
+                       ES3MetalPBOParams(128, 128),
+                       ES3VulkanPBOParams(128, 128));

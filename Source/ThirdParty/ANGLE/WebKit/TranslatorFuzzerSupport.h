@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 417
+#if ANGLE_SH_VERSION != 420
 #    error Check if there are added options and update this check.
 #endif
 
@@ -41,7 +41,7 @@
     MACRO(sourcePath, 2, any, none)                                           \
     MACRO(intermediateTree, 3, any, none)                                     \
     MACRO(validateAST, 4, none, any)                                          \
-    MACRO(unused3, 5, any, none)                                              \
+    MACRO(limitOutputVaryingsTo256, 5, glsl, none)                            \
     MACRO(lineDirectives, 6, any, none)                                       \
     MACRO(removeInvariantAndCentroidForESSL3, 7, glsl, none)                  \
     MACRO(emulateAbsIntFunction, 8, glsl, none)                               \
@@ -92,7 +92,7 @@
     MACRO(rejectWebglShadersWithLargeVariables, 56, any, none)                \
     MACRO(explicitFragmentLocations, 57, glsl, none)                          \
     MACRO(unused, 58, any, none)                                              \
-    MACRO(unused2, 59, any, none)                                             \
+    MACRO(avoidComplexExpressionsInStructConstructor, 59, glsl, none)         \
     MACRO(allowExtensionDisableAfterNonPPTokensInWebGL, 60, any, none)        \
     MACRO(passHighpToPackUnormSnormBuiltins, 61, glsl, none)                  \
     MACRO(emulateClipDistanceState, 62, glsl, none)                           \

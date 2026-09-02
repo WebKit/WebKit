@@ -683,15 +683,6 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
     void test()
     {
-        // ETC2/EAC formats always pass validation on ES3 contexts but in some cases fail in drivers
-        // because their emulation is not implemented for OpenGL renderer.
-        // https://anglebug.com/42264819
-        if (mAlwaysOnES3)
-        {
-            ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3 &&
-                               !IsGLExtensionRequestable(mExtNames[0]));
-        }
-
         // It's not possible to disable ETC2/EAC support on ES 3.0.
         const bool compressedFormatEnabled = mAlwaysOnES3 && getClientMajorVersion() >= 3;
         check2D(compressedFormatEnabled);
@@ -709,7 +700,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
                 {
                     glRequestExtensionANGLE(extName.c_str());
                 }
-                ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(extName));
+                ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(extName) && !compressedFormatEnabled);
             }
         }
 
@@ -803,17 +794,7 @@ const char kBPTC[]     = "GL_EXT_texture_compression_bptc";
 const char kETC1[]    = "GL_OES_compressed_ETC1_RGB8_texture";
 const char kETC1Sub[] = "GL_EXT_compressed_ETC1_RGB8_sub_texture";
 
-const char kEACR11U[]  = "GL_OES_compressed_EAC_R11_unsigned_texture";
-const char kEACR11S[]  = "GL_OES_compressed_EAC_R11_signed_texture";
-const char kEACRG11U[] = "GL_OES_compressed_EAC_RG11_unsigned_texture";
-const char kEACRG11S[] = "GL_OES_compressed_EAC_RG11_signed_texture";
-
-const char kETC2RGB8[]       = "GL_OES_compressed_ETC2_RGB8_texture";
-const char kETC2RGB8SRGB[]   = "GL_OES_compressed_ETC2_sRGB8_texture";
-const char kETC2RGB8A1[]     = "GL_OES_compressed_ETC2_punchthroughA_RGBA8_texture";
-const char kETC2RGB8A1SRGB[] = "GL_OES_compressed_ETC2_punchthroughA_sRGB8_alpha_texture";
-const char kETC2RGBA8[]      = "GL_OES_compressed_ETC2_RGBA8_texture";
-const char kETC2RGBA8SRGB[]  = "GL_OES_compressed_ETC2_sRGB8_alpha8_texture";
+const char kETC2[] = "GL_ANGLE_compressed_texture_etc";
 
 const char kASTC[]         = "GL_KHR_texture_compression_astc_ldr";
 const char kASTC3D[]       = "GL_OES_texture_compression_astc";
@@ -835,22 +816,12 @@ using CompressedTextureBPTCTest     = _Test<kBPTC,     kEmpty, true, true, true,
 using CompressedTextureETC1Test    = _Test<kETC1, kEmpty,   false, false, false, false, false>;
 using CompressedTextureETC1SubTest = _Test<kETC1, kETC1Sub, true,  true,  true,  false, false>;
 
-using CompressedTextureEACR11UTest  = _Test<kEACR11U,  kEmpty, true, true, true, false, true>;
-using CompressedTextureEACR11STest  = _Test<kEACR11S,  kEmpty, true, true, true, false, true>;
-using CompressedTextureEACRG11UTest = _Test<kEACRG11U, kEmpty, true, true, true, false, true>;
-using CompressedTextureEACRG11STest = _Test<kEACRG11S, kEmpty, true, true, true, false, true>;
+using CompressedTextureETC2Test  = _Test<kETC2, kEmpty, true, true, true, false, true>;
 
-using CompressedTextureETC2RGB8Test       = _Test<kETC2RGB8,       kEmpty, true, true, true, false, true>;
-using CompressedTextureETC2RGB8SRGBTest   = _Test<kETC2RGB8SRGB,   kEmpty, true, true, true, false, true>;
-using CompressedTextureETC2RGB8A1Test     = _Test<kETC2RGB8A1,     kEmpty, true, true, true, false, true>;
-using CompressedTextureETC2RGB8A1SRGBTest = _Test<kETC2RGB8A1SRGB, kEmpty, true, true, true, false, true>;
-using CompressedTextureETC2RGBA8Test      = _Test<kETC2RGBA8,      kEmpty, true, true, true, false, true>;
-using CompressedTextureETC2RGBA8SRGBTest  = _Test<kETC2RGBA8SRGB,  kEmpty, true, true, true, false, true>;
-
-using CompressedTextureASTCTest         = _Test<kASTC, kEmpty,        true, true, true, false, false>;
-using CompressedTextureASTC3DTest      = _Test<kASTC3D, kEmpty,        true, true, false, true,  true>;
-using CompressedTextureASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
-using CompressedTextureSamplerASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
+using CompressedTextureASTCTest                = _Test<kASTC, kEmpty,        true, true,  true, false, false>;
+using CompressedTextureASTC3DTest              = _Test<kASTC3D, kEmpty,      true, true, false,  true, false>;
+using CompressedTextureASTCSliced3DTest        = _Test<kASTC, kASTCSliced3D, true, true,  true,  true, false>;
+using CompressedTextureSamplerASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true,  true,  true, false>;
 
 using CompressedTexturePVRTC1Test     = _Test<kPVRTC1, kEmpty,     true, false, false, false, false>;
 using CompressedTexturePVRTC1SRGBTest = _Test<kPVRTC1, kPVRTCSRGB, true, false, false, false, false>;
@@ -902,18 +873,17 @@ static const FormatDesc kBPTCFormats[] = {{GL_COMPRESSED_RGBA_BPTC_UNORM_EXT, 4,
 
 static const FormatDesc kETC1Formats[] = {{GL_ETC1_RGB8_OES, 4, 4, 1, 8}};
 
-// clang-format off
-static const FormatDesc kEACR11UFormats[]        = {{GL_COMPRESSED_R11_EAC, 4, 4, 1, 8}};
-static const FormatDesc kEACR11SFormats[]        = {{GL_COMPRESSED_SIGNED_R11_EAC, 4, 4, 1, 8}};
-static const FormatDesc kEACRG11UFormats[]       = {{GL_COMPRESSED_RG11_EAC, 4, 4, 1, 16}};
-static const FormatDesc kEACRG11SFormats[]       = {{GL_COMPRESSED_SIGNED_RG11_EAC, 4, 4, 1, 16}};
-static const FormatDesc kETC2RGB8Formats[]       = {{GL_COMPRESSED_RGB8_ETC2, 4, 4, 1, 8}};
-static const FormatDesc kETC2RGB8SRGBFormats[]   = {{GL_COMPRESSED_SRGB8_ETC2, 4, 4, 1, 8}};
-static const FormatDesc kETC2RGB8A1Formats[]     = {{GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8}};
-static const FormatDesc kETC2RGB8A1SRGBFormats[] = {{GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8}};
-static const FormatDesc kETC2RGBA8Formats[]      = {{GL_COMPRESSED_RGBA8_ETC2_EAC, 4, 4, 1, 16}};
-static const FormatDesc kETC2RGBA8SRGBFormats[]  = {{GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 4, 4, 1, 16}};
-// clang-format on
+static const FormatDesc kETC2Formats[] = {
+    {GL_COMPRESSED_R11_EAC, 4, 4, 1, 8},
+    {GL_COMPRESSED_SIGNED_R11_EAC, 4, 4, 1, 8},
+    {GL_COMPRESSED_RG11_EAC, 4, 4, 1, 16},
+    {GL_COMPRESSED_SIGNED_RG11_EAC, 4, 4, 1, 16},
+    {GL_COMPRESSED_RGB8_ETC2, 4, 4, 1, 8},
+    {GL_COMPRESSED_SRGB8_ETC2, 4, 4, 1, 8},
+    {GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8},
+    {GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8},
+    {GL_COMPRESSED_RGBA8_ETC2_EAC, 4, 4, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 4, 4, 1, 16}};
 
 static const FormatDesc kASTCFormats[] = {
     {GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 4, 4, 1, 16},
@@ -1026,63 +996,9 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC1SubTest,
                                  ANGLE_ALL_TEST_PLATFORMS_ES2,
                                  ANGLE_ALL_TEST_PLATFORMS_ES3);
 
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureEACR11UTest,
+ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2Test,
                                  PrintToStringParamName,
-                                 testing::ValuesIn(kEACR11UFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureEACR11STest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kEACR11SFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureEACRG11UTest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kEACRG11UFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureEACRG11STest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kEACRG11SFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGB8Test,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGB8Formats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGB8SRGBTest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGB8SRGBFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGB8A1Test,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGB8A1Formats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGB8A1SRGBTest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGB8A1SRGBFormats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGBA8Test,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGBA8Formats),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
-
-ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureETC2RGBA8SRGBTest,
-                                 PrintToStringParamName,
-                                 testing::ValuesIn(kETC2RGBA8SRGBFormats),
+                                 testing::ValuesIn(kETC2Formats),
                                  ANGLE_ALL_TEST_PLATFORMS_ES2,
                                  ANGLE_ALL_TEST_PLATFORMS_ES3);
 
@@ -1132,17 +1048,7 @@ TEST_P(CompressedTextureBPTCTest,     Test) { test(); }
 TEST_P(CompressedTextureETC1Test,    Test) { test(); }
 TEST_P(CompressedTextureETC1SubTest, Test) { test(); }
 
-TEST_P(CompressedTextureEACR11UTest,  Test) { test(); }
-TEST_P(CompressedTextureEACR11STest,  Test) { test(); }
-TEST_P(CompressedTextureEACRG11UTest, Test) { test(); }
-TEST_P(CompressedTextureEACRG11STest, Test) { test(); }
-
-TEST_P(CompressedTextureETC2RGB8Test,       Test) { test(); }
-TEST_P(CompressedTextureETC2RGB8SRGBTest,   Test) { test(); }
-TEST_P(CompressedTextureETC2RGB8A1Test,     Test) { test(); }
-TEST_P(CompressedTextureETC2RGB8A1SRGBTest, Test) { test(); }
-TEST_P(CompressedTextureETC2RGBA8Test,      Test) { test(); }
-TEST_P(CompressedTextureETC2RGBA8SRGBTest,  Test) { test(); }
+TEST_P(CompressedTextureETC2Test,  Test) { test(); }
 
 TEST_P(CompressedTextureASTCTest,         Test) { test(); }
 TEST_P(CompressedTextureASTC3DTest,       Test) { test3D(); }

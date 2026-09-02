@@ -1424,7 +1424,7 @@ angle::Result VertexArrayVk::syncNeedsConversionAttrib(ContextVk *contextVk,
 angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                                                    GLint firstVertex,
                                                    GLsizei vertexOrIndexCount,
-                                                   GLsizei baseInstance,
+                                                   GLuint baseInstance,
                                                    GLsizei instanceCount,
                                                    gl::DrawElementsType indexTypeOrInvalid,
                                                    const void *indices,
@@ -1512,9 +1512,7 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                             static_cast<uint32_t>(ComputeVertexAttributeTypeSize(attrib));
 
                         size_t numVertices = GetVertexCount(bufferVk, binding, srcAttributeSize);
-                        numVertices        = numVertices < static_cast<size_t>(baseInstance)
-                                                 ? 0
-                                                 : numVertices - baseInstance;
+                        numVertices = numVertices < baseInstance ? 0 : numVertices - baseInstance;
 
                         ANGLE_TRY(StreamVertexDataWithDivisor(
                             contextVk, vertexDataBuffer, src, bytesToAllocate, binding.getStride(),

@@ -485,10 +485,6 @@ class WindowSurfaceVk : public SurfaceVk
     // Finish all GPU operations on the surface
     angle::Result finish(vk::ErrorContext *context);
 
-    void updateOverlay(ContextVk *contextVk) const;
-    bool overlayHasEnabledWidget(ContextVk *contextVk) const;
-    angle::Result drawOverlay(ContextVk *contextVk, impl::SwapchainImage *image) const;
-
     bool isMultisampledSurface() const;
     bool hasAncillaryColor() const;
 

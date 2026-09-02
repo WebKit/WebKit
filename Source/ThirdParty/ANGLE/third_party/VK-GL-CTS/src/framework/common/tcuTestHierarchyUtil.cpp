@@ -214,7 +214,24 @@ void writeTxtCaselistsToFiles(TestPackageRoot &root, TestContext &testCtx, const
         }
         catch (const tcu::NotSupportedError &)
         {
-            return;
+            // This package cannot be initialized on the current platform (for example a
+            // desktop GL package on a GLES-only device, where creating the render context
+            // throws). Skip it and continue with the remaining packages instead of aborting
+            // the whole caselist export.
+            //
+            // enterTestPackage() threw part way through entering the package, leaving it on
+            // the iterator with no children populated. Step the iterator until it reaches the
+            // next package or the end. Leaving the package calls TestPackage::deinit(), which
+            // is safe after a failed init() because init() resets the package context to null.
+            print("Skipping unsupported package '%s'\n", pkgName);
+
+            do
+                iter.next();
+            while (iter.getState() != TestHierarchyIterator::STATE_FINISHED &&
+                   !(iter.getState() == TestHierarchyIterator::STATE_ENTER_NODE &&
+                     iter.getNode()->getNodeType() == NODETYPE_PACKAGE));
+
+            continue;
         }
 
         while (iter.getNode()->getNodeType() != NODETYPE_PACKAGE)

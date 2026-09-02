@@ -13,13 +13,11 @@
 #include "common/debug.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
-#include "libANGLE/Overlay.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
-#include "libANGLE/renderer/vulkan/OverlayVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/trace.h"
@@ -840,7 +838,7 @@ angle::Result OffscreenSurfaceVk::initializeContents(const gl::Context *context,
                                                      GLenum binding,
                                                      const gl::OwnImageIndex &ownImageIndex)
 {
-    const gl::ImageIndex imageIndex = ownImageIndex.getUntranslated();
+    const gl::SourceImageIndex imageIndex = mState.toSourceIndex(ownImageIndex);
 
     ContextVk *contextVk = vk::GetImpl(context);
 
@@ -2545,7 +2543,8 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
             {
                 // Apply clear color directly to the single sampled image if the EGL surface is
                 // double buffered and when EGL_SWAP_BEHAVIOR is EGL_BUFFER_DESTROYED
-                gl::ImageIndex imageIndex = gl::ImageIndex::Make2D(gl::LevelIndex(0).get());
+                gl::SourceImageIndex imageIndex =
+                    gl::SourceImageIndex::Make2D(gl::SourceLevel::Zero());
                 image.image->stageClear(imageIndex, VK_IMAGE_ASPECT_COLOR_BIT,
                                         deferredClearValues[0]);
                 ANGLE_TRY(image.image->flushStagedUpdates(contextVk, gl::LevelIndex(0),
@@ -2583,8 +2582,8 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     }
 
     // We can only do present related optimization if this is the last renderpass that touches the
-    // swapchain image. MSAA resolve and overlay will insert another renderpass which disqualifies
-    // the optimization.
+    // swapchain image. MSAA resolve will insert another renderpass which disqualifies the
+    // optimization.
     if (contextVk->hasStartedRenderPassWithDefaultFramebuffer())
     {
         // If image is resolved above, render pass is necessary closed.
@@ -2672,14 +2671,7 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
                           &commandBufferHelper->getCommandBuffer());
     }
 
-    // The overlay is drawn after this.  This ensures that drawing the overlay does not interfere
-    // with other functionality, especially counters used to validate said functionality.
-    const bool shouldDrawOverlay = overlayHasEnabledWidget(contextVk);
-
-    if (!shouldDrawOverlay)
-    {
-        ANGLE_TRY(recordPresentLayoutBarrierIfNecessary(contextVk));
-    }
+    ANGLE_TRY(recordPresentLayoutBarrierIfNecessary(contextVk));
 
     if (mDepthStencilImage.valid())
     {
@@ -2689,19 +2681,8 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
         mDepthStencilImage.invalidateEntireLevelStencilContent(contextVk, gl::LevelIndex(0));
     }
 
-    ANGLE_TRY(contextVk->flushAndSubmitCommands(shouldDrawOverlay ? nullptr : &presentSemaphore,
-                                                nullptr, QueueSubmitReason::EGLSwapBuffers));
-
-    if (shouldDrawOverlay)
-    {
-        updateOverlay(contextVk);
-        ANGLE_TRY(drawOverlay(contextVk, &image));
-
-        ANGLE_TRY(recordPresentLayoutBarrierIfNecessary(contextVk));
-
-        ANGLE_TRY(contextVk->flushAndSubmitCommands(&presentSemaphore, nullptr,
-                                                    QueueSubmitReason::DrawOverlay));
-    }
+    ANGLE_TRY(contextVk->flushAndSubmitCommands(&presentSemaphore, nullptr,
+                                                QueueSubmitReason::EGLSwapBuffers));
 
     ASSERT(image.image->getCurrentImageAccess() ==
            (isSharedPresentMode() ? vk::ImageAccess::SharedPresent : vk::ImageAccess::Present));
@@ -3595,7 +3576,7 @@ angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
                                                   GLenum binding,
                                                   const gl::OwnImageIndex &ownImageIndex)
 {
-    const gl::ImageIndex imageIndex = ownImageIndex.getUntranslated();
+    const gl::SourceImageIndex imageIndex = mState.toSourceIndex(ownImageIndex);
 
     ContextVk *contextVk = vk::GetImpl(context);
 
@@ -3625,64 +3606,14 @@ angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
         case GL_DEPTH:
         case GL_STENCIL:
             ASSERT(mDepthStencilImage.valid());
-            mDepthStencilImage.stageRobustResourceClear(gl::ImageIndex::Make2D(0),
-                                                        mDepthStencilImage.getAspectFlags());
+            mDepthStencilImage.stageRobustResourceClear(
+                gl::SourceImageIndex::Make2D(gl::SourceLevel::Zero()),
+                mDepthStencilImage.getAspectFlags());
             ANGLE_TRY(mDepthStencilImage.flushAllStagedUpdates(contextVk));
             break;
         default:
             UNREACHABLE();
             break;
-    }
-
-    return angle::Result::Continue;
-}
-
-void WindowSurfaceVk::updateOverlay(ContextVk *contextVk) const
-{
-    const gl::OverlayType *overlay = contextVk->getOverlay();
-
-    // If overlay is disabled, nothing to do.
-    if (!overlay->isEnabled())
-    {
-        return;
-    }
-
-    vk::Renderer *renderer = contextVk->getRenderer();
-
-    uint32_t validationMessageCount = 0;
-    std::string lastValidationMessage =
-        renderer->getAndClearLastValidationMessage(&validationMessageCount);
-    if (validationMessageCount)
-    {
-        overlay->getTextWidget(gl::WidgetId::VulkanLastValidationMessage)
-            ->set(std::move(lastValidationMessage));
-        overlay->getCountWidget(gl::WidgetId::VulkanValidationMessageCount)
-            ->set(validationMessageCount);
-    }
-
-    contextVk->updateOverlayOnPresent();
-}
-
-ANGLE_INLINE bool WindowSurfaceVk::overlayHasEnabledWidget(ContextVk *contextVk) const
-{
-    const gl::OverlayType *overlay = contextVk->getOverlay();
-    OverlayVk *overlayVk           = vk::GetImpl(overlay);
-    return overlayVk && overlayVk->getEnabledWidgetCount() > 0;
-}
-
-angle::Result WindowSurfaceVk::drawOverlay(ContextVk *contextVk, SwapchainImage *image) const
-{
-    const gl::OverlayType *overlay = contextVk->getOverlay();
-    OverlayVk *overlayVk           = vk::GetImpl(overlay);
-
-    // Draw overlay
-    const vk::ImageView *imageView = nullptr;
-    ANGLE_TRY(image->imageViews.getLevelLayerDrawImageView(contextVk, *image->image,
-                                                           vk::LevelIndex(0), 0, &imageView));
-    if (overlayVk)
-    {
-        ANGLE_TRY(overlayVk->onPresent(contextVk, image->image.get(), imageView,
-                                       Is90DegreeRotation(getPreTransform())));
     }
 
     return angle::Result::Continue;

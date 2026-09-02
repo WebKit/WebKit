@@ -123,7 +123,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     uint32_t getLayerCount() const { return mLayerCount; }
     bool is3DImage() const { return getOwnerOfData()->getType() == VK_IMAGE_TYPE_3D; }
 
-    gl::ImageIndex getImageIndexForClear(uint32_t layerCount) const;
+    gl::SourceImageIndex getImageIndexForClear(uint32_t layerCount) const;
 
     // Special mutator for Surface RenderTargets. Allows the Framebuffer to keep a single
     // RenderTargetVk pointer.

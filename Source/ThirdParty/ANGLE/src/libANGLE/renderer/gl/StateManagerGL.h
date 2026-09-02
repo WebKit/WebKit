@@ -169,9 +169,9 @@ struct VertexArrayStateGL
 
 struct IndexedBufferBindingGL
 {
-    size_t offset = 0;
-    size_t size   = 0;
-    GLuint buffer = 0;
+    GLintptr offset = 0;
+    GLsizeiptr size = 0;
+    GLuint buffer   = 0;
 };
 
 struct ImageUnitBindingGL
@@ -273,8 +273,9 @@ struct ContextStateGL
     bool rasterizerDiscardEnabled  = false;
     float lineWidth                = 1.0f;
 
-    bool primitiveRestartEnabled = false;
-    GLuint primitiveRestartIndex = 0;
+    bool primitiveRestartFixedIndexEnabled = false;
+    bool primitiveRestartEnabled           = false;
+    GLuint primitiveRestartIndex           = 0;
 
     gl::ColorF clearColor = gl::ColorF(0.0f, 0.0f, 0.0f, 0.0f);
     float clearDepth      = 1.0f;
@@ -287,8 +288,6 @@ struct ContextStateGL
 
     bool multisamplingEnabled    = true;
     bool sampleAlphaToOneEnabled = false;
-
-    GLenum coverageModulation = GL_NONE;
 
     GLenum provokingVertex = GL_LAST_VERTEX_CONVENTION;
 
@@ -316,6 +315,8 @@ class StateManagerGL final : angle::NonCopyable
     void deleteRenderbuffer(GLuint rbo);
     void deleteTransformFeedback(GLuint transformFeedback);
 
+    void onSyncedFlushOrFinish();
+
     void useProgram(GLuint program);
     void forceUseProgram(GLuint program);
     void bindVertexArray(GLuint vao, VertexArrayStateGL *vaoState);
@@ -324,8 +325,8 @@ class StateManagerGL final : angle::NonCopyable
     void bindBufferRange(gl::BufferBinding target,
                          size_t index,
                          GLuint buffer,
-                         size_t offset,
-                         size_t size);
+                         GLintptr offset,
+                         GLsizeiptr size);
     void activeTexture(size_t unit);
     void bindTexture(gl::TextureType type, GLuint texture);
     void bindSampler(size_t unit, GLuint sampler);
@@ -337,6 +338,7 @@ class StateManagerGL final : angle::NonCopyable
                           GLenum access,
                           GLenum format);
     void bindFramebuffer(GLenum type, GLuint framebuffer);
+    void forcefullyFlush();
     void bindRenderbuffer(GLenum type, GLuint renderbuffer);
     void bindTransformFeedback(GLenum type, GLuint transformFeedback);
     void onTransformFeedbackStateChange();
@@ -389,6 +391,7 @@ class StateManagerGL final : angle::NonCopyable
     void setRasterizerDiscardEnabled(bool enabled);
     void setLineWidth(float width);
 
+    angle::Result setPrimitiveRestartFixedIndexEnabled(const gl::Context *context, bool enabled);
     angle::Result setPrimitiveRestartEnabled(const gl::Context *context, bool enabled);
     angle::Result setPrimitiveRestartIndex(const gl::Context *context, GLuint index);
 
@@ -413,8 +416,6 @@ class StateManagerGL final : angle::NonCopyable
 
     void setMultisamplingStateEnabled(bool enabled);
     void setSampleAlphaToOneStateEnabled(bool enabled);
-
-    void setCoverageModulation(GLenum components);
 
     void setProvokingVertex(GLenum mode);
 
@@ -583,6 +584,7 @@ class StateManagerGL final : angle::NonCopyable
     const bool mIndependentBlendStates;
 
     bool mSampleCoverageEverChanged;
+    bool mHasUnflushedQueries;
 
     const bool mFramebufferSRGBAvailable;
     const bool mHasSeparateFramebufferBindings;

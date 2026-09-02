@@ -18,6 +18,7 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/angleutils.h"
+#include "common/hash_containers.h"
 #include "common/utilities.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/angletypes.h"
@@ -339,6 +340,16 @@ void GetUniform(const gl::ProgramExecutable *executable,
                 T *v,
                 GLenum entryPointType,
                 const DefaultUniformBlockMap *defaultUniformBlocks);
+
+// Remove `[*]` from uniform names
+std::string RemoveArraySubscripts(const std::string &uniformName);
+
+// Maps sampler-in-struct uniform names to extracted sampler names, matching the transformation done
+// by the translator (RewriteStructSamplers).  Indices must have already been stripped from the
+// uniformName.
+std::string GetExtractedStructSamplerName(
+    const std::string uniformNameWithoutIndices,
+    angle::HashMap<std::string, size_t> *extractedSamplerIndices);
 
 const angle::Format &GetFormatFromFormatType(GLenum format, GLenum type);
 

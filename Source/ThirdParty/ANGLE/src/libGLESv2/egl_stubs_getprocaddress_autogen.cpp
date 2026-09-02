@@ -597,10 +597,6 @@ const ProcEntry g_procTable[] = {
 #if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCopyTextureCHROMIUMContextANGLE", P(GL_CopyTextureCHROMIUMContextANGLE)},
 #endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
-    {"glCoverageModulationCHROMIUM", P(GL_CoverageModulationCHROMIUM)},
-#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
-    {"glCoverageModulationCHROMIUMContextANGLE", P(GL_CoverageModulationCHROMIUMContextANGLE)},
-#endif // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateMemoryObjectsEXT", P(GL_CreateMemoryObjectsEXT)},
 #if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
     {"glCreateMemoryObjectsEXTContextANGLE", P(GL_CreateMemoryObjectsEXTContextANGLE)},

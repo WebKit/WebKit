@@ -686,7 +686,6 @@ void SerializeContextState(JsonSerializer *json, const gl::State &state)
     json->addScalar("PrimitiveRestartEnabled", state.isPrimitiveRestartEnabled());
     json->addScalar("MultisamplingEnabled", state.isMultisamplingEnabled());
     json->addScalar("SampleAlphaToOneEnabled", state.isSampleAlphaToOneEnabled());
-    json->addScalar("CoverageModulation", state.getCoverageModulation());
     json->addScalar("FramebufferSRGB", state.getFramebufferSRGB());
     json->addScalar("RobustResourceInitEnabled", state.isRobustResourceInitEnabled());
     json->addScalar("ProgramBinaryCacheEnabled", state.isProgramBinaryCacheEnabled());

@@ -29,6 +29,9 @@ VertexArrayState::VertexArrayState(VertexArrayID vertexArrayID,
     {
         mVertexAttributes.emplace_back(static_cast<GLuint>(i));
         mVertexBindings.emplace_back(static_cast<GLuint>(i));
+        // The default vertex attribute format is R32G32B32A32_FLOAT. Keep mVertexAttributesTypeMask
+        // in sync so attributes that keep their default format are treated as float.
+        SetComponentTypeMask(ComponentType::Float, i, &mVertexAttributesTypeMask);
     }
 
     // Initially all attributes start as "client" with no buffer bound.

@@ -4374,19 +4374,6 @@ pub fn vector_component_multi(
     vector: TypedId,
     components: Vec<u32>,
 ) -> Result {
-    // If the swizzle selects every element in order, optimize that out.
-    {
-        let mut type_info = ir_meta.get_type(vector.type_id);
-        if type_info.is_pointer() {
-            type_info = ir_meta.get_type(type_info.get_element_type_id().unwrap());
-        }
-        let vec_size = type_info.get_vector_size().unwrap() as usize;
-        let identity = [0, 1, 2, 3];
-        if components[..] == identity[0..vec_size] {
-            return Result::NoOp(vector);
-        }
-    }
-
     // To avoid swizzles of swizzles, like var.xyz.xz, check if the value being swizzled is
     // itself a swizzle, in which case the swizzle components can be folded and the swizzle
     // applied to the original vector.
@@ -4406,6 +4393,19 @@ pub fn vector_component_multi(
                 components = merge_swizzle_components(original_components, &components);
             }
             _ => (),
+        }
+    }
+
+    // If the swizzle selects every element in order, optimize that out.
+    {
+        let mut type_info = ir_meta.get_type(vector.type_id);
+        if type_info.is_pointer() {
+            type_info = ir_meta.get_type(type_info.get_element_type_id().unwrap());
+        }
+        let vec_size = type_info.get_vector_size().unwrap() as usize;
+        let identity = [0, 1, 2, 3];
+        if components[..] == identity[0..vec_size] {
+            return Result::NoOp(vector);
         }
     }
 

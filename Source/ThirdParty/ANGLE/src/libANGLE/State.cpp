@@ -459,8 +459,6 @@ void PrivateState::initialize(Context *context)
     mMultiSampling    = true;
     mSampleAlphaToOne = false;
 
-    mCoverageModulation = GL_NONE;
-
     // This coherent blending is enabled by default, but can be enabled or disabled by calling
     // glEnable() or glDisable() with the symbolic constant GL_BLEND_ADVANCED_COHERENT_KHR.
     mBlendAdvancedCoherent = true;
@@ -660,8 +658,7 @@ void PrivateState::setClipControl(ClipOrigin origin, ClipDepthMode depth)
 
     if (updated)
     {
-        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
-        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_CLIP_CONTROL);
+        mDirtyBits.set(state::DIRTY_BIT_CLIP_CONTROL);
     }
 }
 
@@ -1201,15 +1198,6 @@ void PrivateState::setUnpackSkipPixels(GLint skipPixels)
 {
     mUnpack.skipPixels = skipPixels;
     mDirtyBits.set(state::DIRTY_BIT_UNPACK_STATE);
-}
-
-void PrivateState::setCoverageModulation(GLenum components)
-{
-    if (mCoverageModulation != components)
-    {
-        mCoverageModulation = components;
-        mDirtyBits.set(state::DIRTY_BIT_COVERAGE_MODULATION);
-    }
 }
 
 void PrivateState::setFramebufferSRGB(bool sRGB)
@@ -2018,9 +2006,6 @@ void PrivateState::getFloatv(GLenum pname, GLfloat *params) const
         case GL_SAMPLE_ALPHA_TO_ONE_EXT:
             *params = static_cast<GLfloat>(mSampleAlphaToOne);
             break;
-        case GL_COVERAGE_MODULATION_CHROMIUM:
-            params[0] = static_cast<GLfloat>(mCoverageModulation);
-            break;
         case GL_ALPHA_TEST_REF:
             *params = mGLES1State.mAlphaTestParameters.ref;
             break;
@@ -2245,9 +2230,6 @@ void PrivateState::getIntegerv(GLenum pname, GLint *params) const
         case GL_SAMPLE_ALPHA_TO_ONE_EXT:
             *params = static_cast<GLint>(mSampleAlphaToOne);
             break;
-        case GL_COVERAGE_MODULATION_CHROMIUM:
-            *params = static_cast<GLint>(mCoverageModulation);
-            break;
         case GL_ALPHA_TEST_FUNC:
             *params = ToGLenum(mGLES1State.mAlphaTestParameters.func);
             break;
@@ -2446,7 +2428,6 @@ State::State(const State *shareContextState,
              TextureManager *shareTextures,
              SemaphoreManager *shareSemaphores,
              egl::ContextMutex *contextMutex,
-             const OverlayType *overlay,
              const Version &clientVersion,
              bool debug,
              bool bindGeneratesResourceCHROMIUM,
@@ -2490,7 +2471,6 @@ State::State(const State *shareContextState,
       mVertexArray(nullptr),
       mDisplayTextureShareGroup(shareTextures != nullptr),
       mMaxShaderCompilerThreads(std::numeric_limits<GLuint>::max()),
-      mOverlay(overlay),
       mPrivateState(clientVersion,
                     debug,
                     bindGeneratesResourceCHROMIUM,
@@ -4281,6 +4261,16 @@ void State::onAtomicCounterBufferStateChange(size_t atomicCounterBufferIndex)
 void State::onShaderStorageBufferStateChange(size_t shaderStorageBufferIndex)
 {
     mDirtyBits.set(state::DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING);
+}
+
+void State::onCurrentExecutableRelink()
+{
+    // Called when a program or PPO is already current but its executable is recreated.  The state
+    // of the previous executable is cleaned up before the new executable is installed.
+    if (mExecutable)
+    {
+        unsetActiveTextures(mExecutable->getActiveSamplersMask());
+    }
 }
 
 void State::initializeForCapture(const Context *context)

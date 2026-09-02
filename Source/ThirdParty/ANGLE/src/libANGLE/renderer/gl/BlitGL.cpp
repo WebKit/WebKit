@@ -862,9 +862,10 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
     pack.alignment = 1;
     ANGLE_TRY(mStateManager->setPixelPackState(context, pack));
     ANGLE_TRY(mStateManager->setPixelPackBuffer(context, nullptr));
-    ANGLE_GL_TRY(context, mFunctions->readPixels(readPixelsArea.x, readPixelsArea.y,
-                                                 readPixelsArea.width, readPixelsArea.height,
-                                                 readPixelsFormat, GL_UNSIGNED_BYTE, sourceMemory));
+    ANGLE_GL_TRY_ALWAYS_CHECK(
+        context, mFunctions->readPixels(readPixelsArea.x, readPixelsArea.y, readPixelsArea.width,
+                                        readPixelsArea.height, readPixelsFormat, GL_UNSIGNED_BYTE,
+                                        sourceMemory));
 
     angle::FormatID destFormatID =
         angle::Format::InternalFormatToID(destInternalFormatInfo.sizedInternalFormat);

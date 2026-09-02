@@ -854,7 +854,9 @@ TString DecorateVariableIfNeeded(const TVariable &variable)
     // For user defined variables, combine variable name with unique id
     // so variables of the same name in different scopes do not get overwritten.
     else if (variable.symbolType() == SymbolType::UserDefined &&
-             (qualifier == EvqTemporary || qualifier == EvqGlobal || qualifier == EvqConst))
+             (qualifier == EvqTemporary || qualifier == EvqGlobal || qualifier == EvqConst ||
+              qualifier == EvqParamIn || qualifier == EvqParamOut || qualifier == EvqParamInOut ||
+              qualifier == EvqParamConst))
     {
         return Decorate(variable.name()) + str(variable.uniqueId().get());
     }

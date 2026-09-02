@@ -1057,9 +1057,6 @@ config("libANGLE_config") {
     defines += [ "ANGLE_USE_WAYLAND" ]
   }
 
-  if (angle_enable_overlay) {
-    defines += [ "ANGLE_ENABLE_OVERLAY=1" ]
-  }
   if (angle_enable_perf_counter_output) {
     defines += [ "ANGLE_ENABLE_PERF_COUNTER_OUTPUT=1" ]
   }

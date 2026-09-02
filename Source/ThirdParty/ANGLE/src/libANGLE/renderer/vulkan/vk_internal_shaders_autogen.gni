@@ -148,6 +148,4 @@ angle_vulkan_internal_shaders = [
   "shaders/gen/ImageCopy.frag.0000002A.inc",
   "shaders/gen/ImageCopyFloat.frag.00000000.inc",
   "shaders/gen/ImageCopyFloat.frag.00000001.inc",
-  "shaders/gen/OverlayDraw.frag.00000000.inc",
-  "shaders/gen/OverlayDraw.vert.00000000.inc",
 ]

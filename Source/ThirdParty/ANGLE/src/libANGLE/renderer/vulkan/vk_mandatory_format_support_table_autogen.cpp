@@ -46,6 +46,7 @@ constexpr FormatMap<VkFormatProperties> kFormatProperties = {
       BLIT_DST | BLIT_SRC | COLOR_ATTACHMENT | COLOR_ATTACHMENT_BLEND | SAMPLED_IMAGE |
           SAMPLED_IMAGE_FILTER_LINEAR,
       0}},
+    {FormatID::A8_UNORM, {0, 0, 0}},
     {FormatID::ASTC_10x10_SRGB_BLOCK, {0, 0, 0}},
     {FormatID::ASTC_10x10_UNORM_BLOCK, {0, 0, 0}},
     {FormatID::ASTC_10x5_SRGB_BLOCK, {0, 0, 0}},

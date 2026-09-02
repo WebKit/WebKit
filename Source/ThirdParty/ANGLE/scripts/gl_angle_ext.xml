@@ -80,10 +80,6 @@
             <param>const <ptype>GLchar</ptype> *<name>name</name></param>
         </command>
         <command>
-            <proto>void <name>glCoverageModulationCHROMIUM</name></proto>
-            <param><ptype>GLenum</ptype> <name>components</name></param>
-        </command>
-        <command>
             <proto>void <name>glMatrixLoadfCHROMIUM</name></proto>
             <param><ptype>GLenum</ptype> <name>matrixMode</name></param>
             <param>const <ptype>GLfloat</ptype> *<name>matrix</name></param>
@@ -903,11 +899,6 @@
         <extension name="GL_CHROMIUM_bind_uniform_location" supported='gles2'>
             <require>
                 <command name="glBindUniformLocationCHROMIUM"/>
-            </require>
-        </extension>
-        <extension name="GL_CHROMIUM_framebuffer_mixed_samples" supported='gles2'>
-            <require>
-                <command name="glCoverageModulationCHROMIUM"/>
             </require>
         </extension>
         <extension name="GL_CHROMIUM_copy_texture" supported='gles2'>

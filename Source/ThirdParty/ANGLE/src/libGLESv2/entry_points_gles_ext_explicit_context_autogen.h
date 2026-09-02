@@ -3137,9 +3137,6 @@ GL_CopySubTextureCHROMIUMContextANGLE(GLeglDisplayANGLE dpy,
                                       GLboolean unpackFlipY,
                                       GLboolean unpackPremultiplyAlpha,
                                       GLboolean unpackUnmultiplyAlpha);
-ANGLE_EXPORT void GL_APIENTRY GL_CoverageModulationCHROMIUMContextANGLE(GLeglDisplayANGLE dpy,
-                                                                        GLeglContextANGLE ctx,
-                                                                        GLenum components);
 ANGLE_EXPORT void GL_APIENTRY GL_LoseContextCHROMIUMContextANGLE(GLeglDisplayANGLE dpy,
                                                                  GLeglContextANGLE ctx,
                                                                  GLenum current,

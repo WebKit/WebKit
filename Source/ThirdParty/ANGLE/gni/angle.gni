@@ -394,10 +394,6 @@ declare_args() {
 
   angle_build_vulkan_system_info = angle_has_build && !angle_is_winuwp
 
-  # Enable overlay by default when debug layers are enabled. This is currently
-  # only implemented on Vulkan.
-  angle_enable_overlay = angle_enable_vulkan && angle_debug_layers_enabled
-
   angle_build_mesa = false
 
   # Android platform's addTraceEvent ignores the timestamp and time() is a

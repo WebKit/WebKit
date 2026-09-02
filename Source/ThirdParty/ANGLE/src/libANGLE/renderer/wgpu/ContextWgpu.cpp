@@ -16,7 +16,6 @@
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
 #include "libANGLE/renderer/wgpu/CompilerWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
@@ -911,8 +910,6 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_ONE:
                 break;
-            case gl::state::DIRTY_BIT_COVERAGE_MODULATION:
-                break;
             case gl::state::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
                 break;
             case gl::state::DIRTY_BIT_CURRENT_VALUES:
@@ -923,6 +920,10 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_PATCH_VERTICES:
                 break;
+            case gl::state::DIRTY_BIT_CLIP_CONTROL:
+                // Driver uniforms are calculated using the clip control state.
+                invalidateDriverUniforms();
+                break;
             case gl::state::DIRTY_BIT_EXTENDED:
             {
                 for (auto extendedIter    = extendedDirtyBits.begin(),
@@ -932,10 +933,6 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                     const size_t extendedDirtyBit = *extendedIter;
                     switch (extendedDirtyBit)
                     {
-                        case gl::state::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
-                            // Driver uniforms are calculated using the clip control state.
-                            invalidateDriverUniforms();
-                            break;
                         case gl::state::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
                             // Driver uniforms include the clip distances.
                             invalidateDriverUniforms();
@@ -1139,11 +1136,6 @@ SemaphoreImpl *ContextWgpu::createSemaphore()
 {
     UNREACHABLE();
     return nullptr;
-}
-
-OverlayImpl *ContextWgpu::createOverlay(const gl::OverlayState &state)
-{
-    return new OverlayImpl(state);
 }
 
 angle::Result ContextWgpu::dispatchCompute(const gl::Context *context,

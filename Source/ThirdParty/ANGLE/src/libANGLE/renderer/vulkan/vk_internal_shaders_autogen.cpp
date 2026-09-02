@@ -158,8 +158,6 @@ namespace
 #include "libANGLE/renderer/vulkan/shaders/gen/ImageCopy.frag.0000002A.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ImageCopyFloat.frag.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ImageCopyFloat.frag.00000001.inc"
-#include "libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.frag.00000000.inc"
-#include "libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.vert.00000000.inc"
 
 // This is compressed SPIR-V binary blob and size
 struct CompressedShaderBlob
@@ -359,12 +357,6 @@ constexpr CompressedShaderBlob kImageCopyFloat_frag_shaders[] = {
     {kImageCopyFloat_frag_00000000, sizeof(kImageCopyFloat_frag_00000000)},
     {kImageCopyFloat_frag_00000001, sizeof(kImageCopyFloat_frag_00000001)},
 };
-constexpr CompressedShaderBlob kOverlayDraw_frag_shaders[] = {
-    {kOverlayDraw_frag_00000000, sizeof(kOverlayDraw_frag_00000000)},
-};
-constexpr CompressedShaderBlob kOverlayDraw_vert_shaders[] = {
-    {kOverlayDraw_vert_00000000, sizeof(kOverlayDraw_vert_00000000)},
-};
 
 angle::Result GetShader(ErrorContext *context,
                         ShaderModulePtr shaders[],
@@ -415,9 +407,7 @@ ShaderLibrary::ShaderLibrary() {}
 
 ShaderLibrary::~ShaderLibrary() {}
 
-void ShaderLibrary::destroy(VkDevice device)
-{
-}
+void ShaderLibrary::destroy(VkDevice device) {}
 
 angle::Result ShaderLibrary::getBlit3DSrc_frag(ErrorContext *context,
                                                uint32_t shaderFlags,
@@ -549,22 +539,6 @@ angle::Result ShaderLibrary::getImageCopyFloat_frag(ErrorContext *context,
 {
     return GetShader(context, mImageCopyFloat_frag_shaders, kImageCopyFloat_frag_shaders,
                      ArraySize(kImageCopyFloat_frag_shaders), shaderFlags, shaderOut);
-}
-
-angle::Result ShaderLibrary::getOverlayDraw_frag(ErrorContext *context,
-                                                 uint32_t shaderFlags,
-                                                 ShaderModulePtr *shaderOut)
-{
-    return GetShader(context, mOverlayDraw_frag_shaders, kOverlayDraw_frag_shaders,
-                     ArraySize(kOverlayDraw_frag_shaders), shaderFlags, shaderOut);
-}
-
-angle::Result ShaderLibrary::getOverlayDraw_vert(ErrorContext *context,
-                                                 uint32_t shaderFlags,
-                                                 ShaderModulePtr *shaderOut)
-{
-    return GetShader(context, mOverlayDraw_vert_shaders, kOverlayDraw_vert_shaders,
-                     ArraySize(kOverlayDraw_vert_shaders), shaderFlags, shaderOut);
 }
 
 }  // namespace vk

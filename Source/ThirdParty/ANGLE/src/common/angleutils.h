@@ -97,9 +97,7 @@ struct PerfMonitorTriplet
 
 #define ANGLE_VK_PERF_COUNTERS_X(FN)               \
     FN(commandQueueSubmitCallsTotal)               \
-    FN(commandQueueSubmitCallsPerFrame)            \
     FN(vkQueueSubmitCallsTotal)                    \
-    FN(vkQueueSubmitCallsPerFrame)                 \
     FN(commandQueueWaitSemaphoresTotal)            \
     FN(renderPasses)                               \
     FN(writeDescriptorSets)                        \
@@ -140,7 +138,6 @@ struct PerfMonitorTriplet
     FN(monolithicPipelineCreation)                 \
     FN(descriptorSetAllocations)                   \
     FN(descriptorSetCacheTotalSize)                \
-    FN(descriptorSetCacheKeySizeBytes)             \
     FN(uniformsAndXfbDescriptorSetCacheHits)       \
     FN(uniformsAndXfbDescriptorSetCacheMisses)     \
     FN(uniformsAndXfbDescriptorSetCacheTotalSize)  \
@@ -162,7 +159,6 @@ struct PerfMonitorTriplet
     FN(vertexArraySyncStateCalls)                  \
     FN(allocateNewBufferBlockCalls)                \
     FN(bufferSuballocationCalls)                   \
-    FN(dynamicBufferAllocations)                   \
     FN(framebufferCacheSize)                       \
     FN(pendingSubmissionGarbageObjects)            \
     FN(graphicsDriverUniformsUpdated)

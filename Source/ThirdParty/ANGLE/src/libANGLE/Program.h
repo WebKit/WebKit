@@ -106,6 +106,38 @@ void LogLinkMismatch(InfoLog &infoLog,
 
 bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock);
 
+// Header prepended to the program binary blob.  All fields are uncompressed, followed by the
+// payload.
+ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
+class ProgramBinaryHeader
+{
+  public:
+    static constexpr uint32_t kProgramBinaryMagic = 0x414E474C;  // "ANGL"
+
+    void setData(uint32_t magic, uint32_t crc, uint64_t uncompressedSize)
+    {
+        mMagic            = magic;
+        mCRC              = crc;
+        mUncompressedSize = uncompressedSize;
+    }
+
+    void getData(uint32_t *magicOut, uint32_t *crcOut, uint64_t *uncompressedSizeOut) const
+    {
+        *magicOut            = mMagic;
+        *crcOut              = mCRC;
+        *uncompressedSizeOut = mUncompressedSize;
+    }
+
+  private:
+    uint32_t mMagic;
+    uint32_t mCRC;
+    uint64_t mUncompressedSize;
+};
+ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
+
+constexpr size_t kProgramBinaryHeaderSize = sizeof(ProgramBinaryHeader);
+static_assert(kProgramBinaryHeaderSize == 16, "ProgramBinaryHeader size mismatch");
+
 // Struct used for correlating uniforms/elements of uniform arrays to handles
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 struct VariableLocation

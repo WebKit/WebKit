@@ -666,29 +666,22 @@ const CompressionExtension kCompressionExtensions[] = {
                                               {GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT, 16, 4, 4}},
                                              true, true},
 
-    // ETC
-    {"GL_OES_compressed_ETC1_RGB8_texture",                      {{GL_ETC1_RGB8_OES, 8, 4, 4}},
-                                                                 false, false},
-    {"GL_OES_compressed_EAC_R11_unsigned_texture",               {{GL_COMPRESSED_R11_EAC, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_EAC_R11_signed_texture",                 {{GL_COMPRESSED_SIGNED_R11_EAC, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_EAC_RG11_unsigned_texture",              {{GL_COMPRESSED_RG11_EAC, 16, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_EAC_RG11_signed_texture",                {{GL_COMPRESSED_SIGNED_RG11_EAC, 16, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_RGB8_texture",                      {{GL_COMPRESSED_RGB8_ETC2, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_sRGB8_texture",                     {{GL_COMPRESSED_SRGB8_ETC2, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_punchthroughA_RGBA8_texture",       {{GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_punchthroughA_sRGB8_alpha_texture", {{GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 8, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_RGBA8_texture",                     {{GL_COMPRESSED_RGBA8_ETC2_EAC, 16, 4, 4}},
-                                                                 true, false},
-    {"GL_OES_compressed_ETC2_sRGB8_alpha8_texture",              {{GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 16, 4, 4}},
-                                                                 true, false},
+    // ETC1
+    {"GL_OES_compressed_ETC1_RGB8_texture",  {{GL_ETC1_RGB8_OES, 8, 4, 4}},
+                                             false, false},
+
+    // ETC2
+    {"GL_ANGLE_compressed_texture_etc",      {{GL_COMPRESSED_R11_EAC, 8, 4, 4},
+                                              {GL_COMPRESSED_SIGNED_R11_EAC, 8, 4, 4},
+                                              {GL_COMPRESSED_RG11_EAC, 16, 4, 4},
+                                              {GL_COMPRESSED_SIGNED_RG11_EAC, 16, 4, 4},
+                                              {GL_COMPRESSED_RGB8_ETC2, 8, 4, 4},
+                                              {GL_COMPRESSED_SRGB8_ETC2, 8, 4, 4},
+                                              {GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 8, 4, 4},
+                                              {GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 8, 4, 4},
+                                              {GL_COMPRESSED_RGBA8_ETC2_EAC, 16, 4, 4},
+                                              {GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 16, 4, 4}},
+                                             true, false},
 
     // ASTC
     {"GL_KHR_texture_compression_astc_ldr", {{GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 16, 4, 4},
@@ -760,7 +753,8 @@ TEST_P(GetImageTest, CompressedTexImageNegativeAPI)
     ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
 
     // Verify the extension is enabled.
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture"));
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
 
     constexpr GLsizei kRes       = 4;
     constexpr GLsizei kImageSize = 8;
@@ -808,11 +802,16 @@ TEST_P(GetImageTest, CompressedTexImageNegativeAPI)
 using TestFormatFunction =
     std::function<void(const CompressionExtension &, const CompressedFormat &)>;
 
-void TestAllCompressedFormats(TestFormatFunction fun)
+void TestAllCompressedFormats(TestFormatFunction fun, int clientMajorVersion)
 {
     for (CompressionExtension ext : kCompressionExtensions)
     {
-        if (!IsGLExtensionEnabled(ext.name))
+        // ETC2/EAC formats are always supported on OpenGL ES 3.0+ but
+        // the extension is only exposed if there is hardware support.
+        const bool isETC2 =
+            clientMajorVersion >= 3 &&
+            ANGLE_UNSAFE_TODO(strcmp(ext.name, "GL_ANGLE_compressed_texture_etc")) == 0;
+        if (!IsGLExtensionEnabled(ext.name) && !isETC2)
         {
             continue;
         }
@@ -863,7 +862,7 @@ TEST_P(GetImageTest, CompressedTexImageAll)
             EXPECT_EQ(expectedData, actualData);
         }
     };
-    TestAllCompressedFormats(func);
+    TestAllCompressedFormats(func, getClientMajorVersion());
 }
 
 // Test a resolution that is not a multiple of the block size with an ETC2 4x4 format.
@@ -871,7 +870,8 @@ TEST_P(GetImageTest, CompressedTexImageNotBlockMultiple)
 {
     // Verify the extension is enabled.
     ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture"));
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
 
     constexpr GLsizei kRes       = 21;
     constexpr GLsizei kImageSize = 288;
@@ -890,8 +890,7 @@ TEST_P(GetImageTest, CompressedTexImageNotBlockMultiple)
 
     if (IsFormatEmulated(GL_TEXTURE_2D))
     {
-        INFO() << "Skipping emulated format GL_COMPRESSED_RGB8_ETC2 from "
-                  "GL_OES_compressed_ETC2_RGB8_texture";
+        INFO() << "Skipping emulated format GL_COMPRESSED_RGB8_ETC2";
         return;
     }
 
@@ -957,7 +956,7 @@ void TestCompressedTexImage3D(GLenum target, uint32_t numLayers, int clientMajor
         ASSERT_GL_NO_ERROR();
         EXPECT_EQ(expectedData, actualData);
     };
-    TestAllCompressedFormats(func);
+    TestAllCompressedFormats(func, clientMajorVersion);
 }
 
 // Tests GetCompressedTexImage with 2D array textures.
@@ -1022,7 +1021,7 @@ TEST_P(GetImageTest, CompressedTexImageCubeMap)
             EXPECT_EQ(expectedData[faceIndex], actualData);
         }
     };
-    TestAllCompressedFormats(func);
+    TestAllCompressedFormats(func, getClientMajorVersion());
 }
 
 // Tests GetCompressedTexImage with cube map array textures.
@@ -1057,7 +1056,7 @@ TEST_P(GetImageTestES32, CompressedTexImageCubeMapArray)
         EXPECT_GL_NO_ERROR();
         EXPECT_EQ(expectedData, actualData);
     };
-    TestAllCompressedFormats(func);
+    TestAllCompressedFormats(func, getClientMajorVersion());
 }
 
 // Tests GetCompressedTexImage with multiple mip levels.
@@ -1109,7 +1108,7 @@ TEST_P(GetImageTest, CompressedTexImageMultiLevel)
             EXPECT_EQ(expectedData[mipLevel], actualData);
         }
     };
-    TestAllCompressedFormats(func);
+    TestAllCompressedFormats(func, getClientMajorVersion());
 }
 
 struct PalettedFormat

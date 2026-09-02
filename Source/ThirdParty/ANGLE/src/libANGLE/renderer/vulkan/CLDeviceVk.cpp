@@ -35,8 +35,7 @@ uint32_t CLDeviceVk::getNumComputeUnits() const
                shaderCoreProperties.shaderArraysPerEngineCount *
                shaderCoreProperties.computeUnitsPerShaderArray / workGroupFactor;
     }
-
-    return cl::IMPLEMENATION_NUM_COMPUTE_UNITS;
+    return cl::IMPLEMENTATION_NUM_COMPUTE_UNITS;
 }
 
 uint32_t CLDeviceVk::getWorkGroupSizeMultiple() const
@@ -45,8 +44,7 @@ uint32_t CLDeviceVk::getWorkGroupSizeMultiple() const
     {
         return getRenderer()->getPhysicalDeviceShaderCorePropertiesAMD().wavefrontSize;
     }
-
-    return cl::IMPLEMENATION_PREFERRED_WORKGROUP_SIZE_MULTIPLE;
+    return cl::IMPLEMENTATION_PREFERRED_WORKGROUP_SIZE_MULTIPLE;
 }
 
 cl_ulong CLDeviceVk::getSingleFpConfig() const
@@ -114,6 +112,82 @@ cl_ulong CLDeviceVk::getCacheSize() const
     return 1024 * 1024ULL;
 }
 
+cl_ulong CLDeviceVk::getHeapSizeForResource(const VkMemoryPropertyFlags supportedProperties,
+                                            const VkMemoryPropertyFlags avoidedProperties) const
+{
+    const vk::MemoryProperties &memoryProperties = mRenderer->getMemoryProperties();
+    for (uint32_t memTypeIdx = 0; memTypeIdx < memoryProperties.getMemoryTypeCount(); memTypeIdx++)
+    {
+        bool support = (memoryProperties.getMemoryType(memTypeIdx).propertyFlags &
+                        supportedProperties) == supportedProperties;
+        bool avoid =
+            (memoryProperties.getMemoryType(memTypeIdx).propertyFlags & avoidedProperties) != 0;
+        if (support && !avoid)
+        {
+            return memoryProperties.getHeapSizeForMemoryType(memTypeIdx);
+        }
+    }
+    return 0;
+}
+
+cl_ulong CLDeviceVk::getGlobalMemSize() const
+{
+    // Memory-property sets that can back CL buffers (host-visible), with varying cache/coherency.
+    cl_ulong bufferSize                                            = 0;
+    static constexpr VkMemoryPropertyFlags kBufferSupportedFlags[] = {
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT |
+            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    };
+    for (const VkMemoryPropertyFlags &supportedFlags : kBufferSupportedFlags)
+    {
+        bufferSize = std::max(bufferSize, getHeapSizeForResource(supportedFlags, 0));
+    }
+
+    // Memory-property sets that can back CL images (device-local, non-host-coherent).
+    cl_ulong imageSize                                            = 0;
+    static constexpr VkMemoryPropertyFlags kImageSupportedFlags[] = {
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT};
+    for (const VkMemoryPropertyFlags &supportedFlags : kImageSupportedFlags)
+    {
+        imageSize = std::max(imageSize, getHeapSizeForResource(
+                                            supportedFlags, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT));
+    }
+
+    // Return the size of the smallest memory heap
+    if (bufferSize == 0)
+    {
+        return imageSize;
+    }
+    if (imageSize == 0)
+    {
+        return bufferSize;
+    }
+    return std::min(bufferSize, imageSize);
+}
+
+cl_ulong CLDeviceVk::getMaxMemAllocSize() const
+{
+    return std::min(getGlobalMemSize(), mRenderer->getMaxMemoryAllocationSize());
+}
+
+size_t CLDeviceVk::getImageMaxBufferSize() const
+{
+    const VkPhysicalDeviceProperties &properties = mRenderer->getPhysicalDeviceProperties();
+    const VkDeviceSize maxBufferSize             = std::min(
+        static_cast<cl_ulong>(properties.limits.maxTexelBufferElements), getMaxMemAllocSize());
+
+    // Reserve headroom for the vertex-attribute stride padding that
+    // padVertexAttribBufferSizeIfNeeded() would later append. padVertexAttribBufferSizeIfNeeded(0)
+    // yields that padding amount (0 when the padBuffersToMaxVertexAttribStride feature is
+    // disabled).
+    const VkDeviceSize maxVertexAttribStride = mRenderer->padVertexAttribBufferSizeIfNeeded(0);
+    ASSERT(maxBufferSize > maxVertexAttribStride);
+
+    return static_cast<size_t>(maxBufferSize - maxVertexAttribStride);
+}
+
 CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
     : CLDeviceImpl(device), mRenderer(renderer), mSpirvVersion(ClspvGetSpirvVersion(renderer))
 {
@@ -138,7 +212,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         // TODO(aannestrand) Update these hardcoded platform/device queries
         // http://anglebug.com/42266935
         {cl::DeviceInfo::MaxParameterSize, 1024},
-        {cl::DeviceInfo::ProfilingTimerResolution, 1},
+        {cl::DeviceInfo::ProfilingTimerResolution, props.limits.timestampPeriod},
         {cl::DeviceInfo::PrintfBufferSize, 1024 * 1024},
         {cl::DeviceInfo::PreferredWorkGroupSizeMultiple, getWorkGroupSizeMultiple()},
     };
@@ -156,7 +230,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::HalfFpConfig, getHalfFpConfig()},
         {cl::DeviceInfo::DoubleFpConfig, getDoubleFpConfig()},
         {cl::DeviceInfo::GlobalMemCacheSize, getCacheSize()},
-        {cl::DeviceInfo::GlobalMemSize, 4 * 1024 * 1024 * 1024ULL},
+        {cl::DeviceInfo::GlobalMemSize, getGlobalMemSize()},
         // Constant buffer size is same as global variable size in SGPU
         {cl::DeviceInfo::MaxConstantBufferSize, 1024 * 1024 * 1024ULL},
         {cl::DeviceInfo::SingleFpConfig, getSingleFpConfig()},
@@ -183,9 +257,9 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
 
     mInfoUInt = {
         {cl::DeviceInfo::VendorID, props.vendorID},
-        {cl::DeviceInfo::MaxReadImageArgs, cl::IMPLEMENATION_MAX_READ_IMAGES},
-        {cl::DeviceInfo::MaxWriteImageArgs, cl::IMPLEMENATION_MAX_WRITE_IMAGES},
-        {cl::DeviceInfo::MaxReadWriteImageArgs, cl::IMPLEMENATION_MAX_WRITE_IMAGES},
+        {cl::DeviceInfo::MaxReadImageArgs, cl::IMPLEMENTATION_MAX_READ_IMAGES},
+        {cl::DeviceInfo::MaxWriteImageArgs, cl::IMPLEMENTATION_MAX_WRITE_IMAGES},
+        {cl::DeviceInfo::MaxReadWriteImageArgs, cl::IMPLEMENTATION_MAX_WRITE_IMAGES},
         {cl::DeviceInfo::GlobalMemCachelineSize,
          static_cast<cl_uint>(props.limits.nonCoherentAtomSize)},
         {cl::DeviceInfo::Available, CL_TRUE},
@@ -262,7 +336,7 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
 
     // TODO(aannestrand) Update these hardcoded platform/device queries
     // http://anglebug.com/42266935
-    info.maxMemAllocSize  = 1 << 30;
+    info.maxMemAllocSize  = getMaxMemAllocSize();
     info.memBaseAddrAlign = 1024;
 
     info.imageSupport = CL_TRUE;
@@ -273,7 +347,7 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.image3D_MaxHeight = properties.limits.maxImageDimension3D;
     info.image3D_MaxDepth  = properties.limits.maxImageDimension3D;
     // Max number of pixels for a 1D image created from a buffer object.
-    info.imageMaxBufferSize = properties.limits.maxTexelBufferElements;
+    info.imageMaxBufferSize = getImageMaxBufferSize();
     info.imageMaxArraySize  = properties.limits.maxImageArrayLayers;
     // The following are queried when image2d is created from buffer. We mimic its support for now
     // by doing a copy and as such dont have alignment requirements.

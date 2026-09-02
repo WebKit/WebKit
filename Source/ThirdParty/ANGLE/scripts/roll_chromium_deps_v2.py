@@ -33,8 +33,20 @@ import shlex
 import subprocess
 import sys
 from typing import Any, Self, Type
+import urllib.parse
 
 import requests
+
+# depot_tools is DEPSed in at //third_party/depot_tools.
+_DEPOT_TOOLS_DIR = (pathlib.Path(__file__).resolve().parents[1] / 'third_party' / 'depot_tools')
+if _DEPOT_TOOLS_DIR.exists():
+    _DEPOT_TOOLS_DIR_STR = str(_DEPOT_TOOLS_DIR)
+    if _DEPOT_TOOLS_DIR_STR not in sys.path:
+        sys.path.insert(0, _DEPOT_TOOLS_DIR_STR)
+else:
+    logging.warning('depot_tools not found at %s, gerrit_util import may fail', _DEPOT_TOOLS_DIR)
+
+import gerrit_util  # pylint: disable=import-error
 
 ANGLE_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEPS_FILE = ANGLE_ROOT / 'DEPS'
@@ -337,6 +349,89 @@ class ChangedGcs(ChangedDepsEntry):
         ]
 
 
+class GerritUtilHttpConnAdapter:
+    """Adapter to extract auth headers from gerrit_util."""
+
+    def __init__(self, host: str, uri: str):
+        # Convert Gitiles host into Gerrit host
+        if "review" not in host:
+            subdomain, domain = host.split(".", 1)
+            host = f"{subdomain}-review.{domain}"
+        self.req_host = host
+        self.req_uri = uri
+        self.req_headers = {}
+        self.proxy_info = None
+
+    def has_header(self, header: str) -> bool:
+        return header in self.req_headers
+
+    def get_full_url(self) -> str:
+        return self.req_uri
+
+    def get_header(self, header: str, default: str = None) -> str:
+        return self.req_headers.get(header, default)
+
+    def add_unredirected_header(self, header: str, value: str):
+        self.req_headers[header] = value
+
+    @property
+    def unverifiable(self) -> bool:
+        return False
+
+    @property
+    def origin_req_host(self) -> str:
+        return self.req_host
+
+    @property
+    def type(self) -> str:
+        return urllib.parse.urlparse(self.req_uri).scheme
+
+    @property
+    def host(self) -> str:
+        return self.req_host
+
+
+@functools.cache
+def _get_gitiles_session(host: str) -> requests.Session:
+    """Creates and configures an authenticated requests.Session for Gitiles.
+
+    Args:
+        host: The Gitiles hostname (e.g. 'chromium.googlesource.com').
+
+    Returns:
+        A requests.Session configured with authentication headers and proxy.
+    """
+
+    session = requests.Session()
+    gerrit_adapter = GerritUtilHttpConnAdapter(host, f'https://{host}/a/')
+
+    try:
+        # pylint: disable=protected-access
+        authenticator = gerrit_util._Authenticator.get()
+        # pylint: enable=protected-access
+        authenticator.authenticate(gerrit_adapter)
+    except Exception as e:
+        raise RuntimeError(f'Failed to authenticate for {host}: {e}') from e
+
+    session.headers.update(gerrit_adapter.req_headers)
+
+    # Apply proxy if set for SSO.
+    if gerrit_adapter.proxy_info:
+        proxy_host = gerrit_adapter.proxy_info.proxy_host
+        if isinstance(proxy_host, bytes):
+            proxy_host = proxy_host.decode('utf-8')
+        proxy_url = f'http://{proxy_host}:{gerrit_adapter.proxy_info.proxy_port}'
+        session.proxies = {
+            'http': proxy_url,
+            'https': proxy_url,
+        }
+        logging.debug('Using SSO proxy: %s', proxy_url)
+
+    # Store the base URL (potentially rewritten by SSO).
+    session.gitiles_base_url = gerrit_adapter.req_uri.rstrip('/')
+    return session
+
+
 def _parse_deps_file(deps_content: str) -> dict[str, Any]:
     """Parses DEPS file content into a Python dict.
 
@@ -500,8 +595,19 @@ def _read_gitiles_content(file_url: str) -> str:
     Returns:
         The string content of the specified file.
     """
-    file_url = file_url + '?format=TEXT'
-    r = requests.get(file_url)
+    parsed = urllib.parse.urlparse(file_url)
+    session = _get_gitiles_session(parsed.netloc)
+
+    path = parsed.path
+    if path.startswith('/a/'):
+        path = path[2:]
+
+    query = 'format=TEXT'
+    if parsed.query:
+        query = f'{parsed.query}&{query}'
+
+    auth_url = f'{session.gitiles_base_url}{path}?{query}'
+    r = session.get(auth_url)
     r.raise_for_status()
     return base64.b64decode(r.text).decode('utf-8')
 

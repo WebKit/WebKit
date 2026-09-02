@@ -385,9 +385,6 @@ class Renderer : angle::NonCopyable
     angle::Result mergeIntoPipelineCache(vk::ErrorContext *context,
                                          const vk::PipelineCache &pipelineCache);
 
-    void onNewValidationMessage(const std::string &message);
-    std::string getAndClearLastValidationMessage(uint32_t *countSinceLastClear);
-
     const std::vector<const char *> &getSkippedValidationMessages() const
     {
         return mSkippedValidationMessages;
@@ -410,12 +407,10 @@ class Renderer : angle::NonCopyable
 
     ANGLE_INLINE bool isCommandQueueBusy() { return mCommandQueue.isBusy(this); }
 
-    angle::VulkanPerfCounters getCommandQueuePerfCounters()
+    vk::CommandQueuePerfCounters getCommandQueuePerfCounters()
     {
         return mCommandQueue.getPerfCounters();
     }
-    void resetCommandQueuePerFrameCounters() { mCommandQueue.resetPerFramePerfCounters(); }
-
     vk::GlobalOps *getGlobalOps() const { return mGlobalOps; }
 
     bool enableDebugUtils() const { return mEnableDebugUtils; }
@@ -1010,10 +1005,6 @@ class Renderer : angle::NonCopyable
     uint32_t mPipelineCacheVkUpdateTimeout;
     size_t mPipelineCacheSizeAtLastSync;
     std::atomic<bool> mPipelineCacheInitialized;
-
-    // Latest validation data for debug overlay.
-    std::string mLastValidationMessage;
-    uint32_t mValidationMessageCount;
 
     // Skipped validation messages.  The exact contents of the list depends on the availability
     // of certain extensions.

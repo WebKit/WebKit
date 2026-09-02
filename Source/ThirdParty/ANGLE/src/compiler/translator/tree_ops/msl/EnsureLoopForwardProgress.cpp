@@ -83,7 +83,7 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
     {
         return nullptr;
     }
-    if (!IsInteger(variable->getType().getBasicType()) ||
+    if (!IsInteger(variable->getType().getBasicType()) || !variable->getType().isScalar() ||
         variable->getType().getQualifier() != EvqTemporary)
     {
         return nullptr;

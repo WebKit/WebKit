@@ -4,11 +4,11 @@
   "scripts/gen_proc_table.py":
     "06b837e56e54015433bbe2dca29a3c92",
   "scripts/gl_angle_ext.xml":
-    "d32731daaf2540f863533d09838b8065",
+    "0b41a31dc16307fe117a0ec8b0a4540b",
   "scripts/registry_xml.py":
-    "29ecf37c754d1eb1e7fd0c42f53d3f22",
+    "c037acc23262e32e72f38f045c6a8ec1",
   "src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp":
-    "5b081688bc49b31147a954615b335086",
+    "8572bb76d3fe5eea0234291aa28bc53a",
   "src/libGLESv2/proc_table_cl_autogen.cpp":
     "c574d0cc27530b51e3fdc99b13bc740a",
   "src/libOpenCL/libOpenCL_autogen.map":

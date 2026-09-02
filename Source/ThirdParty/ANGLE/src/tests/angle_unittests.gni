@@ -126,11 +126,7 @@ angle_unittests_compiler_tests_sources = [
 angle_unittests_glsl_mac_sources =
     [ "compiler_tests/UnfoldShortCircuitAST_test.cpp" ]
 
-# TODO(jmadill): should probably call this windows sources
-angle_unittests_hlsl_sources = [
-  "compiler_tests/HLSLOutput_test.cpp",
-  "compiler_tests/UnrollFlatten_test.cpp",
-]
+angle_unittests_hlsl_sources = [ "compiler_tests/UnrollFlatten_test.cpp" ]
 
 angle_unittests_gl_sources = [
   "../libANGLE/renderer/gl/DisplayGL_unittest.cpp",

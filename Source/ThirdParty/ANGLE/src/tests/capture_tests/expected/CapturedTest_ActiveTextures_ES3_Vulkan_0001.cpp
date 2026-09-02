@@ -52,6 +52,17 @@ void ReplayFrame1(void)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
     glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(160));
+    glGenTextures(1, (GLuint *)gReadBuffer);
+    UpdateTextureID(4, 0);
+    glBindTexture(GL_TEXTURE_2D, gTextureMap[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glGenFramebuffers(1, (GLuint *)gReadBuffer);
+    UpdateFramebufferID2(3, 3, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, gFramebufferMapPerContext[3][3]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gTextureMap[4], 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, gFramebufferMapPerContext[3][0]);
+    glGetError();
 }
 
 void ReplayFrame2(void)
@@ -71,6 +82,8 @@ void ReplayFrame4(void)
 
 void ResetReplayContextShared(void)
 {
+    UpdateResourceIDBuffer(0, gTextureMap[4]);
+    glDeleteTextures(1, gResourceIDBuffer);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
@@ -80,6 +93,8 @@ void ResetReplayContextShared(void)
 
 void ResetReplayContext3(void)
 {
+    UpdateResourceIDBuffer(0, gFramebufferMapPerContext[3][3]);
+    glDeleteFramebuffers(1, gResourceIDBuffer);
 }
 
 void ReplayFrame5(void)
@@ -108,6 +123,7 @@ void ResetReplay(void)
     ResetReplayContext3();
 
     // Reset main context state
+    glBindFramebuffer(GL_FRAMEBUFFER, gFramebufferMapPerContext[3][0]);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[1]);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);

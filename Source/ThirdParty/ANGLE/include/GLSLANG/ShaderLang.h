@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 417
+#define ANGLE_SH_VERSION 420
 
 enum ShShaderSpec
 {
@@ -179,8 +179,8 @@ struct ShCompileOptions
     // If requested, validates the AST after every transformation.  Useful for debugging.
     uint64_t validateAST : 1;
 
-    // placeholder bit for removed validateLoopIndexing option.
-    uint64_t unused3 : 1;
+    // Limit the number of output varyings allowed in vertex shaders to work around driver bugs.
+    uint64_t limitOutputVaryingsTo256 : 1;
 
     // Emits #line directives in HLSL.
     uint64_t lineDirectives : 1;
@@ -398,11 +398,10 @@ struct ShCompileOptions
     // Always write explicit location layout qualifiers for fragment outputs.
     uint64_t explicitFragmentLocations : 1;
 
-    // placeholder bit for removed emulateDithering option.
     uint64_t unused : 1;
 
-    // placeholder bit for removed roundOutputAfterDithering option.
-    uint64_t unused2 : 1;
+    // Avoid complex expressions in struct constructors to work around driver bugs.
+    uint64_t avoidComplexExpressionsInStructConstructor : 1;
 
     // Whether |#extension ... : disable| is allowed after non-preprocessor tokens in WebGL.
     // WebGL1 deviates from GLSL by allowing |#extension| directives after non-preprocessor tokens.
@@ -1004,6 +1003,10 @@ enum class MetadataFlags
     InvalidEnum,
     EnumCount = InvalidEnum,
 };
+
+// If samplers are extracted from structs, their names will be <prefix><N>, where <N> is a
+// zero-based index assigned in DFS-order of declaration.
+extern const char kExtractedSamplerNamePrefix[];
 
 namespace vk
 {

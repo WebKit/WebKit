@@ -63,8 +63,24 @@ TEST_P(PointSpriteTest, TrianglesNotTreatedAsPointSprites)
 
     // The first coordinate, 0.9f 0.9f should be sufficiently shifted to the right
     // that the green part of the point sprite is hidden.
+    // The test result should not be affected by device screen orientation, where the
+    // xy coordinates can get flipped. We should make sure the center of the only pixel
+    // in the framebuffer still falls within the triangle even after xy flip.
+    // Before xy flip
+    //   +------------------+
+    //   |  --------------- |
+    //   |  \            /  |
+    //   |   \center of 1x1 |
+    //   |    \    *   /    |
+    //   |     \      /     |
+    //   |      \    /      |
+    //   |       \  /       |
+    //   +------------------+
+    // After xy flip, the triangle is rotated 90 degrees clockwise.
+    // Note that with the new shape, the center still falls within the triangle.
+
     std::vector<float> mPositions = {
-        0.9f, 0.9f, -0.9f, 0.9f, 0.9f, -0.9f,
+        0.9f, 0.9f, -0.9f, 0.9f, 0.0f, -0.9f,
     };
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -83,5 +99,7 @@ TEST_P(PointSpriteTest, TrianglesNotTreatedAsPointSprites)
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
-
-ANGLE_INSTANTIATE_TEST_ES1(PointSpriteTest);
+ANGLE_INSTANTIATE_TEST_ES1_AND(PointSpriteTest,
+                               ES1_VULKAN().enable(Feature::EmulatedPrerotation90),
+                               ES1_VULKAN().enable(Feature::EmulatedPrerotation180),
+                               ES1_VULKAN().enable(Feature::EmulatedPrerotation270));

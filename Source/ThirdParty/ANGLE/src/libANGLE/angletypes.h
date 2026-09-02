@@ -909,14 +909,24 @@ class BlendStateExt final
 
     constexpr uint8_t getDrawBufferCount() const { return mDrawBufferCount; }
 
-    constexpr void setSrcColorBits(const FactorStorage::Type srcColor) { mSrcColor = srcColor; }
-    constexpr void setSrcAlphaBits(const FactorStorage::Type srcAlpha) { mSrcAlpha = srcAlpha; }
-    constexpr void setDstColorBits(const FactorStorage::Type dstColor) { mDstColor = dstColor; }
-    constexpr void setDstAlphaBits(const FactorStorage::Type dstAlpha) { mDstAlpha = dstAlpha; }
+    constexpr void setFactorBits(const FactorStorage::Type srcColor,
+                                 const FactorStorage::Type dstColor,
+                                 const FactorStorage::Type srcAlpha,
+                                 const FactorStorage::Type dstAlpha,
+                                 const DrawBufferMask usesExtendedBlendFactorMask)
+    {
+        mSrcColor                    = srcColor;
+        mDstColor                    = dstColor;
+        mSrcAlpha                    = srcAlpha;
+        mDstAlpha                    = dstAlpha;
+        mUsesExtendedBlendFactorMask = usesExtendedBlendFactorMask;
+    }
 
-    constexpr void setEquationColorBits(const EquationStorage::Type equationColor)
+    constexpr void setEquationColorBits(const EquationStorage::Type equationColor,
+                                        const DrawBufferMask usesAdvancedEquationmask)
     {
         mEquationColor = equationColor;
+        mUsesAdvancedBlendEquationMask = usesAdvancedEquationmask;
     }
     constexpr void setEquationAlphaBits(const EquationStorage::Type equationAlpha)
     {

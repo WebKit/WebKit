@@ -23,7 +23,7 @@
 
 namespace gl
 {
-class ImageIndex;
+class SourceImageIndex;
 }  // namespace gl
 
 namespace rx
@@ -296,6 +296,7 @@ class DescriptorPoolHelper final : angle::NonCopyable
     bool recycleFromGarbage(Renderer *renderer, DescriptorSetPointer *descriptorSetOut);
     void destroyGarbage();
     void cleanupPendingGarbage();
+    void forceFinishPendingGarbage();
 
     bool hasValidDescriptorSet() const { return mValidDescriptorSets != 0; }
     bool canDestroy() const { return mValidDescriptorSets == 0 && mPendingGarbageList.empty(); }
@@ -1985,13 +1986,6 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     bool isTransformFeedbackStarted() const { return mValidTransformFeedbackBufferCount > 0; }
     bool isTransformFeedbackActiveUnpaused() const { return mIsTransformFeedbackActiveUnpaused; }
 
-    uint32_t getAndResetCounter()
-    {
-        uint32_t count = mCounter;
-        mCounter       = 0;
-        return count;
-    }
-
     RenderPassFramebuffer &getFramebuffer() { return mFramebuffer; }
     const RenderPassFramebuffer &getFramebuffer() const { return mFramebuffer; }
 
@@ -2157,7 +2151,6 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     uint32_t mCurrentSubpassCommandBufferIndex;
 
     // RenderPass state
-    uint32_t mCounter;
     RenderPassDesc mRenderPassDesc;
     AttachmentOpsArray mAttachmentOps;
     RenderPassFramebuffer mFramebuffer;
@@ -2345,8 +2338,7 @@ class ImageHelper final : public Resource, public angle::Subject
     VkResult initMemory(ErrorContext *context,
                         VkMemoryPropertyFlags flags,
                         VkMemoryPropertyFlags excludedFlags,
-                        const VkMemoryRequirements *memoryRequirements,
-                        const bool allocateDedicatedMemory,
+                        VkMemoryRequirements *memoryRequirements,
                         MemoryAllocationType allocationType,
                         VkMemoryPropertyFlags *flagsOut,
                         VkDeviceSize *sizeOut);
@@ -2658,7 +2650,7 @@ class ImageHelper final : public Resource, public angle::Subject
     angle::Result stagePartialClear(ContextVk *contextVk,
                                     const gl::Box &clearArea,
                                     const ClearTextureMode clearMode,
-                                    const gl::ImageIndex &index,
+                                    const gl::SourceImageIndex &index,
                                     GLenum type,
                                     const gl::InternalFormat &formatInfo,
                                     const Format &vkFormat,
@@ -2666,7 +2658,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                     const uint8_t *data);
 
     angle::Result stageSubresourceUpdate(ContextVk *contextVk,
-                                         const gl::ImageIndex &index,
+                                         const gl::SourceImageIndex &index,
                                          const gl::Extents &glExtents,
                                          const gl::Offset &offset,
                                          const gl::InternalFormat &formatInfo,
@@ -2682,14 +2674,14 @@ class ImageHelper final : public Resource, public angle::Subject
 
     angle::Result stageSubresourceUpdateAndGetData(ContextVk *contextVk,
                                                    size_t allocationSize,
-                                                   const gl::ImageIndex &imageIndex,
+                                                   const gl::SourceImageIndex &imageIndex,
                                                    const gl::Extents &glExtents,
                                                    const gl::Offset &offset,
                                                    uint8_t **destData,
                                                    angle::FormatID formatID);
 
     angle::Result stageSubresourceUpdateFromFramebuffer(const gl::Context *context,
-                                                        const gl::ImageIndex &index,
+                                                        const gl::SourceImageIndex &index,
                                                         const gl::Rectangle &sourceArea,
                                                         const gl::Offset &dstOffset,
                                                         const gl::Extents &dstExtent,
@@ -2698,7 +2690,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                                         FramebufferVk *framebufferVk);
 
     void stageSubresourceUpdateFromImage(RefCounted<ImageHelper> *image,
-                                         const gl::ImageIndex &index,
+                                         const gl::SourceImageIndex &index,
                                          LevelIndex srcMipLevel,
                                          uint32_t srcLayerIndex,
                                          const gl::Offset &destOffset,
@@ -2712,21 +2704,21 @@ class ImageHelper final : public Resource, public angle::Subject
                                                    gl::LevelIndex baseLevel);
 
     // Stage a clear to an arbitrary value.
-    void stageClear(const gl::ImageIndex &index,
+    void stageClear(const gl::SourceImageIndex &index,
                     VkImageAspectFlags aspectFlags,
                     const VkClearValue &clearValue);
 
     // Stage a clear based on robust resource init.
     angle::Result stageRobustResourceClearWithFormat(ContextVk *contextVk,
-                                                     const gl::ImageIndex &index,
+                                                     const gl::SourceImageIndex &index,
                                                      const gl::Extents &glExtents,
                                                      const angle::Format &intendedFormat,
                                                      const angle::Format &imageFormat);
-    void stageRobustResourceClear(const gl::ImageIndex &index,
+    void stageRobustResourceClear(const gl::SourceImageIndex &index,
                                   const VkImageAspectFlags aspectFlags);
 
     angle::Result stageResourceClearWithFormat(ContextVk *contextVk,
-                                               const gl::ImageIndex &index,
+                                               const gl::SourceImageIndex &index,
                                                const gl::Extents &glExtents,
                                                const angle::Format &intendedFormat,
                                                const angle::Format &imageFormat,
@@ -3130,7 +3122,7 @@ class ImageHelper final : public Resource, public angle::Subject
                           angle::FormatID formatID);
         SubresourceUpdate(VkImageAspectFlags aspectFlags,
                           const VkClearValue &clearValue,
-                          const gl::ImageIndex &imageIndex);
+                          const gl::SourceImageIndex &imageIndex);
         SubresourceUpdate(const VkImageAspectFlags aspectFlags,
                           const VkClearValue &clearValue,
                           const gl::LevelIndex levelIndex,
@@ -3144,7 +3136,7 @@ class ImageHelper final : public Resource, public angle::Subject
                           uint32_t layerCount);
         SubresourceUpdate(VkColorComponentFlags colorMaskFlags,
                           const VkClearColorValue &clearValue,
-                          const gl::ImageIndex &imageIndex);
+                          const gl::SourceImageIndex &imageIndex);
 
         SubresourceUpdate(const SubresourceUpdate &other);
         SubresourceUpdate(SubresourceUpdate &&other);
@@ -3292,7 +3284,7 @@ class ImageHelper final : public Resource, public angle::Subject
 
     angle::Result updateSubresourceOnHost(ContextVk *contextVk,
                                           ApplyImageUpdate applyUpdate,
-                                          const gl::ImageIndex &index,
+                                          const gl::SourceImageIndex &index,
                                           const gl::Extents &glExtents,
                                           const gl::Offset &offset,
                                           const uint8_t *source,

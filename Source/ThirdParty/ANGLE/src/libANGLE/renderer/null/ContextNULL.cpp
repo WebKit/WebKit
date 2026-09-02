@@ -12,7 +12,6 @@
 #include "common/debug.h"
 
 #include "libANGLE/Context.h"
-#include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/null/BufferNULL.h"
 #include "libANGLE/renderer/null/CompilerNULL.h"
 #include "libANGLE/renderer/null/DisplayNULL.h"
@@ -511,11 +510,6 @@ SemaphoreImpl *ContextNULL::createSemaphore()
 {
     UNREACHABLE();
     return nullptr;
-}
-
-OverlayImpl *ContextNULL::createOverlay(const gl::OverlayState &state)
-{
-    return new OverlayImpl(state);
 }
 
 angle::Result ContextNULL::dispatchCompute(const gl::Context *context,

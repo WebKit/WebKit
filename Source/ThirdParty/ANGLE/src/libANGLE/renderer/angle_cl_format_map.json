@@ -1,4 +1,10 @@
 {
+  "a": [
+    [
+      "CL_UNORM_INT8",
+      "A8_UNORM"
+    ]
+  ],
   "r": [
     [
       "CL_UNORM_INT8",

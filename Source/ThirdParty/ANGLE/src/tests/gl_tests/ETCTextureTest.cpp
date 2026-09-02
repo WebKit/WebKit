@@ -103,10 +103,6 @@ TEST_P(ETCTextureTest, PBOWithMisalignedOffset)
     // Need ES 3.0 for PBOs.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
-    // Check if ETC2 is supported.
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture") &&
-                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
-
     constexpr GLsizei kWidth  = 512;
     constexpr GLsizei kHeight = 512;
     constexpr GLsizei kBPB    = 8;  // 8 bytes per block

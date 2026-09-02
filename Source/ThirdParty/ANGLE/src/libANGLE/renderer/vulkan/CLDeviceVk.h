@@ -59,6 +59,11 @@ class CLDeviceVk : public CLDeviceImpl
     cl_ulong getHalfFpConfig() const;
     cl_ulong getDoubleFpConfig() const;
     cl_ulong getCacheSize() const;
+    cl_ulong getHeapSizeForResource(const VkMemoryPropertyFlags supportedProperties,
+                                    const VkMemoryPropertyFlags avoidedProperties) const;
+    cl_ulong getGlobalMemSize() const;
+    cl_ulong getMaxMemAllocSize() const;
+    size_t getImageMaxBufferSize() const;
 
   private:
     vk::Renderer *mRenderer;
