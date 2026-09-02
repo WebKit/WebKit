@@ -114,6 +114,7 @@ WK_GAMECONTROLLER_LDFLAGS_iphonesimulator = -framework GameController
 WK_GAMECONTROLLER_LDFLAGS_xros = -framework GameController
 WK_GAMECONTROLLER_LDFLAGS_xrsimulator = -framework GameController
 
+// See ENABLE_WEB_RTC in FeatureDefines.xcconfig in WebCore and WebKit.
 WK_LIBWEBRTC_LDFLAGS = $(WK_LIBWEBRTC_LDFLAGS_$(WK_PLATFORM_NAME))
 WK_LIBWEBRTC_LDFLAGS_iphoneos = -weak-lwebrtc
 WK_LIBWEBRTC_LDFLAGS_iphonesimulator = -weak-lwebrtc
