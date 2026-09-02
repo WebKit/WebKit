@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformXRSystem.h"
 
+#include "FirstPartyAuthority.h"
+
 #if ENABLE(WEBXR)
 
 #include "GPUProcessProxy.h"
@@ -162,9 +164,14 @@ static bool checkFeaturesConsent(const std::optional<PlatformXR::Device::Feature
 
 void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
 {
-    auto securityOriginData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     ASSERT(RunLoop::isMain());
+
+    Ref validationProcess = WebProcessProxy::fromConnection(connection);
+    auto validatedOrigin = WTF::move(untrustedOrigin).validate(FirstPartyAuthority { validationProcess });
+    MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(validatedOrigin), connection, completionHandler(std::nullopt));
+    if (!validatedOrigin)
+        return completionHandler(std::nullopt);
+    auto securityOriginData = WTF::move(*validatedOrigin);
 
     RefPtr page = m_page.get();
     if (!page) {

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProxyingPageAgent.h"
 
+#include "FirstPartyAuthority.h"
 #include "HandleMessage.h"
 #include "ProxyingPageAgentMessages.h"
 #include "WebFrameProxy.h"
@@ -94,9 +95,13 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
     return IdentifierRegistry::protocolFrameId(frameID);
 }
 
-void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
+void ProxyingPageAgent::frameNavigated(IPC::Connection& connection, FrameIdentifier frameID, const URL& url, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
-    auto securityOrigin = WTF::move(untrustedSecurityOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    auto validatedSecurityOrigin = WTF::move(untrustedSecurityOrigin).validate(FirstPartyAuthority { WebProcessProxy::fromConnection(connection) });
+    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(validatedSecurityOrigin), connection);
+    if (!validatedSecurityOrigin)
+        return;
+    auto securityOrigin = WTF::move(*validatedSecurityOrigin);
 
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()
     // can report it for cross-origin children, whose commit the inspectedPage's WebFrameProxy

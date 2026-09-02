@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "Untrusted.h"
+
 #if ENABLE(WEB_AUTHN)
 
 #include "MessageReceiver.h"
-#include "Untrusted.h"
 #include <WebCore/CredentialRequestOptions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediationRequirement.h>
@@ -112,13 +113,13 @@ private:
     // Receivers.
     void makeCredential(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PublicKeyCredentialCreationOptions&&, WebCore::MediationRequirement, RequestCompletionHandler&&);
     void getAssertion(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&&, RequestCompletionHandler&&);
-    void isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
-    void isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
-    void getClientCapabilities(IPC::Untrusted<WebCore::SecurityOriginData>&&, CapabilitiesCompletionHandler&&);
+    void isUserVerifyingPlatformAuthenticatorAvailable(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
+    void isConditionalMediationAvailable(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, QueryCompletionHandler&&);
+    void getClientCapabilities(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, CapabilitiesCompletionHandler&&);
 
-    void signalUnknownCredential(IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::UnknownCredentialOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
-    void signalAllAcceptedCredentials(IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
-    void signalCurrentUserDetails(IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
+    void signalUnknownCredential(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::UnknownCredentialOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
+    void signalAllAcceptedCredentials(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
+    void signalCurrentUserDetails(IPC::Connection&, IPC::Untrusted<WebCore::SecurityOriginData>&&, WebCore::CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&);
 
     void cancel(CompletionHandler<void()>&&);
 
