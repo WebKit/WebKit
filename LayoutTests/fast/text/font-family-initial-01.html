@@ -1,0 +1,49 @@
+    <html>
+    <head>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+        #div1 {
+            font-family: fantasy;
+        }
+        
+        #div2 {
+            font-family: serif;
+        }
+        
+        #span1 {
+            font-family: initial;
+        }
+        
+        #span2 {
+            font-family: initial;
+        }
+        
+        #span3 {
+            font-family: initial;
+        }
+    </style>
+    </head>
+    <body>
+        <p>The following two lines should look the same:</p>
+        <p>test</p>
+    <div id = "div1">
+        <div id = "div2">
+            <span id = "span1">Test1</span>
+            <span id = "span2">Test2</span>
+            <span id = "span3">Test3</span>
+    </div>
+    </div>
+    <script>      
+            var DivElement1    = document.getElementById('div1');
+            var DivElement2    = document.getElementById('div2');
+            var SpanElement1   = document.getElementById('span1');
+            var SpanElement2   = document.getElementById('span2');
+            var SpanElement3   = document.getElementById('span3');
+            shouldBeEqualToString('getComputedStyle(DivElement1).fontFamily',  "fantasy");
+            shouldBeEqualToString('getComputedStyle(DivElement2).fontFamily',  "serif");
+            shouldBeEqualToString('getComputedStyle(SpanElement1).fontFamily', "initial");
+            shouldBeEqualToString('getComputedStyle(SpanElement2).fontFamily', "initial");
+            shouldBeEqualToString('getComputedStyle(SpanElement3).fontFamily', "initial");
+    </script>
+</body>
+</html>
