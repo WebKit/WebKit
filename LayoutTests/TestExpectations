@@ -2466,7 +2466,6 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/table-width-3.html 
 webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-navigation.html [ Skip ]
 webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/a-rel-policy.html [ Skip ]
 webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-target-base.html [ Skip ]
-imported/w3c/web-platform-tests/mathml/relations/text-and-math/non-mathml-children-in-annotation.tentative.html [ ImageOnlyFailure ]
 
 # This MathML test should be rewritten.
 webkit.org/b/201356 mathml/presentation/stretchy-depth-height-symmetric.html [ Skip ]
