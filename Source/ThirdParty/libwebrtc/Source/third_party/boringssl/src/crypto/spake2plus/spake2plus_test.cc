@@ -133,8 +133,11 @@ struct SPAKEPLUSRun {
       return false;
     }
 
-    if (repeat_invocations && prover.GenerateShare(prover_share)) {
-      return false;
+    if (repeat_invocations) {
+      if (prover.GenerateShare(prover_share)) {
+        return false;
+      }
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, std::nullopt}}));
     }
 
     if (prover_corrupt_msg_bit &&
@@ -151,10 +154,12 @@ struct SPAKEPLUSRun {
       return false;
     }
 
-    if (repeat_invocations &&
-        verifier.ProcessProverShare(verifier_share, verifier_confirm,
-                                    verifier_secret, prover_share)) {
-      return false;
+    if (repeat_invocations) {
+      if (verifier.ProcessProverShare(verifier_share, verifier_confirm,
+                                      verifier_secret, prover_share)) {
+        return false;
+      }
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, std::nullopt}}));
     }
 
     uint8_t prover_confirm[kConfirmSize];
@@ -164,10 +169,12 @@ struct SPAKEPLUSRun {
       return false;
     }
 
-    if (repeat_invocations &&  //
-        prover.ComputeConfirmation(prover_confirm, prover_secret,
-                                   verifier_share, verifier_confirm)) {
-      return false;
+    if (repeat_invocations) {
+      if (prover.ComputeConfirmation(prover_confirm, prover_secret,
+                                     verifier_share, verifier_confirm)) {
+        return false;
+      }
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, std::nullopt}}));
     }
 
     if (prover_corrupt_confirm_bit &&
@@ -180,9 +187,11 @@ struct SPAKEPLUSRun {
       return false;
     }
 
-    if (repeat_invocations &&
-        verifier.VerifyProverConfirmation(prover_confirm)) {
-      return false;
+    if (repeat_invocations) {
+      if (verifier.VerifyProverConfirmation(prover_confirm)) {
+        return false;
+      }
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, std::nullopt}}));
     }
 
     key_matches_ = Span(prover_secret) == Span(verifier_secret);
@@ -306,6 +315,7 @@ TEST(SPAKEPLUSTest, WrongPassword) {
   SPAKEPLUSRun spake2;
   spake2.verifier_corrupt_record = true;
   ASSERT_FALSE(spake2.Run());
+  EXPECT_TRUE(ErrorsAreAndClear({{std::nullopt, std::nullopt}}));
 }
 
 TEST(SPAKEPLUSTest, WrongNames) {
@@ -321,6 +331,7 @@ TEST(SPAKEPLUSTest, CorruptMessages) {
     spake2.prover_corrupt_msg_bit = i;
     EXPECT_FALSE(spake2.Run())
         << "Passed after corrupting Prover's key share message, bit " << i;
+    EXPECT_TRUE(ErrorsAreAndClear({{std::nullopt, std::nullopt}}));
   }
 
   for (size_t i = 0; i < 8 * kConfirmSize; i++) {
@@ -328,6 +339,7 @@ TEST(SPAKEPLUSTest, CorruptMessages) {
     spake2.prover_corrupt_confirm_bit = i;
     EXPECT_FALSE(spake2.Run())
         << "Passed after corrupting Verifier's confirmation message, bit " << i;
+    EXPECT_TRUE(ErrorsAreAndClear({{std::nullopt, std::nullopt}}));
   }
 }
 

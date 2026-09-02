@@ -51,7 +51,7 @@ _CET_ENDBR
 
 	mov	QWORD[rsp],rdi
 
-
+; X=1, Y=0
 	mov	r8,1
 	xor	r9,r9
 	xor	r10,r10
@@ -64,7 +64,7 @@ _CET_ENDBR
 	xor	r15,r15
 	xor	rbp,rbp
 
-
+; Copy a/n into B/A on the stack.
 	vmovdqu	xmm0,XMMWORD[rsi]
 	vmovdqu	xmm1,XMMWORD[16+rsi]
 	vmovdqu	XMMWORD[48+rsp],xmm0
@@ -84,23 +84,23 @@ $L$beeu_loop:
 	jz	NEAR $L$beeu_loop_end
 
 
+; 0 < B < |n|,
+; 0 < A <= |n|,
+; (1)      X*a  ==  B   (mod |n|),
+; (2) (-1)*Y*a  ==  A   (mod |n|)
 
-
-
-
-
-
-
-
+; Now divide B by the maximum possible power of two in the
+; integers, and divide X by the same value mod |n|. When we're
+; done, (1) still holds.
 	mov	rcx,1
 
-
+; Note that B > 0
 $L$beeu_shift_loop_XB:
 	mov	rbx,rcx
 	and	rbx,QWORD[48+rsp]
 	jnz	NEAR $L$beeu_shift_loop_end_XB
 
-
+; Ensure X is even and divide by two.
 	mov	rbx,1
 	and	rbx,r8
 	jz	NEAR $L$shift1_0
@@ -119,10 +119,10 @@ $L$shift1_0:
 
 	shl	rcx,1
 
-
-
-
-
+; Test wraparound of the shift parameter. The probability to have 32 zeroes
+; in a row is small Therefore having the value below equal $0x8000000 or
+; $0x8000 does not affect the performance. We choose 0x8000000 because it
+; is the maximal immediate value possible.
 	cmp	rcx,0x8000000
 	jne	NEAR $L$beeu_shift_loop_XB
 
@@ -131,8 +131,8 @@ $L$beeu_shift_loop_end_XB:
 	test	rcx,rcx
 	jz	NEAR $L$beeu_no_shift_XB
 
-
-
+; Copy shifted values.
+; Remember not to override t3=rcx
 	mov	rax,QWORD[((8+48))+rsp]
 	mov	rbx,QWORD[((16+48))+rsp]
 	mov	rsi,QWORD[((24+48))+rsp]
@@ -146,16 +146,16 @@ $L$beeu_shift_loop_end_XB:
 
 
 $L$beeu_no_shift_XB:
-
+; Same for A and Y.  Afterwards, (2) still holds.
 	mov	rcx,1
 
-
+; Note that A > 0
 $L$beeu_shift_loop_YA:
 	mov	rbx,rcx
 	and	rbx,QWORD[16+rsp]
 	jnz	NEAR $L$beeu_shift_loop_end_YA
 
-
+; Ensure X is even and divide by two.
 	mov	rbx,1
 	and	rbx,r12
 	jz	NEAR $L$shift1_1
@@ -174,10 +174,10 @@ $L$shift1_1:
 
 	shl	rcx,1
 
-
-
-
-
+; Test wraparound of the shift parameter. The probability to have 32 zeroes
+; in a row is small therefore having the value below equal $0x8000000 or
+; $0x8000 Does not affect the performance. We choose 0x8000000 because it
+; is the maximal immediate value possible.
 	cmp	rcx,0x8000000
 	jne	NEAR $L$beeu_shift_loop_YA
 
@@ -186,8 +186,8 @@ $L$beeu_shift_loop_end_YA:
 	test	rcx,rcx
 	jz	NEAR $L$beeu_no_shift_YA
 
-
-
+; Copy shifted values.
+; Remember not to override t3=rcx
 	mov	rax,QWORD[((8+16))+rsp]
 	mov	rbx,QWORD[((16+16))+rsp]
 	mov	rsi,QWORD[((24+16))+rsp]
@@ -201,7 +201,7 @@ $L$beeu_shift_loop_end_YA:
 
 
 $L$beeu_no_shift_YA:
-
+; T = B-A (A,B < 2^256)
 	mov	rax,QWORD[48+rsp]
 	mov	rbx,QWORD[56+rsp]
 	mov	rsi,QWORD[64+rsp]
@@ -209,10 +209,10 @@ $L$beeu_no_shift_YA:
 	sub	rax,QWORD[16+rsp]
 	sbb	rbx,QWORD[24+rsp]
 	sbb	rsi,QWORD[32+rsp]
-	sbb	rcx,QWORD[40+rsp]
+	sbb	rcx,QWORD[40+rsp]  ; borrow from shift
 	jnc	NEAR $L$beeu_B_bigger_than_A
 
-
+; A = A - B
 	mov	rax,QWORD[16+rsp]
 	mov	rbx,QWORD[24+rsp]
 	mov	rsi,QWORD[32+rsp]
@@ -226,7 +226,7 @@ $L$beeu_no_shift_YA:
 	mov	QWORD[32+rsp],rsi
 	mov	QWORD[40+rsp],rcx
 
-
+; Y = Y + X
 	add	r12,r8
 	adc	r13,r9
 	adc	r14,r10
@@ -235,13 +235,13 @@ $L$beeu_no_shift_YA:
 	jmp	NEAR $L$beeu_loop
 
 $L$beeu_B_bigger_than_A:
-
+; B = T = B - A
 	mov	QWORD[48+rsp],rax
 	mov	QWORD[56+rsp],rbx
 	mov	QWORD[64+rsp],rsi
 	mov	QWORD[72+rsp],rcx
 
-
+; X = Y + X
 	add	r8,r12
 	adc	r9,r13
 	adc	r10,r14
@@ -251,21 +251,21 @@ $L$beeu_B_bigger_than_A:
 	jmp	NEAR $L$beeu_loop
 
 $L$beeu_loop_end:
+; The Euclid's algorithm loop ends when A == beeu(a,n);
+; Therefore (-1)*Y*a == A (mod |n|), Y>0
 
-
-
-
+; Verify that A = 1 ==> (-1)*Y*a = A = 1  (mod |n|)
 	mov	rbx,QWORD[16+rsp]
 	sub	rbx,1
 	or	rbx,QWORD[24+rsp]
 	or	rbx,QWORD[32+rsp]
 	or	rbx,QWORD[40+rsp]
-
+; If not, fail.
 	jnz	NEAR $L$beeu_err
 
-
-
-
+; From this point on, we no longer need X
+; Therefore we use it as a temporary storage.
+; X = n
 	mov	r8,QWORD[rdx]
 	mov	r9,QWORD[8+rdx]
 	mov	r10,QWORD[16+rdx]
@@ -279,28 +279,28 @@ $L$beeu_reduction_loop:
 	mov	QWORD[40+rsp],r15
 	mov	QWORD[48+rsp],rbp
 
-
+; If Y>n ==> Y=Y-n
 	sub	r12,r8
 	sbb	r13,r9
 	sbb	r14,r10
 	sbb	r15,r11
 	sbb	rbp,0
 
-
+; Choose old Y or new Y
 	cmovc	r12,QWORD[16+rsp]
 	cmovc	r13,QWORD[24+rsp]
 	cmovc	r14,QWORD[32+rsp]
 	cmovc	r15,QWORD[40+rsp]
 	jnc	NEAR $L$beeu_reduction_loop
 
-
+; X = n - Y (n, Y < 2^256), (Cancel the (-1))
 	sub	r8,r12
 	sbb	r9,r13
 	sbb	r10,r14
 	sbb	r11,r15
 
 $L$beeu_save:
-
+; Save the inverse(<2^256) to out.
 	mov	rdi,QWORD[rsp]
 
 	mov	QWORD[rdi],r8
@@ -308,12 +308,12 @@ $L$beeu_save:
 	mov	QWORD[16+rdi],r10
 	mov	QWORD[24+rdi],r11
 
-
+; Return 1.
 	mov	rax,1
 	jmp	NEAR $L$beeu_finish
 
 $L$beeu_err:
-
+; Return 0.
 	xor	rax,rax
 
 $L$beeu_finish:

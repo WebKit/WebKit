@@ -49,7 +49,7 @@ static ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
 
 #if defined(OPENSSL_MSAN)
   if (ret > 0) {
-    // MSAN doesn't recognise |syscall| and thus doesn't notice that we have
+    // MSAN doesn't recognise `syscall` and thus doesn't notice that we have
     // initialised the output buffer.
     __msan_unpoison(buf, ret);
   }
@@ -58,17 +58,17 @@ static ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
   return ret;
 }
 
-// kHaveGetrandom in |urandom_fd| signals that |getrandom| or |getentropy| is
+// kHaveGetrandom in `urandom_fd` signals that `getrandom` or `getentropy` is
 // available and should be used instead.
 static const int kHaveGetrandom = -3;
 
-// urandom_fd is a file descriptor to /dev/urandom. It's protected by |once|.
+// urandom_fd is a file descriptor to /dev/urandom. It's protected by `once`.
 static int urandom_fd;
 
 static CRYPTO_once_t rand_once = CRYPTO_ONCE_INIT;
 
 // init_once initializes the state of this module to values previously
-// requested. This is the only function that modifies |urandom_fd|, which may be
+// requested. This is the only function that modifies `urandom_fd`, which may be
 // read safely after calling the once.
 static void init_once() {
   int have_getrandom;
@@ -115,7 +115,7 @@ static void init_once() {
 
 void bssl::CRYPTO_init_sysrand() { CRYPTO_once(&rand_once, init_once); }
 
-// CRYPTO_sysrand writes |len| bytes of entropy into |out|.
+// CRYPTO_sysrand writes `len` bytes of entropy into `out`.
 void bssl::CRYPTO_sysrand(uint8_t *out, size_t len) {
   if (len == 0) {
     return;
@@ -123,7 +123,7 @@ void bssl::CRYPTO_sysrand(uint8_t *out, size_t len) {
 
   CRYPTO_init_sysrand();
 
-  // Clear |errno| so it has defined value if |read| or |getrandom|
+  // Clear `errno` so it has defined value if `read` or `getrandom`
   // "successfully" returns zero.
   errno = 0;
   while (len > 0) {

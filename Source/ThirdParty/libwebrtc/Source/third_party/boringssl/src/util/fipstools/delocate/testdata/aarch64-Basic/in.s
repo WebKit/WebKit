@@ -1,6 +1,12 @@
 	.type foo, %function
 	.globl foo
 foo:
+	// aarch64 constants can be written with or without '#'.
+	mov x1, #123
+	mov x1, 123
+	add x0, x1, x2, lsl #2
+	add x0, x1, x2, lsl 2
+
 	// GOT load
 	adrp x1, :got:stderr
 	ldr x0, [x1, :got_lo12:stderr]
@@ -16,22 +22,36 @@ foo:
 	// GOT load of synthesized symbol.
 	adrp x0, :got:BORINGSSL_bcm_text_start
 	ldr x0, [x0, :got_lo12:BORINGSSL_bcm_text_start]
+	adrp x0, :got:BORINGSSL_bcm_text_end
+	ldr x0, [x0, :got_lo12:BORINGSSL_bcm_text_end]
+	adrp x0, :got:BORINGSSL_bcm_text_hash
+	ldr x0, [x0, :got_lo12:BORINGSSL_bcm_text_hash]
 
 	// Address load
 	adrp x0, .Llocal_data
 	add x1, x0, :lo12:.Llocal_data
 
+	adrp x0, .Llocal_data
+	add x1, x0, #:lo12:.Llocal_data
+
 	// Address of local symbol with offset
 	adrp x10, .Llocal_data2+16
 	add x11, x10, :lo12:.Llocal_data2+16
+
+	adrp x10, .Llocal_data2+16
+	add x11, x10, #:lo12:.Llocal_data2+16
 
 	// Address load with no-op add instruction
 	adrp x0, .Llocal_data
 	add x0, x0, :lo12:.Llocal_data
 
+	adrp x0, .Llocal_data
+	add x0, x0, #:lo12:.Llocal_data
+
 	// Load from local symbol
 	adrp x10, .Llocal_data2
 	ldr q0, [x10, :lo12:.Llocal_data2]
+	ldr q0, [x10, #:lo12:.Llocal_data2]
 	ldr x0, [x10, :lo12:.Llocal_data2]
 	ldr w0, [x10, :lo12:.Llocal_data2]
 	ldrh w0, [x10, :lo12:.Llocal_data2]
@@ -43,6 +63,7 @@ foo:
 	// Load from local symbol with offset
 	adrp x10, .Llocal_data2+16
 	ldr q0, [x10, :lo12:.Llocal_data2+16]
+	ldr q0, [x10, #:lo12:.Llocal_data2+16]
 	ldr x0, [x10, :lo12:.Llocal_data2+16]
 	ldr w0, [x10, :lo12:.Llocal_data2+16]
 	ldrh w0, [x10, :lo12:.Llocal_data2+16]
@@ -50,6 +71,15 @@ foo:
 	ldrsw x0, [x10, :lo12:.Llocal_data2+16]
 	ldrsh w0, [x10, :lo12:.Llocal_data2+16]
 	ldrsb w0, [x10, :lo12:.Llocal_data2+16]
+
+	// Different aarch64 addressing modes
+	ldr x0, [x1]
+	ldr x0, [x1, #123]
+	ldr x0, [x1, 123]
+	ldr x0, [x1, #123]!
+	ldr x0, [x1, 123]!
+	ldr x0, x1, #123
+	ldr x0, x1, 123
 
 	bl local_function
 
@@ -59,6 +89,12 @@ foo:
 
 	// Regression test for a two-digit index.
 	ld1 { v1.b }[10], [x9]
+
+	// Register range syntaxes
+	st1 {v0.16b,v1.16b,v2.16b,v3.16b}, [x2], #64
+	st1 { v0.16b , v1.16b , v2.16b , v3.16b }, [x2], #64
+	st1 {v0.16b-v3.16b}, [x2], #64
+	st1 { v0.16b - v3.16b }, [x2], #64
 
 	// Ensure that registers aren't interpreted as symbols.
 	add x0, x0

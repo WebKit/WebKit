@@ -360,7 +360,7 @@ impl PrivateKey {
     /// Return the public key corresponding to this private key.
     pub fn as_public(&self) -> PublicKey {
         // Safety: `self.0` is valid by construction and `RSA_up_ref` means
-        // we we can pass an ownership reference to `PublicKey`.
+        // we can pass an ownership reference to `PublicKey`.
         unsafe { bssl_sys::RSA_up_ref(self.0) };
         PublicKey(self.0)
     }

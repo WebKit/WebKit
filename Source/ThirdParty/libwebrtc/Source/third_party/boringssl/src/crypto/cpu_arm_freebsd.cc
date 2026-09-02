@@ -27,7 +27,7 @@ using namespace bssl;
 void bssl::OPENSSL_cpuid_setup() {
   unsigned long hwcap = 0, hwcap2 = 0;
 
-  // |elf_aux_info| may fail, in which case |hwcap| and |hwcap2| will be
+  // `elf_aux_info` may fail, in which case `hwcap` and `hwcap2` will be
   // left at zero. The rest of this function will then gracefully report
   // the features are absent.
   elf_aux_info(AT_HWCAP, &hwcap, sizeof(hwcap));

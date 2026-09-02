@@ -24,8 +24,8 @@ using namespace bssl;
 
 void bssl::bn_big_endian_to_words(BN_ULONG *out, size_t out_len,
                                   const uint8_t *in, size_t in_len) {
-  // The caller should have sized |out| to fit |in| without truncating. This
-  // condition ensures we do not overflow |out|, so use a runtime check.
+  // The caller should have sized `out` to fit `in` without truncating. This
+  // condition ensures we do not overflow `out`, so use a runtime check.
   BSSL_CHECK(in_len <= out_len * sizeof(BN_ULONG));
 
   // Load whole words.
@@ -73,8 +73,8 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     return nullptr;
   }
 
-  // |bn_wexpand| must check bounds on |num_words| to write it into
-  // |ret->dmax|.
+  // `bn_wexpand` must check bounds on `num_words` to write it into
+  // `ret->dmax`.
   assert(num_words <= INT_MAX);
   ret->width = (int)num_words;
   ret->neg = 0;
@@ -99,7 +99,7 @@ BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     return ret;
   }
 
-  // Reserve enough space in |ret|.
+  // Reserve enough space in `ret`.
   size_t num_words = ((len - 1) / BN_BYTES) + 1;
   if (!bn_wexpand(ret, num_words)) {
     BN_free(bn);
@@ -121,8 +121,8 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   return BN_lebin2bn(in, len, ret);
 }
 
-// fits_in_bytes returns one if the |num_words| words in |words| can be
-// represented in |num_bytes| bytes.
+// fits_in_bytes returns one if the `num_words` words in `words` can be
+// represented in `num_bytes` bytes.
 static int fits_in_bytes(const BN_ULONG *words, size_t num_words,
                          size_t num_bytes) {
   const uint8_t *bytes = (const uint8_t *)words;

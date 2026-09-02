@@ -13,7 +13,7 @@
 sha256_block_data_order_nohw:
 .cfi_startproc	
 _CET_ENDBR
-	movq	%rsp,%rax
+	movq	%rsp,%rax  // copy %rsp
 .cfi_def_cfa_register	%rax
 	pushq	%rbx
 .cfi_offset	%rbx,-16
@@ -27,14 +27,14 @@ _CET_ENDBR
 .cfi_offset	%r14,-48
 	pushq	%r15
 .cfi_offset	%r15,-56
-	shlq	$4,%rdx
+	shlq	$4,%rdx  // num*16
 	subq	$64+32,%rsp
-	leaq	(%rsi,%rdx,4),%rdx
-	andq	$-64,%rsp
-	movq	%rdi,64+0(%rsp)
-	movq	%rsi,64+8(%rsp)
-	movq	%rdx,64+16(%rsp)
-	movq	%rax,88(%rsp)
+	leaq	(%rsi,%rdx,4),%rdx  // inp+num*16*4
+	andq	$-64,%rsp  // align stack frame
+	movq	%rdi,64+0(%rsp)  // save ctx, 1st arg
+	movq	%rsi,64+8(%rsp)  // save inp, 2nd arh
+	movq	%rdx,64+16(%rsp)  // save end pointer, "3rd" arg
+	movq	%rax,88(%rsp)  // save copy of %rsp
 .cfi_escape	0x0f,0x06,0x77,0xd8,0x00,0x06,0x23,0x08
 .Lprologue:
 
@@ -52,7 +52,7 @@ _CET_ENDBR
 .Lloop:
 	movl	%ebx,%edi
 	leaq	K256(%rip),%rbp
-	xorl	%ecx,%edi
+	xorl	%ecx,%edi  // magic
 	movl	0(%rsi),%r12d
 	movl	%r8d,%r13d
 	movl	%eax,%r14d
@@ -62,38 +62,38 @@ _CET_ENDBR
 
 	xorl	%r8d,%r13d
 	rorl	$9,%r14d
-	xorl	%r10d,%r15d
+	xorl	%r10d,%r15d  // f^g
 
 	movl	%r12d,0(%rsp)
 	xorl	%eax,%r14d
-	andl	%r8d,%r15d
+	andl	%r8d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r11d,%r12d
-	xorl	%r10d,%r15d
+	addl	%r11d,%r12d  // T1+=h
+	xorl	%r10d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r8d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%eax,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%eax,%r14d
 
-	xorl	%ebx,%r15d
-	rorl	$6,%r13d
+	xorl	%ebx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ebx,%r11d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r11d
-	addl	%r12d,%edx
-	addl	%r12d,%r11d
+	xorl	%edi,%r11d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%edx  // d+=T1
+	addl	%r12d,%r11d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r11d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r11d  // h+=Sigma0(a)
 	movl	4(%rsi),%r12d
 	movl	%edx,%r13d
 	movl	%r11d,%r14d
@@ -103,38 +103,38 @@ _CET_ENDBR
 
 	xorl	%edx,%r13d
 	rorl	$9,%r14d
-	xorl	%r9d,%edi
+	xorl	%r9d,%edi  // f^g
 
 	movl	%r12d,4(%rsp)
 	xorl	%r11d,%r14d
-	andl	%edx,%edi
+	andl	%edx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r10d,%r12d
-	xorl	%r9d,%edi
+	addl	%r10d,%r12d  // T1+=h
+	xorl	%r9d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%edx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r11d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r11d,%r14d
 
-	xorl	%eax,%edi
-	rorl	$6,%r13d
+	xorl	%eax,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%eax,%r10d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r10d
-	addl	%r12d,%ecx
-	addl	%r12d,%r10d
+	xorl	%r15d,%r10d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ecx  // d+=T1
+	addl	%r12d,%r10d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r10d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r10d  // h+=Sigma0(a)
 	movl	8(%rsi),%r12d
 	movl	%ecx,%r13d
 	movl	%r10d,%r14d
@@ -144,38 +144,38 @@ _CET_ENDBR
 
 	xorl	%ecx,%r13d
 	rorl	$9,%r14d
-	xorl	%r8d,%r15d
+	xorl	%r8d,%r15d  // f^g
 
 	movl	%r12d,8(%rsp)
 	xorl	%r10d,%r14d
-	andl	%ecx,%r15d
+	andl	%ecx,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r9d,%r12d
-	xorl	%r8d,%r15d
+	addl	%r9d,%r12d  // T1+=h
+	xorl	%r8d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ecx,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r10d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r10d,%r14d
 
-	xorl	%r11d,%r15d
-	rorl	$6,%r13d
+	xorl	%r11d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r11d,%r9d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r9d
-	addl	%r12d,%ebx
-	addl	%r12d,%r9d
+	xorl	%edi,%r9d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ebx  // d+=T1
+	addl	%r12d,%r9d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r9d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r9d  // h+=Sigma0(a)
 	movl	12(%rsi),%r12d
 	movl	%ebx,%r13d
 	movl	%r9d,%r14d
@@ -185,38 +185,38 @@ _CET_ENDBR
 
 	xorl	%ebx,%r13d
 	rorl	$9,%r14d
-	xorl	%edx,%edi
+	xorl	%edx,%edi  // f^g
 
 	movl	%r12d,12(%rsp)
 	xorl	%r9d,%r14d
-	andl	%ebx,%edi
+	andl	%ebx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r8d,%r12d
-	xorl	%edx,%edi
+	addl	%r8d,%r12d  // T1+=h
+	xorl	%edx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ebx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r9d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r9d,%r14d
 
-	xorl	%r10d,%edi
-	rorl	$6,%r13d
+	xorl	%r10d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r10d,%r8d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r8d
-	addl	%r12d,%eax
-	addl	%r12d,%r8d
+	xorl	%r15d,%r8d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%eax  // d+=T1
+	addl	%r12d,%r8d  // h+=T1
 
-	leaq	20(%rbp),%rbp
-	addl	%r14d,%r8d
+	leaq	20(%rbp),%rbp  // round++
+	addl	%r14d,%r8d  // h+=Sigma0(a)
 	movl	16(%rsi),%r12d
 	movl	%eax,%r13d
 	movl	%r8d,%r14d
@@ -226,38 +226,38 @@ _CET_ENDBR
 
 	xorl	%eax,%r13d
 	rorl	$9,%r14d
-	xorl	%ecx,%r15d
+	xorl	%ecx,%r15d  // f^g
 
 	movl	%r12d,16(%rsp)
 	xorl	%r8d,%r14d
-	andl	%eax,%r15d
+	andl	%eax,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%edx,%r12d
-	xorl	%ecx,%r15d
+	addl	%edx,%r12d  // T1+=h
+	xorl	%ecx,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%eax,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r8d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r8d,%r14d
 
-	xorl	%r9d,%r15d
-	rorl	$6,%r13d
+	xorl	%r9d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r9d,%edx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%edx
-	addl	%r12d,%r11d
-	addl	%r12d,%edx
+	xorl	%edi,%edx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r11d  // d+=T1
+	addl	%r12d,%edx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%edx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%edx  // h+=Sigma0(a)
 	movl	20(%rsi),%r12d
 	movl	%r11d,%r13d
 	movl	%edx,%r14d
@@ -267,38 +267,38 @@ _CET_ENDBR
 
 	xorl	%r11d,%r13d
 	rorl	$9,%r14d
-	xorl	%ebx,%edi
+	xorl	%ebx,%edi  // f^g
 
 	movl	%r12d,20(%rsp)
 	xorl	%edx,%r14d
-	andl	%r11d,%edi
+	andl	%r11d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ecx,%r12d
-	xorl	%ebx,%edi
+	addl	%ecx,%r12d  // T1+=h
+	xorl	%ebx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r11d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%edx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%edx,%r14d
 
-	xorl	%r8d,%edi
-	rorl	$6,%r13d
+	xorl	%r8d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r8d,%ecx
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%ecx
-	addl	%r12d,%r10d
-	addl	%r12d,%ecx
+	xorl	%r15d,%ecx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r10d  // d+=T1
+	addl	%r12d,%ecx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%ecx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%ecx  // h+=Sigma0(a)
 	movl	24(%rsi),%r12d
 	movl	%r10d,%r13d
 	movl	%ecx,%r14d
@@ -308,38 +308,38 @@ _CET_ENDBR
 
 	xorl	%r10d,%r13d
 	rorl	$9,%r14d
-	xorl	%eax,%r15d
+	xorl	%eax,%r15d  // f^g
 
 	movl	%r12d,24(%rsp)
 	xorl	%ecx,%r14d
-	andl	%r10d,%r15d
+	andl	%r10d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ebx,%r12d
-	xorl	%eax,%r15d
+	addl	%ebx,%r12d  // T1+=h
+	xorl	%eax,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r10d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ecx,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ecx,%r14d
 
-	xorl	%edx,%r15d
-	rorl	$6,%r13d
+	xorl	%edx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%edx,%ebx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%ebx
-	addl	%r12d,%r9d
-	addl	%r12d,%ebx
+	xorl	%edi,%ebx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r9d  // d+=T1
+	addl	%r12d,%ebx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%ebx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%ebx  // h+=Sigma0(a)
 	movl	28(%rsi),%r12d
 	movl	%r9d,%r13d
 	movl	%ebx,%r14d
@@ -349,38 +349,38 @@ _CET_ENDBR
 
 	xorl	%r9d,%r13d
 	rorl	$9,%r14d
-	xorl	%r11d,%edi
+	xorl	%r11d,%edi  // f^g
 
 	movl	%r12d,28(%rsp)
 	xorl	%ebx,%r14d
-	andl	%r9d,%edi
+	andl	%r9d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%eax,%r12d
-	xorl	%r11d,%edi
+	addl	%eax,%r12d  // T1+=h
+	xorl	%r11d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r9d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ebx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ebx,%r14d
 
-	xorl	%ecx,%edi
-	rorl	$6,%r13d
+	xorl	%ecx,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ecx,%eax
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%eax
-	addl	%r12d,%r8d
-	addl	%r12d,%eax
+	xorl	%r15d,%eax  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r8d  // d+=T1
+	addl	%r12d,%eax  // h+=T1
 
-	leaq	20(%rbp),%rbp
-	addl	%r14d,%eax
+	leaq	20(%rbp),%rbp  // round++
+	addl	%r14d,%eax  // h+=Sigma0(a)
 	movl	32(%rsi),%r12d
 	movl	%r8d,%r13d
 	movl	%eax,%r14d
@@ -390,38 +390,38 @@ _CET_ENDBR
 
 	xorl	%r8d,%r13d
 	rorl	$9,%r14d
-	xorl	%r10d,%r15d
+	xorl	%r10d,%r15d  // f^g
 
 	movl	%r12d,32(%rsp)
 	xorl	%eax,%r14d
-	andl	%r8d,%r15d
+	andl	%r8d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r11d,%r12d
-	xorl	%r10d,%r15d
+	addl	%r11d,%r12d  // T1+=h
+	xorl	%r10d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r8d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%eax,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%eax,%r14d
 
-	xorl	%ebx,%r15d
-	rorl	$6,%r13d
+	xorl	%ebx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ebx,%r11d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r11d
-	addl	%r12d,%edx
-	addl	%r12d,%r11d
+	xorl	%edi,%r11d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%edx  // d+=T1
+	addl	%r12d,%r11d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r11d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r11d  // h+=Sigma0(a)
 	movl	36(%rsi),%r12d
 	movl	%edx,%r13d
 	movl	%r11d,%r14d
@@ -431,38 +431,38 @@ _CET_ENDBR
 
 	xorl	%edx,%r13d
 	rorl	$9,%r14d
-	xorl	%r9d,%edi
+	xorl	%r9d,%edi  // f^g
 
 	movl	%r12d,36(%rsp)
 	xorl	%r11d,%r14d
-	andl	%edx,%edi
+	andl	%edx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r10d,%r12d
-	xorl	%r9d,%edi
+	addl	%r10d,%r12d  // T1+=h
+	xorl	%r9d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%edx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r11d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r11d,%r14d
 
-	xorl	%eax,%edi
-	rorl	$6,%r13d
+	xorl	%eax,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%eax,%r10d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r10d
-	addl	%r12d,%ecx
-	addl	%r12d,%r10d
+	xorl	%r15d,%r10d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ecx  // d+=T1
+	addl	%r12d,%r10d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r10d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r10d  // h+=Sigma0(a)
 	movl	40(%rsi),%r12d
 	movl	%ecx,%r13d
 	movl	%r10d,%r14d
@@ -472,38 +472,38 @@ _CET_ENDBR
 
 	xorl	%ecx,%r13d
 	rorl	$9,%r14d
-	xorl	%r8d,%r15d
+	xorl	%r8d,%r15d  // f^g
 
 	movl	%r12d,40(%rsp)
 	xorl	%r10d,%r14d
-	andl	%ecx,%r15d
+	andl	%ecx,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r9d,%r12d
-	xorl	%r8d,%r15d
+	addl	%r9d,%r12d  // T1+=h
+	xorl	%r8d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ecx,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r10d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r10d,%r14d
 
-	xorl	%r11d,%r15d
-	rorl	$6,%r13d
+	xorl	%r11d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r11d,%r9d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r9d
-	addl	%r12d,%ebx
-	addl	%r12d,%r9d
+	xorl	%edi,%r9d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ebx  // d+=T1
+	addl	%r12d,%r9d  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%r9d
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%r9d  // h+=Sigma0(a)
 	movl	44(%rsi),%r12d
 	movl	%ebx,%r13d
 	movl	%r9d,%r14d
@@ -513,38 +513,38 @@ _CET_ENDBR
 
 	xorl	%ebx,%r13d
 	rorl	$9,%r14d
-	xorl	%edx,%edi
+	xorl	%edx,%edi  // f^g
 
 	movl	%r12d,44(%rsp)
 	xorl	%r9d,%r14d
-	andl	%ebx,%edi
+	andl	%ebx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r8d,%r12d
-	xorl	%edx,%edi
+	addl	%r8d,%r12d  // T1+=h
+	xorl	%edx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ebx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r9d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r9d,%r14d
 
-	xorl	%r10d,%edi
-	rorl	$6,%r13d
+	xorl	%r10d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r10d,%r8d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r8d
-	addl	%r12d,%eax
-	addl	%r12d,%r8d
+	xorl	%r15d,%r8d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%eax  // d+=T1
+	addl	%r12d,%r8d  // h+=T1
 
-	leaq	20(%rbp),%rbp
-	addl	%r14d,%r8d
+	leaq	20(%rbp),%rbp  // round++
+	addl	%r14d,%r8d  // h+=Sigma0(a)
 	movl	48(%rsi),%r12d
 	movl	%eax,%r13d
 	movl	%r8d,%r14d
@@ -554,38 +554,38 @@ _CET_ENDBR
 
 	xorl	%eax,%r13d
 	rorl	$9,%r14d
-	xorl	%ecx,%r15d
+	xorl	%ecx,%r15d  // f^g
 
 	movl	%r12d,48(%rsp)
 	xorl	%r8d,%r14d
-	andl	%eax,%r15d
+	andl	%eax,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%edx,%r12d
-	xorl	%ecx,%r15d
+	addl	%edx,%r12d  // T1+=h
+	xorl	%ecx,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%eax,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r8d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r8d,%r14d
 
-	xorl	%r9d,%r15d
-	rorl	$6,%r13d
+	xorl	%r9d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r9d,%edx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%edx
-	addl	%r12d,%r11d
-	addl	%r12d,%edx
+	xorl	%edi,%edx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r11d  // d+=T1
+	addl	%r12d,%edx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%edx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%edx  // h+=Sigma0(a)
 	movl	52(%rsi),%r12d
 	movl	%r11d,%r13d
 	movl	%edx,%r14d
@@ -595,38 +595,38 @@ _CET_ENDBR
 
 	xorl	%r11d,%r13d
 	rorl	$9,%r14d
-	xorl	%ebx,%edi
+	xorl	%ebx,%edi  // f^g
 
 	movl	%r12d,52(%rsp)
 	xorl	%edx,%r14d
-	andl	%r11d,%edi
+	andl	%r11d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ecx,%r12d
-	xorl	%ebx,%edi
+	addl	%ecx,%r12d  // T1+=h
+	xorl	%ebx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r11d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%edx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%edx,%r14d
 
-	xorl	%r8d,%edi
-	rorl	$6,%r13d
+	xorl	%r8d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r8d,%ecx
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%ecx
-	addl	%r12d,%r10d
-	addl	%r12d,%ecx
+	xorl	%r15d,%ecx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r10d  // d+=T1
+	addl	%r12d,%ecx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%ecx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%ecx  // h+=Sigma0(a)
 	movl	56(%rsi),%r12d
 	movl	%r10d,%r13d
 	movl	%ecx,%r14d
@@ -636,38 +636,38 @@ _CET_ENDBR
 
 	xorl	%r10d,%r13d
 	rorl	$9,%r14d
-	xorl	%eax,%r15d
+	xorl	%eax,%r15d  // f^g
 
 	movl	%r12d,56(%rsp)
 	xorl	%ecx,%r14d
-	andl	%r10d,%r15d
+	andl	%r10d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ebx,%r12d
-	xorl	%eax,%r15d
+	addl	%ebx,%r12d  // T1+=h
+	xorl	%eax,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r10d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ecx,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ecx,%r14d
 
-	xorl	%edx,%r15d
-	rorl	$6,%r13d
+	xorl	%edx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%edx,%ebx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%ebx
-	addl	%r12d,%r9d
-	addl	%r12d,%ebx
+	xorl	%edi,%ebx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r9d  // d+=T1
+	addl	%r12d,%ebx  // h+=T1
 
-	leaq	4(%rbp),%rbp
-	addl	%r14d,%ebx
+	leaq	4(%rbp),%rbp  // round++
+	addl	%r14d,%ebx  // h+=Sigma0(a)
 	movl	60(%rsi),%r12d
 	movl	%r9d,%r13d
 	movl	%ebx,%r14d
@@ -677,37 +677,37 @@ _CET_ENDBR
 
 	xorl	%r9d,%r13d
 	rorl	$9,%r14d
-	xorl	%r11d,%edi
+	xorl	%r11d,%edi  // f^g
 
 	movl	%r12d,60(%rsp)
 	xorl	%ebx,%r14d
-	andl	%r9d,%edi
+	andl	%r9d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%eax,%r12d
-	xorl	%r11d,%edi
+	addl	%eax,%r12d  // T1+=h
+	xorl	%r11d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r9d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ebx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ebx,%r14d
 
-	xorl	%ecx,%edi
-	rorl	$6,%r13d
+	xorl	%ecx,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ecx,%eax
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%eax
-	addl	%r12d,%r8d
-	addl	%r12d,%eax
+	xorl	%r15d,%eax  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r8d  // d+=T1
+	addl	%r12d,%eax  // h+=T1
 
-	leaq	20(%rbp),%rbp
+	leaq	20(%rbp),%rbp  // round++
 	jmp	.Lrounds_16_xx
 .align	16
 .Lrounds_16_xx:
@@ -716,7 +716,7 @@ _CET_ENDBR
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%eax
+	addl	%r14d,%eax  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -727,8 +727,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	36(%rsp),%r12d
 
 	addl	0(%rsp),%r12d
@@ -740,43 +740,43 @@ _CET_ENDBR
 
 	xorl	%r8d,%r13d
 	rorl	$9,%r14d
-	xorl	%r10d,%r15d
+	xorl	%r10d,%r15d  // f^g
 
 	movl	%r12d,0(%rsp)
 	xorl	%eax,%r14d
-	andl	%r8d,%r15d
+	andl	%r8d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r11d,%r12d
-	xorl	%r10d,%r15d
+	addl	%r11d,%r12d  // T1+=h
+	xorl	%r10d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r8d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%eax,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%eax,%r14d
 
-	xorl	%ebx,%r15d
-	rorl	$6,%r13d
+	xorl	%ebx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ebx,%r11d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r11d
-	addl	%r12d,%edx
-	addl	%r12d,%r11d
+	xorl	%edi,%r11d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%edx  // d+=T1
+	addl	%r12d,%r11d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	8(%rsp),%r13d
 	movl	60(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r11d
+	addl	%r14d,%r11d  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -787,8 +787,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	40(%rsp),%r12d
 
 	addl	4(%rsp),%r12d
@@ -800,43 +800,43 @@ _CET_ENDBR
 
 	xorl	%edx,%r13d
 	rorl	$9,%r14d
-	xorl	%r9d,%edi
+	xorl	%r9d,%edi  // f^g
 
 	movl	%r12d,4(%rsp)
 	xorl	%r11d,%r14d
-	andl	%edx,%edi
+	andl	%edx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r10d,%r12d
-	xorl	%r9d,%edi
+	addl	%r10d,%r12d  // T1+=h
+	xorl	%r9d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%edx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r11d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r11d,%r14d
 
-	xorl	%eax,%edi
-	rorl	$6,%r13d
+	xorl	%eax,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%eax,%r10d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r10d
-	addl	%r12d,%ecx
-	addl	%r12d,%r10d
+	xorl	%r15d,%r10d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ecx  // d+=T1
+	addl	%r12d,%r10d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	12(%rsp),%r13d
 	movl	0(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r10d
+	addl	%r14d,%r10d  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -847,8 +847,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	44(%rsp),%r12d
 
 	addl	8(%rsp),%r12d
@@ -860,43 +860,43 @@ _CET_ENDBR
 
 	xorl	%ecx,%r13d
 	rorl	$9,%r14d
-	xorl	%r8d,%r15d
+	xorl	%r8d,%r15d  // f^g
 
 	movl	%r12d,8(%rsp)
 	xorl	%r10d,%r14d
-	andl	%ecx,%r15d
+	andl	%ecx,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r9d,%r12d
-	xorl	%r8d,%r15d
+	addl	%r9d,%r12d  // T1+=h
+	xorl	%r8d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ecx,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r10d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r10d,%r14d
 
-	xorl	%r11d,%r15d
-	rorl	$6,%r13d
+	xorl	%r11d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r11d,%r9d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r9d
-	addl	%r12d,%ebx
-	addl	%r12d,%r9d
+	xorl	%edi,%r9d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ebx  // d+=T1
+	addl	%r12d,%r9d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	16(%rsp),%r13d
 	movl	4(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r9d
+	addl	%r14d,%r9d  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -907,8 +907,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	48(%rsp),%r12d
 
 	addl	12(%rsp),%r12d
@@ -920,43 +920,43 @@ _CET_ENDBR
 
 	xorl	%ebx,%r13d
 	rorl	$9,%r14d
-	xorl	%edx,%edi
+	xorl	%edx,%edi  // f^g
 
 	movl	%r12d,12(%rsp)
 	xorl	%r9d,%r14d
-	andl	%ebx,%edi
+	andl	%ebx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r8d,%r12d
-	xorl	%edx,%edi
+	addl	%r8d,%r12d  // T1+=h
+	xorl	%edx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ebx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r9d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r9d,%r14d
 
-	xorl	%r10d,%edi
-	rorl	$6,%r13d
+	xorl	%r10d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r10d,%r8d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r8d
-	addl	%r12d,%eax
-	addl	%r12d,%r8d
+	xorl	%r15d,%r8d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%eax  // d+=T1
+	addl	%r12d,%r8d  // h+=T1
 
-	leaq	20(%rbp),%rbp
+	leaq	20(%rbp),%rbp  // round++
 	movl	20(%rsp),%r13d
 	movl	8(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r8d
+	addl	%r14d,%r8d  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -967,8 +967,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	52(%rsp),%r12d
 
 	addl	16(%rsp),%r12d
@@ -980,43 +980,43 @@ _CET_ENDBR
 
 	xorl	%eax,%r13d
 	rorl	$9,%r14d
-	xorl	%ecx,%r15d
+	xorl	%ecx,%r15d  // f^g
 
 	movl	%r12d,16(%rsp)
 	xorl	%r8d,%r14d
-	andl	%eax,%r15d
+	andl	%eax,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%edx,%r12d
-	xorl	%ecx,%r15d
+	addl	%edx,%r12d  // T1+=h
+	xorl	%ecx,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%eax,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r8d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r8d,%r14d
 
-	xorl	%r9d,%r15d
-	rorl	$6,%r13d
+	xorl	%r9d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r9d,%edx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%edx
-	addl	%r12d,%r11d
-	addl	%r12d,%edx
+	xorl	%edi,%edx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r11d  // d+=T1
+	addl	%r12d,%edx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	24(%rsp),%r13d
 	movl	12(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%edx
+	addl	%r14d,%edx  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1027,8 +1027,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	56(%rsp),%r12d
 
 	addl	20(%rsp),%r12d
@@ -1040,43 +1040,43 @@ _CET_ENDBR
 
 	xorl	%r11d,%r13d
 	rorl	$9,%r14d
-	xorl	%ebx,%edi
+	xorl	%ebx,%edi  // f^g
 
 	movl	%r12d,20(%rsp)
 	xorl	%edx,%r14d
-	andl	%r11d,%edi
+	andl	%r11d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ecx,%r12d
-	xorl	%ebx,%edi
+	addl	%ecx,%r12d  // T1+=h
+	xorl	%ebx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r11d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%edx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%edx,%r14d
 
-	xorl	%r8d,%edi
-	rorl	$6,%r13d
+	xorl	%r8d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r8d,%ecx
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%ecx
-	addl	%r12d,%r10d
-	addl	%r12d,%ecx
+	xorl	%r15d,%ecx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r10d  // d+=T1
+	addl	%r12d,%ecx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	28(%rsp),%r13d
 	movl	16(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%ecx
+	addl	%r14d,%ecx  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -1087,8 +1087,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	60(%rsp),%r12d
 
 	addl	24(%rsp),%r12d
@@ -1100,43 +1100,43 @@ _CET_ENDBR
 
 	xorl	%r10d,%r13d
 	rorl	$9,%r14d
-	xorl	%eax,%r15d
+	xorl	%eax,%r15d  // f^g
 
 	movl	%r12d,24(%rsp)
 	xorl	%ecx,%r14d
-	andl	%r10d,%r15d
+	andl	%r10d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ebx,%r12d
-	xorl	%eax,%r15d
+	addl	%ebx,%r12d  // T1+=h
+	xorl	%eax,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r10d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ecx,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ecx,%r14d
 
-	xorl	%edx,%r15d
-	rorl	$6,%r13d
+	xorl	%edx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%edx,%ebx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%ebx
-	addl	%r12d,%r9d
-	addl	%r12d,%ebx
+	xorl	%edi,%ebx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r9d  // d+=T1
+	addl	%r12d,%ebx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	32(%rsp),%r13d
 	movl	20(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%ebx
+	addl	%r14d,%ebx  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1147,8 +1147,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	0(%rsp),%r12d
 
 	addl	28(%rsp),%r12d
@@ -1160,43 +1160,43 @@ _CET_ENDBR
 
 	xorl	%r9d,%r13d
 	rorl	$9,%r14d
-	xorl	%r11d,%edi
+	xorl	%r11d,%edi  // f^g
 
 	movl	%r12d,28(%rsp)
 	xorl	%ebx,%r14d
-	andl	%r9d,%edi
+	andl	%r9d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%eax,%r12d
-	xorl	%r11d,%edi
+	addl	%eax,%r12d  // T1+=h
+	xorl	%r11d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r9d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ebx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ebx,%r14d
 
-	xorl	%ecx,%edi
-	rorl	$6,%r13d
+	xorl	%ecx,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ecx,%eax
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%eax
-	addl	%r12d,%r8d
-	addl	%r12d,%eax
+	xorl	%r15d,%eax  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r8d  // d+=T1
+	addl	%r12d,%eax  // h+=T1
 
-	leaq	20(%rbp),%rbp
+	leaq	20(%rbp),%rbp  // round++
 	movl	36(%rsp),%r13d
 	movl	24(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%eax
+	addl	%r14d,%eax  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -1207,8 +1207,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	4(%rsp),%r12d
 
 	addl	32(%rsp),%r12d
@@ -1220,43 +1220,43 @@ _CET_ENDBR
 
 	xorl	%r8d,%r13d
 	rorl	$9,%r14d
-	xorl	%r10d,%r15d
+	xorl	%r10d,%r15d  // f^g
 
 	movl	%r12d,32(%rsp)
 	xorl	%eax,%r14d
-	andl	%r8d,%r15d
+	andl	%r8d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r11d,%r12d
-	xorl	%r10d,%r15d
+	addl	%r11d,%r12d  // T1+=h
+	xorl	%r10d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r8d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%eax,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%eax,%r14d
 
-	xorl	%ebx,%r15d
-	rorl	$6,%r13d
+	xorl	%ebx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ebx,%r11d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r11d
-	addl	%r12d,%edx
-	addl	%r12d,%r11d
+	xorl	%edi,%r11d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%edx  // d+=T1
+	addl	%r12d,%r11d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	40(%rsp),%r13d
 	movl	28(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r11d
+	addl	%r14d,%r11d  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1267,8 +1267,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	8(%rsp),%r12d
 
 	addl	36(%rsp),%r12d
@@ -1280,43 +1280,43 @@ _CET_ENDBR
 
 	xorl	%edx,%r13d
 	rorl	$9,%r14d
-	xorl	%r9d,%edi
+	xorl	%r9d,%edi  // f^g
 
 	movl	%r12d,36(%rsp)
 	xorl	%r11d,%r14d
-	andl	%edx,%edi
+	andl	%edx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r10d,%r12d
-	xorl	%r9d,%edi
+	addl	%r10d,%r12d  // T1+=h
+	xorl	%r9d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%edx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r11d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r11d,%r14d
 
-	xorl	%eax,%edi
-	rorl	$6,%r13d
+	xorl	%eax,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%eax,%r10d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r10d
-	addl	%r12d,%ecx
-	addl	%r12d,%r10d
+	xorl	%r15d,%r10d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ecx  // d+=T1
+	addl	%r12d,%r10d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	44(%rsp),%r13d
 	movl	32(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r10d
+	addl	%r14d,%r10d  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -1327,8 +1327,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	12(%rsp),%r12d
 
 	addl	40(%rsp),%r12d
@@ -1340,43 +1340,43 @@ _CET_ENDBR
 
 	xorl	%ecx,%r13d
 	rorl	$9,%r14d
-	xorl	%r8d,%r15d
+	xorl	%r8d,%r15d  // f^g
 
 	movl	%r12d,40(%rsp)
 	xorl	%r10d,%r14d
-	andl	%ecx,%r15d
+	andl	%ecx,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r9d,%r12d
-	xorl	%r8d,%r15d
+	addl	%r9d,%r12d  // T1+=h
+	xorl	%r8d,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ecx,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r10d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r10d,%r14d
 
-	xorl	%r11d,%r15d
-	rorl	$6,%r13d
+	xorl	%r11d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r11d,%r9d
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%r9d
-	addl	%r12d,%ebx
-	addl	%r12d,%r9d
+	xorl	%edi,%r9d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%ebx  // d+=T1
+	addl	%r12d,%r9d  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	48(%rsp),%r13d
 	movl	36(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r9d
+	addl	%r14d,%r9d  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1387,8 +1387,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	16(%rsp),%r12d
 
 	addl	44(%rsp),%r12d
@@ -1400,43 +1400,43 @@ _CET_ENDBR
 
 	xorl	%ebx,%r13d
 	rorl	$9,%r14d
-	xorl	%edx,%edi
+	xorl	%edx,%edi  // f^g
 
 	movl	%r12d,44(%rsp)
 	xorl	%r9d,%r14d
-	andl	%ebx,%edi
+	andl	%ebx,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%r8d,%r12d
-	xorl	%edx,%edi
+	addl	%r8d,%r12d  // T1+=h
+	xorl	%edx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%ebx,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r9d,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r9d,%r14d
 
-	xorl	%r10d,%edi
-	rorl	$6,%r13d
+	xorl	%r10d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r10d,%r8d
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%r8d
-	addl	%r12d,%eax
-	addl	%r12d,%r8d
+	xorl	%r15d,%r8d  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%eax  // d+=T1
+	addl	%r12d,%r8d  // h+=T1
 
-	leaq	20(%rbp),%rbp
+	leaq	20(%rbp),%rbp  // round++
 	movl	52(%rsp),%r13d
 	movl	40(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%r8d
+	addl	%r14d,%r8d  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -1447,8 +1447,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	20(%rsp),%r12d
 
 	addl	48(%rsp),%r12d
@@ -1460,43 +1460,43 @@ _CET_ENDBR
 
 	xorl	%eax,%r13d
 	rorl	$9,%r14d
-	xorl	%ecx,%r15d
+	xorl	%ecx,%r15d  // f^g
 
 	movl	%r12d,48(%rsp)
 	xorl	%r8d,%r14d
-	andl	%eax,%r15d
+	andl	%eax,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%edx,%r12d
-	xorl	%ecx,%r15d
+	addl	%edx,%r12d  // T1+=h
+	xorl	%ecx,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%eax,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%r8d,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%r8d,%r14d
 
-	xorl	%r9d,%r15d
-	rorl	$6,%r13d
+	xorl	%r9d,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r9d,%edx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%edx
-	addl	%r12d,%r11d
-	addl	%r12d,%edx
+	xorl	%edi,%edx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r11d  // d+=T1
+	addl	%r12d,%edx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	56(%rsp),%r13d
 	movl	44(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%edx
+	addl	%r14d,%edx  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1507,8 +1507,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	24(%rsp),%r12d
 
 	addl	52(%rsp),%r12d
@@ -1520,43 +1520,43 @@ _CET_ENDBR
 
 	xorl	%r11d,%r13d
 	rorl	$9,%r14d
-	xorl	%ebx,%edi
+	xorl	%ebx,%edi  // f^g
 
 	movl	%r12d,52(%rsp)
 	xorl	%edx,%r14d
-	andl	%r11d,%edi
+	andl	%r11d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ecx,%r12d
-	xorl	%ebx,%edi
+	addl	%ecx,%r12d  // T1+=h
+	xorl	%ebx,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r11d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%edx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%edx,%r14d
 
-	xorl	%r8d,%edi
-	rorl	$6,%r13d
+	xorl	%r8d,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%r8d,%ecx
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%ecx
-	addl	%r12d,%r10d
-	addl	%r12d,%ecx
+	xorl	%r15d,%ecx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r10d  // d+=T1
+	addl	%r12d,%ecx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	60(%rsp),%r13d
 	movl	48(%rsp),%r15d
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%ecx
+	addl	%r14d,%ecx  // modulo-scheduled h+=Sigma0(a)
 	movl	%r15d,%r14d
 	rorl	$2,%r15d
 
@@ -1567,8 +1567,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%r15d
-	xorl	%r13d,%r12d
-	xorl	%r14d,%r15d
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%r15d  // sigma1(X[(i+14)&0xf])
 	addl	28(%rsp),%r12d
 
 	addl	56(%rsp),%r12d
@@ -1580,43 +1580,43 @@ _CET_ENDBR
 
 	xorl	%r10d,%r13d
 	rorl	$9,%r14d
-	xorl	%eax,%r15d
+	xorl	%eax,%r15d  // f^g
 
 	movl	%r12d,56(%rsp)
 	xorl	%ecx,%r14d
-	andl	%r10d,%r15d
+	andl	%r10d,%r15d  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%ebx,%r12d
-	xorl	%eax,%r15d
+	addl	%ebx,%r12d  // T1+=h
+	xorl	%eax,%r15d  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r10d,%r13d
-	addl	%r15d,%r12d
+	addl	%r15d,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ecx,%r15d
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ecx,%r14d
 
-	xorl	%edx,%r15d
-	rorl	$6,%r13d
+	xorl	%edx,%r15d  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%edx,%ebx
 
 	andl	%r15d,%edi
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%edi,%ebx
-	addl	%r12d,%r9d
-	addl	%r12d,%ebx
+	xorl	%edi,%ebx  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r9d  // d+=T1
+	addl	%r12d,%ebx  // h+=T1
 
-	leaq	4(%rbp),%rbp
+	leaq	4(%rbp),%rbp  // round++
 	movl	0(%rsp),%r13d
 	movl	52(%rsp),%edi
 
 	movl	%r13d,%r12d
 	rorl	$11,%r13d
-	addl	%r14d,%ebx
+	addl	%r14d,%ebx  // modulo-scheduled h+=Sigma0(a)
 	movl	%edi,%r14d
 	rorl	$2,%edi
 
@@ -1627,8 +1627,8 @@ _CET_ENDBR
 	shrl	$10,%r14d
 
 	rorl	$17,%edi
-	xorl	%r13d,%r12d
-	xorl	%r14d,%edi
+	xorl	%r13d,%r12d  // sigma0(X[(i+1)&0xf])
+	xorl	%r14d,%edi  // sigma1(X[(i+14)&0xf])
 	addl	32(%rsp),%r12d
 
 	addl	60(%rsp),%r12d
@@ -1640,42 +1640,42 @@ _CET_ENDBR
 
 	xorl	%r9d,%r13d
 	rorl	$9,%r14d
-	xorl	%r11d,%edi
+	xorl	%r11d,%edi  // f^g
 
 	movl	%r12d,60(%rsp)
 	xorl	%ebx,%r14d
-	andl	%r9d,%edi
+	andl	%r9d,%edi  // (f^g)&e
 
 	rorl	$5,%r13d
-	addl	%eax,%r12d
-	xorl	%r11d,%edi
+	addl	%eax,%r12d  // T1+=h
+	xorl	%r11d,%edi  // Ch(e,f,g)=((f^g)&e)^g
 
 	rorl	$11,%r14d
 	xorl	%r9d,%r13d
-	addl	%edi,%r12d
+	addl	%edi,%r12d  // T1+=Ch(e,f,g)
 
 	movl	%ebx,%edi
-	addl	(%rbp),%r12d
+	addl	(%rbp),%r12d  // T1+=K[round]
 	xorl	%ebx,%r14d
 
-	xorl	%ecx,%edi
-	rorl	$6,%r13d
+	xorl	%ecx,%edi  // a^b, b^c in next round
+	rorl	$6,%r13d  // Sigma1(e)
 	movl	%ecx,%eax
 
 	andl	%edi,%r15d
-	rorl	$2,%r14d
-	addl	%r13d,%r12d
+	rorl	$2,%r14d  // Sigma0(a)
+	addl	%r13d,%r12d  // T1+=Sigma1(e)
 
-	xorl	%r15d,%eax
-	addl	%r12d,%r8d
-	addl	%r12d,%eax
+	xorl	%r15d,%eax  // h=Maj(a,b,c)=Ch(a^b,c,b)
+	addl	%r12d,%r8d  // d+=T1
+	addl	%r12d,%eax  // h+=T1
 
-	leaq	20(%rbp),%rbp
+	leaq	20(%rbp),%rbp  // round++
 	cmpb	$0,3(%rbp)
 	jnz	.Lrounds_16_xx
 
 	movq	64+0(%rsp),%rdi
-	addl	%r14d,%eax
+	addl	%r14d,%eax  // modulo-scheduled h+=Sigma0(a)
 	leaq	64(%rsi),%rsi
 
 	addl	0(%rdi),%eax
@@ -1772,16 +1772,16 @@ sha256_block_data_order_hw:
 .cfi_startproc	
 _CET_ENDBR
 	leaq	K256+128(%rip),%rcx
-	movdqu	(%rdi),%xmm1
-	movdqu	16(%rdi),%xmm2
-	movdqa	512-128(%rcx),%xmm7
+	movdqu	(%rdi),%xmm1  // DCBA
+	movdqu	16(%rdi),%xmm2  // HGFE
+	movdqa	512-128(%rcx),%xmm7  // byte swap mask
 
-	pshufd	$0x1b,%xmm1,%xmm0
-	pshufd	$0xb1,%xmm1,%xmm1
-	pshufd	$0x1b,%xmm2,%xmm2
-	movdqa	%xmm7,%xmm8
-	palignr	$8,%xmm2,%xmm1
-	punpcklqdq	%xmm0,%xmm2
+	pshufd	$0x1b,%xmm1,%xmm0  // ABCD
+	pshufd	$0xb1,%xmm1,%xmm1  // CDAB
+	pshufd	$0x1b,%xmm2,%xmm2  // EFGH
+	movdqa	%xmm7,%xmm8  // offload
+	palignr	$8,%xmm2,%xmm1  // ABEF
+	punpcklqdq	%xmm0,%xmm2  // CDGH
 	jmp	.Loop_shaext
 
 .align	16
@@ -1795,17 +1795,17 @@ _CET_ENDBR
 	movdqa	0-128(%rcx),%xmm0
 	paddd	%xmm3,%xmm0
 	pshufb	%xmm7,%xmm4
-	movdqa	%xmm2,%xmm10
-	sha256rnds2	%xmm1,%xmm2
+	movdqa	%xmm2,%xmm10  // offload
+	sha256rnds2	%xmm1,%xmm2  // 0-3
 	pshufd	$0x0e,%xmm0,%xmm0
 	nop
-	movdqa	%xmm1,%xmm9
+	movdqa	%xmm1,%xmm9  // offload
 	sha256rnds2	%xmm2,%xmm1
 
 	movdqa	32-128(%rcx),%xmm0
 	paddd	%xmm4,%xmm0
 	pshufb	%xmm7,%xmm5
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 4-7
 	pshufd	$0x0e,%xmm0,%xmm0
 	leaq	64(%rsi),%rsi
 	sha256msg1	%xmm4,%xmm3
@@ -1814,7 +1814,7 @@ _CET_ENDBR
 	movdqa	64-128(%rcx),%xmm0
 	paddd	%xmm5,%xmm0
 	pshufb	%xmm7,%xmm6
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 8-11
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm6,%xmm7
 	palignr	$4,%xmm5,%xmm7
@@ -1826,7 +1826,7 @@ _CET_ENDBR
 	movdqa	96-128(%rcx),%xmm0
 	paddd	%xmm6,%xmm0
 	sha256msg2	%xmm6,%xmm3
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 12-15
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm3,%xmm7
 	palignr	$4,%xmm6,%xmm7
@@ -1837,7 +1837,7 @@ _CET_ENDBR
 	movdqa	128-128(%rcx),%xmm0
 	paddd	%xmm3,%xmm0
 	sha256msg2	%xmm3,%xmm4
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm4,%xmm7
 	palignr	$4,%xmm3,%xmm7
@@ -1848,7 +1848,7 @@ _CET_ENDBR
 	movdqa	160-128(%rcx),%xmm0
 	paddd	%xmm4,%xmm0
 	sha256msg2	%xmm4,%xmm5
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm5,%xmm7
 	palignr	$4,%xmm4,%xmm7
@@ -1859,7 +1859,7 @@ _CET_ENDBR
 	movdqa	192-128(%rcx),%xmm0
 	paddd	%xmm5,%xmm0
 	sha256msg2	%xmm5,%xmm6
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm6,%xmm7
 	palignr	$4,%xmm5,%xmm7
@@ -1870,7 +1870,7 @@ _CET_ENDBR
 	movdqa	224-128(%rcx),%xmm0
 	paddd	%xmm6,%xmm0
 	sha256msg2	%xmm6,%xmm3
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm3,%xmm7
 	palignr	$4,%xmm6,%xmm7
@@ -1881,7 +1881,7 @@ _CET_ENDBR
 	movdqa	256-128(%rcx),%xmm0
 	paddd	%xmm3,%xmm0
 	sha256msg2	%xmm3,%xmm4
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm4,%xmm7
 	palignr	$4,%xmm3,%xmm7
@@ -1892,7 +1892,7 @@ _CET_ENDBR
 	movdqa	288-128(%rcx),%xmm0
 	paddd	%xmm4,%xmm0
 	sha256msg2	%xmm4,%xmm5
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm5,%xmm7
 	palignr	$4,%xmm4,%xmm7
@@ -1903,7 +1903,7 @@ _CET_ENDBR
 	movdqa	320-128(%rcx),%xmm0
 	paddd	%xmm5,%xmm0
 	sha256msg2	%xmm5,%xmm6
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm6,%xmm7
 	palignr	$4,%xmm5,%xmm7
@@ -1914,7 +1914,7 @@ _CET_ENDBR
 	movdqa	352-128(%rcx),%xmm0
 	paddd	%xmm6,%xmm0
 	sha256msg2	%xmm6,%xmm3
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm3,%xmm7
 	palignr	$4,%xmm6,%xmm7
@@ -1925,7 +1925,7 @@ _CET_ENDBR
 	movdqa	384-128(%rcx),%xmm0
 	paddd	%xmm3,%xmm0
 	sha256msg2	%xmm3,%xmm4
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 16-19...
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm4,%xmm7
 	palignr	$4,%xmm3,%xmm7
@@ -1936,7 +1936,7 @@ _CET_ENDBR
 	movdqa	416-128(%rcx),%xmm0
 	paddd	%xmm4,%xmm0
 	sha256msg2	%xmm4,%xmm5
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 52-55
 	pshufd	$0x0e,%xmm0,%xmm0
 	movdqa	%xmm5,%xmm7
 	palignr	$4,%xmm4,%xmm7
@@ -1945,7 +1945,7 @@ _CET_ENDBR
 
 	movdqa	448-128(%rcx),%xmm0
 	paddd	%xmm5,%xmm0
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 56-59
 	pshufd	$0x0e,%xmm0,%xmm0
 	sha256msg2	%xmm5,%xmm6
 	movdqa	%xmm8,%xmm7
@@ -1954,7 +1954,7 @@ _CET_ENDBR
 	movdqa	480-128(%rcx),%xmm0
 	paddd	%xmm6,%xmm0
 	nop
-	sha256rnds2	%xmm1,%xmm2
+	sha256rnds2	%xmm1,%xmm2  // 60-63
 	pshufd	$0x0e,%xmm0,%xmm0
 	decq	%rdx
 	nop
@@ -1964,11 +1964,11 @@ _CET_ENDBR
 	paddd	%xmm9,%xmm1
 	jnz	.Loop_shaext
 
-	pshufd	$0xb1,%xmm2,%xmm2
-	pshufd	$0x1b,%xmm1,%xmm7
-	pshufd	$0xb1,%xmm1,%xmm1
-	punpckhqdq	%xmm2,%xmm1
-	palignr	$8,%xmm7,%xmm2
+	pshufd	$0xb1,%xmm2,%xmm2  // DCHG
+	pshufd	$0x1b,%xmm1,%xmm7  // FEBA
+	pshufd	$0xb1,%xmm1,%xmm1  // BAFE
+	punpckhqdq	%xmm2,%xmm1  // DCBA
+	palignr	$8,%xmm7,%xmm2  // HGFE
 
 	movdqu	%xmm1,(%rdi)
 	movdqu	%xmm2,16(%rdi)
@@ -1982,7 +1982,7 @@ _CET_ENDBR
 sha256_block_data_order_ssse3:
 .cfi_startproc	
 _CET_ENDBR
-	movq	%rsp,%rax
+	movq	%rsp,%rax  // copy %rsp
 .cfi_def_cfa_register	%rax
 	pushq	%rbx
 .cfi_offset	%rbx,-16
@@ -1996,14 +1996,14 @@ _CET_ENDBR
 .cfi_offset	%r14,-48
 	pushq	%r15
 .cfi_offset	%r15,-56
-	shlq	$4,%rdx
+	shlq	$4,%rdx  // num*16
 	subq	$96,%rsp
-	leaq	(%rsi,%rdx,4),%rdx
-	andq	$-64,%rsp
-	movq	%rdi,64+0(%rsp)
-	movq	%rsi,64+8(%rsp)
-	movq	%rdx,64+16(%rsp)
-	movq	%rax,88(%rsp)
+	leaq	(%rsi,%rdx,4),%rdx  // inp+num*16*4
+	andq	$-64,%rsp  // align stack frame
+	movq	%rdi,64+0(%rsp)  // save ctx, 1st arg
+	movq	%rsi,64+8(%rsp)  // save inp, 2nd arh
+	movq	%rdx,64+16(%rsp)  // save end pointer, "3rd" arg
+	movq	%rax,88(%rsp)  // save copy of %rsp
 .cfi_escape	0x0f,0x06,0x77,0xd8,0x00,0x06,0x23,0x08
 .Lprologue_ssse3:
 
@@ -2015,8 +2015,8 @@ _CET_ENDBR
 	movl	20(%rdi),%r9d
 	movl	24(%rdi),%r10d
 	movl	28(%rdi),%r11d
-
-
+// movdqa	K256+512+32(%rip),%xmm8
+// movdqa	K256+512+64(%rip),%xmm9
 	jmp	.Lloop_ssse3
 .align	16
 .Lloop_ssse3:
@@ -2043,14 +2043,14 @@ _CET_ENDBR
 	movdqa	%xmm5,16(%rsp)
 	movl	%ebx,%edi
 	movdqa	%xmm6,32(%rsp)
-	xorl	%ecx,%edi
+	xorl	%ecx,%edi  // magic
 	movdqa	%xmm7,48(%rsp)
 	movl	%r8d,%r13d
 	jmp	.Lssse3_00_47
 
 .align	16
 .Lssse3_00_47:
-	subq	$-128,%rbp
+	subq	$-128,%rbp  // size optimization
 	rorl	$14,%r13d
 	movdqa	%xmm1,%xmm4
 	movl	%r14d,%eax
@@ -3097,7 +3097,7 @@ _CET_ENDBR
 sha256_block_data_order_avx:
 .cfi_startproc	
 _CET_ENDBR
-	movq	%rsp,%rax
+	movq	%rsp,%rax  // copy %rsp
 .cfi_def_cfa_register	%rax
 	pushq	%rbx
 .cfi_offset	%rbx,-16
@@ -3111,14 +3111,14 @@ _CET_ENDBR
 .cfi_offset	%r14,-48
 	pushq	%r15
 .cfi_offset	%r15,-56
-	shlq	$4,%rdx
+	shlq	$4,%rdx  // num*16
 	subq	$96,%rsp
-	leaq	(%rsi,%rdx,4),%rdx
-	andq	$-64,%rsp
-	movq	%rdi,64+0(%rsp)
-	movq	%rsi,64+8(%rsp)
-	movq	%rdx,64+16(%rsp)
-	movq	%rax,88(%rsp)
+	leaq	(%rsi,%rdx,4),%rdx  // inp+num*16*4
+	andq	$-64,%rsp  // align stack frame
+	movq	%rdi,64+0(%rsp)  // save ctx, 1st arg
+	movq	%rsi,64+8(%rsp)  // save inp, 2nd arh
+	movq	%rdx,64+16(%rsp)  // save end pointer, "3rd" arg
+	movq	%rax,88(%rsp)  // save copy of %rsp
 .cfi_escape	0x0f,0x06,0x77,0xd8,0x00,0x06,0x23,0x08
 .Lprologue_avx:
 
@@ -3155,14 +3155,14 @@ _CET_ENDBR
 	vmovdqa	%xmm5,16(%rsp)
 	movl	%ebx,%edi
 	vmovdqa	%xmm6,32(%rsp)
-	xorl	%ecx,%edi
+	xorl	%ecx,%edi  // magic
 	vmovdqa	%xmm7,48(%rsp)
 	movl	%r8d,%r13d
 	jmp	.Lavx_00_47
 
 .align	16
 .Lavx_00_47:
-	subq	$-128,%rbp
+	subq	$-128,%rbp  // size optimization
 	vpalignr	$4,%xmm0,%xmm1,%xmm4
 	shrdl	$14,%r13d,%r13d
 	movl	%r14d,%eax

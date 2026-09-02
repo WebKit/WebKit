@@ -111,7 +111,7 @@ void bssl::boringssl_fips_inc_counter(enum fips_counter_t counter) {
 
     if (!CRYPTO_set_thread_local(OPENSSL_THREAD_LOCAL_FIPS_COUNTERS, array,
                                  OPENSSL_free)) {
-      // |OPENSSL_free| has already been called by |CRYPTO_set_thread_local|.
+      // `OPENSSL_free` has already been called by `CRYPTO_set_thread_local`.
       return;
     }
   }

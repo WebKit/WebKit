@@ -387,7 +387,7 @@ static int rc2_ctrl(EVP_CIPHER_CTX *ctx, int type, int arg, void *ptr) {
       key->key_bits = EVP_CIPHER_CTX_key_length(ctx) * 8;
       return 1;
     case EVP_CTRL_SET_RC2_KEY_BITS:
-      // Should be overridden by later call to |EVP_CTRL_INIT|, but
+      // Should be overridden by later call to `EVP_CTRL_INIT`, but
       // people call it, so it may as well work.
       key->key_bits = arg;
       return 1;

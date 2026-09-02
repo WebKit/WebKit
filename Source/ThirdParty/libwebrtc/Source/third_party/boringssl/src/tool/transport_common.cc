@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Suppress MSVC's STL warnings. It flags |std::copy| calls with a raw output
+// Suppress MSVC's STL warnings. It flags `std::copy` calls with a raw output
 // pointer, on grounds that MSVC cannot check them. Unfortunately, there is no
 // way to suppress the warning just on one line. The warning is flagged inside
-// the STL itself, so suppressing at the |std::copy| call does not work.
+// the STL itself, so suppressing at the `std::copy` call does not work.
 #if !defined(_SCL_SECURE_NO_WARNINGS)
 #define _SCL_SECURE_NO_WARNINGS
 #endif
@@ -39,7 +39,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <sys/select.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #else
@@ -121,7 +121,8 @@ static std::string GetLastSocketErrorString() {
       reinterpret_cast<char *>(&buffer), 0, nullptr);
   if (len == 0) {
     char buf[256];
-    snprintf(buf, sizeof(buf), "unknown error (0x%x)", error);
+    snprintf(buf, sizeof(buf), "unknown error (0x%x)",
+             static_cast<unsigned>(error));
     return buf;
   }
   std::string ret(buffer, len);
@@ -133,14 +134,14 @@ static std::string GetLastSocketErrorString() {
 }
 
 static void PrintSocketError(const char *function) {
-  // On Windows, |perror| and |errno| are part of the C runtime, while sockets
+  // On Windows, `perror` and `errno` are part of the C runtime, while sockets
   // are separate, so we must print errors manually.
   std::string error = GetLastSocketErrorString();
   fprintf(stderr, "%s: %s\n", function, error.c_str());
 }
 
-// Connect sets |*out_sock| to be a socket connected to the destination given
-// in |hostname_and_port|, which should be of the form "www.example.com:123".
+// Connect sets `*out_sock` to be a socket connected to the destination given
+// in `hostname_and_port`, which should be of the form "www.example.com:123".
 // It returns true on success and false otherwise.
 bool Connect(int *out_sock, const std::string &hostname_and_port) {
   std::string hostname, port;
@@ -452,41 +453,43 @@ class SocketWaiter {
   bool Init() { return true; }
 
   // Wait waits for at least on of the socket or stdin or be ready. On success,
-  // it sets |*socket_ready| and |*stdin_ready| to whether the respective
+  // it sets `*socket_ready` and `*stdin_ready` to whether the respective
   // objects are readable and returns true. On error, it returns false. stdin's
   // readiness may either be the socket being writable or stdin being readable,
-  // depending on |stdin_wait|.
+  // depending on `stdin_wait`.
   bool Wait(StdinWait stdin_wait, bool *socket_ready, bool *stdin_ready) {
-    *socket_ready = true;
+    *socket_ready = false;
     *stdin_ready = false;
 
-    fd_set read_fds, write_fds;
-    FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
+    pollfd pfds[2] = {};
+    nfds_t num_pfds = 1;
+    pfds[0].fd = sock_;
+    pfds[0].events = POLLIN;
     if (stdin_wait == StdinWait::kSocketWrite) {
-      FD_SET(sock_, &write_fds);
+      pfds[0].events |= POLLOUT;
     } else if (stdin_open_) {
-      FD_SET(STDIN_FILENO, &read_fds);
+      num_pfds = 2;
+      pfds[1].fd = STDIN_FILENO;
+      pfds[1].events = POLLIN;
     }
-    FD_SET(sock_, &read_fds);
-    if (select(sock_ + 1, &read_fds, &write_fds, NULL, NULL) <= 0) {
-      perror("select");
+    if (poll(pfds, num_pfds, /*timeout=*/-1) <= 0) {
+      perror("poll");
       return false;
     }
 
-    if (FD_ISSET(STDIN_FILENO, &read_fds) || FD_ISSET(sock_, &write_fds)) {
-      *stdin_ready = true;
-    }
-    if (FD_ISSET(sock_, &read_fds)) {
-      *socket_ready = true;
+    *socket_ready = (pfds[0].revents & (POLLIN | POLLERR | POLLHUP)) != 0;
+    if (stdin_wait == StdinWait::kSocketWrite) {
+      *stdin_ready = (pfds[0].revents & (POLLOUT | POLLERR | POLLHUP)) != 0;
+    } else if (stdin_open_) {
+      *stdin_ready = (pfds[1].revents & (POLLIN | POLLERR | POLLHUP)) != 0;
     }
 
     return true;
   }
 
-  // ReadStdin reads at most |max_out| bytes from stdin. On success, it writes
-  // them to |out| and sets |*out_len| to the number of bytes written. On error,
-  // it returns false. This method may only be called after |Wait| returned
+  // ReadStdin reads at most `max_out` bytes from stdin. On success, it writes
+  // them to `out` and sets `*out_len` to the number of bytes written. On error,
+  // it returns false. This method may only be called after `Wait` returned
   // stdin was ready.
   bool ReadStdin(void *out, size_t *out_len, size_t max_out) {
     ssize_t n;
@@ -546,13 +549,13 @@ class ScopedWSAEVENT {
   WSAEVENT event_ = WSA_INVALID_EVENT;
 };
 
-// SocketWaiter, on Windows, is more complicated. While |WaitForMultipleObjects|
+// SocketWaiter, on Windows, is more complicated. While `WaitForMultipleObjects`
 // works for both sockets and stdin, the latter is often a line-buffered
-// console. The |HANDLE| is considered readable if there are any console events
+// console. The `HANDLE` is considered readable if there are any console events
 // available, but reading blocks until a full line is available.
 //
-// So that |Wait| reflects final stdin read, we spawn a stdin reader thread that
-// writes to an in-memory buffer and signals a |WSAEVENT| to coordinate with the
+// So that `Wait` reflects final stdin read, we spawn a stdin reader thread that
+// writes to an in-memory buffer and signals a `WSAEVENT` to coordinate with the
 // socket.
 class SocketWaiter {
  public:
@@ -607,7 +610,7 @@ class SocketWaiter {
   }
 
   bool Wait(StdinWait stdin_wait, bool *socket_ready, bool *stdin_ready) {
-    *socket_ready = true;
+    *socket_ready = false;
     *stdin_ready = false;
 
     ScopedWSAEVENT sock_read_event(WSACreateEvent());
@@ -654,7 +657,7 @@ class SocketWaiter {
     std::lock_guard<std::mutex> locked(stdin_->lock);
 
     if (stdin_->buffer.empty()) {
-      // |ReadStdin| may only be called when |Wait| signals it is ready, so
+      // `ReadStdin` may only be called when `Wait` signals it is ready, so
       // stdin must have reached EOF or error.
       assert(!stdin_->open);
       listen_stdin_ = false;
@@ -697,7 +700,7 @@ class SocketWaiter {
     ScopedWSAEVENT event;
     // lock protects the following fields.
     std::mutex lock;
-    // cond notifies the stdin thread that |buffer| is no longer full.
+    // cond notifies the stdin thread that `buffer` is no longer full.
     std::condition_variable cond;
     std::deque<uint8_t> buffer;
     bool open = true;
@@ -707,7 +710,7 @@ class SocketWaiter {
   int sock_;
   std::shared_ptr<StdinState> stdin_;
   // listen_stdin_ is set to false when we have consumed an EOF or error from
-  // |stdin_|. This is separate from |stdin_->open| because the signal may not
+  // `stdin_`. This is separate from `stdin_->open` because the signal may not
   // have been consumed yet.
   bool listen_stdin_ = true;
 };
@@ -829,7 +832,7 @@ class SocketLineReader {
   explicit SocketLineReader(int sock) : sock_(sock) {}
 
   // Next reads a '\n'- or '\r\n'-terminated line from the socket and, on
-  // success, sets |*out_line| to it and returns true. Otherwise it returns
+  // success, sets `*out_line` to it and returns true. Otherwise it returns
   // false.
   bool Next(std::string *out_line) {
     for (;;) {
@@ -870,8 +873,8 @@ class SocketLineReader {
   }
 
   // ReadSMTPReply reads one or more lines that make up an SMTP reply. On
-  // success, it sets |*out_code| to the reply's code (e.g. 250) and
-  // |*out_content| to the body of the reply (e.g. "OK") and returns true.
+  // success, it sets `*out_code` to the reply's code (e.g. 250) and
+  // `*out_content` to the body of the reply (e.g. "OK") and returns true.
   // Otherwise it returns false.
   //
   // See https://tools.ietf.org/html/rfc821#page-48
@@ -934,7 +937,7 @@ class SocketLineReader {
   size_t buf_len_ = 0;
 };
 
-// SendAll writes |data_len| bytes from |data| to |sock|. It returns true on
+// SendAll writes `data_len` bytes from `data` to `sock`. It returns true on
 // success and false otherwise.
 static bool SendAll(int sock, const char *data, size_t data_len) {
   size_t done = 0;

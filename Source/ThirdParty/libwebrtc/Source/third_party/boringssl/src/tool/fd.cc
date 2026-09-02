@@ -54,7 +54,7 @@ void CloseFD(int fd) {
 
 bool ReadFromFD(int fd, size_t *out_bytes_read, void *out, size_t num) {
 #if defined(OPENSSL_WINDOWS)
-  // On Windows, the buffer must be at most |INT_MAX|. See
+  // On Windows, the buffer must be at most `INT_MAX`. See
   // https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/read?view=vs-2019
   int ret = _read(fd, out, std::min(size_t{INT_MAX}, num));
 #else
@@ -74,8 +74,8 @@ bool ReadFromFD(int fd, size_t *out_bytes_read, void *out, size_t num) {
 
 bool WriteToFD(int fd, size_t *out_bytes_written, const void *in, size_t num) {
 #if defined(OPENSSL_WINDOWS)
-  // The documentation for |_write| does not say the buffer must be at most
-  // |INT_MAX|, but clamp it to |INT_MAX| instead of |UINT_MAX| in case.
+  // The documentation for `_write` does not say the buffer must be at most
+  // `INT_MAX`, but clamp it to `INT_MAX` instead of `UINT_MAX` in case.
   int ret = _write(fd, in, std::min(size_t{INT_MAX}, num));
 #else
   ssize_t ret;
@@ -99,7 +99,7 @@ ScopedFILE FDToFILE(ScopedFD fd, const char *mode) {
 #else
   ret.reset(fdopen(fd.get(), mode));
 #endif
-  // |fdopen| takes ownership of |fd| on success.
+  // `fdopen` takes ownership of `fd` on success.
   if (ret) {
     fd.release();
   }

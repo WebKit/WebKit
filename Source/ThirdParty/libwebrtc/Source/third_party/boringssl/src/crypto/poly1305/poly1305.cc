@@ -48,8 +48,8 @@ static struct poly1305_state_st *poly1305_aligned_state(poly1305_state *state) {
   return reinterpret_cast<poly1305_state_st *>(align_pointer(state, 64));
 }
 
-// poly1305_blocks updates |state| given some amount of input data. This
-// function may only be called with a |len| that is not a multiple of 16 at the
+// poly1305_blocks updates `state` given some amount of input data. This
+// function may only be called with a `len` that is not a multiple of 16 at the
 // end of the data. Otherwise the input must be buffered into 16 byte blocks.
 static void poly1305_update(struct poly1305_state_st *state, const uint8_t *in,
                             size_t len) {

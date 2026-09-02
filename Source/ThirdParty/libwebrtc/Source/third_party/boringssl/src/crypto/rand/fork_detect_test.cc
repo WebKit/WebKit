@@ -63,7 +63,7 @@ static pid_t WaitpidEINTR(pid_t pid, int *out_status, int options) {
 }
 
 // The *InChild functions run inside a child process and must report errors via
-// |stderr| and |_exit| rather than GTest.
+// `stderr` and `_exit` rather than GTest.
 
 static void CheckGenerationAtLeastInChild(const char *name,
                                    uint64_t minimum_expected) {
@@ -100,7 +100,7 @@ static void WaitForChildOrDie(pid_t pid) {
   }
 }
 
-// ForkInChild forks a child which runs |f|. If the child exits unsuccessfully,
+// ForkInChild forks a child which runs `f`. If the child exits unsuccessfully,
 // this function will also exit unsuccessfully.
 static void ForkInChild(std::function<void()> f) {
   fflush(stderr);  // Avoid duplicating any buffered output.
@@ -219,20 +219,20 @@ TEST(ForkDetect, Test) {
 
   if (child == 0) {
     // Fork grandchildren before observing the fork generation. The
-    // grandchildren will observe |start| + 1.
+    // grandchildren will observe `start` + 1.
     for (int i = 0; i < 2; i++) {
       ForkInChild(
           [&] { CheckGenerationAtLeastInChild("Grandchild", start + 1); });
     }
 
-    // Now the child also observes |start| + 1. This is fine because it has
+    // Now the child also observes `start` + 1. This is fine because it has
     // already diverged from the grandchild at this point.
 
     CheckGenerationAtLeastInChild("Child", start + 1);
 
     // In the pthread_atfork the value may have changed.
     uint64_t child_generation = CRYPTO_get_fork_generation();
-    // Forked grandchildren will now observe |start| + 2.
+    // Forked grandchildren will now observe `start` + 2.
     for (int i = 0; i < 2; i++) {
       ForkInChild([&] {
         CheckGenerationAtLeastInChild("Grandchild", child_generation + 1);
@@ -278,7 +278,7 @@ TEST(ForkDetect, Test) {
   ASSERT_TRUE(WIFEXITED(status));
   EXPECT_EQ(0, WEXITSTATUS(status)) << "Error in child process";
 
-  // We still observe |start|.
+  // We still observe `start`.
   EXPECT_EQ(start, CRYPTO_get_fork_generation());
 }
 
@@ -296,7 +296,7 @@ TEST(ForkDetect, TestAlternateFork) {
     GTEST_SKIP() << "No alternate fork method detected. Skipping test.\n";
   }
 
-  // We still observe |start|.
+  // We still observe `start`.
   EXPECT_EQ(start, CRYPTO_get_fork_generation());
 }
 

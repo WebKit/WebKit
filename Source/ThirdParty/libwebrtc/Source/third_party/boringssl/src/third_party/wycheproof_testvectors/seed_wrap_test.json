@@ -1,0 +1,436 @@
+{
+  "algorithm": "SEED-WRAP",
+  "schema": "keywrap_test_schema_v1.json",
+  "numberOfTests": 35,
+  "header": [
+    "Test vectors of type Keywrap are intended for tests",
+    "checking the wrapping and unwrapping of key material."
+  ],
+  "notes": {
+    "CounterOverflow": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a value that is long enough so that the round counter becomes larger than 256."
+    },
+    "EmptyKey": {
+      "bugType": "AUTH_BYPASS",
+      "description": "An empty key cannot be wrapped. Incorrectly wrapping an empty key may result in key independent result. Incorrectly unwrapping an empty key may allow to circumvent authentication."
+    },
+    "InvalidWrappingSize": {
+      "bugType": "MODIFIED_PARAMETER",
+      "description": "The size of the wrapped key is invalid"
+    },
+    "ModifiedIv": {
+      "bugType": "MISSING_STEP",
+      "description": "The test vector contains a ciphertext that was obtained with an incorrect IV. Unwrapping should verify that the IV is valid and hence reject this test vector."
+    },
+    "Normal": {
+      "bugType": "BASIC",
+      "description": "The test vector contains a pseudorandomly generated, valid test case. Implementations are expected to pass this test."
+    },
+    "ShortKey": {
+      "bugType": "MISSING_STEP",
+      "description": "NIST SP 800-38F does not define the wrapping of 8 byte keys. RFC 3394 Section 2 on the other hand specifies that 8 byte keys are wrapped by directly encrypting one block with AES."
+    },
+    "WrongDataSize": {
+      "bugType": "MISSING_STEP",
+      "description": "KW cannot be used to wrap a key that is not a multiple of 8 bytes. Inputs of such sizes should be rejected."
+    }
+  },
+  "testGroups": [
+    {
+      "type": "KeywrapTest",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9"
+      },
+      "keySize": 128,
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "key": "6f67486d1e914419cb43c28509c7c1ea",
+          "msg": "8dc0632d92ee0be4f740028410b08270",
+          "ct": "36124f93b4d7b9e1467f74614a028714ed76d0f301c3866c",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "key": "a0b17172bb296db7f5c869e9a36b5ce3",
+          "msg": "615dd022d607c910f20178cbdf42060f",
+          "ct": "7592c3bb3714e769d0dd11ab1729f81ef95da142c4204e92",
+          "result": "valid"
+        },
+        {
+          "tcId": 3,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "key": "0e49d571c19b5250effd41d94bde39d6",
+          "msg": "f25e4de8caca363fd5f29442eb147b55",
+          "ct": "beb5f8d591aadf9e8124625edbabb685deaaf80f08ec53b6",
+          "result": "valid"
+        },
+        {
+          "tcId": 4,
+          "comment": "Round counter larger than 256",
+          "flags": [
+            "CounterOverflow"
+          ],
+          "key": "31cacbb17d6dbbecae40727c5048fe0c",
+          "msg": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "ct": "286570d4d7851495d29af1f1c1717c2b20f44b5543eace58951cac77df414c6b9954b53c6424c3340c9bd769f2bf0aa3a597d8d6574ed3a86852016dfca2a20a31a93748cf1a591bf6b6ace9f382c9ff4a31c8c547f04b047d23e80ff143631086a4b8f52183de0aab5c962a78d6d23e30e686258b55998c420b398179e996e0ebd0854ca3bb2edd3c55c36950727258c800e5816b9d170d5f96e2fa849cc8c1091c97a179bb895d69db9606c5945a2535c7b15dec0286b82b315d067aef652941ffa59f16bc876a558034be930a61136616ae49953646ca911362ab2c2c76f4cfc5f319b51b5444be59c4bea12431ea95630301e19c35714844749d7712a24958542823a0c8b5d94c2c1da2fb0cea64c84627774f794867c311ce68848827b3bd45babf9218001517ede204bac2eb250c6330e17166433be67ae5daf84bc4a750a1725133c159c4eebaa2e1a13e9898f70df33cce9998db5fa7a4f899c6ef9cbb4f6fc47195b3068182ce5fbf0ba38fb3817c3fbbbc056da46c1bf5333a5c571df7a418849f1fc8",
+          "result": "valid"
+        },
+        {
+          "tcId": 5,
+          "comment": "empty keys cannot be wrapped",
+          "flags": [
+            "EmptyKey"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "",
+          "ct": "a6a6a6a6a6a6a6a6",
+          "result": "invalid"
+        },
+        {
+          "tcId": 6,
+          "comment": "wrapping an 8 byte key",
+          "flags": [
+            "ShortKey"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "0001020304050607",
+          "ct": "dcf6d0c9b2913140d5cd4da1c80c1719",
+          "result": "acceptable"
+        },
+        {
+          "tcId": 7,
+          "comment": "incorrect wrapping of 8 bytes",
+          "flags": [
+            "ShortKey"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "0001020304050607",
+          "ct": "f2bd97877cd38d5412707355848ec82b",
+          "result": "invalid"
+        },
+        {
+          "tcId": 8,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "00",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 9,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "0001",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 10,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "000102",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 11,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "00010203",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 12,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "0001020304",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 13,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "000102030405",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 14,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "00010203040506",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 15,
+          "comment": "wrapped key size must be divisible by 8",
+          "flags": [
+            "WrongDataSize"
+          ],
+          "key": "574957151fc2afe0fa3dc7a9a7da6495",
+          "msg": "000102030405060708090a0b0c0d0e0f10111213",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 16,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 17,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "9f",
+          "result": "invalid"
+        },
+        {
+          "tcId": 18,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "dc9e9580",
+          "result": "invalid"
+        },
+        {
+          "tcId": 19,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "b9b282d138693000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 20,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "0efc635b2d61e244056b9d4591ca6b",
+          "result": "invalid"
+        },
+        {
+          "tcId": 21,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "4a305dae087b0d24d62af41831338f33ae",
+          "result": "invalid"
+        },
+        {
+          "tcId": 22,
+          "comment": "invalid size of wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "",
+          "ct": "82cb927097cf31ea4affea440b0d8ca6a240b900",
+          "result": "invalid"
+        },
+        {
+          "tcId": 23,
+          "comment": "bytes appended to wrapped key",
+          "flags": [
+            "InvalidWrappingSize"
+          ],
+          "key": "fe60fc8df7d9f4ebb5416ca4e82182f7",
+          "msg": "000102030405060708090a0b0c0d0e0f",
+          "ct": "29d8e449c375f239433bdd658c3966eb2a78c40d583690e700",
+          "result": "invalid"
+        },
+        {
+          "tcId": 24,
+          "comment": "byte 0 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "e4a87ef1e7e105894502a227927b836b62726342ffc2043f",
+          "result": "invalid"
+        },
+        {
+          "tcId": 25,
+          "comment": "byte 1 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "af1b17eb11d09eb728dda965437c06a8480c37b0993beac8",
+          "result": "invalid"
+        },
+        {
+          "tcId": 26,
+          "comment": "byte 2 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "5e1ff456edf5e0beb10a64b6d32e08ee087de932e3ee5f56",
+          "result": "invalid"
+        },
+        {
+          "tcId": 27,
+          "comment": "byte 3 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "d477f08e9080d5d7482a98adb7c91362e0b6f50bd16ac2ac",
+          "result": "invalid"
+        },
+        {
+          "tcId": 28,
+          "comment": "byte 4 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "af6695e34fe22fc684b9eebb26a753182155e4fc94bcc7ab",
+          "result": "invalid"
+        },
+        {
+          "tcId": 29,
+          "comment": "byte 5 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "ee125d5b4538c10e0f25a6403cb3e5ef15f3d0c1d79c95fb",
+          "result": "invalid"
+        },
+        {
+          "tcId": 30,
+          "comment": "byte 6 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "21ff3b204c83f97d0b3e757950c928b7a6c34100a3dbec23",
+          "result": "invalid"
+        },
+        {
+          "tcId": 31,
+          "comment": "byte 7 in IV changed",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "67296d14c252450f49834502715a97cc0be6508c1d792a99",
+          "result": "invalid"
+        },
+        {
+          "tcId": 32,
+          "comment": "IV changed to 0000000000000000",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "b400665d9544018984b9eb261987150d247fea3b2b4375fe",
+          "result": "invalid"
+        },
+        {
+          "tcId": 33,
+          "comment": "IV changed to RFC 5649 padding",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "5f70f4d13e0b8b0c921f5b0dbc28ad2ade9ad9e59a5abc47",
+          "result": "invalid"
+        },
+        {
+          "tcId": 34,
+          "comment": "IV changed to 5959595959595959",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "f422c09d16ce6535a9f410ba76198e5aa4b0be298da9cde5",
+          "result": "invalid"
+        },
+        {
+          "tcId": 35,
+          "comment": "IV changed to ffffffffffffffff",
+          "flags": [
+            "ModifiedIv"
+          ],
+          "key": "4f710eb6b5e28703becfc3dc52fa8bc1",
+          "msg": "a828cbda9b5ff0ae374f84fa01d070a5",
+          "ct": "9c8a88de7109ff464725ccdafb6be259d8e7026fb45bc2e1",
+          "result": "invalid"
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,9 @@ section	.text code align=64
 
 
 section	.rdata rdata align=8
+
 ALIGN	64
+chacha_constants:
 $L$zero:
 	DD	0,0,0,0
 $L$one:
@@ -83,25 +85,25 @@ _CET_ENDBR
 
 $L$ctr32_body:
 
-
+; movdqa	.Lsigma(%rip),%xmm0
 	movdqu	xmm1,XMMWORD[rcx]
 	movdqu	xmm2,XMMWORD[16+rcx]
 	movdqu	xmm3,XMMWORD[r8]
 	movdqa	xmm4,XMMWORD[$L$one]
 
-
-	movdqa	XMMWORD[16+rsp],xmm1
-	movdqa	XMMWORD[32+rsp],xmm2
-	movdqa	XMMWORD[48+rsp],xmm3
-	mov	rbp,rdx
+; movdqa	%xmm0,4*0(%rsp)		# key[0]
+	movdqa	XMMWORD[16+rsp],xmm1  ; key[1]
+	movdqa	XMMWORD[32+rsp],xmm2  ; key[2]
+	movdqa	XMMWORD[48+rsp],xmm3  ; key[3]
+	mov	rbp,rdx  ; reassign %rdx
 	jmp	NEAR $L$oop_outer
 
 ALIGN	32
 $L$oop_outer:
-	mov	eax,0x61707865
-	mov	ebx,0x3320646e
-	mov	ecx,0x79622d32
-	mov	edx,0x6b206574
+	mov	eax,0x61707865  ; 'expa'
+	mov	ebx,0x3320646e  ; 'nd 3'
+	mov	ecx,0x79622d32  ; '2-by'
+	mov	edx,0x6b206574  ; 'te k'
 	mov	r8d,DWORD[16+rsp]
 	mov	r9d,DWORD[20+rsp]
 	mov	r10d,DWORD[24+rsp]
@@ -111,13 +113,13 @@ $L$oop_outer:
 	mov	r14d,DWORD[56+rsp]
 	mov	r15d,DWORD[60+rsp]
 
-	mov	QWORD[((64+0))+rsp],rbp
+	mov	QWORD[((64+0))+rsp],rbp  ; save len
 	mov	ebp,10
-	mov	QWORD[((64+8))+rsp],rsi
-	movq	rsi,xmm2
-	mov	QWORD[((64+16))+rsp],rdi
+	mov	QWORD[((64+8))+rsp],rsi  ; save inp
+	movq	rsi,xmm2  ; "%nox"
+	mov	QWORD[((64+16))+rsp],rdi  ; save out
 	mov	rdi,rsi
-	shr	rdi,32
+	shr	rdi,32  ; "%nox"
 	jmp	NEAR $L$oop
 
 ALIGN	32
@@ -228,18 +230,18 @@ $L$oop:
 	rol	r8d,7
 	dec	ebp
 	jnz	NEAR $L$oop
-	mov	DWORD[36+rsp],edi
+	mov	DWORD[36+rsp],edi  ; modulo-scheduled
 	mov	DWORD[32+rsp],esi
-	mov	rbp,QWORD[64+rsp]
+	mov	rbp,QWORD[64+rsp]  ; load len
 	movdqa	xmm1,xmm2
-	mov	rsi,QWORD[((64+8))+rsp]
-	paddd	xmm3,xmm4
-	mov	rdi,QWORD[((64+16))+rsp]
+	mov	rsi,QWORD[((64+8))+rsp]  ; load inp
+	paddd	xmm3,xmm4  ; increment counter
+	mov	rdi,QWORD[((64+16))+rsp]  ; load out
 
-	add	eax,0x61707865
-	add	ebx,0x3320646e
-	add	ecx,0x79622d32
-	add	edx,0x6b206574
+	add	eax,0x61707865  ; 'expa'
+	add	ebx,0x3320646e  ; 'nd 3'
+	add	ecx,0x79622d32  ; '2-by'
+	add	edx,0x6b206574  ; 'te k'
 	add	r8d,DWORD[16+rsp]
 	add	r9d,DWORD[20+rsp]
 	add	r10d,DWORD[24+rsp]
@@ -253,7 +255,7 @@ $L$oop:
 	cmp	rbp,64
 	jb	NEAR $L$tail
 
-	xor	eax,DWORD[rsi]
+	xor	eax,DWORD[rsi]  ; xor with input
 	xor	ebx,DWORD[4+rsi]
 	xor	ecx,DWORD[8+rsi]
 	xor	edx,DWORD[12+rsi]
@@ -266,13 +268,13 @@ $L$oop:
 	xor	r13d,DWORD[52+rsi]
 	xor	r14d,DWORD[56+rsi]
 	xor	r15d,DWORD[60+rsi]
-	lea	rsi,[64+rsi]
+	lea	rsi,[64+rsi]  ; inp+=64
 	pxor	xmm0,xmm1
 
 	movdqa	XMMWORD[32+rsp],xmm2
 	movd	DWORD[48+rsp],xmm3
 
-	mov	DWORD[rdi],eax
+	mov	DWORD[rdi],eax  ; write output
 	mov	DWORD[4+rdi],ebx
 	mov	DWORD[8+rdi],ecx
 	mov	DWORD[12+rdi],edx
@@ -285,7 +287,7 @@ $L$oop:
 	mov	DWORD[52+rdi],r13d
 	mov	DWORD[56+rdi],r14d
 	mov	DWORD[60+rdi],r15d
-	lea	rdi,[64+rdi]
+	lea	rdi,[64+rdi]  ; out+=64
 
 	sub	rbp,64
 	jnz	NEAR $L$oop_outer
@@ -357,7 +359,7 @@ $L$SEH_begin_ChaCha20_ctr32_ssse3:
 
 
 _CET_ENDBR
-	mov	r9,rsp
+	mov	r9,rsp  ; frame pointer
 
 	sub	rsp,64+40
 	movaps	XMMWORD[(-40)+r9],xmm6
@@ -374,7 +376,7 @@ $L$ssse3_body:
 	movdqa	XMMWORD[16+rsp],xmm1
 	movdqa	XMMWORD[32+rsp],xmm2
 	movdqa	XMMWORD[48+rsp],xmm3
-	mov	r8,10
+	mov	r8,10  ; reuse %r8
 	jmp	NEAR $L$oop_ssse3
 
 ALIGN	32
@@ -445,19 +447,19 @@ $L$oop_ssse3:
 
 	movdqu	xmm4,XMMWORD[rsi]
 	movdqu	xmm5,XMMWORD[16+rsi]
-	pxor	xmm0,xmm4
+	pxor	xmm0,xmm4  ; xor with input
 	movdqu	xmm4,XMMWORD[32+rsi]
 	pxor	xmm1,xmm5
 	movdqu	xmm5,XMMWORD[48+rsi]
-	lea	rsi,[64+rsi]
+	lea	rsi,[64+rsi]  ; inp+=64
 	pxor	xmm2,xmm4
 	pxor	xmm3,xmm5
 
-	movdqu	XMMWORD[rdi],xmm0
+	movdqu	XMMWORD[rdi],xmm0  ; write output
 	movdqu	XMMWORD[16+rdi],xmm1
 	movdqu	XMMWORD[32+rdi],xmm2
 	movdqu	XMMWORD[48+rdi],xmm3
-	lea	rdi,[64+rdi]
+	lea	rdi,[64+rdi]  ; out+=64
 
 	sub	rdx,64
 	jnz	NEAR $L$oop_outer_ssse3
@@ -509,7 +511,7 @@ $L$SEH_begin_ChaCha20_ctr32_ssse3_4x:
 
 
 _CET_ENDBR
-	mov	r9,rsp
+	mov	r9,rsp  ; frame pointer
 
 	sub	rsp,0x140+168
 	movaps	XMMWORD[(-168)+r9],xmm6
@@ -523,17 +525,17 @@ _CET_ENDBR
 	movaps	XMMWORD[(-40)+r9],xmm14
 	movaps	XMMWORD[(-24)+r9],xmm15
 $L$4x_body:
-	movdqa	xmm11,XMMWORD[$L$sigma]
-	movdqu	xmm15,XMMWORD[rcx]
-	movdqu	xmm7,XMMWORD[16+rcx]
-	movdqu	xmm3,XMMWORD[r8]
-	lea	rcx,[256+rsp]
+	movdqa	xmm11,XMMWORD[$L$sigma]  ; key[0]
+	movdqu	xmm15,XMMWORD[rcx]  ; key[1]
+	movdqu	xmm7,XMMWORD[16+rcx]  ; key[2]
+	movdqu	xmm3,XMMWORD[r8]  ; key[3]
+	lea	rcx,[256+rsp]  ; size optimization
 	lea	r10,[$L$rot16]
 	lea	r11,[$L$rot24]
 
-	pshufd	xmm8,xmm11,0x00
+	pshufd	xmm8,xmm11,0x00  ; smash key by lanes...
 	pshufd	xmm9,xmm11,0x55
-	movdqa	XMMWORD[64+rsp],xmm8
+	movdqa	XMMWORD[64+rsp],xmm8  ; ... and offload
 	pshufd	xmm10,xmm11,0xaa
 	movdqa	XMMWORD[80+rsp],xmm9
 	pshufd	xmm11,xmm11,0xff
@@ -549,18 +551,18 @@ $L$4x_body:
 	movdqa	XMMWORD[(160-256)+rcx],xmm14
 	movdqa	XMMWORD[(176-256)+rcx],xmm15
 
-	pshufd	xmm4,xmm7,0x00
-	pshufd	xmm5,xmm7,0x55
+	pshufd	xmm4,xmm7,0x00  ; ""
+	pshufd	xmm5,xmm7,0x55  ; ""
 	movdqa	XMMWORD[(192-256)+rcx],xmm4
-	pshufd	xmm6,xmm7,0xaa
+	pshufd	xmm6,xmm7,0xaa  ; ""
 	movdqa	XMMWORD[(208-256)+rcx],xmm5
-	pshufd	xmm7,xmm7,0xff
+	pshufd	xmm7,xmm7,0xff  ; ""
 	movdqa	XMMWORD[(224-256)+rcx],xmm6
 	movdqa	XMMWORD[(240-256)+rcx],xmm7
 
 	pshufd	xmm0,xmm3,0x00
 	pshufd	xmm1,xmm3,0x55
-	paddd	xmm0,XMMWORD[$L$inc]
+	paddd	xmm0,XMMWORD[$L$inc]  ; don't save counters yet
 	pshufd	xmm2,xmm3,0xaa
 	movdqa	XMMWORD[(272-256)+rcx],xmm1
 	pshufd	xmm3,xmm3,0xff
@@ -571,7 +573,7 @@ $L$4x_body:
 
 ALIGN	32
 $L$oop_outer4x:
-	movdqa	xmm8,XMMWORD[64+rsp]
+	movdqa	xmm8,XMMWORD[64+rsp]  ; re-load smashed key
 	movdqa	xmm9,XMMWORD[80+rsp]
 	movdqa	xmm10,XMMWORD[96+rsp]
 	movdqa	xmm11,XMMWORD[112+rsp]
@@ -579,22 +581,22 @@ $L$oop_outer4x:
 	movdqa	xmm13,XMMWORD[((144-256))+rcx]
 	movdqa	xmm14,XMMWORD[((160-256))+rcx]
 	movdqa	xmm15,XMMWORD[((176-256))+rcx]
-	movdqa	xmm4,XMMWORD[((192-256))+rcx]
-	movdqa	xmm5,XMMWORD[((208-256))+rcx]
-	movdqa	xmm6,XMMWORD[((224-256))+rcx]
-	movdqa	xmm7,XMMWORD[((240-256))+rcx]
+	movdqa	xmm4,XMMWORD[((192-256))+rcx]  ; ""
+	movdqa	xmm5,XMMWORD[((208-256))+rcx]  ; ""
+	movdqa	xmm6,XMMWORD[((224-256))+rcx]  ; ""
+	movdqa	xmm7,XMMWORD[((240-256))+rcx]  ; ""
 	movdqa	xmm0,XMMWORD[((256-256))+rcx]
 	movdqa	xmm1,XMMWORD[((272-256))+rcx]
 	movdqa	xmm2,XMMWORD[((288-256))+rcx]
 	movdqa	xmm3,XMMWORD[((304-256))+rcx]
-	paddd	xmm0,XMMWORD[$L$four]
+	paddd	xmm0,XMMWORD[$L$four]  ; next SIMD counters
 
 $L$oop_enter4x:
-	movdqa	XMMWORD[32+rsp],xmm6
-	movdqa	XMMWORD[48+rsp],xmm7
-	movdqa	xmm7,XMMWORD[r10]
+	movdqa	XMMWORD[32+rsp],xmm6  ; SIMD equivalent of "%nox"
+	movdqa	XMMWORD[48+rsp],xmm7  ; SIMD equivalent of "%nox"
+	movdqa	xmm7,XMMWORD[r10]  ; .Lrot16(%rip)
 	mov	eax,10
-	movdqa	XMMWORD[(256-256)+rcx],xmm0
+	movdqa	XMMWORD[(256-256)+rcx],xmm0  ; save SIMD counters
 	jmp	NEAR $L$oop4x
 
 ALIGN	32
@@ -762,32 +764,32 @@ $L$oop4x:
 	dec	eax
 	jnz	NEAR $L$oop4x
 
-	paddd	xmm8,XMMWORD[64+rsp]
+	paddd	xmm8,XMMWORD[64+rsp]  ; accumulate key material
 	paddd	xmm9,XMMWORD[80+rsp]
 	paddd	xmm10,XMMWORD[96+rsp]
 	paddd	xmm11,XMMWORD[112+rsp]
 
-	movdqa	xmm6,xmm8
+	movdqa	xmm6,xmm8  ; "de-interlace" data
 	punpckldq	xmm8,xmm9
 	movdqa	xmm7,xmm10
 	punpckldq	xmm10,xmm11
 	punpckhdq	xmm6,xmm9
 	punpckhdq	xmm7,xmm11
 	movdqa	xmm9,xmm8
-	punpcklqdq	xmm8,xmm10
+	punpcklqdq	xmm8,xmm10  ; "a0"
 	movdqa	xmm11,xmm6
-	punpcklqdq	xmm6,xmm7
-	punpckhqdq	xmm9,xmm10
-	punpckhqdq	xmm11,xmm7
+	punpcklqdq	xmm6,xmm7  ; "a2"
+	punpckhqdq	xmm9,xmm10  ; "a1"
+	punpckhqdq	xmm11,xmm7  ; "a3"
 	paddd	xmm12,XMMWORD[((128-256))+rcx]
 	paddd	xmm13,XMMWORD[((144-256))+rcx]
 	paddd	xmm14,XMMWORD[((160-256))+rcx]
 	paddd	xmm15,XMMWORD[((176-256))+rcx]
 
-	movdqa	XMMWORD[rsp],xmm8
+	movdqa	XMMWORD[rsp],xmm8  ; offload
 	movdqa	XMMWORD[16+rsp],xmm9
-	movdqa	xmm8,XMMWORD[32+rsp]
-	movdqa	xmm9,XMMWORD[48+rsp]
+	movdqa	xmm8,XMMWORD[32+rsp]  ; "xc2"
+	movdqa	xmm9,XMMWORD[48+rsp]  ; "xc3"
 
 	movdqa	xmm10,xmm12
 	punpckldq	xmm12,xmm13
@@ -796,17 +798,17 @@ $L$oop4x:
 	punpckhdq	xmm10,xmm13
 	punpckhdq	xmm7,xmm15
 	movdqa	xmm13,xmm12
-	punpcklqdq	xmm12,xmm14
+	punpcklqdq	xmm12,xmm14  ; "b0"
 	movdqa	xmm15,xmm10
-	punpcklqdq	xmm10,xmm7
-	punpckhqdq	xmm13,xmm14
-	punpckhqdq	xmm15,xmm7
+	punpcklqdq	xmm10,xmm7  ; "b2"
+	punpckhqdq	xmm13,xmm14  ; "b1"
+	punpckhqdq	xmm15,xmm7  ; "b3"
 	paddd	xmm4,XMMWORD[((192-256))+rcx]
 	paddd	xmm5,XMMWORD[((208-256))+rcx]
 	paddd	xmm8,XMMWORD[((224-256))+rcx]
 	paddd	xmm9,XMMWORD[((240-256))+rcx]
 
-	movdqa	XMMWORD[32+rsp],xmm6
+	movdqa	XMMWORD[32+rsp],xmm6  ; keep offloading
 	movdqa	XMMWORD[48+rsp],xmm11
 
 	movdqa	xmm14,xmm4
@@ -816,11 +818,11 @@ $L$oop4x:
 	punpckhdq	xmm14,xmm5
 	punpckhdq	xmm7,xmm9
 	movdqa	xmm5,xmm4
-	punpcklqdq	xmm4,xmm8
+	punpcklqdq	xmm4,xmm8  ; "c0"
 	movdqa	xmm9,xmm14
-	punpcklqdq	xmm14,xmm7
-	punpckhqdq	xmm5,xmm8
-	punpckhqdq	xmm9,xmm7
+	punpcklqdq	xmm14,xmm7  ; "c2"
+	punpckhqdq	xmm5,xmm8  ; "c1"
+	punpckhqdq	xmm9,xmm7  ; "c3"
 	paddd	xmm0,XMMWORD[((256-256))+rcx]
 	paddd	xmm1,XMMWORD[((272-256))+rcx]
 	paddd	xmm2,XMMWORD[((288-256))+rcx]
@@ -833,19 +835,19 @@ $L$oop4x:
 	punpckhdq	xmm8,xmm1
 	punpckhdq	xmm7,xmm3
 	movdqa	xmm1,xmm0
-	punpcklqdq	xmm0,xmm2
+	punpcklqdq	xmm0,xmm2  ; "d0"
 	movdqa	xmm3,xmm8
-	punpcklqdq	xmm8,xmm7
-	punpckhqdq	xmm1,xmm2
-	punpckhqdq	xmm3,xmm7
+	punpcklqdq	xmm8,xmm7  ; "d2"
+	punpckhqdq	xmm1,xmm2  ; "d1"
+	punpckhqdq	xmm3,xmm7  ; "d3"
 	cmp	rdx,64*4
 	jb	NEAR $L$tail4x
 
-	movdqu	xmm6,XMMWORD[rsi]
+	movdqu	xmm6,XMMWORD[rsi]  ; xor with input
 	movdqu	xmm11,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm7,XMMWORD[48+rsi]
-	pxor	xmm6,XMMWORD[rsp]
+	pxor	xmm6,XMMWORD[rsp]  ; is offloaded, remember?
 	pxor	xmm11,xmm12
 	pxor	xmm2,xmm4
 	pxor	xmm7,xmm0
@@ -858,7 +860,7 @@ $L$oop4x:
 	movdqu	xmm2,XMMWORD[96+rsi]
 	movdqu	XMMWORD[48+rdi],xmm7
 	movdqu	xmm7,XMMWORD[112+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	pxor	xmm6,XMMWORD[16+rsp]
 	pxor	xmm11,xmm13
 	pxor	xmm2,xmm5
@@ -871,7 +873,7 @@ $L$oop4x:
 	movdqu	XMMWORD[96+rdi],xmm2
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	XMMWORD[112+rdi],xmm7
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 	movdqu	xmm7,XMMWORD[48+rsi]
 	pxor	xmm6,XMMWORD[32+rsp]
 	pxor	xmm11,xmm10
@@ -886,7 +888,7 @@ $L$oop4x:
 	movdqu	xmm2,XMMWORD[96+rsi]
 	movdqu	XMMWORD[48+rdi],xmm7
 	movdqu	xmm7,XMMWORD[112+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; inp+=64*4
 	pxor	xmm6,XMMWORD[48+rsp]
 	pxor	xmm11,xmm15
 	pxor	xmm2,xmm9
@@ -895,7 +897,7 @@ $L$oop4x:
 	movdqu	XMMWORD[80+rdi],xmm11
 	movdqu	XMMWORD[96+rdi],xmm2
 	movdqu	XMMWORD[112+rdi],xmm7
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; out+=64*4
 
 	sub	rdx,64*4
 	jnz	NEAR $L$oop_outer4x
@@ -910,9 +912,9 @@ $L$tail4x:
 	cmp	rdx,64
 	jae	NEAR $L$64_or_more4x
 
-
+; movdqa		0x00(%rsp),%xmm6		#  is offloaded, remember?
 	xor	r10,r10
-
+; movdqa		%xmm6,0x00(%rsp)
 	movdqa	XMMWORD[16+rsp],xmm12
 	movdqa	XMMWORD[32+rsp],xmm4
 	movdqa	XMMWORD[48+rsp],xmm0
@@ -920,11 +922,11 @@ $L$tail4x:
 
 ALIGN	32
 $L$64_or_more4x:
-	movdqu	xmm6,XMMWORD[rsi]
+	movdqu	xmm6,XMMWORD[rsi]  ; xor with input
 	movdqu	xmm11,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm7,XMMWORD[48+rsi]
-	pxor	xmm6,XMMWORD[rsp]
+	pxor	xmm6,XMMWORD[rsp]  ; is offloaded, remember?
 	pxor	xmm11,xmm12
 	pxor	xmm2,xmm4
 	pxor	xmm7,xmm0
@@ -934,24 +936,24 @@ $L$64_or_more4x:
 	movdqu	XMMWORD[48+rdi],xmm7
 	je	NEAR $L$done4x
 
-	movdqa	xmm6,XMMWORD[16+rsp]
-	lea	rsi,[64+rsi]
+	movdqa	xmm6,XMMWORD[16+rsp]  ; is offloaded, remember?
+	lea	rsi,[64+rsi]  ; inp+=64*1
 	xor	r10,r10
 	movdqa	XMMWORD[rsp],xmm6
 	movdqa	XMMWORD[16+rsp],xmm13
-	lea	rdi,[64+rdi]
+	lea	rdi,[64+rdi]  ; out+=64*1
 	movdqa	XMMWORD[32+rsp],xmm5
-	sub	rdx,64
+	sub	rdx,64  ; len-=64*1
 	movdqa	XMMWORD[48+rsp],xmm1
 	jmp	NEAR $L$oop_tail4x
 
 ALIGN	32
 $L$128_or_more4x:
-	movdqu	xmm6,XMMWORD[rsi]
+	movdqu	xmm6,XMMWORD[rsi]  ; xor with input
 	movdqu	xmm11,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm7,XMMWORD[48+rsi]
-	pxor	xmm6,XMMWORD[rsp]
+	pxor	xmm6,XMMWORD[rsp]  ; is offloaded, remember?
 	pxor	xmm11,xmm12
 	pxor	xmm2,xmm4
 	pxor	xmm7,xmm0
@@ -974,24 +976,24 @@ $L$128_or_more4x:
 	movdqu	XMMWORD[112+rdi],xmm7
 	je	NEAR $L$done4x
 
-	movdqa	xmm6,XMMWORD[32+rsp]
-	lea	rsi,[128+rsi]
+	movdqa	xmm6,XMMWORD[32+rsp]  ; is offloaded, remember?
+	lea	rsi,[128+rsi]  ; inp+=64*2
 	xor	r10,r10
 	movdqa	XMMWORD[rsp],xmm6
 	movdqa	XMMWORD[16+rsp],xmm10
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; out+=64*2
 	movdqa	XMMWORD[32+rsp],xmm14
-	sub	rdx,128
+	sub	rdx,128  ; len-=64*2
 	movdqa	XMMWORD[48+rsp],xmm8
 	jmp	NEAR $L$oop_tail4x
 
 ALIGN	32
 $L$192_or_more4x:
-	movdqu	xmm6,XMMWORD[rsi]
+	movdqu	xmm6,XMMWORD[rsi]  ; xor with input
 	movdqu	xmm11,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm7,XMMWORD[48+rsi]
-	pxor	xmm6,XMMWORD[rsp]
+	pxor	xmm6,XMMWORD[rsp]  ; is offloaded, remember?
 	pxor	xmm11,xmm12
 	pxor	xmm2,xmm4
 	pxor	xmm7,xmm0
@@ -1004,7 +1006,7 @@ $L$192_or_more4x:
 	movdqu	xmm2,XMMWORD[96+rsi]
 	movdqu	XMMWORD[48+rdi],xmm7
 	movdqu	xmm7,XMMWORD[112+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	pxor	xmm6,XMMWORD[16+rsp]
 	pxor	xmm11,xmm13
 	pxor	xmm2,xmm5
@@ -1017,7 +1019,7 @@ $L$192_or_more4x:
 	movdqu	XMMWORD[96+rdi],xmm2
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	XMMWORD[112+rdi],xmm7
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 	movdqu	xmm7,XMMWORD[48+rsi]
 	pxor	xmm6,XMMWORD[32+rsp]
 	pxor	xmm11,xmm10
@@ -1029,14 +1031,14 @@ $L$192_or_more4x:
 	movdqu	XMMWORD[48+rdi],xmm7
 	je	NEAR $L$done4x
 
-	movdqa	xmm6,XMMWORD[48+rsp]
-	lea	rsi,[64+rsi]
+	movdqa	xmm6,XMMWORD[48+rsp]  ; is offloaded, remember?
+	lea	rsi,[64+rsi]  ; inp+=64*3
 	xor	r10,r10
 	movdqa	XMMWORD[rsp],xmm6
 	movdqa	XMMWORD[16+rsp],xmm15
-	lea	rdi,[64+rdi]
+	lea	rdi,[64+rdi]  ; out+=64*3
 	movdqa	XMMWORD[32+rsp],xmm9
-	sub	rdx,192
+	sub	rdx,192  ; len-=64*3
 	movdqa	XMMWORD[48+rsp],xmm3
 
 $L$oop_tail4x:
@@ -1084,7 +1086,7 @@ $L$SEH_begin_ChaCha20_ctr32_avx2:
 
 
 _CET_ENDBR
-	mov	r9,rsp
+	mov	r9,rsp  ; frame register
 
 	sub	rsp,0x280+168
 	and	rsp,-32
@@ -1101,27 +1103,27 @@ _CET_ENDBR
 $L$8x_body:
 	vzeroupper
 
+; ############### stack layout
+; +0x00		SIMD equivalent of %r12d
+; ...
+; +0x80		constant copy of key[0-2] smashed by lanes
+; ...
+; +0x200	SIMD counters (with nonce smashed by lanes)
+; ...
+; +0x280
 
-
-
-
-
-
-
-
-
-	vbroadcasti128	ymm11,XMMWORD[$L$sigma]
-	vbroadcasti128	ymm3,XMMWORD[rcx]
-	vbroadcasti128	ymm15,XMMWORD[16+rcx]
-	vbroadcasti128	ymm7,XMMWORD[r8]
-	lea	rcx,[256+rsp]
-	lea	rax,[512+rsp]
+	vbroadcasti128	ymm11,XMMWORD[$L$sigma]  ; key[0]
+	vbroadcasti128	ymm3,XMMWORD[rcx]  ; key[1]
+	vbroadcasti128	ymm15,XMMWORD[16+rcx]  ; key[2]
+	vbroadcasti128	ymm7,XMMWORD[r8]  ; key[3]
+	lea	rcx,[256+rsp]  ; size optimization
+	lea	rax,[512+rsp]  ; size optimization
 	lea	r10,[$L$rot16]
 	lea	r11,[$L$rot24]
 
-	vpshufd	ymm8,ymm11,0x00
+	vpshufd	ymm8,ymm11,0x00  ; smash key by lanes...
 	vpshufd	ymm9,ymm11,0x55
-	vmovdqa	YMMWORD[(128-256)+rcx],ymm8
+	vmovdqa	YMMWORD[(128-256)+rcx],ymm8  ; ... and offload
 	vpshufd	ymm10,ymm11,0xaa
 	vmovdqa	YMMWORD[(160-256)+rcx],ymm9
 	vpshufd	ymm11,ymm11,0xff
@@ -1137,18 +1139,18 @@ $L$8x_body:
 	vmovdqa	YMMWORD[(320-256)+rcx],ymm2
 	vmovdqa	YMMWORD[(352-256)+rcx],ymm3
 
-	vpshufd	ymm12,ymm15,0x00
-	vpshufd	ymm13,ymm15,0x55
+	vpshufd	ymm12,ymm15,0x00  ; "xc0"
+	vpshufd	ymm13,ymm15,0x55  ; "xc1"
 	vmovdqa	YMMWORD[(384-512)+rax],ymm12
-	vpshufd	ymm14,ymm15,0xaa
+	vpshufd	ymm14,ymm15,0xaa  ; "xc2"
 	vmovdqa	YMMWORD[(416-512)+rax],ymm13
-	vpshufd	ymm15,ymm15,0xff
+	vpshufd	ymm15,ymm15,0xff  ; "xc3"
 	vmovdqa	YMMWORD[(448-512)+rax],ymm14
 	vmovdqa	YMMWORD[(480-512)+rax],ymm15
 
 	vpshufd	ymm4,ymm7,0x00
 	vpshufd	ymm5,ymm7,0x55
-	vpaddd	ymm4,ymm4,YMMWORD[$L$incy]
+	vpaddd	ymm4,ymm4,YMMWORD[$L$incy]  ; don't save counters yet
 	vpshufd	ymm6,ymm7,0xaa
 	vmovdqa	YMMWORD[(544-512)+rax],ymm5
 	vpshufd	ymm7,ymm7,0xff
@@ -1159,7 +1161,7 @@ $L$8x_body:
 
 ALIGN	32
 $L$oop_outer8x:
-	vmovdqa	ymm8,YMMWORD[((128-256))+rcx]
+	vmovdqa	ymm8,YMMWORD[((128-256))+rcx]  ; re-load smashed key
 	vmovdqa	ymm9,YMMWORD[((160-256))+rcx]
 	vmovdqa	ymm10,YMMWORD[((192-256))+rcx]
 	vmovdqa	ymm11,YMMWORD[((224-256))+rcx]
@@ -1167,21 +1169,21 @@ $L$oop_outer8x:
 	vmovdqa	ymm1,YMMWORD[((288-256))+rcx]
 	vmovdqa	ymm2,YMMWORD[((320-256))+rcx]
 	vmovdqa	ymm3,YMMWORD[((352-256))+rcx]
-	vmovdqa	ymm12,YMMWORD[((384-512))+rax]
-	vmovdqa	ymm13,YMMWORD[((416-512))+rax]
-	vmovdqa	ymm14,YMMWORD[((448-512))+rax]
-	vmovdqa	ymm15,YMMWORD[((480-512))+rax]
+	vmovdqa	ymm12,YMMWORD[((384-512))+rax]  ; "xc0"
+	vmovdqa	ymm13,YMMWORD[((416-512))+rax]  ; "xc1"
+	vmovdqa	ymm14,YMMWORD[((448-512))+rax]  ; "xc2"
+	vmovdqa	ymm15,YMMWORD[((480-512))+rax]  ; "xc3"
 	vmovdqa	ymm4,YMMWORD[((512-512))+rax]
 	vmovdqa	ymm5,YMMWORD[((544-512))+rax]
 	vmovdqa	ymm6,YMMWORD[((576-512))+rax]
 	vmovdqa	ymm7,YMMWORD[((608-512))+rax]
-	vpaddd	ymm4,ymm4,YMMWORD[$L$eight]
+	vpaddd	ymm4,ymm4,YMMWORD[$L$eight]  ; next SIMD counters
 
 $L$oop_enter8x:
-	vmovdqa	YMMWORD[64+rsp],ymm14
-	vmovdqa	YMMWORD[96+rsp],ymm15
+	vmovdqa	YMMWORD[64+rsp],ymm14  ; SIMD equivalent of "%nox"
+	vmovdqa	YMMWORD[96+rsp],ymm15  ; SIMD equivalent of "%nox"
 	vbroadcasti128	ymm15,XMMWORD[r10]
-	vmovdqa	YMMWORD[(512-512)+rax],ymm4
+	vmovdqa	YMMWORD[(512-512)+rax],ymm4  ; save SIMD counters
 	mov	eax,10
 	jmp	NEAR $L$oop8x
 
@@ -1334,20 +1336,20 @@ $L$oop8x:
 	dec	eax
 	jnz	NEAR $L$oop8x
 
-	lea	rax,[512+rsp]
-	vpaddd	ymm8,ymm8,YMMWORD[((128-256))+rcx]
+	lea	rax,[512+rsp]  ; size optimization
+	vpaddd	ymm8,ymm8,YMMWORD[((128-256))+rcx]  ; accumulate key
 	vpaddd	ymm9,ymm9,YMMWORD[((160-256))+rcx]
 	vpaddd	ymm10,ymm10,YMMWORD[((192-256))+rcx]
 	vpaddd	ymm11,ymm11,YMMWORD[((224-256))+rcx]
 
-	vpunpckldq	ymm14,ymm8,ymm9
+	vpunpckldq	ymm14,ymm8,ymm9  ; "de-interlace" data
 	vpunpckldq	ymm15,ymm10,ymm11
 	vpunpckhdq	ymm8,ymm8,ymm9
 	vpunpckhdq	ymm10,ymm10,ymm11
-	vpunpcklqdq	ymm9,ymm14,ymm15
-	vpunpckhqdq	ymm14,ymm14,ymm15
-	vpunpcklqdq	ymm11,ymm8,ymm10
-	vpunpckhqdq	ymm8,ymm8,ymm10
+	vpunpcklqdq	ymm9,ymm14,ymm15  ; "a0"
+	vpunpckhqdq	ymm14,ymm14,ymm15  ; "a1"
+	vpunpcklqdq	ymm11,ymm8,ymm10  ; "a2"
+	vpunpckhqdq	ymm8,ymm8,ymm10  ; "a3"
 	vpaddd	ymm0,ymm0,YMMWORD[((256-256))+rcx]
 	vpaddd	ymm1,ymm1,YMMWORD[((288-256))+rcx]
 	vpaddd	ymm2,ymm2,YMMWORD[((320-256))+rcx]
@@ -1357,11 +1359,11 @@ $L$oop8x:
 	vpunpckldq	ymm15,ymm2,ymm3
 	vpunpckhdq	ymm0,ymm0,ymm1
 	vpunpckhdq	ymm2,ymm2,ymm3
-	vpunpcklqdq	ymm1,ymm10,ymm15
-	vpunpckhqdq	ymm10,ymm10,ymm15
-	vpunpcklqdq	ymm3,ymm0,ymm2
-	vpunpckhqdq	ymm0,ymm0,ymm2
-	vperm2i128	ymm15,ymm9,ymm1,0x20
+	vpunpcklqdq	ymm1,ymm10,ymm15  ; "b0"
+	vpunpckhqdq	ymm10,ymm10,ymm15  ; "b1"
+	vpunpcklqdq	ymm3,ymm0,ymm2  ; "b2"
+	vpunpckhqdq	ymm0,ymm0,ymm2  ; "b3"
+	vperm2i128	ymm15,ymm9,ymm1,0x20  ; "de-interlace" further
 	vperm2i128	ymm1,ymm9,ymm1,0x31
 	vperm2i128	ymm9,ymm14,ymm10,0x20
 	vperm2i128	ymm10,ymm14,ymm10,0x31
@@ -1369,10 +1371,10 @@ $L$oop8x:
 	vperm2i128	ymm3,ymm11,ymm3,0x31
 	vperm2i128	ymm11,ymm8,ymm0,0x20
 	vperm2i128	ymm0,ymm8,ymm0,0x31
-	vmovdqa	YMMWORD[rsp],ymm15
+	vmovdqa	YMMWORD[rsp],ymm15  ; offload
 	vmovdqa	YMMWORD[32+rsp],ymm9
-	vmovdqa	ymm15,YMMWORD[64+rsp]
-	vmovdqa	ymm9,YMMWORD[96+rsp]
+	vmovdqa	ymm15,YMMWORD[64+rsp]  ; %ymm15
+	vmovdqa	ymm9,YMMWORD[96+rsp]  ; %ymm9
 
 	vpaddd	ymm12,ymm12,YMMWORD[((384-512))+rax]
 	vpaddd	ymm13,ymm13,YMMWORD[((416-512))+rax]
@@ -1383,10 +1385,10 @@ $L$oop8x:
 	vpunpckldq	ymm8,ymm15,ymm9
 	vpunpckhdq	ymm12,ymm12,ymm13
 	vpunpckhdq	ymm15,ymm15,ymm9
-	vpunpcklqdq	ymm13,ymm2,ymm8
-	vpunpckhqdq	ymm2,ymm2,ymm8
-	vpunpcklqdq	ymm9,ymm12,ymm15
-	vpunpckhqdq	ymm12,ymm12,ymm15
+	vpunpcklqdq	ymm13,ymm2,ymm8  ; "c0"
+	vpunpckhqdq	ymm2,ymm2,ymm8  ; "c1"
+	vpunpcklqdq	ymm9,ymm12,ymm15  ; "c2"
+	vpunpckhqdq	ymm12,ymm12,ymm15  ; "c3"
 	vpaddd	ymm4,ymm4,YMMWORD[((512-512))+rax]
 	vpaddd	ymm5,ymm5,YMMWORD[((544-512))+rax]
 	vpaddd	ymm6,ymm6,YMMWORD[((576-512))+rax]
@@ -1396,11 +1398,11 @@ $L$oop8x:
 	vpunpckldq	ymm8,ymm6,ymm7
 	vpunpckhdq	ymm4,ymm4,ymm5
 	vpunpckhdq	ymm6,ymm6,ymm7
-	vpunpcklqdq	ymm5,ymm15,ymm8
-	vpunpckhqdq	ymm15,ymm15,ymm8
-	vpunpcklqdq	ymm7,ymm4,ymm6
-	vpunpckhqdq	ymm4,ymm4,ymm6
-	vperm2i128	ymm8,ymm13,ymm5,0x20
+	vpunpcklqdq	ymm5,ymm15,ymm8  ; "d0"
+	vpunpckhqdq	ymm15,ymm15,ymm8  ; "d1"
+	vpunpcklqdq	ymm7,ymm4,ymm6  ; "d2"
+	vpunpckhqdq	ymm4,ymm4,ymm6  ; "d3"
+	vperm2i128	ymm8,ymm13,ymm5,0x20  ; "de-interlace" further
 	vperm2i128	ymm5,ymm13,ymm5,0x31
 	vperm2i128	ymm13,ymm2,ymm15,0x20
 	vperm2i128	ymm15,ymm2,ymm15,0x31
@@ -1408,55 +1410,55 @@ $L$oop8x:
 	vperm2i128	ymm7,ymm9,ymm7,0x31
 	vperm2i128	ymm9,ymm12,ymm4,0x20
 	vperm2i128	ymm4,ymm12,ymm4,0x31
-	vmovdqa	ymm6,YMMWORD[rsp]
+	vmovdqa	ymm6,YMMWORD[rsp]  ; was offloaded, remember?
 	vmovdqa	ymm12,YMMWORD[32+rsp]
 
 	cmp	rdx,64*8
 	jb	NEAR $L$tail8x
 
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	vmovdqu	YMMWORD[rdi],ymm6
 	vmovdqu	YMMWORD[32+rdi],ymm8
 	vmovdqu	YMMWORD[64+rdi],ymm1
 	vmovdqu	YMMWORD[96+rdi],ymm5
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 
 	vpxor	ymm12,ymm12,YMMWORD[rsi]
 	vpxor	ymm13,ymm13,YMMWORD[32+rsi]
 	vpxor	ymm10,ymm10,YMMWORD[64+rsi]
 	vpxor	ymm15,ymm15,YMMWORD[96+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	vmovdqu	YMMWORD[rdi],ymm12
 	vmovdqu	YMMWORD[32+rdi],ymm13
 	vmovdqu	YMMWORD[64+rdi],ymm10
 	vmovdqu	YMMWORD[96+rdi],ymm15
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 
 	vpxor	ymm14,ymm14,YMMWORD[rsi]
 	vpxor	ymm2,ymm2,YMMWORD[32+rsi]
 	vpxor	ymm3,ymm3,YMMWORD[64+rsi]
 	vpxor	ymm7,ymm7,YMMWORD[96+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	vmovdqu	YMMWORD[rdi],ymm14
 	vmovdqu	YMMWORD[32+rdi],ymm2
 	vmovdqu	YMMWORD[64+rdi],ymm3
 	vmovdqu	YMMWORD[96+rdi],ymm7
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 
 	vpxor	ymm11,ymm11,YMMWORD[rsi]
 	vpxor	ymm9,ymm9,YMMWORD[32+rsi]
 	vpxor	ymm0,ymm0,YMMWORD[64+rsi]
 	vpxor	ymm4,ymm4,YMMWORD[96+rsi]
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; size optimization
 	vmovdqu	YMMWORD[rdi],ymm11
 	vmovdqu	YMMWORD[32+rdi],ymm9
 	vmovdqu	YMMWORD[64+rdi],ymm0
 	vmovdqu	YMMWORD[96+rdi],ymm4
-	lea	rdi,[128+rdi]
+	lea	rdi,[128+rdi]  ; size optimization
 
 	sub	rdx,64*8
 	jnz	NEAR $L$oop_outer8x
@@ -1486,23 +1488,23 @@ $L$tail8x:
 
 ALIGN	32
 $L$64_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vmovdqu	YMMWORD[rdi],ymm6
 	vmovdqu	YMMWORD[32+rdi],ymm8
 	je	NEAR $L$done8x
 
-	lea	rsi,[64+rsi]
+	lea	rsi,[64+rsi]  ; inp+=64*1
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm1
-	lea	rdi,[64+rdi]
-	sub	rdx,64
+	lea	rdi,[64+rdi]  ; out+=64*1
+	sub	rdx,64  ; len-=64*1
 	vmovdqa	YMMWORD[32+rsp],ymm5
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$128_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1512,17 +1514,17 @@ $L$128_or_more8x:
 	vmovdqu	YMMWORD[96+rdi],ymm5
 	je	NEAR $L$done8x
 
-	lea	rsi,[128+rsi]
+	lea	rsi,[128+rsi]  ; inp+=64*2
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm12
-	lea	rdi,[128+rdi]
-	sub	rdx,128
+	lea	rdi,[128+rdi]  ; out+=64*2
+	sub	rdx,128  ; len-=64*2
 	vmovdqa	YMMWORD[32+rsp],ymm13
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$192_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1536,17 +1538,17 @@ $L$192_or_more8x:
 	vmovdqu	YMMWORD[160+rdi],ymm13
 	je	NEAR $L$done8x
 
-	lea	rsi,[192+rsi]
+	lea	rsi,[192+rsi]  ; inp+=64*3
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm10
-	lea	rdi,[192+rdi]
-	sub	rdx,192
+	lea	rdi,[192+rdi]  ; out+=64*3
+	sub	rdx,192  ; len-=64*3
 	vmovdqa	YMMWORD[32+rsp],ymm15
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$256_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1564,17 +1566,17 @@ $L$256_or_more8x:
 	vmovdqu	YMMWORD[224+rdi],ymm15
 	je	NEAR $L$done8x
 
-	lea	rsi,[256+rsi]
+	lea	rsi,[256+rsi]  ; inp+=64*4
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm14
-	lea	rdi,[256+rdi]
-	sub	rdx,256
+	lea	rdi,[256+rdi]  ; out+=64*4
+	sub	rdx,256  ; len-=64*4
 	vmovdqa	YMMWORD[32+rsp],ymm2
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$320_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1596,17 +1598,17 @@ $L$320_or_more8x:
 	vmovdqu	YMMWORD[288+rdi],ymm2
 	je	NEAR $L$done8x
 
-	lea	rsi,[320+rsi]
+	lea	rsi,[320+rsi]  ; inp+=64*5
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm3
-	lea	rdi,[320+rdi]
-	sub	rdx,320
+	lea	rdi,[320+rdi]  ; out+=64*5
+	sub	rdx,320  ; len-=64*5
 	vmovdqa	YMMWORD[32+rsp],ymm7
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$384_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1632,17 +1634,17 @@ $L$384_or_more8x:
 	vmovdqu	YMMWORD[352+rdi],ymm7
 	je	NEAR $L$done8x
 
-	lea	rsi,[384+rsi]
+	lea	rsi,[384+rsi]  ; inp+=64*6
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm11
-	lea	rdi,[384+rdi]
-	sub	rdx,384
+	lea	rdi,[384+rdi]  ; out+=64*6
+	sub	rdx,384  ; len-=64*6
 	vmovdqa	YMMWORD[32+rsp],ymm9
 	jmp	NEAR $L$oop_tail8x
 
 ALIGN	32
 $L$448_or_more8x:
-	vpxor	ymm6,ymm6,YMMWORD[rsi]
+	vpxor	ymm6,ymm6,YMMWORD[rsi]  ; xor with input
 	vpxor	ymm8,ymm8,YMMWORD[32+rsi]
 	vpxor	ymm1,ymm1,YMMWORD[64+rsi]
 	vpxor	ymm5,ymm5,YMMWORD[96+rsi]
@@ -1672,11 +1674,11 @@ $L$448_or_more8x:
 	vmovdqu	YMMWORD[416+rdi],ymm9
 	je	NEAR $L$done8x
 
-	lea	rsi,[448+rsi]
+	lea	rsi,[448+rsi]  ; inp+=64*7
 	xor	r10,r10
 	vmovdqa	YMMWORD[rsp],ymm0
-	lea	rdi,[448+rdi]
-	sub	rdx,448
+	lea	rdi,[448+rdi]  ; out+=64*7
+	sub	rdx,448  ; len-=64*7
 	vmovdqa	YMMWORD[32+rsp],ymm4
 
 $L$oop_tail8x:
@@ -1723,20 +1725,20 @@ se_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
 	lea	r10,[$L$ctr32_body]
-	cmp	rbx,r10
+	cmp	rbx,r10  ; context->Rip<.Lprologue
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[152+r8]  ; pull context->Rsp
 
-	lea	r10,[$L$no_data]
-	cmp	rbx,r10
+	lea	r10,[$L$no_data]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=.Lepilogue
 	jae	NEAR $L$common_seh_tail
 
 	lea	rax,[((64+24+48))+rax]
@@ -1747,40 +1749,40 @@ se_handler:
 	mov	r13,QWORD[((-32))+rax]
 	mov	r14,QWORD[((-40))+rax]
 	mov	r15,QWORD[((-48))+rax]
-	mov	QWORD[144+r8],rbx
-	mov	QWORD[160+r8],rbp
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
-	mov	QWORD[232+r8],r14
-	mov	QWORD[240+r8],r15
+	mov	QWORD[144+r8],rbx  ; restore context->Rbx
+	mov	QWORD[160+r8],rbp  ; restore context->Rbp
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
+	mov	QWORD[232+r8],r14  ; restore context->R14
+	mov	QWORD[240+r8],r15  ; restore context->R14
 
 $L$common_seh_tail:
 	mov	rdi,QWORD[8+rax]
 	mov	rsi,QWORD[16+rax]
-	mov	QWORD[152+r8],rax
-	mov	QWORD[168+r8],rsi
-	mov	QWORD[176+r8],rdi
+	mov	QWORD[152+r8],rax  ; restore context->Rsp
+	mov	QWORD[168+r8],rsi  ; restore context->Rsi
+	mov	QWORD[176+r8],rdi  ; restore context->Rdi
 
-	mov	rdi,QWORD[40+r9]
-	mov	rsi,r8
-	mov	ecx,154
-	DD	0xa548f3fc
+	mov	rdi,QWORD[40+r9]  ; disp->ContextRecord
+	mov	rsi,r8  ; context
+	mov	ecx,154  ; sizeof(CONTEXT)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rsi,r9
-	xor	rcx,rcx
-	mov	rdx,QWORD[8+rsi]
-	mov	r8,QWORD[rsi]
-	mov	r9,QWORD[16+rsi]
-	mov	r10,QWORD[40+rsi]
-	lea	r11,[56+rsi]
-	lea	r12,[24+rsi]
-	mov	QWORD[32+rsp],r10
-	mov	QWORD[40+rsp],r11
-	mov	QWORD[48+rsp],r12
-	mov	QWORD[56+rsp],rcx
+	xor	rcx,rcx  ; arg1, UNW_FLAG_NHANDLER
+	mov	rdx,QWORD[8+rsi]  ; arg2, disp->ImageBase
+	mov	r8,QWORD[rsi]  ; arg3, disp->ControlPc
+	mov	r9,QWORD[16+rsi]  ; arg4, disp->FunctionEntry
+	mov	r10,QWORD[40+rsi]  ; disp->ContextRecord
+	lea	r11,[56+rsi]  ; &disp->HandlerData
+	lea	r12,[24+rsi]  ; &disp->EstablisherFrame
+	mov	QWORD[32+rsp],r10  ; arg5
+	mov	QWORD[40+rsp],r11  ; arg6
+	mov	QWORD[48+rsp],r12  ; arg7
+	mov	QWORD[56+rsp],rcx  ; arg8, (NULL)
 	call	QWORD[__imp_RtlVirtualUnwind]
 
-	mov	eax,1
+	mov	eax,1  ; ExceptionContinueSearch
 	add	rsp,64
 	popfq
 	pop	r15
@@ -1808,28 +1810,28 @@ ssse3_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; prologue label
+	cmp	rbx,r10  ; context->Rip<prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[192+r8]
+	mov	rax,QWORD[192+r8]  ; pull context->R9
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
 	lea	rsi,[((-40))+rax]
-	lea	rdi,[512+r8]
+	lea	rdi,[512+r8]  ; &context.Xmm6
 	mov	ecx,4
-	DD	0xa548f3fc
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	jmp	NEAR $L$common_seh_tail
 
@@ -1848,28 +1850,28 @@ full_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; prologue label
+	cmp	rbx,r10  ; context->Rip<prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[192+r8]
+	mov	rax,QWORD[192+r8]  ; pull context->R9
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
 	lea	rsi,[((-168))+rax]
-	lea	rdi,[512+r8]
+	lea	rdi,[512+r8]  ; &context.Xmm6
 	mov	ecx,20
-	DD	0xa548f3fc
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	jmp	NEAR $L$common_seh_tail
 
@@ -1908,7 +1910,7 @@ $L$SEH_info_ChaCha20_ctr32_ssse3_4x:
 $L$SEH_info_ChaCha20_ctr32_avx2:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$8x_body wrt ..imagebase,$L$8x_epilogue wrt ..imagebase
+	DD	$L$8x_body wrt ..imagebase,$L$8x_epilogue wrt ..imagebase  ; HandlerData[]
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

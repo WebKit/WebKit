@@ -126,7 +126,7 @@ class Base64Test : public testing::TestWithParam<Base64TestVector> {};
 
 INSTANTIATE_TEST_SUITE_P(All, Base64Test, testing::ValuesIn(kTestVectors));
 
-// RemoveNewlines returns a copy of |in| with all '\n' characters removed.
+// RemoveNewlines returns a copy of `in` with all '\n' characters removed.
 static std::string RemoveNewlines(const char *in) {
   std::string ret;
   const size_t in_len = strlen(in);
@@ -162,7 +162,7 @@ TEST_P(Base64Test, DecodeBase64) {
   const Base64TestVector &t = GetParam();
   if (t.relation == valid) {
     // The non-canonical encodings will generally have odd whitespace etc
-    // that |EVP_DecodeBase64| will reject.
+    // that `EVP_DecodeBase64` will reject.
     return;
   }
 
@@ -217,7 +217,7 @@ TEST_P(Base64Test, EncodeDecode) {
     ASSERT_TRUE(EVP_EncodedLength(&max_encoded_len, decoded_len));
 
     // EVP_EncodeUpdate will output new lines every 64 bytes of output so we
-    // need slightly more than |EVP_EncodedLength| returns. */
+    // need slightly more than `EVP_EncodedLength` returns. */
     max_encoded_len += (max_encoded_len + 63) >> 6;
     std::vector<uint8_t> out_vec(max_encoded_len);
     uint8_t *out = out_vec.data();
@@ -300,7 +300,7 @@ TEST_P(Base64Test, DecodeUpdateStreaming) {
           if (i == encoded_len ||
               (i + 1 == encoded_len && t.encoded[i] == '\n') ||
               // If there was an '-' in the input (which means “EOF”) then
-              // this loop will continue to test that |EVP_DecodeUpdate| will
+              // this loop will continue to test that `EVP_DecodeUpdate` will
               // ignore the remainder of the input.
               strchr(t.encoded, '-') != nullptr) {
             break;

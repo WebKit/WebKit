@@ -92,8 +92,8 @@ static void sha512_block_data_order(uint64_t state[8], const uint8_t *in,
 
 bcm_infallible bssl::BCM_sha384_final(uint8_t out[SHA384_DIGEST_LENGTH],
                                       SHA512_CTX *sha) {
-  // This function must be paired with |BCM_sha384_init|, which sets
-  // |sha->md_len| to |SHA384_DIGEST_LENGTH|.
+  // This function must be paired with `BCM_sha384_init`, which sets
+  // `sha->md_len` to `SHA384_DIGEST_LENGTH`.
   assert(sha->md_len == SHA384_DIGEST_LENGTH);
   sha512_final_impl(out, SHA384_DIGEST_LENGTH, sha);
   return bcm_infallible::approved;
@@ -111,8 +111,8 @@ bcm_infallible bssl::BCM_sha512_256_update(SHA512_CTX *sha, const void *data,
 
 bcm_infallible bssl::BCM_sha512_256_final(uint8_t out[SHA512_256_DIGEST_LENGTH],
                                           SHA512_CTX *sha) {
-  // This function must be paired with |BCM_sha512_256_init|, which sets
-  // |sha->md_len| to |SHA512_256_DIGEST_LENGTH|.
+  // This function must be paired with `BCM_sha512_256_init`, which sets
+  // `sha->md_len` to `SHA512_256_DIGEST_LENGTH`.
   assert(sha->md_len == SHA512_256_DIGEST_LENGTH);
   sha512_final_impl(out, SHA512_256_DIGEST_LENGTH, sha);
   return bcm_infallible::approved;
@@ -170,9 +170,9 @@ bcm_infallible bssl::BCM_sha512_update(SHA512_CTX *c, const void *in_data,
 
 bcm_infallible bssl::BCM_sha512_final(uint8_t out[SHA512_DIGEST_LENGTH],
                                       SHA512_CTX *sha) {
-  // Ideally we would assert |sha->md_len| is |SHA512_DIGEST_LENGTH| to match
-  // the size hint, but calling code often pairs |BCM_sha384_init| with
-  // |BCM_sha512_final| and expects |sha->md_len| to carry the size over.
+  // Ideally we would assert `sha->md_len` is `SHA512_DIGEST_LENGTH` to match
+  // the size hint, but calling code often pairs `BCM_sha384_init` with
+  // `BCM_sha512_final` and expects `sha->md_len` to carry the size over.
   //
   // TODO(davidben): Add an assert and fix code to match them up.
   sha512_final_impl(out, sha->md_len, sha);

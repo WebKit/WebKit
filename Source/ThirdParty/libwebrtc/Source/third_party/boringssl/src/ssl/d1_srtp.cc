@@ -92,27 +92,29 @@ int SSL_CTX_set_srtp_profiles(SSL_CTX *ctx, const char *profiles) {
 }
 
 int SSL_set_srtp_profiles(SSL *ssl, const char *profiles) {
-  return ssl->config != nullptr &&
-         ssl_ctx_make_profiles(profiles, &ssl->config->srtp_profiles);
+  auto *ssl_impl = FromOpaque(ssl);
+  return ssl_impl->config != nullptr &&
+         ssl_ctx_make_profiles(profiles, &ssl_impl->config->srtp_profiles);
 }
 
 const STACK_OF(SRTP_PROTECTION_PROFILE) *SSL_get_srtp_profiles(const SSL *ssl) {
-  if (ssl == nullptr) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (ssl_impl == nullptr) {
     return nullptr;
   }
 
-  if (ssl->config == nullptr) {
+  if (ssl_impl->config == nullptr) {
     assert(0);
     return nullptr;
   }
 
-  return ssl->config->srtp_profiles != nullptr
-             ? ssl->config->srtp_profiles.get()
-             : ssl->ctx->srtp_profiles.get();
+  return ssl_impl->config->srtp_profiles != nullptr
+             ? ssl_impl->config->srtp_profiles.get()
+             : ssl_impl->ctx->srtp_profiles.get();
 }
 
 const SRTP_PROTECTION_PROFILE *SSL_get_selected_srtp_profile(SSL *ssl) {
-  return ssl->s3->srtp_profile;
+  return FromOpaque(ssl)->s3->srtp_profile;
 }
 
 int SSL_CTX_set_tlsext_use_srtp(SSL_CTX *ctx, const char *profiles) {

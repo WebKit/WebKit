@@ -93,8 +93,8 @@ UniquePtr<SSLAEADContext> SSLAEADContext::Create(
       aead_ctx->ad_is_header_ = true;
     }
   } else {
-    // This is a CBC cipher suite that implements the |EVP_AEAD| interface. The
-    // |EVP_AEAD| takes the MAC key, encryption key, and fixed IV concatenated
+    // This is a CBC cipher suite that implements the `EVP_AEAD` interface. The
+    // `EVP_AEAD` takes the MAC key, encryption key, and fixed IV concatenated
     // as its input key.
     assert(protocol_version < TLS1_3_VERSION);
     BSSL_CHECK(mac_key.size() + enc_key.size() + fixed_iv.size() <=
@@ -106,7 +106,7 @@ UniquePtr<SSLAEADContext> SSLAEADContext::Create(
     enc_key =
         Span(merged_key, enc_key.size() + mac_key.size() + fixed_iv.size());
 
-    // The |EVP_AEAD|'s per-encryption nonce, if any, is actually the CBC IV. It
+    // The `EVP_AEAD`'s per-encryption nonce, if any, is actually the CBC IV. It
     // must be generated randomly and prepended to the record.
     aead_ctx->variable_nonce_included_in_record_ = true;
     aead_ctx->random_variable_nonce_ = true;
@@ -176,7 +176,7 @@ size_t SSLAEADContext::MaxSealInputLen(size_t max_out) const {
   if (is_null_cipher() || CRYPTO_fuzzer_mode_enabled()) {
     return max_out;
   }
-  // TODO(crbug.com/42290602): This should be part of |EVP_AEAD_CTX|.
+  // TODO(crbug.com/42290602): This should be part of `EVP_AEAD_CTX`.
   size_t overhead = EVP_AEAD_max_overhead(EVP_AEAD_CTX_aead(ctx_.get()));
   if (SSL_CIPHER_is_block_cipher(cipher())) {
     size_t block_size;

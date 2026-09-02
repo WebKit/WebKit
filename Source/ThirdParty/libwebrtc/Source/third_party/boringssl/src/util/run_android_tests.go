@@ -46,6 +46,7 @@ var (
 	allTestsArgs = flag.String("all-tests-args", "", "Specifies space-separated arguments to pass to all_tests.go")
 	runnerArgs   = flag.String("runner-args", "", "Specifies space-separated arguments to pass to ssl/test/runner")
 	jsonOutput   = flag.String("json-output", "", "The file to output JSON results to.")
+	uploadOnly   = flag.Bool("upload-only", false, "Skips running the tests and only uploads the data to /data/local/tmp/boringssl/tmp on the device.")
 )
 
 func enableUnitTests() bool {
@@ -408,6 +409,11 @@ func main() {
 	if err := adb("push", "-p", tmpDir, "/data/local/tmp/boringssl-tmp"); err != nil {
 		fmt.Printf("Failed to push runner: %s\n", err)
 		os.Exit(1)
+	}
+
+	if *uploadOnly {
+		fmt.Printf("Tests and data are now uploaded to /data/local/tmp/boringssl-tmp on the device.\n")
+		return
 	}
 
 	var unitTestExit int

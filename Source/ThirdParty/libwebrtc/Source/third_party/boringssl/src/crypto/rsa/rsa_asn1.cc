@@ -326,14 +326,14 @@ int bssl::rsa_parse_pss_params(CBS *cbs, rsa_pss_params_t *out,
   if (!CBS_get_asn1(cbs, &params, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&params, &hash_wrapper,
                     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||
-      // |hash_wrapper| will be parsed below.
+      // `hash_wrapper` will be parsed below.
       !CBS_get_asn1(&params, &mask_wrapper,
                     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 1) ||
       !CBS_get_asn1(&mask_wrapper, &mask_alg, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&mask_alg, &mask_oid, CBS_ASN1_OBJECT) ||
       // We only support MGF-1.
       Span<const uint8_t>(mask_oid) != kMGF1OID ||
-      // The remainder of |mask_alg| will be parsed below.
+      // The remainder of `mask_alg` will be parsed below.
       CBS_len(&mask_wrapper) != 0 ||
       !CBS_get_asn1(&params, &salt_wrapper,
                     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 2) ||

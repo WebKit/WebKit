@@ -138,7 +138,7 @@ int CheckIdempotentError(const char *name, SSL *ssl,
 
 #if defined(HANDSHAKER_SUPPORTED)
 
-// MoveBIOs moves the |BIO|s of |src| to |dst|.  It is used for handoff.
+// MoveBIOs moves the `BIO`s of `src` to `dst`.  It is used for handoff.
 static void MoveBIOs(SSL *dest, SSL *src) {
   BIO *rbio = SSL_get_rbio(src);
   BIO_up_ref(rbio);
@@ -180,7 +180,7 @@ static ssize_t waitpid_eintr(pid_t pid, int *wstatus, int options) {
   return ret;
 }
 
-// Proxy relays data between |socket|, which is connected to the client, and the
+// Proxy relays data between `socket`, which is connected to the client, and the
 // handshaker, which is connected to the numerically specified file descriptors,
 // until the handshaker returns control.
 static bool Proxy(BIO *socket, bool async, int control, int rfd, int wfd) {
@@ -381,10 +381,10 @@ class FileActionsDestroyer {
 };
 
 // StartHandshaker starts the handshaker process and, on success, returns a
-// handle to the process in |*out|. It sets |*out_control| to a control pipe to
-// the process. |map_fds| maps from desired fd number in the child process to
-// the source fd in the calling process. |close_fds| is the list of additional
-// fds to close, which may overlap with |map_fds|. Other than stdin, stdout, and
+// handle to the process in `*out`. It sets `*out_control` to a control pipe to
+// the process. `map_fds` maps from desired fd number in the child process to
+// the source fd in the calling process. `close_fds` is the list of additional
+// fds to close, which may overlap with `map_fds`. Other than stdin, stdout, and
 // stderr, the status of fds not listed in either set is undefined.
 static bool StartHandshaker(ScopedProcess *out, ScopedFD *out_control,
                             const TestConfig *config, bool is_resume,
@@ -438,9 +438,9 @@ static bool StartHandshaker(ScopedProcess *out, ScopedFD *out_control,
       max_fd = std::max(max_fd, pair.first);
       max_fd = std::max(max_fd, pair.second);
     }
-    // |map_fds| may contain cycles, so make a copy of all the source fds.
-    // |posix_spawn| can only use |dup2|, not |dup|, so we assume |max_fd| is
-    // the last fd we care about inheriting. |temp_fds| maps from fd number in
+    // `map_fds` may contain cycles, so make a copy of all the source fds.
+    // `posix_spawn` can only use `dup2`, not `dup`, so we assume `max_fd` is
+    // the last fd we care about inheriting. `temp_fds` maps from fd number in
     // the parent process to a temporary fd number in the child process.
     std::map<int, int> temp_fds;
     int next_fd = max_fd + 1;
@@ -473,7 +473,7 @@ static bool StartHandshaker(ScopedProcess *out, ScopedFD *out_control,
   fflush(stdout);
   fflush(stderr);
 
-  // MSan doesn't know that |posix_spawn| initializes its output, so initialize
+  // MSan doesn't know that `posix_spawn` initializes its output, so initialize
   // it to -1.
   pid_t pid = -1;
   if (posix_spawn(&pid, args[0], &actions, nullptr,
@@ -486,8 +486,8 @@ static bool StartHandshaker(ScopedProcess *out, ScopedFD *out_control,
   return true;
 }
 
-// RunHandshaker forks and execs the handshaker binary, handing off |input|,
-// and, after proxying some amount of handshake traffic, handing back |out|.
+// RunHandshaker forks and execs the handshaker binary, handing off `input`,
+// and, after proxying some amount of handshake traffic, handing back `out`.
 static bool RunHandshaker(BIO *bio, const TestConfig *config, bool is_resume,
                           Span<const uint8_t> input,
                           std::vector<uint8_t> *out) {
@@ -500,8 +500,8 @@ static bool RunHandshaker(BIO *bio, const TestConfig *config, bool is_resume,
   //
   // To avoid this, this process never proxies data to the handshaker that the
   // handshaker has not explicitly requested as a result of hitting
-  // |SSL_ERROR_WANT_READ|.  Pipes allow the data to sit in a buffer while the
-  // two processes synchronize over the |control| channel.
+  // `SSL_ERROR_WANT_READ`.  Pipes allow the data to sit in a buffer while the
+  // two processes synchronize over the `control` channel.
   if (pipe(rfd) != 0) {
     perror("pipe");
     return false;
@@ -613,7 +613,7 @@ static bool RequestHandshakeHint(const TestConfig *config, bool is_resume,
   return true;
 }
 
-// PrepareHandoff accepts the |ClientHello| from |ssl| and serializes state to
+// PrepareHandoff accepts the `ClientHello` from `ssl` and serializes state to
 // be passed to the handshaker.  The serialized state includes both the SSL
 // handoff, as well test-related state.
 static bool PrepareHandoff(SSL *ssl, SettingsWriter *writer,
@@ -651,8 +651,8 @@ static bool PrepareHandoff(SSL *ssl, SettingsWriter *writer,
 
 // DoSplitHandshake delegates the SSL handshake to a separate process, called
 // the handshaker.  This process proxies I/O between the handshaker and the
-// client, using the |BIO| from |ssl|.  After a successful handshake, |ssl| is
-// replaced with a new |SSL| object, in a way that is intended to be invisible
+// client, using the `BIO` from `ssl`.  After a successful handshake, `ssl` is
+// replaced with a new `SSL` object, in a way that is intended to be invisible
 // to the caller.
 bool DoSplitHandshake(UniquePtr<SSL> *ssl, SettingsWriter *writer,
                       bool is_resume) {
@@ -660,7 +660,7 @@ bool DoSplitHandshake(UniquePtr<SSL> *ssl, SettingsWriter *writer,
   std::vector<uint8_t> handshaker_input;
   const TestConfig *config = GetTestConfig(ssl->get());
   // out is the response from the handshaker, which includes a serialized
-  // handback message, but also serialized updates to the |TestState|.
+  // handback message, but also serialized updates to the `TestState`.
   std::vector<uint8_t> out;
   if (!PrepareHandoff(ssl->get(), writer, &handshaker_input) ||
       !RunHandshaker(SSL_get_rbio(ssl->get()), config, is_resume,

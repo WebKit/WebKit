@@ -27,8 +27,8 @@ load(
     "crypto_sources",
     "crypto_sources_asm",
     "crypto_test_data",
-    "crypto_test_sources",
     "crypto_test_internal_headers",
+    "crypto_test_sources",
     "decrepit_internal_headers",
     "decrepit_sources",
     "decrepit_test_sources",
@@ -73,6 +73,9 @@ bssl_cc_library(
     hdrs = crypto_headers,
     asm_srcs = bcm_sources_asm + crypto_sources_asm,
     copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    # :crypto is the bottom of the dependency tree, so it suffices to add the
+    # prefix here and propagate to users.
+    defines = ["BORINGSSL_PREFIX=bssl_bzl"],
     includes = ["include"],
     internal_hdrs = bcm_internal_headers + crypto_internal_headers,
     linkopts = select({

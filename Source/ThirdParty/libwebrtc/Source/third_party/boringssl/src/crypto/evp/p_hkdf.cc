@@ -81,7 +81,7 @@ static int pkey_hkdf_derive(EvpPkeyCtx *ctx, uint8_t *out, size_t *out_len) {
     if (hctx->mode == EVP_PKEY_HKDEF_MODE_EXTRACT_ONLY) {
       *out_len = EVP_MD_size(hctx->md);
     }
-    // HKDF-Expand is variable-length and returns |*out_len| bytes. "Output" the
+    // HKDF-Expand is variable-length and returns `*out_len` bytes. "Output" the
     // input length by leaving it alone.
     return 1;
   }
@@ -135,7 +135,7 @@ static int pkey_hkdf_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
     }
     case EVP_PKEY_CTRL_HKDF_INFO: {
       const auto *info = reinterpret_cast<const Span<const uint8_t> *>(p2);
-      // |EVP_PKEY_CTX_add1_hkdf_info| appends to the info string, rather than
+      // `EVP_PKEY_CTX_add1_hkdf_info` appends to the info string, rather than
       // replacing it.
       return hctx->info.Append(*info);
     }

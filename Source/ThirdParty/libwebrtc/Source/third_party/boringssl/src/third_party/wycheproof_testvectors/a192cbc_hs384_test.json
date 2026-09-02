@@ -1,0 +1,1360 @@
+{
+  "algorithm": "A192CBC-HS384",
+  "schema": "aead_test_schema_v1.json",
+  "numberOfTests": 94,
+  "header": [
+    "Test vectors of type AeadTest test authenticated encryption with additional data.",
+    "The test vectors are intended for testing both encryption and decryption.",
+    "Test vectors with \"result\" : \"valid\" are valid encryptions.",
+    "Test vectors with \"result\" : \"invalid\" are using invalid parameters",
+    "or contain an invalid ciphertext or tag."
+  ],
+  "notes": {
+    "Ktv": {
+      "bugType": "BASIC",
+      "description": "Test vector from RFC 7518."
+    },
+    "ModifiedTag": {
+      "bugType": "AUTH_BYPASS",
+      "description": "The test vector contains a ciphertext with a modified tag. The test vector was obtained by manipulating a valid ciphertext. The purpose of the test is to check whether the verification fully checks the tag.",
+      "effect": "Failing to fully verify a tag reduces the security level of an encryption."
+    },
+    "Pseudorandom": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains pseudorandomly generated inputs. The goal of the test vector is to check the correctness of the implementation for various sizes of the input parameters. Some libraries do not support all the parameter sizes. In particular the size of the IV is often restricted."
+    },
+    "SpecialCaseIv": {
+      "bugType": "FUNCTIONALITY"
+    }
+  },
+  "testGroups": [
+    {
+      "type": "AeadTest",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9"
+      },
+      "keySize": 384,
+      "ivSize": 128,
+      "tagSize": 192,
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "",
+          "flags": [
+            "Ktv"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "1af38c2dc2b96ffdd86694092341bc04",
+          "aad": "546865207365636f6e64207072696e6369706c65206f662041756775737465204b6572636b686f666673",
+          "msg": "41206369706865722073797374656d206d757374206e6f7420626520726571756972656420746f206265207365637265742c20616e64206974206d7573742062652061626c6520746f2066616c6c20696e746f207468652068616e6473206f662074686520656e656d7920776974686f757420696e636f6e76656e69656e6365",
+          "ct": "ea65da6b59e61edb419be62d19712ae5d303eeb50052d0dfd6697f77224c8edb000d279bdc14c1072654bd30944230c657bed4ca0c9f4a8466f22b226d1746214bf8cfc2400add9f5126e479663fc90b3bed787a2f0ffcbf3904be2a641d5c2105bfe591bae23b1d7449e532eef60a9ac8bb6c6b01d35d49787bcd57ef484927f280adc91ac0c4e79c7b11efc60054e3",
+          "tag": "8490ac0e58949bfe51875d733f93ac2075168039ccc733d7",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "0994653634b0a3ef75ff1d531d78c1f767f8dabdf3fb3c837cb9762ad6932eb1a63ec2f231e5797b01ea76f93584c97f",
+          "iv": "c085a8d6341116e4086c2862284ee6cd",
+          "aad": "",
+          "msg": "",
+          "ct": "7d9ce87507ae3bbf4e21d5ff31d05913",
+          "tag": "89a7d049c2942ff4caea76dfc0e4a480ab0dad3bc957620c",
+          "result": "valid"
+        },
+        {
+          "tcId": 3,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "32e55080f475f0cfb8ada0cc9bf9622c25a0e91761e623c8d4939f5b001cee1ffd51fe5dfc5e40877dd1cee3b4b35641",
+          "iv": "fe366fc2ec500fbee85b1d0ec37d8ec0",
+          "aad": "",
+          "msg": "f5",
+          "ct": "8c9c8729cf43739e11f3704dbb0e7c75",
+          "tag": "e1029891b2accbaec586ab6ec30f257c659fab8ab28c8b79",
+          "result": "valid"
+        },
+        {
+          "tcId": 4,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "08f4c54f7cc5fe4ad71786e0a826fbf7c68c3e712458acadca260d29f8d643cc24c6dcd94b23c350f53af009a6909830",
+          "iv": "781cad0c93971fee2bc382384a142015",
+          "aad": "",
+          "msg": "87ad",
+          "ct": "dc38e47a997ed0bb1108cec84ac1663f",
+          "tag": "ef6ce5e373189cf29e544a56087b5321e2d6700ee514578d",
+          "result": "valid"
+        },
+        {
+          "tcId": 5,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "5a36a2fd0d05a2b0e5a3a9bc28a4e65a8d6249ceac836a7ba8b41991dfed368721d7e507fba0495cbf779128057c493a",
+          "iv": "e18440e3c72daf7308051f925a2f5895",
+          "aad": "",
+          "msg": "2415df",
+          "ct": "3e81021646c5d5012f8896fb6b8d0aaa",
+          "tag": "2ad1b12ae3e60fde71e9beaf616edc88415a0543a0db72ce",
+          "result": "valid"
+        },
+        {
+          "tcId": 6,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "81b26e740551311c45faf2a52fb527fe7c49ba1d0ead5c17a6c45a1c14d710f2431b51d1d42bcb2566fdcafb6d0164f4",
+          "iv": "0ce76a1baff4ed042f8711dfd6e77e1b",
+          "aad": "",
+          "msg": "6f949b1a",
+          "ct": "3bcb5d471f41e6680faaf519a989f86d",
+          "tag": "79c122d7e6cd7206a019d0f22bac3a5a8676fe45139caee2",
+          "result": "valid"
+        },
+        {
+          "tcId": 7,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "616f4ad74e6baf09bd5c2bbbb4a42ba4386f8e627403ee019cd1ebef9e3f950902028e2fa4b873d7e862db90543be2dd",
+          "iv": "bdf2327fc8a72476f5bd07aaa5ab6847",
+          "aad": "",
+          "msg": "afd9582d47",
+          "ct": "79b2a352ed49bc5b1c7d4bb70af7c99d",
+          "tag": "a11b6185a1a615e8a8118eba23e887928ba0ae056b84c32c",
+          "result": "valid"
+        },
+        {
+          "tcId": 8,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "e3e9577aee59fbebccc57b2191f7af9b92931576884b14bc8734fa381797272c23a1296de795f2dc66b7f09b09f9edd4",
+          "iv": "6095b2138ef669930e810e2880a8ad75",
+          "aad": "",
+          "msg": "e5634b3e1347",
+          "ct": "1dcce79b3681f0460a9f0e1cfdb1072b",
+          "tag": "0170a09a4b6e5199eeebaa61e48dce291b3c241d7e7318bc",
+          "result": "valid"
+        },
+        {
+          "tcId": 9,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "1cc4440e7b876b2c16464458202e505d715105ee3acd639c44950ad06dff2d7122dff940c205d355e8517a1a862f8715",
+          "iv": "c6da35c8be5a9e4fcf4f784e2ec57836",
+          "aad": "",
+          "msg": "fbf88a005ad720",
+          "ct": "e871f0c4bfc40edc70a78f7c168a04c5",
+          "tag": "507656289e29fb16574aecc0b57f53b6f0735181b113ec9b",
+          "result": "valid"
+        },
+        {
+          "tcId": 10,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "f228cea042ad682e2b5a33ed5360b920fdcbb0937e8ef006cbccce8e7cf69e9c6e44fef0b3846b31c6ac575ac8376f91",
+          "iv": "45eb89ce26c1a404b13112c88d4e09c0",
+          "aad": "",
+          "msg": "9dad905d98dc46b1",
+          "ct": "66f31bd67d5ba2da1a0abfe7737bb989",
+          "tag": "337a6f765c2c601ab160ac69cdb650bef0753c134a1cd945",
+          "result": "valid"
+        },
+        {
+          "tcId": 11,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "db31e2ffbd5746d44539e64a82417a5516e2a75c86586e8fe038db5724e867ef096a7e52b3d24588d14a9ae9a9819516",
+          "iv": "a94b554533865060fe8640b064097e7c",
+          "aad": "",
+          "msg": "23e9ff68b9e84ca49e",
+          "ct": "1e8aa04dc7fd8253fd3946d404ac2c2a",
+          "tag": "54f404b4920101090dbb5aaee33eb1bca8780f8268362160",
+          "result": "valid"
+        },
+        {
+          "tcId": 12,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "4ef99de74d8c39a649f844fd42a7b550e9056dc842b6d37294d2c39abe8106f91a25c96293e9475584dfc1253b082d28",
+          "iv": "fcbd157da34b9b1fdfdeb8c0ebd43184",
+          "aad": "",
+          "msg": "ce821f117391fd0f1e86",
+          "ct": "7cb469430115ff4ac5962f953d32a29d",
+          "tag": "ad6064c3510bc71a289053c8d7e9db2123f15491c25d1ac8",
+          "result": "valid"
+        },
+        {
+          "tcId": 13,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "95f554ab41d06747deb158fdaff9786e5724edd0a9fb984d5e88bc6f2002909207880378a8c90789cffc814f2ed652b2",
+          "iv": "1f117f9a6c269913959a70d516b94bef",
+          "aad": "",
+          "msg": "17f8aed8593f87582c0c34",
+          "ct": "48929c65d0fdaf63c6842e9a30bab507",
+          "tag": "a97521f90b53d1f30b0e3c0883f04fc6bd50b4b6cd93adc7",
+          "result": "valid"
+        },
+        {
+          "tcId": 14,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "aec827144a22bae9082b7666af02078e9d7f653e8d415148471ae1e3c3ada2647a359ef3a931d97ccdf663ad0427eef3",
+          "iv": "ca46ef97994e58152aa47a4a68a72a28",
+          "aad": "",
+          "msg": "98ddb950a7ae4fb11542fe49",
+          "ct": "e4d40ffdc4377b3e6fd439c21e9910c8",
+          "tag": "9de36365cb928e7bba7a9c73c2e18dff81a02b9c0c399981",
+          "result": "valid"
+        },
+        {
+          "tcId": 15,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "213b2563b5de805fb8666620b0d77614c66077929b77860f60925654e43aac03bad178d7e695adc459e9f5b04c32f1a3",
+          "iv": "c7a3f0c9559b5e4f8fd02500656ee0dd",
+          "aad": "",
+          "msg": "8bb44128043efd5d43732ee396",
+          "ct": "3dce50696491fb3afb84962e4f7cb05b",
+          "tag": "b85317d54324d28b709870d26d87a8d0dcfdc709e8cf81fb",
+          "result": "valid"
+        },
+        {
+          "tcId": 16,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "fb5205ddd3657e1876c327d788718bc89a4ac8a2b82e8ecc2cd48a182094b29544ab043139f00bca39d3978405839887",
+          "iv": "d2ef152c76e4fa802d8acd2537b69c68",
+          "aad": "",
+          "msg": "11cf24bc8ae05432a6d573bdb5a1",
+          "ct": "b868ebcd3070df8794baef82974c78ea",
+          "tag": "2154cf58d68c3bb9091c8ae6524043b242bde4a4e9141c21",
+          "result": "valid"
+        },
+        {
+          "tcId": 17,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "dd4cf2c2517f39c62dc3e78804f7c4bcd8c3453537db36ce783dc27099c16539a79e6ea45246677676cbc13a4d772217",
+          "iv": "4a49f1ed2e29fd240dcc3d2f0281096c",
+          "aad": "",
+          "msg": "a04010aa8516c388b4acc4a16d13b8",
+          "ct": "94f6435dc2b0f455c3ecc3ab85dae0b8",
+          "tag": "c280edede04e3b324b20db0dde88b91473388ad5188bc4cd",
+          "result": "valid"
+        },
+        {
+          "tcId": 18,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "f0dde1df35b6dd7bc0de15707c2bed5dfab228b5bf92a118f5cdfaca54a82b56b54e66e0dd87f89b9e10d714d8338b59",
+          "iv": "c9fc1294ca0cdb1987705d842a77203d",
+          "aad": "",
+          "msg": "59e5c3726fd49a3742380e14014b4b59",
+          "ct": "883325b2f314a4441a72a10e21f8d6d1074e96a40c8ac253041157ce1dbe570b",
+          "tag": "494d2318ee96f7a5395ad8f96e4c7fd28abcf87e0aaeb247",
+          "result": "valid"
+        },
+        {
+          "tcId": 19,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "1576b585f16b4f40aced857c01b1eb801cf8da6959ece032cfd9062e924ea64eafe3f4536f670639dfd54a00182fe14e",
+          "iv": "5ee97b9c00bb1a739c385bd1095ab685",
+          "aad": "",
+          "msg": "91197a42522b1ded8ecad2bc8649f579b1",
+          "ct": "1df31a8c88e7ff41ad557c819557bde3297e94a619c0f0d771c935277149901c",
+          "tag": "8b7f00b012bebcd4c9e4c6a5752fd7e460ac63793ffb2c68",
+          "result": "valid"
+        },
+        {
+          "tcId": 20,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "aee9e31b298413986db048b099adc37a2f3b4cbdf3de2d874e2140366e7c9783b7e68a26628f45303497858f277e47ce",
+          "iv": "b65735ec5c193897e99b3fd538ffeb2c",
+          "aad": "",
+          "msg": "77c662ac8108ab143e83311543e017eaa553",
+          "ct": "e9a451ff6df68bc3a6fd86af7bc1cf054fe450c0a68967741ae7192b107a8982",
+          "tag": "8ee30e3f658c7eb3403bbf8ef81cab75584bae196b63452f",
+          "result": "valid"
+        },
+        {
+          "tcId": 21,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "2fb9e55360f201cec51ae2ea2f87a69ca4587527ba00425b903eb82e2c03d940c029376d399eafb3351fa23cfac1c54d",
+          "iv": "5c331b5c634d185c667fa0df0b769785",
+          "aad": "",
+          "msg": "0a9470c4656fee6f3a3c8a47365f251b13f972",
+          "ct": "b26dd074e5a07c5d35520428bf62e5b42c1deb93abe480406b52676b01ed8cdf",
+          "tag": "e138ced0f30a11382e34701f9eece286f2434be4e2ef18da",
+          "result": "valid"
+        },
+        {
+          "tcId": 22,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "075546f5ebbad388163df66956930899a0278c23d4aef68646f6b33a4f80639246092a23d7229d8906ff77627a25b4a7",
+          "iv": "6e04d0c491972326489fab20d3c5cf35",
+          "aad": "",
+          "msg": "89632d206cf0e218a3cd1e22230632594346f2cc",
+          "ct": "1289fb560c8fa64412bf776bef70ad9b1b8a96e995e52ca751a0e84e0feba87a",
+          "tag": "37adb9ff5e9f58d1ee03602f36fc28c92b949fa1d8fc7f8a",
+          "result": "valid"
+        },
+        {
+          "tcId": 23,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "f19b7755df4ecfa75f313cbc0d4c701d1245902fe0539349ad0d7ba3f25d06929d160db08149775c78f5abea7425fd83",
+          "iv": "061dd75ff437f1c2b16c992ed1c75b47",
+          "aad": "",
+          "msg": "70b389f4c8f7a6e65cf5409866058e8d7ee351cf57",
+          "ct": "91163f2f1d58b30708f5bad32981651ee2618afc42db21a04b015775dab53b30",
+          "tag": "b20d6f880a2b49b27cdba6fedfa948d2791f08816dc767a3",
+          "result": "valid"
+        },
+        {
+          "tcId": 24,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "ce66ccae0a27113924945b40a3738cb8eab65ebe9ee3b37f80d5d90f92120ed3086eb436cbc947cc081a5e083178173b",
+          "iv": "7cc2201ff160b76c64d28c2f95c41130",
+          "aad": "",
+          "msg": "f9bd7d7271c4a1516ead19e3ca2fb0780afc951d7eca",
+          "ct": "fe73e7b697d33d5fcc4142f4e9577cb31f1c9157069022252aefb9a175ea2f55",
+          "tag": "19f39f732add8af02e523a7501f9d5f699cfdb2cfbb533e5",
+          "result": "valid"
+        },
+        {
+          "tcId": 25,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "4915a48bffd09b6a4c706bfd119fc7caa075c8cff4125f234680bed038e806615597c8f5d15eaaca1ee8dd2d7e44c408",
+          "iv": "2a848f44f4a9af72aad722b3b0a1a744",
+          "aad": "",
+          "msg": "c91b3d28f614b1b84d95b48319d163ab09e730fc8d62a7",
+          "ct": "9c0c7fa6246864d07580c45f5d909f24676e8c52b59e8d54e524a6babe70ecc8",
+          "tag": "76d85efabf631a0e406c46e2127497a3723a99f6c084b575",
+          "result": "valid"
+        },
+        {
+          "tcId": 26,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "1ab9ad0dd4689774e98d7499e9ed576be6b59acfe35490a1434d6aac77e4ca08f603d9c74a22a24bbaff7e12cd95a452",
+          "iv": "9998be8f8a3a5b1547a887f2d4e9ac02",
+          "aad": "",
+          "msg": "7c8bbbbf5c384f17dea32983b52ad1e3e1bff8e0fa632b0e",
+          "ct": "b2e3b5eb7f0fffcdeb3ff925ad1896ffd8e82876ff71bb61ac6a77464475646c",
+          "tag": "485907152388ea45f26a1d9c59b1b02e45edda22b42dfeb8",
+          "result": "valid"
+        },
+        {
+          "tcId": 27,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "385a4218eaabf46a53f3af26bd49e29c19e3c69f83df39ff17bb82aa4fb52aaea14fe9758ff4d00d9eeab4c000c8a150",
+          "iv": "3d96034727ff99c80346248e90d990dc",
+          "aad": "",
+          "msg": "1e68d227cf09ebc5bcdd443fcd34ab750bec0429ee3aadac68",
+          "ct": "45a151e43da14191969fd7040f061250475a7c9871c1eda6690b17c08354611d",
+          "tag": "50ba534c1c18a9dc85d9e69cb54fe93ab20f262354780ba3",
+          "result": "valid"
+        },
+        {
+          "tcId": 28,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "a5061e75dc27cb89964a4606339a723845f4ef9f46e8e6dcc148fede1a9a573ff15916fe6892fb7bea843340ac034e4d",
+          "iv": "fdac1b2c21de677b66740808d8b1dc53",
+          "aad": "",
+          "msg": "01761f9a6087da001d3fabe0dfcf9ef984580bf811b9d99ff93a",
+          "ct": "8546e2350d0f745b085c0f0c9311342a77a9064bd39e24d2420107248edf9174",
+          "tag": "401085b5e5948ab8ef34be70fef05d4fcf544bf7b61ebed9",
+          "result": "valid"
+        },
+        {
+          "tcId": 29,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "752853cff2e93396140b625f9563f795fc4bfa65491e4c8247255d26296f0acaff83aff1e2db378d4dd6bcd9731f582c",
+          "iv": "7f3680e8373bc846f474de701e7be2dd",
+          "aad": "",
+          "msg": "57f8223e562ed4e37a6aca274e834f37283290ea59dbdb49482993",
+          "ct": "1d7abfccb049efc0a1d4535603030406f798bc7e78ab21b6bd7962fb749929bb",
+          "tag": "4c9b71cdd50658b20f77d9cf705b23cff8db8ec6003a25bb",
+          "result": "valid"
+        },
+        {
+          "tcId": 30,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "aa82f5508334b4714f84a0b3d2d618258939bbb594a8ebcd27ec18877bb74bb2f2466524acb134296b66e306a563ae21",
+          "iv": "1a1bc8f3a0a8905587e5aa8f2a9f25b1",
+          "aad": "",
+          "msg": "00922852aedaa9d785de4f66537619070787d8a8dce65080d65dde3c",
+          "ct": "580303ba221b0c69e43bcd26d535329a7146f63b4cd112072ba1165498e58348",
+          "tag": "66ca403466a40ca9bce9044fbfe37177ebed732f6e4e54a4",
+          "result": "valid"
+        },
+        {
+          "tcId": 31,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "34556bb93e145f4513fe2286c8b0fa887ff2c948e100c522f67802bedf7bccb0addbe75215f2cce68499ed7d0abb0a73",
+          "iv": "c9230ebacf016bcea09396f776dbfd10",
+          "aad": "",
+          "msg": "2786777402ff1443de42caa24e84b1482aaaf872d4e9489e5c3e4a99c4",
+          "ct": "a31f9a64bb8f48947d9432fc514936f99fc74cf3aea2ce1335a0075662b0d3df",
+          "tag": "72b72154d09191e384c32c15eeb1b3905224a85971bf28cf",
+          "result": "valid"
+        },
+        {
+          "tcId": 32,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "cba09e8ccf40aed4ea0284323424c52a428c5b4fc70d91d7c71d67caa56c1309f286bf1545c3bc28d0729bab938a59f6",
+          "iv": "28bcde71a4b8d188ed684c3f66c3da4b",
+          "aad": "",
+          "msg": "72f285040f015efec2ec9cbb3df46b9d2d2bdac3d9dd76edaf061a2a3f70",
+          "ct": "d49d331d2bb78e1d82bc71c46e258863e4c124916bf4a9dee26dceb00732fe4e",
+          "tag": "5c9c23d3474b9a33600d5ece60e136dabc4a7a8922d4ea3b",
+          "result": "valid"
+        },
+        {
+          "tcId": 33,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "7434dc75bc77517fb746409451ba54ffe3c7b348dbd157198541c91c85c1bc00cbbcbdd6cee79ec8f39a4cbc898a64e3",
+          "iv": "6c020a99180b4c73887230db55323218",
+          "aad": "",
+          "msg": "46c33ec875b8898c0683f11d7aa61c27ba90017a08de59991a20dd48f8bf59",
+          "ct": "c502bf37276f0c93c64106efea585132160abd6972b5b2f599a8b8a0fdcbdbab",
+          "tag": "b865d5102cdf5306a93c7fc2befcc6f8197b3c0f7755e35b",
+          "result": "valid"
+        },
+        {
+          "tcId": 34,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "cdae5ec31f7eb82cc6e3ea75a75f5fe6738b3029ddde698bbe1d762586ea74cb4146cf97fac85ec868267afdeddfd1ae",
+          "iv": "d89d843560a7fd543ab20251343f552d",
+          "aad": "",
+          "msg": "6c9408d1428f51fc6177fb017ea492966fab5f0e8e18f02c93493e17357d9442",
+          "ct": "a8d7a1b5176c6842879ea96bbcc9c0cd18d9cea12cd1787f3119baa92851a34b4076485bbea5a148533f92078811ba92",
+          "tag": "e4e3903112d651755612341837102e6c376ec43ebe04ae14",
+          "result": "valid"
+        },
+        {
+          "tcId": 35,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "9e95dcc9bf86c666f71fa7cbee7be276b36b095f455d3a6f313426d27792d2de9db4e9bd40fcaba419ec42c29bd85266",
+          "iv": "3e7ac90fcab77e77cdcfde474d20a0f3",
+          "aad": "",
+          "msg": "b37b310df05ef3fe73e4d74cae68eb67a9734f59d8074fa21cd9cecd94cfe9dfd8",
+          "ct": "2b08d11713276f2ed6deb57229ef62f292d3b1d8d3c82f17e9b4dba1b9deb58ce7432e6193a545f3fe7252f2de0577f0",
+          "tag": "84d3a7f3d09e6caf420bef7c52c79aa9668dc97277e29fa9",
+          "result": "valid"
+        },
+        {
+          "tcId": 36,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "d063914962f8ebfdd651b2c779fc936916e12c88877a3104f528630efb3667564b8ae8d8d7ebde153514b4576a2bc229",
+          "iv": "43bac06a8bf40d522562100ca639b5dd",
+          "aad": "76",
+          "msg": "9518ef90d7e544df24ba15efe56779c9c2b4eae7",
+          "ct": "b6f6f480c01a5de8d444ca14c8ac443443c2fb5eefe6e79e53c447afc7a8a23e",
+          "tag": "8293c8487c30978550a4cc72dc3a2aa732ac989a13ca1842",
+          "result": "valid"
+        },
+        {
+          "tcId": 37,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "264202f29736c7d7f01b78f737fa2acda50c050cfe020ba7bb36ee09eea41940cd4c10430a1869400e8900505ff50647",
+          "iv": "6e57506a3ef5333a075f4764670582eb",
+          "aad": "7baf2a22912c8e9c",
+          "msg": "220f7e16e5ccb0764bb35f1d6ceecf7a40cc4228",
+          "ct": "e7c18e46f515a17bd0d3db70ac5a399ad4c1955ef06870e8e8850de85e9a3b5c",
+          "tag": "2b0526c2b41b6f515a13340b5850b6470b439135591df0c1",
+          "result": "valid"
+        },
+        {
+          "tcId": 38,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "8a7778cf400a690edf75fddfe4c351b98a78acb8cbb65b71634fad395fb8343ec3e5c69c380fc8200fbf7437a0ce436d",
+          "iv": "ad59a9a3b6087eebde7c871db744a85e",
+          "aad": "c93e2c56bbb182c64feca6451a4bb0f0",
+          "msg": "d769a974460e2d7481cb057c7d1f4e56471ada90",
+          "ct": "388703b6df43d0e6e154c9fc5df0dcd7d7bd9a5162ea10b019e15dedd43fb65c",
+          "tag": "2f5df42d0eb54874296f6c8e74b8d6458bfd96d61bb1d1a2",
+          "result": "valid"
+        },
+        {
+          "tcId": 39,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "070c65c590ffdeb017a7c900f0b757a4cd94f0474099c50aad229809a4762dd675b82505621b4a12d6ce01b54492ef98",
+          "iv": "90bcae91d995d76977ef8570c394847e",
+          "aad": "11dd064240b29e50beefb2cb55f9b443ddd0c2c0e5fa495a",
+          "msg": "60fcb70babd4342065d7fead7be49bd18efa55e5",
+          "ct": "091570653769d21417188c705c3149da75a7ed2a3041238384f9f67af6d2971c",
+          "tag": "1583af5512f5f6c252fc5e47d3f9ce133ad3c9e03357798a",
+          "result": "valid"
+        },
+        {
+          "tcId": 40,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "80c10cd46d3071a4c837f80538d45d669ca88951093795b8300da447a4455a9b3a70994da5da52c31cbb6b83baad1829",
+          "iv": "f0e67749c9950ec4f27ffbbc15fb26c7",
+          "aad": "",
+          "msg": "4bb09aa12dbdf0fcad165a8d496357dcd131f40d2f4bad87a4e0167f9b7b40474d78af919d9093228c9f0f386126bf254232a7925bc5776b89a63099db3292",
+          "ct": "5735b034dcc793b7c4045309b7010abe695d136a5a3bf913cbc2c508eadc19bfc73a13cf6b929ecc686b98497982a103638c83bd59b947809e2a1f54caa76154",
+          "tag": "111eab0d7bfda56edf48e687f642080ddc6fbdbf28cf8c93",
+          "result": "valid"
+        },
+        {
+          "tcId": 41,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "08ca26986cb03e0871029e10951f9019085ecdb1badfacda896bd89a34cd1cf4ea23c9a30a11f7dbf0cf1afb1fccf2ec",
+          "iv": "982f490bbf89c4a8b19a41c73c717adb",
+          "aad": "",
+          "msg": "a92bfb13ae0e45f14cc121396ae076010daf8fdc22f9c84b2f6267cfd7a9a4bc5dd1134780f5433c5b28105b659c045d46f6e033ebe169ab1bb0e883f211aed7",
+          "ct": "4e5ef85a27f087d409208f96ada1d81107f914e0d293b0591aa9f769d21fc57b155b735cff9db62ddb948f746a4d3bfe03dc1460cbed8344d263967b3349e19c710439adcfb8e880fe27ff8bbdaf775d",
+          "tag": "86551e638c78479899801aa706a266da1d0197b4f2a5ed39",
+          "result": "valid"
+        },
+        {
+          "tcId": 42,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "deb0fbac11b61026a6fdde89f8e9bd8b765b2994472d897eb9cd8c9c178938f2201e9cbd91e4c81117139fcb1e18ba14",
+          "iv": "ac3e73447dd44439292703fb9a5d40bb",
+          "aad": "",
+          "msg": "977051e129f03c7b53293bf0e70d3e4bf18d4faefd9740004de4fbf00f3b49938a7d8d08d9d755e5434490c34a3bf822f8a8ab9a5dbeada47fcdfc43c3245c8893",
+          "ct": "eaaf1bee9f1a2fc0768d4e74caf82193fd8fe40f8a938a6bbf3bc792f173a1611ec406fb05acef0dbc0fe6eb79b283a69985e0575d454f5cee72c2b3e52292b446ab773c539682aec3031f4f03929504",
+          "tag": "64b096cd4ae9a195da1d5172bd64f696a7a25da222b9dbca",
+          "result": "valid"
+        },
+        {
+          "tcId": 43,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "ad524496efd0a6bd939819ab886fa7c7206d00d8f7fb60fdda797b65cbe649e9618c88125db98e5b9e549c6e09478b0f",
+          "iv": "3435689288997f13378b789d1dd71cbe",
+          "aad": "",
+          "msg": "415185936a4a6ee1e1e9b3ae6370ee760a8184c49491649d553204b3e7e5bf95231782b80c4d4907c364c14a6ba4d350534ebb76708b3fccc10dfb5dee30bc994dff18915a841864552556672599faa45605dd34cac959f2784e7dfd2880962c3fe11e4dedd2d77ca9dd4caf05aababa1ba4670bcdbd36e048fb6fd6f31861",
+          "ct": "5aef7dca275616f96f451ac4fb719474dd174fc2f422318cee27bcedb4902b646dcbaaa0d19c787bcf1abebb6f4dce3f12cd55964f28ecd4da670d75436d07a584dffe2f0302caa08b883b2aeecfa972071b42e8a22d7120f2c6c9d18a5a7a87ba4df2ec3b2fd32fa7c4b79588c64e8c7a73a7e419cc0dc4512f0ab5b431959c",
+          "tag": "f9f28adabbc06860bc9f9b3d55a9fd83db7f976c2d75f7ba",
+          "result": "valid"
+        },
+        {
+          "tcId": 44,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "72a85ca96a98ff44a2e88de91076fc8fff6649ee35fe32cd9fdd0c2682b30a4d5834955a0354af39a0527d5ebf2771df",
+          "iv": "d97f6e2715fe82cba99da1247681fd35",
+          "aad": "",
+          "msg": "906649a92c399990d7c583eec45e8155674d10e294aee045e8eff5c474196ca0cf876276c7e03197e61f290f878c00c034314c22f6096be1e60f55e00324ef561efcb8b99c86739c76928c31b229065b9af704d9a5cdcde918689cbc3c396762b01df6e0827485e0dfc298eda770fd3fc2fea2e709244bba6a5233f29360f5ea",
+          "ct": "b0163a289b417bbf3cd4ba48425f2045df14ee35d0d4f1694219206c824641b87aa194837ce5e1160e8826e770d2a96aa59b7cceb705189f6b380dba0997431ad87898507e7c9a741e2684488321f15b307be10686ecff834f89e6713238cf1bbdad3bb88f393fdf9442ae7a6c184b90ef1778f1ce76c6afaaf85c87b0d39afe2482019e7d63a20acd890a860ff02e22",
+          "tag": "73cd32f098e669c7bc108b68d47db739c2d9b56b87786c55",
+          "result": "valid"
+        },
+        {
+          "tcId": 45,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "f64fb57129273e7e66a94798d336edf72d767c94ade45b740e1a7569da8c460d50c8d4daab22ede3c8d8663fb5cba13b",
+          "iv": "3cf738144a60654d17d16ea7b3b5621a",
+          "aad": "",
+          "msg": "d89b74a7bb6806e537854228c1e924cf2e346097f88de2fd22304197f0cb2cce7ed685c9a308889c372d3c8b370cee99da4a85c55c6d6e02e5e0bb600355a2db0e4d210287190a93893427678a3bac561c5ec28afe92d541d5ec4ead8a88b98aa56edbc60a2ed3fa29351cae4a4d228b6cf5b210bb5e71757c85970af03a279ee2",
+          "ct": "5cbf421a25141981b962efcd741bf0f537ee7b0d8c1330b10a1cc7b77b18feb4aebe3b8505533746123c7a2baed013a3628bc8d6c4a8f263b2343ad1e26e02757332222a21a6647d9b927e56e0d3439f2958847b7bde3ae750b9478ce384ce124e0352f259d330ef8a101128d2be948c16560b10392fbff5a5289a499ae8b677726481553dbbf8b3ac715a2305c78828",
+          "tag": "f5fc3b253d9271403bf22193852513bf62aaed47b9bbb62b",
+          "result": "valid"
+        },
+        {
+          "tcId": 46,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "09a46d92c65c3a1411c9046de9482cc0a354f09ff7a9ffa02c38bf31dc6532ac6dcaedd04ab7d1fd73ffaa30363c2721",
+          "iv": "86ceb0cc16bd76f3ba0706dff8fe4829",
+          "aad": "",
+          "msg": "88633e862c2f316e107d14c57322be4bfc685ff77b712aa428485fe4b89982dcb638682ae507438087d006ae13f10e226f830a70171485174ebe6bac9b0742169e524fd080f45b8c94efe234a9878e8d2b259a4a51ed911670a3a75eb5546b0affb02c2d2c771bb9944474daf4fbec14c3b3c71ad650044fd401d6c80921d529f880d54324f624d3655d27ed4ed83c4d06d99292b9342d4e21d7a2734a75b1b5da88c736b15fb806a800dafbcab646991dcc451b4a825600fb2786e07584e0d270628648b1d891391d757462ba6bb4f2ac86590becc098a90f255bf59d6a9980959c29785fd9c02bfae4d3ca41797f3d6acf74b2a2567f2c98cc119fa5ff4c",
+          "ct": "0f8f1dfe2441a942b9a30fc8e60b1c0f6cbc26c2399e4fc8ede0d55113f63da1270c29e1394444d9154fad166e5cbbf7b562abbe5017b9c382fe3ef84a62c70dc558a8cd64575714013f696ce46b5d218614c0f78957003c09d9d9560780e5e74271f988d5e4ba35a53d3f2c5ceba7342bca254a7da2d180a77fccc7072dddea23c94a199b693ed2650c5da6d081accb119c3ca58819139fbb91a5edb5ff8a0992977eb6698eff8228f8c4a28b712a6fef614e3b5a5a06344f90fc9c23f9456611d43514f65e4149773d20564a7ff0702c881455d0d4ab0557c6538333deba1bf5e9f60ff24a28698f32dd7d4471d7ce229407367877809fe3afe7b1f320938b",
+          "tag": "798cf2a58afc111454c32f76ef35e116743d24ec31f8eff7",
+          "result": "valid"
+        },
+        {
+          "tcId": 47,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "843bd078559f865813732068f77e5b8ce9f0c0c566754eabfbb0e9a753f1757b538dbf26c76b7cb3df082f90b3374b81",
+          "iv": "65496ec7a3871e482958141841895298",
+          "aad": "",
+          "msg": "9c003238496e888a0fcc331e07d93e92d2c2dbe5adffdfd2f826e3d136e5a969ea4a1cb54851afe15582f502a1ab7ec1386480b6acf1dfa7ee6596be509ada382c6f305a044aa9f0e2f5300da925b7b146aca5b9bb252c43c3220741e2d3af3d85db35ce46b52e32592fe95942f25ce267f11a50fd0cf152748207615f88c3e761f969da53006d2f2f6df452fbeb142b570fc40535f8047666ec0dce7fbf417f2eaee64714b0f96f9c8c4a5e67ab6d649afcadedd4911641a60aa16aacb0c8b3728bc683bddf6e9f70ecceb6a3f0a60d0543c6873f34559fb6eb3c7bd8c1dd513a844d228cd286aae6b9beda687ccec2002b943445ae3297429471e130381e70",
+          "ct": "d261e7cb63014e33a42d719035977196e440592621ac1580641693b3ef1a1f01e83e18ee09f6fe36e2480362a07b6b0da4a281a02a0cf3b0eeb40d58ff959471b23229c74d3bd4f01b26b89bf4d2bf140574bc80e8254d789177057c17001aed461bd9baf7c422b775f327e328bb58fbf1efbd74098666d0cfe513f050cb94aff0912579cb39654d8b8b526e24706264903020d43167a7898d68149d59b7aafb28db413e1835fa0618a7d8f761e06827a8a1f2098d9324097a2b9d7f4bf008157d8931ab1905bcc0dc538844c387b9db473224a8f09f15cfa3305b458377dd42d21a6e9cb1c2fd624018eae672c4aa7300718e70ba13d8df9997e1fa790f873bbb3197c4668ac597fd3f807bd535ba3a",
+          "tag": "a8b9ad468fc3f11bc1c98696767a906a4388b250f2009775",
+          "result": "valid"
+        },
+        {
+          "tcId": 48,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "3b7af56bafbcffe3f332d15f4d5914fe59cdfca5e8450865914414ee8672c19df6f5a440265b7628018d0c4f4d06867e",
+          "iv": "e7deee6d694af5aaa75bc3459abbea8a",
+          "aad": "",
+          "msg": "41216f2861d9fd9352ee390bca434e74262ef489984ce5b82bc4b1e5b9feda9abb4ea4a768d870c7f07dae148f54c6c18a9045fa58ac0c48cfeecbe7c6c2430394323885a4ca2ac6f8efaf497d347e9d3ffc3ceb3301d8ff2e9c272748408c6691d63e33d009f0ce522a2103f3366bb739646ca6fd76a3cb81f10c680af4928e1efce1606323f7775679ac30bc9be6b643855b0d62b6c0fad057b2d10a851126069076fa65a8c576b0bde1e3272362b8a9c841e7cbe926bb55a1ebf8079a911149c36b01d8c471daeb49dad7441cd09fac9973cec44ae35be83ef6fa1f5e1de7be72725720a9009852a4843972b3bc1e3589fcb0918b408e6c3a7a660b70646361",
+          "ct": "aa9afa560f45a7d2db48cb5c350400a1cb342984d787eaa6792c3129105d5ff1768bd50112a3b89c673e5f257cae1ffe5ea361e87b4fc7203d6ae7f8572b0763a76f226f5e2bfc59cd325716623ec661ce157c27724e435cb5002b510a68c72a4c0c1b7313436a4931c51830c48d18b5f200d7cb49db2c521754b3590a1da6c378075ee34524cada91ec2cf0cac5bfa1dff62e45d9e9225a4a2d429626eb8030bb111e67dfd65348156c508e2c6347a3ca211b6b1e4a7888bca987cde5d92d1a63b3f3f8757952b24fc100cebd140b7970688e070a05590bd516d2cab8afb8e2b8b67ad8a265d0396a61d92f0e4d064cc01904f7f44d35fde2e6beeb04f5c11aede53ea49f341eb4a83d60d4a8a81f4a",
+          "tag": "4b9d6f655936ba9cc5802d5bfdce925de161c86e8b9e697a",
+          "result": "valid"
+        },
+        {
+          "tcId": 49,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "c69bfb96f69d3bc830d45ce4f851396775702d7ddad4832891921e43fe6ec6c0f7a6d047cb66b21a58dcad29fd2199ca",
+          "iv": "b5eea944da759362599768c47f55d303",
+          "aad": "",
+          "msg": "d8083dbc2685092aa9982589d67ec9dff7896f89324089c6c7879f7ec105d5ab6f4007d5c37ae4c0c146769ae02ac875b0b365614021c867208d61794f95e7aa250de2fef46687deafc6c5a03114bbe2feb4e81bbb2ef1a37dc62b7f625773597ccf17082fda779045d0527464afdece30e2d34f42018694dc181f2fa3fbc22bd20fae06fad6e9f40b1aecb28c253db9b2d60edb36ebe830560fc5a61600f3fa4d54538efff2d0e25ee0345647dcfa4fd6168479cc3a6d1d00c905d0cc750108733da508bded27330a5a77a04b0877f7940391aa0983dfcf9cdf9c909cc12eab21320908559522e28d63aafc139d54bedcba55e3982394e7df909c2e49aa5f44302a11b7cb5d2af2550e97accf26ef7ae414972c220d574a34c84d2778a57e8204ea3556cc89f80d25bd18e7d8b420543fd6d1ed7e4c1595ff3553e10f15be04d01dc4c687ae127bcc592cbb695b2180de6ad9a2d477316209a6a022bf8e0b0e2b91e9b3452bc9ff0fe27abb4523d504dad36192ef50fbd1eedde840bd4f990314b1a8c95581138089bbcfd9f0b6bf7c684144d39a53f5dccb48ea48566353b8a5e00d8385544998552c5ed33eeb72cbf3b3ad99793d75e8c0e8008d1c2b61d85838517cb32fe033d6b7687b5da462b65870d4547222cad845d444df13352b23fee647d6bb0aa739cdef4d9fde05ac38de657c50cdc5cb35340aaeca27cc82",
+          "ct": "6871a95bf749c6ac8cad08c6c177855aae5ba4ca33a99541013f78591bb08a271caf2348dda54c71dcaadaf3fc9649bf7c8fbb29de35b15fcfefb5019b830cfcda470435d36e951b49f2a94d20de6f06bc7d713b1530bce0cf9c0e30bb68ef8b91423cff97ddc6b5c0f2933bd3e4eaef697c797b4d848a49ba1b65eb2ba945232ec8c1189f278e906f3bf875cd373cfd8432ca453ef2ac62a95548d3aca2bd52e5bcaddaf801043f9376add1454eb78e0fbd21f9bf27fe06a803e00eab2be167791ce6c349f2f57a911d99ca7d7befb5bd13ac107edf8f9d8759fca19e2b0262976edcb23443f1020102c96ca3bcb708376ebdbca0e2a67e23c7f7464145a952457643f598f3d8246d8947fc8bfda9b63674e9a751f5f87209fefeb127806dc4be6fee236eedd82c104e875ef68d5507fe0581b47669b28a7891d50b67869a979273e127a9aca2589fc95dedea3882db8102f0cf01e6279837956ca09d87c2f4048a98d0733ae4033c67b2d3717b78597a486df3de494ca431c317e3c4f8a6d84947c998456db149a5b2bc797b8fdb22f06a777ea9f270d28951b295d2a7c8a3cd4a4f4752270a03374f26775e28480b1b448a372b26e31668adefa7cc82b3a0877655d2b2eb703b664441942b80daed32fb46fd2814a1ba5f4b269e416766a6442755d48d6ac3a2f5e61887afe1828f69cb00c799d931333d0d279431870a5b",
+          "tag": "7ee2f4c0e5f2ec3bcc7c5bfa9a42fd82a11863acd1b90ecd",
+          "result": "valid"
+        },
+        {
+          "tcId": 50,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "a91d76f6e4306d45e7bbf9e4c82864a38971e50217cc5dd552f613fa0eaf2856243f87efdec6eb51d641f5070285487c",
+          "iv": "ac48e54b1d5f8dcbf2153e9f5544801c",
+          "aad": "",
+          "msg": "afe7d723e82f8b418763d6d8af864435bec8b65caf639b1a433edce8dd3b9cee6a5f275f55e511dadcf2b056c53bf47c74f2ca76f39fdaa264037238726d5bfa2ad19e6df6ab3d9c54a38ffffa27b35c231037547413c1bdb360df6bf5cdc94cf37139731eb60e8813eea5d314673692179fdca8bf88bab8c3a1bcedbfb960f9b6746e0326604a54a451b03f5fc9caa5f844e9f0dd57caeff10fc0b83c02fae10b470f58d3cee7b3986a7273cc3c87a815c17d23e801eb386d43eaca73fc88946c6b10e7401000bed87f947dc92b2d98873dcca6110779f4270c52be837f75986b5667bf6e526898b9ba07c3844e8d6dc0f936f2998525cb0bbbb656b8b3423f676bbb97cbfe0df391122d110b61556ef745eb87a138bff63f8dba81f0ba8a564f2afcdb99f1a3fec34895f3760ab91753da48c6845a65f79994fb16beb601edc1ce50dc8e5bee53bb58d0f07ec4d4fd32d6fe835961c5f301c1b242bbaf6aba38eabc82d0214c05ca615b57af64da366785325fcf5f6774ba164d2fcbbfae6db65168f86d19f4e16cc322a58da3c66ccd00d6869357f1d350d832a1e594170f032c2a891478e5e452fb686c6ef3d13961c3eede9cff6ba0849b737db85eb5ecb22b21a4253d02d948961626f4752090eba0ccbe727f0bd69b745243ebde4ee31ca5fc98794918a4dd873c03c2ea8f1bb2e1937ff56d14272d9b9fbc9fbf592d",
+          "ct": "7389af7ae75fedb70e7da6aea2628f190e15bc4bad98997ba176d329af4d3bd941b8b4f1c412bfda9adc287e9bca82e1f019fbc1f5f6a2354865f645ae1baf85414642d2413ee2e2e4f50c411a61331d87dce1b0f630e1f3ed89e33db2ad587c0d29cf0f2fac987b83e6ba2123bbac5583b1856c949d16ef22aca082591de1c4d58b2d461682b2e1d5f455f3546adec76ba87f3c05a869fa376ef8536e6394dfefad2422613a52a117cfe9ab21aedccac4a821f272f842c52c218ccdd90eff3b502c109a92d88b005bcc7293b0b12c88ef4856da225b1216c59049cd2d6ebbced7363f5ad8770e857c8ad174352d4b88707963a0c47cbed8bd91e65c36a2cb02e5213672154b7b76b0533eb8a69273a8e637365df1bee5398a838e5ffeb85ab7754eeebc460ea1f38bb40accabd2e879974612e34532c59fd11dea153bf1c511a812ffa53398479f8648cff827b135bb23f1412f3da4326f459c8140253d644fd1c029ddcd0bbb5a44ca02fe70cf7f4db01dfe882668f834888f55f306915b114b4df7a1f394a64b03ab6fb79739dd1af6cccdfaa33f2c6dcf5bb38d757505e2706b3bc5e658205c590b025b976559ce75219fde9de2e0e47249228f5579a4b82fae0d6b5c7816542d1a1b216bfe0e685e2e378658ef68c7b8e55ad29eec38aa6e3bbb3872489a0e586e15ec0ede4cf962ff6cba28e94e95217f726d9707334be9337fa32b3d3151ca4f23bf7443e15d",
+          "tag": "e4a75d9fef19fff4a8341801e64590d81018de8871384761",
+          "result": "valid"
+        },
+        {
+          "tcId": 51,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "b6bbab6383d9948314d9258b014f2eb09a5a8b1c6b45bf34afd12e2d3816a4f63f7a7e294eda6fef01a23a2f7069c281",
+          "iv": "e6276a69503be2fd598d05e200f60112",
+          "aad": "",
+          "msg": "3535d8627fbd31887a21f7bf6c4c930772ddf33d3e85c8bbcd7b4fbd598826f58bf182419bbe5f7a2aed5b055de25ad9c493f8d4807ec439c5269e669250e87f3b6047a716a869d094986a43fef25c2a8f88ff03a708fc7af4656ba37b1f83ef32d230b7aeb07482fc8c6b761936d88a05875311b0488dfac101272748af50151affee014c24ad0ac84061bfc55c3da3d121b7bb8fb4a8f756fddd47f30fc97a4da6cde9146b8ad66a5b9a78fa9f832f5ba6722ca06af85c0dc29aebfd5578ec54fabebcb69d4a8e740d1cd3f781328ed80d74f48fcfaaaa6b34ea13199774e985447db544e2108243d96ac4b5d6a2e668ad0ec2e5c47467ef9891669682c194f50ecbe5c50415cf5835cca76975c8dfef4e607a5da3ea0d3ba6864c0b983715198253c5fad1e7330aef1fc1b755ebca6f0c348e9ba65c95443e158e81020715c0cef6f4f2c9bf322c75a4c5b3aceae53ed3668ce839d7ece8aedcb25b84cfd5713aabf839cb9c460fccb58177304ccf662bdf7075ac0d56dc6f4ed8da1fa895e213123bfbbdfa3564d453ef05d717b61d1ff921550e6b962b8eebbb8d2fd3efe0ba81a7007654023d3cd6ddf8b38d0cfcba2913e43fbbda5d7dd930c27b0660c90d8515e8f6cdd02c4fcb32591538ac90caa1dc8a456d02beb206c69ba02e3320177e6727b8e7394599862f18d0c48ad02d7d72502c15c963fa3a852759fe4092",
+          "ct": "93ebdd65bb4fe22c394ea2187d7402c2b33a61e07dee53756581416f01207d41c7fe21f0421f3538c3b61b81227d717ff2f2056105194d0fca19196140d1fd35c1f2269f86542a13961587cba698bd64a9bcf4127f6624096510a328513ae630eb373412e99f22f81049c663a058cd5d17c705b2bd6c53cc7921f80356f5b7872916517e5fe8ab96428e63e372ff361aa9e682a8ac02ee45a5a5ecf175d228b86bd278d7e2653be06f39ec23eb938b50bd42c9930109c7e79fcf89c3554961e1f11217d1de3d46b254e4d44cc75d374fe506bbeb1bad8c4b4cec97ea7aaf5f08e0ba51039ae341d312109384ba317a03c023a34e9d318f4aa1ad4d149e8f86745102b36696d2bd45933c3d3bc98b4a71d61adf2caf5fa10094b8a2b53a9b4f71d07843d9bc644a8aedb98d6728ca3710e901b0201ff9a0ac3d49c7c2e423651806231f6bc14c20b45f2d9eb54001200de3a3f6fb1de9326956bb5cf2d2c094b000f2afa527ddb7ffb84fbafa04f2c67cbfb13013d2bf7a898ad9565545eb5bf57847b0897dc7cc7c4eb7c9ba836e38a90e851d06712ac0071c412d7054bd3f944631a8a55ac151a8f745d3597ab8873d1f419540b1bb3ad4989f06d75fea4ec5651538db4e9673c5671701b59cef3d8777b88c233f2e405b0ec8bb712c7ff3cbfd693186eb01f1ee10f2b949159be4423df7fa56c2cca11ae1dbcd4ba23d3a03e0e44790afdc50e893434315c60d1fb7",
+          "tag": "5df409a002991657f78cdec9cd606e2145bac678ea2af4f6",
+          "result": "valid"
+        },
+        {
+          "tcId": 52,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "c3fd6eab76860c67bb88a93b7b2e0cfacfa9a0da1843942fba2a4760a11de48307e74c545d228e9838475723a3d62c82",
+          "iv": "3539ec09f596c5a1f6a38b35fe1618af",
+          "aad": "a549bc4b988971fe8506ab9b93d80ed444a10a4d4139f219f5ad657b61281f74ea742cab40a1b56ee665fe5457b8c99b2e92b20434d3050b86063d41c015a7",
+          "msg": "3c07aa42124342f82edb687ee8058c91e87b7247",
+          "ct": "486d6d3327de82f301bbf899f0b99dee072d867bd94ee6ff47b1324602689d5c",
+          "tag": "b0b3d60ac70b039f917238b8acfa1fd50280f6e611af54d2",
+          "result": "valid"
+        },
+        {
+          "tcId": 53,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "4d64abcfcbb4a3274121ad6450797e0b92c372fd10623cd93d17c678f4b9bfe9f04c531fad4654d4dffaac53aafee775",
+          "iv": "c70976667a76831ce47f803b3129ac41",
+          "aad": "822c2f6d0294a744541040fae09bab8e43b9618db20f2997be5d638c11a2b7b3aad32ad2b5f6d615812f601b80707e7efe4e05fd81f7ab39807a2c00b6196988",
+          "msg": "12b915389bbefe81e7bd7909f5cb24ace11efd0c",
+          "ct": "9116d907a03e8a991dd55a56d3adab9f54e907483269798c7a75a98563810e9e",
+          "tag": "eca1dd9c12c3a98db7af8d3cc53dbbd547bace5af952ae5b",
+          "result": "valid"
+        },
+        {
+          "tcId": 54,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "3c8bad5ea6673f56fe11dadb4bc05527f8aa348e9fafc7dba35770b285a2eedbef6d638a819e6bd8ecc684f16fff632a",
+          "iv": "528d796669575a090fb78671471c2d09",
+          "aad": "a0dc8f7a22fc30df0e29e2e472717f49f54df1817b37e27cd66233ecb9af12711e28c415d06f6dc23d5e0e1d1932ba417adb7d1fe4b2f21440cd6c1f5a8db35d51",
+          "msg": "5b42ea9eab009cd54369ee65512c9f67693d6ce7",
+          "ct": "df4e7bfb543aec311f4cacf8f1cc67928c2dfaebef85848e7e3209a6ae7bf8e7",
+          "tag": "ba6a5197caaeb6f0909b815f9eb4ed0753bdb00ee743dac3",
+          "result": "valid"
+        },
+        {
+          "tcId": 55,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "5f551b017da08a86e0a461a51be1c9f1d34349cdd961c5d547a4076e3f71f01173bf8a1c63902a642e6a081f7619a192",
+          "iv": "7f80779dbb8776a634653ed6a4e73371",
+          "aad": "aacfc5b1bb36ef77d2ed8363632fe7fd3b198f92a38a7c83ec36e8be200e735cabfed0797d6ad65c705a5f8b10c92f04716eaa95b54c91f1082de3ef98c12a8c901f389e347b40632c9d0488b2bcdc0381aadf4f3cfd6652bce80ab7c28d1b96ccd1025190e76c072b83b5c1d3f5ecc662f96ffbe20e5e128787857fb3fee7",
+          "msg": "5176fc8092f05ae2499efc9c8eeb230873804219",
+          "ct": "6e1d091f6e2190be730b95edd03484b78d65bdc4f697b5f9b161a24ddcc38293",
+          "tag": "27730a0b0cfe9724ca62ebefff4845bf9da5aed4d1ae0665",
+          "result": "valid"
+        },
+        {
+          "tcId": 56,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "f5a7ef93ed8f842519fa1236b6805e79024ad0888ca1377df51c4d5be25838b20aff140ea9ecaaba2c5fa215e3bfe2b4",
+          "iv": "158ea111bf0629b7c126f30bc38c4a16",
+          "aad": "91641364c89c1212feabb5788cf8f2141380966ff57cbca9dbe94ee0b5c3618c27ba0ebb98cd202a92014795f9853405ddcd6e04c74ff1c7e9367e8c97c230de4c5e433b726feea5a08023b413017224ab1127b2329868abf38c442b736c0f4fc7f9138ce53e40c093f294e8f8d887053b57e98f8ab105041db92ea1974d183a",
+          "msg": "bedfabf9ae3b3d75b16199b7119c31bb6616a9fa",
+          "ct": "e0874b8a2438373c3d5455b66d913091f7ab63a832823d43c8912c27bcf899ba",
+          "tag": "d0a75366c48043e8a9e621548b55044a35c7cfb4b4a89515",
+          "result": "valid"
+        },
+        {
+          "tcId": 57,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "30684e7c97e5c1e2e63b191ed50eab094652f454b9bf12d9d86b71b3bc223e0c3046b4c90b64adeba19097a4f2466a69",
+          "iv": "c76241ebe2da183318220fc463362308",
+          "aad": "6431f97fa540a66a90ded8127623d591909628000b821b998e7d7d2a9f319f5060719ae9849df5cc956bceff8eadbcfbb626c3e3b80cbd02e9ccb71f54b06200fa6fe74b4af7fdacdc44c75473c3c48e99ac98d54077f10f747e0bb1fa386029d6216390b51c133789611ced2338c85ffcee926efd0b65141cc40fea069720ec77",
+          "msg": "c6eb0a8cb0521cb0376a9196d08f41d371509b20",
+          "ct": "46808884dc3515e39b6fe17d6742509566af02ab6b2ae68d1e1dbba4937a9b62",
+          "tag": "170242cdeda67392af7b088c64d9c554923cd34a62f7204e",
+          "result": "valid"
+        },
+        {
+          "tcId": 58,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "817921425de627fbe7298937d35708ad9e279ef58c25d2e31ddbf0f09de0eabd1c9a21f0cbd3a800da2e67fa64d1aa96",
+          "iv": "5c64f86d7e21da83b576c4cce8b09e09",
+          "aad": "e711cb46da97b6a9f7bcf1d75a099191d41a4f9dd3d96f4559e1abf62294ed320160337d9ec5bfd30b0b2ad5c01d21b4a4b09535e25008c8aac04a750e01ba7898d21e7869d0314088c013f0fd5a96ce853fe2d15f297b71e83cd64310b2c383bfd48f0c295af5724708f67c65b49d8ce4fb00f6440f2fcb695ccb960d6e623aa17f2d329c0886cd030317d4b918fc079e8dfd4151d9c0277cb3d8a0dec4a53ce02e69675d50cef297bfc208a803a218d576399886e4c2437d1067f93852cc2bb641707be3bab5b8d84af783b498b672ffe723802bb1296505cfed38955112e50406d538d77a97e9da68aee97a01a201d8af7940c02f35092c4203ea6f6462",
+          "msg": "de7163f1b1d76d04e85e8c9395b2075bbe5a12fa",
+          "ct": "82ab46a7506c531a8ffaafa43607d56efcef41c3d44f1ba9d6eb2935da6303eb",
+          "tag": "76937c49b9b0399bd2b1a0e649535048b6dce32c70ae1e07",
+          "result": "valid"
+        },
+        {
+          "tcId": 59,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "c9bf37ee0643bbab30b5a1d7e0f00477aea767639876989666144fc44ca5a285fb5b04823e0a93078e11629c794a6da7",
+          "iv": "52a30533289d8dbf631e19390a4c2731",
+          "aad": "56dde79a38918299fe02886f21f3e805f773e3589b1d99b5a07780a92909cb1ad29826378ecda9f672e435d0527bde7a5e290056fb76c53ccdf55ff7d0563f114b92afb315da53b8bac27b8b165c695071a24f29f2af56ac84265e42a3018ee801d41f08253804ead6ac36ed6ebca69bc72eff51aefb1b519634a76c9a8cea8f482b49c63aa758c60a17b40e3fdb108cdc00fa567d09fe12f316bec77ce3c77d221fccf27f7a3b2d623166e8a1df32b880e6fb6de649fbd18965527e1ba7e8d7f8d0bb62824b340683efa2373bab6b1b337a9fdd86b0635a0566eaf603424af9d82566ee4aa4f1bfdc02887289573457f13f2e4798b0f2098b2fe18fe812d3f2",
+          "msg": "9346def98b141863c37b6707ae41315cc83f0a62",
+          "ct": "718a98df13cd56d5576b4f1bab15627bbd2db1262d9d0cfe578d66e323dad860",
+          "tag": "98229263835ba73fc157b3efec863dd751b450c12d646962",
+          "result": "valid"
+        },
+        {
+          "tcId": 60,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "76167b1f64e262a6d4192b21b86a0dae65428c80e656f6e2d2c59b0857b5b42e0f29ab54e4dc708d9d21ace546cc4878",
+          "iv": "014e0dd7f8cefadc6695398f2434dfe7",
+          "aad": "19fe3c62ae94bccd5c5194814cc06850c0cbedb9ff3d4434918bcea0dc7b908bdac39c854033397db06038643926d978c0d877f1a6d210eea3553b77068cd3ea515781ea4d2e4f70aee4c74c9a971fa5a5f3cdf1bc12a115e9b7f8fab68a6605ca3d008f1718e2f199762d5c6eca58e0e36651c503e9a7bbd07a80cf91b6bb3661600279e197b25295a417f44f48164e15053e2fbd54dea1683f374dc37240a46533d96a956bde7fcc06242ca48ebe2015eda6d9e6b60243f39bc256a7986c73b139bef1f14072b82b987f3e4319246a1fdab7c2561b1ed8f2d1df5c23eb8fa575277437501f9f83c5aded70fe4436d86d7a8cff600aea2db2c5f47cc925e0d583",
+          "msg": "6c17e04f477bf9de1a8aa08c4088ea7415e8bdf1",
+          "ct": "2b643e0dc9671a0de5f9d0b08b7b40de76c4398aab89ccc1b60d624d860c6d91",
+          "tag": "b35b8b0a9c6f607d0c1fbab2665609fcc32190cd7493fff3",
+          "result": "valid"
+        },
+        {
+          "tcId": 61,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "13dd4567a983714c41caed44b86daf3c8136af2f09f295fdbfd091fa2ab51b2b1872ae67da63c4d7ad38da8c2121278f",
+          "iv": "62aa0e0eff2875aed2882719cda6c65d",
+          "aad": "cd92b095ede4d459cb777ec8111b581c926c8c960681afd427150518df79b4e1d6e628c6bc30e4f66701544c398f782458d353d4bdbfb5656217668fe6592e36fc8237ce95473a88bc7687a53bc3c6abe45d64056b7dc3d121994a785a40945c9446172d9ecf5675146cf674405436b9796b6f88c0fa73e8ae41a16fa6de6b65770e5d190a419c791f53c85866384e191080e70bb7a99f4f8442f58e416bcae83e4ea59d5f44b358a253c97037bb7d55a5d9a80e1147198d8385d5c22a6e56722024ff256a92b67e335844a1ff27732a7bd08a06c9f23686a2622f9f3c84287f3012b5d3b2bd052ab7c3c7c5f3100113c60f6ec2decd998a6c4d88971a406117f95629a84a2963f9d6c2736e2213fde0732af8543520398273c4b4061547a856ced2cae80c06efbdf789f18cdf32ae0ee13904bbef9d2d4b7298f774d6d98052bda4b2abe5ef5125bfcbd9eca02356f36531e28ebea074f797710b8f67868ed1d5895240432f7dd8f6dc33c2573a4845dbf2552f1a5db0fa7f83b4eda0074be6433c08d4da09fce19fa0ec894bcfc32c545898848e88689a5196e43ae548db38e3cebf8d06ac38f1b22073390ed8cd9e0acac35c897e02a948ae559bd99c9b09a378e32a28021dd0deee502cf94914cac6ec8d58e7c5c38eca79e1568114383073d9e2a19866fc8cb5aa0c99113ae68bcb8f0c1906afa8f7585575c059a138",
+          "msg": "887539d7b9bf76514fc5f18e5255015e7814f352",
+          "ct": "09fadab49794195de388c60bc68828b9f8978aba3fb471e6ff70bb33976eead2",
+          "tag": "2ebc8a09f149c9af6076d634d4975aa65bc01dac76ca44d5",
+          "result": "valid"
+        },
+        {
+          "tcId": 62,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "39bd88d7e74234875986d11e61e0a60e8f2d282d28b558157181f034ead92418d976dae131bc8e0d9c00d9b24dc9bc61",
+          "iv": "6503aa8b576e138d421f8e9ff42c3aab",
+          "aad": "db7b66bf56269d815ad396852d96e13d8a04e6640727414e55e29861437943be27df9adebc3062058a0629080537eb72e43b1e9a65a86015b4e4820d8872a2ed221ebebfe26314ccaaf2958f7bd0974292840ccdc207ec5fa48bd15ab88086826da1968b235fff73f6fe7413c96e8abf2c01e3a6d683b488a41f249804cc5b04ed379bacf990926621b71a6c17c19d8eb5c80ef4539c181e77c9ba659e8e68d25b8f258d07ef78ca194157dca5da5c441a0bc437e8bca381c8c516ff179b92727993883ecec56e9e04efa9fb5cbacbe188a4a0b0b5e2ba7d1b136456bbd361ecf2f7fd56752723d8ac36f1ea49cf21dacbb922b707f0058918b5dbcf45baa915be538c0db1e17b4424a815248562e26476a3044aae70f2f27ca2ec2ac56f34d9e5c66f68fb7573a6c87863198b892a309b25acd003f175ac1bb6d9e95e0a6a056b1832b7448018da102f24a7bfe88aaf7344559a1c91d904c5d3d103de98479756d85977502ecd0384d8f58fee62999bd52678bc996ab9e1ef8a2cd2b3d63fe031aeb30b935d99d6103383ca03e777259029091a6ab8db7749406802083a4ad00312f34dbb1d4d6b49b4ea772dcef3e8316ce2065f8b8495ae0e3c44460b95365d7f39e1473a971e7b7db6cdd8ec8b7825e27aabb939597bff4ca50a7c23b326202f56839db9985e923455ebc26cbd6d5a8ce4cd7444290bbda8114c69775b20",
+          "msg": "5b4645e415745f5ec800a558fc14c3f805f5304a",
+          "ct": "109857a21cf0b5396f16b5a98c5181878447b4cc73ccde9f5ff0f76240c330b9",
+          "tag": "ef01792dae4876b0b96720586c054ef6c27f6ccbab6aa695",
+          "result": "valid"
+        },
+        {
+          "tcId": 63,
+          "comment": "",
+          "flags": [
+            "Pseudorandom"
+          ],
+          "key": "a6d7f718fac14b0ad223445fc6d066ecae72f7dd29de86ba78aa51ffe56c746b22ab4b1c282032dbee63ea2144deac81",
+          "iv": "6be9682df9f03ba91ae1d8ddf786238b",
+          "aad": "ac7a5fa6dba91b778c2e2a9ab45f927fe526069ca0b5ff3cddc7216e081efdee4d325c2072d2170974f914d130d1a29ab058bae977aa8e18342e43ad8544a7ccba41e71527a3f4c884f5495810515035615f010002e1093fe2f065516483faacbaf05abf3298ccab7a911c98b6763731071d6800322a9add21ced46630f3584c173d8d9af84de3397eb7d0d62be59051c076bab062ecd82adaec0995c682e8ccdc605ea233a779a8eed185803fe9f466384a5292edc6b7f5d15ed98af97695a79663129398926b02d8473b67078898cb59210d6501664cc87517877260edb1220c470f9635d2f615f512bd26cf471ab5ecab664c769c26e183e7136b2f69c8f7c176eb8cd217c156c249c7ad286e3ae45fae4d5ff0013ab716ed39acb2bee59b76671d9ad7ad6de88274fc4625194497db9c0727e836104bccb3134c7199062864ba550a8899ae9b57383f3b539dfc355c662156e6be08a1e3524844e118d4bc13c5ccb8797764fae51d6e5b7e4ee38330db7743777f167225e60b05ba735b701409d2f92064647583bbe2c18fb143361734f2a28c3be0db2fc81d75f04981ae00e727e68176807311f3ea11c4d1fe8e083509ff2dfbe9337806a4b9d57d85eb6b1893cffd7d12144661ab5a31291b59435f67da8d15975a7dbb9bb5f02b2c0f6aca5a2b21263cc87c4cf3a9c7d51ef4089bcc84d484592fb2d486ea8a37ba86cb",
+          "msg": "b63010971c11227cd3805b95b0ed69a4c9238fbd",
+          "ct": "1d657f593a7289d717df31cd1b77c37dbc0fbb1756cf14711a0bc41dfe7c041a",
+          "tag": "2544fae58ce0e55b601c2f345cc27ea72172a1cbc430d902",
+          "result": "valid"
+        },
+        {
+          "tcId": 64,
+          "comment": "special case IV",
+          "flags": [
+            "SpecialCaseIv"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "00000000000000000000000000000000",
+          "aad": "",
+          "msg": "000102030405060708090a0b0c0d0e0f10111213",
+          "ct": "38fd20e8100f2ed8b8e95015efdedfb1a19a7e413c6a49a7a5582f6d408ddcb7",
+          "tag": "661c3c2980b5e7a20a2967da1ba99001677acf7852932b00",
+          "result": "valid"
+        },
+        {
+          "tcId": 65,
+          "comment": "special case IV",
+          "flags": [
+            "SpecialCaseIv"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "ffffffffffffffffffffffffffffffff",
+          "aad": "",
+          "msg": "000102030405060708090a0b0c0d0e0f10111213",
+          "ct": "38d1feaabef59d428dd7c0f3f79a6d44bbb4da2cf30b334548d3ec017133e0d7",
+          "tag": "0a4a17980a6cfa4f88ce760647460e6ad54412da30ebaf0b",
+          "result": "valid"
+        },
+        {
+          "tcId": 66,
+          "comment": "special case IV",
+          "flags": [
+            "SpecialCaseIv"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "000102030405060708090a0b0c0d0e0f",
+          "aad": "",
+          "msg": "000102030405060708090a0b0c0d0e0f10111213",
+          "ct": "84e817573c1fa71bd3220c57bffe3c0b6d4f2e9477b92a6faea58c649bf7c929",
+          "tag": "0c27a48225281a1b4b8df398fe9eb510c3f89e6c69c2602d",
+          "result": "valid"
+        },
+        {
+          "tcId": 67,
+          "comment": "special case IV",
+          "flags": [
+            "SpecialCaseIv"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0",
+          "aad": "",
+          "msg": "000102030405060708090a0b0c0d0e0f10111213",
+          "ct": "e0f8699e90f8c0b33ad015caec24dace6a1936896fd4b46169e415d5fd629e9a",
+          "tag": "575fcc2ae6c86859929ecd29704ccc8253688cb7aedd6e97",
+          "result": "valid"
+        },
+        {
+          "tcId": 68,
+          "comment": "Flipped bit 0 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a37dff9020f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 69,
+          "comment": "Flipped bit 1 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a07dff9020f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 70,
+          "comment": "Flipped bit 7 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "227dff9020f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 71,
+          "comment": "Flipped bit 8 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27cff9020f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 72,
+          "comment": "Flipped bit 31 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff1020f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 73,
+          "comment": "Flipped bit 32 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9021f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 74,
+          "comment": "Flipped bit 33 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9022f1aadca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 75,
+          "comment": "Flipped bit 63 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aa5ca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 76,
+          "comment": "Flipped bit 64 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca409979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 77,
+          "comment": "Flipped bit 71 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadc2509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 78,
+          "comment": "Flipped bit 77 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca529979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 79,
+          "comment": "Flipped bit 80 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509969e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 80,
+          "comment": "Flipped bit 96 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8d72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 81,
+          "comment": "Flipped bit 97 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8e72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 82,
+          "comment": "Flipped bit 103 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e0c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 83,
+          "comment": "Flipped bit 184 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8c72b1ef16f81d5b08f66b9c",
+          "result": "invalid"
+        },
+        {
+          "tcId": 84,
+          "comment": "Flipped bit 185 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8c72b1ef16f81d5b08f66b9f",
+          "result": "invalid"
+        },
+        {
+          "tcId": 85,
+          "comment": "Flipped bit 190 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8c72b1ef16f81d5b08f66bdd",
+          "result": "invalid"
+        },
+        {
+          "tcId": 86,
+          "comment": "Flipped bit 191 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aadca509979e8c72b1ef16f81d5b08f66b1d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 87,
+          "comment": "Flipped bits 0 and 64 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a37dff9020f1aadca409979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 88,
+          "comment": "Flipped bits 31 and 63 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff1020f1aa5ca509979e8c72b1ef16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 89,
+          "comment": "Flipped bits 63 and 127 in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a27dff9020f1aa5ca509979e8c72b16f16f81d5b08f66b9d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 90,
+          "comment": "all bits of tag flipped",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "5d82006fdf0e55235af66861738d4e10e907e2a4f7099462",
+          "result": "invalid"
+        },
+        {
+          "tcId": 91,
+          "comment": "Tag changed to all zero",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "000000000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 92,
+          "comment": "tag changed to all 1",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "ffffffffffffffffffffffffffffffffffffffffffffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 93,
+          "comment": "msbs changed in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "22fd7f10a0712a5c2589171e0cf2316f96789ddb8876eb1d",
+          "result": "invalid"
+        },
+        {
+          "tcId": 94,
+          "comment": "lsbs changed in tag",
+          "flags": [
+            "ModifiedTag"
+          ],
+          "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+          "iv": "505152535455565758595a5b5c5d5e5f",
+          "aad": "",
+          "msg": "202122232425262728292a2b2c2d2e2f",
+          "ct": "fb1416dff17e9eabc7596a6f97da5701fa2e82374f57ce647e899d776d73370b",
+          "tag": "a37cfe9121f0abdda408969f8d73b0ee17f91c5a09f76a9c",
+          "result": "invalid"
+        }
+      ]
+    }
+  ]
+}

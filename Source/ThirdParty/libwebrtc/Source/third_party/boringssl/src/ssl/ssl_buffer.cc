@@ -47,7 +47,7 @@ void SSLBuffer::Clear() {
 }
 
 bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
-  if (new_cap > 0xffff) {
+  if (new_cap > 0xffff - (SSL3_ALIGN_PAYLOAD - 1)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
@@ -64,10 +64,10 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
     new_buf = inline_buf_;
     new_offset = 0;
   } else {
-    // Add up to |SSL3_ALIGN_PAYLOAD| - 1 bytes of slack for alignment.
+    // Add up to `SSL3_ALIGN_PAYLOAD` - 1 bytes of slack for alignment.
     //
     // Since this buffer gets allocated quite frequently and doesn't contain any
-    // sensitive data, we allocate with malloc rather than |OPENSSL_malloc| and
+    // sensitive data, we allocate with malloc rather than `OPENSSL_malloc` and
     // avoid zeroing on free.
     new_buf = (uint8_t *)malloc(new_cap + SSL3_ALIGN_PAYLOAD - 1);
     if (new_buf == nullptr) {
@@ -116,17 +116,17 @@ void SSLBuffer::DiscardConsumed() {
   }
 }
 
-static int dtls_read_buffer_next_packet(SSL *ssl) {
+static int dtls_read_buffer_next_packet(SSLImpl *ssl) {
   SSLBuffer *buf = &ssl->s3->read_buffer;
 
   if (!buf->empty()) {
-    // It is an error to call |dtls_read_buffer_extend| when the read buffer is
+    // It is an error to call `dtls_read_buffer_extend` when the read buffer is
     // not empty.
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return -1;
   }
 
-  // Read a single packet from |ssl->rbio|. |buf->cap()| must fit in an int.
+  // Read a single packet from `ssl->rbio`. `buf->cap()` must fit in an int.
   int ret =
       BIO_read(ssl->rbio.get(), buf->data(), static_cast<int>(buf->cap()));
   if (ret <= 0) {
@@ -137,7 +137,7 @@ static int dtls_read_buffer_next_packet(SSL *ssl) {
   return 1;
 }
 
-static int tls_read_buffer_extend_to(SSL *ssl, size_t len) {
+static int tls_read_buffer_extend_to(SSLImpl *ssl, size_t len) {
   SSLBuffer *buf = &ssl->s3->read_buffer;
 
   if (len > buf->cap()) {
@@ -147,7 +147,7 @@ static int tls_read_buffer_extend_to(SSL *ssl, size_t len) {
 
   // Read until the target length is reached.
   while (buf->size() < len) {
-    // The amount of data to read is bounded by |buf->cap|, which must fit in an
+    // The amount of data to read is bounded by `buf->cap`, which must fit in an
     // int.
     int ret = BIO_read(ssl->rbio.get(), buf->data() + buf->size(),
                        static_cast<int>(len - buf->size()));
@@ -161,8 +161,8 @@ static int tls_read_buffer_extend_to(SSL *ssl, size_t len) {
   return 1;
 }
 
-int ssl_read_buffer_extend_to(SSL *ssl, size_t len) {
-  // |ssl_read_buffer_extend_to| implicitly discards any consumed data.
+int ssl_read_buffer_extend_to(SSLImpl *ssl, size_t len) {
+  // `ssl_read_buffer_extend_to` implicitly discards any consumed data.
   ssl->s3->read_buffer.DiscardConsumed();
 
   if (SSL_is_dtls(ssl)) {
@@ -170,11 +170,11 @@ int ssl_read_buffer_extend_to(SSL *ssl, size_t len) {
         DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH <= 0xffff,
         "DTLS read buffer is too large");
 
-    // The |len| parameter is ignored in DTLS.
+    // The `len` parameter is ignored in DTLS.
     len = DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_MAX_ENCRYPTED_LENGTH;
   }
 
-  // The DTLS record header can have a variable length, so the |header_len|
+  // The DTLS record header can have a variable length, so the `header_len`
   // value provided for buffer alignment only works if the header is the maximum
   // length.
   if (!ssl->s3->read_buffer.EnsureCap(DTLS1_RT_MAX_HEADER_LENGTH, len)) {
@@ -188,7 +188,7 @@ int ssl_read_buffer_extend_to(SSL *ssl, size_t len) {
 
   int ret;
   if (SSL_is_dtls(ssl)) {
-    // |len| is ignored for a datagram transport.
+    // `len` is ignored for a datagram transport.
     ret = dtls_read_buffer_next_packet(ssl);
   } else {
     ret = tls_read_buffer_extend_to(ssl, len);
@@ -202,7 +202,7 @@ int ssl_read_buffer_extend_to(SSL *ssl, size_t len) {
   return ret;
 }
 
-int ssl_handle_open_record(SSL *ssl, bool *out_retry, ssl_open_record_t ret,
+int ssl_handle_open_record(SSLImpl *ssl, bool *out_retry, ssl_open_record_t ret,
                            size_t consumed, uint8_t alert) {
   *out_retry = false;
   if (ret != ssl_open_record_partial) {
@@ -255,41 +255,40 @@ static_assert(DTLS1_RT_MAX_HEADER_LENGTH + SSL3_RT_SEND_MAX_ENCRYPTED_OVERHEAD +
                   0xffff,
               "maximum DTLS write buffer is too large");
 
-static int tls_write_buffer_flush(SSL *ssl) {
+static int tls_write_buffer_flush(SSLImpl *ssl) {
   SSLBuffer *buf = &ssl->s3->write_buffer;
-
   while (!buf->empty()) {
-    int ret = BIO_write(ssl->wbio.get(), buf->data(), buf->size());
-    if (ret <= 0) {
+    size_t written;
+    if (!BIO_write_ex(ssl->wbio.get(), buf->data(), buf->size(), &written)) {
       ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
-      return ret;
+      return -1;
     }
-    buf->Consume(static_cast<size_t>(ret));
+    buf->Consume(written);
   }
   buf->Clear();
   return 1;
 }
 
-static int dtls_write_buffer_flush(SSL *ssl) {
+static int dtls_write_buffer_flush(SSLImpl *ssl) {
   SSLBuffer *buf = &ssl->s3->write_buffer;
   if (buf->empty()) {
     return 1;
   }
 
-  int ret = BIO_write(ssl->wbio.get(), buf->data(), buf->size());
-  if (ret <= 0) {
+  if (!BIO_write_ex(ssl->wbio.get(), buf->data(), buf->size(),
+                    /*out_written=*/nullptr)) {
     ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
     // If the write failed, drop the write buffer anyway. Datagram transports
     // can't write half a packet, so the caller is expected to retry from the
     // top.
     buf->Clear();
-    return ret;
+    return -1;
   }
   buf->Clear();
   return 1;
 }
 
-int ssl_write_buffer_flush(SSL *ssl) {
+int ssl_write_buffer_flush(SSLImpl *ssl) {
   if (ssl->wbio == nullptr) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_BIO_NOT_SET);
     return -1;

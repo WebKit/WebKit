@@ -22,8 +22,8 @@
 //
 // The TLS client and server fuzzers coordinate with bssl_shim on a common
 // format to encode configuration parameters in a fuzzer file. To add a new
-// configuration, define a tag, update |SetupTest| in fuzzer.h to parse it, and
-// update |SettingsWriter| in bssl_shim to serialize it. Finally, record
+// configuration, define a tag, update `SetupTest` in fuzzer.h to parse it, and
+// update `SettingsWriter` in bssl_shim to serialize it. Finally, record
 // transcripts from a test run, and use the BORINGSSL_FUZZER_DEBUG environment
 // variable to confirm the transcripts are compatible.
 
@@ -39,13 +39,13 @@ static const uint16_t kSessionTag = 1;
 // certificates.
 static const uint16_t kRequestClientCert = 2;
 
-// kHandoffTag is followed by the output of |SSL_serialize_handoff|.
+// kHandoffTag is followed by the output of `SSL_serialize_handoff`.
 static const uint16_t kHandoffTag = 3;
 
-// kHandbackTag is followed by the output of |SSL_serialize_handback|.
+// kHandbackTag is followed by the output of `SSL_serialize_handback`.
 static const uint16_t kHandbackTag = 4;
 
-// kHintsTag is followed by the output of |SSL_serialize_handshake_hints|.
+// kHintsTag is followed by the output of `SSL_serialize_handshake_hints`.
 static const uint16_t kHintsTag = 5;
 
 #endif  // HEADER_SSL_TEST_FUZZER_TAGS

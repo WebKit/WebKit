@@ -29,8 +29,8 @@
 using namespace bssl;
 
 // tls1_P_hash computes the TLS P_<hash> function as described in RFC 5246,
-// section 5. It XORs |out_len| bytes to |out|, using |md| as the hash and
-// |secret| as the secret. |label|, |seed1|, and |seed2| are concatenated to
+// section 5. It XORs `out_len` bytes to `out`, using `md` as the hash and
+// `secret` as the secret. `label`, `seed1`, and `seed2` are concatenated to
 // form the seed parameter. It returns true on success and false on failure.
 static int tls1_P_hash(uint8_t *out, size_t out_len, const EVP_MD *md,
                        const uint8_t *secret, size_t secret_len,
@@ -60,7 +60,7 @@ static int tls1_P_hash(uint8_t *out, size_t out_len, const EVP_MD *md,
     unsigned len_u;
     uint8_t hmac[EVP_MAX_MD_SIZE];
     if (!HMAC_CTX_copy_ex(&ctx, &ctx_init) || !HMAC_Update(&ctx, A1, A1_len) ||
-        // Save a copy of |ctx| to compute the next A1 value below.
+        // Save a copy of `ctx` to compute the next A1 value below.
         (out_len > chunk && !HMAC_CTX_copy_ex(&ctx_tmp, &ctx)) ||
         !HMAC_Update(&ctx, (const uint8_t *)label, label_len) ||
         !HMAC_Update(&ctx, seed1, seed1_len) ||
@@ -71,7 +71,7 @@ static int tls1_P_hash(uint8_t *out, size_t out_len, const EVP_MD *md,
     size_t len = len_u;
     assert(len == chunk);
 
-    // XOR the result into |out|.
+    // XOR the result into `out`.
     if (len > out_len) {
       len = out_len;
     }
@@ -117,14 +117,14 @@ int CRYPTO_tls1_prf(const EVP_MD *digest, uint8_t *out, size_t out_len,
   int ret = 0;
 
   if (digest == EVP_md5_sha1()) {
-    // If using the MD5/SHA1 PRF, |secret| is partitioned between MD5 and SHA-1.
+    // If using the MD5/SHA1 PRF, `secret` is partitioned between MD5 and SHA-1.
     size_t secret_half = secret_len - (secret_len / 2);
     if (!tls1_P_hash(out, out_len, EVP_md5(), secret, secret_half, label,
                      label_len, seed1, seed1_len, seed2, seed2_len)) {
       goto end;
     }
 
-    // Note that, if |secret_len| is odd, the two halves share a byte.
+    // Note that, if `secret_len` is odd, the two halves share a byte.
     secret += secret_len - secret_half;
     secret_len = secret_half;
     digest = EVP_sha1();

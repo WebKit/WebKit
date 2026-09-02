@@ -30,9 +30,9 @@ void bssl::ec_GFp_mont_mul(const EC_GROUP *group, EC_JACOBIAN *r,
                            const EC_JACOBIAN *p, const EC_SCALAR *scalar) {
   // This is a generic implementation for uncommon curves that not do not
   // warrant a tuned one. It uses unsigned digits so that the doubling case in
-  // |ec_GFp_mont_add| is always unreachable, erring on safety and simplicity.
+  // `ec_GFp_mont_add` is always unreachable, erring on safety and simplicity.
 
-  // Compute a table of the first 32 multiples of |p| (including infinity).
+  // Compute a table of the first 32 multiples of `p` (including infinity).
   EC_JACOBIAN precomp[32];
   ec_GFp_simple_point_set_to_infinity(group, &precomp[0]);
   ec_GFp_simple_point_copy(&precomp[1], p);
@@ -44,7 +44,7 @@ void bssl::ec_GFp_mont_mul(const EC_GROUP *group, EC_JACOBIAN *r,
     }
   }
 
-  // Divide bits in |scalar| into windows.
+  // Divide bits in `scalar` into windows.
   unsigned bits =  EC_GROUP_order_bits(group);
   int r_is_at_infinity = 1;
   for (unsigned i = bits - 1; i < bits; i--) {
@@ -142,7 +142,7 @@ void bssl::ec_GFp_mont_mul_batch(
     ec_GFp_mont_batch_precomp(group, precomp[2], 17, p2);
   }
 
-  // Divide bits in |scalar| into windows.
+  // Divide bits in `scalar` into windows.
   unsigned bits = EC_GROUP_order_bits(group);
   int r_is_at_infinity = 1;
   for (unsigned i = bits; i <= bits; i--) {
@@ -183,7 +183,7 @@ int bssl::ec_GFp_mont_init_precomp(const EC_GROUP *group, EC_PRECOMP *out,
   // comb[i - 1] stores the ith element of the comb. That is, if i is
   // b4 * 2^4 + b3 * 2^3 + ... + b0 * 2^0, it stores k * |p|, where k is
   // b4 * 2^(4*stride) + b3 * 2^(3*stride) + ... + b0 * 2^(0*stride). stride
-  // here is |ec_GFp_mont_comb_stride|. We store at index i - 1 because the 0th
+  // here is `ec_GFp_mont_comb_stride`. We store at index i - 1 because the 0th
   // comb entry is always infinity.
   EC_JACOBIAN comb[(1 << EC_MONT_PRECOMP_COMB_SIZE) - 1];
   unsigned stride = ec_GFp_mont_comb_stride(group);
@@ -192,7 +192,7 @@ int bssl::ec_GFp_mont_init_precomp(const EC_GROUP *group, EC_PRECOMP *out,
   // entries up to 2^0 are filled.
   comb[(1 << 0) - 1] = *p;
   for (unsigned i = 1; i < EC_MONT_PRECOMP_COMB_SIZE; i++) {
-    // Compute entry 2^i by doubling the entry for 2^(i-1) |stride| times.
+    // Compute entry 2^i by doubling the entry for 2^(i-1) `stride` times.
     unsigned bit = 1 << i;
     ec_GFp_mont_dbl(group, &comb[bit - 1], &comb[bit / 2 - 1]);
     for (unsigned j = 1; j < stride; j++) {
@@ -219,15 +219,15 @@ static void ec_GFp_mont_get_comb_window(const EC_GROUP *group,
                                         const EC_SCALAR *scalar, unsigned i) {
   const size_t width = group->order.N.width;
   unsigned stride = ec_GFp_mont_comb_stride(group);
-  // Select the bits corresponding to the comb shifted up by |i|.
+  // Select the bits corresponding to the comb shifted up by `i`.
   unsigned window = 0;
   for (unsigned j = 0; j < EC_MONT_PRECOMP_COMB_SIZE; j++) {
     window |= bn_is_bit_set_words(scalar->words, width, j * stride + i)
               << j;
   }
 
-  // Select precomp->comb[window - 1]. If |window| is zero, |match| will always
-  // be zero, which will leave |out| at infinity.
+  // Select precomp->comb[window - 1]. If `window` is zero, `match` will always
+  // be zero, which will leave `out` at infinity.
   OPENSSL_memset(out, 0, sizeof(EC_JACOBIAN));
   for (unsigned j = 0; j < std::size(precomp->comb); j++) {
     BN_ULONG match = constant_time_eq_w(window, j + 1);

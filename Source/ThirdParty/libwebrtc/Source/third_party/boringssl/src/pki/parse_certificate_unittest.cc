@@ -276,7 +276,7 @@ TEST(ParseTbsCertificateTest, Version2IssuerUniqueId) {
                                     CertificateVersion::V2);
 }
 
-// A version 2 certificate with both a issuer and subject unique ID field.
+// A version 2 certificate with both an issuer and subject unique ID field.
 TEST(ParseTbsCertificateTest, Version2IssuerAndSubjectUniqueId) {
   RunTbsCertificateTestGivenVersion("tbs_v2_issuer_and_subject_unique_id.pem",
                                     CertificateVersion::V2);

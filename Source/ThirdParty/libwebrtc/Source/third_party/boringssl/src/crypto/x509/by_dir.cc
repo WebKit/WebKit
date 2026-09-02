@@ -186,7 +186,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
     return 0;
   }
 
-  // Set up an |X509_OBJECT| to compare against.
+  // Set up an `X509_OBJECT` to compare against.
   UniquePtr<X509> lookup_cert;
   UniquePtr<X509_CRL> lookup_crl;
   X509_OBJECT stmp;

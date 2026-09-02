@@ -25,10 +25,10 @@ using namespace bssl;
 // The input and output encrypted as though 64bit cfb mode is being used. The
 // extra state information to record how much of the 64bit block we have used
 // is contained in *num;
-void DES_ede3_cfb64_encrypt(const uint8_t *in, uint8_t *out,
-                            long length, DES_key_schedule *ks1,
-                            DES_key_schedule *ks2, DES_key_schedule *ks3,
-                            DES_cblock *ivec, int *num, int enc) {
+void DES_ede3_cfb64_encrypt(const uint8_t *in, uint8_t *out, long length,
+                            DES_key_schedule *ks1, DES_key_schedule *ks2,
+                            DES_key_schedule *ks3, DES_cblock *ivec, int *num,
+                            int enc) {
   uint32_t v0, v1;
   long l = length;
   int n = *num;
@@ -86,7 +86,7 @@ void DES_ede3_cfb64_encrypt(const uint8_t *in, uint8_t *out,
   *num = n;
 }
 
-// This is compatible with the single key CFB-r for DES, even thought that's
+// This is compatible with the single key CFB-r for DES, even though that's
 // not what EVP needs.
 
 void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,

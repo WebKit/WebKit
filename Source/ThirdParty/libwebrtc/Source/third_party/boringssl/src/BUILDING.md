@@ -80,16 +80,21 @@ version r16b of the NDK.
 Unpack the Android NDK somewhere and export `ANDROID_NDK` to point to the
 directory. Then run CMake like this:
 
-    cmake -DANDROID_ABI=armeabi-v7a \
-          -DANDROID_PLATFORM=android-19 \
+    cmake -DANDROID_ABI=arm64-v8a \
+          -DANDROID_PLATFORM=android-21 \
           -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \
           -GNinja -B build
 
 Once you've run that, Ninja should produce Android-compatible binaries.  You
-can replace `armeabi-v7a` in the above with `arm64-v8a` and use API level 21 or
-higher to build aarch64 binaries.
+can replace `arm64-v8a` with `armeabi-v7a` in the above to build aarch64
+binaries.
 
 For other options, see the documentation in the toolchain file.
+
+To run tests, you can use the `util/run_android_tests.go` script. Individual
+binaries can also be pushed to the device with `adb`, but note that some tests
+require test data. The `-upload-only` flag to `run_android_tests.go` may be
+useful.
 
 To debug the resulting binaries on an Android device with `gdb`, run the
 commands below. Replace `ARCH` with the architecture of the target device, e.g.
@@ -222,14 +227,33 @@ results.
 
 # Pre-generated Files
 
-If modifying perlasm files, or `util/pregenerate/build.json`, you will need to
-run `go run ./util/pregenerate` to refresh some pre-generated files. To do this,
-you will need a recent version of Perl.
+If modifying perlasm files, `util/pregenerate/build.json`, or adding new public
+symbols, you will need to run `go run ./util/pregenerate` to refresh some
+pre-generated files. To do this, you will need:
 
-On Windows, [Active State Perl](http://www.activestate.com/activeperl/) has been
-reported to work, as has MSYS Perl.
-[Strawberry Perl](http://strawberryperl.com/) also works but it adds GCC
-to `PATH`, which can confuse some build tools when identifying the compiler
-(removing `C:\Strawberry\c\bin` from `PATH` should resolve any problems).
+- The most recent stable version of [Go](https://go.dev/)
+
+- A recent version of [Perl](https://www.perl.org/)
+
+- A recent version of [Clang](https://clang.llvm.org/)
+
+If not available in `PATH`, the `-perl=path/to/perl` and `-clang=path/to/clang`
+flags can be used to specify where Perl and Clang can be found, respectively.
+Passing an empty string (`-perl=` and `-clang=`) will skip these dependencies,
+but not all files will be regenerated. If any skipped files need to be updated,
+some of your changes may not be applied to your build, and your change may fail
+tests on our CI.
+
+On non-Windows systems, Perl and Clang are either installed by default or
+readily available from package managers or Xcode.
+
+On Windows, Clang can be installed from Visual Studio. Perl can be installed
+from [Strawberry Perl](https://strawberryperl.com/). Prefer to use the
+"Portable zip" version. The MSI installer will
+[add GCC to `PATH`](https://github.com/StrawberryPerl/Perl-Dist-Strawberry/issues/11),
+which can confuse some build tools when identifying the compiler. If this has
+happened, removing `C:\Strawberry\c\bin` from `PATH` should resolve any
+problems. [`CMAKE_IGNORE_PATH`](https://cmake.org/cmake/help/latest/variable/CMAKE_IGNORE_PATH.html)
+may also be useful.
 
 See [gen/README.md](./gen/README.md) for more details.

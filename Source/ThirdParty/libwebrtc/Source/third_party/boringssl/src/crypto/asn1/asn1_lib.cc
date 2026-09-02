@@ -14,6 +14,7 @@
 
 #include <openssl/asn1.h>
 
+#include <assert.h>
 #include <limits.h>
 #include <string.h>
 
@@ -63,13 +64,13 @@ OPENSSL_DECLARE_ERROR_REASON(ASN1, UNKNOWN_FORMAT)
 OPENSSL_DECLARE_ERROR_REASON(ASN1, UNKNOWN_TAG)
 OPENSSL_DECLARE_ERROR_REASON(ASN1, UNSUPPORTED_TYPE)
 
-// Limit |ASN1_STRING|s to 64 MiB of data. Most of this module, as well as
+// Limit `ASN1_STRING`s to 64 MiB of data. Most of this module, as well as
 // downstream code, does not correctly handle overflow. We cap string fields
-// more tightly than strictly necessary to fit in |int|. This is not expected to
+// more tightly than strictly necessary to fit in `int`. This is not expected to
 // impact real world uses of this field.
 //
 // In particular, this limit is small enough that the bit count of a BIT STRING
-// comfortably fits in an |int|, with room for arithmetic.
+// comfortably fits in an `int`, with room for arithmetic.
 #define ASN1_STRING_MAX (64 * 1024 * 1024)
 
 static void asn1_put_length(unsigned char **pp, int length);
@@ -110,7 +111,7 @@ int ASN1_get_object(const unsigned char **inp, long *out_len, int *out_tag,
   return constructed;
 }
 
-// class 0 is constructed constructed == 2 for indefinite length constructed
+// class 0 is constructed, constructed == 2 for indefinite length constructed
 void ASN1_put_object(unsigned char **pp, int constructed, int length, int tag,
                      int xclass) {
   unsigned char *p = *pp;
@@ -270,7 +271,7 @@ int ASN1_STRING_set(ASN1_STRING *str, const void *_data, ossl_ssize_t len_s) {
   if (data != nullptr) {
     OPENSSL_memcpy(str->data, data, len);
     // Historically, OpenSSL would NUL-terminate most (but not all)
-    // |ASN1_STRING|s, in case anyone accidentally passed |str->data| into a
+    // `ASN1_STRING`s, in case anyone accidentally passed `str->data` into a
     // function expecting a C string. We retain this behavior for compatibility,
     // but code must not rely on this. See CVE-2021-3712.
     str->data[len] = '\0';
@@ -368,9 +369,9 @@ const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *str) {
   return str->data;
 }
 
-int bssl::asn1_parse_octet_string(CBS *cbs, ASN1_STRING *out,
-                                  CBS_ASN1_TAG tag) {
-  tag = tag == 0 ? CBS_ASN1_OCTETSTRING : tag;
+int bssl::asn1_parse_string_unchecked(CBS *cbs, ASN1_STRING *out, int str_type,
+                                      CBS_ASN1_TAG tag) {
+  assert(tag != 0);
   CBS child;
   if (!CBS_get_asn1(cbs, &child, tag)) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
@@ -379,8 +380,22 @@ int bssl::asn1_parse_octet_string(CBS *cbs, ASN1_STRING *out,
   if (!ASN1_STRING_set(out, CBS_data(&child), CBS_len(&child))) {
     return 0;
   }
-  out->type = V_ASN1_OCTET_STRING;
+  out->type = str_type;
   return 1;
+}
+
+int bssl::asn1_parse_octet_string(CBS *cbs, ASN1_STRING *out,
+                                  CBS_ASN1_TAG tag) {
+  // Nothing to check for OCTET STRING.
+  tag = tag == 0 ? CBS_ASN1_OCTETSTRING : tag;
+  return asn1_parse_string_unchecked(cbs, out, V_ASN1_OCTET_STRING, tag);
+}
+
+int bssl::asn1_parse_t61_string(CBS *cbs, ASN1_STRING *out, CBS_ASN1_TAG tag) {
+  // Nothing to check for T61String. We parse it as Latin-1 and all byte strings
+  // are valid Latin-1.
+  tag = tag == 0 ? CBS_ASN1_T61STRING : tag;
+  return asn1_parse_string_unchecked(cbs, out, V_ASN1_T61STRING, tag);
 }
 
 int bssl::asn1_marshal_octet_string(CBB *out, const ASN1_STRING *in,

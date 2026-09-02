@@ -15,10 +15,7 @@
 //! TLS Session support for BoringSSL.
 
 use alloc::vec::Vec;
-use core::ptr::{
-    NonNull,
-    null_mut, //
-};
+use core::ptr::NonNull;
 
 use crate::{
     call_slice_getter,
@@ -35,24 +32,6 @@ use crate::{
 /// A TLS session.
 ///
 /// See [RFC 8446 Section 2.2](https://datatracker.ietf.org/doc/html/rfc8446#section-2.2).
-///
-/// # Example
-///
-/// ```rust,no_run
-/// # use bssl_tls::{context::TlsContext, sessions::TlsSession};
-/// # use bssl_tls::context::{Client, TlsMode};
-/// # use bssl_tls::connection::lifecycle::EstablishedTlsConnection;
-/// // Assuming `conn` is an `EstablishedTlsConnection`
-/// # let conn: EstablishedTlsConnection<'_, Client, TlsMode> = todo!();
-/// # let ctx: TlsContext = todo!();
-/// if let Some(session) = conn.get_session() {
-///     // Serialize the session to store it
-///     let session_bytes = session.to_bytes().unwrap();
-///
-///     // Deserialize the session to resume it later
-///     let recovered_session = TlsSession::from_bytes(&session_bytes, &ctx).unwrap();
-/// }
-/// ```
 pub struct TlsSession(pub(crate) NonNull<bssl_sys::SSL_SESSION>);
 
 // Safety: once constructed an `SSL_SESSION` is immutable and has no thread-local data.
@@ -197,10 +176,8 @@ impl TlsSession {
         Ok(res)
     }
 
-    // TODO(@xfding): Implement SSL_SESSION_get0_peer_rpk when needed.
-
     /// Get the signed certificate timestamp list, if any.
-    pub fn get0_signed_cert_timestamp_list(&self) -> Option<&[u8]> {
+    pub fn get_signed_cert_timestamp_list(&self) -> Option<&[u8]> {
         call_slice_getter!(
             bssl_sys::SSL_SESSION_get0_signed_cert_timestamp_list,
             self.ptr()
@@ -212,50 +189,6 @@ impl TlsSession {
     /// See [RFC 8446 §4.4.2.1](https://datatracker.ietf.org/doc/html/rfc8446#section-4.4.2.1).
     pub fn get_ocsp_response(&self) -> Option<&[u8]> {
         call_slice_getter!(bssl_sys::SSL_SESSION_get0_ocsp_response, self.ptr())
-    }
-
-    /// Get the master key.
-    ///
-    /// In TLS 1.3, this returns the **Resumption Master Secret**.
-    /// See [RFC 8446 §7.1](https://datatracker.ietf.org/doc/html/rfc8446#section-7.1).
-    ///
-    /// BoringSSL uses this secret to automatically derive the Pre-Shared Key (PSK) for
-    /// session resumption. Users should not attempt to manually expand this secret or
-    /// perform manual cryptography; BoringSSL handles the key expansion internally when
-    /// a session is configured for resumption.
-    ///
-    /// # Example
-    ///
-    /// If you need to derive a PSK for external use (e.g. for external PSK resumption),
-    /// you can use `bssl_crypto::hkdf`:
-    ///
-    /// ```rust,no_run
-    /// # use bssl_tls::sessions::TlsSession;
-    /// # // Assuming `session` is a `TlsSession`
-    /// # let session: TlsSession = todo!();
-    /// let master_key = session.get_master_key();
-    ///
-    /// // Treat the master key as a PRK in HKDF
-    /// let prk = bssl_crypto::hkdf::Prk::new::<bssl_crypto::digest::Sha256>(&master_key)
-    ///     .expect("Invalid master key length");
-    ///
-    /// // Expand it to derive a PSK
-    /// let mut psk = vec![0u8; 32];
-    /// prk.expand_into(b"resumption psk", &mut psk)
-    ///     .expect("HKDF expansion failed");
-    /// ```
-    pub fn get_master_key(&self) -> Vec<u8> {
-        let len = unsafe {
-            // Safety: self.ptr() is valid.
-            bssl_sys::SSL_SESSION_get_master_key(self.ptr(), null_mut(), 0)
-        };
-        let mut out = vec![0u8; len];
-        let len = unsafe {
-            // Safety: self.ptr() is valid.
-            bssl_sys::SSL_SESSION_get_master_key(self.ptr(), out.as_mut_ptr(), out.len())
-        };
-        out.truncate(len);
-        out
     }
 
     /// Check if the session should be single use.
@@ -308,169 +241,22 @@ impl TlsSession {
         }
     }
 
+    /// Get the Raw Public Key offered by the peer in the `ClientHello`.
+    pub fn get_peer_raw_public_key(&self) -> Option<Vec<u8>> {
+        let pkey = unsafe {
+            // Safety:
+            // - `self.ptr()` is a valid `SSL` handle.
+            // - `pkey` does not escape the current function frame.
+            NonNull::new(bssl_sys::SSL_SESSION_get0_peer_rpk(self.ptr()))?
+        };
+        Some(crate::credentials::marshal_evp_into_spki(pkey))
+    }
+
     /// Check if the session is early data capable.
     pub fn early_data_capable(&self) -> bool {
         unsafe {
             // Safety: self.ptr() is valid.
             bssl_sys::SSL_SESSION_early_data_capable(self.ptr()) == 1
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use core::pin::Pin;
-
-    use futures::future::try_join;
-
-    use super::*;
-
-    use crate::tests::create_mock_pipe;
-    use crate::{
-        context::TlsContextBuilder,
-        credentials::{
-            PskHash,
-            TlsCredential, //
-        }, //
-    };
-
-    const TEST_KEY: &[u8; 32] = b"0123456789abcdef0123456789abcdef";
-    const TEST_IDENTITY: &[u8] = b"test-identity";
-    const TEST_CONTEXT: &[u8] = b"test-context";
-
-    #[test]
-    fn test_session_ops() {
-        let ctx = TlsContextBuilder::new_tls().build();
-        let dummy_bytes = vec![0u8; 32];
-        let res = TlsSession::from_bytes(&dummy_bytes, &ctx);
-        assert!(res.is_err());
-    }
-
-    #[test]
-    fn test_psk_resumption() {
-        let cred_client = TlsCredential::new_pre_shared_key(
-            TEST_KEY,
-            TEST_IDENTITY,
-            PskHash::Sha256,
-            TEST_CONTEXT,
-        )
-        .unwrap();
-        let cred_server = TlsCredential::new_pre_shared_key(
-            TEST_KEY,
-            TEST_IDENTITY,
-            PskHash::Sha256,
-            TEST_CONTEXT,
-        )
-        .unwrap();
-
-        let mut ctx_client = TlsContextBuilder::new_tls();
-        ctx_client.with_credential(cred_client).unwrap();
-        let ctx_client = ctx_client.build();
-
-        let mut ctx_server = TlsContextBuilder::new_tls();
-        ctx_server.with_credential(cred_server).unwrap();
-        let ctx_server = ctx_server.build();
-
-        let mut conn_client = ctx_client.new_client_connection(None).unwrap().build();
-        let mut conn_server = ctx_server.new_server_connection(None).unwrap().build();
-
-        let (sock_client, sock_server, mut executor) = create_mock_pipe();
-
-        conn_client.set_io(sock_client).unwrap();
-        conn_server.set_io(sock_server).unwrap();
-
-        executor
-            .run(try_join(
-                conn_client.in_handshake().unwrap().async_handshake(),
-                conn_server.in_handshake().unwrap().async_handshake(),
-            ))
-            .unwrap();
-
-        let est_client = conn_client.established().unwrap();
-        let session = est_client.get_session().unwrap();
-
-        let session_bytes = session.to_bytes().unwrap();
-        assert!(!session_bytes.is_empty());
-
-        let session_recovered = TlsSession::from_bytes(&session_bytes, &ctx_client).unwrap();
-
-        let session_bytes_2 = session_recovered.to_bytes().unwrap();
-        assert_eq!(session_bytes, session_bytes_2);
-    }
-
-    #[test]
-    fn test_ticket_based_resumption() {
-        let cred_client = TlsCredential::new_pre_shared_key(
-            TEST_KEY,
-            TEST_IDENTITY,
-            PskHash::Sha256,
-            TEST_CONTEXT,
-        )
-        .unwrap();
-        let cred_server = TlsCredential::new_pre_shared_key(
-            TEST_KEY,
-            TEST_IDENTITY,
-            PskHash::Sha256,
-            TEST_CONTEXT,
-        )
-        .unwrap();
-
-        let mut ctx_client = TlsContextBuilder::new_tls();
-        ctx_client.with_credential(cred_client).unwrap();
-        let ctx_client = ctx_client.build();
-
-        let mut ctx_server = TlsContextBuilder::new_tls();
-        ctx_server.with_credential(cred_server).unwrap();
-        let ctx_server = ctx_server.build();
-        let mut conn_client = ctx_client.new_client_connection(None).unwrap().build();
-        let mut conn_server = ctx_server.new_server_connection(None).unwrap().build();
-
-        let (sock_client, sock_server, mut executor) = create_mock_pipe();
-
-        conn_client.set_io(sock_client).unwrap();
-        conn_server.set_io(sock_server).unwrap();
-
-        executor
-            .run(try_join(
-                conn_client.in_handshake().unwrap().async_handshake(),
-                conn_server.in_handshake().unwrap().async_handshake(),
-            ))
-            .unwrap();
-
-        let est_client = conn_client.established().unwrap();
-        let session = est_client.get_session().unwrap();
-        let peer = session.get_peer_sha256().unwrap();
-
-        // === SESSION RESUMPTION ===
-        // Use the session for a new connection
-        let (sock_client_2, sock_server_2, mut executor) = create_mock_pipe();
-
-        let mut builder_client_2 = ctx_client.new_client_connection(None).unwrap();
-        builder_client_2.with_session(&session);
-        let mut conn_client_2 = builder_client_2.build();
-
-        let builder_server_2 = ctx_server.new_server_connection(None).unwrap();
-        let mut conn_server_2 = builder_server_2.build();
-
-        conn_client_2.set_io(sock_client_2).unwrap();
-        conn_server_2.set_io(sock_server_2).unwrap();
-
-        executor
-            .run(try_join(
-                Pin::new(&mut conn_client_2).async_write(b"hello"),
-                Pin::new(&mut conn_server_2).async_write(b"world"),
-            ))
-            .unwrap();
-        // The peer identity should be the same as before
-        assert_eq!(
-            conn_client_2
-                .established()
-                .unwrap()
-                .get_session()
-                .unwrap()
-                .get_peer_sha256()
-                .unwrap(),
-            peer
-        );
     }
 }

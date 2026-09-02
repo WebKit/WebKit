@@ -153,8 +153,8 @@ struct alignas(16) Reg128 {
 // In aarch64, r18 (accessed as w18 or x18 in a 64-bit context) is the platform
 // register. iOS says user code may not touch it. We found no clear reference
 // for Linux. The iOS behavior implies portable assembly cannot use it, and
-// aarch64 has many registers. Thus this framework ignores register's existence.
-// We test r18 violations in arm-xlate.pl.
+// aarch64 has many registers. Thus this framework ignores the register's
+// existence. We test r18 violations in arm-xlate.pl.
 #define LOOP_CALLER_STATE_REGISTERS()                                \
   /* Per AAPCS64, section 5.1.2, only the bottom 64 bits of v8-v15 */ \
   /* are preserved. These are accessed as dN. */                     \
@@ -233,7 +233,7 @@ inline crypto_word_t ToWord(T t) {
   static_assert(sizeof(T) == 4, "parameter types must be word-sized");
   return (crypto_word_t)t;
 #elif defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)
-  // AAPCS64, section 5.4.2, clauses C.7 and C.14 says any remaining bits in
+  // AAPCS64, section 5.4.2, clauses C.7 and C.14 say any remaining bits in
   // aarch are unspecified. iOS64 contradicts this and says the callee extends
   // arguments up to 32 bits, and only the upper 32 bits are unspecified.
   //

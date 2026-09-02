@@ -30,651 +30,651 @@ _CET_ENDBR
 .cfi_offset	r15,-48
 .Lprologue:
 
+// rdi = arg #1 (ctx, MD5_CTX pointer)
+// rsi = arg #2 (ptr, data pointer)
+// rdx = arg #3 (nbr, number of 16-word blocks to process)
+	movq	%rdi,%rbp  // rbp = ctx
+	shlq	$6,%rdx  // rdx = nbr in bytes
+	leaq	(%rsi,%rdx,1),%rdi  // rdi = end
+	movl	0(%rbp),%eax  // eax = ctx->A
+	movl	4(%rbp),%ebx  // ebx = ctx->B
+	movl	8(%rbp),%ecx  // ecx = ctx->C
+	movl	12(%rbp),%edx  // edx = ctx->D
+// end is 'rdi'
+// ptr is 'rsi'
+// A is 'eax'
+// B is 'ebx'
+// C is 'ecx'
+// D is 'edx'
 
+	cmpq	%rdi,%rsi  // cmp end with ptr
+	je	.Lend  // jmp if ptr == end
 
-
-	movq	%rdi,%rbp
-	shlq	$6,%rdx
-	leaq	(%rsi,%rdx,1),%rdi
-	movl	0(%rbp),%eax
-	movl	4(%rbp),%ebx
-	movl	8(%rbp),%ecx
-	movl	12(%rbp),%edx
-
-
-
-
-
-
-
-	cmpq	%rdi,%rsi
-	je	.Lend
-
-
-.Lloop:
+// BEGIN of loop over 16-word blocks
+.Lloop:  // save old values of A, B, C, D
 	movl	%eax,%r8d
 	movl	%ebx,%r9d
 	movl	%ecx,%r14d
 	movl	%edx,%r15d
-	movl	0(%rsi),%r10d
-	movl	%edx,%r11d
-	xorl	%ecx,%r11d
-	leal	-680876936(%rax,%r10,1),%eax
-	andl	%ebx,%r11d
-	xorl	%edx,%r11d
-	movl	4(%rsi),%r10d
-	addl	%r11d,%eax
-	roll	$7,%eax
-	movl	%ecx,%r11d
-	addl	%ebx,%eax
-	xorl	%ebx,%r11d
-	leal	-389564586(%rdx,%r10,1),%edx
-	andl	%eax,%r11d
-	xorl	%ecx,%r11d
-	movl	8(%rsi),%r10d
-	addl	%r11d,%edx
-	roll	$12,%edx
-	movl	%ebx,%r11d
-	addl	%eax,%edx
-	xorl	%eax,%r11d
-	leal	606105819(%rcx,%r10,1),%ecx
-	andl	%edx,%r11d
-	xorl	%ebx,%r11d
-	movl	12(%rsi),%r10d
-	addl	%r11d,%ecx
-	roll	$17,%ecx
-	movl	%eax,%r11d
-	addl	%edx,%ecx
-	xorl	%edx,%r11d
-	leal	-1044525330(%rbx,%r10,1),%ebx
-	andl	%ecx,%r11d
-	xorl	%eax,%r11d
-	movl	16(%rsi),%r10d
-	addl	%r11d,%ebx
-	roll	$22,%ebx
-	movl	%edx,%r11d
-	addl	%ecx,%ebx
-	xorl	%ecx,%r11d
-	leal	-176418897(%rax,%r10,1),%eax
-	andl	%ebx,%r11d
-	xorl	%edx,%r11d
-	movl	20(%rsi),%r10d
-	addl	%r11d,%eax
-	roll	$7,%eax
-	movl	%ecx,%r11d
-	addl	%ebx,%eax
-	xorl	%ebx,%r11d
-	leal	1200080426(%rdx,%r10,1),%edx
-	andl	%eax,%r11d
-	xorl	%ecx,%r11d
-	movl	24(%rsi),%r10d
-	addl	%r11d,%edx
-	roll	$12,%edx
-	movl	%ebx,%r11d
-	addl	%eax,%edx
-	xorl	%eax,%r11d
-	leal	-1473231341(%rcx,%r10,1),%ecx
-	andl	%edx,%r11d
-	xorl	%ebx,%r11d
-	movl	28(%rsi),%r10d
-	addl	%r11d,%ecx
-	roll	$17,%ecx
-	movl	%eax,%r11d
-	addl	%edx,%ecx
-	xorl	%edx,%r11d
-	leal	-45705983(%rbx,%r10,1),%ebx
-	andl	%ecx,%r11d
-	xorl	%eax,%r11d
-	movl	32(%rsi),%r10d
-	addl	%r11d,%ebx
-	roll	$22,%ebx
-	movl	%edx,%r11d
-	addl	%ecx,%ebx
-	xorl	%ecx,%r11d
-	leal	1770035416(%rax,%r10,1),%eax
-	andl	%ebx,%r11d
-	xorl	%edx,%r11d
-	movl	36(%rsi),%r10d
-	addl	%r11d,%eax
-	roll	$7,%eax
-	movl	%ecx,%r11d
-	addl	%ebx,%eax
-	xorl	%ebx,%r11d
-	leal	-1958414417(%rdx,%r10,1),%edx
-	andl	%eax,%r11d
-	xorl	%ecx,%r11d
-	movl	40(%rsi),%r10d
-	addl	%r11d,%edx
-	roll	$12,%edx
-	movl	%ebx,%r11d
-	addl	%eax,%edx
-	xorl	%eax,%r11d
-	leal	-42063(%rcx,%r10,1),%ecx
-	andl	%edx,%r11d
-	xorl	%ebx,%r11d
-	movl	44(%rsi),%r10d
-	addl	%r11d,%ecx
-	roll	$17,%ecx
-	movl	%eax,%r11d
-	addl	%edx,%ecx
-	xorl	%edx,%r11d
-	leal	-1990404162(%rbx,%r10,1),%ebx
-	andl	%ecx,%r11d
-	xorl	%eax,%r11d
-	movl	48(%rsi),%r10d
-	addl	%r11d,%ebx
-	roll	$22,%ebx
-	movl	%edx,%r11d
-	addl	%ecx,%ebx
-	xorl	%ecx,%r11d
-	leal	1804603682(%rax,%r10,1),%eax
-	andl	%ebx,%r11d
-	xorl	%edx,%r11d
-	movl	52(%rsi),%r10d
-	addl	%r11d,%eax
-	roll	$7,%eax
-	movl	%ecx,%r11d
-	addl	%ebx,%eax
-	xorl	%ebx,%r11d
-	leal	-40341101(%rdx,%r10,1),%edx
-	andl	%eax,%r11d
-	xorl	%ecx,%r11d
-	movl	56(%rsi),%r10d
-	addl	%r11d,%edx
-	roll	$12,%edx
-	movl	%ebx,%r11d
-	addl	%eax,%edx
-	xorl	%eax,%r11d
-	leal	-1502002290(%rcx,%r10,1),%ecx
-	andl	%edx,%r11d
-	xorl	%ebx,%r11d
-	movl	60(%rsi),%r10d
-	addl	%r11d,%ecx
-	roll	$17,%ecx
-	movl	%eax,%r11d
-	addl	%edx,%ecx
-	xorl	%edx,%r11d
-	leal	1236535329(%rbx,%r10,1),%ebx
-	andl	%ecx,%r11d
-	xorl	%eax,%r11d
-	movl	0(%rsi),%r10d
-	addl	%r11d,%ebx
-	roll	$22,%ebx
-	movl	%edx,%r11d
-	addl	%ecx,%ebx
-	movl	4(%rsi),%r10d
-	movl	%edx,%r11d
-	movl	%edx,%r12d
-	notl	%r11d
-	leal	-165796510(%rax,%r10,1),%eax
-	andl	%ebx,%r12d
-	andl	%ecx,%r11d
-	movl	24(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ecx,%r11d
-	addl	%r12d,%eax
-	movl	%ecx,%r12d
-	roll	$5,%eax
-	addl	%ebx,%eax
-	notl	%r11d
-	leal	-1069501632(%rdx,%r10,1),%edx
-	andl	%eax,%r12d
-	andl	%ebx,%r11d
-	movl	44(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ebx,%r11d
-	addl	%r12d,%edx
-	movl	%ebx,%r12d
-	roll	$9,%edx
-	addl	%eax,%edx
-	notl	%r11d
-	leal	643717713(%rcx,%r10,1),%ecx
-	andl	%edx,%r12d
-	andl	%eax,%r11d
-	movl	0(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%eax,%r11d
-	addl	%r12d,%ecx
-	movl	%eax,%r12d
-	roll	$14,%ecx
-	addl	%edx,%ecx
-	notl	%r11d
-	leal	-373897302(%rbx,%r10,1),%ebx
-	andl	%ecx,%r12d
-	andl	%edx,%r11d
-	movl	20(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%edx,%r11d
-	addl	%r12d,%ebx
-	movl	%edx,%r12d
-	roll	$20,%ebx
-	addl	%ecx,%ebx
-	notl	%r11d
-	leal	-701558691(%rax,%r10,1),%eax
-	andl	%ebx,%r12d
-	andl	%ecx,%r11d
-	movl	40(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ecx,%r11d
-	addl	%r12d,%eax
-	movl	%ecx,%r12d
-	roll	$5,%eax
-	addl	%ebx,%eax
-	notl	%r11d
-	leal	38016083(%rdx,%r10,1),%edx
-	andl	%eax,%r12d
-	andl	%ebx,%r11d
-	movl	60(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ebx,%r11d
-	addl	%r12d,%edx
-	movl	%ebx,%r12d
-	roll	$9,%edx
-	addl	%eax,%edx
-	notl	%r11d
-	leal	-660478335(%rcx,%r10,1),%ecx
-	andl	%edx,%r12d
-	andl	%eax,%r11d
-	movl	16(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%eax,%r11d
-	addl	%r12d,%ecx
-	movl	%eax,%r12d
-	roll	$14,%ecx
-	addl	%edx,%ecx
-	notl	%r11d
-	leal	-405537848(%rbx,%r10,1),%ebx
-	andl	%ecx,%r12d
-	andl	%edx,%r11d
-	movl	36(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%edx,%r11d
-	addl	%r12d,%ebx
-	movl	%edx,%r12d
-	roll	$20,%ebx
-	addl	%ecx,%ebx
-	notl	%r11d
-	leal	568446438(%rax,%r10,1),%eax
-	andl	%ebx,%r12d
-	andl	%ecx,%r11d
-	movl	56(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ecx,%r11d
-	addl	%r12d,%eax
-	movl	%ecx,%r12d
-	roll	$5,%eax
-	addl	%ebx,%eax
-	notl	%r11d
-	leal	-1019803690(%rdx,%r10,1),%edx
-	andl	%eax,%r12d
-	andl	%ebx,%r11d
-	movl	12(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ebx,%r11d
-	addl	%r12d,%edx
-	movl	%ebx,%r12d
-	roll	$9,%edx
-	addl	%eax,%edx
-	notl	%r11d
-	leal	-187363961(%rcx,%r10,1),%ecx
-	andl	%edx,%r12d
-	andl	%eax,%r11d
-	movl	32(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%eax,%r11d
-	addl	%r12d,%ecx
-	movl	%eax,%r12d
-	roll	$14,%ecx
-	addl	%edx,%ecx
-	notl	%r11d
-	leal	1163531501(%rbx,%r10,1),%ebx
-	andl	%ecx,%r12d
-	andl	%edx,%r11d
-	movl	52(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%edx,%r11d
-	addl	%r12d,%ebx
-	movl	%edx,%r12d
-	roll	$20,%ebx
-	addl	%ecx,%ebx
-	notl	%r11d
-	leal	-1444681467(%rax,%r10,1),%eax
-	andl	%ebx,%r12d
-	andl	%ecx,%r11d
-	movl	8(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ecx,%r11d
-	addl	%r12d,%eax
-	movl	%ecx,%r12d
-	roll	$5,%eax
-	addl	%ebx,%eax
-	notl	%r11d
-	leal	-51403784(%rdx,%r10,1),%edx
-	andl	%eax,%r12d
-	andl	%ebx,%r11d
-	movl	28(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%ebx,%r11d
-	addl	%r12d,%edx
-	movl	%ebx,%r12d
-	roll	$9,%edx
-	addl	%eax,%edx
-	notl	%r11d
-	leal	1735328473(%rcx,%r10,1),%ecx
-	andl	%edx,%r12d
-	andl	%eax,%r11d
-	movl	48(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%eax,%r11d
-	addl	%r12d,%ecx
-	movl	%eax,%r12d
-	roll	$14,%ecx
-	addl	%edx,%ecx
-	notl	%r11d
-	leal	-1926607734(%rbx,%r10,1),%ebx
-	andl	%ecx,%r12d
-	andl	%edx,%r11d
-	movl	0(%rsi),%r10d
-	orl	%r11d,%r12d
-	movl	%edx,%r11d
-	addl	%r12d,%ebx
-	movl	%edx,%r12d
-	roll	$20,%ebx
-	addl	%ecx,%ebx
-	movl	20(%rsi),%r10d
-	movl	%ecx,%r11d
-	leal	-378558(%rax,%r10,1),%eax
-	movl	32(%rsi),%r10d
-	xorl	%edx,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%eax
-	roll	$4,%eax
-	movl	%ebx,%r11d
-	addl	%ebx,%eax
-	leal	-2022574463(%rdx,%r10,1),%edx
-	movl	44(%rsi),%r10d
-	xorl	%ecx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%edx
-	roll	$11,%edx
-	movl	%eax,%r11d
-	addl	%eax,%edx
-	leal	1839030562(%rcx,%r10,1),%ecx
-	movl	56(%rsi),%r10d
-	xorl	%ebx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ecx
-	roll	$16,%ecx
-	movl	%edx,%r11d
-	addl	%edx,%ecx
-	leal	-35309556(%rbx,%r10,1),%ebx
-	movl	4(%rsi),%r10d
-	xorl	%eax,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%ebx
-	roll	$23,%ebx
-	movl	%ecx,%r11d
-	addl	%ecx,%ebx
-	leal	-1530992060(%rax,%r10,1),%eax
-	movl	16(%rsi),%r10d
-	xorl	%edx,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%eax
-	roll	$4,%eax
-	movl	%ebx,%r11d
-	addl	%ebx,%eax
-	leal	1272893353(%rdx,%r10,1),%edx
-	movl	28(%rsi),%r10d
-	xorl	%ecx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%edx
-	roll	$11,%edx
-	movl	%eax,%r11d
-	addl	%eax,%edx
-	leal	-155497632(%rcx,%r10,1),%ecx
-	movl	40(%rsi),%r10d
-	xorl	%ebx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ecx
-	roll	$16,%ecx
-	movl	%edx,%r11d
-	addl	%edx,%ecx
-	leal	-1094730640(%rbx,%r10,1),%ebx
-	movl	52(%rsi),%r10d
-	xorl	%eax,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%ebx
-	roll	$23,%ebx
-	movl	%ecx,%r11d
-	addl	%ecx,%ebx
-	leal	681279174(%rax,%r10,1),%eax
-	movl	0(%rsi),%r10d
-	xorl	%edx,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%eax
-	roll	$4,%eax
-	movl	%ebx,%r11d
-	addl	%ebx,%eax
-	leal	-358537222(%rdx,%r10,1),%edx
-	movl	12(%rsi),%r10d
-	xorl	%ecx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%edx
-	roll	$11,%edx
-	movl	%eax,%r11d
-	addl	%eax,%edx
-	leal	-722521979(%rcx,%r10,1),%ecx
-	movl	24(%rsi),%r10d
-	xorl	%ebx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ecx
-	roll	$16,%ecx
-	movl	%edx,%r11d
-	addl	%edx,%ecx
-	leal	76029189(%rbx,%r10,1),%ebx
-	movl	36(%rsi),%r10d
-	xorl	%eax,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%ebx
-	roll	$23,%ebx
-	movl	%ecx,%r11d
-	addl	%ecx,%ebx
-	leal	-640364487(%rax,%r10,1),%eax
-	movl	48(%rsi),%r10d
-	xorl	%edx,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%eax
-	roll	$4,%eax
-	movl	%ebx,%r11d
-	addl	%ebx,%eax
-	leal	-421815835(%rdx,%r10,1),%edx
-	movl	60(%rsi),%r10d
-	xorl	%ecx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%edx
-	roll	$11,%edx
-	movl	%eax,%r11d
-	addl	%eax,%edx
-	leal	530742520(%rcx,%r10,1),%ecx
-	movl	8(%rsi),%r10d
-	xorl	%ebx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ecx
-	roll	$16,%ecx
-	movl	%edx,%r11d
-	addl	%edx,%ecx
-	leal	-995338651(%rbx,%r10,1),%ebx
-	movl	0(%rsi),%r10d
-	xorl	%eax,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%ebx
-	roll	$23,%ebx
-	movl	%ecx,%r11d
-	addl	%ecx,%ebx
-	movl	0(%rsi),%r10d
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	xorl	%ecx,%r11d  // y ^ ...
+	leal	-680876936(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r11d  // x & ...
+	xorl	%edx,%r11d  // z ^ ...
+	movl	4(%rsi),%r10d  // (NEXT STEP) X[1]
+	addl	%r11d,%eax  // dst += ...
+	roll	$7,%eax  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%ebx,%eax  // dst += x
+	xorl	%ebx,%r11d  // y ^ ...
+	leal	-389564586(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r11d  // x & ...
+	xorl	%ecx,%r11d  // z ^ ...
+	movl	8(%rsi),%r10d  // (NEXT STEP) X[2]
+	addl	%r11d,%edx  // dst += ...
+	roll	$12,%edx  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%eax,%edx  // dst += x
+	xorl	%eax,%r11d  // y ^ ...
+	leal	606105819(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r11d  // x & ...
+	xorl	%ebx,%r11d  // z ^ ...
+	movl	12(%rsi),%r10d  // (NEXT STEP) X[3]
+	addl	%r11d,%ecx  // dst += ...
+	roll	$17,%ecx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%edx,%ecx  // dst += x
+	xorl	%edx,%r11d  // y ^ ...
+	leal	-1044525330(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r11d  // x & ...
+	xorl	%eax,%r11d  // z ^ ...
+	movl	16(%rsi),%r10d  // (NEXT STEP) X[4]
+	addl	%r11d,%ebx  // dst += ...
+	roll	$22,%ebx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%ecx,%ebx  // dst += x
+	xorl	%ecx,%r11d  // y ^ ...
+	leal	-176418897(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r11d  // x & ...
+	xorl	%edx,%r11d  // z ^ ...
+	movl	20(%rsi),%r10d  // (NEXT STEP) X[5]
+	addl	%r11d,%eax  // dst += ...
+	roll	$7,%eax  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%ebx,%eax  // dst += x
+	xorl	%ebx,%r11d  // y ^ ...
+	leal	1200080426(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r11d  // x & ...
+	xorl	%ecx,%r11d  // z ^ ...
+	movl	24(%rsi),%r10d  // (NEXT STEP) X[6]
+	addl	%r11d,%edx  // dst += ...
+	roll	$12,%edx  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%eax,%edx  // dst += x
+	xorl	%eax,%r11d  // y ^ ...
+	leal	-1473231341(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r11d  // x & ...
+	xorl	%ebx,%r11d  // z ^ ...
+	movl	28(%rsi),%r10d  // (NEXT STEP) X[7]
+	addl	%r11d,%ecx  // dst += ...
+	roll	$17,%ecx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%edx,%ecx  // dst += x
+	xorl	%edx,%r11d  // y ^ ...
+	leal	-45705983(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r11d  // x & ...
+	xorl	%eax,%r11d  // z ^ ...
+	movl	32(%rsi),%r10d  // (NEXT STEP) X[8]
+	addl	%r11d,%ebx  // dst += ...
+	roll	$22,%ebx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%ecx,%ebx  // dst += x
+	xorl	%ecx,%r11d  // y ^ ...
+	leal	1770035416(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r11d  // x & ...
+	xorl	%edx,%r11d  // z ^ ...
+	movl	36(%rsi),%r10d  // (NEXT STEP) X[9]
+	addl	%r11d,%eax  // dst += ...
+	roll	$7,%eax  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%ebx,%eax  // dst += x
+	xorl	%ebx,%r11d  // y ^ ...
+	leal	-1958414417(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r11d  // x & ...
+	xorl	%ecx,%r11d  // z ^ ...
+	movl	40(%rsi),%r10d  // (NEXT STEP) X[10]
+	addl	%r11d,%edx  // dst += ...
+	roll	$12,%edx  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%eax,%edx  // dst += x
+	xorl	%eax,%r11d  // y ^ ...
+	leal	-42063(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r11d  // x & ...
+	xorl	%ebx,%r11d  // z ^ ...
+	movl	44(%rsi),%r10d  // (NEXT STEP) X[11]
+	addl	%r11d,%ecx  // dst += ...
+	roll	$17,%ecx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%edx,%ecx  // dst += x
+	xorl	%edx,%r11d  // y ^ ...
+	leal	-1990404162(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r11d  // x & ...
+	xorl	%eax,%r11d  // z ^ ...
+	movl	48(%rsi),%r10d  // (NEXT STEP) X[12]
+	addl	%r11d,%ebx  // dst += ...
+	roll	$22,%ebx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%ecx,%ebx  // dst += x
+	xorl	%ecx,%r11d  // y ^ ...
+	leal	1804603682(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r11d  // x & ...
+	xorl	%edx,%r11d  // z ^ ...
+	movl	52(%rsi),%r10d  // (NEXT STEP) X[13]
+	addl	%r11d,%eax  // dst += ...
+	roll	$7,%eax  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%ebx,%eax  // dst += x
+	xorl	%ebx,%r11d  // y ^ ...
+	leal	-40341101(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r11d  // x & ...
+	xorl	%ecx,%r11d  // z ^ ...
+	movl	56(%rsi),%r10d  // (NEXT STEP) X[14]
+	addl	%r11d,%edx  // dst += ...
+	roll	$12,%edx  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%eax,%edx  // dst += x
+	xorl	%eax,%r11d  // y ^ ...
+	leal	-1502002290(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r11d  // x & ...
+	xorl	%ebx,%r11d  // z ^ ...
+	movl	60(%rsi),%r10d  // (NEXT STEP) X[15]
+	addl	%r11d,%ecx  // dst += ...
+	roll	$17,%ecx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%edx,%ecx  // dst += x
+	xorl	%edx,%r11d  // y ^ ...
+	leal	1236535329(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r11d  // x & ...
+	xorl	%eax,%r11d  // z ^ ...
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	addl	%r11d,%ebx  // dst += ...
+	roll	$22,%ebx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%ecx,%ebx  // dst += x
+	movl	4(%rsi),%r10d  // (NEXT STEP) X[1]
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	movl	%edx,%r12d  // (NEXT STEP) z' = %edx
+	notl	%r11d  // not z
+	leal	-165796510(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r12d  // x & z
+	andl	%ecx,%r11d  // y & (not z)
+	movl	24(%rsi),%r10d  // (NEXT STEP) X[6]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%r12d,%eax  // dst += ...
+	movl	%ecx,%r12d  // (NEXT STEP) z' = %ecx
+	roll	$5,%eax  // dst <<< s
+	addl	%ebx,%eax  // dst += x
+	notl	%r11d  // not z
+	leal	-1069501632(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r12d  // x & z
+	andl	%ebx,%r11d  // y & (not z)
+	movl	44(%rsi),%r10d  // (NEXT STEP) X[11]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%r12d,%edx  // dst += ...
+	movl	%ebx,%r12d  // (NEXT STEP) z' = %ebx
+	roll	$9,%edx  // dst <<< s
+	addl	%eax,%edx  // dst += x
+	notl	%r11d  // not z
+	leal	643717713(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r12d  // x & z
+	andl	%eax,%r11d  // y & (not z)
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%r12d,%ecx  // dst += ...
+	movl	%eax,%r12d  // (NEXT STEP) z' = %eax
+	roll	$14,%ecx  // dst <<< s
+	addl	%edx,%ecx  // dst += x
+	notl	%r11d  // not z
+	leal	-373897302(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r12d  // x & z
+	andl	%edx,%r11d  // y & (not z)
+	movl	20(%rsi),%r10d  // (NEXT STEP) X[5]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%r12d,%ebx  // dst += ...
+	movl	%edx,%r12d  // (NEXT STEP) z' = %edx
+	roll	$20,%ebx  // dst <<< s
+	addl	%ecx,%ebx  // dst += x
+	notl	%r11d  // not z
+	leal	-701558691(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r12d  // x & z
+	andl	%ecx,%r11d  // y & (not z)
+	movl	40(%rsi),%r10d  // (NEXT STEP) X[10]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%r12d,%eax  // dst += ...
+	movl	%ecx,%r12d  // (NEXT STEP) z' = %ecx
+	roll	$5,%eax  // dst <<< s
+	addl	%ebx,%eax  // dst += x
+	notl	%r11d  // not z
+	leal	38016083(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r12d  // x & z
+	andl	%ebx,%r11d  // y & (not z)
+	movl	60(%rsi),%r10d  // (NEXT STEP) X[15]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%r12d,%edx  // dst += ...
+	movl	%ebx,%r12d  // (NEXT STEP) z' = %ebx
+	roll	$9,%edx  // dst <<< s
+	addl	%eax,%edx  // dst += x
+	notl	%r11d  // not z
+	leal	-660478335(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r12d  // x & z
+	andl	%eax,%r11d  // y & (not z)
+	movl	16(%rsi),%r10d  // (NEXT STEP) X[4]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%r12d,%ecx  // dst += ...
+	movl	%eax,%r12d  // (NEXT STEP) z' = %eax
+	roll	$14,%ecx  // dst <<< s
+	addl	%edx,%ecx  // dst += x
+	notl	%r11d  // not z
+	leal	-405537848(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r12d  // x & z
+	andl	%edx,%r11d  // y & (not z)
+	movl	36(%rsi),%r10d  // (NEXT STEP) X[9]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%r12d,%ebx  // dst += ...
+	movl	%edx,%r12d  // (NEXT STEP) z' = %edx
+	roll	$20,%ebx  // dst <<< s
+	addl	%ecx,%ebx  // dst += x
+	notl	%r11d  // not z
+	leal	568446438(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r12d  // x & z
+	andl	%ecx,%r11d  // y & (not z)
+	movl	56(%rsi),%r10d  // (NEXT STEP) X[14]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%r12d,%eax  // dst += ...
+	movl	%ecx,%r12d  // (NEXT STEP) z' = %ecx
+	roll	$5,%eax  // dst <<< s
+	addl	%ebx,%eax  // dst += x
+	notl	%r11d  // not z
+	leal	-1019803690(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r12d  // x & z
+	andl	%ebx,%r11d  // y & (not z)
+	movl	12(%rsi),%r10d  // (NEXT STEP) X[3]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%r12d,%edx  // dst += ...
+	movl	%ebx,%r12d  // (NEXT STEP) z' = %ebx
+	roll	$9,%edx  // dst <<< s
+	addl	%eax,%edx  // dst += x
+	notl	%r11d  // not z
+	leal	-187363961(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r12d  // x & z
+	andl	%eax,%r11d  // y & (not z)
+	movl	32(%rsi),%r10d  // (NEXT STEP) X[8]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%r12d,%ecx  // dst += ...
+	movl	%eax,%r12d  // (NEXT STEP) z' = %eax
+	roll	$14,%ecx  // dst <<< s
+	addl	%edx,%ecx  // dst += x
+	notl	%r11d  // not z
+	leal	1163531501(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r12d  // x & z
+	andl	%edx,%r11d  // y & (not z)
+	movl	52(%rsi),%r10d  // (NEXT STEP) X[13]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%r12d,%ebx  // dst += ...
+	movl	%edx,%r12d  // (NEXT STEP) z' = %edx
+	roll	$20,%ebx  // dst <<< s
+	addl	%ecx,%ebx  // dst += x
+	notl	%r11d  // not z
+	leal	-1444681467(%rax,%r10,1),%eax  // Const + dst + ...
+	andl	%ebx,%r12d  // x & z
+	andl	%ecx,%r11d  // y & (not z)
+	movl	8(%rsi),%r10d  // (NEXT STEP) X[2]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ecx,%r11d  // (NEXT STEP) z' = %ecx
+	addl	%r12d,%eax  // dst += ...
+	movl	%ecx,%r12d  // (NEXT STEP) z' = %ecx
+	roll	$5,%eax  // dst <<< s
+	addl	%ebx,%eax  // dst += x
+	notl	%r11d  // not z
+	leal	-51403784(%rdx,%r10,1),%edx  // Const + dst + ...
+	andl	%eax,%r12d  // x & z
+	andl	%ebx,%r11d  // y & (not z)
+	movl	28(%rsi),%r10d  // (NEXT STEP) X[7]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%ebx,%r11d  // (NEXT STEP) z' = %ebx
+	addl	%r12d,%edx  // dst += ...
+	movl	%ebx,%r12d  // (NEXT STEP) z' = %ebx
+	roll	$9,%edx  // dst <<< s
+	addl	%eax,%edx  // dst += x
+	notl	%r11d  // not z
+	leal	1735328473(%rcx,%r10,1),%ecx  // Const + dst + ...
+	andl	%edx,%r12d  // x & z
+	andl	%eax,%r11d  // y & (not z)
+	movl	48(%rsi),%r10d  // (NEXT STEP) X[12]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%eax,%r11d  // (NEXT STEP) z' = %eax
+	addl	%r12d,%ecx  // dst += ...
+	movl	%eax,%r12d  // (NEXT STEP) z' = %eax
+	roll	$14,%ecx  // dst <<< s
+	addl	%edx,%ecx  // dst += x
+	notl	%r11d  // not z
+	leal	-1926607734(%rbx,%r10,1),%ebx  // Const + dst + ...
+	andl	%ecx,%r12d  // x & z
+	andl	%edx,%r11d  // y & (not z)
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	orl	%r11d,%r12d  // (y & (not z)) | (x & z)
+	movl	%edx,%r11d  // (NEXT STEP) z' = %edx
+	addl	%r12d,%ebx  // dst += ...
+	movl	%edx,%r12d  // (NEXT STEP) z' = %edx
+	roll	$20,%ebx  // dst <<< s
+	addl	%ecx,%ebx  // dst += x
+	movl	20(%rsi),%r10d  // (NEXT STEP) X[5]
+	movl	%ecx,%r11d  // (NEXT STEP) y' = %ecx
+	leal	-378558(%rax,%r10,1),%eax  // Const + dst + ...
+	movl	32(%rsi),%r10d  // (NEXT STEP) X[8]
+	xorl	%edx,%r11d  // z ^ ...
+	xorl	%ebx,%r11d  // x ^ ...
+	addl	%r11d,%eax  // dst += ...
+	roll	$4,%eax  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) y' = %ebx
+	addl	%ebx,%eax  // dst += x
+	leal	-2022574463(%rdx,%r10,1),%edx  // Const + dst + ...
+	movl	44(%rsi),%r10d  // (NEXT STEP) X[11]
+	xorl	%ecx,%r11d  // z ^ ...
+	xorl	%eax,%r11d  // x ^ ...
+	addl	%r11d,%edx  // dst += ...
+	roll	$11,%edx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) y' = %eax
+	addl	%eax,%edx  // dst += x
+	leal	1839030562(%rcx,%r10,1),%ecx  // Const + dst + ...
+	movl	56(%rsi),%r10d  // (NEXT STEP) X[14]
+	xorl	%ebx,%r11d  // z ^ ...
+	xorl	%edx,%r11d  // x ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	roll	$16,%ecx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) y' = %edx
+	addl	%edx,%ecx  // dst += x
+	leal	-35309556(%rbx,%r10,1),%ebx  // Const + dst + ...
+	movl	4(%rsi),%r10d  // (NEXT STEP) X[1]
+	xorl	%eax,%r11d  // z ^ ...
+	xorl	%ecx,%r11d  // x ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	roll	$23,%ebx  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) y' = %ecx
+	addl	%ecx,%ebx  // dst += x
+	leal	-1530992060(%rax,%r10,1),%eax  // Const + dst + ...
+	movl	16(%rsi),%r10d  // (NEXT STEP) X[4]
+	xorl	%edx,%r11d  // z ^ ...
+	xorl	%ebx,%r11d  // x ^ ...
+	addl	%r11d,%eax  // dst += ...
+	roll	$4,%eax  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) y' = %ebx
+	addl	%ebx,%eax  // dst += x
+	leal	1272893353(%rdx,%r10,1),%edx  // Const + dst + ...
+	movl	28(%rsi),%r10d  // (NEXT STEP) X[7]
+	xorl	%ecx,%r11d  // z ^ ...
+	xorl	%eax,%r11d  // x ^ ...
+	addl	%r11d,%edx  // dst += ...
+	roll	$11,%edx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) y' = %eax
+	addl	%eax,%edx  // dst += x
+	leal	-155497632(%rcx,%r10,1),%ecx  // Const + dst + ...
+	movl	40(%rsi),%r10d  // (NEXT STEP) X[10]
+	xorl	%ebx,%r11d  // z ^ ...
+	xorl	%edx,%r11d  // x ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	roll	$16,%ecx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) y' = %edx
+	addl	%edx,%ecx  // dst += x
+	leal	-1094730640(%rbx,%r10,1),%ebx  // Const + dst + ...
+	movl	52(%rsi),%r10d  // (NEXT STEP) X[13]
+	xorl	%eax,%r11d  // z ^ ...
+	xorl	%ecx,%r11d  // x ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	roll	$23,%ebx  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) y' = %ecx
+	addl	%ecx,%ebx  // dst += x
+	leal	681279174(%rax,%r10,1),%eax  // Const + dst + ...
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	xorl	%edx,%r11d  // z ^ ...
+	xorl	%ebx,%r11d  // x ^ ...
+	addl	%r11d,%eax  // dst += ...
+	roll	$4,%eax  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) y' = %ebx
+	addl	%ebx,%eax  // dst += x
+	leal	-358537222(%rdx,%r10,1),%edx  // Const + dst + ...
+	movl	12(%rsi),%r10d  // (NEXT STEP) X[3]
+	xorl	%ecx,%r11d  // z ^ ...
+	xorl	%eax,%r11d  // x ^ ...
+	addl	%r11d,%edx  // dst += ...
+	roll	$11,%edx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) y' = %eax
+	addl	%eax,%edx  // dst += x
+	leal	-722521979(%rcx,%r10,1),%ecx  // Const + dst + ...
+	movl	24(%rsi),%r10d  // (NEXT STEP) X[6]
+	xorl	%ebx,%r11d  // z ^ ...
+	xorl	%edx,%r11d  // x ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	roll	$16,%ecx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) y' = %edx
+	addl	%edx,%ecx  // dst += x
+	leal	76029189(%rbx,%r10,1),%ebx  // Const + dst + ...
+	movl	36(%rsi),%r10d  // (NEXT STEP) X[9]
+	xorl	%eax,%r11d  // z ^ ...
+	xorl	%ecx,%r11d  // x ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	roll	$23,%ebx  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) y' = %ecx
+	addl	%ecx,%ebx  // dst += x
+	leal	-640364487(%rax,%r10,1),%eax  // Const + dst + ...
+	movl	48(%rsi),%r10d  // (NEXT STEP) X[12]
+	xorl	%edx,%r11d  // z ^ ...
+	xorl	%ebx,%r11d  // x ^ ...
+	addl	%r11d,%eax  // dst += ...
+	roll	$4,%eax  // dst <<< s
+	movl	%ebx,%r11d  // (NEXT STEP) y' = %ebx
+	addl	%ebx,%eax  // dst += x
+	leal	-421815835(%rdx,%r10,1),%edx  // Const + dst + ...
+	movl	60(%rsi),%r10d  // (NEXT STEP) X[15]
+	xorl	%ecx,%r11d  // z ^ ...
+	xorl	%eax,%r11d  // x ^ ...
+	addl	%r11d,%edx  // dst += ...
+	roll	$11,%edx  // dst <<< s
+	movl	%eax,%r11d  // (NEXT STEP) y' = %eax
+	addl	%eax,%edx  // dst += x
+	leal	530742520(%rcx,%r10,1),%ecx  // Const + dst + ...
+	movl	8(%rsi),%r10d  // (NEXT STEP) X[2]
+	xorl	%ebx,%r11d  // z ^ ...
+	xorl	%edx,%r11d  // x ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	roll	$16,%ecx  // dst <<< s
+	movl	%edx,%r11d  // (NEXT STEP) y' = %edx
+	addl	%edx,%ecx  // dst += x
+	leal	-995338651(%rbx,%r10,1),%ebx  // Const + dst + ...
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
+	xorl	%eax,%r11d  // z ^ ...
+	xorl	%ecx,%r11d  // x ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	roll	$23,%ebx  // dst <<< s
+	movl	%ecx,%r11d  // (NEXT STEP) y' = %ecx
+	addl	%ecx,%ebx  // dst += x
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
 	movl	$0xffffffff,%r11d
-	xorl	%edx,%r11d
-	leal	-198630844(%rax,%r10,1),%eax
-	orl	%ebx,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%eax
-	movl	28(%rsi),%r10d
+	xorl	%edx,%r11d  // (NEXT STEP) not z' = not %edx
+	leal	-198630844(%rax,%r10,1),%eax  // Const + dst + ...
+	orl	%ebx,%r11d  // x | ...
+	xorl	%ecx,%r11d  // y ^ ...
+	addl	%r11d,%eax  // dst += ...
+	movl	28(%rsi),%r10d  // (NEXT STEP) X[7]
 	movl	$0xffffffff,%r11d
-	roll	$6,%eax
-	xorl	%ecx,%r11d
-	addl	%ebx,%eax
-	leal	1126891415(%rdx,%r10,1),%edx
-	orl	%eax,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%edx
-	movl	56(%rsi),%r10d
+	roll	$6,%eax  // dst <<< s
+	xorl	%ecx,%r11d  // (NEXT STEP) not z' = not %ecx
+	addl	%ebx,%eax  // dst += x
+	leal	1126891415(%rdx,%r10,1),%edx  // Const + dst + ...
+	orl	%eax,%r11d  // x | ...
+	xorl	%ebx,%r11d  // y ^ ...
+	addl	%r11d,%edx  // dst += ...
+	movl	56(%rsi),%r10d  // (NEXT STEP) X[14]
 	movl	$0xffffffff,%r11d
-	roll	$10,%edx
-	xorl	%ebx,%r11d
-	addl	%eax,%edx
-	leal	-1416354905(%rcx,%r10,1),%ecx
-	orl	%edx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%ecx
-	movl	20(%rsi),%r10d
+	roll	$10,%edx  // dst <<< s
+	xorl	%ebx,%r11d  // (NEXT STEP) not z' = not %ebx
+	addl	%eax,%edx  // dst += x
+	leal	-1416354905(%rcx,%r10,1),%ecx  // Const + dst + ...
+	orl	%edx,%r11d  // x | ...
+	xorl	%eax,%r11d  // y ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	movl	20(%rsi),%r10d  // (NEXT STEP) X[5]
 	movl	$0xffffffff,%r11d
-	roll	$15,%ecx
-	xorl	%eax,%r11d
-	addl	%edx,%ecx
-	leal	-57434055(%rbx,%r10,1),%ebx
-	orl	%ecx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ebx
-	movl	48(%rsi),%r10d
+	roll	$15,%ecx  // dst <<< s
+	xorl	%eax,%r11d  // (NEXT STEP) not z' = not %eax
+	addl	%edx,%ecx  // dst += x
+	leal	-57434055(%rbx,%r10,1),%ebx  // Const + dst + ...
+	orl	%ecx,%r11d  // x | ...
+	xorl	%edx,%r11d  // y ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	movl	48(%rsi),%r10d  // (NEXT STEP) X[12]
 	movl	$0xffffffff,%r11d
-	roll	$21,%ebx
-	xorl	%edx,%r11d
-	addl	%ecx,%ebx
-	leal	1700485571(%rax,%r10,1),%eax
-	orl	%ebx,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%eax
-	movl	12(%rsi),%r10d
+	roll	$21,%ebx  // dst <<< s
+	xorl	%edx,%r11d  // (NEXT STEP) not z' = not %edx
+	addl	%ecx,%ebx  // dst += x
+	leal	1700485571(%rax,%r10,1),%eax  // Const + dst + ...
+	orl	%ebx,%r11d  // x | ...
+	xorl	%ecx,%r11d  // y ^ ...
+	addl	%r11d,%eax  // dst += ...
+	movl	12(%rsi),%r10d  // (NEXT STEP) X[3]
 	movl	$0xffffffff,%r11d
-	roll	$6,%eax
-	xorl	%ecx,%r11d
-	addl	%ebx,%eax
-	leal	-1894986606(%rdx,%r10,1),%edx
-	orl	%eax,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%edx
-	movl	40(%rsi),%r10d
+	roll	$6,%eax  // dst <<< s
+	xorl	%ecx,%r11d  // (NEXT STEP) not z' = not %ecx
+	addl	%ebx,%eax  // dst += x
+	leal	-1894986606(%rdx,%r10,1),%edx  // Const + dst + ...
+	orl	%eax,%r11d  // x | ...
+	xorl	%ebx,%r11d  // y ^ ...
+	addl	%r11d,%edx  // dst += ...
+	movl	40(%rsi),%r10d  // (NEXT STEP) X[10]
 	movl	$0xffffffff,%r11d
-	roll	$10,%edx
-	xorl	%ebx,%r11d
-	addl	%eax,%edx
-	leal	-1051523(%rcx,%r10,1),%ecx
-	orl	%edx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%ecx
-	movl	4(%rsi),%r10d
+	roll	$10,%edx  // dst <<< s
+	xorl	%ebx,%r11d  // (NEXT STEP) not z' = not %ebx
+	addl	%eax,%edx  // dst += x
+	leal	-1051523(%rcx,%r10,1),%ecx  // Const + dst + ...
+	orl	%edx,%r11d  // x | ...
+	xorl	%eax,%r11d  // y ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	movl	4(%rsi),%r10d  // (NEXT STEP) X[1]
 	movl	$0xffffffff,%r11d
-	roll	$15,%ecx
-	xorl	%eax,%r11d
-	addl	%edx,%ecx
-	leal	-2054922799(%rbx,%r10,1),%ebx
-	orl	%ecx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ebx
-	movl	32(%rsi),%r10d
+	roll	$15,%ecx  // dst <<< s
+	xorl	%eax,%r11d  // (NEXT STEP) not z' = not %eax
+	addl	%edx,%ecx  // dst += x
+	leal	-2054922799(%rbx,%r10,1),%ebx  // Const + dst + ...
+	orl	%ecx,%r11d  // x | ...
+	xorl	%edx,%r11d  // y ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	movl	32(%rsi),%r10d  // (NEXT STEP) X[8]
 	movl	$0xffffffff,%r11d
-	roll	$21,%ebx
-	xorl	%edx,%r11d
-	addl	%ecx,%ebx
-	leal	1873313359(%rax,%r10,1),%eax
-	orl	%ebx,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%eax
-	movl	60(%rsi),%r10d
+	roll	$21,%ebx  // dst <<< s
+	xorl	%edx,%r11d  // (NEXT STEP) not z' = not %edx
+	addl	%ecx,%ebx  // dst += x
+	leal	1873313359(%rax,%r10,1),%eax  // Const + dst + ...
+	orl	%ebx,%r11d  // x | ...
+	xorl	%ecx,%r11d  // y ^ ...
+	addl	%r11d,%eax  // dst += ...
+	movl	60(%rsi),%r10d  // (NEXT STEP) X[15]
 	movl	$0xffffffff,%r11d
-	roll	$6,%eax
-	xorl	%ecx,%r11d
-	addl	%ebx,%eax
-	leal	-30611744(%rdx,%r10,1),%edx
-	orl	%eax,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%edx
-	movl	24(%rsi),%r10d
+	roll	$6,%eax  // dst <<< s
+	xorl	%ecx,%r11d  // (NEXT STEP) not z' = not %ecx
+	addl	%ebx,%eax  // dst += x
+	leal	-30611744(%rdx,%r10,1),%edx  // Const + dst + ...
+	orl	%eax,%r11d  // x | ...
+	xorl	%ebx,%r11d  // y ^ ...
+	addl	%r11d,%edx  // dst += ...
+	movl	24(%rsi),%r10d  // (NEXT STEP) X[6]
 	movl	$0xffffffff,%r11d
-	roll	$10,%edx
-	xorl	%ebx,%r11d
-	addl	%eax,%edx
-	leal	-1560198380(%rcx,%r10,1),%ecx
-	orl	%edx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%ecx
-	movl	52(%rsi),%r10d
+	roll	$10,%edx  // dst <<< s
+	xorl	%ebx,%r11d  // (NEXT STEP) not z' = not %ebx
+	addl	%eax,%edx  // dst += x
+	leal	-1560198380(%rcx,%r10,1),%ecx  // Const + dst + ...
+	orl	%edx,%r11d  // x | ...
+	xorl	%eax,%r11d  // y ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	movl	52(%rsi),%r10d  // (NEXT STEP) X[13]
 	movl	$0xffffffff,%r11d
-	roll	$15,%ecx
-	xorl	%eax,%r11d
-	addl	%edx,%ecx
-	leal	1309151649(%rbx,%r10,1),%ebx
-	orl	%ecx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ebx
-	movl	16(%rsi),%r10d
+	roll	$15,%ecx  // dst <<< s
+	xorl	%eax,%r11d  // (NEXT STEP) not z' = not %eax
+	addl	%edx,%ecx  // dst += x
+	leal	1309151649(%rbx,%r10,1),%ebx  // Const + dst + ...
+	orl	%ecx,%r11d  // x | ...
+	xorl	%edx,%r11d  // y ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	movl	16(%rsi),%r10d  // (NEXT STEP) X[4]
 	movl	$0xffffffff,%r11d
-	roll	$21,%ebx
-	xorl	%edx,%r11d
-	addl	%ecx,%ebx
-	leal	-145523070(%rax,%r10,1),%eax
-	orl	%ebx,%r11d
-	xorl	%ecx,%r11d
-	addl	%r11d,%eax
-	movl	44(%rsi),%r10d
+	roll	$21,%ebx  // dst <<< s
+	xorl	%edx,%r11d  // (NEXT STEP) not z' = not %edx
+	addl	%ecx,%ebx  // dst += x
+	leal	-145523070(%rax,%r10,1),%eax  // Const + dst + ...
+	orl	%ebx,%r11d  // x | ...
+	xorl	%ecx,%r11d  // y ^ ...
+	addl	%r11d,%eax  // dst += ...
+	movl	44(%rsi),%r10d  // (NEXT STEP) X[11]
 	movl	$0xffffffff,%r11d
-	roll	$6,%eax
-	xorl	%ecx,%r11d
-	addl	%ebx,%eax
-	leal	-1120210379(%rdx,%r10,1),%edx
-	orl	%eax,%r11d
-	xorl	%ebx,%r11d
-	addl	%r11d,%edx
-	movl	8(%rsi),%r10d
+	roll	$6,%eax  // dst <<< s
+	xorl	%ecx,%r11d  // (NEXT STEP) not z' = not %ecx
+	addl	%ebx,%eax  // dst += x
+	leal	-1120210379(%rdx,%r10,1),%edx  // Const + dst + ...
+	orl	%eax,%r11d  // x | ...
+	xorl	%ebx,%r11d  // y ^ ...
+	addl	%r11d,%edx  // dst += ...
+	movl	8(%rsi),%r10d  // (NEXT STEP) X[2]
 	movl	$0xffffffff,%r11d
-	roll	$10,%edx
-	xorl	%ebx,%r11d
-	addl	%eax,%edx
-	leal	718787259(%rcx,%r10,1),%ecx
-	orl	%edx,%r11d
-	xorl	%eax,%r11d
-	addl	%r11d,%ecx
-	movl	36(%rsi),%r10d
+	roll	$10,%edx  // dst <<< s
+	xorl	%ebx,%r11d  // (NEXT STEP) not z' = not %ebx
+	addl	%eax,%edx  // dst += x
+	leal	718787259(%rcx,%r10,1),%ecx  // Const + dst + ...
+	orl	%edx,%r11d  // x | ...
+	xorl	%eax,%r11d  // y ^ ...
+	addl	%r11d,%ecx  // dst += ...
+	movl	36(%rsi),%r10d  // (NEXT STEP) X[9]
 	movl	$0xffffffff,%r11d
-	roll	$15,%ecx
-	xorl	%eax,%r11d
-	addl	%edx,%ecx
-	leal	-343485551(%rbx,%r10,1),%ebx
-	orl	%ecx,%r11d
-	xorl	%edx,%r11d
-	addl	%r11d,%ebx
-	movl	0(%rsi),%r10d
+	roll	$15,%ecx  // dst <<< s
+	xorl	%eax,%r11d  // (NEXT STEP) not z' = not %eax
+	addl	%edx,%ecx  // dst += x
+	leal	-343485551(%rbx,%r10,1),%ebx  // Const + dst + ...
+	orl	%ecx,%r11d  // x | ...
+	xorl	%edx,%r11d  // y ^ ...
+	addl	%r11d,%ebx  // dst += ...
+	movl	0(%rsi),%r10d  // (NEXT STEP) X[0]
 	movl	$0xffffffff,%r11d
-	roll	$21,%ebx
-	xorl	%edx,%r11d
-	addl	%ecx,%ebx
-
+	roll	$21,%ebx  // dst <<< s
+	xorl	%edx,%r11d  // (NEXT STEP) not z' = not %edx
+	addl	%ecx,%ebx  // dst += x
+// add old values of A, B, C, D
 	addl	%r8d,%eax
 	addl	%r9d,%ebx
 	addl	%r14d,%ecx
 	addl	%r15d,%edx
 
-
-	addq	$64,%rsi
-	cmpq	%rdi,%rsi
-	jb	.Lloop
-
+// loop control
+	addq	$64,%rsi  // ptr += 64
+	cmpq	%rdi,%rsi  // cmp end with ptr
+	jb	.Lloop  // jmp if ptr < end
+// END of loop over 16-word blocks
 
 .Lend:
-	movl	%eax,0(%rbp)
-	movl	%ebx,4(%rbp)
-	movl	%ecx,8(%rbp)
-	movl	%edx,12(%rbp)
+	movl	%eax,0(%rbp)  // ctx->A = A
+	movl	%ebx,4(%rbp)  // ctx->B = B
+	movl	%ecx,8(%rbp)  // ctx->C = C
+	movl	%edx,12(%rbp)  // ctx->D = D
 
 	movq	(%rsp),%r15
 .cfi_restore	r15

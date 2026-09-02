@@ -41,11 +41,11 @@ _CET_ENDBR
 
 	push	r14
 
-	mov	r8,rdi
+	mov	r8,rdi  ; reassigned argument
 	sub	rsp,72
-	mov	r9,rsi
+	mov	r9,rsi  ; reassigned argument
 	and	rsp,-64
-	mov	r10,rdx
+	mov	r10,rdx  ; reassigned argument
 	mov	QWORD[64+rsp],rax
 
 $L$prologue:
@@ -1284,32 +1284,32 @@ _CET_ENDBR
 $L$prologue_shaext:
 	movdqu	xmm0,XMMWORD[rdi]
 	movd	xmm1,DWORD[16+rdi]
-	movdqa	xmm3,XMMWORD[((K_XX_XX+160))]
+	movdqa	xmm3,XMMWORD[((K_XX_XX+160))]  ; byte-n-word swap
 
 	movdqu	xmm4,XMMWORD[rsi]
-	pshufd	xmm0,xmm0,27
+	pshufd	xmm0,xmm0,27  ; flip word order
 	movdqu	xmm5,XMMWORD[16+rsi]
-	pshufd	xmm1,xmm1,27
+	pshufd	xmm1,xmm1,27  ; flip word order
 	movdqu	xmm6,XMMWORD[32+rsi]
 	pshufb	xmm4,xmm3
 	movdqu	xmm7,XMMWORD[48+rsi]
 	pshufb	xmm5,xmm3
 	pshufb	xmm6,xmm3
-	movdqa	xmm9,xmm1
+	movdqa	xmm9,xmm1  ; offload %xmm1
 	pshufb	xmm7,xmm3
 	jmp	NEAR $L$oop_shaext
 
 ALIGN	16
 $L$oop_shaext:
 	dec	rdx
-	lea	r8,[64+rsi]
+	lea	r8,[64+rsi]  ; next input block
 	paddd	xmm1,xmm4
 	cmovne	rsi,r8
 	prefetcht0	[512+rsi]
-	movdqa	xmm8,xmm0
+	movdqa	xmm8,xmm0  ; offload %xmm0
 	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,0
+	sha1rnds4	xmm0,xmm1,0  ; 0-3...
 	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
 	sha1msg1	xmm5,xmm6
@@ -1322,7 +1322,7 @@ $L$oop_shaext:
 	sha1msg2	xmm5,xmm4
 	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,0
+	sha1rnds4	xmm0,xmm1,0  ; 0-3...
 	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
 	sha1msg1	xmm7,xmm4
@@ -1335,7 +1335,7 @@ $L$oop_shaext:
 	sha1msg2	xmm7,xmm6
 	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,0
+	sha1rnds4	xmm0,xmm1,0  ; 0-3...
 	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
 	sha1msg1	xmm5,xmm6
@@ -1348,7 +1348,7 @@ $L$oop_shaext:
 	sha1msg2	xmm5,xmm4
 	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,1
+	sha1rnds4	xmm0,xmm1,1  ; 0-3...
 	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
 	sha1msg1	xmm7,xmm4
@@ -1361,7 +1361,7 @@ $L$oop_shaext:
 	sha1msg2	xmm7,xmm6
 	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,1
+	sha1rnds4	xmm0,xmm1,1  ; 0-3...
 	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
 	sha1msg1	xmm5,xmm6
@@ -1374,7 +1374,7 @@ $L$oop_shaext:
 	sha1msg2	xmm5,xmm4
 	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,2
+	sha1rnds4	xmm0,xmm1,2  ; 0-3...
 	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
 	sha1msg1	xmm7,xmm4
@@ -1387,7 +1387,7 @@ $L$oop_shaext:
 	sha1msg2	xmm7,xmm6
 	sha1msg1	xmm4,xmm5
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,2
+	sha1rnds4	xmm0,xmm1,2  ; 0-3...
 	sha1nexte	xmm2,xmm5
 	pxor	xmm4,xmm6
 	sha1msg1	xmm5,xmm6
@@ -1400,7 +1400,7 @@ $L$oop_shaext:
 	sha1msg2	xmm5,xmm4
 	sha1msg1	xmm6,xmm7
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,2
+	sha1rnds4	xmm0,xmm1,2  ; 0-3...
 	sha1nexte	xmm2,xmm7
 	pxor	xmm6,xmm4
 	sha1msg1	xmm7,xmm4
@@ -1413,30 +1413,30 @@ $L$oop_shaext:
 	sha1msg2	xmm7,xmm6
 	movdqu	xmm4,XMMWORD[rsi]
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,3
+	sha1rnds4	xmm0,xmm1,3  ; 64-67
 	sha1nexte	xmm2,xmm5
 	movdqu	xmm5,XMMWORD[16+rsi]
 	pshufb	xmm4,xmm3
 
 	movdqa	xmm1,xmm0
-	sha1rnds4	xmm0,xmm2,3
+	sha1rnds4	xmm0,xmm2,3  ; 68-71
 	sha1nexte	xmm1,xmm6
 	movdqu	xmm6,XMMWORD[32+rsi]
 	pshufb	xmm5,xmm3
 
 	movdqa	xmm2,xmm0
-	sha1rnds4	xmm0,xmm1,3
+	sha1rnds4	xmm0,xmm1,3  ; 72-75
 	sha1nexte	xmm2,xmm7
 	movdqu	xmm7,XMMWORD[48+rsi]
 	pshufb	xmm6,xmm3
 
 	movdqa	xmm1,xmm0
-	sha1rnds4	xmm0,xmm2,3
+	sha1rnds4	xmm0,xmm2,3  ; 76-79
 	sha1nexte	xmm1,xmm9
 	pshufb	xmm7,xmm3
 
 	paddd	xmm0,xmm8
-	movdqa	xmm9,xmm1
+	movdqa	xmm9,xmm1  ; offload %xmm1
 
 	jnz	NEAR $L$oop_shaext
 
@@ -1470,7 +1470,7 @@ $L$SEH_begin_sha1_block_data_order_ssse3:
 
 
 _CET_ENDBR
-	mov	r11,rsp
+	mov	r11,rsp  ; frame pointer
 
 	push	rbx
 
@@ -1478,7 +1478,7 @@ _CET_ENDBR
 
 	push	r12
 
-	push	r13
+	push	r13  ; redundant, done to share Win64 SE handler
 
 	push	r14
 
@@ -1491,40 +1491,40 @@ _CET_ENDBR
 	movaps	XMMWORD[(-40-16)+r11],xmm11
 $L$prologue_ssse3:
 	and	rsp,-64
-	mov	r8,rdi
-	mov	r9,rsi
-	mov	r10,rdx
+	mov	r8,rdi  ; reassigned argument
+	mov	r9,rsi  ; reassigned argument
+	mov	r10,rdx  ; reassigned argument
 
 	shl	r10,6
 	add	r10,r9
 	lea	r14,[((K_XX_XX+64))]
 
-	mov	eax,DWORD[r8]
+	mov	eax,DWORD[r8]  ; load context
 	mov	ebx,DWORD[4+r8]
 	mov	ecx,DWORD[8+r8]
 	mov	edx,DWORD[12+r8]
-	mov	esi,ebx
+	mov	esi,ebx  ; magic seed
 	mov	ebp,DWORD[16+r8]
 	mov	edi,ecx
 	xor	edi,edx
 	and	esi,edi
 
-	movdqa	xmm6,XMMWORD[64+r14]
-	movdqa	xmm9,XMMWORD[((-64))+r14]
-	movdqu	xmm0,XMMWORD[r9]
+	movdqa	xmm6,XMMWORD[64+r14]  ; pbswap mask
+	movdqa	xmm9,XMMWORD[((-64))+r14]  ; K_00_19
+	movdqu	xmm0,XMMWORD[r9]  ; load input to %xmm[0-3]
 	movdqu	xmm1,XMMWORD[16+r9]
 	movdqu	xmm2,XMMWORD[32+r9]
 	movdqu	xmm3,XMMWORD[48+r9]
-	pshufb	xmm0,xmm6
+	pshufb	xmm0,xmm6  ; byte swap
 	pshufb	xmm1,xmm6
 	pshufb	xmm2,xmm6
 	add	r9,64
-	paddd	xmm0,xmm9
+	paddd	xmm0,xmm9  ; add K_00_19
 	pshufb	xmm3,xmm6
 	paddd	xmm1,xmm9
 	paddd	xmm2,xmm9
-	movdqa	XMMWORD[rsp],xmm0
-	psubd	xmm0,xmm9
+	movdqa	XMMWORD[rsp],xmm0  ; X[]+K xfer to IALU
+	psubd	xmm0,xmm9  ; restore X[]
 	movdqa	XMMWORD[16+rsp],xmm1
 	psubd	xmm1,xmm9
 	movdqa	XMMWORD[32+rsp],xmm2
@@ -2521,14 +2521,14 @@ $L$oop_ssse3:
 	add	eax,edi
 	ror	ecx,7
 	add	eax,ebx
-	add	eax,DWORD[r8]
+	add	eax,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ecx,DWORD[8+r8]
 	add	edx,DWORD[12+r8]
 	mov	DWORD[r8],eax
 	add	ebp,DWORD[16+r8]
 	mov	DWORD[4+r8],esi
-	mov	ebx,esi
+	mov	ebx,esi  ; magic seed
 	mov	DWORD[8+r8],ecx
 	mov	edi,ecx
 	mov	DWORD[12+r8],edx
@@ -2634,7 +2634,7 @@ $L$done_ssse3:
 	add	eax,edi
 	ror	ecx,7
 	add	eax,ebx
-	add	eax,DWORD[r8]
+	add	eax,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ecx,DWORD[8+r8]
 	mov	DWORD[r8],eax
@@ -2691,7 +2691,7 @@ _CET_ENDBR
 
 	push	r12
 
-	push	r13
+	push	r13  ; redundant, done to share Win64 SE handler
 
 	push	r14
 
@@ -2705,39 +2705,39 @@ _CET_ENDBR
 	vmovaps	XMMWORD[(-40-16)+r11],xmm11
 $L$prologue_avx:
 	and	rsp,-64
-	mov	r8,rdi
-	mov	r9,rsi
-	mov	r10,rdx
+	mov	r8,rdi  ; reassigned argument
+	mov	r9,rsi  ; reassigned argument
+	mov	r10,rdx  ; reassigned argument
 
 	shl	r10,6
 	add	r10,r9
 	lea	r14,[((K_XX_XX+64))]
 
-	mov	eax,DWORD[r8]
+	mov	eax,DWORD[r8]  ; load context
 	mov	ebx,DWORD[4+r8]
 	mov	ecx,DWORD[8+r8]
 	mov	edx,DWORD[12+r8]
-	mov	esi,ebx
+	mov	esi,ebx  ; magic seed
 	mov	ebp,DWORD[16+r8]
 	mov	edi,ecx
 	xor	edi,edx
 	and	esi,edi
 
-	vmovdqa	xmm6,XMMWORD[64+r14]
-	vmovdqa	xmm11,XMMWORD[((-64))+r14]
-	vmovdqu	xmm0,XMMWORD[r9]
+	vmovdqa	xmm6,XMMWORD[64+r14]  ; pbswap mask
+	vmovdqa	xmm11,XMMWORD[((-64))+r14]  ; K_00_19
+	vmovdqu	xmm0,XMMWORD[r9]  ; load input to %xmm[0-3]
 	vmovdqu	xmm1,XMMWORD[16+r9]
 	vmovdqu	xmm2,XMMWORD[32+r9]
 	vmovdqu	xmm3,XMMWORD[48+r9]
-	vpshufb	xmm0,xmm0,xmm6
+	vpshufb	xmm0,xmm0,xmm6  ; byte swap
 	add	r9,64
 	vpshufb	xmm1,xmm1,xmm6
 	vpshufb	xmm2,xmm2,xmm6
 	vpshufb	xmm3,xmm3,xmm6
-	vpaddd	xmm4,xmm0,xmm11
+	vpaddd	xmm4,xmm0,xmm11  ; add K_00_19
 	vpaddd	xmm5,xmm1,xmm11
 	vpaddd	xmm6,xmm2,xmm11
-	vmovdqa	XMMWORD[rsp],xmm4
+	vmovdqa	XMMWORD[rsp],xmm4  ; X[]+K xfer to IALU
 	vmovdqa	XMMWORD[16+rsp],xmm5
 	vmovdqa	XMMWORD[32+rsp],xmm6
 	jmp	NEAR $L$oop_avx
@@ -3672,14 +3672,14 @@ $L$oop_avx:
 	add	eax,edi
 	shrd	ecx,ecx,7
 	add	eax,ebx
-	add	eax,DWORD[r8]
+	add	eax,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ecx,DWORD[8+r8]
 	add	edx,DWORD[12+r8]
 	mov	DWORD[r8],eax
 	add	ebp,DWORD[16+r8]
 	mov	DWORD[4+r8],esi
-	mov	ebx,esi
+	mov	ebx,esi  ; magic seed
 	mov	DWORD[8+r8],ecx
 	mov	edi,ecx
 	mov	DWORD[12+r8],edx
@@ -3787,7 +3787,7 @@ $L$done_avx:
 	add	eax,ebx
 	vzeroupper
 
-	add	eax,DWORD[r8]
+	add	eax,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ecx,DWORD[8+r8]
 	mov	DWORD[r8],eax
@@ -3857,9 +3857,9 @@ _CET_ENDBR
 	vmovaps	XMMWORD[(-40-32)+r11],xmm10
 	vmovaps	XMMWORD[(-40-16)+r11],xmm11
 $L$prologue_avx2:
-	mov	r8,rdi
-	mov	r9,rsi
-	mov	r10,rdx
+	mov	r8,rdi  ; reassigned argument
+	mov	r9,rsi  ; reassigned argument
+	mov	r10,rdx  ; reassigned argument
 
 	lea	rsp,[((-640))+rsp]
 	shl	r10,6
@@ -3868,14 +3868,14 @@ $L$prologue_avx2:
 	add	r10,r9
 	lea	r14,[((K_XX_XX+64))]
 
-	mov	eax,DWORD[r8]
+	mov	eax,DWORD[r8]  ; load context
 	cmp	r13,r10
-	cmovae	r13,r9
+	cmovae	r13,r9  ; next or same block
 	mov	ebp,DWORD[4+r8]
 	mov	ecx,DWORD[8+r8]
 	mov	edx,DWORD[12+r8]
 	mov	esi,DWORD[16+r8]
-	vmovdqu	ymm6,YMMWORD[64+r14]
+	vmovdqu	ymm6,YMMWORD[64+r14]  ; pbswap mask
 
 	vmovdqu	xmm0,XMMWORD[r9]
 	vmovdqu	xmm1,XMMWORD[16+r9]
@@ -3889,12 +3889,12 @@ $L$prologue_avx2:
 	vpshufb	ymm1,ymm1,ymm6
 	vinserti128	ymm3,ymm3,XMMWORD[48+r13],1
 	vpshufb	ymm2,ymm2,ymm6
-	vmovdqu	ymm11,YMMWORD[((-64))+r14]
+	vmovdqu	ymm11,YMMWORD[((-64))+r14]  ; K_00_19
 	vpshufb	ymm3,ymm3,ymm6
 
-	vpaddd	ymm4,ymm0,ymm11
+	vpaddd	ymm4,ymm0,ymm11  ; add K_00_19
 	vpaddd	ymm5,ymm1,ymm11
-	vmovdqu	YMMWORD[rsp],ymm4
+	vmovdqu	YMMWORD[rsp],ymm4  ; X[]+K xfer to IALU
 	vpaddd	ymm6,ymm2,ymm11
 	vmovdqu	YMMWORD[32+rsp],ymm5
 	vpaddd	ymm7,ymm3,ymm11
@@ -3969,7 +3969,7 @@ $L$oop_avx2:
 	andn	edi,ebp,edx
 	and	ebp,ecx
 	xor	ebp,edi
-	jmp	NEAR $L$align32_1
+	jmp	NEAR $L$align32_1  ; see "Decoded ICache" in manual
 ALIGN	32
 $L$align32_1:
 	vpalignr	ymm8,ymm7,ymm6,8
@@ -4348,7 +4348,7 @@ $L$align32_1:
 	xor	ecx,esi
 	add	ebx,r12d
 	and	ecx,edi
-	jmp	NEAR $L$align32_2
+	jmp	NEAR $L$align32_2  ; see "Decoded ICache" in manual
 ALIGN	32
 $L$align32_2:
 	vpalignr	ymm8,ymm7,ymm6,8
@@ -4724,38 +4724,38 @@ $L$align32_2:
 	rorx	r12d,esi,27
 	add	edx,r12d
 	lea	r13,[128+r9]
-	lea	rdi,[128+r9]
+	lea	rdi,[128+r9]  ; borrow %edi
 	cmp	r13,r10
-	cmovae	r13,r9
+	cmovae	r13,r9  ; next or previous block
 
-
-	add	edx,DWORD[r8]
+; output is d-e-[a]-f-b-c => A=d,F=e,C=f,D=b,E=c
+	add	edx,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ebp,DWORD[8+r8]
 	mov	DWORD[r8],edx
 	add	ebx,DWORD[12+r8]
 	mov	DWORD[4+r8],esi
-	mov	eax,edx
+	mov	eax,edx  ; A=d
 	add	ecx,DWORD[16+r8]
 	mov	r12d,ebp
 	mov	DWORD[8+r8],ebp
-	mov	edx,ebx
-
+	mov	edx,ebx  ; D=b
+; xchg	%ecx,%ebp			# F=c, C=f
 	mov	DWORD[12+r8],ebx
-	mov	ebp,esi
+	mov	ebp,esi  ; F=e
 	mov	DWORD[16+r8],ecx
-
-	mov	esi,ecx
-	mov	ecx,r12d
-
+; mov	%ebp,16(%r8)
+	mov	esi,ecx  ; E=c
+	mov	ecx,r12d  ; C=f
+; xchg	%ebp,%esi				# E=c, F=e
 
 	cmp	r9,r10
 	je	NEAR $L$done_avx2
-	vmovdqu	ymm6,YMMWORD[64+r14]
-	cmp	rdi,r10
+	vmovdqu	ymm6,YMMWORD[64+r14]  ; pbswap mask
+	cmp	rdi,r10  ; borrowed %edi
 	ja	NEAR $L$ast_avx2
 
-	vmovdqu	xmm0,XMMWORD[((-64))+rdi]
+	vmovdqu	xmm0,XMMWORD[((-64))+rdi]  ; low part of %ymm0
 	vmovdqu	xmm1,XMMWORD[((-48))+rdi]
 	vmovdqu	xmm2,XMMWORD[((-32))+rdi]
 	vmovdqu	xmm3,XMMWORD[((-16))+rdi]
@@ -5135,7 +5135,7 @@ $L$ast_avx2:
 	xor	edx,eax
 	add	ecx,r12d
 	and	edx,edi
-	jmp	NEAR $L$align32_3
+	jmp	NEAR $L$align32_3  ; see "Decoded ICache" in manual
 ALIGN	32
 $L$align32_3:
 	vmovdqu	YMMWORD[64+rsp],ymm6
@@ -5490,26 +5490,26 @@ $L$align32_3:
 	add	edx,r12d
 	lea	r13,[128+rsp]
 
-
-	add	edx,DWORD[r8]
+; output is d-e-[a]-f-b-c => A=d,F=e,C=f,D=b,E=c
+	add	edx,DWORD[r8]  ; update context
 	add	esi,DWORD[4+r8]
 	add	ebp,DWORD[8+r8]
 	mov	DWORD[r8],edx
 	add	ebx,DWORD[12+r8]
 	mov	DWORD[4+r8],esi
-	mov	eax,edx
+	mov	eax,edx  ; A=d
 	add	ecx,DWORD[16+r8]
 	mov	r12d,ebp
 	mov	DWORD[8+r8],ebp
-	mov	edx,ebx
-
+	mov	edx,ebx  ; D=b
+; xchg	%ecx,%ebp			# F=c, C=f
 	mov	DWORD[12+r8],ebx
-	mov	ebp,esi
+	mov	ebp,esi  ; F=e
 	mov	DWORD[16+r8],ecx
-
-	mov	esi,ecx
-	mov	ecx,r12d
-
+; mov	%ebp,16(%r8)
+	mov	esi,ecx  ; E=c
+	mov	ecx,r12d  ; C=f
+; xchg	%ebp,%esi				# E=c, F=e
 
 	cmp	r9,r10
 	jbe	NEAR $L$oop_avx2
@@ -5543,16 +5543,16 @@ $L$SEH_end_sha1_block_data_order_avx2:
 section	.rdata rdata align=8
 ALIGN	64
 K_XX_XX:
-	DD	0x5a827999,0x5a827999,0x5a827999,0x5a827999
-	DD	0x5a827999,0x5a827999,0x5a827999,0x5a827999
-	DD	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1
-	DD	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1
-	DD	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc
-	DD	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc
-	DD	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6
-	DD	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6
-	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
-	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
+	DD	0x5a827999,0x5a827999,0x5a827999,0x5a827999  ; K_00_19
+	DD	0x5a827999,0x5a827999,0x5a827999,0x5a827999  ; K_00_19
+	DD	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1  ; K_20_39
+	DD	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1  ; K_20_39
+	DD	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc  ; K_40_59
+	DD	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc  ; K_40_59
+	DD	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6  ; K_60_79
+	DD	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6  ; K_60_79
+	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f  ; pbswap mask
+	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f  ; pbswap mask
 	DB	0xf,0xe,0xd,0xc,0xb,0xa,0x9,0x8,0x7,0x6,0x5,0x4,0x3,0x2,0x1,0x0
 	DB	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115
 	DB	102,111,114,109,32,102,111,114,32,120,56,54,95,54,52,44
@@ -5577,31 +5577,31 @@ se_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
 	lea	r10,[$L$prologue]
-	cmp	rbx,r10
+	cmp	rbx,r10  ; context->Rip<.Lprologue
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[152+r8]  ; pull context->Rsp
 
 	lea	r10,[$L$epilogue]
-	cmp	rbx,r10
+	cmp	rbx,r10  ; context->Rip>=.Lepilogue
 	jae	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[64+rax]
+	mov	rax,QWORD[64+rax]  ; pull saved stack pointer
 
 	mov	rbx,QWORD[((-8))+rax]
 	mov	rbp,QWORD[((-16))+rax]
 	mov	r12,QWORD[((-24))+rax]
 	mov	r13,QWORD[((-32))+rax]
 	mov	r14,QWORD[((-40))+rax]
-	mov	QWORD[144+r8],rbx
-	mov	QWORD[160+r8],rbp
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
-	mov	QWORD[232+r8],r14
+	mov	QWORD[144+r8],rbx  ; restore context->Rbx
+	mov	QWORD[160+r8],rbp  ; restore context->Rbp
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
+	mov	QWORD[232+r8],r14  ; restore context->R14
 
 	jmp	NEAR $L$common_seh_tail
 
@@ -5619,21 +5619,21 @@ shaext_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
 	lea	r10,[$L$prologue_shaext]
-	cmp	rbx,r10
+	cmp	rbx,r10  ; context->Rip<.Lprologue
 	jb	NEAR $L$common_seh_tail
 
 	lea	r10,[$L$epilogue_shaext]
-	cmp	rbx,r10
+	cmp	rbx,r10  ; context->Rip>=.Lepilogue
 	jae	NEAR $L$common_seh_tail
 
 	lea	rsi,[((-8-64))+rax]
-	lea	rdi,[512+r8]
+	lea	rdi,[512+r8]  ; &context.Xmm6
 	mov	ecx,8
-	DD	0xa548f3fc
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	jmp	NEAR $L$common_seh_tail
 
@@ -5651,67 +5651,67 @@ ssse3_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; prologue label
+	cmp	rbx,r10  ; context->Rip<prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[208+r8]
+	mov	rax,QWORD[208+r8]  ; pull context->R11
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
 	lea	rsi,[((-40-96))+rax]
-	lea	rdi,[512+r8]
+	lea	rdi,[512+r8]  ; &context.Xmm6
 	mov	ecx,12
-	DD	0xa548f3fc
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rbx,QWORD[((-8))+rax]
 	mov	rbp,QWORD[((-16))+rax]
 	mov	r12,QWORD[((-24))+rax]
 	mov	r13,QWORD[((-32))+rax]
 	mov	r14,QWORD[((-40))+rax]
-	mov	QWORD[144+r8],rbx
-	mov	QWORD[160+r8],rbp
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
-	mov	QWORD[232+r8],r14
+	mov	QWORD[144+r8],rbx  ; restore context->Rbx
+	mov	QWORD[160+r8],rbp  ; restore context->Rbp
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
+	mov	QWORD[232+r8],r14  ; restore context->R14
 
 $L$common_seh_tail:
 	mov	rdi,QWORD[8+rax]
 	mov	rsi,QWORD[16+rax]
-	mov	QWORD[152+r8],rax
-	mov	QWORD[168+r8],rsi
-	mov	QWORD[176+r8],rdi
+	mov	QWORD[152+r8],rax  ; restore context->Rsp
+	mov	QWORD[168+r8],rsi  ; restore context->Rsi
+	mov	QWORD[176+r8],rdi  ; restore context->Rdi
 
-	mov	rdi,QWORD[40+r9]
-	mov	rsi,r8
-	mov	ecx,154
-	DD	0xa548f3fc
+	mov	rdi,QWORD[40+r9]  ; disp->ContextRecord
+	mov	rsi,r8  ; context
+	mov	ecx,154  ; sizeof(CONTEXT)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rsi,r9
-	xor	rcx,rcx
-	mov	rdx,QWORD[8+rsi]
-	mov	r8,QWORD[rsi]
-	mov	r9,QWORD[16+rsi]
-	mov	r10,QWORD[40+rsi]
-	lea	r11,[56+rsi]
-	lea	r12,[24+rsi]
-	mov	QWORD[32+rsp],r10
-	mov	QWORD[40+rsp],r11
-	mov	QWORD[48+rsp],r12
-	mov	QWORD[56+rsp],rcx
+	xor	rcx,rcx  ; arg1, UNW_FLAG_NHANDLER
+	mov	rdx,QWORD[8+rsi]  ; arg2, disp->ImageBase
+	mov	r8,QWORD[rsi]  ; arg3, disp->ControlPc
+	mov	r9,QWORD[16+rsi]  ; arg4, disp->FunctionEntry
+	mov	r10,QWORD[40+rsi]  ; disp->ContextRecord
+	lea	r11,[56+rsi]  ; &disp->HandlerData
+	lea	r12,[24+rsi]  ; &disp->EstablisherFrame
+	mov	QWORD[32+rsp],r10  ; arg5
+	mov	QWORD[40+rsp],r11  ; arg6
+	mov	QWORD[48+rsp],r12  ; arg7
+	mov	QWORD[56+rsp],rcx  ; arg8, (NULL)
 	call	QWORD[__imp_RtlVirtualUnwind]
 
-	mov	eax,1
+	mov	eax,1  ; ExceptionContinueSearch
 	add	rsp,64
 	popfq
 	pop	r15
@@ -5753,15 +5753,15 @@ $L$SEH_info_sha1_block_data_order_hw:
 $L$SEH_info_sha1_block_data_order_ssse3:
 	DB	9,0,0,0
 	DD	ssse3_handler wrt ..imagebase
-	DD	$L$prologue_ssse3 wrt ..imagebase,$L$epilogue_ssse3 wrt ..imagebase
+	DD	$L$prologue_ssse3 wrt ..imagebase,$L$epilogue_ssse3 wrt ..imagebase  ; HandlerData[]
 $L$SEH_info_sha1_block_data_order_avx:
 	DB	9,0,0,0
 	DD	ssse3_handler wrt ..imagebase
-	DD	$L$prologue_avx wrt ..imagebase,$L$epilogue_avx wrt ..imagebase
+	DD	$L$prologue_avx wrt ..imagebase,$L$epilogue_avx wrt ..imagebase  ; HandlerData[]
 $L$SEH_info_sha1_block_data_order_avx2:
 	DB	9,0,0,0
 	DD	ssse3_handler wrt ..imagebase
-	DD	$L$prologue_avx2 wrt ..imagebase,$L$epilogue_avx2 wrt ..imagebase
+	DD	$L$prologue_avx2 wrt ..imagebase,$L$epilogue_avx2 wrt ..imagebase  ; HandlerData[]
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

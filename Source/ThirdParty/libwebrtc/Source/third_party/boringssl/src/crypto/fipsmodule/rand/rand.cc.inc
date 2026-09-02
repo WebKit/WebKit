@@ -44,8 +44,8 @@ using namespace bssl;
 // Each thread gets its own, thread-local DRBG. These are `rand_thread_state`
 // objects. In non-FIPS mode these are seeded from the operating system. It's
 // assumed that the operating system always has an unfailing source of entropy
-// which is accessed via |CRYPTO_sysrand|. (If the operating system entropy
-// source fails, it's up to |CRYPTO_sysrand| to abort the process—we don't try
+// which is accessed via `CRYPTO_sysrand`. (If the operating system entropy
+// source fails, it's up to `CRYPTO_sysrand` to abort the process—we don't try
 // to handle it.)
 //
 // If running in FIPS mode, a compliant entropy source must be used to seed the
@@ -81,8 +81,8 @@ using namespace bssl;
 
 struct core_drbg {
   CTR_DRBG_STATE drbg;
-  // calls is the number of generate calls made on |drbg| since it was last
-  // (re)seeded. This is bound by |kCoreReseedInterval|.
+  // calls is the number of generate calls made on `drbg` since it was last
+  // (re)seeded. This is bound by `kCoreReseedInterval`.
   uint64_t calls = 0;
 };
 
@@ -187,10 +187,10 @@ static const unsigned kReseedInterval = 4096;
 struct rand_thread_state {
   CTR_DRBG_STATE drbg;
   uint64_t fork_generation;
-  // calls is the number of generate calls made on |drbg| since it was last
-  // (re)seeded. This is bound by |kReseedInterval|.
+  // calls is the number of generate calls made on `drbg` since it was last
+  // (re)seeded. This is bound by `kReseedInterval`.
   unsigned calls;
-  // fork_unsafe_buffering is non-zero iff, when |drbg| was last (re)seeded,
+  // fork_unsafe_buffering is non-zero iff, when `drbg` was last (re)seeded,
   // fork-unsafe buffering was enabled.
   int fork_unsafe_buffering;
 
@@ -198,8 +198,8 @@ struct rand_thread_state {
   // next and prev form a nullptr-terminated, double-linked list of all states
   // in a process.
   struct rand_thread_state *next, *prev;
-  // clear_drbg_lock synchronizes between uses of |drbg| and
-  // |rand_thread_state_clear_all| clearing it. This lock should be uncontended
+  // clear_drbg_lock synchronizes between uses of `drbg` and
+  // `rand_thread_state_clear_all` clearing it. This lock should be uncontended
   // in the common case, except on shutdown.
   Mutex clear_drbg_lock;
 #endif
@@ -208,7 +208,7 @@ struct rand_thread_state {
 }  // namespace
 
 #if defined(BORINGSSL_FIPS)
-// thread_states_list is the head of a linked-list of all |rand_thread_state|
+// thread_states_list is the head of a linked-list of all `rand_thread_state`
 // objects in the process, one per thread. This is needed because FIPS requires
 // the ability to zero them on demand (AS09.28). BoringSSL triggers this with a
 // destructor function.
@@ -231,13 +231,13 @@ static void rand_thread_state_clear_all() {
   }
 
   // The locks are deliberately left locked so that any threads that are still
-  // running will hang if they try to call |BCM_rand_bytes|. It also ensures
-  // |rand_thread_state_free| cannot free any thread state while we've taken the
+  // running will hang if they try to call `BCM_rand_bytes`. It also ensures
+  // `rand_thread_state_free` cannot free any thread state while we've taken the
   // lock.
 }
 #endif
 
-// rand_thread_state_free frees a |rand_thread_state|. This is called when a
+// rand_thread_state_free frees a `rand_thread_state`. This is called when a
 // thread exits.
 static void rand_thread_state_free(void *state_in) {
   struct rand_thread_state *state =
@@ -253,8 +253,8 @@ static void rand_thread_state_free(void *state_in) {
   if (state->prev != nullptr) {
     state->prev->next = state->next;
   } else if (*thread_states_list_bss_get() == state) {
-    // |state->prev| may be nullptr either if it is the head of the list,
-    // or if |state| is freed before it was added to the list at all.
+    // `state->prev` may be nullptr either if it is the head of the list,
+    // or if `state` is freed before it was added to the list at all.
     // Compare against the head of the list to distinguish these cases.
     *thread_states_list_bss_get() = state->next;
   }
@@ -273,7 +273,7 @@ static void rand_thread_state_free(void *state_in) {
 
 #if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM) && \
     !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
-// rdrand should only be called if either |have_rdrand| or |have_fast_rdrand|
+// rdrand should only be called if either `have_rdrand` or `have_fast_rdrand`
 // returned true.
 static int rdrand(uint8_t *buf, const size_t len) {
   const size_t len_multiple8 = len & ~7;
@@ -313,7 +313,7 @@ bcm_status bssl::BCM_rand_bytes_hwrng(uint8_t *buf, const size_t len) {
 
 #if defined(BORINGSSL_FIPS)
 
-// rand_get_seed fills |seed| with entropy. Since, in FIPS mode, this entropy
+// rand_get_seed fills `seed` with entropy. Since, in FIPS mode, this entropy
 // comes from the jitter source / system daemon, `additional_input` will also be
 // filled with system entropy.
 static void rand_get_seed(struct rand_thread_state *state,
@@ -327,7 +327,7 @@ static void rand_get_seed(struct rand_thread_state *state,
 
 #else
 
-// rand_get_seed fills |seed| with system entropy in a non-FIPS build.
+// rand_get_seed fills `seed` with system entropy in a non-FIPS build.
 static void rand_get_seed(struct rand_thread_state *state,
                           uint8_t seed[CTR_DRBG_ENTROPY_LEN],
                           uint8_t additional_input[CTR_DRBG_SEED_LEN],
@@ -357,7 +357,7 @@ bcm_infallible bssl::BCM_rand_bytes_with_additional_data(
   if (!have_fast_rdrand() ||
       !rdrand(additional_data, sizeof(additional_data))) {
     // Without a hardware RNG to save us from address-space duplication, the OS
-    // entropy is used. This can be expensive (one read per |RAND_bytes| call)
+    // entropy is used. This can be expensive (one read per `RAND_bytes` call)
     // and so is disabled when we have fork detection, or if the application has
     // promised not to fork.
     if (fork_generation != 0 || fork_unsafe_buffering) {
@@ -416,10 +416,10 @@ bcm_infallible bssl::BCM_rand_bytes_with_additional_data(
   }
 
   if (state->calls >= kReseedInterval ||
-      // If we've forked since |state| was last seeded, reseed.
+      // If we've forked since `state` was last seeded, reseed.
       state->fork_generation != fork_generation ||
-      // If |state| was seeded from a state with different fork-safety
-      // preferences, reseed. Suppose |state| was fork-safe, then forked into
+      // If `state` was seeded from a state with different fork-safety
+      // preferences, reseed. Suppose `state` was fork-safe, then forked into
       // two children, but each of the children never fork and disable fork
       // safety. The children must reseed to avoid working from the same PRNG
       // state.
@@ -430,9 +430,9 @@ bcm_infallible bssl::BCM_rand_bytes_with_additional_data(
     rand_get_seed(state, seed, reseed_additional_data,
                   &reseed_additional_data_len);
 #if defined(BORINGSSL_FIPS)
-    // Take a read lock around accesses to |state->drbg|. This is needed to
+    // Take a read lock around accesses to `state->drbg`. This is needed to
     // avoid returning bad entropy if we race with
-    // |rand_thread_state_clear_all|.
+    // `rand_thread_state_clear_all`.
     state->clear_drbg_lock.LockRead();
 #endif
     if (!CTR_DRBG_reseed_ex(&state->drbg, seed, sizeof(seed),
@@ -464,7 +464,7 @@ bcm_infallible bssl::BCM_rand_bytes_with_additional_data(
     out += todo;
     out_len -= todo;
     // Though we only check before entering the loop, this cannot add enough to
-    // overflow a |size_t|.
+    // overflow a `size_t`.
     state->calls++;
     first_call = 0;
   }

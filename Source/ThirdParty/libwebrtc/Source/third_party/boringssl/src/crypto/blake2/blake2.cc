@@ -139,7 +139,7 @@ void BLAKE2B256_Update(BLAKE2B_CTX *b2b, const void *in_data, size_t len) {
     return;
   }
 
-  // More input remains therefore we must have filled |b2b->block|.
+  // More input remains therefore we must have filled `b2b->block`.
   assert(b2b->block_used == BLAKE2B_CBLOCK);
   blake2b_transform(b2b, b2b->block, BLAKE2B_CBLOCK,
                     /*is_final_block=*/0);

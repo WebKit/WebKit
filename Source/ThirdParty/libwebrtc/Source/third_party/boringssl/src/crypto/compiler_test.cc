@@ -35,7 +35,7 @@ namespace {
 //
 // Implementation-defined behavior is left up to the compiler to define (or
 // leave undefined). These are often platform-specific details, such as how big
-// |int| is or how |uintN_t| is implemented. Programs that depend on
+// `int` is or how `uintN_t` is implemented. Programs that depend on
 // implementation-defined behavior are not necessarily invalid, merely less
 // portable. A compiler that provides some implementation-defined behavior is
 // not permitted to miscompile code that depends on it.
@@ -47,6 +47,11 @@ namespace {
 // our scope are flagged.
 
 template <typename T>
+Span<const uint8_t> MemoryRepresentation(const T &t) {
+  return Span(reinterpret_cast<const uint8_t *>(&t), sizeof(T));
+}
+
+template <typename T>
 static void CheckRepresentation(T value) {
   SCOPED_TRACE(value);
 
@@ -54,10 +59,10 @@ static void CheckRepresentation(T value) {
   // unsigned value so the right-shift below has defined value. Right-shifts of
   // negative numbers in C are implementation defined.
   //
-  // If |T| is already unsigned, this is a no-op, as desired.
+  // If `T` is already unsigned, this is a no-op, as desired.
   //
-  // If |T| is signed, conversion to unsigned is defined to repeatedly add or
-  // subtract (numerically, not within |T|) one more than the unsigned type's
+  // If `T` is signed, conversion to unsigned is defined to repeatedly add or
+  // subtract (numerically, not within `T`) one more than the unsigned type's
   // maximum value until it fits (this must be a power of two). This is the
   // conversion we want.
   using UnsignedT = std::make_unsigned_t<T>;
@@ -68,25 +73,24 @@ static void CheckRepresentation(T value) {
   uint8_t expected[sizeof(UnsignedT)];
   for (size_t i = 0; i < sizeof(UnsignedT); i++) {
     expected[i] = static_cast<uint8_t>(value_u);
-    // Divide instead of right-shift to appease compilers that warn if |T| is a
+    // Divide instead of right-shift to appease compilers that warn if `T` is a
     // char. The explicit cast is also needed to appease MSVC if integer
     // promotion happened.
     value_u = static_cast<UnsignedT>(value_u / 256);
   }
   EXPECT_EQ(0u, value_u);
 
-  // Check that |value| has the expected representation.
-  EXPECT_EQ(Bytes(expected),
-            Bytes(reinterpret_cast<const uint8_t *>(&value), sizeof(value)));
+  // Check that `value` has the expected representation.
+  EXPECT_EQ(Bytes(expected), Bytes(MemoryRepresentation(value)));
 }
 
 TEST(CompilerTest, IntegerRepresentation) {
   static_assert(CHAR_BIT == 8, "BoringSSL only supports 8-bit chars");
   static_assert(UCHAR_MAX == 0xff, "BoringSSL only supports 8-bit chars");
 
-  // Require that |unsigned char| and |uint8_t| be the same type. We require
-  // that type-punning through |uint8_t| is not a strict aliasing violation. In
-  // principle, type-punning should be done with |memcpy|, which would make this
+  // Require that `unsigned char` and `uint8_t` be the same type. We require
+  // that type-punning through `uint8_t` is not a strict aliasing violation. In
+  // principle, type-punning should be done with `memcpy`, which would make this
   // moot.
   //
   // However, C made too many historical mistakes with the types and signedness
@@ -109,20 +113,20 @@ TEST(CompilerTest, IntegerRepresentation) {
   // size_t does not exceed uint64_t.
   static_assert(sizeof(size_t) <= 8u, "size_t must not exceed uint64_t");
 
-  // The positive maximum of |int| must fit into |size_t|.
+  // The positive maximum of `int` must fit into `size_t`.
   static_assert(sizeof(int) <= sizeof(size_t), "int must not exceed size_t");
 
-  // Require that |int| be exactly 32 bits. OpenSSL historically mixed up
-  // |unsigned| and |uint32_t|, so we require it be at least 32 bits. Requiring
+  // Require that `int` be exactly 32 bits. OpenSSL historically mixed up
+  // `unsigned` and `uint32_t`, so we require it be at least 32 bits. Requiring
   // at most 32-bits is a bit more subtle. C promotes arithmetic operands to
-  // |int| when they fit. But this means, if |int| is 2N bits wide, multiplying
-  // two maximum-sized |uintN_t|s is undefined by integer overflow!
+  // `int` when they fit. But this means, if `int` is 2N bits wide, multiplying
+  // two maximum-sized `uintN_t`s is undefined by integer overflow!
   //
-  // We attempt to handle this for |uint16_t|, assuming a 32-bit |int|, but we
-  // make no attempts to correct for this with |uint32_t| for a 64-bit |int|.
+  // We attempt to handle this for `uint16_t`, assuming a 32-bit `int`, but we
+  // make no attempts to correct for this with `uint32_t` for a 64-bit `int`.
   // Thus BoringSSL does not support ILP64 platforms.
   //
-  // This test is on |INT_MAX| and |INT32_MAX| rather than sizeof because it is
+  // This test is on `INT_MAX` and `INT32_MAX` rather than sizeof because it is
   // theoretically allowed for sizeof(int) to be 4 but include padding bits.
   static_assert(INT_MAX == INT32_MAX, "BoringSSL requires int be 32-bit");
   static_assert(UINT_MAX == UINT32_MAX,
@@ -219,8 +223,25 @@ TEST(CompilerTest, PointerRepresentation) {
   // structs may be initialized by memset(0).
   int *null = nullptr;
   uint8_t bytes[sizeof(null)] = {0};
-  EXPECT_EQ(Bytes(bytes),
-            Bytes(reinterpret_cast<uint8_t *>(&null), sizeof(null)));
+  EXPECT_EQ(Bytes(bytes), Bytes(MemoryRepresentation(null)));
+
+  // The in-memory representation of pointers is not dependent on the type.
+  // crypto/asn1's table-based parser depends on being able to write to load and
+  // store pointers without knowing their types.
+  std::unique_ptr<int> obj(new int);
+  int *ptr_int = obj.get();
+  void *ptr_void = ptr_int;
+  char *ptr_char = reinterpret_cast<char *>(ptr_int);
+  // This is allowed as long as the pointer is aligned. (Dereferencing the
+  // pointer would be a strict aliasing violation.)
+  static_assert(alignof(short) <= alignof(int));
+  short *ptr_short = reinterpret_cast<short*>(ptr_int);
+  EXPECT_EQ(Bytes(MemoryRepresentation(ptr_int)),
+            Bytes(MemoryRepresentation(ptr_void)));
+  EXPECT_EQ(Bytes(MemoryRepresentation(ptr_int)),
+            Bytes(MemoryRepresentation(ptr_char)));
+  EXPECT_EQ(Bytes(MemoryRepresentation(ptr_int)),
+            Bytes(MemoryRepresentation(ptr_short)));
 }
 
 static uintptr_t aba(uintptr_t *a, void **b) {
@@ -232,7 +253,7 @@ static uintptr_t aba(uintptr_t *a, void **b) {
 TEST(CompilerTest, NoStrictAliasing) {
   // Sequential memory access must be sequentially consistent across types.
   // Compilers such as clang and gcc need to be passed -fno-strict-aliasing
-  // for this to remain true at at higher optimization levels. Use with the
+  // for this to remain true at higher optimization levels. Use with the
   // opposite configuration, -fstrict-aliasing, is not supported.
   // Even though some subset of type punning through memory is considered
   // undefined behavior, the subtlety of exactly which subset that is and the

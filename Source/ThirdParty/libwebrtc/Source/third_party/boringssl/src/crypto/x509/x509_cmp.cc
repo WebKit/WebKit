@@ -72,14 +72,12 @@ X509_NAME *X509_get_subject_name(const X509 *a) {
   return const_cast<X509Name *>(&impl->subject);
 }
 
-ASN1_INTEGER *X509_get_serialNumber(X509 *a) {
-  auto *impl = FromOpaque(a);
-  return &impl->serialNumber;
+ASN1_INTEGER *X509_get_serialNumber(X509 *x509) {
+  return FromOpaque(x509)->serialNumber.get();
 }
 
 const ASN1_INTEGER *X509_get0_serialNumber(const X509 *x509) {
-  const auto *impl = FromOpaque(x509);
-  return &impl->serialNumber;
+  return FromOpaque(x509)->serialNumber.get();
 }
 
 uint32_t X509_subject_name_hash(const X509 *x) {
@@ -101,9 +99,9 @@ uint32_t X509_subject_name_hash_old(const X509 *x) {
 int X509_cmp(const X509 *a, const X509 *b) {
   const auto *a_impl = FromOpaque(a);
   const auto *b_impl = FromOpaque(b);
-  // Fill in the |cert_hash| fields.
+  // Fill in the `cert_hash` fields.
   //
-  // TODO(davidben): This may fail, in which case the the hash will be all
+  // TODO(davidben): This may fail, in which case the hash will be all
   // zeros. This produces a consistent comparison (failures are sticky), but
   // not a good one. OpenSSL now returns -2, but this is not a consistent
   // comparison and may cause misbehaving sorts by transitivity. For now, we
@@ -117,11 +115,11 @@ int X509_cmp(const X509 *a, const X509 *b) {
 }
 
 int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b) {
-  const X509_NAME_CACHE *a_cache = x509_name_get_cache(a);
+  const X509NameCache *a_cache = x509_name_get_cache(a);
   if (a_cache == nullptr) {
     return -2;
   }
-  const X509_NAME_CACHE *b_cache = x509_name_get_cache(b);
+  const X509NameCache *b_cache = x509_name_get_cache(b);
   if (b_cache == nullptr) {
     return -2;
   }
@@ -145,7 +143,7 @@ int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b) {
 }
 
 uint32_t X509_NAME_hash(const X509_NAME *x) {
-  const X509_NAME_CACHE *cache = x509_name_get_cache(x);
+  const X509NameCache *cache = x509_name_get_cache(x);
   if (cache == nullptr) {
     return 0;
   }
@@ -158,7 +156,7 @@ uint32_t X509_NAME_hash(const X509_NAME *x) {
 // this is reasonably efficient.
 
 uint32_t X509_NAME_hash_old(const X509_NAME *x) {
-  const X509_NAME_CACHE *cache = x509_name_get_cache(x);
+  const X509NameCache *cache = x509_name_get_cache(x);
   if (cache == nullptr) {
     return 0;
   }
@@ -216,7 +214,7 @@ ASN1_BIT_STRING *X509_get0_pubkey_bitstr(const X509 *x) {
   }
   // This function is not const-correct for OpenSSL compatibility.
   auto *impl = FromOpaque(x);
-  return const_cast<ASN1_BIT_STRING *>(&impl->key.public_key);
+  return const_cast<ASN1_BIT_STRING *>(impl->key.public_key.get());
 }
 
 int X509_check_private_key(const X509 *x, const EVP_PKEY *k) {

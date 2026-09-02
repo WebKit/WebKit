@@ -210,7 +210,7 @@ static int PKCS12_handle_sequence(
   CBS in;
   int ret = 0;
 
-  // Although a BER->DER conversion is done at the beginning of |PKCS12_parse|,
+  // Although a BER->DER conversion is done at the beginning of `PKCS12_parse`,
   // the ASN.1 data gets wrapped in OCTETSTRINGs and/or encrypted and the
   // conversion cannot see through those wrappings. So each time we step
   // through one we need to convert to DER again.
@@ -269,7 +269,7 @@ static const uint8_t kX509Certificate[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                            0x0d, 0x01, 0x09, 0x16, 0x01};
 
 // parse_bag_attributes parses the bagAttributes field of a SafeBag structure.
-// It sets |*out_friendly_name| to a newly-allocated copy of the friendly name,
+// It sets `*out_friendly_name` to a newly-allocated copy of the friendly name,
 // encoded as a UTF-8 string, or NULL if there is none. It returns one on
 // success and zero on error.
 static int parse_bag_attributes(CBS *attrs, uint8_t **out_friendly_name,
@@ -853,7 +853,7 @@ int PKCS12_parse(const PKCS12 *p12, const char *password, EVP_PKEY **out_pkey,
   }
 
   // OpenSSL selects the last certificate which matches the private key as
-  // |out_cert|.
+  // `out_cert`.
   *out_cert = nullptr;
   size_t num_certs = sk_X509_num(ca_certs);
   if (*out_pkey != nullptr && num_certs > 0) {
@@ -1011,9 +1011,9 @@ static int add_cert_safe_contents(CBB *cbb, X509 *cert,
   return CBB_flush(cbb);
 }
 
-// add_encrypted_data encrypts |in| with |pbe_nid| and |pbe_cipher|, writing the
-// result to |out|. It returns one on success and zero on error. |pbe_nid| and
-// |pbe_cipher| are interpreted as in |PKCS8_encrypt|.
+// add_encrypted_data encrypts `in` with `pbe_nid` and `pbe_cipher`, writing the
+// result to `out`. It returns one on success and zero on error. `pbe_nid` and
+// `pbe_cipher` are interpreted as in `PKCS8_encrypt`.
 static int add_encrypted_data(CBB *out, int pbe_nid,
                               const EVP_CIPHER *pbe_cipher,
                               const char *password, size_t password_len,
@@ -1103,7 +1103,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
   // recursive data format. Section 5.1 of RFC 7292 describes the encoding
   // algorithm, but there is no clear overview. A quick summary:
   //
-  // PKCS#7 defines a ContentInfo structure, which is a overgeneralized typed
+  // PKCS#7 defines a ContentInfo structure, which is an overgeneralized typed
   // combinator structure for applying cryptography. We care about two types. A
   // data ContentInfo contains an OCTET STRING and is a leaf node of the
   // combinator tree. An encrypted-data ContentInfo contains encryption
@@ -1129,7 +1129,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
   // key-specific encryption container, PKCS8ShroudedKeyBag, which is used
   // instead.
 
-  // Note that |password| may be NULL to specify no password, rather than the
+  // Note that `password` may be NULL to specify no password, rather than the
   // empty string. They are encoded differently in PKCS#12. (One is the empty
   // byte array and the other is NUL-terminated UCS-2.)
   size_t password_len = password != nullptr ? strlen(password) : 0;
@@ -1160,7 +1160,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
                     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0) ||
       !CBB_add_asn1(&auth_safe_wrapper, &auth_safe_data,
                     CBS_ASN1_OCTETSTRING) ||
-      // See https://tools.ietf.org/html/rfc7292#section-4.1. |auth_safe|'s
+      // See https://tools.ietf.org/html/rfc7292#section-4.1. `auth_safe`'s
       // contains a SEQUENCE of ContentInfos.
       !CBB_add_asn1(&auth_safe_data, &content_infos, CBS_ASN1_SEQUENCE)) {
     goto err;
@@ -1267,7 +1267,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
 
   {
     // Compute the MAC. Match OpenSSL in using SHA-1 as the hash function. The
-    // MAC covers |auth_safe_data|.
+    // MAC covers `auth_safe_data`.
     const EVP_MD *mac_md = EVP_sha1();
     uint8_t mac_salt[PKCS5_SALT_LEN];
     uint8_t mac[EVP_MAX_MD_SIZE];

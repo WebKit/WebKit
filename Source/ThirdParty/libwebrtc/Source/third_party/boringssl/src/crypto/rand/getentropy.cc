@@ -35,10 +35,10 @@ using namespace bssl;
 
 void bssl::CRYPTO_init_sysrand() {}
 
-// CRYPTO_sysrand puts |requested| random bytes into |out|.
+// CRYPTO_sysrand puts `requested` random bytes into `out`.
 void bssl::CRYPTO_sysrand(uint8_t *out, size_t requested) {
   while (requested > 0) {
-    // |getentropy| can only request 256 bytes at a time.
+    // `getentropy` can only request 256 bytes at a time.
     size_t todo = requested <= 256 ? requested : 256;
     if (getentropy(out, todo) != 0) {
       perror("getentropy() failed");

@@ -78,7 +78,7 @@ TEST(CMSTest, KernelModuleSigning) {
       i2d_CMS_bio_stream(out.get(), cms.get(), /*in=*/nullptr, /*flags=*/0));
 
   // RSA signatures are deterministic so the output should not change. By
-  // default, |CMS_sign| should sign SHA-256.
+  // default, `CMS_sign` should sign SHA-256.
   std::string expected = GetTestData("crypto/pkcs7/test/sign_sha256.p7s");
   EXPECT_EQ(Bytes(BIOMemContents(out.get())), Bytes(expected));
 
@@ -128,7 +128,7 @@ TEST(CMSTest, KernelModuleSigning) {
   // https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0ad9a71933e7,
   // the kernel started accidentally passing extra flag to every function, even
   // where it doesn't make sense. Make sure it works, even if though it's
-  // dubious. (Passing |CMS_PARTIAL| to |CMS_final| is particularly
+  // dubious. (Passing `CMS_PARTIAL` to `CMS_final` is particularly
   // questionable.)
   const uint32_t many_flags = CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
                               CMS_DETACHED | CMS_STREAM | CMS_NOSMIMECAP |

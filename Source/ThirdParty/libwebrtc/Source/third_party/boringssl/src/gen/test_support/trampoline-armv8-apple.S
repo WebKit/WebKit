@@ -128,6 +128,7 @@ Lx29_ok:
 .globl	_abi_test_clobber_x0
 .private_extern	_abi_test_clobber_x0
 .align	4
+.alt_entry _abi_test_clobber_x0
 _abi_test_clobber_x0:
 	AARCH64_VALID_CALL_TARGET
 	mov	x0, xzr
@@ -137,6 +138,7 @@ _abi_test_clobber_x0:
 .globl	_abi_test_clobber_x1
 .private_extern	_abi_test_clobber_x1
 .align	4
+.alt_entry _abi_test_clobber_x1
 _abi_test_clobber_x1:
 	AARCH64_VALID_CALL_TARGET
 	mov	x1, xzr
@@ -146,6 +148,7 @@ _abi_test_clobber_x1:
 .globl	_abi_test_clobber_x2
 .private_extern	_abi_test_clobber_x2
 .align	4
+.alt_entry _abi_test_clobber_x2
 _abi_test_clobber_x2:
 	AARCH64_VALID_CALL_TARGET
 	mov	x2, xzr
@@ -155,6 +158,7 @@ _abi_test_clobber_x2:
 .globl	_abi_test_clobber_x3
 .private_extern	_abi_test_clobber_x3
 .align	4
+.alt_entry _abi_test_clobber_x3
 _abi_test_clobber_x3:
 	AARCH64_VALID_CALL_TARGET
 	mov	x3, xzr
@@ -164,6 +168,7 @@ _abi_test_clobber_x3:
 .globl	_abi_test_clobber_x4
 .private_extern	_abi_test_clobber_x4
 .align	4
+.alt_entry _abi_test_clobber_x4
 _abi_test_clobber_x4:
 	AARCH64_VALID_CALL_TARGET
 	mov	x4, xzr
@@ -173,6 +178,7 @@ _abi_test_clobber_x4:
 .globl	_abi_test_clobber_x5
 .private_extern	_abi_test_clobber_x5
 .align	4
+.alt_entry _abi_test_clobber_x5
 _abi_test_clobber_x5:
 	AARCH64_VALID_CALL_TARGET
 	mov	x5, xzr
@@ -182,6 +188,7 @@ _abi_test_clobber_x5:
 .globl	_abi_test_clobber_x6
 .private_extern	_abi_test_clobber_x6
 .align	4
+.alt_entry _abi_test_clobber_x6
 _abi_test_clobber_x6:
 	AARCH64_VALID_CALL_TARGET
 	mov	x6, xzr
@@ -191,6 +198,7 @@ _abi_test_clobber_x6:
 .globl	_abi_test_clobber_x7
 .private_extern	_abi_test_clobber_x7
 .align	4
+.alt_entry _abi_test_clobber_x7
 _abi_test_clobber_x7:
 	AARCH64_VALID_CALL_TARGET
 	mov	x7, xzr
@@ -200,6 +208,7 @@ _abi_test_clobber_x7:
 .globl	_abi_test_clobber_x8
 .private_extern	_abi_test_clobber_x8
 .align	4
+.alt_entry _abi_test_clobber_x8
 _abi_test_clobber_x8:
 	AARCH64_VALID_CALL_TARGET
 	mov	x8, xzr
@@ -209,6 +218,7 @@ _abi_test_clobber_x8:
 .globl	_abi_test_clobber_x9
 .private_extern	_abi_test_clobber_x9
 .align	4
+.alt_entry _abi_test_clobber_x9
 _abi_test_clobber_x9:
 	AARCH64_VALID_CALL_TARGET
 	mov	x9, xzr
@@ -218,6 +228,7 @@ _abi_test_clobber_x9:
 .globl	_abi_test_clobber_x10
 .private_extern	_abi_test_clobber_x10
 .align	4
+.alt_entry _abi_test_clobber_x10
 _abi_test_clobber_x10:
 	AARCH64_VALID_CALL_TARGET
 	mov	x10, xzr
@@ -227,6 +238,7 @@ _abi_test_clobber_x10:
 .globl	_abi_test_clobber_x11
 .private_extern	_abi_test_clobber_x11
 .align	4
+.alt_entry _abi_test_clobber_x11
 _abi_test_clobber_x11:
 	AARCH64_VALID_CALL_TARGET
 	mov	x11, xzr
@@ -236,6 +248,7 @@ _abi_test_clobber_x11:
 .globl	_abi_test_clobber_x12
 .private_extern	_abi_test_clobber_x12
 .align	4
+.alt_entry _abi_test_clobber_x12
 _abi_test_clobber_x12:
 	AARCH64_VALID_CALL_TARGET
 	mov	x12, xzr
@@ -245,6 +258,7 @@ _abi_test_clobber_x12:
 .globl	_abi_test_clobber_x13
 .private_extern	_abi_test_clobber_x13
 .align	4
+.alt_entry _abi_test_clobber_x13
 _abi_test_clobber_x13:
 	AARCH64_VALID_CALL_TARGET
 	mov	x13, xzr
@@ -254,6 +268,7 @@ _abi_test_clobber_x13:
 .globl	_abi_test_clobber_x14
 .private_extern	_abi_test_clobber_x14
 .align	4
+.alt_entry _abi_test_clobber_x14
 _abi_test_clobber_x14:
 	AARCH64_VALID_CALL_TARGET
 	mov	x14, xzr
@@ -263,6 +278,7 @@ _abi_test_clobber_x14:
 .globl	_abi_test_clobber_x15
 .private_extern	_abi_test_clobber_x15
 .align	4
+.alt_entry _abi_test_clobber_x15
 _abi_test_clobber_x15:
 	AARCH64_VALID_CALL_TARGET
 	mov	x15, xzr
@@ -272,6 +288,7 @@ _abi_test_clobber_x15:
 .globl	_abi_test_clobber_x16
 .private_extern	_abi_test_clobber_x16
 .align	4
+.alt_entry _abi_test_clobber_x16
 _abi_test_clobber_x16:
 	AARCH64_VALID_CALL_TARGET
 	mov	x16, xzr
@@ -281,6 +298,7 @@ _abi_test_clobber_x16:
 .globl	_abi_test_clobber_x17
 .private_extern	_abi_test_clobber_x17
 .align	4
+.alt_entry _abi_test_clobber_x17
 _abi_test_clobber_x17:
 	AARCH64_VALID_CALL_TARGET
 	mov	x17, xzr
@@ -290,6 +308,7 @@ _abi_test_clobber_x17:
 .globl	_abi_test_clobber_x19
 .private_extern	_abi_test_clobber_x19
 .align	4
+.alt_entry _abi_test_clobber_x19
 _abi_test_clobber_x19:
 	AARCH64_VALID_CALL_TARGET
 	mov	x19, xzr
@@ -299,6 +318,7 @@ _abi_test_clobber_x19:
 .globl	_abi_test_clobber_x20
 .private_extern	_abi_test_clobber_x20
 .align	4
+.alt_entry _abi_test_clobber_x20
 _abi_test_clobber_x20:
 	AARCH64_VALID_CALL_TARGET
 	mov	x20, xzr
@@ -308,6 +328,7 @@ _abi_test_clobber_x20:
 .globl	_abi_test_clobber_x21
 .private_extern	_abi_test_clobber_x21
 .align	4
+.alt_entry _abi_test_clobber_x21
 _abi_test_clobber_x21:
 	AARCH64_VALID_CALL_TARGET
 	mov	x21, xzr
@@ -317,6 +338,7 @@ _abi_test_clobber_x21:
 .globl	_abi_test_clobber_x22
 .private_extern	_abi_test_clobber_x22
 .align	4
+.alt_entry _abi_test_clobber_x22
 _abi_test_clobber_x22:
 	AARCH64_VALID_CALL_TARGET
 	mov	x22, xzr
@@ -326,6 +348,7 @@ _abi_test_clobber_x22:
 .globl	_abi_test_clobber_x23
 .private_extern	_abi_test_clobber_x23
 .align	4
+.alt_entry _abi_test_clobber_x23
 _abi_test_clobber_x23:
 	AARCH64_VALID_CALL_TARGET
 	mov	x23, xzr
@@ -335,6 +358,7 @@ _abi_test_clobber_x23:
 .globl	_abi_test_clobber_x24
 .private_extern	_abi_test_clobber_x24
 .align	4
+.alt_entry _abi_test_clobber_x24
 _abi_test_clobber_x24:
 	AARCH64_VALID_CALL_TARGET
 	mov	x24, xzr
@@ -344,6 +368,7 @@ _abi_test_clobber_x24:
 .globl	_abi_test_clobber_x25
 .private_extern	_abi_test_clobber_x25
 .align	4
+.alt_entry _abi_test_clobber_x25
 _abi_test_clobber_x25:
 	AARCH64_VALID_CALL_TARGET
 	mov	x25, xzr
@@ -353,6 +378,7 @@ _abi_test_clobber_x25:
 .globl	_abi_test_clobber_x26
 .private_extern	_abi_test_clobber_x26
 .align	4
+.alt_entry _abi_test_clobber_x26
 _abi_test_clobber_x26:
 	AARCH64_VALID_CALL_TARGET
 	mov	x26, xzr
@@ -362,6 +388,7 @@ _abi_test_clobber_x26:
 .globl	_abi_test_clobber_x27
 .private_extern	_abi_test_clobber_x27
 .align	4
+.alt_entry _abi_test_clobber_x27
 _abi_test_clobber_x27:
 	AARCH64_VALID_CALL_TARGET
 	mov	x27, xzr
@@ -371,6 +398,7 @@ _abi_test_clobber_x27:
 .globl	_abi_test_clobber_x28
 .private_extern	_abi_test_clobber_x28
 .align	4
+.alt_entry _abi_test_clobber_x28
 _abi_test_clobber_x28:
 	AARCH64_VALID_CALL_TARGET
 	mov	x28, xzr
@@ -380,6 +408,7 @@ _abi_test_clobber_x28:
 .globl	_abi_test_clobber_x29
 .private_extern	_abi_test_clobber_x29
 .align	4
+.alt_entry _abi_test_clobber_x29
 _abi_test_clobber_x29:
 	AARCH64_VALID_CALL_TARGET
 	mov	x29, xzr
@@ -389,6 +418,7 @@ _abi_test_clobber_x29:
 .globl	_abi_test_clobber_d0
 .private_extern	_abi_test_clobber_d0
 .align	4
+.alt_entry _abi_test_clobber_d0
 _abi_test_clobber_d0:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d0, xzr
@@ -398,6 +428,7 @@ _abi_test_clobber_d0:
 .globl	_abi_test_clobber_d1
 .private_extern	_abi_test_clobber_d1
 .align	4
+.alt_entry _abi_test_clobber_d1
 _abi_test_clobber_d1:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d1, xzr
@@ -407,6 +438,7 @@ _abi_test_clobber_d1:
 .globl	_abi_test_clobber_d2
 .private_extern	_abi_test_clobber_d2
 .align	4
+.alt_entry _abi_test_clobber_d2
 _abi_test_clobber_d2:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d2, xzr
@@ -416,6 +448,7 @@ _abi_test_clobber_d2:
 .globl	_abi_test_clobber_d3
 .private_extern	_abi_test_clobber_d3
 .align	4
+.alt_entry _abi_test_clobber_d3
 _abi_test_clobber_d3:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d3, xzr
@@ -425,6 +458,7 @@ _abi_test_clobber_d3:
 .globl	_abi_test_clobber_d4
 .private_extern	_abi_test_clobber_d4
 .align	4
+.alt_entry _abi_test_clobber_d4
 _abi_test_clobber_d4:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d4, xzr
@@ -434,6 +468,7 @@ _abi_test_clobber_d4:
 .globl	_abi_test_clobber_d5
 .private_extern	_abi_test_clobber_d5
 .align	4
+.alt_entry _abi_test_clobber_d5
 _abi_test_clobber_d5:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d5, xzr
@@ -443,6 +478,7 @@ _abi_test_clobber_d5:
 .globl	_abi_test_clobber_d6
 .private_extern	_abi_test_clobber_d6
 .align	4
+.alt_entry _abi_test_clobber_d6
 _abi_test_clobber_d6:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d6, xzr
@@ -452,6 +488,7 @@ _abi_test_clobber_d6:
 .globl	_abi_test_clobber_d7
 .private_extern	_abi_test_clobber_d7
 .align	4
+.alt_entry _abi_test_clobber_d7
 _abi_test_clobber_d7:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d7, xzr
@@ -461,6 +498,7 @@ _abi_test_clobber_d7:
 .globl	_abi_test_clobber_d8
 .private_extern	_abi_test_clobber_d8
 .align	4
+.alt_entry _abi_test_clobber_d8
 _abi_test_clobber_d8:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d8, xzr
@@ -470,6 +508,7 @@ _abi_test_clobber_d8:
 .globl	_abi_test_clobber_d9
 .private_extern	_abi_test_clobber_d9
 .align	4
+.alt_entry _abi_test_clobber_d9
 _abi_test_clobber_d9:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d9, xzr
@@ -479,6 +518,7 @@ _abi_test_clobber_d9:
 .globl	_abi_test_clobber_d10
 .private_extern	_abi_test_clobber_d10
 .align	4
+.alt_entry _abi_test_clobber_d10
 _abi_test_clobber_d10:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d10, xzr
@@ -488,6 +528,7 @@ _abi_test_clobber_d10:
 .globl	_abi_test_clobber_d11
 .private_extern	_abi_test_clobber_d11
 .align	4
+.alt_entry _abi_test_clobber_d11
 _abi_test_clobber_d11:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d11, xzr
@@ -497,6 +538,7 @@ _abi_test_clobber_d11:
 .globl	_abi_test_clobber_d12
 .private_extern	_abi_test_clobber_d12
 .align	4
+.alt_entry _abi_test_clobber_d12
 _abi_test_clobber_d12:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d12, xzr
@@ -506,6 +548,7 @@ _abi_test_clobber_d12:
 .globl	_abi_test_clobber_d13
 .private_extern	_abi_test_clobber_d13
 .align	4
+.alt_entry _abi_test_clobber_d13
 _abi_test_clobber_d13:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d13, xzr
@@ -515,6 +558,7 @@ _abi_test_clobber_d13:
 .globl	_abi_test_clobber_d14
 .private_extern	_abi_test_clobber_d14
 .align	4
+.alt_entry _abi_test_clobber_d14
 _abi_test_clobber_d14:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d14, xzr
@@ -524,6 +568,7 @@ _abi_test_clobber_d14:
 .globl	_abi_test_clobber_d15
 .private_extern	_abi_test_clobber_d15
 .align	4
+.alt_entry _abi_test_clobber_d15
 _abi_test_clobber_d15:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d15, xzr
@@ -533,6 +578,7 @@ _abi_test_clobber_d15:
 .globl	_abi_test_clobber_d16
 .private_extern	_abi_test_clobber_d16
 .align	4
+.alt_entry _abi_test_clobber_d16
 _abi_test_clobber_d16:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d16, xzr
@@ -542,6 +588,7 @@ _abi_test_clobber_d16:
 .globl	_abi_test_clobber_d17
 .private_extern	_abi_test_clobber_d17
 .align	4
+.alt_entry _abi_test_clobber_d17
 _abi_test_clobber_d17:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d17, xzr
@@ -551,6 +598,7 @@ _abi_test_clobber_d17:
 .globl	_abi_test_clobber_d18
 .private_extern	_abi_test_clobber_d18
 .align	4
+.alt_entry _abi_test_clobber_d18
 _abi_test_clobber_d18:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d18, xzr
@@ -560,6 +608,7 @@ _abi_test_clobber_d18:
 .globl	_abi_test_clobber_d19
 .private_extern	_abi_test_clobber_d19
 .align	4
+.alt_entry _abi_test_clobber_d19
 _abi_test_clobber_d19:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d19, xzr
@@ -569,6 +618,7 @@ _abi_test_clobber_d19:
 .globl	_abi_test_clobber_d20
 .private_extern	_abi_test_clobber_d20
 .align	4
+.alt_entry _abi_test_clobber_d20
 _abi_test_clobber_d20:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d20, xzr
@@ -578,6 +628,7 @@ _abi_test_clobber_d20:
 .globl	_abi_test_clobber_d21
 .private_extern	_abi_test_clobber_d21
 .align	4
+.alt_entry _abi_test_clobber_d21
 _abi_test_clobber_d21:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d21, xzr
@@ -587,6 +638,7 @@ _abi_test_clobber_d21:
 .globl	_abi_test_clobber_d22
 .private_extern	_abi_test_clobber_d22
 .align	4
+.alt_entry _abi_test_clobber_d22
 _abi_test_clobber_d22:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d22, xzr
@@ -596,6 +648,7 @@ _abi_test_clobber_d22:
 .globl	_abi_test_clobber_d23
 .private_extern	_abi_test_clobber_d23
 .align	4
+.alt_entry _abi_test_clobber_d23
 _abi_test_clobber_d23:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d23, xzr
@@ -605,6 +658,7 @@ _abi_test_clobber_d23:
 .globl	_abi_test_clobber_d24
 .private_extern	_abi_test_clobber_d24
 .align	4
+.alt_entry _abi_test_clobber_d24
 _abi_test_clobber_d24:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d24, xzr
@@ -614,6 +668,7 @@ _abi_test_clobber_d24:
 .globl	_abi_test_clobber_d25
 .private_extern	_abi_test_clobber_d25
 .align	4
+.alt_entry _abi_test_clobber_d25
 _abi_test_clobber_d25:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d25, xzr
@@ -623,6 +678,7 @@ _abi_test_clobber_d25:
 .globl	_abi_test_clobber_d26
 .private_extern	_abi_test_clobber_d26
 .align	4
+.alt_entry _abi_test_clobber_d26
 _abi_test_clobber_d26:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d26, xzr
@@ -632,6 +688,7 @@ _abi_test_clobber_d26:
 .globl	_abi_test_clobber_d27
 .private_extern	_abi_test_clobber_d27
 .align	4
+.alt_entry _abi_test_clobber_d27
 _abi_test_clobber_d27:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d27, xzr
@@ -641,6 +698,7 @@ _abi_test_clobber_d27:
 .globl	_abi_test_clobber_d28
 .private_extern	_abi_test_clobber_d28
 .align	4
+.alt_entry _abi_test_clobber_d28
 _abi_test_clobber_d28:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d28, xzr
@@ -650,6 +708,7 @@ _abi_test_clobber_d28:
 .globl	_abi_test_clobber_d29
 .private_extern	_abi_test_clobber_d29
 .align	4
+.alt_entry _abi_test_clobber_d29
 _abi_test_clobber_d29:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d29, xzr
@@ -659,6 +718,7 @@ _abi_test_clobber_d29:
 .globl	_abi_test_clobber_d30
 .private_extern	_abi_test_clobber_d30
 .align	4
+.alt_entry _abi_test_clobber_d30
 _abi_test_clobber_d30:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d30, xzr
@@ -668,6 +728,7 @@ _abi_test_clobber_d30:
 .globl	_abi_test_clobber_d31
 .private_extern	_abi_test_clobber_d31
 .align	4
+.alt_entry _abi_test_clobber_d31
 _abi_test_clobber_d31:
 	AARCH64_VALID_CALL_TARGET
 	fmov	d31, xzr
@@ -677,6 +738,7 @@ _abi_test_clobber_d31:
 .globl	_abi_test_clobber_v8_upper
 .private_extern	_abi_test_clobber_v8_upper
 .align	4
+.alt_entry _abi_test_clobber_v8_upper
 _abi_test_clobber_v8_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v8.d[1], xzr
@@ -686,6 +748,7 @@ _abi_test_clobber_v8_upper:
 .globl	_abi_test_clobber_v9_upper
 .private_extern	_abi_test_clobber_v9_upper
 .align	4
+.alt_entry _abi_test_clobber_v9_upper
 _abi_test_clobber_v9_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v9.d[1], xzr
@@ -695,6 +758,7 @@ _abi_test_clobber_v9_upper:
 .globl	_abi_test_clobber_v10_upper
 .private_extern	_abi_test_clobber_v10_upper
 .align	4
+.alt_entry _abi_test_clobber_v10_upper
 _abi_test_clobber_v10_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v10.d[1], xzr
@@ -704,6 +768,7 @@ _abi_test_clobber_v10_upper:
 .globl	_abi_test_clobber_v11_upper
 .private_extern	_abi_test_clobber_v11_upper
 .align	4
+.alt_entry _abi_test_clobber_v11_upper
 _abi_test_clobber_v11_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v11.d[1], xzr
@@ -713,6 +778,7 @@ _abi_test_clobber_v11_upper:
 .globl	_abi_test_clobber_v12_upper
 .private_extern	_abi_test_clobber_v12_upper
 .align	4
+.alt_entry _abi_test_clobber_v12_upper
 _abi_test_clobber_v12_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v12.d[1], xzr
@@ -722,6 +788,7 @@ _abi_test_clobber_v12_upper:
 .globl	_abi_test_clobber_v13_upper
 .private_extern	_abi_test_clobber_v13_upper
 .align	4
+.alt_entry _abi_test_clobber_v13_upper
 _abi_test_clobber_v13_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v13.d[1], xzr
@@ -731,6 +798,7 @@ _abi_test_clobber_v13_upper:
 .globl	_abi_test_clobber_v14_upper
 .private_extern	_abi_test_clobber_v14_upper
 .align	4
+.alt_entry _abi_test_clobber_v14_upper
 _abi_test_clobber_v14_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v14.d[1], xzr
@@ -740,6 +808,7 @@ _abi_test_clobber_v14_upper:
 .globl	_abi_test_clobber_v15_upper
 .private_extern	_abi_test_clobber_v15_upper
 .align	4
+.alt_entry _abi_test_clobber_v15_upper
 _abi_test_clobber_v15_upper:
 	AARCH64_VALID_CALL_TARGET
 	fmov	v15.d[1], xzr

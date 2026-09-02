@@ -89,6 +89,7 @@ z_bss_get:
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:
+.LBORINGSSL_bcm_text_hash_local_target:
 .byte 0xae
 .byte 0x2c
 .byte 0xea

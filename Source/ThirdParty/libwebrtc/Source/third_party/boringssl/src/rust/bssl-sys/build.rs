@@ -74,7 +74,7 @@ fn get_bssl_build_dir() -> PathBuf {
     }
 
     let crate_dir = env::var_os("CARGO_MANIFEST_DIR").unwrap();
-    return Path::new(&crate_dir).join("../../build");
+    Path::new(&crate_dir).join("../../build")
 }
 
 fn get_cpp_runtime_lib() -> Option<String> {
@@ -104,11 +104,13 @@ fn main() {
     // Find the bindgen generated target platform bindings file and put it into
     // OUT_DIR/bindgen.rs.
     let bindgen_source_file = bssl_sys_build_dir.join(format!("wrapper_{}.rs", target));
-    std::fs::copy(&bindgen_source_file, &bindgen_out_file).expect(&format!(
-        "Could not copy bindings from '{}' to '{}'",
-        bindgen_source_file.display(),
-        bindgen_out_file.display()
-    ));
+    std::fs::copy(&bindgen_source_file, &bindgen_out_file).unwrap_or_else(|_| {
+        panic!(
+            "Could not copy bindings from '{}' to '{}'",
+            bindgen_source_file.display(),
+            bindgen_out_file.display()
+        )
+    });
     println!("cargo:rerun-if-changed={}", bindgen_source_file.display());
 
     // Statically link libraries.

@@ -93,7 +93,7 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
         return 0;
       }
     } else {
-      ERR_clear_error();  // Clear |ASN1_INTEGER_get_uint64|'s error.
+      ERR_clear_error();  // Clear `ASN1_INTEGER_get_uint64`'s error.
       const char *neg =
           (serial->type == V_ASN1_NEG_INTEGER) ? " (Negative)" : "";
       if (BIO_printf(bp, "\n%12s%s", "", neg) <= 0) {
@@ -110,7 +110,7 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
   }
 
   if (!(cflag & X509_FLAG_NO_SIGNAME)) {
-    if (X509_signature_print(bp, &impl->tbs_sig_alg, nullptr) <= 0) {
+    if (X509_signature_print(bp, impl->tbs_sig_alg.get(), nullptr) <= 0) {
       return 0;
     }
   }
@@ -166,7 +166,7 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
     if (BIO_printf(bp, "%12sPublic Key Algorithm: ", "") <= 0) {
       return 0;
     }
-    if (i2a_ASN1_OBJECT(bp, impl->key.algor.algorithm) <= 0) {
+    if (i2a_ASN1_OBJECT(bp, impl->key.algor->algorithm) <= 0) {
       return 0;
     }
     if (BIO_puts(bp, "\n") <= 0) {
@@ -187,7 +187,7 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
       if (BIO_printf(bp, "%8sIssuer Unique ID: ", "") <= 0) {
         return 0;
       }
-      if (!X509_signature_dump(bp, impl->issuerUID, 12)) {
+      if (!X509_signature_dump(bp, impl->issuerUID.get(), 12)) {
         return 0;
       }
     }
@@ -195,7 +195,7 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
       if (BIO_printf(bp, "%8sSubject Unique ID: ", "") <= 0) {
         return 0;
       }
-      if (!X509_signature_dump(bp, impl->subjectUID, 12)) {
+      if (!X509_signature_dump(bp, impl->subjectUID.get(), 12)) {
         return 0;
       }
     }
@@ -207,7 +207,8 @@ int X509_print_ex(BIO *bp, const X509 *x, unsigned long nmflags,
   }
 
   if (!(cflag & X509_FLAG_NO_SIGDUMP)) {
-    if (X509_signature_print(bp, &impl->sig_alg, &impl->signature) <= 0) {
+    if (X509_signature_print(bp, impl->sig_alg.get(), impl->signature.get()) <=
+        0) {
       return 0;
     }
   }

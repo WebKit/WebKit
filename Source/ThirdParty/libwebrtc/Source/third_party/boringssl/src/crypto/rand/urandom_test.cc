@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
 #include <stdlib.h>
+#include <gtest/gtest.h>
 
 #include <optional>
 
@@ -67,7 +67,7 @@ static const size_t kDaemonWriteLength = 496;
 // simulate the absence of RDRAND of machines that have it.
 
 // Event represents a system call from urandom.c that is observed by the ptrace
-// code in |GetTrace|.
+// code in `GetTrace`.
 struct Event {
   enum class Syscall {
     kGetRandom,
@@ -187,18 +187,18 @@ static std::string ToString(const std::vector<Event> &trace) {
   return ret;
 }
 
-// The following are flags to tell |GetTrace| to inject faults, using ptrace,
+// The following are flags to tell `GetTrace` to inject faults, using ptrace,
 // into the entropy-related system calls.
 
-// getrandom gives |ENOSYS|.
+// getrandom gives `ENOSYS`.
 static const unsigned NO_GETRANDOM = 1;
 // opening /dev/urandom fails.
 static const unsigned NO_URANDOM = 2;
-// getrandom always returns |EAGAIN| if given |GRNG_NONBLOCK|.
+// getrandom always returns `EAGAIN` if given `GRNG_NONBLOCK`.
 static const unsigned GETRANDOM_NOT_READY = 4;
-// getrandom gives |EINVAL| unless |NO_GETRANDOM| is set.
+// getrandom gives `EINVAL` unless `NO_GETRANDOM` is set.
 static const unsigned GETRANDOM_ERROR = 8;
-// Reading from /dev/urandom gives |EINVAL|.
+// Reading from /dev/urandom gives `EINVAL`.
 static const unsigned URANDOM_ERROR = 16;
 static const unsigned SOCKET_ERROR = 32;
 static const unsigned CONNECT_ERROR = 64;
@@ -206,7 +206,7 @@ static const unsigned SOCKET_READ_ERROR = 128;
 static const unsigned SOCKET_READ_SHORT = 256;
 static const unsigned NEXT_FLAG = 512;
 
-// regs_read fetches the registers of |child_pid| and writes them to |out_regs|.
+// regs_read fetches the registers of `child_pid` and writes them to `out_regs`.
 // That structure will contain at least the following members:
 //   syscall: the syscall number, if registers were read just before entering
 //       one.
@@ -218,11 +218,11 @@ static const unsigned NEXT_FLAG = 512;
 // This call returns true on success and false otherwise.
 static bool regs_read(struct regs *out_regs, int child_pid);
 
-// regs_set_ret sets the return value of the system call that |child_pid| has
-// just finished, to |ret|. It returns true on success and false otherwise.
+// regs_set_ret sets the return value of the system call that `child_pid` has
+// just finished, to `ret`. It returns true on success and false otherwise.
 static bool regs_set_ret(int child_pid, int ret);
 
-// regs_break_syscall causes the system call that |child_pid| is about to enter
+// regs_break_syscall causes the system call that `child_pid` is about to enter
 // to fail to run.
 static bool regs_break_syscall(int child_pid, const struct regs *orig_regs);
 
@@ -309,8 +309,8 @@ static bool regs_break_syscall(int child_pid, const struct regs *orig_regs) {
 
 #endif
 
-// memcpy_to_remote copies |n| bytes from |in_src| in the local address space,
-// to |dest| in the address space of |child_pid|.
+// memcpy_to_remote copies `n` bytes from `in_src` in the local address space,
+// to `dest` in the address space of `child_pid`.
 static void memcpy_to_remote(int child_pid, uint64_t dest, const void *in_src,
                              size_t n) {
   const uint8_t *src = reinterpret_cast<const uint8_t *>(in_src);
@@ -384,9 +384,9 @@ static std::string get_string_from_remote(int child_pid, uint64_t ptr) {
   return ret;
 }
 
-// GetTrace runs |thunk| in a forked process and observes the resulting system
+// GetTrace runs `thunk` in a forked process and observes the resulting system
 // calls using ptrace. It simulates a variety of failures based on the contents
-// of |flags| and records the observed events by appending to |out_trace|.
+// of `flags` and records the observed events by appending to `out_trace`.
 static void GetTrace(std::vector<Event> *out_trace, unsigned flags,
                      std::function<void()> thunk) {
   const int child_pid = fork();
@@ -596,7 +596,7 @@ static void GetTrace(std::vector<Event> *out_trace, unsigned flags,
   }
 }
 
-// TestFunction is the function that |GetTrace| is asked to trace.
+// TestFunction is the function that `GetTrace` is asked to trace.
 static void TestFunction() {
   uint8_t byte;
   RAND_bytes(&byte, sizeof(byte));
@@ -636,8 +636,8 @@ out:
 }
 
 // TestFunctionPRNGModel is a model of how the urandom.c code will behave when
-// |TestFunction| is run. It should return the same trace of events that
-// |GetTrace| will observe the real code making.
+// `TestFunction` is run. It should return the same trace of events that
+// `GetTrace` will observe the real code making.
 static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
   std::vector<Event> ret;
 
@@ -694,8 +694,7 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       if (!sysrand(kAdditionalDataLength)) {
         return ret;
       }
-      if (kUsesDaemon && !AppendDaemonEvents(&ret, flags) &&
-          !sysrand(48)) {
+      if (kUsesDaemon && !AppendDaemonEvents(&ret, flags) && !sysrand(48)) {
         return ret;
       }
     }
@@ -724,8 +723,8 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
   return ret;
 }
 
-// Tests that |TestFunctionPRNGModel| is a correct model for the code in
-// urandom.c, at least to the limits of the the |Event| type.
+// Tests that `TestFunctionPRNGModel` is a correct model for the code in
+// urandom.c, at least to the limits of the `Event` type.
 TEST(URandomTest, Test) {
   char buf[256];
 

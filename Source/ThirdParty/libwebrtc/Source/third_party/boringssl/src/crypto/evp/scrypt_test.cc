@@ -79,24 +79,31 @@ TEST(ScryptTest, InvalidParameters) {
   // p and r are non-zero.
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1024 /* N */, 0 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1024 /* N */, 8 /* r */,
                               0 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
 
   // N must be a power of 2 > 1.
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 0 /* N */, 8 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1 /* N */, 8 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1023 /* N */, 8 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
   EXPECT_TRUE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1024 /* N */, 8 /* r */,
-                              1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+                             1 /* p */, 0 /* max_mem */, key, sizeof(key)));
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 1025 /* N */, 8 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
 
   // N must be below 2^(128 * r / 8).
   EXPECT_FALSE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 65536 /* N */, 1 /* r */,
                               1 /* p */, 0 /* max_mem */, key, sizeof(key)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_INVALID_PARAMETERS}}));
   EXPECT_TRUE(EVP_PBE_scrypt(nullptr, 0, nullptr, 0, 32768 /* N */, 1 /* r */,
                              1 /* p */, 0 /* max_mem */, key, sizeof(key)));
 }

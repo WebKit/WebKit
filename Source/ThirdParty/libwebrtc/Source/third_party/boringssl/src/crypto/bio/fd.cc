@@ -23,6 +23,8 @@
 #include <unistd.h>
 #else
 #include <io.h>
+#include <limits.h>
+#include <algorithm>
 #endif
 
 #include <openssl/err.h>
@@ -36,12 +38,10 @@
   #define BORINGSSL_CLOSE _close
   #define BORINGSSL_LSEEK _lseek
   #define BORINGSSL_READ _read
-  #define BORINGSSL_WRITE _write
 #else
   #define BORINGSSL_CLOSE close
   #define BORINGSSL_LSEEK lseek
   #define BORINGSSL_READ read
-  #define BORINGSSL_WRITE write
 #endif
 
 using namespace bssl;
@@ -72,9 +72,7 @@ static int fd_free(BIO *bio) {
 }
 
 static int fd_read(BIO *b, char *out, int outl) {
-  int ret = 0;
-
-  ret = (int)BORINGSSL_READ(FromOpaque(b)->num, out, outl);
+  int ret = (int)BORINGSSL_READ(FromOpaque(b)->num, out, outl);
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
     if (bio_errno_should_retry(ret)) {
@@ -85,16 +83,24 @@ static int fd_read(BIO *b, char *out, int outl) {
   return ret;
 }
 
-static int fd_write(BIO *b, const char *in, int inl) {
-  int ret = (int)BORINGSSL_WRITE(FromOpaque(b)->num, in, inl);
+static int fd_write_ex(BIO *b, const char *in, size_t inl,
+                       size_t *out_written) {
+#if defined(OPENSSL_WINDOWS)
+  inl = std::min(inl, size_t{UINT_MAX});
+  int ret = _write(FromOpaque(b)->num, in, static_cast<unsigned>(inl));
+#else
+  ssize_t ret = write(FromOpaque(b)->num, in, inl);
+#endif
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
     if (bio_errno_should_retry(ret)) {
       BIO_set_retry_write(b);
     }
+    return 0;
   }
 
-  return ret;
+  *out_written = ret;
+  return 1;
 }
 
 static long fd_ctrl(BIO *b, int cmd, long num, void *ptr) {
@@ -158,14 +164,21 @@ static int fd_gets(BIO *bp, char *buf, int size) {
 
   ptr[0] = '\0';
 
-  // The output length is bounded by |size|.
+  // The output length is bounded by `size`.
   return (int)(ptr - buf);
 }
 
 static const BIO_METHOD methods_fdp = {
-    BIO_TYPE_FD, "file descriptor", fd_write,
-    fd_read,     fd_gets,           fd_ctrl,
-    fd_new,      fd_free,           /*callback_ctrl=*/nullptr,
+    BIO_TYPE_FD,
+    "file descriptor",
+    /*bwrite=*/nullptr,
+    fd_write_ex,
+    fd_read,
+    fd_gets,
+    fd_ctrl,
+    fd_new,
+    fd_free,
+    /*callback_ctrl=*/nullptr,
 };
 
 const BIO_METHOD *BIO_s_fd() { return &methods_fdp; }

@@ -27,8 +27,8 @@ using namespace bssl;
 
 // TODO(crbug.com/42290422): Rewrite this logic to recognize signature
 // algorithms without pulling in the OID table. We can enumerate every supported
-// signature algorithm into a small enum and convert them to/from |EVP_PKEY_CTX|
-// and |X509_ALGOR|.
+// signature algorithm into a small enum and convert them to/from `EVP_PKEY_CTX`
+// and `X509_ALGOR`.
 
 // Restrict the digests that are allowed in X509 certificates
 static int x509_digest_nid_ok(const int digest_nid) {

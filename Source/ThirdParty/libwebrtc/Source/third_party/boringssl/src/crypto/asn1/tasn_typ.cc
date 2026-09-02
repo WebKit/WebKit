@@ -21,7 +21,7 @@
 
 using namespace bssl;
 
-// TODO(crbug.com/42290417): While we need |ASN1_ITEM|s, the exposed new, free,
+// TODO(crbug.com/42290417): While we need `ASN1_ITEM`s, the exposed new, free,
 // i2d, and d2i functions should call the underlying implementations directly.
 
 #define IMPLEMENT_ASN1_STRING_FUNCTIONS(sname)                     \
@@ -54,8 +54,6 @@ IMPLEMENT_ASN1_TYPE(ASN1_ANY)
 
 // Just swallow an ASN1_SEQUENCE in an ASN1_STRING
 IMPLEMENT_ASN1_TYPE(ASN1_SEQUENCE)
-
-IMPLEMENT_ASN1_FUNCTIONS_const_fname(ASN1_TYPE, ASN1_ANY, ASN1_TYPE)
 
 BSSL_NAMESPACE_BEGIN
 

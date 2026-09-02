@@ -106,6 +106,10 @@ bar:
 	# Synthesized symbols do not use the GOT.
 # WAS movq BORINGSSL_bcm_text_start@GOTPCREL(%rip), %r11
 	leaq	.LBORINGSSL_bcm_text_start_local_target(%rip), %r11
+# WAS movq BORINGSSL_bcm_text_end@GOTPCREL(%rip), %r11
+	leaq	.LBORINGSSL_bcm_text_end_local_target(%rip), %r11
+# WAS movq BORINGSSL_bcm_text_hash@GOTPCREL(%rip), %r11
+	leaq	.LBORINGSSL_bcm_text_hash_local_target(%rip), %r11
 # WAS movq foobar_bss_get@GOTPCREL(%rip), %r11
 	leaq	foobar_bss_get(%rip), %r11
 
@@ -259,6 +263,7 @@ stderr_GOTPCREL_external:
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:
+.LBORINGSSL_bcm_text_hash_local_target:
 .byte 0xae
 .byte 0x2c
 .byte 0xea

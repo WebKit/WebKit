@@ -45,12 +45,11 @@ SSL3_STATE::SSL3_STATE()
       alert_dispatch(false),
       renegotiate_pending(false),
       used_hello_retry_request(false),
-      was_key_usage_invalid(false),
       server_sent_requested_padding(false) {}
 
 SSL3_STATE::~SSL3_STATE() {}
 
-bool tls_new(SSL *ssl) {
+bool tls_new(SSLImpl *ssl) {
   UniquePtr<SSL3_STATE> s3 = MakeUnique<SSL3_STATE>();
   if (!s3) {
     return false;
@@ -77,7 +76,7 @@ bool tls_new(SSL *ssl) {
   return true;
 }
 
-void tls_free(SSL *ssl) {
+void tls_free(SSLImpl *ssl) {
   if (ssl->s3 == nullptr) {
     return;
   }

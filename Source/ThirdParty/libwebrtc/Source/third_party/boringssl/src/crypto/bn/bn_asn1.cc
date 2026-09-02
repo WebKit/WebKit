@@ -45,7 +45,7 @@ int BN_marshal_asn1(CBB *cbb, const BIGNUM *bn) {
   CBB child;
   if (!CBB_add_asn1(cbb, &child, CBS_ASN1_INTEGER) ||
       // The number must be padded with a leading zero if the high bit would
-      // otherwise be set or if |bn| is zero.
+      // otherwise be set or if `bn` is zero.
       (BN_num_bits(bn) % 8 == 0 && !CBB_add_u8(&child, 0x00)) ||
       !BN_bn2cbb_padded(&child, BN_num_bytes(bn), bn) ||
       !CBB_flush(cbb)) {

@@ -6,13 +6,13 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
 .text	
 
-
-
-
-
-
-
-
+// abi_test_trampoline loads callee-saved registers from |state|, calls |func|
+// with |argv|, then saves the callee-saved registers into |state|. It returns
+// the result of |func|. If |unwind| is non-zero, this function triggers unwind
+// instrumentation.
+// uint64_t abi_test_trampoline(void (*func)(...), CallerState *state,
+// const uint64_t *argv, size_t argc,
+// int unwind);
 .globl	_abi_test_trampoline
 .private_extern _abi_test_trampoline
 
@@ -21,15 +21,15 @@ _abi_test_trampoline:
 
 
 _CET_ENDBR
-
-
-
-
-
-
-
-
-
+// Stack layout:
+// 8 bytes - align
+// 48 bytes - saved caller registers
+// 8 bytes - scratch space
+// 8 bytes - saved copy of $unwind (SysV-only)
+// 8 bytes - saved copy of $state
+// 8 bytes - saved copy of $func
+// 8 bytes - if needed for stack alignment
+// 8*4 bytes - parameters for $func
 	subq	$120,%rsp
 
 
@@ -59,13 +59,13 @@ _CET_ENDBR
 	movq	24(%rsi),%r13
 	movq	32(%rsi),%r14
 	movq	40(%rsi),%r15
-
+// Stash $func and $state, so they are available after the call returns.
 	movq	%rdi,32(%rsp)
 	movq	%rsi,40(%rsp)
 
-
-
-
+// Load parameters. Note this will clobber $argv and $argc, so we can
+// only use non-parameter volatile registers. There are three, and they
+// are the same between SysV and Win64: %rax, %r10, and %r11.
 	movq	%rdx,%r10
 	movq	%rcx,%r11
 	decq	%r11
@@ -97,11 +97,11 @@ L$args_loop:
 	decq	%r11
 	js	L$args_done
 
-
-
-
-
-
+// This block should be:
+// movq (%r10), %rtmp
+// movq %rtmp, (%rax)
+// There are no spare registers available, so we spill into the scratch
+// space.
 	movq	%r11,56(%rsp)
 	movq	(%r10),%r11
 	movq	%r11,(%rax)
@@ -117,31 +117,34 @@ L$args_done:
 	testq	%r10,%r10
 	jz	L$no_unwind
 
-
+// Set the trap flag.
 	pushfq
 	orq	$0x100,0(%rsp)
 	popfq
 
-
-
+// Run an instruction to trigger a breakpoint immediately before the
+// call.
 	nop
 .globl	_abi_test_unwind_start
 .private_extern _abi_test_unwind_start
+.alt_entry _abi_test_unwind_start
 _abi_test_unwind_start:
 
 	call	*%rax
 .globl	_abi_test_unwind_return
 .private_extern _abi_test_unwind_return
+.alt_entry _abi_test_unwind_return
 _abi_test_unwind_return:
 
-
-
-
+// Clear the trap flag. Note this assumes the trap flag was clear on
+// entry. We do not support instrumenting an unwind-instrumented
+// |abi_test_trampoline|.
 	pushfq
-	andq	$-0x101,0(%rsp)
+	andq	$-0x101,0(%rsp)  // -0x101 is ~0x100
 	popfq
 .globl	_abi_test_unwind_stop
 .private_extern _abi_test_unwind_stop
+.alt_entry _abi_test_unwind_stop
 _abi_test_unwind_stop:
 
 	jmp	L$call_done
@@ -150,7 +153,7 @@ L$no_unwind:
 	call	*%rax
 
 L$call_done:
-
+// Store what $func did our state, so our caller can check.
 	movq	40(%rsp),%rsi
 	movq	%rbx,0(%rsi)
 	movq	%rbp,8(%rsi)
@@ -173,7 +176,7 @@ L$call_done:
 	addq	$120,%rsp
 
 
-
+// %rax already contains $func's return value, unmodified.
 	ret
 
 
@@ -182,6 +185,7 @@ L$call_done:
 .private_extern _abi_test_clobber_rax
 
 .p2align	4
+.alt_entry _abi_test_clobber_rax
 _abi_test_clobber_rax:
 _CET_ENDBR
 	xorq	%rax,%rax
@@ -191,6 +195,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rbx
 
 .p2align	4
+.alt_entry _abi_test_clobber_rbx
 _abi_test_clobber_rbx:
 _CET_ENDBR
 	xorq	%rbx,%rbx
@@ -200,6 +205,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rcx
 
 .p2align	4
+.alt_entry _abi_test_clobber_rcx
 _abi_test_clobber_rcx:
 _CET_ENDBR
 	xorq	%rcx,%rcx
@@ -209,6 +215,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rdx
 
 .p2align	4
+.alt_entry _abi_test_clobber_rdx
 _abi_test_clobber_rdx:
 _CET_ENDBR
 	xorq	%rdx,%rdx
@@ -218,6 +225,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rdi
 
 .p2align	4
+.alt_entry _abi_test_clobber_rdi
 _abi_test_clobber_rdi:
 _CET_ENDBR
 	xorq	%rdi,%rdi
@@ -227,6 +235,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rsi
 
 .p2align	4
+.alt_entry _abi_test_clobber_rsi
 _abi_test_clobber_rsi:
 _CET_ENDBR
 	xorq	%rsi,%rsi
@@ -236,6 +245,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_rbp
 
 .p2align	4
+.alt_entry _abi_test_clobber_rbp
 _abi_test_clobber_rbp:
 _CET_ENDBR
 	xorq	%rbp,%rbp
@@ -245,6 +255,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r8
 
 .p2align	4
+.alt_entry _abi_test_clobber_r8
 _abi_test_clobber_r8:
 _CET_ENDBR
 	xorq	%r8,%r8
@@ -254,6 +265,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r9
 
 .p2align	4
+.alt_entry _abi_test_clobber_r9
 _abi_test_clobber_r9:
 _CET_ENDBR
 	xorq	%r9,%r9
@@ -263,6 +275,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r10
 
 .p2align	4
+.alt_entry _abi_test_clobber_r10
 _abi_test_clobber_r10:
 _CET_ENDBR
 	xorq	%r10,%r10
@@ -272,6 +285,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r11
 
 .p2align	4
+.alt_entry _abi_test_clobber_r11
 _abi_test_clobber_r11:
 _CET_ENDBR
 	xorq	%r11,%r11
@@ -281,6 +295,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r12
 
 .p2align	4
+.alt_entry _abi_test_clobber_r12
 _abi_test_clobber_r12:
 _CET_ENDBR
 	xorq	%r12,%r12
@@ -290,6 +305,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r13
 
 .p2align	4
+.alt_entry _abi_test_clobber_r13
 _abi_test_clobber_r13:
 _CET_ENDBR
 	xorq	%r13,%r13
@@ -299,6 +315,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r14
 
 .p2align	4
+.alt_entry _abi_test_clobber_r14
 _abi_test_clobber_r14:
 _CET_ENDBR
 	xorq	%r14,%r14
@@ -308,6 +325,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_r15
 
 .p2align	4
+.alt_entry _abi_test_clobber_r15
 _abi_test_clobber_r15:
 _CET_ENDBR
 	xorq	%r15,%r15
@@ -317,6 +335,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm0
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm0
 _abi_test_clobber_xmm0:
 _CET_ENDBR
 	pxor	%xmm0,%xmm0
@@ -326,6 +345,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm1
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm1
 _abi_test_clobber_xmm1:
 _CET_ENDBR
 	pxor	%xmm1,%xmm1
@@ -335,6 +355,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm2
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm2
 _abi_test_clobber_xmm2:
 _CET_ENDBR
 	pxor	%xmm2,%xmm2
@@ -344,6 +365,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm3
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm3
 _abi_test_clobber_xmm3:
 _CET_ENDBR
 	pxor	%xmm3,%xmm3
@@ -353,6 +375,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm4
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm4
 _abi_test_clobber_xmm4:
 _CET_ENDBR
 	pxor	%xmm4,%xmm4
@@ -362,6 +385,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm5
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm5
 _abi_test_clobber_xmm5:
 _CET_ENDBR
 	pxor	%xmm5,%xmm5
@@ -371,6 +395,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm6
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm6
 _abi_test_clobber_xmm6:
 _CET_ENDBR
 	pxor	%xmm6,%xmm6
@@ -380,6 +405,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm7
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm7
 _abi_test_clobber_xmm7:
 _CET_ENDBR
 	pxor	%xmm7,%xmm7
@@ -389,6 +415,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm8
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm8
 _abi_test_clobber_xmm8:
 _CET_ENDBR
 	pxor	%xmm8,%xmm8
@@ -398,6 +425,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm9
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm9
 _abi_test_clobber_xmm9:
 _CET_ENDBR
 	pxor	%xmm9,%xmm9
@@ -407,6 +435,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm10
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm10
 _abi_test_clobber_xmm10:
 _CET_ENDBR
 	pxor	%xmm10,%xmm10
@@ -416,6 +445,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm11
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm11
 _abi_test_clobber_xmm11:
 _CET_ENDBR
 	pxor	%xmm11,%xmm11
@@ -425,6 +455,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm12
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm12
 _abi_test_clobber_xmm12:
 _CET_ENDBR
 	pxor	%xmm12,%xmm12
@@ -434,6 +465,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm13
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm13
 _abi_test_clobber_xmm13:
 _CET_ENDBR
 	pxor	%xmm13,%xmm13
@@ -443,6 +475,7 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm14
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm14
 _abi_test_clobber_xmm14:
 _CET_ENDBR
 	pxor	%xmm14,%xmm14
@@ -452,29 +485,31 @@ _CET_ENDBR
 .private_extern _abi_test_clobber_xmm15
 
 .p2align	4
+.alt_entry _abi_test_clobber_xmm15
 _abi_test_clobber_xmm15:
 _CET_ENDBR
 	pxor	%xmm15,%xmm15
 	ret
 
-
-
-
+// abi_test_bad_unwind_wrong_register preserves the ABI, but annotates the wrong
+// register in unwind metadata.
+// void abi_test_bad_unwind_wrong_register(void);
 .globl	_abi_test_bad_unwind_wrong_register
 .private_extern _abi_test_bad_unwind_wrong_register
 
 .p2align	4
+.alt_entry _abi_test_bad_unwind_wrong_register
 _abi_test_bad_unwind_wrong_register:
 
 
 _CET_ENDBR
 	pushq	%r12
+// This should be %r13
+// This should be %r13
 
-
-
-
-
-
+// Windows evaluates epilogs directly in the unwinder, rather than using
+// unwind codes. Add a nop so there is one non-epilog point (immediately
+// before the nop) where the unwinder can observe the mistake.
 	nop
 	popq	%r12
 
@@ -483,13 +518,14 @@ _CET_ENDBR
 
 
 
-
-
-
+// abi_test_bad_unwind_temporary preserves the ABI, but temporarily corrupts the
+// storage space for a saved register, breaking unwind.
+// void abi_test_bad_unwind_temporary(void);
 .globl	_abi_test_bad_unwind_temporary
 .private_extern _abi_test_bad_unwind_temporary
 
 .p2align	4
+.alt_entry _abi_test_bad_unwind_temporary
 _abi_test_bad_unwind_temporary:
 
 
@@ -502,11 +538,11 @@ _CET_ENDBR
 	movq	%r12,%rax
 	incq	%rax
 	movq	%rax,(%rsp)
-
-
+// Unwinding from here is incorrect. Although %r12 itself has not been
+// changed, the unwind codes say to look in (%rsp) instead.
 
 	movq	%r12,(%rsp)
-
+// Unwinding is now fixed.
 
 	popq	%r12
 
@@ -515,12 +551,13 @@ _CET_ENDBR
 
 
 
-
-
-
+// abi_test_get_and_clear_direction_flag clears the direction flag. If the flag
+// was previously set, it returns one. Otherwise, it returns zero.
+// int abi_test_get_and_clear_direction_flag(void);
 .globl	_abi_test_get_and_clear_direction_flag
 .private_extern _abi_test_get_and_clear_direction_flag
 
+.alt_entry _abi_test_get_and_clear_direction_flag
 _abi_test_get_and_clear_direction_flag:
 _CET_ENDBR
 	pushfq
@@ -531,11 +568,12 @@ _CET_ENDBR
 	ret
 
 
-
-
+// abi_test_set_direction_flag sets the direction flag.
+// void abi_test_set_direction_flag(void);
 .globl	_abi_test_set_direction_flag
 .private_extern _abi_test_set_direction_flag
 
+.alt_entry _abi_test_set_direction_flag
 _abi_test_set_direction_flag:
 _CET_ENDBR
 	std

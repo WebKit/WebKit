@@ -145,7 +145,7 @@ int DH_generate_key(DH *dh) {
   }
 
   // Only generate a private key if there's already one. Otherwise,
-  // |DH_generate_key| recomputes the public key.
+  // `DH_generate_key` recomputes the public key.
   const BIGNUM *priv_key = impl->priv_key.get();
   UniquePtr<BIGNUM> new_priv_key;
   if (priv_key == nullptr) {
@@ -159,7 +159,7 @@ int DH_generate_key(DH *dh) {
       // from [1, min(2^N-1, q-1)].
       //
       // Although SP 800-56A Rev3 now permits a private key length N,
-      // |impl->priv_length| historically was ignored when q is available. We
+      // `impl->priv_length` historically was ignored when q is available. We
       // continue to ignore it and interpret such a configuration as N = len(q).
       if (!BN_rand_range_ex(new_priv_key.get(), 1, impl->q.get())) {
         OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
@@ -170,10 +170,10 @@ int DH_generate_key(DH *dh) {
       // the (p-1)/2 subgroup. So, we use q = (p-1)/2. (If g generates a smaller
       // prime-order subgroup, q will still divide (p-1)/2.)
       //
-      // We set N from |impl->priv_length|. Section 5.6.1.1.4 of SP 800-56A Rev3
+      // We set N from `impl->priv_length`. Section 5.6.1.1.4 of SP 800-56A Rev3
       // says to reject N > len(q), or N > num_bits(p) - 1. However, this logic
       // originally aligned with PKCS#3, which allows num_bits(p). Instead, we
-      // clamp |impl->priv_length| before invoking the algorithm.
+      // clamp `impl->priv_length` before invoking the algorithm.
 
       // Compute M = min(2^N, q).
       UniquePtr<BIGNUM> priv_key_limit(BN_new());
@@ -302,7 +302,7 @@ int DH_compute_key(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
       !dh_compute_key(dh, shared_key, peers_key, ctx.get())) {
     return -1;
   }
-  // A |BIGNUM|'s byte count fits in |int|.
+  // A `BIGNUM`'s byte count fits in `int`.
   return static_cast<int>(BN_bn2bin(shared_key, out));
 }
 
@@ -392,7 +392,7 @@ DH *DH_get_rfc7919_2048() {
                    ffdhe2048_g.get())) {
     return nullptr;
   }
-  // |DH_set0_pqg| takes ownership on success.
+  // `DH_set0_pqg` takes ownership on success.
   ffdhe2048_p.release();
   ffdhe2048_q.release();
   ffdhe2048_g.release();

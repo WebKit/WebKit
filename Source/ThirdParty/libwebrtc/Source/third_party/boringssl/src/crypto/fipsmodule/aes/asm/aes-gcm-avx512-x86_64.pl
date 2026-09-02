@@ -171,7 +171,9 @@ ___
 
 my $code = <<___;
 .section .rodata
+
 .align 64
+aes_gcm_avx512_constants:
 
     # A shuffle mask that reflects the bytes of 16-byte blocks
 .Lbswap_mask:

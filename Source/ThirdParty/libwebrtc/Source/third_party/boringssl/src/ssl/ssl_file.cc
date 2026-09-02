@@ -35,16 +35,16 @@ static int xname_cmp(const X509_NAME *const *a, const X509_NAME *const *b) {
 
 static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
                                           bool allow_empty) {
-  // This function historically sorted |out| after every addition and skipped
+  // This function historically sorted `out` after every addition and skipped
   // duplicates. This implementation preserves that behavior, but only sorts at
-  // the end, to avoid a quadratic running time. Existing duplicates in |out|
+  // the end, to avoid a quadratic running time. Existing duplicates in `out`
   // are preserved, but do not introduce new duplicates.
   UniquePtr<STACK_OF(X509_NAME)> to_append(sk_X509_NAME_new(xname_cmp));
   if (to_append == nullptr) {
     return 0;
   }
 
-  // Temporarily switch the comparison function for |out|.
+  // Temporarily switch the comparison function for `out`.
   struct RestoreCmpFunc {
     ~RestoreCmpFunc() { sk_X509_NAME_set_cmp_func(stack, old_cmp); }
     STACK_OF(X509_NAME) *stack;
@@ -61,14 +61,14 @@ static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
         return 0;
       }
       // TODO(davidben): This ignores PEM syntax errors. It should only succeed
-      // on |PEM_R_NO_START_LINE|.
+      // on `PEM_R_NO_START_LINE`.
       ERR_clear_error();
       break;
     }
     first = false;
 
     X509_NAME *subject = X509_get_subject_name(x509.get());
-    // Skip if already present in |out|. Duplicates in |to_append| will be
+    // Skip if already present in `out`. Duplicates in `to_append` will be
     // handled separately.
     if (sk_X509_NAME_find(out, /*out_index=*/nullptr, subject)) {
       continue;
@@ -80,7 +80,7 @@ static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
     }
   }
 
-  // Append |to_append| to |stack|, skipping any duplicates.
+  // Append `to_append` to `stack`, skipping any duplicates.
   sk_X509_NAME_sort(to_append.get());
   size_t num = sk_X509_NAME_num(to_append.get());
   for (size_t i = 0; i < num; i++) {
@@ -96,7 +96,7 @@ static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
     }
   }
 
-  // Sort |out| one last time, to preserve the historical behavior of
+  // Sort `out` one last time, to preserve the historical behavior of
   // maintaining the sorted list.
   sk_X509_NAME_sort(out);
   return 1;
@@ -130,6 +130,7 @@ int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *out,
 }
 
 int SSL_use_certificate_file(SSL *ssl, const char *file, int type) {
+  SSLContext *ctx = FromOpaque(SSL_get_SSL_CTX(ssl));
   UniquePtr<BIO> in(BIO_new_file(file, "rb"));
   if (in == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_BUF_LIB);
@@ -143,9 +144,8 @@ int SSL_use_certificate_file(SSL *ssl, const char *file, int type) {
     x.reset(d2i_X509_bio(in.get(), nullptr));
   } else if (type == SSL_FILETYPE_PEM) {
     reason_code = ERR_R_PEM_LIB;
-    x.reset(PEM_read_bio_X509(in.get(), nullptr,
-                              ssl->ctx->default_passwd_callback,
-                              ssl->ctx->default_passwd_callback_userdata));
+    x.reset(PEM_read_bio_X509(in.get(), nullptr, ctx->default_passwd_callback,
+                              ctx->default_passwd_callback_userdata));
   } else {
     OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_SSL_FILETYPE);
     return 0;
@@ -160,6 +160,7 @@ int SSL_use_certificate_file(SSL *ssl, const char *file, int type) {
 }
 
 int SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type) {
+  SSLContext *ctx = FromOpaque(SSL_get_SSL_CTX(ssl));
   UniquePtr<BIO> in(BIO_new_file(file, "rb"));
   if (in == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_BUF_LIB);
@@ -174,8 +175,8 @@ int SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type) {
   } else if (type == SSL_FILETYPE_PEM) {
     reason_code = ERR_R_PEM_LIB;
     rsa.reset(PEM_read_bio_RSAPrivateKey(
-        in.get(), nullptr, ssl->ctx->default_passwd_callback,
-        ssl->ctx->default_passwd_callback_userdata));
+        in.get(), nullptr, ctx->default_passwd_callback,
+        ctx->default_passwd_callback_userdata));
   } else {
     OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_SSL_FILETYPE);
     return 0;
@@ -189,6 +190,7 @@ int SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type) {
 }
 
 int SSL_use_PrivateKey_file(SSL *ssl, const char *file, int type) {
+  SSLContext *ctx = FromOpaque(SSL_get_SSL_CTX(ssl));
   UniquePtr<BIO> in(BIO_new_file(file, "rb"));
   if (in == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_BUF_LIB);
@@ -199,9 +201,9 @@ int SSL_use_PrivateKey_file(SSL *ssl, const char *file, int type) {
   UniquePtr<EVP_PKEY> pkey;
   if (type == SSL_FILETYPE_PEM) {
     reason_code = ERR_R_PEM_LIB;
-    pkey.reset(PEM_read_bio_PrivateKey(
-        in.get(), nullptr, ssl->ctx->default_passwd_callback,
-        ssl->ctx->default_passwd_callback_userdata));
+    pkey.reset(PEM_read_bio_PrivateKey(in.get(), nullptr,
+                                       ctx->default_passwd_callback,
+                                       ctx->default_passwd_callback_userdata));
   } else if (type == SSL_FILETYPE_ASN1) {
     reason_code = ERR_R_ASN1_LIB;
     pkey.reset(d2i_PrivateKey_bio(in.get(), nullptr));

@@ -86,36 +86,29 @@ err:
   return nullptr;
 }
 
-// Currently two options: keyid: use the issuers subject keyid, the value
-// 'always' means its is an error if the issuer certificate doesn't have a
-// key id. issuer: use the issuers cert issuer and serial number. The default
-// is to only use this if keyid is not present. With the option 'always' this
-// is always included.
-
+// Currently two options:
+//
+// - keyid: Use the issuer's subject key ID. The value 'always' means it's an
+//   error if the issuer certificate doesn't have one.
+//
+// - issuer: Use the issuer's issuer and serial number. The default is to only
+//   use this if the key ID is not present. The value 'always' means it's always
+//   included.
 static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
                                  const X509V3_CTX *ctx,
                                  const STACK_OF(CONF_VALUE) *values) {
-  char keyid = 0, issuer = 0;
-  int j;
-  ASN1_OCTET_STRING *ikeyid = nullptr;
-  X509_NAME *isname = nullptr;
-  GENERAL_NAMES *gens = nullptr;
-  GENERAL_NAME *gen = nullptr;
-  ASN1_INTEGER *serial = nullptr;
-  const X509 *cert;
-  AUTHORITY_KEYID *akeyid;
-
-  for (size_t i = 0; i < sk_CONF_VALUE_num(values); i++) {
-    const CONF_VALUE *cnf = sk_CONF_VALUE_value(values, i);
+  enum Option { kOff = 0, kOn = 1, kAlways = 2 };
+  Option use_key_id = kOff, use_issuer = kOff;
+  for (const CONF_VALUE *cnf : values) {
     if (!strcmp(cnf->name, "keyid")) {
-      keyid = 1;
+      use_key_id = kOn;
       if (cnf->value && !strcmp(cnf->value, "always")) {
-        keyid = 2;
+        use_key_id = kAlways;
       }
     } else if (!strcmp(cnf->name, "issuer")) {
-      issuer = 1;
+      use_issuer = kOn;
       if (cnf->value && !strcmp(cnf->value, "always")) {
-        issuer = 2;
+        use_issuer = kAlways;
       }
     } else {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNKNOWN_OPTION);
@@ -132,51 +125,50 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
     return nullptr;
   }
 
-  cert = ctx->issuer_cert;
-
-  if (keyid) {
-    j = X509_get_ext_by_NID(cert, NID_subject_key_identifier, -1);
-    const X509_EXTENSION *ext;
-    if ((j >= 0) && (ext = X509_get_ext(cert, j))) {
-      ikeyid = reinterpret_cast<ASN1_OCTET_STRING *>(X509V3_EXT_d2i(ext));
+  UniquePtr<ASN1_OCTET_STRING> key_id;
+  if (use_key_id != kOff) {
+    int critical;
+    key_id.reset(static_cast<ASN1_OCTET_STRING *>(X509_get_ext_d2i(
+        ctx->issuer_cert, NID_subject_key_identifier, &critical, nullptr)));
+    if (key_id == nullptr && critical != -1) {
+      return nullptr;  // Syntax error in the extension.
     }
-    if (keyid == 2 && !ikeyid) {
+    if (use_key_id == kAlways && key_id == nullptr) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNABLE_TO_GET_ISSUER_KEYID);
       return nullptr;
     }
   }
 
-  if ((issuer && !ikeyid) || (issuer == 2)) {
-    isname = X509_NAME_dup(X509_get_issuer_name(cert));
-    serial = ASN1_INTEGER_dup(X509_get0_serialNumber(cert));
-    if (!isname || !serial) {
+  UniquePtr<ASN1_INTEGER> serial;
+  UniquePtr<GENERAL_NAMES> issuer_gens;
+  if ((use_issuer == kOn && key_id == nullptr) || use_issuer == kAlways) {
+    UniquePtr<X509_NAME> issuer_name(
+        X509_NAME_dup(X509_get_issuer_name(ctx->issuer_cert)));
+    serial.reset(ASN1_INTEGER_dup(X509_get0_serialNumber(ctx->issuer_cert)));
+    if (issuer_name == nullptr || serial == nullptr) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS);
-      goto err;
+      return nullptr;
     }
-  }
-
-  if (!(akeyid = AUTHORITY_KEYID_new())) {
-    goto err;
-  }
-
-  if (isname) {
-    if (!(gens = sk_GENERAL_NAME_new_null()) || !(gen = GENERAL_NAME_new()) ||
-        !sk_GENERAL_NAME_push(gens, gen)) {
-      goto err;
+    // AKID wraps the issuer name in a GeneralNames structure.
+    UniquePtr<GENERAL_NAME> gen(GENERAL_NAME_new());
+    if (gen == nullptr) {
+      return nullptr;
     }
     gen->type = GEN_DIRNAME;
-    gen->d.dirn = isname;
+    gen->d.directoryName = issuer_name.release();
+    issuer_gens.reset(sk_GENERAL_NAME_new_null());
+    if (issuer_gens == nullptr ||
+        !PushToStack(issuer_gens.get(), std::move(gen))) {
+      return nullptr;
+    }
   }
 
-  akeyid->issuer = gens;
-  akeyid->serial = serial;
-  akeyid->keyid = ikeyid;
-
-  return akeyid;
-
-err:
-  X509_NAME_free(isname);
-  ASN1_INTEGER_free(serial);
-  ASN1_OCTET_STRING_free(ikeyid);
-  return nullptr;
+  UniquePtr<AUTHORITY_KEYID> akid(AUTHORITY_KEYID_new());
+  if (akid == nullptr) {
+    return nullptr;
+  }
+  akid->issuer = issuer_gens.release();
+  akid->serial = serial.release();
+  akid->keyid = key_id.release();
+  return akid.release();
 }

@@ -33,8 +33,8 @@ struct ExDataFuncs {
   long argl;   // Arbitrary long
   void *argp;  // Arbitrary void pointer
   CRYPTO_EX_free *free_func;
-  // next points to the next |ExDataFuncs| or NULL if this is the last
-  // one. It may only be read if synchronized with a read from |num_funcs|.
+  // next points to the next `ExDataFuncs` or NULL if this is the last
+  // one. It may only be read if synchronized with a read from `num_funcs`.
   ExDataFuncs *next;
 };
 
@@ -53,13 +53,13 @@ int CRYPTO_get_ex_new_index_ex(ExDataClass *ex_data_class, long argl,
   MutexWriteLock lock(&ex_data_class->lock);
 
   uint32_t num_funcs = ex_data_class->num_funcs.load();
-  // The index must fit in |int|.
+  // The index must fit in `int`.
   if (num_funcs > (size_t)(INT_MAX - ex_data_class->num_reserved)) {
     OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
     return -1;
   }
 
-  // Append |funcs| to the linked list.
+  // Append `funcs` to the linked list.
   if (ex_data_class->last == nullptr) {
     assert(num_funcs == 0);
     ex_data_class->funcs = funcs;
@@ -76,8 +76,8 @@ int CRYPTO_get_ex_new_index_ex(ExDataClass *ex_data_class, long argl,
 int CRYPTO_set_ex_data(CRYPTO_EX_DATA *ad, int index, void *val) {
   if (index < 0) {
     // A caller that can accidentally pass in an invalid index into this
-    // function will hit an memory error if |index| happened to be valid, and
-    // expected |val| to be of a different type.
+    // function will hit a memory error if `index` happened to be valid, and
+    // expected `val` to be of a different type.
     abort();
   }
 
@@ -115,11 +115,11 @@ void CRYPTO_free_ex_data(ExDataClass *ex_data_class, CRYPTO_EX_DATA *ad) {
   }
 
   uint32_t num_funcs = ex_data_class->num_funcs.load();
-  // |CRYPTO_get_ex_new_index_ex| will not allocate indices beyond |INT_MAX|.
+  // `CRYPTO_get_ex_new_index_ex` will not allocate indices beyond `INT_MAX`.
   assert(num_funcs <= (size_t)(INT_MAX - ex_data_class->num_reserved));
 
-  // Defer dereferencing |ex_data_class->funcs| and |funcs->next|. It must come
-  // after the |num_funcs| comparison to be correctly synchronized.
+  // Defer dereferencing `ex_data_class->funcs` and `funcs->next`. It must come
+  // after the `num_funcs` comparison to be correctly synchronized.
   ExDataFuncs *const *funcs = &ex_data_class->funcs;
   for (uint32_t i = 0; i < num_funcs; i++) {
     if ((*funcs)->free_func != nullptr) {

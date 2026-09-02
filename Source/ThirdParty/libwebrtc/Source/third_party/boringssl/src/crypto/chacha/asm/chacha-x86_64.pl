@@ -82,7 +82,9 @@ $code.=<<___;
 .text
 
 .section .rodata
+
 .align	64
+chacha_constants:
 .Lzero:
 .long	0,0,0,0
 .Lone:

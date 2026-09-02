@@ -29,8 +29,8 @@ namespace {
 
 struct ED25519_KEY {
   // key is the concatenation of the private seed and public key. It is stored
-  // as a single 64-bit array to allow passing to |ED25519_sign|. If
-  // |has_private| is false, the first 32 bytes are uninitialized and the public
+  // as a single 64-bit array to allow passing to `ED25519_sign`. If
+  // `has_private` is false, the first 32 bytes are uninitialized and the public
   // key is in the last 32 bytes.
   uint8_t key[64];
   bool has_private;

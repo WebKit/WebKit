@@ -31,7 +31,7 @@
 
 using namespace bssl;
 
-// digest_to_scalar interprets |digest_len| bytes from |digest| as a scalar for
+// digest_to_scalar interprets `digest_len` bytes from `digest` as a scalar for
 // ECDSA.
 static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
                              const uint8_t *digest, size_t digest_len) {
@@ -49,8 +49,8 @@ static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
     bn_rshift_words(out->words, out->words, 8 - (num_bits & 0x7), order->width);
   }
 
-  // |out| now has the same bit width as |order|, but this only bounds by
-  // 2*|order|. Subtract the order if out of range.
+  // `out` now has the same bit width as `order`, but this only bounds by
+  // 2*`order`. Subtract the order if out of range.
   //
   // Montgomery multiplication accepts the looser bounds, so this isn't strictly
   // necessary, but it is a cleaner abstraction and has no performance impact.
@@ -89,8 +89,8 @@ int bssl::ecdsa_verify_fixed_no_self_test(const uint8_t *digest,
   // u1 = m * s^-1 mod order
   // u2 = r * s^-1 mod order
   //
-  // |s_inv_mont| is in Montgomery form while |m| and |r| are not, so |u1| and
-  // |u2| will be taken out of Montgomery form, as desired.
+  // `s_inv_mont` is in Montgomery form while `m` and `r` are not, so `u1` and
+  // `u2` will be taken out of Montgomery form, as desired.
   digest_to_scalar(group, &m, digest, digest_len);
   ec_scalar_mul_montgomery(group, &u1, &m, &s_inv_mont);
   ec_scalar_mul_montgomery(group, &u2, &r, &s_inv_mont);
@@ -144,7 +144,7 @@ static int ecdsa_sign_impl(const EC_GROUP *group, int *out_retry, uint8_t *sig,
   }
 
   // s = priv_key * r. Note if only one parameter is in the Montgomery domain,
-  // |ec_scalar_mod_mul_montgomery| will compute the answer in the normal
+  // `ec_scalar_mod_mul_montgomery` will compute the answer in the normal
   // domain.
   EC_SCALAR s;
   ec_scalar_to_montgomery(group, &s, &r);
@@ -156,9 +156,9 @@ static int ecdsa_sign_impl(const EC_GROUP *group, int *out_retry, uint8_t *sig,
   ec_scalar_add(group, &s, &s, &tmp);
 
   // s = k^-1 * (m + priv_key * r). First, we compute k^-1 in the Montgomery
-  // domain. This is |ec_scalar_to_montgomery| followed by
-  // |ec_scalar_inv0_montgomery|, but |ec_scalar_inv0_montgomery| followed by
-  // |ec_scalar_from_montgomery| is equivalent and slightly more efficient.
+  // domain. This is `ec_scalar_to_montgomery` followed by
+  // `ec_scalar_inv0_montgomery`, but `ec_scalar_inv0_montgomery` followed by
+  // `ec_scalar_from_montgomery` is equivalent and slightly more efficient.
   // Then, as above, only one parameter is in the Montgomery domain, so the
   // result is in the normal domain. Finally, note k is non-zero (or computing r
   // would fail), so the inverse must exist.
@@ -264,7 +264,7 @@ int bssl::ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len,
       goto out;
     }
 
-    // TODO(davidben): Move this inside |ec_random_nonzero_scalar| or lower, so
+    // TODO(davidben): Move this inside `ec_random_nonzero_scalar` or lower, so
     // that all scalars we generate are, by default, secret.
     CONSTTIME_SECRET(k.words, sizeof(k.words));
 

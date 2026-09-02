@@ -301,9 +301,14 @@ var defaultInputs = []string{
 	"mldsa_87_sign_noseed_test.json",
 	"mldsa_87_sign_seed_test.json",
 	"mldsa_87_verify_test.json",
-	// TODO(crbug.com/42290453): Enable ML-KEM-768 and ML-KEM-1024 tests
-	// "mlkem_768_test.json",
-	// "mlkem_1024_test.json",
+	"mlkem_1024_encaps_test.json",
+	"mlkem_1024_keygen_seed_test.json",
+	"mlkem_1024_semi_expanded_decaps_test.json",
+	"mlkem_1024_test.json",
+	"mlkem_768_encaps_test.json",
+	"mlkem_768_keygen_seed_test.json",
+	"mlkem_768_semi_expanded_decaps_test.json",
+	"mlkem_768_test.json",
 }
 
 func main() {

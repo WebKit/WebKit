@@ -87,14 +87,14 @@ static int xwing_set_priv_seed(EvpPkey *pkey, const uint8_t *in, size_t len) {
 
 static int xwing_get_priv_seed(const EvpPkey *pkey, uint8_t *out,
                                size_t *out_len) {
-  if (out == nullptr) {
-    *out_len = XWING_PRIVATE_KEY_BYTES;
-    return 1;
-  }
   const XWING_KEY *key = reinterpret_cast<const XWING_KEY *>(pkey->pkey);
   if (key == nullptr || !key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
     return 0;
+  }
+  if (out == nullptr) {
+    *out_len = XWING_PRIVATE_KEY_BYTES;
+    return 1;
   }
   if (*out_len < XWING_PRIVATE_KEY_BYTES) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_BUFFER_TOO_SMALL);

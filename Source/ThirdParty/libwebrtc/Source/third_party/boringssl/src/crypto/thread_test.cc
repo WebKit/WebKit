@@ -36,7 +36,7 @@ static unsigned g_once_init_called = 0;
 static void once_init() {
   g_once_init_called++;
 
-  // Sleep briefly so one |call_once_func| instance will call |CRYPTO_once|
+  // Sleep briefly so one `call_once_func` instance will call `CRYPTO_once`
   // while the other is running this function.
   std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
@@ -134,7 +134,7 @@ TEST(ThreadTest, RandState) {
 TEST(ThreadTest, PreSandboxInitThreads) {
   constexpr size_t kNumThreads = 10;
 
-  // |CRYPTO_pre_sandbox_init| is safe to call across threads.
+  // `CRYPTO_pre_sandbox_init` is safe to call across threads.
   std::vector<std::thread> threads;
   threads.reserve(kNumThreads);
   for (size_t i = 0; i < kNumThreads; i++) {

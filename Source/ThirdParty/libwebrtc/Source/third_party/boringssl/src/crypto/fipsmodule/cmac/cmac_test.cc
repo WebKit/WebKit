@@ -58,7 +58,7 @@ static void test(const char *name, const uint8_t *key, size_t key_len,
     EXPECT_EQ(Bytes(expected, sizeof(out)), Bytes(out, out_len));
   }
 
-  // Test that |CMAC_CTX_copy| works.
+  // Test that `CMAC_CTX_copy` works.
   ASSERT_TRUE(CMAC_Reset(ctx.get()));
   size_t chunk = msg_len / 2;
   ASSERT_TRUE(CMAC_Update(ctx.get(), msg, chunk));

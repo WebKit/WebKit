@@ -153,8 +153,8 @@ bool tls13_advance_key_schedule(SSL_HANDSHAKE *hs, Span<const uint8_t> in) {
 }
 
 // derive_secret_with_transcript derives a secret of length
-// |transcript.DigestLen()| and writes the result in |out| with the given label,
-// the current base secret, and the state of |transcript|. It returns true on
+// `transcript.DigestLen()` and writes the result in `out` with the given label,
+// the current base secret, and the state of `transcript`. It returns true on
 // success and false on error.
 static bool derive_secret_with_transcript(
     const SSL_HANDSHAKE *hs, InplaceVector<uint8_t, SSL_MAX_MD_SIZE> *out,
@@ -177,7 +177,7 @@ static bool derive_secret(SSL_HANDSHAKE *hs,
   return derive_secret_with_transcript(hs, out, hs->transcript, label);
 }
 
-bool tls13_set_traffic_key(SSL *ssl, enum ssl_encryption_level_t level,
+bool tls13_set_traffic_key(SSLImpl *ssl, enum ssl_encryption_level_t level,
                            enum evp_aead_direction_t direction,
                            const SSL_SESSION *session,
                            Span<const uint8_t> traffic_secret) {
@@ -279,7 +279,7 @@ class ChaChaRecordNumberEncrypter : public RecordNumberEncrypter {
   bool GenerateMask(Span<uint8_t> out, Span<const uint8_t> sample) override {
     // RFC 9147 section 4.2.3 uses the first 4 bytes of the sample as the
     // counter and the next 12 bytes as the nonce. If we have less than 4+12=16
-    // bytes in the sample, then we'll read past the end of the |sample| buffer.
+    // bytes in the sample, then we'll read past the end of the `sample` buffer.
     // The counter is interpreted as little-endian per RFC 8439.
     if (sample.size() < 16) {
       return false;
@@ -347,7 +347,7 @@ static const char kTLS13LabelClientApplicationTraffic[] = "c ap traffic";
 static const char kTLS13LabelServerApplicationTraffic[] = "s ap traffic";
 
 bool tls13_derive_early_secret(SSL_HANDSHAKE *hs) {
-  SSL *const ssl = hs->ssl;
+  SSLImpl *const ssl = hs->ssl;
   // When offering ECH on the client, early data is associated with
   // ClientHelloInner, not ClientHelloOuter.
   const SSLTranscript &transcript = (!ssl->server && hs->selected_ech_config)
@@ -363,7 +363,7 @@ bool tls13_derive_early_secret(SSL_HANDSHAKE *hs) {
 }
 
 bool tls13_derive_handshake_secrets(SSL_HANDSHAKE *hs) {
-  SSL *const ssl = hs->ssl;
+  SSLImpl *const ssl = hs->ssl;
   if (!derive_secret(hs, &hs->client_handshake_secret,
                      kTLS13LabelClientHandshakeTraffic) ||
       !ssl_log_secret(ssl, "CLIENT_HANDSHAKE_TRAFFIC_SECRET",
@@ -379,7 +379,7 @@ bool tls13_derive_handshake_secrets(SSL_HANDSHAKE *hs) {
 }
 
 bool tls13_derive_application_secrets(SSL_HANDSHAKE *hs) {
-  SSL *const ssl = hs->ssl;
+  SSLImpl *const ssl = hs->ssl;
   if (!derive_secret(hs, &hs->client_traffic_secret_0,
                      kTLS13LabelClientApplicationTraffic) ||
       !ssl_log_secret(ssl, "CLIENT_TRAFFIC_SECRET_0",
@@ -398,7 +398,8 @@ bool tls13_derive_application_secrets(SSL_HANDSHAKE *hs) {
 
 static const char kTLS13LabelApplicationTraffic[] = "traffic upd";
 
-bool tls13_rotate_traffic_key(SSL *ssl, enum evp_aead_direction_t direction) {
+bool tls13_rotate_traffic_key(SSLImpl *ssl,
+                              enum evp_aead_direction_t direction) {
   InplaceVector<uint8_t, SSL_MAX_MD_SIZE> secret(
       direction == evp_aead_open ? ssl->s3->read_traffic_secret
                                  : ssl->s3->write_traffic_secret);
@@ -420,9 +421,9 @@ bool tls13_derive_resumption_secret(SSL_HANDSHAKE *hs) {
 
 static const char kTLS13LabelFinished[] = "finished";
 
-// tls13_verify_data sets |out| to be the HMAC of |context| using a derived
-// Finished key for both Finished messages and the PSK binder. |out| must have
-// space available for |EVP_MAX_MD_SIZE| bytes.
+// tls13_verify_data sets `out` to be the HMAC of `context` using a derived
+// Finished key for both Finished messages and the PSK binder. `out` must have
+// space available for `EVP_MAX_MD_SIZE` bytes.
 static bool tls13_verify_data(uint8_t *out, size_t *out_len,
                               const EVP_MD *digest, Span<const uint8_t> secret,
                               Span<const uint8_t> context, bool is_dtls) {
@@ -469,7 +470,7 @@ bool tls13_derive_session_psk(SSL_SESSION *session, Span<const uint8_t> nonce,
 
 static const char kTLS13LabelExportKeying[] = "exporter";
 
-bool tls13_export_keying_material(const SSL *ssl, Span<uint8_t> out,
+bool tls13_export_keying_material(const SSLImpl *ssl, Span<uint8_t> out,
                                   Span<const uint8_t> secret,
                                   std::string_view label,
                                   Span<const uint8_t> context) {
@@ -687,7 +688,7 @@ bool tls13_compare_imported_psk_identity(Span<const uint8_t> id,
          CBS_len(&cbs) == 0;
 }
 
-size_t ssl_ech_confirmation_signal_hello_offset(const SSL *ssl) {
+size_t ssl_ech_confirmation_signal_hello_offset(const SSLImpl *ssl) {
   static_assert(ECH_CONFIRMATION_SIGNAL_LEN < SSL3_RANDOM_SIZE,
                 "the confirmation signal is a suffix of the random");
   const size_t header_len =
@@ -704,7 +705,7 @@ bool ssl_ech_accept_confirmation(
   // See RFC 9849, sections 7.2 and 7.2.1.
   static const uint8_t kZeros[EVP_MAX_MD_SIZE] = {0};
 
-  // We hash |msg|, with bytes from |offset| zeroed.
+  // We hash `msg`, with bytes from `offset` zeroed.
   if (msg.size() < offset + ECH_CONFIRMATION_SIGNAL_LEN) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;

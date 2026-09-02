@@ -275,7 +275,7 @@ struct trust_token_method_st {
   int (*client_key_from_bytes)(bssl::TRUST_TOKEN_CLIENT_KEY *key,
                                const uint8_t *in, size_t len);
 
-  // issuer_key_from_bytes decodes a issuer key from `in` and sets `key`
+  // issuer_key_from_bytes decodes an issuer key from `in` and sets `key`
   // to the resulting key. It returns one on success and zero
   // on failure.
   int (*issuer_key_from_bytes)(bssl::TRUST_TOKEN_ISSUER_KEY *key,

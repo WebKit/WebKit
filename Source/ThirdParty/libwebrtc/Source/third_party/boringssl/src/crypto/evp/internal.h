@@ -229,10 +229,20 @@ class EvpPkeyCtx : public evp_pkey_ctx_st {
  public:
   static constexpr bool kAllowUniquePtr = true;
 
-  // TODO(crbug.com/487376811): Ideally this destructor should be virtual so
-  // that we can emit vtables in libcrypto. In that case we would be able to
-  // replace `pmeth` with virtual methods and subclassing.
+  // Use an optional virtual destructor. This class does not (yet) have a need
+  // for a vtable, but we intend to write code with vtables in the future.
+  // Virtual destructors add a reference to symbols in the C++ runtime, so trial
+  // the dependency here. This is, temporarily, gated on a build define. If this
+  // breaks your build, build with `BORINGSSL_TEMPORARY_NO_CXX_RUNTIME` and then
+  // contact the BoringSSL team, so we can help fix your build.
+  //
+  // TODO(crbug.com/486922845): Remove the `BORINGSSL_TEMPORARY_NO_CXX_RUNTIME`
+  // case.
+#if defined(BORINGSSL_TEMPORARY_NO_CXX_RUNTIME)
   ~EvpPkeyCtx();
+#else
+  virtual ~EvpPkeyCtx();
+#endif
 
   // Method associated with this operation
   const bssl::EVP_PKEY_CTX_METHOD *pmeth = nullptr;

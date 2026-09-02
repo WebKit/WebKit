@@ -16,6 +16,7 @@ package runner
 
 import (
 	"fmt"
+	"strconv"
 )
 
 func addExtensionTests() {
@@ -1998,10 +1999,13 @@ func addExtensionTests() {
 				RequireClientHelloSize: 512,
 			},
 		},
-		// This hostname just needs to be long enough to push the
-		// ClientHello into F5's danger zone between 256 and 511 bytes
-		// long.
-		flags: []string{"-host-name", "01234567890123456789012345678901234567890123456789012345678901234567890123456789.com"},
+		flags: []string{
+			// This hostname just needs to be long enough to push the
+			// ClientHello into F5's danger zone between 256 and 511 bytes long.
+			"-host-name", "01234567890123456789012345678901234567890123456789012345678901234567890123456789.com",
+			// Curve chosen to make handshakes short enough to end up in the danger zone.
+			"-curves", strconv.Itoa(int(CurveX25519)),
+		},
 	})
 
 	// Test that illegal extensions in TLS 1.3 are rejected by the client if

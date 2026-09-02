@@ -18,6 +18,7 @@
 
 #include <openssl/digest.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/hpke.h>
 #include <openssl/rand.h>
 #include <openssl/ssl.h>
@@ -170,14 +171,10 @@ static bool LoadOCSPResponse(SSL_CTX *ctx, const char *filename) {
 }
 
 static bssl::UniquePtr<EVP_PKEY> MakeKeyPairForSelfSignedCert() {
-  bssl::UniquePtr<EC_KEY> ec_key(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
-  if (!ec_key || !EC_KEY_generate_key(ec_key.get())) {
+  bssl::UniquePtr<EVP_PKEY> evp_pkey(
+      EVP_PKEY_generate_from_alg(EVP_pkey_ec_p256()));
+  if (!evp_pkey) {
     fprintf(stderr, "Failed to generate key pair.\n");
-    return nullptr;
-  }
-  bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
-  if (!evp_pkey || !EVP_PKEY_assign_EC_KEY(evp_pkey.get(), ec_key.release())) {
-    fprintf(stderr, "Failed to assign key pair.\n");
     return nullptr;
   }
   return evp_pkey;

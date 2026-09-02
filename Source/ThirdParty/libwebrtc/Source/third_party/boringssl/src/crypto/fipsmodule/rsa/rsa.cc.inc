@@ -407,7 +407,7 @@ struct pkcs1_sig_prefix {
   int nid;
   // hash_len is the expected length of the hash function.
   uint8_t hash_len;
-  // len is the number of bytes of |bytes| which are valid.
+  // len is the number of bytes of `bytes` which are valid.
   uint8_t len;
   // bytes contains the DER bytes.
   uint8_t bytes[19];
@@ -551,7 +551,7 @@ int bssl::rsa_sign_no_self_test(int hash_nid, const uint8_t *digest,
     if (!rsa_check_digest_size(hash_nid, digest_len)) {
       return 0;
     }
-    // All supported digest lengths fit in |unsigned|.
+    // All supported digest lengths fit in `unsigned`.
     assert(digest_len <= EVP_MAX_MD_SIZE);
     static_assert(EVP_MAX_MD_SIZE <= UINT_MAX, "digest too long");
     return impl->meth->sign(hash_nid, digest, (unsigned)digest_len, out,
@@ -715,8 +715,8 @@ static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
     return 1;
   }
 
-  // Note |bn_mul_consttime| and |bn_div_consttime| do not scale linearly, but
-  // checking |ainv| is in range bounds the running time, assuming |m|'s bounds
+  // Note `bn_mul_consttime` and `bn_div_consttime` do not scale linearly, but
+  // checking `ainv` is in range bounds the running time, assuming `m`'s bounds
   // were checked by the caller.
   BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
@@ -731,8 +731,8 @@ static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
 
 int RSA_check_key(const RSA *key) {
   // TODO(davidben): RSA key initialization is spread across
-  // |rsa_check_public_key|, |RSA_check_key|, |freeze_private_key|, and
-  // |BN_MONT_CTX_set_locked| as a result of API issues. See
+  // `rsa_check_public_key`, `RSA_check_key`, `freeze_private_key`, and
+  // `BN_MONT_CTX_set_locked` as a result of API issues. See
   // https://crbug.com/boringssl/316. As a result, we inconsistently check RSA
   // invariants. We should fix this and integrate that logic.
 
@@ -746,7 +746,7 @@ int RSA_check_key(const RSA *key) {
     return 0;
   }
 
-  // |impl->d| must be bounded by |impl->n|. This ensures bounds on |RSA_bits|
+  // `impl->d` must be bounded by `impl->n`. This ensures bounds on `RSA_bits`
   // translate to bounds on the running time of private key operations.
   if (impl->d != nullptr && (BN_is_negative(impl->d.get()) ||
                              BN_cmp(impl->d.get(), impl->n.get()) >= 0)) {
@@ -777,8 +777,8 @@ int RSA_check_key(const RSA *key) {
   BN_init(&dmq1);
 
   // Check that p * q == n. Before we multiply, we check that p and q are in
-  // bounds, to avoid a DoS vector in |bn_mul_consttime| below. Note that
-  // n was bound by |rsa_check_public_key|. This also implicitly checks p and q
+  // bounds, to avoid a DoS vector in `bn_mul_consttime` below. Note that
+  // n was bound by `rsa_check_public_key`. This also implicitly checks p and q
   // are odd, which is a necessary condition for Montgomery reduction.
   if (BN_is_negative(impl->p.get()) ||
       constant_time_declassify_int(BN_cmp(impl->p.get(), impl->n.get()) >= 0) ||
@@ -833,7 +833,7 @@ int RSA_check_key(const RSA *key) {
                            pm1_bits, ctx) ||
         !check_mod_inverse(&dmq1_ok, impl->e.get(), impl->dmq1.get(), &qm1,
                            qm1_bits, ctx) ||
-        // |p| is odd, so |pm1| and |p| have the same bit width. If they didn't,
+        // `p` is odd, so `pm1` and `p` have the same bit width. If they didn't,
         // we only need a lower bound anyway.
         !check_mod_inverse(&iqmp_ok, impl->q.get(), impl->iqmp.get(),
                            impl->p.get(), pm1_bits, ctx)) {
@@ -906,12 +906,12 @@ int RSA_check_fips(RSA *key) {
 
   // Perform partial public key validation of RSA keys (SP 800-89 5.3.3).
   // Although this is not for primality testing, SP 800-89 cites an RSA
-  // primality testing algorithm, so we use |BN_prime_checks_for_generation| to
+  // primality testing algorithm, so we use `BN_prime_checks_for_generation` to
   // match. This is only a plausibility test and we expect the value to be
   // composite, so too few iterations will cause us to reject the key, not use
   // an implausible one.
   //
-  // |key->e| may be nullptr if created with |RSA_new_private_key_no_e|.
+  // `key->e` may be nullptr if created with `RSA_new_private_key_no_e`.
   enum bn_primality_result_t primality_result;
   auto *impl = FromOpaque(key);
   if (impl->e.get() == nullptr ||          //
@@ -939,7 +939,7 @@ int RSA_check_fips(RSA *key) {
   }
 
   // FIPS pairwise consistency test (FIPS 140-2 4.9.2). Per FIPS 140-2 IG,
-  // section 9.9, it is not known whether |rsa| will be used for signing or
+  // section 9.9, it is not known whether `rsa` will be used for signing or
   // encryption, so either pair-wise consistency self-test is acceptable. We
   // perform a signing test.
   uint8_t data[32] = {0};

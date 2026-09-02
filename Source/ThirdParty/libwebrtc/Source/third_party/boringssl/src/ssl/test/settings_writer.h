@@ -26,7 +26,7 @@ struct SettingsWriter {
  public:
   SettingsWriter();
 
-  // Init initializes the writer for a new connection, given by |i|.  Each
+  // Init initializes the writer for a new connection, given by `i`.  Each
   // connection gets a unique output file.
   bool Init(int i, const TestConfig *config, SSL_SESSION *session);
 

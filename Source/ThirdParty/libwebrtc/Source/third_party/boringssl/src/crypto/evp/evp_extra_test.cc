@@ -857,10 +857,14 @@ TEST(EVPExtraTest, BadECKey) {
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKCS82PKEY(p8inf.get()));
   ASSERT_FALSE(pkey) << "Imported invalid EC key";
-  ERR_clear_error();
+  EXPECT_TRUE(ErrorsAreAndClear({
+      {ERR_LIB_EC, EC_R_INVALID_SCALAR},
+      {ERR_LIB_EC, EC_R_INVALID_PRIVATE_KEY},
+      {ERR_LIB_EVP, EVP_R_DECODE_ERROR},
+  }));
 }
 
-// Tests |EVP_marshal_public_key| on an empty key.
+// Tests `EVP_marshal_public_key` on an empty key.
 TEST(EVPExtraTest, MarshalEmptyPublicKey) {
   UniquePtr<EVP_PKEY> empty(EVP_PKEY_new());
   ASSERT_TRUE(empty);
@@ -881,18 +885,22 @@ TEST(EVPExtraTest, d2i_PrivateKey) {
   EXPECT_TRUE(ParsePrivateKey(EVP_PKEY_EC, kExampleECKeyDER));
 
   EXPECT_FALSE(ParsePrivateKey(EVP_PKEY_EC, kExampleBadECKeyDER));
-  ERR_clear_error();
+  EXPECT_TRUE(ErrorsAreAndClear({
+      {ERR_LIB_EC, EC_R_INVALID_SCALAR},
+      {ERR_LIB_EC, EC_R_INVALID_PRIVATE_KEY},
+      {ERR_LIB_EVP, EVP_R_DECODE_ERROR},
+  }));
 
-  // Copy the input into a |malloc|'d vector to flag memory errors.
+  // Copy the input into a `malloc`'d vector to flag memory errors.
   std::vector<uint8_t> copy(
       kExampleBadECKeyDER2,
       kExampleBadECKeyDER2 + sizeof(kExampleBadECKeyDER2));
   EXPECT_FALSE(ParsePrivateKey(EVP_PKEY_EC, copy));
-  ERR_clear_error();
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DECODE_ERROR}}));
 
   // Test that an RSA key may not be imported as an EC key.
   EXPECT_FALSE(ParsePrivateKey(EVP_PKEY_EC, kExampleRSAKeyPKCS8));
-  ERR_clear_error();
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DIFFERENT_KEY_TYPES}}));
 }
 
 TEST(EVPExtraTest, Ed25519) {
@@ -1039,7 +1047,7 @@ TEST(EVPExtraTest, Ed25519) {
   EXPECT_FALSE(EVP_DigestVerifyFinal(ctx.get(), nullptr, 0));
   ERR_clear_error();
 
-  // The buffer length to |EVP_DigestSign| is an input/output parameter and
+  // The buffer length to `EVP_DigestSign` is an input/output parameter and
   // should be checked before signing.
   ctx.Reset();
   ASSERT_TRUE(
@@ -1140,8 +1148,8 @@ TEST(EVPExtraTest, ECKeygen) {
       return *ctx != nullptr;
     };
 
-    // |EVP_PKEY_paramgen| may be used as an extremely roundabout way to get an
-    // |EC_GROUP|.
+    // `EVP_PKEY_paramgen` may be used as an extremely roundabout way to get an
+    // `EC_GROUP`.
     UniquePtr<EVP_PKEY_CTX> ctx(EVP_PKEY_CTX_new_id(EVP_PKEY_EC, nullptr));
     ASSERT_TRUE(ctx);
     ASSERT_TRUE(maybe_copy(&ctx));
@@ -1155,7 +1163,7 @@ TEST(EVPExtraTest, ECKeygen) {
     UniquePtr<EVP_PKEY> pkey(raw);
     ExpectECGroupOnly(pkey.get(), NID_X9_62_prime256v1);
 
-    // That resulting |EVP_PKEY| may be used as a template for key generation.
+    // That resulting `EVP_PKEY` may be used as a template for key generation.
     ctx.reset(EVP_PKEY_CTX_new(pkey.get(), nullptr));
     ASSERT_TRUE(ctx);
     ASSERT_TRUE(maybe_copy(&ctx));
@@ -1166,7 +1174,7 @@ TEST(EVPExtraTest, ECKeygen) {
     pkey.reset(raw);
     ExpectECGroupAndKey(pkey.get(), NID_X9_62_prime256v1);
 
-    // |EVP_PKEY_paramgen| may also be skipped.
+    // `EVP_PKEY_paramgen` may also be skipped.
     ctx.reset(EVP_PKEY_CTX_new_id(EVP_PKEY_EC, nullptr));
     ASSERT_TRUE(ctx);
     ASSERT_TRUE(maybe_copy(&ctx));
@@ -1210,7 +1218,7 @@ TEST(EVPExtraTest, ECKeygen) {
 }
 
 TEST(EVPExtraTest, DHKeygen) {
-  // Set up some DH params in an |EVP_PKEY|. There is currently no API to do
+  // Set up some DH params in an `EVP_PKEY`. There is currently no API to do
   // this from EVP directly.
   UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_1536(nullptr));
   ASSERT_TRUE(p);
@@ -1235,7 +1243,7 @@ TEST(EVPExtraTest, DHKeygen) {
       return *ctx != nullptr;
     };
 
-    // |params| may be used as a template for key generation.
+    // `params` may be used as a template for key generation.
     UniquePtr<EVP_PKEY_CTX> ctx(EVP_PKEY_CTX_new(params.get(), nullptr));
     ASSERT_TRUE(ctx);
     ASSERT_TRUE(maybe_copy(&ctx));
@@ -1288,7 +1296,7 @@ static void CheckSignAndVerify(EVP_PKEY *pkey) {
                                msg.size()));
 }
 
-// Test that |EVP_PKEY_keygen| works for Ed25519.
+// Test that `EVP_PKEY_keygen` works for Ed25519.
 TEST(EVPExtraTest, Ed25519Keygen) {
   UniquePtr<EVP_PKEY_CTX> pctx(EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, nullptr));
   ASSERT_TRUE(pctx);
@@ -1348,7 +1356,7 @@ TEST(EVPExtraTest, MLDSAKeyGen) {
 
 // Test that OpenSSL's legacy TLS-specific APIs in EVP work correctly. When we
 // target OpenSSL 3.0, these should be renamed to
-// |EVP_PKEY_get1_encoded_public_key|.
+// `EVP_PKEY_get1_encoded_public_key`.
 TEST(EVPExtraTest, TLSEncodedPoint) {
   const struct {
     int pkey_type;
@@ -1395,7 +1403,7 @@ TEST(EVPExtraTest, TLSEncodedPoint) {
     UniquePtr<EVP_PKEY> from_encoded_point(EVP_PKEY_new());
     ASSERT_TRUE(from_encoded_point);
     if (test.pkey_type == EVP_PKEY_EC) {
-      // |EVP_PKEY_EC| should have been |EVP_PKEY_EC_P256|, etc., but instead
+      // `EVP_PKEY_EC` should have been `EVP_PKEY_EC_P256`, etc., but instead
       // part of the type is buried inside parameters.
       ASSERT_TRUE(
           EVP_PKEY_copy_parameters(from_encoded_point.get(), from_spki.get()));
@@ -1452,6 +1460,7 @@ TEST(EVPExtraTest, Parameters) {
   // RSA-PSS keys' parameters are not compatible with RSA keys.
   EXPECT_FALSE(EVP_PKEY_parameters_eq(rsa_pss_sha256.get(), rsa.get()));
   EXPECT_FALSE(EVP_PKEY_copy_parameters(rsa_pss_sha256.get(), rsa.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DIFFERENT_KEY_TYPES}}));
 
   // Different RSA-PSS key types are not compatible.
   alg = EVP_pkey_rsa_pss_sha384();
@@ -1463,9 +1472,10 @@ TEST(EVPExtraTest, Parameters) {
       EVP_PKEY_parameters_eq(rsa_pss_sha256.get(), rsa_pss_sha384.get()));
   EXPECT_FALSE(
       EVP_PKEY_copy_parameters(rsa_pss_sha256.get(), rsa_pss_sha384.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DIFFERENT_PARAMETERS}}));
 
-  // EC keys have parameters, but it is possible to initialize an |EVP_PKEY|
-  // with a completely empty |EC_KEY|.
+  // EC keys have parameters, but it is possible to initialize an `EVP_PKEY`
+  // with a completely empty `EC_KEY`.
   UniquePtr<EVP_PKEY> ec_no_params(EVP_PKEY_new());
   ASSERT_TRUE(ec_no_params);
   ASSERT_TRUE(EVP_PKEY_assign_EC_KEY(ec_no_params.get(), EC_KEY_new()));
@@ -1501,10 +1511,12 @@ TEST(EVPExtraTest, Parameters) {
   EXPECT_EQ(EVP_PKEY_EC, EVP_PKEY_id(pkey.get()));
   EXPECT_EQ(1, EVP_PKEY_parameters_eq(p256.get(), pkey.get()));
 
-  // |EVP_PKEY_copy_parameters| cannot change a key's type or curve.
+  // `EVP_PKEY_copy_parameters` cannot change a key's type or curve.
   EXPECT_FALSE(EVP_PKEY_copy_parameters(rsa.get(), p256.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DIFFERENT_KEY_TYPES}}));
   EXPECT_EQ(EVP_PKEY_RSA, EVP_PKEY_id(rsa.get()));
   EXPECT_FALSE(EVP_PKEY_copy_parameters(rsa.get(), p256.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_DIFFERENT_KEY_TYPES}}));
   EXPECT_EQ(EVP_PKEY_RSA, EVP_PKEY_id(rsa.get()));
 }
 
@@ -1552,15 +1564,19 @@ TEST(EVPExtraTest, RawKeyUnsupported) {
   static const uint8_t kKey[] = {1, 2, 3, 4};
   EXPECT_FALSE(
       EVP_PKEY_new_raw_public_key(EVP_PKEY_RSA, nullptr, kKey, sizeof(kKey)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_FALSE(
       EVP_PKEY_new_raw_private_key(EVP_PKEY_RSA, nullptr, kKey, sizeof(kKey)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_FALSE(
       EVP_PKEY_from_raw_public_key(EVP_pkey_rsa(), kKey, sizeof(kKey)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_FALSE(
       EVP_PKEY_from_raw_private_key(EVP_pkey_rsa(), kKey, sizeof(kKey)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
 }
 
-// The default salt length for PSS should be |RSA_PSS_SALTLEN_DIGEST|.
+// The default salt length for PSS should be `RSA_PSS_SALTLEN_DIGEST`.
 TEST(EVPExtraTest, PSSDefaultSaltLen) {
   UniquePtr<EVP_PKEY> key = LoadExampleRSAKey();
   ASSERT_TRUE(key);
@@ -1576,7 +1592,7 @@ TEST(EVPExtraTest, PSSDefaultSaltLen) {
 
 // Test that setting a key to type none will clear it. Some calling code has
 // unit tests that rely on this, usually as part of a roundabout way to get a
-// key of the "wrong" type to test with. (In reality, |EVP_PKEY_new| will
+// key of the "wrong" type to test with. (In reality, `EVP_PKEY_new` will
 // produce the same object.)
 TEST(EVPExtraTest, SetNoneClearsKey) {
   UniquePtr<EVP_PKEY> pkey = LoadExampleRSAKey();
@@ -1585,11 +1601,11 @@ TEST(EVPExtraTest, SetNoneClearsKey) {
   EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_NONE));
   // However, it still resets the key to the initial state.
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
-  // Calling operations on the |EVP_PKEY| should cleanly fail.
+  // Calling operations on the `EVP_PKEY` should cleanly fail.
   EXPECT_EQ(EVP_PKEY_bits(pkey.get()), 0);
 }
 
-// Test that |EC_KEY|s using custom curves can be wrapped in |EVP_PKEY|. Callers
+// Test that `EC_KEY`s using custom curves can be wrapped in `EVP_PKEY`. Callers
 // should not follow this code. This is maintained and tested only for
 // compatibility with one legacy application, and supported in only a limited
 // form. (E.g. such keys cannot be serialized.)
@@ -1637,7 +1653,7 @@ TEST(EVPExtraTest, CustomCurve) {
   ASSERT_TRUE(EC_KEY_set_group(ec_key.get(), group.get()));
   ASSERT_TRUE(EC_KEY_generate_key(ec_key.get()));
 
-  // Wrap it in an |EVP_PKEY|.
+  // Wrap it in an `EVP_PKEY`.
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
   ASSERT_TRUE(pkey);
   ASSERT_TRUE(EVP_PKEY_set1_EC_KEY(pkey.get(), ec_key.get()));
@@ -1664,12 +1680,14 @@ TEST(EVPExtraTest, CustomCurve) {
   ScopedCBB cbb;
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   EXPECT_FALSE(EVP_marshal_public_key(cbb.get(), pkey.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_UNKNOWN_GROUP}}));
   cbb.Reset();
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   EXPECT_FALSE(EVP_marshal_private_key(cbb.get(), pkey.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_UNKNOWN_GROUP}}));
 }
 
-// APIs should avoid creating an |EVP_PKEY| that is missing its underlying data.
+// APIs should avoid creating an `EVP_PKEY` that is missing its underlying data.
 // In some cases, we are stuck with this due to OpenSSL compatibility, but it is
 // preferable to reduce the number of kinds of half-empty states.
 TEST(EVPExtraTest, NoHalfEmptyKeys) {
@@ -1677,21 +1695,25 @@ TEST(EVPExtraTest, NoHalfEmptyKeys) {
   ASSERT_TRUE(pkey);
 
   EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_RSA));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
   EXPECT_FALSE(EVP_PKEY_set1_RSA(pkey.get(), nullptr));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
 
   EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_EC));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
   EXPECT_FALSE(EVP_PKEY_set1_EC_KEY(pkey.get(), nullptr));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
 
   EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_DH));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
   EXPECT_FALSE(EVP_PKEY_set1_DH(pkey.get(), nullptr));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
 
   EXPECT_FALSE(EVP_PKEY_set_type(pkey.get(), EVP_PKEY_DSA));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
   EXPECT_FALSE(EVP_PKEY_set1_DSA(pkey.get(), nullptr));
   EXPECT_EQ(EVP_PKEY_id(pkey.get()), EVP_PKEY_NONE);
@@ -1711,21 +1733,21 @@ TEST(EVPExtraTest, EmptyKey) {
   EXPECT_EQ(EVP_PKEY_id(empty.get()), EVP_PKEY_NONE);
 
   EXPECT_EQ(EVP_PKEY_get_raw_private_key(empty.get(), nullptr, nullptr), 0);
-  EXPECT_TRUE(ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP,
-                          EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE));
+  EXPECT_TRUE(ErrorsAreAndClear(
+      {{ERR_LIB_EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE}}));
   EXPECT_EQ(EVP_PKEY_get_private_seed(empty.get(), nullptr, nullptr), 0);
-  EXPECT_TRUE(ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP,
-                          EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE));
+  EXPECT_TRUE(ErrorsAreAndClear(
+      {{ERR_LIB_EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE}}));
   EXPECT_EQ(EVP_PKEY_get_raw_public_key(empty.get(), nullptr, nullptr), 0);
-  EXPECT_TRUE(ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP,
-                          EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE));
+  EXPECT_TRUE(ErrorsAreAndClear(
+      {{ERR_LIB_EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE}}));
 
   EXPECT_EQ(EVP_PKEY_get1_tls_encodedpoint(empty.get(), nullptr), 0u);
-  EXPECT_TRUE(ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP,
-                          EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE));
+  EXPECT_TRUE(ErrorsAreAndClear(
+      {{ERR_LIB_EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE}}));
   EXPECT_EQ(EVP_PKEY_set1_tls_encodedpoint(empty.get(), nullptr, 0u), 0);
-  EXPECT_TRUE(ErrorEquals(ERR_peek_last_error(), ERR_LIB_EVP,
-                          EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE));
+  EXPECT_TRUE(ErrorsAreAndClear(
+      {{ERR_LIB_EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE}}));
 }
 
 // Due to an OpenSSL API flaw, it is possible to make a half-empty X25519 key.
@@ -1784,14 +1806,14 @@ TEST(EVPExtraTest, TrailingData) {
                             CBB_data(cbb.get()) + CBB_len(cbb.get()));
   spki.push_back('a');
 
-  // |EVP_parse_public_key| should accept trailing data and return the
+  // `EVP_parse_public_key` should accept trailing data and return the
   // remainder.
   CBS cbs(spki);
   pkey.reset(EVP_parse_public_key(&cbs));
   EXPECT_TRUE(pkey);
   EXPECT_EQ(Bytes(cbs), Bytes("a"));
 
-  // |EVP_PKEY_from_subject_public_key_info| should not.
+  // `EVP_PKEY_from_subject_public_key_info` should not.
   const EVP_PKEY_ALG *alg = EVP_pkey_rsa();
   pkey.reset(EVP_PKEY_from_subject_public_key_info(spki.data(), spki.size(),
                                                    &alg, 1u));
@@ -1870,7 +1892,7 @@ TEST(EVPExtraTest, NewRawKey) {
   }
 }
 
-// Test that an |EVP_MD_CTX| can be reconfigured across operations of the same
+// Test that an `EVP_MD_CTX` can be reconfigured across operations of the same
 // and different type.
 TEST(EVPExtraTest, ReconfigureMDContext) {
   UniquePtr<EVP_PKEY> rsa = LoadExampleRSAKey();
@@ -1944,7 +1966,7 @@ TEST(EVPExtraTest, ReconfigureMDContext) {
       for (bool finish_first_op : {false, true}) {
         SCOPED_TRACE(finish_first_op);
 
-        // Configure |ctx| for |first_op|.
+        // Configure `ctx` for `first_op`.
         ScopedEVP_MD_CTX ctx;
         ASSERT_NO_FATAL_FAILURE(first_op.init(ctx.get()));
         if (finish_first_op) {
@@ -1953,7 +1975,7 @@ TEST(EVPExtraTest, ReconfigureMDContext) {
           EXPECT_EQ(Bytes(first_op.expected), Bytes(out));
         }
 
-        // Reconfigure it for |second_op|.
+        // Reconfigure it for `second_op`.
         ASSERT_NO_FATAL_FAILURE(second_op.init(ctx.get()));
         std::vector<uint8_t> out;
         ASSERT_NO_FATAL_FAILURE(second_op.finish(ctx.get(), &out));

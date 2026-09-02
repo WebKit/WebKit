@@ -48,11 +48,11 @@ using namespace bssl;
 #define ASN1_GEN_FORMAT_HEX 3
 #define ASN1_GEN_FORMAT_BITLIST 4
 
-// generate_v3 converts |str| into an ASN.1 structure and writes the result to
-// |cbb|. It returns one on success and zero on error. |depth| bounds recursion,
-// and |format| specifies the current format modifier.
+// generate_v3 converts `str` into an ASN.1 structure and writes the result to
+// `cbb`. It returns one on success and zero on error. `depth` bounds recursion,
+// and `format` specifies the current format modifier.
 //
-// If |tag| is non-zero, the structure is implicitly tagged with |tag|. |tag|
+// If `tag` is non-zero, the structure is implicitly tagged with `tag`. `tag`
 // must not have the constructed bit set.
 static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
                        CBS_ASN1_TAG tag, int format, int depth);
@@ -69,7 +69,7 @@ ASN1_TYPE *bssl::ASN1_generate_v3(const char *str, const X509V3_CTX *cnf) {
 
   // While not strictly necessary to avoid a DoS (we rely on any super-linear
   // checks being performed internally), cap the overall output to
-  // |ASN1_GEN_MAX_OUTPUT| so the externally-visible behavior is consistent.
+  // `ASN1_GEN_MAX_OUTPUT` so the externally-visible behavior is consistent.
   if (CBB_len(cbb.get()) > ASN1_GEN_MAX_OUTPUT) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
     return nullptr;
@@ -84,7 +84,7 @@ static int cbs_str_equal(const CBS *cbs, const char *str) {
          OPENSSL_memcmp(CBS_data(cbs), str, strlen(str)) == 0;
 }
 
-// parse_tag decodes a tag specifier in |cbs|. It returns the tag on success or
+// parse_tag decodes a tag specifier in `cbs`. It returns the tag on success or
 // zero on error.
 static CBS_ASN1_TAG parse_tag(const CBS *cbs) {
   CBS copy = *cbs;
@@ -151,7 +151,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
   }
 
   // Process modifiers. This function uses a mix of NUL-terminated strings and
-  // |CBS|. Several functions only work with NUL-terminated strings, so we need
+  // `CBS`. Several functions only work with NUL-terminated strings, so we need
   // to keep track of when a slice spans the whole buffer.
   for (;;) {
     // Skip whitespace.
@@ -241,7 +241,7 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
       tag = tag == 0 ? CBS_ASN1_SET : (tag | CBS_ASN1_CONSTRUCTED);
       return generate_wrapped(cbb, str, cnf, tag, /*padding=*/0, format, depth);
     } else {
-      // If this was not a recognized modifier, rewind |str| to before splitting
+      // If this was not a recognized modifier, rewind `str` to before splitting
       // on the comma. The type itself consumes all remaining input.
       str = str_old;
       break;
@@ -412,9 +412,9 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
         return 0;
       }
 
-      // |maxsize| is measured in code points, rather than bytes, but pass it in
+      // `maxsize` is measured in code points, rather than bytes, but pass it in
       // as a loose cap so fuzzers can exit from excessively long inputs
-      // earlier. This limit is not load-bearing because |ASN1_mbstring_ncopy|'s
+      // earlier. This limit is not load-bearing because `ASN1_mbstring_ncopy`'s
       // output is already linear in the input.
       ASN1_STRING *obj = nullptr;
       if (ASN1_mbstring_ncopy(&obj, (const uint8_t *)value, -1, encoding,
@@ -493,8 +493,8 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
                            ASN1_GEN_FORMAT_ASCII, depth + 1)) {
             return 0;
           }
-          // This recursive call, by referencing |section|, is the one place
-          // where |generate_v3|'s output can be super-linear in the input.
+          // This recursive call, by referencing `section`, is the one place
+          // where `generate_v3`'s output can be super-linear in the input.
           // Check bounds here.
           if (CBB_len(&child) > ASN1_GEN_MAX_OUTPUT) {
             OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);

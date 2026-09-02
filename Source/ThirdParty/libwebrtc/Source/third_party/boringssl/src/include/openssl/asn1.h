@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_ASN1_H
 #define OPENSSL_HEADER_ASN1_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <time.h>
 
@@ -271,11 +271,6 @@ OPENSSL_EXPORT void ASN1_item_free(ASN1_VALUE *val, const ASN1_ITEM *it);
 // ASN1_item_d2i parses the ASN.1 type `it` from up to `len` bytes at `*inp`.
 // It behaves like `d2i_SAMPLE`, except that `out` and the return value are cast
 // to `ASN1_VALUE` pointers.
-//
-// TODO(https://crbug.com/boringssl/444): C strict aliasing forbids type-punning
-// `T*` and `ASN1_VALUE*` the way this function signature does. When that bug is
-// resolved, we will need to pick which type `*out` is (probably `T*`). Do not
-// use a non-NULL `out` to avoid ending up on the wrong side of this question.
 //
 // This function may not be used with `ASN1_ITEM`s whose C type is
 // `ASN1_BOOLEAN`.
@@ -854,8 +849,9 @@ OPENSSL_EXPORT int i2d_DISPLAYTEXT(const ASN1_STRING *in, uint8_t **outp);
 // AlgorithmIdentifier. While some unknown algorithm could choose to store
 // arbitrary bit strings, all supported algorithms use a byte string, with bit
 // order matching the DER encoding. Callers interpreting a BIT STRING as a byte
-// string should use `ASN1_BIT_STRING_num_bytes` instead of `ASN1_STRING_length`
-// and reject bit strings that are not a whole number of bytes.
+// string should reject bit strings that are not a whole number of bytes by
+// requiring that `ASN1_BIT_STRING_unused_bits` returns zero; the byte length is
+// returned by `ASN1_STRING_length`.
 //
 // This library represents BIT STRINGs as `ASN1_STRING`s with type
 // `V_ASN1_BIT_STRING`. The data contains the encoded form of the BIT STRING,
@@ -915,7 +911,8 @@ DECLARE_ASN1_ITEM(ASN1_BIT_STRING)
 OPENSSL_EXPORT uint8_t ASN1_BIT_STRING_unused_bits(const ASN1_BIT_STRING *str);
 
 // ASN1_BIT_STRING_set calls `ASN1_STRING_set`.
-OPENSSL_EXPORT int ASN1_BIT_STRING_set(ASN1_BIT_STRING *str, const uint8_t *data,
+OPENSSL_EXPORT int ASN1_BIT_STRING_set(ASN1_BIT_STRING *str,
+                                       const uint8_t *data,
                                        ossl_ssize_t length);
 
 // ASN1_BIT_STRING_set1 sets `str` to a BIT STRING containing `length` bytes
@@ -1323,8 +1320,8 @@ OPENSSL_EXPORT int ASN1_TIME_to_posix(const ASN1_TIME *t, int64_t *out);
 // non-standard four-digit timezone offsets on UTC times. On success, one is
 // returned. On failure, zero is returned. `ASN1_TIME_to_posix` should normally
 // be used instead of this function.
-OPENSSL_EXPORT int ASN1_TIME_to_posix_nonstandard(
-    const ASN1_TIME *t, int64_t *out);
+OPENSSL_EXPORT int ASN1_TIME_to_posix_nonstandard(const ASN1_TIME *t,
+                                                  int64_t *out);
 
 // TODO(davidben): Expand and document function prototypes generated in macros.
 
@@ -1358,7 +1355,7 @@ DECLARE_ASN1_ITEM(ASN1_NULL)
 
 // Object identifiers.
 //
-// An `ASN1_OBJECT` represents a ASN.1 OBJECT IDENTIFIER. See also obj.h for
+// An `ASN1_OBJECT` represents an ASN.1 OBJECT IDENTIFIER. See also obj.h for
 // additional functions relating to `ASN1_OBJECT`.
 //
 // TODO(davidben): What's the relationship between asn1.h and obj.h? Most of

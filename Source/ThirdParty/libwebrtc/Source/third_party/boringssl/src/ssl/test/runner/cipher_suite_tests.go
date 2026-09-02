@@ -68,6 +68,14 @@ func isTLS13Suite(suiteName string) bool {
 	return !hasComponent(suiteName, "WITH")
 }
 
+func isPSKSuite(suiteName string) bool {
+	return hasComponent(suiteName, "PSK")
+}
+
+func isRSAKeyExchange(suiteName string) bool {
+	return strings.HasPrefix(suiteName, "RSA_WITH_")
+}
+
 func addTestForCipherSuite(suite testCipherSuite, ver tlsVersion, protocol protocol) {
 	const psk = "12345"
 	const pskIdentity = "luggage combo"

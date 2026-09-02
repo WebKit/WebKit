@@ -14,9 +14,10 @@ default	rel
 section	.text code align=64
 
 
-
+; The polynomial
 section	.rdata rdata align=8
 ALIGN	64
+p256_constants:
 $L$poly:
 	DQ	0xffffffffffffffff,0x00000000ffffffff,0x0000000000000000,0xffffffff00000001
 
@@ -29,7 +30,7 @@ $L$Three:
 $L$ONE_mont:
 	DQ	0x0000000000000001,0xffffffff00000000,0xffffffffffffffff,0x00000000fffffffe
 
-
+; Constants for computations modulo ord(p256)
 $L$ord:
 	DQ	0xf3b9cac2fc632551,0xbce6faada7179e84,0xffffffffffffffff,0xffffffff00000000
 $L$ordK:
@@ -37,8 +38,8 @@ $L$ordK:
 section	.text
 
 
-
-
+; ###############################################################################
+; void ecp_nistz256_neg(uint64_t res[4], uint64_t a[4]);
 global	ecp_nistz256_neg
 
 ALIGN	32
@@ -103,11 +104,11 @@ $L$neg_epilogue:
 	ret
 
 $L$SEH_end_ecp_nistz256_neg:
-
-
-
-
-
+; ###############################################################################
+; void ecp_nistz256_ord_mul_mont(
+; uint64_t res[4],
+; uint64_t a[4],
+; uint64_t b[4]);
 
 global	ecp_nistz256_ord_mul_mont_nohw
 
@@ -143,7 +144,7 @@ $L$ord_mul_body:
 	lea	r14,[$L$ord]
 	mov	r15,QWORD[$L$ordK]
 
-
+; ################################ * b[0]
 	mov	rcx,rax
 	mul	QWORD[rsi]
 	mov	r8,rax
@@ -171,16 +172,16 @@ $L$ord_mul_body:
 	adc	rdx,0
 	mov	r12,rdx
 
-
+; ################################ First reduction step
 	mul	QWORD[r14]
 	mov	rbp,r8
-	add	r13,rax
+	add	r13,rax  ; guaranteed to be zero
 	mov	rax,r8
 	adc	rdx,0
 	mov	rcx,rdx
 
 	sub	r10,r8
-	sbb	r8,0
+	sbb	r8,0  ; can't borrow
 
 	mul	QWORD[8+r14]
 	add	r9,rcx
@@ -189,19 +190,19 @@ $L$ord_mul_body:
 	mov	rax,rbp
 	adc	r10,rdx
 	mov	rdx,rbp
-	adc	r8,0
+	adc	r8,0  ; can't overflow
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r11,rax
 	mov	rax,QWORD[8+rbx]
-	sbb	rbp,rdx
+	sbb	rbp,rdx  ; can't borrow
 
 	add	r11,r8
 	adc	r12,rbp
 	adc	r13,0
 
-
+; ################################ * b[1]
 	mov	rcx,rax
 	mul	QWORD[rsi]
 	add	r9,rax
@@ -237,15 +238,15 @@ $L$ord_mul_body:
 	adc	r13,rdx
 	adc	r8,0
 
-
+; ################################ Second reduction step
 	mul	QWORD[r14]
 	mov	rbp,r9
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,r9
 	adc	rcx,rdx
 
 	sub	r11,r9
-	sbb	r9,0
+	sbb	r9,0  ; can't borrow
 
 	mul	QWORD[8+r14]
 	add	r10,rcx
@@ -254,19 +255,19 @@ $L$ord_mul_body:
 	mov	rax,rbp
 	adc	r11,rdx
 	mov	rdx,rbp
-	adc	r9,0
+	adc	r9,0  ; can't overflow
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r12,rax
 	mov	rax,QWORD[16+rbx]
-	sbb	rbp,rdx
+	sbb	rbp,rdx  ; can't borrow
 
 	add	r12,r9
 	adc	r13,rbp
 	adc	r8,0
 
-
+; ################################# * b[2]
 	mov	rcx,rax
 	mul	QWORD[rsi]
 	add	r10,rax
@@ -302,15 +303,15 @@ $L$ord_mul_body:
 	adc	r8,rdx
 	adc	r9,0
 
-
+; ################################ Third reduction step
 	mul	QWORD[r14]
 	mov	rbp,r10
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,r10
 	adc	rcx,rdx
 
 	sub	r12,r10
-	sbb	r10,0
+	sbb	r10,0  ; can't borrow
 
 	mul	QWORD[8+r14]
 	add	r11,rcx
@@ -319,19 +320,19 @@ $L$ord_mul_body:
 	mov	rax,rbp
 	adc	r12,rdx
 	mov	rdx,rbp
-	adc	r10,0
+	adc	r10,0  ; can't overflow
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r13,rax
 	mov	rax,QWORD[24+rbx]
-	sbb	rbp,rdx
+	sbb	rbp,rdx  ; can't borrow
 
 	add	r13,r10
 	adc	r8,rbp
 	adc	r9,0
 
-
+; ################################ * b[3]
 	mov	rcx,rax
 	mul	QWORD[rsi]
 	add	r11,rax
@@ -367,15 +368,15 @@ $L$ord_mul_body:
 	adc	r9,rdx
 	adc	r10,0
 
-
+; ################################ Last reduction step
 	mul	QWORD[r14]
 	mov	rbp,r11
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,r11
 	adc	rcx,rdx
 
 	sub	r13,r11
-	sbb	r11,0
+	sbb	r11,0  ; can't borrow
 
 	mul	QWORD[8+r14]
 	add	r12,rcx
@@ -384,18 +385,18 @@ $L$ord_mul_body:
 	mov	rax,rbp
 	adc	r13,rdx
 	mov	rdx,rbp
-	adc	r11,0
+	adc	r11,0  ; can't overflow
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r8,rax
-	sbb	rbp,rdx
+	sbb	rbp,rdx  ; can't borrow
 
 	add	r8,r11
 	adc	r9,rbp
 	adc	r10,0
 
-
+; ################################ Subtract ord
 	mov	rsi,r12
 	sub	r12,QWORD[r14]
 	mov	r11,r13
@@ -437,11 +438,11 @@ $L$ord_mul_epilogue:
 
 $L$SEH_end_ecp_nistz256_ord_mul_mont_nohw:
 
-
-
-
-
-
+; ###############################################################################
+; void ecp_nistz256_ord_sqr_mont(
+; uint64_t res[4],
+; uint64_t a[4],
+; uint64_t rep);
 
 global	ecp_nistz256_ord_sqr_mont_nohw
 
@@ -476,56 +477,56 @@ $L$ord_sqr_body:
 	mov	rax,QWORD[8+rsi]
 	mov	r14,QWORD[16+rsi]
 	mov	r15,QWORD[24+rsi]
-	lea	rsi,[$L$ord]
+	lea	rsi,[$L$ord]  ; pointer to modulus
 	mov	rbx,rdx
 	jmp	NEAR $L$oop_ord_sqr
 
 ALIGN	32
 $L$oop_ord_sqr:
-
-	mov	rbp,rax
-	mul	r8
+; ################################ a[1:] * a[0]
+	mov	rbp,rax  ; put aside a[1]
+	mul	r8  ; a[1] * a[0]
 	mov	r9,rax
-	movq	xmm1,rbp
+	movq	xmm1,rbp  ; offload a[1]
 	mov	rax,r14
 	mov	r10,rdx
 
-	mul	r8
+	mul	r8  ; a[2] * a[0]
 	add	r10,rax
 	mov	rax,r15
-	movq	xmm2,r14
+	movq	xmm2,r14  ; offload a[2]
 	adc	rdx,0
 	mov	r11,rdx
 
-	mul	r8
+	mul	r8  ; a[3] * a[0]
 	add	r11,rax
 	mov	rax,r15
-	movq	xmm3,r15
+	movq	xmm3,r15  ; offload a[3]
 	adc	rdx,0
 	mov	r12,rdx
 
-
-	mul	r14
+; ################################ a[3] * a[2]
+	mul	r14  ; a[3] * a[2]
 	mov	r13,rax
 	mov	rax,r14
 	mov	r14,rdx
 
-
-	mul	rbp
+; ################################ a[2:] * a[1]
+	mul	rbp  ; a[2] * a[1]
 	add	r11,rax
 	mov	rax,r15
 	adc	rdx,0
 	mov	r15,rdx
 
-	mul	rbp
+	mul	rbp  ; a[3] * a[1]
 	add	r12,rax
 	adc	rdx,0
 
 	add	r12,r15
 	adc	r13,rdx
-	adc	r14,0
+	adc	r14,0  ; can't overflow
 
-
+; ################################ *2
 	xor	r15,r15
 	mov	rax,r8
 	add	r9,r9
@@ -536,20 +537,20 @@ $L$oop_ord_sqr:
 	adc	r14,r14
 	adc	r15,0
 
-
-	mul	rax
+; ################################ Missing products
+	mul	rax  ; a[0] * a[0]
 	mov	r8,rax
 	movq	rax,xmm1
 	mov	rbp,rdx
 
-	mul	rax
+	mul	rax  ; a[1] * a[1]
 	add	r9,rbp
 	adc	r10,rax
 	movq	rax,xmm2
 	adc	rdx,0
 	mov	rbp,rdx
 
-	mul	rax
+	mul	rax  ; a[2] * a[2]
 	add	r11,rbp
 	adc	r12,rax
 	movq	rax,xmm3
@@ -557,23 +558,23 @@ $L$oop_ord_sqr:
 	mov	rbp,rdx
 
 	mov	rcx,r8
-	imul	r8,QWORD[32+rsi]
+	imul	r8,QWORD[32+rsi]  ; *= .LordK
 
-	mul	rax
+	mul	rax  ; a[3] * a[3]
 	add	r13,rbp
 	adc	r14,rax
-	mov	rax,QWORD[rsi]
-	adc	r15,rdx
+	mov	rax,QWORD[rsi]  ; modulus[0]
+	adc	r15,rdx  ; can't overflow
 
-
+; ################################ First reduction step
 	mul	r8
 	mov	rbp,r8
-	add	rcx,rax
-	mov	rax,QWORD[8+rsi]
+	add	rcx,rax  ; guaranteed to be zero
+	mov	rax,QWORD[8+rsi]  ; modulus[1]
 	adc	rcx,rdx
 
 	sub	r10,r8
-	sbb	rbp,0
+	sbb	rbp,0  ; can't borrow
 
 	mul	r8
 	add	r9,rcx
@@ -582,29 +583,29 @@ $L$oop_ord_sqr:
 	mov	rax,r8
 	adc	r10,rdx
 	mov	rdx,r8
-	adc	rbp,0
+	adc	rbp,0  ; can't overflow
 
 	mov	rcx,r9
-	imul	r9,QWORD[32+rsi]
+	imul	r9,QWORD[32+rsi]  ; *= .LordK
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r11,rax
 	mov	rax,QWORD[rsi]
-	sbb	r8,rdx
+	sbb	r8,rdx  ; can't borrow
 
 	add	r11,rbp
-	adc	r8,0
+	adc	r8,0  ; can't overflow
 
-
+; ################################ Second reduction step
 	mul	r9
 	mov	rbp,r9
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,QWORD[8+rsi]
 	adc	rcx,rdx
 
 	sub	r11,r9
-	sbb	rbp,0
+	sbb	rbp,0  ; can't borrow
 
 	mul	r9
 	add	r10,rcx
@@ -613,29 +614,29 @@ $L$oop_ord_sqr:
 	mov	rax,r9
 	adc	r11,rdx
 	mov	rdx,r9
-	adc	rbp,0
+	adc	rbp,0  ; can't overflow
 
 	mov	rcx,r10
-	imul	r10,QWORD[32+rsi]
+	imul	r10,QWORD[32+rsi]  ; *= .LordK
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r8,rax
 	mov	rax,QWORD[rsi]
-	sbb	r9,rdx
+	sbb	r9,rdx  ; can't borrow
 
 	add	r8,rbp
-	adc	r9,0
+	adc	r9,0  ; can't overflow
 
-
+; ################################ Third reduction step
 	mul	r10
 	mov	rbp,r10
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,QWORD[8+rsi]
 	adc	rcx,rdx
 
 	sub	r8,r10
-	sbb	rbp,0
+	sbb	rbp,0  ; can't borrow
 
 	mul	r10
 	add	r11,rcx
@@ -644,29 +645,29 @@ $L$oop_ord_sqr:
 	mov	rax,r10
 	adc	r8,rdx
 	mov	rdx,r10
-	adc	rbp,0
+	adc	rbp,0  ; can't overflow
 
 	mov	rcx,r11
-	imul	r11,QWORD[32+rsi]
+	imul	r11,QWORD[32+rsi]  ; *= .LordK
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r9,rax
 	mov	rax,QWORD[rsi]
-	sbb	r10,rdx
+	sbb	r10,rdx  ; can't borrow
 
 	add	r9,rbp
-	adc	r10,0
+	adc	r10,0  ; can't overflow
 
-
+; ################################ Last reduction step
 	mul	r11
 	mov	rbp,r11
-	add	rcx,rax
+	add	rcx,rax  ; guaranteed to be zero
 	mov	rax,QWORD[8+rsi]
 	adc	rcx,rdx
 
 	sub	r9,r11
-	sbb	rbp,0
+	sbb	rbp,0  ; can't borrow
 
 	mul	r11
 	add	r8,rcx
@@ -675,17 +676,17 @@ $L$oop_ord_sqr:
 	mov	rax,r11
 	adc	r9,rdx
 	mov	rdx,r11
-	adc	rbp,0
+	adc	rbp,0  ; can't overflow
 
 	shl	rax,32
 	shr	rdx,32
 	sub	r10,rax
-	sbb	r11,rdx
+	sbb	r11,rdx  ; can't borrow
 
 	add	r10,rbp
-	adc	r11,0
+	adc	r11,0  ; can't overflow
 
-
+; ################################ Add bits [511:256] of the sqr result
 	xor	rdx,rdx
 	add	r8,r12
 	adc	r9,r13
@@ -695,7 +696,7 @@ $L$oop_ord_sqr:
 	mov	rax,r9
 	adc	rdx,0
 
-
+; ################################ Compare to modulus
 	sub	r8,QWORD[rsi]
 	mov	r14,r10
 	sbb	r9,QWORD[8+rsi]
@@ -740,7 +741,7 @@ $L$ord_sqr_epilogue:
 	ret
 
 $L$SEH_end_ecp_nistz256_ord_sqr_mont_nohw:
-
+; ###############################################################################
 global	ecp_nistz256_ord_mul_mont_adx
 
 ALIGN	32
@@ -777,11 +778,11 @@ $L$ord_mulx_body:
 	mov	r10,QWORD[8+rsi]
 	mov	r11,QWORD[16+rsi]
 	mov	r12,QWORD[24+rsi]
-	lea	rsi,[((-128))+rsi]
+	lea	rsi,[((-128))+rsi]  ; control u-op density
 	lea	r14,[(($L$ord-128))]
 	mov	r15,QWORD[$L$ordK]
 
-
+; ################################ Multiply by b[0]
 	mulx	r9,r8,r9
 	mulx	r10,rcx,r10
 	mulx	r11,rbp,r11
@@ -793,10 +794,10 @@ $L$ord_mulx_body:
 	adc	r11,rcx
 	adc	r12,0
 
-
-	xor	r13,r13
+; ################################ reduction
+	xor	r13,r13  ; %r13=0, cf=0, of=0
 	mulx	rbp,rcx,QWORD[((0+128))+r14]
-	adcx	r8,rcx
+	adcx	r8,rcx  ; guaranteed to be zero
 	adox	r9,rbp
 
 	mulx	rbp,rcx,QWORD[((8+128))+r14]
@@ -813,9 +814,9 @@ $L$ord_mulx_body:
 	adox	r12,rbp
 	adcx	r12,r8
 	adox	r13,r8
-	adc	r13,0
+	adc	r13,0  ; cf=0, of=0
 
-
+; ################################ Multiply by b[1]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r9,rcx
 	adox	r10,rbp
@@ -836,11 +837,11 @@ $L$ord_mulx_body:
 
 	adcx	r13,r8
 	adox	r8,r8
-	adc	r8,0
+	adc	r8,0  ; cf=0, of=0
 
-
+; ################################ reduction
 	mulx	rbp,rcx,QWORD[((0+128))+r14]
-	adcx	r9,rcx
+	adcx	r9,rcx  ; guaranteed to be zero
 	adox	r10,rbp
 
 	mulx	rbp,rcx,QWORD[((8+128))+r14]
@@ -857,9 +858,9 @@ $L$ord_mulx_body:
 	adox	r13,rbp
 	adcx	r13,r9
 	adox	r8,r9
-	adc	r8,0
+	adc	r8,0  ; cf=0, of=0
 
-
+; ################################ Multiply by b[2]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r10,rcx
 	adox	r11,rbp
@@ -880,11 +881,11 @@ $L$ord_mulx_body:
 
 	adcx	r8,r9
 	adox	r9,r9
-	adc	r9,0
+	adc	r9,0  ; cf=0, of=0
 
-
+; ################################ reduction
 	mulx	rbp,rcx,QWORD[((0+128))+r14]
-	adcx	r10,rcx
+	adcx	r10,rcx  ; guaranteed to be zero
 	adox	r11,rbp
 
 	mulx	rbp,rcx,QWORD[((8+128))+r14]
@@ -901,9 +902,9 @@ $L$ord_mulx_body:
 	adox	r8,rbp
 	adcx	r8,r10
 	adox	r9,r10
-	adc	r9,0
+	adc	r9,0  ; cf=0, of=0
 
-
+; ################################ Multiply by b[3]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r11,rcx
 	adox	r12,rbp
@@ -924,11 +925,11 @@ $L$ord_mulx_body:
 
 	adcx	r9,r10
 	adox	r10,r10
-	adc	r10,0
+	adc	r10,0  ; cf=0, of=0
 
-
+; ################################ reduction
 	mulx	rbp,rcx,QWORD[((0+128))+r14]
-	adcx	r11,rcx
+	adcx	r11,rcx  ; guaranteed to be zero
 	adox	r12,rbp
 
 	mulx	rbp,rcx,QWORD[((8+128))+r14]
@@ -949,8 +950,8 @@ $L$ord_mulx_body:
 	adox	r10,r11
 	adc	r10,0
 
-
-
+; ################################
+; Branch-less conditional subtraction of P
 	mov	rcx,r8
 	sub	r12,QWORD[r14]
 	sbb	r13,QWORD[8+r14]
@@ -1030,38 +1031,38 @@ $L$ord_sqrx_body:
 
 ALIGN	32
 $L$oop_ord_sqrx:
-	mulx	r10,r9,r14
-	mulx	r11,rcx,r15
-	mov	rax,rdx
-	movq	xmm1,r14
-	mulx	r12,rbp,r8
+	mulx	r10,r9,r14  ; a[0]*a[1]
+	mulx	r11,rcx,r15  ; a[0]*a[2]
+	mov	rax,rdx  ; offload a[0]
+	movq	xmm1,r14  ; offload a[1]
+	mulx	r12,rbp,r8  ; a[0]*a[3]
 	mov	rdx,r14
 	add	r10,rcx
-	movq	xmm2,r15
+	movq	xmm2,r15  ; offload a[2]
 	adc	r11,rbp
 	adc	r12,0
-	xor	r13,r13
-
-	mulx	rbp,rcx,r15
+	xor	r13,r13  ; %r13=0,cf=0,of=0
+; ################################
+	mulx	rbp,rcx,r15  ; a[1]*a[2]
 	adcx	r11,rcx
 	adox	r12,rbp
 
-	mulx	rbp,rcx,r8
+	mulx	rbp,rcx,r8  ; a[1]*a[3]
 	mov	rdx,r15
 	adcx	r12,rcx
 	adox	r13,rbp
 	adc	r13,0
-
-	mulx	r14,rcx,r8
+; ################################
+	mulx	r14,rcx,r8  ; a[2]*a[3]
 	mov	rdx,rax
-	movq	xmm3,r8
-	xor	r15,r15
-	adcx	r9,r9
+	movq	xmm3,r8  ; offload a[3]
+	xor	r15,r15  ; %r15=0,cf=0,of=0
+	adcx	r9,r9  ; acc1:6<<1
 	adox	r13,rcx
 	adcx	r10,r10
-	adox	r14,r15
+	adox	r14,r15  ; of=0
 
-
+; ################################ a[i]*a[i]
 	mulx	rbp,r8,rdx
 	movq	rdx,xmm1
 	adcx	r11,r11
@@ -1083,13 +1084,13 @@ $L$oop_ord_sqrx:
 	adox	r14,rcx
 	adox	r15,rax
 
-
+; ################################ reduction
 	mov	rdx,r8
 	mulx	rcx,rdx,QWORD[32+rsi]
 
-	xor	rax,rax
+	xor	rax,rax  ; cf=0, of=0
 	mulx	rbp,rcx,QWORD[rsi]
-	adcx	r8,rcx
+	adcx	r8,rcx  ; guaranteed to be zero
 	adox	r9,rbp
 	mulx	rbp,rcx,QWORD[8+rsi]
 	adcx	r9,rcx
@@ -1099,15 +1100,15 @@ $L$oop_ord_sqrx:
 	adox	r11,rbp
 	mulx	rbp,rcx,QWORD[24+rsi]
 	adcx	r11,rcx
-	adox	r8,rbp
-	adcx	r8,rax
+	adox	r8,rbp  ; of=0
+	adcx	r8,rax  ; cf=0
 
-
+; ################################
 	mov	rdx,r9
 	mulx	rcx,rdx,QWORD[32+rsi]
 
 	mulx	rbp,rcx,QWORD[rsi]
-	adox	r9,rcx
+	adox	r9,rcx  ; guaranteed to be zero
 	adcx	r10,rbp
 	mulx	rbp,rcx,QWORD[8+rsi]
 	adox	r10,rcx
@@ -1117,15 +1118,15 @@ $L$oop_ord_sqrx:
 	adcx	r8,rbp
 	mulx	rbp,rcx,QWORD[24+rsi]
 	adox	r8,rcx
-	adcx	r9,rbp
-	adox	r9,rax
+	adcx	r9,rbp  ; cf=0
+	adox	r9,rax  ; of=0
 
-
+; ################################
 	mov	rdx,r10
 	mulx	rcx,rdx,QWORD[32+rsi]
 
 	mulx	rbp,rcx,QWORD[rsi]
-	adcx	r10,rcx
+	adcx	r10,rcx  ; guaranteed to be zero
 	adox	r11,rbp
 	mulx	rbp,rcx,QWORD[8+rsi]
 	adcx	r11,rcx
@@ -1135,15 +1136,15 @@ $L$oop_ord_sqrx:
 	adox	r9,rbp
 	mulx	rbp,rcx,QWORD[24+rsi]
 	adcx	r9,rcx
-	adox	r10,rbp
-	adcx	r10,rax
+	adox	r10,rbp  ; of=0
+	adcx	r10,rax  ; cf=0
 
-
+; ################################
 	mov	rdx,r11
 	mulx	rcx,rdx,QWORD[32+rsi]
 
 	mulx	rbp,rcx,QWORD[rsi]
-	adox	r11,rcx
+	adox	r11,rcx  ; guaranteed to be zero
 	adcx	r8,rbp
 	mulx	rbp,rcx,QWORD[8+rsi]
 	adox	r8,rcx
@@ -1156,8 +1157,8 @@ $L$oop_ord_sqrx:
 	adcx	r11,rbp
 	adox	r11,rax
 
-
-	add	r12,r8
+; ################################ accumulate upper half
+	add	r12,r8  ; add	%r12, %r8
 	adc	r9,r13
 	mov	rdx,r12
 	adc	r10,r14
@@ -1165,7 +1166,7 @@ $L$oop_ord_sqrx:
 	mov	r14,r9
 	adc	rax,0
 
-
+; ################################ compare to modulus
 	sub	r12,QWORD[rsi]
 	mov	r15,r10
 	sbb	r9,QWORD[8+rsi]
@@ -1210,11 +1211,11 @@ $L$ord_sqrx_epilogue:
 	ret
 
 $L$SEH_end_ecp_nistz256_ord_sqr_mont_adx:
-
-
-
-
-
+; ###############################################################################
+; void ecp_nistz256_mul_mont(
+; uint64_t res[4],
+; uint64_t a[4],
+; uint64_t b[4]);
 
 global	ecp_nistz256_mul_mont_nohw
 
@@ -1278,8 +1279,8 @@ $L$SEH_end_ecp_nistz256_mul_mont_nohw:
 ALIGN	32
 __ecp_nistz256_mul_montq:
 
-
-
+; #######################################################################
+; Multiply a by b[0]
 	mov	rbp,rax
 	mul	r9
 	mov	r14,QWORD[(($L$poly+8))]
@@ -1307,20 +1308,20 @@ __ecp_nistz256_mul_montq:
 	xor	r13,r13
 	mov	r12,rdx
 
-
-
-
-
-
-
-
-
+; #######################################################################
+; First reduction step
+; Basically now we want to multiply acc[0] by p256,
+; and add the result to the acc.
+; Due to the special form of p256 we do some optimizations
+; 
+; acc[0] x p256[0..1] = acc[0] x 2^96 - acc[0]
+; then we add acc[0] and get acc[0] x 2^96
 
 	mov	rbp,r8
 	shl	r8,32
 	mul	r15
 	shr	rbp,32
-	add	r9,r8
+	add	r9,r8  ; +=acc[0]<<96
 	adc	r10,rbp
 	adc	r11,rax
 	mov	rax,QWORD[8+rbx]
@@ -1328,8 +1329,8 @@ __ecp_nistz256_mul_montq:
 	adc	r13,0
 	xor	r8,r8
 
-
-
+; #######################################################################
+; Multiply by b[1]
 	mov	rbp,rax
 	mul	QWORD[rsi]
 	add	r9,rax
@@ -1361,8 +1362,8 @@ __ecp_nistz256_mul_montq:
 	adc	r13,rdx
 	adc	r8,0
 
-
-
+; #######################################################################
+; Second reduction step
 	mov	rbp,r9
 	shl	r9,32
 	mul	r15
@@ -1375,8 +1376,8 @@ __ecp_nistz256_mul_montq:
 	adc	r8,0
 	xor	r9,r9
 
-
-
+; #######################################################################
+; Multiply by b[2]
 	mov	rbp,rax
 	mul	QWORD[rsi]
 	add	r10,rax
@@ -1408,8 +1409,8 @@ __ecp_nistz256_mul_montq:
 	adc	r8,rdx
 	adc	r9,0
 
-
-
+; #######################################################################
+; Third reduction step
 	mov	rbp,r10
 	shl	r10,32
 	mul	r15
@@ -1422,8 +1423,8 @@ __ecp_nistz256_mul_montq:
 	adc	r9,0
 	xor	r10,r10
 
-
-
+; #######################################################################
+; Multiply by b[3]
 	mov	rbp,rax
 	mul	QWORD[rsi]
 	add	r11,rax
@@ -1455,8 +1456,8 @@ __ecp_nistz256_mul_montq:
 	adc	r9,rdx
 	adc	r10,0
 
-
-
+; #######################################################################
+; Final reduction step
 	mov	rbp,r11
 	shl	r11,32
 	mul	r15
@@ -1469,14 +1470,14 @@ __ecp_nistz256_mul_montq:
 	mov	rbp,r13
 	adc	r10,0
 
-
-
-	sub	r12,-1
+; #######################################################################
+; Branch-less conditional subtraction of P
+	sub	r12,-1  ; .Lpoly[0]
 	mov	rbx,r8
-	sbb	r13,r14
-	sbb	r8,0
+	sbb	r13,r14  ; .Lpoly[1]
+	sbb	r8,0  ; .Lpoly[2]
 	mov	rdx,r9
-	sbb	r9,r15
+	sbb	r9,r15  ; .Lpoly[3]
 	sbb	r10,0
 
 	cmovc	r12,rcx
@@ -1492,13 +1493,13 @@ __ecp_nistz256_mul_montq:
 
 
 
+; ###############################################################################
+; void ecp_nistz256_sqr_mont(
+; uint64_t res[4],
+; uint64_t a[4]);
 
-
-
-
-
-
-
+; we optimize the square according to S.Gueron and V.Krasnov,
+; "Speeding up Big-Number Squaring"
 global	ecp_nistz256_sqr_mont_nohw
 
 ALIGN	32
@@ -1559,31 +1560,31 @@ ALIGN	32
 __ecp_nistz256_sqr_montq:
 
 	mov	r13,rax
-	mul	r14
+	mul	r14  ; a[1]*a[0]
 	mov	r9,rax
 	mov	rax,r15
 	mov	r10,rdx
 
-	mul	r13
+	mul	r13  ; a[0]*a[2]
 	add	r10,rax
 	mov	rax,r8
 	adc	rdx,0
 	mov	r11,rdx
 
-	mul	r13
+	mul	r13  ; a[0]*a[3]
 	add	r11,rax
 	mov	rax,r15
 	adc	rdx,0
 	mov	r12,rdx
 
-
-	mul	r14
+; ################################
+	mul	r14  ; a[1]*a[2]
 	add	r11,rax
 	mov	rax,r8
 	adc	rdx,0
 	mov	rbp,rdx
 
-	mul	r14
+	mul	r14  ; a[1]*a[3]
 	add	r12,rax
 	mov	rax,r8
 	adc	rdx,0
@@ -1591,15 +1592,15 @@ __ecp_nistz256_sqr_montq:
 	mov	r13,rdx
 	adc	r13,0
 
-
-	mul	r15
+; ################################
+	mul	r15  ; a[2]*a[3]
 	xor	r15,r15
 	add	r13,rax
 	mov	rax,QWORD[rsi]
 	mov	r14,rdx
 	adc	r14,0
 
-	add	r9,r9
+	add	r9,r9  ; acc1:6<<1
 	adc	r10,r10
 	adc	r11,r11
 	adc	r12,r12
@@ -1635,21 +1636,21 @@ __ecp_nistz256_sqr_montq:
 	mov	rsi,QWORD[(($L$poly+8))]
 	mov	rbp,QWORD[(($L$poly+24))]
 
-
-
-
+; #########################################
+; Now the reduction
+; First iteration
 	mov	rcx,r8
 	shl	r8,32
 	mul	rbp
 	shr	rcx,32
-	add	r9,r8
+	add	r9,r8  ; +=acc[0]<<96
 	adc	r10,rcx
 	adc	r11,rax
 	mov	rax,r9
 	adc	rdx,0
 
-
-
+; #########################################
+; Second iteration
 	mov	rcx,r9
 	shl	r9,32
 	mov	r8,rdx
@@ -1661,8 +1662,8 @@ __ecp_nistz256_sqr_montq:
 	mov	rax,r10
 	adc	rdx,0
 
-
-
+; #########################################
+; Third iteration
 	mov	rcx,r10
 	shl	r10,32
 	mov	r9,rdx
@@ -1674,8 +1675,8 @@ __ecp_nistz256_sqr_montq:
 	mov	rax,r11
 	adc	rdx,0
 
-
-
+; ##########################################
+; Last iteration
 	mov	rcx,r11
 	shl	r11,32
 	mov	r10,rdx
@@ -1687,8 +1688,8 @@ __ecp_nistz256_sqr_montq:
 	adc	rdx,0
 	xor	r11,r11
 
-
-
+; ###########################################
+; Add the rest of the acc
 	add	r12,r8
 	adc	r13,r9
 	mov	r8,r12
@@ -1697,12 +1698,12 @@ __ecp_nistz256_sqr_montq:
 	mov	r9,r13
 	adc	r11,0
 
-	sub	r12,-1
+	sub	r12,-1  ; .Lpoly[0]
 	mov	r10,r14
-	sbb	r13,rsi
-	sbb	r14,0
+	sbb	r13,rsi  ; .Lpoly[1]
+	sbb	r14,0  ; .Lpoly[2]
 	mov	rcx,r15
-	sbb	r15,rbp
+	sbb	r15,rbp  ; .Lpoly[3]
 	sbb	r11,0
 
 	cmovc	r12,r8
@@ -1751,7 +1752,7 @@ $L$mulx_body:
 	mov	r10,QWORD[8+rsi]
 	mov	r11,QWORD[16+rsi]
 	mov	r12,QWORD[24+rsi]
-	lea	rsi,[((-128))+rsi]
+	lea	rsi,[((-128))+rsi]  ; control u-op density
 
 	call	__ecp_nistz256_mul_montx
 
@@ -1780,12 +1781,12 @@ $L$SEH_end_ecp_nistz256_mul_mont_adx:
 ALIGN	32
 __ecp_nistz256_mul_montx:
 
-
-
+; #######################################################################
+; Multiply by b[0]
 	mulx	r9,r8,r9
 	mulx	r10,rcx,r10
 	mov	r14,32
-	xor	r13,r13
+	xor	r13,r13  ; cf=0
 	mulx	r11,rbp,r11
 	mov	r15,QWORD[(($L$poly+24))]
 	adc	r9,rcx
@@ -1797,8 +1798,8 @@ __ecp_nistz256_mul_montx:
 	shrx	rcx,r8,r14
 	adc	r12,0
 
-
-
+; #######################################################################
+; First reduction step
 	add	r9,rbp
 	adc	r10,rcx
 
@@ -1807,10 +1808,10 @@ __ecp_nistz256_mul_montx:
 	adc	r11,rcx
 	adc	r12,rbp
 	adc	r13,0
-	xor	r8,r8
+	xor	r8,r8  ; %r8=0,cf=0,of=0
 
-
-
+; #######################################################################
+; Multiply by b[1]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r9,rcx
 	adox	r10,rbp
@@ -1834,8 +1835,8 @@ __ecp_nistz256_mul_montx:
 	adox	r8,r8
 	adc	r8,0
 
-
-
+; #######################################################################
+; Second reduction step
 	add	r10,rcx
 	adc	r11,rbp
 
@@ -1844,10 +1845,10 @@ __ecp_nistz256_mul_montx:
 	adc	r12,rcx
 	adc	r13,rbp
 	adc	r8,0
-	xor	r9,r9
+	xor	r9,r9  ; %r9=0,cf=0,of=0
 
-
-
+; #######################################################################
+; Multiply by b[2]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r10,rcx
 	adox	r11,rbp
@@ -1871,8 +1872,8 @@ __ecp_nistz256_mul_montx:
 	adox	r9,r9
 	adc	r9,0
 
-
-
+; #######################################################################
+; Third reduction step
 	add	r11,rcx
 	adc	r12,rbp
 
@@ -1881,10 +1882,10 @@ __ecp_nistz256_mul_montx:
 	adc	r13,rcx
 	adc	r8,rbp
 	adc	r9,0
-	xor	r10,r10
+	xor	r10,r10  ; %r10=0,cf=0,of=0
 
-
-
+; #######################################################################
+; Multiply by b[3]
 	mulx	rbp,rcx,QWORD[((0+128))+rsi]
 	adcx	r11,rcx
 	adox	r12,rbp
@@ -1908,8 +1909,8 @@ __ecp_nistz256_mul_montx:
 	adox	r10,r10
 	adc	r10,0
 
-
-
+; #######################################################################
+; Fourth reduction step
 	add	r12,rcx
 	adc	r13,rbp
 
@@ -1921,15 +1922,15 @@ __ecp_nistz256_mul_montx:
 	adc	r9,rbp
 	adc	r10,0
 
-
-
+; #######################################################################
+; Branch-less conditional subtraction of P
 	xor	eax,eax
 	mov	rcx,r8
-	sbb	r12,-1
-	sbb	r13,r14
-	sbb	r8,0
+	sbb	r12,-1  ; .Lpoly[0]
+	sbb	r13,r14  ; .Lpoly[1]
+	sbb	r8,0  ; .Lpoly[2]
 	mov	rbp,r9
-	sbb	r9,r15
+	sbb	r9,r15  ; .Lpoly[3]
 	sbb	r10,0
 
 	cmovc	r12,rbx
@@ -1976,7 +1977,7 @@ $L$sqrx_body:
 	mov	r14,QWORD[8+rsi]
 	mov	r15,QWORD[16+rsi]
 	mov	r8,QWORD[24+rsi]
-	lea	rsi,[((-128))+rsi]
+	lea	rsi,[((-128))+rsi]  ; control u-op density
 
 	call	__ecp_nistz256_sqr_montx
 
@@ -2005,35 +2006,35 @@ $L$SEH_end_ecp_nistz256_sqr_mont_adx:
 ALIGN	32
 __ecp_nistz256_sqr_montx:
 
-	mulx	r10,r9,r14
-	mulx	r11,rcx,r15
+	mulx	r10,r9,r14  ; a[0]*a[1]
+	mulx	r11,rcx,r15  ; a[0]*a[2]
 	xor	eax,eax
 	adc	r10,rcx
-	mulx	r12,rbp,r8
+	mulx	r12,rbp,r8  ; a[0]*a[3]
 	mov	rdx,r14
 	adc	r11,rbp
 	adc	r12,0
-	xor	r13,r13
+	xor	r13,r13  ; %r13=0,cf=0,of=0
 
-
-	mulx	rbp,rcx,r15
+; ################################
+	mulx	rbp,rcx,r15  ; a[1]*a[2]
 	adcx	r11,rcx
 	adox	r12,rbp
 
-	mulx	rbp,rcx,r8
+	mulx	rbp,rcx,r8  ; a[1]*a[3]
 	mov	rdx,r15
 	adcx	r12,rcx
 	adox	r13,rbp
 	adc	r13,0
 
-
-	mulx	r14,rcx,r8
+; ################################
+	mulx	r14,rcx,r8  ; a[2]*a[3]
 	mov	rdx,QWORD[((0+128))+rsi]
-	xor	r15,r15
-	adcx	r9,r9
+	xor	r15,r15  ; %r15=0,cf=0,of=0
+	adcx	r9,r9  ; acc1:6<<1
 	adox	r13,rcx
 	adcx	r10,r10
-	adox	r14,r15
+	adox	r14,r15  ; of=0
 
 	mulx	rbp,r8,rdx
 	mov	rdx,QWORD[((8+128))+rsi]
@@ -2062,7 +2063,7 @@ __ecp_nistz256_sqr_montx:
 	shrx	rax,r8,rsi
 	mov	rbp,rdx
 
-
+; reduction step 1
 	add	r9,rcx
 	adc	r10,rax
 
@@ -2072,7 +2073,7 @@ __ecp_nistz256_sqr_montx:
 	adc	r8,0
 	shrx	rax,r9,rsi
 
-
+; reduction step 2
 	add	r10,rcx
 	adc	r11,rax
 
@@ -2082,7 +2083,7 @@ __ecp_nistz256_sqr_montx:
 	adc	r9,0
 	shrx	rax,r10,rsi
 
-
+; reduction step 3
 	add	r11,rcx
 	adc	r8,rax
 
@@ -2092,7 +2093,7 @@ __ecp_nistz256_sqr_montx:
 	adc	r10,0
 	shrx	rax,r11,rsi
 
-
+; reduction step 4
 	add	r8,rcx
 	adc	r9,rax
 
@@ -2101,7 +2102,7 @@ __ecp_nistz256_sqr_montx:
 	adc	r11,0
 
 	xor	rdx,rdx
-	add	r12,r8
+	add	r12,r8  ; accumulate upper half
 	mov	rsi,QWORD[(($L$poly+8))]
 	adc	r13,r9
 	mov	r8,r12
@@ -2110,12 +2111,12 @@ __ecp_nistz256_sqr_montx:
 	mov	r9,r13
 	adc	rdx,0
 
-	sub	r12,-1
+	sub	r12,-1  ; .Lpoly[0]
 	mov	r10,r14
-	sbb	r13,rsi
-	sbb	r14,0
+	sbb	r13,rsi  ; .Lpoly[1]
+	sbb	r14,0  ; .Lpoly[2]
 	mov	r11,r15
-	sbb	r15,rbp
+	sbb	r15,rbp  ; .Lpoly[3]
 	sbb	rdx,0
 
 	cmovc	r12,r8
@@ -2130,8 +2131,8 @@ __ecp_nistz256_sqr_montx:
 	ret
 
 
-
-
+; ###############################################################################
+; void ecp_nistz256_select_w5_nohw(uint64_t *val, uint64_t *in_t, int index);
 global	ecp_nistz256_select_w5_nohw
 
 ALIGN	32
@@ -2140,17 +2141,17 @@ ecp_nistz256_select_w5_nohw:
 _CET_ENDBR
 	lea	rax,[((-136))+rsp]
 $L$SEH_begin_ecp_nistz256_select_w5_nohw:
-	DB	0x48,0x8d,0x60,0xe0
-	DB	0x0f,0x29,0x70,0xe0
-	DB	0x0f,0x29,0x78,0xf0
-	DB	0x44,0x0f,0x29,0x00
-	DB	0x44,0x0f,0x29,0x48,0x10
-	DB	0x44,0x0f,0x29,0x50,0x20
-	DB	0x44,0x0f,0x29,0x58,0x30
-	DB	0x44,0x0f,0x29,0x60,0x40
-	DB	0x44,0x0f,0x29,0x68,0x50
-	DB	0x44,0x0f,0x29,0x70,0x60
-	DB	0x44,0x0f,0x29,0x78,0x70
+	DB	0x48,0x8d,0x60,0xe0  ; lea	-0x20(%rax), %rsp
+	DB	0x0f,0x29,0x70,0xe0  ; movaps	%xmm6, -0x20(%rax)
+	DB	0x0f,0x29,0x78,0xf0  ; movaps	%xmm7, -0x10(%rax)
+	DB	0x44,0x0f,0x29,0x00  ; movaps	%xmm8, 0(%rax)
+	DB	0x44,0x0f,0x29,0x48,0x10  ; movaps	%xmm9, 0x10(%rax)
+	DB	0x44,0x0f,0x29,0x50,0x20  ; movaps	%xmm10, 0x20(%rax)
+	DB	0x44,0x0f,0x29,0x58,0x30  ; movaps	%xmm11, 0x30(%rax)
+	DB	0x44,0x0f,0x29,0x60,0x40  ; movaps	%xmm12, 0x40(%rax)
+	DB	0x44,0x0f,0x29,0x68,0x50  ; movaps	%xmm13, 0x50(%rax)
+	DB	0x44,0x0f,0x29,0x70,0x60  ; movaps	%xmm14, 0x60(%rax)
+	DB	0x44,0x0f,0x29,0x78,0x70  ; movaps	%xmm15, 0x70(%rax)
 	movdqa	xmm0,XMMWORD[$L$One]
 	movd	xmm1,r8d
 
@@ -2217,8 +2218,8 @@ $L$select_loop_sse_w5:
 $L$SEH_end_ecp_nistz256_select_w5_nohw:
 
 
-
-
+; ###############################################################################
+; void ecp_nistz256_select_w7_nohw(uint64_t *val, uint64_t *in_t, int index);
 global	ecp_nistz256_select_w7_nohw
 
 ALIGN	32
@@ -2227,17 +2228,17 @@ ecp_nistz256_select_w7_nohw:
 _CET_ENDBR
 	lea	rax,[((-136))+rsp]
 $L$SEH_begin_ecp_nistz256_select_w7_nohw:
-	DB	0x48,0x8d,0x60,0xe0
-	DB	0x0f,0x29,0x70,0xe0
-	DB	0x0f,0x29,0x78,0xf0
-	DB	0x44,0x0f,0x29,0x00
-	DB	0x44,0x0f,0x29,0x48,0x10
-	DB	0x44,0x0f,0x29,0x50,0x20
-	DB	0x44,0x0f,0x29,0x58,0x30
-	DB	0x44,0x0f,0x29,0x60,0x40
-	DB	0x44,0x0f,0x29,0x68,0x50
-	DB	0x44,0x0f,0x29,0x70,0x60
-	DB	0x44,0x0f,0x29,0x78,0x70
+	DB	0x48,0x8d,0x60,0xe0  ; lea	-0x20(%rax), %rsp
+	DB	0x0f,0x29,0x70,0xe0  ; movaps	%xmm6, -0x20(%rax)
+	DB	0x0f,0x29,0x78,0xf0  ; movaps	%xmm7, -0x10(%rax)
+	DB	0x44,0x0f,0x29,0x00  ; movaps	%xmm8, 0(%rax)
+	DB	0x44,0x0f,0x29,0x48,0x10  ; movaps	%xmm9, 0x10(%rax)
+	DB	0x44,0x0f,0x29,0x50,0x20  ; movaps	%xmm10, 0x20(%rax)
+	DB	0x44,0x0f,0x29,0x58,0x30  ; movaps	%xmm11, 0x30(%rax)
+	DB	0x44,0x0f,0x29,0x60,0x40  ; movaps	%xmm12, 0x40(%rax)
+	DB	0x44,0x0f,0x29,0x68,0x50  ; movaps	%xmm13, 0x50(%rax)
+	DB	0x44,0x0f,0x29,0x70,0x60  ; movaps	%xmm14, 0x60(%rax)
+	DB	0x44,0x0f,0x29,0x78,0x70  ; movaps	%xmm15, 0x70(%rax)
 	movdqa	xmm8,XMMWORD[$L$One]
 	movd	xmm1,r8d
 
@@ -2292,8 +2293,8 @@ $L$select_loop_sse_w7:
 
 $L$SEH_end_ecp_nistz256_select_w7_nohw:
 
-
-
+; ###############################################################################
+; void ecp_nistz256_select_w5_avx2(uint64_t *val, uint64_t *in_t, int index);
 global	ecp_nistz256_select_w5_avx2
 
 ALIGN	32
@@ -2304,17 +2305,17 @@ _CET_ENDBR
 	lea	rax,[((-136))+rsp]
 	mov	r11,rsp
 $L$SEH_begin_ecp_nistz256_select_w5_avx2:
-	DB	0x48,0x8d,0x60,0xe0
-	DB	0xc5,0xf8,0x29,0x70,0xe0
-	DB	0xc5,0xf8,0x29,0x78,0xf0
-	DB	0xc5,0x78,0x29,0x40,0x00
-	DB	0xc5,0x78,0x29,0x48,0x10
-	DB	0xc5,0x78,0x29,0x50,0x20
-	DB	0xc5,0x78,0x29,0x58,0x30
-	DB	0xc5,0x78,0x29,0x60,0x40
-	DB	0xc5,0x78,0x29,0x68,0x50
-	DB	0xc5,0x78,0x29,0x70,0x60
-	DB	0xc5,0x78,0x29,0x78,0x70
+	DB	0x48,0x8d,0x60,0xe0  ; lea	-0x20(%rax), %rsp
+	DB	0xc5,0xf8,0x29,0x70,0xe0  ; vmovaps %xmm6, -0x20(%rax)
+	DB	0xc5,0xf8,0x29,0x78,0xf0  ; vmovaps %xmm7, -0x10(%rax)
+	DB	0xc5,0x78,0x29,0x40,0x00  ; vmovaps %xmm8, 8(%rax)
+	DB	0xc5,0x78,0x29,0x48,0x10  ; vmovaps %xmm9, 0x10(%rax)
+	DB	0xc5,0x78,0x29,0x50,0x20  ; vmovaps %xmm10, 0x20(%rax)
+	DB	0xc5,0x78,0x29,0x58,0x30  ; vmovaps %xmm11, 0x30(%rax)
+	DB	0xc5,0x78,0x29,0x60,0x40  ; vmovaps %xmm12, 0x40(%rax)
+	DB	0xc5,0x78,0x29,0x68,0x50  ; vmovaps %xmm13, 0x50(%rax)
+	DB	0xc5,0x78,0x29,0x70,0x60  ; vmovaps %xmm14, 0x60(%rax)
+	DB	0xc5,0x78,0x29,0x78,0x70  ; vmovaps %xmm15, 0x70(%rax)
 	vmovdqa	ymm0,YMMWORD[$L$Two]
 
 	vpxor	ymm2,ymm2,ymm2
@@ -2382,8 +2383,8 @@ $L$select_loop_avx2_w5:
 $L$SEH_end_ecp_nistz256_select_w5_avx2:
 
 
-
-
+; ###############################################################################
+; void ecp_nistz256_select_w7_avx2(uint64_t *val, uint64_t *in_t, int index);
 global	ecp_nistz256_select_w7_avx2
 
 ALIGN	32
@@ -2394,17 +2395,17 @@ _CET_ENDBR
 	mov	r11,rsp
 	lea	rax,[((-136))+rsp]
 $L$SEH_begin_ecp_nistz256_select_w7_avx2:
-	DB	0x48,0x8d,0x60,0xe0
-	DB	0xc5,0xf8,0x29,0x70,0xe0
-	DB	0xc5,0xf8,0x29,0x78,0xf0
-	DB	0xc5,0x78,0x29,0x40,0x00
-	DB	0xc5,0x78,0x29,0x48,0x10
-	DB	0xc5,0x78,0x29,0x50,0x20
-	DB	0xc5,0x78,0x29,0x58,0x30
-	DB	0xc5,0x78,0x29,0x60,0x40
-	DB	0xc5,0x78,0x29,0x68,0x50
-	DB	0xc5,0x78,0x29,0x70,0x60
-	DB	0xc5,0x78,0x29,0x78,0x70
+	DB	0x48,0x8d,0x60,0xe0  ; lea	-0x20(%rax), %rsp
+	DB	0xc5,0xf8,0x29,0x70,0xe0  ; vmovaps %xmm6, -0x20(%rax)
+	DB	0xc5,0xf8,0x29,0x78,0xf0  ; vmovaps %xmm7, -0x10(%rax)
+	DB	0xc5,0x78,0x29,0x40,0x00  ; vmovaps %xmm8, 8(%rax)
+	DB	0xc5,0x78,0x29,0x48,0x10  ; vmovaps %xmm9, 0x10(%rax)
+	DB	0xc5,0x78,0x29,0x50,0x20  ; vmovaps %xmm10, 0x20(%rax)
+	DB	0xc5,0x78,0x29,0x58,0x30  ; vmovaps %xmm11, 0x30(%rax)
+	DB	0xc5,0x78,0x29,0x60,0x40  ; vmovaps %xmm12, 0x40(%rax)
+	DB	0xc5,0x78,0x29,0x68,0x50  ; vmovaps %xmm13, 0x50(%rax)
+	DB	0xc5,0x78,0x29,0x70,0x60  ; vmovaps %xmm14, 0x60(%rax)
+	DB	0xc5,0x78,0x29,0x78,0x70  ; vmovaps %xmm15, 0x70(%rax)
 	vmovdqa	ymm0,YMMWORD[$L$Three]
 
 	vpxor	ymm2,ymm2,ymm2
@@ -2416,7 +2417,7 @@ $L$SEH_begin_ecp_nistz256_select_w7_avx2:
 
 	vmovd	xmm1,r8d
 	vpermd	ymm1,ymm2,ymm1
-
+; Skip index = 0, because it is implicitly the point at infinity
 
 	mov	rax,21
 $L$select_loop_avx2_w7:
@@ -2587,7 +2588,7 @@ ALIGN	32
 __ecp_nistz256_mul_by_2q:
 
 	xor	r11,r11
-	add	r12,r12
+	add	r12,r12  ; a0:a3+a0:a3
 	adc	r13,r13
 	mov	rax,r12
 	adc	r8,r8
@@ -2646,10 +2647,10 @@ _CET_ENDBR
 $L$point_doubleq_body:
 
 $L$point_double_shortcutq:
-	movdqu	xmm0,XMMWORD[rsi]
-	mov	rbx,rsi
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi.x
+	mov	rbx,rsi  ; backup copy
 	movdqu	xmm1,XMMWORD[16+rsi]
-	mov	r12,QWORD[((32+0))+rsi]
+	mov	r12,QWORD[((32+0))+rsi]  ; load in_y in "5-4-0-1" order
 	mov	r13,QWORD[((32+8))+rsi]
 	mov	r8,QWORD[((32+16))+rsi]
 	mov	r9,QWORD[((32+24))+rsi]
@@ -2664,7 +2665,7 @@ $L$point_double_shortcutq:
 	movq	xmm2,r11
 
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_by_2q
+	call	__ecp_nistz256_mul_by_2q  ; p256_mul_by_2(S, in_y);
 
 	mov	rax,QWORD[((64+0))+rsi]
 	mov	r14,QWORD[((64+8))+rsi]
@@ -2672,7 +2673,7 @@ $L$point_double_shortcutq:
 	mov	r8,QWORD[((64+24))+rsi]
 	lea	rsi,[((64-0))+rsi]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sqr_montq
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Zsqr, in_z);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
@@ -2680,9 +2681,9 @@ $L$point_double_shortcutq:
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_sqr_montq
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(S, S);
 
-	mov	rax,QWORD[32+rbx]
+	mov	rax,QWORD[32+rbx]  ; %rbx is still valid
 	mov	r9,QWORD[((64+0))+rbx]
 	mov	r10,QWORD[((64+8))+rbx]
 	mov	r11,QWORD[((64+16))+rbx]
@@ -2690,24 +2691,24 @@ $L$point_double_shortcutq:
 	lea	rsi,[((64-0))+rbx]
 	lea	rbx,[32+rbx]
 	movq	rdi,xmm2
-	call	__ecp_nistz256_mul_montq
-	call	__ecp_nistz256_mul_by_2q
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(res_z, in_z, in_y);
+	call	__ecp_nistz256_mul_by_2q  ; p256_mul_by_2(res_z, res_z);
 
-	mov	r12,QWORD[((96+0))+rsp]
+	mov	r12,QWORD[((96+0))+rsp]  ; "5-4-0-1" order
 	mov	r13,QWORD[((96+8))+rsp]
 	lea	rbx,[64+rsp]
 	mov	r8,QWORD[((96+16))+rsp]
 	mov	r9,QWORD[((96+24))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_add_toq
+	call	__ecp_nistz256_add_toq  ; p256_add(M, in_x, Zsqr);
 
-	mov	r12,QWORD[((96+0))+rsp]
+	mov	r12,QWORD[((96+0))+rsp]  ; "5-4-0-1" order
 	mov	r13,QWORD[((96+8))+rsp]
 	lea	rbx,[64+rsp]
 	mov	r8,QWORD[((96+16))+rsp]
 	mov	r9,QWORD[((96+24))+rsp]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(Zsqr, in_x, Zsqr);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
@@ -2715,7 +2716,7 @@ $L$point_double_shortcutq:
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
 	movq	rdi,xmm1
-	call	__ecp_nistz256_sqr_montq
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(res_y, S);
 	xor	r9,r9
 	mov	rax,r12
 	add	r12,-1
@@ -2726,7 +2727,7 @@ $L$point_double_shortcutq:
 	mov	r8,r15
 	adc	r15,rbp
 	adc	r9,0
-	xor	rsi,rsi
+	xor	rsi,rsi  ; borrow %rsi
 	test	rax,1
 
 	cmovz	r12,rax
@@ -2735,7 +2736,7 @@ $L$point_double_shortcutq:
 	cmovz	r15,r8
 	cmovz	r9,rsi
 
-	mov	rax,r13
+	mov	rax,r13  ; a0:a3>>1
 	shr	r12,1
 	shl	rax,63
 	mov	r10,r14
@@ -2762,14 +2763,14 @@ $L$point_double_shortcutq:
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(M, M, Zsqr);
 
 	lea	rdi,[128+rsp]
 	call	__ecp_nistz256_mul_by_2q
 
 	lea	rbx,[32+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_add_toq
+	call	__ecp_nistz256_add_toq  ; p256_mul_by_3(M, M);
 
 	mov	rax,QWORD[96+rsp]
 	lea	rbx,[96+rsp]
@@ -2779,10 +2780,10 @@ $L$point_double_shortcutq:
 	mov	r11,QWORD[((16+0))+rsp]
 	mov	r12,QWORD[((24+0))+rsp]
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S, S, in_x);
 
 	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_mul_by_2q
+	call	__ecp_nistz256_mul_by_2q  ; p256_mul_by_2(tmp0, S);
 
 	mov	rax,QWORD[((0+32))+rsp]
 	mov	r14,QWORD[((8+32))+rsp]
@@ -2790,27 +2791,27 @@ $L$point_double_shortcutq:
 	mov	r15,QWORD[((16+32))+rsp]
 	mov	r8,QWORD[((24+32))+rsp]
 	movq	rdi,xmm0
-	call	__ecp_nistz256_sqr_montq
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(res_x, M);
 
 	lea	rbx,[128+rsp]
-	mov	r8,r14
+	mov	r8,r14  ; harmonize sqr output and sub input
 	mov	r9,r15
 	mov	r14,rsi
 	mov	r15,rbp
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_x, res_x, tmp0);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	rbp,QWORD[((0+8))+rsp]
 	mov	rcx,QWORD[((0+16))+rsp]
-	mov	r10,QWORD[((0+24))+rsp]
+	mov	r10,QWORD[((0+24))+rsp]  ; "4-5-0-1" order
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_subq
+	call	__ecp_nistz256_subq  ; p256_sub(S, S, res_x);
 
 	mov	rax,QWORD[32+rsp]
 	lea	rbx,[32+rsp]
-	mov	r14,r12
+	mov	r14,r12  ; harmonize sub output and mul input
 	xor	ecx,ecx
-	mov	QWORD[((0+0))+rsp],r12
+	mov	QWORD[((0+0))+rsp],r12  ; have to save:-(
 	mov	r10,r13
 	mov	QWORD[((0+8))+rsp],r13
 	cmovz	r11,r8
@@ -2820,11 +2821,11 @@ $L$point_double_shortcutq:
 	mov	QWORD[((0+24))+rsp],r9
 	mov	r9,r14
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S, S, M);
 
 	movq	rbx,xmm1
 	movq	rdi,xmm1
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_y, S, res_y);
 
 	lea	rsi,[((160+56))+rsp]
 
@@ -2879,14 +2880,14 @@ _CET_ENDBR
 
 $L$point_addq_body:
 
-	movdqu	xmm0,XMMWORD[rsi]
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm3,XMMWORD[48+rsi]
 	movdqu	xmm4,XMMWORD[64+rsi]
 	movdqu	xmm5,XMMWORD[80+rsi]
-	mov	rbx,rsi
-	mov	rsi,rdx
+	mov	rbx,rsi  ; reassign
+	mov	rsi,rdx  ; reassign
 	movdqa	XMMWORD[384+rsp],xmm0
 	movdqa	XMMWORD[(384+16)+rsp],xmm1
 	movdqa	XMMWORD[416+rsp],xmm2
@@ -2895,54 +2896,54 @@ $L$point_addq_body:
 	movdqa	XMMWORD[(448+16)+rsp],xmm5
 	por	xmm5,xmm4
 
-	movdqu	xmm0,XMMWORD[rsi]
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rbx
 	pshufd	xmm3,xmm5,0xb1
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	por	xmm5,xmm3
 	movdqu	xmm3,XMMWORD[48+rsi]
-	mov	rax,QWORD[((64+0))+rsi]
+	mov	rax,QWORD[((64+0))+rsi]  ; load original in2_z
 	mov	r14,QWORD[((64+8))+rsi]
 	mov	r15,QWORD[((64+16))+rsi]
 	mov	r8,QWORD[((64+24))+rsi]
 	movdqa	XMMWORD[480+rsp],xmm0
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(480+16)+rsp],xmm1
-	movdqu	xmm0,XMMWORD[64+rsi]
+	movdqu	xmm0,XMMWORD[64+rsi]  ; in2_z again
 	movdqu	xmm1,XMMWORD[80+rsi]
 	movdqa	XMMWORD[512+rsp],xmm2
 	movdqa	XMMWORD[(512+16)+rsp],xmm3
 	por	xmm5,xmm4
 	pxor	xmm4,xmm4
 	por	xmm1,xmm0
-	movq	xmm0,rdi
+	movq	xmm0,rdi  ; save %rdi
 
-	lea	rsi,[((64-0))+rsi]
-	mov	QWORD[((544+0))+rsp],rax
+	lea	rsi,[((64-0))+rsi]  ; %rsi is still valid
+	mov	QWORD[((544+0))+rsp],rax  ; make in2_z copy
 	mov	QWORD[((544+8))+rsp],r14
 	mov	QWORD[((544+16))+rsp],r15
 	mov	QWORD[((544+24))+rsp],r8
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[96+rsp]  ; Z2^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Z2sqr, in2_z);
 
 	pcmpeqd	xmm5,xmm4
 	pshufd	xmm4,xmm1,0xb1
 	por	xmm4,xmm1
-	pshufd	xmm5,xmm5,0
+	pshufd	xmm5,xmm5,0  ; in1infty
 	pshufd	xmm3,xmm4,0x1e
 	por	xmm4,xmm3
 	pxor	xmm3,xmm3
 	pcmpeqd	xmm4,xmm3
-	pshufd	xmm4,xmm4,0
-	mov	rax,QWORD[((64+0))+rbx]
+	pshufd	xmm4,xmm4,0  ; in2infty
+	mov	rax,QWORD[((64+0))+rbx]  ; load original in1_z
 	mov	r14,QWORD[((64+8))+rbx]
 	mov	r15,QWORD[((64+16))+rbx]
 	mov	r8,QWORD[((64+24))+rbx]
 	movq	xmm1,rbx
 
 	lea	rsi,[((64-0))+rbx]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[32+rsp]  ; Z1^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Z1sqr, in1_z);
 
 	mov	rax,QWORD[544+rsp]
 	lea	rbx,[544+rsp]
@@ -2951,8 +2952,8 @@ $L$point_addq_body:
 	lea	rsi,[((0+96))+rsp]
 	mov	r11,QWORD[((16+96))+rsp]
 	mov	r12,QWORD[((24+96))+rsp]
-	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[224+rsp]  ; S1 = Z2^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S1, Z2sqr, in2_z);
 
 	mov	rax,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -2961,8 +2962,8 @@ $L$point_addq_body:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[256+rsp]  ; S2 = Z1^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, Z1sqr, in1_z);
 
 	mov	rax,QWORD[416+rsp]
 	lea	rbx,[416+rsp]
@@ -2971,8 +2972,8 @@ $L$point_addq_body:
 	lea	rsi,[((0+224))+rsp]
 	mov	r11,QWORD[((16+224))+rsp]
 	mov	r12,QWORD[((24+224))+rsp]
-	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[224+rsp]  ; S1 = Y1*Z2^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S1, S1, in1_y);
 
 	mov	rax,QWORD[512+rsp]
 	lea	rbx,[512+rsp]
@@ -2981,18 +2982,18 @@ $L$point_addq_body:
 	lea	rsi,[((0+256))+rsp]
 	mov	r11,QWORD[((16+256))+rsp]
 	mov	r12,QWORD[((24+256))+rsp]
-	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[256+rsp]  ; S2 = Y2*Z1^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, S2, in2_y);
 
 	lea	rbx,[224+rsp]
-	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromq
+	lea	rdi,[64+rsp]  ; R = S2 - S1
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(R, S2, S1);
 
-	or	r12,r13
+	or	r12,r13  ; see if result is zero
 	movdqa	xmm2,xmm4
 	or	r12,r8
 	or	r12,r9
-	por	xmm2,xmm5
+	por	xmm2,xmm5  ; in1infty || in2infty
 	movq	xmm3,r12
 
 	mov	rax,QWORD[384+rsp]
@@ -3002,8 +3003,8 @@ $L$point_addq_body:
 	lea	rsi,[((0+96))+rsp]
 	mov	r11,QWORD[((16+96))+rsp]
 	mov	r12,QWORD[((24+96))+rsp]
-	lea	rdi,[160+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[160+rsp]  ; U1 = X1*Z2^2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(U1, in1_x, Z2sqr);
 
 	mov	rax,QWORD[480+rsp]
 	lea	rbx,[480+rsp]
@@ -3012,34 +3013,34 @@ $L$point_addq_body:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[192+rsp]  ; U2 = X2*Z1^2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(U2, in2_x, Z1sqr);
 
 	lea	rbx,[160+rsp]
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_sub_fromq
+	lea	rdi,[rsp]  ; H = U2 - U1
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(H, U2, U1);
 
-	or	r12,r13
+	or	r12,r13  ; see if result is zero
 	or	r12,r8
-	or	r12,r9
+	or	r12,r9  ; !is_equal(U1, U2)
 
 	movq	r8,xmm2
 	movq	r9,xmm3
 	or	r12,r8
-	DB	0x3e
-	jnz	NEAR $L$add_proceedq
+	DB	0x3e  ; predict taken
+	jnz	NEAR $L$add_proceedq  ; !is_equal(U1, U2) || in1infty || in2infty
 
-
-
+; We now know A = B or A = -B and neither is infinity. Compare the
+; y-coordinates via S1 and S2.
 	test	r9,r9
-	jz	NEAR $L$add_doubleq
+	jz	NEAR $L$add_doubleq  ; is_equal(S1, S2)
 
-
-
-
-
-
-	movq	rdi,xmm0
+; A = -B, so the result is infinity.
+; 
+; TODO(davidben): Does .Ladd_proceed handle this case? It seems to, in
+; which case we should eliminate this special-case and simplify the
+; timing analysis.
+	movq	rdi,xmm0  ; restore %rdi
 	pxor	xmm0,xmm0
 	movdqu	XMMWORD[rdi],xmm0
 	movdqu	XMMWORD[16+rdi],xmm0
@@ -3051,9 +3052,9 @@ $L$point_addq_body:
 
 ALIGN	32
 $L$add_doubleq:
-	movq	rsi,xmm1
-	movq	rdi,xmm0
-	add	rsp,416
+	movq	rsi,xmm1  ; restore %rsi
+	movq	rdi,xmm0  ; restore %rdi
+	add	rsp,416  ; difference in frame sizes
 
 	jmp	NEAR $L$point_double_shortcutq
 
@@ -3065,8 +3066,8 @@ $L$add_proceedq:
 	lea	rsi,[((0+64))+rsp]
 	mov	r15,QWORD[((16+64))+rsp]
 	mov	r8,QWORD[((24+64))+rsp]
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[96+rsp]  ; R^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Rsqr, R);
 
 	mov	rax,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -3075,16 +3076,16 @@ $L$add_proceedq:
 	lea	rsi,[((0+0))+rsp]
 	mov	r11,QWORD[((16+0))+rsp]
 	mov	r12,QWORD[((24+0))+rsp]
-	lea	rdi,[352+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[352+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(res_z, H, in1_z);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
 	lea	rsi,[((0+0))+rsp]
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[32+rsp]  ; H^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Hsqr, H);
 
 	mov	rax,QWORD[544+rsp]
 	lea	rbx,[544+rsp]
@@ -3093,8 +3094,8 @@ $L$add_proceedq:
 	lea	rsi,[((0+352))+rsp]
 	mov	r11,QWORD[((16+352))+rsp]
 	mov	r12,QWORD[((24+352))+rsp]
-	lea	rdi,[352+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[352+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(res_z, res_z, in2_z);
 
 	mov	rax,QWORD[rsp]
 	lea	rbx,[rsp]
@@ -3103,8 +3104,8 @@ $L$add_proceedq:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[128+rsp]  ; H^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(Hcub, Hsqr, H);
 
 	mov	rax,QWORD[160+rsp]
 	lea	rbx,[160+rsp]
@@ -3113,14 +3114,14 @@ $L$add_proceedq:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_mul_montq
-
-
-
+	lea	rdi,[192+rsp]  ; U1*H^2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(U2, U1, Hsqr);
+; lea	192(%rsp), %rsi
+; lea	32(%rsp), %rdi	# 2*U1*H^2
+; call	__ecp_nistz256_mul_by_2	# ecp_nistz256_mul_by_2(Hsqr, U2);
 
 	xor	r11,r11
-	add	r12,r12
+	add	r12,r12  ; a0:a3+a0:a3
 	lea	rsi,[96+rsp]
 	adc	r13,r13
 	mov	rax,r12
@@ -3146,11 +3147,11 @@ $L$add_proceedq:
 	cmovc	r9,r10
 	mov	r10,QWORD[24+rsi]
 
-	call	__ecp_nistz256_subq
+	call	__ecp_nistz256_subq  ; p256_sub(res_x, Rsqr, Hsqr);
 
 	lea	rbx,[128+rsp]
 	lea	rdi,[288+rsp]
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_x, res_x, Hcub);
 
 	mov	rax,QWORD[((192+0))+rsp]
 	mov	rbp,QWORD[((192+8))+rsp]
@@ -3158,10 +3159,10 @@ $L$add_proceedq:
 	mov	r10,QWORD[((192+24))+rsp]
 	lea	rdi,[320+rsp]
 
-	call	__ecp_nistz256_subq
+	call	__ecp_nistz256_subq  ; p256_sub(res_y, U2, res_x);
 
-	mov	QWORD[rdi],r12
-	mov	QWORD[8+rdi],r13
+	mov	QWORD[rdi],r12  ; save the result, as
+	mov	QWORD[8+rdi],r13  ; __ecp_nistz256_sub doesn't
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 	mov	rax,QWORD[128+rsp]
@@ -3172,7 +3173,7 @@ $L$add_proceedq:
 	mov	r11,QWORD[((16+224))+rsp]
 	mov	r12,QWORD[((24+224))+rsp]
 	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, S1, Hcub);
 
 	mov	rax,QWORD[320+rsp]
 	lea	rbx,[320+rsp]
@@ -3182,15 +3183,15 @@ $L$add_proceedq:
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
 	lea	rdi,[320+rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(res_y, R, res_y);
 
 	lea	rbx,[256+rsp]
 	lea	rdi,[320+rsp]
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_y, res_y, S2);
 
-	movq	rdi,xmm0
+	movq	rdi,xmm0  ; restore %rdi
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_z, in2_z, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[352+rsp]
 	movdqa	xmm2,xmm5
@@ -3201,7 +3202,7 @@ $L$add_proceedq:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_z, in1_z, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3214,7 +3215,7 @@ $L$add_proceedq:
 	movdqu	XMMWORD[64+rdi],xmm2
 	movdqu	XMMWORD[80+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_x, in2_x, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[288+rsp]
 	movdqa	xmm2,xmm5
@@ -3225,7 +3226,7 @@ $L$add_proceedq:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_x, in1_x, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3238,7 +3239,7 @@ $L$add_proceedq:
 	movdqu	XMMWORD[rdi],xmm2
 	movdqu	XMMWORD[16+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_y, in2_y, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[320+rsp]
 	movdqa	xmm2,xmm5
@@ -3249,7 +3250,7 @@ $L$add_proceedq:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_y, in1_y, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3316,14 +3317,14 @@ _CET_ENDBR
 
 $L$add_affineq_body:
 
-	movdqu	xmm0,XMMWORD[rsi]
-	mov	rbx,rdx
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi
+	mov	rbx,rdx  ; reassign
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm3,XMMWORD[48+rsi]
 	movdqu	xmm4,XMMWORD[64+rsi]
 	movdqu	xmm5,XMMWORD[80+rsi]
-	mov	rax,QWORD[((64+0))+rsi]
+	mov	rax,QWORD[((64+0))+rsi]  ; load original in1_z
 	mov	r14,QWORD[((64+8))+rsi]
 	mov	r15,QWORD[((64+16))+rsi]
 	mov	r8,QWORD[((64+24))+rsi]
@@ -3335,7 +3336,7 @@ $L$add_affineq_body:
 	movdqa	XMMWORD[(384+16)+rsp],xmm5
 	por	xmm5,xmm4
 
-	movdqu	xmm0,XMMWORD[rbx]
+	movdqu	xmm0,XMMWORD[rbx]  ; copy	*(P256_POINT_AFFINE *)%rbx
 	pshufd	xmm3,xmm5,0xb1
 	movdqu	xmm1,XMMWORD[16+rbx]
 	movdqu	xmm2,XMMWORD[32+rbx]
@@ -3345,7 +3346,7 @@ $L$add_affineq_body:
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(416+16)+rsp],xmm1
 	por	xmm1,xmm0
-	movq	xmm0,rdi
+	movq	xmm0,rdi  ; save %rdi
 	movdqa	XMMWORD[448+rsp],xmm2
 	movdqa	XMMWORD[(448+16)+rsp],xmm3
 	por	xmm3,xmm2
@@ -3353,33 +3354,33 @@ $L$add_affineq_body:
 	pxor	xmm4,xmm4
 	por	xmm3,xmm1
 
-	lea	rsi,[((64-0))+rsi]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rsi,[((64-0))+rsi]  ; %rsi is still valid
+	lea	rdi,[32+rsp]  ; Z1^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Z1sqr, in1_z);
 
 	pcmpeqd	xmm5,xmm4
 	pshufd	xmm4,xmm3,0xb1
-	mov	rax,QWORD[rbx]
-
-	mov	r9,r12
+	mov	rax,QWORD[rbx]  ; %rbx is still valid
+; lea	0x00(%rbx), %rbx
+	mov	r9,r12  ; harmonize sqr output and mul input
 	por	xmm4,xmm3
-	pshufd	xmm5,xmm5,0
+	pshufd	xmm5,xmm5,0  ; in1infty
 	pshufd	xmm3,xmm4,0x1e
 	mov	r10,r13
 	por	xmm4,xmm3
 	pxor	xmm3,xmm3
 	mov	r11,r14
 	pcmpeqd	xmm4,xmm3
-	pshufd	xmm4,xmm4,0
+	pshufd	xmm4,xmm4,0  ; in2infty
 
 	lea	rsi,[((32-0))+rsp]
 	mov	r12,r15
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[rsp]  ; U2 = X2*Z1^2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(U2, Z1sqr, in2_x);
 
 	lea	rbx,[320+rsp]
-	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromq
+	lea	rdi,[64+rsp]  ; H = U2 - U1
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(H, U2, in1_x);
 
 	mov	rax,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -3388,8 +3389,8 @@ $L$add_affineq_body:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[32+rsp]  ; S2 = Z1^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, Z1sqr, in1_z);
 
 	mov	rax,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -3398,8 +3399,8 @@ $L$add_affineq_body:
 	lea	rsi,[((0+64))+rsp]
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
-	lea	rdi,[288+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[288+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(res_z, H, in1_z);
 
 	mov	rax,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -3408,28 +3409,28 @@ $L$add_affineq_body:
 	lea	rsi,[((0+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[32+rsp]  ; S2 = Y2*Z1^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, S2, in2_y);
 
 	lea	rbx,[352+rsp]
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sub_fromq
+	lea	rdi,[96+rsp]  ; R = S2 - S1
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(R, S2, in1_y);
 
 	mov	rax,QWORD[((0+64))+rsp]
 	mov	r14,QWORD[((8+64))+rsp]
 	lea	rsi,[((0+64))+rsp]
 	mov	r15,QWORD[((16+64))+rsp]
 	mov	r8,QWORD[((24+64))+rsp]
-	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[128+rsp]  ; H^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Hsqr, H);
 
 	mov	rax,QWORD[((0+96))+rsp]
 	mov	r14,QWORD[((8+96))+rsp]
 	lea	rsi,[((0+96))+rsp]
 	mov	r15,QWORD[((16+96))+rsp]
 	mov	r8,QWORD[((24+96))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_sqr_montq
+	lea	rdi,[192+rsp]  ; R^2
+	call	__ecp_nistz256_sqr_montq  ; p256_sqr_mont(Rsqr, R);
 
 	mov	rax,QWORD[128+rsp]
 	lea	rbx,[128+rsp]
@@ -3438,8 +3439,8 @@ $L$add_affineq_body:
 	lea	rsi,[((0+64))+rsp]
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
-	lea	rdi,[160+rsp]
-	call	__ecp_nistz256_mul_montq
+	lea	rdi,[160+rsp]  ; H^3
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(Hcub, Hsqr, H);
 
 	mov	rax,QWORD[320+rsp]
 	lea	rbx,[320+rsp]
@@ -3448,14 +3449,14 @@ $L$add_affineq_body:
 	lea	rsi,[((0+128))+rsp]
 	mov	r11,QWORD[((16+128))+rsp]
 	mov	r12,QWORD[((24+128))+rsp]
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montq
-
-
-
+	lea	rdi,[rsp]  ; U1*H^2
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(U2, in1_x, Hsqr);
+; lea	0(%rsp), %rsi
+; lea	128(%rsp), %rdi	# 2*U1*H^2
+; call	__ecp_nistz256_mul_by_2	# ecp_nistz256_mul_by_2(Hsqr, U2);
 
 	xor	r11,r11
-	add	r12,r12
+	add	r12,r12  ; a0:a3+a0:a3
 	lea	rsi,[192+rsp]
 	adc	r13,r13
 	mov	rax,r12
@@ -3481,11 +3482,11 @@ $L$add_affineq_body:
 	cmovc	r9,r10
 	mov	r10,QWORD[24+rsi]
 
-	call	__ecp_nistz256_subq
+	call	__ecp_nistz256_subq  ; p256_sub(res_x, Rsqr, Hsqr);
 
 	lea	rbx,[160+rsp]
 	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_x, res_x, Hcub);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	rbp,QWORD[((0+8))+rsp]
@@ -3493,10 +3494,10 @@ $L$add_affineq_body:
 	mov	r10,QWORD[((0+24))+rsp]
 	lea	rdi,[64+rsp]
 
-	call	__ecp_nistz256_subq
+	call	__ecp_nistz256_subq  ; p256_sub(H, U2, res_x);
 
-	mov	QWORD[rdi],r12
-	mov	QWORD[8+rdi],r13
+	mov	QWORD[rdi],r12  ; save the result, as
+	mov	QWORD[8+rdi],r13  ; __ecp_nistz256_sub doesn't
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 	mov	rax,QWORD[352+rsp]
@@ -3507,7 +3508,7 @@ $L$add_affineq_body:
 	mov	r11,QWORD[((16+160))+rsp]
 	mov	r12,QWORD[((24+160))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(S2, Hcub, in1_y);
 
 	mov	rax,QWORD[96+rsp]
 	lea	rbx,[96+rsp]
@@ -3517,15 +3518,15 @@ $L$add_affineq_body:
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_mul_montq
+	call	__ecp_nistz256_mul_montq  ; p256_mul_mont(H, H, R);
 
 	lea	rbx,[32+rsp]
 	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_sub_fromq
+	call	__ecp_nistz256_sub_fromq  ; p256_sub(res_y, H, S2);
 
-	movq	rdi,xmm0
+	movq	rdi,xmm0  ; restore %rdi
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_z, ONE, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[288+rsp]
 	movdqa	xmm2,xmm5
@@ -3536,7 +3537,7 @@ $L$add_affineq_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_z, in1_z, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3549,7 +3550,7 @@ $L$add_affineq_body:
 	movdqu	XMMWORD[64+rdi],xmm2
 	movdqu	XMMWORD[80+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_x, in2_x, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[224+rsp]
 	movdqa	xmm2,xmm5
@@ -3560,7 +3561,7 @@ $L$add_affineq_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_x, in1_x, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3573,7 +3574,7 @@ $L$add_affineq_body:
 	movdqu	XMMWORD[rdi],xmm2
 	movdqu	XMMWORD[16+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_y, in2_y, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[256+rsp]
 	movdqa	xmm2,xmm5
@@ -3584,7 +3585,7 @@ $L$add_affineq_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_y, in1_y, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -3725,7 +3726,7 @@ ALIGN	32
 __ecp_nistz256_mul_by_2x:
 
 	xor	r11,r11
-	adc	r12,r12
+	adc	r12,r12  ; a0:a3+a0:a3
 	adc	r13,r13
 	mov	rax,r12
 	adc	r8,r8
@@ -3785,10 +3786,10 @@ _CET_ENDBR
 $L$point_doublex_body:
 
 $L$point_double_shortcutx:
-	movdqu	xmm0,XMMWORD[rsi]
-	mov	rbx,rsi
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi.x
+	mov	rbx,rsi  ; backup copy
 	movdqu	xmm1,XMMWORD[16+rsi]
-	mov	r12,QWORD[((32+0))+rsi]
+	mov	r12,QWORD[((32+0))+rsi]  ; load in_y in "5-4-0-1" order
 	mov	r13,QWORD[((32+8))+rsi]
 	mov	r8,QWORD[((32+16))+rsi]
 	mov	r9,QWORD[((32+24))+rsi]
@@ -3803,7 +3804,7 @@ $L$point_double_shortcutx:
 	movq	xmm2,r11
 
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_by_2x
+	call	__ecp_nistz256_mul_by_2x  ; p256_mul_by_2(S, in_y);
 
 	mov	rdx,QWORD[((64+0))+rsi]
 	mov	r14,QWORD[((64+8))+rsi]
@@ -3811,7 +3812,7 @@ $L$point_double_shortcutx:
 	mov	r8,QWORD[((64+24))+rsi]
 	lea	rsi,[((64-128))+rsi]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sqr_montx
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Zsqr, in_z);
 
 	mov	rdx,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
@@ -3819,9 +3820,9 @@ $L$point_double_shortcutx:
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_sqr_montx
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(S, S);
 
-	mov	rdx,QWORD[32+rbx]
+	mov	rdx,QWORD[32+rbx]  ; %rbx is still valid
 	mov	r9,QWORD[((64+0))+rbx]
 	mov	r10,QWORD[((64+8))+rbx]
 	mov	r11,QWORD[((64+16))+rbx]
@@ -3829,24 +3830,24 @@ $L$point_double_shortcutx:
 	lea	rsi,[((64-128))+rbx]
 	lea	rbx,[32+rbx]
 	movq	rdi,xmm2
-	call	__ecp_nistz256_mul_montx
-	call	__ecp_nistz256_mul_by_2x
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(res_z, in_z, in_y);
+	call	__ecp_nistz256_mul_by_2x  ; p256_mul_by_2(res_z, res_z);
 
-	mov	r12,QWORD[((96+0))+rsp]
+	mov	r12,QWORD[((96+0))+rsp]  ; "5-4-0-1" order
 	mov	r13,QWORD[((96+8))+rsp]
 	lea	rbx,[64+rsp]
 	mov	r8,QWORD[((96+16))+rsp]
 	mov	r9,QWORD[((96+24))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_add_tox
+	call	__ecp_nistz256_add_tox  ; p256_add(M, in_x, Zsqr);
 
-	mov	r12,QWORD[((96+0))+rsp]
+	mov	r12,QWORD[((96+0))+rsp]  ; "5-4-0-1" order
 	mov	r13,QWORD[((96+8))+rsp]
 	lea	rbx,[64+rsp]
 	mov	r8,QWORD[((96+16))+rsp]
 	mov	r9,QWORD[((96+24))+rsp]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(Zsqr, in_x, Zsqr);
 
 	mov	rdx,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
@@ -3854,7 +3855,7 @@ $L$point_double_shortcutx:
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
 	movq	rdi,xmm1
-	call	__ecp_nistz256_sqr_montx
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(res_y, S);
 	xor	r9,r9
 	mov	rax,r12
 	add	r12,-1
@@ -3865,7 +3866,7 @@ $L$point_double_shortcutx:
 	mov	r8,r15
 	adc	r15,rbp
 	adc	r9,0
-	xor	rsi,rsi
+	xor	rsi,rsi  ; borrow %rsi
 	test	rax,1
 
 	cmovz	r12,rax
@@ -3874,7 +3875,7 @@ $L$point_double_shortcutx:
 	cmovz	r15,r8
 	cmovz	r9,rsi
 
-	mov	rax,r13
+	mov	rax,r13  ; a0:a3>>1
 	shr	r12,1
 	shl	rax,63
 	mov	r10,r14
@@ -3901,14 +3902,14 @@ $L$point_double_shortcutx:
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(M, M, Zsqr);
 
 	lea	rdi,[128+rsp]
 	call	__ecp_nistz256_mul_by_2x
 
 	lea	rbx,[32+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_add_tox
+	call	__ecp_nistz256_add_tox  ; p256_mul_by_3(M, M);
 
 	mov	rdx,QWORD[96+rsp]
 	lea	rbx,[96+rsp]
@@ -3918,10 +3919,10 @@ $L$point_double_shortcutx:
 	mov	r11,QWORD[((16+0))+rsp]
 	mov	r12,QWORD[((24+0))+rsp]
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S, S, in_x);
 
 	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_mul_by_2x
+	call	__ecp_nistz256_mul_by_2x  ; p256_mul_by_2(tmp0, S);
 
 	mov	rdx,QWORD[((0+32))+rsp]
 	mov	r14,QWORD[((8+32))+rsp]
@@ -3929,27 +3930,27 @@ $L$point_double_shortcutx:
 	mov	r15,QWORD[((16+32))+rsp]
 	mov	r8,QWORD[((24+32))+rsp]
 	movq	rdi,xmm0
-	call	__ecp_nistz256_sqr_montx
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(res_x, M);
 
 	lea	rbx,[128+rsp]
-	mov	r8,r14
+	mov	r8,r14  ; harmonize sqr output and sub input
 	mov	r9,r15
 	mov	r14,rsi
 	mov	r15,rbp
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_x, res_x, tmp0);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	rbp,QWORD[((0+8))+rsp]
 	mov	rcx,QWORD[((0+16))+rsp]
-	mov	r10,QWORD[((0+24))+rsp]
+	mov	r10,QWORD[((0+24))+rsp]  ; "4-5-0-1" order
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_subx
+	call	__ecp_nistz256_subx  ; p256_sub(S, S, res_x);
 
 	mov	rdx,QWORD[32+rsp]
 	lea	rbx,[32+rsp]
-	mov	r14,r12
+	mov	r14,r12  ; harmonize sub output and mul input
 	xor	ecx,ecx
-	mov	QWORD[((0+0))+rsp],r12
+	mov	QWORD[((0+0))+rsp],r12  ; have to save:-(
 	mov	r10,r13
 	mov	QWORD[((0+8))+rsp],r13
 	cmovz	r11,r8
@@ -3959,11 +3960,11 @@ $L$point_double_shortcutx:
 	mov	QWORD[((0+24))+rsp],r9
 	mov	r9,r14
 	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S, S, M);
 
 	movq	rbx,xmm1
 	movq	rdi,xmm1
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_y, S, res_y);
 
 	lea	rsi,[((160+56))+rsp]
 
@@ -4018,14 +4019,14 @@ _CET_ENDBR
 
 $L$point_addx_body:
 
-	movdqu	xmm0,XMMWORD[rsi]
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm3,XMMWORD[48+rsi]
 	movdqu	xmm4,XMMWORD[64+rsi]
 	movdqu	xmm5,XMMWORD[80+rsi]
-	mov	rbx,rsi
-	mov	rsi,rdx
+	mov	rbx,rsi  ; reassign
+	mov	rsi,rdx  ; reassign
 	movdqa	XMMWORD[384+rsp],xmm0
 	movdqa	XMMWORD[(384+16)+rsp],xmm1
 	movdqa	XMMWORD[416+rsp],xmm2
@@ -4034,54 +4035,54 @@ $L$point_addx_body:
 	movdqa	XMMWORD[(448+16)+rsp],xmm5
 	por	xmm5,xmm4
 
-	movdqu	xmm0,XMMWORD[rsi]
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rbx
 	pshufd	xmm3,xmm5,0xb1
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	por	xmm5,xmm3
 	movdqu	xmm3,XMMWORD[48+rsi]
-	mov	rdx,QWORD[((64+0))+rsi]
+	mov	rdx,QWORD[((64+0))+rsi]  ; load original in2_z
 	mov	r14,QWORD[((64+8))+rsi]
 	mov	r15,QWORD[((64+16))+rsi]
 	mov	r8,QWORD[((64+24))+rsi]
 	movdqa	XMMWORD[480+rsp],xmm0
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(480+16)+rsp],xmm1
-	movdqu	xmm0,XMMWORD[64+rsi]
+	movdqu	xmm0,XMMWORD[64+rsi]  ; in2_z again
 	movdqu	xmm1,XMMWORD[80+rsi]
 	movdqa	XMMWORD[512+rsp],xmm2
 	movdqa	XMMWORD[(512+16)+rsp],xmm3
 	por	xmm5,xmm4
 	pxor	xmm4,xmm4
 	por	xmm1,xmm0
-	movq	xmm0,rdi
+	movq	xmm0,rdi  ; save %rdi
 
-	lea	rsi,[((64-128))+rsi]
-	mov	QWORD[((544+0))+rsp],rdx
+	lea	rsi,[((64-128))+rsi]  ; %rsi is still valid
+	mov	QWORD[((544+0))+rsp],rdx  ; make in2_z copy
 	mov	QWORD[((544+8))+rsp],r14
 	mov	QWORD[((544+16))+rsp],r15
 	mov	QWORD[((544+24))+rsp],r8
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[96+rsp]  ; Z2^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Z2sqr, in2_z);
 
 	pcmpeqd	xmm5,xmm4
 	pshufd	xmm4,xmm1,0xb1
 	por	xmm4,xmm1
-	pshufd	xmm5,xmm5,0
+	pshufd	xmm5,xmm5,0  ; in1infty
 	pshufd	xmm3,xmm4,0x1e
 	por	xmm4,xmm3
 	pxor	xmm3,xmm3
 	pcmpeqd	xmm4,xmm3
-	pshufd	xmm4,xmm4,0
-	mov	rdx,QWORD[((64+0))+rbx]
+	pshufd	xmm4,xmm4,0  ; in2infty
+	mov	rdx,QWORD[((64+0))+rbx]  ; load original in1_z
 	mov	r14,QWORD[((64+8))+rbx]
 	mov	r15,QWORD[((64+16))+rbx]
 	mov	r8,QWORD[((64+24))+rbx]
 	movq	xmm1,rbx
 
 	lea	rsi,[((64-128))+rbx]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[32+rsp]  ; Z1^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Z1sqr, in1_z);
 
 	mov	rdx,QWORD[544+rsp]
 	lea	rbx,[544+rsp]
@@ -4090,8 +4091,8 @@ $L$point_addx_body:
 	lea	rsi,[((-128+96))+rsp]
 	mov	r11,QWORD[((16+96))+rsp]
 	mov	r12,QWORD[((24+96))+rsp]
-	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[224+rsp]  ; S1 = Z2^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S1, Z2sqr, in2_z);
 
 	mov	rdx,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -4100,8 +4101,8 @@ $L$point_addx_body:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[256+rsp]  ; S2 = Z1^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, Z1sqr, in1_z);
 
 	mov	rdx,QWORD[416+rsp]
 	lea	rbx,[416+rsp]
@@ -4110,8 +4111,8 @@ $L$point_addx_body:
 	lea	rsi,[((-128+224))+rsp]
 	mov	r11,QWORD[((16+224))+rsp]
 	mov	r12,QWORD[((24+224))+rsp]
-	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[224+rsp]  ; S1 = Y1*Z2^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S1, S1, in1_y);
 
 	mov	rdx,QWORD[512+rsp]
 	lea	rbx,[512+rsp]
@@ -4120,18 +4121,18 @@ $L$point_addx_body:
 	lea	rsi,[((-128+256))+rsp]
 	mov	r11,QWORD[((16+256))+rsp]
 	mov	r12,QWORD[((24+256))+rsp]
-	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[256+rsp]  ; S2 = Y2*Z1^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, S2, in2_y);
 
 	lea	rbx,[224+rsp]
-	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromx
+	lea	rdi,[64+rsp]  ; R = S2 - S1
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(R, S2, S1);
 
-	or	r12,r13
+	or	r12,r13  ; see if result is zero
 	movdqa	xmm2,xmm4
 	or	r12,r8
 	or	r12,r9
-	por	xmm2,xmm5
+	por	xmm2,xmm5  ; in1infty || in2infty
 	movq	xmm3,r12
 
 	mov	rdx,QWORD[384+rsp]
@@ -4141,8 +4142,8 @@ $L$point_addx_body:
 	lea	rsi,[((-128+96))+rsp]
 	mov	r11,QWORD[((16+96))+rsp]
 	mov	r12,QWORD[((24+96))+rsp]
-	lea	rdi,[160+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[160+rsp]  ; U1 = X1*Z2^2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(U1, in1_x, Z2sqr);
 
 	mov	rdx,QWORD[480+rsp]
 	lea	rbx,[480+rsp]
@@ -4151,34 +4152,34 @@ $L$point_addx_body:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[192+rsp]  ; U2 = X2*Z1^2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(U2, in2_x, Z1sqr);
 
 	lea	rbx,[160+rsp]
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_sub_fromx
+	lea	rdi,[rsp]  ; H = U2 - U1
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(H, U2, U1);
 
-	or	r12,r13
+	or	r12,r13  ; see if result is zero
 	or	r12,r8
-	or	r12,r9
+	or	r12,r9  ; !is_equal(U1, U2)
 
 	movq	r8,xmm2
 	movq	r9,xmm3
 	or	r12,r8
-	DB	0x3e
-	jnz	NEAR $L$add_proceedx
+	DB	0x3e  ; predict taken
+	jnz	NEAR $L$add_proceedx  ; !is_equal(U1, U2) || in1infty || in2infty
 
-
-
+; We now know A = B or A = -B and neither is infinity. Compare the
+; y-coordinates via S1 and S2.
 	test	r9,r9
-	jz	NEAR $L$add_doublex
+	jz	NEAR $L$add_doublex  ; is_equal(S1, S2)
 
-
-
-
-
-
-	movq	rdi,xmm0
+; A = -B, so the result is infinity.
+; 
+; TODO(davidben): Does .Ladd_proceed handle this case? It seems to, in
+; which case we should eliminate this special-case and simplify the
+; timing analysis.
+	movq	rdi,xmm0  ; restore %rdi
 	pxor	xmm0,xmm0
 	movdqu	XMMWORD[rdi],xmm0
 	movdqu	XMMWORD[16+rdi],xmm0
@@ -4190,9 +4191,9 @@ $L$point_addx_body:
 
 ALIGN	32
 $L$add_doublex:
-	movq	rsi,xmm1
-	movq	rdi,xmm0
-	add	rsp,416
+	movq	rsi,xmm1  ; restore %rsi
+	movq	rdi,xmm0  ; restore %rdi
+	add	rsp,416  ; difference in frame sizes
 
 	jmp	NEAR $L$point_double_shortcutx
 
@@ -4204,8 +4205,8 @@ $L$add_proceedx:
 	lea	rsi,[((-128+64))+rsp]
 	mov	r15,QWORD[((16+64))+rsp]
 	mov	r8,QWORD[((24+64))+rsp]
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[96+rsp]  ; R^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Rsqr, R);
 
 	mov	rdx,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -4214,16 +4215,16 @@ $L$add_proceedx:
 	lea	rsi,[((-128+0))+rsp]
 	mov	r11,QWORD[((16+0))+rsp]
 	mov	r12,QWORD[((24+0))+rsp]
-	lea	rdi,[352+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[352+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(res_z, H, in1_z);
 
 	mov	rdx,QWORD[((0+0))+rsp]
 	mov	r14,QWORD[((8+0))+rsp]
 	lea	rsi,[((-128+0))+rsp]
 	mov	r15,QWORD[((16+0))+rsp]
 	mov	r8,QWORD[((24+0))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[32+rsp]  ; H^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Hsqr, H);
 
 	mov	rdx,QWORD[544+rsp]
 	lea	rbx,[544+rsp]
@@ -4232,8 +4233,8 @@ $L$add_proceedx:
 	lea	rsi,[((-128+352))+rsp]
 	mov	r11,QWORD[((16+352))+rsp]
 	mov	r12,QWORD[((24+352))+rsp]
-	lea	rdi,[352+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[352+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(res_z, res_z, in2_z);
 
 	mov	rdx,QWORD[rsp]
 	lea	rbx,[rsp]
@@ -4242,8 +4243,8 @@ $L$add_proceedx:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[128+rsp]  ; H^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(Hcub, Hsqr, H);
 
 	mov	rdx,QWORD[160+rsp]
 	lea	rbx,[160+rsp]
@@ -4252,14 +4253,14 @@ $L$add_proceedx:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_mul_montx
-
-
-
+	lea	rdi,[192+rsp]  ; U1*H^2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(U2, U1, Hsqr);
+; lea	192(%rsp), %rsi
+; lea	32(%rsp), %rdi	# 2*U1*H^2
+; call	__ecp_nistz256_mul_by_2	# ecp_nistz256_mul_by_2(Hsqr, U2);
 
 	xor	r11,r11
-	add	r12,r12
+	add	r12,r12  ; a0:a3+a0:a3
 	lea	rsi,[96+rsp]
 	adc	r13,r13
 	mov	rax,r12
@@ -4285,11 +4286,11 @@ $L$add_proceedx:
 	cmovc	r9,r10
 	mov	r10,QWORD[24+rsi]
 
-	call	__ecp_nistz256_subx
+	call	__ecp_nistz256_subx  ; p256_sub(res_x, Rsqr, Hsqr);
 
 	lea	rbx,[128+rsp]
 	lea	rdi,[288+rsp]
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_x, res_x, Hcub);
 
 	mov	rax,QWORD[((192+0))+rsp]
 	mov	rbp,QWORD[((192+8))+rsp]
@@ -4297,10 +4298,10 @@ $L$add_proceedx:
 	mov	r10,QWORD[((192+24))+rsp]
 	lea	rdi,[320+rsp]
 
-	call	__ecp_nistz256_subx
+	call	__ecp_nistz256_subx  ; p256_sub(res_y, U2, res_x);
 
-	mov	QWORD[rdi],r12
-	mov	QWORD[8+rdi],r13
+	mov	QWORD[rdi],r12  ; save the result, as
+	mov	QWORD[8+rdi],r13  ; __ecp_nistz256_sub doesn't
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 	mov	rdx,QWORD[128+rsp]
@@ -4311,7 +4312,7 @@ $L$add_proceedx:
 	mov	r11,QWORD[((16+224))+rsp]
 	mov	r12,QWORD[((24+224))+rsp]
 	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, S1, Hcub);
 
 	mov	rdx,QWORD[320+rsp]
 	lea	rbx,[320+rsp]
@@ -4321,15 +4322,15 @@ $L$add_proceedx:
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
 	lea	rdi,[320+rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(res_y, R, res_y);
 
 	lea	rbx,[256+rsp]
 	lea	rdi,[320+rsp]
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_y, res_y, S2);
 
-	movq	rdi,xmm0
+	movq	rdi,xmm0  ; restore %rdi
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_z, in2_z, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[352+rsp]
 	movdqa	xmm2,xmm5
@@ -4340,7 +4341,7 @@ $L$add_proceedx:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_z, in1_z, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4353,7 +4354,7 @@ $L$add_proceedx:
 	movdqu	XMMWORD[64+rdi],xmm2
 	movdqu	XMMWORD[80+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_x, in2_x, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[288+rsp]
 	movdqa	xmm2,xmm5
@@ -4364,7 +4365,7 @@ $L$add_proceedx:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_x, in1_x, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4377,7 +4378,7 @@ $L$add_proceedx:
 	movdqu	XMMWORD[rdi],xmm2
 	movdqu	XMMWORD[16+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_y, in2_y, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[320+rsp]
 	movdqa	xmm2,xmm5
@@ -4388,7 +4389,7 @@ $L$add_proceedx:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_y, in1_y, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4455,14 +4456,14 @@ _CET_ENDBR
 
 $L$add_affinex_body:
 
-	movdqu	xmm0,XMMWORD[rsi]
-	mov	rbx,rdx
+	movdqu	xmm0,XMMWORD[rsi]  ; copy	*(P256_POINT *)%rsi
+	mov	rbx,rdx  ; reassign
 	movdqu	xmm1,XMMWORD[16+rsi]
 	movdqu	xmm2,XMMWORD[32+rsi]
 	movdqu	xmm3,XMMWORD[48+rsi]
 	movdqu	xmm4,XMMWORD[64+rsi]
 	movdqu	xmm5,XMMWORD[80+rsi]
-	mov	rdx,QWORD[((64+0))+rsi]
+	mov	rdx,QWORD[((64+0))+rsi]  ; load original in1_z
 	mov	r14,QWORD[((64+8))+rsi]
 	mov	r15,QWORD[((64+16))+rsi]
 	mov	r8,QWORD[((64+24))+rsi]
@@ -4474,7 +4475,7 @@ $L$add_affinex_body:
 	movdqa	XMMWORD[(384+16)+rsp],xmm5
 	por	xmm5,xmm4
 
-	movdqu	xmm0,XMMWORD[rbx]
+	movdqu	xmm0,XMMWORD[rbx]  ; copy	*(P256_POINT_AFFINE *)%rbx
 	pshufd	xmm3,xmm5,0xb1
 	movdqu	xmm1,XMMWORD[16+rbx]
 	movdqu	xmm2,XMMWORD[32+rbx]
@@ -4484,7 +4485,7 @@ $L$add_affinex_body:
 	pshufd	xmm4,xmm5,0x1e
 	movdqa	XMMWORD[(416+16)+rsp],xmm1
 	por	xmm1,xmm0
-	movq	xmm0,rdi
+	movq	xmm0,rdi  ; save %rdi
 	movdqa	XMMWORD[448+rsp],xmm2
 	movdqa	XMMWORD[(448+16)+rsp],xmm3
 	por	xmm3,xmm2
@@ -4492,33 +4493,33 @@ $L$add_affinex_body:
 	pxor	xmm4,xmm4
 	por	xmm3,xmm1
 
-	lea	rsi,[((64-128))+rsi]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rsi,[((64-128))+rsi]  ; %rsi is still valid
+	lea	rdi,[32+rsp]  ; Z1^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Z1sqr, in1_z);
 
 	pcmpeqd	xmm5,xmm4
 	pshufd	xmm4,xmm3,0xb1
-	mov	rdx,QWORD[rbx]
-
-	mov	r9,r12
+	mov	rdx,QWORD[rbx]  ; %rbx is still valid
+; lea	0x00(%rbx), %rbx
+	mov	r9,r12  ; harmonize sqr output and mul input
 	por	xmm4,xmm3
-	pshufd	xmm5,xmm5,0
+	pshufd	xmm5,xmm5,0  ; in1infty
 	pshufd	xmm3,xmm4,0x1e
 	mov	r10,r13
 	por	xmm4,xmm3
 	pxor	xmm3,xmm3
 	mov	r11,r14
 	pcmpeqd	xmm4,xmm3
-	pshufd	xmm4,xmm4,0
+	pshufd	xmm4,xmm4,0  ; in2infty
 
 	lea	rsi,[((32-128))+rsp]
 	mov	r12,r15
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[rsp]  ; U2 = X2*Z1^2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(U2, Z1sqr, in2_x);
 
 	lea	rbx,[320+rsp]
-	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_sub_fromx
+	lea	rdi,[64+rsp]  ; H = U2 - U1
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(H, U2, in1_x);
 
 	mov	rdx,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -4527,8 +4528,8 @@ $L$add_affinex_body:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[32+rsp]  ; S2 = Z1^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, Z1sqr, in1_z);
 
 	mov	rdx,QWORD[384+rsp]
 	lea	rbx,[384+rsp]
@@ -4537,8 +4538,8 @@ $L$add_affinex_body:
 	lea	rsi,[((-128+64))+rsp]
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
-	lea	rdi,[288+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[288+rsp]  ; Z3 = H*Z1*Z2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(res_z, H, in1_z);
 
 	mov	rdx,QWORD[448+rsp]
 	lea	rbx,[448+rsp]
@@ -4547,28 +4548,28 @@ $L$add_affinex_body:
 	lea	rsi,[((-128+32))+rsp]
 	mov	r11,QWORD[((16+32))+rsp]
 	mov	r12,QWORD[((24+32))+rsp]
-	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[32+rsp]  ; S2 = Y2*Z1^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, S2, in2_y);
 
 	lea	rbx,[352+rsp]
-	lea	rdi,[96+rsp]
-	call	__ecp_nistz256_sub_fromx
+	lea	rdi,[96+rsp]  ; R = S2 - S1
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(R, S2, in1_y);
 
 	mov	rdx,QWORD[((0+64))+rsp]
 	mov	r14,QWORD[((8+64))+rsp]
 	lea	rsi,[((-128+64))+rsp]
 	mov	r15,QWORD[((16+64))+rsp]
 	mov	r8,QWORD[((24+64))+rsp]
-	lea	rdi,[128+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[128+rsp]  ; H^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Hsqr, H);
 
 	mov	rdx,QWORD[((0+96))+rsp]
 	mov	r14,QWORD[((8+96))+rsp]
 	lea	rsi,[((-128+96))+rsp]
 	mov	r15,QWORD[((16+96))+rsp]
 	mov	r8,QWORD[((24+96))+rsp]
-	lea	rdi,[192+rsp]
-	call	__ecp_nistz256_sqr_montx
+	lea	rdi,[192+rsp]  ; R^2
+	call	__ecp_nistz256_sqr_montx  ; p256_sqr_mont(Rsqr, R);
 
 	mov	rdx,QWORD[128+rsp]
 	lea	rbx,[128+rsp]
@@ -4577,8 +4578,8 @@ $L$add_affinex_body:
 	lea	rsi,[((-128+64))+rsp]
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
-	lea	rdi,[160+rsp]
-	call	__ecp_nistz256_mul_montx
+	lea	rdi,[160+rsp]  ; H^3
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(Hcub, Hsqr, H);
 
 	mov	rdx,QWORD[320+rsp]
 	lea	rbx,[320+rsp]
@@ -4587,14 +4588,14 @@ $L$add_affinex_body:
 	lea	rsi,[((-128+128))+rsp]
 	mov	r11,QWORD[((16+128))+rsp]
 	mov	r12,QWORD[((24+128))+rsp]
-	lea	rdi,[rsp]
-	call	__ecp_nistz256_mul_montx
-
-
-
+	lea	rdi,[rsp]  ; U1*H^2
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(U2, in1_x, Hsqr);
+; lea	0(%rsp), %rsi
+; lea	128(%rsp), %rdi	# 2*U1*H^2
+; call	__ecp_nistz256_mul_by_2	# ecp_nistz256_mul_by_2(Hsqr, U2);
 
 	xor	r11,r11
-	add	r12,r12
+	add	r12,r12  ; a0:a3+a0:a3
 	lea	rsi,[192+rsp]
 	adc	r13,r13
 	mov	rax,r12
@@ -4620,11 +4621,11 @@ $L$add_affinex_body:
 	cmovc	r9,r10
 	mov	r10,QWORD[24+rsi]
 
-	call	__ecp_nistz256_subx
+	call	__ecp_nistz256_subx  ; p256_sub(res_x, Rsqr, Hsqr);
 
 	lea	rbx,[160+rsp]
 	lea	rdi,[224+rsp]
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_x, res_x, Hcub);
 
 	mov	rax,QWORD[((0+0))+rsp]
 	mov	rbp,QWORD[((0+8))+rsp]
@@ -4632,10 +4633,10 @@ $L$add_affinex_body:
 	mov	r10,QWORD[((0+24))+rsp]
 	lea	rdi,[64+rsp]
 
-	call	__ecp_nistz256_subx
+	call	__ecp_nistz256_subx  ; p256_sub(H, U2, res_x);
 
-	mov	QWORD[rdi],r12
-	mov	QWORD[8+rdi],r13
+	mov	QWORD[rdi],r12  ; save the result, as
+	mov	QWORD[8+rdi],r13  ; __ecp_nistz256_sub doesn't
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 	mov	rdx,QWORD[352+rsp]
@@ -4646,7 +4647,7 @@ $L$add_affinex_body:
 	mov	r11,QWORD[((16+160))+rsp]
 	mov	r12,QWORD[((24+160))+rsp]
 	lea	rdi,[32+rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(S2, Hcub, in1_y);
 
 	mov	rdx,QWORD[96+rsp]
 	lea	rbx,[96+rsp]
@@ -4656,15 +4657,15 @@ $L$add_affinex_body:
 	mov	r11,QWORD[((16+64))+rsp]
 	mov	r12,QWORD[((24+64))+rsp]
 	lea	rdi,[64+rsp]
-	call	__ecp_nistz256_mul_montx
+	call	__ecp_nistz256_mul_montx  ; p256_mul_mont(H, H, R);
 
 	lea	rbx,[32+rsp]
 	lea	rdi,[256+rsp]
-	call	__ecp_nistz256_sub_fromx
+	call	__ecp_nistz256_sub_fromx  ; p256_sub(res_y, H, S2);
 
-	movq	rdi,xmm0
+	movq	rdi,xmm0  ; restore %rdi
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_z, ONE, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[288+rsp]
 	movdqa	xmm2,xmm5
@@ -4675,7 +4676,7 @@ $L$add_affinex_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_z, in1_z, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4688,7 +4689,7 @@ $L$add_affinex_body:
 	movdqu	XMMWORD[64+rdi],xmm2
 	movdqu	XMMWORD[80+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_x, in2_x, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[224+rsp]
 	movdqa	xmm2,xmm5
@@ -4699,7 +4700,7 @@ $L$add_affinex_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_x, in1_x, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4712,7 +4713,7 @@ $L$add_affinex_body:
 	movdqu	XMMWORD[rdi],xmm2
 	movdqu	XMMWORD[16+rdi],xmm3
 
-	movdqa	xmm0,xmm5
+	movdqa	xmm0,xmm5  ; copy_conditional(res_y, in2_y, in1infty);
 	movdqa	xmm1,xmm5
 	pandn	xmm0,XMMWORD[256+rsp]
 	movdqa	xmm2,xmm5
@@ -4723,7 +4724,7 @@ $L$add_affinex_body:
 	por	xmm2,xmm0
 	por	xmm3,xmm1
 
-	movdqa	xmm0,xmm4
+	movdqa	xmm0,xmm4  ; copy_conditional(res_y, in1_y, in2infty);
 	movdqa	xmm1,xmm4
 	pandn	xmm0,xmm2
 	movdqa	xmm2,xmm4
@@ -4774,30 +4775,30 @@ short_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; end of prologue label
+	cmp	rbx,r10  ; context->Rip<end of prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[152+r8]  ; pull context->Rsp
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
 	lea	rax,[16+rax]
 
 	mov	r12,QWORD[((-8))+rax]
 	mov	r13,QWORD[((-16))+rax]
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
 
 	jmp	NEAR $L$common_seh_tail
 
@@ -4816,25 +4817,25 @@ full_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; end of prologue label
+	cmp	rbx,r10  ; context->Rip<end of prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[152+r8]  ; pull context->Rsp
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
-	mov	r10d,DWORD[8+r11]
+	mov	r10d,DWORD[8+r11]  ; HandlerData[2]
 	lea	rax,[r10*1+rax]
 
 	mov	rbp,QWORD[((-8))+rax]
@@ -4843,40 +4844,40 @@ full_handler:
 	mov	r13,QWORD[((-32))+rax]
 	mov	r14,QWORD[((-40))+rax]
 	mov	r15,QWORD[((-48))+rax]
-	mov	QWORD[144+r8],rbx
-	mov	QWORD[160+r8],rbp
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
-	mov	QWORD[232+r8],r14
-	mov	QWORD[240+r8],r15
+	mov	QWORD[144+r8],rbx  ; restore context->Rbx
+	mov	QWORD[160+r8],rbp  ; restore context->Rbp
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
+	mov	QWORD[232+r8],r14  ; restore context->R14
+	mov	QWORD[240+r8],r15  ; restore context->R15
 
 $L$common_seh_tail:
 	mov	rdi,QWORD[8+rax]
 	mov	rsi,QWORD[16+rax]
-	mov	QWORD[152+r8],rax
-	mov	QWORD[168+r8],rsi
-	mov	QWORD[176+r8],rdi
+	mov	QWORD[152+r8],rax  ; restore context->Rsp
+	mov	QWORD[168+r8],rsi  ; restore context->Rsi
+	mov	QWORD[176+r8],rdi  ; restore context->Rdi
 
-	mov	rdi,QWORD[40+r9]
-	mov	rsi,r8
-	mov	ecx,154
-	DD	0xa548f3fc
+	mov	rdi,QWORD[40+r9]  ; disp->ContextRecord
+	mov	rsi,r8  ; context
+	mov	ecx,154  ; sizeof(CONTEXT)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rsi,r9
-	xor	rcx,rcx
-	mov	rdx,QWORD[8+rsi]
-	mov	r8,QWORD[rsi]
-	mov	r9,QWORD[16+rsi]
-	mov	r10,QWORD[40+rsi]
-	lea	r11,[56+rsi]
-	lea	r12,[24+rsi]
-	mov	QWORD[32+rsp],r10
-	mov	QWORD[40+rsp],r11
-	mov	QWORD[48+rsp],r12
-	mov	QWORD[56+rsp],rcx
+	xor	rcx,rcx  ; arg1, UNW_FLAG_NHANDLER
+	mov	rdx,QWORD[8+rsi]  ; arg2, disp->ImageBase
+	mov	r8,QWORD[rsi]  ; arg3, disp->ControlPc
+	mov	r9,QWORD[16+rsi]  ; arg4, disp->FunctionEntry
+	mov	r10,QWORD[40+rsi]  ; disp->ContextRecord
+	lea	r11,[56+rsi]  ; &disp->HandlerData
+	lea	r12,[24+rsi]  ; &disp->EstablisherFrame
+	mov	QWORD[32+rsp],r10  ; arg5
+	mov	QWORD[40+rsp],r11  ; arg6
+	mov	QWORD[48+rsp],r12  ; arg7
+	mov	QWORD[56+rsp],rcx  ; arg8, (NULL)
 	call	QWORD[__imp_RtlVirtualUnwind]
 
-	mov	eax,1
+	mov	eax,1  ; ExceptionContinueSearch
 	add	rsp,64
 	popfq
 	pop	r15
@@ -4966,106 +4967,106 @@ ALIGN	8
 $L$SEH_info_ecp_nistz256_neg:
 	DB	9,0,0,0
 	DD	short_handler wrt ..imagebase
-	DD	$L$neg_body wrt ..imagebase,$L$neg_epilogue wrt ..imagebase
+	DD	$L$neg_body wrt ..imagebase,$L$neg_epilogue wrt ..imagebase  ; HandlerData[]
 $L$SEH_info_ecp_nistz256_ord_mul_mont_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$ord_mul_body wrt ..imagebase,$L$ord_mul_epilogue wrt ..imagebase
+	DD	$L$ord_mul_body wrt ..imagebase,$L$ord_mul_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_ord_sqr_mont_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$ord_sqr_body wrt ..imagebase,$L$ord_sqr_epilogue wrt ..imagebase
+	DD	$L$ord_sqr_body wrt ..imagebase,$L$ord_sqr_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_ord_mul_mont_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$ord_mulx_body wrt ..imagebase,$L$ord_mulx_epilogue wrt ..imagebase
+	DD	$L$ord_mulx_body wrt ..imagebase,$L$ord_mulx_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_ord_sqr_mont_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$ord_sqrx_body wrt ..imagebase,$L$ord_sqrx_epilogue wrt ..imagebase
+	DD	$L$ord_sqrx_body wrt ..imagebase,$L$ord_sqrx_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_mul_mont_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$mul_body wrt ..imagebase,$L$mul_epilogue wrt ..imagebase
+	DD	$L$mul_body wrt ..imagebase,$L$mul_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_sqr_mont_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$sqr_body wrt ..imagebase,$L$sqr_epilogue wrt ..imagebase
+	DD	$L$sqr_body wrt ..imagebase,$L$sqr_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_mul_mont_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$mulx_body wrt ..imagebase,$L$mulx_epilogue wrt ..imagebase
+	DD	$L$mulx_body wrt ..imagebase,$L$mulx_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_sqr_mont_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$sqrx_body wrt ..imagebase,$L$sqrx_epilogue wrt ..imagebase
+	DD	$L$sqrx_body wrt ..imagebase,$L$sqrx_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	48,0
 $L$SEH_info_ecp_nistz256_select_wX_nohw:
 	DB	0x01,0x33,0x16,0x00
-	DB	0x33,0xf8,0x09,0x00
-	DB	0x2e,0xe8,0x08,0x00
-	DB	0x29,0xd8,0x07,0x00
-	DB	0x24,0xc8,0x06,0x00
-	DB	0x1f,0xb8,0x05,0x00
-	DB	0x1a,0xa8,0x04,0x00
-	DB	0x15,0x98,0x03,0x00
-	DB	0x10,0x88,0x02,0x00
-	DB	0x0c,0x78,0x01,0x00
-	DB	0x08,0x68,0x00,0x00
-	DB	0x04,0x01,0x15,0x00
+	DB	0x33,0xf8,0x09,0x00  ; movaps 0x90(rsp),xmm15
+	DB	0x2e,0xe8,0x08,0x00  ; movaps 0x80(rsp),xmm14
+	DB	0x29,0xd8,0x07,0x00  ; movaps 0x70(rsp),xmm13
+	DB	0x24,0xc8,0x06,0x00  ; movaps 0x60(rsp),xmm12
+	DB	0x1f,0xb8,0x05,0x00  ; movaps 0x50(rsp),xmm11
+	DB	0x1a,0xa8,0x04,0x00  ; movaps 0x40(rsp),xmm10
+	DB	0x15,0x98,0x03,0x00  ; movaps 0x30(rsp),xmm9
+	DB	0x10,0x88,0x02,0x00  ; movaps 0x20(rsp),xmm8
+	DB	0x0c,0x78,0x01,0x00  ; movaps 0x10(rsp),xmm7
+	DB	0x08,0x68,0x00,0x00  ; movaps 0x00(rsp),xmm6
+	DB	0x04,0x01,0x15,0x00  ; sub	rsp,0xa8
 ALIGN	8
 $L$SEH_info_ecp_nistz256_select_wX_avx2:
 	DB	0x01,0x36,0x17,0x0b
-	DB	0x36,0xf8,0x09,0x00
-	DB	0x31,0xe8,0x08,0x00
-	DB	0x2c,0xd8,0x07,0x00
-	DB	0x27,0xc8,0x06,0x00
-	DB	0x22,0xb8,0x05,0x00
-	DB	0x1d,0xa8,0x04,0x00
-	DB	0x18,0x98,0x03,0x00
-	DB	0x13,0x88,0x02,0x00
-	DB	0x0e,0x78,0x01,0x00
-	DB	0x09,0x68,0x00,0x00
-	DB	0x04,0x01,0x15,0x00
-	DB	0x00,0xb3,0x00,0x00
+	DB	0x36,0xf8,0x09,0x00  ; vmovaps 0x90(rsp),xmm15
+	DB	0x31,0xe8,0x08,0x00  ; vmovaps 0x80(rsp),xmm14
+	DB	0x2c,0xd8,0x07,0x00  ; vmovaps 0x70(rsp),xmm13
+	DB	0x27,0xc8,0x06,0x00  ; vmovaps 0x60(rsp),xmm12
+	DB	0x22,0xb8,0x05,0x00  ; vmovaps 0x50(rsp),xmm11
+	DB	0x1d,0xa8,0x04,0x00  ; vmovaps 0x40(rsp),xmm10
+	DB	0x18,0x98,0x03,0x00  ; vmovaps 0x30(rsp),xmm9
+	DB	0x13,0x88,0x02,0x00  ; vmovaps 0x20(rsp),xmm8
+	DB	0x0e,0x78,0x01,0x00  ; vmovaps 0x10(rsp),xmm7
+	DB	0x09,0x68,0x00,0x00  ; vmovaps 0x00(rsp),xmm6
+	DB	0x04,0x01,0x15,0x00  ; sub	  rsp,0xa8
+	DB	0x00,0xb3,0x00,0x00  ; set_frame r11
 ALIGN	8
 $L$SEH_info_ecp_nistz256_point_double_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$point_doubleq_body wrt ..imagebase,$L$point_doubleq_epilogue wrt ..imagebase
+	DD	$L$point_doubleq_body wrt ..imagebase,$L$point_doubleq_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*5+56,0
 $L$SEH_info_ecp_nistz256_point_add_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$point_addq_body wrt ..imagebase,$L$point_addq_epilogue wrt ..imagebase
+	DD	$L$point_addq_body wrt ..imagebase,$L$point_addq_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*18+56,0
 $L$SEH_info_ecp_nistz256_point_add_affine_nohw:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$add_affineq_body wrt ..imagebase,$L$add_affineq_epilogue wrt ..imagebase
+	DD	$L$add_affineq_body wrt ..imagebase,$L$add_affineq_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*15+56,0
 ALIGN	8
 $L$SEH_info_ecp_nistz256_point_double_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$point_doublex_body wrt ..imagebase,$L$point_doublex_epilogue wrt ..imagebase
+	DD	$L$point_doublex_body wrt ..imagebase,$L$point_doublex_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*5+56,0
 $L$SEH_info_ecp_nistz256_point_add_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$point_addx_body wrt ..imagebase,$L$point_addx_epilogue wrt ..imagebase
+	DD	$L$point_addx_body wrt ..imagebase,$L$point_addx_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*18+56,0
 $L$SEH_info_ecp_nistz256_point_add_affine_adx:
 	DB	9,0,0,0
 	DD	full_handler wrt ..imagebase
-	DD	$L$add_affinex_body wrt ..imagebase,$L$add_affinex_epilogue wrt ..imagebase
+	DD	$L$add_affinex_body wrt ..imagebase,$L$add_affinex_epilogue wrt ..imagebase  ; HandlerData[]
 	DD	32*15+56,0
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738

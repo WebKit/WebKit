@@ -25,15 +25,15 @@
 #include "mock_quic_transport.h"
 
 struct TestState {
-  // Serialize writes |pending_session| and |msg_callback_text| to |out|, for
+  // Serialize writes `pending_session` and `msg_callback_text` to `out`, for
   // use in split-handshake tests.  We don't try to serialize every bit of test
-  // state, but serializing |pending_session| is necessary to exercise session
-  // resumption, and |msg_callback_text| is especially useful.  In the general
+  // state, but serializing `pending_session` is necessary to exercise session
+  // resumption, and `msg_callback_text` is especially useful.  In the general
   // case, checks of state updated during the handshake can be skipped when
-  // |config->handoff|.
+  // `config->handoff`.
   bool Serialize(CBB *out) const;
 
-  // Deserialize returns a new |TestState| from data written by |Serialize|.
+  // Deserialize returns a new `TestState` from data written by `Serialize`.
   static std::unique_ptr<TestState> Deserialize(CBS *cbs, SSL_CTX *ctx);
 
   // async_bio is async BIO which pauses reads and writes.
@@ -83,10 +83,10 @@ void AdvanceClock(unsigned seconds);
 void CopySessions(SSL_CTX *dest, const SSL_CTX *src);
 
 // SerializeContextState writes session material (sessions and ticket keys) from
-// |ctx| into |cbb|.
+// `ctx` into `cbb`.
 bool SerializeContextState(SSL_CTX *ctx, CBB *cbb);
 
-// DeserializeContextState updates |out| with material previously serialized by
+// DeserializeContextState updates `out` with material previously serialized by
 // SerializeContextState.
 bool DeserializeContextState(CBS *in, SSL_CTX *out);
 

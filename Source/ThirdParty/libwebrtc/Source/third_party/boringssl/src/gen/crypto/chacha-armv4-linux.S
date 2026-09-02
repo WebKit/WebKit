@@ -23,6 +23,7 @@
 #endif
 
 .align	5
+chacha_constants:
 .Lsigma:
 .long	0x61707865,0x3320646e,0x79622d32,0x6b206574	@ endian-neutral
 .Lone:

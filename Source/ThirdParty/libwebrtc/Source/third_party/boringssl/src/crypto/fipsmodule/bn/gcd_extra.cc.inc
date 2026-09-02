@@ -72,7 +72,7 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
     return 0;
   }
 
-  // Each loop iteration halves at least one of |u| and |v|. Thus we need at
+  // Each loop iteration halves at least one of `u` and `v`. Thus we need at
   // most the combined bit width of inputs for at least one value to be zero.
   x_bits = x->width * BN_BITS2;
   y_bits = y->width * BN_BITS2;
@@ -86,14 +86,14 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
   for (unsigned i = 0; i < num_iters; i++) {
     BN_ULONG both_odd = word_is_odd_mask(u->d[0]) & word_is_odd_mask(v->d[0]);
 
-    // If both |u| and |v| are odd, subtract the smaller from the larger.
+    // If both `u` and `v` are odd, subtract the smaller from the larger.
     BN_ULONG u_less_than_v =
         (BN_ULONG)0 - bn_sub_words(tmp->d, u->d, v->d, width);
     bn_select_words(u->d, both_odd & ~u_less_than_v, tmp->d, u->d, width);
     bn_sub_words(tmp->d, v->d, u->d, width);
     bn_select_words(v->d, both_odd & u_less_than_v, tmp->d, v->d, width);
 
-    // At least one of |u| and |v| is now even.
+    // At least one of `u` and `v` is now even.
     BN_ULONG u_is_odd = word_is_odd_mask(u->d[0]);
     BN_ULONG v_is_odd = word_is_odd_mask(v->d[0]);
     declassify_assert(!(u_is_odd & v_is_odd));
@@ -106,8 +106,8 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
     maybe_rshift1_words(v->d, ~v_is_odd, tmp->d, width);
   }
 
-  // One of |u| or |v| is zero at this point. The algorithm usually makes |u|
-  // zero, unless |y| was already zero on input. Fix this by combining the
+  // One of `u` or `v` is zero at this point. The algorithm usually makes `u`
+  // zero, unless `y` was already zero on input. Fix this by combining the
   // values.
   declassify_assert(BN_is_zero(u) | BN_is_zero(v));
   for (size_t i = 0; i < width; i++) {
@@ -132,7 +132,7 @@ int bssl::bn_is_relatively_prime(int *out_relatively_prime, const BIGNUM *x,
     return 0;
   }
 
-  // Check that 2^|shift| * |gcd| is one.
+  // Check that 2^`shift` * `gcd` is one.
   if (gcd->width == 0) {
     *out_relatively_prime = 0;
   } else {
@@ -154,7 +154,7 @@ int bssl::bn_lcm_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
   return gcd != nullptr &&  //
          bn_mul_consttime(r, a, b, ctx) &&
          bn_gcd_consttime(gcd, &shift, a, b, ctx) &&
-         // |gcd| has a secret bit width.
+         // `gcd` has a secret bit width.
          bn_div_consttime(r, nullptr, r, gcd, /*divisor_min_bits=*/0, ctx) &&
          bn_rshift_secret_shift(r, r, shift, ctx);
 }
@@ -183,9 +183,9 @@ int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
   // negative numbers.
   //
   // For more details and proof of correctness, see
-  // https://github.com/mit-plv/fiat-crypto/pull/333. In particular, see |step|
-  // and |mod_inverse_consttime| for the algorithm in Gallina and see
-  // |mod_inverse_consttime_spec| for the correctness result.
+  // https://github.com/mit-plv/fiat-crypto/pull/333. In particular, see `step`
+  // and `mod_inverse_consttime` for the algorithm in Gallina and see
+  // `mod_inverse_consttime_spec` for the correctness result.
 
   if (!BN_is_odd(a) && !BN_is_odd(n)) {
     *out_no_inverse = 1;
@@ -193,8 +193,8 @@ int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
     return 0;
   }
 
-  // This function exists to compute the RSA private exponent, where |a| is one
-  // word. We'll thus use |a_width| when available.
+  // This function exists to compute the RSA private exponent, where `a` is one
+  // word. We'll thus use `a_width` when available.
   size_t n_width = n->width, a_width = a->width;
   if (a_width > n_width) {
     a_width = n_width;
@@ -222,25 +222,25 @@ int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
       !BN_copy(v, n) ||  //
       !BN_one(A) ||      //
       !BN_one(D) ||
-      // For convenience, size |u| and |v| equivalently.
+      // For convenience, size `u` and `v` equivalently.
       !bn_resize_words(u, n_width) ||  //
       !bn_resize_words(v, n_width) ||
-      // |A| and |C| are bounded by |m|.
+      // `A` and `C` are bounded by `m`.
       !bn_resize_words(A, n_width) ||  //
       !bn_resize_words(C, n_width) ||
-      // |B| and |D| are bounded by |a|.
+      // `B` and `D` are bounded by `a`.
       !bn_resize_words(B, a_width) ||  //
       !bn_resize_words(D, a_width) ||
-      // |tmp| and |tmp2| may be used at either size.
+      // `tmp` and `tmp2` may be used at either size.
       !bn_resize_words(tmp, n_width) ||  //
       !bn_resize_words(tmp2, n_width)) {
     return 0;
   }
 
-  // Each loop iteration halves at least one of |u| and |v|. Thus we need at
+  // Each loop iteration halves at least one of `u` and `v`. Thus we need at
   // most the combined bit width of inputs for at least one value to be zero.
-  // |a_bits| and |n_bits| cannot overflow because |bn_wexpand| ensures bit
-  // counts fit in even |int|.
+  // `a_bits` and `n_bits` cannot overflow because `bn_wexpand` ensures bit
+  // counts fit in even `int`.
   a_bits = a_width * BN_BITS2;
   n_bits = n_width * BN_BITS2;
   num_iters = a_bits + n_bits;
@@ -265,7 +265,7 @@ int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
   for (size_t i = 0; i < num_iters; i++) {
     BN_ULONG both_odd = word_is_odd_mask(u->d[0]) & word_is_odd_mask(v->d[0]);
 
-    // If both |u| and |v| are odd, subtract the smaller from the larger.
+    // If both `u` and `v` are odd, subtract the smaller from the larger.
     BN_ULONG v_less_than_u =
         (BN_ULONG)0 - bn_sub_words(tmp->d, v->d, u->d, n_width);
     bn_select_words(v->d, both_odd & ~v_less_than_u, tmp->d, v->d, n_width);
@@ -285,8 +285,8 @@ int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
     bn_select_words(B->d, both_odd & v_less_than_u, tmp->d, B->d, a_width);
     bn_select_words(D->d, both_odd & ~v_less_than_u, tmp->d, D->d, a_width);
 
-    // Our loop invariants hold at this point. Additionally, exactly one of |u|
-    // and |v| is now even.
+    // Our loop invariants hold at this point. Additionally, exactly one of `u`
+    // and `v` is now even.
     BN_ULONG u_is_even = ~word_is_odd_mask(u->d[0]);
     BN_ULONG v_is_even = ~word_is_odd_mask(v->d[0]);
     declassify_assert(u_is_even != v_is_even);

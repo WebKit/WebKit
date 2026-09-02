@@ -118,6 +118,16 @@ static inline br_word_t br_cmov(br_word_t c, br_word_t vnz, br_word_t vz) {
       : [vz] "r"(vz), [c] "r"(c)
       : "cc");
   return vnz;
+#elif !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__)) && \
+    defined(__aarch64__)
+  br_word_t ret;
+  __asm__(
+      "cmp %[c], #0\n"
+      "csel %[ret], %[vz], %[vnz], EQ"
+      : [ret] "=r"(ret)
+      : [vz] "r"(vz), [vnz] "r"(vnz), [c] "r"(c)
+      : "cc");
+  return ret;
 #else
   br_word_t m = br_broadcast_nonzero(c);
   return (m & vnz) | (~m & vz);

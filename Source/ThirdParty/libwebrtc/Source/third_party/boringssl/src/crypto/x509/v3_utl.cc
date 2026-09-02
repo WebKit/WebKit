@@ -61,7 +61,7 @@ static int x509V3_add_len_value(const char *name, const char *value,
     goto err;
   }
   if (!omit_value) {
-    // |CONF_VALUE| cannot represent strings with NULs.
+    // `CONF_VALUE` cannot represent strings with NULs.
     if (OPENSSL_memchr(value, 0, value_len)) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_VALUE);
       goto err;
@@ -303,8 +303,6 @@ int bssl::X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
 #define HDR_NAME 1
 #define HDR_VALUE 2
 
-// #define DEBUG
-
 STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
   char *p, *q, c;
   char *ntmp, *vtmp;
@@ -312,6 +310,8 @@ STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
   char *linebuf;
   int state;
   // We are going to modify the line so copy it first
+  // TODO(davidben): Rewrite this parser with `std::string_view`. It doesn't
+  // need to copy the string.
   linebuf = OPENSSL_strdup(line);
   if (linebuf == nullptr) {
     goto err;
@@ -335,9 +335,6 @@ STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
           *p = 0;
           ntmp = strip_spaces(q);
           q = p + 1;
-#if 0
-                printf("%s\n", ntmp);
-#endif
           if (!ntmp) {
             OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_NAME);
             goto err;
@@ -351,9 +348,6 @@ STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
           state = HDR_NAME;
           *p = 0;
           vtmp = strip_spaces(q);
-#if 0
-                printf("%s\n", ntmp);
-#endif
           if (!vtmp) {
             OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_VALUE);
             goto err;
@@ -367,9 +361,6 @@ STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
 
   if (state == HDR_VALUE) {
     vtmp = strip_spaces(q);
-#if 0
-        printf("%s=%s\n", ntmp, vtmp);
-#endif
     if (!vtmp) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_VALUE);
       goto err;
@@ -377,9 +368,6 @@ STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
     X509V3_add_value(ntmp, vtmp, &values);
   } else {
     ntmp = strip_spaces(q);
-#if 0
-        printf("%s\n", ntmp);
-#endif
     if (!ntmp) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NULL_NAME);
       goto err;
@@ -496,12 +484,12 @@ badhex:
 }
 
 int bssl::x509v3_conf_name_matches(const char *name, const char *cmp) {
-  // |name| must begin with |cmp|.
+  // `name` must begin with `cmp`.
   size_t len = strlen(cmp);
   if (strncmp(name, cmp, len) != 0) {
     return 0;
   }
-  // |name| must either be equal to |cmp| or begin with |cmp|, followed by '.'.
+  // `name` must either be equal to `cmp` or begin with `cmp`, followed by '.'.
   return name[len] == '\0' || name[len] == '.';
 }
 
@@ -575,7 +563,7 @@ static int append_ia5(UniquePtr<STACK_OF(OPENSSL_STRING)> *sk,
   if (email->data == nullptr || email->length == 0) {
     return 1;
   }
-  // |OPENSSL_STRING| cannot represent strings with embedded NULs. Do not
+  // `OPENSSL_STRING` cannot represent strings with embedded NULs. Do not
   // report them as outputs.
   if (OPENSSL_memchr(email->data, 0, email->length) != nullptr) {
     return 1;
@@ -873,7 +861,7 @@ static int do_check_string(const ASN1_STRING *a, int cmp_type, equal_fn equal,
       return -1;
     }
     // We check the common name against DNS name constraints if it passes
-    // |x509v3_looks_like_dns_name|. Thus we must not consider common names
+    // `x509v3_looks_like_dns_name`. Thus we must not consider common names
     // for DNS fallbacks if they fail this check.
     if (check_type == GEN_DNS && !x509v3_looks_like_dns_name(astr, astrlen)) {
       rv = 0;
@@ -1095,8 +1083,8 @@ int bssl::x509v3_a2i_ipadd(uint8_t ipout[16], const char *ipasc) {
 }
 
 // get_ipv4_component consumes one IPv4 component, terminated by either '.' or
-// the end of the string, from |*str|. On success, it returns one, sets |*out|
-// to the component, and advances |*str| to the first unconsumed character. On
+// the end of the string, from `*str`. On success, it returns one, sets `*out`
+// to the component, and advances `*str` to the first unconsumed character. On
 // invalid input, it returns zero.
 static int get_ipv4_component(uint8_t *out_byte, const char **str) {
   // Store a slightly larger intermediary so the overflow check is easier.
@@ -1123,8 +1111,8 @@ static int get_ipv4_component(uint8_t *out_byte, const char **str) {
   }
 }
 
-// get_ipv4_dot consumes a '.' from |*str| and advances it. It returns one on
-// success and zero if |*str| does not point to a '.'.
+// get_ipv4_dot consumes a '.' from `*str` and advances it. It returns one on
+// success and zero if `*str` does not point to a '.'.
 static int get_ipv4_dot(const char **str) {
   if (**str != '.') {
     return 0;

@@ -25,7 +25,7 @@
 
 using namespace bssl;
 
-static void dtls1_on_handshake_complete(SSL *ssl) {
+static void dtls1_on_handshake_complete(SSLImpl *ssl) {
   if (ssl_protocol_version(ssl) <= TLS1_2_VERSION) {
     // Stop the reply timer left by the last flight we sent. In DTLS 1.2, the
     // retransmission timer ends when the handshake completes. If we sent the
@@ -40,7 +40,7 @@ static void dtls1_on_handshake_complete(SSL *ssl) {
   }
 }
 
-static bool next_epoch(const SSL *ssl, uint16_t *out,
+static bool next_epoch(const SSLImpl *ssl, uint16_t *out,
                        ssl_encryption_level_t level, uint16_t prev) {
   switch (level) {
     case ssl_encryption_initial:
@@ -68,7 +68,7 @@ static bool next_epoch(const SSL *ssl, uint16_t *out,
   return false;
 }
 
-static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
+static bool dtls1_set_read_state(SSLImpl *ssl, ssl_encryption_level_t level,
                                  UniquePtr<SSLAEADContext> aead_ctx,
                                  Span<const uint8_t> traffic_secret) {
   // Cipher changes are forbidden if the current epoch has leftover data.
@@ -108,7 +108,7 @@ static bool dtls1_set_read_state(SSL *ssl, ssl_encryption_level_t level,
   return true;
 }
 
-static bool dtls1_set_write_state(SSL *ssl, ssl_encryption_level_t level,
+static bool dtls1_set_write_state(SSLImpl *ssl, ssl_encryption_level_t level,
                                   UniquePtr<SSLAEADContext> aead_ctx,
                                   Span<const uint8_t> traffic_secret) {
   uint16_t epoch;

@@ -143,6 +143,15 @@ typedef __uint128_t uint128_t;
 #define OPENSSL_ATTR_CONST
 #endif
 
+// OPENSSL_ATTR_ALWAYS_INLINE tells the compiler to always attempt inlining the
+// function. This has the beneficial side effects that it inherits attributes
+// for code generation (e.g. the target attribute) from its callee.
+#if defined(__GNUC__) || defined(__clang__)
+#define OPENSSL_ATTR_ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define OPENSSL_ATTR_ALWAYS_INLINE
+#endif
+
 #if defined(BORINGSSL_MALLOC_FAILURE_TESTING)
 // OPENSSL_reset_malloc_counter_for_testing, when malloc testing is enabled,
 // resets the internal malloc counter, to simulate further malloc failures. This
@@ -448,8 +457,10 @@ inline void constant_time_conditional_memxor(void *dst, const void *src,
   assert(!buffers_alias(dst, n, src, n));
   uint8_t *out = (uint8_t *)dst;
   const uint8_t *in = (const uint8_t *)src;
-#if defined(__GNUC__) && !defined(__clang__)
+#if defined(__GNUC__) || defined(__clang__)
   // gcc 13.2.0 doesn't automatically vectorize this loop regardless of barrier
+  // clang 16.0.6 vectorizes if alias analysis finds src and dst are disjoint,
+  // but does not conclude that from the !buffers_alias assert.
   typedef uint8_t v32u8 __attribute__((vector_size(32), aligned(1), may_alias));
   size_t n_vec = n & ~(size_t)31;
   v32u8 masks = ((uint8_t)mask - (v32u8){});  // broadcast

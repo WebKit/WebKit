@@ -24,6 +24,7 @@
 #include "../fipsmodule/aes/internal.h"
 #include "../fipsmodule/cipher/internal.h"
 #include "../internal.h"
+#include "internal.h"
 
 
 using namespace bssl;
@@ -36,155 +37,17 @@ void inc_counter(uint8_t tag[16], uint32_t by) {
   CRYPTO_store_u32_le(tag, CRYPTO_load_u32_le(tag) + by);
 }
 
-// TODO(davidben): AES-GCM-SIV assembly is not correct for Windows. It must save
-// and restore xmm6 through xmm15.
-#if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM) && \
-    !defined(OPENSSL_WINDOWS)
-#define AES_GCM_SIV_ASM
-
-// Optimised AES-GCM-SIV
-
-struct aead_aes_gcm_siv_asm_ctx {
-  alignas(16) uint8_t key[16 * 15];
-  int is_128_bit;
-};
+#if defined(AES_GCM_SIV_ASM)
 
 // The assembly code assumes 8-byte alignment of the EVP_AEAD_CTX's state, and
 // aligns to 16 bytes itself.
-static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) + 8 >=
-                  sizeof(struct aead_aes_gcm_siv_asm_ctx),
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
+                  sizeof(struct aead_aes_gcm_siv_asm_ctx) + 8,
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >= 8,
               "AEAD state has insufficient alignment");
 
-extern "C" {
-// aes128gcmsiv_aes_ks writes an AES-128 key schedule for |key| to
-// |out_expanded_key|.
-extern void aes128gcmsiv_aes_ks(const uint8_t key[16],
-                                uint8_t out_expanded_key[16 * 15]);
-
-// aes256gcmsiv_aes_ks writes an AES-256 key schedule for |key| to
-// |out_expanded_key|.
-extern void aes256gcmsiv_aes_ks(const uint8_t key[32],
-                                uint8_t out_expanded_key[16 * 15]);
-
-// aesgcmsiv_polyval_horner updates the POLYVAL value in |in_out_poly| to
-// include a number (|in_blocks|) of 16-byte blocks of data from |in|, given
-// the POLYVAL key in |key|.
-extern void aesgcmsiv_polyval_horner(const uint8_t in_out_poly[16],
-                                     const uint8_t key[16], const uint8_t *in,
-                                     size_t in_blocks);
-
-// aesgcmsiv_htable_init writes powers 1..8 of |auth_key| to |out_htable|.
-extern void aesgcmsiv_htable_init(uint8_t out_htable[16 * 8],
-                                  const uint8_t auth_key[16]);
-
-// aesgcmsiv_htable6_init writes powers 1..6 of |auth_key| to |out_htable|.
-extern void aesgcmsiv_htable6_init(uint8_t out_htable[16 * 6],
-                                   const uint8_t auth_key[16]);
-
-// aesgcmsiv_htable_polyval updates the POLYVAL value in |in_out_poly| to
-// include |in_len| bytes of data from |in|. (Where |in_len| must be a multiple
-// of 16.) It uses the precomputed powers of the key given in |htable|.
-extern void aesgcmsiv_htable_polyval(const uint8_t htable[16 * 8],
-                                     const uint8_t *in, size_t in_len,
-                                     uint8_t in_out_poly[16]);
-
-// aes128gcmsiv_dec decrypts |in_len| & ~15 bytes from |out| and writes them to
-// |in|. |in| and |out| may be equal, but must not otherwise alias.
-//
-// |in_out_calculated_tag_and_scratch|, on entry, must contain:
-//    1. The current value of the calculated tag, which will be updated during
-//       decryption and written back to the beginning of this buffer on exit.
-//    2. The claimed tag, which is needed to derive counter values.
-//
-// While decrypting, the whole of |in_out_calculated_tag_and_scratch| may be
-// used for other purposes. In order to decrypt and update the POLYVAL value, it
-// uses the expanded key from |key| and the table of powers in |htable|.
-extern void aes128gcmsiv_dec(const uint8_t *in, uint8_t *out,
-                             uint8_t in_out_calculated_tag_and_scratch[16 * 8],
-                             const uint8_t htable[16 * 6],
-                             const struct aead_aes_gcm_siv_asm_ctx *key,
-                             size_t in_len);
-
-// aes256gcmsiv_dec acts like |aes128gcmsiv_dec|, but for AES-256.
-extern void aes256gcmsiv_dec(const uint8_t *in, uint8_t *out,
-                             uint8_t in_out_calculated_tag_and_scratch[16 * 8],
-                             const uint8_t htable[16 * 6],
-                             const struct aead_aes_gcm_siv_asm_ctx *key,
-                             size_t in_len);
-
-// aes128gcmsiv_kdf performs the AES-GCM-SIV KDF given the expanded key from
-// |key_schedule| and the nonce in |nonce|. Note that, while only 12 bytes of
-// the nonce are used, 16 bytes are read and so the value must be
-// right-padded.
-extern void aes128gcmsiv_kdf(const uint8_t nonce[16],
-                             uint64_t out_key_material[8],
-                             const uint8_t *key_schedule);
-
-// aes256gcmsiv_kdf acts like |aes128gcmsiv_kdf|, but for AES-256.
-extern void aes256gcmsiv_kdf(const uint8_t nonce[16],
-                             uint64_t out_key_material[12],
-                             const uint8_t *key_schedule);
-
-// aes128gcmsiv_aes_ks_enc_x1 performs a key expansion of the AES-128 key in
-// |key|, writes the expanded key to |out_expanded_key| and encrypts a single
-// block from |in| to |out|.
-extern void aes128gcmsiv_aes_ks_enc_x1(const uint8_t in[16], uint8_t out[16],
-                                       uint8_t out_expanded_key[16 * 15],
-                                       const uint64_t key[2]);
-
-// aes256gcmsiv_aes_ks_enc_x1 acts like |aes128gcmsiv_aes_ks_enc_x1|, but for
-// AES-256.
-extern void aes256gcmsiv_aes_ks_enc_x1(const uint8_t in[16], uint8_t out[16],
-                                       uint8_t out_expanded_key[16 * 15],
-                                       const uint64_t key[4]);
-
-// aes128gcmsiv_ecb_enc_block encrypts a single block from |in| to |out| using
-// the expanded key in |expanded_key|.
-extern void aes128gcmsiv_ecb_enc_block(
-    const uint8_t in[16], uint8_t out[16],
-    const struct aead_aes_gcm_siv_asm_ctx *expanded_key);
-
-// aes256gcmsiv_ecb_enc_block acts like |aes128gcmsiv_ecb_enc_block|, but for
-// AES-256.
-extern void aes256gcmsiv_ecb_enc_block(
-    const uint8_t in[16], uint8_t out[16],
-    const struct aead_aes_gcm_siv_asm_ctx *expanded_key);
-
-// aes128gcmsiv_enc_msg_x4 encrypts |in_len| bytes from |in| to |out| using the
-// expanded key from |key|. (The value of |in_len| must be a multiple of 16.)
-// The |in| and |out| buffers may be equal but must not otherwise overlap. The
-// initial counter is constructed from the given |tag| as required by
-// AES-GCM-SIV.
-extern void aes128gcmsiv_enc_msg_x4(const uint8_t *in, uint8_t *out,
-                                    const uint8_t *tag,
-                                    const struct aead_aes_gcm_siv_asm_ctx *key,
-                                    size_t in_len);
-
-// aes256gcmsiv_enc_msg_x4 acts like |aes128gcmsiv_enc_msg_x4|, but for
-// AES-256.
-extern void aes256gcmsiv_enc_msg_x4(const uint8_t *in, uint8_t *out,
-                                    const uint8_t *tag,
-                                    const struct aead_aes_gcm_siv_asm_ctx *key,
-                                    size_t in_len);
-
-// aes128gcmsiv_enc_msg_x8 acts like |aes128gcmsiv_enc_msg_x4|, but is
-// optimised for longer messages.
-extern void aes128gcmsiv_enc_msg_x8(const uint8_t *in, uint8_t *out,
-                                    const uint8_t *tag,
-                                    const struct aead_aes_gcm_siv_asm_ctx *key,
-                                    size_t in_len);
-
-// aes256gcmsiv_enc_msg_x8 acts like |aes256gcmsiv_enc_msg_x4|, but is
-// optimised for longer messages.
-extern void aes256gcmsiv_enc_msg_x8(const uint8_t *in, uint8_t *out,
-                                    const uint8_t *tag,
-                                    const struct aead_aes_gcm_siv_asm_ctx *key,
-                                    size_t in_len);
-}
-
-// asm_ctx_from_ctx returns a 16-byte aligned context pointer from |ctx|.
+// asm_ctx_from_ctx returns a 16-byte aligned context pointer from `ctx`.
 struct aead_aes_gcm_siv_asm_ctx *asm_ctx_from_ctx(const EVP_AEAD_CTX *ctx) {
   // ctx->state must already be 8-byte aligned. Thus, at most, we may need to
   // add eight to align it to 16 bytes.
@@ -228,8 +91,8 @@ int aead_aes_gcm_siv_asm_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
 
 void aead_aes_gcm_siv_asm_cleanup(EVP_AEAD_CTX *ctx) {}
 
-// gcm_siv_asm_polyval evaluates POLYVAL at |auth_key| on the given plaintext
-// and AD. The result is written to |out_tag|.
+// gcm_siv_asm_polyval evaluates POLYVAL at `auth_key` on the given plaintext
+// and AD. The result is written to `out_tag`, which must be 16-byte aligned.
 void gcm_siv_asm_polyval(uint8_t out_tag[16], Span<const CRYPTO_IOVEC> iovecs,
                          Span<const CRYPTO_IVEC> aadvecs,
                          const uint8_t auth_key[16], const uint8_t nonce[12]) {
@@ -271,11 +134,11 @@ void gcm_siv_asm_polyval(uint8_t out_tag[16], Span<const CRYPTO_IOVEC> iovecs,
     return true;
   };
 
-  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(aadvecs, f_whole,
-                                                               f_final);
+  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(
+      aadvecs, f_whole, f_final);
 
-  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(iovecs, f_whole,
-                                                               f_final);
+  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(
+      iovecs, f_whole, f_final);
 
   uint8_t length_block[16];
   CRYPTO_store_u64_le(length_block, ad_len * 8);
@@ -291,8 +154,8 @@ void gcm_siv_asm_polyval(uint8_t out_tag[16], Span<const CRYPTO_IOVEC> iovecs,
 
 // aead_aes_gcm_siv_asm_crypt_last_block handles the encryption/decryption
 // (same thing in CTR mode) of the final block of a plaintext/ciphertext. It
-// writes |total_in_len| & 15 bytes to |out_last_block|, based on an initial
-// counter derived from |tag|.
+// writes `total_in_len` & 15 bytes to `out_last_block`, based on an initial
+// counter derived from `tag`.
 void aead_aes_gcm_siv_asm_crypt_last_block(
     int is_128_bit, uint8_t *out_last_block, const uint8_t *in_last_block,
     size_t total_in_len, const uint8_t tag[16],
@@ -315,7 +178,7 @@ void aead_aes_gcm_siv_asm_crypt_last_block(
 }
 
 // aead_aes_gcm_siv_kdf calculates the record encryption and authentication
-// keys given the |nonce|.
+// keys given the `nonce`.
 void aead_aes_gcm_siv_kdf(int is_128_bit,
                           const struct aead_aes_gcm_siv_asm_ctx *gcm_siv_ctx,
                           uint64_t out_record_auth_key[2],
@@ -648,7 +511,7 @@ const EVP_AEAD aead_aes_256_gcm_siv_asm = {
     nullptr /* tag_len */,
 };
 
-#endif  // X86_64 && !NO_ASM && !WINDOWS
+#endif  // AES_GCM_SIV_ASM
 
 
 struct aead_aes_gcm_siv_ctx {
@@ -698,12 +561,12 @@ int aead_aes_gcm_siv_init(EVP_AEAD_CTX *ctx, const uint8_t *key, size_t key_len,
 
 void aead_aes_gcm_siv_cleanup(EVP_AEAD_CTX *ctx) {}
 
-// gcm_siv_crypt encrypts (or decrypts—it's the same thing) bytes from |in| to
-// |out| in the |iovec|, using the block function |enc_block| with |key| in
-// counter mode, starting at |initial_counter|. This differs from the
+// gcm_siv_crypt encrypts (or decrypts—it's the same thing) bytes from `in` to
+// `out` in the `iovec`, using the block function `enc_block` with `key` in
+// counter mode, starting at `initial_counter`. This differs from the
 // traditional counter mode code in that the counter is handled little-endian,
 // only the first four bytes are used and the GCM-SIV tweak to the final byte
-// is applied. The |in| and |out| pointers may be equal but otherwise must not
+// is applied. The `in` and `out` pointers may be equal but otherwise must not
 // alias.
 void gcm_siv_crypt(Span<const CRYPTO_IOVEC> iovecs,
                    const uint8_t initial_counter[AES_BLOCK_SIZE],
@@ -757,7 +620,7 @@ struct polyval_ctx {
   ghash_func ghash;
 };
 
-// byte_reverse reverses the order of the bytes in |b->c|.
+// byte_reverse reverses the order of the bytes in `b->c`.
 void byte_reverse(uint8_t b[16]) {
   uint64_t hi = CRYPTO_load_u64_le(b);
   uint64_t lo = CRYPTO_load_u64_le(b + 8);
@@ -765,8 +628,8 @@ void byte_reverse(uint8_t b[16]) {
   CRYPTO_store_u64_le(b + 8, CRYPTO_bswap8(hi));
 }
 
-// reverse_and_mulX_ghash interprets |b| as a reversed element of the GHASH
-// field, multiplies that by 'x' and serialises the result back into |b|, but
+// reverse_and_mulX_ghash interprets `b` as a reversed element of the GHASH
+// field, multiplies that by 'x' and serialises the result back into `b`, but
 // with GHASH's backwards bit ordering.
 void reverse_and_mulX_ghash(uint8_t b[16]) {
   uint64_t hi = CRYPTO_load_u64_le(b);
@@ -818,8 +681,8 @@ void crypto_polyval_finish(const struct polyval_ctx *ctx, uint8_t out[16]) {
   byte_reverse(out);
 }
 
-// gcm_siv_polyval evaluates POLYVAL at |auth_key| on the given plaintext and
-// AD. The result is written to |out_tag|.
+// gcm_siv_polyval evaluates POLYVAL at `auth_key` on the given plaintext and
+// AD. The result is written to `out_tag`.
 void gcm_siv_polyval(uint8_t out_tag[16], Span<const CRYPTO_IOVEC> iovecs,
                      bool encrypt, Span<const CRYPTO_IVEC> aadvecs,
                      const uint8_t auth_key[16],
@@ -847,8 +710,8 @@ void gcm_siv_polyval(uint8_t out_tag[16], Span<const CRYPTO_IOVEC> iovecs,
     return true;
   };
 
-  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(aadvecs, f_whole,
-                                                               f_final);
+  bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(
+      aadvecs, f_whole, f_final);
 
   if (encrypt) {
     bssl::iovec::ForEachBlockRange<AES_BLOCK_SIZE, /*WriteOut=*/false>(
@@ -883,7 +746,7 @@ struct gcm_siv_record_keys {
 };
 
 // gcm_siv_keys calculates the keys for a specific GCM-SIV record with the
-// given nonce and writes them to |*out_keys|.
+// given nonce and writes them to `*out_keys`.
 void gcm_siv_keys(const struct aead_aes_gcm_siv_ctx *gcm_siv_ctx,
                   struct gcm_siv_record_keys *out_keys,
                   const uint8_t nonce[EVP_AEAD_AES_GCM_SIV_NONCE_LEN]) {
@@ -904,13 +767,13 @@ void gcm_siv_keys(const struct aead_aes_gcm_siv_ctx *gcm_siv_ctx,
   }
 
   OPENSSL_memcpy(out_keys->auth_key, key_material, 16);
-  // Note the |ctr128_f| function uses a big-endian couner, while AES-GCM-SIV
+  // Note the `ctr128_f` function uses a big-endian counter, while AES-GCM-SIV
   // uses a little-endian counter. We ignore the return value and only use
-  // |block128_f|. This has a significant performance cost for the fallback
+  // `block128_f`. This has a significant performance cost for the fallback
   // bitsliced AES implementations (bsaes and aes_nohw).
   //
   // We currently do not consider AES-GCM-SIV to be performance-sensitive on
-  // client hardware. If this changes, we can write little-endian |ctr128_f|
+  // client hardware. If this changes, we can write little-endian `ctr128_f`
   // functions.
   aes_ctr_set_key(&out_keys->enc_key.ks, nullptr, &out_keys->enc_block,
                   key_material + 16, gcm_siv_ctx->is_256 ? 32 : 16);
@@ -1036,26 +899,20 @@ const EVP_AEAD aead_aes_256_gcm_siv = {
 };
 }  // namespace
 
-#if defined(AES_GCM_SIV_ASM)
-
 const EVP_AEAD *EVP_aead_aes_128_gcm_siv() {
-  if (CRYPTO_is_AVX_capable() && CRYPTO_is_AESNI_capable()) {
+#if defined(AES_GCM_SIV_ASM)
+  if (aes_gcm_siv_asm_capable()) {
     return &aead_aes_128_gcm_siv_asm;
   }
+#endif
   return &aead_aes_128_gcm_siv;
 }
 
 const EVP_AEAD *EVP_aead_aes_256_gcm_siv() {
-  if (CRYPTO_is_AVX_capable() && CRYPTO_is_AESNI_capable()) {
+#if defined(AES_GCM_SIV_ASM)
+  if (aes_gcm_siv_asm_capable()) {
     return &aead_aes_256_gcm_siv_asm;
   }
+#endif
   return &aead_aes_256_gcm_siv;
 }
-
-#else
-
-const EVP_AEAD *EVP_aead_aes_128_gcm_siv() { return &aead_aes_128_gcm_siv; }
-
-const EVP_AEAD *EVP_aead_aes_256_gcm_siv() { return &aead_aes_256_gcm_siv; }
-
-#endif  // AES_GCM_SIV_ASM

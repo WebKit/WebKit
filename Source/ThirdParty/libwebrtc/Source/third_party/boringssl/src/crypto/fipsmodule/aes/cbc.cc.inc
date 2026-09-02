@@ -26,7 +26,7 @@ void bssl::CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                                  block128_f block) {
   assert(key != nullptr && ivec != nullptr);
   if (len == 0) {
-    // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.
+    // Avoid `ivec` == `iv` in the `memcpy` below, which is not legal in C.
     return;
   }
 
@@ -67,7 +67,7 @@ void bssl::CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
                                  block128_f block) {
   assert(key != nullptr && ivec != nullptr);
   if (len == 0) {
-    // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.
+    // Avoid `ivec` == `iv` in the `memcpy` below, which is not legal in C.
     return;
   }
 
@@ -75,13 +75,13 @@ void bssl::CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
 
   const uintptr_t inptr = (uintptr_t) in;
   const uintptr_t outptr = (uintptr_t) out;
-  // If |in| and |out| alias, |in| must be ahead.
+  // If `in` and `out` alias, `in` must be ahead.
   assert(inptr >= outptr || inptr + len <= outptr);
 
   size_t n;
   alignas(16) uint8_t tmp[16];
   if ((inptr >= 32 && outptr <= inptr - 32) || inptr < outptr) {
-    // If |out| is at least two blocks behind |in| or completely disjoint, there
+    // If `out` is at least two blocks behind `in` or completely disjoint, there
     // is no need to decrypt to a temporary block.
     const uint8_t *iv = ivec;
     while (len >= 16) {

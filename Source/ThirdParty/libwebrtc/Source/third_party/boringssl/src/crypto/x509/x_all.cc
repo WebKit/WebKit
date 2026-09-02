@@ -37,7 +37,7 @@ using namespace bssl;
 
 int X509_verify(const X509 *x509, EVP_PKEY *pkey) {
   auto *impl = FromOpaque(x509);
-  if (X509_ALGOR_cmp(&impl->sig_alg, &impl->tbs_sig_alg)) {
+  if (X509_ALGOR_cmp(impl->sig_alg.get(), impl->tbs_sig_alg.get())) {
     OPENSSL_PUT_ERROR(X509, X509_R_SIGNATURE_ALGORITHM_MISMATCH);
     return 0;
   }
@@ -46,7 +46,7 @@ int X509_verify(const X509 *x509, EVP_PKEY *pkey) {
   if (!CBB_init(cbb.get(), 128) || !x509_marshal_tbs_cert(cbb.get(), x509)) {
     return 0;
   }
-  return x509_verify_signature(&impl->sig_alg, &impl->signature,
+  return x509_verify_signature(impl->sig_alg.get(), impl->signature.get(),
                                CBBAsSpan(cbb.get()), pkey);
 }
 
@@ -64,7 +64,7 @@ int X509_sign(X509 *x, EVP_PKEY *pkey, const EVP_MD *md) {
 }
 
 int X509_sign_ctx(X509 *x, EVP_MD_CTX *ctx) {
-  // Historically, this function called |EVP_MD_CTX_cleanup| on return. Some
+  // Historically, this function called `EVP_MD_CTX_cleanup` on return. Some
   // callers rely on this to avoid memory leaks.
   Cleanup cleanup = [&] { EVP_MD_CTX_cleanup(ctx); };
 
@@ -72,20 +72,20 @@ int X509_sign_ctx(X509 *x, EVP_MD_CTX *ctx) {
 
   // Fill in the two copies of AlgorithmIdentifier. Note one of these modifies
   // the TBSCertificate.
-  if (!x509_digest_sign_algorithm(ctx, &impl->tbs_sig_alg) ||
-      !x509_digest_sign_algorithm(ctx, &impl->sig_alg)) {
+  if (!x509_digest_sign_algorithm(ctx, impl->tbs_sig_alg.get()) ||
+      !x509_digest_sign_algorithm(ctx, impl->sig_alg.get())) {
     return 0;
   }
 
   // Discard the cached encoding. (We just modified it.)
-  CRYPTO_BUFFER_free(impl->buf);
   impl->buf = nullptr;
 
   ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 128) || !x509_marshal_tbs_cert(cbb.get(), x)) {
     return 0;
   }
-  return x509_sign_to_bit_string(ctx, &impl->signature, CBBAsSpan(cbb.get()));
+  return x509_sign_to_bit_string(ctx, impl->signature.get(),
+                                 CBBAsSpan(cbb.get()));
 }
 
 int X509_REQ_sign(X509_REQ *x, EVP_PKEY *pkey, const EVP_MD *md) {

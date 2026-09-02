@@ -40,7 +40,7 @@ static void gcm_mul64_nohw(uint64_t *out_lo, uint64_t *out_hi, uint64_t a,
   // One term every four bits means the largest term is 64/4 = 16, which barely
   // overflows into the next term. Using one term every five bits would cost 25
   // multiplications instead of 16. It is faster to mask off the bottom four
-  // bits of |a|, giving a largest term of 60/4 = 15, and apply the bottom bits
+  // bits of `a`, giving a largest term of 60/4 = 15, and apply the bottom bits
   // separately.
   uint64_t a0 = a & UINT64_C(0x1111111111111110);
   uint64_t a1 = a & UINT64_C(0x2222222222222220);
@@ -61,7 +61,7 @@ static void gcm_mul64_nohw(uint64_t *out_lo, uint64_t *out_hi, uint64_t a,
   uint128_t c3 = (a0 * (uint128_t)b3) ^ (a1 * (uint128_t)b2) ^
                  (a2 * (uint128_t)b1) ^ (a3 * (uint128_t)b0);
 
-  // Multiply the bottom four bits of |a| with |b|.
+  // Multiply the bottom four bits of `a` with `b`.
   uint64_t a0_mask = UINT64_C(0) - (a & 1);
   uint64_t a1_mask = UINT64_C(0) - ((a >> 1) & 1);
   uint64_t a2_mask = UINT64_C(0) - ((a >> 2) & 1);
@@ -201,7 +201,7 @@ void bssl::gcm_init_nohw(u128 Htable[16], const uint64_t Xi[2]) {
   // rev128(X) * rev128(Y) = rev255(X*Y).
   //
   // Per Appendix A, we run mulX_POLYVAL. Note this is the same transformation
-  // applied by |gcm_init_clmul|, etc. Note |Xi| has already been byteswapped.
+  // applied by `gcm_init_clmul`, etc. Note `Xi` has already been byteswapped.
   //
   // See also slide 16 of
   // https://crypto.stanford.edu/RealWorldCrypto/slides/gueron.pdf
@@ -220,12 +220,12 @@ void bssl::gcm_init_nohw(u128 Htable[16], const uint64_t Xi[2]) {
   Htable[0].lo ^= carry & 1;
   Htable[0].hi ^= carry & UINT64_C(0xc200000000000000);
 
-  // This implementation does not use the rest of |Htable|.
+  // This implementation does not use the rest of `Htable`.
 }
 
 static void gcm_polyval_nohw(uint64_t Xi[2], const u128 *H) {
-  // Karatsuba multiplication. The product of |Xi| and |H| is stored in |r0|
-  // through |r3|. Note there is no byte or bit reversal because we are
+  // Karatsuba multiplication. The product of `Xi` and `H` is stored in `r0`
+  // through `r3`. Note there is no byte or bit reversal because we are
   // evaluating POLYVAL.
   uint64_t r0, r1;
   gcm_mul64_nohw(&r0, &r1, Xi[0], H->lo);
@@ -238,8 +238,8 @@ static void gcm_polyval_nohw(uint64_t Xi[2], const u128 *H) {
   r2 ^= mid1;
   r1 ^= mid0;
 
-  // Now we multiply our 256-bit result by x^-128 and reduce. |r2| and
-  // |r3| shifts into position and we must multiply |r0| and |r1| by x^-128. We
+  // Now we multiply our 256-bit result by x^-128 and reduce. `r2` and
+  // `r3` shifts into position and we must multiply `r0` and `r1` by x^-128. We
   // have:
   //
   //       1 = x^121 + x^126 + x^127 + x^128
@@ -249,7 +249,7 @@ static void gcm_polyval_nohw(uint64_t Xi[2], const u128 *H) {
 
   // The x^-7, x^-2, and x^-1 terms shift bits past x^0, which would require
   // another reduction steps. Instead, we gather the excess bits, incorporate
-  // them into |r0| and |r1| and reduce once. See slides 17-19
+  // them into `r0` and `r1` and reduce once. See slides 17-19
   // of https://crypto.stanford.edu/RealWorldCrypto/slides/gueron.pdf.
   r1 ^= (r0 << 63) ^ (r0 << 62) ^ (r0 << 57);
 

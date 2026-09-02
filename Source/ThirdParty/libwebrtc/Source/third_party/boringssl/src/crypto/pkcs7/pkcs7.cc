@@ -35,12 +35,12 @@ static const uint8_t kPKCS7SignedData[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                            0x0d, 0x01, 0x07, 0x02};
 
 // pkcs7_parse_header reads the non-certificate/non-CRL prefix of a PKCS#7
-// SignedData blob from |cbs| and sets |*out| to point to the rest of the
-// input. If the input is in BER format, then |*der_bytes| will be set to a
+// SignedData blob from `cbs` and sets `*out` to point to the rest of the
+// input. If the input is in BER format, then `*der_bytes` will be set to a
 // pointer that needs to be freed by the caller once they have finished
-// processing |*out| (which will be pointing into |*der_bytes|).
+// processing `*out` (which will be pointing into `*der_bytes`).
 //
-// It returns one on success or zero on error. On error, |*der_bytes| is
+// It returns one on success or zero on error. On error, `*der_bytes` is
 // NULL.
 int bssl::pkcs7_parse_header(uint8_t **der_bytes, CBS *out, CBS *cbs) {
   CBS in, content_info, content_type, wrapped_signed_data, signed_data;
@@ -151,7 +151,7 @@ static int pkcs7_bundle_raw_certificates_cb(CBB *out, void *arg) {
     }
   }
 
-  // |certificates| is a implicitly-tagged SET OF.
+  // `certificates` is an implicitly-tagged SET OF.
   return CBB_flush_asn1_set_of(&certificates) && CBB_flush(out);
 }
 

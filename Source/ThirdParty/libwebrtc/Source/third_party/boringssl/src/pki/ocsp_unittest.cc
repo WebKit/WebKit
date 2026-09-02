@@ -21,6 +21,7 @@
 #include <openssl/span.h>
 
 #include "encode_values.h"
+#include "parsed_certificate.h"
 #include "string_util.h"
 #include "test_helpers.h"
 
@@ -38,10 +39,14 @@ std::shared_ptr<const ParsedCertificate> ParseCertificate(
     std::string_view data) {
   CertErrors errors;
   auto bytes = StringAsBytes(data);
+  // TODO(crbug.com/533048005): Remove this option when
+  // good_response_invalid_serial is removed.
+  ParseCertificateOptions options;
+  options.allow_invalid_serial_numbers = true;
   return ParsedCertificate::Create(
       bssl::UniquePtr<CRYPTO_BUFFER>(
           CRYPTO_BUFFER_new(bytes.data(), bytes.size(), nullptr)),
-      {}, &errors);
+      options, &errors);
 }
 
 struct TestParams {
@@ -56,6 +61,8 @@ const TestParams kTestParams[] = {
     {"good_response.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
     {"good_response_sha256.pem", OCSPRevocationStatus::GOOD,
+     OCSPVerifyResult::PROVIDED},
+    {"good_response_invalid_serial.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
     {"no_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::NO_MATCHING_RESPONSE},

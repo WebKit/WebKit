@@ -32,7 +32,7 @@ using namespace bssl;
 static void set_unused_bits(ASN1_BIT_STRING *str, uint8_t unused_bits) {
   assert(unused_bits < 8);
   assert(unused_bits == 0 || str->length > 0);
-  // |ASN1_STRING_FLAG_BITS_LEFT| and the bottom 3 bits encode |padding|.
+  // `ASN1_STRING_FLAG_BITS_LEFT` and the bottom 3 bits encode `padding`.
   str->flags &= ~0x07;
   str->flags |= ASN1_STRING_FLAG_BITS_LEFT | unused_bits;
 }

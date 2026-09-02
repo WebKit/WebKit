@@ -360,6 +360,11 @@ CRLRevocationStatus GetCRLStatusForCert(
       return CRLRevocationStatus::UNKNOWN;
     }
 
+    // TODO(crbug.com/533048005): We do not check `revoked_cert_serial_number`
+    // is a valid INTEGER because our certificate parser does not yet check for
+    // valid INTEGERs. This ensures those non-integers can be represented in
+    // CRLs.
+
     //              revocationDate          Time,
     der::GeneralizedTime unused_revocation_date;
     if (!ReadUTCOrGeneralizedTime(&crl_entry_parser, &unused_revocation_date)) {

@@ -113,8 +113,8 @@ void EVP_AEAD_CTX_cleanup(EVP_AEAD_CTX *ctx) {
   ctx->aead = nullptr;
 }
 
-// check_alias returns 1 if |out| is compatible with |in| and 0 otherwise. If
-// |in| and |out| alias, we require that |in| == |out|.
+// check_alias returns 1 if `out` is compatible with `in` and 0 otherwise. If
+// `in` and `out` alias, we require that `in` == `out`.
 static int check_alias(const uint8_t *in, size_t in_len, const uint8_t *out,
                        size_t out_len) {
   if (!buffers_alias(in, in_len, out, out_len)) {
@@ -178,7 +178,7 @@ int EVP_AEAD_CTX_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
     }
   });
 
-  // |out_tag| contains both the encryption of |extra_in| and the tag.
+  // `out_tag` contains both the encryption of `extra_in` and the tag.
   Span<uint8_t> out_tag_span(out_tag, max_out_tag_len);
   if (out_tag_span.size() < extra_in_len) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BUFFER_TOO_SMALL);
@@ -338,7 +338,7 @@ int EVP_AEAD_CTX_sealv(const EVP_AEAD_CTX *ctx, const CRYPTO_IOVEC *iovec,
   }
 
   // Enforce aliasing rules: no output may alias any input, with the one
-  // exception that an iovec member's |in| and |out| pointers may be identical
+  // exception that an iovec member's `in` and `out` pointers may be identical
   // for in-place operation.
   if (!check_iovec_alias(iovecs, aadvecs, out_tag, max_out_tag_len, nonce,
                          nonce_len, nullptr, 0)) {
@@ -481,7 +481,7 @@ int EVP_AEAD_CTX_openv(const EVP_AEAD_CTX *ctx, const CRYPTO_IOVEC *iovec,
   }
 
   // Enforce aliasing rules: no output may alias any input, with the one
-  // exception that an iovec member's |in| and |out| pointers may be identical
+  // exception that an iovec member's `in` and `out` pointers may be identical
   // for in-place operation.
   if (!check_iovec_alias(iovecs, aadvecs, nullptr, 0, nonce, nonce_len, nullptr,
                          0)) {
@@ -499,7 +499,7 @@ int EVP_AEAD_CTX_openv(const EVP_AEAD_CTX *ctx, const CRYPTO_IOVEC *iovec,
       std::optional<Span<const uint8_t>> tag = bssl::iovec::GetAndRemoveSuffix(
           Span(tagbuf).first(ctx->tag_len), Span(detached_iovecs));
 
-      if (!tag.has_value()) {  // I.e. no |ctx->tag_len| bytes available.
+      if (!tag.has_value()) {  // I.e. no `ctx->tag_len` bytes available.
         OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
         return 0;
       }
@@ -554,7 +554,7 @@ int EVP_AEAD_CTX_openv_detached(const EVP_AEAD_CTX *ctx,
   }
 
   // Enforce aliasing rules: no output may alias any input, with the one
-  // exception that an iovec member's |in| and |out| pointers may be identical
+  // exception that an iovec member's `in` and `out` pointers may be identical
   // for in-place operation.
   if (!check_iovec_alias(iovecs, aadvecs, nullptr, 0, nonce, nonce_len, in_tag,
                          in_tag_len)) {

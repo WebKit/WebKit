@@ -328,7 +328,7 @@ TEST(SignatureAlgorithmTest, ParseDerSha224WithRSAEncryptionNullParams) {
   EXPECT_FALSE(ParseSignatureAlgorithm(der::Input(kData)));
 }
 
-// Parses a ecdsa-with-SHA1 which contains no parameters field.
+// Parses an ecdsa-with-SHA1 which contains no parameters field.
 //
 //   SEQUENCE (1 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.1
@@ -344,7 +344,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA1NoParams) {
             SignatureAlgorithm::kEcdsaSha1);
 }
 
-// Parses a ecdsa-with-SHA1 which contains a NULL parameters field.
+// Parses an ecdsa-with-SHA1 which contains a NULL parameters field.
 //
 //   SEQUENCE (2 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.1
@@ -361,7 +361,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA1NullParams) {
   EXPECT_FALSE(ParseSignatureAlgorithm(der::Input(kData)));
 }
 
-// Parses a ecdsa-with-SHA256 which contains no parameters field.
+// Parses an ecdsa-with-SHA256 which contains no parameters field.
 //
 //   SEQUENCE (1 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.2
@@ -377,7 +377,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA256NoParams) {
             SignatureAlgorithm::kEcdsaSha256);
 }
 
-// Parses a ecdsa-with-SHA256 which contains a NULL parameters field.
+// Parses an ecdsa-with-SHA256 which contains a NULL parameters field.
 //
 //   SEQUENCE (2 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.2
@@ -394,7 +394,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA256NullParams) {
   EXPECT_FALSE(ParseSignatureAlgorithm(der::Input(kData)));
 }
 
-// Parses a ecdsa-with-SHA384 which contains no parameters field.
+// Parses an ecdsa-with-SHA384 which contains no parameters field.
 //
 //   SEQUENCE (1 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.3
@@ -410,7 +410,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA384NoParams) {
             SignatureAlgorithm::kEcdsaSha384);
 }
 
-// Parses a ecdsa-with-SHA384 which contains a NULL parameters field.
+// Parses an ecdsa-with-SHA384 which contains a NULL parameters field.
 //
 //   SEQUENCE (2 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.3
@@ -427,7 +427,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA384NullParams) {
   EXPECT_FALSE(ParseSignatureAlgorithm(der::Input(kData)));
 }
 
-// Parses a ecdsa-with-SHA512 which contains no parameters field.
+// Parses an ecdsa-with-SHA512 which contains no parameters field.
 //
 //   SEQUENCE (1 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.4
@@ -443,7 +443,7 @@ TEST(SignatureAlgorithmTest, ParseDerEcdsaWithSHA512NoParams) {
             SignatureAlgorithm::kEcdsaSha512);
 }
 
-// Parses a ecdsa-with-SHA512 which contains a NULL parameters field.
+// Parses an ecdsa-with-SHA512 which contains a NULL parameters field.
 //
 //   SEQUENCE (2 elem)
 //       OBJECT IDENTIFIER  1.2.840.10045.4.3.4

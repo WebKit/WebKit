@@ -28,7 +28,7 @@
 
 using namespace bssl;
 
-// g_num_calls is the number of calls to |CRYPTO_sysrand| that have occurred.
+// g_num_calls is the number of calls to `CRYPTO_sysrand` that have occurred.
 //
 // This is intentionally not thread-safe. If the fuzzer mode is ever used in a
 // multi-threaded program, replace this with a thread-local. (A mutex would not

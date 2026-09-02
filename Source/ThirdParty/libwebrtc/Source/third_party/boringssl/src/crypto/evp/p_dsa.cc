@@ -102,8 +102,8 @@ static bssl::evp_decode_result_t dsa_priv_decode(const EVP_PKEY_ALG *alg,
     return evp_decode_error;
   }
 
-  // To avoid DoS attacks when importing private keys, check bounds on |dsa|.
-  // This bounds |dsa->priv_key| against |dsa->q| and bounds |dsa->q|'s bit
+  // To avoid DoS attacks when importing private keys, check bounds on `dsa`.
+  // This bounds `dsa->priv_key` against `dsa->q` and bounds `dsa->q`'s bit
   // width.
   if (!dsa_check_key(dsa.get())) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
@@ -289,13 +289,13 @@ const EVP_PKEY_ALG *EVP_pkey_dsa() {
 }
 
 int EVP_PKEY_CTX_set_dsa_paramgen_bits(EVP_PKEY_CTX *ctx, int nbits) {
-  // BoringSSL does not support DSA in |EVP_PKEY_CTX|.
+  // BoringSSL does not support DSA in `EVP_PKEY_CTX`.
   OPENSSL_PUT_ERROR(EVP, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
   return 0;
 }
 
 int EVP_PKEY_CTX_set_dsa_paramgen_q_bits(EVP_PKEY_CTX *ctx, int qbits) {
-  // BoringSSL does not support DSA in |EVP_PKEY_CTX|.
+  // BoringSSL does not support DSA in `EVP_PKEY_CTX`.
   OPENSSL_PUT_ERROR(EVP, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
   return 0;
 }

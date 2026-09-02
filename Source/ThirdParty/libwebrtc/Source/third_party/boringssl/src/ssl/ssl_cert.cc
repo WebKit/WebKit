@@ -51,14 +51,14 @@ UniquePtr<CERT> ssl_cert_dup(CERT *cert) {
     return nullptr;
   }
 
-  // TODO(crbug.com/boringssl/431): This should just be |CopyFrom|.
+  // TODO(crbug.com/boringssl/431): This should just be `CopyFrom`.
   for (const auto &cred : cert->credentials) {
     if (!ret->credentials.Push(UpRef(cred))) {
       return nullptr;
     }
   }
 
-  // |legacy_credential| is mutable, so it must be copied. We cannot simply
+  // `legacy_credential` is mutable, so it must be copied. We cannot simply
   // bump the reference count.
   ret->legacy_credential = cert->legacy_credential->Dup();
   if (ret->legacy_credential == nullptr ||
@@ -220,8 +220,8 @@ bool ssl_parse_rpk_cert(uint8_t *out_alert,
   return true;
 }
 
-// ssl_cert_skip_to_spki parses a DER-encoded, X.509 certificate from |in| and
-// positions |*out_tbs_cert| to cover the TBSCertificate, starting at the
+// ssl_cert_skip_to_spki parses a DER-encoded, X.509 certificate from `in` and
+// positions `*out_tbs_cert` to cover the TBSCertificate, starting at the
 // subjectPublicKeyInfo.
 static bool ssl_cert_skip_to_spki(const CBS *in, CBS *out_tbs_cert) {
   /* From RFC 5280, section 4.1
@@ -405,7 +405,7 @@ bool ssl_cert_check_key_usage(const CBS *in, enum ssl_key_usage_t bit) {
   return true;
 }
 
-UniquePtr<STACK_OF(CRYPTO_BUFFER)> SSL_parse_CA_list(SSL *ssl,
+UniquePtr<STACK_OF(CRYPTO_BUFFER)> SSL_parse_CA_list(SSLImpl *ssl,
                                                      uint8_t *out_alert,
                                                      CBS *cbs) {
   CRYPTO_BUFFER_POOL *const pool = ssl->ctx->pool.get();
@@ -542,10 +542,11 @@ using namespace bssl;
 int SSL_set_chain_and_key(SSL *ssl, CRYPTO_BUFFER *const *certs,
                           size_t num_certs, EVP_PKEY *privkey,
                           const SSL_PRIVATE_KEY_METHOD *privkey_method) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return 0;
   }
-  return cert_set_chain_and_key(ssl->config->cert.get(), certs, num_certs,
+  return cert_set_chain_and_key(ssl_impl->config->cert.get(), certs, num_certs,
                                 privkey, privkey_method);
 }
 
@@ -557,11 +558,12 @@ int SSL_CTX_set_chain_and_key(SSL_CTX *ctx, CRYPTO_BUFFER *const *certs,
 }
 
 void SSL_certs_clear(SSL *ssl) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return;
   }
 
-  CERT *cert = ssl->config->cert.get();
+  CERT *cert = ssl_impl->config->cert.get();
   cert->x509_method->cert_clear(cert);
   cert->credentials.clear();
   cert->legacy_credential->ClearCertAndKey();
@@ -572,10 +574,11 @@ const STACK_OF(CRYPTO_BUFFER) *SSL_CTX_get0_chain(const SSL_CTX *ctx) {
 }
 
 const STACK_OF(CRYPTO_BUFFER) *SSL_get0_chain(const SSL *ssl) {
-  if (!ssl->config) {
+  const auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return nullptr;
   }
-  return ssl->config->cert->legacy_credential->chain.get();
+  return ssl_impl->config->cert->legacy_credential->chain.get();
 }
 
 int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, size_t der_len,
@@ -589,12 +592,13 @@ int SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, size_t der_len,
 }
 
 int SSL_use_certificate_ASN1(SSL *ssl, const uint8_t *der, size_t der_len) {
+  auto *ssl_impl = FromOpaque(ssl);
   UniquePtr<CRYPTO_BUFFER> buffer(CRYPTO_BUFFER_new(der, der_len, nullptr));
-  if (!buffer || !ssl->config) {
+  if (!buffer || !ssl_impl->config) {
     return 0;
   }
 
-  return ssl_set_cert(ssl->config->cert.get(), std::move(buffer));
+  return ssl_set_cert(ssl_impl->config->cert.get(), std::move(buffer));
 }
 
 void SSL_CTX_set_cert_cb(SSL_CTX *ctx, int (*cb)(SSL *ssl, void *arg),
@@ -603,10 +607,11 @@ void SSL_CTX_set_cert_cb(SSL_CTX *ctx, int (*cb)(SSL *ssl, void *arg),
 }
 
 void SSL_set_cert_cb(SSL *ssl, int (*cb)(SSL *ssl, void *arg), void *arg) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return;
   }
-  ssl_cert_set_cert_cb(ssl->config->cert.get(), cb, arg);
+  ssl_cert_set_cert_cb(ssl_impl->config->cert.get(), cb, arg);
 }
 
 const STACK_OF(CRYPTO_BUFFER) *SSL_get0_peer_certificates(const SSL *ssl) {
@@ -619,10 +624,11 @@ const STACK_OF(CRYPTO_BUFFER) *SSL_get0_peer_certificates(const SSL *ssl) {
 }
 
 const STACK_OF(CRYPTO_BUFFER) *SSL_get0_server_requested_CAs(const SSL *ssl) {
-  if (ssl->s3->hs == nullptr) {
+  const auto *ssl_impl = FromOpaque(ssl);
+  if (ssl_impl->s3->hs == nullptr) {
     return nullptr;
   }
-  return ssl->s3->hs->ca_names.get();
+  return ssl_impl->s3->hs->ca_names.get();
 }
 
 int SSL_CTX_set_signed_cert_timestamp_list(SSL_CTX *ctx, const uint8_t *list,
@@ -635,13 +641,14 @@ int SSL_CTX_set_signed_cert_timestamp_list(SSL_CTX *ctx, const uint8_t *list,
 
 int SSL_set_signed_cert_timestamp_list(SSL *ssl, const uint8_t *list,
                                        size_t list_len) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return 0;
   }
   UniquePtr<CRYPTO_BUFFER> buf(CRYPTO_BUFFER_new(list, list_len, nullptr));
   return buf != nullptr &&
          SSL_CREDENTIAL_set1_signed_cert_timestamp_list(
-             ssl->config->cert->legacy_credential.get(), buf.get());
+             ssl_impl->config->cert->legacy_credential.get(), buf.get());
 }
 
 int SSL_CTX_set_ocsp_response(SSL_CTX *ctx, const uint8_t *response,
@@ -655,14 +662,15 @@ int SSL_CTX_set_ocsp_response(SSL_CTX *ctx, const uint8_t *response,
 
 int SSL_set_ocsp_response(SSL *ssl, const uint8_t *response,
                           size_t response_len) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return 0;
   }
   UniquePtr<CRYPTO_BUFFER> buf(
       CRYPTO_BUFFER_new(response, response_len, nullptr));
   return buf != nullptr &&
          SSL_CREDENTIAL_set1_ocsp_response(
-             ssl->config->cert->legacy_credential.get(), buf.get());
+             ssl_impl->config->cert->legacy_credential.get(), buf.get());
 }
 
 void SSL_CTX_set0_client_CAs(SSL_CTX *ctx, STACK_OF(CRYPTO_BUFFER) *name_list) {
@@ -672,18 +680,22 @@ void SSL_CTX_set0_client_CAs(SSL_CTX *ctx, STACK_OF(CRYPTO_BUFFER) *name_list) {
 }
 
 void SSL_set0_client_CAs(SSL *ssl, STACK_OF(CRYPTO_BUFFER) *name_list) {
-  if (!ssl->config) {
-    // |SSL_set0_client_CAs| is expected to take ownership of |name_list|.
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
+    // `SSL_set0_client_CAs` is expected to take ownership of `name_list`.
     sk_CRYPTO_BUFFER_pop_free(name_list, CRYPTO_BUFFER_free);
     return;
   }
-  ssl->ctx->x509_method->ssl_flush_cached_client_CA(ssl->config.get());
-  ssl->config->client_CA.reset(name_list);
+  ssl_impl->ctx->x509_method->ssl_flush_cached_client_CA(
+      ssl_impl->config.get());
+  ssl_impl->config->client_CA.reset(name_list);
 }
 
 void SSL_set0_CA_names(SSL *ssl, STACK_OF(CRYPTO_BUFFER) *name_list) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
+    sk_CRYPTO_BUFFER_pop_free(name_list, CRYPTO_BUFFER_free);
     return;
   }
-  ssl->config->CA_names.reset(name_list);
+  ssl_impl->config->CA_names.reset(name_list);
 }

@@ -69,14 +69,14 @@ static void __asan_unpoison_memory_region(const void *addr, size_t size) {}
 #endif
 
 #if defined(BORINGSSL_DETECT_SDALLOCX)
-// sdallocx is a sized |free| function. By passing the size (which we happen to
+// sdallocx is a sized `free` function. By passing the size (which we happen to
 // always know in BoringSSL), the malloc implementation can save work. We cannot
-// depend on |sdallocx| being available, however, so it's a weak symbol.
+// depend on `sdallocx` being available, however, so it's a weak symbol.
 //
-// This mechanism is kept opt-in because it assumes that, when |sdallocx| is
-// defined, it is part of the same allocator as |malloc|. This is usually true
-// but may break if |malloc| does not implement |sdallocx|, but some other
-// allocator with |sdallocx| is imported which does.
+// This mechanism is kept opt-in because it assumes that, when `sdallocx` is
+// defined, it is part of the same allocator as `malloc`. This is usually true
+// but may break if `malloc` does not implement `sdallocx`, but some other
+// allocator with `sdallocx` is imported which does.
 WEAK_SYMBOL_FUNC(void, sdallocx, (void *ptr, size_t size, int flags))
 #else
 static void (*const sdallocx)(void *ptr, size_t size, int flags) = nullptr;
@@ -84,8 +84,8 @@ static void (*const sdallocx)(void *ptr, size_t size, int flags) = nullptr;
 
 // The following three functions can be defined to override default heap
 // allocation and freeing. If defined, it is the responsibility of
-// |OPENSSL_memory_free| to zero out the memory before returning it to the
-// system. |OPENSSL_memory_free| will not be passed NULL pointers.
+// `OPENSSL_memory_free` to zero out the memory before returning it to the
+// system. `OPENSSL_memory_free` will not be passed NULL pointers.
 //
 // WARNING: These functions are called on every allocation and free in
 // BoringSSL across the entire process. They may be called by any code in the

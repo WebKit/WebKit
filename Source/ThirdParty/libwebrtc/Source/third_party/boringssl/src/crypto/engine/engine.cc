@@ -42,7 +42,7 @@ int ENGINE_free(ENGINE *engine) {
 }
 
 // set_method takes a pointer to a method and its given size and sets
-// |*out_member| to point to it. This function might want to be extended in the
+// `*out_member` to point to it. This function might want to be extended in the
 // future to support making a copy of the method so that a stable ABI for
 // ENGINEs can be supported. But, for the moment, all *_METHODS must be
 // static.

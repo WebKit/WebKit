@@ -241,12 +241,12 @@ TEST(P256_NistzTest, BEEU) {
 
   for (int i = 0; i < 255; i++) {
     SCOPED_TRACE(i);
-    // Test |in| = 2^i.
+    // Test `in` = 2^i.
     OPENSSL_memset(in, 0, sizeof(in));
     in[i / BN_BITS2] = BN_ULONG{1} << (i % BN_BITS2);
     beeu_test();
 
-    // Test |in| = N - 2^i.
+    // Test `in` = N - 2^i.
     bn_sub_words(in, order_words, in, P256_LIMBS);
     beeu_test();
   }
@@ -264,7 +264,7 @@ static bool GetFieldElement(FileTest *t, BN_ULONG out[P256_LIMBS],
     return false;
   }
 
-  // |byte| contains bytes in big-endian while |out| should contain |BN_ULONG|s
+  // `byte` contains bytes in big-endian while `out` should contain `BN_ULONG`s
   // in little-endian.
   OPENSSL_memset(out, 0, P256_LIMBS * sizeof(BN_ULONG));
   for (size_t i = 0; i < bytes.size(); i++) {
@@ -331,8 +331,8 @@ static bool PointToAffine(P256_POINT_AFFINE *out, const P256_POINT *in) {
 static testing::AssertionResult ExpectPointsEqual(
     const char *expected_expr, const char *actual_expr,
     const P256_POINT_AFFINE *expected, const P256_POINT *actual) {
-  // There are multiple representations of the same |P256_POINT|, so convert to
-  // |P256_POINT_AFFINE| and compare.
+  // There are multiple representations of the same `P256_POINT`, so convert to
+  // `P256_POINT_AFFINE` and compare.
   P256_POINT_AFFINE affine;
   if (!PointToAffine(&affine, actual)) {
     return testing::AssertionFailure()

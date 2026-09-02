@@ -17,6 +17,8 @@
 
 #include <openssl/base.h>
 
+#include "../../internal.h"
+
 
 BSSL_NAMESPACE_BEGIN
 
@@ -72,7 +74,19 @@ OPENSSL_EXPORT void BORINGSSL_keccak_squeeze(struct BORINGSSL_keccak_st *ctx,
 
 #if defined(__has_attribute)
 #if __has_attribute(vector_size)
+
 #define HAVE_KECCAK_X2
+
+#if defined(OPENSSL_AARCH64)
+#define HAVE_KECCAK_X4
+#define KECCAK_X4_TARGET
+#endif
+
+#if defined(OPENSSL_X86_64)
+#define HAVE_KECCAK_X4
+#define KECCAK_X4_TARGET __attribute__((target("avx2")))
+#endif
+
 #endif  // vector_size
 #endif  // __has_attribute
 
@@ -88,6 +102,31 @@ OPENSSL_EXPORT void BORINGSSL_keccak_squeeze_x2(
 // (or actually `rate_bytes`).
 OPENSSL_EXPORT void BORINGSSL_keccak_short_x2(
     uint8_t *outs[2], size_t out_len, const uint8_t *ins[2], size_t in_len,
+    enum boringssl_keccak_config_t config);
+#endif
+
+#if defined(HAVE_KECCAK_X4)
+// BORINGSSL_have_keccak_x4 needs to return true before using any of the _x4
+// variants here, as they may require additional CPU features.
+inline bool BORINGSSL_have_keccak_x4() {
+#if defined(OPENSSL_X86_64)
+  return CRYPTO_is_AVX2_capable();
+#else
+  return true;
+#endif
+}
+
+// BORINGSSL_keccak_squeeze_x4 performs BORINGSSL_keccak_squeeze in parallel
+// with four same-length outputs. The contexts must be in equivalent state (i.e.
+// same config, same amount of bytes absorbed and squeezed).
+OPENSSL_EXPORT void BORINGSSL_keccak_squeeze_x4(
+    struct BORINGSSL_keccak_st ctx[4], uint8_t *outs[4], size_t out_len);
+
+// BORINGSSL_keccak_short_x4 performs BORINGSSL_keccak in parallel on four
+// same-length strings with same-length outputs. in_len must be less than 72
+// (or actually |rate_bytes|).
+OPENSSL_EXPORT void BORINGSSL_keccak_short_x4(
+    uint8_t *outs[4], size_t out_len, const uint8_t *ins[4], size_t in_len,
     enum boringssl_keccak_config_t config);
 #endif
 

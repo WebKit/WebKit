@@ -53,7 +53,7 @@ struct evp_aead_st {
 
   // AEADs need to provide one of the following sets of methods:
   //
-  // - openv + sealv: variable tag lenght AEAD.
+  // - openv + sealv: variable tag length AEAD.
   // - openv_detached + sealv: fixed tag length AEAD.
 
   int (*openv)(const EVP_AEAD_CTX *ctx, bssl::Span<const CRYPTO_IOVEC> iovecs,

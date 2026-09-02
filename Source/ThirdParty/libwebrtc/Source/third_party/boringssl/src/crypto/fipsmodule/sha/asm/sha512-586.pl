@@ -93,7 +93,7 @@ $Hsse2=&QWP(56,"esp");
 
 $A="mm0";	# B-D and
 $E="mm4";	# F-H are commonly loaded to respectively mm1-mm3 and
-		# mm5-mm7, but it's done on on-demand basis...
+		# mm5-mm7, but it's done on an on-demand basis...
 $BxC="mm2";	# ... except for B^C
 
 sub BODY_00_15_sse2 {

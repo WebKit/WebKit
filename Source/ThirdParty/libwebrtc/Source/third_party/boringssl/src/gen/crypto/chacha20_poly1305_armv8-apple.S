@@ -7,6 +7,7 @@
 .section	__TEXT,__const
 
 .align	7
+chacha20_poly1305_constants:
 Lchacha20_consts:
 .byte	'e','x','p','a','n','d',' ','3','2','-','b','y','t','e',' ','k'
 Linc:
@@ -20,6 +21,7 @@ Lclamp:
 
 
 .align	6
+chacha20_poly1305_helpers:
 Lpoly_hash_ad_internal:
 .cfi_startproc
 	cbnz	x4, Lpoly_hash_intro
@@ -118,6 +120,7 @@ Lpoly_hash_ad_ret:
 .private_extern	_chacha20_poly1305_seal
 
 .align	6
+.alt_entry _chacha20_poly1305_seal
 _chacha20_poly1305_seal:
 	AARCH64_SIGN_LINK_REGISTER
 .cfi_startproc
@@ -1474,6 +1477,7 @@ Lseal_128_rounds:
 .private_extern	_chacha20_poly1305_open
 
 .align	6
+.alt_entry _chacha20_poly1305_open
 _chacha20_poly1305_open:
 	AARCH64_SIGN_LINK_REGISTER
 .cfi_startproc

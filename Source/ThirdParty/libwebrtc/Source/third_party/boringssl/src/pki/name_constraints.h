@@ -38,7 +38,7 @@ class OPENSSL_EXPORT NameConstraints {
   // Parses a DER-encoded NameConstraints extension and initializes this object.
   // `extension_value` should be the extnValue from the extension (not including
   // the OCTET STRING tag). `is_critical` should be true if the extension was
-  // marked critical. Returns nullptr if parsing the the extension failed.
+  // marked critical. Returns nullptr if parsing the extension failed.
   // The object may reference data from `extension_value`, so is only valid as
   // long as `extension_value` is.
   static std::unique_ptr<NameConstraints> Create(der::Input extension_value,

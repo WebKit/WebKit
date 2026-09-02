@@ -275,7 +275,7 @@ func (x extractor) visit(n *node) (err error) {
 			len(n.Inner))
 	}
 
-	// Allow to ignore errors.
+	// Allow errors to be ignored.
 	defer func() {
 		if x.options.KeepGoing && err != nil {
 			log.Printf("ERROR: %v", err)

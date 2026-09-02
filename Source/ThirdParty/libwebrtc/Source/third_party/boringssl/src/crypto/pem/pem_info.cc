@@ -175,7 +175,7 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
     // not decrypt private keys.
     if (key_type != EVP_PKEY_NONE && strlen(header.get()) > 10) {
       if (data.size() > INT_MAX) {
-        // We need the data to fit in |info| which forces the size to
+        // We need the data to fit in `info` which forces the size to
         // fit in one int type.
         goto err;
       }
@@ -196,7 +196,7 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
       }
       size_t size;
       data.Release(reinterpret_cast<uint8_t **>(&info->enc_data), &size);
-      // Safety: we checked that |size| <= |INT_MAX|.
+      // Safety: we checked that `size` <= `INT_MAX`.
       info->enc_len = static_cast<int>(size);
     } else if (parse_function != nullptr) {
       EVP_CIPHER_INFO cipher;

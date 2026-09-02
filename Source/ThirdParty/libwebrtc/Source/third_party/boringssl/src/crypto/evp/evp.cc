@@ -29,7 +29,7 @@
 
 using namespace bssl;
 
-// Node depends on |EVP_R_NOT_XOF_OR_INVALID_LENGTH|.
+// Node depends on `EVP_R_NOT_XOF_OR_INVALID_LENGTH`.
 //
 // TODO(davidben): Fix Node to not touch the error queue itself and remove this.
 OPENSSL_DECLARE_ERROR_REASON(EVP, NOT_XOF_OR_INVALID_LENGTH)
@@ -75,7 +75,7 @@ int EVP_PKEY_is_opaque(const EVP_PKEY *pkey) {
 }
 
 int EVP_PKEY_eq(const EVP_PKEY *a, const EVP_PKEY *b) {
-  // This also checks that |EVP_PKEY_id| matches.
+  // This also checks that `EVP_PKEY_id` matches.
   if (!EVP_PKEY_parameters_eq(a, b)) {
     return 0;
   }
@@ -96,7 +96,7 @@ int EVP_PKEY_copy_parameters(EVP_PKEY *to, const EVP_PKEY *from) {
   auto *from_impl = FromOpaque(from);
 
   if (EVP_PKEY_id(to_impl) == EVP_PKEY_NONE) {
-    // TODO(crbug.com/42290409): This shouldn't leave |to| in a half-empty state
+    // TODO(crbug.com/42290409): This shouldn't leave `to` in a half-empty state
     // on error. The complexity here largely comes from parameterless DSA keys,
     // which we no longer support, so this function can probably be trimmed
     // down.
@@ -205,15 +205,15 @@ int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key) {
 int EVP_PKEY_set_type(EVP_PKEY *pkey, int type) {
   auto *impl = FromOpaque(pkey);
   if (impl && impl->pkey) {
-    // Some callers rely on |pkey| getting cleared even if |type| is
-    // unsupported, usually setting |type| to |EVP_PKEY_NONE|.
+    // Some callers rely on `pkey` getting cleared even if `type` is
+    // unsupported, usually setting `type` to `EVP_PKEY_NONE`.
     evp_pkey_set0(impl, nullptr, nullptr);
   }
 
-  // This function broadly isn't useful. It initializes |EVP_PKEY| for a type,
-  // but forgets to put anything in the |pkey|. The one pattern where it does
-  // anything is |EVP_PKEY_X25519|, where it's needed to make
-  // |EVP_PKEY_set1_tls_encodedpoint| work, so we support only that.
+  // This function broadly isn't useful. It initializes `EVP_PKEY` for a type,
+  // but forgets to put anything in the `pkey`. The one pattern where it does
+  // anything is `EVP_PKEY_X25519`, where it's needed to make
+  // `EVP_PKEY_set1_tls_encodedpoint` work, so we support only that.
   const EVP_PKEY_ALG *alg;
   if (type == EVP_PKEY_X25519) {
     alg = EVP_pkey_x25519();
@@ -367,8 +367,8 @@ int EVP_PKEY_CTX_set1_signature_context_string(EVP_PKEY_CTX *ctx,
 
 void *EVP_PKEY_get0(const EVP_PKEY *pkey) {
   // Node references, but never calls this function, so for now we return NULL.
-  // If other projects require complete support, call |EVP_PKEY_get0_RSA|, etc.,
-  // rather than reading |pkey->pkey| directly. This avoids problems if our
+  // If other projects require complete support, call `EVP_PKEY_get0_RSA`, etc.,
+  // rather than reading `pkey->pkey` directly. This avoids problems if our
   // internal representation does not match the type the caller expects from
   // OpenSSL.
   return nullptr;

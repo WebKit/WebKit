@@ -99,7 +99,7 @@ void bssl::ec_GFp_simple_point_copy(EC_JACOBIAN *dest, const EC_JACOBIAN *src) {
 void bssl::ec_GFp_simple_point_set_to_infinity(const EC_GROUP *group,
                                                EC_JACOBIAN *point) {
   // Although it is strictly only necessary to zero Z, we zero the entire point
-  // in case |point| was stack-allocated and yet to be initialized.
+  // in case `point` was stack-allocated and yet to be initialized.
   ec_GFp_simple_point_init(point);
 }
 
@@ -177,7 +177,7 @@ int bssl::ec_GFp_simple_points_equal(const EC_GROUP *group,
   // restore this optimization by keeping better track of affine vs. Jacobian
   // forms. See https://crbug.com/boringssl/326.
 
-  // If neither |a| or |b| is infinity, we have to decide whether
+  // If neither `a` or `b` is infinity, we have to decide whether
   //     (X_a/Z_a^2, Y_a/Z_a^3) = (X_b/Z_b^2, Y_b/Z_b^3),
   // or equivalently, whether
   //     (X_a*Z_b^2, Y_a*Z_b^3) = (X_b*Z_a^2, Y_b*Z_a^3).
@@ -209,7 +209,7 @@ int bssl::ec_GFp_simple_points_equal(const EC_GROUP *group,
 
 int bssl::ec_affine_jacobian_equal(const EC_GROUP *group, const EC_AFFINE *a,
                                    const EC_JACOBIAN *b) {
-  // If |b| is not infinity, we have to decide whether
+  // If `b` is not infinity, we have to decide whether
   //     (X_a, Y_a) = (X_b/Z_b^2, Y_b/Z_b^3),
   // or equivalently, whether
   //     (X_a*Z_b^2, Y_a*Z_b^3) = (X_b, Y_b).
@@ -236,7 +236,7 @@ int bssl::ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group,
                                          const EC_JACOBIAN *p,
                                          const EC_SCALAR *r) {
   if (ec_GFp_simple_is_at_infinity(group, p)) {
-    // |ec_get_x_coordinate_as_scalar| will check this internally, but this way
+    // `ec_get_x_coordinate_as_scalar` will check this internally, but this way
     // we do not push to the error queue.
     return 0;
   }

@@ -130,7 +130,7 @@ static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
 
 bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
     Span<const uint8_t> spki) {
-  // Ideally the set of reachable algorithms would flow from |SSL_CTX| for dead
+  // Ideally the set of reachable algorithms would flow from `SSL_CTX` for dead
   // code elimination, but for now we just specify every algorithm that might be
   // reachable from libssl.
   const EVP_PKEY_ALG *const algs[] = {
@@ -142,7 +142,7 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
       spki.data(), spki.size(), algs, std::size(algs)));
 }
 
-bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
+bool ssl_pkey_supports_algorithm(const SSLImpl *ssl, EVP_PKEY *pkey,
                                  uint16_t sigalg, bool is_verify) {
   const SSL_SIGNATURE_ALGORITHM *alg = get_signature_algorithm(sigalg);
   if (alg == nullptr || EVP_PKEY_id(pkey) != alg->pkey_type) {
@@ -167,7 +167,7 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
            sigalg == SSL_SIGN_ECDSA_SHA1;
   }
 
-  // |SSL_SIGN_RSA_PKCS1_MD5_SHA1| is not a real SignatureScheme for TLS 1.2 and
+  // `SSL_SIGN_RSA_PKCS1_MD5_SHA1` is not a real SignatureScheme for TLS 1.2 and
   // higher. It is an internal value we use to represent TLS 1.0/1.1's MD5/SHA1
   // concatenation.
   if (sigalg == SSL_SIGN_RSA_PKCS1_MD5_SHA1) {
@@ -197,7 +197,7 @@ bool ssl_pkey_supports_algorithm(const SSL *ssl, EVP_PKEY *pkey,
   return true;
 }
 
-static bool setup_ctx(SSL *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
+static bool setup_ctx(SSLImpl *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
                       uint16_t sigalg, bool is_verify) {
   if (!ssl_pkey_supports_algorithm(ssl, pkey, sigalg, is_verify)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
@@ -229,11 +229,10 @@ static bool setup_ctx(SSL *ssl, EVP_MD_CTX *ctx, EVP_PKEY *pkey,
 enum ssl_private_key_result_t ssl_private_key_sign(
     SSL_HANDSHAKE *hs, uint8_t *out, size_t *out_len, size_t max_out,
     uint16_t sigalg, Span<const uint8_t> in) {
-  SSL *const ssl = hs->ssl;
+  SSLImpl *const ssl = hs->ssl;
   const SSLCredential *const cred = hs->credential.get();
-  SSL_HANDSHAKE_HINTS *const hints = hs->hints.get();
   Array<uint8_t> spki;
-  if (hints) {
+  if (hs->provided_hints != nullptr || hs->pending_hints != nullptr) {
     ScopedCBB spki_cbb;
     if (!CBB_init(spki_cbb.get(), 64) ||
         !EVP_marshal_public_key(spki_cbb.get(), cred->pubkey.get()) ||
@@ -244,67 +243,68 @@ enum ssl_private_key_result_t ssl_private_key_sign(
   }
 
   // Replay the signature from handshake hints if available.
-  if (hints && !hs->hints_requested &&         //
-      sigalg == hints->signature_algorithm &&  //
-      in == hints->signature_input &&          //
-      Span(spki) == hints->signature_spki &&   //
-      !hints->signature.empty() &&             //
-      hints->signature.size() <= max_out) {
+  bool hint_applicable = hs->provided_hints != nullptr &&
+                         sigalg == hs->provided_hints->signature_algorithm &&
+                         in == hs->provided_hints->signature_input &&
+                         Span(spki) == hs->provided_hints->signature_spki &&
+                         !hs->provided_hints->signature.empty() &&
+                         hs->provided_hints->signature.size() <= max_out;
+  if (hint_applicable) {
     // Signature algorithm and input both match. Reuse the signature from hints.
-    *out_len = hints->signature.size();
-    OPENSSL_memcpy(out, hints->signature.data(), hints->signature.size());
-    return ssl_private_key_success;
-  }
+    *out_len = hs->provided_hints->signature.size();
+    OPENSSL_memcpy(out, hs->provided_hints->signature.data(),
+                   hs->provided_hints->signature.size());
+  } else {
+    const SSL_PRIVATE_KEY_METHOD *key_method = cred->key_method;
+    EVP_PKEY *privkey = cred->privkey.get();
+    assert(!hs->can_release_private_key);
 
-  const SSL_PRIVATE_KEY_METHOD *key_method = cred->key_method;
-  EVP_PKEY *privkey = cred->privkey.get();
-  assert(!hs->can_release_private_key);
-
-  if (key_method != nullptr) {
-    if (key_method->sign == nullptr) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-      return ssl_private_key_failure;
-    }
-    enum ssl_private_key_result_t ret;
-    if (hs->pending_private_key_op) {
-      if (key_method->complete == nullptr) {
+    if (key_method != nullptr) {
+      if (key_method->sign == nullptr) {
         OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
         return ssl_private_key_failure;
       }
-      ret = key_method->complete(ssl, out, out_len, max_out);
+      enum ssl_private_key_result_t ret;
+      if (hs->pending_private_key_op) {
+        if (key_method->complete == nullptr) {
+          OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+          return ssl_private_key_failure;
+        }
+        ret = key_method->complete(ssl, out, out_len, max_out);
+      } else {
+        ret = key_method->sign(ssl, out, out_len, max_out, sigalg, in.data(),
+                              in.size());
+      }
+      if (ret == ssl_private_key_failure) {
+        OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
+      }
+      hs->pending_private_key_op = ret == ssl_private_key_retry;
+      if (ret != ssl_private_key_success) {
+        return ret;
+      }
     } else {
-      ret = key_method->sign(ssl, out, out_len, max_out, sigalg, in.data(),
-                             in.size());
-    }
-    if (ret == ssl_private_key_failure) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_PRIVATE_KEY_OPERATION_FAILED);
-    }
-    hs->pending_private_key_op = ret == ssl_private_key_retry;
-    if (ret != ssl_private_key_success) {
-      return ret;
-    }
-  } else {
-    *out_len = max_out;
-    ScopedEVP_MD_CTX ctx;
-    if (!setup_ctx(ssl, ctx.get(), privkey, sigalg, false /* sign */) ||
-        !EVP_DigestSign(ctx.get(), out, out_len, in.data(), in.size())) {
-      return ssl_private_key_failure;
+      *out_len = max_out;
+      ScopedEVP_MD_CTX ctx;
+      if (!setup_ctx(ssl, ctx.get(), privkey, sigalg, false /* sign */) ||
+          !EVP_DigestSign(ctx.get(), out, out_len, in.data(), in.size())) {
+        return ssl_private_key_failure;
+      }
     }
   }
 
-  // Save the hint if applicable.
-  if (hints && hs->hints_requested) {
-    hints->signature_algorithm = sigalg;
-    hints->signature_spki = std::move(spki);
-    if (!hints->signature_input.CopyFrom(in) ||
-        !hints->signature.CopyFrom(Span(out, *out_len))) {
+  // Save the hint if requested.
+  if (hs->pending_hints != nullptr) {
+    hs->pending_hints->signature_algorithm = sigalg;
+    hs->pending_hints->signature_spki = std::move(spki);
+    if (!hs->pending_hints->signature_input.CopyFrom(in) ||
+        !hs->pending_hints->signature.CopyFrom(Span(out, *out_len))) {
       return ssl_private_key_failure;
     }
   }
   return ssl_private_key_success;
 }
 
-bool ssl_public_key_verify(SSL *ssl, Span<const uint8_t> signature,
+bool ssl_public_key_verify(SSLImpl *ssl, Span<const uint8_t> signature,
                            uint16_t sigalg, EVP_PKEY *pkey,
                            Span<const uint8_t> in) {
   ScopedEVP_MD_CTX ctx;
@@ -325,7 +325,7 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
                                                       size_t *out_len,
                                                       size_t max_out,
                                                       Span<const uint8_t> in) {
-  SSL *const ssl = hs->ssl;
+  SSLImpl *const ssl = hs->ssl;
   const SSLCredential *const cred = hs->credential.get();
   assert(!hs->can_release_private_key);
   if (cred->key_method != nullptr) {
@@ -372,7 +372,7 @@ BSSL_NAMESPACE_END
 using namespace bssl;
 
 int SSL_use_RSAPrivateKey(SSL *ssl, RSA *rsa) {
-  if (rsa == nullptr || ssl->config == nullptr) {
+  if (rsa == nullptr || FromOpaque(ssl)->config == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
@@ -398,13 +398,14 @@ int SSL_use_RSAPrivateKey_ASN1(SSL *ssl, const uint8_t *der, size_t der_len) {
 }
 
 int SSL_use_PrivateKey(SSL *ssl, EVP_PKEY *pkey) {
-  if (pkey == nullptr || ssl->config == nullptr) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (pkey == nullptr || ssl_impl->config == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
 
   return SSL_CREDENTIAL_set1_private_key(
-      ssl->config->cert->legacy_credential.get(), pkey);
+      ssl_impl->config->cert->legacy_credential.get(), pkey);
 }
 
 int SSL_use_PrivateKey_ASN1(int type, SSL *ssl, const uint8_t *der,
@@ -479,11 +480,12 @@ int SSL_CTX_use_PrivateKey_ASN1(int type, SSL_CTX *ctx, const uint8_t *der,
 
 void SSL_set_private_key_method(SSL *ssl,
                                 const SSL_PRIVATE_KEY_METHOD *key_method) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return;
   }
   BSSL_CHECK(SSL_CREDENTIAL_set_private_key_method(
-      ssl->config->cert->legacy_credential.get(), key_method));
+      ssl_impl->config->cert->legacy_credential.get(), key_method));
 }
 
 void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
@@ -532,7 +534,7 @@ const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
       case SSL_SIGN_ECDSA_SECP521R1_SHA512:
         return "ecdsa_sha512";
         // If adding more here, also update
-        // |SSL_get_all_signature_algorithm_names|.
+        // `SSL_get_all_signature_algorithm_names`.
     }
   }
 
@@ -597,7 +599,7 @@ static bool set_sigalg_prefs(Array<uint16_t> *out, Span<const uint16_t> prefs) {
     return false;
   }
 
-  // Check for invalid algorithms, and filter out |SSL_SIGN_RSA_PKCS1_MD5_SHA1|.
+  // Check for invalid algorithms, and filter out `SSL_SIGN_RSA_PKCS1_MD5_SHA1`.
   Array<uint16_t> filtered;
   if (!filtered.InitForOverwrite(prefs.size())) {
     return false;
@@ -606,8 +608,8 @@ static bool set_sigalg_prefs(Array<uint16_t> *out, Span<const uint16_t> prefs) {
   for (uint16_t pref : prefs) {
     if (pref == SSL_SIGN_RSA_PKCS1_MD5_SHA1) {
       // Though not intended to be used with this API, we treat
-      // |SSL_SIGN_RSA_PKCS1_MD5_SHA1| as a real signature algorithm in
-      // |SSL_PRIVATE_KEY_METHOD|. Not accepting it here makes for a confusing
+      // `SSL_SIGN_RSA_PKCS1_MD5_SHA1` as a real signature algorithm in
+      // `SSL_PRIVATE_KEY_METHOD`. Not accepting it here makes for a confusing
       // abstraction.
       continue;
     }
@@ -620,7 +622,7 @@ static bool set_sigalg_prefs(Array<uint16_t> *out, Span<const uint16_t> prefs) {
   }
   filtered.Shrink(added);
 
-  // This can happen if |prefs| contained only |SSL_SIGN_RSA_PKCS1_MD5_SHA1|.
+  // This can happen if `prefs` contained only `SSL_SIGN_RSA_PKCS1_MD5_SHA1`.
   // Leaving it empty would revert to the default, so treat this as an error
   // condition.
   if (!prefs.empty() && filtered.empty()) {
@@ -659,11 +661,12 @@ int SSL_CTX_set_signing_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
 
 int SSL_set_signing_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
                                     size_t num_prefs) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     return 0;
   }
   return SSL_CREDENTIAL_set1_signing_algorithm_prefs(
-      ssl->config->cert->legacy_credential.get(), prefs, num_prefs);
+      ssl_impl->config->cert->legacy_credential.get(), prefs, num_prefs);
 }
 
 static constexpr struct {
@@ -739,7 +742,8 @@ int SSL_CTX_set1_sigalgs(SSL_CTX *ctx, const int *values, size_t num_values) {
 }
 
 int SSL_set1_sigalgs(SSL *ssl, const int *values, size_t num_values) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
@@ -749,8 +753,10 @@ int SSL_set1_sigalgs(SSL *ssl, const int *values, size_t num_values) {
     return 0;
   }
 
-  if (!SSL_set_signing_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size()) ||
-      !SSL_set_verify_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size())) {
+  if (!SSL_set_signing_algorithm_prefs(ssl_impl, sigalgs.data(),
+                                       sigalgs.size()) ||
+      !SSL_set_verify_algorithm_prefs(ssl_impl, sigalgs.data(),
+                                      sigalgs.size())) {
     return 0;
   }
 
@@ -927,7 +933,8 @@ int SSL_CTX_set1_sigalgs_list(SSL_CTX *ctx, const char *str) {
 }
 
 int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
@@ -937,8 +944,10 @@ int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
     return 0;
   }
 
-  if (!SSL_set_signing_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size()) ||
-      !SSL_set_verify_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size())) {
+  if (!SSL_set_signing_algorithm_prefs(ssl_impl, sigalgs.data(),
+                                       sigalgs.size()) ||
+      !SSL_set_verify_algorithm_prefs(ssl_impl, sigalgs.data(),
+                                      sigalgs.size())) {
     return 0;
   }
 
@@ -953,10 +962,12 @@ int SSL_CTX_set_verify_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
 
 int SSL_set_verify_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
                                    size_t num_prefs) {
-  if (!ssl->config) {
+  auto *ssl_impl = FromOpaque(ssl);
+  if (!ssl_impl->config) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
 
-  return set_sigalg_prefs(&ssl->config->verify_sigalgs, Span(prefs, num_prefs));
+  return set_sigalg_prefs(&ssl_impl->config->verify_sigalgs,
+                          Span(prefs, num_prefs));
 }

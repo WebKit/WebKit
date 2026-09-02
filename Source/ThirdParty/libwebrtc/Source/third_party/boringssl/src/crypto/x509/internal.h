@@ -21,25 +21,43 @@
 #include <openssl/x509.h>
 
 #include "../asn1/internal.h"
-#include "../mem_internal.h"
 #include "../internal.h"
+#include "../mem_internal.h"
 
 // Internal structures.
 
 DECLARE_OPAQUE_STRUCT(x509_st, X509Impl)
 DECLARE_OPAQUE_STRUCT(x509_store_st, X509Store)
 DECLARE_OPAQUE_STRUCT(X509_name_st, X509Name)
-
-struct X509_pubkey_st {
-  X509_ALGOR algor;
-  ASN1_BIT_STRING public_key;
-  EVP_PKEY *pkey;
-} /* X509_PUBKEY */;
+DECLARE_OPAQUE_STRUCT(X509_name_entry_st, X509NameEntry)
+DECLARE_OPAQUE_STRUCT(X509_pubkey_st, X509Pubkey)
 
 BSSL_NAMESPACE_BEGIN
 
-void x509_pubkey_init(X509_PUBKEY *key);
-void x509_pubkey_cleanup(X509_PUBKEY *key);
+void x509_algor_init(X509_ALGOR *alg);
+void x509_algor_cleanup(X509_ALGOR *alg);
+
+// A ScopedX509Algor is a stack-allocatable `X509_ALGOR` with managed lifetime.
+// This cannot use `DECLARE_OPAQUE_STRUCT` because `X509_ALGOR` is a public
+// struct.
+using ScopedX509Algor =
+    internal::StackAllocated<X509_ALGOR, void, x509_algor_init,
+                             x509_algor_cleanup>;
+
+// x509_parse_algorithm parses a DER-encoded, AlgorithmIdentifier from `cbs` and
+// writes the result to `*out`. It returns one on success and zero on error.
+int x509_parse_algorithm(CBS *cbs, X509_ALGOR *out);
+
+// x509_marshal_algorithm marshals `in` as a DER-encoded, AlgorithmIdentifier
+// and writes the result to `out`. It returns one on success and zero on error.
+int x509_marshal_algorithm(CBB *out, const X509_ALGOR *in);
+
+class X509Pubkey : public X509_pubkey_st {
+ public:
+  ScopedX509Algor algor;
+  ScopedASN1String public_key{V_ASN1_BIT_STRING};
+  UniquePtr<EVP_PKEY> pkey;
+};
 
 int x509_parse_public_key(CBS *cbs, X509_PUBKEY *out,
                           Span<const EVP_PKEY_ALG *const> algs);
@@ -52,21 +70,21 @@ int x509_pubkey_set1(X509_PUBKEY *key, EVP_PKEY *pkey);
 // depend on the tables.
 DECLARE_ASN1_ITEM(X509_PUBKEY)
 
-BSSL_NAMESPACE_END
+class X509NameEntry : public X509_name_entry_st {
+ public:
+  static constexpr bool kAllowUniquePtr = true;
+  X509NameEntry();
 
-struct X509_name_entry_st {
-  ASN1_OBJECT *object;
-  ASN1_STRING value;
-  int set;
-} /* X509_NAME_ENTRY */;
-
-BSSL_NAMESPACE_BEGIN
+  UniquePtr<ASN1_OBJECT> object;
+  ScopedASN1String value{-1};
+  int set = 0;
+};
 
 // X509_NAME_ENTRY is an `ASN1_ITEM` whose ASN.1 type is AttributeTypeAndValue
 // (RFC 5280) and C type is `X509_NAME_ENTRY*`.
 DECLARE_ASN1_ITEM(X509_NAME_ENTRY)
 
-struct X509_NAME_CACHE {
+struct X509NameCache {
   static constexpr bool kAllowUniquePtr = true;
   // canon contains the DER-encoded canonicalized X.509 Name, not including the
   // outermost TLV.
@@ -77,8 +95,14 @@ struct X509_NAME_CACHE {
 
 class X509Name : public X509_name_st {
  public:
-  STACK_OF(X509_NAME_ENTRY) *entries = nullptr;
-  mutable bssl::Atomic<bssl::X509_NAME_CACHE *> cache;
+  ~X509Name();
+
+  // TODO(crbug.com/42290036): Switch to `Vector<UniquePtr<X509NameEntry>>`,
+  // which would save an allocation. Potentially `Vector<X509NameEntry>` if we
+  // are willing to break pointer stability of entries after
+  // `X509_NAME_add_entry` or `X509_NAME_delete_entry`.
+  UniquePtr<STACK_OF(X509_NAME_ENTRY)> entries;
+  mutable Atomic<X509NameCache *> cache = nullptr;
 } /* X509_NAME */;
 
 BSSL_NAMESPACE_END
@@ -127,35 +151,35 @@ class X509Impl : public x509_st, public RefCounted<X509Impl> {
 
   // TBSCertificate fields:
   uint8_t version = X509_VERSION_1;  // One of the `X509_VERSION_*` constants.
-  ASN1_INTEGER serialNumber;
-  X509_ALGOR tbs_sig_alg;
+  ScopedASN1String serialNumber{V_ASN1_INTEGER};
+  ScopedX509Algor tbs_sig_alg;
   X509Name issuer;
-  ASN1_TIME notBefore;
-  ASN1_TIME notAfter;
+  ScopedASN1String notBefore{-1};
+  ScopedASN1String notAfter{-1};
   X509Name subject;
-  X509_PUBKEY key;
-  ASN1_BIT_STRING *issuerUID = nullptr;            // [ 1 ] optional in v2
-  ASN1_BIT_STRING *subjectUID = nullptr;           // [ 2 ] optional in v2
+  X509Pubkey key;
+  UniquePtr<ASN1_BIT_STRING> issuerUID;            // [ 1 ] optional in v2
+  UniquePtr<ASN1_BIT_STRING> subjectUID;           // [ 2 ] optional in v2
   STACK_OF(X509_EXTENSION) *extensions = nullptr;  // [ 3 ] optional in v3
   // Certificate fields:
-  X509_ALGOR sig_alg;
-  ASN1_BIT_STRING signature;
+  ScopedX509Algor sig_alg;
+  ScopedASN1String signature{V_ASN1_BIT_STRING};
   // Other state:
   // buf, if not nullptr, contains a copy of the serialized Certificate.
   // TODO(davidben): Now every parsed `X509` has an underlying `CRYPTO_BUFFER`,
   // but `X509`s created peacemeal do not. Can we make this more uniform?
-  CRYPTO_BUFFER *buf = nullptr;
+  UniquePtr<CRYPTO_BUFFER> buf;
   CRYPTO_EX_DATA ex_data;
   // These contain copies of various extension values
   long ex_pathlen = -1;
   uint32_t ex_flags = 0;
   uint32_t ex_kusage = 0;
   uint32_t ex_xkusage = 0;
-  ASN1_OCTET_STRING *skid = nullptr;
-  AUTHORITY_KEYID *akid = nullptr;
-  STACK_OF(DIST_POINT) *crldp = nullptr;
-  STACK_OF(GENERAL_NAME) *altname = nullptr;
-  NAME_CONSTRAINTS *nc = nullptr;
+  UniquePtr<ASN1_OCTET_STRING> skid;
+  UniquePtr<AUTHORITY_KEYID> akid;
+  UniquePtr<STACK_OF(DIST_POINT)> crldp;
+  UniquePtr<STACK_OF(GENERAL_NAME)> altname;
+  UniquePtr<NAME_CONSTRAINTS> nc;
   unsigned char cert_hash[SHA256_DIGEST_LENGTH] = {};
   bssl::X509_CERT_AUX *aux = nullptr;
   Mutex lock;
@@ -356,12 +380,12 @@ BSSL_NAMESPACE_END
 // This is the functions plus an instance of the local variables.
 struct x509_lookup_st {
   const X509_LOOKUP_METHOD *method;  // the functions
-  void *method_data;           // method data
+  void *method_data;                 // method data
 
   X509_STORE *store_ctx;  // who owns us
 } /* X509_LOOKUP */;
 
-// This is a used when verifying cert chains.  Since the
+// This is used when verifying cert chains.  Since the
 // gathering of the cert chain can take some time (and have to be
 // 'retried', this needs to be kept and passed around.
 struct x509_store_ctx_st {
@@ -379,7 +403,7 @@ struct x509_store_ctx_st {
   STACK_OF(X509) *trusted_stack;
 
   // Callbacks for various operations
-  X509_STORE_CTX_verify_cb verify_cb;       // error callback
+  X509_STORE_CTX_verify_cb verify_cb;  // error callback
 
   // The following is built up
   int last_untrusted;     // index of last untrusted cert
@@ -611,9 +635,6 @@ int X509_PURPOSE_get_trust(const X509_PURPOSE *xp);
 // TODO(https://crbug.com/boringssl/695): Remove this.
 int DIST_POINT_set_dpname(DIST_POINT_NAME *dpn, X509_NAME *iname);
 
-void x509_name_init(X509_NAME *name);
-void x509_name_cleanup(X509_NAME *name);
-
 // x509_parse_name parses a DER-encoded, X.509 Name from `cbs` and writes the
 // result to `*out`. It returns one on success and zero on error.
 int x509_parse_name(CBS *cbs, X509_NAME *out);
@@ -622,21 +643,10 @@ int x509_parse_name(CBS *cbs, X509_NAME *out);
 // result to `out`. It returns one on success and zero on error.
 int x509_marshal_name(CBB *out, const X509_NAME *in);
 
-const X509_NAME_CACHE *x509_name_get_cache(const X509_NAME *name);
+const X509NameCache *x509_name_get_cache(const X509_NAME *name);
 void x509_name_invalidate_cache(X509_NAME *name);
 
 int x509_name_copy(X509_NAME *dst, const X509_NAME *src);
-
-void x509_algor_init(X509_ALGOR *alg);
-void x509_algor_cleanup(X509_ALGOR *alg);
-
-// x509_parse_algorithm parses a DER-encoded, AlgorithmIdentifier from `cbs` and
-// writes the result to `*out`. It returns one on success and zero on error.
-int x509_parse_algorithm(CBS *cbs, X509_ALGOR *out);
-
-// x509_marshal_algorithm marshals `in` as a DER-encoded, AlgorithmIdentifier
-// and writes the result to `out`. It returns one on success and zero on error.
-int x509_marshal_algorithm(CBB *out, const X509_ALGOR *in);
 
 
 // Standard extensions.

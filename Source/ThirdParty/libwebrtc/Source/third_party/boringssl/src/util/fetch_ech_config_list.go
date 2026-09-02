@@ -33,7 +33,7 @@ import (
 const (
 	httpsType = 65 // RRTYPE for HTTPS records.
 
-	// SvcParamKey codepoints defined in draft-ietf-dnsop-svcb-https-06.
+	// SvcParamKey codepoints defined in RFC 9460 and RFC 9848.
 	httpsKeyMandatory     = 0
 	httpsKeyALPN          = 1
 	httpsKeyNoDefaultALPN = 2
@@ -219,8 +219,8 @@ func dnsQueryForHTTPS(domain string) ([][]byte, error) {
 	}
 }
 
-// parseHTTPSRecord parses an HTTPS record (draft-ietf-dnsop-svcb-https-06,
-// Section 2.2) from |raw|. If there are syntax errors, it returns an error.
+// parseHTTPSRecord parses an HTTPS record (RFC 9460, Section 2.2) from |raw|.
+// If there are syntax errors, it returns an error.
 func parseHTTPSRecord(raw []byte) (httpsRecord, error) {
 	reader := cryptobyte.String(raw)
 

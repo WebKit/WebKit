@@ -57,10 +57,10 @@ static void thread_local_init() {
 
 static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
                                           PVOID reserved) {
-  // Only free memory on |DLL_THREAD_DETACH|, not |DLL_PROCESS_DETACH|. In
+  // Only free memory on `DLL_THREAD_DETACH`, not `DLL_PROCESS_DETACH`. In
   // VS2015's debug runtime, the C runtime has been unloaded by the time
-  // |DLL_PROCESS_DETACH| runs. See https://crbug.com/575795. This is consistent
-  // with |pthread_key_create| which does not call destructors on process exit,
+  // `DLL_PROCESS_DETACH` runs. See https://crbug.com/575795. This is consistent
+  // with `pthread_key_create` which does not call destructors on process exit,
   // only thread exit.
   if (reason != DLL_THREAD_DETACH) {
     return;
@@ -103,7 +103,7 @@ static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
 // a reference to p_thread_callback_boringssl to prevent whole program
 // optimization from discarding the variable.
 //
-// Note, in the prefixed build, |p_thread_callback_boringssl| may be a macro.
+// Note, in the prefixed build, `p_thread_callback_boringssl` may be a macro.
 #define STRINGIFY(x) #x
 #define EXPAND_AND_STRINGIFY(x) STRINGIFY(x)
 #ifdef _WIN64
@@ -160,13 +160,13 @@ PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;
 #endif  // _WIN64
 
 static void **get_thread_locals() {
-  // |TlsGetValue| clears the last error even on success, so that callers may
+  // `TlsGetValue` clears the last error even on success, so that callers may
   // distinguish it successfully returning NULL or failing. It is documented to
-  // never fail if the argument is a valid index from |TlsAlloc|, so we do not
+  // never fail if the argument is a valid index from `TlsAlloc`, so we do not
   // need to handle this.
   //
   // However, this error-mangling behavior interferes with the caller's use of
-  // |GetLastError|. In particular |SSL_get_error| queries the error queue to
+  // `GetLastError`. In particular `SSL_get_error` queries the error queue to
   // determine whether the caller should look at the OS's errors. To avoid
   // destroying state, save and restore the Windows error.
   //

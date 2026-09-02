@@ -100,12 +100,12 @@ func (h *shake) Process(vectorSet []byte, m Transactable) (any, error) {
 
 			switch group.Type {
 			case "AFT":
-				// "AFTs all produce a single digest size, matching the security strength of the extendable output function."
-				if test.BitOutLength != uint32(h.size*8) {
-					return nil, fmt.Errorf("AFT test case %d/%d has bit length %d but expected %d", group.ID, test.ID, test.BitOutLength, h.size*8)
+				outLenBytes := test.BitOutLength / 8
+				if test.BitOutLength == 0 {
+					outLenBytes = uint32(h.size)
 				}
 
-				m.TransactAsync(h.algo, 1, [][]byte{msg, uint32le(test.BitOutLength / 8)}, func(result [][]byte) error {
+				m.TransactAsync(h.algo, 1, [][]byte{msg, uint32le(outLenBytes)}, func(result [][]byte) error {
 					response.Tests = append(response.Tests, shakeTestResponse{
 						ID:        test.ID,
 						DigestHex: hex.EncodeToString(result[0]),

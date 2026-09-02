@@ -582,14 +582,13 @@ func addCurveTests() {
 		})
 	}
 
-	// ML-KEM and Kyber should not be offered by default as a client.
+	// ML-KEM should be offered by default as a client.
 	testCases = append(testCases, testCase{
-		name: "PostQuantumNotEnabledByDefaultInClients",
+		name: "PostQuantumEnabledByDefaultInClients",
 		config: Config{
-			MinVersion: VersionTLS13,
-			Bugs: ProtocolBugs{
-				FailIfPostQuantumOffered: true,
-			},
+			MinVersion:       VersionTLS13,
+			CurvePreferences: []CurveID{CurveX25519MLKEM768},
+			Bugs:             ProtocolBugs{},
 		},
 	})
 
@@ -682,18 +681,17 @@ func addCurveTests() {
 		})
 	}
 
-	// As a server, ML-KEMs and Kyber are not yet supported by default.
 	testCases = append(testCases, testCase{
 		testType: serverTest,
-		name:     "PostQuantumNotEnabledByDefaultForAServer",
+		name:     "PostQuantumEnabledByDefaultForAServer",
 		config: Config{
 			MinVersion:       VersionTLS13,
-			CurvePreferences: []CurveID{CurveX25519MLKEM768, CurveMLKEM1024, CurveX25519Kyber768, CurveX25519},
-			DefaultCurves:    []CurveID{CurveX25519MLKEM768, CurveMLKEM1024, CurveX25519Kyber768},
+			CurvePreferences: []CurveID{CurveX25519MLKEM768},
+			DefaultCurves:    []CurveID{CurveX25519MLKEM768},
 		},
 		flags: []string{
 			"-server-preference",
-			"-expect-curve-id", strconv.Itoa(int(CurveX25519)),
+			"-expect-curve-id", strconv.Itoa(int(CurveX25519MLKEM768)),
 		},
 	})
 

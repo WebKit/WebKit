@@ -264,11 +264,16 @@ OPENSSL_EXPORT int CBS_get_asn1(CBS *cbs, CBS *out, CBS_ASN1_TAG tag_value);
 OPENSSL_EXPORT int CBS_get_asn1_element(CBS *cbs, CBS *out,
                                         CBS_ASN1_TAG tag_value);
 
-// CBS_peek_asn1_tag looks ahead at the next ASN.1 tag and returns one
-// if the next ASN.1 element on `cbs` would have tag `tag_value`. If
-// `cbs` is empty or the tag does not match, it returns zero. Note: if
-// it returns one, CBS_get_asn1 may still fail if the rest of the
+// CBS_peek_any_asn1_tag looks ahead at the next ASN.1 tag and returns it. If a
+// tag could not be parsed, it returns zero, which is never a valid tag. Note:
+// if it returns non-zero, `CBS_get_asn1` may still fail if the rest of the
 // element is malformed.
+OPENSSL_EXPORT CBS_ASN1_TAG CBS_peek_any_asn1_tag(const CBS *cbs);
+
+// CBS_peek_asn1_tag looks ahead at the next ASN.1 tag and returns one if the
+// next ASN.1 element on `cbs` would have tag `tag_value`. If `cbs` is empty or
+// the tag does not match, it returns zero. Note: if it returns one,
+// `CBS_get_asn1` may still fail if the rest of the element is malformed.
 OPENSSL_EXPORT int CBS_peek_asn1_tag(const CBS *cbs, CBS_ASN1_TAG tag_value);
 
 // CBS_get_any_asn1 sets `*out` to contain the next ASN.1 element from `*cbs`
@@ -424,6 +429,16 @@ OPENSSL_EXPORT int CBS_is_valid_asn1_relative_oid(const CBS *cbs);
 // OID components are too large.
 OPENSSL_EXPORT char *CBS_asn1_relative_oid_to_text(const CBS *cbs);
 
+// CBS_get_asn1_oid_component gets a single OID component from `cbs`. On
+// success, it sets `*out` to the value, advances `cbs` past the component, and
+// returns one. If the input does not contain a valid OID component or if the
+// OID component is bigger than `uint64_t`, it returns zero.
+//
+// Specifically, this decodes a non-empty, minimal-width, base-128, big-endian
+// integer. The high bit of each byte is set for continuation bytes and unset
+// for the final byte. This encoding is also used for DER tag numbers 31 and up.
+OPENSSL_EXPORT int CBS_get_asn1_oid_component(CBS *cbs, uint64_t *out);
+
 // CBS_parse_generalized_time returns one if `cbs` is a valid DER-encoded, ASN.1
 // GeneralizedTime body within the limitations imposed by RFC 5280, or zero
 // otherwise. If `allow_timezone_offset` is non-zero, four-digit timezone
@@ -443,6 +458,7 @@ OPENSSL_EXPORT int CBS_parse_generalized_time(const CBS *cbs, struct tm *out_tm,
 // `out_tm->tm_yday`.
 OPENSSL_EXPORT int CBS_parse_utc_time(const CBS *cbs, struct tm *out_tm,
                                       int allow_timezone_offset);
+
 
 // CRYPTO ByteBuilder.
 //
@@ -623,6 +639,10 @@ OPENSSL_EXPORT int CBB_add_u32(CBB *cbb, uint32_t value);
 // It returns one on success and zero otherwise.
 OPENSSL_EXPORT int CBB_add_u32le(CBB *cbb, uint32_t value);
 
+// CBB_add_u48 appends a 48-bit, big-endian number from `value` to `cbb`. It
+// returns one on success and zero otherwise.
+OPENSSL_EXPORT int CBB_add_u48(CBB *cbb, uint64_t value);
+
 // CBB_add_u64 appends a 64-bit, big-endian number from `value` to `cbb`. It
 // returns one on success and zero otherwise.
 OPENSSL_EXPORT int CBB_add_u64(CBB *cbb, uint64_t value);
@@ -701,6 +721,11 @@ OPENSSL_EXPORT int CBB_add_asn1_relative_oid_from_text(CBB *cbb,
 
 // CBB_add_asn1_oid_component appends a single OID component to `cbb`.
 // It returns one on success and zero on error.
+//
+// Specifically, this encodes `value` as a non-empty, minimal-width, base-128,
+// big-endian integer. The high bit of each byte is set for continuation bytes
+// and unset for the final byte. This encoding is also used for DER tag numbers
+// 31 and up.
 OPENSSL_EXPORT int CBB_add_asn1_oid_component(CBB *cbb, uint64_t value);
 
 // CBB_flush_asn1_set_of calls `CBB_flush` on `cbb` and then reorders the

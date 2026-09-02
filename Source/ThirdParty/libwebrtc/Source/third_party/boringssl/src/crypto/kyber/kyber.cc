@@ -145,7 +145,7 @@ static uint16_t reduce_once(uint16_t x) {
   // We usually add value barriers to selects because Clang turns consecutive
   // selects with the same condition into a branch instead of CMOV/CSEL. This
   // condition does not occur in Kyber, so omitting it seems to be safe so far,
-  // but see |scalar_centered_binomial_distribution_eta_2_with_prf|.
+  // but see `scalar_centered_binomial_distribution_eta_2_with_prf`.
   return (mask & x) | (~mask & subtracted);
 }
 
@@ -166,9 +166,9 @@ static void vector_zero(vector *out) { OPENSSL_memset(out, 0, sizeof(*out)); }
 // In place number theoretic transform of a given scalar.
 // Note that Kyber's kPrime 3329 does not have a 512th root of unity, so this
 // transform leaves off the last iteration of the usual FFT code, with the 128
-// relevant roots of unity being stored in |kNTTRoots|. This means the output
+// relevant roots of unity being stored in `kNTTRoots`. This means the output
 // should be seen as 128 elements in GF(3329^2), with the coefficients of the
-// elements being consecutive entries in |s->c|.
+// elements being consecutive entries in `s->c`.
 static void scalar_ntt(scalar *s) {
   int offset = DEGREE;
   // `int` is used here because using `size_t` throughout caused a ~5% slowdown
@@ -199,7 +199,7 @@ static void vector_ntt(vector *a) {
 // entries of s->v being interpreted as elements of GF(3329^2). Just as with the
 // number theoretic transform, this leaves off the first step of the normal iFFT
 // to account for the fact that 3329 does not have a 512th root of unity, using
-// the precomputed 128 roots of unity stored in |kInverseNTTRoots|.
+// the precomputed 128 roots of unity stored in `kInverseNTTRoots`.
 static void scalar_inverse_ntt(scalar *s) {
   int step = DEGREE / 2;
   // `int` is used here because using `size_t` throughout caused a ~5% slowdown
@@ -245,7 +245,7 @@ static void scalar_sub(scalar *lhs, const scalar *rhs) {
 // 3329 does not have a 512th root of unity, this means we have to interpret
 // the 2*ith and (2*i+1)th entries of the scalar as elements of GF(3329)[X]/(X^2
 // - 17^(2*bitreverse(i)+1)) The value of 17^(2*bitreverse(i)+1) mod 3329 is
-// stored in the precomputed |kModRoots| table. Note that our Barrett transform
+// stored in the precomputed `kModRoots` table. Note that our Barrett transform
 // only allows us to multiply two reduced numbers together, so we need some
 // intermediate reduction steps, even if an uint64_t could hold 3 multiplied
 // numbers.
@@ -327,7 +327,7 @@ static void scalar_from_keccak_vartime(scalar *out,
 }
 
 // Algorithm 2 of the Kyber spec, with eta fixed to two and the PRF call
-// included. Creates binominally distributed elements by sampling 2*|eta| bits,
+// included. Creates binominally distributed elements by sampling 2*`eta` bits,
 // and setting the coefficient to the count of the first bits minus the count of
 // the second bits, resulting in a centered binomial distribution. Since eta is
 // two this gives -2/2 with a probability of 1/16, -1/1 with probability 1/4,
@@ -343,10 +343,10 @@ static void scalar_centered_binomial_distribution_eta_2_with_prf(
 
     uint16_t value = (byte & 1) + ((byte >> 1) & 1);
     value -= ((byte >> 2) & 1) + ((byte >> 3) & 1);
-    // Add |kPrime| if |value| underflowed. See |reduce_once| for a discussion
+    // Add `kPrime` if `value` underflowed. See `reduce_once` for a discussion
     // on why the value barrier is omitted. While this could have been written
     // reduce_once(value + kPrime), this is one extra addition and small range
-    // of |value| tempts some versions of Clang to emit a branch.
+    // of `value` tempts some versions of Clang to emit a branch.
     uint16_t mask = 0u - (value >> 15);
     out->c[i] = value + (kPrime & mask);
 
@@ -360,8 +360,8 @@ static void scalar_centered_binomial_distribution_eta_2_with_prf(
 }
 
 // Generates a secret vector by using
-// |scalar_centered_binomial_distribution_eta_2_with_prf|, using the given seed
-// appending and incrementing |counter| for entry of the vector.
+// `scalar_centered_binomial_distribution_eta_2_with_prf`, using the given seed
+// appending and incrementing `counter` for entry of the vector.
 static void vector_generate_secret_eta_2(vector *out, uint8_t *counter,
                                          const uint8_t seed[32]) {
   uint8_t input[33];
@@ -426,7 +426,7 @@ static void scalar_encode(uint8_t *out, const scalar *s, int bits) {
   }
 }
 
-// scalar_encode_1 is |scalar_encode| specialised for |bits| == 1.
+// scalar_encode_1 is `scalar_encode` specialised for `bits` == 1.
 static void scalar_encode_1(uint8_t out[32], const scalar *s) {
   for (int i = 0; i < DEGREE; i += 8) {
     uint8_t out_byte = 0;
@@ -438,7 +438,7 @@ static void scalar_encode_1(uint8_t out[32], const scalar *s) {
   }
 }
 
-// Encodes an entire vector into 32*|RANK|*|bits| bytes. Note that since 256
+// Encodes an entire vector into 32*`RANK`*`bits` bytes. Note that since 256
 // (DEGREE) is divisible by 8, the individual vector entries will always fill a
 // whole number of bytes, so we do not need to worry about bit packing here.
 static void vector_encode(uint8_t *out, const vector *a, int bits) {
@@ -447,9 +447,9 @@ static void vector_encode(uint8_t *out, const vector *a, int bits) {
   }
 }
 
-// scalar_decode parses |DEGREE * bits| bits from |in| into |DEGREE| values in
-// |out|. It returns one on success and zero if any parsed value is >=
-// |kPrime|.
+// scalar_decode parses `DEGREE * bits` bits from `in` into `DEGREE` values in
+// `out`. It returns one on success and zero if any parsed value is >=
+// `kPrime`.
 static int scalar_decode(scalar *out, const uint8_t *in, int bits) {
   assert(bits <= (int)sizeof(*out->c) * 8 && bits != 1);
 
@@ -490,7 +490,7 @@ static int scalar_decode(scalar *out, const uint8_t *in, int bits) {
   return 1;
 }
 
-// scalar_decode_1 is |scalar_decode| specialised for |bits| == 1.
+// scalar_decode_1 is `scalar_decode` specialised for `bits` == 1.
 static void scalar_decode_1(scalar *out, const uint8_t in[32]) {
   for (int i = 0; i < DEGREE; i += 8) {
     uint8_t in_byte = *in;
@@ -502,8 +502,8 @@ static void scalar_decode_1(scalar *out, const uint8_t in[32]) {
   }
 }
 
-// Decodes 32*|RANK|*|bits| bytes from |in| into |out|. It returns one on
-// success or zero if any parsed value is >= |kPrime|.
+// Decodes 32*`RANK`*`bits` bytes from `in` into `out`. It returns one on
+// success or zero if any parsed value is >= `kPrime`.
 static int vector_decode(vector *out, const uint8_t *in, int bits) {
   for (int i = 0; i < RANK; i++) {
     if (!scalar_decode(&out->v[i], in + i * bits * DEGREE / 8, bits)) {
@@ -513,12 +513,12 @@ static int vector_decode(vector *out, const uint8_t *in, int bits) {
   return 1;
 }
 
-// Compresses (lossily) an input |x| mod 3329 into |bits| many bits by grouping
+// Compresses (lossily) an input `x` mod 3329 into `bits` many bits by grouping
 // numbers close to each other together. The formula used is
-// round(2^|bits|/kPrime*x) mod 2^|bits|.
+// round(2^`bits`/kPrime*x) mod 2^`bits`.
 // Uses Barrett reduction to achieve constant time. Since we need both the
 // remainder (for rounding) and the quotient (as the result), we cannot use
-// |reduce| here, but need to do the Barrett reduction directly.
+// `reduce` here, but need to do the Barrett reduction directly.
 static uint16_t compress(uint16_t x, int bits) {
   uint32_t shifted = (uint32_t)x << bits;
   uint64_t product = (uint64_t)shifted * kBarrettMultiplier;
@@ -535,19 +535,19 @@ static uint16_t compress(uint16_t x, int bits) {
   return quotient & ((1 << bits) - 1);
 }
 
-// Decompresses |x| by using an equi-distant representative. The formula is
-// round(kPrime/2^|bits|*x). Note that 2^|bits| being the divisor allows us to
+// Decompresses `x` by using an equi-distant representative. The formula is
+// round(kPrime/2^`bits`*x). Note that 2^`bits` being the divisor allows us to
 // implement this logic using only bit operations.
 static uint16_t decompress(uint16_t x, int bits) {
   uint32_t product = (uint32_t)x * kPrime;
   uint32_t power = 1 << bits;
-  // This is |product| % power, since |power| is a power of 2.
+  // This is `product` % power, since `power` is a power of 2.
   uint32_t remainder = product & (power - 1);
-  // This is |product| / power, since |power| is a power of 2.
+  // This is `product` / power, since `power` is a power of 2.
   uint32_t lower = product >> bits;
-  // The rounding logic works since the first half of numbers mod |power| have a
-  // 0 as first bit, and the second half has a 1 as first bit, since |power| is
-  // a power of 2. As a 12 bit number, |remainder| is always positive, so we
+  // The rounding logic works since the first half of numbers mod `power` have a
+  // 0 as first bit, and the second half has a 1 as first bit, since `power` is
+  // a power of 2. As a 12 bit number, `remainder` is always positive, so we
   // will shift in 0s for a right shift.
   return lower + (remainder >> (bits - 1));
 }
@@ -612,8 +612,8 @@ static struct private_key *private_key_from_external(
 
 }  // namespace
 
-// Calls |KYBER_generate_key_external_entropy| with random bytes from
-// |RAND_bytes|.
+// Calls `KYBER_generate_key_external_entropy` with random bytes from
+// `RAND_bytes`.
 void bssl::KYBER_generate_key(
     uint8_t out_encoded_public_key[KYBER_PUBLIC_KEY_BYTES],
     struct KYBER_private_key *out_private_key) {
@@ -683,7 +683,7 @@ void bssl::KYBER_public_from_private(
 }
 
 // Algorithm 5 of the Kyber spec. Encrypts a message with given randomness to
-// the ciphertext in |out|. Without applying the Fujisaki-Okamoto transform this
+// the ciphertext in `out`. Without applying the Fujisaki-Okamoto transform this
 // would not result in a CCA secure scheme, since lattice schemes are vulnerable
 // to decryption failure oracles.
 static void encrypt_cpa(uint8_t out[KYBER_CIPHERTEXT_BYTES],
@@ -718,7 +718,7 @@ static void encrypt_cpa(uint8_t out[KYBER_CIPHERTEXT_BYTES],
   scalar_encode(out + kCompressedVectorSize, &v, kDV);
 }
 
-// Calls KYBER_encap_external_entropy| with random bytes from |RAND_bytes|
+// Calls `KYBER_encap_external_entropy` with random bytes from `RAND_bytes`
 void bssl::KYBER_encap(uint8_t out_ciphertext[KYBER_CIPHERTEXT_BYTES],
                        uint8_t out_shared_secret[KYBER_SHARED_SECRET_BYTES],
                        const struct KYBER_public_key *public_key) {
@@ -809,8 +809,8 @@ int bssl::KYBER_marshal_public_key(CBB *out,
   return kyber_marshal_public_key(out, public_key_from_external(public_key));
 }
 
-// kyber_parse_public_key_no_hash parses |in| into |pub| but doesn't calculate
-// the value of |pub->public_key_hash|.
+// kyber_parse_public_key_no_hash parses `in` into `pub` but doesn't calculate
+// the value of `pub->public_key_hash`.
 static int kyber_parse_public_key_no_hash(struct public_key *pub, CBS *in) {
   CBS t_bytes;
   if (!CBS_get_bytes(in, &t_bytes, kEncodedVectorSize) ||

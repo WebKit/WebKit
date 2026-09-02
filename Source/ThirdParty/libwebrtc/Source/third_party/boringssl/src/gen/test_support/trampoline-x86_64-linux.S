@@ -6,13 +6,13 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
-
-
-
-
-
-
-
+// abi_test_trampoline loads callee-saved registers from |state|, calls |func|
+// with |argv|, then saves the callee-saved registers into |state|. It returns
+// the result of |func|. If |unwind| is non-zero, this function triggers unwind
+// instrumentation.
+// uint64_t abi_test_trampoline(void (*func)(...), CallerState *state,
+// const uint64_t *argv, size_t argc,
+// int unwind);
 .globl	abi_test_trampoline
 .hidden abi_test_trampoline
 .type	abi_test_trampoline, @function
@@ -21,15 +21,15 @@ abi_test_trampoline:
 .cfi_startproc	
 
 _CET_ENDBR
-
-
-
-
-
-
-
-
-
+// Stack layout:
+// 8 bytes - align
+// 48 bytes - saved caller registers
+// 8 bytes - scratch space
+// 8 bytes - saved copy of $unwind (SysV-only)
+// 8 bytes - saved copy of $state
+// 8 bytes - saved copy of $func
+// 8 bytes - if needed for stack alignment
+// 8*4 bytes - parameters for $func
 	subq	$120,%rsp
 .cfi_adjust_cfa_offset	120
 
@@ -59,13 +59,13 @@ _CET_ENDBR
 	movq	24(%rsi),%r13
 	movq	32(%rsi),%r14
 	movq	40(%rsi),%r15
-
+// Stash $func and $state, so they are available after the call returns.
 	movq	%rdi,32(%rsp)
 	movq	%rsi,40(%rsp)
 
-
-
-
+// Load parameters. Note this will clobber $argv and $argc, so we can
+// only use non-parameter volatile registers. There are three, and they
+// are the same between SysV and Win64: %rax, %r10, and %r11.
 	movq	%rdx,%r10
 	movq	%rcx,%r11
 	decq	%r11
@@ -97,11 +97,11 @@ _CET_ENDBR
 	decq	%r11
 	js	.Largs_done
 
-
-
-
-
-
+// This block should be:
+// movq (%r10), %rtmp
+// movq %rtmp, (%rax)
+// There are no spare registers available, so we spill into the scratch
+// space.
 	movq	%r11,56(%rsp)
 	movq	(%r10),%r11
 	movq	%r11,(%rax)
@@ -117,13 +117,13 @@ _CET_ENDBR
 	testq	%r10,%r10
 	jz	.Lno_unwind
 
-
+// Set the trap flag.
 	pushfq
 	orq	$0x100,0(%rsp)
 	popfq
 
-
-
+// Run an instruction to trigger a breakpoint immediately before the
+// call.
 	nop
 .globl	abi_test_unwind_start
 .hidden abi_test_unwind_start
@@ -134,11 +134,11 @@ abi_test_unwind_start:
 .hidden abi_test_unwind_return
 abi_test_unwind_return:
 
-
-
-
+// Clear the trap flag. Note this assumes the trap flag was clear on
+// entry. We do not support instrumenting an unwind-instrumented
+// |abi_test_trampoline|.
 	pushfq
-	andq	$-0x101,0(%rsp)
+	andq	$-0x101,0(%rsp)  // -0x101 is ~0x100
 	popfq
 .globl	abi_test_unwind_stop
 .hidden abi_test_unwind_stop
@@ -150,7 +150,7 @@ abi_test_unwind_stop:
 	call	*%rax
 
 .Lcall_done:
-
+// Store what $func did our state, so our caller can check.
 	movq	40(%rsp),%rsi
 	movq	%rbx,0(%rsi)
 	movq	%rbp,8(%rsi)
@@ -173,7 +173,7 @@ abi_test_unwind_stop:
 	addq	$120,%rsp
 .cfi_adjust_cfa_offset	-120
 
-
+// %rax already contains $func's return value, unmodified.
 	ret
 .cfi_endproc	
 
@@ -457,9 +457,9 @@ _CET_ENDBR
 	pxor	%xmm15,%xmm15
 	ret
 .size	abi_test_clobber_xmm15,.-abi_test_clobber_xmm15
-
-
-
+// abi_test_bad_unwind_wrong_register preserves the ABI, but annotates the wrong
+// register in unwind metadata.
+// void abi_test_bad_unwind_wrong_register(void);
 .globl	abi_test_bad_unwind_wrong_register
 .hidden abi_test_bad_unwind_wrong_register
 .type	abi_test_bad_unwind_wrong_register, @function
@@ -470,12 +470,12 @@ abi_test_bad_unwind_wrong_register:
 _CET_ENDBR
 	pushq	%r12
 .cfi_adjust_cfa_offset	8
-.cfi_offset	%r13,-16
+.cfi_offset	%r13,-16  // This should be %r13
+// This should be %r13
 
-
-
-
-
+// Windows evaluates epilogs directly in the unwinder, rather than using
+// unwind codes. Add a nop so there is one non-epilog point (immediately
+// before the nop) where the unwinder can observe the mistake.
 	nop
 	popq	%r12
 .cfi_adjust_cfa_offset	-8
@@ -485,9 +485,9 @@ _CET_ENDBR
 .cfi_endproc	
 .size	abi_test_bad_unwind_wrong_register,.-abi_test_bad_unwind_wrong_register
 
-
-
-
+// abi_test_bad_unwind_temporary preserves the ABI, but temporarily corrupts the
+// storage space for a saved register, breaking unwind.
+// void abi_test_bad_unwind_temporary(void);
 .globl	abi_test_bad_unwind_temporary
 .hidden abi_test_bad_unwind_temporary
 .type	abi_test_bad_unwind_temporary, @function
@@ -505,11 +505,11 @@ _CET_ENDBR
 	movq	%r12,%rax
 	incq	%rax
 	movq	%rax,(%rsp)
-
-
+// Unwinding from here is incorrect. Although %r12 itself has not been
+// changed, the unwind codes say to look in (%rsp) instead.
 
 	movq	%r12,(%rsp)
-
+// Unwinding is now fixed.
 
 	popq	%r12
 .cfi_adjust_cfa_offset	-8
@@ -519,9 +519,9 @@ _CET_ENDBR
 
 .size	abi_test_bad_unwind_temporary,.-abi_test_bad_unwind_temporary
 
-
-
-
+// abi_test_get_and_clear_direction_flag clears the direction flag. If the flag
+// was previously set, it returns one. Otherwise, it returns zero.
+// int abi_test_get_and_clear_direction_flag(void);
 .globl	abi_test_get_and_clear_direction_flag
 .hidden abi_test_get_and_clear_direction_flag
 .type	abi_test_get_and_clear_direction_flag, @function
@@ -535,8 +535,8 @@ _CET_ENDBR
 	ret
 .size	abi_test_get_and_clear_direction_flag,.-abi_test_get_and_clear_direction_flag
 
-
-
+// abi_test_set_direction_flag sets the direction flag.
+// void abi_test_set_direction_flag(void);
 .globl	abi_test_set_direction_flag
 .hidden abi_test_set_direction_flag
 .type	abi_test_set_direction_flag, @function

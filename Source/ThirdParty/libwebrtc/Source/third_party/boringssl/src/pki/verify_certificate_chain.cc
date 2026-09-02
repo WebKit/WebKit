@@ -17,9 +17,13 @@
 #include <algorithm>
 #include <cassert>
 
+#include <inttypes.h>
+
 #include <openssl/base.h>
 #include <openssl/bytestring.h>
+#include <openssl/digest.h>
 #include <openssl/mem.h>
+#include <openssl/pool.h>
 #include <openssl/sha2.h>
 #include <openssl/span.h>
 
@@ -390,7 +394,7 @@ void VerifyExtendedKeyUsage(const ParsedCertificate &cert,
     // intermediates, there are a number of exceptions regarding CA ownership
     // and cross signing which are impossible for us to know or enforce here.
     // Therefore, we can only enforce at the level of the intermediate that
-    // issued our target certificate. This means we we differ in the following
+    // issued our target certificate. This means we differ in the following
     // ways:
     // - We only enforce at the issuer of the TLS certificate.
     // - We allow email protection to exist in the issuer, since without
@@ -1125,8 +1129,8 @@ void PathVerifier::ApplyPolicyConstraints(const ParsedCertificate &cert) {
 
 // This function implements draft-davidben-tls-merkle-tree-certs-08 section 7.2:
 // Verifying Certificate Signatures.
-static bool VerifyMTC(const ParsedCertificate &cert,
-                      const MTCAnchor *mtc_anchor) {
+static bool VerifyMTCDraftDavidben08(const ParsedCertificate &cert,
+                                     const MTCAnchor *mtc_anchor) {
   // Step 1: Check that the TBSCertificate's signature field is id-alg-mtcProof
   // (kMtcProofDraftDavidben08) with omitted parameters.
   if (cert.signature_algorithm() !=
@@ -1263,6 +1267,375 @@ static bool VerifyMTC(const ParsedCertificate &cert,
                        expected_subtree_hash->size()) == 0;
 }
 
+static bool VerifyMTCProofSignaturePlants04(
+    const CBS *cosigner_id, Span<const uint8_t> log_id_text, uint64_t start,
+    uint64_t end, const TreeHash &expected_subtree_hash,
+    Span<const uint8_t> signature, SignatureAlgorithm signature_algorithm,
+    const CRYPTO_BUFFER *key_bytes, SignatureVerifyCache *cache) {
+  ScopedCBB cosigned_message;
+  // `cosigner_name` and `log_origin` are the only variable-length parts of
+  // `CosignedMessage`. Allocate the initial buffer size with 48 bytes for those
+  // (16 byte prefix + 32 bytes for the text representation of the
+  // relative-oid.)
+  if (!CBB_init(cosigned_message.get(), 12 + 48 + 8 + 48 + 8 + 8 + 32)) {
+    return false;
+  }
+  // Section 7.2 step 12:
+  // Signatures are verified as described in Section 5.3.1. For each signature
+  // verification, the CosignedMessage structure is constructed as follows:
+  //
+  // Section 5.3.1:
+  //     uint8 label[12] = "subtree/v1\n\0";
+  // (C string constants implicitly have a null terminator, so it's not
+  // explicitly included here:)
+  static constexpr uint8_t kLabel[12] = "subtree/v1\n";
+  if (!CBB_add_bytes(cosigned_message.get(), kLabel, sizeof(kLabel))) {
+    return false;
+  }
+  // Section 7.2: Set the CosignedMessage's cosigner_name based on the cosigner
+  // ID as described in Section 5.3.1.
+  // Section 5.3.1: opaque cosigner_name<1..2^8-1>;
+  static constexpr uint8_t kTaiPrefix[16] = {'o', 'i', 'd', '/', '1', '.',
+                                             '3', '.', '6', '.', '1', '.',
+                                             '4', '.', '1', '.'};
+  UniquePtr<char> cosigner_id_text_buf(
+      CBS_asn1_relative_oid_to_text(cosigner_id));
+  if (!cosigner_id_text_buf) {
+    return false;
+  }
+  Span<const uint8_t> cosigner_id_text =
+      StringAsBytes(cosigner_id_text_buf.get());
+  CBB cosigner_name;
+  if (!CBB_add_u8_length_prefixed(cosigned_message.get(), &cosigner_name) ||
+      !CBB_add_bytes(&cosigner_name, kTaiPrefix, sizeof(kTaiPrefix)) ||
+      !CBB_add_bytes(&cosigner_name, cosigner_id_text.data(),
+                     cosigner_id_text.size())) {
+    return false;
+  }
+
+  // Section 7.2: Set the CosignedMessage's timestamp to zero.
+  // Section 5.3.1: uint64 timestamp;
+  if (!CBB_add_u64(cosigned_message.get(), 0u)) {
+    return false;
+  }
+
+  // Section 7.2: Set the CosignedMessage's log_origin based on log_id as
+  // described in Section 5.3.1.
+  // Section 5.3.1:     opaque log_origin<1..2^8-1>;
+  CBB log_origin;
+  if (!CBB_add_u8_length_prefixed(cosigned_message.get(), &log_origin) ||
+      !CBB_add_bytes(&log_origin, kTaiPrefix, sizeof(kTaiPrefix)) ||
+      !CBB_add_bytes(&log_origin, log_id_text.data(), log_id_text.size())) {
+    return false;
+  }
+
+  // Section 7.2: Set the CosignedMessage's start and end to the MTCProof's
+  // start and end, respectively.
+  // Section 5.3.1: uint64 start;
+  // Section 5.3.1: uint64 end;
+  if (!CBB_add_u64(cosigned_message.get(), start) ||
+      !CBB_add_u64(cosigned_message.get(), end)) {
+    return false;
+  }
+
+  // Section 7.2: Set the CosignedMessage's subtree_hash to
+  // expected_subtree_hash.
+  // Section 5.3.1: HashValue subtree_hash;
+  if (!CBB_add_bytes(cosigned_message.get(), expected_subtree_hash.data(),
+                     expected_subtree_hash.size())) {
+    return false;
+  }
+
+  if (!CBB_flush(cosigned_message.get())) {
+    return false;
+  }
+
+  return VerifySignedData(
+      signature_algorithm,
+      Span<const uint8_t>(CBB_data(cosigned_message.get()),
+                          CBB_len(cosigned_message.get())),
+      der::BitString(signature, 0),
+      Span(CRYPTO_BUFFER_data(key_bytes), CRYPTO_BUFFER_len(key_bytes)), cache);
+}
+
+// This function implements draft-ietf-plants-merkle-tree-certs-04 section 7.2:
+// Verifying Certificate Signatures.
+static bool VerifyMTCDraftPlants04(const ParsedCertificate &cert,
+                                   const MTCAnchor *mtc_anchor,
+                                   VerifyCertificateChainDelegate *delegate) {
+  // Step 1: Check that the TBSCertificate's signature field is id-alg-mtcProof
+  // (kMtcProofDraftPlants04) with omitted parameters.
+  if (cert.signature_algorithm() !=
+      SignatureAlgorithm::kMtcProofDraftPlants04) {
+    // When we parse the signature algorithm, we check that the parameters are
+    // omitted.
+    return false;
+  }
+
+  // Step 2: Decode the signatureValue as an MTCProof.
+  uint64_t start, end;
+  CBS extensions, inclusion_proof, signatures;
+  CBS mtc_proof(cert.signature_value().bytes());
+  if (cert.signature_value().unused_bits() != 0 ||
+      !CBS_get_u16_length_prefixed(&mtc_proof, &extensions) ||
+      !CBS_get_u48(&mtc_proof, &start) || !CBS_get_u48(&mtc_proof, &end) ||
+      !CBS_get_u16_length_prefixed(&mtc_proof, &inclusion_proof) ||
+      !CBS_get_u16_length_prefixed(&mtc_proof, &signatures) ||
+      CBS_len(&mtc_proof) != 0) {
+    return false;
+  }
+
+  // Step 3: Let serial be the certificate's serial number. If serial is
+  // negative or greater than 2^64-1, abort this process and fail verification.
+  uint64_t serial;
+  if (!der::ParseUint64(cert.tbs().serial_number, &serial)) {
+    return false;
+  }
+
+  // Step 4's revocation check is not performed in this function. The caller is
+  // responsible for performing revocation checks.
+
+  // Step 5: Let index be the least significant 48 bits of serial and let
+  // log_number be serial >> 48. If log_number is zero, abort this process and
+  // fail verification.
+  uint64_t index = serial & ((1ull << 48) - 1);
+  uint16_t log_number = serial >> 48;
+  if (log_number == 0) {
+    return false;
+  }
+
+  // Step 6 is only relevant for standalone certificate verification, so we put
+  // it off until we actually need it (in step 12).
+
+  // Steps 7, 8, and 9 are done in a single pass as described in the procedure
+  // at the end of section 7.2 ("entry_hash can equivalently be computed in a
+  // single pass"):
+  // 1. Initialize a hash instance.
+  ScopedEVP_MD_CTX entry_hash_ctx;
+  if (!EVP_DigestInit(entry_hash_ctx.get(), EVP_sha256())) {
+    return false;
+  }
+
+  // Write the octet 0x00 to the hash. This is the domain separator for leaf
+  // nodes.
+  // (Note: the procedure as defined in plants-04 is missing this step.)
+  static constexpr uint8_t kDomainSeparator[] = {0x00};
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), kDomainSeparator,
+                        sizeof(kDomainSeparator))) {
+    return false;
+  }
+
+  // 2. Write the extensions field from the MTCProof to the hash.
+  uint8_t extensions_length[2] = {
+      static_cast<uint8_t>(CBS_len(&extensions) >> 8),
+      static_cast<uint8_t>(CBS_len(&extensions) & 0xff)};
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), extensions_length,
+                        sizeof(extensions_length)) ||
+      !EVP_DigestUpdate(entry_hash_ctx.get(), CBS_data(&extensions),
+                        CBS_len(&extensions))) {
+    return false;
+  }
+
+  // 3. Write the big-endian, two-byte tbs_cert_entry value to the hash.
+  static constexpr uint8_t kTbsCertEntry[] = {0, 1};
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), kTbsCertEntry,
+                        sizeof(kTbsCertEntry))) {
+    return false;
+  }
+
+  // 4. Write the TBSCertificate's `version`, `issuer`, `validity`, and
+  // `subject` fields to the hash.
+  // (Note that this is a correction to the instructions in plants-04.)
+  if (cert.tbs().version != CertificateVersion::V1) {
+    ScopedCBB version_outer;
+    CBB version;
+    if (!CBB_init(version_outer.get(), 0) ||
+        !CBB_add_asn1(version_outer.get(), &version,
+                      CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0) ||
+        !CBB_add_asn1_uint64(&version,
+                             static_cast<uint64_t>(cert.tbs().version)) ||
+        !CBB_flush(version_outer.get()) ||
+        !EVP_DigestUpdate(entry_hash_ctx.get(), CBB_data(version_outer.get()),
+                          CBB_len(version_outer.get()))) {
+      return false;
+    }
+  }
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), cert.tbs().issuer_tlv.data(),
+                        cert.tbs().issuer_tlv.size()) ||
+      !EVP_DigestUpdate(entry_hash_ctx.get(), cert.tbs().validity_tlv.data(),
+                        cert.tbs().validity_tlv.size()) ||
+      !EVP_DigestUpdate(entry_hash_ctx.get(), cert.tbs().subject_tlv.data(),
+                        cert.tbs().subject_tlv.size())) {
+    return false;
+  }
+
+  // 5. Write the subjectPublicKeyInfo's algorithm field to the hash.
+  CBS spki(cert.tbs().spki_tlv);
+  CBS spki_sequence, spki_algorithm_tlv;
+  if (!CBS_get_asn1(&spki, &spki_sequence, CBS_ASN1_SEQUENCE) ||
+      !CBS_get_asn1_element(&spki_sequence, &spki_algorithm_tlv,
+                            CBS_ASN1_SEQUENCE) ||
+      !EVP_DigestUpdate(entry_hash_ctx.get(), CBS_data(&spki_algorithm_tlv),
+                        CBS_len(&spki_algorithm_tlv))) {
+    return false;
+  }
+
+  // 6. Write the octet 0x04 to the hash. This is an OCTET STRING identifier.
+  // 7. Write the octet L to the hash, where L is the hash length. (This
+  // assumes L is at most 127.)
+  static constexpr uint8_t kSpkiHashTagAndLength[] = {CBS_ASN1_OCTETSTRING,
+                                                      SHA256_DIGEST_LENGTH};
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), kSpkiHashTagAndLength,
+                        sizeof(kSpkiHashTagAndLength))) {
+    return false;
+  }
+
+  // 8. Write H to the hash, where H is the hash of the entire
+  // subjectPublicKeyInfo field.
+  uint8_t spki_hash[SHA256_DIGEST_LENGTH];
+  SHA256(cert.tbs().spki_tlv.data(), cert.tbs().spki_tlv.size(), spki_hash);
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(), spki_hash, sizeof(spki_hash))) {
+    return false;
+  }
+
+  // 9. Write the remainder of the TBSCertificate contents octets to the hash,
+  // starting just after the subjectPublicKeyInfo field.
+  if (!EVP_DigestUpdate(entry_hash_ctx.get(),
+                        cert.tbs().bytes_after_spki.data(),
+                        cert.tbs().bytes_after_spki.size())) {
+    return false;
+  }
+
+  // 10. Finalize the hash and set entry_hash to the result.
+  TreeHash entry_hash;
+  if (!EVP_DigestFinal(entry_hash_ctx.get(), entry_hash.data(), nullptr)) {
+    return false;
+  }
+
+  // Step 10. Let expected_subtree_hash be the result of evaluating the
+  // MTCProof's inclusion_proof
+  Subtree range{start, end};
+  std::optional<TreeHash> expected_subtree_hash =
+      EvaluateMerkleSubtreeInclusionProof(inclusion_proof, index, entry_hash,
+                                          range);
+  if (!expected_subtree_hash) {
+    return false;
+  }
+
+  // Step 11. If log_number, start, and end matches a trusted subtree (Section
+  // 7.4) for the CA, check that expected_subtree_hash is equal to the trusted
+  // subtree's hash.
+  if (!mtc_anchor) {
+    return false;
+  }
+  std::optional<TreeHashConstSpan> trusted_subtree_hash =
+      mtc_anchor->SubtreeHash(log_number, range);
+  if (trusted_subtree_hash) {
+    return CRYPTO_memcmp(expected_subtree_hash->data(),
+                         trusted_subtree_hash->data(),
+                         expected_subtree_hash->size()) == 0;
+  }
+
+  // Step 6: Let log_id be the log ID constructed from the CA ID in issuer and
+  // the log_number.
+  //
+  // Use the ca_id from mtc_anchor instead of parsing the id out of issuer. It
+  // should be guaranteed to be the same id, otherwise mtc_anchor would not
+  // have been selected as the anchor for this cert.
+  CBS ca_id(mtc_anchor->ca_id());
+  UniquePtr<char> ca_id_text(CBS_asn1_relative_oid_to_text(&ca_id));
+  if (!ca_id_text) {
+    return false;
+  }
+  // Section 5.1: For each positive integer N, the OID {caID logs(0) N}
+  // represents the issuance log N (Section 5.2).
+  std::string log_id_text = ca_id_text.get();
+  log_id_text += ".0.";
+  char log_number_text[DECIMAL_SIZE(log_number) + 1];
+  snprintf(log_number_text, sizeof(log_number_text), "%" PRIu16, log_number);
+  log_id_text += log_number_text;
+
+  // Step 12. Otherwise, check that the MTCProof's signatures contain a
+  // sufficient set of valid signatures from cosigners to satisfy the relying
+  // party's cosigner requirements (Section 7.3). Unrecognized cosigners MUST
+  // be ignored.
+
+  std::vector<std::vector<uint8_t>> valid_additional_cosigners;
+  bool found_valid_ca_signature = false;
+  Span<const uint8_t> prev_cosigner_id;
+  while (CBS_len(&signatures)) {
+    CBS cbs_cosigner_id, signature;
+    if (!CBS_get_u8_length_prefixed(&signatures, &cbs_cosigner_id) ||
+        CBS_len(&cbs_cosigner_id) == 0 ||
+        !CBS_get_u16_length_prefixed(&signatures, &signature)) {
+      return false;
+    }
+    Span<const uint8_t> cosigner_id(cbs_cosigner_id);
+    // Section 6.1: Each element of the signatures field MUST have a unique
+    // cosigner_id. Elements MUST be ordered by cosigner_id as follows:
+    // (Checking the ordering isn't specified as part of the verification
+    // procedure, but it's good to enforce it, and means we don't need to worry
+    // about corner cases like multiple cosignatures with the same id, etc.)
+    if (!prev_cosigner_id.empty()) {
+      // Shorter byte strings are ordered before longer byte strings
+      if (prev_cosigner_id.size() > cosigner_id.size()) {
+        return false;
+      }
+      // Byte strings of the same length are ordered lexicographically
+      if (prev_cosigner_id.size() == cosigner_id.size() &&
+          !std::lexicographical_compare(
+              prev_cosigner_id.begin(), prev_cosigner_id.end(),
+              cosigner_id.begin(), cosigner_id.end())) {
+        return false;
+      }
+    }
+
+    // TODO(crbug.com/452983502): The non-CA cosignature verification results
+    // are ignored if the CA signature didn't validate successfully, so we
+    // could first find and verify the CA signature before bothering to check
+    // any of the other ones.
+    if (cosigner_id == mtc_anchor->ca_id()) {
+      found_valid_ca_signature = VerifyMTCProofSignaturePlants04(
+          &cbs_cosigner_id, StringAsBytes(log_id_text), start, end,
+          expected_subtree_hash.value(), signature,
+          mtc_anchor->ca_signature_algorithm(), mtc_anchor->ca_key(),
+          delegate->GetVerifyCache());
+    } else {
+      auto cosigner = delegate->GetMTCCosigner(cosigner_id);
+      // TODO(crbug.com/452983502): output debug logs or delegate data or
+      // something for non-success cases?
+      if (cosigner && VerifyMTCProofSignaturePlants04(
+                          &cbs_cosigner_id, StringAsBytes(log_id_text), start,
+                          end, expected_subtree_hash.value(), signature,
+                          cosigner->signature_algorithm, cosigner->key.get(),
+                          delegate->GetVerifyCache())) {
+        valid_additional_cosigners.emplace_back(cosigner_id.begin(),
+                                                cosigner_id.end());
+      }
+    }
+
+    prev_cosigner_id = cosigner_id;
+  }
+
+  if (found_valid_ca_signature) {
+    return delegate->IsCosignatureVerificationResultAcceptable(
+        mtc_anchor, std::move(valid_additional_cosigners));
+  }
+  return false;
+}
+
+static bool VerifyMTC(const ParsedCertificate &cert,
+                      const MTCAnchor *mtc_anchor,
+                      VerifyCertificateChainDelegate *delegate) {
+  switch (mtc_anchor->spec_version()) {
+    case MTCAnchor::MtcSpecVersion::kDavidben08:
+      return VerifyMTCDraftDavidben08(cert, mtc_anchor);
+    case MTCAnchor::MtcSpecVersion::kPlants04:
+      return VerifyMTCDraftPlants04(cert, mtc_anchor, delegate);
+  }
+  return false;
+}
+
 void PathVerifier::BasicCertificateProcessing(
     const ParsedCertificate &cert, bool is_target_cert,
     bool is_target_cert_issuer, const der::GeneralizedTime &time,
@@ -1300,7 +1673,7 @@ void PathVerifier::BasicCertificateProcessing(
     if (!is_target_cert) {
       *shortcircuit_chain_validation = true;
       errors->AddError(cert_errors::kMaxPathLengthViolated);
-    } else if (!VerifyMTC(cert, working_mtc_anchor_)) {
+    } else if (!VerifyMTC(cert, working_mtc_anchor_, delegate_)) {
       *shortcircuit_chain_validation = true;
       errors->AddError(cert_errors::kVerifySignedDataFailed);
     }
@@ -1798,21 +2171,21 @@ void PathVerifier::Run(
 
   valid_policy_graph_.Init();
 
-  // RFC 5280 section section 6.1.2:
+  // RFC 5280 section 6.1.2:
   //
   // If initial-explicit-policy is set, then the initial value
   // [of explicit_policy] is 0, otherwise the initial value is n+1.
   explicit_policy_ =
       initial_explicit_policy == InitialExplicitPolicy::kTrue ? 0 : n + 1;
 
-  // RFC 5280 section section 6.1.2:
+  // RFC 5280 section 6.1.2:
   //
   // If initial-any-policy-inhibit is set, then the initial value
   // [of inhibit_anyPolicy] is 0, otherwise the initial value is n+1.
   inhibit_any_policy_ =
       initial_any_policy_inhibit == InitialAnyPolicyInhibit::kTrue ? 0 : n + 1;
 
-  // RFC 5280 section section 6.1.2:
+  // RFC 5280 section 6.1.2:
   //
   // If initial-policy-mapping-inhibit is set, then the initial value
   // [of policy_mapping] is 0, otherwise the initial value is n+1.
@@ -1821,7 +2194,7 @@ void PathVerifier::Run(
           ? 0
           : n + 1;
 
-  // RFC 5280 section section 6.1.2:
+  // RFC 5280 section 6.1.2:
   //
   // max_path_length:  this integer is initialized to n, ...
   max_path_length_ = n;

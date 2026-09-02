@@ -45,18 +45,18 @@ using namespace bssl;
 // shifts match the operations themselves, which makes them reversed in a
 // little-endian, left-to-right reading.
 //
-// Eight |aes_word_t|s contain |AES_NOHW_BATCH_SIZE| blocks. The bits in an
-// |aes_word_t| are divided into 16 consecutive groups of |AES_NOHW_BATCH_SIZE|
+// Eight `aes_word_t`s contain `AES_NOHW_BATCH_SIZE` blocks. The bits in an
+// `aes_word_t` are divided into 16 consecutive groups of `AES_NOHW_BATCH_SIZE`
 // bits each, each corresponding to a byte in an AES block in column-major
 // order (AES's byte order). We refer to these as "logical bytes". Note, in the
 // 32-bit and 64-bit implementations, they are smaller than a byte. (The
 // contents of a logical byte will be described later.)
 //
-// MSVC does not support C bit operators on |__m128i|, so the wrapper functions
-// |aes_nohw_and|, etc., should be used instead. Note |aes_nohw_shift_left| and
-// |aes_nohw_shift_right| measure the shift in logical bytes. That is, the shift
-// value ranges from 0 to 15 independent of |aes_word_t| and
-// |AES_NOHW_BATCH_SIZE|.
+// MSVC does not support C bit operators on `__m128i`, so the wrapper functions
+// `aes_nohw_and`, etc., should be used instead. Note `aes_nohw_shift_left` and
+// `aes_nohw_shift_right` measure the shift in logical bytes. That is, the shift
+// value ranges from 0 to 15 independent of `aes_word_t` and
+// `AES_NOHW_BATCH_SIZE`.
 //
 // This ordering is different from https://eprint.iacr.org/2009/129.pdf, which
 // uses row-major order. Matching the AES order was easier to reason about, and
@@ -100,7 +100,7 @@ static aes_word_t aes_nohw_not(aes_word_t a) {
       a, _mm_set_epi32(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff));
 }
 
-// These are macros because parameters to |_mm_slli_si128| and |_mm_srli_si128|
+// These are macros because parameters to `_mm_slli_si128` and `_mm_srli_si128`
 // must be constants.
 #define aes_nohw_shift_left(/* aes_word_t */ a, /* const */ i) \
   _mm_slli_si128((a), (i))
@@ -158,8 +158,8 @@ static_assert(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
 //
 // This implementation uses three representations for AES blocks. First, the
 // public API represents blocks as uint8_t[16] in the usual way. Second, most
-// AES steps are evaluated in bitsliced form, stored in an |AES_NOHW_BATCH|.
-// This stores |AES_NOHW_BATCH_SIZE| blocks in bitsliced order. For 64-bit words
+// AES steps are evaluated in bitsliced form, stored in an `AES_NOHW_BATCH`.
+// This stores `AES_NOHW_BATCH_SIZE` blocks in bitsliced order. For 64-bit words
 // containing bitsliced blocks a, b, c, d, this would be as follows (vertical
 // bars divide logical bytes):
 //
@@ -172,10 +172,10 @@ static_assert(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
 // Finally, an individual block may be stored as an intermediate form in an
 // aes_word_t[AES_NOHW_BLOCK_WORDS]. In this form, we permute the bits in each
 // block, so that block[0]'s ith logical byte contains least-significant
-// |AES_NOHW_BATCH_SIZE| bits of byte i, block[1] contains the next group of
-// |AES_NOHW_BATCH_SIZE| bits, and so on. We refer to this transformation as
+// `AES_NOHW_BATCH_SIZE` bits of byte i, block[1] contains the next group of
+// `AES_NOHW_BATCH_SIZE` bits, and so on. We refer to this transformation as
 // "compacting" the block. Note this is no-op with 128-bit words because then
-// |AES_NOHW_BLOCK_WORDS| is one and |AES_NOHW_BATCH_SIZE| is eight. For 64-bit
+// `AES_NOHW_BLOCK_WORDS` is one and `AES_NOHW_BATCH_SIZE` is eight. For 64-bit
 // words, one block would be stored in two words:
 //
 //   block[0] = a0 a1 a2 a3 |  a8  a9 a10 a11 | a16 a17 a18 a19 ...
@@ -197,40 +197,40 @@ static_assert(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
 //   batch.w[3] = a3 b3 c3 d3 | a11 b11 c11 d11 | a19 b19 c19 d19 ...
 //
 // Note also that bitwise operations and (logical) byte permutations on an
-// |aes_word_t| work equally for the bitsliced and compact words.
+// `aes_word_t` work equally for the bitsliced and compact words.
 //
-// We use the compact form in the |AES_KEY| representation to save work
-// inflating round keys into |AES_NOHW_BATCH|. The compact form also exists
-// temporarily while moving blocks in or out of an |AES_NOHW_BATCH|, immediately
-// before or after |aes_nohw_transpose|.
+// We use the compact form in the `AES_KEY` representation to save work
+// inflating round keys into `AES_NOHW_BATCH`. The compact form also exists
+// temporarily while moving blocks in or out of an `AES_NOHW_BATCH`, immediately
+// before or after `aes_nohw_transpose`.
 
 #define AES_NOHW_BLOCK_WORDS (16 / sizeof(aes_word_t))
 
-// An AES_NOHW_BATCH stores |AES_NOHW_BATCH_SIZE| blocks. Unless otherwise
+// An AES_NOHW_BATCH stores `AES_NOHW_BATCH_SIZE` blocks. Unless otherwise
 // specified, it is in bitsliced form.
 typedef struct {
   aes_word_t w[8];
 } AES_NOHW_BATCH;
 
 // An AES_NOHW_SCHEDULE is an expanded bitsliced AES key schedule. It is
-// suitable for encryption or decryption. It is as large as |AES_NOHW_BATCH|
-// |AES_KEY|s so it should not be used as a long-term key representation.
+// suitable for encryption or decryption. It is as large as `AES_NOHW_BATCH`
+// `AES_KEY`s so it should not be used as a long-term key representation.
 typedef struct {
   // keys is an array of batches, one for each round key. Each batch stores
-  // |AES_NOHW_BATCH_SIZE| copies of the round key in bitsliced form.
+  // `AES_NOHW_BATCH_SIZE` copies of the round key in bitsliced form.
   AES_NOHW_BATCH keys[AES_MAXNR + 1];
 } AES_NOHW_SCHEDULE;
 
-// aes_nohw_batch_set sets the |i|th block of |batch| to |in|. |batch| is in
+// aes_nohw_batch_set sets the `i`th block of `batch` to `in`. `batch` is in
 // compact form.
 static void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
                                const aes_word_t in[AES_NOHW_BLOCK_WORDS],
                                size_t i) {
-  // Note the words are interleaved. The order comes from |aes_nohw_transpose|.
-  // If |i| is zero and this is the 64-bit implementation, in[0] contains bits
+  // Note the words are interleaved. The order comes from `aes_nohw_transpose`.
+  // If `i` is zero and this is the 64-bit implementation, in[0] contains bits
   // 0-3 and in[1] contains bits 4-7. We place in[0] at w[0] and in[1] at
   // w[4] so that bits 0 and 4 are in the correct position. (In general, bits
-  // along diagonals of |AES_NOHW_BATCH_SIZE| by |AES_NOHW_BATCH_SIZE| squares
+  // along diagonals of `AES_NOHW_BATCH_SIZE` by `AES_NOHW_BATCH_SIZE` squares
   // will be correctly placed.)
   assert(i < AES_NOHW_BATCH_SIZE);
 #if defined(OPENSSL_SSE2)
@@ -246,7 +246,7 @@ static void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
 #endif
 }
 
-// aes_nohw_batch_get writes the |i|th block of |batch| to |out|. |batch| is in
+// aes_nohw_batch_get writes the `i`th block of `batch` to `out`. `batch` is in
 // compact form.
 static void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
                                aes_word_t out[AES_NOHW_BLOCK_WORDS], size_t i) {
@@ -265,8 +265,8 @@ static void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
 }
 
 #if !defined(OPENSSL_SSE2)
-// aes_nohw_delta_swap returns |a| with bits |a & mask| and
-// |a & (mask << shift)| swapped. |mask| and |mask << shift| may not overlap.
+// aes_nohw_delta_swap returns `a` with bits |a & mask| and
+// |a & (mask << shift)| swapped. `mask` and |mask << shift| may not overlap.
 static aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
                                       aes_word_t shift) {
   // See
@@ -276,8 +276,8 @@ static aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
 }
 
 // In the 32-bit and 64-bit implementations, a block spans multiple words.
-// |aes_nohw_compact_block| must permute bits across different words. First we
-// implement |aes_nohw_compact_word| which performs a smaller version of the
+// `aes_nohw_compact_block` must permute bits across different words. First we
+// implement `aes_nohw_compact_word` which performs a smaller version of the
 // transformation which stays within a single word.
 //
 // These transformations are generalizations of the output of
@@ -301,7 +301,7 @@ static uint64_t aes_nohw_compact_word(uint64_t a) {
 }
 
 static uint64_t aes_nohw_uncompact_word(uint64_t a) {
-  // Reverse the steps of |aes_nohw_uncompact_word|.
+  // Reverse the steps of `aes_nohw_uncompact_word`.
   a = aes_nohw_delta_swap(a, UINT64_C(0x00000000ffff0000), 16);
   a = aes_nohw_delta_swap(a, UINT64_C(0x0000ff000000ff00), 8);
   a = aes_nohw_delta_swap(a, UINT64_C(0x00f000f000f000f0), 4);
@@ -324,7 +324,7 @@ static uint32_t aes_nohw_compact_word(uint32_t a) {
 }
 
 static uint32_t aes_nohw_uncompact_word(uint32_t a) {
-  // Reverse the steps of |aes_nohw_uncompact_word|.
+  // Reverse the steps of `aes_nohw_uncompact_word`.
   a = aes_nohw_delta_swap(a, 0x0000f0f0, 12);
   a = aes_nohw_delta_swap(a, 0x00cc00cc, 6);
   return a;
@@ -406,11 +406,11 @@ static void aes_nohw_uncompact_block(
 }
 
 // aes_nohw_swap_bits is a variation on a delta swap. It swaps the bits in
-// |*a & (mask << shift)| with the bits in |*b & mask|. |mask| and
-// |mask << shift| must not overlap. |mask| is specified as a |uint32_t|, but it
-// is repeated to the full width of |aes_word_t|.
+// `*a & (mask << shift)` with the bits in `*b & mask`. `mask` and
+// `mask << shift` must not overlap. `mask` is specified as a `uint32_t`, but it
+// is repeated to the full width of `aes_word_t`.
 #if defined(OPENSSL_SSE2)
-// This must be a macro because |_mm_srli_epi32| and |_mm_slli_epi32| require
+// This must be a macro because `_mm_srli_epi32` and `_mm_slli_epi32` require
 // constant shift values.
 #define aes_nohw_swap_bits(/*__m128i* */ a, /*__m128i* */ b,              \
                            /* uint32_t */ mask, /* const */ shift)        \
@@ -437,7 +437,7 @@ static void aes_nohw_swap_bits(aes_word_t *a, aes_word_t *b, uint32_t mask,
 }
 #endif  // OPENSSL_SSE2
 
-// aes_nohw_transpose converts |batch| to and from bitsliced form. It divides
+// aes_nohw_transpose converts `batch` to and from bitsliced form. It divides
 // the 8 × word_size bits into AES_NOHW_BATCH_SIZE × AES_NOHW_BATCH_SIZE squares
 // and transposes each square.
 static void aes_nohw_transpose(AES_NOHW_BATCH *batch) {
@@ -464,8 +464,8 @@ static void aes_nohw_transpose(AES_NOHW_BATCH *batch) {
 #endif
 }
 
-// aes_nohw_to_batch initializes |out| with the |num_blocks| blocks from |in|.
-// |num_blocks| must be at most |AES_NOHW_BATCH|.
+// aes_nohw_to_batch initializes `out` with the `num_blocks` blocks from `in`.
+// `num_blocks` must be at most `AES_NOHW_BATCH`.
 static void aes_nohw_to_batch(AES_NOHW_BATCH *out, const uint8_t *in,
                               size_t num_blocks) {
   // Don't leave unused blocks uninitialized.
@@ -480,8 +480,8 @@ static void aes_nohw_to_batch(AES_NOHW_BATCH *out, const uint8_t *in,
   aes_nohw_transpose(out);
 }
 
-// aes_nohw_to_batch writes the first |num_blocks| blocks in |batch| to |out|.
-// |num_blocks| must be at most |AES_NOHW_BATCH|.
+// aes_nohw_to_batch writes the first `num_blocks` blocks in `batch` to `out`.
+// `num_blocks` must be at most `AES_NOHW_BATCH`.
 static void aes_nohw_from_batch(uint8_t *out, size_t num_blocks,
                                 const AES_NOHW_BATCH *batch) {
   AES_NOHW_BATCH copy = *batch;
@@ -696,8 +696,8 @@ static void aes_nohw_inv_sub_bytes(AES_NOHW_BATCH *batch) {
   aes_nohw_sub_bytes_inv_affine(batch);
 }
 
-// aes_nohw_rotate_cols_right returns |v| with the columns in each row rotated
-// to the right by |n|. This is a macro because |aes_nohw_shift_*| require
+// aes_nohw_rotate_cols_right returns `v` with the columns in each row rotated
+// to the right by `n`. This is a macro because `aes_nohw_shift_*` require
 // constant shift counts in the SSE2 implementation.
 #define aes_nohw_rotate_cols_right(/* aes_word_t */ v, /* const */ n) \
   (aes_nohw_or(aes_nohw_shift_right((v), (n)*4),                      \
@@ -729,7 +729,7 @@ static void aes_nohw_inv_shift_rows(AES_NOHW_BATCH *batch) {
   }
 }
 
-// aes_nohw_rotate_rows_down returns |v| with the rows in each column rotated
+// aes_nohw_rotate_rows_down returns `v` with the rows in each column rotated
 // down by one.
 static aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
@@ -742,7 +742,7 @@ static aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 #endif
 }
 
-// aes_nohw_rotate_rows_twice returns |v| with the rows in each column rotated
+// aes_nohw_rotate_rows_twice returns `v` with the rows in each column rotated
 // by two.
 static aes_word_t aes_nohw_rotate_rows_twice(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
@@ -910,8 +910,8 @@ static void aes_nohw_expand_round_keys(AES_NOHW_SCHEDULE *out,
 static const uint8_t aes_nohw_rcon[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
                                           0x20, 0x40, 0x80, 0x1b, 0x36};
 
-// aes_nohw_rcon_slice returns the |i|th group of |AES_NOHW_BATCH_SIZE| bits in
-// |rcon|, stored in a |aes_word_t|.
+// aes_nohw_rcon_slice returns the `i`th group of `AES_NOHW_BATCH_SIZE` bits in
+// `rcon`, stored in a `aes_word_t`.
 static aes_word_t aes_nohw_rcon_slice(uint8_t rcon, size_t i) {
   rcon = (rcon >> (i * AES_NOHW_BATCH_SIZE)) & ((1 << AES_NOHW_BATCH_SIZE) - 1);
 #if defined(OPENSSL_SSE2)
@@ -944,7 +944,7 @@ static void aes_nohw_setup_key_128(AES_KEY *key, const uint8_t in[16]) {
     aes_nohw_sub_block(sub, block);
     uint8_t rcon = aes_nohw_rcon[i - 1];
     for (size_t j = 0; j < AES_NOHW_BLOCK_WORDS; j++) {
-      // Incorporate |rcon| and the transformed word into the first word.
+      // Incorporate `rcon` and the transformed word into the first word.
       block[j] = aes_nohw_xor(block[j], aes_nohw_rcon_slice(rcon, j));
       block[j] = aes_nohw_xor(
           block[j],
@@ -971,9 +971,9 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
   // We maintain a sliding window of two blocks, filled to 1.5 blocks at a time.
   // We loop below every three blocks or two key schedule iterations.
   //
-  // On entry to the loop, |block1| and the first half of |block2| contain the
-  // previous key schedule iteration. |block1| has been written to |key|, but
-  // |block2| has not as it is incomplete.
+  // On entry to the loop, `block1` and the first half of `block2` contain the
+  // previous key schedule iteration. `block1` has been written to `key`, but
+  // `block2` has not as it is incomplete.
   aes_nohw_compact_block(block1, in);
   memcpy(key->rd_key, block1, 16);
 
@@ -987,17 +987,17 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
     uint8_t rcon = aes_nohw_rcon[2 * i];
     for (size_t j = 0; j < AES_NOHW_BLOCK_WORDS; j++) {
       // Compute the first two words of the next key schedule iteration, which
-      // go in the second half of |block2|. The first two words of the previous
-      // iteration are in the first half of |block1|. Apply |rcon| here too
+      // go in the second half of `block2`. The first two words of the previous
+      // iteration are in the first half of `block1`. Apply `rcon` here too
       // because the shifts match.
       block2[j] = aes_nohw_or(
           block2[j],
           aes_nohw_shift_left(
               aes_nohw_xor(block1[j], aes_nohw_rcon_slice(rcon, j)), 8));
       // Incorporate the transformed word and propagate. Note the last word of
-      // the previous iteration corresponds to the second word of |copy|. This
+      // the previous iteration corresponds to the second word of `copy`. This
       // is incorporated into the first word of the next iteration, or the third
-      // word of |block2|.
+      // word of `block2`.
       block2[j] = aes_nohw_xor(
           block2[j], aes_nohw_and(aes_nohw_shift_left(
                                       aes_nohw_rotate_rows_down(sub[j]), 4),
@@ -1006,12 +1006,12 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
           block2[j],
           aes_nohw_and(aes_nohw_shift_left(block2[j], 4), AES_NOHW_COL3_MASK));
 
-      // Compute the remaining four words, which fill |block1|. Begin by moving
+      // Compute the remaining four words, which fill `block1`. Begin by moving
       // the corresponding words of the previous iteration: the second half of
-      // |block1| and the first half of |block2|.
+      // `block1` and the first half of `block2`.
       block1[j] = aes_nohw_shift_right(block1[j], 8);
       block1[j] = aes_nohw_or(block1[j], aes_nohw_shift_left(block2[j], 8));
-      // Incorporate the second word, computed previously in |block2|, and
+      // Incorporate the second word, computed previously in `block2`, and
       // propagate.
       block1[j] = aes_nohw_xor(block1[j], aes_nohw_shift_right(block2[j], 12));
       aes_word_t v = block1[j];
@@ -1020,7 +1020,7 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
       block1[j] = aes_nohw_xor(block1[j], aes_nohw_shift_left(v, 12));
     }
 
-    // This completes two round keys. Note half of |block2| was computed in the
+    // This completes two round keys. Note half of `block2` was computed in the
     // previous loop iteration but was not yet output.
     memcpy(key->rd_key + 4 * (3 * i + 1), block2, 16);
     memcpy(key->rd_key + 4 * (3 * i + 2), block1, 16);
@@ -1029,12 +1029,12 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
     rcon = aes_nohw_rcon[2 * i + 1];
     for (size_t j = 0; j < AES_NOHW_BLOCK_WORDS; j++) {
       // Compute the first four words of the next key schedule iteration in
-      // |block2|. Begin by moving the corresponding words of the previous
-      // iteration: the second half of |block2| and the first half of |block1|.
+      // `block2`. Begin by moving the corresponding words of the previous
+      // iteration: the second half of `block2` and the first half of `block1`.
       block2[j] = aes_nohw_shift_right(block2[j], 8);
       block2[j] = aes_nohw_or(block2[j], aes_nohw_shift_left(block1[j], 8));
       // Incorporate rcon and the transformed word. Note the last word of the
-      // previous iteration corresponds to the last word of |copy|.
+      // previous iteration corresponds to the last word of `copy`.
       block2[j] = aes_nohw_xor(block2[j], aes_nohw_rcon_slice(rcon, j));
       block2[j] = aes_nohw_xor(
           block2[j],
@@ -1045,9 +1045,9 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
       block2[j] = aes_nohw_xor(block2[j], aes_nohw_shift_left(v, 8));
       block2[j] = aes_nohw_xor(block2[j], aes_nohw_shift_left(v, 12));
 
-      // Compute the last two words, which go in the first half of |block1|. The
+      // Compute the last two words, which go in the first half of `block1`. The
       // last two words of the previous iteration are in the second half of
-      // |block1|.
+      // `block1`.
       block1[j] = aes_nohw_shift_right(block1[j], 8);
       // Propagate blocks and mask off the excess.
       block1[j] = aes_nohw_xor(block1[j], aes_nohw_shift_right(block2[j], 12));
@@ -1055,7 +1055,7 @@ static void aes_nohw_setup_key_192(AES_KEY *key, const uint8_t in[24]) {
       block1[j] = aes_nohw_and(block1[j], AES_NOHW_COL01_MASK);
     }
 
-    // |block2| has a complete round key. |block1| will be completed in the next
+    // `block2` has a complete round key. `block1` will be completed in the next
     // iteration.
     memcpy(key->rd_key + 4 * (3 * i + 3), block2, 16);
 
@@ -1082,7 +1082,7 @@ static void aes_nohw_setup_key_256(AES_KEY *key, const uint8_t in[32]) {
     aes_nohw_sub_block(sub, block2);
     uint8_t rcon = aes_nohw_rcon[i / 2 - 1];
     for (size_t j = 0; j < AES_NOHW_BLOCK_WORDS; j++) {
-      // Incorporate |rcon| and the transformed word into the first word.
+      // Incorporate `rcon` and the transformed word into the first word.
       block1[j] = aes_nohw_xor(block1[j], aes_nohw_rcon_slice(rcon, j));
       block1[j] = aes_nohw_xor(
           block1[j],
@@ -1178,7 +1178,7 @@ void bssl::aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
   AES_NOHW_SCHEDULE sched;
   aes_nohw_expand_round_keys(&sched, key);
 
-  // Make |AES_NOHW_BATCH_SIZE| copies of |ivec|.
+  // Make `AES_NOHW_BATCH_SIZE` copies of `ivec`.
   alignas(AES_NOHW_WORD_SIZE) uint8_t ivs[AES_NOHW_BATCH_SIZE * 16];
   alignas(AES_NOHW_WORD_SIZE) uint8_t enc_ivs[AES_NOHW_BATCH_SIZE * 16];
   for (size_t i = 0; i < AES_NOHW_BATCH_SIZE; i++) {

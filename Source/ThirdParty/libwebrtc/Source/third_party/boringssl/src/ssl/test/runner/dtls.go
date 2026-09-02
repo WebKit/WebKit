@@ -271,7 +271,7 @@ func (c *Conn) dtlsDoReadRecord(epoch *epochState, want recordType) (recordType,
 		}
 		if c.maxPacketLen != 0 {
 			if n > c.maxPacketLen {
-				return 0, nil, fmt.Errorf("dtls: exceeded maximum packet length")
+				return 0, nil, fmt.Errorf("dtls: exceeded maximum packet length: got %d, want <=%d", n, c.maxPacketLen)
 			}
 			c.bytesAvailableInPacket = c.maxPacketLen - n
 		} else {
@@ -288,7 +288,7 @@ func (c *Conn) dtlsDoReadRecord(epoch *epochState, want recordType) (recordType,
 	}
 	if n > maxCiphertext || c.rawInput.Len() < recordHeaderLen+n {
 		c.sendAlert(alertRecordOverflow)
-		return 0, nil, c.in.setErrorLocked(fmt.Errorf("dtls: oversized record received with length %d", n))
+		return 0, nil, c.in.setErrorLocked(fmt.Errorf("dtls: oversized record received with length: got %d, want <=%d", n, maxCiphertext))
 	}
 	b := c.rawInput.Next(recordHeaderLen + n)
 

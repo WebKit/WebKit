@@ -16,8 +16,8 @@ _CET_ENDBR
 
 	movb	$1,_BORINGSSL_function_hit+1(%rip)
 #endif
-	movups	(%rdi),%xmm2
-	movl	240(%rdx),%eax
+	movups	(%rdi),%xmm2  // load input
+	movl	240(%rdx),%eax  // key->rounds
 	movups	(%rdx),%xmm0
 	movups	16(%rdx),%xmm1
 	leaq	32(%rdx),%rdx
@@ -27,11 +27,11 @@ L$oop_enc1_1:
 	decl	%eax
 	movups	(%rdx),%xmm1
 	leaq	16(%rdx),%rdx
-	jnz	L$oop_enc1_1
+	jnz	L$oop_enc1_1  // loop body is 16 bytes
 	aesenclast	%xmm1,%xmm2
-	pxor	%xmm0,%xmm0
+	pxor	%xmm0,%xmm0  // clear register bank
 	pxor	%xmm1,%xmm1
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // output
 	pxor	%xmm2,%xmm2
 	ret
 
@@ -41,11 +41,12 @@ L$oop_enc1_1:
 .private_extern _aes_hw_decrypt
 
 .p2align	4
+.alt_entry _aes_hw_decrypt
 _aes_hw_decrypt:
 
 _CET_ENDBR
-	movups	(%rdi),%xmm2
-	movl	240(%rdx),%eax
+	movups	(%rdi),%xmm2  // load input
+	movl	240(%rdx),%eax  // key->rounds
 	movups	(%rdx),%xmm0
 	movups	16(%rdx),%xmm1
 	leaq	32(%rdx),%rdx
@@ -55,17 +56,18 @@ L$oop_dec1_2:
 	decl	%eax
 	movups	(%rdx),%xmm1
 	leaq	16(%rdx),%rdx
-	jnz	L$oop_dec1_2
+	jnz	L$oop_dec1_2  // loop body is 16 bytes
 	aesdeclast	%xmm1,%xmm2
-	pxor	%xmm0,%xmm0
+	pxor	%xmm0,%xmm0  // clear register bank
 	pxor	%xmm1,%xmm1
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // output
 	pxor	%xmm2,%xmm2
 	ret
 
 
 
 .p2align	4
+.alt_entry _aesni_encrypt2
 _aesni_encrypt2:
 
 	movups	(%rcx),%xmm0
@@ -75,7 +77,7 @@ _aesni_encrypt2:
 	xorps	%xmm0,%xmm3
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	addq	$16,%rax
 
 L$enc_loop2:
@@ -97,6 +99,7 @@ L$enc_loop2:
 
 
 .p2align	4
+.alt_entry _aesni_decrypt2
 _aesni_decrypt2:
 
 	movups	(%rcx),%xmm0
@@ -106,7 +109,7 @@ _aesni_decrypt2:
 	xorps	%xmm0,%xmm3
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	addq	$16,%rax
 
 L$dec_loop2:
@@ -128,6 +131,7 @@ L$dec_loop2:
 
 
 .p2align	4
+.alt_entry _aesni_encrypt3
 _aesni_encrypt3:
 
 	movups	(%rcx),%xmm0
@@ -138,7 +142,7 @@ _aesni_encrypt3:
 	xorps	%xmm0,%xmm4
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	addq	$16,%rax
 
 L$enc_loop3:
@@ -164,6 +168,7 @@ L$enc_loop3:
 
 
 .p2align	4
+.alt_entry _aesni_decrypt3
 _aesni_decrypt3:
 
 	movups	(%rcx),%xmm0
@@ -174,7 +179,7 @@ _aesni_decrypt3:
 	xorps	%xmm0,%xmm4
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	addq	$16,%rax
 
 L$dec_loop3:
@@ -200,6 +205,7 @@ L$dec_loop3:
 
 
 .p2align	4
+.alt_entry _aesni_encrypt4
 _aesni_encrypt4:
 
 	movups	(%rcx),%xmm0
@@ -211,7 +217,7 @@ _aesni_encrypt4:
 	xorps	%xmm0,%xmm5
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 .byte	0x0f,0x1f,0x00
 	addq	$16,%rax
 
@@ -242,6 +248,7 @@ L$enc_loop4:
 
 
 .p2align	4
+.alt_entry _aesni_decrypt4
 _aesni_decrypt4:
 
 	movups	(%rcx),%xmm0
@@ -253,7 +260,7 @@ _aesni_decrypt4:
 	xorps	%xmm0,%xmm5
 	movups	32(%rcx),%xmm0
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 .byte	0x0f,0x1f,0x00
 	addq	$16,%rax
 
@@ -284,6 +291,7 @@ L$dec_loop4:
 
 
 .p2align	4
+.alt_entry _aesni_encrypt6
 _aesni_encrypt6:
 
 	movups	(%rcx),%xmm0
@@ -294,7 +302,7 @@ _aesni_encrypt6:
 	pxor	%xmm0,%xmm4
 	aesenc	%xmm1,%xmm2
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	aesenc	%xmm1,%xmm3
 	pxor	%xmm0,%xmm5
 	pxor	%xmm0,%xmm6
@@ -340,6 +348,7 @@ L$enc_loop6_enter:
 
 
 .p2align	4
+.alt_entry _aesni_decrypt6
 _aesni_decrypt6:
 
 	movups	(%rcx),%xmm0
@@ -350,7 +359,7 @@ _aesni_decrypt6:
 	pxor	%xmm0,%xmm4
 	aesdec	%xmm1,%xmm2
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	aesdec	%xmm1,%xmm3
 	pxor	%xmm0,%xmm5
 	pxor	%xmm0,%xmm6
@@ -396,6 +405,7 @@ L$dec_loop6_enter:
 
 
 .p2align	4
+.alt_entry _aesni_encrypt8
 _aesni_encrypt8:
 
 	movups	(%rcx),%xmm0
@@ -407,7 +417,7 @@ _aesni_encrypt8:
 	pxor	%xmm0,%xmm5
 	pxor	%xmm0,%xmm6
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	aesenc	%xmm1,%xmm2
 	pxor	%xmm0,%xmm7
 	pxor	%xmm0,%xmm8
@@ -462,6 +472,7 @@ L$enc_loop8_enter:
 
 
 .p2align	4
+.alt_entry _aesni_decrypt8
 _aesni_decrypt8:
 
 	movups	(%rcx),%xmm0
@@ -473,7 +484,7 @@ _aesni_decrypt8:
 	pxor	%xmm0,%xmm5
 	pxor	%xmm0,%xmm6
 	leaq	32(%rcx,%rax,1),%rcx
-	negq	%rax
+	negq	%rax  // %eax
 	aesdec	%xmm1,%xmm2
 	pxor	%xmm0,%xmm7
 	pxor	%xmm0,%xmm8
@@ -530,23 +541,24 @@ L$dec_loop8_enter:
 .private_extern _aes_hw_ecb_encrypt
 
 .p2align	4
+.alt_entry _aes_hw_ecb_encrypt
 _aes_hw_ecb_encrypt:
 
 _CET_ENDBR
-	andq	$-16,%rdx
-	jz	L$ecb_ret
+	andq	$-16,%rdx  // if (%rdx<16)
+	jz	L$ecb_ret  // return
 
-	movl	240(%rcx),%eax
+	movl	240(%rcx),%eax  // key->rounds
 	movups	(%rcx),%xmm0
-	movq	%rcx,%r11
-	movl	%eax,%r10d
-	testl	%r8d,%r8d
+	movq	%rcx,%r11  // backup %rcx
+	movl	%eax,%r10d  // backup %eax
+	testl	%r8d,%r8d  // 5th argument
 	jz	L$ecb_decrypt
+//  --------------------------- ECB ENCRYPT ------------------------------
+	cmpq	$0x80,%rdx  // if (%rdx<8*16)
+	jb	L$ecb_enc_tail  // short input
 
-	cmpq	$0x80,%rdx
-	jb	L$ecb_enc_tail
-
-	movdqu	(%rdi),%xmm2
+	movdqu	(%rdi),%xmm2  // load 8 input blocks
 	movdqu	16(%rdi),%xmm3
 	movdqu	32(%rdi),%xmm4
 	movdqu	48(%rdi),%xmm5
@@ -554,15 +566,15 @@ _CET_ENDBR
 	movdqu	80(%rdi),%xmm7
 	movdqu	96(%rdi),%xmm8
 	movdqu	112(%rdi),%xmm9
-	leaq	128(%rdi),%rdi
-	subq	$0x80,%rdx
+	leaq	128(%rdi),%rdi  // %rdi+=8*16
+	subq	$0x80,%rdx  // %rdx-=8*16 (can be zero)
 	jmp	L$ecb_enc_loop8_enter
 .p2align	4
 L$ecb_enc_loop8:
-	movups	%xmm2,(%rsi)
-	movq	%r11,%rcx
-	movdqu	(%rdi),%xmm2
-	movl	%r10d,%eax
+	movups	%xmm2,(%rsi)  // store 8 output blocks
+	movq	%r11,%rcx  // restore %rcx
+	movdqu	(%rdi),%xmm2  // load 8 input blocks
+	movl	%r10d,%eax  // restore %eax
 	movups	%xmm3,16(%rsi)
 	movdqu	16(%rdi),%xmm3
 	movups	%xmm4,32(%rsi)
@@ -576,31 +588,31 @@ L$ecb_enc_loop8:
 	movups	%xmm8,96(%rsi)
 	movdqu	96(%rdi),%xmm8
 	movups	%xmm9,112(%rsi)
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // %rsi+=8*16
 	movdqu	112(%rdi),%xmm9
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // %rdi+=8*16
 L$ecb_enc_loop8_enter:
 
 	call	_aesni_encrypt8
 
 	subq	$0x80,%rdx
-	jnc	L$ecb_enc_loop8
+	jnc	L$ecb_enc_loop8  // loop if %rdx-=8*16 didn't borrow
 
-	movups	%xmm2,(%rsi)
-	movq	%r11,%rcx
+	movups	%xmm2,(%rsi)  // store 8 output blocks
+	movq	%r11,%rcx  // restore %rcx
 	movups	%xmm3,16(%rsi)
-	movl	%r10d,%eax
+	movl	%r10d,%eax  // restore %eax
 	movups	%xmm4,32(%rsi)
 	movups	%xmm5,48(%rsi)
 	movups	%xmm6,64(%rsi)
 	movups	%xmm7,80(%rsi)
 	movups	%xmm8,96(%rsi)
 	movups	%xmm9,112(%rsi)
-	leaq	128(%rsi),%rsi
-	addq	$0x80,%rdx
-	jz	L$ecb_ret
+	leaq	128(%rsi),%rsi  // %rsi+=8*16
+	addq	$0x80,%rdx  // restore real remaining %rdx
+	jz	L$ecb_ret  // done if (%rdx==0)
 
-L$ecb_enc_tail:
+L$ecb_enc_tail:  // %rdx is less than 8*16
 	movups	(%rdi),%xmm2
 	cmpq	$0x20,%rdx
 	jb	L$ecb_enc_one
@@ -619,7 +631,7 @@ L$ecb_enc_tail:
 	movdqu	96(%rdi),%xmm8
 	xorps	%xmm9,%xmm9
 	call	_aesni_encrypt8
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 7 output blocks
 	movups	%xmm3,16(%rsi)
 	movups	%xmm4,32(%rsi)
 	movups	%xmm5,48(%rsi)
@@ -638,27 +650,27 @@ L$oop_enc1_3:
 	decl	%eax
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_enc1_3
+	jnz	L$oop_enc1_3  // loop body is 16 bytes
 	aesenclast	%xmm1,%xmm2
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store one output block
 	jmp	L$ecb_ret
 .p2align	4
 L$ecb_enc_two:
 	call	_aesni_encrypt2
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 2 output blocks
 	movups	%xmm3,16(%rsi)
 	jmp	L$ecb_ret
 .p2align	4
 L$ecb_enc_three:
 	call	_aesni_encrypt3
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 3 output blocks
 	movups	%xmm3,16(%rsi)
 	movups	%xmm4,32(%rsi)
 	jmp	L$ecb_ret
 .p2align	4
 L$ecb_enc_four:
 	call	_aesni_encrypt4
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 4 output blocks
 	movups	%xmm3,16(%rsi)
 	movups	%xmm4,32(%rsi)
 	movups	%xmm5,48(%rsi)
@@ -667,7 +679,7 @@ L$ecb_enc_four:
 L$ecb_enc_five:
 	xorps	%xmm7,%xmm7
 	call	_aesni_encrypt6
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 5 output blocks
 	movups	%xmm3,16(%rsi)
 	movups	%xmm4,32(%rsi)
 	movups	%xmm5,48(%rsi)
@@ -676,20 +688,20 @@ L$ecb_enc_five:
 .p2align	4
 L$ecb_enc_six:
 	call	_aesni_encrypt6
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 6 output blocks
 	movups	%xmm3,16(%rsi)
 	movups	%xmm4,32(%rsi)
 	movups	%xmm5,48(%rsi)
 	movups	%xmm6,64(%rsi)
 	movups	%xmm7,80(%rsi)
 	jmp	L$ecb_ret
-
+// --------------------------- ECB DECRYPT ------------------------------#
 .p2align	4
 L$ecb_decrypt:
-	cmpq	$0x80,%rdx
-	jb	L$ecb_dec_tail
+	cmpq	$0x80,%rdx  // if (%rdx<8*16)
+	jb	L$ecb_dec_tail  // short input
 
-	movdqu	(%rdi),%xmm2
+	movdqu	(%rdi),%xmm2  // load 8 input blocks
 	movdqu	16(%rdi),%xmm3
 	movdqu	32(%rdi),%xmm4
 	movdqu	48(%rdi),%xmm5
@@ -697,15 +709,15 @@ L$ecb_decrypt:
 	movdqu	80(%rdi),%xmm7
 	movdqu	96(%rdi),%xmm8
 	movdqu	112(%rdi),%xmm9
-	leaq	128(%rdi),%rdi
-	subq	$0x80,%rdx
+	leaq	128(%rdi),%rdi  // %rdi+=8*16
+	subq	$0x80,%rdx  // %rdx-=8*16 (can be zero)
 	jmp	L$ecb_dec_loop8_enter
 .p2align	4
 L$ecb_dec_loop8:
-	movups	%xmm2,(%rsi)
-	movq	%r11,%rcx
-	movdqu	(%rdi),%xmm2
-	movl	%r10d,%eax
+	movups	%xmm2,(%rsi)  // store 8 output blocks
+	movq	%r11,%rcx  // restore %rcx
+	movdqu	(%rdi),%xmm2  // load 8 input blocks
+	movl	%r10d,%eax  // restore %eax
 	movups	%xmm3,16(%rsi)
 	movdqu	16(%rdi),%xmm3
 	movups	%xmm4,32(%rsi)
@@ -719,23 +731,23 @@ L$ecb_dec_loop8:
 	movups	%xmm8,96(%rsi)
 	movdqu	96(%rdi),%xmm8
 	movups	%xmm9,112(%rsi)
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // %rsi+=8*16
 	movdqu	112(%rdi),%xmm9
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // %rdi+=8*16
 L$ecb_dec_loop8_enter:
 
 	call	_aesni_decrypt8
 
 	movups	(%r11),%xmm0
 	subq	$0x80,%rdx
-	jnc	L$ecb_dec_loop8
+	jnc	L$ecb_dec_loop8  // loop if %rdx-=8*16 didn't borrow
 
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
-	movq	%r11,%rcx
+	movups	%xmm2,(%rsi)  // store 8 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
+	movq	%r11,%rcx  // restore %rcx
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
-	movl	%r10d,%eax
+	movl	%r10d,%eax  // restore %eax
 	movups	%xmm4,32(%rsi)
 	pxor	%xmm4,%xmm4
 	movups	%xmm5,48(%rsi)
@@ -748,9 +760,9 @@ L$ecb_dec_loop8_enter:
 	pxor	%xmm8,%xmm8
 	movups	%xmm9,112(%rsi)
 	pxor	%xmm9,%xmm9
-	leaq	128(%rsi),%rsi
-	addq	$0x80,%rdx
-	jz	L$ecb_ret
+	leaq	128(%rsi),%rsi  // %rsi+=8*16
+	addq	$0x80,%rdx  // restore real remaining %rdx
+	jz	L$ecb_ret  // done if (%rdx==0)
 
 L$ecb_dec_tail:
 	movups	(%rdi),%xmm2
@@ -772,8 +784,8 @@ L$ecb_dec_tail:
 	movups	(%rcx),%xmm0
 	xorps	%xmm9,%xmm9
 	call	_aesni_decrypt8
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 7 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	movups	%xmm4,32(%rsi)
@@ -799,24 +811,24 @@ L$oop_dec1_4:
 	decl	%eax
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_dec1_4
+	jnz	L$oop_dec1_4  // loop body is 16 bytes
 	aesdeclast	%xmm1,%xmm2
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store one output block
+	pxor	%xmm2,%xmm2  // clear register bank
 	jmp	L$ecb_ret
 .p2align	4
 L$ecb_dec_two:
 	call	_aesni_decrypt2
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 2 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	jmp	L$ecb_ret
 .p2align	4
 L$ecb_dec_three:
 	call	_aesni_decrypt3
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 3 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	movups	%xmm4,32(%rsi)
@@ -825,8 +837,8 @@ L$ecb_dec_three:
 .p2align	4
 L$ecb_dec_four:
 	call	_aesni_decrypt4
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 4 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	movups	%xmm4,32(%rsi)
@@ -838,8 +850,8 @@ L$ecb_dec_four:
 L$ecb_dec_five:
 	xorps	%xmm7,%xmm7
 	call	_aesni_decrypt6
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 5 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	movups	%xmm4,32(%rsi)
@@ -853,8 +865,8 @@ L$ecb_dec_five:
 .p2align	4
 L$ecb_dec_six:
 	call	_aesni_decrypt6
-	movups	%xmm2,(%rsi)
-	pxor	%xmm2,%xmm2
+	movups	%xmm2,(%rsi)  // store 6 output blocks
+	pxor	%xmm2,%xmm2  // clear register bank
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm3,%xmm3
 	movups	%xmm4,32(%rsi)
@@ -867,7 +879,7 @@ L$ecb_dec_six:
 	pxor	%xmm7,%xmm7
 
 L$ecb_ret:
-	xorps	%xmm0,%xmm0
+	xorps	%xmm0,%xmm0  // %xmm0
 	pxor	%xmm1,%xmm1
 	ret
 
@@ -876,6 +888,7 @@ L$ecb_ret:
 .private_extern _aes_hw_ctr32_encrypt_blocks
 
 .p2align	4
+.alt_entry _aes_hw_ctr32_encrypt_blocks
 _aes_hw_ctr32_encrypt_blocks:
 
 _CET_ENDBR
@@ -885,11 +898,11 @@ _CET_ENDBR
 	cmpq	$1,%rdx
 	jne	L$ctr32_bulk
 
-
-
+// handle single block without allocating stack frame,
+// useful when handling edges
 	movups	(%r8),%xmm2
 	movups	(%rdi),%xmm3
-	movl	240(%rcx),%edx
+	movl	240(%rcx),%edx  // key->rounds
 	movups	(%rcx),%xmm0
 	movups	16(%rcx),%xmm1
 	leaq	32(%rcx),%rcx
@@ -899,9 +912,9 @@ L$oop_enc1_5:
 	decl	%edx
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_enc1_5
+	jnz	L$oop_enc1_5  // loop body is 16 bytes
 	aesenclast	%xmm1,%xmm2
-	pxor	%xmm0,%xmm0
+	pxor	%xmm0,%xmm0  // clear register bank
 	pxor	%xmm1,%xmm1
 	xorps	%xmm3,%xmm2
 	pxor	%xmm3,%xmm3
@@ -911,22 +924,22 @@ L$oop_enc1_5:
 
 .p2align	4
 L$ctr32_bulk:
-	leaq	(%rsp),%r11
+	leaq	(%rsp),%r11  // use %r11 as frame pointer
 
 	pushq	%rbp
 
 	subq	$128,%rsp
-	andq	$-16,%rsp
+	andq	$-16,%rsp  // Linux kernel stack can be incorrectly seeded
 
-
-
+// 8 16-byte words on top of stack are counter values
+// xor-ed with zero-round key
 
 	movdqu	(%r8),%xmm2
 	movdqu	(%rcx),%xmm0
-	movl	12(%r8),%r8d
+	movl	12(%r8),%r8d  // counter LSB
 	pxor	%xmm0,%xmm2
-	movl	12(%rcx),%ebp
-	movdqa	%xmm2,0(%rsp)
+	movl	12(%rcx),%ebp  // 0-round key LSB
+	movdqa	%xmm2,0(%rsp)  // populate counter block
 	bswapl	%r8d
 	movdqa	%xmm2,%xmm3
 	movdqa	%xmm2,%xmm4
@@ -934,7 +947,7 @@ L$ctr32_bulk:
 	movdqa	%xmm2,64(%rsp)
 	movdqa	%xmm2,80(%rsp)
 	movdqa	%xmm2,96(%rsp)
-	movq	%rdx,%r10
+	movq	%rdx,%r10  // about to borrow %rdx
 	movdqa	%xmm2,112(%rsp)
 
 	leaq	1(%r8),%rax
@@ -948,7 +961,7 @@ L$ctr32_bulk:
 	movdqa	%xmm3,16(%rsp)
 	pinsrd	$3,%edx,%xmm4
 	bswapl	%eax
-	movq	%r10,%rdx
+	movq	%r10,%rdx  // restore %rdx
 	leaq	4(%r8),%r10
 	movdqa	%xmm4,32(%rsp)
 	xorl	%ebp,%eax
@@ -960,7 +973,7 @@ L$ctr32_bulk:
 	movl	%r10d,64+12(%rsp)
 	bswapl	%r9d
 	leaq	6(%r8),%r10
-	movl	240(%rcx),%eax
+	movl	240(%rcx),%eax  // key->rounds
 	xorl	%ebp,%r9d
 	bswapl	%r10d
 	movl	%r9d,80+12(%rsp)
@@ -976,16 +989,16 @@ L$ctr32_bulk:
 	movdqa	64(%rsp),%xmm6
 	movdqa	80(%rsp),%xmm7
 
-	cmpq	$8,%rdx
-	jb	L$ctr32_tail
+	cmpq	$8,%rdx  // %rdx is in blocks
+	jb	L$ctr32_tail  // short input if (%rdx<8)
 
-	leaq	128(%rcx),%rcx
-	subq	$8,%rdx
+	leaq	128(%rcx),%rcx  // size optimization
+	subq	$8,%rdx  // %rdx is biased by -8
 	jmp	L$ctr32_loop8
 
 .p2align	5
 L$ctr32_loop8:
-	addl	$8,%r8d
+	addl	$8,%r8d  // next counter value
 	movdqa	96(%rsp),%xmm8
 	aesenc	%xmm1,%xmm2
 	movl	%r8d,%r9d
@@ -997,7 +1010,7 @@ L$ctr32_loop8:
 	xorl	%ebp,%r9d
 	nop
 	aesenc	%xmm1,%xmm5
-	movl	%r9d,0+12(%rsp)
+	movl	%r9d,0+12(%rsp)  // store next counter value
 	leaq	1(%r8),%r9
 	aesenc	%xmm1,%xmm6
 	aesenc	%xmm1,%xmm7
@@ -1093,7 +1106,7 @@ L$ctr32_loop8:
 	aesenc	%xmm0,%xmm3
 	aesenc	%xmm0,%xmm4
 	xorl	%ebp,%r9d
-	movdqu	0(%rdi),%xmm10
+	movdqu	0(%rdi),%xmm10  // start loading input
 	aesenc	%xmm0,%xmm5
 	movl	%r9d,112+12(%rsp)
 	cmpl	$11,%eax
@@ -1150,7 +1163,7 @@ L$ctr32_loop8:
 .p2align	4
 L$ctr32_enc_done:
 	movdqu	16(%rdi),%xmm11
-	pxor	%xmm0,%xmm10
+	pxor	%xmm0,%xmm10  // input^=round[last]
 	movdqu	32(%rdi),%xmm12
 	pxor	%xmm0,%xmm11
 	movdqu	48(%rdi),%xmm13
@@ -1159,8 +1172,8 @@ L$ctr32_enc_done:
 	pxor	%xmm0,%xmm13
 	movdqu	80(%rdi),%xmm15
 	pxor	%xmm0,%xmm14
-	prefetcht0	448(%rdi)
-	prefetcht0	512(%rdi)
+	prefetcht0	448(%rdi)  // We process 128 bytes (8*16), so to prefetch 1 iteration
+	prefetcht0	512(%rdi)  // We need to prefetch 2 64 byte lines
 	pxor	%xmm0,%xmm15
 	aesenc	%xmm1,%xmm2
 	aesenc	%xmm1,%xmm3
@@ -1170,15 +1183,15 @@ L$ctr32_enc_done:
 	aesenc	%xmm1,%xmm7
 	aesenc	%xmm1,%xmm8
 	aesenc	%xmm1,%xmm9
-	movdqu	96(%rdi),%xmm1
-	leaq	128(%rdi),%rdi
+	movdqu	96(%rdi),%xmm1  // borrow %xmm1 for inp[6]
+	leaq	128(%rdi),%rdi  // %rdi+=8*16
 
-	aesenclast	%xmm10,%xmm2
-	pxor	%xmm0,%xmm1
+	aesenclast	%xmm10,%xmm2  // is inp[N]^round[last]
+	pxor	%xmm0,%xmm1  // borrowed
 	movdqu	112-128(%rdi),%xmm10
 	aesenclast	%xmm11,%xmm3
 	pxor	%xmm0,%xmm10
-	movdqa	0(%rsp),%xmm11
+	movdqa	0(%rsp),%xmm11  // load next counter block
 	aesenclast	%xmm12,%xmm4
 	aesenclast	%xmm13,%xmm5
 	movdqa	16(%rsp),%xmm12
@@ -1189,10 +1202,10 @@ L$ctr32_enc_done:
 	movdqa	64(%rsp),%xmm15
 	aesenclast	%xmm1,%xmm8
 	movdqa	80(%rsp),%xmm0
-	movups	16-128(%rcx),%xmm1
+	movups	16-128(%rcx),%xmm1  // real 1st-round key
 	aesenclast	%xmm10,%xmm9
 
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store 8 output blocks
 	movdqa	%xmm11,%xmm2
 	movups	%xmm3,16(%rsi)
 	movdqa	%xmm12,%xmm3
@@ -1206,24 +1219,24 @@ L$ctr32_enc_done:
 	movdqa	%xmm0,%xmm7
 	movups	%xmm8,96(%rsi)
 	movups	%xmm9,112(%rsi)
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // %rsi+=8*16
 
 	subq	$8,%rdx
-	jnc	L$ctr32_loop8
+	jnc	L$ctr32_loop8  // loop if %rdx-=8 didn't borrow
 
-	addq	$8,%rdx
-	jz	L$ctr32_done
+	addq	$8,%rdx  // restore real remaining %rdx
+	jz	L$ctr32_done  // done if (%rdx==0)
 	leaq	-128(%rcx),%rcx
 
 L$ctr32_tail:
-
-
+// note that at this point %xmm2..5 are populated with
+// counter values xor-ed with 0-round key
 	leaq	16(%rcx),%rcx
 	cmpq	$4,%rdx
 	jb	L$ctr32_loop3
 	je	L$ctr32_loop4
 
-
+// if (%rdx>4) compute 7 E(counter)
 	shll	$4,%eax
 	movdqa	96(%rsp),%xmm8
 	pxor	%xmm9,%xmm9
@@ -1231,14 +1244,14 @@ L$ctr32_tail:
 	movups	16(%rcx),%xmm0
 	aesenc	%xmm1,%xmm2
 	aesenc	%xmm1,%xmm3
-	leaq	32-16(%rcx,%rax,1),%rcx
+	leaq	32-16(%rcx,%rax,1),%rcx  // prepare for .Lenc_loop8_enter
 	negq	%rax
 	aesenc	%xmm1,%xmm4
-	addq	$16,%rax
+	addq	$16,%rax  // prepare for .Lenc_loop8_enter
 	movups	(%rdi),%xmm10
 	aesenc	%xmm1,%xmm5
 	aesenc	%xmm1,%xmm6
-	movups	16(%rdi),%xmm11
+	movups	16(%rdi),%xmm11  // pre-load input
 	movups	32(%rdi),%xmm12
 	aesenc	%xmm1,%xmm7
 	aesenc	%xmm1,%xmm8
@@ -1249,7 +1262,7 @@ L$ctr32_tail:
 	pxor	%xmm10,%xmm2
 	movdqu	64(%rdi),%xmm10
 	pxor	%xmm11,%xmm3
-	movdqu	%xmm2,(%rsi)
+	movdqu	%xmm2,(%rsi)  // store output
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
 	pxor	%xmm13,%xmm5
@@ -1258,17 +1271,17 @@ L$ctr32_tail:
 	movdqu	%xmm5,48(%rsi)
 	movdqu	%xmm6,64(%rsi)
 	cmpq	$6,%rdx
-	jb	L$ctr32_done
+	jb	L$ctr32_done  // %rdx was 5, stop store
 
 	movups	80(%rdi),%xmm11
 	xorps	%xmm11,%xmm7
 	movups	%xmm7,80(%rsi)
-	je	L$ctr32_done
+	je	L$ctr32_done  // %rdx was 6, stop store
 
 	movups	96(%rdi),%xmm12
 	xorps	%xmm12,%xmm8
 	movups	%xmm8,96(%rsi)
-	jmp	L$ctr32_done
+	jmp	L$ctr32_done  // %rdx was 7, stop store
 
 .p2align	5
 L$ctr32_loop4:
@@ -1282,7 +1295,7 @@ L$ctr32_loop4:
 	jnz	L$ctr32_loop4
 	aesenclast	%xmm1,%xmm2
 	aesenclast	%xmm1,%xmm3
-	movups	(%rdi),%xmm10
+	movups	(%rdi),%xmm10  // load input
 	movups	16(%rdi),%xmm11
 	aesenclast	%xmm1,%xmm4
 	aesenclast	%xmm1,%xmm5
@@ -1290,14 +1303,14 @@ L$ctr32_loop4:
 	movups	48(%rdi),%xmm13
 
 	xorps	%xmm10,%xmm2
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store output
 	xorps	%xmm11,%xmm3
 	movups	%xmm3,16(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm4,32(%rsi)
 	pxor	%xmm13,%xmm5
 	movdqu	%xmm5,48(%rsi)
-	jmp	L$ctr32_done
+	jmp	L$ctr32_done  // %rdx was 4, stop store
 
 .p2align	5
 L$ctr32_loop3:
@@ -1312,23 +1325,23 @@ L$ctr32_loop3:
 	aesenclast	%xmm1,%xmm3
 	aesenclast	%xmm1,%xmm4
 
-	movups	(%rdi),%xmm10
+	movups	(%rdi),%xmm10  // load input
 	xorps	%xmm10,%xmm2
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store output
 	cmpq	$2,%rdx
-	jb	L$ctr32_done
+	jb	L$ctr32_done  // %rdx was 1, stop store
 
 	movups	16(%rdi),%xmm11
 	xorps	%xmm11,%xmm3
 	movups	%xmm3,16(%rsi)
-	je	L$ctr32_done
+	je	L$ctr32_done  // %rdx was 2, stop store
 
 	movups	32(%rdi),%xmm12
 	xorps	%xmm12,%xmm4
-	movups	%xmm4,32(%rsi)
+	movups	%xmm4,32(%rsi)  // %rdx was 3, stop store
 
 L$ctr32_done:
-	xorps	%xmm0,%xmm0
+	xorps	%xmm0,%xmm0  // clear register bank
 	xorl	%ebp,%ebp
 	pxor	%xmm1,%xmm1
 	pxor	%xmm2,%xmm2
@@ -1337,7 +1350,7 @@ L$ctr32_done:
 	pxor	%xmm5,%xmm5
 	pxor	%xmm6,%xmm6
 	pxor	%xmm7,%xmm7
-	movaps	%xmm0,0(%rsp)
+	movaps	%xmm0,0(%rsp)  // clear stack
 	pxor	%xmm8,%xmm8
 	movaps	%xmm0,16(%rsp)
 	pxor	%xmm9,%xmm9
@@ -1365,18 +1378,19 @@ L$ctr32_epilogue:
 .private_extern _aes_hw_cbc_encrypt
 
 .p2align	4
+.alt_entry _aes_hw_cbc_encrypt
 _aes_hw_cbc_encrypt:
 
 _CET_ENDBR
-	testq	%rdx,%rdx
+	testq	%rdx,%rdx  // check length
 	jz	L$cbc_ret
 
-	movl	240(%rcx),%r10d
-	movq	%rcx,%r11
-	testl	%r9d,%r9d
+	movl	240(%rcx),%r10d  // key->rounds
+	movq	%rcx,%r11  // backup %rcx
+	testl	%r9d,%r9d  // 6th argument
 	jz	L$cbc_decrypt
-
-	movups	(%r8),%xmm2
+//  --------------------------- CBC ENCRYPT ------------------------------
+	movups	(%r8),%xmm2  // load iv as initial state
 	movl	%r10d,%eax
 	cmpq	$16,%rdx
 	jb	L$cbc_enc_tail
@@ -1384,9 +1398,9 @@ _CET_ENDBR
 	jmp	L$cbc_enc_loop
 .p2align	4
 L$cbc_enc_loop:
-	movups	(%rdi),%xmm3
+	movups	(%rdi),%xmm3  // load input
 	leaq	16(%rdi),%rdi
-
+// xorps	%xmm3,%xmm2
 	movups	(%rcx),%xmm0
 	movups	16(%rcx),%xmm1
 	xorps	%xmm0,%xmm3
@@ -1397,17 +1411,17 @@ L$oop_enc1_6:
 	decl	%eax
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_enc1_6
+	jnz	L$oop_enc1_6  // loop body is 16 bytes
 	aesenclast	%xmm1,%xmm2
-	movl	%r10d,%eax
-	movq	%r11,%rcx
-	movups	%xmm2,0(%rsi)
+	movl	%r10d,%eax  // restore %eax
+	movq	%r11,%rcx  // restore %rcx
+	movups	%xmm2,0(%rsi)  // store output
 	leaq	16(%rsi),%rsi
 	subq	$16,%rdx
 	jnc	L$cbc_enc_loop
 	addq	$16,%rdx
 	jnz	L$cbc_enc_tail
-	pxor	%xmm0,%xmm0
+	pxor	%xmm0,%xmm0  // clear register bank
 	pxor	%xmm1,%xmm1
 	movups	%xmm2,(%r8)
 	pxor	%xmm2,%xmm2
@@ -1415,30 +1429,30 @@ L$oop_enc1_6:
 	jmp	L$cbc_ret
 
 L$cbc_enc_tail:
-	movq	%rdx,%rcx
-	xchgq	%rdi,%rsi
-.long	0x9066A4F3
-	movl	$16,%ecx
+	movq	%rdx,%rcx  // zaps %rcx
+	xchgq	%rdi,%rsi  // %rdi is %rsi and %rsi is %rdi now
+.long	0x9066A4F3  // rep movsb
+	movl	$16,%ecx  // zero tail
 	subq	%rdx,%rcx
 	xorl	%eax,%eax
-.long	0x9066AAF3
-	leaq	-16(%rdi),%rdi
-	movl	%r10d,%eax
-	movq	%rdi,%rsi
-	movq	%r11,%rcx
-	xorq	%rdx,%rdx
-	jmp	L$cbc_enc_loop
-
+.long	0x9066AAF3  // rep stosb
+	leaq	-16(%rdi),%rdi  // rewind %rsi by 1 block
+	movl	%r10d,%eax  // restore %eax
+	movq	%rdi,%rsi  // %rdi and %rsi are the same
+	movq	%r11,%rcx  // restore %rcx
+	xorq	%rdx,%rdx  // len=16
+	jmp	L$cbc_enc_loop  // one more spin
+// --------------------------- CBC DECRYPT ------------------------------#
 .p2align	4
 L$cbc_decrypt:
 	cmpq	$16,%rdx
 	jne	L$cbc_decrypt_bulk
 
-
-
-	movdqu	(%rdi),%xmm2
-	movdqu	(%r8),%xmm3
-	movdqa	%xmm2,%xmm4
+// handle single block without allocating stack frame,
+// useful in ciphertext stealing mode
+	movdqu	(%rdi),%xmm2  // load input
+	movdqu	(%r8),%xmm3  // load iv
+	movdqa	%xmm2,%xmm4  // future iv
 	movups	(%rcx),%xmm0
 	movups	16(%rcx),%xmm1
 	leaq	32(%rcx),%rcx
@@ -1448,32 +1462,32 @@ L$oop_dec1_7:
 	decl	%r10d
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_dec1_7
+	jnz	L$oop_dec1_7  // loop body is 16 bytes
 	aesdeclast	%xmm1,%xmm2
-	pxor	%xmm0,%xmm0
+	pxor	%xmm0,%xmm0  // clear register bank
 	pxor	%xmm1,%xmm1
-	movdqu	%xmm4,(%r8)
-	xorps	%xmm3,%xmm2
+	movdqu	%xmm4,(%r8)  // store iv
+	xorps	%xmm3,%xmm2  // ^=iv
 	pxor	%xmm3,%xmm3
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store output
 	pxor	%xmm2,%xmm2
 	jmp	L$cbc_ret
 .p2align	4
 L$cbc_decrypt_bulk:
-	leaq	(%rsp),%r11
+	leaq	(%rsp),%r11  // frame pointer
 
 	pushq	%rbp
 
 	subq	$16,%rsp
-	andq	$-16,%rsp
-	movq	%rcx,%rbp
+	andq	$-16,%rsp  // Linux kernel stack can be incorrectly seeded
+	movq	%rcx,%rbp  // [re-]backup %rcx [after reassignment]
 	movups	(%r8),%xmm10
 	movl	%r10d,%eax
 	cmpq	$0x50,%rdx
 	jbe	L$cbc_dec_tail
 
 	movups	(%rcx),%xmm0
-	movdqu	0(%rdi),%xmm2
+	movdqu	0(%rdi),%xmm2  // load input
 	movdqu	16(%rdi),%xmm3
 	movdqa	%xmm2,%xmm11
 	movdqu	32(%rdi),%xmm4
@@ -1487,8 +1501,8 @@ L$cbc_decrypt_bulk:
 	cmpq	$0x70,%rdx
 	jbe	L$cbc_dec_six_or_seven
 
-	subq	$0x70,%rdx
-	leaq	112(%rcx),%rcx
+	subq	$0x70,%rdx  // %rdx is biased by -7*16
+	leaq	112(%rcx),%rcx  // size optimization
 	jmp	L$cbc_dec_loop8_enter
 .p2align	4
 L$cbc_dec_loop8:
@@ -1502,7 +1516,7 @@ L$cbc_dec_loop8_enter:
 	movups	16-112(%rcx),%xmm1
 	pxor	%xmm0,%xmm4
 	movq	$-1,%rbp
-	cmpq	$0x70,%rdx
+	cmpq	$0x70,%rdx  // is there at least 0x60 bytes ahead?
 	pxor	%xmm0,%xmm5
 	pxor	%xmm0,%xmm6
 	pxor	%xmm0,%xmm7
@@ -1651,11 +1665,11 @@ L$cbc_dec_done:
 	movdqu	80(%rdi),%xmm1
 
 	aesdeclast	%xmm10,%xmm2
-	movdqu	96(%rdi),%xmm10
+	movdqu	96(%rdi),%xmm10  // borrow %xmm10
 	pxor	%xmm0,%xmm1
 	aesdeclast	%xmm11,%xmm3
 	pxor	%xmm0,%xmm10
-	movdqu	112(%rdi),%xmm0
+	movdqu	112(%rdi),%xmm0  // next IV
 	aesdeclast	%xmm12,%xmm4
 	leaq	128(%rdi),%rdi
 	movdqu	0(%rbp),%xmm11
@@ -1668,11 +1682,11 @@ L$cbc_dec_done:
 	movdqu	48(%rbp),%xmm14
 	movdqu	64(%rbp),%xmm15
 	aesdeclast	%xmm10,%xmm9
-	movdqa	%xmm0,%xmm10
+	movdqa	%xmm0,%xmm10  // return %xmm10
 	movdqu	80(%rbp),%xmm1
 	movups	-112(%rcx),%xmm0
 
-	movups	%xmm2,(%rsi)
+	movups	%xmm2,(%rsi)  // store output
 	movdqa	%xmm11,%xmm2
 	movups	%xmm3,16(%rsi)
 	movdqa	%xmm12,%xmm3
@@ -1706,13 +1720,13 @@ L$cbc_dec_six_or_seven:
 
 	movaps	%xmm7,%xmm8
 	call	_aesni_decrypt6
-	pxor	%xmm10,%xmm2
+	pxor	%xmm10,%xmm2  // ^= IV
 	movaps	%xmm8,%xmm10
 	pxor	%xmm11,%xmm3
 	movdqu	%xmm2,(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	pxor	%xmm13,%xmm5
 	movdqu	%xmm4,32(%rsi)
 	pxor	%xmm4,%xmm4
@@ -1733,13 +1747,13 @@ L$cbc_dec_seven:
 	xorps	%xmm9,%xmm9
 	call	_aesni_decrypt8
 	movups	80(%rdi),%xmm9
-	pxor	%xmm10,%xmm2
+	pxor	%xmm10,%xmm2  // ^= IV
 	movups	96(%rdi),%xmm10
 	pxor	%xmm11,%xmm3
 	movdqu	%xmm2,(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	pxor	%xmm13,%xmm5
 	movdqu	%xmm4,32(%rsi)
 	pxor	%xmm4,%xmm4
@@ -1761,24 +1775,24 @@ L$cbc_dec_seven:
 L$cbc_dec_tail:
 	movups	(%rdi),%xmm2
 	subq	$0x10,%rdx
-	jbe	L$cbc_dec_one
+	jbe	L$cbc_dec_one  // %rdx is 1*16 or less
 
 	movups	16(%rdi),%xmm3
 	movaps	%xmm2,%xmm11
 	subq	$0x10,%rdx
-	jbe	L$cbc_dec_two
+	jbe	L$cbc_dec_two  // %rdx is 2*16 or less
 
 	movups	32(%rdi),%xmm4
 	movaps	%xmm3,%xmm12
 	subq	$0x10,%rdx
-	jbe	L$cbc_dec_three
+	jbe	L$cbc_dec_three  // %rdx is 3*16 or less
 
 	movups	48(%rdi),%xmm5
 	movaps	%xmm4,%xmm13
 	subq	$0x10,%rdx
-	jbe	L$cbc_dec_four
+	jbe	L$cbc_dec_four  // %rdx is 4*16 or less
 
-	movups	64(%rdi),%xmm6
+	movups	64(%rdi),%xmm6  // %rdx is 5*16 or less
 	movaps	%xmm5,%xmm14
 	movaps	%xmm6,%xmm15
 	xorps	%xmm7,%xmm7
@@ -1789,7 +1803,7 @@ L$cbc_dec_tail:
 	movdqu	%xmm2,(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	pxor	%xmm13,%xmm5
 	movdqu	%xmm4,32(%rsi)
 	pxor	%xmm4,%xmm4
@@ -1815,7 +1829,7 @@ L$oop_dec1_8:
 	decl	%eax
 	movups	(%rcx),%xmm1
 	leaq	16(%rcx),%rcx
-	jnz	L$oop_dec1_8
+	jnz	L$oop_dec1_8  // loop body is 16 bytes
 	aesdeclast	%xmm1,%xmm2
 	xorps	%xmm10,%xmm2
 	movaps	%xmm11,%xmm10
@@ -1829,7 +1843,7 @@ L$cbc_dec_two:
 	pxor	%xmm11,%xmm3
 	movdqu	%xmm2,(%rsi)
 	movdqa	%xmm3,%xmm2
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	leaq	16(%rsi),%rsi
 	jmp	L$cbc_dec_tail_collected
 .p2align	4
@@ -1842,7 +1856,7 @@ L$cbc_dec_three:
 	movdqu	%xmm2,(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	movdqa	%xmm4,%xmm2
 	pxor	%xmm4,%xmm4
 	leaq	32(%rsi),%rsi
@@ -1857,7 +1871,7 @@ L$cbc_dec_four:
 	movdqu	%xmm2,(%rsi)
 	pxor	%xmm12,%xmm4
 	movdqu	%xmm3,16(%rsi)
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	pxor	%xmm13,%xmm5
 	movdqu	%xmm4,32(%rsi)
 	pxor	%xmm4,%xmm4
@@ -1868,10 +1882,10 @@ L$cbc_dec_four:
 
 .p2align	4
 L$cbc_dec_clear_tail_collected:
-	pxor	%xmm3,%xmm3
+	pxor	%xmm3,%xmm3  // clear register bank
 	pxor	%xmm4,%xmm4
 	pxor	%xmm5,%xmm5
-	pxor	%xmm6,%xmm6
+	pxor	%xmm6,%xmm6  // %xmm6..9
 	pxor	%xmm7,%xmm7
 	pxor	%xmm8,%xmm8
 	pxor	%xmm9,%xmm9
@@ -1890,11 +1904,11 @@ L$cbc_dec_tail_partial:
 	movq	%rsi,%rdi
 	subq	%rdx,%rcx
 	leaq	(%rsp),%rsi
-.long	0x9066A4F3
+.long	0x9066A4F3  // rep movsb
 	movdqa	%xmm2,(%rsp)
 
 L$cbc_dec_ret:
-	xorps	%xmm0,%xmm0
+	xorps	%xmm0,%xmm0  // %xmm0
 	pxor	%xmm1,%xmm1
 	movq	-8(%r11),%rbp
 
@@ -1908,6 +1922,7 @@ L$cbc_ret:
 .private_extern _aes_hw_encrypt_key_to_decrypt_key
 
 .p2align	4
+.alt_entry _aes_hw_encrypt_key_to_decrypt_key
 _aes_hw_encrypt_key_to_decrypt_key:
 
 _CET_ENDBR
@@ -1915,9 +1930,9 @@ _CET_ENDBR
 	movl	240(%rdi),%esi
 	shll	$4,%esi
 
-	leaq	16(%rdi,%rsi,1),%rdx
+	leaq	16(%rdi,%rsi,1),%rdx  // points at the end of key schedule
 
-	movups	(%rdi),%xmm0
+	movups	(%rdi),%xmm0  // just swap
 	movups	(%rdx),%xmm1
 	movups	%xmm0,(%rdx)
 	movups	%xmm1,(%rdi)
@@ -1925,7 +1940,7 @@ _CET_ENDBR
 	leaq	-16(%rdx),%rdx
 
 L$dec_key_inverse:
-	movups	(%rdi),%xmm0
+	movups	(%rdi),%xmm0  // swap and inverse
 	movups	(%rdx),%xmm1
 	aesimc	%xmm0,%xmm0
 	aesimc	%xmm1,%xmm1
@@ -1936,7 +1951,7 @@ L$dec_key_inverse:
 	cmpq	%rdi,%rdx
 	ja	L$dec_key_inverse
 
-	movups	(%rdi),%xmm0
+	movups	(%rdi),%xmm0  // inverse middle
 	aesimc	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
 	movups	%xmm0,(%rdx)
@@ -1948,6 +1963,7 @@ L$dec_key_inverse:
 .private_extern _aes_hw_set_encrypt_key_base
 
 .p2align	4
+.alt_entry _aes_hw_set_encrypt_key_base
 _aes_hw_set_encrypt_key_base:
 
 
@@ -1959,9 +1975,9 @@ _CET_ENDBR
 
 
 
-	movups	(%rdi),%xmm0
-	xorps	%xmm4,%xmm4
-	leaq	16(%rdx),%rax
+	movups	(%rdi),%xmm0  // pull first 128 bits of *userKey
+	xorps	%xmm4,%xmm4  // low dword of xmm4 is assumed 0
+	leaq	16(%rdx),%rax  // %rax is used as modifiable copy of %rdx
 	cmpl	$256,%esi
 	je	L$14rounds
 	cmpl	$192,%esi
@@ -1970,97 +1986,97 @@ _CET_ENDBR
 	jne	L$bad_keybits
 
 L$10rounds:
-	movl	$9,%esi
+	movl	$9,%esi  // 10 rounds for 128-bit key
 
-	movups	%xmm0,(%rdx)
-	aeskeygenassist	$0x1,%xmm0,%xmm1
+	movups	%xmm0,(%rdx)  // round 0
+	aeskeygenassist	$0x1,%xmm0,%xmm1  // round 1
 	call	L$key_expansion_128_cold
-	aeskeygenassist	$0x2,%xmm0,%xmm1
+	aeskeygenassist	$0x2,%xmm0,%xmm1  // round 2
 	call	L$key_expansion_128
-	aeskeygenassist	$0x4,%xmm0,%xmm1
+	aeskeygenassist	$0x4,%xmm0,%xmm1  // round 3
 	call	L$key_expansion_128
-	aeskeygenassist	$0x8,%xmm0,%xmm1
+	aeskeygenassist	$0x8,%xmm0,%xmm1  // round 4
 	call	L$key_expansion_128
-	aeskeygenassist	$0x10,%xmm0,%xmm1
+	aeskeygenassist	$0x10,%xmm0,%xmm1  // round 5
 	call	L$key_expansion_128
-	aeskeygenassist	$0x20,%xmm0,%xmm1
+	aeskeygenassist	$0x20,%xmm0,%xmm1  // round 6
 	call	L$key_expansion_128
-	aeskeygenassist	$0x40,%xmm0,%xmm1
+	aeskeygenassist	$0x40,%xmm0,%xmm1  // round 7
 	call	L$key_expansion_128
-	aeskeygenassist	$0x80,%xmm0,%xmm1
+	aeskeygenassist	$0x80,%xmm0,%xmm1  // round 8
 	call	L$key_expansion_128
-	aeskeygenassist	$0x1b,%xmm0,%xmm1
+	aeskeygenassist	$0x1b,%xmm0,%xmm1  // round 9
 	call	L$key_expansion_128
-	aeskeygenassist	$0x36,%xmm0,%xmm1
+	aeskeygenassist	$0x36,%xmm0,%xmm1  // round 10
 	call	L$key_expansion_128
 	movups	%xmm0,(%rax)
-	movl	%esi,80(%rax)
+	movl	%esi,80(%rax)  // 240(%rdx)
 	xorl	%eax,%eax
 	jmp	L$enc_key_ret
 
 .p2align	4
 L$12rounds:
-	movq	16(%rdi),%xmm2
-	movl	$11,%esi
+	movq	16(%rdi),%xmm2  // remaining 1/3 of *userKey
+	movl	$11,%esi  // 12 rounds for 192
 
-	movups	%xmm0,(%rdx)
-	aeskeygenassist	$0x1,%xmm2,%xmm1
+	movups	%xmm0,(%rdx)  // round 0
+	aeskeygenassist	$0x1,%xmm2,%xmm1  // round 1,2
 	call	L$key_expansion_192a_cold
-	aeskeygenassist	$0x2,%xmm2,%xmm1
+	aeskeygenassist	$0x2,%xmm2,%xmm1  // round 2,3
 	call	L$key_expansion_192b
-	aeskeygenassist	$0x4,%xmm2,%xmm1
+	aeskeygenassist	$0x4,%xmm2,%xmm1  // round 4,5
 	call	L$key_expansion_192a
-	aeskeygenassist	$0x8,%xmm2,%xmm1
+	aeskeygenassist	$0x8,%xmm2,%xmm1  // round 5,6
 	call	L$key_expansion_192b
-	aeskeygenassist	$0x10,%xmm2,%xmm1
+	aeskeygenassist	$0x10,%xmm2,%xmm1  // round 7,8
 	call	L$key_expansion_192a
-	aeskeygenassist	$0x20,%xmm2,%xmm1
+	aeskeygenassist	$0x20,%xmm2,%xmm1  // round 8,9
 	call	L$key_expansion_192b
-	aeskeygenassist	$0x40,%xmm2,%xmm1
+	aeskeygenassist	$0x40,%xmm2,%xmm1  // round 10,11
 	call	L$key_expansion_192a
-	aeskeygenassist	$0x80,%xmm2,%xmm1
+	aeskeygenassist	$0x80,%xmm2,%xmm1  // round 11,12
 	call	L$key_expansion_192b
 	movups	%xmm0,(%rax)
-	movl	%esi,48(%rax)
+	movl	%esi,48(%rax)  // 240(%rdx)
 	xorq	%rax,%rax
 	jmp	L$enc_key_ret
 
 .p2align	4
 L$14rounds:
-	movups	16(%rdi),%xmm2
-	movl	$13,%esi
+	movups	16(%rdi),%xmm2  // remaining half of *userKey
+	movl	$13,%esi  // 14 rounds for 256
 	leaq	16(%rax),%rax
 
-	movups	%xmm0,(%rdx)
-	movups	%xmm2,16(%rdx)
-	aeskeygenassist	$0x1,%xmm2,%xmm1
+	movups	%xmm0,(%rdx)  // round 0
+	movups	%xmm2,16(%rdx)  // round 1
+	aeskeygenassist	$0x1,%xmm2,%xmm1  // round 2
 	call	L$key_expansion_256a_cold
-	aeskeygenassist	$0x1,%xmm0,%xmm1
+	aeskeygenassist	$0x1,%xmm0,%xmm1  // round 3
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x2,%xmm2,%xmm1
+	aeskeygenassist	$0x2,%xmm2,%xmm1  // round 4
 	call	L$key_expansion_256a
-	aeskeygenassist	$0x2,%xmm0,%xmm1
+	aeskeygenassist	$0x2,%xmm0,%xmm1  // round 5
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x4,%xmm2,%xmm1
+	aeskeygenassist	$0x4,%xmm2,%xmm1  // round 6
 	call	L$key_expansion_256a
-	aeskeygenassist	$0x4,%xmm0,%xmm1
+	aeskeygenassist	$0x4,%xmm0,%xmm1  // round 7
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x8,%xmm2,%xmm1
+	aeskeygenassist	$0x8,%xmm2,%xmm1  // round 8
 	call	L$key_expansion_256a
-	aeskeygenassist	$0x8,%xmm0,%xmm1
+	aeskeygenassist	$0x8,%xmm0,%xmm1  // round 9
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x10,%xmm2,%xmm1
+	aeskeygenassist	$0x10,%xmm2,%xmm1  // round 10
 	call	L$key_expansion_256a
-	aeskeygenassist	$0x10,%xmm0,%xmm1
+	aeskeygenassist	$0x10,%xmm0,%xmm1  // round 11
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x20,%xmm2,%xmm1
+	aeskeygenassist	$0x20,%xmm2,%xmm1  // round 12
 	call	L$key_expansion_256a
-	aeskeygenassist	$0x20,%xmm0,%xmm1
+	aeskeygenassist	$0x20,%xmm0,%xmm1  // round 13
 	call	L$key_expansion_256b
-	aeskeygenassist	$0x40,%xmm2,%xmm1
+	aeskeygenassist	$0x40,%xmm2,%xmm1  // round 14
 	call	L$key_expansion_256a
 	movups	%xmm0,(%rax)
-	movl	%esi,16(%rax)
+	movl	%esi,16(%rax)  // 240(%rdx)
 	xorq	%rax,%rax
 	jmp	L$enc_key_ret
 
@@ -2080,6 +2096,7 @@ L$enc_key_ret:
 
 
 
+
 .p2align	4
 L$key_expansion_128:
 
@@ -2090,7 +2107,7 @@ L$key_expansion_128_cold:
 	xorps	%xmm4,%xmm0
 	shufps	$140,%xmm0,%xmm4
 	xorps	%xmm4,%xmm0
-	shufps	$255,%xmm1,%xmm1
+	shufps	$255,%xmm1,%xmm1  // critical path
 	xorps	%xmm1,%xmm0
 	ret
 
@@ -2109,7 +2126,7 @@ L$key_expansion_192b_warm:
 	shufps	$140,%xmm0,%xmm4
 	pslldq	$4,%xmm3
 	xorps	%xmm4,%xmm0
-	pshufd	$85,%xmm1,%xmm1
+	pshufd	$85,%xmm1,%xmm1  // critical path
 	pxor	%xmm3,%xmm2
 	pxor	%xmm1,%xmm0
 	pshufd	$255,%xmm0,%xmm3
@@ -2139,7 +2156,7 @@ L$key_expansion_256a_cold:
 	xorps	%xmm4,%xmm0
 	shufps	$140,%xmm0,%xmm4
 	xorps	%xmm4,%xmm0
-	shufps	$255,%xmm1,%xmm1
+	shufps	$255,%xmm1,%xmm1  // critical path
 	xorps	%xmm1,%xmm0
 	ret
 
@@ -2154,16 +2171,16 @@ L$key_expansion_256b:
 	xorps	%xmm4,%xmm2
 	shufps	$140,%xmm2,%xmm4
 	xorps	%xmm4,%xmm2
-	shufps	$170,%xmm1,%xmm1
+	shufps	$170,%xmm1,%xmm1  // critical path
 	xorps	%xmm1,%xmm2
 	ret
-
 
 
 .globl	_aes_hw_set_encrypt_key_alt
 .private_extern _aes_hw_set_encrypt_key_alt
 
 .p2align	4
+.alt_entry _aes_hw_set_encrypt_key_alt
 _aes_hw_set_encrypt_key_alt:
 
 
@@ -2175,9 +2192,9 @@ _CET_ENDBR
 
 
 
-	movups	(%rdi),%xmm0
-	xorps	%xmm4,%xmm4
-	leaq	16(%rdx),%rax
+	movups	(%rdi),%xmm0  // pull first 128 bits of *userKey
+	xorps	%xmm4,%xmm4  // low dword of xmm4 is assumed 0
+	leaq	16(%rdx),%rax  // %rax is used as modifiable copy of %rdx
 	cmpl	$256,%esi
 	je	L$14rounds_alt
 	cmpl	$192,%esi
@@ -2185,7 +2202,7 @@ _CET_ENDBR
 	cmpl	$128,%esi
 	jne	L$bad_keybits_alt
 
-	movl	$9,%esi
+	movl	$9,%esi  // 10 rounds for 128-bit key
 	movdqa	L$key_rotate(%rip),%xmm5
 	movl	$8,%r10d
 	movdqa	L$key_rcon1(%rip),%xmm4
@@ -2247,14 +2264,14 @@ L$oop_key128:
 	pxor	%xmm2,%xmm0
 	movdqu	%xmm0,16(%rax)
 
-	movl	%esi,96(%rax)
+	movl	%esi,96(%rax)  // 240(%rdx)
 	xorl	%eax,%eax
 	jmp	L$enc_key_ret_alt
 
 .p2align	4
 L$12rounds_alt:
-	movq	16(%rdi),%xmm2
-	movl	$11,%esi
+	movq	16(%rdi),%xmm2  // remaining 1/3 of *userKey
+	movl	$11,%esi  // 12 rounds for 192
 	movdqa	L$key_rotate192(%rip),%xmm5
 	movdqa	L$key_rcon1(%rip),%xmm4
 	movl	$8,%r10d
@@ -2290,14 +2307,14 @@ L$oop_key192:
 	decl	%r10d
 	jnz	L$oop_key192
 
-	movl	%esi,32(%rax)
+	movl	%esi,32(%rax)  // 240(%rdx)
 	xorl	%eax,%eax
 	jmp	L$enc_key_ret_alt
 
 .p2align	4
 L$14rounds_alt:
-	movups	16(%rdi),%xmm2
-	movl	$13,%esi
+	movups	16(%rdi),%xmm2  // remaining half of *userKey
+	movl	$13,%esi  // 14 rounds for 256
 	leaq	16(%rax),%rax
 	movdqa	L$key_rotate(%rip),%xmm5
 	movdqa	L$key_rcon1(%rip),%xmm4
@@ -2347,7 +2364,7 @@ L$oop_key256:
 	jmp	L$oop_key256
 
 L$done_key256:
-	movl	%esi,16(%rax)
+	movl	%esi,16(%rax)  // 240(%rdx)
 	xorl	%eax,%eax
 	jmp	L$enc_key_ret_alt
 
@@ -2368,7 +2385,9 @@ L$enc_key_ret_alt:
 
 
 .section	__DATA,__const
+
 .p2align	6
+aesni_constants:
 L$bswap_mask:
 .byte	15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
 L$increment32:

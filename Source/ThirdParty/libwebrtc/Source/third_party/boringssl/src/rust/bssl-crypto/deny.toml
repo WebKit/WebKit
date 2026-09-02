@@ -1,5 +1,5 @@
 # Configuration file used for `cargo deny check`, which checks for licensing
-# issues and security adviories.
+# issues and security advisories.
 #
 # For a list of possible sections and their default values, see
 # https://github.com/EmbarkStudios/cargo-deny/blob/main/deny.template.toml

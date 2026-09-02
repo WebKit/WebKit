@@ -184,7 +184,7 @@ int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
   if (sLen == RSA_PSS_SALTLEN_DIGEST) {
     sLen = (int)hLen;
   } else if (sLen == RSA_PSS_SALTLEN_AUTO) {
-    // Leave |sLen| negative, which will trigger the logic below to recover and
+    // Leave `sLen` negative, which will trigger the logic below to recover and
     // allow any salt length.
   } else if (sLen < 0) {
     // Other negative values are reserved.
@@ -202,7 +202,7 @@ int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
     EM++;
     emLen--;
   }
-  // |sLen| may be negative for the non-standard salt length recovery mode.
+  // `sLen` may be negative for the non-standard salt length recovery mode.
   if (emLen < hLen + 2 || (sLen >= 0 && emLen < hLen + (size_t)sLen + 2)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     goto err;

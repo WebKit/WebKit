@@ -1020,7 +1020,9 @@ sha256_block_data_order_nohw:
 .size	sha256_block_data_order_nohw,.-sha256_block_data_order_nohw
 
 .section	.rodata
+
 .align	6
+sha256_constants:
 .type	.LK256,%object
 .LK256:
 .long	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5

@@ -292,7 +292,7 @@ int ECDSA_SIG_to_bytes(uint8_t **out_bytes, size_t *out_len,
   return 1;
 }
 
-// der_len_len returns the number of bytes needed to represent a length of |len|
+// der_len_len returns the number of bytes needed to represent a length of `len`
 // in DER.
 static size_t der_len_len(size_t len) {
   if (len < 0x80) {
@@ -307,7 +307,7 @@ static size_t der_len_len(size_t len) {
 }
 
 size_t ECDSA_SIG_max_len(size_t order_len) {
-  // Compute the maximum length of an |order_len| byte integer. Defensively
+  // Compute the maximum length of an `order_len` byte integer. Defensively
   // assume that the leading 0x00 is included.
   size_t integer_len = 1 /* tag */ + der_len_len(order_len + 1) + 1 + order_len;
   if (integer_len < order_len) {

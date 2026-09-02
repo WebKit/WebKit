@@ -78,7 +78,7 @@ static int run_test() {
          module_version);
 
 #if !defined(BORINGSSL_FIPS)
-  // |module_version| will be zero, so the non-FIPS build will never get
+  // `module_version` will be zero, so the non-FIPS build will never get
   // this far.
   printf("Non zero module version in non-FIPS build - should not happen!\n");
   return 0;

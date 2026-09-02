@@ -79,7 +79,7 @@ static void poly1305_update_length(poly1305_state *poly1305, size_t data_len) {
   CRYPTO_poly1305_update(poly1305, length_bytes, sizeof(length_bytes));
 }
 
-// calc_tag_pre prepares filling |tag| with the authentication tag for the given
+// calc_tag_pre prepares filling `tag` with the authentication tag for the given
 // inputs.
 static size_t calc_tag_pre(poly1305_state *ctx, const uint8_t key[32],
                            const uint8_t nonce[12],
@@ -129,9 +129,9 @@ static int chacha20_poly1305_sealv(const uint8_t *key,
     return 0;
   }
 
-  // |CRYPTO_chacha_20| uses a 32-bit block counter. Therefore we disallow
+  // `CRYPTO_chacha_20` uses a 32-bit block counter. Therefore we disallow
   // individual operations that work on more than 256GB at a time.
-  // |in_len_64| is needed because, on 32-bit platforms, size_t is only
+  // `in_len_64` is needed because, on 32-bit platforms, size_t is only
   // 32-bits and this produces a warning because it's always false.
   // Casting to uint64_t inside the conditional is not sufficient to stop
   // the warning.
@@ -148,7 +148,7 @@ static int chacha20_poly1305_sealv(const uint8_t *key,
     data.in.counter = 0;
     CopySpan(nonce, data.in.nonce);
     if (iovecs.size() >= 2) {
-      // |chacha20_poly1305_seal| only supports one extra input and expects it
+      // `chacha20_poly1305_seal` only supports one extra input and expects it
       // to have been encrypted ahead of time. (Historically it was only used
       // for very short inputs.)
       constexpr size_t kChaChaBlockSize = 64;
@@ -271,9 +271,9 @@ static int chacha20_poly1305_openv_detached(const uint8_t *key,
     return 0;
   }
 
-  // |CRYPTO_chacha_20| uses a 32-bit block counter. Therefore we disallow
+  // `CRYPTO_chacha_20` uses a 32-bit block counter. Therefore we disallow
   // individual operations that work on more than 256GB at a time.
-  // |in_len_64| is needed because, on 32-bit platforms, size_t is only
+  // `in_len_64` is needed because, on 32-bit platforms, size_t is only
   // 32-bits and this produces a warning because it's always false.
   // Casting to uint64_t inside the conditional is not sufficient to stop
   // the warning.

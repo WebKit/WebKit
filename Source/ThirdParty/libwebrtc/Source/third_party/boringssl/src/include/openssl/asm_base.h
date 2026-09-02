@@ -27,7 +27,7 @@
 // when included in assembly, adds that metadata. It also makes defines like
 // `OPENSSL_X86_64` available and includes the prefixing macros.
 //
-// Including this header in an assembly file imples:
+// Including this header in an assembly file implies:
 //
 // - The file does not require an executable stack.
 //
@@ -205,6 +205,14 @@
 // clang-format on
 #endif
 #endif  // ARM || AARCH64
+
+#if defined(__APPLE__)
+// Require all Apple assembly to be compatible with `.subsections_via_symbols`.
+// Perlasm output will automatically no-op it by marking all non-initials with
+// `.alt_entry`. Other assembly must either do something similar or be
+// compatible with the optimization.
+.subsections_via_symbols
+#endif
 
 #endif  // __ASSEMBLER__
 

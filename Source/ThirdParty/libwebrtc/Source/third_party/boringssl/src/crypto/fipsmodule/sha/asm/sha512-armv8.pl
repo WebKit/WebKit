@@ -251,7 +251,9 @@ $code.=<<___;
 .size	$func,.-$func
 
 .section .rodata
+
 .align	6
+sha${BITS}_constants:
 .type	.LK$BITS,%object
 .LK$BITS:
 ___

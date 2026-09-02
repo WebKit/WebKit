@@ -32,7 +32,7 @@ jobs:
     permissions: read-all
     steps:
       - name: Checkout GitHub Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: 'main'
           fetch-depth:  0 # Required to accurately count commits and find ancestors

@@ -49,22 +49,22 @@ int BN_sqrt(BIGNUM *out_sqrt, const BIGNUM *in, BN_CTX *ctx) {
     goto err;
   }
 
-  // This is Newton's method for finding a root of the equation |estimate|^2 -
-  // |in| = 0.
+  // This is Newton's method for finding a root of the equation `estimate`^2 -
+  // `in` = 0.
   for (;;) {
-    // |estimate| = 1/2 * (|estimate| + |in|/|estimate|)
+    // `estimate` = 1/2 * (`estimate` + `in`/`estimate`)
     if (!BN_div(tmp, nullptr, in, estimate, ctx) ||
         !BN_add(tmp, tmp, estimate) || !BN_rshift1(estimate, tmp) ||
-        // |tmp| = |estimate|^2
+        // `tmp` = `estimate`^2
         !BN_sqr(tmp, estimate, ctx) ||
-        // |delta| = |in| - |tmp|
+        // `delta` = `in` - `tmp`
         !BN_sub(delta, in, tmp)) {
       OPENSSL_PUT_ERROR(BN, ERR_R_BN_LIB);
       goto err;
     }
 
     delta->neg = 0;
-    // The difference between |in| and |estimate| squared is required to always
+    // The difference between `in` and `estimate` squared is required to always
     // decrease. This ensures that the loop always terminates, but I don't have
     // a proof that it always finds the square root for a given square.
     if (last_delta_valid && BN_cmp(delta, last_delta) >= 0) {

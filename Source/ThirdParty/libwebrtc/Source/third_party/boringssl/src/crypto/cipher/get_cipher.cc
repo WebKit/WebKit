@@ -69,7 +69,7 @@ const EVP_CIPHER *EVP_get_cipherbyname(const char *name) {
   }
 
   // This is not a name used by OpenSSL, but tcpdump registers it with
-  // |EVP_add_cipher_alias|. Our |EVP_add_cipher_alias| is a no-op, so we
+  // `EVP_add_cipher_alias`. Our `EVP_add_cipher_alias` is a no-op, so we
   // support the name here.
   if (OPENSSL_strcasecmp(name, "3des") == 0) {
     name = "des-ede3-cbc";

@@ -1020,7 +1020,9 @@ Loop_16_xx:
 
 
 .section	__TEXT,__const
+
 .align	6
+sha512_constants:
 
 LK512:
 .quad	0x428a2f98d728ae22,0x7137449123ef65cd
@@ -1074,6 +1076,7 @@ LK512:
 .private_extern	_sha512_block_data_order_hw
 
 .align	6
+.alt_entry _sha512_block_data_order_hw
 _sha512_block_data_order_hw:
 	// Armv8.3-A PAuth: even though x30 is pushed to stack it is not popped later.
 	AARCH64_VALID_CALL_TARGET

@@ -1,7 +1,7 @@
 {
   "algorithm": "ECDSA",
   "schema": "ecdsa_verify_schema_v1.json",
-  "numberOfTests": 552,
+  "numberOfTests": 554,
   "header": [
     "Test vectors of type EcdsaVerify are meant for the verification",
     "of ASN encoded ECDSA signatures."
@@ -7900,6 +7900,46 @@
           "msg": "68656c6c6f2c20776f726c64",
           "sig": "3042021d00ffffffff00000000000000004319055258e8617b0c46353d039cdab4022100ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254e",
           "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-s-pow2",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp256r1",
+        "keySize": 256,
+        "uncompressed": "0443ee8fee3c942a8a28caa347e532481778fef03835cbdbfcf20727f97ea8a30e8a1930ff6cd357b864a454b70c27989265da529a9e45623a9fa364b2bd21230e",
+        "wx": "43ee8fee3c942a8a28caa347e532481778fef03835cbdbfcf20727f97ea8a30e",
+        "wy": "8a1930ff6cd357b864a454b70c27989265da529a9e45623a9fa364b2bd21230e"
+      },
+      "publicKeyDer": "3059301306072a8648ce3d020106082a8648ce3d0301070342000443ee8fee3c942a8a28caa347e532481778fef03835cbdbfcf20727f97ea8a30e8a1930ff6cd357b864a454b70c27989265da529a9e45623a9fa364b2bd21230e",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ+6P7jyUKoooyqNH5TJIF3j+8Dg1\ny9v88gcn+X6oow6KGTD/bNNXuGSkVLcMJ5iSZdpSmp5FYjqfo2SyvSEjDg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-512",
+      "tests": [
+        {
+          "tcId": 553,
+          "comment": "s = 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "303502205f6d3aa0d327c13702513d4299f297ab182fcf670f96291fab19572e7a6e01c402110100000000000000000000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 554,
+          "comment": "s = n - 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "304502205f6d3aa0d327c13702513d4299f297ab182fcf670f96291fab19572e7a6e01c4022100ffffffff00000000fffffffffffffffebce6faada7179e84f3b9cac2fc632551",
+          "result": "valid"
         }
       ]
     }

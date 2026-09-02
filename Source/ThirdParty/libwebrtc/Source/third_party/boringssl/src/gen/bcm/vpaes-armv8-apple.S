@@ -133,6 +133,7 @@ _vpaes_encrypt_preheat:
 ##
 
 .align	4
+.alt_entry _vpaes_encrypt_core
 _vpaes_encrypt_core:
 	mov	x9, x2
 	ldr	w8, [x2,#240]			// pull rounds
@@ -205,6 +206,7 @@ Lenc_entry:
 .private_extern	_vpaes_encrypt
 
 .align	4
+.alt_entry _vpaes_encrypt
 _vpaes_encrypt:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -222,6 +224,7 @@ _vpaes_encrypt:
 
 
 .align	4
+.alt_entry _vpaes_encrypt_2x
 _vpaes_encrypt_2x:
 	mov	x9, x2
 	ldr	w8, [x2,#240]			// pull rounds
@@ -328,6 +331,7 @@ Lenc_2x_entry:
 
 
 .align	4
+.alt_entry _vpaes_decrypt_preheat
 _vpaes_decrypt_preheat:
 	adrp	x10, Lk_inv@PAGE
 	add	x10, x10, Lk_inv@PAGEOFF
@@ -348,6 +352,7 @@ _vpaes_decrypt_preheat:
 ##
 
 .align	4
+.alt_entry _vpaes_decrypt_core
 _vpaes_decrypt_core:
 	mov	x9, x2
 	ldr	w8, [x2,#240]			// pull rounds
@@ -444,6 +449,7 @@ Ldec_entry:
 .private_extern	_vpaes_decrypt
 
 .align	4
+.alt_entry _vpaes_decrypt
 _vpaes_decrypt:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -462,6 +468,7 @@ _vpaes_decrypt:
 // v14-v15 input, v0-v1 output
 
 .align	4
+.alt_entry _vpaes_decrypt_2x
 _vpaes_decrypt_2x:
 	mov	x9, x2
 	ldr	w8, [x2,#240]			// pull rounds
@@ -602,6 +609,7 @@ Ldec_2x_entry:
 ########################################################
 
 .align	4
+.alt_entry _vpaes_key_preheat
 _vpaes_key_preheat:
 	adrp	x10, Lk_inv@PAGE
 	add	x10, x10, Lk_inv@PAGEOFF
@@ -624,6 +632,7 @@ _vpaes_key_preheat:
 
 
 .align	4
+.alt_entry _vpaes_schedule_core
 _vpaes_schedule_core:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29, x30, [sp,#-16]!
@@ -815,6 +824,7 @@ Lschedule_mangle_last_dec:
 ##
 
 .align	4
+.alt_entry _vpaes_schedule_192_smear
 _vpaes_schedule_192_smear:
 	movi	v1.16b, #0
 	dup	v0.4s, v7.s[3]
@@ -848,6 +858,7 @@ _vpaes_schedule_192_smear:
 ##
 
 .align	4
+.alt_entry _vpaes_schedule_round
 _vpaes_schedule_round:
 	// extract rcon from xmm8
 	movi	v4.16b, #0			// vpxor	%xmm4,	%xmm4,	%xmm4
@@ -862,6 +873,7 @@ _vpaes_schedule_round:
 	// fall through...
 
 	// low round: same as high round, but no rotation and no rcon.
+.alt_entry _vpaes_schedule_low_round
 _vpaes_schedule_low_round:
 	// smear xmm7
 	ext	v1.16b, v4.16b, v7.16b, #12	// vpslldq	$4,	%xmm7,	%xmm1
@@ -904,6 +916,7 @@ _vpaes_schedule_low_round:
 ##
 
 .align	4
+.alt_entry _vpaes_schedule_transform
 _vpaes_schedule_transform:
 	and	v1.16b, v0.16b, v17.16b		// vpand	%xmm9,	%xmm0,	%xmm1
 	ushr	v0.16b, v0.16b, #4		// vpsrlb	$4,	%xmm0,	%xmm0
@@ -940,6 +953,7 @@ _vpaes_schedule_transform:
 ##
 
 .align	4
+.alt_entry _vpaes_schedule_mangle
 _vpaes_schedule_mangle:
 	mov	v4.16b, v0.16b			// vmovdqa	%xmm0,	%xmm4	# save xmm0 for later
 						// vmovdqa	.Lk_mc_forward(%rip),%xmm5
@@ -1008,6 +1022,7 @@ Lschedule_mangle_both:
 .private_extern	_vpaes_set_encrypt_key
 
 .align	4
+.alt_entry _vpaes_set_encrypt_key
 _vpaes_set_encrypt_key:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -1033,6 +1048,7 @@ _vpaes_set_encrypt_key:
 .private_extern	_vpaes_set_decrypt_key
 
 .align	4
+.alt_entry _vpaes_set_decrypt_key
 _vpaes_set_decrypt_key:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -1061,6 +1077,7 @@ _vpaes_set_decrypt_key:
 .private_extern	_vpaes_cbc_encrypt
 
 .align	4
+.alt_entry _vpaes_cbc_encrypt
 _vpaes_cbc_encrypt:
 	AARCH64_SIGN_LINK_REGISTER
 	cbz	x2, Lcbc_abort
@@ -1145,6 +1162,7 @@ Lcbc_dec_done:
 .private_extern	_vpaes_ctr32_encrypt_blocks
 
 .align	4
+.alt_entry _vpaes_ctr32_encrypt_blocks
 _vpaes_ctr32_encrypt_blocks:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!

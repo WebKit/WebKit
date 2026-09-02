@@ -89,21 +89,21 @@ $L$SEH_begin_aesgcmsiv_htable_init:
 _CET_ENDBR
 	vmovdqa	xmm0,XMMWORD[rsi]
 	vmovdqa	xmm1,xmm0
-	vmovdqa	XMMWORD[rdi],xmm0
+	vmovdqa	XMMWORD[rdi],xmm0  ; H
 	call	GFMUL
-	vmovdqa	XMMWORD[16+rdi],xmm0
+	vmovdqa	XMMWORD[16+rdi],xmm0  ; H^2
 	call	GFMUL
-	vmovdqa	XMMWORD[32+rdi],xmm0
+	vmovdqa	XMMWORD[32+rdi],xmm0  ; H^3
 	call	GFMUL
-	vmovdqa	XMMWORD[48+rdi],xmm0
+	vmovdqa	XMMWORD[48+rdi],xmm0  ; H^4
 	call	GFMUL
-	vmovdqa	XMMWORD[64+rdi],xmm0
+	vmovdqa	XMMWORD[64+rdi],xmm0  ; H^5
 	call	GFMUL
-	vmovdqa	XMMWORD[80+rdi],xmm0
+	vmovdqa	XMMWORD[80+rdi],xmm0  ; H^6
 	call	GFMUL
-	vmovdqa	XMMWORD[96+rdi],xmm0
+	vmovdqa	XMMWORD[96+rdi],xmm0  ; H^7
 	call	GFMUL
-	vmovdqa	XMMWORD[112+rdi],xmm0
+	vmovdqa	XMMWORD[112+rdi],xmm0  ; H^8
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	ret
@@ -125,17 +125,17 @@ $L$SEH_begin_aesgcmsiv_htable6_init:
 _CET_ENDBR
 	vmovdqa	xmm0,XMMWORD[rsi]
 	vmovdqa	xmm1,xmm0
-	vmovdqa	XMMWORD[rdi],xmm0
+	vmovdqa	XMMWORD[rdi],xmm0  ; H
 	call	GFMUL
-	vmovdqa	XMMWORD[16+rdi],xmm0
+	vmovdqa	XMMWORD[16+rdi],xmm0  ; H^2
 	call	GFMUL
-	vmovdqa	XMMWORD[32+rdi],xmm0
+	vmovdqa	XMMWORD[32+rdi],xmm0  ; H^3
 	call	GFMUL
-	vmovdqa	XMMWORD[48+rdi],xmm0
+	vmovdqa	XMMWORD[48+rdi],xmm0  ; H^4
 	call	GFMUL
-	vmovdqa	XMMWORD[64+rdi],xmm0
+	vmovdqa	XMMWORD[64+rdi],xmm0  ; H^5
 	call	GFMUL
-	vmovdqa	XMMWORD[80+rdi],xmm0
+	vmovdqa	XMMWORD[80+rdi],xmm0  ; H^6
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	ret
@@ -166,8 +166,8 @@ _CET_ENDBR
 $L$htable_polyval_start:
 	vzeroall
 
-
-
+; We hash 8 blocks each iteration. If the total number of blocks is not a
+; multiple of 8, we first hash the leading n%8 blocks.
 	mov	r11,rdx
 	and	r11,127
 
@@ -179,7 +179,7 @@ $L$htable_polyval_start:
 
 	sub	r11,16
 
-
+; hash first prefix block
 	vmovdqu	xmm0,XMMWORD[rsi]
 	vpxor	xmm0,xmm0,xmm1
 
@@ -194,12 +194,12 @@ $L$htable_polyval_start:
 	jnz	NEAR $L$htable_polyval_prefix_loop
 	jmp	NEAR $L$htable_polyval_prefix_complete
 
-
+; hash remaining prefix blocks (up to 7 total prefix blocks)
 ALIGN	64
 $L$htable_polyval_prefix_loop:
 	sub	r11,16
 
-	vmovdqu	xmm0,XMMWORD[rsi]
+	vmovdqu	xmm0,XMMWORD[rsi]  ; next data block
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[r11*1+rdi],0x00
 	vpxor	xmm3,xmm3,xmm6
@@ -226,10 +226,10 @@ $L$htable_polyval_prefix_complete:
 	jmp	NEAR $L$htable_polyval_main_loop
 
 $L$htable_polyval_no_prefix:
-
-
-
-
+; At this point we know the number of blocks is a multiple of 8. However,
+; the reduction in the main loop includes a multiplication by x^(-128). In
+; order to counter this, the existing tag needs to be multiplied by x^128.
+; In practice, this just means that it is loaded into %xmm9, not %xmm1.
 	vpxor	xmm1,xmm1,xmm1
 	vmovdqa	xmm9,XMMWORD[rcx]
 
@@ -238,7 +238,7 @@ $L$htable_polyval_main_loop:
 	sub	rdx,0x80
 	jb	NEAR $L$htable_polyval_out
 
-	vmovdqu	xmm0,XMMWORD[112+rsi]
+	vmovdqu	xmm0,XMMWORD[112+rsi]  ; Ii
 
 	vpclmulqdq	xmm5,xmm0,XMMWORD[rdi],0x01
 	vpclmulqdq	xmm3,xmm0,XMMWORD[rdi],0x00
@@ -246,7 +246,7 @@ $L$htable_polyval_main_loop:
 	vpclmulqdq	xmm6,xmm0,XMMWORD[rdi],0x10
 	vpxor	xmm5,xmm5,xmm6
 
-
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[96+rsi]
 	vpclmulqdq	xmm6,xmm0,XMMWORD[16+rdi],0x01
 	vpxor	xmm5,xmm5,xmm6
@@ -258,10 +258,10 @@ $L$htable_polyval_main_loop:
 	vpxor	xmm5,xmm5,xmm6
 
 
-
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[80+rsi]
 
-	vpclmulqdq	xmm7,xmm1,XMMWORD[poly],0x10
+	vpclmulqdq	xmm7,xmm1,XMMWORD[poly],0x10  ; reduction stage 1a
 	vpalignr	xmm1,xmm1,xmm1,8
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[32+rdi],0x01
@@ -274,8 +274,8 @@ $L$htable_polyval_main_loop:
 	vpxor	xmm5,xmm5,xmm6
 
 
-	vpxor	xmm1,xmm1,xmm7
-
+	vpxor	xmm1,xmm1,xmm7  ; reduction stage 1b
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[64+rsi]
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[48+rdi],0x01
@@ -287,10 +287,10 @@ $L$htable_polyval_main_loop:
 	vpclmulqdq	xmm6,xmm0,XMMWORD[48+rdi],0x10
 	vpxor	xmm5,xmm5,xmm6
 
-
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[48+rsi]
 
-	vpclmulqdq	xmm7,xmm1,XMMWORD[poly],0x10
+	vpclmulqdq	xmm7,xmm1,XMMWORD[poly],0x10  ; reduction stage 2a
 	vpalignr	xmm1,xmm1,xmm1,8
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[64+rdi],0x01
@@ -303,8 +303,8 @@ $L$htable_polyval_main_loop:
 	vpxor	xmm5,xmm5,xmm6
 
 
-	vpxor	xmm1,xmm1,xmm7
-
+	vpxor	xmm1,xmm1,xmm7  ; reduction stage 2b
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[32+rsi]
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[80+rdi],0x01
@@ -317,8 +317,8 @@ $L$htable_polyval_main_loop:
 	vpxor	xmm5,xmm5,xmm6
 
 
-	vpxor	xmm1,xmm1,xmm9
-
+	vpxor	xmm1,xmm1,xmm9  ; reduction finalize
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[16+rsi]
 
 	vpclmulqdq	xmm6,xmm0,XMMWORD[96+rdi],0x01
@@ -330,7 +330,7 @@ $L$htable_polyval_main_loop:
 	vpclmulqdq	xmm6,xmm0,XMMWORD[96+rdi],0x10
 	vpxor	xmm5,xmm5,xmm6
 
-
+; ########################################################
 	vmovdqu	xmm0,XMMWORD[rsi]
 	vpxor	xmm0,xmm0,xmm1
 
@@ -343,7 +343,7 @@ $L$htable_polyval_main_loop:
 	vpclmulqdq	xmm6,xmm0,XMMWORD[112+rdi],0x10
 	vpxor	xmm5,xmm5,xmm6
 
-
+; ########################################################
 	vpsrldq	xmm6,xmm5,8
 	vpslldq	xmm5,xmm5,8
 
@@ -353,7 +353,7 @@ $L$htable_polyval_main_loop:
 	lea	rsi,[128+rsi]
 	jmp	NEAR $L$htable_polyval_main_loop
 
-
+; ########################################################
 
 $L$htable_polyval_out:
 	vpclmulqdq	xmm6,xmm1,XMMWORD[poly],0x10
@@ -395,24 +395,24 @@ _CET_ENDBR
 	ret
 
 $L$polyval_horner_start:
-
-
+; We will start with L GFMULS for POLYVAL(BIG_BUFFER)
+; RES = GFMUL(RES, H)
 
 	xor	r10,r10
-	shl	rcx,4
+	shl	rcx,4  ; L contains number of bytes to process
 
 	vmovdqa	xmm1,XMMWORD[rsi]
 	vmovdqa	xmm0,XMMWORD[rdi]
 
 $L$polyval_horner_loop:
-	vpxor	xmm0,xmm0,XMMWORD[r10*1+rdx]
-	call	GFMUL
+	vpxor	xmm0,xmm0,XMMWORD[r10*1+rdx]  ; RES = RES + Xi
+	call	GFMUL  ; RES = RES * H
 
 	add	r10,16
 	cmp	rcx,r10
 	jne	NEAR $L$polyval_horner_loop
 
-
+; calculation of T is complete. RES=T
 	vmovdqa	XMMWORD[rdi],xmm0
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
@@ -433,8 +433,8 @@ $L$SEH_begin_aes128gcmsiv_aes_ks:
 
 
 _CET_ENDBR
-	vmovdqu	xmm1,XMMWORD[rdi]
-	vmovdqa	XMMWORD[rsi],xmm1
+	vmovdqu	xmm1,XMMWORD[rdi]  ; xmm1 = user key
+	vmovdqa	XMMWORD[rsi],xmm1  ; rsi points to output
 
 	vmovdqa	xmm0,XMMWORD[con1]
 	vmovdqa	xmm15,XMMWORD[mask]
@@ -442,9 +442,9 @@ _CET_ENDBR
 	mov	rax,8
 
 $L$ks128_loop:
-	add	rsi,16
+	add	rsi,16  ; rsi points for next key
 	sub	rax,1
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; xmm2 = shuffled user key
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
 	vpslldq	xmm3,xmm1,4
@@ -558,19 +558,19 @@ $L$SEH_begin_aes128gcmsiv_aes_ks_enc_x1:
 
 
 _CET_ENDBR
-	vmovdqa	xmm1,XMMWORD[rcx]
+	vmovdqa	xmm1,XMMWORD[rcx]  ; xmm1 = first 16 bytes of random key
 	vmovdqa	xmm4,XMMWORD[rdi]
 
-	vmovdqa	XMMWORD[rdx],xmm1
+	vmovdqa	XMMWORD[rdx],xmm1  ; KEY[0] = first 16 bytes of random key
 	vpxor	xmm4,xmm4,xmm1
 
-	vmovdqa	xmm0,XMMWORD[con1]
-	vmovdqa	xmm15,XMMWORD[mask]
+	vmovdqa	xmm0,XMMWORD[con1]  ; xmm0  = 1,1,1,1
+	vmovdqa	xmm15,XMMWORD[mask]  ; xmm15 = mask
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -579,10 +579,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[16+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -591,10 +591,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[32+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -603,10 +603,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[48+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -615,10 +615,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[64+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -627,10 +627,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[80+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -639,10 +639,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[96+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -651,10 +651,10 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[112+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -666,10 +666,10 @@ _CET_ENDBR
 
 	vmovdqa	xmm0,XMMWORD[con2]
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
 	vpslld	xmm0,xmm0,1
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -678,9 +678,9 @@ _CET_ENDBR
 	vaesenc	xmm4,xmm4,xmm1
 	vmovdqa	XMMWORD[144+rdx],xmm1
 
-	vpshufb	xmm2,xmm1,xmm15
+	vpshufb	xmm2,xmm1,xmm15  ; !!saving mov instruction to xmm2
 	vaesenclast	xmm2,xmm2,xmm0
-	vpsllq	xmm3,xmm1,32
+	vpsllq	xmm3,xmm1,32  ; !!saving mov instruction to xmm3
 	vpxor	xmm1,xmm1,xmm3
 	vpshufb	xmm3,xmm1,XMMWORD[con3]
 	vpxor	xmm1,xmm1,xmm3
@@ -711,11 +711,11 @@ $L$SEH_begin_aes128gcmsiv_kdf:
 
 
 _CET_ENDBR
+; parameter 1: %rdi                         Pointer to NONCE
+; parameter 2: %rsi                         Pointer to CT
+; parameter 4: %rdx                         Pointer to keys
 
-
-
-
-	vmovdqa	xmm1,XMMWORD[rdx]
+	vmovdqa	xmm1,XMMWORD[rdx]  ; xmm1 = first 16 bytes of random key
 	vmovdqa	xmm9,XMMWORD[rdi]
 	vmovdqa	xmm12,XMMWORD[and_mask]
 	vmovdqa	xmm13,XMMWORD[one]
@@ -829,20 +829,20 @@ $L$128_enc_msg_x4_start:
 	push	r13
 
 
-	shr	r8,4
+	shr	r8,4  ; LEN = num of blocks
 	mov	r10,r8
 	shl	r10,62
 	shr	r10,62
 
-
+; make IV from TAG
 	vmovdqa	xmm15,XMMWORD[rdx]
-	vpor	xmm15,xmm15,XMMWORD[OR_MASK]
+	vpor	xmm15,xmm15,XMMWORD[OR_MASK]  ; IV = [1]TAG[126...32][00..00]
 
-	vmovdqu	xmm4,XMMWORD[four]
-	vmovdqa	xmm0,xmm15
-	vpaddd	xmm1,xmm15,XMMWORD[one]
-	vpaddd	xmm2,xmm15,XMMWORD[two]
-	vpaddd	xmm3,xmm15,XMMWORD[three]
+	vmovdqu	xmm4,XMMWORD[four]  ; Register to increment counters
+	vmovdqa	xmm0,xmm15  ; CTR1 = TAG[1][127...32][00..00]
+	vpaddd	xmm1,xmm15,XMMWORD[one]  ; CTR2 = TAG[1][127...32][00..01]
+	vpaddd	xmm2,xmm15,XMMWORD[two]  ; CTR3 = TAG[1][127...32][00..02]
+	vpaddd	xmm3,xmm15,XMMWORD[three]  ; CTR4 = TAG[1][127...32][00..03]
 
 	shr	r8,2
 	je	NEAR $L$128_enc_msg_x4_check_remainder
@@ -930,7 +930,7 @@ $L$128_enc_msg_x4_loop1:
 	vaesenclast	xmm8,xmm8,xmm12
 
 
-
+; XOR with Plaintext
 	vpxor	xmm5,xmm5,XMMWORD[rdi]
 	vpxor	xmm6,xmm6,XMMWORD[16+rdi]
 	vpxor	xmm7,xmm7,XMMWORD[32+rdi]
@@ -953,10 +953,10 @@ $L$128_enc_msg_x4_check_remainder:
 	je	NEAR $L$128_enc_msg_x4_out
 
 $L$128_enc_msg_x4_loop2:
-
-
+; enc each block separately
+; CTR1 is the highest counter (even if no LOOP done)
 	vmovdqa	xmm5,xmm0
-	vpaddd	xmm0,xmm0,XMMWORD[one]
+	vpaddd	xmm0,xmm0,XMMWORD[one]  ; inc counter
 
 	vpxor	xmm5,xmm5,XMMWORD[rcx]
 	vaesenc	xmm5,xmm5,XMMWORD[16+rcx]
@@ -970,7 +970,7 @@ $L$128_enc_msg_x4_loop2:
 	vaesenc	xmm5,xmm5,XMMWORD[144+rcx]
 	vaesenclast	xmm5,xmm5,XMMWORD[160+rcx]
 
-
+; XOR with plaintext
 	vpxor	xmm5,xmm5,XMMWORD[rdi]
 	vmovdqu	XMMWORD[rsi],xmm5
 
@@ -1023,29 +1023,29 @@ $L$128_enc_msg_x8_start:
 	mov	rbp,rsp
 
 
-
+; Place in stack
 	sub	rsp,128
 	and	rsp,-64
 
-	shr	r8,4
+	shr	r8,4  ; LEN = num of blocks
 	mov	r10,r8
 	shl	r10,61
 	shr	r10,61
 
-
+; make IV from TAG
 	vmovdqu	xmm1,XMMWORD[rdx]
-	vpor	xmm1,xmm1,XMMWORD[OR_MASK]
+	vpor	xmm1,xmm1,XMMWORD[OR_MASK]  ; TMP1= IV = [1]TAG[126...32][00..00]
 
-
+; store counter8 in the stack
 	vpaddd	xmm0,xmm1,XMMWORD[seven]
-	vmovdqu	XMMWORD[rsp],xmm0
-	vpaddd	xmm9,xmm1,XMMWORD[one]
-	vpaddd	xmm10,xmm1,XMMWORD[two]
-	vpaddd	xmm11,xmm1,XMMWORD[three]
-	vpaddd	xmm12,xmm1,XMMWORD[four]
-	vpaddd	xmm13,xmm1,XMMWORD[five]
-	vpaddd	xmm14,xmm1,XMMWORD[six]
-	vmovdqa	xmm0,xmm1
+	vmovdqu	XMMWORD[rsp],xmm0  ; CTR8 = TAG[127...32][00..07]
+	vpaddd	xmm9,xmm1,XMMWORD[one]  ; CTR2 = TAG[127...32][00..01]
+	vpaddd	xmm10,xmm1,XMMWORD[two]  ; CTR3 = TAG[127...32][00..02]
+	vpaddd	xmm11,xmm1,XMMWORD[three]  ; CTR4 = TAG[127...32][00..03]
+	vpaddd	xmm12,xmm1,XMMWORD[four]  ; CTR5 = TAG[127...32][00..04]
+	vpaddd	xmm13,xmm1,XMMWORD[five]  ; CTR6 = TAG[127...32][00..05]
+	vpaddd	xmm14,xmm1,XMMWORD[six]  ; CTR7 = TAG[127...32][00..06]
+	vmovdqa	xmm0,xmm1  ; CTR1 = TAG[127...32][00..00]
 
 	shr	r8,3
 	je	NEAR $L$128_enc_msg_x8_check_remainder
@@ -1064,7 +1064,7 @@ $L$128_enc_msg_x8_loop1:
 	vmovdqa	xmm5,xmm12
 	vmovdqa	xmm6,xmm13
 	vmovdqa	xmm7,xmm14
-
+; move from stack
 	vmovdqu	xmm8,XMMWORD[rsp]
 
 	vpxor	xmm1,xmm1,XMMWORD[rcx]
@@ -1086,7 +1086,7 @@ $L$128_enc_msg_x8_loop1:
 	vaesenc	xmm7,xmm7,xmm15
 	vaesenc	xmm8,xmm8,xmm15
 
-	vmovdqu	xmm14,XMMWORD[rsp]
+	vmovdqu	xmm14,XMMWORD[rsp]  ; deal with CTR8
 	vpaddd	xmm14,xmm14,XMMWORD[eight]
 	vmovdqu	XMMWORD[rsp],xmm14
 	vmovdqu	xmm15,XMMWORD[32+rcx]
@@ -1187,7 +1187,7 @@ $L$128_enc_msg_x8_loop1:
 	vaesenclast	xmm8,xmm8,xmm15
 
 
-
+; XOR with Plaintext
 	vpxor	xmm1,xmm1,XMMWORD[rdi]
 	vpxor	xmm2,xmm2,XMMWORD[16+rdi]
 	vpxor	xmm3,xmm3,XMMWORD[32+rdi]
@@ -1218,10 +1218,10 @@ $L$128_enc_msg_x8_check_remainder:
 	je	NEAR $L$128_enc_msg_x8_out
 
 $L$128_enc_msg_x8_loop2:
-
-
+; enc each block separately
+; CTR1 is the highest counter (even if no LOOP done)
 	vmovdqa	xmm1,xmm0
-	vpaddd	xmm0,xmm0,XMMWORD[one]
+	vpaddd	xmm0,xmm0,XMMWORD[one]  ; inc counter
 
 	vpxor	xmm1,xmm1,XMMWORD[rcx]
 	vaesenc	xmm1,xmm1,XMMWORD[16+rcx]
@@ -1235,7 +1235,7 @@ $L$128_enc_msg_x8_loop2:
 	vaesenc	xmm1,xmm1,XMMWORD[144+rcx]
 	vaesenclast	xmm1,xmm1,XMMWORD[160+rcx]
 
-
+; XOR with Plaintext
 	vpxor	xmm1,xmm1,XMMWORD[rdi]
 
 	vmovdqu	XMMWORD[rsi],xmm1
@@ -1287,10 +1287,10 @@ _CET_ENDBR
 $L$128_dec_start:
 	vzeroupper
 	vmovdqa	xmm0,XMMWORD[rdx]
-
-
+; The claimed tag is provided after the current calculated tag value.
+; CTRBLKs is made from it.
 	vmovdqu	xmm15,XMMWORD[16+rdx]
-	vpor	xmm15,xmm15,XMMWORD[OR_MASK]
+	vpor	xmm15,xmm15,XMMWORD[OR_MASK]  ; CTR = [1]TAG[126...32][00..00]
 	mov	rax,rdx
 
 	lea	rax,[32+rax]
@@ -1298,11 +1298,11 @@ $L$128_dec_start:
 
 	and	r9,~15
 
-
+; If less then 6 blocks, make singles
 	cmp	r9,96
 	jb	NEAR $L$128_dec_loop2
 
-
+; Decrypt the first six blocks
 	sub	r9,96
 	vmovdqa	xmm7,xmm15
 	vpaddd	xmm8,xmm7,XMMWORD[one]
@@ -1399,7 +1399,7 @@ $L$128_dec_start:
 	vaesenclast	xmm11,xmm11,xmm4
 	vaesenclast	xmm12,xmm12,xmm4
 
-
+; XOR with CT
 	vpxor	xmm7,xmm7,XMMWORD[rdi]
 	vpxor	xmm8,xmm8,XMMWORD[16+rdi]
 	vpxor	xmm9,xmm9,XMMWORD[32+rdi]
@@ -1418,7 +1418,7 @@ $L$128_dec_start:
 	add	rsi,96
 	jmp	NEAR $L$128_dec_loop1
 
-
+; Decrypt 6 blocks each time while hashing previous 6 blocks
 ALIGN	64
 $L$128_dec_loop1:
 	cmp	r9,96
@@ -1730,9 +1730,9 @@ $L$128_dec_finish_96:
 	vpxor	xmm0,xmm0,xmm5
 
 $L$128_dec_loop2:
+; Here we encrypt any remaining whole block
 
-
-
+; if there are no whole blocks
 	cmp	r9,16
 	jb	NEAR $L$128_dec_out
 	sub	r9,16
@@ -1796,7 +1796,7 @@ _CET_ENDBR
 	vaesenc	xmm1,xmm1,XMMWORD[112+rdx]
 	vaesenc	xmm1,xmm1,XMMWORD[128+rdx]
 	vaesenc	xmm1,xmm1,XMMWORD[144+rdx]
-	vaesenclast	xmm1,xmm1,XMMWORD[160+rdx]
+	vaesenclast	xmm1,xmm1,XMMWORD[160+rdx]  ; STATE_1 == IV
 
 	vmovdqa	XMMWORD[rsi],xmm1
 
@@ -1821,14 +1821,14 @@ $L$SEH_begin_aes256gcmsiv_aes_ks_enc_x1:
 
 
 _CET_ENDBR
-	vmovdqa	xmm0,XMMWORD[con1]
-	vmovdqa	xmm15,XMMWORD[mask]
+	vmovdqa	xmm0,XMMWORD[con1]  ; CON_MASK  = 1,1,1,1
+	vmovdqa	xmm15,XMMWORD[mask]  ; MASK_256
 	vmovdqa	xmm8,XMMWORD[rdi]
-	vmovdqa	xmm1,XMMWORD[rcx]
+	vmovdqa	xmm1,XMMWORD[rcx]  ; KEY_1 || KEY_2 [0..7] = user key
 	vmovdqa	xmm3,XMMWORD[16+rcx]
 	vpxor	xmm8,xmm8,xmm1
 	vaesenc	xmm8,xmm8,xmm3
-	vmovdqu	XMMWORD[rdx],xmm1
+	vmovdqu	XMMWORD[rdx],xmm1  ; First round key
 	vmovdqu	XMMWORD[16+rdx],xmm3
 	vpxor	xmm14,xmm14,xmm14
 
@@ -2030,7 +2030,7 @@ _CET_ENDBR
 	vaesenc	xmm1,xmm1,XMMWORD[176+rdx]
 	vaesenc	xmm1,xmm1,XMMWORD[192+rdx]
 	vaesenc	xmm1,xmm1,XMMWORD[208+rdx]
-	vaesenclast	xmm1,xmm1,XMMWORD[224+rdx]
+	vaesenclast	xmm1,xmm1,XMMWORD[224+rdx]  ; %xmm1 == IV
 	vmovdqa	XMMWORD[rsi],xmm1
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
@@ -2062,7 +2062,7 @@ _CET_ENDBR
 
 $L$256_enc_msg_x4_start:
 	mov	r10,r8
-	shr	r8,4
+	shr	r8,4  ; LEN = num of blocks
 	shl	r10,60
 	jz	NEAR $L$256_enc_msg_x4_start2
 	add	r8,1
@@ -2072,15 +2072,15 @@ $L$256_enc_msg_x4_start2:
 	shl	r10,62
 	shr	r10,62
 
-
+; make IV from TAG
 	vmovdqa	xmm15,XMMWORD[rdx]
-	vpor	xmm15,xmm15,XMMWORD[OR_MASK]
+	vpor	xmm15,xmm15,XMMWORD[OR_MASK]  ; IV = [1]TAG[126...32][00..00]
 
-	vmovdqa	xmm4,XMMWORD[four]
-	vmovdqa	xmm0,xmm15
-	vpaddd	xmm1,xmm15,XMMWORD[one]
-	vpaddd	xmm2,xmm15,XMMWORD[two]
-	vpaddd	xmm3,xmm15,XMMWORD[three]
+	vmovdqa	xmm4,XMMWORD[four]  ; Register to increment counters
+	vmovdqa	xmm0,xmm15  ; CTR1 = TAG[1][127...32][00..00]
+	vpaddd	xmm1,xmm15,XMMWORD[one]  ; CTR2 = TAG[1][127...32][00..01]
+	vpaddd	xmm2,xmm15,XMMWORD[two]  ; CTR3 = TAG[1][127...32][00..02]
+	vpaddd	xmm3,xmm15,XMMWORD[three]  ; CTR4 = TAG[1][127...32][00..03]
 
 	shr	r8,2
 	je	NEAR $L$256_enc_msg_x4_check_remainder
@@ -2192,7 +2192,7 @@ $L$256_enc_msg_x4_loop1:
 	vaesenclast	xmm8,xmm8,xmm12
 
 
-
+; XOR with Plaintext
 	vpxor	xmm5,xmm5,XMMWORD[rdi]
 	vpxor	xmm6,xmm6,XMMWORD[16+rdi]
 	vpxor	xmm7,xmm7,XMMWORD[32+rdi]
@@ -2215,11 +2215,11 @@ $L$256_enc_msg_x4_check_remainder:
 	je	NEAR $L$256_enc_msg_x4_out
 
 $L$256_enc_msg_x4_loop2:
-
-
+; encrypt each block separately
+; CTR1 is the highest counter (even if no LOOP done)
 
 	vmovdqa	xmm5,xmm0
-	vpaddd	xmm0,xmm0,XMMWORD[one]
+	vpaddd	xmm0,xmm0,XMMWORD[one]  ; inc counter
 	vpxor	xmm5,xmm5,XMMWORD[rcx]
 	vaesenc	xmm5,xmm5,XMMWORD[16+rcx]
 	vaesenc	xmm5,xmm5,XMMWORD[32+rcx]
@@ -2236,7 +2236,7 @@ $L$256_enc_msg_x4_loop2:
 	vaesenc	xmm5,xmm5,XMMWORD[208+rcx]
 	vaesenclast	xmm5,xmm5,XMMWORD[224+rcx]
 
-
+; XOR with Plaintext
 	vpxor	xmm5,xmm5,XMMWORD[rdi]
 
 	vmovdqu	XMMWORD[rsi],xmm5
@@ -2277,13 +2277,13 @@ _CET_ENDBR
 	ret
 
 $L$256_enc_msg_x8_start:
-
+; Place in stack
 	mov	r11,rsp
 	sub	r11,16
 	and	r11,-64
 
 	mov	r10,r8
-	shr	r8,4
+	shr	r8,4  ; LEN = num of blocks
 	shl	r10,60
 	jz	NEAR $L$256_enc_msg_x8_start2
 	add	r8,1
@@ -2293,20 +2293,20 @@ $L$256_enc_msg_x8_start2:
 	shl	r10,61
 	shr	r10,61
 
-
+; Make IV from TAG
 	vmovdqa	xmm1,XMMWORD[rdx]
-	vpor	xmm1,xmm1,XMMWORD[OR_MASK]
+	vpor	xmm1,xmm1,XMMWORD[OR_MASK]  ; TMP1= IV = [1]TAG[126...32][00..00]
 
-
+; store counter8 on the stack
 	vpaddd	xmm0,xmm1,XMMWORD[seven]
-	vmovdqa	XMMWORD[r11],xmm0
-	vpaddd	xmm9,xmm1,XMMWORD[one]
-	vpaddd	xmm10,xmm1,XMMWORD[two]
-	vpaddd	xmm11,xmm1,XMMWORD[three]
-	vpaddd	xmm12,xmm1,XMMWORD[four]
-	vpaddd	xmm13,xmm1,XMMWORD[five]
-	vpaddd	xmm14,xmm1,XMMWORD[six]
-	vmovdqa	xmm0,xmm1
+	vmovdqa	XMMWORD[r11],xmm0  ; CTR8 = TAG[127...32][00..07]
+	vpaddd	xmm9,xmm1,XMMWORD[one]  ; CTR2 = TAG[127...32][00..01]
+	vpaddd	xmm10,xmm1,XMMWORD[two]  ; CTR3 = TAG[127...32][00..02]
+	vpaddd	xmm11,xmm1,XMMWORD[three]  ; CTR4 = TAG[127...32][00..03]
+	vpaddd	xmm12,xmm1,XMMWORD[four]  ; CTR5 = TAG[127...32][00..04]
+	vpaddd	xmm13,xmm1,XMMWORD[five]  ; CTR6 = TAG[127...32][00..05]
+	vpaddd	xmm14,xmm1,XMMWORD[six]  ; CTR7 = TAG[127...32][00..06]
+	vmovdqa	xmm0,xmm1  ; CTR1 = TAG[127...32][00..00]
 
 	shr	r8,3
 	jz	NEAR $L$256_enc_msg_x8_check_remainder
@@ -2325,7 +2325,7 @@ $L$256_enc_msg_x8_loop1:
 	vmovdqa	xmm5,xmm12
 	vmovdqa	xmm6,xmm13
 	vmovdqa	xmm7,xmm14
-
+; move from stack
 	vmovdqa	xmm8,XMMWORD[r11]
 
 	vpxor	xmm1,xmm1,XMMWORD[rcx]
@@ -2347,7 +2347,7 @@ $L$256_enc_msg_x8_loop1:
 	vaesenc	xmm7,xmm7,xmm15
 	vaesenc	xmm8,xmm8,xmm15
 
-	vmovdqa	xmm14,XMMWORD[r11]
+	vmovdqa	xmm14,XMMWORD[r11]  ; deal with CTR8
 	vpaddd	xmm14,xmm14,XMMWORD[eight]
 	vmovdqa	XMMWORD[r11],xmm14
 	vmovdqu	xmm15,XMMWORD[32+rcx]
@@ -2488,7 +2488,7 @@ $L$256_enc_msg_x8_loop1:
 	vaesenclast	xmm8,xmm8,xmm15
 
 
-
+; XOR with Plaintext
 	vpxor	xmm1,xmm1,XMMWORD[rdi]
 	vpxor	xmm2,xmm2,XMMWORD[16+rdi]
 	vpxor	xmm3,xmm3,XMMWORD[32+rdi]
@@ -2519,8 +2519,8 @@ $L$256_enc_msg_x8_check_remainder:
 	je	NEAR $L$256_enc_msg_x8_out
 
 $L$256_enc_msg_x8_loop2:
-
-
+; encrypt each block separately
+; CTR1 is the highest counter (even if no LOOP done)
 	vmovdqa	xmm1,xmm0
 	vpaddd	xmm0,xmm0,XMMWORD[one]
 
@@ -2540,7 +2540,7 @@ $L$256_enc_msg_x8_loop2:
 	vaesenc	xmm1,xmm1,XMMWORD[208+rcx]
 	vaesenclast	xmm1,xmm1,XMMWORD[224+rcx]
 
-
+; XOR with Plaintext
 	vpxor	xmm1,xmm1,XMMWORD[rdi]
 
 	vmovdqu	XMMWORD[rsi],xmm1
@@ -2584,10 +2584,10 @@ _CET_ENDBR
 $L$256_dec_start:
 	vzeroupper
 	vmovdqa	xmm0,XMMWORD[rdx]
-
-
+; The claimed tag is provided after the current calculated tag value.
+; CTRBLKs is made from it.
 	vmovdqu	xmm15,XMMWORD[16+rdx]
-	vpor	xmm15,xmm15,XMMWORD[OR_MASK]
+	vpor	xmm15,xmm15,XMMWORD[OR_MASK]  ; CTR = [1]TAG[126...32][00..00]
 	mov	rax,rdx
 
 	lea	rax,[32+rax]
@@ -2595,11 +2595,11 @@ $L$256_dec_start:
 
 	and	r9,~15
 
-
+; If less then 6 blocks, make singles
 	cmp	r9,96
 	jb	NEAR $L$256_dec_loop2
 
-
+; Decrypt the first six blocks
 	sub	r9,96
 	vmovdqa	xmm7,xmm15
 	vpaddd	xmm8,xmm7,XMMWORD[one]
@@ -2728,7 +2728,7 @@ $L$256_dec_start:
 	vaesenclast	xmm11,xmm11,xmm4
 	vaesenclast	xmm12,xmm12,xmm4
 
-
+; XOR with CT
 	vpxor	xmm7,xmm7,XMMWORD[rdi]
 	vpxor	xmm8,xmm8,XMMWORD[16+rdi]
 	vpxor	xmm9,xmm9,XMMWORD[32+rdi]
@@ -2747,7 +2747,7 @@ $L$256_dec_start:
 	add	rsi,96
 	jmp	NEAR $L$256_dec_loop1
 
-
+; Decrypt 6 blocks each time while hashing previous 6 blocks
 ALIGN	64
 $L$256_dec_loop1:
 	cmp	r9,96
@@ -3091,9 +3091,9 @@ $L$256_dec_finish_96:
 	vpxor	xmm0,xmm0,xmm5
 
 $L$256_dec_loop2:
+; Here we encrypt any remaining whole block
 
-
-
+; if there are no whole blocks
 	cmp	r9,16
 	jb	NEAR $L$256_dec_out
 	sub	r9,16
@@ -3149,11 +3149,11 @@ $L$SEH_begin_aes256gcmsiv_kdf:
 
 
 _CET_ENDBR
+; parameter 1: %rdi                         Pointer to NONCE
+; parameter 2: %rsi                         Pointer to CT
+; parameter 4: %rdx                         Pointer to keys
 
-
-
-
-	vmovdqa	xmm1,XMMWORD[rdx]
+	vmovdqa	xmm1,XMMWORD[rdx]  ; xmm1 = first 16 bytes of random key
 	vmovdqa	xmm4,XMMWORD[rdi]
 	vmovdqa	xmm11,XMMWORD[and_mask]
 	vmovdqa	xmm8,XMMWORD[one]

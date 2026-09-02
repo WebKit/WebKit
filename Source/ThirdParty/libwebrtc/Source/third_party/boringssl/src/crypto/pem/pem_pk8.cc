@@ -22,6 +22,9 @@
 #include <openssl/rand.h>
 #include <openssl/x509.h>
 
+#include "internal.h"
+
+
 static int do_pk8pkey(BIO *bp, const EVP_PKEY *x, int isder, int nid,
                       const EVP_CIPHER *enc, const char *pass, int pass_len,
                       pem_password_cb *cb, void *u);

@@ -52,7 +52,7 @@ bool SetTestState(SSL *ssl, std::unique_ptr<TestState> state) {
   if (!InitGlobals()) {
     return false;
   }
-  // |SSL_set_ex_data| takes ownership of |state| only on success.
+  // `SSL_set_ex_data` takes ownership of `state` only on success.
   if (SSL_set_ex_data(ssl, g_state_index, state.get()) == 1) {
     state.release();
     return true;

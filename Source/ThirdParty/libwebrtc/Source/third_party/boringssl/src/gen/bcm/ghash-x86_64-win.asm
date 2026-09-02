@@ -27,154 +27,154 @@ $L$SEH_prologue_gcm_init_clmul_2:
 $L$SEH_prologue_gcm_init_clmul_3:
 $L$SEH_endprologue_gcm_init_clmul_4:
 	movdqu	xmm2,XMMWORD[rdx]
-	pshufd	xmm2,xmm2,78
+	pshufd	xmm2,xmm2,78  ; dword swap
 
-
-	pshufd	xmm4,xmm2,255
+; <<1 twist
+	pshufd	xmm4,xmm2,255  ; broadcast uppermost dword
 	movdqa	xmm3,xmm2
 	psllq	xmm2,1
-	pxor	xmm5,xmm5
+	pxor	xmm5,xmm5  ; 
 	psrlq	xmm3,63
-	pcmpgtd	xmm5,xmm4
+	pcmpgtd	xmm5,xmm4  ; broadcast carry bit
 	pslldq	xmm3,8
-	por	xmm2,xmm3
+	por	xmm2,xmm3  ; H<<=1
 
-
+; magic reduction
 	pand	xmm5,XMMWORD[$L$0x1c2_polynomial]
-	pxor	xmm2,xmm5
+	pxor	xmm2,xmm5  ; if(carry) H^=0x1c2_polynomial
 
-
+; calculate H^2
 	pshufd	xmm6,xmm2,78
 	movdqa	xmm0,xmm2
 	pxor	xmm6,xmm2
-	movdqa	xmm1,xmm0
+	movdqa	xmm1,xmm0  ; 
 	pshufd	xmm3,xmm0,78
-	pxor	xmm3,xmm0
-	pclmulqdq	xmm0,xmm2,0x00
-	pclmulqdq	xmm1,xmm2,0x11
-	pclmulqdq	xmm3,xmm6,0x00
-	pxor	xmm3,xmm0
-	pxor	xmm3,xmm1
+	pxor	xmm3,xmm0  ; 
+	pclmulqdq	xmm0,xmm2,0x00  ; ######
+	pclmulqdq	xmm1,xmm2,0x11  ; ######
+	pclmulqdq	xmm3,xmm6,0x00  ; ######
+	pxor	xmm3,xmm0  ; 
+	pxor	xmm3,xmm1  ; 
 
-	movdqa	xmm4,xmm3
+	movdqa	xmm4,xmm3  ; 
 	psrldq	xmm3,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm3
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	pshufd	xmm3,xmm2,78
 	pshufd	xmm4,xmm0,78
-	pxor	xmm3,xmm2
-	movdqu	XMMWORD[rcx],xmm2
-	pxor	xmm4,xmm0
-	movdqu	XMMWORD[16+rcx],xmm0
-	palignr	xmm4,xmm3,8
-	movdqu	XMMWORD[32+rcx],xmm4
-	movdqa	xmm1,xmm0
+	pxor	xmm3,xmm2  ; Karatsuba pre-processing
+	movdqu	XMMWORD[rcx],xmm2  ; save H
+	pxor	xmm4,xmm0  ; Karatsuba pre-processing
+	movdqu	XMMWORD[16+rcx],xmm0  ; save H^2
+	palignr	xmm4,xmm3,8  ; low part is H.lo^H.hi...
+	movdqu	XMMWORD[32+rcx],xmm4  ; save Karatsuba "salt"
+	movdqa	xmm1,xmm0  ; 
 	pshufd	xmm3,xmm0,78
-	pxor	xmm3,xmm0
-	pclmulqdq	xmm0,xmm2,0x00
-	pclmulqdq	xmm1,xmm2,0x11
-	pclmulqdq	xmm3,xmm6,0x00
-	pxor	xmm3,xmm0
-	pxor	xmm3,xmm1
+	pxor	xmm3,xmm0  ; 
+	pclmulqdq	xmm0,xmm2,0x00  ; ######
+	pclmulqdq	xmm1,xmm2,0x11  ; ######
+	pclmulqdq	xmm3,xmm6,0x00  ; ######
+	pxor	xmm3,xmm0  ; 
+	pxor	xmm3,xmm1  ; 
 
-	movdqa	xmm4,xmm3
+	movdqa	xmm4,xmm3  ; 
 	psrldq	xmm3,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm3
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	movdqa	xmm5,xmm0
-	movdqa	xmm1,xmm0
+	movdqa	xmm1,xmm0  ; 
 	pshufd	xmm3,xmm0,78
-	pxor	xmm3,xmm0
-	pclmulqdq	xmm0,xmm2,0x00
-	pclmulqdq	xmm1,xmm2,0x11
-	pclmulqdq	xmm3,xmm6,0x00
-	pxor	xmm3,xmm0
-	pxor	xmm3,xmm1
+	pxor	xmm3,xmm0  ; 
+	pclmulqdq	xmm0,xmm2,0x00  ; ######
+	pclmulqdq	xmm1,xmm2,0x11  ; ######
+	pclmulqdq	xmm3,xmm6,0x00  ; ######
+	pxor	xmm3,xmm0  ; 
+	pxor	xmm3,xmm1  ; 
 
-	movdqa	xmm4,xmm3
+	movdqa	xmm4,xmm3  ; 
 	psrldq	xmm3,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm3
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	pshufd	xmm3,xmm5,78
 	pshufd	xmm4,xmm0,78
-	pxor	xmm3,xmm5
-	movdqu	XMMWORD[48+rcx],xmm5
-	pxor	xmm4,xmm0
-	movdqu	XMMWORD[64+rcx],xmm0
-	palignr	xmm4,xmm3,8
-	movdqu	XMMWORD[80+rcx],xmm4
+	pxor	xmm3,xmm5  ; Karatsuba pre-processing
+	movdqu	XMMWORD[48+rcx],xmm5  ; save H^3
+	pxor	xmm4,xmm0  ; Karatsuba pre-processing
+	movdqu	XMMWORD[64+rcx],xmm0  ; save H^4
+	palignr	xmm4,xmm3,8  ; low part is H^3.lo^H^3.hi...
+	movdqu	XMMWORD[80+rcx],xmm4  ; save Karatsuba "salt"
 	movaps	xmm6,XMMWORD[rsp]
 	lea	rsp,[24+rsp]
 	ret
@@ -193,43 +193,43 @@ $L$_gmult_clmul:
 	movdqu	xmm2,XMMWORD[rdx]
 	movdqu	xmm4,XMMWORD[32+rdx]
 	pshufb	xmm0,xmm5
-	movdqa	xmm1,xmm0
+	movdqa	xmm1,xmm0  ; 
 	pshufd	xmm3,xmm0,78
-	pxor	xmm3,xmm0
-	pclmulqdq	xmm0,xmm2,0x00
-	pclmulqdq	xmm1,xmm2,0x11
-	pclmulqdq	xmm3,xmm4,0x00
-	pxor	xmm3,xmm0
-	pxor	xmm3,xmm1
+	pxor	xmm3,xmm0  ; 
+	pclmulqdq	xmm0,xmm2,0x00  ; ######
+	pclmulqdq	xmm1,xmm2,0x11  ; ######
+	pclmulqdq	xmm3,xmm4,0x00  ; ######
+	pxor	xmm3,xmm0  ; 
+	pxor	xmm3,xmm1  ; 
 
-	movdqa	xmm4,xmm3
+	movdqa	xmm4,xmm3  ; 
 	psrldq	xmm3,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm3
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	pshufb	xmm0,xmm5
 	movdqu	XMMWORD[rcx],xmm0
 	ret
@@ -282,13 +282,13 @@ $L$SEH_endprologue_gcm_ghash_clmul_13:
 	jb	NEAR $L$skip4x
 
 	sub	r9,0x30
-	mov	rax,0xA040608020C0E000
+	mov	rax,0xA040608020C0E000  ; ((7..0)·0xE0)&0xff
 	movdqu	xmm14,XMMWORD[48+rdx]
 	movdqu	xmm15,XMMWORD[64+rdx]
 
-
-
-
+; ######
+; Xi+4 =[(H*Ii+3) + (H^2*Ii+2) + (H^3*Ii+1) + H^4*(Ii+Xi)] mod P
+; 
 	movdqu	xmm3,XMMWORD[48+r8]
 	movdqu	xmm11,XMMWORD[32+r8]
 	pshufb	xmm3,xmm10
@@ -353,33 +353,33 @@ $L$mod4_loop:
 	pclmulqdq	xmm11,xmm2,0x00
 	pshufd	xmm4,xmm3,78
 
-	pxor	xmm8,xmm0
+	pxor	xmm8,xmm0  ; aggregated Karatsuba post-processing
 	movdqa	xmm5,xmm3
-	pxor	xmm8,xmm1
+	pxor	xmm8,xmm1  ; 
 	pxor	xmm4,xmm3
-	movdqa	xmm9,xmm8
+	movdqa	xmm9,xmm8  ; 
 	pclmulqdq	xmm13,xmm2,0x11
 	pslldq	xmm8,8
-	psrldq	xmm9,8
+	psrldq	xmm9,8  ; 
 	pxor	xmm0,xmm8
 	movdqa	xmm8,XMMWORD[$L$7_mask]
-	pxor	xmm1,xmm9
+	pxor	xmm1,xmm9  ; 
 	movq	xmm9,rax
 
-	pand	xmm8,xmm0
-	pshufb	xmm9,xmm8
-	pxor	xmm9,xmm0
+	pand	xmm8,xmm0  ; 1st phase
+	pshufb	xmm9,xmm8  ; 
+	pxor	xmm9,xmm0  ; 
 	pclmulqdq	xmm12,xmm7,0x00
-	psllq	xmm9,57
-	movdqa	xmm8,xmm9
+	psllq	xmm9,57  ; 
+	movdqa	xmm8,xmm9  ; 
 	pslldq	xmm9,8
 	pclmulqdq	xmm3,xmm6,0x00
-	psrldq	xmm8,8
+	psrldq	xmm8,8  ; 
 	pxor	xmm0,xmm9
-	pxor	xmm1,xmm8
+	pxor	xmm1,xmm8  ; 
 	movdqu	xmm8,XMMWORD[r8]
 
-	movdqa	xmm9,xmm0
+	movdqa	xmm9,xmm0  ; 2nd phase
 	psrlq	xmm0,1
 	pclmulqdq	xmm5,xmm6,0x11
 	xorps	xmm3,xmm11
@@ -389,19 +389,19 @@ $L$mod4_loop:
 	xorps	xmm5,xmm13
 	movups	xmm7,XMMWORD[80+rdx]
 	pshufb	xmm8,xmm10
-	pxor	xmm1,xmm9
+	pxor	xmm1,xmm9  ; 
 	pxor	xmm9,xmm0
 	psrlq	xmm0,5
 
 	movdqa	xmm13,xmm11
 	pxor	xmm4,xmm12
 	pshufd	xmm12,xmm11,78
-	pxor	xmm0,xmm9
+	pxor	xmm0,xmm9  ; 
 	pxor	xmm1,xmm8
 	pxor	xmm12,xmm11
 	pclmulqdq	xmm11,xmm14,0x00
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	movdqa	xmm1,xmm0
 	pclmulqdq	xmm13,xmm14,0x11
 	xorps	xmm3,xmm11
@@ -422,56 +422,56 @@ $L$tail4x:
 	xorps	xmm4,xmm12
 	xorps	xmm0,xmm3
 	xorps	xmm1,xmm5
-	pxor	xmm1,xmm0
+	pxor	xmm1,xmm0  ; aggregated Karatsuba post-processing
 	pxor	xmm8,xmm4
 
-	pxor	xmm8,xmm1
+	pxor	xmm8,xmm1  ; 
 	pxor	xmm1,xmm0
 
-	movdqa	xmm9,xmm8
+	movdqa	xmm9,xmm8  ; 
 	psrldq	xmm8,8
-	pslldq	xmm9,8
+	pslldq	xmm9,8  ; 
 	pxor	xmm1,xmm8
-	pxor	xmm0,xmm9
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm9  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	add	r9,0x40
 	jz	NEAR $L$done
 	movdqu	xmm7,XMMWORD[32+rdx]
 	sub	r9,0x10
 	jz	NEAR $L$odd_tail
 $L$skip4x:
-
-
-
-
-
-	movdqu	xmm8,XMMWORD[r8]
-	movdqu	xmm3,XMMWORD[16+r8]
+; ######
+; Xi+2 =[H*(Ii+1 + Xi+1)] mod P =
+; [(H*Ii+1) + (H*Xi+1)] mod P =
+; [(H*Ii+1) + H^2*(Ii+Xi)] mod P
+; 
+	movdqu	xmm8,XMMWORD[r8]  ; Ii
+	movdqu	xmm3,XMMWORD[16+r8]  ; Ii+1
 	pshufb	xmm8,xmm10
 	pshufb	xmm3,xmm10
-	pxor	xmm0,xmm8
+	pxor	xmm0,xmm8  ; Ii+Xi
 
 	movdqa	xmm5,xmm3
 	pshufd	xmm4,xmm3,78
@@ -480,7 +480,7 @@ $L$skip4x:
 	pclmulqdq	xmm5,xmm2,0x11
 	pclmulqdq	xmm4,xmm7,0x00
 
-	lea	r8,[32+r8]
+	lea	r8,[32+r8]  ; i+=2
 	nop
 	sub	r9,0x20
 	jbe	NEAR $L$even_tail
@@ -491,59 +491,59 @@ ALIGN	32
 $L$mod_loop:
 	movdqa	xmm1,xmm0
 	movdqa	xmm8,xmm4
-	pshufd	xmm4,xmm0,78
-	pxor	xmm4,xmm0
+	pshufd	xmm4,xmm0,78  ; 
+	pxor	xmm4,xmm0  ; 
 
 	pclmulqdq	xmm0,xmm6,0x00
 	pclmulqdq	xmm1,xmm6,0x11
 	pclmulqdq	xmm4,xmm7,0x10
 
-	pxor	xmm0,xmm3
+	pxor	xmm0,xmm3  ; (H*Ii+1) + H^2*(Ii+Xi)
 	pxor	xmm1,xmm5
-	movdqu	xmm9,XMMWORD[r8]
-	pxor	xmm8,xmm0
+	movdqu	xmm9,XMMWORD[r8]  ; Ii
+	pxor	xmm8,xmm0  ; aggregated Karatsuba post-processing
 	pshufb	xmm9,xmm10
-	movdqu	xmm3,XMMWORD[16+r8]
+	movdqu	xmm3,XMMWORD[16+r8]  ; Ii+1
 
 	pxor	xmm8,xmm1
-	pxor	xmm1,xmm9
+	pxor	xmm1,xmm9  ; "Ii+Xi", consume early
 	pxor	xmm4,xmm8
 	pshufb	xmm3,xmm10
-	movdqa	xmm8,xmm4
+	movdqa	xmm8,xmm4  ; 
 	psrldq	xmm8,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm8
-	pxor	xmm0,xmm4
+	pxor	xmm0,xmm4  ; 
 
-	movdqa	xmm5,xmm3
+	movdqa	xmm5,xmm3  ; 
 
-	movdqa	xmm9,xmm0
+	movdqa	xmm9,xmm0  ; 1st phase
 	movdqa	xmm8,xmm0
 	psllq	xmm0,5
-	pxor	xmm8,xmm0
-	pclmulqdq	xmm3,xmm2,0x00
+	pxor	xmm8,xmm0  ; 
+	pclmulqdq	xmm3,xmm2,0x00  ; ######
 	psllq	xmm0,1
-	pxor	xmm0,xmm8
-	psllq	xmm0,57
-	movdqa	xmm8,xmm0
+	pxor	xmm0,xmm8  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm8,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm8,8
+	psrldq	xmm8,8  ; 
 	pxor	xmm0,xmm9
 	pshufd	xmm4,xmm5,78
-	pxor	xmm1,xmm8
-	pxor	xmm4,xmm5
+	pxor	xmm1,xmm8  ; 
+	pxor	xmm4,xmm5  ; 
 
-	movdqa	xmm9,xmm0
+	movdqa	xmm9,xmm0  ; 2nd phase
 	psrlq	xmm0,1
-	pclmulqdq	xmm5,xmm2,0x11
-	pxor	xmm1,xmm9
+	pclmulqdq	xmm5,xmm2,0x11  ; ######
+	pxor	xmm1,xmm9  ; 
 	pxor	xmm9,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm9
+	pxor	xmm0,xmm9  ; 
 	lea	r8,[32+r8]
-	psrlq	xmm0,1
-	pclmulqdq	xmm4,xmm7,0x00
-	pxor	xmm0,xmm1
+	psrlq	xmm0,1  ; 
+	pclmulqdq	xmm4,xmm7,0x00  ; ######
+	pxor	xmm0,xmm1  ; 
 
 	sub	r9,0x20
 	ja	NEAR $L$mod_loop
@@ -551,90 +551,90 @@ $L$mod_loop:
 $L$even_tail:
 	movdqa	xmm1,xmm0
 	movdqa	xmm8,xmm4
-	pshufd	xmm4,xmm0,78
-	pxor	xmm4,xmm0
+	pshufd	xmm4,xmm0,78  ; 
+	pxor	xmm4,xmm0  ; 
 
 	pclmulqdq	xmm0,xmm6,0x00
 	pclmulqdq	xmm1,xmm6,0x11
 	pclmulqdq	xmm4,xmm7,0x10
 
-	pxor	xmm0,xmm3
+	pxor	xmm0,xmm3  ; (H*Ii+1) + H^2*(Ii+Xi)
 	pxor	xmm1,xmm5
 	pxor	xmm8,xmm0
 	pxor	xmm8,xmm1
 	pxor	xmm4,xmm8
-	movdqa	xmm8,xmm4
+	movdqa	xmm8,xmm4  ; 
 	psrldq	xmm8,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm8
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 	test	r9,r9
 	jnz	NEAR $L$done
 
 $L$odd_tail:
-	movdqu	xmm8,XMMWORD[r8]
+	movdqu	xmm8,XMMWORD[r8]  ; Ii
 	pshufb	xmm8,xmm10
-	pxor	xmm0,xmm8
-	movdqa	xmm1,xmm0
+	pxor	xmm0,xmm8  ; Ii+Xi
+	movdqa	xmm1,xmm0  ; 
 	pshufd	xmm3,xmm0,78
-	pxor	xmm3,xmm0
-	pclmulqdq	xmm0,xmm2,0x00
-	pclmulqdq	xmm1,xmm2,0x11
-	pclmulqdq	xmm3,xmm7,0x00
-	pxor	xmm3,xmm0
-	pxor	xmm3,xmm1
+	pxor	xmm3,xmm0  ; 
+	pclmulqdq	xmm0,xmm2,0x00  ; ######
+	pclmulqdq	xmm1,xmm2,0x11  ; ######
+	pclmulqdq	xmm3,xmm7,0x00  ; ######
+	pxor	xmm3,xmm0  ; 
+	pxor	xmm3,xmm1  ; 
 
-	movdqa	xmm4,xmm3
+	movdqa	xmm4,xmm3  ; 
 	psrldq	xmm3,8
-	pslldq	xmm4,8
+	pslldq	xmm4,8  ; 
 	pxor	xmm1,xmm3
-	pxor	xmm0,xmm4
-
-	movdqa	xmm4,xmm0
+	pxor	xmm0,xmm4  ; 
+; 1st phase
+	movdqa	xmm4,xmm0  ; 
 	movdqa	xmm3,xmm0
 	psllq	xmm0,5
-	pxor	xmm3,xmm0
+	pxor	xmm3,xmm0  ; 
 	psllq	xmm0,1
-	pxor	xmm0,xmm3
-	psllq	xmm0,57
-	movdqa	xmm3,xmm0
+	pxor	xmm0,xmm3  ; 
+	psllq	xmm0,57  ; 
+	movdqa	xmm3,xmm0  ; 
 	pslldq	xmm0,8
-	psrldq	xmm3,8
+	psrldq	xmm3,8  ; 
 	pxor	xmm0,xmm4
-	pxor	xmm1,xmm3
+	pxor	xmm1,xmm3  ; 
 
-
+; 2nd phase
 	movdqa	xmm4,xmm0
 	psrlq	xmm0,1
-	pxor	xmm1,xmm4
+	pxor	xmm1,xmm4  ; 
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
-	pxor	xmm0,xmm4
-	psrlq	xmm0,1
-	pxor	xmm0,xmm1
+	pxor	xmm0,xmm4  ; 
+	psrlq	xmm0,1  ; 
+	pxor	xmm0,xmm1  ; 
 $L$done:
 	pshufb	xmm0,xmm10
 	movdqu	XMMWORD[rcx],xmm0
@@ -668,101 +668,101 @@ $L$SEH_endprologue_gcm_init_avx_4:
 	vzeroupper
 
 	vmovdqu	xmm2,XMMWORD[rdx]
-	vpshufd	xmm2,xmm2,78
+	vpshufd	xmm2,xmm2,78  ; dword swap
 
-
-	vpshufd	xmm4,xmm2,255
+; <<1 twist
+	vpshufd	xmm4,xmm2,255  ; broadcast uppermost dword
 	vpsrlq	xmm3,xmm2,63
 	vpsllq	xmm2,xmm2,1
-	vpxor	xmm5,xmm5,xmm5
-	vpcmpgtd	xmm5,xmm5,xmm4
+	vpxor	xmm5,xmm5,xmm5  ; 
+	vpcmpgtd	xmm5,xmm5,xmm4  ; broadcast carry bit
 	vpslldq	xmm3,xmm3,8
-	vpor	xmm2,xmm2,xmm3
+	vpor	xmm2,xmm2,xmm3  ; H<<=1
 
-
+; magic reduction
 	vpand	xmm5,xmm5,XMMWORD[$L$0x1c2_polynomial]
-	vpxor	xmm2,xmm2,xmm5
+	vpxor	xmm2,xmm2,xmm5  ; if(carry) H^=0x1c2_polynomial
 
 	vpunpckhqdq	xmm6,xmm2,xmm2
 	vmovdqa	xmm0,xmm2
 	vpxor	xmm6,xmm6,xmm2
-	mov	r10,4
+	mov	r10,4  ; up to H^8
 	jmp	NEAR $L$init_start_avx
 ALIGN	32
 $L$init_loop_avx:
-	vpalignr	xmm5,xmm4,xmm3,8
-	vmovdqu	XMMWORD[(-16)+rcx],xmm5
+	vpalignr	xmm5,xmm4,xmm3,8  ; low part is H.lo^H.hi...
+	vmovdqu	XMMWORD[(-16)+rcx],xmm5  ; save Karatsuba "salt"
 	vpunpckhqdq	xmm3,xmm0,xmm0
-	vpxor	xmm3,xmm3,xmm0
-	vpclmulqdq	xmm1,xmm0,xmm2,0x11
-	vpclmulqdq	xmm0,xmm0,xmm2,0x00
-	vpclmulqdq	xmm3,xmm3,xmm6,0x00
-	vpxor	xmm4,xmm1,xmm0
-	vpxor	xmm3,xmm3,xmm4
+	vpxor	xmm3,xmm3,xmm0  ; 
+	vpclmulqdq	xmm1,xmm0,xmm2,0x11  ; ######
+	vpclmulqdq	xmm0,xmm0,xmm2,0x00  ; ######
+	vpclmulqdq	xmm3,xmm3,xmm6,0x00  ; ######
+	vpxor	xmm4,xmm1,xmm0  ; 
+	vpxor	xmm3,xmm3,xmm4  ; 
 
-	vpslldq	xmm4,xmm3,8
+	vpslldq	xmm4,xmm3,8  ; 
 	vpsrldq	xmm3,xmm3,8
-	vpxor	xmm0,xmm0,xmm4
+	vpxor	xmm0,xmm0,xmm4  ; 
 	vpxor	xmm1,xmm1,xmm3
-	vpsllq	xmm3,xmm0,57
+	vpsllq	xmm3,xmm0,57  ; 1st phase
 	vpsllq	xmm4,xmm0,62
-	vpxor	xmm4,xmm4,xmm3
+	vpxor	xmm4,xmm4,xmm3  ; 
 	vpsllq	xmm3,xmm0,63
-	vpxor	xmm4,xmm4,xmm3
-	vpslldq	xmm3,xmm4,8
+	vpxor	xmm4,xmm4,xmm3  ; 
+	vpslldq	xmm3,xmm4,8  ; 
 	vpsrldq	xmm4,xmm4,8
-	vpxor	xmm0,xmm0,xmm3
+	vpxor	xmm0,xmm0,xmm3  ; 
 	vpxor	xmm1,xmm1,xmm4
 
-	vpsrlq	xmm4,xmm0,1
+	vpsrlq	xmm4,xmm0,1  ; 2nd phase
 	vpxor	xmm1,xmm1,xmm0
-	vpxor	xmm0,xmm0,xmm4
+	vpxor	xmm0,xmm0,xmm4  ; 
 	vpsrlq	xmm4,xmm4,5
-	vpxor	xmm0,xmm0,xmm4
-	vpsrlq	xmm0,xmm0,1
-	vpxor	xmm0,xmm0,xmm1
+	vpxor	xmm0,xmm0,xmm4  ; 
+	vpsrlq	xmm0,xmm0,1  ; 
+	vpxor	xmm0,xmm0,xmm1  ; 
 $L$init_start_avx:
 	vmovdqa	xmm5,xmm0
 	vpunpckhqdq	xmm3,xmm0,xmm0
-	vpxor	xmm3,xmm3,xmm0
-	vpclmulqdq	xmm1,xmm0,xmm2,0x11
-	vpclmulqdq	xmm0,xmm0,xmm2,0x00
-	vpclmulqdq	xmm3,xmm3,xmm6,0x00
-	vpxor	xmm4,xmm1,xmm0
-	vpxor	xmm3,xmm3,xmm4
+	vpxor	xmm3,xmm3,xmm0  ; 
+	vpclmulqdq	xmm1,xmm0,xmm2,0x11  ; ######
+	vpclmulqdq	xmm0,xmm0,xmm2,0x00  ; ######
+	vpclmulqdq	xmm3,xmm3,xmm6,0x00  ; ######
+	vpxor	xmm4,xmm1,xmm0  ; 
+	vpxor	xmm3,xmm3,xmm4  ; 
 
-	vpslldq	xmm4,xmm3,8
+	vpslldq	xmm4,xmm3,8  ; 
 	vpsrldq	xmm3,xmm3,8
-	vpxor	xmm0,xmm0,xmm4
+	vpxor	xmm0,xmm0,xmm4  ; 
 	vpxor	xmm1,xmm1,xmm3
-	vpsllq	xmm3,xmm0,57
+	vpsllq	xmm3,xmm0,57  ; 1st phase
 	vpsllq	xmm4,xmm0,62
-	vpxor	xmm4,xmm4,xmm3
+	vpxor	xmm4,xmm4,xmm3  ; 
 	vpsllq	xmm3,xmm0,63
-	vpxor	xmm4,xmm4,xmm3
-	vpslldq	xmm3,xmm4,8
+	vpxor	xmm4,xmm4,xmm3  ; 
+	vpslldq	xmm3,xmm4,8  ; 
 	vpsrldq	xmm4,xmm4,8
-	vpxor	xmm0,xmm0,xmm3
+	vpxor	xmm0,xmm0,xmm3  ; 
 	vpxor	xmm1,xmm1,xmm4
 
-	vpsrlq	xmm4,xmm0,1
+	vpsrlq	xmm4,xmm0,1  ; 2nd phase
 	vpxor	xmm1,xmm1,xmm0
-	vpxor	xmm0,xmm0,xmm4
+	vpxor	xmm0,xmm0,xmm4  ; 
 	vpsrlq	xmm4,xmm4,5
-	vpxor	xmm0,xmm0,xmm4
-	vpsrlq	xmm0,xmm0,1
-	vpxor	xmm0,xmm0,xmm1
+	vpxor	xmm0,xmm0,xmm4  ; 
+	vpsrlq	xmm0,xmm0,1  ; 
+	vpxor	xmm0,xmm0,xmm1  ; 
 	vpshufd	xmm3,xmm5,78
 	vpshufd	xmm4,xmm0,78
-	vpxor	xmm3,xmm3,xmm5
-	vmovdqu	XMMWORD[rcx],xmm5
-	vpxor	xmm4,xmm4,xmm0
-	vmovdqu	XMMWORD[16+rcx],xmm0
+	vpxor	xmm3,xmm3,xmm5  ; Karatsuba pre-processing
+	vmovdqu	XMMWORD[rcx],xmm5  ; save H^1,3,5,7
+	vpxor	xmm4,xmm4,xmm0  ; Karatsuba pre-processing
+	vmovdqu	XMMWORD[16+rcx],xmm0  ; save H^2,4,6,8
 	lea	rcx,[48+rcx]
 	sub	r10,1
 	jnz	NEAR $L$init_loop_avx
 
-	vpalignr	xmm5,xmm3,xmm4,8
+	vpalignr	xmm5,xmm3,xmm4,8  ; last "salt" is flipped
 	vmovdqu	XMMWORD[(-16)+rcx],xmm5
 
 	vzeroupper
@@ -814,29 +814,29 @@ $L$SEH_prologue_gcm_ghash_avx_12:
 $L$SEH_endprologue_gcm_ghash_avx_13:
 	vzeroupper
 
-	vmovdqu	xmm10,XMMWORD[rcx]
+	vmovdqu	xmm10,XMMWORD[rcx]  ; load %xmm10
 	lea	r10,[$L$0x1c2_polynomial]
-	lea	rdx,[64+rdx]
+	lea	rdx,[64+rdx]  ; size optimization
 	vmovdqu	xmm13,XMMWORD[$L$bswap_mask]
 	vpshufb	xmm10,xmm10,xmm13
 	cmp	r9,0x80
 	jb	NEAR $L$short_avx
 	sub	r9,0x80
 
-	vmovdqu	xmm14,XMMWORD[112+r8]
-	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]
+	vmovdqu	xmm14,XMMWORD[112+r8]  ; I[7]
+	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]  ; %xmm6^1
 	vpshufb	xmm14,xmm14,xmm13
 	vmovdqu	xmm7,XMMWORD[((32-64))+rdx]
 
 	vpunpckhqdq	xmm9,xmm14,xmm14
-	vmovdqu	xmm15,XMMWORD[96+r8]
+	vmovdqu	xmm15,XMMWORD[96+r8]  ; I[6]
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpxor	xmm9,xmm9,xmm14
 	vpshufb	xmm15,xmm15,xmm13
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]  ; %xmm6^2
 	vpunpckhqdq	xmm8,xmm15,xmm15
-	vmovdqu	xmm14,XMMWORD[80+r8]
+	vmovdqu	xmm14,XMMWORD[80+r8]  ; I[5]
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
 	vpxor	xmm8,xmm8,xmm15
 
@@ -844,9 +844,9 @@ $L$SEH_endprologue_gcm_ghash_avx_13:
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpunpckhqdq	xmm9,xmm14,xmm14
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]  ; %xmm6^3
 	vpxor	xmm9,xmm9,xmm14
-	vmovdqu	xmm15,XMMWORD[64+r8]
+	vmovdqu	xmm15,XMMWORD[64+r8]  ; I[4]
 	vpclmulqdq	xmm5,xmm8,xmm7,0x10
 	vmovdqu	xmm7,XMMWORD[((80-64))+rdx]
 
@@ -856,56 +856,56 @@ $L$SEH_endprologue_gcm_ghash_avx_13:
 	vpxor	xmm4,xmm4,xmm1
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]  ; %xmm6^4
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
 	vpxor	xmm8,xmm8,xmm15
 
-	vmovdqu	xmm14,XMMWORD[48+r8]
+	vmovdqu	xmm14,XMMWORD[48+r8]  ; I[3]
 	vpxor	xmm0,xmm0,xmm3
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpxor	xmm1,xmm1,xmm4
 	vpshufb	xmm14,xmm14,xmm13
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]  ; %xmm6^5
 	vpxor	xmm2,xmm2,xmm5
 	vpunpckhqdq	xmm9,xmm14,xmm14
 	vpclmulqdq	xmm5,xmm8,xmm7,0x10
 	vmovdqu	xmm7,XMMWORD[((128-64))+rdx]
 	vpxor	xmm9,xmm9,xmm14
 
-	vmovdqu	xmm15,XMMWORD[32+r8]
+	vmovdqu	xmm15,XMMWORD[32+r8]  ; I[2]
 	vpxor	xmm3,xmm3,xmm0
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpxor	xmm4,xmm4,xmm1
 	vpshufb	xmm15,xmm15,xmm13
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]  ; %xmm6^6
 	vpxor	xmm5,xmm5,xmm2
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
 	vpxor	xmm8,xmm8,xmm15
 
-	vmovdqu	xmm14,XMMWORD[16+r8]
+	vmovdqu	xmm14,XMMWORD[16+r8]  ; I[1]
 	vpxor	xmm0,xmm0,xmm3
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpxor	xmm1,xmm1,xmm4
 	vpshufb	xmm14,xmm14,xmm13
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]  ; %xmm6^7
 	vpxor	xmm2,xmm2,xmm5
 	vpunpckhqdq	xmm9,xmm14,xmm14
 	vpclmulqdq	xmm5,xmm8,xmm7,0x10
 	vmovdqu	xmm7,XMMWORD[((176-64))+rdx]
 	vpxor	xmm9,xmm9,xmm14
 
-	vmovdqu	xmm15,XMMWORD[r8]
+	vmovdqu	xmm15,XMMWORD[r8]  ; I[0]
 	vpxor	xmm3,xmm3,xmm0
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpxor	xmm4,xmm4,xmm1
 	vpshufb	xmm15,xmm15,xmm13
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((160-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((160-64))+rdx]  ; %xmm6^8
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm9,xmm7,0x10
 
@@ -913,41 +913,41 @@ $L$SEH_endprologue_gcm_ghash_avx_13:
 	cmp	r9,0x80
 	jb	NEAR $L$tail_avx
 
-	vpxor	xmm15,xmm15,xmm10
+	vpxor	xmm15,xmm15,xmm10  ; accumulate %xmm10
 	sub	r9,0x80
 	jmp	NEAR $L$oop8x_avx
 
 ALIGN	32
 $L$oop8x_avx:
 	vpunpckhqdq	xmm8,xmm15,xmm15
-	vmovdqu	xmm14,XMMWORD[112+r8]
+	vmovdqu	xmm14,XMMWORD[112+r8]  ; I[7]
 	vpxor	xmm3,xmm3,xmm0
 	vpxor	xmm8,xmm8,xmm15
 	vpclmulqdq	xmm10,xmm15,xmm6,0x00
 	vpshufb	xmm14,xmm14,xmm13
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm11,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]  ; %xmm6^1
 	vpunpckhqdq	xmm9,xmm14,xmm14
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm12,xmm8,xmm7,0x00
 	vmovdqu	xmm7,XMMWORD[((32-64))+rdx]
 	vpxor	xmm9,xmm9,xmm14
 
-	vmovdqu	xmm15,XMMWORD[96+r8]
+	vmovdqu	xmm15,XMMWORD[96+r8]  ; I[6]
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
-	vpxor	xmm10,xmm10,xmm3
+	vpxor	xmm10,xmm10,xmm3  ; collect result
 	vpshufb	xmm15,xmm15,xmm13
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
 	vxorps	xmm11,xmm11,xmm4
-	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]  ; %xmm6^2
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
 	vpxor	xmm12,xmm12,xmm5
 	vxorps	xmm8,xmm8,xmm15
 
-	vmovdqu	xmm14,XMMWORD[80+r8]
-	vpxor	xmm12,xmm12,xmm10
+	vmovdqu	xmm14,XMMWORD[80+r8]  ; I[5]
+	vpxor	xmm12,xmm12,xmm10  ; aggregated Karatsuba post-processing
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpxor	xmm12,xmm12,xmm11
 	vpslldq	xmm9,xmm12,8
@@ -955,7 +955,7 @@ $L$oop8x_avx:
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
 	vpsrldq	xmm12,xmm12,8
 	vpxor	xmm10,xmm10,xmm9
-	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]  ; %xmm6^3
 	vpshufb	xmm14,xmm14,xmm13
 	vxorps	xmm11,xmm11,xmm12
 	vpxor	xmm4,xmm4,xmm1
@@ -965,26 +965,26 @@ $L$oop8x_avx:
 	vpxor	xmm9,xmm9,xmm14
 	vpxor	xmm5,xmm5,xmm2
 
-	vmovdqu	xmm15,XMMWORD[64+r8]
-	vpalignr	xmm12,xmm10,xmm10,8
+	vmovdqu	xmm15,XMMWORD[64+r8]  ; I[4]
+	vpalignr	xmm12,xmm10,xmm10,8  ; 1st phase
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpshufb	xmm15,xmm15,xmm13
 	vpxor	xmm0,xmm0,xmm3
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]  ; %xmm6^4
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpxor	xmm1,xmm1,xmm4
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
 	vxorps	xmm8,xmm8,xmm15
 	vpxor	xmm2,xmm2,xmm5
 
-	vmovdqu	xmm14,XMMWORD[48+r8]
+	vmovdqu	xmm14,XMMWORD[48+r8]  ; I[3]
 	vpclmulqdq	xmm10,xmm10,XMMWORD[r10],0x10
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpshufb	xmm14,xmm14,xmm13
 	vpxor	xmm3,xmm3,xmm0
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]  ; %xmm6^5
 	vpunpckhqdq	xmm9,xmm14,xmm14
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm5,xmm8,xmm7,0x10
@@ -992,12 +992,12 @@ $L$oop8x_avx:
 	vpxor	xmm9,xmm9,xmm14
 	vpxor	xmm5,xmm5,xmm2
 
-	vmovdqu	xmm15,XMMWORD[32+r8]
+	vmovdqu	xmm15,XMMWORD[32+r8]  ; I[2]
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpshufb	xmm15,xmm15,xmm13
 	vpxor	xmm0,xmm0,xmm3
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]  ; %xmm6^6
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpxor	xmm1,xmm1,xmm4
 	vpclmulqdq	xmm2,xmm9,xmm7,0x00
@@ -1005,13 +1005,13 @@ $L$oop8x_avx:
 	vpxor	xmm2,xmm2,xmm5
 	vxorps	xmm10,xmm10,xmm12
 
-	vmovdqu	xmm14,XMMWORD[16+r8]
-	vpalignr	xmm12,xmm10,xmm10,8
+	vmovdqu	xmm14,XMMWORD[16+r8]  ; I[1]
+	vpalignr	xmm12,xmm10,xmm10,8  ; 2nd phase
 	vpclmulqdq	xmm3,xmm15,xmm6,0x00
 	vpshufb	xmm14,xmm14,xmm13
 	vpxor	xmm3,xmm3,xmm0
 	vpclmulqdq	xmm4,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]  ; %xmm6^7
 	vpclmulqdq	xmm10,xmm10,XMMWORD[r10],0x10
 	vxorps	xmm12,xmm12,xmm11
 	vpunpckhqdq	xmm9,xmm14,xmm14
@@ -1021,14 +1021,14 @@ $L$oop8x_avx:
 	vpxor	xmm9,xmm9,xmm14
 	vpxor	xmm5,xmm5,xmm2
 
-	vmovdqu	xmm15,XMMWORD[r8]
+	vmovdqu	xmm15,XMMWORD[r8]  ; I[0]
 	vpclmulqdq	xmm0,xmm14,xmm6,0x00
 	vpshufb	xmm15,xmm15,xmm13
 	vpclmulqdq	xmm1,xmm14,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((160-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((160-64))+rdx]  ; %xmm6^8
 	vpxor	xmm15,xmm15,xmm12
 	vpclmulqdq	xmm2,xmm9,xmm7,0x10
-	vpxor	xmm15,xmm15,xmm10
+	vpxor	xmm15,xmm15,xmm10  ; accumulate %xmm10
 
 	lea	r8,[128+r8]
 	sub	r9,0x80
@@ -1039,15 +1039,15 @@ $L$oop8x_avx:
 
 ALIGN	32
 $L$short_avx:
-	vmovdqu	xmm14,XMMWORD[((-16))+r9*1+r8]
+	vmovdqu	xmm14,XMMWORD[((-16))+r9*1+r8]  ; very last word
 	lea	r8,[r9*1+r8]
-	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((0-64))+rdx]  ; %xmm6^1
 	vmovdqu	xmm7,XMMWORD[((32-64))+rdx]
 	vpshufb	xmm15,xmm14,xmm13
 
-	vmovdqa	xmm3,xmm0
-	vmovdqa	xmm4,xmm1
-	vmovdqa	xmm5,xmm2
+	vmovdqa	xmm3,xmm0  ; subtle way to zero %xmm3,
+	vmovdqa	xmm4,xmm1  ; %xmm4 and
+	vmovdqa	xmm5,xmm2  ; %xmm5
 	sub	r9,0x10
 	jz	NEAR $L$tail_avx
 
@@ -1058,7 +1058,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-32))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((16-64))+rdx]  ; %xmm6^2
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1073,7 +1073,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-48))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((48-64))+rdx]  ; %xmm6^3
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1088,7 +1088,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-64))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((64-64))+rdx]  ; %xmm6^4
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1103,7 +1103,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-80))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((96-64))+rdx]  ; %xmm6^5
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1118,7 +1118,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-96))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((112-64))+rdx]  ; %xmm6^6
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1133,7 +1133,7 @@ $L$short_avx:
 	vmovdqu	xmm14,XMMWORD[((-112))+r8]
 	vpxor	xmm4,xmm4,xmm1
 	vpclmulqdq	xmm1,xmm15,xmm6,0x11
-	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]
+	vmovdqu	xmm6,XMMWORD[((144-64))+rdx]  ; %xmm6^7
 	vpshufb	xmm15,xmm14,xmm13
 	vpxor	xmm5,xmm5,xmm2
 	vpclmulqdq	xmm2,xmm8,xmm7,0x00
@@ -1143,7 +1143,7 @@ $L$short_avx:
 
 ALIGN	32
 $L$tail_avx:
-	vpxor	xmm15,xmm15,xmm10
+	vpxor	xmm15,xmm15,xmm10  ; accumulate %xmm10
 $L$tail_no_xor_avx:
 	vpunpckhqdq	xmm8,xmm15,xmm15
 	vpxor	xmm3,xmm3,xmm0
@@ -1160,18 +1160,18 @@ $L$tail_no_xor_avx:
 	vpxor	xmm11,xmm4,xmm1
 	vpxor	xmm5,xmm5,xmm2
 
-	vpxor	xmm5,xmm5,xmm10
+	vpxor	xmm5,xmm5,xmm10  ; aggregated Karatsuba post-processing
 	vpxor	xmm5,xmm5,xmm11
 	vpslldq	xmm9,xmm5,8
 	vpsrldq	xmm5,xmm5,8
 	vpxor	xmm10,xmm10,xmm9
 	vpxor	xmm11,xmm11,xmm5
 
-	vpclmulqdq	xmm9,xmm10,xmm12,0x10
+	vpclmulqdq	xmm9,xmm10,xmm12,0x10  ; 1st phase
 	vpalignr	xmm10,xmm10,xmm10,8
 	vpxor	xmm10,xmm10,xmm9
 
-	vpclmulqdq	xmm9,xmm10,xmm12,0x10
+	vpclmulqdq	xmm9,xmm10,xmm12,0x10  ; 2nd phase
 	vpalignr	xmm10,xmm10,xmm10,8
 	vpxor	xmm10,xmm10,xmm11
 	vpxor	xmm10,xmm10,xmm9
@@ -1198,7 +1198,9 @@ $L$tail_no_xor_avx:
 $L$SEH_end_gcm_ghash_avx_14:
 
 section	.rdata rdata align=8
+
 ALIGN	64
+ghash_constants:
 $L$bswap_mask:
 	DB	15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
 $L$0x1c2_polynomial:
@@ -1236,7 +1238,7 @@ ALIGN	4
 section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_gcm_init_clmul_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_gcm_init_clmul_4-$L$SEH_begin_gcm_init_clmul_1
 	DB	3
 	DB	0
@@ -1248,7 +1250,7 @@ $L$SEH_info_gcm_init_clmul_0:
 
 	DW	0
 $L$SEH_info_gcm_ghash_clmul_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_gcm_ghash_clmul_13-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	22
 	DB	0
@@ -1287,7 +1289,7 @@ $L$SEH_info_gcm_ghash_clmul_0:
 	DW	21
 
 $L$SEH_info_gcm_init_avx_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_gcm_init_avx_4-$L$SEH_begin_gcm_init_avx_1
 	DB	3
 	DB	0
@@ -1299,7 +1301,7 @@ $L$SEH_info_gcm_init_avx_0:
 
 	DW	0
 $L$SEH_info_gcm_ghash_avx_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_gcm_ghash_avx_13-$L$SEH_begin_gcm_ghash_avx_1
 	DB	22
 	DB	0

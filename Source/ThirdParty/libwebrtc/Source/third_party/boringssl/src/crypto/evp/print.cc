@@ -72,7 +72,7 @@ static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
     return 0;
   }
 
-  // Print |num| in hex, adding a leading zero, as in ASN.1, if the high bit
+  // Print `num` in hex, adding a leading zero, as in ASN.1, if the high bit
   // is set.
   //
   // TODO(davidben): Do we need to do this? We already print "(Negative)" above

@@ -7,7 +7,9 @@
 .text	
 
 .section	__DATA,__const
+
 .p2align	6
+chacha_constants:
 L$zero:
 .long	0,0,0,0
 L$one:
@@ -60,25 +62,25 @@ _CET_ENDBR
 
 L$ctr32_body:
 
-
+// movdqa	.Lsigma(%rip),%xmm0
 	movdqu	(%rcx),%xmm1
 	movdqu	16(%rcx),%xmm2
 	movdqu	(%r8),%xmm3
 	movdqa	L$one(%rip),%xmm4
 
-
-	movdqa	%xmm1,16(%rsp)
-	movdqa	%xmm2,32(%rsp)
-	movdqa	%xmm3,48(%rsp)
-	movq	%rdx,%rbp
+// movdqa	%xmm0,4*0(%rsp)		# key[0]
+	movdqa	%xmm1,16(%rsp)  // key[1]
+	movdqa	%xmm2,32(%rsp)  // key[2]
+	movdqa	%xmm3,48(%rsp)  // key[3]
+	movq	%rdx,%rbp  // reassign %rdx
 	jmp	L$oop_outer
 
 .p2align	5
 L$oop_outer:
-	movl	$0x61707865,%eax
-	movl	$0x3320646e,%ebx
-	movl	$0x79622d32,%ecx
-	movl	$0x6b206574,%edx
+	movl	$0x61707865,%eax  // 'expa'
+	movl	$0x3320646e,%ebx  // 'nd 3'
+	movl	$0x79622d32,%ecx  // '2-by'
+	movl	$0x6b206574,%edx  // 'te k'
 	movl	16(%rsp),%r8d
 	movl	20(%rsp),%r9d
 	movl	24(%rsp),%r10d
@@ -88,13 +90,13 @@ L$oop_outer:
 	movl	56(%rsp),%r14d
 	movl	60(%rsp),%r15d
 
-	movq	%rbp,64+0(%rsp)
+	movq	%rbp,64+0(%rsp)  // save len
 	movl	$10,%ebp
-	movq	%rsi,64+8(%rsp)
-	movq	%xmm2,%rsi
-	movq	%rdi,64+16(%rsp)
+	movq	%rsi,64+8(%rsp)  // save inp
+	movq	%xmm2,%rsi  // "%nox"
+	movq	%rdi,64+16(%rsp)  // save out
 	movq	%rsi,%rdi
-	shrq	$32,%rdi
+	shrq	$32,%rdi  // "%nox"
 	jmp	L$oop
 
 .p2align	5
@@ -205,18 +207,18 @@ L$oop:
 	roll	$7,%r8d
 	decl	%ebp
 	jnz	L$oop
-	movl	%edi,36(%rsp)
+	movl	%edi,36(%rsp)  // modulo-scheduled
 	movl	%esi,32(%rsp)
-	movq	64(%rsp),%rbp
+	movq	64(%rsp),%rbp  // load len
 	movdqa	%xmm2,%xmm1
-	movq	64+8(%rsp),%rsi
-	paddd	%xmm4,%xmm3
-	movq	64+16(%rsp),%rdi
+	movq	64+8(%rsp),%rsi  // load inp
+	paddd	%xmm4,%xmm3  // increment counter
+	movq	64+16(%rsp),%rdi  // load out
 
-	addl	$0x61707865,%eax
-	addl	$0x3320646e,%ebx
-	addl	$0x79622d32,%ecx
-	addl	$0x6b206574,%edx
+	addl	$0x61707865,%eax  // 'expa'
+	addl	$0x3320646e,%ebx  // 'nd 3'
+	addl	$0x79622d32,%ecx  // '2-by'
+	addl	$0x6b206574,%edx  // 'te k'
 	addl	16(%rsp),%r8d
 	addl	20(%rsp),%r9d
 	addl	24(%rsp),%r10d
@@ -230,7 +232,7 @@ L$oop:
 	cmpq	$64,%rbp
 	jb	L$tail
 
-	xorl	0(%rsi),%eax
+	xorl	0(%rsi),%eax  // xor with input
 	xorl	4(%rsi),%ebx
 	xorl	8(%rsi),%ecx
 	xorl	12(%rsi),%edx
@@ -243,13 +245,13 @@ L$oop:
 	xorl	52(%rsi),%r13d
 	xorl	56(%rsi),%r14d
 	xorl	60(%rsi),%r15d
-	leaq	64(%rsi),%rsi
+	leaq	64(%rsi),%rsi  // inp+=64
 	pxor	%xmm1,%xmm0
 
 	movdqa	%xmm2,32(%rsp)
 	movd	%xmm3,48(%rsp)
 
-	movl	%eax,0(%rdi)
+	movl	%eax,0(%rdi)  // write output
 	movl	%ebx,4(%rdi)
 	movl	%ecx,8(%rdi)
 	movl	%edx,12(%rdi)
@@ -262,7 +264,7 @@ L$oop:
 	movl	%r13d,52(%rdi)
 	movl	%r14d,56(%rdi)
 	movl	%r15d,60(%rdi)
-	leaq	64(%rdi),%rdi
+	leaq	64(%rdi),%rdi  // out+=64
 
 	subq	$64,%rbp
 	jnz	L$oop_outer
@@ -319,10 +321,11 @@ L$no_data:
 .private_extern _ChaCha20_ctr32_ssse3
 
 .p2align	5
+.alt_entry _ChaCha20_ctr32_ssse3
 _ChaCha20_ctr32_ssse3:
 
 _CET_ENDBR
-	movq	%rsp,%r9
+	movq	%rsp,%r9  // frame pointer
 
 	subq	$64+8,%rsp
 	movdqa	L$sigma(%rip),%xmm0
@@ -336,7 +339,7 @@ _CET_ENDBR
 	movdqa	%xmm1,16(%rsp)
 	movdqa	%xmm2,32(%rsp)
 	movdqa	%xmm3,48(%rsp)
-	movq	$10,%r8
+	movq	$10,%r8  // reuse %r8
 	jmp	L$oop_ssse3
 
 .p2align	5
@@ -407,19 +410,19 @@ L$oop_ssse3:
 
 	movdqu	0(%rsi),%xmm4
 	movdqu	16(%rsi),%xmm5
-	pxor	%xmm4,%xmm0
+	pxor	%xmm4,%xmm0  // xor with input
 	movdqu	32(%rsi),%xmm4
 	pxor	%xmm5,%xmm1
 	movdqu	48(%rsi),%xmm5
-	leaq	64(%rsi),%rsi
+	leaq	64(%rsi),%rsi  // inp+=64
 	pxor	%xmm4,%xmm2
 	pxor	%xmm5,%xmm3
 
-	movdqu	%xmm0,0(%rdi)
+	movdqu	%xmm0,0(%rdi)  // write output
 	movdqu	%xmm1,16(%rdi)
 	movdqu	%xmm2,32(%rdi)
 	movdqu	%xmm3,48(%rdi)
-	leaq	64(%rdi),%rdi
+	leaq	64(%rdi),%rdi  // out+=64
 
 	subq	$64,%rdx
 	jnz	L$oop_outer_ssse3
@@ -454,23 +457,24 @@ L$ssse3_epilogue:
 .private_extern _ChaCha20_ctr32_ssse3_4x
 
 .p2align	5
+.alt_entry _ChaCha20_ctr32_ssse3_4x
 _ChaCha20_ctr32_ssse3_4x:
 
 _CET_ENDBR
-	movq	%rsp,%r9
+	movq	%rsp,%r9  // frame pointer
 
 	subq	$0x140+8,%rsp
-	movdqa	L$sigma(%rip),%xmm11
-	movdqu	(%rcx),%xmm15
-	movdqu	16(%rcx),%xmm7
-	movdqu	(%r8),%xmm3
-	leaq	256(%rsp),%rcx
+	movdqa	L$sigma(%rip),%xmm11  // key[0]
+	movdqu	(%rcx),%xmm15  // key[1]
+	movdqu	16(%rcx),%xmm7  // key[2]
+	movdqu	(%r8),%xmm3  // key[3]
+	leaq	256(%rsp),%rcx  // size optimization
 	leaq	L$rot16(%rip),%r10
 	leaq	L$rot24(%rip),%r11
 
-	pshufd	$0x00,%xmm11,%xmm8
+	pshufd	$0x00,%xmm11,%xmm8  // smash key by lanes...
 	pshufd	$0x55,%xmm11,%xmm9
-	movdqa	%xmm8,64(%rsp)
+	movdqa	%xmm8,64(%rsp)  // ... and offload
 	pshufd	$0xaa,%xmm11,%xmm10
 	movdqa	%xmm9,80(%rsp)
 	pshufd	$0xff,%xmm11,%xmm11
@@ -486,18 +490,18 @@ _CET_ENDBR
 	movdqa	%xmm14,160-256(%rcx)
 	movdqa	%xmm15,176-256(%rcx)
 
-	pshufd	$0x00,%xmm7,%xmm4
-	pshufd	$0x55,%xmm7,%xmm5
+	pshufd	$0x00,%xmm7,%xmm4  // ""
+	pshufd	$0x55,%xmm7,%xmm5  // ""
 	movdqa	%xmm4,192-256(%rcx)
-	pshufd	$0xaa,%xmm7,%xmm6
+	pshufd	$0xaa,%xmm7,%xmm6  // ""
 	movdqa	%xmm5,208-256(%rcx)
-	pshufd	$0xff,%xmm7,%xmm7
+	pshufd	$0xff,%xmm7,%xmm7  // ""
 	movdqa	%xmm6,224-256(%rcx)
 	movdqa	%xmm7,240-256(%rcx)
 
 	pshufd	$0x00,%xmm3,%xmm0
 	pshufd	$0x55,%xmm3,%xmm1
-	paddd	L$inc(%rip),%xmm0
+	paddd	L$inc(%rip),%xmm0  // don't save counters yet
 	pshufd	$0xaa,%xmm3,%xmm2
 	movdqa	%xmm1,272-256(%rcx)
 	pshufd	$0xff,%xmm3,%xmm3
@@ -508,7 +512,7 @@ _CET_ENDBR
 
 .p2align	5
 L$oop_outer4x:
-	movdqa	64(%rsp),%xmm8
+	movdqa	64(%rsp),%xmm8  // re-load smashed key
 	movdqa	80(%rsp),%xmm9
 	movdqa	96(%rsp),%xmm10
 	movdqa	112(%rsp),%xmm11
@@ -516,22 +520,22 @@ L$oop_outer4x:
 	movdqa	144-256(%rcx),%xmm13
 	movdqa	160-256(%rcx),%xmm14
 	movdqa	176-256(%rcx),%xmm15
-	movdqa	192-256(%rcx),%xmm4
-	movdqa	208-256(%rcx),%xmm5
-	movdqa	224-256(%rcx),%xmm6
-	movdqa	240-256(%rcx),%xmm7
+	movdqa	192-256(%rcx),%xmm4  // ""
+	movdqa	208-256(%rcx),%xmm5  // ""
+	movdqa	224-256(%rcx),%xmm6  // ""
+	movdqa	240-256(%rcx),%xmm7  // ""
 	movdqa	256-256(%rcx),%xmm0
 	movdqa	272-256(%rcx),%xmm1
 	movdqa	288-256(%rcx),%xmm2
 	movdqa	304-256(%rcx),%xmm3
-	paddd	L$four(%rip),%xmm0
+	paddd	L$four(%rip),%xmm0  // next SIMD counters
 
 L$oop_enter4x:
-	movdqa	%xmm6,32(%rsp)
-	movdqa	%xmm7,48(%rsp)
-	movdqa	(%r10),%xmm7
+	movdqa	%xmm6,32(%rsp)  // SIMD equivalent of "%nox"
+	movdqa	%xmm7,48(%rsp)  // SIMD equivalent of "%nox"
+	movdqa	(%r10),%xmm7  // .Lrot16(%rip)
 	movl	$10,%eax
-	movdqa	%xmm0,256-256(%rcx)
+	movdqa	%xmm0,256-256(%rcx)  // save SIMD counters
 	jmp	L$oop4x
 
 .p2align	5
@@ -699,32 +703,32 @@ L$oop4x:
 	decl	%eax
 	jnz	L$oop4x
 
-	paddd	64(%rsp),%xmm8
+	paddd	64(%rsp),%xmm8  // accumulate key material
 	paddd	80(%rsp),%xmm9
 	paddd	96(%rsp),%xmm10
 	paddd	112(%rsp),%xmm11
 
-	movdqa	%xmm8,%xmm6
+	movdqa	%xmm8,%xmm6  // "de-interlace" data
 	punpckldq	%xmm9,%xmm8
 	movdqa	%xmm10,%xmm7
 	punpckldq	%xmm11,%xmm10
 	punpckhdq	%xmm9,%xmm6
 	punpckhdq	%xmm11,%xmm7
 	movdqa	%xmm8,%xmm9
-	punpcklqdq	%xmm10,%xmm8
+	punpcklqdq	%xmm10,%xmm8  // "a0"
 	movdqa	%xmm6,%xmm11
-	punpcklqdq	%xmm7,%xmm6
-	punpckhqdq	%xmm10,%xmm9
-	punpckhqdq	%xmm7,%xmm11
+	punpcklqdq	%xmm7,%xmm6  // "a2"
+	punpckhqdq	%xmm10,%xmm9  // "a1"
+	punpckhqdq	%xmm7,%xmm11  // "a3"
 	paddd	128-256(%rcx),%xmm12
 	paddd	144-256(%rcx),%xmm13
 	paddd	160-256(%rcx),%xmm14
 	paddd	176-256(%rcx),%xmm15
 
-	movdqa	%xmm8,0(%rsp)
+	movdqa	%xmm8,0(%rsp)  // offload
 	movdqa	%xmm9,16(%rsp)
-	movdqa	32(%rsp),%xmm8
-	movdqa	48(%rsp),%xmm9
+	movdqa	32(%rsp),%xmm8  // "xc2"
+	movdqa	48(%rsp),%xmm9  // "xc3"
 
 	movdqa	%xmm12,%xmm10
 	punpckldq	%xmm13,%xmm12
@@ -733,17 +737,17 @@ L$oop4x:
 	punpckhdq	%xmm13,%xmm10
 	punpckhdq	%xmm15,%xmm7
 	movdqa	%xmm12,%xmm13
-	punpcklqdq	%xmm14,%xmm12
+	punpcklqdq	%xmm14,%xmm12  // "b0"
 	movdqa	%xmm10,%xmm15
-	punpcklqdq	%xmm7,%xmm10
-	punpckhqdq	%xmm14,%xmm13
-	punpckhqdq	%xmm7,%xmm15
+	punpcklqdq	%xmm7,%xmm10  // "b2"
+	punpckhqdq	%xmm14,%xmm13  // "b1"
+	punpckhqdq	%xmm7,%xmm15  // "b3"
 	paddd	192-256(%rcx),%xmm4
 	paddd	208-256(%rcx),%xmm5
 	paddd	224-256(%rcx),%xmm8
 	paddd	240-256(%rcx),%xmm9
 
-	movdqa	%xmm6,32(%rsp)
+	movdqa	%xmm6,32(%rsp)  // keep offloading
 	movdqa	%xmm11,48(%rsp)
 
 	movdqa	%xmm4,%xmm14
@@ -753,11 +757,11 @@ L$oop4x:
 	punpckhdq	%xmm5,%xmm14
 	punpckhdq	%xmm9,%xmm7
 	movdqa	%xmm4,%xmm5
-	punpcklqdq	%xmm8,%xmm4
+	punpcklqdq	%xmm8,%xmm4  // "c0"
 	movdqa	%xmm14,%xmm9
-	punpcklqdq	%xmm7,%xmm14
-	punpckhqdq	%xmm8,%xmm5
-	punpckhqdq	%xmm7,%xmm9
+	punpcklqdq	%xmm7,%xmm14  // "c2"
+	punpckhqdq	%xmm8,%xmm5  // "c1"
+	punpckhqdq	%xmm7,%xmm9  // "c3"
 	paddd	256-256(%rcx),%xmm0
 	paddd	272-256(%rcx),%xmm1
 	paddd	288-256(%rcx),%xmm2
@@ -770,19 +774,19 @@ L$oop4x:
 	punpckhdq	%xmm1,%xmm8
 	punpckhdq	%xmm3,%xmm7
 	movdqa	%xmm0,%xmm1
-	punpcklqdq	%xmm2,%xmm0
+	punpcklqdq	%xmm2,%xmm0  // "d0"
 	movdqa	%xmm8,%xmm3
-	punpcklqdq	%xmm7,%xmm8
-	punpckhqdq	%xmm2,%xmm1
-	punpckhqdq	%xmm7,%xmm3
+	punpcklqdq	%xmm7,%xmm8  // "d2"
+	punpckhqdq	%xmm2,%xmm1  // "d1"
+	punpckhqdq	%xmm7,%xmm3  // "d3"
 	cmpq	$256,%rdx
 	jb	L$tail4x
 
-	movdqu	0(%rsi),%xmm6
+	movdqu	0(%rsi),%xmm6  // xor with input
 	movdqu	16(%rsi),%xmm11
 	movdqu	32(%rsi),%xmm2
 	movdqu	48(%rsi),%xmm7
-	pxor	0(%rsp),%xmm6
+	pxor	0(%rsp),%xmm6  // is offloaded, remember?
 	pxor	%xmm12,%xmm11
 	pxor	%xmm4,%xmm2
 	pxor	%xmm0,%xmm7
@@ -795,7 +799,7 @@ L$oop4x:
 	movdqu	96(%rsi),%xmm2
 	movdqu	%xmm7,48(%rdi)
 	movdqu	112(%rsi),%xmm7
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	pxor	16(%rsp),%xmm6
 	pxor	%xmm13,%xmm11
 	pxor	%xmm5,%xmm2
@@ -808,7 +812,7 @@ L$oop4x:
 	movdqu	%xmm2,96(%rdi)
 	movdqu	32(%rsi),%xmm2
 	movdqu	%xmm7,112(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 	movdqu	48(%rsi),%xmm7
 	pxor	32(%rsp),%xmm6
 	pxor	%xmm10,%xmm11
@@ -823,7 +827,7 @@ L$oop4x:
 	movdqu	96(%rsi),%xmm2
 	movdqu	%xmm7,48(%rdi)
 	movdqu	112(%rsi),%xmm7
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // inp+=64*4
 	pxor	48(%rsp),%xmm6
 	pxor	%xmm15,%xmm11
 	pxor	%xmm9,%xmm2
@@ -832,7 +836,7 @@ L$oop4x:
 	movdqu	%xmm11,80(%rdi)
 	movdqu	%xmm2,96(%rdi)
 	movdqu	%xmm7,112(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // out+=64*4
 
 	subq	$256,%rdx
 	jnz	L$oop_outer4x
@@ -847,9 +851,9 @@ L$tail4x:
 	cmpq	$64,%rdx
 	jae	L$64_or_more4x
 
-
+// movdqa		0x00(%rsp),%xmm6		#  is offloaded, remember?
 	xorq	%r10,%r10
-
+// movdqa		%xmm6,0x00(%rsp)
 	movdqa	%xmm12,16(%rsp)
 	movdqa	%xmm4,32(%rsp)
 	movdqa	%xmm0,48(%rsp)
@@ -857,11 +861,11 @@ L$tail4x:
 
 .p2align	5
 L$64_or_more4x:
-	movdqu	0(%rsi),%xmm6
+	movdqu	0(%rsi),%xmm6  // xor with input
 	movdqu	16(%rsi),%xmm11
 	movdqu	32(%rsi),%xmm2
 	movdqu	48(%rsi),%xmm7
-	pxor	0(%rsp),%xmm6
+	pxor	0(%rsp),%xmm6  // is offloaded, remember?
 	pxor	%xmm12,%xmm11
 	pxor	%xmm4,%xmm2
 	pxor	%xmm0,%xmm7
@@ -871,24 +875,24 @@ L$64_or_more4x:
 	movdqu	%xmm7,48(%rdi)
 	je	L$done4x
 
-	movdqa	16(%rsp),%xmm6
-	leaq	64(%rsi),%rsi
+	movdqa	16(%rsp),%xmm6  // is offloaded, remember?
+	leaq	64(%rsi),%rsi  // inp+=64*1
 	xorq	%r10,%r10
 	movdqa	%xmm6,0(%rsp)
 	movdqa	%xmm13,16(%rsp)
-	leaq	64(%rdi),%rdi
+	leaq	64(%rdi),%rdi  // out+=64*1
 	movdqa	%xmm5,32(%rsp)
-	subq	$64,%rdx
+	subq	$64,%rdx  // len-=64*1
 	movdqa	%xmm1,48(%rsp)
 	jmp	L$oop_tail4x
 
 .p2align	5
 L$128_or_more4x:
-	movdqu	0(%rsi),%xmm6
+	movdqu	0(%rsi),%xmm6  // xor with input
 	movdqu	16(%rsi),%xmm11
 	movdqu	32(%rsi),%xmm2
 	movdqu	48(%rsi),%xmm7
-	pxor	0(%rsp),%xmm6
+	pxor	0(%rsp),%xmm6  // is offloaded, remember?
 	pxor	%xmm12,%xmm11
 	pxor	%xmm4,%xmm2
 	pxor	%xmm0,%xmm7
@@ -911,24 +915,24 @@ L$128_or_more4x:
 	movdqu	%xmm7,112(%rdi)
 	je	L$done4x
 
-	movdqa	32(%rsp),%xmm6
-	leaq	128(%rsi),%rsi
+	movdqa	32(%rsp),%xmm6  // is offloaded, remember?
+	leaq	128(%rsi),%rsi  // inp+=64*2
 	xorq	%r10,%r10
 	movdqa	%xmm6,0(%rsp)
 	movdqa	%xmm10,16(%rsp)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // out+=64*2
 	movdqa	%xmm14,32(%rsp)
-	subq	$128,%rdx
+	subq	$128,%rdx  // len-=64*2
 	movdqa	%xmm8,48(%rsp)
 	jmp	L$oop_tail4x
 
 .p2align	5
 L$192_or_more4x:
-	movdqu	0(%rsi),%xmm6
+	movdqu	0(%rsi),%xmm6  // xor with input
 	movdqu	16(%rsi),%xmm11
 	movdqu	32(%rsi),%xmm2
 	movdqu	48(%rsi),%xmm7
-	pxor	0(%rsp),%xmm6
+	pxor	0(%rsp),%xmm6  // is offloaded, remember?
 	pxor	%xmm12,%xmm11
 	pxor	%xmm4,%xmm2
 	pxor	%xmm0,%xmm7
@@ -941,7 +945,7 @@ L$192_or_more4x:
 	movdqu	96(%rsi),%xmm2
 	movdqu	%xmm7,48(%rdi)
 	movdqu	112(%rsi),%xmm7
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	pxor	16(%rsp),%xmm6
 	pxor	%xmm13,%xmm11
 	pxor	%xmm5,%xmm2
@@ -954,7 +958,7 @@ L$192_or_more4x:
 	movdqu	%xmm2,96(%rdi)
 	movdqu	32(%rsi),%xmm2
 	movdqu	%xmm7,112(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 	movdqu	48(%rsi),%xmm7
 	pxor	32(%rsp),%xmm6
 	pxor	%xmm10,%xmm11
@@ -966,14 +970,14 @@ L$192_or_more4x:
 	movdqu	%xmm7,48(%rdi)
 	je	L$done4x
 
-	movdqa	48(%rsp),%xmm6
-	leaq	64(%rsi),%rsi
+	movdqa	48(%rsp),%xmm6  // is offloaded, remember?
+	leaq	64(%rsi),%rsi  // inp+=64*3
 	xorq	%r10,%r10
 	movdqa	%xmm6,0(%rsp)
 	movdqa	%xmm15,16(%rsp)
-	leaq	64(%rdi),%rdi
+	leaq	64(%rdi),%rdi  // out+=64*3
 	movdqa	%xmm9,32(%rsp)
-	subq	$192,%rdx
+	subq	$192,%rdx  // len-=64*3
 	movdqa	%xmm3,48(%rsp)
 
 L$oop_tail4x:
@@ -996,36 +1000,37 @@ L$4x_epilogue:
 .private_extern _ChaCha20_ctr32_avx2
 
 .p2align	5
+.alt_entry _ChaCha20_ctr32_avx2
 _ChaCha20_ctr32_avx2:
 
 _CET_ENDBR
-	movq	%rsp,%r9
+	movq	%rsp,%r9  // frame register
 
 	subq	$0x280+8,%rsp
 	andq	$-32,%rsp
 	vzeroupper
 
+// ############### stack layout
+// +0x00		SIMD equivalent of %r12d
+// ...
+// +0x80		constant copy of key[0-2] smashed by lanes
+// ...
+// +0x200	SIMD counters (with nonce smashed by lanes)
+// ...
+// +0x280
 
-
-
-
-
-
-
-
-
-	vbroadcasti128	L$sigma(%rip),%ymm11
-	vbroadcasti128	(%rcx),%ymm3
-	vbroadcasti128	16(%rcx),%ymm15
-	vbroadcasti128	(%r8),%ymm7
-	leaq	256(%rsp),%rcx
-	leaq	512(%rsp),%rax
+	vbroadcasti128	L$sigma(%rip),%ymm11  // key[0]
+	vbroadcasti128	(%rcx),%ymm3  // key[1]
+	vbroadcasti128	16(%rcx),%ymm15  // key[2]
+	vbroadcasti128	(%r8),%ymm7  // key[3]
+	leaq	256(%rsp),%rcx  // size optimization
+	leaq	512(%rsp),%rax  // size optimization
 	leaq	L$rot16(%rip),%r10
 	leaq	L$rot24(%rip),%r11
 
-	vpshufd	$0x00,%ymm11,%ymm8
+	vpshufd	$0x00,%ymm11,%ymm8  // smash key by lanes...
 	vpshufd	$0x55,%ymm11,%ymm9
-	vmovdqa	%ymm8,128-256(%rcx)
+	vmovdqa	%ymm8,128-256(%rcx)  // ... and offload
 	vpshufd	$0xaa,%ymm11,%ymm10
 	vmovdqa	%ymm9,160-256(%rcx)
 	vpshufd	$0xff,%ymm11,%ymm11
@@ -1041,18 +1046,18 @@ _CET_ENDBR
 	vmovdqa	%ymm2,320-256(%rcx)
 	vmovdqa	%ymm3,352-256(%rcx)
 
-	vpshufd	$0x00,%ymm15,%ymm12
-	vpshufd	$0x55,%ymm15,%ymm13
+	vpshufd	$0x00,%ymm15,%ymm12  // "xc0"
+	vpshufd	$0x55,%ymm15,%ymm13  // "xc1"
 	vmovdqa	%ymm12,384-512(%rax)
-	vpshufd	$0xaa,%ymm15,%ymm14
+	vpshufd	$0xaa,%ymm15,%ymm14  // "xc2"
 	vmovdqa	%ymm13,416-512(%rax)
-	vpshufd	$0xff,%ymm15,%ymm15
+	vpshufd	$0xff,%ymm15,%ymm15  // "xc3"
 	vmovdqa	%ymm14,448-512(%rax)
 	vmovdqa	%ymm15,480-512(%rax)
 
 	vpshufd	$0x00,%ymm7,%ymm4
 	vpshufd	$0x55,%ymm7,%ymm5
-	vpaddd	L$incy(%rip),%ymm4,%ymm4
+	vpaddd	L$incy(%rip),%ymm4,%ymm4  // don't save counters yet
 	vpshufd	$0xaa,%ymm7,%ymm6
 	vmovdqa	%ymm5,544-512(%rax)
 	vpshufd	$0xff,%ymm7,%ymm7
@@ -1063,7 +1068,7 @@ _CET_ENDBR
 
 .p2align	5
 L$oop_outer8x:
-	vmovdqa	128-256(%rcx),%ymm8
+	vmovdqa	128-256(%rcx),%ymm8  // re-load smashed key
 	vmovdqa	160-256(%rcx),%ymm9
 	vmovdqa	192-256(%rcx),%ymm10
 	vmovdqa	224-256(%rcx),%ymm11
@@ -1071,21 +1076,21 @@ L$oop_outer8x:
 	vmovdqa	288-256(%rcx),%ymm1
 	vmovdqa	320-256(%rcx),%ymm2
 	vmovdqa	352-256(%rcx),%ymm3
-	vmovdqa	384-512(%rax),%ymm12
-	vmovdqa	416-512(%rax),%ymm13
-	vmovdqa	448-512(%rax),%ymm14
-	vmovdqa	480-512(%rax),%ymm15
+	vmovdqa	384-512(%rax),%ymm12  // "xc0"
+	vmovdqa	416-512(%rax),%ymm13  // "xc1"
+	vmovdqa	448-512(%rax),%ymm14  // "xc2"
+	vmovdqa	480-512(%rax),%ymm15  // "xc3"
 	vmovdqa	512-512(%rax),%ymm4
 	vmovdqa	544-512(%rax),%ymm5
 	vmovdqa	576-512(%rax),%ymm6
 	vmovdqa	608-512(%rax),%ymm7
-	vpaddd	L$eight(%rip),%ymm4,%ymm4
+	vpaddd	L$eight(%rip),%ymm4,%ymm4  // next SIMD counters
 
 L$oop_enter8x:
-	vmovdqa	%ymm14,64(%rsp)
-	vmovdqa	%ymm15,96(%rsp)
+	vmovdqa	%ymm14,64(%rsp)  // SIMD equivalent of "%nox"
+	vmovdqa	%ymm15,96(%rsp)  // SIMD equivalent of "%nox"
 	vbroadcasti128	(%r10),%ymm15
-	vmovdqa	%ymm4,512-512(%rax)
+	vmovdqa	%ymm4,512-512(%rax)  // save SIMD counters
 	movl	$10,%eax
 	jmp	L$oop8x
 
@@ -1238,20 +1243,20 @@ L$oop8x:
 	decl	%eax
 	jnz	L$oop8x
 
-	leaq	512(%rsp),%rax
-	vpaddd	128-256(%rcx),%ymm8,%ymm8
+	leaq	512(%rsp),%rax  // size optimization
+	vpaddd	128-256(%rcx),%ymm8,%ymm8  // accumulate key
 	vpaddd	160-256(%rcx),%ymm9,%ymm9
 	vpaddd	192-256(%rcx),%ymm10,%ymm10
 	vpaddd	224-256(%rcx),%ymm11,%ymm11
 
-	vpunpckldq	%ymm9,%ymm8,%ymm14
+	vpunpckldq	%ymm9,%ymm8,%ymm14  // "de-interlace" data
 	vpunpckldq	%ymm11,%ymm10,%ymm15
 	vpunpckhdq	%ymm9,%ymm8,%ymm8
 	vpunpckhdq	%ymm11,%ymm10,%ymm10
-	vpunpcklqdq	%ymm15,%ymm14,%ymm9
-	vpunpckhqdq	%ymm15,%ymm14,%ymm14
-	vpunpcklqdq	%ymm10,%ymm8,%ymm11
-	vpunpckhqdq	%ymm10,%ymm8,%ymm8
+	vpunpcklqdq	%ymm15,%ymm14,%ymm9  // "a0"
+	vpunpckhqdq	%ymm15,%ymm14,%ymm14  // "a1"
+	vpunpcklqdq	%ymm10,%ymm8,%ymm11  // "a2"
+	vpunpckhqdq	%ymm10,%ymm8,%ymm8  // "a3"
 	vpaddd	256-256(%rcx),%ymm0,%ymm0
 	vpaddd	288-256(%rcx),%ymm1,%ymm1
 	vpaddd	320-256(%rcx),%ymm2,%ymm2
@@ -1261,11 +1266,11 @@ L$oop8x:
 	vpunpckldq	%ymm3,%ymm2,%ymm15
 	vpunpckhdq	%ymm1,%ymm0,%ymm0
 	vpunpckhdq	%ymm3,%ymm2,%ymm2
-	vpunpcklqdq	%ymm15,%ymm10,%ymm1
-	vpunpckhqdq	%ymm15,%ymm10,%ymm10
-	vpunpcklqdq	%ymm2,%ymm0,%ymm3
-	vpunpckhqdq	%ymm2,%ymm0,%ymm0
-	vperm2i128	$0x20,%ymm1,%ymm9,%ymm15
+	vpunpcklqdq	%ymm15,%ymm10,%ymm1  // "b0"
+	vpunpckhqdq	%ymm15,%ymm10,%ymm10  // "b1"
+	vpunpcklqdq	%ymm2,%ymm0,%ymm3  // "b2"
+	vpunpckhqdq	%ymm2,%ymm0,%ymm0  // "b3"
+	vperm2i128	$0x20,%ymm1,%ymm9,%ymm15  // "de-interlace" further
 	vperm2i128	$0x31,%ymm1,%ymm9,%ymm1
 	vperm2i128	$0x20,%ymm10,%ymm14,%ymm9
 	vperm2i128	$0x31,%ymm10,%ymm14,%ymm10
@@ -1273,10 +1278,10 @@ L$oop8x:
 	vperm2i128	$0x31,%ymm3,%ymm11,%ymm3
 	vperm2i128	$0x20,%ymm0,%ymm8,%ymm11
 	vperm2i128	$0x31,%ymm0,%ymm8,%ymm0
-	vmovdqa	%ymm15,0(%rsp)
+	vmovdqa	%ymm15,0(%rsp)  // offload
 	vmovdqa	%ymm9,32(%rsp)
-	vmovdqa	64(%rsp),%ymm15
-	vmovdqa	96(%rsp),%ymm9
+	vmovdqa	64(%rsp),%ymm15  // %ymm15
+	vmovdqa	96(%rsp),%ymm9  // %ymm9
 
 	vpaddd	384-512(%rax),%ymm12,%ymm12
 	vpaddd	416-512(%rax),%ymm13,%ymm13
@@ -1287,10 +1292,10 @@ L$oop8x:
 	vpunpckldq	%ymm9,%ymm15,%ymm8
 	vpunpckhdq	%ymm13,%ymm12,%ymm12
 	vpunpckhdq	%ymm9,%ymm15,%ymm15
-	vpunpcklqdq	%ymm8,%ymm2,%ymm13
-	vpunpckhqdq	%ymm8,%ymm2,%ymm2
-	vpunpcklqdq	%ymm15,%ymm12,%ymm9
-	vpunpckhqdq	%ymm15,%ymm12,%ymm12
+	vpunpcklqdq	%ymm8,%ymm2,%ymm13  // "c0"
+	vpunpckhqdq	%ymm8,%ymm2,%ymm2  // "c1"
+	vpunpcklqdq	%ymm15,%ymm12,%ymm9  // "c2"
+	vpunpckhqdq	%ymm15,%ymm12,%ymm12  // "c3"
 	vpaddd	512-512(%rax),%ymm4,%ymm4
 	vpaddd	544-512(%rax),%ymm5,%ymm5
 	vpaddd	576-512(%rax),%ymm6,%ymm6
@@ -1300,11 +1305,11 @@ L$oop8x:
 	vpunpckldq	%ymm7,%ymm6,%ymm8
 	vpunpckhdq	%ymm5,%ymm4,%ymm4
 	vpunpckhdq	%ymm7,%ymm6,%ymm6
-	vpunpcklqdq	%ymm8,%ymm15,%ymm5
-	vpunpckhqdq	%ymm8,%ymm15,%ymm15
-	vpunpcklqdq	%ymm6,%ymm4,%ymm7
-	vpunpckhqdq	%ymm6,%ymm4,%ymm4
-	vperm2i128	$0x20,%ymm5,%ymm13,%ymm8
+	vpunpcklqdq	%ymm8,%ymm15,%ymm5  // "d0"
+	vpunpckhqdq	%ymm8,%ymm15,%ymm15  // "d1"
+	vpunpcklqdq	%ymm6,%ymm4,%ymm7  // "d2"
+	vpunpckhqdq	%ymm6,%ymm4,%ymm4  // "d3"
+	vperm2i128	$0x20,%ymm5,%ymm13,%ymm8  // "de-interlace" further
 	vperm2i128	$0x31,%ymm5,%ymm13,%ymm5
 	vperm2i128	$0x20,%ymm15,%ymm2,%ymm13
 	vperm2i128	$0x31,%ymm15,%ymm2,%ymm15
@@ -1312,55 +1317,55 @@ L$oop8x:
 	vperm2i128	$0x31,%ymm7,%ymm9,%ymm7
 	vperm2i128	$0x20,%ymm4,%ymm12,%ymm9
 	vperm2i128	$0x31,%ymm4,%ymm12,%ymm4
-	vmovdqa	0(%rsp),%ymm6
+	vmovdqa	0(%rsp),%ymm6  // was offloaded, remember?
 	vmovdqa	32(%rsp),%ymm12
 
 	cmpq	$512,%rdx
 	jb	L$tail8x
 
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	vmovdqu	%ymm6,0(%rdi)
 	vmovdqu	%ymm8,32(%rdi)
 	vmovdqu	%ymm1,64(%rdi)
 	vmovdqu	%ymm5,96(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 
 	vpxor	0(%rsi),%ymm12,%ymm12
 	vpxor	32(%rsi),%ymm13,%ymm13
 	vpxor	64(%rsi),%ymm10,%ymm10
 	vpxor	96(%rsi),%ymm15,%ymm15
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	vmovdqu	%ymm12,0(%rdi)
 	vmovdqu	%ymm13,32(%rdi)
 	vmovdqu	%ymm10,64(%rdi)
 	vmovdqu	%ymm15,96(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 
 	vpxor	0(%rsi),%ymm14,%ymm14
 	vpxor	32(%rsi),%ymm2,%ymm2
 	vpxor	64(%rsi),%ymm3,%ymm3
 	vpxor	96(%rsi),%ymm7,%ymm7
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	vmovdqu	%ymm14,0(%rdi)
 	vmovdqu	%ymm2,32(%rdi)
 	vmovdqu	%ymm3,64(%rdi)
 	vmovdqu	%ymm7,96(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 
 	vpxor	0(%rsi),%ymm11,%ymm11
 	vpxor	32(%rsi),%ymm9,%ymm9
 	vpxor	64(%rsi),%ymm0,%ymm0
 	vpxor	96(%rsi),%ymm4,%ymm4
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // size optimization
 	vmovdqu	%ymm11,0(%rdi)
 	vmovdqu	%ymm9,32(%rdi)
 	vmovdqu	%ymm0,64(%rdi)
 	vmovdqu	%ymm4,96(%rdi)
-	leaq	128(%rdi),%rdi
+	leaq	128(%rdi),%rdi  // size optimization
 
 	subq	$512,%rdx
 	jnz	L$oop_outer8x
@@ -1390,23 +1395,23 @@ L$tail8x:
 
 .p2align	5
 L$64_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vmovdqu	%ymm6,0(%rdi)
 	vmovdqu	%ymm8,32(%rdi)
 	je	L$done8x
 
-	leaq	64(%rsi),%rsi
+	leaq	64(%rsi),%rsi  // inp+=64*1
 	xorq	%r10,%r10
 	vmovdqa	%ymm1,0(%rsp)
-	leaq	64(%rdi),%rdi
-	subq	$64,%rdx
+	leaq	64(%rdi),%rdi  // out+=64*1
+	subq	$64,%rdx  // len-=64*1
 	vmovdqa	%ymm5,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$128_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1416,17 +1421,17 @@ L$128_or_more8x:
 	vmovdqu	%ymm5,96(%rdi)
 	je	L$done8x
 
-	leaq	128(%rsi),%rsi
+	leaq	128(%rsi),%rsi  // inp+=64*2
 	xorq	%r10,%r10
 	vmovdqa	%ymm12,0(%rsp)
-	leaq	128(%rdi),%rdi
-	subq	$128,%rdx
+	leaq	128(%rdi),%rdi  // out+=64*2
+	subq	$128,%rdx  // len-=64*2
 	vmovdqa	%ymm13,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$192_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1440,17 +1445,17 @@ L$192_or_more8x:
 	vmovdqu	%ymm13,160(%rdi)
 	je	L$done8x
 
-	leaq	192(%rsi),%rsi
+	leaq	192(%rsi),%rsi  // inp+=64*3
 	xorq	%r10,%r10
 	vmovdqa	%ymm10,0(%rsp)
-	leaq	192(%rdi),%rdi
-	subq	$192,%rdx
+	leaq	192(%rdi),%rdi  // out+=64*3
+	subq	$192,%rdx  // len-=64*3
 	vmovdqa	%ymm15,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$256_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1468,17 +1473,17 @@ L$256_or_more8x:
 	vmovdqu	%ymm15,224(%rdi)
 	je	L$done8x
 
-	leaq	256(%rsi),%rsi
+	leaq	256(%rsi),%rsi  // inp+=64*4
 	xorq	%r10,%r10
 	vmovdqa	%ymm14,0(%rsp)
-	leaq	256(%rdi),%rdi
-	subq	$256,%rdx
+	leaq	256(%rdi),%rdi  // out+=64*4
+	subq	$256,%rdx  // len-=64*4
 	vmovdqa	%ymm2,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$320_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1500,17 +1505,17 @@ L$320_or_more8x:
 	vmovdqu	%ymm2,288(%rdi)
 	je	L$done8x
 
-	leaq	320(%rsi),%rsi
+	leaq	320(%rsi),%rsi  // inp+=64*5
 	xorq	%r10,%r10
 	vmovdqa	%ymm3,0(%rsp)
-	leaq	320(%rdi),%rdi
-	subq	$320,%rdx
+	leaq	320(%rdi),%rdi  // out+=64*5
+	subq	$320,%rdx  // len-=64*5
 	vmovdqa	%ymm7,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$384_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1536,17 +1541,17 @@ L$384_or_more8x:
 	vmovdqu	%ymm7,352(%rdi)
 	je	L$done8x
 
-	leaq	384(%rsi),%rsi
+	leaq	384(%rsi),%rsi  // inp+=64*6
 	xorq	%r10,%r10
 	vmovdqa	%ymm11,0(%rsp)
-	leaq	384(%rdi),%rdi
-	subq	$384,%rdx
+	leaq	384(%rdi),%rdi  // out+=64*6
+	subq	$384,%rdx  // len-=64*6
 	vmovdqa	%ymm9,32(%rsp)
 	jmp	L$oop_tail8x
 
 .p2align	5
 L$448_or_more8x:
-	vpxor	0(%rsi),%ymm6,%ymm6
+	vpxor	0(%rsi),%ymm6,%ymm6  // xor with input
 	vpxor	32(%rsi),%ymm8,%ymm8
 	vpxor	64(%rsi),%ymm1,%ymm1
 	vpxor	96(%rsi),%ymm5,%ymm5
@@ -1576,11 +1581,11 @@ L$448_or_more8x:
 	vmovdqu	%ymm9,416(%rdi)
 	je	L$done8x
 
-	leaq	448(%rsi),%rsi
+	leaq	448(%rsi),%rsi  // inp+=64*7
 	xorq	%r10,%r10
 	vmovdqa	%ymm0,0(%rsp)
-	leaq	448(%rdi),%rdi
-	subq	$448,%rdx
+	leaq	448(%rdi),%rdi  // out+=64*7
+	subq	$448,%rdx  // len-=64*7
 	vmovdqa	%ymm4,32(%rsp)
 
 L$oop_tail8x:

@@ -211,7 +211,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *voprf_blind(const VOPRF_METHOD *method,
   }
 
   for (size_t i = 0; i < count; i++) {
-    // Insert |pretoken| into |pretokens| early to simplify error-handling.
+    // Insert `pretoken` into `pretokens` early to simplify error-handling.
     TRUST_TOKEN_PRETOKEN *pretoken = New<TRUST_TOKEN_PRETOKEN>();
     if (pretoken == nullptr ||
         !sk_TRUST_TOKEN_PRETOKEN_push(pretokens, pretoken)) {
@@ -617,7 +617,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind_tt(
       goto err;
     }
 
-    // Serialize the token. Include |key_id| to avoid an extra copy in the layer
+    // Serialize the token. Include `key_id` to avoid an extra copy in the layer
     // above.
     CBB token_cbb;
     size_t point_len = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);
@@ -1009,7 +1009,7 @@ static STACK_OF(TRUST_TOKEN) *voprf_unblind(
       goto err;
     }
 
-    // Serialize the token. Include |key_id| to avoid an extra copy in the layer
+    // Serialize the token. Include `key_id` to avoid an extra copy in the layer
     // above.
     CBB token_cbb;
     size_t point_len = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);

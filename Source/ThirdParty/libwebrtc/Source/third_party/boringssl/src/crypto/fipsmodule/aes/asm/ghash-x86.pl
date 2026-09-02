@@ -104,7 +104,7 @@
 # 1.91 and 2.16. As already mentioned, this implementation processes
 # one byte out of 8KB buffer in 2.10 cycles, while x86_64 counterpart
 # - in 2.02. x86_64 performance is better, because larger register
-# bank allows to interleave reduction and multiplication better.
+# bank allows interleaving reduction and multiplication better.
 #
 # Does it make sense to increase Naggr? To start with it's virtually
 # impossible in 32-bit mode, because of limited register bank

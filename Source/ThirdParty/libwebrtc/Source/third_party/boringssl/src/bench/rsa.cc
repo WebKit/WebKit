@@ -480,10 +480,10 @@ const uint8_t kDERRSAPrivate4096[] = {
 
 constexpr size_t kMaxSignature = 512;
 
-// |RSA| objects cache some state on them, so we benchmark both repeat
+// `RSA` objects cache some state on them, so we benchmark both repeat
 // operations on long-lived RSA keys, and newly-imported RSA keys.
 //
-// In typical applications, RSA signing is done on a long-lived |RSA| object
+// In typical applications, RSA signing is done on a long-lived `RSA` object
 // (e.g. one's TLS key) that takes advantage of the cache, while RSA
 // verification is done on a newly-imported RSA keys (e.g. parsing a TLS server
 // key out of a newly-received end-entity certificate). However, other

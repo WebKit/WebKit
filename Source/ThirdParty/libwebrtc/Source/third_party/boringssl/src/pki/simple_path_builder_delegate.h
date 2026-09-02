@@ -83,6 +83,15 @@ class OPENSSL_EXPORT SimplePathBuilderDelegate
   // No-op implementation.
   bool AcceptPreCertificates() override;
 
+  // No-op implementation.
+  std::optional<MTCCosigner> GetMTCCosigner(
+      Span<const uint8_t> cosigner_id) override;
+
+  // No-op implementation (does not require any valid additional cosigners).
+  bool IsCosignatureVerificationResultAcceptable(
+      const MTCAnchor* mtc_anchor,
+      std::vector<std::vector<uint8_t>> valid_additional_cosigners) override;
+
  private:
   const size_t min_rsa_modulus_length_bits_;
   const DigestPolicy digest_policy_;

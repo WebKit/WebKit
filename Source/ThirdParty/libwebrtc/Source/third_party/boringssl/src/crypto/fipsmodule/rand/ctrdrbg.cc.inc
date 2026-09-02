@@ -241,7 +241,7 @@ int bssl::CTR_DRBG_init(CTR_DRBG_STATE *drbg, int df, const uint8_t *entropy,
 static_assert(CTR_DRBG_SEED_LEN % AES_BLOCK_SIZE == 0,
               "not a multiple of AES block size");
 
-// ctr_inc adds |n| to the last four bytes of |drbg->counter|, treated as a
+// ctr_inc adds `n` to the last four bytes of `drbg->counter`, treated as a
 // big-endian number.
 static void ctr32_add(CTR_DRBG_STATE *drbg, uint32_t n) {
   uint32_t ctr = CRYPTO_load_u32_be(drbg->counter + 12);

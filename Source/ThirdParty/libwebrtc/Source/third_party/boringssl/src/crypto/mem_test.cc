@@ -68,7 +68,7 @@ TEST(NewTest, DefaultInit) {
   {
     struct Foo {
       Foo() = default;
-      Foo(int) { /* This constructor leaves |x| uninitialized. */ }
+      Foo(int) { /* This constructor leaves `x` uninitialized. */ }
       int x;
     };
     Foo *foo = New<Foo>();

@@ -56,7 +56,7 @@ poly_hash_ad_internal:
 	cmpq	$13,%r8
 	jne	L$hash_ad_loop
 L$poly_fast_tls_ad:
-
+// Special treatment for the TLS case of 13 bytes
 	movq	(%rcx),%r10
 	movq	5(%rcx),%r11
 	shrq	$24,%r11
@@ -87,21 +87,21 @@ L$poly_fast_tls_ad:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
 	ret
 L$hash_ad_loop:
-
+// Hash in 16 byte chunk
 	cmpq	$16,%r8
 	jb	L$hash_ad_tail
 	addq	0+0(%rcx),%r10
@@ -133,14 +133,14 @@ L$hash_ad_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -151,7 +151,7 @@ L$hash_ad_loop:
 L$hash_ad_tail:
 	cmpq	$0,%r8
 	je	L$hash_ad_done
-
+// Hash last < 16 byte tail
 	xorq	%r13,%r13
 	xorq	%r14,%r14
 	xorq	%r15,%r15
@@ -194,19 +194,19 @@ L$hash_ad_tail_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Finished AD
 L$hash_ad_done:
 	ret
 
@@ -216,6 +216,7 @@ L$hash_ad_done:
 .private_extern _chacha20_poly1305_open_sse41
 
 .p2align	6
+.alt_entry _chacha20_poly1305_open_sse41
 _chacha20_poly1305_open_sse41:
 
 _CET_ENDBR
@@ -231,8 +232,8 @@ _CET_ENDBR
 
 	pushq	%r15
 
-
-
+// We write the calculated authenticator back to keyp at the end, so save
+// the pointer on the stack too.
 	pushq	%r9
 
 	subq	$288 + 0 + 32,%rsp
@@ -247,14 +248,14 @@ _CET_ENDBR
 
 	cmpq	$128,%rbx
 	jbe	L$open_sse_128
-
+// For long buffers, prepare the poly key first
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqu	0(%r9),%xmm4
 	movdqu	16(%r9),%xmm8
 	movdqu	32(%r9),%xmm12
 
 	movdqa	%xmm12,%xmm7
-
+// Store on stack, to free keyp
 	movdqa	%xmm4,0+48(%rbp)
 	movdqa	%xmm8,0+64(%rbp)
 	movdqa	%xmm12,0+96(%rbp)
@@ -305,20 +306,20 @@ L$open_sse_init_rounds:
 
 	decq	%r10
 	jne	L$open_sse_init_rounds
-
+// A0|B0 hold the Poly1305 32-byte key, C0,D0 can be discarded
 	paddd	L$chacha20_consts(%rip),%xmm0
 	paddd	0+48(%rbp),%xmm4
-
+// Clamp and store the key
 	pand	L$clamp(%rip),%xmm0
 	movdqa	%xmm0,0+0(%rbp)
 	movdqa	%xmm4,0+16(%rbp)
-
+// Hash
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
 L$open_sse_main_loop:
 	cmpq	$256,%rbx
 	jb	L$open_sse_tail
-
+// Load state, increment counter blocks
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
 	movdqa	0+64(%rbp),%xmm8
@@ -344,8 +345,8 @@ L$open_sse_main_loop:
 	movdqa	%xmm14,0+128(%rbp)
 	movdqa	%xmm15,0+144(%rbp)
 
-
-
+// There are 10 ChaCha20 iterations of 2QR each, so for 6 iterations we
+// hash 2 blocks, and for the remaining 4 only 1 block - for a total of 16
 	movq	$4,%rcx
 	movq	%rsi,%r8
 L$open_sse_main_loop_rounds:
@@ -480,14 +481,14 @@ L$open_sse_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -607,14 +608,14 @@ L$open_sse_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -693,7 +694,7 @@ L$open_sse_main_loop_rounds:
 	subq	$256,%rbx
 	jmp	L$open_sse_main_loop
 L$open_sse_tail:
-
+// Handle the various tail sizes efficiently
 	testq	%rbx,%rbx
 	jz	L$open_sse_finalize
 	cmpq	$192,%rbx
@@ -743,14 +744,14 @@ L$open_sse_tail_64_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -811,7 +812,7 @@ L$open_sse_tail_64_rounds:
 	paddd	0+96(%rbp),%xmm12
 
 	jmp	L$open_sse_tail_64_dec_loop
-
+// ############################################################################# 
 L$open_sse_tail_128:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -859,14 +860,14 @@ L$open_sse_tail_128_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -987,7 +988,7 @@ L$open_sse_tail_128_rounds:
 	leaq	64(%rsi),%rsi
 	leaq	64(%rdi),%rdi
 	jmp	L$open_sse_tail_64_dec_loop
-
+// ############################################################################# 
 L$open_sse_tail_192:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -1044,14 +1045,14 @@ L$open_sse_tail_192_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1220,14 +1221,14 @@ L$open_sse_tail_192_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1263,14 +1264,14 @@ L$open_sse_tail_192_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1317,7 +1318,7 @@ L$open_sse_tail_192_finish:
 	leaq	128(%rsi),%rsi
 	leaq	128(%rdi),%rdi
 	jmp	L$open_sse_tail_64_dec_loop
-
+// ############################################################################# 
 L$open_sse_tail_256:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -1528,14 +1529,14 @@ L$open_sse_tail_256_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1599,14 +1600,14 @@ L$open_sse_tail_256_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1672,8 +1673,8 @@ L$open_sse_tail_256_hash:
 	subq	$192,%rbx
 	leaq	192(%rsi),%rsi
 	leaq	192(%rdi),%rdi
-
-
+// ############################################################################# 
+// Decrypt the remaining data, 16B at a time, using existing stream
 L$open_sse_tail_64_dec_loop:
 	cmpq	$16,%rbx
 	jb	L$open_sse_tail_16_init
@@ -1690,13 +1691,13 @@ L$open_sse_tail_64_dec_loop:
 L$open_sse_tail_16_init:
 	movdqa	%xmm0,%xmm1
 
-
+// Decrypt up to 16 bytes at the end.
 L$open_sse_tail_16:
 	testq	%rbx,%rbx
 	jz	L$open_sse_finalize
 
-
-
+// Read the final bytes into %xmm3. They need to be read in reverse order so
+// that they end up in the correct order in %xmm3.
 	pxor	%xmm3,%xmm3
 	leaq	-1(%rsi,%rbx,1),%rsi
 	movq	%rbx,%r8
@@ -1709,10 +1710,10 @@ L$open_sse_tail_16_compose:
 
 	movq	%xmm3,%r13
 	pextrq	$1,%xmm3,%r14
-
+// The final bytes of keystream are in %xmm1.
 	pxor	%xmm1,%xmm3
 
-
+// Copy the plaintext bytes out.
 L$open_sse_tail_16_extract:
 	pextrb	$0,%xmm3,(%rdi)
 	psrldq	$1,%xmm3
@@ -1749,14 +1750,14 @@ L$open_sse_tail_16_extract:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -1792,19 +1793,19 @@ L$open_sse_finalize:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Final reduce
 	movq	%r10,%r13
 	movq	%r11,%r14
 	movq	%r12,%r15
@@ -1814,14 +1815,14 @@ L$open_sse_finalize:
 	cmovcq	%r13,%r10
 	cmovcq	%r14,%r11
 	cmovcq	%r15,%r12
-
+// Add in s part of the key
 	addq	0+0+16(%rbp),%r10
 	adcq	8+0+16(%rbp),%r11
 
 
 	addq	$288 + 0 + 32,%rsp
 
-
+// The tag replaces the key on return
 	popq	%r9
 
 	movq	%r10,(%r9)
@@ -1839,7 +1840,7 @@ L$open_sse_finalize:
 	popq	%rbp
 
 	ret
-
+// ############################################################################# 
 L$open_sse_128:
 
 	movdqu	L$chacha20_consts(%rip),%xmm0
@@ -2002,11 +2003,11 @@ L$open_sse_128_rounds:
 	paddd	%xmm15,%xmm13
 	paddd	L$sse_inc(%rip),%xmm15
 	paddd	%xmm15,%xmm14
-
+// Clamp and store the key
 	pand	L$clamp(%rip),%xmm0
 	movdqa	%xmm0,0+0(%rbp)
 	movdqa	%xmm4,0+16(%rbp)
-
+// Hash
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
 L$open_sse_128_xor_hash:
@@ -2017,7 +2018,7 @@ L$open_sse_128_xor_hash:
 	adcq	8+0(%rsi),%r11
 	adcq	$1,%r12
 
-
+// Load for decryption
 	movdqu	0(%rsi),%xmm3
 	pxor	%xmm3,%xmm1
 	movdqu	%xmm1,0(%rdi)
@@ -2049,19 +2050,19 @@ L$open_sse_128_xor_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Shift the stream left
 	movdqa	%xmm5,%xmm1
 	movdqa	%xmm9,%xmm5
 	movdqa	%xmm13,%xmm9
@@ -2073,16 +2074,17 @@ L$open_sse_128_xor_hash:
 
 
 
-
-
-
-
-
-
+// ############################################################################## 
+// ############################################################################## 
+// void chacha20_poly1305_seal(uint8_t *out_ciphertext, const uint8_t *plaintext,
+// size_t plaintext_len, const uint8_t *ad,
+// size_t ad_len,
+// union chacha20_poly1305_seal_data *data);
 .globl	_chacha20_poly1305_seal_sse41
 .private_extern _chacha20_poly1305_seal_sse41
 
 .p2align	6
+.alt_entry _chacha20_poly1305_seal_sse41
 _chacha20_poly1305_seal_sse41:
 
 _CET_ENDBR
@@ -2098,8 +2100,8 @@ _CET_ENDBR
 
 	pushq	%r15
 
-
-
+// We write the calculated authenticator back to keyp at the end, so save
+// the pointer on the stack too.
 	pushq	%r9
 
 	subq	$288 + 0 + 32,%rsp
@@ -2107,7 +2109,7 @@ _CET_ENDBR
 	leaq	32(%rsp),%rbp
 	andq	$-32,%rbp
 
-	movq	56(%r9),%rbx
+	movq	56(%r9),%rbx  // extra_in_len
 	addq	%rdx,%rbx
 	movq	%r8,0+0+32(%rbp)
 	movq	%rbx,8+0+32(%rbp)
@@ -2115,7 +2117,7 @@ _CET_ENDBR
 
 	cmpq	$128,%rbx
 	jbe	L$seal_sse_128
-
+// For longer buffers, prepare the poly key + some stream
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqu	0(%r9),%xmm4
 	movdqu	16(%r9),%xmm8
@@ -2136,7 +2138,7 @@ _CET_ENDBR
 	paddd	L$sse_inc(%rip),%xmm12
 	movdqa	%xmm12,%xmm13
 	paddd	L$sse_inc(%rip),%xmm12
-
+// Store on stack
 	movdqa	%xmm4,0+48(%rbp)
 	movdqa	%xmm8,0+64(%rbp)
 	movdqa	%xmm12,0+96(%rbp)
@@ -2349,11 +2351,11 @@ L$seal_sse_init_rounds:
 	paddd	0+64(%rbp),%xmm8
 	paddd	0+96(%rbp),%xmm12
 
-
+// Clamp and store the key
 	pand	L$clamp(%rip),%xmm3
 	movdqa	%xmm3,0+0(%rbp)
 	movdqa	%xmm7,0+16(%rbp)
-
+// Hash
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
 	movdqu	0 + 0(%rsi),%xmm3
@@ -2570,14 +2572,14 @@ L$seal_sse_main_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -2698,14 +2700,14 @@ L$seal_sse_main_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -2806,7 +2808,7 @@ L$seal_sse_main_loop_xor:
 	ja	L$seal_sse_tail_192
 	cmpq	$64,%rbx
 	ja	L$seal_sse_tail_128
-
+// ############################################################################# 
 L$seal_sse_tail_64:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -2845,14 +2847,14 @@ L$seal_sse_tail_64_rounds_and_x2hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -2930,14 +2932,14 @@ L$seal_sse_tail_64_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -2953,7 +2955,7 @@ L$seal_sse_tail_64_rounds_and_x1hash:
 	paddd	0+96(%rbp),%xmm12
 
 	jmp	L$seal_sse_128_tail_xor
-
+// ############################################################################# 
 L$seal_sse_tail_128:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -2998,14 +3000,14 @@ L$seal_sse_tail_128_rounds_and_x2hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3083,14 +3085,14 @@ L$seal_sse_tail_128_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3167,7 +3169,7 @@ L$seal_sse_tail_128_rounds_and_x1hash:
 	subq	$64,%rbx
 	leaq	64(%rsi),%rsi
 	jmp	L$seal_sse_128_tail_hash
-
+// ############################################################################# 
 L$seal_sse_tail_192:
 	movdqa	L$chacha20_consts(%rip),%xmm0
 	movdqa	0+48(%rbp),%xmm4
@@ -3218,14 +3220,14 @@ L$seal_sse_tail_192_rounds_and_x2hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3324,14 +3326,14 @@ L$seal_sse_tail_192_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3444,7 +3446,7 @@ L$seal_sse_tail_192_rounds_and_x1hash:
 	movq	$128,%rcx
 	subq	$128,%rbx
 	leaq	128(%rsi),%rsi
-
+// ############################################################################# 
 L$seal_sse_128_tail_hash:
 	cmpq	$16,%rcx
 	jb	L$seal_sse_128_tail_xor
@@ -3477,14 +3479,14 @@ L$seal_sse_128_tail_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3497,11 +3499,11 @@ L$seal_sse_128_tail_xor:
 	cmpq	$16,%rbx
 	jb	L$seal_sse_tail_16
 	subq	$16,%rbx
-
+// Load for decryption
 	movdqu	0(%rsi),%xmm3
 	pxor	%xmm3,%xmm0
 	movdqu	%xmm0,0(%rdi)
-
+// Then hash
 	addq	0(%rdi),%r10
 	adcq	8(%rdi),%r11
 	adcq	$1,%r12
@@ -3533,19 +3535,19 @@ L$seal_sse_128_tail_xor:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Shift the stream left
 	movdqa	%xmm4,%xmm0
 	movdqa	%xmm8,%xmm4
 	movdqa	%xmm12,%xmm8
@@ -3558,7 +3560,7 @@ L$seal_sse_128_tail_xor:
 L$seal_sse_tail_16:
 	testq	%rbx,%rbx
 	jz	L$process_blocks_of_extra_in
-
+// We can only load the PT one byte at a time to avoid buffer overread
 	movq	%rbx,%r8
 	movq	%rbx,%rcx
 	leaq	-1(%rsi,%rbx,1),%rsi
@@ -3570,10 +3572,10 @@ L$seal_sse_tail_16_compose:
 	decq	%rcx
 	jne	L$seal_sse_tail_16_compose
 
-
+// XOR the keystream with the plaintext.
 	pxor	%xmm0,%xmm15
 
-
+// Write ciphertext out, byte-by-byte.
 	movq	%rbx,%rcx
 	movdqu	%xmm15,%xmm0
 L$seal_sse_tail_16_extract:
@@ -3583,42 +3585,42 @@ L$seal_sse_tail_16_extract:
 	subq	$1,%rcx
 	jnz	L$seal_sse_tail_16_extract
 
-
-
-
-
-
-
-
+// %xmm15 contains the final (partial, non-empty) block of ciphertext which
+// needs to be fed into the Poly1305 state. The right-most %rbx bytes of it
+// are valid. We need to fill it with extra_in bytes until full, or until we
+// run out of bytes.
+// 
+// %r9 points to the tag output, which is actually a struct with the
+// extra_in pointer and length at offset 48.
 	movq	288 + 0 + 32(%rsp),%r9
-	movq	56(%r9),%r14
-	movq	48(%r9),%r13
+	movq	56(%r9),%r14  // extra_in_len
+	movq	48(%r9),%r13  // extra_in
 	testq	%r14,%r14
-	jz	L$process_partial_block
+	jz	L$process_partial_block  // Common case: no bytes of extra_in
 
 	movq	$16,%r15
-	subq	%rbx,%r15
-	cmpq	%r15,%r14
-
+	subq	%rbx,%r15  // 16-%rbx is the number of bytes that fit into %xmm15.
+	cmpq	%r15,%r14  // if extra_in_len < 16-%rbx, only copy extra_in_len
+// (note that AT&T syntax reverses the arguments)
 	jge	L$load_extra_in
 	movq	%r14,%r15
 
 L$load_extra_in:
-
-
+// %r15 contains the number of bytes of extra_in (pointed to by %r13) to load
+// into %xmm15. They are loaded in reverse order.
 	leaq	-1(%r13,%r15,1),%rsi
-
-
+// Update extra_in and extra_in_len to reflect the bytes that are about to
+// be read.
 	addq	%r15,%r13
 	subq	%r15,%r14
 	movq	%r13,48(%r9)
 	movq	%r14,56(%r9)
 
-
-
+// Update %r8, which is used to select the mask later on, to reflect the
+// extra bytes about to be added.
 	addq	%r15,%r8
 
-
+// Load %r15 bytes of extra_in into %xmm11.
 	pxor	%xmm11,%xmm11
 L$load_extra_load_loop:
 	pslldq	$1,%xmm11
@@ -3627,9 +3629,9 @@ L$load_extra_load_loop:
 	subq	$1,%r15
 	jnz	L$load_extra_load_loop
 
-
-
-
+// Shift %xmm11 up the length of the remainder from the main encryption. Sadly,
+// the shift for an XMM register has to be a constant, thus we loop to do
+// this.
 	movq	%rbx,%r15
 
 L$load_extra_shift_loop:
@@ -3637,18 +3639,18 @@ L$load_extra_shift_loop:
 	subq	$1,%r15
 	jnz	L$load_extra_shift_loop
 
-
-
-
+// Mask %xmm15 (the remainder from the main encryption) so that superfluous
+// bytes are zero. This means that the non-zero bytes in %xmm11 and %xmm15 are
+// disjoint and so we can merge them with an OR.
 	leaq	L$and_masks(%rip),%r15
 	shlq	$4,%rbx
 	pand	-16(%r15,%rbx,1),%xmm15
 
-
+// Merge %xmm11 into %xmm15, forming the remainder block.
 	por	%xmm11,%xmm15
 
-
-
+// The block of ciphertext + extra_in is ready to be included in the
+// Poly1305 state.
 	movq	%xmm15,%r13
 	pextrq	$1,%xmm15,%r14
 	addq	%r13,%r10
@@ -3680,26 +3682,26 @@ L$load_extra_shift_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
 
 L$process_blocks_of_extra_in:
-
+// There may be additional bytes of extra_in to process.
 	movq	288+32+0 (%rsp),%r9
-	movq	48(%r9),%rsi
-	movq	56(%r9),%r8
+	movq	48(%r9),%rsi  // extra_in
+	movq	56(%r9),%r8  // extra_in_len
 	movq	%r8,%rcx
-	shrq	$4,%r8
+	shrq	$4,%r8  // number of blocks
 
 L$process_extra_hash_loop:
 	jz	process_extra_in_trailer
@@ -3732,14 +3734,14 @@ L$process_extra_hash_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3747,8 +3749,9 @@ L$process_extra_hash_loop:
 	leaq	16(%rsi),%rsi
 	subq	$1,%r8
 	jmp	L$process_extra_hash_loop
+.alt_entry process_extra_in_trailer
 process_extra_in_trailer:
-	andq	$15,%rcx
+	andq	$15,%rcx  // remaining num bytes (<16) of extra_in
 	movq	%rcx,%rbx
 	jz	L$do_length_block
 	leaq	-1(%rsi,%rcx,1),%rsi
@@ -3761,7 +3764,7 @@ L$process_extra_in_trailer_load:
 	jnz	L$process_extra_in_trailer_load
 
 L$process_partial_block:
-
+// %xmm15 contains %rbx bytes of data to be fed into Poly1305. %rbx
 	leaq	L$and_masks(%rip),%r15
 	shlq	$4,%rbx
 	pand	-16(%r15,%rbx,1),%xmm15
@@ -3796,14 +3799,14 @@ L$process_partial_block:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -3839,19 +3842,19 @@ L$do_length_block:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Final reduce
 	movq	%r10,%r13
 	movq	%r11,%r14
 	movq	%r12,%r15
@@ -3861,14 +3864,14 @@ L$do_length_block:
 	cmovcq	%r13,%r10
 	cmovcq	%r14,%r11
 	cmovcq	%r15,%r12
-
+// Add in s part of the key
 	addq	0+0+16(%rbp),%r10
 	adcq	8+0+16(%rbp),%r11
 
 
 	addq	$288 + 0 + 32,%rsp
 
-
+// The tag replaces the key on return
 	popq	%r9
 
 	movq	%r10,(%r9)
@@ -3886,7 +3889,7 @@ L$do_length_block:
 	popq	%rbp
 
 	ret
-
+// ############################################################################## 
 L$seal_sse_128:
 
 	movdqu	L$chacha20_consts(%rip),%xmm0
@@ -4049,22 +4052,23 @@ L$seal_sse_128_rounds:
 	paddd	%xmm15,%xmm12
 	paddd	L$sse_inc(%rip),%xmm15
 	paddd	%xmm15,%xmm13
-
+// Clamp and store the key
 	pand	L$clamp(%rip),%xmm2
 	movdqa	%xmm2,0+0(%rbp)
 	movdqa	%xmm6,0+16(%rbp)
-
+// Hash
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
 	jmp	L$seal_sse_128_tail_xor
 
 
 
-
+// ############################################################################# 
 .globl	_chacha20_poly1305_open_avx2
 .private_extern _chacha20_poly1305_open_avx2
 
 .p2align	6
+.alt_entry _chacha20_poly1305_open_avx2
 _chacha20_poly1305_open_avx2:
 
 _CET_ENDBR
@@ -4080,8 +4084,8 @@ _CET_ENDBR
 
 	pushq	%r15
 
-
-
+// We write the calculated authenticator back to keyp at the end, so save
+// the pointer on the stack too.
 	pushq	%r9
 
 	subq	$288 + 0 + 32,%rsp
@@ -4157,16 +4161,16 @@ L$open_avx2_init_rounds:
 	vpaddd	0+160(%rbp),%ymm12,%ymm12
 
 	vperm2i128	$0x02,%ymm0,%ymm4,%ymm3
-
+// Clamp and store key
 	vpand	L$clamp(%rip),%ymm3,%ymm3
 	vmovdqa	%ymm3,0+0(%rbp)
-
+// Stream for the first 64 bytes
 	vperm2i128	$0x13,%ymm0,%ymm4,%ymm0
 	vperm2i128	$0x13,%ymm8,%ymm12,%ymm4
-
+// Hash AD + first 64 bytes
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
-
+// Hash first 64 bytes
 	xorq	%rcx,%rcx
 L$open_avx2_init_hash:
 	addq	0+0(%rsi,%rcx,1),%r10
@@ -4198,14 +4202,14 @@ L$open_avx2_init_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4213,17 +4217,17 @@ L$open_avx2_init_hash:
 	addq	$16,%rcx
 	cmpq	$64,%rcx
 	jne	L$open_avx2_init_hash
-
+// Decrypt first 64 bytes
 	vpxor	0(%rsi),%ymm0,%ymm0
 	vpxor	32(%rsi),%ymm4,%ymm4
-
+// Store first 64 bytes of decrypted data
 	vmovdqu	%ymm0,0(%rdi)
 	vmovdqu	%ymm4,32(%rdi)
 	leaq	64(%rsi),%rsi
 	leaq	64(%rdi),%rdi
 	subq	$64,%rbx
 L$open_avx2_main_loop:
-
+// Hash and decrypt 512 bytes each iteration
 	cmpq	$512,%rbx
 	jb	L$open_avx2_main_loop_done
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
@@ -4313,14 +4317,14 @@ L$open_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4408,14 +4412,14 @@ L$open_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4503,14 +4507,14 @@ L$open_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4579,14 +4583,14 @@ L$open_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4643,14 +4647,14 @@ L$open_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4693,7 +4697,7 @@ L$open_avx2_main_loop_done:
 	movq	%rbx,%rcx
 	andq	$-16,%rcx
 	testq	%rcx,%rcx
-	je	L$open_avx2_tail_128_rounds
+	je	L$open_avx2_tail_128_rounds  // Have nothing to hash
 L$open_avx2_tail_128_rounds_and_x1hash:
 	addq	0+0(%rsi,%r8,1),%r10
 	adcq	8+0(%rsi,%r8,1),%r11
@@ -4724,14 +4728,14 @@ L$open_avx2_tail_128_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4792,7 +4796,7 @@ L$open_avx2_tail_128_rounds:
 	vmovdqa	%ymm3,%ymm8
 
 	jmp	L$open_avx2_tail_128_xor
-
+// ############################################################################# 
 L$open_avx2_tail_256:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -4838,14 +4842,14 @@ L$open_avx2_tail_256_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -4984,14 +4988,14 @@ L$open_avx2_tail_256_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5029,7 +5033,7 @@ L$open_avx2_tail_256_done:
 	leaq	128(%rdi),%rdi
 	subq	$128,%rbx
 	jmp	L$open_avx2_tail_128_xor
-
+// ############################################################################# 
 L$open_avx2_tail_384:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -5081,14 +5085,14 @@ L$open_avx2_tail_384_rounds_and_x2hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5181,14 +5185,14 @@ L$open_avx2_tail_384_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5287,14 +5291,14 @@ L$open_avx2_384_tail_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5348,7 +5352,7 @@ L$open_avx2_384_tail_done:
 	leaq	256(%rdi),%rdi
 	subq	$256,%rbx
 	jmp	L$open_avx2_tail_128_xor
-
+// ############################################################################# 
 L$open_avx2_tail_512:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -5404,14 +5408,14 @@ L$open_avx2_tail_512_rounds_and_x2hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5477,14 +5481,14 @@ L$open_avx2_tail_512_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5558,14 +5562,14 @@ L$open_avx2_tail_512_rounds_and_x1hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5684,14 +5688,14 @@ L$open_avx2_tail_512_hash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5782,7 +5786,7 @@ L$open_avx2_tail_32_xor:
 	vmovdqa	%xmm0,%xmm1
 	jb	L$open_avx2_exit
 	subq	$16,%rbx
-
+// load for decryption
 	vpxor	(%rsi),%xmm0,%xmm1
 	vmovdqu	%xmm1,(%rdi)
 	leaq	16(%rsi),%rsi
@@ -5792,7 +5796,7 @@ L$open_avx2_tail_32_xor:
 L$open_avx2_exit:
 	vzeroupper
 	jmp	L$open_sse_tail_16
-
+// ############################################################################# 
 L$open_avx2_192:
 	vmovdqa	%ymm0,%ymm1
 	vmovdqa	%ymm0,%ymm2
@@ -5893,10 +5897,10 @@ L$open_avx2_192_rounds:
 	vpaddd	%ymm11,%ymm12,%ymm12
 	vpaddd	%ymm15,%ymm13,%ymm13
 	vperm2i128	$0x02,%ymm0,%ymm4,%ymm3
-
+// Clamp and store the key
 	vpand	L$clamp(%rip),%ymm3,%ymm3
 	vmovdqa	%ymm3,0+0(%rbp)
-
+// Stream for up to 192 bytes
 	vperm2i128	$0x13,%ymm0,%ymm4,%ymm0
 	vperm2i128	$0x13,%ymm8,%ymm12,%ymm4
 	vperm2i128	$0x02,%ymm1,%ymm5,%ymm8
@@ -5939,14 +5943,14 @@ L$open_avx2_short_hash_and_xor_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -5979,24 +5983,24 @@ L$open_avx2_short_hash_and_xor_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-
+// Load + decrypt
 	vpxor	(%rsi),%ymm0,%ymm0
 	vmovdqu	%ymm0,(%rdi)
 	leaq	32(%rsi),%rsi
 	leaq	32(%rdi),%rdi
-
+// Shift stream
 	vmovdqa	%ymm4,%ymm0
 	vmovdqa	%ymm8,%ymm4
 	vmovdqa	%ymm12,%ymm8
@@ -6041,14 +6045,14 @@ L$open_avx2_short_tail_32:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -6061,7 +6065,7 @@ L$open_avx2_short_tail_32:
 L$open_avx2_short_tail_32_exit:
 	vzeroupper
 	jmp	L$open_sse_tail_16
-
+// ############################################################################# 
 L$open_avx2_320:
 	vmovdqa	%ymm0,%ymm1
 	vmovdqa	%ymm0,%ymm2
@@ -6208,10 +6212,10 @@ L$open_avx2_320_rounds:
 	vpaddd	0+192(%rbp),%ymm13,%ymm13
 	vpaddd	0+224(%rbp),%ymm14,%ymm14
 	vperm2i128	$0x02,%ymm0,%ymm4,%ymm3
-
+// Clamp and store the key
 	vpand	L$clamp(%rip),%ymm3,%ymm3
 	vmovdqa	%ymm3,0+0(%rbp)
-
+// Stream for up to 320 bytes
 	vperm2i128	$0x13,%ymm0,%ymm4,%ymm0
 	vperm2i128	$0x13,%ymm8,%ymm12,%ymm4
 	vperm2i128	$0x02,%ymm1,%ymm5,%ymm8
@@ -6225,12 +6229,13 @@ L$open_avx2_320_rounds:
 	jmp	L$open_avx2_short
 
 
-
-
+// ############################################################################# 
+// ############################################################################# 
 .globl	_chacha20_poly1305_seal_avx2
 .private_extern _chacha20_poly1305_seal_avx2
 
 .p2align	6
+.alt_entry _chacha20_poly1305_seal_avx2
 _chacha20_poly1305_seal_avx2:
 
 _CET_ENDBR
@@ -6246,8 +6251,8 @@ _CET_ENDBR
 
 	pushq	%r15
 
-
-
+// We write the calculated authenticator back to keyp at the end, so save
+// the pointer on the stack too.
 	pushq	%r9
 
 	subq	$288 + 0 + 32,%rsp
@@ -6255,7 +6260,7 @@ _CET_ENDBR
 	leaq	32(%rsp),%rbp
 	andq	$-32,%rbp
 
-	movq	56(%r9),%rbx
+	movq	56(%r9),%rbx  // extra_in_len
 	addq	%rdx,%rbx
 	movq	%r8,0+0+32(%rbp)
 	movq	%rbx,8+0+32(%rbp)
@@ -6483,7 +6488,7 @@ L$seal_avx2_init_rounds:
 	vmovdqa	%ymm15,0+0(%rbp)
 	movq	%r8,%r8
 	call	poly_hash_ad_internal
-
+// Safely store 320 bytes (otherwise would handle with optimized call)
 	vpxor	0(%rsi),%ymm3,%ymm3
 	vpxor	32(%rsi),%ymm11,%ymm11
 	vmovdqu	%ymm3,0(%rdi)
@@ -6863,14 +6868,14 @@ L$seal_avx2_main_loop_rounds:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -6960,14 +6965,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7055,14 +7060,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7110,14 +7115,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7143,14 +7148,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7234,14 +7239,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7267,14 +7272,14 @@ L$seal_avx2_main_loop_rounds_entry:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7289,7 +7294,7 @@ L$seal_avx2_main_loop_rounds_entry:
 	ja	L$seal_avx2_tail_384
 	cmpq	$128,%rbx
 	ja	L$seal_avx2_tail_256
-
+// ############################################################################# 
 L$seal_avx2_tail_128:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -7321,14 +7326,14 @@ L$seal_avx2_tail_128_rounds_and_3xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7376,14 +7381,14 @@ L$seal_avx2_tail_128_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7428,14 +7433,14 @@ L$seal_avx2_tail_128_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7456,7 +7461,7 @@ L$seal_avx2_tail_128_rounds_and_2xhash:
 	vmovdqa	%ymm3,%ymm8
 
 	jmp	L$seal_avx2_short_loop
-
+// ############################################################################# 
 L$seal_avx2_tail_256:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -7500,14 +7505,14 @@ L$seal_avx2_tail_256_rounds_and_3xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7581,14 +7586,14 @@ L$seal_avx2_tail_256_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7659,14 +7664,14 @@ L$seal_avx2_tail_256_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7706,7 +7711,7 @@ L$seal_avx2_tail_256_rounds_and_2xhash:
 	leaq	128(%rsi),%rsi
 	subq	$128,%rbx
 	jmp	L$seal_avx2_short_hash_remainder
-
+// ############################################################################# 
 L$seal_avx2_tail_384:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -7755,14 +7760,14 @@ L$seal_avx2_tail_384_rounds_and_3xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7836,14 +7841,14 @@ L$seal_avx2_tail_384_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -7914,14 +7919,14 @@ L$seal_avx2_tail_384_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8015,7 +8020,7 @@ L$seal_avx2_tail_384_rounds_and_2xhash:
 	leaq	256(%rsi),%rsi
 	subq	$256,%rbx
 	jmp	L$seal_avx2_short_hash_remainder
-
+// ############################################################################# 
 L$seal_avx2_tail_512:
 	vmovdqa	L$chacha20_consts(%rip),%ymm0
 	vmovdqa	0+64(%rbp),%ymm4
@@ -8062,14 +8067,14 @@ L$seal_avx2_tail_512_rounds_and_3xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8198,14 +8203,14 @@ L$seal_avx2_tail_512_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8331,14 +8336,14 @@ L$seal_avx2_tail_512_rounds_and_2xhash:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8414,7 +8419,7 @@ L$seal_avx2_tail_512_rounds_and_2xhash:
 	leaq	384(%rsi),%rsi
 	subq	$384,%rbx
 	jmp	L$seal_avx2_short_hash_remainder
-
+// ############################################################################## 
 L$seal_avx2_320:
 	vmovdqa	%ymm0,%ymm1
 	vmovdqa	%ymm0,%ymm2
@@ -8561,10 +8566,10 @@ L$seal_avx2_320_rounds:
 	vpaddd	0+192(%rbp),%ymm13,%ymm13
 	vpaddd	0+224(%rbp),%ymm14,%ymm14
 	vperm2i128	$0x02,%ymm0,%ymm4,%ymm3
-
+// Clamp and store the key
 	vpand	L$clamp(%rip),%ymm3,%ymm3
 	vmovdqa	%ymm3,0+0(%rbp)
-
+// Stream for up to 320 bytes
 	vperm2i128	$0x13,%ymm0,%ymm4,%ymm0
 	vperm2i128	$0x13,%ymm8,%ymm12,%ymm4
 	vperm2i128	$0x02,%ymm1,%ymm5,%ymm8
@@ -8576,7 +8581,7 @@ L$seal_avx2_320_rounds:
 	vperm2i128	$0x13,%ymm2,%ymm6,%ymm2
 	vperm2i128	$0x13,%ymm10,%ymm14,%ymm6
 	jmp	L$seal_avx2_short
-
+// ############################################################################## 
 L$seal_avx2_192:
 	vmovdqa	%ymm0,%ymm1
 	vmovdqa	%ymm0,%ymm2
@@ -8677,10 +8682,10 @@ L$seal_avx2_192_rounds:
 	vpaddd	%ymm11,%ymm12,%ymm12
 	vpaddd	%ymm15,%ymm13,%ymm13
 	vperm2i128	$0x02,%ymm0,%ymm4,%ymm3
-
+// Clamp and store the key
 	vpand	L$clamp(%rip),%ymm3,%ymm3
 	vmovdqa	%ymm3,0+0(%rbp)
-
+// Stream for up to 192 bytes
 	vperm2i128	$0x13,%ymm0,%ymm4,%ymm0
 	vperm2i128	$0x13,%ymm8,%ymm12,%ymm4
 	vperm2i128	$0x02,%ymm1,%ymm5,%ymm8
@@ -8723,14 +8728,14 @@ L$seal_avx2_short_hash_remainder:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8742,11 +8747,11 @@ L$seal_avx2_short_loop:
 	cmpq	$32,%rbx
 	jb	L$seal_avx2_short_tail
 	subq	$32,%rbx
-
+// Encrypt
 	vpxor	(%rsi),%ymm0,%ymm0
 	vmovdqu	%ymm0,(%rdi)
 	leaq	32(%rsi),%rsi
-
+// Load + hash
 	addq	0+0(%rdi),%r10
 	adcq	8+0(%rdi),%r11
 	adcq	$1,%r12
@@ -8776,14 +8781,14 @@ L$seal_avx2_short_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
@@ -8816,20 +8821,20 @@ L$seal_avx2_short_loop:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
 	leaq	32(%rdi),%rdi
-
+// Shift stream
 	vmovdqa	%ymm4,%ymm0
 	vmovdqa	%ymm8,%ymm4
 	vmovdqa	%ymm12,%ymm8
@@ -8876,14 +8881,14 @@ L$seal_avx2_short_tail:
 	movq	%r13,%r10
 	movq	%r14,%r11
 	movq	%r15,%r12
-	andq	$3,%r12
+	andq	$3,%r12  // At this point acc2 is 2 bits at most (value of 3)
 	movq	%r15,%r13
 	andq	$-4,%r13
 	movq	%r9,%r14
 	shrdq	$2,%r9,%r15
 	shrq	$2,%r9
 	addq	%r13,%r15
-	adcq	%r14,%r9
+	adcq	%r14,%r9  // No carry out since t3 is 61 bits and t1 is 63 bits
 	addq	%r15,%r10
 	adcq	%r9,%r11
 	adcq	$0,%r12

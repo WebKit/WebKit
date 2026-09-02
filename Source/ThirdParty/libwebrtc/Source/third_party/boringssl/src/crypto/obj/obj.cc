@@ -29,7 +29,7 @@
 #include "../internal.h"
 #include "../lhash/internal.h"
 
-// obj_data.h must be included after the definition of |ASN1_OBJECT|.
+// obj_data.h must be included after the definition of `ASN1_OBJECT`.
 #include "obj_dat.h"
 
 
@@ -42,7 +42,7 @@ DEFINE_LHASH_OF(ASN1_OBJECT)
 BSSL_NAMESPACE_END
 
 static StaticMutex global_added_lock;
-// These globals are protected by |global_added_lock|.
+// These globals are protected by `global_added_lock`.
 static LHASH_OF(ASN1_OBJECT) *global_added_by_data = nullptr;
 static LHASH_OF(ASN1_OBJECT) *global_added_by_nid = nullptr;
 static LHASH_OF(ASN1_OBJECT) *global_added_by_short_name = nullptr;
@@ -127,14 +127,14 @@ size_t OBJ_length(const ASN1_OBJECT *obj) {
 }
 
 static const ASN1_OBJECT *get_builtin_object(int nid) {
-  // |NID_undef| is stored separately, so all the indices are off by one. The
+  // `NID_undef` is stored separately, so all the indices are off by one. The
   // caller of this function must have a valid built-in, non-undef NID.
   BSSL_CHECK(nid > 0 && nid < NUM_NID);
   return &kObjects[nid - 1];
 }
 
-// obj_cmp is called to search the kNIDsInOIDOrder array. The |key| argument is
-// an |ASN1_OBJECT|* that we're looking for and |element| is a pointer to an
+// obj_cmp is called to search the kNIDsInOIDOrder array. The `key` argument is
+// an `ASN1_OBJECT`* that we're looking for and `element` is a pointer to an
 // unsigned int in the array.
 static int obj_cmp(const void *key, const void *element) {
   uint16_t nid = *((const uint16_t *)element);
@@ -185,7 +185,7 @@ int OBJ_cbs2nid(const CBS *cbs) {
 }
 
 // short_name_cmp is called to search the kNIDsInShortNameOrder array. The
-// |key| argument is name that we're looking for and |element| is a pointer to
+// `key` argument is name that we're looking for and `element` is a pointer to
 // an unsigned int in the array.
 static int short_name_cmp(const void *key, const void *element) {
   const char *name = (const char *)key;
@@ -219,7 +219,7 @@ int OBJ_sn2nid(const char *short_name) {
 }
 
 // long_name_cmp is called to search the kNIDsInLongNameOrder array. The
-// |key| argument is name that we're looking for and |element| is a pointer to
+// `key` argument is name that we're looking for and `element` is a pointer to
 // an unsigned int in the array.
 static int long_name_cmp(const void *key, const void *element) {
   const char *name = (const char *)key;
@@ -435,7 +435,7 @@ static int cmp_long_name(const ASN1_OBJECT *a, const ASN1_OBJECT *b) {
   return strcmp(a->ln, b->ln);
 }
 
-// obj_add_object inserts |obj| into the various global hashes for run-time
+// obj_add_object inserts `obj` into the various global hashes for run-time
 // added objects. It returns one on success or zero otherwise.
 static int obj_add_object(ASN1_OBJECT *obj) {
   obj->flags &= ~(ASN1_OBJECT_FLAG_DYNAMIC | ASN1_OBJECT_FLAG_DYNAMIC_STRINGS |
@@ -464,10 +464,10 @@ static int obj_add_object(ASN1_OBJECT *obj) {
     return 0;
   }
 
-  // We don't pay attention to |old_object| (which contains any previous object
+  // We don't pay attention to `old_object` (which contains any previous object
   // that was evicted from the hashes) because we don't have a reference count
   // on ASN1_OBJECT values. Also, we should never have duplicates nids and so
-  // should always have objects in |global_added_by_nid|.
+  // should always have objects in `global_added_by_nid`.
   ASN1_OBJECT *old_object;
   int ok = lh_ASN1_OBJECT_insert(global_added_by_nid, &old_object, obj);
   if (obj->length != 0 && obj->data != nullptr) {

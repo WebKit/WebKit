@@ -77,6 +77,12 @@ macro_rules! crypto_buffer_wrapper {
             }
         }
 
+        impl $crate::ffi::CryptoBufferWrapper for $name {
+            unsafe fn from_crypto_buffer(buf: ::core::ptr::NonNull<::bssl_sys::CRYPTO_BUFFER>) -> Self {
+                Self(buf)
+            }
+        }
+
         impl ::core::ops::Deref for $name {
             type Target = [u8];
             fn deref(&self) -> &Self::Target {

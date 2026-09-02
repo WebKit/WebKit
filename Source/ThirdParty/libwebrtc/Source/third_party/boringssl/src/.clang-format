@@ -16,7 +16,7 @@ IncludeCategories:
     Priority: 5
   # Headers from our dependencies
   #
-  # TODO(davidben): A strict reading of the the style guide would suggest these
+  # TODO(davidben): A strict reading of the style guide would suggest these
   # should be grouped with C system headers. Previously we grouped them as if
   # they were "Other libraries' .h files.". Should we switch?
   - Regex: '^<(gtest|gmock|benchmark)/.*\.h>'

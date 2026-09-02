@@ -1752,7 +1752,9 @@ ___
 
 $code.=<<___;
 .section .rodata
+
 .align	64
+rsaz_avx2_constants:
 .Land_mask:
 	.quad	0x1fffffff,0x1fffffff,0x1fffffff,0x1fffffff
 .Lscatter_permd:

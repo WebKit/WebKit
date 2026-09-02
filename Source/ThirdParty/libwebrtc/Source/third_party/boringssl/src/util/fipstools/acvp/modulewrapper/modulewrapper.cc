@@ -50,13 +50,18 @@
 #include "../../../../crypto/bytestring/internal.h"
 #include "../../../../crypto/fipsmodule/bcm_interface.h"
 #include "../../../../crypto/fipsmodule/ec/internal.h"
+#include "../../../../crypto/fipsmodule/keccak/internal.h"
 #include "../../../../crypto/fipsmodule/rand/internal.h"
 #include "../../../../crypto/fipsmodule/tls/internal.h"
+#include "../../../../crypto/internal.h"
 #include "modulewrapper.h"
 
 
 BSSL_NAMESPACE_BEGIN
 namespace acvp {
+
+// A general sanity limit for values that are expected to be small.
+constexpr size_t kMaxSize = 128 * 1024 * 1024;
 
 #if defined(OPENSSL_TRUSTY)
 #include <trusty_log.h>
@@ -114,6 +119,26 @@ static bool GetConfig(const Span<const uint8_t> args[],
         "revision": "1.0",
         "messageLength": [{
           "min": 0, "max": 65528, "increment": 8
+        }]
+      },
+      {
+        "algorithm": "SHAKE-128",
+        "revision": "1.0",
+        "inBit": false,
+        "inEmpty": true,
+        "outBit": false,
+        "outputLen": [{
+          "min": 16, "max": 65536, "increment": 8
+        }]
+      },
+      {
+        "algorithm": "SHAKE-256",
+        "revision": "1.0",
+        "inBit": false,
+        "inEmpty": true,
+        "outBit": false,
+        "outputLen": [{
+          "min": 16, "max": 65536, "increment": 8
         }]
       },
       {
@@ -812,7 +837,9 @@ static bool GetConfig(const Span<const uint8_t> args[],
         ],
         "functions": [
           "encapsulation",
-          "decapsulation"
+          "decapsulation",
+          "encapsulationKeyCheck",
+          "decapsulationKeyCheck"
         ]
       },
       {
@@ -917,18 +944,83 @@ static bool HashMCT(const Span<const uint8_t> args[],
   return write_reply({Span(buf).subspan(2 * DigestLength, DigestLength)});
 }
 
+template <enum boringssl_keccak_config_t Config>
+static bool SHAKE(const Span<const uint8_t> args[], ReplyCallback write_reply) {
+  const Span<const uint8_t> msg = args[0];
+  if (args[1].size() != sizeof(uint32_t)) {
+    LOG_ERROR("Wrong length for SHAKE output length.\n");
+    return false;
+  }
+  const uint32_t out_len = CRYPTO_load_u32_le(args[1].data());
+  if (out_len > kMaxSize) {
+    LOG_ERROR("SHAKE output length too large.\n");
+    return false;
+  }
+
+  std::vector<uint8_t> out(out_len);
+  BORINGSSL_keccak(out.data(), out.size(), msg.data(), msg.size(), Config);
+  return write_reply({Span<const uint8_t>(out)});
+}
+
+// Monte Carlo Test for SHAKE. See
+// https://pages.nist.gov/ACVP/draft-celi-acvp-sha3.html#name-shake-monte-carlo-test
+template <enum boringssl_keccak_config_t Config>
+static bool SHAKEMCT(const Span<const uint8_t> args[],
+                     ReplyCallback write_reply) {
+  if (args[1].size() != sizeof(uint32_t) ||
+      args[2].size() != sizeof(uint32_t) ||
+      args[3].size() != sizeof(uint32_t)) {
+    LOG_ERROR("Bad parameter length for SHAKE MCT.\n");
+    return false;
+  }
+  const uint32_t min_out_len = CRYPTO_load_u32_le(args[1].data());
+  const uint32_t max_out_len = CRYPTO_load_u32_le(args[2].data());
+  uint32_t out_len = CRYPTO_load_u32_le(args[3].data());
+
+  if (max_out_len < min_out_len || out_len > kMaxSize ||
+      max_out_len > kMaxSize) {
+    LOG_ERROR("Bad SHAKE MCT lengths: %u %u %u.\n", min_out_len, max_out_len,
+              out_len);
+    return false;
+  }
+  const uint32_t range = max_out_len - min_out_len + 1;
+
+  std::vector<uint8_t> md(args[0].begin(), args[0].end());
+  for (size_t i = 0; i < 1000; i++) {
+    // The message is the leftmost 128 bits of the previous output, zero-padded
+    // if the previous output was shorter.
+    uint8_t msg[16] = {0};
+    if (!md.empty()) {
+      memcpy(msg, md.data(), std::min(md.size(), sizeof(msg)));
+    }
+
+    md.resize(out_len);
+    BORINGSSL_keccak(md.data(), md.size(), msg, sizeof(msg), Config);
+
+    // The output length for the next iteration is derived from the rightmost
+    // 16 bits of the output.
+    uint16_t rightmost = 0;
+    if (out_len >= 2) {
+      rightmost = CRYPTO_load_u16_be(&md[out_len - 2]);
+    } else if (out_len == 1) {
+      rightmost = md[0];
+    }
+    out_len = min_out_len + (rightmost % range);
+  }
+
+  uint8_t out_len_bytes[sizeof(out_len)];
+  CRYPTO_store_u32_le(out_len_bytes, out_len);
+  return write_reply({Span<const uint8_t>(md), MakeConstSpan(out_len_bytes)});
+}
+
 static uint32_t GetIterations(const Span<const uint8_t> iterations_bytes) {
-  uint32_t iterations;
-  if (iterations_bytes.size() != sizeof(iterations)) {
-    LOG_ERROR(
-        "Expected %u-byte input for number of iterations, but found %u "
-        "bytes.\n",
-        static_cast<unsigned>(sizeof(iterations)),
-        static_cast<unsigned>(iterations_bytes.size()));
+  if (iterations_bytes.size() != sizeof(uint32_t)) {
+    LOG_ERROR("Iteration count value is %u bytes, not a uint32_t\n",
+              static_cast<unsigned>(iterations_bytes.size()));
     abort();
   }
 
-  memcpy(&iterations, iterations_bytes.data(), sizeof(iterations));
+  const uint32_t iterations = CRYPTO_load_u32_le(iterations_bytes.data());
   if (iterations == 0 || iterations == UINT32_MAX) {
     LOG_ERROR("Invalid number of iterations: %x.\n",
               static_cast<unsigned>(iterations));
@@ -1051,7 +1143,7 @@ static bool AES_CTR(const Span<const uint8_t> args[],
 static bool AESGCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
                         Span<const uint8_t> key) {
   if (tag_len_span.size() != sizeof(uint32_t)) {
-    LOG_ERROR("Tag size value is %u bytes, not an uint32_t\n",
+    LOG_ERROR("Tag size value is %u bytes, not a uint32_t\n",
               static_cast<unsigned>(tag_len_span.size()));
     return false;
   }
@@ -1088,7 +1180,7 @@ static bool AESGCMRandNonceSetup(EVP_AEAD_CTX *ctx,
                                  Span<const uint8_t> tag_len_span,
                                  Span<const uint8_t> key) {
   if (tag_len_span.size() != sizeof(uint32_t)) {
-    LOG_ERROR("Tag size value is %u bytes, not an uint32_t\n",
+    LOG_ERROR("Tag size value is %u bytes, not a uint32_t\n",
               static_cast<unsigned>(tag_len_span.size()));
     return false;
   }
@@ -1121,13 +1213,12 @@ static bool AESGCMRandNonceSetup(EVP_AEAD_CTX *ctx,
 
 static bool AESCCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
                         Span<const uint8_t> key) {
-  uint32_t tag_len_32;
-  if (tag_len_span.size() != sizeof(tag_len_32)) {
-    LOG_ERROR("Tag size value is %u bytes, not an uint32_t\n",
+  if (tag_len_span.size() != sizeof(uint32_t)) {
+    LOG_ERROR("Tag size value is %u bytes, not a uint32_t\n",
               static_cast<unsigned>(tag_len_span.size()));
     return false;
   }
-  memcpy(&tag_len_32, tag_len_span.data(), sizeof(tag_len_32));
+  const uint32_t tag_len_32 = CRYPTO_load_u32_le(tag_len_span.data());
   const EVP_AEAD *aead;
   switch (tag_len_32) {
     case 4:
@@ -1557,8 +1648,7 @@ static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
     nonce = args[7];
   }
 
-  uint32_t out_len;
-  if (out_len_bytes.size() != sizeof(out_len) ||
+  if (out_len_bytes.size() != sizeof(uint32_t) ||
       entropy.size() < CTR_DRBG_MIN_ENTROPY_LEN ||
       entropy.size() > CTR_DRBG_MAX_ENTROPY_LEN ||
       (!reseed_entropy.empty() &&
@@ -1567,7 +1657,7 @@ static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
       (nonce.size() != CTR_DRBG_NONCE_LEN && nonce.size() != 0)) {
     return false;
   }
-  memcpy(&out_len, out_len_bytes.data(), sizeof(out_len));
+  const uint32_t out_len = CRYPTO_load_u32_le(out_len_bytes.data());
   if (out_len > (1 << 24)) {
     return false;
   }
@@ -1764,11 +1854,10 @@ static bool CMAC_AES(const Span<const uint8_t> args[],
     return false;
   }
 
-  uint32_t mac_len;
-  if (args[0].size() != sizeof(mac_len)) {
+  if (args[0].size() != sizeof(uint32_t)) {
     return false;
   }
-  memcpy(&mac_len, args[0].data(), sizeof(mac_len));
+  const uint32_t mac_len = CRYPTO_load_u32_le(args[0].data());
   if (mac_len != sizeof(mac)) {
     return false;
   }
@@ -1815,11 +1904,10 @@ static RSA *GetRSAKey(unsigned bits) {
 
 static bool RSAKeyGen(const Span<const uint8_t> args[],
                       ReplyCallback write_reply) {
-  uint32_t bits;
-  if (args[0].size() != sizeof(bits)) {
+  if (args[0].size() != sizeof(uint32_t)) {
     return false;
   }
-  memcpy(&bits, args[0].data(), sizeof(bits));
+  const uint32_t bits = CRYPTO_load_u32_le(args[0].data());
 
   UniquePtr<RSA> key(RSA_new());
   if (!RSA_generate_key_fips(key.get(), bits, nullptr)) {
@@ -1843,11 +1931,10 @@ static bool RSAKeyGen(const Span<const uint8_t> args[],
 template <const EVP_MD *(MDFunc)(), bool UsePSS>
 static bool RSASigGen(const Span<const uint8_t> args[],
                       ReplyCallback write_reply) {
-  uint32_t bits;
-  if (args[0].size() != sizeof(bits)) {
+  if (args[0].size() != sizeof(uint32_t)) {
     return false;
   }
-  memcpy(&bits, args[0].data(), sizeof(bits));
+  const uint32_t bits = CRYPTO_load_u32_le(args[0].data());
   const Span<const uint8_t> msg = args[1];
 
   RSA *const key = GetRSAKey(bits);
@@ -1861,15 +1948,14 @@ static bool RSASigGen(const Span<const uint8_t> args[],
   std::vector<uint8_t> sig(RSA_size(key));
   size_t sig_len;
   if (UsePSS) {
-    uint32_t salt_len;
-    if (args[2].size() != sizeof(salt_len)) {
+    if (args[2].size() != sizeof(uint32_t)) {
       return false;
     }
-    memcpy(&salt_len, args[2].data(), sizeof(salt_len));
+    const uint32_t salt_len = CRYPTO_load_u32_le(args[2].data());
     if (salt_len != digest_len) {
-      LOG_ERROR(
-          "PSS salt length %u does not match digest length %u.\n",
-          static_cast<unsigned>(salt_len), static_cast<unsigned>(digest_len));
+      LOG_ERROR("PSS salt length %u does not match digest length %u.\n",
+                static_cast<unsigned>(salt_len),
+                static_cast<unsigned>(digest_len));
       return false;
     }
     if (!RSA_sign_pss_mgf1(key, &sig_len, sig.data(), sig.size(), digest_buf,
@@ -1938,11 +2024,10 @@ static bool TLSKDF(const Span<const uint8_t> args[],
   const Span<const uint8_t> seed2 = args[4];
   const EVP_MD *md = MDFunc();
 
-  uint32_t out_len;
-  if (out_len_bytes.size() != sizeof(out_len)) {
-    return 0;
+  if (out_len_bytes.size() != sizeof(uint32_t)) {
+    return false;
   }
-  memcpy(&out_len, out_len_bytes.data(), sizeof(out_len));
+  const uint32_t out_len = CRYPTO_load_u32_le(out_len_bytes.data());
 
   std::vector<uint8_t> out(size_t{out_len});
   if (!CRYPTO_tls1_prf(md, out.data(), out.size(), secret.data(), secret.size(),
@@ -1990,7 +2075,7 @@ static bool ECDH(const Span<const uint8_t> args[], ReplyCallback write_reply) {
     return false;
   }
 
-  // The output buffer is one larger than |EC_MAX_BYTES| so that truncation
+  // The output buffer is one larger than `EC_MAX_BYTES` so that truncation
   // can be detected.
   std::vector<uint8_t> output(EC_MAX_BYTES + 1);
   const int out_len =
@@ -2277,6 +2362,30 @@ static bool MLKEMDecap(const Span<const uint8_t> args[],
   return write_reply({shared_secret});
 }
 
+template <typename PublicKey, bcm_status (*ParsePublic)(PublicKey *, CBS *)>
+static bool MLKEMEncapKeyCheck(const Span<const uint8_t> args[],
+                               ReplyCallback write_reply) {
+  const Span<const uint8_t> pub_key_bytes = args[0];
+
+  auto pub = std::make_unique<PublicKey>();
+  CBS cbs = pub_key_bytes;
+  uint8_t valid = bcm_success(ParsePublic(pub.get(), &cbs));
+
+  return write_reply({Span<const uint8_t>(&valid, sizeof(valid))});
+}
+
+template <typename PrivateKey, bcm_status (*ParsePrivate)(PrivateKey *, CBS *)>
+static bool MLKEMDecapKeyCheck(const Span<const uint8_t> args[],
+                               ReplyCallback write_reply) {
+  const Span<const uint8_t> priv_key_bytes = args[0];
+
+  auto priv = std::make_unique<PrivateKey>();
+  CBS cbs = priv_key_bytes;
+  uint8_t valid = bcm_success(ParsePrivate(priv.get(), &cbs));
+
+  return write_reply({Span<const uint8_t>(&valid, sizeof(valid))});
+}
+
 template <size_t N, size_t PublicKeyBytes, size_t PrivateKeyBytes,
           bcm_infallible (*GenerateFromSeed)(uint8_t *, uint8_t *,
                                              const uint8_t *)>
@@ -2371,6 +2480,12 @@ static constexpr struct {
     {"SHA2-384/MCT", 1, HashMCT<SHA384, SHA384_DIGEST_LENGTH>},
     {"SHA2-512/MCT", 1, HashMCT<SHA512, SHA512_DIGEST_LENGTH>},
     {"SHA2-512/256/MCT", 1, HashMCT<SHA512_256, SHA512_256_DIGEST_LENGTH>},
+    {"SHAKE-128", 2, SHAKE<boringssl_shake128>},
+    {"SHAKE-128/VOT", 2, SHAKE<boringssl_shake128>},
+    {"SHAKE-128/MCT", 4, SHAKEMCT<boringssl_shake128>},
+    {"SHAKE-256", 2, SHAKE<boringssl_shake256>},
+    {"SHAKE-256/VOT", 2, SHAKE<boringssl_shake256>},
+    {"SHAKE-256/MCT", 4, SHAKEMCT<boringssl_shake256>},
     {"AES/encrypt", 3, AES<AES_set_encrypt_key, AES_encrypt>},
     {"AES/decrypt", 3, AES<AES_set_decrypt_key, AES_decrypt>},
     {"AES-CBC/encrypt", 4, AES_CBC<AES_set_encrypt_key, AES_ENCRYPT>},
@@ -2503,6 +2618,15 @@ static constexpr struct {
     {"ML-KEM-1024/decap", 2,
      MLKEMDecap<MLKEM1024_private_key, BCM_mlkem1024_parse_private_key,
                 BCM_mlkem1024_decap>},
+    {"ML-KEM-768/encapKeyCheck", 1,
+     MLKEMEncapKeyCheck<MLKEM768_public_key, BCM_mlkem768_parse_public_key>},
+    {"ML-KEM-1024/encapKeyCheck", 1,
+     MLKEMEncapKeyCheck<MLKEM1024_public_key, BCM_mlkem1024_parse_public_key>},
+    {"ML-KEM-768/decapKeyCheck", 1,
+     MLKEMDecapKeyCheck<MLKEM768_private_key, BCM_mlkem768_parse_private_key>},
+    {"ML-KEM-1024/decapKeyCheck", 1,
+     MLKEMDecapKeyCheck<MLKEM1024_private_key,
+                        BCM_mlkem1024_parse_private_key>},
     {"SLH-DSA-SHA2-128s/keyGen", 1,
      SLHDSAKeyGen<BCM_SLHDSA_SHA2_128S_N, BCM_SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES,
                   BCM_SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES,

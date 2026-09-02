@@ -82,7 +82,7 @@ int ASN1_mbstring_ncopy(ASN1_STRING **out, const unsigned char *in,
       return -1;
   }
 
-  // Check |minsize| and |maxsize| and work out the minimal type, if any.
+  // Check `minsize` and `maxsize` and work out the minimal type, if any.
   CBS cbs;
   CBS_init(&cbs, in, len);
   size_t utf8_len = 0, nchar = 0;
@@ -209,7 +209,7 @@ int ASN1_mbstring_ncopy(ASN1_STRING **out, const unsigned char *in,
     }
   }
   if (/* OpenSSL historically NUL-terminated this value with a single byte,
-       * even for |MBSTRING_BMP| and |MBSTRING_UNIV|. */
+       * even for `MBSTRING_BMP` and `MBSTRING_UNIV`. */
       !CBB_add_u8(&cbb, 0) ||                 //
       !CBB_finish(&cbb, &data, &data_len) ||  //
       data_len < 1 ||                         //

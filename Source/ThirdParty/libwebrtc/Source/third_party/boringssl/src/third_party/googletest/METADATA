@@ -1,0 +1,11 @@
+name: "googletest"
+description: "Google Testing and Mocking Framework"
+
+third_party {
+  url {
+    type: HOMEPAGE
+    value: "https://github.com/google/googletest"
+  }
+  version: "16d4f8eff6d7cefca6975d82a53f8fc995a6feb7"
+  last_upgrade_date { year: 2025 month: 5 day: 20 }
+}

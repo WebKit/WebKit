@@ -107,7 +107,7 @@ ASN1_GENERALIZEDTIME *ASN1_GENERALIZEDTIME_adj(ASN1_GENERALIZEDTIME *s,
   int ret = snprintf(buf, sizeof(buf), "%04d%02d%02d%02d%02d%02dZ",
                      data.tm_year + 1900, data.tm_mon + 1, data.tm_mday,
                      data.tm_hour, data.tm_min, data.tm_sec);
-  // |snprintf| must write exactly 15 bytes (plus the NUL) to the buffer.
+  // `snprintf` must write exactly 15 bytes (plus the NUL) to the buffer.
   BSSL_CHECK(ret == static_cast<int>(sizeof(buf) - 1));
 
   int free_s = 0;

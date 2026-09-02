@@ -103,7 +103,7 @@ int X509_ATTRIBUTE_set1_data(X509_ATTRIBUTE *attr, int attrtype,
 
   if (attrtype == 0) {
     // Do nothing. This is used to create an empty value set in
-    // |X509_ATTRIBUTE_create_by_*|. This is invalid, but supported by OpenSSL.
+    // `X509_ATTRIBUTE_create_by_*`. This is invalid, but supported by OpenSSL.
     return 1;
   }
 
@@ -114,9 +114,9 @@ int X509_ATTRIBUTE_set1_data(X509_ATTRIBUTE *attr, int attrtype,
 
   // This function is several functions in one.
   if (attrtype & MBSTRING_FLAG) {
-    // |data| is an encoded string. We must decode and re-encode it to |attr|'s
-    // preferred ASN.1 type. Note |len| may be -1, in which case
-    // |ASN1_STRING_set_by_NID| calls |strlen| automatically.
+    // `data` is an encoded string. We must decode and re-encode it to `attr`'s
+    // preferred ASN.1 type. Note `len` may be -1, in which case
+    // `ASN1_STRING_set_by_NID` calls `strlen` automatically.
     ASN1_STRING *str =
         ASN1_STRING_set_by_NID(nullptr, reinterpret_cast<const uint8_t *>(data),
                                len, attrtype, OBJ_obj2nid(attr->object));
@@ -126,8 +126,8 @@ int X509_ATTRIBUTE_set1_data(X509_ATTRIBUTE *attr, int attrtype,
     }
     asn1_type_set0_string(typ, str);
   } else if (len != -1) {
-    // |attrtype| must be a valid |ASN1_STRING| type. |data| and |len| is a
-    // value in the corresponding |ASN1_STRING| representation.
+    // `attrtype` must be a valid `ASN1_STRING` type. `data` and `len` is a
+    // value in the corresponding `ASN1_STRING` representation.
     ASN1_STRING *str = ASN1_STRING_type_new(attrtype);
     if (str == nullptr || !ASN1_STRING_set(str, data, len)) {
       ASN1_STRING_free(str);
@@ -135,7 +135,7 @@ int X509_ATTRIBUTE_set1_data(X509_ATTRIBUTE *attr, int attrtype,
     }
     asn1_type_set0_string(typ, str);
   } else {
-    // |attrtype| must be a valid |ASN1_TYPE| type. |data| is a pointer to an
+    // `attrtype` must be a valid `ASN1_TYPE` type. `data` is a pointer to an
     // object of the corresponding type.
     if (!ASN1_TYPE_set1(typ, attrtype, data)) {
       goto err;

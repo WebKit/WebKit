@@ -23,12 +23,12 @@ nasm-win32.exe: Update to the appropriate release of NASM, found at
     The current revision is nasm-2.13.03-win64.zip.
 
 Finally, update sde-linux64.tar.xz and sde-win32.tar.xz by downloading the
-latet release from Intel at
+latest release from Intel at
 https://software.intel.com/en-us/articles/intel-software-development-emulator,
 but upload it with the following command. (Note the bucket is different.)
 
     upload_to_google_storage.py -b chrome-boringssl-sde sde-linux64.tar.xz sde-win32.tar.xz
 
-The current revision is sde-external-9.38.0-2024-04-18-*.tar.xz.
+The current revision is sde-external-9.48.0-2024-11-25-*.tar.xz.
 
 When adding new files, remember to update .gitignore.

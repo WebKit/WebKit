@@ -26,7 +26,7 @@
 using namespace bssl;
 
 // kSizeTWithoutLower4Bits is a mask that can be used to zero the lower four
-// bits of a |size_t|.
+// bits of a `size_t`.
 static const size_t kSizeTWithoutLower4Bits = (size_t) -16;
 
 
@@ -79,7 +79,7 @@ void bssl::gcm_init_ssse3(u128 Htable[16], const uint64_t H[2]) {
   Htable[14].hi = V.hi ^ Htable[6].hi, Htable[14].lo = V.lo ^ Htable[6].lo;
   Htable[15].hi = V.hi ^ Htable[7].hi, Htable[15].lo = V.lo ^ Htable[7].lo;
 
-  // Treat |Htable| as a 16x16 byte table and transpose it. Thus, Htable[i]
+  // Treat `Htable` as a 16x16 byte table and transpose it. Thus, Htable[i]
   // contains the i'th byte of j*H for all j.
   uint8_t *Hbytes = (uint8_t *)Htable;
   for (int i = 0; i < 16; i++) {
@@ -180,7 +180,7 @@ static size_t hw_gcm_decrypt(const uint8_t *in, uint8_t *out, size_t len,
 
 void bssl::CRYPTO_ghash_init(gmult_func *out_mult, ghash_func *out_hash,
                              u128 out_table[16], const uint8_t gcm_key[16]) {
-  // H is passed to |gcm_init_*| as a pair of byte-swapped, 64-bit values.
+  // H is passed to `gcm_init_*` as a pair of byte-swapped, 64-bit values.
   uint64_t H[2] = {CRYPTO_load_u64_be(gcm_key),
                    CRYPTO_load_u64_be(gcm_key + 8)};
 
@@ -435,7 +435,7 @@ int bssl::CRYPTO_gcm128_encrypt(const GCM128_KEY *key, GCM128_CONTEXT *ctx,
 
 #if defined(HW_GCM)
   if (key->impl != gcm_separate && len > 0) {
-    // |hw_gcm_encrypt| may not process all the input given to it. It may
+    // `hw_gcm_encrypt` may not process all the input given to it. It may
     // not process *any* of its input if it is deemed too small.
     size_t bulk = hw_gcm_encrypt(in, out, len, &key->aes, ctx->Yi, ctx->Xi,
                                  key->Htable, key->impl);
@@ -523,7 +523,7 @@ int bssl::CRYPTO_gcm128_decrypt(const GCM128_KEY *key, GCM128_CONTEXT *ctx,
 
 #if defined(HW_GCM)
   if (key->impl != gcm_separate && len > 0) {
-    // |hw_gcm_decrypt| may not process all the input given to it. It may
+    // `hw_gcm_decrypt` may not process all the input given to it. It may
     // not process *any* of its input if it is deemed too small.
     size_t bulk = hw_gcm_decrypt(in, out, len, &key->aes, ctx->Yi, ctx->Xi,
                                  key->Htable, key->impl);

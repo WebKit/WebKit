@@ -131,51 +131,9 @@ func addRSAKeyUsageTests() {
 				shouldFail:    true,
 				expectedError: ":KEY_USAGE_BIT_INCORRECT:",
 			})
-
-			// In 1.2 and below, we should not enforce without the enforce-rsa-key-usage flag.
-			testCases = append(testCases, testCase{
-				testType: clientTest,
-				name:     "RSAKeyUsage-Client-WantSignature-GotEncipherment-Unenforced-" + ver.name,
-				config: Config{
-					MinVersion:   ver.version,
-					MaxVersion:   ver.version,
-					Credential:   &dsCert,
-					CipherSuites: encSuites,
-				},
-				flags: []string{"-expect-key-usage-invalid", "-ignore-rsa-key-usage"},
-			})
-
-			testCases = append(testCases, testCase{
-				testType: clientTest,
-				name:     "RSAKeyUsage-Client-WantEncipherment-GotSignature-Unenforced-" + ver.name,
-				config: Config{
-					MinVersion:   ver.version,
-					MaxVersion:   ver.version,
-					Credential:   &encCert,
-					CipherSuites: dsSuites,
-				},
-				flags: []string{"-expect-key-usage-invalid", "-ignore-rsa-key-usage"},
-			})
 		}
 
-		if ver.version >= VersionTLS13 {
-			// In 1.3 and above, we enforce keyUsage even when disabled.
-			testCases = append(testCases, testCase{
-				testType: clientTest,
-				name:     "RSAKeyUsage-Client-WantSignature-GotEncipherment-AlwaysEnforced-" + ver.name,
-				config: Config{
-					MinVersion:   ver.version,
-					MaxVersion:   ver.version,
-					Credential:   &encCert,
-					CipherSuites: dsSuites,
-				},
-				flags:         []string{"-ignore-rsa-key-usage"},
-				shouldFail:    true,
-				expectedError: ":KEY_USAGE_BIT_INCORRECT:",
-			})
-		}
-
-		// The server only uses signatures and always enforces it.
+		// The server expects signatures from the client and always enforces it.
 		testCases = append(testCases, testCase{
 			testType: serverTest,
 			name:     "RSAKeyUsage-Server-WantSignature-GotEncipherment-" + ver.name,

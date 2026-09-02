@@ -48,10 +48,10 @@ static const struct nid_to_digest nid_to_digest_mapping[] = {
     {NID_sha512, EVP_sha512, SN_sha512, LN_sha512},
     {NID_sha512_256, EVP_sha512_256, SN_sha512_256, LN_sha512_256},
     {NID_md5_sha1, EVP_md5_sha1, SN_md5_sha1, LN_md5_sha1},
-    // As a remnant of signing |EVP_MD|s, OpenSSL returned the corresponding
+    // As a remnant of signing `EVP_MD`s, OpenSSL returned the corresponding
     // hash function when given a signature OID. To avoid unintended lax parsing
     // of hash OIDs, this is no longer supported for lookup by OID or NID.
-    // Node.js, however, exposes |EVP_get_digestbyname|'s full behavior to
+    // Node.js, however, exposes `EVP_get_digestbyname`'s full behavior to
     // consumers so we retain it there.
     {NID_undef, EVP_sha1, SN_dsaWithSHA, LN_dsaWithSHA},
     {NID_undef, EVP_sha1, SN_dsaWithSHA1, LN_dsaWithSHA1},
@@ -70,7 +70,7 @@ static const struct nid_to_digest nid_to_digest_mapping[] = {
 
 const EVP_MD *EVP_get_digestbynid(int nid) {
   if (nid == NID_undef) {
-    // Skip the |NID_undef| entries in |nid_to_digest_mapping|.
+    // Skip the `NID_undef` entries in `nid_to_digest_mapping`.
     return nullptr;
   }
 
@@ -117,7 +117,7 @@ static int cbs_to_digest_nid(const CBS *cbs) {
 const EVP_MD *EVP_get_digestbyobj(const ASN1_OBJECT *obj) {
   int nid = obj->nid;
   if (nid == NID_undef) {
-    // Handle objects with no saved NID. Note we don't use |OBJ_obj2nid| here to
+    // Handle objects with no saved NID. Note we don't use `OBJ_obj2nid` here to
     // avoid pulling in the OID table.
     CBS cbs;
     CBS_init(&cbs, OBJ_get0_data(obj), OBJ_length(obj));

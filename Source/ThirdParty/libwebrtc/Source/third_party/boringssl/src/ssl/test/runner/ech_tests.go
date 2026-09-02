@@ -484,6 +484,10 @@ read ack
 					"-ech-is-retry-config", "1",
 					"-expect-ech-accept",
 					"-expect-msg-callback", expectMsgCallback,
+					// Exact message trace of the handshake depends on selected curves,
+					// as MLKEM causes messages to be split due to its handshake size
+					// and DTLS trying to respect a MTU here.
+					"-curves", strconv.Itoa(int(CurveX25519)),
 				},
 				expectations: connectionExpectations{
 					echAccepted: true,
@@ -2383,6 +2387,10 @@ read hs 4
 				"-ech-config-list", base64FlagValue(CreateECHConfigList(echConfig.ECHConfig.Raw)),
 				"-expect-ech-accept",
 				"-expect-msg-callback", clientAndServerHelloInitial + finishHandshake,
+				// Exact message trace of the handshake depends on selected curves,
+				// as MLKEM causes messages to be split due to its handshake size
+				// and DTLS trying to respect a MTU here.
+				"-curves", strconv.Itoa(int(CurveX25519)),
 			},
 			expectations: connectionExpectations{echAccepted: true},
 		})
@@ -2405,6 +2413,10 @@ read hs 4
 				"-expect-ech-accept",
 				"-expect-hrr", // Check we triggered HRR.
 				"-expect-msg-callback", clientAndServerHelloInitial + clientAndServerHello + finishHandshake,
+				// Exact message trace of the handshake depends on selected curves,
+				// as MLKEM causes messages to be split due to its handshake size
+				// and DTLS trying to respect a MTU here.
+				"-curves", strconv.Itoa(int(CurveX25519)), "-curves", strconv.Itoa(int(CurveP384)),
 			},
 			expectations: connectionExpectations{echAccepted: true},
 		})

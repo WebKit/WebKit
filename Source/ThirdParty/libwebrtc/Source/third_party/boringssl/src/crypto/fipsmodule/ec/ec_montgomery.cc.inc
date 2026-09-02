@@ -42,7 +42,7 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
   }
 
   // Transform (X, Y, Z) into (x, y) := (X/Z^2, Y/Z^3). Note the check above
-  // ensures |point->Z| is non-zero, so the inverse always exists.
+  // ensures `point->Z` is non-zero, so the inverse always exists.
   EC_FELEM z1, z2;
   ec_GFp_mont_felem_inv0(group, &z2, &point->Z);
   ec_felem_sqr(group, &z1, &z2);
@@ -67,7 +67,7 @@ static int ec_GFp_mont_jacobian_to_affine_batch(const EC_GROUP *group,
     return 1;
   }
 
-  // Compute prefix products of all Zs. Use |out[i].X| as scratch space
+  // Compute prefix products of all Zs. Use `out[i].X` as scratch space
   // to store these values.
   out[0].X = in[0].Z;
   for (size_t i = 1; i < num; i++) {
@@ -84,7 +84,7 @@ static int ec_GFp_mont_jacobian_to_affine_batch(const EC_GROUP *group,
   EC_FELEM zinvprod;
   ec_GFp_mont_felem_inv0(group, &zinvprod, &out[num - 1].X);
   for (size_t i = num - 1; i < num; i--) {
-    // Our loop invariant is that |zinvprod| is Z0^-1 * Z1^-1 * ... * Zi^-1.
+    // Our loop invariant is that `zinvprod` is Z0^-1 * Z1^-1 * ... * Zi^-1.
     // Recover Zi^-1 by multiplying by the previous product.
     EC_FELEM zinv, zinv2;
     if (i == 0) {
@@ -174,7 +174,7 @@ void bssl::ec_GFp_mont_add(const EC_GROUP *group, EC_JACOBIAN *out,
 
   BN_ULONG yneq = ec_felem_non_zero_mask(group, &r);
 
-  // This case will never occur in the constant-time |ec_GFp_mont_mul|.
+  // This case will never occur in the constant-time `ec_GFp_mont_mul`.
   BN_ULONG is_nontrivial_double = ~xneq & ~yneq & z1nz & z2nz;
   if (constant_time_declassify_w(is_nontrivial_double)) {
     ec_GFp_mont_dbl(group, out, a);
@@ -341,7 +341,7 @@ static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
 
   // During signing the x coefficient is reduced modulo the group order.
   // Therefore there is a small possibility, less than 1/2^128, that group_order
-  // < p.x < P. in that case we need not only to compare against |r| but also to
+  // < p.x < P. in that case we need not only to compare against `r` but also to
   // compare against r+group_order.
   BN_ULONG carry = bn_add_words(r_Z2.words, r->words, group->order.N.d,
                                 group->field.N.width);

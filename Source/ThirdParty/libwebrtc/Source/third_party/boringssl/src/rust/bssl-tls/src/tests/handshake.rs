@@ -46,7 +46,7 @@ fn ping_pong() -> Result<(), Error> {
         .with_certificate_cache(Some(&cache))
         .with_credential(server_cred.unwrap())?;
     let server_ctx = server_ctx_builder.build();
-    let mut server_conn = server_ctx.new_server_connection(None)?.build();
+    let mut server_conn = server_ctx.new_server_connection().build();
 
     let mut client_ctx_builder = TlsContextBuilder::new_tls();
     let mut cert_store = X509StoreBuilder::new();
@@ -58,7 +58,7 @@ fn ping_pong() -> Result<(), Error> {
         .with_certificate_cache(Some(&cache))
         .with_certificate_store(&cert_store);
     let client_ctx = client_ctx_builder.build();
-    let mut client_conn = client_ctx.new_client_connection(None)?;
+    let mut client_conn = client_ctx.new_client_connection();
     client_conn.with_certificate_verification_mode(CertificateVerificationMode::PeerCertMandatory);
     let mut client_conn = client_conn.build();
     client_conn

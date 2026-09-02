@@ -368,7 +368,7 @@ OPENSSL_EXPORT int RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, uint8_t *out,
 // a DigestInfo structure.
 //
 // If `padding` is `RSA_NO_PADDING`, this function only performs the raw private
-// key operation, interpreting `in` as a integer modulo n. The caller is
+// key operation, interpreting `in` as an integer modulo n. The caller is
 // responsible for hashing the input and encoding it for the signature scheme
 // being implemented.
 //

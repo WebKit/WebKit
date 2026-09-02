@@ -747,6 +747,7 @@ Lenc_blocks_less_than_1:	//	Last partial block handling
 .private_extern	_aes_gcm_dec_kernel
 
 .align	4
+.alt_entry _aes_gcm_dec_kernel
 _aes_gcm_dec_kernel:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29, x30, [sp, #-224]!
@@ -1479,6 +1480,7 @@ Ldec_blocks_less_than_1:	//	blocks left <= 1
 .private_extern	_aes_gcm_enc_kernel_eor3
 
 .align	4
+.alt_entry _aes_gcm_enc_kernel_eor3
 _aes_gcm_enc_kernel_eor3:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29, x30, [sp, #-224]!
@@ -2195,6 +2197,7 @@ Lenc_blocks_less_than_1_eor3:	//	Last partial block handling
 .private_extern	_aes_gcm_dec_kernel_eor3
 
 .align	4
+.alt_entry _aes_gcm_dec_kernel_eor3
 _aes_gcm_dec_kernel_eor3:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29, x30, [sp, #-224]!

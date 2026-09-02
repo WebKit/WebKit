@@ -16,6 +16,7 @@
 #define BSSL_PKI_VERIFY_CERTIFICATE_CHAIN_H_
 
 #include <set>
+#include <vector>
 
 #include <openssl/base.h>
 #include <openssl/evp.h>
@@ -100,6 +101,28 @@ class OPENSSL_EXPORT VerifyCertificateChainDelegate {
   // validation. If this function returns true the CT precertificate poison
   // extension will not prevent the certificate from being validated.
   virtual bool AcceptPreCertificates() = 0;
+
+  // Returns a cosigner key that matches `cosigner_id`, if one exists. Will
+  // only be called for additional cosignatures, is not called for the CA
+  // cosignature (which uses the key from the MTCAnchor).
+  // The `IsCosignatureVerificationResultAcceptable` method should also be
+  // implemented to evaluate if the cosignatures meet the delegate's policy.
+  struct MTCCosigner {
+    SignatureAlgorithm signature_algorithm;
+    UniquePtr<CRYPTO_BUFFER> key;
+  };
+  virtual std::optional<MTCCosigner> GetMTCCosigner(
+      Span<const uint8_t> cosigner_id) = 0;
+
+  // Called after standalone MTC verification, the delegate should return true
+  // if the combination of `mtc_anchor` and `valid_additional_cosigners` meets
+  // the delegate's cosigner policy. Only called if the MTC had a valid
+  // CA cosignature for `mtc_anchor`. `valid_additional_cosigners` will contain
+  // the cosigner_ids of the additional valid cosigners, if any, and will not
+  // contain the `ca_id` of `mtc_anchor`.
+  virtual bool IsCosignatureVerificationResultAcceptable(
+      const MTCAnchor* mtc_anchor,
+      std::vector<std::vector<uint8_t>> valid_additional_cosigners) = 0;
 
   virtual ~VerifyCertificateChainDelegate();
 };

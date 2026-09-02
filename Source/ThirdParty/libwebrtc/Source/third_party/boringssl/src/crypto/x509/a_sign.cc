@@ -47,12 +47,12 @@ int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
 int ASN1_item_sign_ctx(const ASN1_ITEM *it, X509_ALGOR *algor1,
                        X509_ALGOR *algor2, ASN1_BIT_STRING *signature,
                        void *asn, EVP_MD_CTX *ctx) {
-  // Historically, this function called |EVP_MD_CTX_cleanup| on return. Some
+  // Historically, this function called `EVP_MD_CTX_cleanup` on return. Some
   // callers rely on this to avoid memory leaks.
   Cleanup cleanup = [&] { EVP_MD_CTX_cleanup(ctx); };
 
   // Write out the requested copies of the AlgorithmIdentifier. This may modify
-  // |asn|, so we must do it first.
+  // `asn`, so we must do it first.
   if ((algor1 != nullptr && !x509_digest_sign_algorithm(ctx, algor1)) ||
       (algor2 != nullptr && !x509_digest_sign_algorithm(ctx, algor2))) {
     return 0;
@@ -78,7 +78,7 @@ int bssl::x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
   size_t sig_len = EVP_PKEY_size(pkey);
   if (sig_len > INT_MAX) {
-    // Ensure the signature will fit in |out|.
+    // Ensure the signature will fit in `out`.
     OPENSSL_PUT_ERROR(X509, ERR_R_OVERFLOW);
     return 0;
   }
