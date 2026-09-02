@@ -2966,6 +2966,9 @@ media/airplay-allows-buffering.html
 media/airplay-autoplay.html
 media/airplay-target-availability.html
 media/airplay-target-availability-disableremoteplayback.html
+http/tests/media/airplay-target-availability-in-cross-origin-iframe.html
+http/tests/media/airplay-select-target-in-cross-origin-iframe.html
+http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html
 
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/116651 media/context-menu-actions.html

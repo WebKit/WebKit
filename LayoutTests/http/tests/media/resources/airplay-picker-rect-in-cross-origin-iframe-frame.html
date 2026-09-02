@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<video id="video" muted playsinline controls src="/media-resources/content/test.mp4" style="width: 100%"></video>
+<script>
+const video = document.getElementById("video");
+
+if (window.internals)
+    internals.settings.setAllowsAirPlayForMediaPlayback(true);
+
+video.addEventListener("webkitplaybacktargetavailabilitychanged", (event) => {
+    if (event.availability === "available")
+        parent.postMessage({ type: "available" }, "*");
+}, true);
+
+video.addEventListener("canplaythrough", () => {
+    parent.postMessage({ type: "ready" }, "*");
+}, { once: true });
+
+addEventListener("message", (event) => {
+    if (event.data.type === "showPicker")
+        video.webkitShowPlaybackTargetPicker();
+});
+</script>
+</body>

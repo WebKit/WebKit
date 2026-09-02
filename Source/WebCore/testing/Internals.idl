@@ -1137,6 +1137,7 @@ enum ContentsFormat {
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
+    [Conditional=WIRELESS_PLAYBACK_TARGET] Promise<DOMRect> mockMediaPlaybackTargetPickerRect();
     [Conditional=MEDIA_RECORDER] undefined setCustomPrivateRecorderCreator();
 
     readonly attribute boolean isMonitoringWirelessRoutes;

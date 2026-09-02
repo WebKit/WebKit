@@ -146,6 +146,7 @@
 #include "InternalsMapLike.h"
 #include "InternalsSetLike.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSDOMRect.h"
 #include "JSFile.h"
 #include "JSInternals.h"
 #include "JSNode.h"
@@ -6053,6 +6054,19 @@ void Internals::mockMediaPlaybackTargetPickerDismissPopup()
         return;
 
     frame->page()->mockMediaPlaybackTargetPickerDismissPopup();
+}
+
+void Internals::mockMediaPlaybackTargetPickerRect(DOMPromiseDeferred<IDLInterface<DOMRect>>&& promise)
+{
+    auto frame = this->frame();
+    if (!frame || !frame->page()) {
+        promise.reject(Exception { ExceptionCode::InvalidAccessError });
+        return;
+    }
+
+    frame->page()->mockMediaPlaybackTargetPickerRect([promise = WTF::move(promise)](FloatRect rect) mutable {
+        promise.resolve(DOMRect::create(rect));
+    });
 }
 #endif
 

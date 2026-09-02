@@ -186,6 +186,11 @@ void WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup()
     protect(mockPicker())->dismissPopup();
 }
 
+FloatRect WebMediaSessionManager::mockMediaPlaybackTargetPickerRect()
+{
+    return mockPicker().lastPickerRect();
+}
+
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
     if (!m_pickerOverride)

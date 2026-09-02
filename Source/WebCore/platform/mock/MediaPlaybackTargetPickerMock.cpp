@@ -63,7 +63,7 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMock::playbackTarget()
     return MediaPlaybackTargetMock::create(m_deviceName, m_state);
 }
 
-void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance)
+void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(CocoaView*, const FloatRect& rect, bool checkActiveRoute, bool useDarkAppearance)
 {
     if (!client() || m_showingMenu)
         return;
@@ -75,6 +75,7 @@ void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(CocoaView*, const F
 
     LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDarkAppearance = %i", (int)checkActiveRoute, (int)useDarkAppearance);
 
+    m_lastPickerRect = rect;
     m_showingMenu = true;
     callOnMainThread([weakThis = WeakPtr { *this }] {
         CheckedPtr checkedThis = weakThis.get();

@@ -3220,6 +3220,9 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-005.h
 
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
+http/tests/media/airplay-target-availability-in-cross-origin-iframe.html
+http/tests/media/airplay-select-target-in-cross-origin-iframe.html
+http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html
 webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Skip ]

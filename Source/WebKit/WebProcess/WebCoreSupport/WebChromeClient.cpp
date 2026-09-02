@@ -2070,18 +2070,13 @@ void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientConte
         page->send(Messages::WebPageProxy::RemovePlaybackTargetPickerClient(contextId));
 }
 
-void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const IntPoint& position, bool isVideo)
+void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, FrameIdentifier frameID, const IntPoint& position, bool isVideo)
 {
     RefPtr page = m_page.get();
     if (!page)
         return;
 
-    RefPtr frameView = page->localMainFrameView();
-    if (!frameView)
-        return;
-
-    FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
-    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
+    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, frameID, FloatRect(position, FloatSize()), isVideo));
 }
 
 void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)
@@ -2106,6 +2101,15 @@ void WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup()
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::MockMediaPlaybackTargetPickerDismissPopup());
+}
+
+void WebChromeClient::mockMediaPlaybackTargetPickerRect(CompletionHandler<void(FloatRect)>&& completionHandler)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler({ });
+
+    page->sendWithAsyncReply(Messages::WebPageProxy::MockMediaPlaybackTargetPickerRect(), WTF::move(completionHandler));
 }
 #endif
 

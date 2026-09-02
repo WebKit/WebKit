@@ -27,6 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
+#include <WebCore/FloatRect.h>
 #include <WebCore/MediaPlaybackTargetPicker.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Forward.h>
@@ -50,6 +51,8 @@ public:
     void setState(const String&, MediaPlaybackTargetMockState);
     void dismissPopup();
 
+    const FloatRect& lastPickerRect() const { return m_lastPickerRect; }
+
 private:
     void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
     void startingMonitoringPlaybackTargets() final;
@@ -62,6 +65,7 @@ private:
     String m_deviceName;
     MediaPlaybackTargetMockState m_state;
     bool m_showingMenu { false };
+    FloatRect m_lastPickerRect;
 };
 
 } // namespace WebCore

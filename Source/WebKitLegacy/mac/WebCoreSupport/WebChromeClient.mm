@@ -1081,7 +1081,7 @@ void WebChromeClient::removePlaybackTargetPickerClient(WebCore::PlaybackTargetCl
     [m_webView _removePlaybackTargetPickerClient:contextId];
 }
 
-void WebChromeClient::showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, const WebCore::IntPoint& location, bool hasVideo)
+void WebChromeClient::showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FrameIdentifier, const WebCore::IntPoint& location, bool hasVideo)
 {
     [m_webView _showPlaybackTargetPicker:contextId location:location hasVideo:hasVideo];
 }
