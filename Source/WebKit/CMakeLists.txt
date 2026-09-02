@@ -1457,6 +1457,7 @@ if (SWIFT_REQUIRED)
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/Shared/Foundation+Extras.swift
         ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
+        ${WEBKIT_DIR}/Shared/RunJavaScriptResult.swift
         ${WEBKIT_DIR}/Shared/WTFCompletionHandler+Extras.swift
         ${WEBKIT_DIR}/Shared/WTFExpected+Extras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
