@@ -110,7 +110,10 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
             completionHandler(WTF::move(request));
     };
 
-    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTF::move(innerCompletionHandler), *m_webPageID);
+    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), [innerCompletionHandler = WTF::move(innerCompletionHandler)](IPC::Untrusted<ResourceRequest>&& untrustedActualRequest) mutable {
+        // Names where the page wants its own custom-scheme load to go next.
+        innerCompletionHandler(WTF::move(untrustedActualRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget));
+    }, *m_webPageID);
 
     return ExceptionType::None;
 }

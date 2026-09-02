@@ -287,9 +287,16 @@ def replies_to_privileged_sender(receiver):
     The mirror of is_privileged_receiver. A privileged process asking web content a question is
     no better placed to trust the answer than to trust an unsolicited message: the reply is
     whatever the web process chose to put in it.
+
+    A receiver that declines to name its senders may be asked by any of them, so its replies are
+    treated as reaching a privileged process. The other end is read strictly: unless web content
+    dispatches the receiver, nothing untrustworthy composed the reply.
     """
-    return ('WebContent' in _process_names(receiver.receiver_dispatched_to)
-            and any(name in PRIVILEGED_PROCESSES for name in _process_names(receiver.receiver_dispatched_from)))
+    if 'WebContent' not in _process_names(receiver.receiver_dispatched_to):
+        return False
+    if receiver.receiver_dispatched_from_exception:
+        return True
+    return any(name in PRIVILEGED_PROCESSES for name in _process_names(receiver.receiver_dispatched_from))
 
 
 if __name__ == '__main__':
@@ -364,9 +371,10 @@ if __name__ == '__main__':
 
         def test_direction_of_travel(self):
             class FakeReceiver(object):
-                def __init__(self, dispatched_from, dispatched_to):
+                def __init__(self, dispatched_from, dispatched_to, dispatched_from_exception=False):
                     self.receiver_dispatched_from = dispatched_from
                     self.receiver_dispatched_to = dispatched_to
+                    self.receiver_dispatched_from_exception = dispatched_from_exception
 
             web_content_to_ui = FakeReceiver('WebContent', 'UI')
             self.assertTrue(is_privileged_receiver(web_content_to_ui))
@@ -386,6 +394,11 @@ if __name__ == '__main__':
             self.assertFalse(replies_to_privileged_sender(FakeReceiver('WebContent', 'WebContent')))
             self.assertFalse(is_privileged_receiver(FakeReceiver(None, None)))
             self.assertFalse(replies_to_privileged_sender(FakeReceiver(None, None)))
+
+            # A receiver that does not name its senders could be asked by a privileged one, but
+            # only a receiver web content dispatches can compose an untrustworthy reply.
+            self.assertTrue(replies_to_privileged_sender(FakeReceiver(None, 'WebContent', dispatched_from_exception=True)))
+            self.assertFalse(replies_to_privileged_sender(FakeReceiver(None, 'UI', dispatched_from_exception=True)))
 
         def test_validation_procedures_are_confined(self):
             source_root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
