@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/BitSet.h>
-#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -62,112 +61,70 @@ enum class QuirkSite : uint8_t {
 };
 
 enum class SiteSpecificQuirk {
-#if PLATFORM(IOS) || PLATFORM(VISION)
     AllowLayeredFullscreenVideos,
-#endif
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
     BlocksEnteringStandardFullscreenFromPictureInPictureQuirk,
     BlocksReturnToFullscreenFromPictureInPictureQuirk,
-#endif
     EnsureCaptionVisibilityInFullscreenAndPictureInPicture,
     HasBrokenEncryptedMediaAPISupportQuirk,
     ImplicitMuteWhenVolumeSetToZero,
     InputMethodUsesCorrectKeyEventOrder,
     InputMethodMustUseCompositionEvents,
-#if PLATFORM(MAC)
     IsNeverRichlyEditableForTouchBarQuirk,
     IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk,
-#endif
     MaybeBypassBackForwardCache,
-#if ENABLE(TWO_PHASE_CLICKS)
     MayNeedToIgnoreContentObservation,
-#endif
     NeedsAirIndiaExpressLayeringQuirk,
     NeedsBodyScrollbarWidthNoneDisabledQuirk,
     NeedsCanPlayAfterSeekedQuirk,
     NeedsChromeMediaControlsPseudoElementQuirk,
-#if PLATFORM(COCOA)
     NeedsCNNCaptionQuirk,
-#endif
-#if ENABLE(MEDIA_RECORDER) && ENABLE(COCOA_WEBM_PLAYER)
     NeedsLimitedMatroskaSupportQuirk,
-#endif
     NeedsLogoutCookieCleanupQuirk,
-#if PLATFORM(IOS_FAMILY)
     NeedsAmazonDesignMenuViewportUnitQuirk,
     NeedsClaudeSidebarViewportUnitQuirk,
     NeedsHideSelectionDuringOverflowScrollQuirk,
-#endif
     NeedsCustomUserAgentData,
-#if PLATFORM(IOS_FAMILY)
     NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk,
-#endif
     NeedsDisableDOMPasteAccessQuirk,
     NeedsFacebookRemoveNotSupportedQuirk,
-#if PLATFORM(COCOA)
     NeedsAnchorToBeMouseFocusableQuirk,
     NeedsFormControlToBeMouseFocusableQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
     NeedsFullscreenDisplayNoneQuirk,
     NeedsFullscreenObjectFitQuirk,
     NeedsGMailOverflowScrollQuirk,
     NeedsGoogleMapsScrollingQuirk,
     NeedsGoogleTranslateScrollingQuirk,
-#endif
-#if PLATFORM(IOS) || PLATFORM(VISION)
     NeedsNetflixVolumeSliderQuirk,
-#endif
     NeedsGeforcenowWarningDisplayNoneQuirk,
     NeedsExpediaGroupAnimationQuirk,
     NeedsMediaRewriteRangeRequestQuirk,
     NeedsMozillaFileTypeForDataTransferQuirk,
     NeedsNavigatorUserAgentDataQuirk,
     NeedsNowPlayingFullscreenSwapQuirk,
-#if PLATFORM(IOS_FAMILY)
     NeedsSuppressedPauseEventOnFullscreenExitQuirk,
     NeedsPreloadAutoQuirk,
-#endif
     NeedsResettingTransitionCancelsRunningTransitionQuirk,
     NeedsReuseLiveRangeForSelectionUpdateQuirk,
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk,
     NeedsScrollbarWidthThinDisabledQuirk,
     NeedsSeekingSupportDisabledQuirk,
-#if ENABLE(MEDIA_SOURCE)
     NeedsSupportsProgressMonitoringQuirk,
-#endif
     NeedsSuppressPostLayoutBoundaryEventsQuirk,
     NeedsTikTokOverflowingContentQuirk,
     NeedsVideoShouldMaintainAspectRatioQuirk,
     NeedsWebKitMediaTextTrackDisplayQuirk,
-#if PLATFORM(COCOA)
     NeedsYouTubeCaptionQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
     NeedsYouTubeEmbedAutoplayQuirk,
-#endif
-#if ENABLE(TWO_PHASE_CLICKS)
     NeedsYouTubeMouseOutQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
     NeedsYouTubeOverflowScrollQuirk,
-#endif
     NeedsZeroMaxTouchPointsQuirk,
-#if PLATFORM(MAC)
     NeedsZomatoEmailLoginLabelQuirk,
-#endif
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     RequiresUserGestureToLoadInPictureInPictureQuirk,
     RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk,
     RequiresUserGestureToPauseInPictureInPictureQuirk,
-#endif
-#if ENABLE(FULLSCREEN_API)
     RequiresUserGestureToPlayInFullscreenQuirk,
-#endif
     ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk,
-#if PLATFORM(IOS_FAMILY)
     ShouldAllowPopupFromMicrosoftOfficeToOneDrive,
-#endif
     ShouldAutoplayWebAudioForArbitraryUserGestureQuirk,
     ShouldAvoidProgrammaticScrollClampingQuirk,
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk,
@@ -176,132 +133,77 @@ enum class SiteSpecificQuirk {
     ShouldBypassAsyncScriptDeferring,
     ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions,
     ShouldDelayReloadWhenRegisteringServiceWorker,
-#if HAVE(PIP_SKIP_PREROLL)
     ShouldDisableAdSkippingInPip,
-#endif
     ShouldDisableDataURLPaddingValidation,
     ShouldDisableDOMAudioSession,
-#if PLATFORM(IOS_FAMILY)
     ShouldDisableElementFullscreenQuirk,
-#endif
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk,
-#endif
     ShouldDisableFetchMetadata,
-#if PLATFORM(VISION)
     ShouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk,
-#endif
-#if ENABLE(MEDIA_STREAM)
     ShouldDisableImageCaptureQuirk,
     ShouldAllowMediaStreamTrackSerializationQuirk,
-#endif
     ShouldDisableLazyIframeLoadingQuirk,
     ShouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk,
-#if PLATFORM(IOS_FAMILY)
     ShouldDisablePointerEventsQuirk,
-#endif
     ShouldDisablePushStateFilePathRestrictions,
     ShouldDisableScrollAnchoringQuirk,
-#if ENABLE(THREADED_ANIMATIONS)
     ShouldDisableThreadedAnimationsQuirk,
-#endif
     ShouldDisableWritingSuggestionsByDefaultQuirk,
     ShouldDispatchPlayPauseEventsOnResume,
-#if ENABLE(TOUCH_EVENTS)
     ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick,
-#endif
     ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk,
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
-#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     ShouldDispatchSimulatedMouseEventsQuirk,
-#endif
-#if ENABLE(MEDIA_STREAM)
     ShouldEnableCameraAndMicrophonePermissionStateQuirk,
     ShouldEnableCameraBackgroundPlayback,
     ShouldEnableEnumerateDeviceQuirk,
     ShouldEnableFacebookFlagQuirk,
-#endif
     ShouldEnableFontLoadingAPIQuirk,
-#if ENABLE(MEDIA_STREAM)
     ShouldEnableLegacyGetUserMediaQuirk,
     ShouldEnableRemoteTrackLabelQuirk,
-#endif
-#if ENABLE(WEB_RTC)
     ShouldEnableRTCEncodedStreamsQuirk,
-#endif
-#if ENABLE(MEDIA_STREAM)
     ShouldEnableSpeakerSelectionPermissionsPolicyQuirk,
-#endif
     ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen,
     ShouldExposeShowModalDialog,
-#if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     ShouldFlipScreenDimensionsQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
     ShouldHideCoarsePointerCharacteristicsQuirk,
     ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk,
     ShouldIgnoreAriaForFastPathContentObservationCheckQuirk,
     ShouldIgnoreInputModeNone,
-#endif
     ShouldIgnorePlaysInlineRequirementQuirk,
-#if ENABLE(TEXT_AUTOSIZING)
     ShouldIgnoreTextAutoSizingQuirk,
-#endif
-#if ENABLE(META_VIEWPORT)
     ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk,
     ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk,
     ShouldUseDynamicViewportUnitsAsDefaultQuirk,
-#endif
     ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk,
-#if PLATFORM(IOS_FAMILY)
     ShouldNavigatorPluginsBeEmpty,
-#endif
-#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     ShouldPreventDispatchOfTouchEventQuirk,
-#endif
     ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk,
-#if ENABLE(PICTURE_IN_PICTURE_API)
     ShouldReportDocumentAsVisibleIfActivePIPQuirk,
-#endif
     ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk,
-#if PLATFORM(IOS_FAMILY)
     ShouldUseLayoutViewportForClientRectsQuirk,
     ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting,
-#endif
-#if PLATFORM(IOS) || PLATFORM(VISION)
     ShouldSilenceMediaQueryListChangeEvents,
     ShouldSilenceResizeObservers,
-#endif
-#if PLATFORM(IOS_FAMILY)
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk,
-#endif
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     NeedsWebExScrollabilityQuirk,
     ShouldSupportHoverMediaQueriesQuirk,
-#endif
-#if PLATFORM(IOS_FAMILY)
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk,
-#endif
-#if ENABLE(CONTENT_CHANGE_OBSERVER)
     ShouldTreatAddingMouseOutEventListenerAsContentChange,
-#endif
     ShouldUnloadHeavyFrames,
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor,
     ShouldAllowNotificationPermissionWithoutUserGesture,
     NeedsInstagramResizingReelsQuirk,
     NeedsYahooVolumeSliderQuirk,
-#if PLATFORM(IOS_FAMILY)
     NeedsChromeOSNavigatorUserAgentQuirk,
     ShouldSendFakeTouchForceChangeEvent,
-#endif
     ShouldLimitHLSPlaybackRate,
     ShouldDeferIntersectionObserversDuringResize,
     ShouldSuppressHLSSubtitles,
     ShouldSuppressMediaSessionPauseActionOnInterruption,
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying,
-#if PLATFORM(COCOA)
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk,
-#endif
+
     NumberOfQuirks
 };
 

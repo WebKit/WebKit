@@ -45,6 +45,8 @@ public:
 
     constexpr const QuirkBitSet& bits() const LIFETIME_BOUND { return m_bits; }
 
+    constexpr void exclude(const QuirkBitSet& quirks) { m_bits.exclude(quirks); }
+
 private:
     QuirkBitSet m_bits;
 };
@@ -90,6 +92,7 @@ struct Quirk {
     QuirkURLMatch match;
     QuirkBehaviors behaviors { };
     std::optional<QuirkSite> site { };
+    bool availableWhen { true };
 
     void apply(QuirksData&) const;
 };
