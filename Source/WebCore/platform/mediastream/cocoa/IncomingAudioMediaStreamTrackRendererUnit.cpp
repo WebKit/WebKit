@@ -92,10 +92,18 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
             m_logger = source->logger();
 #endif
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     ASSERT(source->outputDescription());
     if (!source->outputDescription())
         return;
     auto outputDescription = *source->outputDescription();
+#else
+    auto sourceOutputDescription = source->outputDescription();
+    ASSERT(sourceOutputDescription);
+    if (!sourceOutputDescription)
+        return;
+    auto outputDescription = *sourceOutputDescription;
+#endif
 
     auto result = addSourceToMixer(deviceID, WTF::move(source));
     bool shouldStart = result.first;

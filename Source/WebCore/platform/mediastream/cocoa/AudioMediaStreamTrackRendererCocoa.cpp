@@ -159,7 +159,12 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
     ASSERT(!isMainThread());
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     RefPtr dataSource = m_dataSource;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!dataSource || m_shouldRecreateDataSource || !dataSource->inputDescription() || *dataSource->inputDescription() != description) {
+#else
+    auto currentInputDescription = dataSource ? dataSource->inputDescription() : std::nullopt;
+    if (!dataSource || m_shouldRecreateDataSource || !currentInputDescription || *currentInputDescription != description) {
+#endif
         DisableMallocRestrictionsForCurrentThreadScope scope;
 
         // FIXME: For non libwebrtc sources, we can probably reduce poll samples count to 2.

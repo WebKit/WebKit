@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function makeTrack(context, channelCount)
+{
+    const destination = context.createMediaStreamDestination();
+    const merger = context.createChannelMerger(channelCount);
+    for (let channel = 0; channel < channelCount; ++channel) {
+        const oscillator = context.createOscillator();
+        oscillator.frequency.value = 200 + 100 * channel;
+        oscillator.connect(merger, 0, channel);
+        oscillator.start();
+    }
+    merger.connect(destination);
+    return destination.stream.getAudioTracks()[0];
+}
+
+promise_test(async (test) => {
+    const context = new AudioContext();
+    test.add_cleanup(() => context.close());
+    await context.resume();
+
+    const monoTrack = makeTrack(context, 1);
+    const stereoTrack = makeTrack(context, 2);
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+    test.add_cleanup(() => { pc1.close(); pc2.close(); });
+    pc1.onicecandidate = event => { if (event.candidate) pc2.addIceCandidate(event.candidate).catch(() => { }); };
+    pc2.onicecandidate = event => { if (event.candidate) pc1.addIceCandidate(event.candidate).catch(() => { }); };
+
+    const sender = pc1.addTrack(stereoTrack, new MediaStream([stereoTrack]));
+    await pc1.setLocalDescription(await pc1.createOffer());
+    await pc2.setRemoteDescription(pc1.localDescription);
+    await pc2.setLocalDescription(await pc2.createAnswer());
+    await pc1.setRemoteDescription(pc2.localDescription);
+
+    // Let audio start flowing so that pullAudioData() is being dispatched to the signaling thread.
+    await new Promise(resolve => test.step_timeout(resolve, 300));
+
+    // Each replaceTrack() flips the channel count so setOutputFormat() frees and reallocates the ring buffer while a pull may be in flight.
+    for (let i = 0; i < 30; ++i) {
+        await sender.replaceTrack(monoTrack);
+        await new Promise(resolve => test.step_timeout(resolve, 40));
+        await sender.replaceTrack(stereoTrack);
+        await new Promise(resolve => test.step_timeout(resolve, 40));
+    }
+}, "replaceTrack() alternating channel counts must not free AudioSampleDataSource's ring buffer under a concurrent pull");
+</script>
+</body>
+</html>

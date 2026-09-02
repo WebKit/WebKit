@@ -74,6 +74,10 @@ OSStatus AudioSampleDataSource::setInputFormat(const CAAudioStreamDescription& f
 {
     ASSERT(format.sampleRate() >= 0);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+#endif
+
     m_inputDescription = CAAudioStreamDescription { format };
     if (m_outputDescription)
         return setupConverter();
@@ -83,6 +87,14 @@ OSStatus AudioSampleDataSource::setInputFormat(const CAAudioStreamDescription& f
 
 OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& format)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Let's release the being-replaced buffers after the lock has been dropped.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    RefPtr<AudioSampleBufferList> previousScratchBuffer;
+    std::unique_ptr<InProcessCARingBuffer> previousRingBuffer;
+    Locker locker { m_ringBufferLock };
+#endif
+
     ASSERT(m_inputDescription);
     ASSERT(format.sampleRate() >= 0);
 
@@ -90,6 +102,12 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
         return noErr;
 
     m_outputDescription = CAAudioStreamDescription { format };
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    previousRingBuffer = std::exchange(m_ringBuffer, { });
+    previousScratchBuffer = std::exchange(m_scratchBuffer, { });
+    ++m_ringBufferGenerationCount;
+#endif
 
     {
         // Heap allocations are forbidden on the audio thread for performance reasons so we need to
@@ -103,6 +121,20 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
 
     return setupConverter();
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+std::optional<CAAudioStreamDescription> AudioSampleDataSource::inputDescription() const
+{
+    Locker locker { m_ringBufferLock };
+    return m_inputDescription;
+}
+
+std::optional<CAAudioStreamDescription> AudioSampleDataSource::outputDescription() const
+{
+    Locker locker { m_ringBufferLock };
+    return m_outputDescription;
+}
+#endif
 
 MediaTime AudioSampleDataSource::hostTime() const
 {
@@ -180,6 +212,12 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
 void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampleDescription, CMSampleBufferRef sampleBuffer)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+    if (!m_ringBuffer || !m_inputDescription)
+        return;
+#endif
+
     ASSERT_UNUSED(sampleDescription, *m_inputDescription == sampleDescription);
 
     WebAudioBufferList list(*m_inputDescription, sampleBuffer);
@@ -188,11 +226,24 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
 
 void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, size_t sampleCount, NeedsFlush needsFlush)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+    if (!m_ringBuffer)
+        return;
+#endif
+
     pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount, needsFlush);
 }
 
 bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+#endif
+
     size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
@@ -278,6 +329,13 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
 bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+
+#endif
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
@@ -297,6 +355,13 @@ bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, si
 
 bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_ringBufferLock };
+
+    if (!m_ringBuffer || !m_outputDescription)
+        return false;
+#endif
+
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
@@ -318,10 +383,27 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
     if (endFrame < startFrame)
         return false;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    auto consumeFilledBufferWithoutHoldingLock = [&] {
+        assertIsHeld(m_ringBufferLock);
+        auto generationCount = m_ringBufferGenerationCount;
+        {
+            DropLockForScope unlocker { locker };
+            consumeFilledBuffer();
+        }
+        return m_ringBuffer && m_ringBufferGenerationCount == generationCount;
+    };
+#endif
+
     if (m_muted) {
         AudioSampleBufferList::zeroABL(buffer, sampleCountPerChunk * m_outputDescription->bytesPerFrame());
         while (endFrame - startFrame >= sampleCountPerChunk) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             consumeFilledBuffer();
+#else
+            if (!consumeFilledBufferWithoutHoldingLock())
+                return true;
+#endif
             startFrame += sampleCountPerChunk;
         }
         return true;
@@ -329,7 +411,12 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
 
     while (endFrame - startFrame >= sampleCountPerChunk) {
         m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy);
+#ifdef RC_REMOVE_SEC_ACCEL_3
         consumeFilledBuffer();
+#else
+        if (!consumeFilledBufferWithoutHoldingLock())
+            return true;
+#endif
         startFrame += sampleCountPerChunk;
     }
     return true;

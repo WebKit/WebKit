@@ -120,7 +120,12 @@ void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const WTF::MediaT
     Locker locker { AdoptLock, m_dataSourceLock };
     RefPtr dataSource = m_dataSource;
     auto audioDescription = toCAAudioStreamDescription(description);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!dataSource || !dataSource->inputDescription() || *dataSource->inputDescription() != description) {
+#else
+    auto currentInputDescription = dataSource ? dataSource->inputDescription() : std::nullopt;
+    if (!dataSource || !currentInputDescription || *currentInputDescription != description) {
+#endif
         Ref newDataSource = AudioSampleDataSource::create(audioDescription.sampleRate(), m_source.get());
         if (newDataSource->setInputFormat(audioDescription)) {
             callOnMainThread([weakThis = WeakPtr { *this }] {
