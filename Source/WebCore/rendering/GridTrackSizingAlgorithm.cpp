@@ -2234,6 +2234,9 @@ void GridTrackSizingAlgorithm::run(Style::GridTrackSizingDirection direction, un
     if (m_renderGrid->isSubgrid(m_direction) && copyUsedTrackSizesForSubgrid())
         return;
 
+    if (m_renderGrid->isSkippedContentRoot())
+        return;
+
     // Step 1.
     const std::optional<LayoutUnit> initialFreeSpace = freeSpace(m_direction);
     initializeTrackSizes();
