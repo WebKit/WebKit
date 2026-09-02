@@ -4597,6 +4597,9 @@ int jscmain(int argc, char** argv)
 
     WTF::initializeMainThread();
 
+    // Match the QoS of the WebKit WebContent process.
+    WTF::Thread::setCurrentThreadIsUserInteractive(-1);
+
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     mainCommandLine.construct(argc, argv);
