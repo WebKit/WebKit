@@ -108,6 +108,12 @@ void Highlight::repaint()
         repaintRange(highlightRange->range());
 }
 
+void Highlight::setAllRangesNeedPositionUpdate()
+{
+    for (auto& highlightRange : m_highlightRanges)
+        highlightRange->setNeedsPositionUpdate();
+}
+
 void Highlight::setPriority(int priority)
 {
     if (m_priority == priority)

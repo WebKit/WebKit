@@ -129,7 +129,9 @@ void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
         ASSERT(!m_highlightNames.contains(key));
         m_highlightNames.append(WTF::move(key));
     }
-    protect(addResult.iterator->value)->repaint();
+    Ref<Highlight> highlight = addResult.iterator->value;
+    highlight->setAllRangesNeedPositionUpdate();
+    highlight->repaint();
 }
 
 void HighlightRegistry::clear()
