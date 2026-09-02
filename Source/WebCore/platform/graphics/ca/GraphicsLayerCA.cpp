@@ -3149,9 +3149,9 @@ void GraphicsLayerCA::updateDebugIndicators()
     if (showDebugBorders)
         getDebugBorderInfo(borderColor, width);
 
-    // Paint repaint counter.
     RefPtr layer = m_layer;
-    layer->setNeedsDisplay();
+    if (isShowingRepaintCounter())
+        layer->setNeedsDisplay();
 
     setLayerDebugBorder(*layer, borderColor, width);
     if (RefPtr contentsLayer = m_contentsLayer)
@@ -4521,6 +4521,10 @@ void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
         return;
 
     GraphicsLayer::setShowRepaintCounter(showCounter);
+
+    if (RefPtr layer = m_layer)
+        layer->setNeedsDisplay();
+
     noteLayerPropertyChanged(DebugIndicatorsChanged);
 }
 
