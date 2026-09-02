@@ -36,12 +36,23 @@ namespace Style {
 // and no invalidation or prototype style management.
 class LocalPropertyRegistry {
 public:
+    explicit LocalPropertyRegistry(const LocalPropertyRegistry* enclosing = nullptr)
+        : m_enclosing(enclosing)
+    { }
+
+    // The registration for a name, from this function or an enclosing one.
     const CSSRegisteredCustomProperty* get(const AtomString&) const;
+    // Whether this function declares the name itself. A name declared by an enclosing function has its
+    // value inherited from the calling context rather than resolving to a registered value here.
+    bool declares(const AtomString&) const;
     bool isInherited(const AtomString&) const;
 
     void add(CSSRegisteredCustomProperty&&);
 
 private:
+    // The registry of the function this one was invoked from, so a typed parameter keeps its type across
+    // frames. https://github.com/w3c/csswg-drafts/issues/12315
+    const LocalPropertyRegistry* m_enclosing { nullptr };
     UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
 };
 

@@ -261,9 +261,13 @@ bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<At
 
     if (functionId == CSSValueVar && name) {
         auto* registered = m_styleBuilder.state().registeredProperty(*name);
+        // A custom function's parameters and locals are registered to carry their type, but they are
+        // not author registrations, so a fallback for one is not held to its syntax.
+        auto* localRegistry = m_styleBuilder.state().localPropertyRegistry();
+        bool isLocalRegistration = localRegistry && localRegistry->get(*name);
         // https://drafts.css-houdini.org/css-properties-values-api/#fallbacks-in-var-references
         // A used fallback must match the referenced registered property's syntax.
-        if (registered && !registered->syntax.isUniversal()
+        if (registered && !isLocalRegistration && !registered->syntax.isUniversal()
             && !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *fallbackTokens, context))
             return false;
     }
@@ -355,8 +359,8 @@ bool SubstitutionResolver::substituteInheritFunction(CSSParserTokenRange range, 
 // https://drafts.csswg.org/css-mixins/#evaluate-a-custom-function
 // Computes each parameter from its argument, falling back to the default when there is no argument or
 // the argument does not match the parameter's type. Values are computed against the calling element.
-// Registers each parameter as universal with its computed value, and returns the properties to prepend
-// to the body rule, or nullptr on failure.
+// Registers each parameter with its declared type and computed value, and returns the properties to
+// prepend to the body rule, or nullptr on failure.
 RefPtr<MutableStyleProperties> SubstitutionResolver::resolveAndRegisterDashedFunctionArguments(const Vector<StyleRuleFunction::Parameter>& parameters, const Vector<Vector<CSSParserToken>>& arguments, LocalPropertyRegistry& registrations, ScopeOrdinal definitionScope)
 {
     // A parameter without a default requires a corresponding argument. A missing one makes the whole
@@ -455,9 +459,12 @@ RefPtr<MutableStyleProperties> SubstitutionResolver::resolveAndRegisterDashedFun
 
         m_parameterValues.last().set(parameter.name, resolvedValue);
 
+        // A typed parameter keeps its type and acts as a local registration, so a body declaration
+        // assigning to its name is computed against it too.
+        // https://github.com/w3c/csswg-drafts/issues/12315
         registrations.add({
             .name = AtomString { parameter.name },
-            .syntax = CSSCustomPropertySyntax::universal(),
+            .syntax = parameter.type,
             .inherits = true,
             .initialValue = resolvedValue,
         });
@@ -530,7 +537,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
         return false;
 
     // "Let registrations be an initially empty set of custom property registrations."
-    auto registrations = LocalPropertyRegistry { };
+    auto registrations = LocalPropertyRegistry { m_styleBuilder.state().localPropertyRegistry() };
 
     auto resolvedArgumentProperties = resolveAndRegisterDashedFunctionArguments(parameters, *substitutedArguments, registrations, foundScopeOrdinal);
     if (!resolvedArgumentProperties)

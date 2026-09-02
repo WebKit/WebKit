@@ -54,11 +54,11 @@ PASS random(e-s) in untyped arg defaults, same function on different elements
 PASS random(e-s) in untyped arg defaults, same function in different properties
 PASS random(e-s) in untyped arg defaults, same function at different indexes
 PASS random(p-i-s) in typed arg and set in body, same function on different elements
-FAIL random(p-i-s) in typed arg and set in body, same function in different properties assert_true: Random values should be equal expected true got false
-FAIL random(p-i-s) in typed arg and set in body, same function at different indexes assert_true: Random values should be equal expected true got false
+PASS random(p-i-s) in typed arg and set in body, same function in different properties
+PASS random(p-i-s) in typed arg and set in body, same function at different indexes
 FAIL random(p-i-s) in typed arg and set in body, different function on different elements assert_false: Random values should not be equal expected false got true
-PASS random(p-i-s) in typed arg and set in body, different function in different properties
-PASS random(p-i-s) in typed arg and set in body, different function at different indexes
+FAIL random(p-i-s) in typed arg and set in body, different function in different properties assert_false: Random values should not be equal expected false got true
+FAIL random(p-i-s) in typed arg and set in body, different function at different indexes assert_false: Random values should not be equal expected false got true
 PASS random(e-s) in typed arg and set in body, same function on different elements
 FAIL random(e-s) in typed arg and set in body, same function in different properties assert_false: Random values should not be equal expected false got true
 FAIL random(e-s) in typed arg and set in body, same function at different indexes assert_false: Random values should not be equal expected false got true

@@ -35,7 +35,17 @@ namespace Style {
 const CSSRegisteredCustomProperty* LocalPropertyRegistry::get(const AtomString& name) const
 {
     ASSERT(isCustomPropertyName(name) || name == "result"_s);
-    return m_properties.get(name);
+    if (auto* property = m_properties.get(name))
+        return property;
+    // result belongs to the function being evaluated, not to an enclosing one.
+    if (m_enclosing && name != "result"_s)
+        return m_enclosing->get(name);
+    return nullptr;
+}
+
+bool LocalPropertyRegistry::declares(const AtomString& name) const
+{
+    return m_properties.contains(name);
 }
 
 bool LocalPropertyRegistry::isInherited(const AtomString& name) const

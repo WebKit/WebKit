@@ -1,10 +1,10 @@
 
-FAIL A parameter retains its type assert_equals: expected "PASS" but got "FAIL"
-FAIL A parameter type acts as a local registration assert_equals: expected "PASS" but got "FAIL"
-FAIL A parameter retains its type (parent stack frame) assert_equals: expected "PASS" but got "FAIL"
-FAIL A parameter type acts as a local registration (parent stack frame) assert_equals: expected "PASS" but got "FAIL"
+PASS A parameter retains its type
+PASS A parameter type acts as a local registration
+PASS A parameter retains its type (parent stack frame)
+PASS A parameter type acts as a local registration (parent stack frame)
 PASS Universally typed parameter can shadow other parameters
-FAIL Invalid value for typed local becomes IACVT assert_equals: expected "PASS" but got "3"
+PASS Invalid value for typed local becomes IACVT
 PASS if() within @function can query registered custom property
 PASS A local is untyped even where a registration of the same name exists
 

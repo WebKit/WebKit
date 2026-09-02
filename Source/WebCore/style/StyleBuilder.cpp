@@ -246,16 +246,17 @@ void Builder::applyCustomProperty(const AtomString& name)
     applyCustomPropertyImpl(name, iterator->value);
 }
 
-// A custom property absent from a function's cascade is either a parameter (locally registered: it
-// shadows inheritance and resolves to its registered value) or one inherited from the calling context
-// (resolved lazily). https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
+// A custom property absent from a function's cascade is either declared by this function (a parameter or
+// local: it shadows inheritance and resolves to its registered value) or one inherited from the calling
+// context (resolved lazily). An enclosing function's parameter is registered here but not declared here,
+// so it inherits. https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
 void Builder::applyCustomPropertyFromCallingContext(const AtomString& name)
 {
     auto* callingContextBuilder = m_state->callingContextBuilder();
     ASSERT(callingContextBuilder);
 
     auto* localRegistry = m_state->localPropertyRegistry();
-    if (localRegistry && localRegistry->get(name))
+    if (localRegistry && localRegistry->declares(name))
         applyCustomProperty(name, CSSWideKeyword::Initial);
     else {
         callingContextBuilder->applyCustomProperty(name);
