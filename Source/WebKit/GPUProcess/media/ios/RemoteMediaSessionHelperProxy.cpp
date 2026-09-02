@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaSessionHelperProxy.h"
 
-#if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SESSION) && PLATFORM(IOS_FAMILY)
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
