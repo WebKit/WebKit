@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPermissionControllerProxy.h"
 
+#include "FirstPartyAuthority.h"
+
 #include "MessageSenderInlines.h"
 #include "WebPageProxy.h"
 #include "WebPermissionControllerProxyMessages.h"
@@ -84,10 +86,9 @@ void WebPermissionControllerProxy::deref() const
     m_process->deref();
 }
 
-void WebPermissionControllerProxy::query(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+void WebPermissionControllerProxy::query(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
-    auto clientOrigin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(clientOrigin, untrustedClientOrigin, completionHandler(std::nullopt), CommittedClientOriginAuthority { m_process.get() });
     MESSAGE_CHECK_COMPLETION(identifier || (source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker), completionHandler(std::nullopt));
 
     RefPtr webPageProxy = identifier ? RefPtr { m_process->webPage(identifier.value()) } : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);

@@ -367,6 +367,7 @@
 		1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */; };
 		1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */; };
 		1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */; };
+		C7A41E952E8F1A0100D3B841 /* FirstPartyAuthority.h in Headers */ = {isa = PBXBuildFile; fileRef = C7A41E942E8F1A0100D3B841 /* FirstPartyAuthority.h */; };
 		C7A41E912E8F1A0100D3B841 /* Untrusted.h in Headers */ = {isa = PBXBuildFile; fileRef = C7A41E902E8F1A0100D3B841 /* Untrusted.h */; };
 		1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3934,6 +3935,7 @@
 		1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageReceiverMap.cpp; sourceTree = "<group>"; };
 		1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiverMap.h; sourceTree = "<group>"; };
 		1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiver.h; sourceTree = "<group>"; };
+		C7A41E942E8F1A0100D3B841 /* FirstPartyAuthority.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstPartyAuthority.h; sourceTree = "<group>"; };
 		C7A41E902E8F1A0100D3B841 /* Untrusted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Untrusted.h; sourceTree = "<group>"; };
 		1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHistoryDelegatePrivate.h; sourceTree = "<group>"; };
 		1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKProcessPoolConfiguration.mm; sourceTree = "<group>"; };
@@ -16249,6 +16251,7 @@
 				0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */,
 				D6C27CBB2EC2759A00AA941F /* FindTextMatchesCallbackAggregator.cpp */,
 				D6C27CBA2EC2757B00AA941F /* FindTextMatchesCallbackAggregator.h */,
+				C7A41E942E8F1A0100D3B841 /* FirstPartyAuthority.h */,
 				1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */,
 				1AE00D5F1831792100087DD7 /* FrameLoadState.h */,
 				FA6757052B815C8300C1566A /* FrameProcess.cpp */,
@@ -18509,6 +18512,7 @@
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
 				0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */,
 				D6C27CBC2EC275F600AA941F /* FindTextMatchesCallbackAggregator.h in Headers */,
+				C7A41E952E8F1A0100D3B841 /* FirstPartyAuthority.h in Headers */,
 				0D653B3B2F3459210022454D /* Float3.h in Headers */,
 				0D653B3C2F34592B0022454D /* Float4x4.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,

@@ -321,7 +321,9 @@ public:
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     bool hasCommittedClientOrigin(const WebCore::ClientOrigin&) const;
+    bool participatesInPageWithFirstPartySite(const WebCore::Site&) const;
     void didCommitLoadClientOrigin(WebCore::ClientOrigin&&);
+    void didCommitWebArchiveLoad();
     void didBecomeRemoteWorkerHostForSite(const WebCore::Site&);
 
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
@@ -849,6 +851,7 @@ private:
     uint64_t m_frameProcessCount { 0 };
 
     HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.
+    bool m_hasCommittedWebArchiveLoad { false };
     HashSet<WebCore::Site> m_remoteWorkerSites; // Only grows so that messages sent by a remote worker that is going away remain valid.
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
