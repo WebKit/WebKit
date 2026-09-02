@@ -14348,6 +14348,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
     m_isServiceWorkerPage = false;
 
+    internals().processInheritedFromOpener = false;
+
     m_userScriptsNotified = false;
     m_hasActiveAnimatedScroll = false;
     m_registeredForFullSpeedUpdates = false;

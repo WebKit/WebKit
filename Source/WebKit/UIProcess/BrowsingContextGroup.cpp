@@ -67,6 +67,8 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     if (isLoopbackOrLocalNetworkSite(site, preferences.localNetworkAccessEnabled()))
         return completionHandler(nullptr);
 
+    RefPtr existingSharedProcess = liveSharedProcess();
+
     if (!m_sharedProcessSites.contains(site)) {
         if (isMainFrame == IsMainFrame::Yes)
             return completionHandler(nullptr);
@@ -99,11 +101,12 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     }
 
     m_sharedProcessSites.add(site);
-    if (RefPtr frameProcess = m_sharedProcess.get()) {
-        ASSERT(frameProcess->isSharedProcess());
-        RELEASE_ASSERT(!frameProcess->process().isInProcessCache());
-        frameProcess->process().addSharedProcessDomain(site.domain());
-        return completionHandler(frameProcess.get());
+
+    if (existingSharedProcess) {
+        ASSERT(existingSharedProcess->isSharedProcess());
+        RELEASE_ASSERT(!existingSharedProcess->process().isInProcessCache());
+        existingSharedProcess->process().addSharedProcessDomain(site.domain());
+        return completionHandler(existingSharedProcess.get());
     }
 
     Ref process = protect(pageConfiguration.processPool())->processForSite(websiteDataStore, WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessSwapDisposition::Other);
@@ -119,11 +122,12 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
     if (preferences.siteIsolationEnabled()) {
-        if ((m_sharedProcess && m_sharedProcessSites.contains(site)) || process.isSharedProcess()) {
-            ASSERT(&m_sharedProcess->process() == &process);
+        RefPtr sharedProcess = liveSharedProcess();
+        if (sharedProcess && (m_sharedProcessSites.contains(site) || process.isSharedProcess())) {
+            ASSERT(&sharedProcess->process() == &process);
             if (m_sharedProcessSites.add(site).isNewEntry)
                 process.addSharedProcessDomain(site.domain());
-            return *m_sharedProcess;
+            return sharedProcess.releaseNonNull();
         }
         if (RefPtr existingProcess = processForSite(site)) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
@@ -134,11 +138,31 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
     return FrameProcess::create(process, *this, site, mainFrameSite, preferences, loadedWebArchive, browsingContextGroupUpdate);
 }
 
+RefPtr<FrameProcess> BrowsingContextGroup::liveSharedProcess()
+{
+    RefPtr sharedProcess = m_sharedProcess.get();
+    if (!sharedProcess)
+        return nullptr;
+    if (sharedProcess->process().state() != WebProcessProxy::State::Terminated)
+        return sharedProcess;
+    clearSharedProcess();
+    return nullptr;
+}
+
+void BrowsingContextGroup::clearSharedProcess()
+{
+    m_sharedProcess = nullptr;
+    m_sharedProcessSites.clear();
+    m_pagesInSharedProcess.clear();
+}
+
 RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
 {
+    RefPtr<FrameProcess> process;
     if (m_sharedProcessSites.contains(site))
-        return m_sharedProcess.get();
-    RefPtr process = m_processMap.get(site);
+        process = liveSharedProcess();
+    else
+        process = m_processMap.get(site);
     if (!process)
         return nullptr;
     if (process->process().state() == WebProcessProxy::State::Terminated)
@@ -148,8 +172,10 @@ RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
 
 void BrowsingContextGroup::processDidTerminate(WebPageProxy& page, WebProcessProxy& process)
 {
-    if (&page.siteIsolatedProcess() == &process)
-        m_pages.remove(page);
+    if (&page.siteIsolatedProcess() != &process)
+        return;
+    m_pages.remove(page);
+    closeRemotePagesForPage(page);
 }
 
 void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
@@ -236,9 +262,8 @@ bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProce
 void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
 {
     if (process.isSharedProcess()) {
-        m_sharedProcess = nullptr;
-        m_sharedProcessSites.clear();
-        m_pagesInSharedProcess.clear();
+        if (m_sharedProcess.get() == &process)
+            clearSharedProcess();
     } else {
         auto& site = *process.site();
         // Either we are still the current entry for this site (normal teardown), or a

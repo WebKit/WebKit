@@ -8239,6 +8239,144 @@ TEST(SiteIsolation, TopOriginInRemoteProcessesAfterMainFrameProcessSwap)
     EXPECT_FALSE(terminatedByNetworkProcess);
 }
 
+TEST(SiteIsolation, SharedProcessNotReusedAfterCrash)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>alert('webkit')</script>"_s } },
+        { "/w3c"_s, { "<script>alert('w3c')</script>"_s } },
+        { "/apple"_s, { "<script>alert('apple')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit");
+    pid_t crashedSharedProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_NE(crashedSharedProcess, [webView mainFrame].info._processIdentifier);
+
+    kill(crashedSharedProcess, SIGKILL);
+    while (processStillRunning(crashedSharedProcess))
+        Util::spinRunLoop();
+
+    // The dead shared process must not be handed to this load.
+    [webView evaluateJavaScript:
+        @"window.f2 = document.createElement('iframe');"
+        "document.body.appendChild(window.f2);"
+        "window.f2.src = 'https://w3.org/w3c';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "w3c");
+
+    pid_t newSharedProcess = [webView mainFrame].childFrames.lastObject.info._processIdentifier;
+    EXPECT_NE(newSharedProcess, crashedSharedProcess);
+    EXPECT_TRUE(processStillRunning(newSharedProcess));
+
+    // Wait for the removal to reach the UI process, so the dead shared process's FrameProcess is
+    // really gone before the next load asks for a shared process.
+    [webView evaluateJavaScript:@"document.querySelector('iframe').remove();" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView mainFrame].childFrames.count == 1;
+    }));
+
+    [webView evaluateJavaScript:
+        @"window.f3 = document.createElement('iframe');"
+        "document.body.appendChild(window.f3);"
+        "window.f3.src = 'https://apple.com/apple';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    EXPECT_EQ([webView mainFrame].childFrames.lastObject.info._processIdentifier, newSharedProcess);
+}
+
+TEST(SiteIsolation, SharedProcessMainFrameNotReusedAfterCrash)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>window.open('https://webkit.org/opened')</script>"_s } },
+        { "/opened"_s, { "<!DOCTYPE html>opened"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [openerView, openerNavigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<TestWKWebView> openedView;
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        openedView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        openedView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedView.get();
+    };
+    [openerView setUIDelegate:openerUIDelegate.get()];
+
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!openedView)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    // The iframe put webkit.org in the shared process, so the window it opened has its main frame there too.
+    pid_t crashedSharedProcess = [openerView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_NE(crashedSharedProcess, [openerView mainFrame].info._processIdentifier);
+    EXPECT_EQ(crashedSharedProcess, [openedView mainFrame].info._processIdentifier);
+
+    kill(crashedSharedProcess, SIGKILL);
+    while (processStillRunning(crashedSharedProcess))
+        Util::spinRunLoop();
+
+    // The dead shared process must not be handed to the main frame of the reloaded window.
+    [openedView reload];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    pid_t reloadedProcess = [openedView mainFrame].info._processIdentifier;
+    EXPECT_NE(reloadedProcess, crashedSharedProcess);
+    EXPECT_TRUE(processStillRunning(reloadedProcess));
+}
+
+TEST(SiteIsolation, SharedProcessShutsDownWhenLastRemoteFrameIsRemoved)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><body></body>"_s } },
+        { "/webkit"_s, { "<script>alert('webkit')</script>"_s } },
+        { "/w3c"_s, { "<script>alert('w3c')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+
+    EXPECT_EQ(0U, [webView.get().configuration.processPool _processCacheCapacity]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto addTwoRemoteFrames = [&] {
+        [webView evaluateJavaScript:
+            @"window.f1 = document.createElement('iframe');"
+            "document.body.appendChild(window.f1);"
+            "window.f1.src = 'https://webkit.org/webkit';"
+        completionHandler:nil];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit");
+        [webView evaluateJavaScript:
+            @"window.f2 = document.createElement('iframe');"
+            "document.body.appendChild(window.f2);"
+            "window.f2.src = 'https://w3.org/w3c';"
+        completionHandler:nil];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "w3c");
+    };
+
+    addTwoRemoteFrames();
+    pid_t sharedProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_EQ(sharedProcess, [webView mainFrame].childFrames[1].info._processIdentifier);
+    EXPECT_NE(sharedProcess, [webView mainFrame].info._processIdentifier);
+
+    [webView evaluateJavaScript:@"window.f1.remove(); window.f2.remove();" completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(sharedProcess);
+    }));
+
+    addTwoRemoteFrames();
+    pid_t newSharedProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_EQ(newSharedProcess, [webView mainFrame].childFrames[1].info._processIdentifier);
+    EXPECT_NE(newSharedProcess, [webView mainFrame].info._processIdentifier);
+    EXPECT_NE(newSharedProcess, sharedProcess);
+}
+
 TEST(SiteIsolation, SharedProcessMostBasic)
 {
     HTTPServer server({

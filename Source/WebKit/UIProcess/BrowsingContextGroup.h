@@ -99,6 +99,9 @@ public:
 private:
     BrowsingContextGroup();
 
+    RefPtr<FrameProcess> liveSharedProcess();
+    void clearSharedProcess();
+
     WebCore::BrowsingContextGroupIdentifier m_identifier { WebCore::BrowsingContextGroupIdentifier::generate() };
 
     WeakPtr<FrameProcess> m_sharedProcess;
