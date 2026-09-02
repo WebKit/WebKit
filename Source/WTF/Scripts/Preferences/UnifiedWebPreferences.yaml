@@ -6286,7 +6286,7 @@ MouseEventsSimulationEnabled:
 
 MoveBeforeEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   humanReadableName: "DOM moveBefore()"
   defaultValue:

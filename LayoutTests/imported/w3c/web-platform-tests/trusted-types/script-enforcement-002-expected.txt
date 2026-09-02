@@ -25,7 +25,7 @@ PASS Default policy's calls when setting script source via Node.removeChild().
 PASS Default policy's calls when setting script source via Element.prepend().
 PASS Default policy's calls when setting script source via Element.append().
 PASS Default policy's calls when setting script source via Element.replaceChildren().
-FAIL Default policy's calls when setting script source via Element.moveBefore(). promise_test: Unhandled rejection with value: object "TypeError: script.moveBefore is not a function. (In 'script.moveBefore(text, script.firstChild)', 'script.moveBefore' is undefined)"
+PASS Default policy's calls when setting script source via Element.moveBefore().
 PASS Default policy's calls when setting script source via Node.insertAdjacentText().
 PASS Default policy's calls when setting script source via Node.insertAdjacentHTML().
 PASS Default policy's calls when setting source via Range.insertNode().

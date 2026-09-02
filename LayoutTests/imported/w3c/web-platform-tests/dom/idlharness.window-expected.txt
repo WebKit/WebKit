@@ -396,7 +396,7 @@ PASS Document interface: attribute childElementCount
 PASS Document interface: operation prepend((Node or DOMString)...)
 PASS Document interface: operation append((Node or DOMString)...)
 PASS Document interface: operation replaceChildren((Node or DOMString)...)
-FAIL Document interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
+PASS Document interface: operation moveBefore(Node, Node?)
 PASS Document interface: operation querySelector(DOMString)
 PASS Document interface: operation querySelectorAll(DOMString)
 PASS Document interface: operation createExpression(DOMString, optional XPathNSResolver?)
@@ -467,8 +467,8 @@ PASS Document interface: new Document() must inherit property "append((Node or D
 PASS Document interface: calling append((Node or DOMString)...) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Document interface: calling replaceChildren((Node or DOMString)...) on new Document() with too few arguments must throw TypeError
-FAIL Document interface: new Document() must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
-FAIL Document interface: calling moveBefore(Node, Node?) on new Document() with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
+PASS Document interface: new Document() must inherit property "moveBefore(Node, Node?)" with the proper type
+PASS Document interface: calling moveBefore(Node, Node?) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "querySelector(DOMString)" with the proper type
 PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError
 PASS Document interface: new Document() must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -616,8 +616,8 @@ PASS Document interface: xmlDoc must inherit property "append((Node or DOMString
 PASS Document interface: calling append((Node or DOMString)...) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Document interface: calling replaceChildren((Node or DOMString)...) on xmlDoc with too few arguments must throw TypeError
-FAIL Document interface: xmlDoc must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
-FAIL Document interface: calling moveBefore(Node, Node?) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
+PASS Document interface: xmlDoc must inherit property "moveBefore(Node, Node?)" with the proper type
+PASS Document interface: calling moveBefore(Node, Node?) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "querySelector(DOMString)" with the proper type
 PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError
 PASS Document interface: xmlDoc must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -818,7 +818,7 @@ PASS DocumentFragment interface: attribute childElementCount
 PASS DocumentFragment interface: operation prepend((Node or DOMString)...)
 PASS DocumentFragment interface: operation append((Node or DOMString)...)
 PASS DocumentFragment interface: operation replaceChildren((Node or DOMString)...)
-FAIL DocumentFragment interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
+PASS DocumentFragment interface: operation moveBefore(Node, Node?)
 PASS DocumentFragment interface: operation querySelector(DOMString)
 PASS DocumentFragment interface: operation querySelectorAll(DOMString)
 PASS DocumentFragment must be primary interface of document.createDocumentFragment()
@@ -835,8 +835,8 @@ PASS DocumentFragment interface: document.createDocumentFragment() must inherit 
 PASS DocumentFragment interface: calling append((Node or DOMString)...) on document.createDocumentFragment() with too few arguments must throw TypeError
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS DocumentFragment interface: calling replaceChildren((Node or DOMString)...) on document.createDocumentFragment() with too few arguments must throw TypeError
-FAIL DocumentFragment interface: document.createDocumentFragment() must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
-FAIL DocumentFragment interface: calling moveBefore(Node, Node?) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "moveBefore(Node, Node?)" with the proper type
+PASS DocumentFragment interface: calling moveBefore(Node, Node?) on document.createDocumentFragment() with too few arguments must throw TypeError
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelector(DOMString)" with the proper type
 PASS DocumentFragment interface: calling querySelector(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError
 PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelectorAll(DOMString)" with the proper type
@@ -974,7 +974,7 @@ PASS Element interface: attribute childElementCount
 PASS Element interface: operation prepend((Node or DOMString)...)
 PASS Element interface: operation append((Node or DOMString)...)
 PASS Element interface: operation replaceChildren((Node or DOMString)...)
-FAIL Element interface: operation moveBefore(Node, Node?) assert_own_property: interface prototype object missing non-static operation expected property "moveBefore" missing
+PASS Element interface: operation moveBefore(Node, Node?)
 PASS Element interface: operation querySelector(DOMString)
 PASS Element interface: operation querySelectorAll(DOMString)
 PASS Element interface: attribute previousElementSibling
@@ -1059,8 +1059,8 @@ PASS Element interface: element must inherit property "append((Node or DOMString
 PASS Element interface: calling append((Node or DOMString)...) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "replaceChildren((Node or DOMString)...)" with the proper type
 PASS Element interface: calling replaceChildren((Node or DOMString)...) on element with too few arguments must throw TypeError
-FAIL Element interface: element must inherit property "moveBefore(Node, Node?)" with the proper type assert_inherits: property "moveBefore" not found in prototype chain
-FAIL Element interface: calling moveBefore(Node, Node?) on element with too few arguments must throw TypeError assert_inherits: property "moveBefore" not found in prototype chain
+PASS Element interface: element must inherit property "moveBefore(Node, Node?)" with the proper type
+PASS Element interface: calling moveBefore(Node, Node?) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "querySelector(DOMString)" with the proper type
 PASS Element interface: calling querySelector(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "querySelectorAll(DOMString)" with the proper type

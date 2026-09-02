@@ -25,7 +25,7 @@ PASS Setting script source via Node.removeChild() drops trustworthiness.
 PASS Setting script source via Element.prepend() drops trustworthiness.
 PASS Setting script source via Element.append() drops trustworthiness.
 PASS Setting script source via Element.replaceChildren() drops trustworthiness.
-FAIL Setting script source via Element.moveBefore() drops trustworthiness. promise_test: Unhandled rejection with value: object "TypeError: script.moveBefore is not a function. (In 'script.moveBefore(text, script.firstChild)', 'script.moveBefore' is undefined)"
+PASS Setting script source via Element.moveBefore() drops trustworthiness.
 PASS Setting script source via TrustedHTML sink Node.insertAdjacentHTML() drops trustworthiness.
 PASS Setting script source via Node.insertAdjacentText() drops trustworthiness.
 PASS Setting script source via Range.insertNode() drops trustworthiness.
