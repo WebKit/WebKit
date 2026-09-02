@@ -811,6 +811,13 @@ WebCore::IntPoint WebPage::remoteFrameOffsetInMainFrame()
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 {
+    // CFNetwork's built-in protocols always handle these schemes, and a custom NSURLProtocol can
+    // only add handling, never take it away. Materializing the NSURLRequest just to ask is very
+    // expensive for URLs with a long query.
+    auto& url = request.url();
+    if (url.protocolIsInHTTPFamily() || url.protocolIsFile() || url.protocolIsData() || url.protocolIsAbout())
+        return true;
+
     RetainPtr nsRequest = request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     if (!nsRequest.get().URL)
         return false;

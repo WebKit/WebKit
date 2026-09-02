@@ -132,6 +132,9 @@ void ResourceRequestBase::setURL(URL&& url, bool didFilterLinkDecoration)
 {
     updateResourceRequest();
 
+    if (m_requestData.m_url == url && m_requestData.m_didFilterLinkDecoration == didFilterLinkDecoration)
+        return;
+
     m_requestData.m_url = WTF::move(url);
     m_requestData.m_didFilterLinkDecoration = didFilterLinkDecoration;
 

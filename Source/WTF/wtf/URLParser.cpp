@@ -2933,6 +2933,12 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
 
 std::optional<String> URLParser::formURLDecode(StringView input)
 {
+    // Fast path for input that decodes to itself. The general path below makes four full copies
+    // of the input, which is very expensive for long query parameter values. Restricted to ASCII
+    // because the UTF-8 round trip below is what rejects unpaired surrogates. rdar://185796614
+    if (input.containsOnlyASCII() && input.find('%') == notFound)
+        return input.toString();
+
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
         return std::nullopt;

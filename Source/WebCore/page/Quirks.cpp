@@ -2037,20 +2037,20 @@ bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
         return false;
 
     static bool wasLoggedOnce { false };
-    URL lowercaseURL { url.string().foldCase() };
 
-    if (lowercaseURL.host() == "bundle-file"_s || RegistrableDomain { lowercaseURL } == "consistentqueryparameterfiltering.internal"_s)
+    if (equalLettersIgnoringASCIICase(url.host(), "bundle-file"_s)
+        || equalLettersIgnoringASCIICase(RegistrableDomain { url }.string(), "consistentqueryparameterfiltering.internal"_s))
         return true;
 
     bool enableQuirk = m_document->settings().consistentQueryParameterFilteringInternalQuirkEnabled()
-        && needsConsistentQueryParameterFilteringInternal(lowercaseURL);
+        && needsConsistentQueryParameterFilteringInternal(URL { url.string().foldCase() });
 
     if (RefPtr page = m_document->page())
         enableQuirk |= page->requiresConsistentPrivacyQuirkForDomain(url);
 
     if (enableQuirk && !wasLoggedOnce) {
         RELEASE_LOG(Loading, "Quirks::needsConsistentQueryParameterFilteringQuirk: Enabling consistent privacy protections");
-        protect(m_document)->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("Enabling consistent privacy protections on \""_s, lowercaseURL.string(), "\""_s));
+        protect(m_document)->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("Enabling consistent privacy protections on \""_s, url.string(), "\""_s));
         wasLoggedOnce = true;
     }
 

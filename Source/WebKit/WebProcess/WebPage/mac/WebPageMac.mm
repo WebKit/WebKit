@@ -587,6 +587,13 @@ RefPtr<AXIsolatedTree> WebPage::isolatedTreeForFrame(WebCore::LocalFrame& frame)
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 {
+    // CFNetwork's built-in protocols always handle these schemes, and a custom NSURLProtocol can
+    // only add handling, never take it away. Materializing the NSURLRequest just to ask is very
+    // expensive for URLs with a long query.
+    auto& url = request.url();
+    if (url.protocolIsInHTTPFamily() || url.protocolIsFile() || url.protocolIsData() || url.protocolIsAbout())
+        return true;
+
     RetainPtr nsRequest = request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     if (!nsRequest.get().URL)
         return false;
@@ -595,10 +602,10 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 
     // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
 #if ENABLE(SWIFT_DEMO_URI_SCHEME)
-    return request.url().protocolIs("applewebdata"_s)
-        || request.url().protocolIs("x-swift-demo"_s);
+    return url.protocolIs("applewebdata"_s)
+        || url.protocolIs("x-swift-demo"_s);
 #else
-    return request.url().protocolIs("applewebdata"_s);
+    return url.protocolIs("applewebdata"_s);
 #endif
 }
 
