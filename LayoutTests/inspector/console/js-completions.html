@@ -78,6 +78,16 @@ function test()
     });
 
     suite.addTestCase({
+        name: "console.jsCompletions.bigInt",
+        description: "Test that completions handle BigInt values.",
+        async test() {
+            let completions = await generateJSCompletions({baseString: "1n.", prefix: ""});
+            InspectorTest.expectTrue(completions.includes("toString"), "Completions for a BigInt value should include toString.");
+            InspectorTest.expectTrue(completions.includes("valueOf"), "Completions for a BigInt value should include valueOf.");
+        }
+    });
+
+    suite.addTestCase({
         name: "console.jsCompletions.completionOrdering",
         description: "Test that the JavaScript completions are ordered correctly.",
         async test() {
