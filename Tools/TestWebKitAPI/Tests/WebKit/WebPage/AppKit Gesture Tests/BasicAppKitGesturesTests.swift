@@ -973,30 +973,7 @@ extension AppKitGesturesTests.Basic {
         let maximumValue = 10
         let initialValue = maximumValue / 2
 
-        let elementID = useNativeWidget ? "native-slider" : "custom-slider"
-
-        let customHTML = try #require(Bundle.testResources.url(forResource: "custom-slider", withExtension: "html"))
-        try await page.load(customHTML).wait()
-
-        await page.waitForNextPresentationUpdate()
-
-        try await page.callJavaScript(
-            arguments: ["elementID": "custom-slider", "interactive": false],
-            script: styleAdjustmentForCustomWidgetScript
-        )
-        await page.waitForNextPresentationUpdate()
-
-        let sliderBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: elementID))
-        let convertedSliderBounds = screenBounds(ofRectInViewportCoordinates: sliderBounds)
-
-        let start = convertedSliderBounds.center
-        let end = CGPoint(x: convertedSliderBounds.maxX, y: convertedSliderBounds.center.y)
-
-        await recap.play { composer in
-            composer._wk_drag(withStart: start, end: end, duration: .seconds(1.5), pressAndWait: .seconds(0.5))
-        }
-
-        await page.waitForNextPresentationUpdate()
+        let elementID = try await dragAcrossSlider(useNativeWidget: useNativeWidget)
 
         let finalSliderValue = try await page.callJavaScript(
             returning: Double.self,
@@ -1020,6 +997,22 @@ extension AppKitGesturesTests.Basic {
         }
 
         #expect(eventLog == (initialValue...maximumValue).map(Double.init))
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/323157", "wikimedia.org: Cannot press-and-drag over media player controls"),
+        arguments: [true, false]
+    )
+    func pressDragOverRangeInputReportsHeldButton(useNativeWidget: Bool) async throws {
+        try await dragAcrossSlider(useNativeWidget: useNativeWidget)
+        let buttonsLog = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.buttonsLog;
+            """
+        }
+        #expect(buttonsLog.first == "pointerdown:1")
+        #expect(buttonsLog.last == "pointerup:0")
+        #expect(Set(buttonsLog) == ["pointerdown:1", "pointermove:1", "pointerup:0"])
     }
 
     @Test(
@@ -1692,6 +1685,36 @@ extension CGPoint {
 }
 
 extension AppKitGesturesTests.Basic {
+    @discardableResult
+    private func dragAcrossSlider(useNativeWidget: Bool) async throws -> String {
+        let elementID = useNativeWidget ? "native-slider" : "custom-slider"
+
+        let customHTML = try #require(Bundle.testResources.url(forResource: "custom-slider", withExtension: "html"))
+        try await page.load(customHTML).wait()
+
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript(
+            arguments: ["elementID": "custom-slider", "interactive": false],
+            script: styleAdjustmentForCustomWidgetScript
+        )
+        await page.waitForNextPresentationUpdate()
+
+        let sliderBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: elementID))
+        let convertedSliderBounds = screenBounds(ofRectInViewportCoordinates: sliderBounds)
+
+        let start = convertedSliderBounds.center
+        let end = CGPoint(x: convertedSliderBounds.maxX, y: convertedSliderBounds.center.y)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(1.5), pressAndWait: .seconds(0.5))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        return elementID
+    }
+
     private func loadScrollableText() async throws {
         let lines = (0..<100)
             .reversed()
