@@ -35,20 +35,132 @@
 #include "DFGNode.h"
 #include "JSCJSValueInlines.h"
 #include "RegisterAtOffsetList.h"
+#include "TrackedReferences.h"
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
+#include <wtf/UnalignedAccess.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace DFG {
+
+namespace {
+
+constexpr uint8_t explicitValueTag = 0x80;
+constexpr uint8_t constantBit = 1 << 0;
+constexpr uint8_t allArrayModesBit = 1 << 1;
+constexpr uint8_t explicitArrayModesBit = 1 << 2;
+constexpr uint8_t topStructuresBit = 1 << 3;
+constexpr uint8_t structureListBit = 1 << 4;
+
+} // anonymous namespace
+
+OSREntryExpectedValues::OSREntryExpectedValues(const FixedOperands<AbstractValue>& values)
+    : m_numberOfArguments(values.numberOfArguments())
+    , m_numberOfLocals(values.numberOfLocals())
+{
+    unsigned numberOfOperands = m_numberOfArguments + m_numberOfLocals;
+    Vector<uint8_t> bytes;
+    bytes.reserveInitialCapacity(numberOfOperands);
+    for (unsigned index = 0; index < numberOfOperands; ++index) {
+        const AbstractValue& value = values[index];
+        if (value.isBytecodeTop()) {
+            unsigned runLength = 1;
+            while (runLength < explicitValueTag && index + runLength < numberOfOperands && values[index + runLength].isBytecodeTop())
+                ++runLength;
+            bytes.append(static_cast<uint8_t>(runLength - 1));
+            index += runLength - 1;
+            continue;
+        }
+
+        uint8_t tag = explicitValueTag;
+        if (value.m_value)
+            tag |= constantBit;
+        if (value.m_arrayModes == ALL_ARRAY_MODES)
+            tag |= allArrayModesBit;
+        else if (value.m_arrayModes)
+            tag |= explicitArrayModesBit;
+        if (value.m_structure.isInfinite())
+            tag |= topStructuresBit;
+        else if (!value.m_structure.isClear())
+            tag |= structureListBit;
+        bytes.append(tag);
+
+        WTF::LEBEncoder::encodeUInt64(bytes, value.m_type);
+        if (tag & explicitArrayModesBit)
+            WTF::LEBEncoder::encodeUInt32(bytes, value.m_arrayModes);
+        if (tag & structureListBit) {
+            WTF::LEBEncoder::encodeUInt32(bytes, value.m_structure.size());
+            value.m_structure.forEach([&](RegisteredStructure structure) {
+                bytes.append(asByteSpan(structure->id()));
+            });
+        }
+        if (tag & constantBit)
+            bytes.append(asByteSpan(JSValue::encode(value.m_value)));
+    }
+    m_bytes = FixedVector<uint8_t>(WTF::move(bytes));
+}
+
+FixedOperands<AbstractValue> OSREntryExpectedValues::decode() const
+{
+    FixedOperands<AbstractValue> result(m_numberOfArguments, m_numberOfLocals, 0, AbstractValue::bytecodeTop());
+    std::span<const uint8_t> bytes = m_bytes.span();
+    size_t offset = 0;
+    for (unsigned index = 0; index < result.size(); ++index) {
+        uint8_t tag = bytes[offset++];
+        if (!(tag & explicitValueTag)) {
+            index += tag;
+            continue;
+        }
+
+        AbstractValue& value = result[index];
+        value.m_type = WTF::LEBDecoder::decodeUInt64OrCrash(bytes, offset);
+
+        if (tag & explicitArrayModesBit)
+            value.m_arrayModes = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset);
+        else
+            value.m_arrayModes = (tag & allArrayModesBit) ? ALL_ARRAY_MODES : 0;
+
+        if (tag & structureListBit) {
+            RegisteredStructureSet structures;
+            unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset);
+            for (unsigned i = 0; i < count; ++i) {
+                structures.add(RegisteredStructure::createPrivate(WTF::unalignedLoad<StructureID>(bytes.subspan(offset, sizeof(StructureID)).data()).decode()));
+                offset += sizeof(StructureID);
+            }
+            value.m_structure = structures;
+        } else if (tag & topStructuresBit)
+            value.m_structure.makeTop();
+        else
+            value.m_structure.clear();
+
+        if (tag & constantBit) {
+            value.m_value = JSValue::decode(WTF::unalignedLoad<EncodedJSValue>(bytes.subspan(offset, sizeof(EncodedJSValue)).data()));
+            offset += sizeof(EncodedJSValue);
+        }
+        value.checkConsistency();
+    }
+    RELEASE_ASSERT(offset == bytes.size());
+    return result;
+}
+
+void OSREntryExpectedValues::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    FixedOperands<AbstractValue> values = decode();
+    for (unsigned index = 0; index < values.size(); ++index)
+        values[index].validateReferences(trackedReferences);
+}
 
 void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print(m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.taggedPtr()));
     out.print(", stack rules = [");
     
+    FixedOperands<AbstractValue> expectedValues = m_expectedValues.decode();
     auto printOperand = [&] (VirtualRegister reg) {
-        out.print(inContext(m_expectedValues.operand(reg), context), " (");
+        out.print(inContext(expectedValues.operand(reg), context), " (");
         VirtualRegister toReg;
         bool overwritten = false;
         for (OSREntryReshuffling reshuffling : m_reshufflings) {
@@ -76,11 +188,11 @@ void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
     };
     
     CommaPrinter comma;
-    for (size_t argumentIndex = m_expectedValues.numberOfArguments(); argumentIndex--;) {
+    for (size_t argumentIndex = expectedValues.numberOfArguments(); argumentIndex--;) {
         out.print(comma, "arg"_s, argumentIndex, ":"_s);
         printOperand(virtualRegisterForArgumentIncludingThis(argumentIndex));
     }
-    for (size_t localIndex = 0; localIndex < m_expectedValues.numberOfLocals(); ++localIndex) {
+    for (size_t localIndex = 0; localIndex < expectedValues.numberOfLocals(); ++localIndex) {
         out.print(comma, "loc"_s, localIndex, ":"_s);
         printOperand(virtualRegisterForLocal(localIndex));
     }
@@ -147,6 +259,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     }
     
     ASSERT(entry->m_bytecodeIndex == bytecodeIndex);
+    FixedOperands<AbstractValue> expectedValues = entry->m_expectedValues.decode();
     
     // The code below checks if it is safe to perform OSR entry. It may find
     // that it is unsafe to do so, for any number of reasons, which are documented
@@ -172,20 +285,20 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     //    into a less-likely path. So, the wisest course of action is to simply not
     //    OSR at this time.
     
-    for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
+    for (size_t argument = 0; argument < expectedValues.numberOfArguments(); ++argument) {
         JSValue value = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
-        if (!entry->m_expectedValues.argument(argument).validateOSREntryValue(value, FlushedJSValue)) {
+        if (!expectedValues.argument(argument).validateOSREntryValue(value, FlushedJSValue)) {
             dataLogLnIf(Options::verboseOSR(),
                 "    OSR failed because argument ", argument, " is ", value,
-                ", expected ", entry->m_expectedValues.argument(argument));
+                ", expected ", expectedValues.argument(argument));
             return nullptr;
         }
     }
     
-    for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
+    for (size_t local = 0; local < expectedValues.numberOfLocals(); ++local) {
         int localOffset = virtualRegisterForLocal(local).offset();
         JSValue value = callFrame->registers()[localOffset].asanUnsafeJSValue();
-        auto& abstractValue = entry->m_expectedValues.local(local);
+        auto& abstractValue = expectedValues.local(local);
         FlushFormat format = FlushedJSValue;
 
         if (entry->m_localsForcedAnyInt.get(local)) {
@@ -214,7 +327,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
 
         if (!abstractValue.validateOSREntryValue(value, format)) {
             dataLogLnIf(Options::verboseOSR(),
-                "    OSR failed because variable ", VirtualRegister(localOffset), " is ", value, ", with format ", format, ", expected ", entry->m_expectedValues.local(local), ".");
+                "    OSR failed because variable ", VirtualRegister(localOffset), " is ", value, ", with format ", format, ", expected ", expectedValues.local(local), ".");
             return nullptr;
         }
     }
@@ -242,7 +355,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     // 3) Set up the data in the scratch buffer and perform data format conversions.
 
     unsigned frameSize = jitCode->common.frameRegisterCount;
-    unsigned baselineFrameSize = entry->m_expectedValues.numberOfLocals();
+    unsigned baselineFrameSize = expectedValues.numberOfLocals();
     unsigned maxFrameSize = std::max(frameSize, baselineFrameSize);
 
     Register* scratch = std::bit_cast<Register*>(vm.scratchBufferForSize(sizeof(Register) * (2 + CallFrame::headerSizeInRegisters + maxFrameSize))->dataBuffer());
@@ -272,7 +385,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
                 continue;
             }
 
-            auto& abstractValue = entry->m_expectedValues.local(reg.toLocal());
+            auto& abstractValue = expectedValues.local(reg.toLocal());
             if (value.isDouble() && abstractValue.isType(SpecInt32Only)) {
                 pivot[index] = jsNumber(value.asInt32AsAnyInt());
                 continue;

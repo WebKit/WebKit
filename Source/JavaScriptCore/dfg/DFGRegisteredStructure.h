@@ -51,6 +51,7 @@ public:
 
 private:
     friend class Graph;
+    friend class OSREntryExpectedValues;
 
     RegisteredStructure(Structure* structure)
         : m_structure(structure)

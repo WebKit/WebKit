@@ -31,11 +31,13 @@
 #include "MacroAssemblerCodeRef.h"
 #include "Operands.h"
 #include <wtf/BitVector.h>
+#include <wtf/FixedVector.h>
 
 namespace JSC {
 
 class CallFrame;
 class CodeBlock;
+class TrackedReferences;
 
 namespace DFG {
 
@@ -53,10 +55,34 @@ struct OSREntryReshuffling {
     int toOffset;
 };
 
+// Stores the AbstractValue of every operand of an OSR entry (arguments, then locals) as a
+// byte stream: a tag byte followed by an optional payload.
+//
+//   0x00-0x7F  (tag + 1) consecutive BytecodeTop values
+//   0x80-0xFF  an explicit value: LEB128 SpeculatedType follows, then the payloads the tag bits select
+//     bit 0    a constant: 8-byte EncodedJSValue follows
+//     bit 1    array modes are ALL_ARRAY_MODES (otherwise none)
+//     bit 2    explicit array modes: LEB128 ArrayModes follows, overriding bit 1
+//     bit 3    structures are TOP or clobbered (otherwise none)
+//     bit 4    a structure list: LEB128 count and 4-byte StructureIDs follow, overriding bit 3
+class OSREntryExpectedValues {
+public:
+    OSREntryExpectedValues() = default;
+    explicit OSREntryExpectedValues(const FixedOperands<AbstractValue>&);
+
+    FixedOperands<AbstractValue> decode() const;
+    void validateReferences(const TrackedReferences&) const;
+
+private:
+    FixedVector<uint8_t> m_bytes;
+    unsigned m_numberOfArguments { 0 };
+    unsigned m_numberOfLocals { 0 };
+};
+
 struct OSREntryData {
     BytecodeIndex m_bytecodeIndex;
     CodeLocationLabel<OSREntryPtrTag> m_machineCode;
-    FixedOperands<AbstractValue> m_expectedValues;
+    OSREntryExpectedValues m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedAnyInt;
