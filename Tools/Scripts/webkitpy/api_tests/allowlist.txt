@@ -70,7 +70,6 @@ TestWTF.NativePromise
 TestWTF.OSObjectPtr
 TestWTF.OSObjectPtrCocoa
 TestWTF.OSObjectPtrCocoaARC
-TestWTF.RETAIN_PTR_TEST_NAME
 TestWTF.RedBlackTreeTest
 TestWTF.RetainPtr
 TestWTF.RetainPtrARC
