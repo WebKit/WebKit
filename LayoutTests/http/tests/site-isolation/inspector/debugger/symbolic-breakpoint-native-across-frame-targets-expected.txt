@@ -1,0 +1,66 @@
+Test that a symbolic breakpoint on a native function pauses the frame target that made the call, and only that one, when two same-origin frames share a process.
+
+
+
+== Running test suite: SiteIsolation.Debugger.SymbolicBreakpoint.Native
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Setup
+PASS: Should find the main frame's target.
+PASS: Should find the same-origin subframe's target.
+PASS: The two frames should have distinct targets.
+PASS: The main frame target should have a DebuggerAgent.
+PASS: The subframe target should have a DebuggerAgent.
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.Subframe
+Paused in the subframe target.
+PASS: Should pause in the subframe target, which made the call.
+PASS: Pause reason should be FunctionCall.
+PASS: Pause data should name "reverse".
+PASS: The main frame target should not pause.
+PASS: Should pause 1 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.MainFrame
+Paused in the main frame target.
+PASS: Should pause in the main frame target, which made the call.
+PASS: Pause reason should be FunctionCall.
+PASS: Pause data should name "reverse".
+PASS: The subframe target should not pause.
+PASS: Should pause 1 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.Removed
+Did not pause.
+PASS: Should pause 0 time(s).
+Did not pause.
+PASS: Should pause 0 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Subframe
+Paused in the subframe target.
+PASS: Should pause in the subframe target, which made the call.
+PASS: Pause reason should be FunctionCall.
+PASS: Pause data should name "EventTarget".
+PASS: The main frame target should not pause.
+PASS: Should pause 1 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.MainFrame
+Paused in the main frame target.
+PASS: Should pause in the main frame target, which made the call.
+PASS: Pause reason should be FunctionCall.
+PASS: Pause data should name "EventTarget".
+PASS: The subframe target should not pause.
+PASS: Should pause 1 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Removed
+Did not pause.
+PASS: Should pause 0 time(s).
+Did not pause.
+PASS: Should pause 0 time(s).
+
+-- Running test case: SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Action
+Paused in the subframe target.
+PASS: Should pause in the subframe target, which made the call.
+PASS: Pause reason should be FunctionCall.
+PASS: Pause data should name "EventTarget".
+PASS: The main frame target should not pause.
+PASS: Should pause 1 time(s).
+PASS: The action should have run once in the subframe.
+PASS: The action should not have run in the main frame.
+
