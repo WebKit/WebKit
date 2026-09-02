@@ -1,0 +1,67 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({});
+
+    device.pushErrorScope('validation');
+
+    let shaderModule = device.createShaderModule({ code: `
+    @group(1) @binding(1) var<storage, read_write> x: f32;
+    @compute @workgroup_size(3) fn compute1() {
+        while true {
+            x = 1;
+        }
+    }
+    `});
+    let pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule }});
+    let bindGroupLayout = pipeline.getBindGroupLayout(1);
+    // An auto-generated bind group layout has a non-null [[exclusivePipeline]], so createPipelineLayout()
+    // rejects it and shaderModule2 is never compiled against pipeline's argument buffer indices. That
+    // makes the __ArgumentBufferPlaceholder_ name collision this test was originally written for
+    // unreachable through this path; the second case below covers what is left of it.
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout]});
+    let shaderModule2 = device.createShaderModule({ code : ` 
+    var<private> y = f32();
+    @compute @workgroup_size(1) fn compute2() {
+        while true {
+            y = 1;
+        }
+    }
+    `});
+    device.createComputePipeline({ layout: pipelineLayout, compute: { module: shaderModule2 }});
+    await device.queue.onSubmittedWorkDone();
+
+    const error = await device.popErrorScope();
+  if (error) {
+        debug('Error');
+        debug(error.message);
+  } else
+        debug('Pass');
+
+    // Second case: the same shape with an explicitly created bind group layout is still accepted, so
+    // compiling shaderModule2 against it still emits an __ArgumentBufferPlaceholder_ member for the
+    // unused entry and another for its buffer length. Those two cannot collide the way the
+    // auto-generated layout's did, because an explicit layout offsets its buffer size indices above
+    // every binding index.
+    device.pushErrorScope('validation');
+
+    let explicitBindGroupLayout = device.createBindGroupLayout({ entries: [
+        { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+    ]});
+    let explicitPipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [explicitBindGroupLayout]});
+    device.createComputePipeline({ layout: explicitPipelineLayout, compute: { module: shaderModule2 }});
+    await device.queue.onSubmittedWorkDone();
+
+    const explicitError = await device.popErrorScope();
+    if (explicitError) {
+        debug('Explicit error');
+        debug(explicitError.message);
+    } else
+        debug('Explicit pass');
+
+    globalThis.testRunner?.notifyDone();
+};
+</script>
