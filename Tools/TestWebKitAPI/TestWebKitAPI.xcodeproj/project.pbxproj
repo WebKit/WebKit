@@ -719,6 +719,7 @@
 				WebCore/ApplicationManifestParser.cpp,
 				WebCore/ASN1Utilities.cpp,
 				WebCore/AudioSampleFormat.cpp,
+				WebCore/BezierUtilitiesTests.cpp,
 				WebCore/CachedMatchFinder.cpp,
 				WebCore/CARingBufferTest.cpp,
 				WebCore/CBORReaderTest.cpp,

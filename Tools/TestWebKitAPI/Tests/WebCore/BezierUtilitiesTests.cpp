@@ -46,6 +46,18 @@ static void expectPointNear(const FloatPoint& actual, float expectedX, float exp
     EXPECT_NEAR(actual.y(), expectedY, tolerance);
 }
 
+// Finds and applies the intersection in one step, as the corner contour builder does for
+// corners that share an edge, where the ordering is known to be the right way round.
+static bool trimAtIntersection(Vector<BezierSegment>& first, Vector<BezierSegment>& second)
+{
+    auto intersection = findMonotonicBezierCurvesIntersection(first, second);
+    if (!intersection)
+        return false;
+
+    trimMonotonicBezierCurvesAtIntersection(first, second, *intersection);
+    return true;
+}
+
 // A curve entirely inside the rect is returned unchanged (single piece, all four control points intact).
 TEST(BezierUtilities, TrimReturnsStraightCurveInsideUnchanged)
 {
@@ -186,6 +198,186 @@ TEST(BezierUtilities, TrimKeepsLineLyingAlongTopEdge)
     auto result = trimBezierToRect(curve, FloatRect(0, 0, 20, 20));
 
     EXPECT_FALSE(result.isEmpty());
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesLeavesSeparatedRunsAlone)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 10 }, { 4, 0 }) }; // reaches the edge at x = 4
+    Vector<BezierSegment> second { lineCurve({ 8, 0 }, { 12, 10 }) }; // leaves it at x = 8
+
+    EXPECT_FALSE(trimAtIntersection(first, second));
+
+    ASSERT_EQ(1u, first.size());
+    ASSERT_EQ(1u, second.size());
+    expectPointNear(first[0].end, 4, 0);
+    expectPointNear(second[0].start, 8, 0);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesMeetsStraightRunsAtTheirIntersection)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 10, 10 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 10 }, { 10, 0 }) };
+
+    EXPECT_TRUE(trimAtIntersection(first, second));
+
+    ASSERT_EQ(1u, first.size());
+    ASSERT_EQ(1u, second.size());
+    expectPointNear(first[0].start, 0, 0); // the far end of each run is untouched
+    expectPointNear(first[0].end, 5, 5);
+    expectPointNear(second[0].start, 5, 5);
+    expectPointNear(second[0].end, 10, 0);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesFindsIntersectionAwayFromMidParameter)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 12, 12 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 4 }, { 8, 4 }) };
+
+    EXPECT_TRUE(trimAtIntersection(first, second));
+
+    ASSERT_FALSE(first.isEmpty());
+    ASSERT_FALSE(second.isEmpty());
+    expectPointNear(first.last().end, 4, 4);
+    expectPointNear(second.first().start, 4, 4);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesLeavesParallelRunsAlone)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 10, 10 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 3 }, { 10, 13 }) }; // parallel, three above
+
+    EXPECT_FALSE(trimAtIntersection(first, second));
+
+    ASSERT_EQ(1u, first.size());
+    ASSERT_EQ(1u, second.size());
+    expectPointNear(first[0].start, 0, 0);
+    expectPointNear(first[0].end, 10, 10);
+    expectPointNear(second[0].start, 0, 3);
+    expectPointNear(second[0].end, 10, 13);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesKeepsEarlierSegmentsWhole)
+{
+    // y = x, split at (5, 5), and y = 8, split at x = 5. They meet at (8, 8).
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 5, 5 }), lineCurve({ 5, 5 }, { 10, 10 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 8 }, { 5, 8 }), lineCurve({ 5, 8 }, { 10, 8 }) };
+
+    EXPECT_TRUE(trimAtIntersection(first, second));
+
+    ASSERT_EQ(2u, first.size());
+    expectPointNear(first[0].start, 0, 0);
+    expectPointNear(first[0].end, 5, 5); // untouched
+    expectPointNear(first[1].end, 8, 8); // cut at the intersection
+
+    ASSERT_EQ(1u, second.size()); // everything before the intersection is gone
+    expectPointNear(second[0].start, 8, 8);
+    expectPointNear(second[0].end, 10, 8);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesLeavesRunsMeetingAtAPointAlone)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 10 }, { 5, 0 }) };
+    Vector<BezierSegment> second { lineCurve({ 5, 0 }, { 10, 10 }) };
+
+    trimAtIntersection(first, second);
+
+    ASSERT_EQ(1u, first.size());
+    ASSERT_EQ(1u, second.size());
+    expectPointNear(first[0].start, 0, 10);
+    expectPointNear(first[0].end, 5, 0);
+    expectPointNear(second[0].start, 5, 0);
+    expectPointNear(second[0].end, 10, 10);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesMeetsCurvedRunsAtOnePoint)
+{
+    Vector<BezierSegment> first { { { 0, 0 }, { 6, 0 }, { 10, 4 }, { 10, 10 } } };
+    Vector<BezierSegment> second { { { 0, 10 }, { 6, 10 }, { 10, 6 }, { 10, 0 } } };
+
+    EXPECT_TRUE(trimAtIntersection(first, second));
+
+    ASSERT_FALSE(first.isEmpty());
+    ASSERT_FALSE(second.isEmpty());
+
+    auto meeting = first.last().end;
+    expectPointNear(second.first().start, meeting.x(), meeting.y());
+
+    // Inside the box the two arcs span, and away from either run's far end.
+    EXPECT_GT(meeting.x(), 0);
+    EXPECT_LT(meeting.x(), 10);
+    EXPECT_GT(meeting.y(), 0);
+    EXPECT_LT(meeting.y(), 10);
+}
+
+TEST(BezierUtilities, TrimMonotonicCurvesHandlesEmptyRuns)
+{
+    Vector<BezierSegment> empty;
+    Vector<BezierSegment> curves { lineCurve({ 0, 0 }, { 10, 10 }) };
+
+    EXPECT_FALSE(trimAtIntersection(empty, curves));
+    EXPECT_TRUE(empty.isEmpty());
+    ASSERT_EQ(1u, curves.size());
+    expectPointNear(curves[0].end, 10, 10);
+
+    EXPECT_FALSE(trimAtIntersection(curves, empty));
+    EXPECT_TRUE(empty.isEmpty());
+    ASSERT_EQ(1u, curves.size());
+    expectPointNear(curves[0].end, 10, 10);
+}
+
+
+// The intersection is reported with where it sits on each run, which is what lets a caller
+// that tries both orderings of a pair keep only the meaningful one.
+TEST(BezierUtilities, FindMonotonicCurvesReportsWhereTheIntersectionSits)
+{
+    // y = x split at (5, 5), and y = 8 split at x = 5. They meet at (8, 8), in the second
+    // curve of each run, three fifths of the way along it.
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 5, 5 }), lineCurve({ 5, 5 }, { 10, 10 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 8 }, { 5, 8 }), lineCurve({ 5, 8 }, { 10, 8 }) };
+
+    auto intersection = findMonotonicBezierCurvesIntersection(first, second);
+    ASSERT_TRUE(intersection.has_value());
+
+    EXPECT_EQ(1u, intersection->indexOnFirst);
+    EXPECT_NEAR(intersection->parameterOnFirst, 0.6f, 0.01f);
+    EXPECT_EQ(1u, intersection->indexOnSecond);
+    EXPECT_NEAR(intersection->parameterOnSecond, 0.6f, 0.01f);
+
+    // Both runs hold two curves, so the fractions are (1 + 0.6) / 2.
+    EXPECT_NEAR(intersection->fractionAlongFirst, 0.8f, 0.01f);
+    EXPECT_NEAR(intersection->fractionAlongSecond, 0.8f, 0.01f);
+}
+
+// Swapping the two runs describes the same point, but the sides to keep swap with it. Only
+// one of the two orderings has the first run's tail meeting the second run's head.
+TEST(BezierUtilities, FindMonotonicCurvesRejectsTheReversedOrdering)
+{
+    // The first run reaches the meeting point late, the second reaches it early.
+    Vector<BezierSegment> tailFirst { lineCurve({ 0, 0 }, { 10, 10 }) };
+    Vector<BezierSegment> headSecond { lineCurve({ 6, 6 }, { 16, 0 }) };
+
+    auto forward = findMonotonicBezierCurvesIntersection(tailFirst, headSecond);
+    ASSERT_TRUE(forward.has_value());
+    EXPECT_GT(forward->fractionAlongFirst, forward->fractionAlongSecond);
+    EXPECT_TRUE(forward->isTailToHead());
+
+    auto reversed = findMonotonicBezierCurvesIntersection(headSecond, tailFirst);
+    ASSERT_TRUE(reversed.has_value());
+    EXPECT_FALSE(reversed->isTailToHead());
+}
+
+// Finding leaves the runs untouched, so a caller can look before deciding to cut.
+TEST(BezierUtilities, FindMonotonicCurvesDoesNotModifyTheRuns)
+{
+    Vector<BezierSegment> first { lineCurve({ 0, 0 }, { 10, 10 }) };
+    Vector<BezierSegment> second { lineCurve({ 0, 10 }, { 10, 0 }) };
+
+    ASSERT_TRUE(findMonotonicBezierCurvesIntersection(first, second).has_value());
+
+    ASSERT_EQ(1u, first.size());
+    ASSERT_EQ(1u, second.size());
+    expectPointNear(first[0].end, 10, 10);
+    expectPointNear(second[0].start, 0, 10);
 }
 
 } // namespace TestWebKitAPI

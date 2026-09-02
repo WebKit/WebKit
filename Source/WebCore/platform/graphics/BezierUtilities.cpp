@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <optional>
 #include <utility>
 
 namespace WebCore {
@@ -205,6 +206,99 @@ static bool boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
         && first.maxY() >= second.y() && first.y() <= second.maxY();
 }
 
+static FloatRect controlPointBounds(const BezierSegment& curve)
+{
+    FloatRect bounds { curve.start, FloatSize { } };
+    bounds.extend(curve.controlPoint1);
+    bounds.extend(curve.controlPoint2);
+    bounds.extend(curve.end);
+    return bounds;
+}
+
+// Boxes below this are treated as a point when locating a crossing, and the subdivision
+// depth is capped in case a pair of curves overlaps rather than crossing cleanly.
+constexpr float crossingTolerance = 1.0f / 256;
+constexpr unsigned maximumCrossingDepth = 40;
+
+static FloatRect monotonicBounds(const BezierSegment& curve)
+{
+    FloatRect bounds { curve.start, FloatSize { } };
+    bounds.extend(curve.end);
+    return bounds;
+}
+
+static FloatRect monotonicBounds(const Vector<BezierSegment>& curves)
+{
+    FloatRect bounds { curves.first().start, FloatSize { } };
+    bounds.extend(curves.last().end);
+    return bounds;
+}
+
+static bool boxesCanReach(FloatRect first, const FloatRect& second)
+{
+    first.inflate(crossingTolerance);
+    return boxesTouchOrOverlap(first, second);
+}
+
+struct CurveParameterPair {
+    float onFirst { 0 };
+    float onSecond { 0 };
+};
+
+static void appendCurveCrossings(const BezierSegment& first, float firstStart, float firstEnd, const BezierSegment& second, float secondStart, float secondEnd, unsigned depth, Vector<CurveParameterPair>& crossings)
+{
+    auto firstBounds = monotonicBounds(first);
+    auto secondBounds = monotonicBounds(second);
+    if (!boxesTouchOrOverlap(firstBounds, secondBounds))
+        return;
+
+    float firstExtent = std::max(firstBounds.width(), firstBounds.height());
+    float secondExtent = std::max(secondBounds.width(), secondBounds.height());
+
+    float firstMiddle = (firstStart + firstEnd) / 2;
+    float secondMiddle = (secondStart + secondEnd) / 2;
+
+    if (depth >= maximumCrossingDepth || (firstExtent <= crossingTolerance && secondExtent <= crossingTolerance)) {
+        crossings.append({ firstMiddle, secondMiddle });
+        return;
+    }
+
+    if (firstExtent >= secondExtent) {
+        auto [before, after] = splitBezier(first, 0.5f);
+        appendCurveCrossings(before, firstStart, firstMiddle, second, secondStart, secondEnd, depth + 1, crossings);
+        appendCurveCrossings(after, firstMiddle, firstEnd, second, secondStart, secondEnd, depth + 1, crossings);
+        return;
+    }
+
+    auto [before, after] = splitBezier(second, 0.5f);
+    appendCurveCrossings(first, firstStart, firstEnd, before, secondStart, secondMiddle, depth + 1, crossings);
+    appendCurveCrossings(first, firstStart, firstEnd, after, secondMiddle, secondEnd, depth + 1, crossings);
+}
+
+static Vector<BezierSegment> curvesUpToIntersection(const Vector<BezierSegment>& curves, size_t index, float parameter)
+{
+    Vector<BezierSegment> kept;
+    for (size_t position = 0; position < index; ++position)
+        kept.append(curves[position]);
+
+    if (parameter > parameterEpsilon)
+        kept.append(splitBezier(curves[index], parameter).first);
+
+    return kept;
+}
+
+static Vector<BezierSegment> curvesFromIntersection(const Vector<BezierSegment>& curves, size_t index, float parameter)
+{
+    Vector<BezierSegment> kept;
+    if (parameter < 1.0f - parameterEpsilon)
+        kept.append(splitBezier(curves[index], parameter).second);
+
+    for (size_t position = index + 1; position < curves.size(); ++position)
+        kept.append(curves[position]);
+
+    return kept;
+}
+
 } // namespace
 
 // `parameter` is the Bézier curve parameter t in [0, 1] (the variable of the Bernstein basis
@@ -224,11 +318,7 @@ FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter
 
 Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect& rect)
 {
-    // The curve stays within its control points' convex hull
-    FloatRect controlBounds { curve.start, FloatSize { } };
-    controlBounds.extend(curve.controlPoint1);
-    controlBounds.extend(curve.controlPoint2);
-    controlBounds.extend(curve.end);
+    auto controlBounds = controlPointBounds(curve);
 
     // Inside -> no trim; disjoint -> empty. Inclusive test keeps zero-area (axis-aligned line) bounds.
     if (rect.contains(controlBounds))
@@ -252,6 +342,50 @@ Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRe
         curves = clipped;
     }
     return curves;
+}
+
+std::optional<BezierCurvesIntersection> findMonotonicBezierCurvesIntersection(const Vector<BezierSegment>& first, const Vector<BezierSegment>& second)
+{
+    if (first.isEmpty() || second.isEmpty())
+        return { };
+
+    if (!boxesCanReach(monotonicBounds(first), monotonicBounds(second)))
+        return { };
+
+    std::optional<BezierCurvesIntersection> found;
+    for (size_t firstIndex = 0; firstIndex < first.size(); ++firstIndex) {
+        for (size_t secondIndex = 0; secondIndex < second.size(); ++secondIndex) {
+            const auto& firstCurve = first[firstIndex];
+            const auto& secondCurve = second[secondIndex];
+
+            if (!boxesCanReach(monotonicBounds(firstCurve), monotonicBounds(secondCurve)))
+                continue;
+
+            Vector<CurveParameterPair> candidates;
+            appendCurveCrossings(firstCurve, 0, 1, secondCurve, 0, 1, 0, candidates);
+
+            for (auto candidate : candidates) {
+                bool isLater = !found || firstIndex > found->indexOnFirst || (firstIndex == found->indexOnFirst && candidate.onFirst > found->parameterOnFirst);
+                if (!isLater)
+                    continue;
+
+                found = BezierCurvesIntersection {
+                    firstIndex, candidate.onFirst,
+                    secondIndex, candidate.onSecond,
+                    (firstIndex + candidate.onFirst) / static_cast<float>(first.size()),
+                    (secondIndex + candidate.onSecond) / static_cast<float>(second.size()),
+                };
+            }
+        }
+    }
+
+    return found;
+}
+
+void trimMonotonicBezierCurvesAtIntersection(Vector<BezierSegment>& first, Vector<BezierSegment>& second, const BezierCurvesIntersection& intersection)
+{
+    first = curvesUpToIntersection(first, intersection.indexOnFirst, intersection.parameterOnFirst);
+    second = curvesFromIntersection(second, intersection.indexOnSecond, intersection.parameterOnSecond);
 }
 
 } // namespace WebCore

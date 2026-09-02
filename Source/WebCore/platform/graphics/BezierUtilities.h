@@ -26,6 +26,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,6 +39,21 @@ struct BezierSegment {
 };
 
 WEBCORE_EXPORT Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect&);
+
+struct BezierCurvesIntersection {
+    size_t indexOnFirst { 0 };
+    float parameterOnFirst { 0 };
+    size_t indexOnSecond { 0 };
+    float parameterOnSecond { 0 };
+    float fractionAlongFirst { 0 };
+    float fractionAlongSecond { 0 };
+    bool isTailToHead() const { return fractionAlongFirst > fractionAlongSecond; }
+};
+
+WEBCORE_EXPORT std::optional<BezierCurvesIntersection> findMonotonicBezierCurvesIntersection(const Vector<BezierSegment>& first, const Vector<BezierSegment>& second);
+
+WEBCORE_EXPORT void trimMonotonicBezierCurvesAtIntersection(Vector<BezierSegment>& first, Vector<BezierSegment>& second, const BezierCurvesIntersection&);
+
 // `parameter` is the Bézier curve parameter t in [0, 1]: 0 is the start point, 1 is the end point (not arc length).
 FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter);
 
