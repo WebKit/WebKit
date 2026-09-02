@@ -30,7 +30,6 @@
 
 #if ENABLE(WEBGL) && USE(CAIRO)
 
-#include "BitmapImage.h"
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
@@ -41,35 +40,20 @@ namespace WebCore {
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
+bool GraphicsContextGLImageExtractor::extractImage(AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha)
 {
-    // We need this to stay in scope because the native image is just a shallow copy of the data.
-    AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
-    GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
-    auto image = BitmapImage::create(nullptr, alphaOption, gammaAndColorProfileOption);
-    m_alphaOp = AlphaOp::DoNothing;
+    m_imageSurface = m_image->platformImage();
 
-    if (m_image->data()) {
-        image->setData(m_image->data(), true);
-        if (!image->frameCount())
-            return false;
-        m_imageSurface = image->currentNativeImage()->platformImage();
-    } else {
-        m_imageSurface = m_image->currentNativeImage()->platformImage();
-        // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value is 0xFF for each pixel,
-        // which is true at present and may be changed in the future and needs adjustment accordingly.
-        // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port, 
-        // do AlphaDoUnmultiply if UNPACK_PREMULTIPLY_ALPHA_WEBGL is set to false.
-        if (!premultiplyAlpha && m_imageHtmlDomSource != DOMSource::Video)
-            m_alphaOp = AlphaOp::DoUnmultiply;
+    // Cairo surfaces do not record whether the alpha is premultiplied, so the caller states it.
+    // CAIRO_FORMAT_ARGB32, the only format extracted below, always has a meaningful alpha channel.
+    m_alphaOp = alphaOpForPremultiplication(sourceAlphaPremultiplication, premultiplyAlpha);
 
-        // if m_imageSurface is not an image, extract a copy of the surface
-        if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
-            IntSize surfaceSize = cairoSurfaceSize(m_imageSurface.get());
-            auto tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, surfaceSize.width(), surfaceSize.height()));
-            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize());
-            m_imageSurface = WTF::move(tmpSurface);
-        }
+    // if m_imageSurface is not an image, extract a copy of the surface
+    if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
+        IntSize surfaceSize = cairoSurfaceSize(m_imageSurface.get());
+        RefPtr tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, surfaceSize.width(), surfaceSize.height()));
+        copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize());
+        m_imageSurface = WTF::move(tmpSurface);
     }
 
     if (!m_imageSurface)

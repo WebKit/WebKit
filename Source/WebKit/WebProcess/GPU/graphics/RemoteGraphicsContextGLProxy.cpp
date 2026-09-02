@@ -269,7 +269,7 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
 #endif
 }
 
-RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFrame& frame)
+RefPtr<NativeImage> RemoteGraphicsContextGLProxy::videoFrameToNativeImage(WebCore::VideoFrame& frame)
 {
     if (isContextLost())
         return { };
@@ -279,9 +279,9 @@ RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFram
     callOnMainRunLoopAndWait([&] {
         nativeImage = protect(m_videoFrameObjectHeapProxy)->getNativeImage(frame);
     });
-    return BitmapImage::create(WTF::move(nativeImage));
+    return nativeImage;
 #else
-    return GraphicsContextGL::videoFrameToImage(frame);
+    return GraphicsContextGL::videoFrameToNativeImage(frame);
 #endif
 }
 #endif

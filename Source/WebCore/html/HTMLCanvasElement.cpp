@@ -597,7 +597,7 @@ std::optional<FloatRect> HTMLCanvasElement::computeDirtyRectangleIfNeeded(const 
 
 void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
-    clearCopiedImage();
+    m_copiedImage = nullptr;
     if (CheckedPtr renderer = renderBox()) {
         const std::optional<FloatRect> dirtyRect = computeDirtyRectangleIfNeeded(rect);
         if (usesContentsAsLayerContents())
@@ -620,7 +620,7 @@ void HTMLCanvasElement::didUpdateSizeProperties()
     IntSize newSize(w, h);
     bool sizeChanged = oldSize != newSize;
     CanvasBase::setSize(newSize);
-    clearCopiedImage();
+    m_copiedImage = nullptr;
     if (m_context)
         m_context->didUpdateCanvasSizeProperties(sizeChanged);
     if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {
@@ -865,11 +865,6 @@ Image* HTMLCanvasElement::copiedImage() const
     if (RefPtr image = copyNativeImage())
         m_copiedImage = BitmapImage::create(WTF::move(image));
     return m_copiedImage.get();
-}
-
-void HTMLCanvasElement::clearCopiedImage() const
-{
-    m_copiedImage = nullptr;
 }
 
 bool HTMLCanvasElement::virtualHasPendingActivity() const

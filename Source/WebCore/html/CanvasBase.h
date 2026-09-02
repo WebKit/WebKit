@@ -110,9 +110,6 @@ public:
     void willUpdateContents(const std::optional<FloatRect>& rect) { return willUpdateContents(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
     virtual void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
 
-    virtual Image* copiedImage() const = 0;
-    virtual void clearCopiedImage() const = 0;
-
     bool hasActiveInspectorCanvasCallTracer() const;
 
     bool shouldAccelerate() const;

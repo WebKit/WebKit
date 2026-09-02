@@ -30,14 +30,12 @@
 
 #if ENABLE(WEBGL)
 
-#include "BitmapImage.h"
 #include "FormatConverter.h"
 #include "GCGLSpan.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
-#include "Image.h"
 #include "ImageBuffer.h"
-#include "ImageObserver.h"
+#include "NativeImage.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "VideoFrame.h"
@@ -482,9 +480,9 @@ std::optional<GraphicsContextGL::PixelRectangleSizes> GraphicsContextGL::compute
     return PixelRectangleSizes { initialSkipBytes.value(), imageBytes.value(), alignedRowBytes.value(), lastRowBytes.value() };
 }
 
-bool GraphicsContextGL::packImageData(Image* image, std::span<const uint8_t> pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data)
+bool GraphicsContextGL::packImageData(std::span<const uint8_t> pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data)
 {
-    if (!image || !pixels.data())
+    if (!pixels.data())
         return false;
 
     // Output data is tightly packed (alignment == 1).
@@ -497,8 +495,6 @@ bool GraphicsContextGL::packImageData(Image* image, std::span<const uint8_t> pix
 
     if (!packPixels(pixels, sourceFormat, sourceImageWidth, sourceImageHeight, sourceImageSubRectangle, depth, sourceUnpackAlignment, unpackImageHeight, format, type, alphaOp, data.mutableSpan(), flipY))
         return false;
-    if (auto observer = image->imageObserver())
-        observer->didDraw(*image);
     return true;
 }
 
@@ -636,14 +632,14 @@ void GraphicsContextGL::didChangeMemoryCost()
 }
 
 #if ENABLE(VIDEO)
-RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
+RefPtr<NativeImage> GraphicsContextGL::videoFrameToNativeImage(VideoFrame& frame)
 {
     IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
     auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return { };
     imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);
-    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer)));
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 #endif
 

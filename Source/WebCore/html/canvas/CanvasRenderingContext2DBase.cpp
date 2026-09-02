@@ -2333,12 +2333,8 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 {
     if (!canvas.width() || !canvas.height())
         return Exception { ExceptionCode::InvalidStateError };
-    RefPtr copiedImage = canvas.copiedImage();
 
-    if (!copiedImage)
-        return Exception { ExceptionCode::InvalidStateError };
-
-    auto nativeImage = copiedImage->nativeImage();
+    RefPtr nativeImage = canvas.copyNativeImage();
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 

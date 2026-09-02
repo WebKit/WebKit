@@ -1092,13 +1092,6 @@ public:
         DoUnmultiply,
     };
 
-    enum class DOMSource : uint8_t {
-        Image,
-        Canvas,
-        Video,
-        DOMSourceNone,
-    };
-
     using FlipY = GraphicsContextGLFlipY;
 
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() = 0;
@@ -1683,7 +1676,7 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum  format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
-    WEBCORE_EXPORT virtual RefPtr<Image> videoFrameToImage(VideoFrame&);
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> videoFrameToNativeImage(VideoFrame&);
 #endif
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
@@ -1725,10 +1718,10 @@ public:
     // Returns true if successful, false if any error occurred.
     static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParameters& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
 
-    // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
+    // Packs the contents of the given image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.
     // Returns true upon success.
-    static bool packImageData(Image*, std::span<const uint8_t> pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
+    static bool packImageData(std::span<const uint8_t> pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
     WEBCORE_EXPORT static void paintToCanvas(NativeImage&, const IntSize& canvasSize, GraphicsContext&);
 

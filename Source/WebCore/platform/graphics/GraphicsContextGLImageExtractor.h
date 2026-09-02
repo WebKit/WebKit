@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "AlphaPremultiplication.h"
 #include "GraphicsContextGL.h"
 #include "PlatformImage.h"
 #include <wtf/MallocSpan.h>
@@ -35,10 +36,14 @@ namespace WebCore {
 
 class GraphicsContextGLImageExtractor {
 public:
-    using DOMSource = GraphicsContextGL::DOMSource;
     using DataFormat = GraphicsContextGL::DataFormat;
     using AlphaOp = GraphicsContextGL::AlphaOp;
-    GraphicsContextGLImageExtractor(Image&, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
+
+    // The caller states the premultiplication of the native image contents with
+    // sourceAlphaPremultiplication, as not all platform images record it, and those that do may
+    // record it incorrectly. premultiplyAlpha is the premultiplication the upload needs, and the
+    // extracted image alpha op converts between the two.
+    GraphicsContextGLImageExtractor(NativeImage&, AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha);
 
     // Each platform must provide an implementation of this method to deallocate or release resources
     // associated with the image if needed.
@@ -51,12 +56,16 @@ public:
     DataFormat imageSourceFormat() { return m_imageSourceFormat; }
     AlphaOp imageAlphaOp() { return m_alphaOp; }
     unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; }
-    DOMSource imageHtmlDomSource() { return m_imageHtmlDomSource; }
 private:
     // Each platform must provide an implementation of this method.
     // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
     // needs to lock the resources or relevant data if needed and returns true upon success
-    bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
+    bool extractImage(AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha);
+
+    // The alpha op that converts contents of sourceAlphaPremultiplication to the premultiplication
+    // the upload needs. Contents without a meaningful alpha channel must use AlphaOp::DoNothing
+    // instead, as the alpha values would not be usable for either conversion.
+    static AlphaOp alphaOpForPremultiplication(AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha);
 
 #if USE(CAIRO)
     RefPtr<cairo_surface_t> m_imageSurface;
@@ -67,8 +76,7 @@ private:
     sk_sp<SkData> m_pixelData;
     sk_sp<SkImage> m_skImage;
 #endif
-    const Ref<Image> m_image;
-    DOMSource m_imageHtmlDomSource;
+    const Ref<NativeImage> m_image;
     bool m_extractSucceeded;
     std::span<const uint8_t> m_imagePixelData;
     unsigned m_imageWidth;

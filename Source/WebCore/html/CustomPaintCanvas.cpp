@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CustomPaintCanvas.h"
 
-#include "BitmapImage.h"
 #include "CanvasRenderingContext.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ImageBitmap.h"
@@ -76,25 +75,6 @@ void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
     if (m_context)
         m_context->replayDisplayList(imageTarget);
     target.drawImageBuffer(*image, clipBounds);
-}
-
-Image* CustomPaintCanvas::copiedImage() const
-{
-    if (!width() || !height())
-        return nullptr;
-    m_copiedImage = nullptr;
-    auto buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (buffer) {
-        if (m_context)
-            m_context->replayDisplayList(buffer->context());
-        m_copiedImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(buffer));
-    }
-    return m_copiedImage.get();
-}
-
-void CustomPaintCanvas::clearCopiedImage() const
-{
-    m_copiedImage = nullptr;
 }
 
 std::unique_ptr<CSSParserContext> CustomPaintCanvas::createCSSParserContext() const

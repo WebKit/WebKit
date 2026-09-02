@@ -418,7 +418,6 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
             return;
 
         RefPtr base = protectedThis->canvasBase();
-        base->clearCopiedImage();
         if (buffer && protectedThis->m_configuration) {
             buffer->flushDrawingContext();
             protectedThis->m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, frameCount);

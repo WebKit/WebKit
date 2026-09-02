@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "AlphaPremultiplication.h"
 #include "CanvasElementImage.h"
 #include "EventLoop.h"
 #include "GPUBasedCanvasRenderingContext.h"
@@ -593,10 +594,10 @@ protected:
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GCGLenum);
 
-    RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, ASCIILiteral functionName);
+    RefPtr<NativeImage> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, ASCIILiteral functionName);
 
 #if ENABLE(VIDEO)
-    RefPtr<Image> videoFrameToImage(HTMLVideoElement&, ASCIILiteral functionName);
+    RefPtr<NativeImage> videoFrameToNativeImage(HTMLVideoElement&, ASCIILiteral functionName);
 #endif
 
     void loseExtensions(LostContextMode);
@@ -881,7 +882,7 @@ protected:
 
     ExceptionOr<void> texImageSourceHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&&);
     void texImageArrayBufferViewHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition, uint64_t srcOffset);
-    void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image&, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
+    void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, NativeImage&, AlphaPremultiplication sourceAlphaPremultiplication, bool flipY, bool premultiplyAlpha, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
     void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
     static ASCIILiteral texImageFunctionName(TexImageFunctionID);

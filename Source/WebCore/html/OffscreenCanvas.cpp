@@ -28,7 +28,6 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-#include "BitmapImage.h"
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "ContextDestructionObserverInlines.h"
@@ -172,7 +171,6 @@ void OffscreenCanvas::setSizeForControllingContext(IntSize newSize)
 
 void OffscreenCanvas::didUpdateSizeProperties(bool sizeChanged)
 {
-    clearCopiedImage();
     if (m_context)
         m_context->didUpdateCanvasSizeProperties(sizeChanged);
     notifyObserversCanvasResized();
@@ -292,7 +290,6 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         return Exception { ExceptionCode::InvalidStateError };
     if (size().isEmpty())
         return { RefPtr<ImageBitmap> { nullptr } };
-    clearCopiedImage();
     bool bitmapOriginClean = originClean();
     RefPtr buffer = m_context->transferToImageBuffer();
     if (!buffer)
@@ -350,25 +347,8 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
 
 void OffscreenCanvas::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
-    clearCopiedImage();
     scheduleCommitToPlaceholderCanvas();
     CanvasBase::willUpdateContents(rect, shouldApplyPostProcessingToDirtyRect);
-}
-
-Image* OffscreenCanvas::copiedImage() const
-{
-    if (m_detached)
-        return nullptr;
-    if (m_copiedImage)
-        return m_copiedImage;
-    if (RefPtr image = const_cast<OffscreenCanvas*>(this)->copyNativeImage())
-        m_copiedImage = BitmapImage::create(WTF::move(image));
-    return m_copiedImage.get();
-}
-
-void OffscreenCanvas::clearCopiedImage() const
-{
-    m_copiedImage = nullptr;
 }
 
 SecurityOrigin* OffscreenCanvas::securityOrigin() const

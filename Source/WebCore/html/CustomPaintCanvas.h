@@ -61,9 +61,6 @@ public:
     void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
     void setSizeForControllingContext(IntSize) { };
 
-    Image* copiedImage() const final;
-    void clearCopiedImage() const final;
-
     void replayDisplayList(GraphicsContext&);
 
     void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final { };
@@ -80,7 +77,6 @@ private:
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final;
 
     std::unique_ptr<PaintRenderingContext2D> m_context;
-    mutable RefPtr<Image> m_copiedImage;
 };
 
 } // namespace WebCore

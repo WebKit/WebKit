@@ -51,6 +51,7 @@
 #include "JSImageBitmap.h"
 #include "LayoutSize.h"
 #include "LocalFrameView.h"
+#include "NativeImage.h"
 #include "RenderElement.h"
 #include "SVGImageElement.h"
 #include "ScriptExecutionContextInlines.h"
@@ -562,7 +563,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    RefPtr imageForRender = canvas.copiedImage();
+    RefPtr imageForRender = canvas.copyNativeImage();
     if (!imageForRender) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s });
         return;
@@ -578,7 +579,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    auto& context = bitmapData->context();
+    // drawNativeImage() uses the interpolation quality of the context, not the one from the paint options.
+    {
+        InterpolationQualityMaintainer interpolationQualityForThisScope(context, interpolationQualityForResizeQuality(options.resizeQuality));
+        context.drawNativeImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    }
 
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
     // 3. Create a new ImageBitmap object.

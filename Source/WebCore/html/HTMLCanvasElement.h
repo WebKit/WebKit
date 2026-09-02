@@ -137,8 +137,7 @@ public:
 
     std::unique_ptr<CSSParserContext> createCSSParserContext() const final;
 
-    Image* copiedImage() const final;
-    void clearCopiedImage() const final;
+    Image* copiedImage() const;
     RefPtr<ImageData> getImageData();
 
     SecurityOrigin* securityOrigin() const final;
@@ -202,7 +201,7 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
-    mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
+    mutable RefPtr<Image> m_copiedImage; // For CSSCanvasValue.
 };
 
 WebCoreOpaqueRoot root(HTMLCanvasElement*);
