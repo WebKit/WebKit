@@ -9571,11 +9571,11 @@ UseIFCForSVGText:
   humanReadableDescription: "Use IFC for SVG text rendering"
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 UseImageDocumentForSubframePDF:
   type: bool
