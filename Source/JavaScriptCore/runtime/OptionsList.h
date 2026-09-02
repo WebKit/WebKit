@@ -332,7 +332,7 @@ bool hasCapacityToUseLargeGigacage();
     /* from super long compiles that take a lot of memory. */\
     v(Unsigned, maximumInliningCallerBytecodeCost, 10000, Normal, nullptr) \
     \
-    v(Bool, useGlobalInliningPlanner, false, Normal, "Survey and rank every inlining candidate before parsing and spend one compilation-wide budget on the best of them, instead of deciding each call site in bytecode order"_s) \
+    v(Bool, useGlobalInliningPlanner, true, Normal, "Survey and rank every inlining candidate before parsing and spend one compilation-wide budget on the best of them, instead of deciding each call site in bytecode order"_s) \
     v(Unsigned, globalInliningPlanBudgetForDFG, 2500, Normal, "Total callee bytecode cost the DFG may plan to inline in one compilation"_s) \
     v(Unsigned, globalInliningPlanBudgetForFTL, 12000, Normal, "Total callee bytecode cost the FTL may plan to inline in one compilation"_s) \
     v(Unsigned, maximumGlobalInliningPlanSites, 20000, Normal, "Cap on how many call sites one inlining plan will survey"_s) \
