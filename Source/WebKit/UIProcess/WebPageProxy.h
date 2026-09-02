@@ -2361,7 +2361,7 @@ public:
     void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&&);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
-    void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, IPC::Untrusted<FrameInfoData>&&,  WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItemID)>&&);
+    void showMediaControlsContextMenu(IPC::Connection&, WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, IPC::Untrusted<FrameInfoData>&&,  WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(WebCore::MediaControlsContextMenuItemID)>&&);
 #endif
 
     static RefPtr<WebPageProxy> nonEphemeralWebPageProxy();
@@ -3245,7 +3245,7 @@ private:
     void runJavaScriptConfirm(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, String&&, CompletionHandler<void(bool)>&&);
     void runJavaScriptPrompt(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<FrameInfoData>&&, String&&, String&&, CompletionHandler<void(const String&)>&&);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(IPC::Untrusted<WebHitTestResultData>&&, OptionSet<WebEventModifier>);
+    void mouseDidMoveOverElement(IPC::Connection&, IPC::Untrusted<WebHitTestResultData>&&, OptionSet<WebEventModifier>);
 
     void NODELETE getIsViewVisible(bool&);
     void setIsResizable(bool isResizable);
@@ -3395,7 +3395,7 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    void showContextMenuFromFrame(IPC::Untrusted<FrameInfoData>&&, IPC::Untrusted<ContextMenuContextData>&&, UserData&&);
+    void showContextMenuFromFrame(IPC::Connection&, IPC::Untrusted<FrameInfoData>&&, IPC::Untrusted<ContextMenuContextData>&&, UserData&&);
     void showContextMenu(FrameInfoData&&, ContextMenuContextData&&, const UserData&);
 #endif
 
@@ -3718,7 +3718,7 @@ private:
     void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, std::optional<WebCore::FrameIdentifier>&&);
 
     void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::UserGestureTokenIdentifier>);
-    void postMessageToRemote(WebCore::FrameIdentifier source, IPC::Untrusted<WebCore::SecurityOriginData>&& sourceOrigin, WebCore::FrameIdentifier target, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<WebCore::UserGestureTokenData>&&);
+    void postMessageToRemote(IPC::Connection&, WebCore::FrameIdentifier source, IPC::Untrusted<WebCore::SecurityOriginData>&& sourceOrigin, WebCore::FrameIdentifier target, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<WebCore::UserGestureTokenData>&&);
     void renderTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
     void layerTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>, CompletionHandler<void(String&&)>&&);
     void dispatchCrossOriginBeforeUnloadCheckForFrame(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
