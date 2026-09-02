@@ -30,6 +30,7 @@
 
 #import "AppKitSPI.h"
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "WKNSData.h"
 #import "WKWebViewMac.h"
 #import "WebColorPicker.h"
@@ -165,6 +166,13 @@
 #else
     return NO;
 #endif
+}
+
+- (BOOL)_hasLiveResizePresentationOverrideForTesting
+{
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(_page->drawingArea()))
+        return drawingArea->hasLiveResizePresentationOverrideForTesting();
+    return NO;
 }
 
 @end

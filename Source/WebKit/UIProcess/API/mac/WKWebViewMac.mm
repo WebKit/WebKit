@@ -141,11 +141,13 @@ static WebCore::FloatBoxExtent NODELETE coreBoxExtentsFromEdgeInsets(NSEdgeInset
 
 - (void)viewWillStartLiveResize
 {
+    [super viewWillStartLiveResize];
     _impl->viewWillStartLiveResize();
 }
 
 - (void)viewDidEndLiveResize
 {
+    [super viewDidEndLiveResize];
     _impl->viewDidEndLiveResize();
 }
 

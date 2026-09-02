@@ -63,6 +63,11 @@ static NSString * const transientClipPositionAnimationKey = @"wkTransientClipPos
 static NSString * const transientClipSizeAnimationKey = @"wkTransientClipSize";
 static NSString * const transientScrolledContentsPositionAnimationKey = @"wkTransientScrolledContentsPosition";
 static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkScrollPositionOverride";
+static NSString * const liveResizeScaleAnimationKey = @"wkLiveResizeScale";
+static NSString * const liveResizeClipSizeAnimationKey = @"wkLiveResizeClipSize";
+
+static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix&);
+static RetainPtr<CABasicAnimation> transientSizeAnimation(const FloatSize&);
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client, public ThreadSafeRefCounted<RemoteLayerTreeDisplayLinkClient> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDisplayLinkClient);
@@ -234,6 +239,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     m_scrolledContentsLayerID = mainFrameCommitData.scrolledContentsLayerID;
     m_mainFrameClipLayerID = mainFrameCommitData.mainFrameClipLayerID;
 
+    updateLiveResizePresentation(true);
+
     if (m_transientZoomScale)
         applyTransientZoomToLayer();
     else if (m_transactionIDAfterEndingTransientZoom && transactionID.greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
@@ -261,6 +268,54 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     }
 
     layoutBannerLayers(transaction);
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::updateLiveResizePresentation(bool flushImmediately)
+{
+    if (!isInLiveResize() && !m_hasLiveResizePresentationOverride)
+        return;
+
+    RetainPtr pageScalingLayer = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr clipLayer = remoteLayerTreeHost().layerForID(m_mainFrameClipLayerID);
+    if (!pageScalingLayer || !clipLayer)
+        return;
+
+    FloatSize committedSize { clipLayer.get().bounds.size };
+    FloatSize targetSize { size() };
+    if (committedSize.isEmpty() || targetSize.isEmpty())
+        return;
+
+    if (!isInLiveResize() && committedSize == targetSize) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [pageScalingLayer removeAnimationForKey:liveResizeScaleAnimationKey];
+        [clipLayer removeAnimationForKey:liveResizeClipSizeAnimationKey];
+        if (flushImmediately)
+            [CATransaction flush];
+        END_BLOCK_OBJC_EXCEPTIONS
+        m_hasLiveResizePresentationOverride = false;
+        m_liveResizePresentationCommittedSize = { };
+        m_liveResizePresentationTargetSize = { };
+        return;
+    }
+
+    if (m_hasLiveResizePresentationOverride && committedSize == m_liveResizePresentationCommittedSize && targetSize == m_liveResizePresentationTargetSize)
+        return;
+
+    // Keep the last committed page surface covering the current view while the
+    // WebContent process asynchronously lays out and commits the new size.
+    TransformationMatrix transform;
+    transform.scaleNonUniform(targetSize.width() / committedSize.width(), targetSize.height() / committedSize.height());
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [pageScalingLayer addAnimation:transientZoomTransformOverrideAnimation(transform).get() forKey:liveResizeScaleAnimationKey];
+    [clipLayer addAnimation:transientSizeAnimation(targetSize).get() forKey:liveResizeClipSizeAnimationKey];
+    if (flushImmediately)
+        [CATransaction flush];
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    m_hasLiveResizePresentationOverride = true;
+    m_liveResizePresentationCommittedSize = committedSize;
+    m_liveResizePresentationTargetSize = targetSize;
 }
 
 static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPath(NSString *keyPath)
