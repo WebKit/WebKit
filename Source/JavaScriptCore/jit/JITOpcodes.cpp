@@ -409,7 +409,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
 
     using BaselineJITRegisters::JFalse::valueGPR; // Incoming
     constexpr GPRReg scratch1GPR = regT1;
-    constexpr GPRReg scratch2GPR = regT5;
+    constexpr GPRReg scratch2GPR = regT3;
     constexpr GPRReg globalObjectGPR = regT4;
     static_assert(noOverlap(valueGPR, scratch1GPR, scratch2GPR, globalObjectGPR));
 
@@ -552,7 +552,7 @@ void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     using BaselineJITRegisters::JTrue::valueGPR;
-    using BaselineJITRegisters::JFalse::scratch1GPR;
+    using BaselineJITRegisters::JTrue::scratch1GPR;
 
     emitGetVirtualRegister(bytecode.m_condition, valueGPR);
 
@@ -585,7 +585,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
 
     using BaselineJITRegisters::JTrue::valueGPR; // Incoming
     constexpr GPRReg scratch1GPR = regT1;
-    constexpr GPRReg scratch2GPR = regT5;
+    constexpr GPRReg scratch2GPR = regT3;
     constexpr GPRReg globalObjectGPR = regT4;
     static_assert(noOverlap(valueGPR, scratch1GPR, scratch2GPR, globalObjectGPR));
 

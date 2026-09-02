@@ -55,8 +55,8 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
             state.slowPathJumps.append(jit.branchIfNotNumber(m_right));
         state.slowPathJumps.append(jit.branchIfInt32(m_left));
         state.slowPathJumps.append(jit.branchIfInt32(m_right));
-        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
-        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR);
+        jit.unboxDouble(m_left, m_scratchGPR, m_leftFPR);
+        jit.unboxDouble(m_right, m_scratchGPR, m_rightFPR);
         jit.mulDouble(m_rightFPR, m_leftFPR);
         jit.boxDouble(m_leftFPR, m_result);
 
@@ -120,7 +120,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         if (!varOpr.definitelyIsNumber())
             slowPathJumpList.append(jit.branchIfNotNumber(var));
 
-        jit.unboxDoubleNonDestructive(var, m_leftFPR, m_scratchGPR);
+        jit.unboxDouble(var, m_scratchGPR, m_leftFPR);
 
         jit.move(CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR);
         jit.convertInt32ToDouble(m_scratchGPR, m_rightFPR);
@@ -149,7 +149,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         if (!m_rightOperand.definitelyIsNumber())
             slowPathJumpList.append(jit.branchIfNotNumber(m_right));
 
-        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
+        jit.unboxDouble(m_left, m_scratchGPR, m_leftFPR);
         CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
 
         jit.convertInt32ToDouble(m_right, m_rightFPR);
@@ -162,7 +162,7 @@ bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         jit.convertInt32ToDouble(m_left, m_leftFPR);
 
         rightIsDouble.link(&jit);
-        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR);
+        jit.unboxDouble(m_right, m_scratchGPR, m_rightFPR);
 
         rightWasInteger.link(&jit);
 

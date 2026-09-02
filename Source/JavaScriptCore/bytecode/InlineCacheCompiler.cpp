@@ -3343,14 +3343,14 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             if (Options::useJITCage()) {
                 jit.setupArguments<GetValueFuncWithPtr>(
                     CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
+                    baseForCustom,
                     CCallHelpers::TrustedImmPtr(accessCase.uid()),
                     CCallHelpers::TrustedImmPtr(customAccessor.taggedPtr()));
                 jit.callOperation<OperationPtrTag>(vmEntryCustomGetter);
             } else {
                 jit.setupArguments<GetValueFunc>(
                     CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
+                    baseForCustom,
                     CCallHelpers::TrustedImmPtr(accessCase.uid()));
                 jit.callOperation<CustomAccessorPtrTag>(customAccessor);
             }
@@ -3359,7 +3359,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             if (Options::useJITCage()) {
                 jit.setupArguments<PutValueFuncWithPtr>(
                     CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
+                    baseForCustom,
                     valueGPR,
                     CCallHelpers::TrustedImmPtr(accessCase.uid()),
                     CCallHelpers::TrustedImmPtr(customAccessor.taggedPtr()));
@@ -3367,7 +3367,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             } else {
                 jit.setupArguments<PutValueFunc>(
                     CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
+                    baseForCustom,
                     valueGPR,
                     CCallHelpers::TrustedImmPtr(accessCase.uid()));
                 jit.callOperation<CustomAccessorPtrTag>(customAccessor);
@@ -3535,9 +3535,9 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
 
         jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + LowWordOffset));
 
-        jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+        jit.storeValue(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
-        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+        jit.storeValue(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
         if (!isGetter)
             jit.storeValue(valueGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
@@ -4190,7 +4190,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
 
     jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + LowWordOffset));
 
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.storeValue(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
     if (!hasConstantIdentifier(m_propertyCache.accessType))
         jit.storeValue(m_propertyCache.propertyGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
@@ -4203,11 +4203,11 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
         break;
     case AccessCase::ProxyObjectLoad:
     case AccessCase::IndexedProxyObjectLoad:
-        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+        jit.storeValue(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         break;
     case AccessCase::ProxyObjectStore:
     case AccessCase::IndexedProxyObjectStore:
-        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+        jit.storeValue(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         jit.storeValue(valueGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
         break;
     default:
@@ -4273,7 +4273,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+    jit.storeValue(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     if (useHandlerIC()) {
         // handlerGPR can be the same to BaselineJITRegisters::Call::calleeGPR.
@@ -5339,10 +5339,10 @@ static void customGetterHandlerImpl(VM& vm, CCallHelpers& jit, GPRReg baseGPR, G
     jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch2GPR);
     if (Options::useJITCage()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCustomAccessor()), scratch3GPR);
-        jit.setupArguments<GetValueFuncWithPtr>(scratch1GPR, CCallHelpers::CellValue(baseGPR), scratch2GPR, scratch3GPR);
+        jit.setupArguments<GetValueFuncWithPtr>(scratch1GPR, baseGPR, scratch2GPR, scratch3GPR);
         jit.callOperation<OperationPtrTag>(vmEntryCustomGetter);
     } else {
-        jit.setupArguments<GetValueFunc>(scratch1GPR, CCallHelpers::CellValue(baseGPR), scratch2GPR);
+        jit.setupArguments<GetValueFunc>(scratch1GPR, baseGPR, scratch2GPR);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCustomAccessor()), CustomAccessorPtrTag);
     }
     jit.setupResults(resultGPR);
@@ -5415,8 +5415,8 @@ static void getterCallFromGetterSetterImpl(CCallHelpers& jit, GPRReg baseGPR, [[
     jit.subPtr(CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall), CCallHelpers::stackPointerRegister);
     CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
     jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + LowWordOffset));
-    jit.storeCell(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.storeValue(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+    jit.storeValue(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
     // handlerGPR can be the same to BaselineJITRegisters::Call::calleeGPR.
     if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeGPR) {
@@ -5552,12 +5552,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler()
     jit.subPtr(CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall), CCallHelpers::stackPointerRegister);
     CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
     jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + LowWordOffset));
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.storeValue(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
     jit.transferPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+    jit.storeValue(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
     jit.loadPtr(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfGlobalObject()), scratch1GPR);
     jit.loadPtr(CCallHelpers::Address(scratch1GPR, JSGlobalObject::offsetOfPerformProxyObjectGetFunction()), scratch1GPR);
-    jit.storeCell(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+    jit.storeValue(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     // handlerGPR can be the same to BaselineJITRegisters::Call::calleeGPR.
     if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeGPR) {
@@ -5843,10 +5843,10 @@ static void customSetterHandlerImpl(VM& vm, CCallHelpers& jit, GPRReg baseGPR, G
     jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfUid()), scratch2GPR);
     if (Options::useJITCage()) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCustomAccessor()), scratch3GPR);
-        jit.setupArguments<PutValueFuncWithPtr>(scratch1GPR, CCallHelpers::CellValue(baseGPR), valueGPR, scratch2GPR, scratch3GPR);
+        jit.setupArguments<PutValueFuncWithPtr>(scratch1GPR, baseGPR, valueGPR, scratch2GPR, scratch3GPR);
         jit.callOperation<OperationPtrTag>(vmEntryCustomSetter);
     } else {
-        jit.setupArguments<PutValueFunc>(scratch1GPR, CCallHelpers::CellValue(baseGPR), valueGPR, scratch2GPR);
+        jit.setupArguments<PutValueFunc>(scratch1GPR, baseGPR, valueGPR, scratch2GPR);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCustomAccessor()), CustomAccessorPtrTag);
     }
 
@@ -5944,8 +5944,8 @@ static void setterHandlerImpl(CCallHelpers& jit, GPRReg baseGPR, GPRReg valueGPR
     jit.subPtr(CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall), CCallHelpers::stackPointerRegister);
     CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
     jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + LowWordOffset));
-    jit.storeCell(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.storeValue(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
+    jit.storeValue(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
     jit.storeValue(valueGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
     // handlerGPR can be the same to BaselineJITRegisters::Call::calleeGPR.

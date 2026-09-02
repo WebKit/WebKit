@@ -58,9 +58,10 @@ namespace CheckTraps {
 }
 
 namespace Enter {
-    static constexpr GPRReg scratch1GPR { GPRInfo::regT4 };
-    static constexpr GPRReg scratch2GPR { GPRInfo::regT5 };
-    static constexpr GPRReg scratch3GPR { GPRInfo::regT2 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT1 };
+    static constexpr GPRReg scratch2GPR { GPRInfo::regT2 };
+    static constexpr GPRReg scratch3GPR { GPRInfo::regT3 };
+    static_assert(noOverlap(scratch1GPR, scratch2GPR, scratch3GPR));
 }
 
 namespace Instanceof {
@@ -86,13 +87,13 @@ namespace Instanceof {
 
 namespace JFalse {
     static constexpr GPRReg valueGPR { GPRInfo::regT2 };
-    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT1 };
     static_assert(noOverlap(valueGPR, scratch1GPR));
 }
 
 namespace JTrue {
     static constexpr GPRReg valueGPR { GPRInfo::regT2 };
-    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT1 };
     static_assert(noOverlap(valueGPR, scratch1GPR));
 }
 

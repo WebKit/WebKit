@@ -70,11 +70,6 @@ public:
         ASSERT(m_base != InvalidGPRReg);
     }
     
-    static JSValueSource unboxedCell(GPRReg gpr)
-    {
-        return JSValueSource(gpr);
-    }
-    
     bool operator!() const { return m_base == InvalidGPRReg; }
     explicit operator bool() const { return m_base != InvalidGPRReg; }
     
@@ -645,21 +640,9 @@ constexpr GPRReg preferredArgumentGPR()
 template<typename RegisterBank, auto... registers>
 struct StaticScratchRegisterAllocator {
     static_assert(noOverlap(registers...));
-    static constexpr size_t countRegisters(typename RegisterBank::RegisterType)
-    {
-        return 1;
-    }
+    static_assert((std::is_same_v<decltype(registers), typename RegisterBank::RegisterType> && ...), "Every reserved register must belong to the bank being allocated from");
 
-    template<auto reg, auto... args>
-    static constexpr size_t countRegisters()
-    {
-        if constexpr (!sizeof...(args))
-            return countRegisters(reg);
-        else
-            return countRegisters(reg) + countRegisters<args...>();
-    }
-
-    static constexpr size_t size = RegisterBank::numberOfRegisters - countRegisters<registers...>();
+    static constexpr size_t size = RegisterBank::numberOfRegisters - sizeof...(registers);
     using ArrayType = std::array<typename RegisterBank::RegisterType, size>;
 
     static constexpr ArrayType constructScratchRegisters()

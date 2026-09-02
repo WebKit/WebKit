@@ -155,23 +155,6 @@ public:
         load64ToReg(src, dst);
     }
 
-    template<typename T, typename U>
-    void storeCell(T cell, U address)
-    {
-        store64(cell, address);
-    }
-
-    template<typename U>
-    void storeCell(GPRReg cell, U address)
-    {
-        store64(cell, address);
-    }
-
-    void loadCell(Address address, GPRReg gpr)
-    {
-        load64(address, gpr);
-    }
-
     void storeValue(GPRReg valueGPR, Address address)
     {
         store64(valueGPR, address);
@@ -491,7 +474,7 @@ public:
     void emitPutCellToCallFrameHeader(GPRReg from, VirtualRegister entry)
     {
         ASSERT(entry.isHeader());
-        storeCell(from, Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
+        storeValue(from, Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
     void emitZeroToCallFrameHeader(VirtualRegister entry)
@@ -1092,11 +1075,6 @@ public:
     void unboxDouble(GPRReg gpr, FPRReg fpr)
     {
         unboxDouble(gpr, gpr, fpr);
-    }
-
-    void unboxDoubleNonDestructive(GPRReg gpr, FPRReg destFPR, GPRReg resultGPR)
-    {
-        unboxDouble(gpr, resultGPR, destFPR);
     }
 
     Jump isStrictInt52(GPRReg valueGPR, GPRReg scratchGPR)

@@ -1306,7 +1306,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     //
     // That's really all there is to this. We have all the registers we need to do it.
     
-    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    jit.loadValue(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
     jit.load32(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfBoundArgsLength()), GPRInfo::regT2);
     jit.load32(CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
     jit.move(GPRInfo::regT1, GPRInfo::regT3);
@@ -1385,7 +1385,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     argsPushed.link(&jit);
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfTargetFunction()), GPRInfo::regT2);
-    jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
+    jit.storeValue(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
     
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT1);
     auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
@@ -1472,7 +1472,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     static constexpr int numFrameLocals = 1;
     VirtualRegister loopIndex = virtualRegisterForLocal(0);
 
-    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    jit.loadValue(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
     jit.load32(CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
 
     jit.add32(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters - CallerFrameAndPC::sizeInRegisters + numFrameLocals), GPRInfo::regT1, GPRInfo::regT2);
@@ -1552,7 +1552,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
         exceptionChecks.append(jit.emitJumpIfException(vm));
 
         jit.setupResults(valueGPR);
-        jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+        jit.loadValue(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
 
         jit.loadPtr(jit.addressFor(loopIndex), GPRInfo::regT1);
 
@@ -1564,7 +1564,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     }
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSRemoteFunction::offsetOfTargetFunction()), GPRInfo::regT2);
-    jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
+    jit.storeValue(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT1);
     auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
@@ -1621,7 +1621,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     resultIsPrimitive.append(jit.branchIfNotCell(resultGPR, DoNotHaveTagRegisters));
     resultIsPrimitive.append(jit.branchIfNotObject(resultGPR));
 
-    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT2);
+    jit.loadValue(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT2);
     jit.setupArguments<decltype(operationGetWrappedValueForCaller)>(GPRInfo::regT2, resultGPR);
     jit.prepareCallOperation(vm);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForCaller)), GPRInfo::nonArgGPR0);
@@ -1712,13 +1712,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> maxThunkGenerator(VM& vm)
 
         notInt32RHS.link(&jit);
         jit.convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT2, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT2, GPRInfo::regT4, FPRInfo::fpRegT1);
         jit.doubleMax(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
         jit.returnDouble(FPRInfo::fpRegT0);
     }
     {
         notInt32LHS.link(&jit);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT0, FPRInfo::fpRegT0, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT0, GPRInfo::regT4, FPRInfo::fpRegT0);
         auto notInt32RHS = jit.branchIfNotInt32(GPRInfo::regT2);
 
         jit.convertInt32ToDouble(GPRInfo::regT2, FPRInfo::fpRegT1);
@@ -1726,7 +1726,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> maxThunkGenerator(VM& vm)
         jit.returnDouble(FPRInfo::fpRegT0);
 
         notInt32RHS.link(&jit);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT2, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT2, GPRInfo::regT4, FPRInfo::fpRegT1);
         jit.doubleMax(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
         jit.returnDouble(FPRInfo::fpRegT0);
     }
@@ -1763,13 +1763,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> minThunkGenerator(VM& vm)
 
         notInt32RHS.link(&jit);
         jit.convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT2, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT2, GPRInfo::regT4, FPRInfo::fpRegT1);
         jit.doubleMin(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
         jit.returnDouble(FPRInfo::fpRegT0);
     }
     {
         notInt32LHS.link(&jit);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT0, FPRInfo::fpRegT0, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT0, GPRInfo::regT4, FPRInfo::fpRegT0);
         auto notInt32RHS = jit.branchIfNotInt32(GPRInfo::regT2);
 
         jit.convertInt32ToDouble(GPRInfo::regT2, FPRInfo::fpRegT1);
@@ -1777,7 +1777,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> minThunkGenerator(VM& vm)
         jit.returnDouble(FPRInfo::fpRegT0);
 
         notInt32RHS.link(&jit);
-        jit.unboxDoubleNonDestructive(GPRInfo::regT2, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.unboxDouble(GPRInfo::regT2, GPRInfo::regT4, FPRInfo::fpRegT1);
         jit.doubleMin(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
         jit.returnDouble(FPRInfo::fpRegT0);
     }

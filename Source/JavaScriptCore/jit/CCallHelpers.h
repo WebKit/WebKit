@@ -57,20 +57,6 @@ public:
     {
     }
 
-    // Wrapper to encode JSCell GPR into JSValue.
-    class CellValue {
-    public:
-        explicit CellValue(GPRReg gpr)
-            : m_gpr(gpr)
-        {
-        }
-
-        GPRReg gpr() const { return m_gpr; }
-
-    private:
-        GPRReg m_gpr;
-    };
-
     // Base class for constant materializers.
     // It offers DerivedClass::materialize and poke functions.
     class ConstantMaterializer { };
@@ -367,13 +353,6 @@ private:
     {
         marshallArgumentRegister<OperationType>(argSourceRegs, arg, args...);
     }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, nonArgGPRs, extraPoke> argSourceRegs, CellValue arg, Args... args)
-    {
-        marshallArgumentRegister<OperationType>(argSourceRegs, arg.gpr(), args...);
-    }
-
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
         requires DerivedFromOrConvertibleTo<Arg, TrustedImm> // DerivedFromOrConvertibleTo instead of derived_from since DFGSpeculativeJIT has its own implementation of TrustedImmPtr

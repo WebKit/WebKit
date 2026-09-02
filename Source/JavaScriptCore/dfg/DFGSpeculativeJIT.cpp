@@ -1085,7 +1085,7 @@ void SpeculativeJIT::checkArray(Node* node)
     case Array::SlowPutArrayStorage: {
         load8(Address(baseReg, JSCell::indexingTypeAndMiscOffset()), tempGPR.value());
         speculationCheck(
-            BadIndexingType, JSValueSource::unboxedCell(baseReg), nullptr,
+            BadIndexingType, JSValueSource(baseReg), nullptr,
             jumpSlowForUnwantedArrayMode(tempGPR.value(), arrayMode));
         break;
     }
@@ -1099,7 +1099,7 @@ void SpeculativeJIT::checkArray(Node* node)
         DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView());
 
         if (arrayMode.type() == Array::AnyTypedArray)
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), nullptr, branchIfNotType(baseReg, JSTypeRange { JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView) }));
+            speculationCheck(BadType, JSValueSource(baseReg), nullptr, branchIfNotType(baseReg, JSTypeRange { JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView) }));
         else
             speculateCellTypeWithoutTypeFiltering(node->child1(), baseReg, typeForTypedArrayType(arrayMode.typedArrayType()));
         break;
@@ -1440,19 +1440,19 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), branchIfNotObject(op1GPR));
+                BadType, JSValueSource(op1GPR), node->child1(), branchIfNotObject(op1GPR));
         }
         if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op2GPR), node->child2(), branchIfNotObject(op2GPR));
+                BadType, JSValueSource(op2GPR), node->child2(), branchIfNotObject(op2GPR));
         }
     } else {
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
+                BadType, JSValueSource(op1GPR), node->child1(),
                 branchIfNotObject(op1GPR));
         }
-        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
+        speculationCheck(BadType, JSValueSource(op1GPR), node->child1(),
             branchTest8(
                 NonZero,
                 Address(op1GPR, JSCell::typeInfoFlagsOffset()),
@@ -1460,10 +1460,10 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
 
         if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
+                BadType, JSValueSource(op2GPR), node->child2(),
                 branchIfNotObject(op2GPR));
         }
-        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
+        speculationCheck(BadType, JSValueSource(op2GPR), node->child2(),
             branchTest8(
                 NonZero,
                 Address(op2GPR, JSCell::typeInfoFlagsOffset()),
@@ -2087,7 +2087,7 @@ void SpeculativeJIT::compileCheckDetached(Node* node)
     GPRReg baseReg = base.gpr();
 
     speculationCheck(
-        BadIndexingType, JSValueSource::unboxedCell(baseReg), node->child1(), 
+        BadIndexingType, JSValueSource(baseReg), node->child1(),
         branchTestPtr(Zero, Address(baseReg, JSArrayBufferView::offsetOfVector())));
 
     noResult(node);
@@ -3177,7 +3177,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
     }
 
     if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(edge)))
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
 #if USE(LARGE_TYPED_ARRAYS)
     signExtend32ToPtr(indexGPR, scratchGPR);
@@ -7210,21 +7210,21 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
 
     if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, branchIfNotObject(op1GPR));
+            JSValueSource(op1GPR), node->child1(), SpecObject, branchIfNotObject(op1GPR));
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, branchIfNotObject(op2GPR));
+            JSValueSource(op2GPR), node->child2(), SpecObject, branchIfNotObject(op2GPR));
     } else {
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, branchIfNotObject(op1GPR));
-        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
+            JSValueSource(op1GPR), node->child1(), SpecObject, branchIfNotObject(op1GPR));
+        speculationCheck(BadType, JSValueSource(op1GPR), node->child1(),
             branchTest8(
                 NonZero,
                 Address(op1GPR, JSCell::typeInfoFlagsOffset()),
                 TrustedImm32(MasqueradesAsUndefined)));
 
         DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op2GPR), node->child2(), SpecObject, branchIfNotObject(op2GPR));
-        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
+            JSValueSource(op2GPR), node->child2(), SpecObject, branchIfNotObject(op2GPR));
+        speculationCheck(BadType, JSValueSource(op2GPR), node->child2(),
             branchTest8(
                 NonZero,
                 Address(op2GPR, JSCell::typeInfoFlagsOffset()),
@@ -7897,7 +7897,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 
 
     if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
 #if USE(LARGE_TYPED_ARRAYS)
     load64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
@@ -8237,7 +8237,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRReg resultGPR = result.gpr();
 
         if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
-            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 #if USE(LARGE_TYPED_ARRAYS)
         load64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
         speculationCheck(ExitKind::Overflow, JSValueSource(), nullptr, branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
@@ -8263,7 +8263,7 @@ void SpeculativeJIT::compileDataViewGetByteLength(Node* node)
         speculateDataViewObject(node->child1(), baseGPR);
 
         auto [outOfBounds, doneCases] = loadDataViewByteLength(baseGPR, resultGPR, scratch1GPR, resultGPR, TypeDataView);
-        speculationCheck(OutOfBounds, JSValueSource::unboxedCell(baseGPR), node, outOfBounds);
+        speculationCheck(OutOfBounds, JSValueSource(baseGPR), node, outOfBounds);
         doneCases.link(this);
 
         speculationCheck(ExitKind::Overflow, JSValueSource(), nullptr, branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
@@ -8279,7 +8279,7 @@ void SpeculativeJIT::compileDataViewGetByteLength(Node* node)
     speculateDataViewObject(node->child1(), baseGPR);
 
     if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 #if USE(LARGE_TYPED_ARRAYS)
     load64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
     speculationCheck(ExitKind::Overflow, JSValueSource(), nullptr, branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
@@ -9446,7 +9446,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         if (bitVector->get(i)) {
             SpeculateCellOperand immutableButterfly(this, use);
             GPRReg immutableButterflyGPR = immutableButterfly.gpr();
-            storeCell(immutableButterflyGPR, &buffer[i]);
+            storeValue(immutableButterflyGPR, &buffer[i]);
         } else {
             JSValueOperand input(this, use);
             GPRReg inputGPR = input.gpr();
@@ -10562,7 +10562,7 @@ void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempG
     
     if (node->structureSet().size() == 1) {
         speculationCheck(
-            BadCache, JSValueSource::unboxedCell(cellGPR), nullptr,
+            BadCache, JSValueSource(cellGPR), nullptr,
             branchWeakStructure(
                 NotEqual,
                 Address(cellGPR, JSCell::structureIDOffset()),
@@ -10587,7 +10587,7 @@ void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempG
         }
         
         speculationCheck(
-            BadCache, JSValueSource::unboxedCell(cellGPR), nullptr,
+            BadCache, JSValueSource(cellGPR), nullptr,
             branchWeakStructure(
                 NotEqual, structureGPR, node->structureSet().last()));
         
@@ -10599,7 +10599,7 @@ void SpeculativeJIT::compileCheckIsConstant(Node* node)
 {
     if (node->child1().useKind() == CellUse) {
         SpeculateCellOperand cell(this, node->child1());
-        speculationCheck(BadConstantValue, JSValueSource::unboxedCell(cell.gpr()), node->child1(), branchLinkableConstant(NotEqual, cell.gpr(), LinkableConstant(*this, node->cellOperand()->cell())));
+        speculationCheck(BadConstantValue, JSValueSource(cell.gpr()), node->child1(), branchLinkableConstant(NotEqual, cell.gpr(), LinkableConstant(*this, node->cellOperand()->cell())));
     } else {
         ASSERT(!node->constant()->value().isCell() || !node->constant()->value());
         JSValueOperand operand(this, node->child1());
@@ -10895,10 +10895,10 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         storePtr(GPRInfo::callFrameRegister, &vm().topCallFrame);
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
         if (Options::useJITCage())
-            callOperation(vmEntryCustomGetter, resultGPR, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)), TrustedImmPtr(getter.taggedPtr()));
+            callOperation(vmEntryCustomGetter, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)), TrustedImmPtr(getter.taggedPtr()));
         else {
             CodePtr<OperationPtrTag> bypassedFunction(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.taggedPtr())));
-            callOperation<J_JITOperation_GJI>(bypassedFunction, resultGPR, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)));
+            callOperation<J_JITOperation_GJI>(bypassedFunction, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImmPtr(identifierUID(node->callDOMGetterData()->identifierNumber)));
         }
 
         jsValueResult(resultGPR, node);
@@ -10944,7 +10944,7 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
             checkFailed = branchIfNotType(baseGPR, classInfo->inheritsJSTypeRange.value());
         else
             checkFailed = branchIfType(baseGPR, classInfo->inheritsJSTypeRange.value());
-        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), checkFailed);
+        speculationCheck(BadType, JSValueSource(baseGPR), node->child1(), checkFailed);
         noResult(node);
         return;
     }
@@ -10967,11 +10967,11 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
         loadPtr(Address(otherGPR, ClassInfo::offsetOfParentClass()), otherGPR);
         branchTestPtr(NonZero, otherGPR).linkTo(loop, this);
         if (node->op() == CheckJSCast) {
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), jump());
+            speculationCheck(BadType, JSValueSource(baseGPR), node->child1(), jump());
             found.link(this);
         } else {
             auto notFound = jump();
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), found);
+            speculationCheck(BadType, JSValueSource(baseGPR), node->child1(), found);
             notFound.link(this);
         }
         noResult(node);
@@ -10995,9 +10995,9 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
     SnippetParams params(this, WTF::move(regs), WTF::move(gpScratch), WTF::move(fpScratch));
     JumpList failureCases = snippet->generator()->run(*this, params);
     if (node->op() == CheckJSCast)
-        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
+        speculationCheck(BadType, JSValueSource(baseGPR), node->child1(), failureCases);
     else {
-        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), jump());
+        speculationCheck(BadType, JSValueSource(baseGPR), node->child1(), jump());
         failureCases.link(this);
     }
     noResult(node);
@@ -11196,7 +11196,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
 
         load8(Address(op1GPR, JSCell::typeInfoTypeOffset()), resultGPR);
         Jump isString = branch32(Equal, resultGPR, TrustedImm32(StringType));
-        DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), node->child1(), (SpecString | SpecStringObject), branch32(NotEqual, resultGPR, TrustedImm32(StringObjectType)));
+        DFG_TYPE_CHECK(JSValueSource(op1GPR), node->child1(), (SpecString | SpecStringObject), branch32(NotEqual, resultGPR, TrustedImm32(StringObjectType)));
         loadPtr(Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         Jump done = jump();
 
@@ -11394,7 +11394,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         resultGPR, TrustedImmPtr(node->structure()), butterfly, scratch1GPR, scratch2GPR,
         slowPath, SlowAllocationResult::UndefinedBehavior);
     
-    storeCell(operandGPR, Address(resultGPR, JSWrapperObject::internalValueOffset()));
+    storeValue(operandGPR, Address(resultGPR, JSWrapperObject::internalValueOffset()));
 
     mutatorFence(vm());
     
@@ -11727,7 +11727,7 @@ void SpeculativeJIT::speculateCellTypeWithoutTypeFiltering(
     Edge edge, GPRReg cellGPR, JSType jsType)
 {
     speculationCheck(
-        BadType, JSValueSource::unboxedCell(cellGPR), edge,
+        BadType, JSValueSource(cellGPR), edge,
         branchIfNotType(cellGPR, jsType));
 }
 
@@ -11735,7 +11735,7 @@ void SpeculativeJIT::speculateCellType(
     Edge edge, GPRReg cellGPR, SpeculatedType specType, JSType jsType)
 {
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(cellGPR), edge, specType,
+        JSValueSource(cellGPR), edge, specType,
         branchIfNotType(cellGPR, jsType));
 }
 
@@ -11827,7 +11827,7 @@ void SpeculativeJIT::speculateCellOrOther(Edge edge)
 
 void SpeculativeJIT::speculateObject(Edge edge, GPRReg cell)
 {
-    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, SpecObject, branchIfNotObject(cell));
+    DFG_TYPE_CHECK(JSValueSource(cell), edge, SpecObject, branchIfNotObject(cell));
 }
 
 void SpeculativeJIT::speculateObject(Edge edge)
@@ -12100,7 +12100,7 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 void SpeculativeJIT::speculateString(Edge edge, GPRReg cell)
 {
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(cell), edge, SpecString | ~SpecCellCheck, branchIfNotString(cell));
+        JSValueSource(cell), edge, SpecString | ~SpecCellCheck, branchIfNotString(cell));
 }
 
 void SpeculativeJIT::speculateStringOrOther(Edge edge, GPRReg valueGPR, GPRReg scratch)
@@ -12133,7 +12133,7 @@ void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string
     if (!needsTypeCheck(edge, SpecStringIdent | ~SpecString))
         return;
 
-    speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchIfNotAtomStringImpl(string, storage, canBeRope(edge)));
+    speculationCheck(BadStringType, JSValueSource(string), edge, branchIfNotAtomStringImpl(string, storage, canBeRope(edge)));
 
     m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
 }
@@ -12169,7 +12169,7 @@ void SpeculativeJIT::speculateString(Edge edge)
 
 void SpeculativeJIT::speculateStringObject(Edge edge, GPRReg cellGPR)
 {
-    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cellGPR), edge, ~SpecCellCheck | SpecStringObject, branchIfNotType(cellGPR, StringObjectType));
+    DFG_TYPE_CHECK(JSValueSource(cellGPR), edge, ~SpecCellCheck | SpecStringObject, branchIfNotType(cellGPR, StringObjectType));
 }
 
 void SpeculativeJIT::speculateStringObject(Edge edge)
@@ -12198,7 +12198,7 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     load8(Address(gpr, JSCell::typeInfoTypeOffset()), typeGPR);
 
     Jump isString = branch32(Equal, typeGPR, TrustedImm32(StringType));
-    speculationCheck(BadType, JSValueSource::unboxedCell(gpr), edge.node(), branch32(NotEqual, typeGPR, TrustedImm32(StringObjectType)));
+    speculationCheck(BadType, JSValueSource(gpr), edge.node(), branch32(NotEqual, typeGPR, TrustedImm32(StringObjectType)));
     isString.link(this);
     
     m_interpreter.filter(edge, SpecString | SpecStringObject);
@@ -12235,7 +12235,7 @@ void SpeculativeJIT::speculateNotSymbol(Edge edge)
     if (needsCellCheck)
         notCell = branchIfNotCell(valueGPR);
 
-    speculationCheck(BadType, JSValueSource::unboxedCell(value), edge.node(), branchIfSymbol(value));
+    speculationCheck(BadType, JSValueSource(value), edge.node(), branchIfSymbol(value));
 
     if (needsCellCheck)
         notCell.link(this);
@@ -12245,7 +12245,7 @@ void SpeculativeJIT::speculateNotSymbol(Edge edge)
 
 void SpeculativeJIT::speculateSymbol(Edge edge, GPRReg cell)
 {
-    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, ~SpecCellCheck | SpecSymbol, branchIfNotSymbol(cell));
+    DFG_TYPE_CHECK(JSValueSource(cell), edge, ~SpecCellCheck | SpecSymbol, branchIfNotSymbol(cell));
 }
 
 void SpeculativeJIT::speculateSymbol(Edge edge)
@@ -12259,7 +12259,7 @@ void SpeculativeJIT::speculateSymbol(Edge edge)
 
 void SpeculativeJIT::speculateHeapBigInt(Edge edge, GPRReg cell)
 {
-    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, ~SpecCellCheck | SpecHeapBigInt, branchIfNotHeapBigInt(cell));
+    DFG_TYPE_CHECK(JSValueSource(cell), edge, ~SpecCellCheck | SpecHeapBigInt, branchIfNotHeapBigInt(cell));
 }
 
 void SpeculativeJIT::speculateHeapBigInt(Edge edge)
@@ -13627,7 +13627,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
         flushRegisters();
         GPRFlushedCallResult result(this);
-        callOperation(node->op() == StringReplaceAll ? operationStringProtoFuncReplaceAllGeneric : operationStringProtoFuncReplaceGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, CellValue(searchGPR), replaceGPR);
+        callOperation(node->op() == StringReplaceAll ? operationStringProtoFuncReplaceAllGeneric : operationStringProtoFuncReplaceGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
         cellResult(result.gpr(), node);
         break;
     }
@@ -14811,7 +14811,7 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
 
         operationCases.link(this);
 
-        callOperation(slowPathFunction, resultGPR, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), propertyNameGPR, indexGPR, modeGPR);
+        callOperation(slowPathFunction, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, propertyNameGPR, indexGPR, modeGPR);
 
         done.link(this);
 
@@ -15084,7 +15084,7 @@ void SpeculativeJIT::compileGetCallee(Node* node)
 void SpeculativeJIT::compileSetCallee(Node* node)
 {
     SpeculateCellOperand callee(this, node->child1());
-    storeCell(callee.gpr(), lowWordFor(CallFrameSlot::callee));
+    storeValue(callee.gpr(), lowWordFor(CallFrameSlot::callee));
     noResult(node);
 }
 
@@ -17475,7 +17475,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
         ASSERT(generationInfo(node).gpr() == resultGPR && generationInfo(node).registerFormat() == DataFormatJS);
 
         if (!recoverGenericCase.empty()) {
-            addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndGetByVal, resultGPR, LinkableConstant::globalObject(*this, node), CellValue(baseGPR), indexGPR, enumeratorGPR));
+            addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndGetByVal, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, indexGPR, enumeratorGPR));
         }
 
         doneCases.link(this);

@@ -135,7 +135,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
             break;
         }
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
-        jit.storeCell(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
+        jit.storeValue(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
 
         alreadyAllocatedArguments.add(id, operand.virtualRegister());
     }

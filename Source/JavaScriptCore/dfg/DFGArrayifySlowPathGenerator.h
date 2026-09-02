@@ -66,7 +66,7 @@ public:
                 break;
             }
         }
-        m_badIndexingTypeJump = jit->speculationCheck(BadIndexingType, JSValueSource::unboxedCell(m_baseGPR), nullptr);
+        m_badIndexingTypeJump = jit->speculationCheck(BadIndexingType, JSValueSource(m_baseGPR), nullptr);
     }
     
 private:
