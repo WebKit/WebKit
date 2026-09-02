@@ -903,14 +903,8 @@ webkit.org/b/174066 inspector/canvas/console-record-offscreen-webgl2.html [ Pass
 webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/178028 inspector/canvas/create-context-2d.html [ Pass Failure Timeout ]
 webkit.org/b/174066 inspector/canvas/create-context-webgl2.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-frameCount.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-full.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-memoryLimit.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-snapshots.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-webgl-receivers.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-webgl2-frameCount.html [ Pass Failure Timeout ]
+webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-full.html [ Slow ]
 webkit.org/b/174066 inspector/canvas/recording-webgl2-full.html [ Pass Failure Timeout ]
-webkit.org/b/174066 inspector/canvas/recording-webgl2-memoryLimit.html [ Pass Failure Timeout ]
 webkit.org/b/174272 inspector/canvas/requestClientNodes-css.html [ Pass Failure Timeout ]
 webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
 webkit.org/b/152452 [ Debug ] inspector/console/messageRepeatCountUpdated.html [ Pass Timeout ]
@@ -1628,11 +1622,7 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-border-radius
 
 webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 
-webkit.org/b/189672 [ Release ] webgl/2.0.y/conformance2/textures/canvas/tex-2d-rg32f-rg-float.html [ Pass Failure ]
-
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Pass ]
-
-webkit.org/b/215817 [ Release ] webgl/2.0.y/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
 
@@ -1910,7 +1900,7 @@ webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
 
-webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
+webkit.org/b/237415 [ x86_64 ] webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
 [ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
@@ -2212,7 +2202,7 @@ webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 
 webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html [ Pass Failure ]
 
-webkit.org/b/287990 [ Sonoma+ ] fast/canvas/webgl/drawingbuffer-test.html [ Pass Failure ]
+webkit.org/b/287990 [ Sonoma+ x86_64 ] fast/canvas/webgl/drawingbuffer-test.html [ Pass Failure ]
 
 webkit.org/b/260320 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ Pass ImageOnlyFailure ]
 
@@ -2310,8 +2300,6 @@ webkit.org/b/297609 compositing/backing/backing-store-attachment-empty-keyframe.
 
 [ x86_64 ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ Skip ]
 
-webkit.org/b/297691 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
-
 webkit.org/b/298402 inspector/worker/dom-debugger-event-after-terminate-crash.html [ Pass Crash ]
 
 webkit.org/b/298476 gamepad/gamepad-visibility-1.html [ Crash ]
@@ -2332,7 +2320,7 @@ media/media-hevc-video-as-img.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ Pass ImageOnlyFailure ]
 fast/scrolling/mac/scrollbars/scrollbar-width-dynamic-none-to-auto.html [ Pass ImageOnlyFailure ]
-webgl/1.0.x/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Pass Failure ]
+webkit.org/b/288642 [ x86_64 ] webgl/1.0.x/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Pass ImageOnlyFailure Failure ]
 imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
@@ -2369,8 +2357,7 @@ fast/forms/menulist-style-color.html [ Pass Failure ] # rdar://162304596
 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Pass Failure ] # rdar://162304596
 fast/forms/select-style.html [ Pass Failure ] # rdar://162304596
 http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
-webgl/2.0.y/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Pass Failure ]
-webgl/2.0.y/conformance/ogles/GL/greaterThan/greaterThan_001_to_008.html [ Pass Failure ]
+webkit.org/b/288642 [ x86_64 ] webgl/2.0.y/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Pass Failure ]
 inspector/timeline/timeline-event-CancelAnimationFrame.html [ Pass Crash ]
 
 webkit.org/b/300994 fast/animation/request-animation-frame-throttling-aggressiveThermalMitigation.html [ Pass Failure ]

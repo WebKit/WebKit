@@ -1074,8 +1074,6 @@ webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOn
 
 webkit.org/b/228256 inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
-webkit.org/b/229043 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
-webkit.org/b/229043 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-2d-full.html [ Pass Crash ]
@@ -1133,7 +1131,7 @@ webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrat
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
-webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
+webkit.org/b/240821 [ x86_64 ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
 
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
@@ -1716,10 +1714,6 @@ webkit.org/b/288603 imported/w3c/web-platform-tests/screen-orientation/hidden_do
 
 webkit.org/b/288613 [ Sonoma+ ] pdf/pdf-in-embed-with-root-page-zoom.html [ Pass Timeout Failure ]
 
-# webkit.org/b/288642 [Sonoma H Release x86_64 EWS ] webgl/1.0.x/conformance/glsl/bugs/sampler-array-using-loop-index.html and webgl/2.0.y/conformance/glsl/bugs/sampler-array-using-loop-index.html failure
-[ Sonoma Release x86_64 ] webgl/1.0.x/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Skip ]
-[ Sonoma Release x86_64 ] webgl/2.0.y/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Skip ]
-
 webkit.org/b/288660 [ Sonoma Release x86_64 ] media/media-hevc-video-as-img.html [ Skip ]
 
 # webkit.org/b/280189 [EWS] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html is a constant failure on Ventura+ Intel EWS
@@ -1856,7 +1850,9 @@ webkit.org/b/295743 [ Debug ] media/video-display-aspect-ratio.html [ Pass Failu
 # FIXME: Needs bug.
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-before-short-deletion.html [ Failure ]
 
-webkit.org/b/295756 [ arm64 ] webgl/2.0.y/conformance2/rendering/texture-switch-performance.html  [ Pass Failure ]
+webkit.org/b/295756 webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Pass Failure ]
+webkit.org/b/295756 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Pass Failure ]
+webkit.org/b/295756 webgl/2.0.y/conformance2/rendering/texture-switch-performance.html [ Pass Failure ]
 
 webkit.org/b/295814 [ arm64 ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html [ Pass Timeout ]
 
