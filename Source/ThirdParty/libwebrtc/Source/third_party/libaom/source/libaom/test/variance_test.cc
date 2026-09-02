@@ -3812,4 +3812,89 @@ INSTANTIATE_TEST_SUITE_P(SVE, AvxHBDVarianceTest,
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_SVE
 
+#if HAVE_AVX2
+using CalcVarianceStatFunc = int64_t (*)(const uint8_t *src, int stride, int bw,
+                                         int bh);
+
+class CalcVarianceStatTest
+    : public ::testing::TestWithParam<CalcVarianceStatFunc> {
+ protected:
+  void SetUp() override {
+    target_func_ = GetParam();
+    rnd_.Reset(ACMRandom::DeterministicSeed());
+  }
+
+  CalcVarianceStatFunc target_func_;
+  ACMRandom rnd_;
+};
+
+TEST_P(CalcVarianceStatTest, CompareWithC) {
+  static const int kSizes[] = { 4, 8, 16, 32, 64, 128 };
+  DECLARE_ALIGNED(32, uint8_t, src[128 * 128]);
+
+  for (int w : kSizes) {
+    for (int h : kSizes) {
+      SCOPED_TRACE(::testing::Message() << "bw=" << w << " bh=" << h);
+      int stride = 128;
+      for (int iter = 0; iter < 500; ++iter) {
+        for (int r = 0; r < h; ++r) {
+          for (int c = 0; c < w; ++c) {
+            src[r * stride + c] = rnd_.Rand8();
+          }
+        }
+        int64_t res_c = aom_calc_variance_stat_c(src, stride, w, h);
+        int64_t res_target = target_func_(src, stride, w, h);
+        EXPECT_EQ(res_c, res_target) << "iter=" << iter;
+      }
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(AVX2, CalcVarianceStatTest,
+                         ::testing::Values(&aom_calc_variance_stat_avx2));
+
+#if CONFIG_AV1_HIGHBITDEPTH
+using CalcVarianceStatHbdFunc = int64_t (*)(const uint16_t *src, int stride,
+                                            int bw, int bh);
+
+class CalcVarianceStatHbdTest
+    : public ::testing::TestWithParam<CalcVarianceStatHbdFunc> {
+ protected:
+  void SetUp() override {
+    target_func_ = GetParam();
+    rnd_.Reset(ACMRandom::DeterministicSeed());
+  }
+
+  CalcVarianceStatHbdFunc target_func_;
+  ACMRandom rnd_;
+};
+
+TEST_P(CalcVarianceStatHbdTest, CompareWithC) {
+  static const int kSizes[] = { 4, 8, 16, 32, 64, 128 };
+  DECLARE_ALIGNED(32, uint16_t, src[128 * 128]);
+
+  for (int w : kSizes) {
+    for (int h : kSizes) {
+      SCOPED_TRACE(::testing::Message() << "bw=" << w << " bh=" << h);
+      int stride = 128;
+      for (int iter = 0; iter < 500; ++iter) {
+        for (int r = 0; r < h; ++r) {
+          for (int c = 0; c < w; ++c) {
+            src[r * stride + c] = rnd_.Rand16() & 0xfff;  // 12-bit
+          }
+        }
+        int64_t res_c = aom_highbd_calc_variance_stat_c(src, stride, w, h);
+        int64_t res_target = target_func_(src, stride, w, h);
+        EXPECT_EQ(res_c, res_target) << "iter=" << iter;
+      }
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    AVX2, CalcVarianceStatHbdTest,
+    ::testing::Values(&aom_highbd_calc_variance_stat_avx2));
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+#endif  // HAVE_AVX2
+
 }  // namespace

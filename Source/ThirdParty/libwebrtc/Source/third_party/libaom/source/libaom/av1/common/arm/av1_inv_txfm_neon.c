@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "av1/common/arm/av1_inv_txfm_neon.h"
+
 #include <arm_neon.h>
 
 #include "config/aom_config.h"
@@ -18,10 +20,10 @@
 #include "aom_dsp/arm/transpose_neon.h"
 #include "av1/common/av1_inv_txfm1d.h"
 #include "av1/common/av1_inv_txfm1d_cfg.h"
+#include "av1/common/av1_inv_txfm2d.h"
 #include "av1/common/av1_txfm.h"
 #include "av1/common/enums.h"
 #include "av1/common/idct.h"
-#include "av1/common/arm/av1_inv_txfm_neon.h"
 
 // 1D itx types
 typedef enum ATTRIBUTE_PACKED {
@@ -4177,11 +4179,6 @@ static inline void lowbd_inv_txfm2d_add_universe_neon(
   }
 }
 
-// This function is used by av1_inv_txfm2d_test.cc.
-void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input, uint8_t *output,
-                                   int stride, TX_TYPE tx_type, TX_SIZE tx_size,
-                                   int eob);
-
 void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input, uint8_t *output,
                                    int stride, TX_TYPE tx_type, TX_SIZE tx_size,
                                    int eob) {
@@ -4214,10 +4211,16 @@ void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input, uint8_t *output,
 }
 void av1_inv_txfm_add_neon(const tran_low_t *dqcoeff, uint8_t *dst, int stride,
                            const TxfmParam *txfm_param) {
-  const TX_TYPE tx_type = txfm_param->tx_type;
   if (!txfm_param->lossless) {
+    // TODO(bug 528050364): Remove the C fallback after issues with
+    // arm-linux-gnueabi-gcc-14+ are addressed.
+#if defined(__GNUC__) && __GNUC__ >= 14 && defined(__ARM_ARCH) && __ARM_ARCH < 7
+    av1_inv_txfm_add_c(dqcoeff, dst, stride, txfm_param);
+#else
+    const TX_TYPE tx_type = txfm_param->tx_type;
     av1_lowbd_inv_txfm2d_add_neon(dqcoeff, dst, stride, tx_type,
                                   txfm_param->tx_size, txfm_param->eob);
+#endif
   } else {
     av1_inv_txfm_add_c(dqcoeff, dst, stride, txfm_param);
   }

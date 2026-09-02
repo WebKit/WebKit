@@ -104,10 +104,10 @@ static inline uint64_t aom_sum_squares_2d_i16_wxh_sve(const int16_t *src,
 
 uint64_t aom_sum_squares_2d_i16_sve(const int16_t *src, int stride, int width,
                                     int height) {
-  if (width == 4) {
+  if (width == 4 && height % 2 == 0) {
     return aom_sum_squares_2d_i16_4xh_sve(src, stride, height);
   }
-  if (width == 8) {
+  if (width == 8 && height % 2 == 0) {
     return aom_sum_squares_2d_i16_8xh_sve(src, stride, height);
   }
   if (width % 16 == 0) {
@@ -225,9 +225,9 @@ uint64_t aom_sum_sse_2d_i16_sve(const int16_t *src, int stride, int width,
                                 int height, int *sum) {
   uint64_t sse;
 
-  if (width == 4) {
+  if (width == 4 && height % 2 == 0) {
     sse = aom_sum_sse_2d_i16_4xh_sve(src, stride, height, sum);
-  } else if (width == 8) {
+  } else if (width == 8 && height % 2 == 0) {
     sse = aom_sum_sse_2d_i16_8xh_sve(src, stride, height, sum);
   } else if (width % 16 == 0) {
     sse = aom_sum_sse_2d_i16_16xh_sve(src, stride, width, height, sum);
@@ -240,7 +240,7 @@ uint64_t aom_sum_sse_2d_i16_sve(const int16_t *src, int stride, int width,
 
 #if CONFIG_AV1_HIGHBITDEPTH
 static inline uint64_t aom_var_2d_u16_4xh_sve(uint8_t *src, int src_stride,
-                                              int width, int height) {
+                                              int height) {
   uint16_t *src_u16 = CONVERT_TO_SHORTPTR(src);
   uint64_t sum = 0;
   uint64_t sse = 0;
@@ -263,7 +263,7 @@ static inline uint64_t aom_var_2d_u16_4xh_sve(uint8_t *src, int src_stride,
   sum += vaddlvq_u32(sum_u32);
   sse += vaddvq_u64(sse_u64);
 
-  return sse - sum * sum / (width * height);
+  return sse - sum * sum / (4 * height);
 }
 
 static inline uint64_t aom_var_2d_u16_8xh_sve(uint8_t *src, int src_stride,
@@ -388,17 +388,17 @@ static inline uint64_t aom_var_2d_u16_large_sve(uint8_t *src, int src_stride,
 
 uint64_t aom_var_2d_u16_sve(uint8_t *src, int src_stride, int width,
                             int height) {
-  if (width == 4) {
-    return aom_var_2d_u16_4xh_sve(src, src_stride, width, height);
-  }
-  if (width == 8) {
-    return aom_var_2d_u16_8xh_sve(src, src_stride, width, height);
-  }
-  if (width == 16) {
-    return aom_var_2d_u16_16xh_sve(src, src_stride, width, height);
+  if (width == 4 && height % 2 == 0) {
+    return aom_var_2d_u16_4xh_sve(src, src_stride, height);
   }
   if (width % 32 == 0) {
     return aom_var_2d_u16_large_sve(src, src_stride, width, height);
+  }
+  if (width % 16 == 0) {
+    return aom_var_2d_u16_16xh_sve(src, src_stride, width, height);
+  }
+  if (width % 8 == 0) {
+    return aom_var_2d_u16_8xh_sve(src, src_stride, width, height);
   }
   return aom_var_2d_u16_neon(src, src_stride, width, height);
 }

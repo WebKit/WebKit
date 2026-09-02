@@ -257,8 +257,8 @@ const char *const kAV1TestVectors[] = {
   "av1-1-b8-06-mfmv.ivf",
   "av1-1-b8-16-intra_only-intrabc-extreme-dv.ivf",
   "av1-1-b8-22-svc-L1T2.ivf",
-  "av1-1-b8-22-svc-L2T1.ivf",
-  "av1-1-b8-22-svc-L2T2.ivf",
+  "av1-1-b8-22-svc-L2T1-2.ivf",
+  "av1-1-b8-22-svc-L2T2-2.ivf",
   "av1-1-b8-23-film_grain-50.ivf",
   "av1-1-b8-24-monochrome.ivf"
 };

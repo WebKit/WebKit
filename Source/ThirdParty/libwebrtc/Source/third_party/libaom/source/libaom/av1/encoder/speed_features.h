@@ -504,6 +504,13 @@ typedef struct HIGH_LEVEL_SPEED_FEATURES {
    *  1: Fast detection
    */
   int screen_detection_mode2_fast_detection;
+
+  /*!
+   *  Decide whether to enable weighted chroma distortion.
+   *  0: Disable
+   *  1: Enable
+   */
+  int weighted_chroma_distortion;
 } HIGH_LEVEL_SPEED_FEATURES;
 
 /*!
@@ -616,7 +623,8 @@ typedef struct GLOBAL_MOTION_SPEED_FEATURES {
   int num_refinement_steps;
 
   // Error advantage threshold level used to determine whether global motion
-  // compensation should be enabled
+  // compensation should be enabled. It Can take values 0 - 2 increasing
+  // aggressiveness of skipping GM in order.
   int gm_erroradv_tr_level;
 } GLOBAL_MOTION_SPEED_FEATURES;
 
@@ -1240,12 +1248,17 @@ typedef struct INTER_MODE_SPEED_FEATURES {
   // Percentage of scaling used to increase the rd cost of warp mode so that
   // encoder decisions are biased against local warp, favoring low complexity
   // modes.
-  int bias_warp_mode_rd_scale_pct;
+  float bias_warp_mode_rd_scale_pct;
 
   // Percentage of scaling used to increase the rd cost of obmc motion mode so
   // that encoder decisions are biased against local obmc, favoring low
   // complexity modes.
   float bias_obmc_mode_rd_scale_pct;
+
+  // Percentage of scaling used to increase the rd cost of GLOBALMV and
+  // GLOBAL_GLOBALMV modes of type ROTZOOM so that encoder decisions are biased
+  // against these modes, favoring low complexity modes.
+  float bias_gm_mode_rd_scale_pct;
 
   // Avoid further evaluation of compound modes using top estimate RD Costs of
   // compound average.
@@ -1255,6 +1268,9 @@ typedef struct INTER_MODE_SPEED_FEATURES {
 
   // Skip interinter wedge search based on MSE between the two predictors.
   int skip_interinter_wedge_search_based_on_mse;
+
+  // Enable/disable model RD based fast compound wedge mask search.
+  int enable_comp_wedge_search_using_model_rd;
 } INTER_MODE_SPEED_FEATURES;
 
 typedef struct INTERP_FILTER_SPEED_FEATURES {
@@ -1841,6 +1857,16 @@ typedef struct REAL_TIME_SPEED_FEATURES {
 
   // Force selective cdf update.
   int selective_cdf_update;
+  // Use IntraBC for realtime mode.
+  int rt_use_intrabc;
+  // Prune IntraBC for nonrd pickmode.
+  int rt_prune_intrabc_nonrd;
+  // Fallback search mode for IntraBC on hash misses in nonrd pickmode.
+  // 0: Full pixel search (Diamond/Hex search)
+  // 1: Block Vector Predictor (BVP) only
+  // 2: BVP + 12-point integer offset probe
+  // 3: Skip fallback search entirely (Hash-only)
+  int rt_intrabc_miss_mode;
 
   // Force only single reference (LAST) for prediction.
   int force_only_last_ref;

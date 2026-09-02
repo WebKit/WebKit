@@ -2,10 +2,12 @@ Name: Alliance for Open Media Video Codec
 Short Name: libaom
 URL: https://aomedia.googlesource.com/aom/
 Version: N/A
-Revision: 77665fee933b409dd94e35b0c216645f845b9fd9
-CPEPrefix: cpe:/a:aomedia:aomedia:3.9.0
-License: BSD
-License File: source/libaom/LICENSE
+Revision: d08a82575de50dc99f3b3d324e7b8304836fe0ef
+Update Mechanism: Manual
+CPEPrefix: cpe:/a:aomedia:aomedia:3.14.1
+License: Alliance-for-Open-Media-Patent, BSD-2-Clause
+License Android Compatible: yes
+License File: source/libaom/LICENSE, source/libaom/PATENTS
 Security Critical: yes
 Shipped: yes
 
@@ -46,7 +48,7 @@ after running roll_dep.py.
 
      git commit -a --amend
 
-   Add `Bug: b:307414544` to the commit message.
+   Add `Bug: 307414544` to the commit message.
 
 4. Upload the change to Gerrit:
 

@@ -759,6 +759,26 @@ TEST_P(DatarateTestPsnr, PerFramePsnr) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }
 
+// Warped motion can't be enabled in realtime only build.
+#if !CONFIG_REALTIME_ONLY
+// Test to reproduce decode failure in issue: 514696186.
+TEST_P(DatarateTestRealtime, WarpedMotionEnabled) {
+  if (GET_PARAM(2) != 8) GTEST_SKIP() << "Only run for cpu-used=8";
+
+  ResetModel();
+
+  cfg_.rc_end_usage = AOM_CBR;
+  cfg_.rc_target_bitrate = 100;
+  cfg_.rc_min_quantizer = 2;
+  cfg_.rc_max_quantizer = 52;
+  enable_warped_motion_ = true;
+
+  ::libaom_test::YUVVideoSource video("hantro_odd.yuv", AOM_IMG_FMT_I420, 208,
+                                      144, 30, 1, 0, 30);
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+#endif
+
 AV1_INSTANTIATE_TEST_SUITE(DatarateTestLarge,
                            ::testing::Values(::libaom_test::kRealTime),
                            ::testing::Range(5, 7), ::testing::Values(0, 3),

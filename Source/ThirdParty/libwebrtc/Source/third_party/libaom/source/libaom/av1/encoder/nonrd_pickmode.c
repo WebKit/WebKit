@@ -14,12 +14,15 @@
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "av1/common/mvref_common.h"
 #include "av1/common/reconinter.h"
 #include "av1/common/reconintra.h"
 
 #include "av1/encoder/encodemv.h"
 #include "av1/encoder/intra_mode_search.h"
+#include "av1/encoder/mcomp.h"
 #include "av1/encoder/model_rd.h"
 #include "av1/encoder/motion_search_facade.h"
 #include "av1/encoder/nonrd_opt.h"
@@ -1579,6 +1582,196 @@ static bool should_prune_intra_modes_using_neighbors(
          this_mode != left_mode;
 }
 
+static void av1_search_intrabc_nonrd(AV1_COMP *cpi, MACROBLOCK *x,
+                                     BLOCK_SIZE bsize, RD_STATS *this_rdc,
+                                     int_mv *best_dv) {
+  AV1_COMMON *const cm = &cpi->common;
+  MACROBLOCKD *const xd = &x->e_mbd;
+  MB_MODE_INFO *const mi = xd->mi[0];
+  const int mi_row = xd->mi_row;
+  const int mi_col = xd->mi_col;
+  const int num_planes = av1_num_planes(cm);
+
+  this_rdc->rdcost = INT64_MAX;
+
+  // Save pre[0] state as it's shared across blocks
+  struct buf_2d ori_pre[MAX_MB_PLANE];
+  for (int i = 0; i < num_planes; ++i) ori_pre[i] = xd->plane[i].pre[0];
+
+  struct buf_2d yv12_mb[MAX_MB_PLANE];
+  av1_setup_pred_block(xd, yv12_mb, xd->cur_buf, NULL, NULL, num_planes);
+  for (int i = 0; i < num_planes; ++i) {
+    xd->plane[i].pre[0] = yv12_mb[i];
+  }
+
+  MB_MODE_INFO_EXT *const mbmi_ext = &x->mbmi_ext;
+  const MV_REFERENCE_FRAME ref_frame = INTRA_FRAME;
+  av1_find_mv_refs(cm, xd, mi, ref_frame, mbmi_ext->ref_mv_count,
+                   xd->ref_mv_stack, xd->weight, NULL, mbmi_ext->global_mvs,
+                   mbmi_ext->mode_context);
+  av1_copy_usable_ref_mv_stack_and_weight(xd, mbmi_ext, ref_frame);
+  int_mv nearestmv, nearmv;
+  av1_find_best_ref_mvs_from_stack(0, mbmi_ext, ref_frame, &nearestmv, &nearmv,
+                                   0);
+
+  if (nearestmv.as_int == INVALID_MV) {
+    nearestmv.as_int = 0;
+  }
+  if (nearmv.as_int == INVALID_MV) {
+    nearmv.as_int = 0;
+  }
+
+  int_mv dv_ref = nearestmv.as_int == 0 ? nearmv : nearestmv;
+  if (dv_ref.as_int == 0) {
+    av1_find_ref_dv(&dv_ref, &xd->tile, cm->seq_params->mib_size, mi_row);
+  }
+  // Ref DV should not have sub-pel.
+  assert((dv_ref.as_mv.col & 7) == 0);
+  assert((dv_ref.as_mv.row & 7) == 0);
+  mbmi_ext->ref_mv_stack[INTRA_FRAME][0].this_mv = dv_ref;
+
+  FULLPEL_MOTION_SEARCH_PARAMS fullms_params;
+  const SEARCH_METHODS search_method =
+      av1_get_default_mv_search_method(x, &cpi->sf.mv_sf, bsize);
+  const search_site_config *lookahead_search_sites =
+      cpi->mv_search_params.search_site_cfg[SS_CFG_LOOKAHEAD];
+  const FULLPEL_MV start_mv = get_fullmv_from_mv(&dv_ref.as_mv);
+  av1_make_default_fullpel_ms_params(&fullms_params, cpi, x, bsize,
+                                     &dv_ref.as_mv, start_mv,
+                                     lookahead_search_sites, search_method,
+                                     /*fine_search_interval=*/0);
+  av1_set_ms_to_intra_mode(&fullms_params, x->dv_costs);
+  fullms_params.mv_limits.col_min = (xd->tile.mi_col_start - mi_col) * MI_SIZE;
+  fullms_params.mv_limits.col_max =
+      (xd->tile.mi_col_end - mi_col) * MI_SIZE - block_size_wide[bsize];
+  fullms_params.mv_limits.row_min = (xd->tile.mi_row_start - mi_row) * MI_SIZE;
+  fullms_params.mv_limits.row_max =
+      (xd->tile.mi_row_end - mi_row) * MI_SIZE - block_size_high[bsize];
+  int_mv best_mv;
+  int bestsme = INT_MAX;
+  if (!cpi->sf.mv_sf.hash_max_8x8_intrabc_blocks || bsize <= BLOCK_8X8) {
+    bestsme = av1_intrabc_hash_search(
+        cpi, xd, &fullms_params, &x->intrabc_hash_info, &best_mv.as_fullmv);
+  }
+  if (bestsme == INT_MAX) {
+    const int miss_mode = cpi->sf.rt_sf.rt_intrabc_miss_mode;
+    if (miss_mode == 0) {
+      FULLPEL_MV_STATS best_mv_stats;
+      bestsme = av1_full_pixel_search(start_mv, &fullms_params,
+                                      cpi->mv_search_params.mv_step_param, NULL,
+                                      &best_mv.as_fullmv, &best_mv_stats, NULL);
+    } else if (miss_mode == 1 || miss_mode == 2) {
+      // Evaluate start_mv (BVP candidate)
+      FULLPEL_MV cand_mv = start_mv;
+      if (cand_mv.col >= fullms_params.mv_limits.col_min &&
+          cand_mv.col <= fullms_params.mv_limits.col_max &&
+          cand_mv.row >= fullms_params.mv_limits.row_min &&
+          cand_mv.row <= fullms_params.mv_limits.row_max) {
+        MV dv = get_mv_from_fullmv(&cand_mv);
+        if (av1_is_dv_valid(dv, cm, xd, mi_row, mi_col, bsize,
+                            cm->seq_params->mib_size_log2)) {
+          const struct buf_2d *src = fullms_params.ms_buffers.src;
+          const struct buf_2d *ref = fullms_params.ms_buffers.ref;
+          unsigned int sad = fullms_params.vfp->sdf(
+              src->buf, src->stride, get_buf_from_fullmv(ref, &cand_mv),
+              ref->stride);
+          unsigned int rate =
+              av1_mv_bit_cost(&dv, &dv_ref.as_mv, x->dv_costs->joint_mv,
+                              x->dv_costs->dv_costs, MV_COST_WEIGHT);
+          best_mv.as_fullmv = cand_mv;
+          bestsme = (int)(sad + rate);
+        }
+      }
+
+      // If miss_mode == 2, do a one-shot 12-point offset probe around start_mv
+      if (miss_mode == 2) {
+        const int row_offsets[12] = { -1, 1, 0, 0, -2, 2, 0, 0, -1, -1, 1, 1 };
+        const int col_offsets[12] = { 0, 0, -1, 1, 0, 0, -2, 2, -1, 1, -1, 1 };
+        for (int k = 0; k < 12; ++k) {
+          FULLPEL_MV probe_mv;
+          probe_mv.row = start_mv.row + row_offsets[k];
+          probe_mv.col = start_mv.col + col_offsets[k];
+          if (probe_mv.col >= fullms_params.mv_limits.col_min &&
+              probe_mv.col <= fullms_params.mv_limits.col_max &&
+              probe_mv.row >= fullms_params.mv_limits.row_min &&
+              probe_mv.row <= fullms_params.mv_limits.row_max) {
+            MV dv = get_mv_from_fullmv(&probe_mv);
+            if (av1_is_dv_valid(dv, cm, xd, mi_row, mi_col, bsize,
+                                cm->seq_params->mib_size_log2)) {
+              const struct buf_2d *src = fullms_params.ms_buffers.src;
+              const struct buf_2d *ref = fullms_params.ms_buffers.ref;
+              unsigned int sad = fullms_params.vfp->sdf(
+                  src->buf, src->stride, get_buf_from_fullmv(ref, &probe_mv),
+                  ref->stride);
+              unsigned int rate =
+                  av1_mv_bit_cost(&dv, &dv_ref.as_mv, x->dv_costs->joint_mv,
+                                  x->dv_costs->dv_costs, MV_COST_WEIGHT);
+              int cost = (int)(sad + rate);
+              if (cost < bestsme) {
+                bestsme = cost;
+                best_mv.as_fullmv = probe_mv;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      // miss_mode == 3: skip entirely (hash-only)
+      bestsme = INT_MAX;
+    }
+  }
+  if (bestsme != INT_MAX) {
+    MV dv = get_mv_from_fullmv(&best_mv.as_fullmv);
+    if (av1_is_dv_valid(dv, cm, xd, mi_row, mi_col, bsize,
+                        cm->seq_params->mib_size_log2)) {
+      const int8_t ori_mi_use_intrabc = mi->use_intrabc;
+      const int_mv ori_mi_mv0 = mi->mv[0];
+      const PREDICTION_MODE ori_mi_mode = mi->mode;
+      const MV_REFERENCE_FRAME ori_ref0 = mi->ref_frame[0];
+
+      mi->use_intrabc = 1;
+      mi->mv[0].as_mv = dv;
+      mi->mode = DC_PRED;
+      mi->ref_frame[0] = INTRA_FRAME;
+
+      av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, NULL, bsize, 0, 0);
+      if (num_planes > 1) {
+        av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, NULL, bsize, 1,
+                                      1);
+        av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, NULL, bsize, 2,
+                                      2);
+      }
+
+      this_rdc->rate =
+          av1_mv_bit_cost(&dv, &dv_ref.as_mv, x->dv_costs->joint_mv,
+                          x->dv_costs->dv_costs, MV_COST_WEIGHT);
+      this_rdc->rate += x->mode_costs.intrabc_cost[1];
+      this_rdc->dist = 0;
+      int skippable;
+      av1_block_yrd(x, this_rdc, &skippable, bsize,
+                    AOMMIN(mi->tx_size, TX_16X16));
+      if (num_planes > 1) {
+        RD_STATS rdc_uv;
+        av1_invalid_rd_stats(&rdc_uv);
+        av1_model_rd_for_sb_uv(cpi, bsize, x, xd, &rdc_uv, 1, 2);
+        this_rdc->rate += rdc_uv.rate;
+        this_rdc->dist += rdc_uv.dist;
+      }
+      this_rdc->rdcost = RDCOST(x->rdmult, this_rdc->rate, this_rdc->dist);
+      *best_dv = mi->mv[0];
+
+      // Restore mi state after trial
+      mi->use_intrabc = ori_mi_use_intrabc;
+      mi->mv[0] = ori_mi_mv0;
+      mi->mode = ori_mi_mode;
+      mi->ref_frame[0] = ori_ref0;
+    }
+  }
+
+  // Restore pre[0] state
+  for (int i = 0; i < num_planes; ++i) xd->plane[i].pre[0] = ori_pre[i];
+}
+
 void av1_nonrd_pick_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, RD_STATS *rd_cost,
                                BLOCK_SIZE bsize, PICK_MODE_CONTEXT *ctx) {
   AV1_COMMON *const cm = &cpi->common;
@@ -1633,6 +1826,7 @@ void av1_nonrd_pick_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, RD_STATS *rd_cost,
   mi->mv[0].as_int = mi->mv[1].as_int = INVALID_MV;
 
   bool allow_skip_nondc = true;
+  bool palette_selected = false;
   // Change the limit of this loop to add other intra prediction
   // mode tests.
   for (int mode_index = 0; mode_index < RTC_INTRA_MODES; ++mode_index) {
@@ -1724,6 +1918,7 @@ void av1_nonrd_pick_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, RD_STATS *rd_cost,
                                  &this_rdc, best_rdc.rdcost);
     // Update best mode data.
     if (this_rdc.rdcost < best_rdc.rdcost) {
+      palette_selected = true;
       best_mode = DC_PRED;
       mi->mv[0].as_int = INVALID_MV;
       mi->mv[1].as_int = INVALID_MV;
@@ -1734,6 +1929,29 @@ void av1_nonrd_pick_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, RD_STATS *rd_cost,
         av1_copy_array(ctx->tx_type_map, xd->tx_type_map, ctx->num_4x4_blk);
     } else {
       av1_zero(mi->palette_mode_info);
+    }
+  }
+
+  bool try_intrabc =
+      cpi->sf.rt_sf.rt_use_intrabc && av1_allow_intrabc(cm) &&
+      bsize <= BLOCK_16X16 &&
+      (!cpi->sf.rt_sf.rt_prune_intrabc_nonrd || palette_selected);
+
+  if (try_intrabc) {
+    int_mv best_dv;
+    av1_search_intrabc_nonrd(cpi, x, bsize, &this_rdc, &best_dv);
+    if (this_rdc.rdcost < best_rdc.rdcost) {
+      best_rdc = this_rdc;
+      best_mode = DC_PRED;
+      mi->use_intrabc = 1;
+      mi->mv[0] = best_dv;
+      mi->uv_mode = UV_DC_PRED;
+      mi->motion_mode = SIMPLE_TRANSLATION;
+      mi->interp_filters = av1_broadcast_interp_filter(BILINEAR);
+      memset(&mi->palette_mode_info, 0, sizeof(mi->palette_mode_info));
+      memset(mi->inter_tx_size, mi->tx_size, sizeof(mi->inter_tx_size));
+    } else {
+      mi->use_intrabc = 0;
     }
   }
 
@@ -3747,6 +3965,12 @@ void av1_nonrd_pick_inter_mode_sb(AV1_COMP *cpi, TileDataEnc *tile_data,
 #endif  // COLLECT_NONRD_PICK_MODE_STAT
 
   *rd_cost = search_state.best_rdc;
+
+  mi->num_proj_ref = 0;
+  if (warped_motion_update_num_proj_ref(cpi, mi)) {
+    int pts[SAMPLES_ARRAY_SIZE], pts_inref[SAMPLES_ARRAY_SIZE];
+    mi->num_proj_ref = av1_findSamples(cm, xd, pts, pts_inref);
+  }
 
   // Reset the xd->block_ref_scale_factors[i], as they may have
   // been set to pointer &sf_no_scale, which becomes invalid afer

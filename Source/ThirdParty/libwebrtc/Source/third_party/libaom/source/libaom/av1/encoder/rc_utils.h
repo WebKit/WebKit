@@ -74,12 +74,14 @@ static inline void config_target_level(AV1_COMP *const cpi,
       av1_get_max_bitrate_for_level(target_level, tier, profile);
   const int64_t max_bitrate = (int64_t)(level_bitrate_limit * 0.70);
   rc_cfg->target_bandwidth = AOMMIN(rc_cfg->target_bandwidth, max_bitrate);
+#if !CONFIG_REALTIME_ONLY
   // Also need to update cpi->ppi->twopass.bits_left.
   TWO_PASS *const twopass = &cpi->ppi->twopass;
   FIRSTPASS_STATS *stats = twopass->stats_buf_ctx->total_stats;
   if (stats != NULL)
     cpi->ppi->twopass.bits_left =
         (int64_t)(stats->duration * rc_cfg->target_bandwidth / 10000000.0);
+#endif
 
   // Adjust max over-shoot percentage.
   rc_cfg->over_shoot_pct = 0;

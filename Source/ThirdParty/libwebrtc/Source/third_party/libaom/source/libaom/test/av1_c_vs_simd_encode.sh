@@ -104,6 +104,10 @@ av1_c_vs_simd_enc_verify_environment () {
 # }
 
 # Echo AOM_SIMD_CAPS_MASK for different instruction set architecture.
+avx512() {
+   echo "0x3FF"
+}
+
 avx2() {
    echo "0x1FF"
 }
@@ -300,6 +304,7 @@ av1_enc_build() {
   cd $tmp_build_dir
 
   local cmake_common_args="--fresh -DCONFIG_EXCLUDE_SIMD_MISMATCH=1 \
+           -DCONFIG_HIGHWAY=1 \
            -DCMAKE_BUILD_TYPE=Release \
            -DENABLE_CCACHE=1 \
            '-DCMAKE_C_FLAGS_RELEASE=-O3 -g' \
@@ -454,21 +459,22 @@ av1_test_generic() {
   done
 }
 
-# This function encodes AV1 bitstream by enabling SSE2, SSE3, SSSE3, SSE4_1, SSE4_2, AVX, AVX2 as
-# there are no functions with MMX, SSE and AVX512 specialization.
+# This function encodes AV1 bitstream by enabling SSE2, SSE3, SSSE3, SSE4_1, SSE4_2, AVX, AVX2,
+# AVX512 as there are no functions with MMX and SSE specialization.
 # The value of environment variable 'AOM_SIMD_CAPS_MASK' controls enabling of different instruction
 # set extension optimizations. The value of the flag 'AOM_SIMD_CAPS_MASK' and the corresponding
 # instruction set extension optimization enabled are as follows:
-# SSE4_2 AVX2 AVX SSE4_1 SSSE3 SSE3 SSE2 SSE MMX
-#   1     1    1    1      1    1    1    1   1  -> 0x1FF -> Enable AVX2 and lower variants
-#   1     0    1    1      1    1    1    1   1  -> 0x17F -> Enable AVX and lower variants
-#   1     0    0    1      1    1    1    1   1  -> 0x13F -> Enable SSE4_2 and lower variants
-#   0     0    0    1      1    1    1    1   1  -> 0x03F -> Enable SSE4_1 and lower variants
-#   0     0    0    0      1    1    1    1   1  -> 0x01F -> Enable SSSE3 and lower variants
-#   0     0    0    0      0    1    1    1   1  -> 0x00F -> Enable SSE3 and lower variants
-#   0     0    0    0      0    0    1    1   1  -> 0x007 -> Enable SSE2 and lower variants
-#   0     0    0    0      0    0    0    1   1  -> 0x003 -> Enable SSE and lower variants
-#   0     0    0    0      0    0    0    0   1  -> 0x001 -> Enable MMX
+# AVX512 SSE4_2 AVX2 AVX SSE4_1 SSSE3 SSE3 SSE2 SSE MMX
+#   1      1     1    1    1      1    1    1    1   1  -> 0x3FF -> Enable AVX512 and lower variants
+#   0      1     1    1    1      1    1    1    1   1  -> 0x1FF -> Enable AVX2 and lower variants
+#   0      1     0    1    1      1    1    1    1   1  -> 0x17F -> Enable AVX and lower variants
+#   0      1     0    0    1      1    1    1    1   1  -> 0x13F -> Enable SSE4_2 and lower variants
+#   0      0     0    0    1      1    1    1    1   1  -> 0x03F -> Enable SSE4_1 and lower variants
+#   0      0     0    0    0      1    1    1    1   1  -> 0x01F -> Enable SSSE3 and lower variants
+#   0      0     0    0    0      0    1    1    1   1  -> 0x00F -> Enable SSE3 and lower variants
+#   0      0     0    0    0      0    0    1    1   1  -> 0x007 -> Enable SSE2 and lower variants
+#   0      0     0    0    0      0    0    0    1   1  -> 0x003 -> Enable SSE and lower variants
+#   0      0     0    0    0      0    0    0    0   1  -> 0x001 -> Enable MMX
 ## NOTE: In x86_64 platform, it is not possible to enable sse/mmx/c using "AOM_SIMD_CAPS_MASK" as
 #  all x86_64 platforms implement sse2.
 av1_test_x86() {
@@ -489,8 +495,8 @@ av1_test_x86() {
     local cmake_command="cmake $LIBAOM_SOURCE_DIR"
   fi
 
-  # Available x86 isa variants: "avx2 avx sse4_2 sse4_1 ssse3 sse3 sse2"
-  local x86_isa_variants="avx2 sse4_2 sse2"
+  # Available x86 isa variants: "avx512 avx2 avx sse4_2 sse4_1 ssse3 sse3 sse2"
+  local x86_isa_variants="avx512 avx2 sse4_2 sse2"
 
   echo "Build for x86: ${target}"
   if ! av1_enc_build "${target}" "${cmake_command}"; then

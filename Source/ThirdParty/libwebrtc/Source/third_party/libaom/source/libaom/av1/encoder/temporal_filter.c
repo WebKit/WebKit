@@ -321,6 +321,13 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   // 32x32 block motion search results.
   int midblock_mses[4] = { INT_MAX, INT_MAX, INT_MAX, INT_MAX };
   MV midblock_mvs[4] = { kZeroMv, kZeroMv, kZeroMv, kZeroMv };
+  av1_set_mv_row_limits(&cpi->common.mi_params, &mb->mv_limits,
+                        (mb_row << mi_size_high_log2[block_size]),
+                        (mb_height >> MI_SIZE_LOG2),
+                        cpi->oxcf.border_in_pixels);
+  av1_set_mv_col_limits(&cpi->common.mi_params, &mb->mv_limits,
+                        (mb_col << mi_size_wide_log2[block_size]),
+                        (mb_width >> MI_SIZE_LOG2), cpi->oxcf.border_in_pixels);
 
   const int q = get_q(cpi);
 
@@ -1048,8 +1055,6 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
   TemporalFilterData *const tf_data = &td->tf_data;
   const int mb_height = block_size_high[block_size];
   const int mb_width = block_size_wide[block_size];
-  const int mi_h = mi_size_high_log2[block_size];
-  const int mi_w = mi_size_wide_log2[block_size];
   const int num_planes = av1_num_planes(&cpi->common);
   const int weight_calc_level_in_tf = cpi->sf.hl_sf.weight_calc_level_in_tf;
   uint32_t *accum = tf_data->accum;
@@ -1076,13 +1081,7 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
 
   // Do filtering.
   FRAME_DIFF *diff = &td->tf_data.diff;
-  av1_set_mv_row_limits(&cpi->common.mi_params, &mb->mv_limits,
-                        (mb_row << mi_h), (mb_height >> MI_SIZE_LOG2),
-                        cpi->oxcf.border_in_pixels);
   for (int mb_col = 0; mb_col < tf_ctx->mb_cols; mb_col++) {
-    av1_set_mv_col_limits(&cpi->common.mi_params, &mb->mv_limits,
-                          (mb_col << mi_w), (mb_width >> MI_SIZE_LOG2),
-                          cpi->oxcf.border_in_pixels);
     memset(accum, 0, num_pels * sizeof(accum[0]));
     memset(count, 0, num_pels * sizeof(count[0]));
     MV ref_mv = kZeroMv;  // Reference motion vector passed down along frames.

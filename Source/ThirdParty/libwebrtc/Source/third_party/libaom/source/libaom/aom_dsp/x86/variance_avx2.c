@@ -946,6 +946,371 @@ static inline void get_var_sse_sum_16x16_dual_avx2(
   _mm_storel_epi64((__m128i *)var16x16, variance_16x16);
 }
 
+static inline int32_t yy_hsum_epi32_si32(__m256i v) {
+  __m128i v128 =
+      _mm_add_epi32(_mm256_castsi256_si128(v), _mm256_extracti128_si256(v, 1));
+  v128 = _mm_hadd_epi32(v128, v128);
+  v128 = _mm_hadd_epi32(v128, v128);
+  return _mm_cvtsi128_si32(v128);
+}
+
+static inline int32_t xx_hsum_epi32_si32(__m128i v) {
+  v = _mm_hadd_epi32(v, v);
+  v = _mm_hadd_epi32(v, v);
+  return _mm_cvtsi128_si32(v);
+}
+
+int64_t aom_calc_variance_stat_avx2(const uint8_t *src, int stride, int bw,
+                                    int bh) {
+  // Temporary buffer to store horizontal filter results H[y][x]
+  // Max block size in AV1 is 128x128
+  DECLARE_ALIGNED(32, uint16_t, H_buf[128 * 128]);
+
+  // Step 1: Compute Horizontal 1D Filter H[y][x] = P(y, x-1) + 2*P(y, x) + P(y,
+  // x + 1)
+  for (int y = 0; y < bh; ++y) {
+    const uint8_t *src_row = src + y * stride;
+    uint16_t *H_row = H_buf + y * bw;
+
+    if (bw >= 16) {
+      for (int x = 0; x < bw; x += 16) {
+        __m128i v_curr = _mm_loadu_si128((const __m128i *)(src_row + x));
+        __m128i v_left, v_right;
+
+        if (x == 0) {
+          v_left =
+              _mm_insert_epi8(_mm_slli_si128(v_curr, 1), (int8_t)src_row[0], 0);
+        } else {
+          v_left = _mm_loadu_si128((const __m128i *)(src_row + x - 1));
+        }
+
+        if (x + 16 < bw) {
+          v_right = _mm_loadu_si128((const __m128i *)(src_row + x + 1));
+        } else {
+          v_right = _mm_insert_epi8(_mm_srli_si128(v_curr, 1),
+                                    (int8_t)src_row[bw - 1], 15);
+        }
+
+        __m256i u16_left = _mm256_cvtepu8_epi16(v_left);
+        __m256i u16_curr = _mm256_cvtepu8_epi16(v_curr);
+        __m256i u16_right = _mm256_cvtepu8_epi16(v_right);
+
+        __m256i u16_H = _mm256_add_epi16(_mm256_add_epi16(u16_left, u16_right),
+                                         _mm256_slli_epi16(u16_curr, 1));
+
+        _mm256_storeu_si256((__m256i *)(H_row + x), u16_H);
+      }
+    } else if (bw == 8) {
+      __m128i v_curr = _mm_loadl_epi64((const __m128i *)src_row);
+      __m128i v_left =
+          _mm_insert_epi8(_mm_slli_si128(v_curr, 1), (int8_t)src_row[0], 0);
+      __m128i v_right =
+          _mm_insert_epi8(_mm_srli_si128(v_curr, 1), (int8_t)src_row[7], 7);
+
+      __m128i u16_left = _mm_cvtepu8_epi16(v_left);
+      __m128i u16_curr = _mm_cvtepu8_epi16(v_curr);
+      __m128i u16_right = _mm_cvtepu8_epi16(v_right);
+
+      __m128i u16_H = _mm_add_epi16(_mm_add_epi16(u16_left, u16_right),
+                                    _mm_slli_epi16(u16_curr, 1));
+
+      _mm_storeu_si128((__m128i *)H_row, u16_H);
+    } else {  // bw == 4
+      __m128i v_curr = _mm_cvtsi32_si128(*(const int32_t *)src_row);
+      __m128i v_left =
+          _mm_insert_epi8(_mm_slli_si128(v_curr, 1), (int8_t)src_row[0], 0);
+      __m128i v_right =
+          _mm_insert_epi8(_mm_srli_si128(v_curr, 1), (int8_t)src_row[3], 3);
+
+      __m128i u16_left = _mm_cvtepu8_epi16(v_left);
+      __m128i u16_curr = _mm_cvtepu8_epi16(v_curr);
+      __m128i u16_right = _mm_cvtepu8_epi16(v_right);
+
+      __m128i u16_H = _mm_add_epi16(_mm_add_epi16(u16_left, u16_right),
+                                    _mm_slli_epi16(u16_curr, 1));
+
+      _mm_storel_epi64((__m128i *)H_row, u16_H);
+    }
+  }
+
+  // Step 2: Compute Vertical Filter V[y][x] = H(y-1, x) + 2*H(y, x) + H(y + 1,
+  // x), smooth = V >> 4, diff = P - smooth, and accum (diff^2)
+  int64_t total_var = 0;
+
+  if (bw >= 16) {
+    __m256i acc_var_256 = _mm256_setzero_si256();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint8_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * bw;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * bw;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * bw;
+
+      for (int x = 0; x < bw; x += 16) {
+        __m256i H_top = _mm256_loadu_si256((const __m256i *)(H_top_row + x));
+        __m256i H_curr = _mm256_loadu_si256((const __m256i *)(H_curr_row + x));
+        __m256i H_bot = _mm256_loadu_si256((const __m256i *)(H_bot_row + x));
+
+        __m256i u16_V = _mm256_add_epi16(_mm256_add_epi16(H_top, H_bot),
+                                         _mm256_slli_epi16(H_curr, 1));
+
+        __m256i u16_sum = _mm256_srli_epi16(u16_V, 4);
+
+        __m128i v_p_curr = _mm_loadu_si128((const __m128i *)(src_row + x));
+        __m256i u16_p_curr = _mm256_cvtepu8_epi16(v_p_curr);
+
+        __m256i diff = _mm256_sub_epi16(u16_p_curr, u16_sum);
+        __m256i diff_sq = _mm256_madd_epi16(diff, diff);
+
+        acc_var_256 = _mm256_add_epi32(acc_var_256, diff_sq);
+      }
+    }
+
+    total_var = (int64_t)yy_hsum_epi32_si32(acc_var_256);
+  } else if (bw == 8) {
+    __m128i acc_var_128 = _mm_setzero_si128();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint8_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * 8;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * 8;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * 8;
+
+      __m128i H_top = _mm_loadu_si128((const __m128i *)H_top_row);
+      __m128i H_curr = _mm_loadu_si128((const __m128i *)H_curr_row);
+      __m128i H_bot = _mm_loadu_si128((const __m128i *)H_bot_row);
+
+      __m128i u16_V =
+          _mm_add_epi16(_mm_add_epi16(H_top, H_bot), _mm_slli_epi16(H_curr, 1));
+
+      __m128i u16_sum = _mm_srli_epi16(u16_V, 4);
+
+      __m128i v_p_curr = _mm_loadl_epi64((const __m128i *)src_row);
+      __m128i u16_p_curr = _mm_cvtepu8_epi16(v_p_curr);
+
+      __m128i diff = _mm_sub_epi16(u16_p_curr, u16_sum);
+      __m128i diff_sq = _mm_madd_epi16(diff, diff);
+
+      acc_var_128 = _mm_add_epi32(acc_var_128, diff_sq);
+    }
+
+    total_var = (int64_t)xx_hsum_epi32_si32(acc_var_128);
+  } else {  // bw == 4
+    __m128i acc_var_128 = _mm_setzero_si128();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint8_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * 4;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * 4;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * 4;
+
+      __m128i H_top = _mm_loadl_epi64((const __m128i *)H_top_row);
+      __m128i H_curr = _mm_loadl_epi64((const __m128i *)H_curr_row);
+      __m128i H_bot = _mm_loadl_epi64((const __m128i *)H_bot_row);
+
+      __m128i u16_V =
+          _mm_add_epi16(_mm_add_epi16(H_top, H_bot), _mm_slli_epi16(H_curr, 1));
+
+      __m128i u16_sum = _mm_srli_epi16(u16_V, 4);
+
+      __m128i v_p_curr = _mm_cvtsi32_si128(*(const int32_t *)src_row);
+      __m128i u16_p_curr = _mm_cvtepu8_epi16(v_p_curr);
+
+      __m128i diff = _mm_sub_epi16(u16_p_curr, u16_sum);
+      __m128i diff_sq = _mm_madd_epi16(diff, diff);
+
+      acc_var_128 = _mm_add_epi32(acc_var_128, diff_sq);
+    }
+
+    total_var = (int64_t)xx_hsum_epi32_si32(acc_var_128);
+  }
+
+  return total_var << 4;
+}
+
+static inline int64_t yy_hsum_epi64_si64(__m256i v) {
+  __m128i v128 =
+      _mm_add_epi64(_mm256_castsi256_si128(v), _mm256_extracti128_si256(v, 1));
+  __m128i tmp = _mm_srli_si128(v128, 8);
+  v128 = _mm_add_epi64(v128, tmp);
+
+#if AOM_ARCH_X86_64
+  return _mm_cvtsi128_si64(v128);
+#else
+  int64_t tmp32;
+  _mm_storel_epi64((__m128i *)&tmp32, v128);
+  return tmp32;
+#endif
+}
+
+static inline int64_t xx_hsum_epi64_si64(__m128i v) {
+  __m128i tmp = _mm_srli_si128(v, 8);
+  v = _mm_add_epi64(v, tmp);
+
+#if AOM_ARCH_X86_64
+  return _mm_cvtsi128_si64(v);
+#else
+  int64_t tmp32;
+  _mm_storel_epi64((__m128i *)&tmp32, v);
+  return tmp32;
+#endif
+}
+
+int64_t aom_highbd_calc_variance_stat_avx2(const uint16_t *src, int stride,
+                                           int bw, int bh) {
+  // Temporary buffer to store horizontal filter results H[y][x]
+  DECLARE_ALIGNED(32, uint16_t, H_buf[128 * 128]);
+
+  // Step 1: Compute Horizontal 1D Filter H[y][x] = P(y, x-1) + 2*P(y, x) + P(y,
+  // x + 1)
+  for (int y = 0; y < bh; ++y) {
+    const uint16_t *src_row = src + y * stride;
+    uint16_t *H_row = H_buf + y * bw;
+
+    if (bw >= 8) {
+      for (int x = 0; x < bw; x += 8) {
+        __m128i v_curr = _mm_loadu_si128((const __m128i *)(src_row + x));
+        __m128i v_left, v_right;
+
+        if (x == 0) {
+          v_left = _mm_insert_epi16(_mm_slli_si128(v_curr, 2), src_row[0], 0);
+        } else {
+          v_left = _mm_loadu_si128((const __m128i *)(src_row + x - 1));
+        }
+
+        if (x + 8 < bw) {
+          v_right = _mm_loadu_si128((const __m128i *)(src_row + x + 1));
+        } else {
+          v_right =
+              _mm_insert_epi16(_mm_srli_si128(v_curr, 2), src_row[bw - 1], 7);
+        }
+
+        __m128i u16_H = _mm_add_epi16(_mm_add_epi16(v_left, v_right),
+                                      _mm_slli_epi16(v_curr, 1));
+
+        _mm_storeu_si128((__m128i *)(H_row + x), u16_H);
+      }
+    } else {  // bw == 4
+      __m128i v_curr = _mm_loadl_epi64((const __m128i *)src_row);
+      __m128i v_left =
+          _mm_insert_epi16(_mm_slli_si128(v_curr, 2), src_row[0], 0);
+      __m128i v_right =
+          _mm_insert_epi16(_mm_srli_si128(v_curr, 2), src_row[3], 3);
+
+      __m128i u16_H = _mm_add_epi16(_mm_add_epi16(v_left, v_right),
+                                    _mm_slli_epi16(v_curr, 1));
+
+      _mm_storel_epi64((__m128i *)H_row, u16_H);
+    }
+  }
+
+  // Step 2: Compute Vertical Filter V[y][x] = H(y-1, x) + 2*H(y, x) + H(y + 1,
+  // x), smooth = V >> 4, diff = P - smooth, and accum (diff^2)
+  int64_t total_var = 0;
+
+  if (bw >= 16) {
+    __m256i acc_var_64 = _mm256_setzero_si256();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint16_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * bw;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * bw;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * bw;
+
+      for (int x = 0; x < bw; x += 16) {
+        __m256i H_top = _mm256_loadu_si256((const __m256i *)(H_top_row + x));
+        __m256i H_curr = _mm256_loadu_si256((const __m256i *)(H_curr_row + x));
+        __m256i H_bot = _mm256_loadu_si256((const __m256i *)(H_bot_row + x));
+
+        __m256i u16_V = _mm256_add_epi16(_mm256_add_epi16(H_top, H_bot),
+                                         _mm256_slli_epi16(H_curr, 1));
+
+        __m256i u16_sum = _mm256_srli_epi16(u16_V, 4);
+
+        __m256i v_p_curr = _mm256_loadu_si256((const __m256i *)(src_row + x));
+
+        __m256i diff = _mm256_sub_epi16(v_p_curr, u16_sum);
+        __m256i diff_sq = _mm256_madd_epi16(diff, diff);
+
+        __m256i diff_sq_lo =
+            _mm256_cvtepi32_epi64(_mm256_castsi256_si128(diff_sq));
+        __m256i diff_sq_hi =
+            _mm256_cvtepi32_epi64(_mm256_extracti128_si256(diff_sq, 1));
+        acc_var_64 = _mm256_add_epi64(acc_var_64, diff_sq_lo);
+        acc_var_64 = _mm256_add_epi64(acc_var_64, diff_sq_hi);
+      }
+    }
+
+    total_var = yy_hsum_epi64_si64(acc_var_64);
+  } else if (bw == 8) {
+    __m128i acc_var_64 = _mm_setzero_si128();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint16_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * 8;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * 8;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * 8;
+
+      __m128i H_top = _mm_loadu_si128((const __m128i *)H_top_row);
+      __m128i H_curr = _mm_loadu_si128((const __m128i *)H_curr_row);
+      __m128i H_bot = _mm_loadu_si128((const __m128i *)H_bot_row);
+
+      __m128i u16_V =
+          _mm_add_epi16(_mm_add_epi16(H_top, H_bot), _mm_slli_epi16(H_curr, 1));
+
+      __m128i u16_sum = _mm_srli_epi16(u16_V, 4);
+
+      __m128i v_p_curr = _mm_loadu_si128((const __m128i *)src_row);
+
+      __m128i diff = _mm_sub_epi16(v_p_curr, u16_sum);
+      __m128i diff_sq = _mm_madd_epi16(diff, diff);
+
+      __m128i diff_sq_lo = _mm_cvtepi32_epi64(diff_sq);
+      __m128i diff_sq_hi = _mm_cvtepi32_epi64(_mm_srli_si128(diff_sq, 8));
+      acc_var_64 = _mm_add_epi64(acc_var_64, diff_sq_lo);
+      acc_var_64 = _mm_add_epi64(acc_var_64, diff_sq_hi);
+    }
+
+    total_var = xx_hsum_epi64_si64(acc_var_64);
+  } else {  // bw == 4
+    __m128i acc_var_64 = _mm_setzero_si128();
+
+    for (int y = 0; y < bh; ++y) {
+      const uint16_t *src_row = src + y * stride;
+      const uint16_t *H_curr_row = H_buf + y * 4;
+      const uint16_t *H_top_row = (y == 0) ? H_curr_row : H_buf + (y - 1) * 4;
+      const uint16_t *H_bot_row =
+          (y == bh - 1) ? H_curr_row : H_buf + (y + 1) * 4;
+
+      __m128i H_top = _mm_loadl_epi64((const __m128i *)H_top_row);
+      __m128i H_curr = _mm_loadl_epi64((const __m128i *)H_curr_row);
+      __m128i H_bot = _mm_loadl_epi64((const __m128i *)H_bot_row);
+
+      __m128i u16_V =
+          _mm_add_epi16(_mm_add_epi16(H_top, H_bot), _mm_slli_epi16(H_curr, 1));
+
+      __m128i u16_sum = _mm_srli_epi16(u16_V, 4);
+
+      __m128i v_p_curr = _mm_loadl_epi64((const __m128i *)src_row);
+
+      __m128i diff = _mm_sub_epi16(v_p_curr, u16_sum);
+      __m128i diff_sq = _mm_madd_epi16(diff, diff);
+
+      __m128i diff_sq_lo = _mm_cvtepi32_epi64(diff_sq);
+      acc_var_64 = _mm_add_epi64(acc_var_64, diff_sq_lo);
+    }
+
+    total_var = xx_hsum_epi64_si64(acc_var_64);
+  }
+
+  return total_var << 4;
+}
+
 void aom_get_var_sse_sum_8x8_quad_avx2(const uint8_t *src_ptr,
                                        int source_stride,
                                        const uint8_t *ref_ptr, int ref_stride,

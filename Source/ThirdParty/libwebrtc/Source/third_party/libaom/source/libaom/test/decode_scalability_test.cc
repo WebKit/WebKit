@@ -91,13 +91,13 @@ const ObuExtensionHeader kSize16x16Headers[1] = { { 0, 0 } };
 //   operating_point_idc[ 1 ] = 0x101
 const ObuExtensionHeader kL1T2Headers[2] = { { 0, 0 }, { 1, 0 } };
 
-// av1-1-b8-22-svc-L2T1.ivf:
+// av1-1-b8-22-svc-L2T1-2.ivf:
 //   operating_points_cnt_minus_1 = 1
 //   operating_point_idc[ 0 ] = 0x301
 //   operating_point_idc[ 1 ] = 0x101
 const ObuExtensionHeader kL2T1Headers[2] = { { 0, 0 }, { 0, 1 } };
 
-// av1-1-b8-22-svc-L2T2.ivf:
+// av1-1-b8-22-svc-L2T2-2.ivf:
 //   operating_points_cnt_minus_1 = 3
 //   operating_point_idc[ 0 ] = 0x303
 //   operating_point_idc[ 1 ] = 0x301
@@ -111,8 +111,8 @@ const DecodeParam kAV1DecodeScalabilityTests[] = {
   // { filename, headers, num_headers }
   { "av1-1-b8-01-size-16x16.ivf", kSize16x16Headers, 1 },
   { "av1-1-b8-22-svc-L1T2.ivf", kL1T2Headers, 2 },
-  { "av1-1-b8-22-svc-L2T1.ivf", kL2T1Headers, 2 },
-  { "av1-1-b8-22-svc-L2T2.ivf", kL2T2Headers, 4 },
+  { "av1-1-b8-22-svc-L2T1-2.ivf", kL2T1Headers, 2 },
+  { "av1-1-b8-22-svc-L2T2-2.ivf", kL2T2Headers, 4 },
 };
 
 AV1_INSTANTIATE_TEST_SUITE(DecodeScalabilityTest,

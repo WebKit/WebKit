@@ -1569,6 +1569,19 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
                                        int num_workers) {
   MultiThreadInfo *const mt_info = &cpi->mt_info;
   AV1_COMMON *const cm = &cpi->common;
+
+  // If a previous frame's encode raised an error after this function ran,
+  // accumulate_counters_enc_workers() was skipped via longjmp and the mb
+  // buffers (including cpi->td.mb) were never freed. Free them here so the
+  // shallow copy of cpi->td.mb below cannot leave a worker's mb aliasing
+  // cpi->td.mb's heap allocations on a subsequent partial-allocation failure
+  // (which would double-free in encoder_destroy()).
+  for (int i = num_workers - 1; i >= 0; i--) {
+    EncWorkerData *const thread_data = &mt_info->tile_thr_data[i];
+    ThreadData *const td = (i == 0) ? &cpi->td : thread_data->original_td;
+    if (td) av1_dealloc_mb_data(&td->mb, av1_num_planes(cm));
+  }
+
   for (int i = num_workers - 1; i >= 0; i--) {
     AVxWorker *const worker = &mt_info->workers[i];
     EncWorkerData *const thread_data = &mt_info->tile_thr_data[i];

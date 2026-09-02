@@ -1385,6 +1385,12 @@ if (aom_config("CONFIG_AV1_ENCODER") eq "yes") {
   add_proto qw/uint64_t/, "aom_mse_wxh_16bit", "uint8_t *dst, int dstride,uint16_t *src, int sstride, int w, int h";
   specialize qw/aom_mse_wxh_16bit  sse2 avx2 neon/;
 
+  add_proto qw/int64_t/, "aom_calc_variance_stat", "const uint8_t *src, int stride, int bw, int bh";
+  specialize qw/aom_calc_variance_stat avx2/;
+
+  add_proto qw/int64_t/, "aom_highbd_calc_variance_stat", "const uint16_t *src, int stride, int bw, int bh";
+  specialize qw/aom_highbd_calc_variance_stat avx2/;
+
   add_proto qw/uint64_t/, "aom_mse_16xh_16bit", "uint8_t *dst, int dstride,uint16_t *src, int w, int h";
   specialize qw/aom_mse_16xh_16bit sse2 avx2 neon/;
 

@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "av1/common/av1_inv_txfm2d.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -374,32 +376,26 @@ TEST_P(AV1LbdInvTxfm2d, DISABLED_Speed) {
 }
 
 #if HAVE_SSSE3
-extern "C" void av1_lowbd_inv_txfm2d_add_ssse3(const int32_t *input,
-                                               uint8_t *output, int stride,
-                                               TX_TYPE tx_type, TX_SIZE tx_size,
-                                               int eob);
 INSTANTIATE_TEST_SUITE_P(SSSE3, AV1LbdInvTxfm2d,
                          ::testing::Values(av1_lowbd_inv_txfm2d_add_ssse3));
 #endif  // HAVE_SSSE3
 
 #if HAVE_AVX2
-extern "C" void av1_lowbd_inv_txfm2d_add_avx2(const int32_t *input,
-                                              uint8_t *output, int stride,
-                                              TX_TYPE tx_type, TX_SIZE tx_size,
-                                              int eob);
-
 INSTANTIATE_TEST_SUITE_P(AVX2, AV1LbdInvTxfm2d,
                          ::testing::Values(av1_lowbd_inv_txfm2d_add_avx2));
 #endif  // HAVE_AVX2
 
 #if HAVE_NEON
-extern "C" void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input,
-                                              uint8_t *output, int stride,
-                                              TX_TYPE tx_type, TX_SIZE tx_size,
-                                              int eob);
-
+// TODO(bug 528050364): Enable this test after issues with
+// arm-linux-gnueabi-gcc-14+ are addressed.
+#if defined(__GNUC__) && __GNUC__ >= 14 && defined(__ARM_ARCH) && \
+    __ARM_ARCH <= 7
+INSTANTIATE_TEST_SUITE_P(DISABLED_NEON, AV1LbdInvTxfm2d,
+                         ::testing::Values(av1_lowbd_inv_txfm2d_add_neon));
+#else
 INSTANTIATE_TEST_SUITE_P(NEON, AV1LbdInvTxfm2d,
                          ::testing::Values(av1_lowbd_inv_txfm2d_add_neon));
+#endif
 #endif  // HAVE_NEON
 
 }  // namespace

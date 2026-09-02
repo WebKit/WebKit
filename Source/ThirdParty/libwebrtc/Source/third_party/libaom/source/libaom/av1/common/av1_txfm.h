@@ -149,6 +149,24 @@ static inline uint16_t highbd_clip_pixel_add(uint16_t dest, tran_high_t trans,
   return clip_pixel_highbd(dest + (int)trans, bd);
 }
 
+#if HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON
+static inline int get_log_range_out(int bd) {
+  const int log_range_out = AOMMAX(16, bd + 6);
+  // bd is limited by the bitstream to 12. This assert is to satisfy static
+  // analyzers that may assume `log_range_out - 1` is greater than 31.
+  assert(log_range_out <= 18);
+  return log_range_out;
+}
+
+static inline int get_log_range(int bd, int do_cols) {
+  const int log_range = AOMMAX(16, bd + (do_cols ? 6 : 8));
+  // bd is limited by the bitstream to 12. This assert is to satisfy static
+  // analyzers that may assume `log_range - 1` is greater than 31.
+  assert(log_range <= 20);
+  return log_range;
+}
+#endif  // HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON
+
 typedef void (*TxfmFunc)(const int32_t *input, int32_t *output, int8_t cos_bit,
                          const int8_t *stage_range);
 

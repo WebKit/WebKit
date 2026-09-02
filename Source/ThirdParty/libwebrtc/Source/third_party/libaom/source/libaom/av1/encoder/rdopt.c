@@ -632,79 +632,10 @@ static void get_variance_stats_hbd(const MACROBLOCK *x, int64_t *src_var,
   int bw = block_size_wide[bsize];
   int bh = block_size_high[bsize];
 
-  static const int gau_filter[3][3] = {
-    { 1, 2, 1 },
-    { 2, 4, 2 },
-    { 1, 2, 1 },
-  };
-
-  DECLARE_ALIGNED(16, uint16_t, dclevel[(MAX_SB_SIZE + 2) * (MAX_SB_SIZE + 2)]);
-
-  uint16_t *pred_ptr = &dclevel[bw + 1];
-  int pred_stride = xd->plane[0].dst.stride;
-
-  for (int idy = -1; idy < bh + 1; ++idy) {
-    for (int idx = -1; idx < bw + 1; ++idx) {
-      int offset_idy = idy;
-      int offset_idx = idx;
-      if (idy == -1) offset_idy = 0;
-      if (idy == bh) offset_idy = bh - 1;
-      if (idx == -1) offset_idx = 0;
-      if (idx == bw) offset_idx = bw - 1;
-
-      int offset = offset_idy * pred_stride + offset_idx;
-      pred_ptr[idy * bw + idx] = CONVERT_TO_SHORTPTR(pd->dst.buf)[offset];
-    }
-  }
-
-  *rec_var = 0;
-  for (int idy = 0; idy < bh; ++idy) {
-    for (int idx = 0; idx < bw; ++idx) {
-      int sum = 0;
-      for (int iy = 0; iy < 3; ++iy)
-        for (int ix = 0; ix < 3; ++ix)
-          sum += pred_ptr[(idy + iy - 1) * bw + (idx + ix - 1)] *
-                 gau_filter[iy][ix];
-
-      sum = sum >> 4;
-
-      int64_t diff = pred_ptr[idy * bw + idx] - sum;
-      *rec_var += diff * diff;
-    }
-  }
-  *rec_var <<= 4;
-
-  int src_stride = p->src.stride;
-  for (int idy = -1; idy < bh + 1; ++idy) {
-    for (int idx = -1; idx < bw + 1; ++idx) {
-      int offset_idy = idy;
-      int offset_idx = idx;
-      if (idy == -1) offset_idy = 0;
-      if (idy == bh) offset_idy = bh - 1;
-      if (idx == -1) offset_idx = 0;
-      if (idx == bw) offset_idx = bw - 1;
-
-      int offset = offset_idy * src_stride + offset_idx;
-      pred_ptr[idy * bw + idx] = CONVERT_TO_SHORTPTR(p->src.buf)[offset];
-    }
-  }
-
-  *src_var = 0;
-  for (int idy = 0; idy < bh; ++idy) {
-    for (int idx = 0; idx < bw; ++idx) {
-      int sum = 0;
-      for (int iy = 0; iy < 3; ++iy)
-        for (int ix = 0; ix < 3; ++ix)
-          sum += pred_ptr[(idy + iy - 1) * bw + (idx + ix - 1)] *
-                 gau_filter[iy][ix];
-
-      sum = sum >> 4;
-
-      int64_t diff = pred_ptr[idy * bw + idx] - sum;
-      *src_var += diff * diff;
-    }
-  }
-  *src_var <<= 4;
+  *rec_var = aom_highbd_calc_variance_stat(CONVERT_TO_SHORTPTR(pd->dst.buf),
+                                           pd->dst.stride, bw, bh);
+  *src_var = aom_highbd_calc_variance_stat(CONVERT_TO_SHORTPTR(p->src.buf),
+                                           p->src.stride, bw, bh);
 }
 
 static void get_variance_stats(const MACROBLOCK *x, int64_t *src_var,
@@ -718,79 +649,8 @@ static void get_variance_stats(const MACROBLOCK *x, int64_t *src_var,
   int bw = block_size_wide[bsize];
   int bh = block_size_high[bsize];
 
-  static const int gau_filter[3][3] = {
-    { 1, 2, 1 },
-    { 2, 4, 2 },
-    { 1, 2, 1 },
-  };
-
-  DECLARE_ALIGNED(16, uint8_t, dclevel[(MAX_SB_SIZE + 2) * (MAX_SB_SIZE + 2)]);
-
-  uint8_t *pred_ptr = &dclevel[bw + 1];
-  int pred_stride = xd->plane[0].dst.stride;
-
-  for (int idy = -1; idy < bh + 1; ++idy) {
-    for (int idx = -1; idx < bw + 1; ++idx) {
-      int offset_idy = idy;
-      int offset_idx = idx;
-      if (idy == -1) offset_idy = 0;
-      if (idy == bh) offset_idy = bh - 1;
-      if (idx == -1) offset_idx = 0;
-      if (idx == bw) offset_idx = bw - 1;
-
-      int offset = offset_idy * pred_stride + offset_idx;
-      pred_ptr[idy * bw + idx] = pd->dst.buf[offset];
-    }
-  }
-
-  *rec_var = 0;
-  for (int idy = 0; idy < bh; ++idy) {
-    for (int idx = 0; idx < bw; ++idx) {
-      int sum = 0;
-      for (int iy = 0; iy < 3; ++iy)
-        for (int ix = 0; ix < 3; ++ix)
-          sum += pred_ptr[(idy + iy - 1) * bw + (idx + ix - 1)] *
-                 gau_filter[iy][ix];
-
-      sum = sum >> 4;
-
-      int64_t diff = pred_ptr[idy * bw + idx] - sum;
-      *rec_var += diff * diff;
-    }
-  }
-  *rec_var <<= 4;
-
-  int src_stride = p->src.stride;
-  for (int idy = -1; idy < bh + 1; ++idy) {
-    for (int idx = -1; idx < bw + 1; ++idx) {
-      int offset_idy = idy;
-      int offset_idx = idx;
-      if (idy == -1) offset_idy = 0;
-      if (idy == bh) offset_idy = bh - 1;
-      if (idx == -1) offset_idx = 0;
-      if (idx == bw) offset_idx = bw - 1;
-
-      int offset = offset_idy * src_stride + offset_idx;
-      pred_ptr[idy * bw + idx] = p->src.buf[offset];
-    }
-  }
-
-  *src_var = 0;
-  for (int idy = 0; idy < bh; ++idy) {
-    for (int idx = 0; idx < bw; ++idx) {
-      int sum = 0;
-      for (int iy = 0; iy < 3; ++iy)
-        for (int ix = 0; ix < 3; ++ix)
-          sum += pred_ptr[(idy + iy - 1) * bw + (idx + ix - 1)] *
-                 gau_filter[iy][ix];
-
-      sum = sum >> 4;
-
-      int64_t diff = pred_ptr[idy * bw + idx] - sum;
-      *src_var += diff * diff;
-    }
-  }
-  *src_var <<= 4;
+  *rec_var = aom_calc_variance_stat(pd->dst.buf, pd->dst.stride, bw, bh);
+  *src_var = aom_calc_variance_stat(p->src.buf, p->src.stride, bw, bh);
 }
 
 static void adjust_rdcost(const AV1_COMP *cpi, const MACROBLOCK *x,
@@ -879,9 +739,16 @@ static int64_t get_sse(const AV1_COMP *cpi, const MACROBLOCK *x,
     const BLOCK_SIZE bs =
         get_plane_block_size(mbmi->bsize, pd->subsampling_x, pd->subsampling_y);
     unsigned int sse;
+    int bw, bh;
+    const int block_width = block_size_wide[bs];
+    const int block_height = block_size_high[bs];
 
-    cpi->ppi->fn_ptr[bs].vf(p->src.buf, p->src.stride, pd->dst.buf,
-                            pd->dst.stride, &sse);
+    get_visible_dimensions(x, plane, bs, 0, 0, block_width, block_height,
+                           cpi->do_border_pad, &bw, &bh);
+
+    sse = pixel_dist_visible_only(cpi, x, p->src.buf, p->src.stride,
+                                  pd->dst.buf, pd->dst.stride, bs, block_height,
+                                  block_width, bh, bw);
     total_sse += sse;
     if (!plane && sse_y) *sse_y = sse;
   }
@@ -1438,34 +1305,41 @@ static inline void update_mode_start_end_index(
     *mode_index_end = SIMPLE_TRANSLATION;
 }
 
-// Increase rd cost of warp and obmc motion modes for low complexity decoding.
-static inline void increase_motion_mode_rd(const MB_MODE_INFO *const best_mbmi,
-                                           const MB_MODE_INFO *const this_mbmi,
-                                           int64_t *const best_scaled_rd,
-                                           int64_t *const this_scaled_rd,
-                                           int rd_warp_bias_scale_pct,
-                                           float rd_obmc_bias_scale_pct) {
-  if (*best_scaled_rd == INT64_MAX || *this_scaled_rd == INT64_MAX) return;
+// Scale rate, dist and sse of RD_STATS as per the given bias percentage
+static inline void scale_rdstats(RD_STATS *rd_stats, double rd_scale_pct) {
+  if (rd_stats == NULL) return;
+  rd_stats->rate += (int)(rd_scale_pct * rd_stats->rate + 0.5);
+  rd_stats->dist += (int64_t)(rd_scale_pct * rd_stats->dist + 0.5);
+  rd_stats->sse += (int64_t)(rd_scale_pct * rd_stats->sse + 0.5);
+  rd_stats->zero_rate += (int)(rd_scale_pct * rd_stats->zero_rate + 0.5);
+}
 
-  // Experiments have been performed with increasing the RD cost of warp and
-  // obmc motion modes at the below locations of inter mode evaluation.
-  // (1). Inter mode evaluation loop in av1_rd_pick_inter_mode().
-  // (2). Motion mode evaluation during handle_inter_mode() call.
-  // (3). Motion mode evaluation for winner motion modes.
-  // (4). Tx search for best inter candidates.
-  // Based on the speed quality trade-off results of this speed feature, the rd
-  // bias logic is enabled only at (2), (3) and (4).
-  const double rd_warp_bias_scale = rd_warp_bias_scale_pct / 100.0;
-  const double rd_obmc_bias_scale = rd_obmc_bias_scale_pct / 100.0;
-  if (best_mbmi->motion_mode == WARPED_CAUSAL)
-    *best_scaled_rd += (int64_t)(rd_warp_bias_scale * *best_scaled_rd);
-  else if (best_mbmi->motion_mode == OBMC_CAUSAL)
-    *best_scaled_rd += (int64_t)(rd_obmc_bias_scale * *best_scaled_rd);
+// Increase rate, distortion and SSE in RD_STATS structure of warp and obmc
+// motion modes for low complexity decoding.
+static inline void increase_motion_mode_rdstats(const AV1_COMP *cpi,
+                                                const MB_MODE_INFO *this_mbmi,
+                                                RD_STATS *rd_stats,
+                                                RD_STATS *rd_stats_y,
+                                                RD_STATS *rd_stats_uv) {
+  if (rd_stats->rate == INT_MAX ||
+      (rd_stats_y != NULL && rd_stats_y->rate == INT_MAX) ||
+      (rd_stats_uv != NULL && rd_stats_uv->rate == INT_MAX))
+    return;
+  const INTER_MODE_SPEED_FEATURES *const inter_sf = &cpi->sf.inter_sf;
+  double rd_bias_scale = 0.0;
+  if (this_mbmi->motion_mode == WARPED_CAUSAL) {
+    rd_bias_scale = inter_sf->bias_warp_mode_rd_scale_pct / 100.0;
+  } else if (this_mbmi->motion_mode == OBMC_CAUSAL) {
+    rd_bias_scale = inter_sf->bias_obmc_mode_rd_scale_pct / 100.0;
+  } else if (this_mbmi->mode == GLOBALMV ||
+             this_mbmi->mode == GLOBAL_GLOBALMV) {
+    rd_bias_scale = get_global_mv_mode_bias(cpi, this_mbmi);
+  }
+  if (rd_bias_scale <= 0.0) return;
 
-  if (this_mbmi->motion_mode == WARPED_CAUSAL)
-    *this_scaled_rd += (int64_t)(rd_warp_bias_scale * *this_scaled_rd);
-  else if (this_mbmi->motion_mode == OBMC_CAUSAL)
-    *this_scaled_rd += (int64_t)(rd_obmc_bias_scale * *this_scaled_rd);
+  scale_rdstats(rd_stats, rd_bias_scale);
+  scale_rdstats(rd_stats_y, rd_bias_scale);
+  scale_rdstats(rd_stats_uv, rd_bias_scale);
 }
 
 /*!\brief AV1 motion mode search
@@ -1836,6 +1710,8 @@ static int64_t motion_mode_rd(
                               rd_stats_uv, mbmi);
       }
       mbmi->skip_txfm = 0;
+      increase_motion_mode_rdstats(cpi, mbmi, rd_stats, NULL, NULL);
+
     } else {
       // Perform full transform search
       int64_t skip_rd = INT64_MAX;
@@ -1861,10 +1737,25 @@ static int64_t motion_mode_rd(
         continue;
       }
       const int skip_ctx = av1_get_skip_txfm_context(xd);
+      const int *skip_txfm_cost_ptr = mode_costs->skip_txfm_cost[skip_ctx];
+
+      if (cpi->sf.inter_sf.inter_mode_rd_model_estimation == 1) {
+        inter_mode_data_push(tile_data, mbmi->bsize, rd_stats->sse,
+                             rd_stats->dist,
+                             rd_stats_y->rate + rd_stats_uv->rate +
+                                 skip_txfm_cost_ptr[mbmi->skip_txfm]);
+      }
+      // Scale RD_STATS after mode stats are collected. Thus unscaled metrics
+      // are used for model generation
+      increase_motion_mode_rdstats(cpi, mbmi, rd_stats, rd_stats_y,
+                                   rd_stats_uv);
+      const int skip_rate =
+          rd_stats->skip_txfm ? skip_txfm_cost_ptr[1] : skip_txfm_cost_ptr[0];
+
+      const int32_t scaled_skip_rate =
+          increase_motion_mode_rate(cpi, mbmi, skip_rate);
       const int y_rate =
-          rd_stats->skip_txfm
-              ? x->mode_costs.skip_txfm_cost[skip_ctx][1]
-              : (rd_stats_y->rate + x->mode_costs.skip_txfm_cost[skip_ctx][0]);
+          scaled_skip_rate + (rd_stats->skip_txfm ? 0 : rd_stats_y->rate);
       this_yrd = RDCOST(x->rdmult, y_rate + mode_rate, rd_stats_y->dist);
 
       const int64_t curr_rd = RDCOST(x->rdmult, rd_stats->rate, rd_stats->dist);
@@ -1872,12 +1763,6 @@ static int64_t motion_mode_rd(
         ref_best_rd = curr_rd;
         ref_skip_rd[0] = skip_rd;
         ref_skip_rd[1] = skip_rdy;
-      }
-      if (cpi->sf.inter_sf.inter_mode_rd_model_estimation == 1) {
-        inter_mode_data_push(
-            tile_data, mbmi->bsize, rd_stats->sse, rd_stats->dist,
-            rd_stats_y->rate + rd_stats_uv->rate +
-                mode_costs->skip_txfm_cost[skip_ctx][mbmi->skip_txfm]);
       }
     }
 
@@ -1902,15 +1787,7 @@ static int64_t motion_mode_rd(
     if (mode_index == 0) {
       args->simple_rd[this_mode][mbmi->ref_mv_idx][mbmi->ref_frame[0]] = tmp_rd;
     }
-    int64_t best_scaled_rd = best_rd;
-    int64_t this_scaled_rd = tmp_rd;
-    if (mode_index != 0)
-      increase_motion_mode_rd(&best_mbmi, mbmi, &best_scaled_rd,
-                              &this_scaled_rd,
-                              cpi->sf.inter_sf.bias_warp_mode_rd_scale_pct,
-                              cpi->sf.inter_sf.bias_obmc_mode_rd_scale_pct);
-
-    if (mode_index == 0 || this_scaled_rd < best_scaled_rd) {
+    if (mode_index == 0 || tmp_rd < best_rd) {
       // Update best_rd data if this is the best motion mode so far
       best_mbmi = *mbmi;
       best_rd = tmp_rd;
@@ -1964,7 +1841,7 @@ static int64_t skip_mode_rd(RD_STATS *rd_stats, const AV1_COMP *const cpi,
     const BLOCK_SIZE plane_bsize =
         get_plane_block_size(bsize, pd->subsampling_x, pd->subsampling_y);
 
-    av1_subtract_plane(x, plane_bsize, plane);
+    av1_subtract_plane(x, plane_bsize, plane, cpi->do_border_pad);
 
     int64_t sse =
         av1_pixel_diff_dist(x, plane, 0, 0, plane_bsize, plane_bsize, NULL);
@@ -3370,8 +3247,8 @@ static int64_t handle_inter_mode(
       const THR_MODES mode_enum = get_prediction_mode_idx(
           mbmi->mode, mbmi->ref_frame[0], mbmi->ref_frame[1]);
       // Collect mode stats for multiwinner mode processing
-      store_winner_mode_stats(&cpi->common, x, mbmi, rd_stats, rd_stats_y,
-                              rd_stats_uv, mode_enum, NULL, bsize, tmp_rd,
+      store_winner_mode_stats(cpi, x, mbmi, rd_stats, rd_stats_y, rd_stats_uv,
+                              mode_enum, NULL, bsize, tmp_rd,
                               cpi->sf.winner_mode_sf.multi_winner_mode_type,
                               do_tx_search);
       if (tmp_rd < best_rd) {
@@ -3430,7 +3307,8 @@ static int64_t rd_pick_intrabc_mode_sb(const AV1_COMP *cpi, MACROBLOCK *x,
                                        int64_t best_rd) {
   const AV1_COMMON *const cm = &cpi->common;
   if (!av1_allow_intrabc(cm) || !cpi->oxcf.kf_cfg.enable_intrabc ||
-      !cpi->sf.mv_sf.use_intrabc || cpi->sf.rt_sf.use_nonrd_pick_mode)
+      !cpi->sf.mv_sf.use_intrabc ||
+      (cpi->sf.rt_sf.use_nonrd_pick_mode && !cpi->sf.rt_sf.rt_use_intrabc))
     return INT64_MAX;
   if (cpi->sf.mv_sf.intrabc_search_level >= 1 && bsize != BLOCK_4X4 &&
       bsize != BLOCK_8X8 && bsize != BLOCK_16X16) {
@@ -3940,7 +3818,7 @@ static inline void refine_winner_mode_tx(
         if (mbmi->motion_mode == OBMC_CAUSAL)
           av1_build_obmc_inter_predictors_sb(cm, xd);
 
-        av1_subtract_plane(x, bsize, 0);
+        av1_subtract_plane(x, bsize, PLANE_TYPE_Y, cpi->do_border_pad);
         if (txfm_params->tx_mode_search_type == TX_MODE_SELECT &&
             !xd->lossless[mbmi->segment_id]) {
           av1_pick_recursive_tx_size_type_yrd(cpi, x, &rd_stats_y, bsize,
@@ -3966,34 +3844,43 @@ static inline void refine_winner_mode_tx(
       const int comp_pred = mbmi->ref_frame[1] > INTRA_FRAME;
 
       const ModeCosts *mode_costs = &x->mode_costs;
+      int64_t this_dist = rd_stats_y.dist + rd_stats_uv.dist;
+      int64_t this_sse = rd_stats_y.sse + rd_stats_uv.sse;
+      if (cpi->sf.hl_sf.weighted_chroma_distortion) {
+        this_dist = rd_stats_y.dist + rd_stats_uv.dist * 15 / 16;
+        this_sse = rd_stats_y.sse + rd_stats_uv.sse * 15 / 16;
+      }
+
       if (is_inter_mode(mbmi->mode) &&
           (!cpi->oxcf.algo_cfg.sharpness || !comp_pred) &&
           RDCOST(x->rdmult,
                  mode_costs->skip_txfm_cost[skip_ctx][0] + rd_stats_y.rate +
                      rd_stats_uv.rate,
-                 (rd_stats_y.dist + rd_stats_uv.dist)) >
-              RDCOST(x->rdmult, mode_costs->skip_txfm_cost[skip_ctx][1],
-                     (rd_stats_y.sse + rd_stats_uv.sse))) {
+                 this_dist) > RDCOST(x->rdmult,
+                                     mode_costs->skip_txfm_cost[skip_ctx][1],
+                                     this_sse)) {
         skip_blk = 1;
         rd_stats_y.rate = mode_costs->skip_txfm_cost[skip_ctx][1];
         rd_stats_uv.rate = 0;
         rd_stats_y.dist = rd_stats_y.sse;
         rd_stats_uv.dist = rd_stats_uv.sse;
+        this_dist = this_sse;
       } else {
         skip_blk = 0;
         rd_stats_y.rate += mode_costs->skip_txfm_cost[skip_ctx][0];
       }
+      increase_motion_mode_rdstats(cpi, mbmi, &rd_stats, &rd_stats_y,
+                                   &rd_stats_uv);
       int this_rate = rd_stats.rate + rd_stats_y.rate + rd_stats_uv.rate -
                       winner_rate_y - winner_rate_uv;
-      int64_t this_rd =
-          RDCOST(x->rdmult, this_rate, (rd_stats_y.dist + rd_stats_uv.dist));
+      int64_t this_rd = RDCOST(x->rdmult, this_rate, this_dist);
       if (best_rd > this_rd) {
         *best_mbmode = *mbmi;
         *best_mode_index = winner_mode_index;
         av1_copy_array(ctx->tx_type_map, xd->tx_type_map, ctx->num_4x4_blk);
         rd_cost->rate = this_rate;
-        rd_cost->dist = rd_stats_y.dist + rd_stats_uv.dist;
-        rd_cost->sse = rd_stats_y.sse + rd_stats_uv.sse;
+        rd_cost->dist = this_dist;
+        rd_cost->sse = this_sse;
         rd_cost->rdcost = this_rd;
         best_rd = this_rd;
         *best_skip2 = skip_blk;
@@ -4754,6 +4641,7 @@ static AOM_FORCE_INLINE int inter_mode_search_order_independent_skip(
 
   int skip_motion_mode = 0;
   if (mbmi->partition != PARTITION_NONE) {
+    assert(ref_type > NONE_FRAME);
     int skip_ref = skip_ref_frame_mask & (1 << ref_type);
     if (ref_type <= ALTREF_FRAME && skip_ref) {
       // Since the compound ref modes depends on the motion estimation result of
@@ -5150,10 +5038,11 @@ static int compare_int64(const void *a, const void *b) {
 }
 
 static inline void update_search_state(
-    InterModeSearchState *search_state, RD_STATS *best_rd_stats_dst,
-    PICK_MODE_CONTEXT *ctx, const RD_STATS *new_best_rd_stats,
-    const RD_STATS *new_best_rd_stats_y, const RD_STATS *new_best_rd_stats_uv,
-    THR_MODES new_best_mode, const MACROBLOCK *x, int txfm_search_done) {
+    const AV1_COMP *cpi, InterModeSearchState *search_state,
+    RD_STATS *best_rd_stats_dst, PICK_MODE_CONTEXT *ctx,
+    const RD_STATS *new_best_rd_stats, const RD_STATS *new_best_rd_stats_y,
+    const RD_STATS *new_best_rd_stats_uv, THR_MODES new_best_mode,
+    const MACROBLOCK *x, int txfm_search_done) {
   const MACROBLOCKD *xd = &x->e_mbd;
   const MB_MODE_INFO *mbmi = xd->mi[0];
   const int skip_ctx = av1_get_skip_txfm_context(xd);
@@ -5171,10 +5060,12 @@ static inline void update_search_state(
   // Therefore, we should avoid updating best_rate_y and best_rate_uv here.
   // These two values will be updated when av1_txfm_search is called.
   if (txfm_search_done) {
-    search_state->best_rate_y =
-        new_best_rd_stats_y->rate +
+    const int32_t skip_rate =
         x->mode_costs.skip_txfm_cost[skip_ctx]
                                     [new_best_rd_stats->skip_txfm || skip_txfm];
+    const int32_t scaled_skip_rate =
+        increase_motion_mode_rate(cpi, mbmi, skip_rate);
+    search_state->best_rate_y = new_best_rd_stats_y->rate + scaled_skip_rate;
     search_state->best_rate_uv = new_best_rd_stats_uv->rate;
   }
   search_state->best_y_rdcost = *new_best_rd_stats_y;
@@ -5273,22 +5164,15 @@ static inline void evaluate_motion_mode_for_winner_candidates(
           mbmi->mode, mbmi->ref_frame[0], mbmi->ref_frame[1]);
       // Collect mode stats for multiwinner mode processing
       store_winner_mode_stats(
-          &cpi->common, x, mbmi, &rd_stats, &rd_stats_y, &rd_stats_uv,
-          mode_enum, NULL, bsize, rd_stats.rdcost,
-          cpi->sf.winner_mode_sf.multi_winner_mode_type, do_tx_search);
+          cpi, x, mbmi, &rd_stats, &rd_stats_y, &rd_stats_uv, mode_enum, NULL,
+          bsize, rd_stats.rdcost, cpi->sf.winner_mode_sf.multi_winner_mode_type,
+          do_tx_search);
 
-      int64_t best_scaled_rd = search_state->best_rd;
-      int64_t this_scaled_rd = rd_stats.rdcost;
-      if (search_state->best_mode_index != THR_INVALID)
-        increase_motion_mode_rd(&search_state->best_mbmode, mbmi,
-                                &best_scaled_rd, &this_scaled_rd,
-                                cpi->sf.inter_sf.bias_warp_mode_rd_scale_pct,
-                                cpi->sf.inter_sf.bias_obmc_mode_rd_scale_pct);
-
-      if (this_scaled_rd < best_scaled_rd) {
+      if (rd_stats.rdcost < search_state->best_rd) {
         *yrd = this_yrd;
-        update_search_state(search_state, rd_cost, ctx, &rd_stats, &rd_stats_y,
-                            &rd_stats_uv, mode_enum, x, do_tx_search);
+        update_search_state(cpi, search_state, rd_cost, ctx, &rd_stats,
+                            &rd_stats_y, &rd_stats_uv, mode_enum, x,
+                            do_tx_search);
         if (do_tx_search) search_state->best_skip_rd[0] = skip_rd[0];
       }
     }
@@ -5493,8 +5377,8 @@ static void tx_search_best_inter_candidates(
   search_state->best_mode_index = THR_INVALID;
   // Initialize best mode stats for winner mode processing
   x->winner_mode_count = 0;
-  store_winner_mode_stats(&cpi->common, x, mbmi, NULL, NULL, NULL, THR_INVALID,
-                          NULL, bsize, best_rd_so_far,
+  store_winner_mode_stats(cpi, x, mbmi, NULL, NULL, NULL, THR_INVALID, NULL,
+                          bsize, best_rd_so_far,
                           cpi->sf.winner_mode_sf.multi_winner_mode_type, 0);
   inter_modes_info->num =
       inter_modes_info->num < cpi->sf.rt_sf.num_inter_modes_for_tx_search
@@ -5597,18 +5481,22 @@ static void tx_search_best_inter_candidates(
                          mode_rate, search_state->best_rd)) {
       continue;
     } else {
-      const int y_rate =
-          rd_stats.skip_txfm
-              ? mode_costs->skip_txfm_cost[skip_ctx][1]
-              : (rd_stats_y.rate + mode_costs->skip_txfm_cost[skip_ctx][0]);
-      this_yrd = RDCOST(x->rdmult, y_rate + mode_rate, rd_stats_y.dist);
-
       if (cpi->sf.inter_sf.inter_mode_rd_model_estimation == 1) {
         inter_mode_data_push(
             tile_data, mbmi->bsize, rd_stats.sse, rd_stats.dist,
             rd_stats_y.rate + rd_stats_uv.rate +
                 mode_costs->skip_txfm_cost[skip_ctx][mbmi->skip_txfm]);
       }
+      increase_motion_mode_rdstats(cpi, mbmi, &rd_stats, &rd_stats_y,
+                                   &rd_stats_uv);
+      const int *skip_txfm_cost_ptr = mode_costs->skip_txfm_cost[skip_ctx];
+      const int skip_rate =
+          rd_stats.skip_txfm ? skip_txfm_cost_ptr[1] : skip_txfm_cost_ptr[0];
+      const int32_t scaled_skip_rate =
+          increase_motion_mode_rate(cpi, mbmi, skip_rate);
+      const int y_rate =
+          scaled_skip_rate + (rd_stats.skip_txfm ? 0 : rd_stats_y.rate);
+      this_yrd = RDCOST(x->rdmult, y_rate + mode_rate, rd_stats_y.dist);
     }
 
     rd_stats.rdcost = RDCOST(x->rdmult, rd_stats.rate, rd_stats.dist);
@@ -5618,25 +5506,20 @@ static void tx_search_best_inter_candidates(
 
     // Collect mode stats for multiwinner mode processing
     const int txfm_search_done = 1;
-    store_winner_mode_stats(
-        &cpi->common, x, mbmi, &rd_stats, &rd_stats_y, &rd_stats_uv, mode_enum,
-        NULL, bsize, rd_stats.rdcost,
-        cpi->sf.winner_mode_sf.multi_winner_mode_type, txfm_search_done);
+    store_winner_mode_stats(cpi, x, mbmi, &rd_stats, &rd_stats_y, &rd_stats_uv,
+                            mode_enum, NULL, bsize, rd_stats.rdcost,
+                            cpi->sf.winner_mode_sf.multi_winner_mode_type,
+                            txfm_search_done);
 
-    int64_t best_scaled_rd = search_state->best_rd;
-    int64_t this_scaled_rd = rd_stats.rdcost;
-    increase_motion_mode_rd(&search_state->best_mbmode, mbmi, &best_scaled_rd,
-                            &this_scaled_rd,
-                            cpi->sf.inter_sf.bias_warp_mode_rd_scale_pct,
-                            cpi->sf.inter_sf.bias_obmc_mode_rd_scale_pct);
-    if (this_scaled_rd < best_rd_in_this_partition) {
+    if (rd_stats.rdcost < best_rd_in_this_partition) {
       best_rd_in_this_partition = rd_stats.rdcost;
       *yrd = this_yrd;
     }
 
-    if (this_scaled_rd < best_scaled_rd) {
-      update_search_state(search_state, rd_cost, ctx, &rd_stats, &rd_stats_y,
-                          &rd_stats_uv, mode_enum, x, txfm_search_done);
+    if (rd_stats.rdcost < search_state->best_rd) {
+      update_search_state(cpi, search_state, rd_cost, ctx, &rd_stats,
+                          &rd_stats_y, &rd_stats_uv, mode_enum, x,
+                          txfm_search_done);
       search_state->best_skip_rd[0] = skip_rd;
       // Limit the total number of modes to be evaluated if the first is valid
       // and transform skip or compound
@@ -5932,11 +5815,11 @@ static inline void search_intra_modes_in_interframe(
   // Collect mode stats for multiwinner mode processing
   const int txfm_search_done = 1;
   store_winner_mode_stats(
-      &cpi->common, x, mbmi, &intra_rd_stats, &best_intra_rd_stats_y,
-      &intra_rd_stats_uv, best_mode_enum, NULL, bsize, intra_rd_stats.rdcost,
+      cpi, x, mbmi, &intra_rd_stats, &best_intra_rd_stats_y, &intra_rd_stats_uv,
+      best_mode_enum, NULL, bsize, intra_rd_stats.rdcost,
       cpi->sf.winner_mode_sf.multi_winner_mode_type, txfm_search_done);
   if (intra_rd_stats.rdcost < search_state->best_rd) {
-    update_search_state(search_state, rd_cost, ctx, &intra_rd_stats,
+    update_search_state(cpi, search_state, rd_cost, ctx, &intra_rd_stats,
                         &best_intra_rd_stats_y, &intra_rd_stats_uv,
                         best_mode_enum, x, txfm_search_done);
   }
@@ -6277,8 +6160,8 @@ void av1_rd_pick_inter_mode(struct AV1_COMP *cpi, struct TileDataEnc *tile_data,
       winner_mode_count_allowed[sf->winner_mode_sf.multi_winner_mode_type];
   zero_winner_mode_stats(bsize, max_winner_mode_count, x->winner_mode_stats);
   x->winner_mode_count = 0;
-  store_winner_mode_stats(&cpi->common, x, mbmi, NULL, NULL, NULL, THR_INVALID,
-                          NULL, bsize, best_rd_so_far,
+  store_winner_mode_stats(cpi, x, mbmi, NULL, NULL, NULL, THR_INVALID, NULL,
+                          bsize, best_rd_so_far,
                           sf->winner_mode_sf.multi_winner_mode_type, 0);
 
   int mode_thresh_mul_fact = (1 << MODE_THRESH_QBITS);
@@ -6424,8 +6307,9 @@ void av1_rd_pick_inter_mode(struct AV1_COMP *cpi, struct TileDataEnc *tile_data,
                      cm->current_frame.reference_mode != SINGLE_REFERENCE));
       search_state.best_pred_sse = x->pred_sse[ref_frame];
       best_inter_yrd = this_yrd;
-      update_search_state(&search_state, rd_cost, ctx, &rd_stats, &rd_stats_y,
-                          &rd_stats_uv, mode_enum, x, do_tx_search);
+      update_search_state(cpi, &search_state, rd_cost, ctx, &rd_stats,
+                          &rd_stats_y, &rd_stats_uv, mode_enum, x,
+                          do_tx_search);
       if (do_tx_search) search_state.best_skip_rd[0] = skip_rd[0];
       // skip_rd[0] is the best total rd for a skip mode so far.
       // skip_rd[1] is the best total rd for a skip mode so far in luma.

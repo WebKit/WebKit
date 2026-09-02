@@ -50,7 +50,7 @@ class SumSSETest : public ::testing::TestWithParam<TestFuncs> {
   }
 
   void TearDown() override { aom_free(src_); }
-  void RunTest(int isRandom);
+  void RunTest(int is_random, int multiple_of_4);
   void RunSpeedTest();
 
   void GenRandomData(int width, int height, int stride) {
@@ -82,15 +82,17 @@ class SumSSETest : public ::testing::TestWithParam<TestFuncs> {
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SumSSETest);
 
-void SumSSETest::RunTest(int isRandom) {
+void SumSSETest::RunTest(int is_random, int multiple_of_4) {
   for (int k = 0; k < kNumIterations; k++) {
-    const int width = 4 * (rnd_(31) + 1);   // Up to 128x128
-    const int height = 4 * (rnd_(31) + 1);  // Up to 128x128
-    int stride = 4 << rnd_(7);              // Up to 256 stride
-    while (stride < width) {                // Make sure it's valid
+    // Up to 128x128
+    const int width = multiple_of_4 ? 4 * (rnd_(31) + 1) : rnd_(127) + 1;
+    // Up to 128x128
+    const int height = multiple_of_4 ? 4 * (rnd_(31) + 1) : rnd_(127) + 1;
+    int stride = 4 << rnd_(7);  // Up to 256 stride
+    while (stride < width) {    // Make sure it's valid
       stride = 4 << rnd_(7);
     }
-    if (isRandom) {
+    if (is_random) {
       GenRandomData(width, height, stride);
     } else {
       GenExtremeData(width, height, stride);
@@ -145,11 +147,16 @@ void SumSSETest::RunSpeedTest() {
 }
 
 TEST_P(SumSSETest, OperationCheck) {
-  RunTest(1);  // GenRandomData
+  RunTest(1, 1);  // GenRandomData, width and height multiple of 4
 }
 
 TEST_P(SumSSETest, ExtremeValues) {
-  RunTest(0);  // GenExtremeData
+  RunTest(0, 1);  // GenExtremeData, width and height multiple of 4
+}
+
+TEST_P(SumSSETest, ArbitraryWidthAndHeight) {
+  // GenRandomData, width and height not necessarily multiple of 4
+  RunTest(1, 0);
 }
 
 TEST_P(SumSSETest, DISABLED_Speed) { RunSpeedTest(); }

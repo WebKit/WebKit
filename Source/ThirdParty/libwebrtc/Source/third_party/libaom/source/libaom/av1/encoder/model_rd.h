@@ -67,17 +67,62 @@ static int64_t calculate_sse(MACROBLOCKD *const xd,
   return sse;
 }
 
-static inline int64_t compute_sse_plane(MACROBLOCK *x, MACROBLOCKD *xd,
-                                        int plane, const BLOCK_SIZE bsize) {
+static unsigned pixel_dist_visible_only(
+    const AV1_COMP *const cpi, const MACROBLOCK *x, const uint8_t *src,
+    const int src_stride, const uint8_t *dst, const int dst_stride,
+    const BLOCK_SIZE tx_bsize, int txb_rows, int txb_cols, int visible_rows,
+    int visible_cols) {
+  if (visible_rows == 0 || visible_cols == 0) return 0;
+
+  unsigned sse;
+  if (txb_rows == visible_rows && txb_cols == visible_cols) {
+    cpi->ppi->fn_ptr[tx_bsize].vf(src, src_stride, dst, dst_stride, &sse);
+    return sse;
+  }
+
+#if CONFIG_AV1_HIGHBITDEPTH
+  const MACROBLOCKD *xd = &x->e_mbd;
+  if (is_cur_buf_hbd(xd)) {
+    uint64_t sse64;
+    if (!(visible_rows % 4) && !(visible_cols % 4)) {
+      sse64 = aom_highbd_sse(src, src_stride, dst, dst_stride, visible_cols,
+                             visible_rows);
+    } else {
+      sse64 = aom_highbd_sse_odd_size(src, src_stride, dst, dst_stride,
+                                      visible_cols, visible_rows);
+    }
+    return (unsigned int)ROUND_POWER_OF_TWO(sse64, (xd->bd - 8) * 2);
+  }
+#else
+  (void)x;
+#endif
+  if (!(visible_rows % 4) && !(visible_cols % 4)) {
+    sse = (unsigned)aom_sse(src, src_stride, dst, dst_stride, visible_cols,
+                            visible_rows);
+  } else {
+    sse = aom_sse_odd_size(src, src_stride, dst, dst_stride, visible_cols,
+                           visible_rows);
+  }
+  return sse;
+}
+
+static inline int64_t compute_sse_plane(const AV1_COMP *cpi, MACROBLOCK *x,
+                                        MACROBLOCKD *xd, int plane,
+                                        const BLOCK_SIZE bsize) {
   struct macroblockd_plane *const pd = &xd->plane[plane];
   const BLOCK_SIZE plane_bsize =
       get_plane_block_size(bsize, pd->subsampling_x, pd->subsampling_y);
   int bw, bh;
   const struct macroblock_plane *const p = &x->plane[plane];
-  get_txb_dimensions(xd, plane, plane_bsize, 0, 0, plane_bsize, NULL, NULL, &bw,
-                     &bh);
+  const int block_width = block_size_wide[plane_bsize];
+  const int block_height = block_size_high[plane_bsize];
 
-  int64_t sse = calculate_sse(xd, p, pd, bw, bh);
+  get_visible_dimensions(x, plane, plane_bsize, 0, 0, block_width, block_height,
+                         /*clip_dims=*/true, &bw, &bh);
+
+  int64_t sse = pixel_dist_visible_only(
+      cpi, x, p->src.buf, p->src.stride, pd->dst.buf, pd->dst.stride,
+      plane_bsize, block_height, block_width, bh, bw);
 
   return sse;
 }
@@ -231,10 +276,16 @@ static inline void model_rd_for_sb_with_curvfit(
     int rate;
     int bw, bh;
     const struct macroblock_plane *const p = &x->plane[plane];
-    get_txb_dimensions(xd, plane, plane_bsize, 0, 0, plane_bsize, NULL, NULL,
-                       &bw, &bh);
+    const int block_width = block_size_wide[plane_bsize];
+    const int block_height = block_size_high[plane_bsize];
 
-    sse = calculate_sse(xd, p, pd, bw, bh);
+    get_visible_dimensions(x, plane, plane_bsize, 0, 0, block_width,
+                           block_height, /*clip_dims=*/true, &bw, &bh);
+
+    sse = pixel_dist_visible_only(cpi, x, p->src.buf, p->src.stride,
+                                  pd->dst.buf, pd->dst.stride, plane_bsize,
+                                  block_height, block_width, bh, bw);
+
     model_rd_with_curvfit(cpi, x, plane_bsize, plane, sse, bw * bh, &rate,
                           &dist);
 

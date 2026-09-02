@@ -274,10 +274,8 @@ TEST_P(ResizeAndExtendTest, ResizeFrame_EightTapSmooth) {
 TEST_P(ResizeAndExtendTest, ResizeFrame_Bilinear) { RunTest(BILINEAR); }
 TEST_P(ResizeAndExtendTest, DISABLED_Speed) { SpeedTest(); }
 
-// TODO: bug aomedia:363916152 - Enable SSSE3 unit tests when implementation of
-// av1_resize_and_extend_frame does not differ from scalar version
 #if HAVE_SSSE3
-INSTANTIATE_TEST_SUITE_P(DISABLED_SSSE3, ResizeAndExtendTest,
+INSTANTIATE_TEST_SUITE_P(SSSE3, ResizeAndExtendTest,
                          ::testing::Values(av1_resize_and_extend_frame_ssse3));
 #endif  // HAVE_SSSE3
 

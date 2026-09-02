@@ -212,6 +212,24 @@ void av1_setup_tpl_buffers(AV1_PRIMARY *const ppi,
   tpl_data->prev_gop_arf_disp_order = -1;
 }
 
+static inline void tpl_subtract_block(BitDepthInfo bd_info, int rows, int cols,
+                                      int16_t *diff, ptrdiff_t diff_stride,
+                                      const uint8_t *src8, ptrdiff_t src_stride,
+                                      const uint8_t *pred8,
+                                      ptrdiff_t pred_stride) {
+  assert(rows >= 4 && cols >= 4);
+#if CONFIG_AV1_HIGHBITDEPTH
+  if (bd_info.use_highbitdepth_buf) {
+    aom_highbd_subtract_block(rows, cols, diff, diff_stride, src8, src_stride,
+                              pred8, pred_stride);
+    return;
+  }
+#endif
+  (void)bd_info;
+  aom_subtract_block(rows, cols, diff, diff_stride, src8, src_stride, pred8,
+                     pred_stride);
+}
+
 static inline int32_t tpl_get_satd_cost(BitDepthInfo bd_info, int16_t *src_diff,
                                         int diff_stride, const uint8_t *src,
                                         int src_stride, const uint8_t *dst,
@@ -219,7 +237,7 @@ static inline int32_t tpl_get_satd_cost(BitDepthInfo bd_info, int16_t *src_diff,
                                         int bw, int bh, TX_SIZE tx_size) {
   const int pix_num = bw * bh;
 
-  av1_subtract_block(bd_info, bh, bw, src_diff, diff_stride, src, src_stride,
+  tpl_subtract_block(bd_info, bh, bw, src_diff, diff_stride, src, src_stride,
                      dst, dst_stride);
   av1_quick_txfm(/*use_hadamard=*/0, tx_size, bd_info, src_diff, bw, coeff);
   return aom_satd(coeff, pix_num);
@@ -247,7 +265,7 @@ static inline void txfm_quant_rdcost(
   const MACROBLOCKD *xd = &x->e_mbd;
   const BitDepthInfo bd_info = get_bit_depth_info(xd);
   uint16_t eob;
-  av1_subtract_block(bd_info, bh, bw, src_diff, diff_stride, src, src_stride,
+  tpl_subtract_block(bd_info, bh, bw, src_diff, diff_stride, src, src_stride,
                      dst, dst_stride);
   av1_quick_txfm(/*use_hadamard=*/0, tx_size, bd_info, src_diff, bw, coeff);
 
@@ -851,7 +869,11 @@ static inline void mode_estimation(AV1_COMP *cpi, TplTxfmStats *tpl_txfm_stats,
     // Store inter cost for each ref frame. This is used to prune inter modes.
     tpl_stats->pred_error[rf_idx] = AOMMAX(1, inter_cost);
 
-    if (inter_cost < best_inter_cost) {
+    // If we have saved the previous arf frame. Only allow using it as reference
+    // for previous gop.
+    if (inter_cost < best_inter_cost &&
+        (tpl_data->prev_gop_arf_disp_order < 0 ||
+         tpl_data->src_ref_frame[rf_idx] != tpl_data->ref_frame[rf_idx])) {
       best_rf_idx = rf_idx;
 
       best_inter_cost = inter_cost;
@@ -981,7 +1003,13 @@ static inline void mode_estimation(AV1_COMP *cpi, TplTxfmStats *tpl_txfm_stats,
     inter_cost =
         tpl_get_satd_cost(bd_info, src_diff, bw, src_mb_buffer, src_stride,
                           predictor, bw, coeff, bw, bh, tx_size);
-    if (inter_cost < best_inter_cost) {
+
+    // If we have saved the previous arf frame. Only allow using it as reference
+    // for previous gop.
+    if (inter_cost < best_inter_cost &&
+        (tpl_data->prev_gop_arf_disp_order < 0 ||
+         (tpl_data->src_ref_frame[rf_idx0] != tpl_data->ref_frame[rf_idx0] &&
+          tpl_data->src_ref_frame[rf_idx1] != tpl_data->ref_frame[rf_idx1]))) {
       best_cmp_rf_idx = cmp_rf_idx;
       best_inter_cost = inter_cost;
       best_mv[0] = tmp_mv[0];
@@ -1641,6 +1669,7 @@ static inline int init_gop_frames_for_tpl(
   TplParams *const tpl_data = &cpi->ppi->tpl_data;
 
   int ref_picture_map[REF_FRAMES];
+  int has_prev_arf = 0;
 
   for (int i = 0; i < REF_FRAMES; ++i) {
     if (frame_params.frame_type == KEY_FRAME) {
@@ -1651,15 +1680,22 @@ static inline int init_gop_frames_for_tpl(
       if (cm->ref_frame_map[i]->display_order_hint ==
           tpl_data->prev_gop_arf_disp_order) {
         tpl_data->tpl_frame[-i - 1].gf_picture = &tpl_data->prev_gop_arf_src;
+        tpl_data->tpl_frame[-i - 1].rec_picture =
+            &tpl_data->prev_gop_arf_tpl_recon;
+        has_prev_arf = 1;
       } else {
         tpl_data->tpl_frame[-i - 1].gf_picture = &cm->ref_frame_map[i]->buf;
+        tpl_data->tpl_frame[-i - 1].rec_picture = &cm->ref_frame_map[i]->buf;
       }
-      tpl_data->tpl_frame[-i - 1].rec_picture = &cm->ref_frame_map[i]->buf;
       tpl_data->tpl_frame[-i - 1].frame_display_index =
           cm->ref_frame_map[i]->display_order_hint;
     }
 
     ref_picture_map[i] = -i - 1;
+  }
+
+  if (frame_params.frame_type != KEY_FRAME && !has_prev_arf) {
+    tpl_data->prev_gop_arf_disp_order = -1;
   }
 
   *tpl_group_frames = 0;

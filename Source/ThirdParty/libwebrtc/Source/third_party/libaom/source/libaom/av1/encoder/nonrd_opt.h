@@ -526,6 +526,7 @@ static inline void init_mbmi_nonrd(MB_MODE_INFO *mbmi,
   mbmi->ref_frame[1] = ref_frame1;
   pmi->palette_size[PLANE_TYPE_Y] = 0;
   pmi->palette_size[PLANE_TYPE_UV] = 0;
+  mbmi->use_intrabc = 0;
   mbmi->filter_intra_mode_info.use_filter_intra = 0;
   mbmi->mv[0].as_int = mbmi->mv[1].as_int = 0;
   mbmi->motion_mode = SIMPLE_TRANSLATION;

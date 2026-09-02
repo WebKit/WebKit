@@ -2469,6 +2469,7 @@ static void write_motion_feature_to_file(
   snprintf(filename, sizeof(filename), "%s/motion_search_feature_sb%d", path,
            sb_counter);
   FILE *pfile = fopen(filename, "w");
+  if (pfile == NULL) return;
   fprintf(pfile, "%d,%d,%d,%d,%d\n", mi_row, mi_col, bsize,
           block_size_wide[fixed_block_size], num_blocks);
   for (int i = 0; i < num_blocks; ++i) {

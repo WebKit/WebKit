@@ -742,6 +742,8 @@ static void scale_plane_1_to_2_phase_0(const uint8_t *src,
   uint8_t *tmp[9];
   __m128i f[4];
 
+  // The for loop below only works if src_w is a multiple of 8.
+  assert(src_w % 8 == 0);
   max_width = (src_w + 7) & ~7;
   tmp[0] = temp_buffer + 0 * max_width;
   tmp[1] = temp_buffer + 1 * max_width;
@@ -814,12 +816,14 @@ static void scale_plane_1_to_2_phase_0(const uint8_t *src,
 static inline bool has_normative_scaler_ssse3(const int src_width,
                                               const int src_height,
                                               const int dst_width,
-                                              const int dst_height) {
+                                              const int dst_height,
+                                              const int phase) {
   const bool has_normative_scaler =
       (2 * dst_width == src_width && 2 * dst_height == src_height) ||
       (4 * dst_width == src_width && 4 * dst_height == src_height) ||
       (4 * dst_width == 3 * src_width && 4 * dst_height == 3 * src_height) ||
-      (dst_width == src_width * 2 && dst_height == src_height * 2);
+      (dst_width == src_width * 2 && dst_height == src_height * 2 &&
+       phase == 0 && src_width % 8 == 0);
 
   return has_normative_scaler;
 }
@@ -830,13 +834,13 @@ void av1_resize_and_extend_frame_ssse3(const YV12_BUFFER_CONFIG *src,
                                        const int phase, const int num_planes) {
   bool has_normative_scaler =
       has_normative_scaler_ssse3(src->y_crop_width, src->y_crop_height,
-                                 dst->y_crop_width, dst->y_crop_height);
+                                 dst->y_crop_width, dst->y_crop_height, phase);
 
   if (num_planes > 1) {
-    has_normative_scaler =
-        has_normative_scaler &&
-        has_normative_scaler_ssse3(src->uv_crop_width, src->uv_crop_height,
-                                   dst->uv_crop_width, dst->uv_crop_height);
+    has_normative_scaler = has_normative_scaler &&
+                           has_normative_scaler_ssse3(
+                               src->uv_crop_width, src->uv_crop_height,
+                               dst->uv_crop_width, dst->uv_crop_height, phase);
   }
 
   if (!has_normative_scaler) {
@@ -949,8 +953,9 @@ void av1_resize_and_extend_frame_ssse3(const YV12_BUFFER_CONFIG *src,
                                  dst_h, interp_kernel, phase, temp_buffer);
       free(temp_buffer);
     } else {
-      assert(dst_w == src_w * 2 && dst_h == src_h * 2);
-      // 1 to 2
+      assert(dst_w == src_w * 2 && dst_h == src_h * 2 && phase == 0 &&
+             src_w % 8 == 0);
+      // 1 to 2, phase 0, src_w a multiple of 8
       uint8_t *const temp_buffer = (uint8_t *)malloc(8 * ((src_y_w + 7) & ~7));
       if (!temp_buffer) {
         malloc_failed = 1;

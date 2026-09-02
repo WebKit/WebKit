@@ -1647,6 +1647,15 @@ enum aome_enc_control_id {
    */
   AOME_SET_VALIDATE_HBD_INPUT = 175,
 
+  /*!\brief Codec control function to toggle loopfilter mode_ref_delta_enabled.
+   *
+   * - 0 = disable
+   * - 1 = enable (default)
+   *
+   * \note This is only used in loopfilter control unit test.
+   */
+  AV1E_SET_MODE_REF_DELTA_ENABLED = 176,
+
   // Any new encoder control IDs should be added above.
   // Maximum allowed encoder control ID is 229.
   // No encoder control ID should be added below.
@@ -2432,6 +2441,9 @@ AOM_CTRL_USE_TYPE(AV1E_SET_EXTERNAL_RATE_CONTROL, aom_rc_funcs_t *)
 
 AOM_CTRL_USE_TYPE(AV1E_GET_GOP_INFO, aom_gop_info_t *)
 #define AOM_CTRL_AV1E_GET_GOP_INFO
+
+AOM_CTRL_USE_TYPE(AV1E_SET_MODE_REF_DELTA_ENABLED, int)
+#define AOM_CTRL_AV1E_SET_MODE_REF_DELTA_ENABLED
 
 /*!\endcond */
 /*! @} - end defgroup aom_encoder */

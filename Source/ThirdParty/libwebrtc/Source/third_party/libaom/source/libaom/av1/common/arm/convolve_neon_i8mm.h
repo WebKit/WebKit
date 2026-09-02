@@ -78,8 +78,6 @@ static inline void convolve_2d_sr_horiz_12tap_neon_i8mm(
   // The no-op filter should never be used here.
   assert(x_filter_ptr[5] != 128);
 
-  const int bd = 8;
-
   // Split 12-tap filter into two 6-tap filters, masking the top two elements.
   // { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0, 0 }
   const int8x8_t mask = vcreate_s8(0x0000ffffffffffff);
@@ -97,8 +95,7 @@ static inline void convolve_2d_sr_horiz_12tap_neon_i8mm(
   // This shim of 1 << (ROUND0_BITS - 1) enables us to use non-rounding shifts
   // in convolution kernels - which are generally faster than rounding shifts on
   // modern CPUs.
-  const int32x4_t horiz_const =
-      vdupq_n_s32((1 << (bd + FILTER_BITS - 1)) + (1 << (ROUND0_BITS - 1)));
+  const int32x4_t horiz_const = vdupq_n_s32(1 << (ROUND0_BITS - 1));
 
   if (w <= 4) {
     const uint8x16_t permute_tbl = vld1q_u8(kMatMul6PermuteTbl);
