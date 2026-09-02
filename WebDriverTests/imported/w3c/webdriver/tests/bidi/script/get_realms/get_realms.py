@@ -86,16 +86,20 @@ async def test_multiple_top_level_contexts(bidi_session, top_context, type_hint)
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
 async def test_iframes(
     bidi_session,
-    top_context,
+    domain,
+    inline,
     test_alt_origin,
     test_origin,
-    test_page_cross_origin_frame,
+    top_context,
 ):
+    frame_url = inline("<div>foo</div>", domain=domain)
+    page_url = inline(f"<iframe src='{frame_url}'></iframe>")
     await bidi_session.browsing_context.navigate(
         context=top_context["context"],
-        url=test_page_cross_origin_frame,
+        url=page_url,
         wait="complete",
     )
 
@@ -133,7 +137,7 @@ async def test_iframes(
             },
             {
                 "context": frame_context,
-                "origin": test_alt_origin,
+                "origin": test_alt_origin if domain == "alt" else test_origin,
                 "realm": frame_context_result["realm"],
                 "type": "window",
             },

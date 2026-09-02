@@ -51,6 +51,7 @@ messages -> WebAutomationSessionProxy {
     DeleteCookie(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (std::optional<String> errorType)
 
 #if ENABLE(WEBDRIVER_BIDI)
+    GetBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<WebKit::RealmIdentifier> realmIdentifier, std::optional<WebCore::SecurityOriginData> origin)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 #endif
 }
