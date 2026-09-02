@@ -185,8 +185,9 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     }
 
+    auto storedCredentialsPolicy = options.storedCredentialsPolicy;
     CachedResourceRequest cachedRequest { WTF::move(request), WTF::move(options) };
-    updateRequestForAccessControl(cachedRequest.resourceRequest(), protect(document.securityOrigin()).get(), options.storedCredentialsPolicy);
+    updateRequestForAccessControl(cachedRequest.resourceRequest(), protect(document.securityOrigin()).get(), storedCredentialsPolicy);
     return cachedRequest;
 }
 
