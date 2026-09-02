@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventInit.h"
 #include "IDLTypes.h"
 
 namespace WebCore {
@@ -64,12 +65,18 @@ public:
         return adoptRef(*new DeviceMotionEvent);
     }
 
+    struct Init : EventInit {
+        std::optional<Acceleration> acceleration;
+        std::optional<Acceleration> accelerationIncludingGravity;
+        std::optional<RotationRate> rotationRate;
+        double interval { 0 };
+    };
+
+
     std::optional<Acceleration> NODELETE acceleration() const;
     std::optional<Acceleration> NODELETE accelerationIncludingGravity() const;
     std::optional<RotationRate> NODELETE rotationRate() const;
-    std::optional<double> NODELETE interval() const;
-
-    void initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<Acceleration>&&, std::optional<Acceleration>&&, std::optional<RotationRate>&&, std::optional<double>);
+    double NODELETE interval() const;
 
 #if ENABLE(DEVICE_ORIENTATION)
     using PermissionState = DeviceOrientationOrMotionPermissionState;
@@ -80,6 +87,7 @@ public:
 private:
     DeviceMotionEvent();
     DeviceMotionEvent(const AtomString& eventType, DeviceMotionData*);
+    DeviceMotionEvent(const AtomString& type, Init&&, IsTrusted);
 
     RefPtr<DeviceMotionData> m_deviceMotionData;
 };

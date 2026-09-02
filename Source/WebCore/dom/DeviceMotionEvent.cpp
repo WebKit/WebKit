@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,10 +88,6 @@ static RefPtr<DeviceMotionData::Acceleration> NODELETE convert(std::optional<Dev
 {
     if (!acceleration)
         return nullptr;
-
-    if (!acceleration->x && !acceleration->y && !acceleration->z)
-        return nullptr;
-
     return DeviceMotionData::Acceleration::create(acceleration->x, acceleration->y, acceleration->z);
 }
 
@@ -99,10 +95,6 @@ static RefPtr<DeviceMotionData::RotationRate> NODELETE convert(std::optional<Dev
 {
     if (!rotationRate)
         return nullptr;
-
-    if (!rotationRate->alpha && !rotationRate->beta && !rotationRate->gamma)
-        return nullptr;
-
     return DeviceMotionData::RotationRate::create(rotationRate->alpha, rotationRate->beta, rotationRate->gamma);
 }
 
@@ -124,18 +116,24 @@ std::optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate()
     return convert(rotationRate);
 }
 
-std::optional<double> DeviceMotionEvent::interval() const
+double DeviceMotionEvent::interval() const
 {
     return m_deviceMotionData->interval();
 }
 
-void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<DeviceMotionEvent::Acceleration>&& acceleration, std::optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, std::optional<DeviceMotionEvent::RotationRate>&& rotationRate, std::optional<double> interval)
+Ref<DeviceMotionEvent> DeviceMotionEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    if (isBeingDispatched())
-        return;
+    return adoptRef(*new DeviceMotionEvent(type, WTF::move(initializer), isTrusted));
+}
 
-    initEvent(type, bubbles, cancelable);
-    m_deviceMotionData = DeviceMotionData::create(convert(WTF::move(acceleration)), convert(WTF::move(accelerationIncludingGravity)), convert(WTF::move(rotationRate)), interval);
+DeviceMotionEvent::DeviceMotionEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+#if ENABLE(DEVICE_ORIENTATION)
+    : Event(EventInterfaceType::DeviceMotionEvent, type, initializer, isTrusted)
+#else
+    : Event(EventInterfaceType::Event, type, initializer, isTrusted)
+#endif
+    , m_deviceMotionData(DeviceMotionData::create(convert(WTF::move(initializer.acceleration)), convert(WTF::move(initializer.accelerationIncludingGravity)), convert(WTF::move(initializer.rotationRate)), initializer.interval))
+{
 }
 
 #if ENABLE(DEVICE_ORIENTATION)

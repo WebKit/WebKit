@@ -7,8 +7,8 @@ event = document.createEvent('DeviceMotionEvent')
 PASS event.acceleration == null is true
 PASS event.accelerationIncludingGravity == null is true
 PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9)
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: {x: 0, y: 1, z: 2}, accelerationIncludingGravity: {x: 3, y: 4, z: 5}, rotationRate: {alpha: 6, beta: 7, gamma: 8}, interval: 9})
 PASS event.acceleration.x == 0 is true
 PASS event.acceleration.y == 1 is true
 PASS event.acceleration.z == 2 is true
@@ -19,14 +19,13 @@ PASS event.rotationRate.alpha == 6 is true
 PASS event.rotationRate.beta == 7 is true
 PASS event.rotationRate.gamma == 8 is true
 PASS event.interval == 9 is true
-PASS event.initDeviceMotionEvent('', false, false, objectThrowingException, {x: 3, z: 5}, {gamma: 8, beta: 7}, 9) threw exception Error: x getter exception.
-PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, objectThrowingException, {gamma: 8, beta: 7}, 9) threw exception Error: x getter exception.
-PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, z: 5}, objectThrowingException, 9) threw exception Error: alpha getter exception.
-PASS event.initDeviceMotionEvent('', false, false, {x: objectThrowingException, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9) threw exception Error: valueOf threw exception.
-PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: objectThrowingException, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9) threw exception Error: valueOf threw exception.
-PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: objectThrowingException}, 9) threw exception Error: valueOf threw exception.
-PASS event.initDeviceMotionEvent('', false, false, '', '', '', '') threw exception TypeError: Type error.
-event.initDeviceMotionEvent('', false, false, {y: 1, x: 0}, {x: 3, z: 5}, {gamma: 8, beta: 7}, 9)
+PASS event = new DeviceMotionEvent('', {acceleration: objectThrowingException, accelerationIncludingGravity: {x: 3, z: 5}, rotationRate: {gamma: 8, beta: 7}, interval: 9}) threw exception Error: x getter exception.
+PASS event = new DeviceMotionEvent('', {acceleration: {x: 0, y: 1, z: 2}, accelerationIncludingGravity: objectThrowingException, rotationRate: {gamma: 8, beta: 7}, interval: 9}) threw exception Error: x getter exception.
+PASS event = new DeviceMotionEvent('', {acceleration: {x: 0, y: 1, z: 2}, accelerationIncludingGravity: {x: 3, z: 5}, rotationRate: objectThrowingException, interval: 9}) threw exception Error: alpha getter exception.
+PASS event = new DeviceMotionEvent('', {acceleration: {x: objectThrowingException, y: 1, z: 2}, accelerationIncludingGravity: {x: 3, y: 4, z: 5}, rotationRate: {alpha: 6, beta: 7, gamma: 8}, interval: 9}) threw exception Error: valueOf threw exception.
+PASS event = new DeviceMotionEvent('', {acceleration: {x: 0, y: 1, z: 2}, accelerationIncludingGravity: {x: 3, y: objectThrowingException, z: 5}, rotationRate: {alpha: 6, beta: 7, gamma: 8}, interval: 9}) threw exception Error: valueOf threw exception.
+PASS event = new DeviceMotionEvent('', {acceleration: {x: 0, y: 1, z: 2}, accelerationIncludingGravity: {x: 3, y: 4, z: 5}, rotationRate: {alpha: 6, beta: 7, gamma: objectThrowingException}, interval: 9}) threw exception Error: valueOf threw exception.
+event = new DeviceMotionEvent('', {acceleration: {y: 1, x: 0}, accelerationIncludingGravity: {x: 3, z: 5}, rotationRate: {gamma: 8, beta: 7}, interval: 9})
 PASS event.acceleration.x == 0 is true
 PASS event.acceleration.y == 1 is true
 PASS event.acceleration.z == null is true
@@ -37,32 +36,52 @@ PASS event.rotationRate.alpha == null is true
 PASS event.rotationRate.beta == 7 is true
 PASS event.rotationRate.gamma == 8 is true
 PASS event.interval == 9 is true
-event.initDeviceMotionEvent()
-PASS event.acceleration == null is true
-PASS event.accelerationIncludingGravity == null is true
-PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, [], [], [], [])
+event = new DeviceMotionEvent('')
 PASS event.acceleration == null is true
 PASS event.accelerationIncludingGravity == null is true
 PASS event.rotationRate == null is true
 PASS event.interval == 0 is true
-event.initDeviceMotionEvent('', false, false, undefined, undefined, undefined, undefined)
-PASS event.acceleration == null is true
+event = new DeviceMotionEvent('', {acceleration: [], accelerationIncludingGravity: [], rotationRate: [], interval: []})
+PASS event.acceleration.x == null is true
+PASS event.acceleration.y == null is true
+PASS event.acceleration.z == null is true
+PASS event.accelerationIncludingGravity.x == null is true
+PASS event.accelerationIncludingGravity.y == null is true
+PASS event.accelerationIncludingGravity.z == null is true
+PASS event.rotationRate.alpha == null is true
+PASS event.rotationRate.beta == null is true
+PASS event.rotationRate.gamma == null is true
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: [], accelerationIncludingGravity: undefined, rotationRate: undefined, interval: undefined})
+PASS event.acceleration.x == null is true
+PASS event.acceleration.y == null is true
+PASS event.acceleration.z == null is true
 PASS event.accelerationIncludingGravity == null is true
 PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, null, null, null, null)
-PASS event.acceleration == null is true
-PASS event.accelerationIncludingGravity == null is true
-PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, {x: null, y: null, z: null}, {x: null, y: null, z: null}, {alpha: null, beta: null, gamma: null}, null)
-PASS event.acceleration == null is true
-PASS event.accelerationIncludingGravity == null is true
-PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, {x: null, y: null, z: 1}, {x: null, y: null, z: 2}, {alpha: null, beta: null, gamma: 3}, null)
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: null, accelerationIncludingGravity: null, rotationRate: null, interval: null})
+PASS event.acceleration.x == null is true
+PASS event.acceleration.y == null is true
+PASS event.acceleration.z == null is true
+PASS event.accelerationIncludingGravity.x == null is true
+PASS event.accelerationIncludingGravity.y == null is true
+PASS event.accelerationIncludingGravity.z == null is true
+PASS event.rotationRate.alpha == null is true
+PASS event.rotationRate.beta == null is true
+PASS event.rotationRate.gamma == null is true
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: {x: null, y: null, z: null}, accelerationIncludingGravity: {x: null, y: null, z: null}, rotationRate: {alpha: null, beta: null, gamma: null}, interval: null})
+PASS event.acceleration.x == null is true
+PASS event.acceleration.y == null is true
+PASS event.acceleration.z == null is true
+PASS event.accelerationIncludingGravity.x == null is true
+PASS event.accelerationIncludingGravity.y == null is true
+PASS event.accelerationIncludingGravity.z == null is true
+PASS event.rotationRate.alpha == null is true
+PASS event.rotationRate.beta == null is true
+PASS event.rotationRate.gamma == null is true
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: {x: null, y: null, z: 1}, accelerationIncludingGravity: {x: null, y: null, z: 2}, rotationRate: {alpha: null, beta: null, gamma: 3}, interval: null})
 PASS event.acceleration.x == null is true
 PASS event.acceleration.y == null is true
 PASS event.acceleration.z == 1 is true
@@ -72,13 +91,19 @@ PASS event.accelerationIncludingGravity.z == 2 is true
 PASS event.rotationRate.alpha == null is true
 PASS event.rotationRate.beta == null is true
 PASS event.rotationRate.gamma == 3 is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, {x: undefined, y: undefined, z: undefined}, {x: undefined, y: undefined, z: undefined}, {alpha: undefined, beta: undefined, gamma: undefined}, undefined)
-PASS event.acceleration == null is true
-PASS event.accelerationIncludingGravity == null is true
-PASS event.rotationRate == null is true
-PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, {x: undefined, y: undefined, z: 1}, {x: undefined, y: undefined, z: 2}, {alpha: undefined, beta: undefined, gamma: 3}, undefined)
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: {x: undefined, y: undefined, z: undefined}, accelerationIncludingGravity: {x: undefined, y: undefined, z: undefined}, rotationRate: {alpha: undefined, beta: undefined, gamma: undefined}, interval: undefined})
+PASS event.acceleration.x == null is true
+PASS event.acceleration.y == null is true
+PASS event.acceleration.z == null is true
+PASS event.accelerationIncludingGravity.x == null is true
+PASS event.accelerationIncludingGravity.y == null is true
+PASS event.accelerationIncludingGravity.z == null is true
+PASS event.rotationRate.alpha == null is true
+PASS event.rotationRate.beta == null is true
+PASS event.rotationRate.gamma == null is true
+PASS event.interval == 0 is true
+event = new DeviceMotionEvent('', {acceleration: {x: undefined, y: undefined, z: 1}, accelerationIncludingGravity: {x: undefined, y: undefined, z: 2}, rotationRate: {alpha: undefined, beta: undefined, gamma: 3}, interval: undefined})
 PASS event.acceleration.x == null is true
 PASS event.acceleration.y == null is true
 PASS event.acceleration.z == 1 is true
@@ -88,7 +113,7 @@ PASS event.accelerationIncludingGravity.z == 2 is true
 PASS event.rotationRate.alpha == null is true
 PASS event.rotationRate.beta == null is true
 PASS event.rotationRate.gamma == 3 is true
-PASS event.interval == null is true
+PASS event.interval == 0 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
