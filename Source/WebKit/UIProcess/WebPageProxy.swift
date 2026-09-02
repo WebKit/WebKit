@@ -40,7 +40,7 @@ extension WebKit.WebPageProxy.RunJavaScriptInFrameCompletionHandler: @unsafe Cxx
 }
 
 extension WebKit.WebPageProxy {
-    #if canImport(Swift, _version: 6.4)
+    #if HAVE_SWIFT_STDLIB_6_4
     @unsafe
     struct JavaScriptArgument: ~Copyable {
         let key: String
@@ -98,7 +98,7 @@ extension WebKit.WebPageProxy {
         // swift-format-ignore: NeverForceUnwrap
         return unsafe box.take()!
     }
-    #endif // canImport(Swift, _version: 6.4)
+    #endif // HAVE_SWIFT_STDLIB_6_4
 
     private borrowing func editorStateCopy() -> WebKit.EditorState {
         unsafe __editorStateUnsafe().pointee
