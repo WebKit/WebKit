@@ -35,6 +35,7 @@ namespace Layout {
 class GridFormattingContext;
 class IntegrationUtils;
 class PlacedGridItem;
+struct AxisConstraint;
 
 // When resolving intrinsic track sizes, the track sizing algorithm queries each
 // grid item for a few different sizes: its min-content contribution, its
@@ -43,7 +44,7 @@ class PlacedGridItem;
 // callbacks — built with inlineAxis() for columns and blockAxis() for rows.
 struct GridItemSizingFunctions {
     GridItemSizingFunctions(Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContributionFunction, Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContributionFunction,
-        Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit oppositeAxisConstraint)> usedMinimumSizeFunction)
+        Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSizeFunction)
             : minContentContribution(WTF::move(minContentContributionFunction))
             , maxContentContribution(WTF::move(maxContentContributionFunction))
             , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
@@ -55,7 +56,7 @@ struct GridItemSizingFunctions {
 
     Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContribution;
     Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContribution;
-    Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit oppositeAxisConstraint)> usedMinimumSize;
+    Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSize;
 };
 
 } // namespace Layout

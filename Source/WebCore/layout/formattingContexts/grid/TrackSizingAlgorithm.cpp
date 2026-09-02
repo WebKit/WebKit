@@ -299,20 +299,22 @@ static Vector<LayoutUnit> maxContentContributions(const TrackSizingItemList& tra
 // item's used minimum size as its preferred size; else the item's minimum contribution is its
 // min-content contribution.
 static LayoutUnit minimumContribution(const TrackSizingItemList& trackSizingItems, size_t gridItemIndex,
-    const GridItemSizingFunctions& gridItemSizingFunctions, const TrackSizingFunctionsList& trackSizingFunctions)
+    const GridItemSizingFunctions& gridItemSizingFunctions, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit gapSize,
+    const AxisConstraint& axisConstraint)
 {
     auto& trackSizingItem = trackSizingItems[gridItemIndex];
     auto& preferredSize = trackSizingItem.computedSizes.preferredSize;
     if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::sizeDependsOnContainingBlockSize(preferredSize))
-        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, trackSizingItem.oppositeAxisConstraint);
+        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, trackSizingItem.oppositeAxisConstraint, gapSize, axisConstraint);
     return gridItemSizingFunctions.minContentContribution(trackSizingItem.gridItem, trackSizingItem.oppositeAxisConstraint);
 }
 
 static Vector<LayoutUnit> minimumContributions(const TrackSizingItemList& trackSizingItems,
-    const GridItemIndexes& gridItemIndexes, const GridItemSizingFunctions& gridItemSizingFunctions, const TrackSizingFunctionsList& trackSizingFunctions)
+    const GridItemIndexes& gridItemIndexes, const GridItemSizingFunctions& gridItemSizingFunctions, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit gapSize,
+    const AxisConstraint& axisConstraint)
 {
     return gridItemIndexes.map([&](size_t gridItemIndex) {
-        return minimumContribution(trackSizingItems, gridItemIndex, gridItemSizingFunctions, trackSizingFunctions);
+        return minimumContribution(trackSizingItems, gridItemIndex, gridItemSizingFunctions, trackSizingFunctions, gapSize, axisConstraint);
     });
 }
 
@@ -398,14 +400,14 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                     });
 
                     // and ultimately floored by its minimum contribution.
-                    auto itemMinimumContributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList);
+                    auto itemMinimumContributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList, resolveIntrinsicTrackSizesContext.gapSize, resolveIntrinsicTrackSizesContext.axisConstraint);
 
                     auto limitedContributions = limitedContentContributions(minContentSizeContributions, fixedMaxTrackSizingFunctionSums, itemMinimumContributions);
                     return std::max({ }, std::ranges::max(limitedContributions));
                 }
                 // Otherwise, set the track’s base size to the maximum of its items’ minimum
                 // contributions, floored at zero.
-                auto contributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList);
+                auto contributions = minimumContributions(trackSizingItems, singleSpanningItemsIndexes, gridItemSizingFunctions, resolveIntrinsicTrackSizesContext.trackSizingFunctionsList, resolveIntrinsicTrackSizesContext.gapSize, resolveIntrinsicTrackSizesContext.axisConstraint);
                 return std::max({ }, std::ranges::max(contributions));
             },
             // A <length-percentage> min track sizing function was already resolved to an absolute
@@ -742,7 +744,7 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
     auto& trackSizingFunctions = resolveIntrinsicTrackSizesContext.trackSizingFunctionsList;
     auto gapSize = resolveIntrinsicTrackSizesContext.gapSize;
 
-    auto minimumContributionsList = minimumContributions(trackSizingItems, spanningItems, gridItemSizingFunctions, trackSizingFunctions);
+    auto minimumContributionsList = minimumContributions(trackSizingItems, spanningItems, gridItemSizingFunctions, trackSizingFunctions, gapSize, resolveIntrinsicTrackSizesContext.axisConstraint);
     Vector<std::optional<LayoutUnit>> fixedMaxTrackSizingFunctionSums;
     if (isSizedUnderMinOrMaxContentConstraint(resolveIntrinsicTrackSizesContext.axisConstraint)) {
         fixedMaxTrackSizingFunctionSums = spanningItems.map([&](size_t gridItemIndex) {
