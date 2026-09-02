@@ -78,7 +78,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceConst>::value, "Int
 
 JSTestNamespaceConst* JSTestNamespaceConst::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
+    auto& vm = globalObject->vm();
     JSTestNamespaceConst* ptr = new (NotNull, JSC::allocateCell<JSTestNamespaceConst>(vm)) JSTestNamespaceConst(structure, *globalObject);
     ptr->finishCreation(vm);
     return ptr;

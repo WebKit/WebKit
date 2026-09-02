@@ -106,7 +106,7 @@ template<> void JSTestLegacyFactoryFunctionDOMConstructor::initializeProperties(
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = uncheckedDowncast<JSTestLegacyFactoryFunctionLegacyFactoryFunction>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -189,7 +189,7 @@ static_assert(std::is_base_of<ActiveDOMObject, TestLegacyFactoryFunction>::value
 
 JSTestLegacyFactoryFunction* JSTestLegacyFactoryFunction::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
+    auto& vm = globalObject->vm();
     JSTestLegacyFactoryFunction* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunction>(vm)) JSTestLegacyFactoryFunction(structure, *globalObject, WTF::move(impl));
     ptr->finishCreation(vm);
     return ptr;
@@ -230,7 +230,7 @@ void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = dynamicDowncast<JSTestLegacyFactoryFunctionPrototype>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]

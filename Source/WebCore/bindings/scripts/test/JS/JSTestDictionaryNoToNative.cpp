@@ -46,7 +46,7 @@ IGNORE_WARNINGS_END
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestDictionaryNoToNative& dictionary)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = WebCore::constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
@@ -71,7 +71,7 @@ IGNORE_WARNINGS_END
 
 template<> ConversionResult<IDLDictionary<TestDictionaryNoToNative::GenerateKeyword>> convertDictionary<TestDictionaryNoToNative::GenerateKeyword>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();

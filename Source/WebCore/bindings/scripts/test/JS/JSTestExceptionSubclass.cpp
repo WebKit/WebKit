@@ -131,7 +131,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestExceptionSubclass>::value, "
 
 JSTestExceptionSubclass* JSTestExceptionSubclass::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestExceptionSubclass>&& impl)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
+    auto& vm = globalObject->vm();
     JSTestExceptionSubclass* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionSubclass>(vm)) JSTestExceptionSubclass(structure, *globalObject, WTF::move(impl));
     ptr->finishCreation(vm);
     return ptr;
@@ -167,7 +167,7 @@ void JSTestExceptionSubclass::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestExceptionSubclassConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = dynamicDowncast<JSTestExceptionSubclassPrototype>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
@@ -177,7 +177,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestExceptionSubclassConstructor, (JSGlobalObject* le
 
 static inline JSValue jsTestExceptionSubclass_reasonGetter(JSGlobalObject& lexicalGlobalObject, JSTestExceptionSubclass& thisObject)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.reason())));

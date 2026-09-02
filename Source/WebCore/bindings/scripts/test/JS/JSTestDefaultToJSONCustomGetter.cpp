@@ -147,7 +147,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONCustomGetter>::
 
 JSTestDefaultToJSONCustomGetter* JSTestDefaultToJSONCustomGetter::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONCustomGetter>&& impl)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
+    auto& vm = globalObject->vm();
     JSTestDefaultToJSONCustomGetter* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONCustomGetter>(vm)) JSTestDefaultToJSONCustomGetter(structure, *globalObject, WTF::move(impl));
     ptr->finishCreation(vm);
     return ptr;
@@ -183,7 +183,7 @@ void JSTestDefaultToJSONCustomGetter::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONCustomGetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = dynamicDowncast<JSTestDefaultToJSONCustomGetterPrototype>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
@@ -193,7 +193,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONCustomGetterConstructor, (JSGlobalOb
 
 static inline JSValue jsTestDefaultToJSONCustomGetter_firstStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONCustomGetter& thisObject)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.firstStringAttribute())));
@@ -206,7 +206,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONCustomGetter_firstStringAttribute, (
 
 static inline bool setJSTestDefaultToJSONCustomGetter_firstStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONCustomGetter& thisObject, JSValue value)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
@@ -237,7 +237,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONCustomGetter_customGetterAttribute, 
 
 static inline JSValue jsTestDefaultToJSONCustomGetter_secondLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONCustomGetter& thisObject)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.secondLongAttribute())));
@@ -250,7 +250,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONCustomGetter_secondLongAttribute, (J
 
 static inline bool setJSTestDefaultToJSONCustomGetter_secondLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONCustomGetter& thisObject, JSValue value)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
@@ -270,7 +270,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONCustomGetter_secondLongAttribute,
 
 static inline EncodedJSValue jsTestDefaultToJSONCustomGetterPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONCustomGetter* castedThis)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();

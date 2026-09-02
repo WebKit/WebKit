@@ -129,7 +129,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestEmbedderArrayLike>::value, "
 
 JSTestEmbedderArrayLike* JSTestEmbedderArrayLike::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEmbedderArrayLike>&& impl)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
+    auto& vm = globalObject->vm();
     JSTestEmbedderArrayLike* ptr = new (NotNull, JSC::allocateCell<JSTestEmbedderArrayLike>(vm)) JSTestEmbedderArrayLike(structure, *globalObject, WTF::move(impl));
     ptr->finishCreation(vm);
     return ptr;
@@ -165,7 +165,7 @@ void JSTestEmbedderArrayLike::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEmbedderArrayLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = dynamicDowncast<JSTestEmbedderArrayLikePrototype>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
