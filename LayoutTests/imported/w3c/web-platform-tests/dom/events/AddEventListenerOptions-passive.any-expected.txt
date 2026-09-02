@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
 
 PASS Supports passive option on addEventListener only
 PASS preventDefault should be ignored if-and-only-if the passive option is true
