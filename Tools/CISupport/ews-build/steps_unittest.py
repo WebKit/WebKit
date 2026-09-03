@@ -1596,6 +1596,16 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.jsc_single_stress_test_failure = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager"],"allApiTestsPassed":true}\n'''
         self.jsc_multiple_stress_test_failures = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/switch-on-char-llint-rope.js.dfg-eager","stress/switch-on-char-llint-rope.js.dfg-eager-no-cjit-validate","stress/switch-on-char-llint-rope.js.eager-jettison-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit","stress/switch-on-char-llint-rope.js.ftl-eager-no-cjit-b3o1","stress/switch-on-char-llint-rope.js.ftl-no-cjit-b3o0","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-inline-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-no-put-stack-validate","stress/switch-on-char-llint-rope.js.ftl-no-cjit-small-pool","stress/switch-on-char-llint-rope.js.ftl-no-cjit-validate-sampling-profiler","stress/switch-on-char-llint-rope.js.no-cjit-collect-continuously","stress/switch-on-char-llint-rope.js.no-cjit-validate-phases","stress/switch-on-char-llint-rope.js.no-ftl"],"allApiTestsPassed":true}\n'''
         self.jsc_passed_with_flaky = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":[],"flakyAndPassed":{"stress/switch-on-char-llint-rope.js.default":{"P":"7","T":"10"}},"allApiTestsPassed":true}\n'''
+        self.jsc_stress_test_failure_with_results = '''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"stressTestFailures":["stress/weakset-gc.js"],"allApiTestsPassed":true,"results":{"stress/weakset-gc.js":{"report":"REGRESSION","expected":"PASS","actual":"FAIL"}}}\n'''
+        self.jsc_too_many_stress_test_failures_with_results = json.dumps({
+            'allDFGTestsPassed': True,
+            'allMasmTestsPassed': True,
+            'allB3TestsPassed': True,
+            'allAirTestsPassed': True,
+            'allApiTestsPassed': True,
+            'stressTestFailures': [f'stress/test-{i}.js' for i in range(RunJavaScriptCoreTests.FAILURE_THRESHOLD + 1)],
+            'results': {'stress/test-0.js': {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'FAIL'}},
+        }) + '\n'
         return self.setup_test_build_step()
 
     def tearDown(self):
@@ -1770,6 +1780,136 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property(self.prefix + 'binary_test_failures', None)
         return rc
 
+    def test_stress_test_failure_with_results(self) -> defer.Deferred:
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=1 * 60 * 60,
+                        logfiles={'json': self.jsonFileName},
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        )
+            .exit(2)
+            .log('json', stdout=self.jsc_stress_test_failure_with_results),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Found 1 jsc stress test failure: stress/weakset-gc.js')
+        rc = self.run_step()
+        self.expect_property(self.prefix + 'stress_test_failures', ['stress/weakset-gc.js'])
+        self.expect_property(self.prefix + 'results', {'stress/weakset-gc.js': {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'FAIL'}})
+        return rc
+
+    def test_too_many_stress_test_failures_does_not_set_results(self) -> defer.Deferred:
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=1 * 60 * 60,
+                        logfiles={'json': self.jsonFileName},
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --release --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        )
+            .exit(2)
+            .log('json', stdout=self.jsc_too_many_stress_test_failures_with_results),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Found 1001 jsc stress test failures: stress/test-0.js, stress/test-1.js, stress/test-2.js, stress/test-3.js, stress/test-4.js ...')
+        rc = self.run_step()
+        self.expect_no_property(self.prefix + 'results')
+        return rc
+
+
+class TestRunJavaScriptCoreTestsResultsDBIgnoreBranch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self) -> defer.Deferred:
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self) -> defer.Deferred:
+        return self.tear_down_test_build_step()
+
+    def _configure(self) -> RunJavaScriptCoreTests:
+        self.setup_step(RunJavaScriptCoreTests())
+        step = self.get_nth_step(0)
+        step.countFailures = lambda: 0
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'release')
+        self.steps_added = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: self.steps_added.append(steps))
+        return step
+
+    class _FailedCmd:
+        def results(self) -> int:
+            return FAILURE
+
+    def test_flaky_verdict_takes_the_ignore_branch(self) -> None:
+        step = self._configure()
+        step.stressTestFailures_filtered = []
+        step.binaryFailures_filtered = []
+        step.flaky_failures_in_results_db = {'stress/flaky.js': 'CleanTree'}
+
+        rc = step.evaluateCommand(self._FailedCmd())
+
+        self.assertEqual(rc, WARNINGS)
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored flaky tests: stress/flaky.js based on results-db')
+        self.assertEqual(self.build.results, SUCCESS)
+        self.assertEqual(self.steps_added, [])
+
+    def test_pre_existing_failure_still_takes_the_ignore_branch(self) -> None:
+        # Regression guard: the message used to be hand-built here ("Ignored pre-existing failure: ...")
+        # and now comes from the shared results_db_ignore_message() helper, which pluralizes
+        # "failures" and appends "based on results-db".
+        step = self._configure()
+        step.stressTestFailures_filtered = []
+        step.binaryFailures_filtered = []
+        step.preexisting_failures_in_results_db = ['stress/pre-existing.js']
+
+        rc = step.evaluateCommand(self._FailedCmd())
+
+        self.assertEqual(rc, WARNINGS)
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored pre-existing failures: stress/pre-existing.js based on results-db')
+        self.assertEqual(self.build.results, SUCCESS)
+        self.assertEqual(self.steps_added, [])
+
+    def test_unexcused_flaky_verdict_takes_the_normal_failure_path(self) -> None:
+        # A flaky verdict outside INCLUDED_FLAKY_VERDICTS leaves stressTestFailures_filtered
+        # non-empty, so the ignore branch must not fire even though flaky_failures_in_results_db
+        # is populated.
+        step = self._configure()
+        step.stressTestFailures_filtered = ['stress/flaky.js']
+        step.binaryFailures_filtered = []
+        step.flaky_failures_in_results_db = {'stress/flaky.js': 'BetweenBuilds'}
+
+        rc = step.evaluateCommand(self._FailedCmd())
+
+        self.assertEqual(rc, FAILURE)
+        self.assertEqual(len(self.steps_added), 1)
+        step_names = [added.name for added in self.steps_added[0] if hasattr(added, 'name')]
+        self.assertIn(RunJSCTestsWithoutChange.name, step_names)
+        self.assertIn(AnalyzeJSCTestsResults.name, step_names)
+
+    def test_getResultSummary_reports_the_ignore_message_instead_of_the_raw_failures(self) -> None:
+        step = self._configure()
+        step.results = WARNINGS
+        step.stressTestFailures = ['stress/flaky.js']
+        step.stressTestFailures_filtered = []
+        step.binaryFailures = []
+        step.binaryFailures_filtered = []
+        step.flaky_failures_in_results_db = {'stress/flaky.js': 'CleanTree'}
+
+        summary = step.getResultSummary()
+
+        self.assertEqual(summary, {'step': 'Ignored flaky tests: stress/flaky.js based on results-db'})
+
+    def test_getResultSummary_still_reports_raw_failures_when_not_excused(self) -> None:
+        step = self._configure()
+        step.results = FAILURE
+        step.stressTestFailures = ['stress/flaky.js']
+        step.stressTestFailures_filtered = ['stress/flaky.js']
+        step.binaryFailures = []
+        step.binaryFailures_filtered = []
+
+        summary = step.getResultSummary()
+
+        self.assertEqual(summary, {'step': 'Found 1 jsc stress test failure: stress/flaky.js'})
+
 
 class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -1813,6 +1953,64 @@ class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=FAILURE, state_string='jscore-tests (failure)')
         return self.run_step()
+
+    def test_a_clean_tree_failure_does_not_clobber_the_with_change_filtered_properties(self) -> defer.Deferred:
+        self.setup_step(RunJSCTestsWithoutChange())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('jsc_stress_test_failures_filtered', ['stress/force-error.js.bytecode-cache'])
+        self.setProperty('jsc_binary_failures_filtered', ['testapi'])
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+
+        def fake_filter(stress_test_failures: list, binary_failures: list) -> defer.Deferred:
+            step.stressTestFailures_filtered = ['stress/weakset-gc.js']
+            step.binaryFailures_filtered = ['testb3']
+            return defer.succeed(None)
+
+        step.filter_failures_using_results_db = fake_filter
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'perl Tools/Scripts/run-javascriptcore-tests --no-build --no-fail-fast --json-output={self.jsonFileName} --debug --treat-failing-as-flaky=0.6,10,200 --max-timeout 800 2>&1 | Tools/Scripts/filter-test-logs jsc'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=1 * 60 * 60,
+                        )
+            .log('json', stdout='''{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":false,"allAirTestsPassed":true,"allApiTestsPassed":true,"stressTestFailures":["stress/weakset-gc.js"]}\n''')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Found 1 jsc stress test failure: stress/weakset-gc.js, JSC test binary failure: testb3')
+        rc = self.run_step()
+        self.expect_property('jsc_stress_test_failures_filtered', ['stress/force-error.js.bytecode-cache'])
+        self.expect_property('jsc_binary_failures_filtered', ['testapi'])
+        self.expect_property('jsc_clean_tree_stress_test_failures_filtered', ['stress/weakset-gc.js'])
+        self.expect_property('jsc_clean_tree_binary_failures_filtered', ['testb3'])
+        return rc
+
+    @defer.inlineCallbacks
+    def test_does_not_excuse_a_flaky_verdict(self) -> Generator[Any, Any, None]:
+        # AnalyzeJSCTestsResults deliberately ignores the clean-tree run's own filtered/results-db
+        # properties (see test_pre_existing_flaky_stress_failure_is_not_blamed_on_the_author), so a
+        # clean-tree flaky verdict must never remove a failure from stressTestFailures_filtered.
+        self.setup_step(RunJSCTestsWithoutChange())
+        step = self.get_nth_step(0)
+        self.assertEqual(step.INCLUDED_FLAKY_VERDICTS, ())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('platform', 'mac')
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(
+            lambda cls, test, **kwargs: defer.succeed({
+                'is_existing_failure': False, 'pass_rate': 100, 'raw_data': {}, 'logs': '', 'request_failed': False,
+            })))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {test: FlakyVerdict(flaky_type='CleanTree') for test in tests}, ''))))
+
+        yield step.filter_failures_using_results_db(['stress/flaky.js'], [])
+
+        self.assertEqual(step.stressTestFailures_filtered, ['stress/flaky.js'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'stress/flaky.js': 'CleanTree'})
 
 
 class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
@@ -1919,6 +2117,209 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('clean_tree_run_status', SUCCESS)
         self.expect_outcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
         return self.run_step()
+
+    def test_pre_existing_flaky_stress_failure_is_not_blamed_on_the_author(self) -> None:
+        # The flaky test failed with the change and passed on the clean tree, so subtracting the
+        # clean-tree failures cannot explain it away; only the results-db filtering can.
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/dfg-osr-entry-hoisted-clobber.js.default', 'stress/force-error.js.bytecode-cache'])
+        self.setProperty('jsc_stress_test_failures_filtered', ['stress/force-error.js.bytecode-cache'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.run_step()
+
+    def test_pre_existing_flaky_binary_failure_is_not_blamed_on_the_author(self) -> None:
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testapi', 'testdfg'])
+        self.setProperty('jsc_binary_failures_filtered', ['testdfg'])
+        self.setProperty('jsc_clean_tree_binary_failures', ['testdfg'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.run_step()
+
+    def test_new_failure_is_still_reported_when_the_filtered_lists_are_set(self) -> None:
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/dfg-osr-entry-hoisted-clobber.js.default', 'stress/force-error.js.bytecode-cache'])
+        self.setProperty('jsc_stress_test_failures_filtered', ['stress/force-error.js.bytecode-cache'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new JSC stress test failure: stress/force-error.js.bytecode-cache (failure)')
+        return self.run_step()
+
+    def test_raw_failures_are_used_when_the_filtered_properties_are_absent(self) -> None:
+        # RunJavaScriptCoreTests only sets the filtered properties for builds against the default
+        # branch, so the raw lists still have to drive the verdict on every other branch.
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/dfg-osr-entry-hoisted-clobber.js.default'])
+        self.setProperty('jsc_binary_failures', ['testapi'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new JSC binary failure: testapi, Found 1 new JSC stress test failure: stress/dfg-osr-entry-hoisted-clobber.js.default (failure)')
+        return self.run_step()
+
+
+class TestFilterJSCTestFailuresUsingResultsDB(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self) -> defer.Deferred:
+        self.longMessage = True
+        self.queried = []
+        self.flake_queries = []
+        return self.setup_test_build_step()
+
+    def tearDown(self) -> defer.Deferred:
+        return self.tear_down_test_build_step()
+
+    def patch_flaky_verdicts(self, verdicts: dict) -> None:
+        def fake_flaky_verdicts_for(cls, tests: list, **kwargs) -> defer.Deferred:
+            self.flake_queries.append((list(tests), kwargs))
+            return defer.succeed(({test: verdicts.get(test, FlakyVerdict()) for test in tests}, ''))
+
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(fake_flaky_verdicts_for))
+
+    def configureStep(self, pre_existing: set) -> RunJavaScriptCoreTests:
+        self.setup_step(RunJavaScriptCoreTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+
+        def fake_is_pre_existing(cls, test: str, **kwargs) -> defer.Deferred:
+            self.queried.append(test)
+            return defer.succeed({
+                'is_existing_failure': test in pre_existing,
+                'pass_rate': 0 if test in pre_existing else 100,
+                'raw_data': {},
+                'logs': '',
+                'request_failed': False,
+            })
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch_flaky_verdicts({})
+        return step
+
+    @defer.inlineCallbacks
+    def test_pre_existing_failure_after_an_unexplained_one_is_still_filtered(self) -> None:
+        # The lists have to be complete, since AnalyzeJSCTestsResults decides what to blame on the
+        # author from them; an early exit on the first unexplained failure would truncate them.
+        step = self.configureStep({'stress/dfg-osr-entry-hoisted-clobber.js.default', 'testapi'})
+        yield step.filter_failures_using_results_db(
+            ['stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default'],
+            ['testdfg', 'testapi'],
+        )
+        self.assertEqual(step.stressTestFailures_filtered, ['stress/force-error.js.bytecode-cache'])
+        self.assertEqual(step.binaryFailures_filtered, ['testdfg'])
+        self.assertEqual(sorted(step.preexisting_failures_in_results_db), ['stress/dfg-osr-entry-hoisted-clobber.js.default', 'testapi'])
+
+    @defer.inlineCallbacks
+    def test_caps_the_number_of_results_db_queries(self) -> None:
+        cap = RunJavaScriptCoreTests.MAX_FAILURES_TO_CHECK_RESULTS_DB
+        stress_test_failures = [f'stress/force-error.js.ftl-no-cjit-{i}' for i in range(cap + 10)]
+        binary_failures = ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi', 'testLibJSCTools']
+        step = self.configureStep(set(stress_test_failures) | set(binary_failures))
+        yield step.filter_failures_using_results_db(stress_test_failures, binary_failures)
+        self.assertEqual(self.queried, stress_test_failures[:cap] + binary_failures)
+
+    @defer.inlineCallbacks
+    def test_a_verdict_in_the_included_set_removes_the_failure(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+        logs = []
+        step._addToLog = lambda logName, message: logs.append(message) or defer.succeed(None)
+        self.patch_flaky_verdicts({'stress/force-error.js.bytecode-cache': FlakyVerdict(flaky_type='CleanTree', pr_numbers={12345})})
+
+        yield step.filter_failures_using_results_db(['stress/force-error.js.bytecode-cache'], ['testapi'])
+
+        self.assertEqual(step.stressTestFailures_filtered, [])
+        self.assertEqual(step.binaryFailures_filtered, ['testapi'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'stress/force-error.js.bytecode-cache': 'CleanTree'})
+        self.assertEqual(step.preexisting_failures_in_results_db, [])
+        self.assertIn("\nstress/force-error.js.bytecode-cache: pre-existing-flake=CleanTree: {'pr_numbers': [12345]}\n", logs)
+        self.assertIn('\nIgnored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+        self.assertNotIn('\nWould have ignored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+
+    @defer.inlineCallbacks
+    def test_a_verdict_outside_the_included_set_is_recorded_without_ignoring_the_failure(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+        step.INCLUDED_FLAKY_VERDICTS = frozenset({'CleanTree'})
+        logs = []
+        step._addToLog = lambda logName, message: logs.append(message) or defer.succeed(None)
+        self.patch_flaky_verdicts({'stress/force-error.js.bytecode-cache': FlakyVerdict(flaky_type='BetweenBuilds', pr_numbers={12345})})
+
+        yield step.filter_failures_using_results_db(['stress/force-error.js.bytecode-cache'], ['testapi'])
+
+        self.assertEqual(step.stressTestFailures_filtered, ['stress/force-error.js.bytecode-cache'])
+        self.assertEqual(step.binaryFailures_filtered, ['testapi'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'stress/force-error.js.bytecode-cache': 'BetweenBuilds'})
+        self.assertEqual(step.preexisting_failures_in_results_db, [])
+        self.assertIn("\nstress/force-error.js.bytecode-cache: pre-existing-flake=BetweenBuilds: {'pr_numbers': [12345]}\n", logs)
+        self.assertIn('\nWould have ignored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+        self.assertNotIn('\nIgnored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+
+    @defer.inlineCallbacks
+    def test_a_between_builds_verdict_with_no_intra_build_evidence_is_not_excused(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+        logs = []
+        step._addToLog = lambda logName, message: logs.append(message) or defer.succeed(None)
+        self.patch_flaky_verdicts({'stress/force-error.js.bytecode-cache': FlakyVerdict(flaky_type='BetweenBuilds', pr_numbers={12345})})
+
+        yield step.filter_failures_using_results_db(['stress/force-error.js.bytecode-cache'], ['testapi'])
+
+        self.assertEqual(step.stressTestFailures_filtered, ['stress/force-error.js.bytecode-cache'])
+        self.assertEqual(step.binaryFailures_filtered, ['testapi'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'stress/force-error.js.bytecode-cache': 'BetweenBuilds'})
+        self.assertEqual(step.unsupported_flakes_in_results_db, ['stress/force-error.js.bytecode-cache'])
+        self.assertIn("\nstress/force-error.js.bytecode-cache: pre-existing-flake=BetweenBuilds: {'pr_numbers': [12345]}\n", logs)
+        self.assertIn('\nWould have ignored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+        self.assertNotIn('\nIgnored 1 flaky test(s): stress/force-error.js.bytecode-cache\n', logs)
+
+    @defer.inlineCallbacks
+    def test_a_pre_existing_failure_is_not_asked_for_a_flake_verdict(self) -> Generator[Any, Any, None]:
+        step = self.configureStep({'stress/dfg-osr-entry-hoisted-clobber.js.default', 'testapi'})
+
+        yield step.filter_failures_using_results_db(
+            ['stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default'],
+            ['testdfg', 'testapi'],
+        )
+
+        self.assertEqual([tests for tests, _ in self.flake_queries], [['stress/force-error.js.bytecode-cache']])
+
+    @defer.inlineCallbacks
+    def test_binary_failures_are_never_asked_for_a_flake_verdict(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+
+        yield step.filter_failures_using_results_db(
+            ['stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default'],
+            ['testdfg', 'testapi'],
+        )
+
+        self.assertEqual(self.queried, [
+            'stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default',
+            'testdfg', 'testapi',
+        ])
+        self.assertEqual(len(self.flake_queries), 1)
+        tests, kwargs = self.flake_queries[0]
+        self.assertEqual(tests, [
+            'stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default',
+        ])
+        self.assertEqual(kwargs, {'configuration': {'platform': 'mac', 'style': 'release'}, 'suite': 'javascriptcore-tests'})
+
+    @defer.inlineCallbacks
+    def test_caps_the_number_of_flake_verdict_queries(self) -> Generator[Any, Any, None]:
+        cap = RunJavaScriptCoreTests.MAX_FAILURES_TO_CHECK_RESULTS_DB
+        stress_test_failures = [f'stress/force-error.js.ftl-no-cjit-{i}' for i in range(cap + 10)]
+        step = self.configureStep(set())
+
+        yield step.filter_failures_using_results_db(stress_test_failures, [])
+
+        self.assertEqual(len(self.flake_queries), 1)
+        tests, _ = self.flake_queries[0]
+        self.assertEqual(tests, stress_test_failures[:cap])
+
+    @defer.inlineCallbacks
+    def test_a_failed_verdict_query_is_recorded_as_unknown(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+        self.patch_flaky_verdicts({'stress/force-error.js.bytecode-cache': FlakyVerdict(request_failed=True)})
+
+        yield step.filter_failures_using_results_db(['stress/force-error.js.bytecode-cache'], ['testapi'])
+
+        self.assertEqual(step.unknown_flakes_in_results_db, ['stress/force-error.js.bytecode-cache'])
+        self.assertEqual(step.flaky_failures_in_results_db, {})
+        self.assertEqual(step.stressTestFailures_filtered, ['stress/force-error.js.bytecode-cache'])
+        self.assertEqual(step.binaryFailures_filtered, ['testapi'])
 
 
 class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
@@ -4065,6 +4466,95 @@ class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase
             self.results_db_reports[0]['results']['suite.new']['actual_by_run'],
             {'first-run': 'FAIL', 'second-run': 'TIMEOUT'},
         )
+
+
+class TestJSCTestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
+    """AnalyzeJSCTestsResults ends the build on every exit, so a step queued after it never runs."""
+
+    JSC_JSON = '{"allDFGTestsPassed":true,"allMasmTestsPassed":true,"allB3TestsPassed":true,"allAirTestsPassed":true,"allApiTestsPassed":true,"stressTestFailures":["stress/broken.js"],"flaky":{"stress/flaky.js":{"P":"7","T":"10","S":1},"stress/broken.js":{"P":"1","T":"10","S":0}},"results":{"stress/broken.js":{"actual":"FAIL","flakiness_num_passes":1,"flakiness_num_tries":10},"stress/flaky.js":{"actual":"PASS","flakiness_num_passes":7,"flakiness_num_tries":10}}}'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, StepClass):
+        self.setup_step(StepClass())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('os_version', '14.6.1')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('got_revision', 'def456')
+        self.setProperty('commit_timestamp', 1599000000)
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        return step
+
+    def configureRunStep(self, StepClass):
+        step = self.configureStep(StepClass)
+        step.log_observer_json = TestLayoutTestStepsReportAsTheyRun.FakeLogObserver(self.JSC_JSON)
+
+        def fake_filter(stress_test_failures, binary_failures):
+            step.stressTestFailures_filtered = list(stress_test_failures)
+            step.binaryFailures_filtered = list(binary_failures)
+            step.preexisting_failures_in_results_db = []
+            return defer.succeed(None)
+
+        step.filter_failures_using_results_db = fake_filter
+        self.patch(shell.Test, 'runCommand', lambda *args, **kwargs: defer.succeed(None))
+        return step
+
+    def reported(self):
+        return [
+            (report['flaky_type'], (report['details'] or {}).get('stage'), sorted(report['results']))
+            for report in self.results_db_reports
+        ]
+
+    @defer.inlineCallbacks
+    def test_reports_only_stress_tests_that_were_retried_and_then_passed(self):
+        # The runner retries stress tests itself, so a test it retried and that still failed is a
+        # failure, not evidence of flakiness. stress/broken.js never passed ("S":0).
+        step = self.configureRunStep(RunJavaScriptCoreTests)
+        yield step.runCommand(['run-javascriptcore-tests'])
+
+        self.assertEqual(self.reported(), [('WithinStepDirtyTree', 'with-change', ['stress/flaky.js'])])
+        self.assertEqual(self.results_db_reports[0]['suite'], 'javascriptcore-tests')
+
+    @defer.inlineCallbacks
+    def test_the_clean_tree_jsc_run_reports_its_flakes_as_clean_tree(self):
+        step = self.configureRunStep(RunJSCTestsWithoutChange)
+        yield step.runCommand(['run-javascriptcore-tests'])
+
+        self.assertEqual(self.reported(), [('WithinStepCleanTree', 'clean-tree', ['stress/flaky.js'])])
+
+    @defer.inlineCallbacks
+    def test_the_analyze_step_reports_stress_failures_the_clean_tree_did_not_have(self):
+        step = self.configureStep(AnalyzeJSCTestsResults)
+        step.new_stress_failures_to_display = 'stress/a.js'
+        step.new_binary_failures_to_display = ''
+        self.setProperty('jsc_results', {
+            'stress/a.js': dict(actual='FAIL'),
+            'stress/b.js': dict(actual='FAIL'),
+        })
+        yield step.report_failure(set(), {'stress/a.js'})
+
+        # No flaky_type: a failure attributed to the change is not flakiness.
+        self.assertEqual(self.reported(), [(None, None, ['stress/a.js'])])
+
+    @defer.inlineCallbacks
+    def test_an_over_threshold_summary_is_not_reported_as_a_test(self):
+        # Past FAILURE_THRESHOLD the step records a summary line in place of the test names, and
+        # that line is not a test.
+        step = self.configureStep(AnalyzeJSCTestsResults)
+        step.new_stress_failures_to_display = 'Too many failures: 1500 jsc tests failed'
+        step.new_binary_failures_to_display = ''
+        self.setProperty('jsc_results', {'stress/a.js': dict(actual='FAIL')})
+        yield step.report_failure(set(), {'Too many failures: 1500 jsc tests failed'})
+
+        self.assertEqual(self.results_db_reports, [])
 
 
 class TestLayoutTestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):

@@ -689,6 +689,14 @@ class ResultsDBReportMixin(abc.ABC):
             return False
         return reported
 
+    def results_db_ignore_message(self) -> str:
+        parts = []
+        if self.preexisting_failures_in_results_db:
+            parts.append(f"pre-existing failures: {', '.join(self.preexisting_failures_in_results_db)}")
+        if self.flaky_failures_in_results_db:
+            parts.append(f"flaky tests: {', '.join(sorted(self.flaky_failures_in_results_db))}")
+        return f"Ignored {'; '.join(parts)} based on results-db"
+
 
 class Contributors(object):
     url = f'https://raw.githubusercontent.com/{CANONICAL_GITHUB_PROJECT}/main/metadata/contributors.json'
@@ -3503,7 +3511,7 @@ class CompileJSCWithoutChange(CompileJSC):
         return shell.Compile.evaluateCommand(self, cmd)
 
 
-class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
+class RunJavaScriptCoreTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     name = 'jscore-test'
     description = ['jscore-tests running']
     descriptionDone = ['jscore-tests']
@@ -3522,8 +3530,17 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     # results before printing out the summary).
     command_extra = ['--treat-failing-as-flaky=0.6,10,200', '--max-timeout', '800']
     prefix = 'jsc_'
+    suite = 'javascriptcore-tests'
+    results_db_flaky_type = 'WithinStepDirtyTree'
+    results_db_stage = 'with-change'
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
     FAILURE_THRESHOLD = 1000
+    MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
+    INCLUDED_FLAKY_VERDICTS = frozenset({
+        ResultsDatabase.CLEAN_TREE_VERDICT,
+        ResultsDatabase.DIRTY_TREE_VERDICT,
+        ResultsDatabase.BETWEEN_BUILDS_VERDICT,
+    })
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, sigtermTime=10, timeout=1 * 60 * 60, **kwargs)
@@ -3533,6 +3550,9 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         self.stressTestFailures_filtered = []
         self.binaryFailures_filtered = []
         self.preexisting_failures_in_results_db = []
+        self.flaky_failures_in_results_db = {}
+        self.unsupported_flakes_in_results_db = []
+        self.unknown_flakes_in_results_db = []
 
     @defer.inlineCallbacks
     def run(self):
@@ -3566,6 +3586,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield super().runCommand(command)
 
         yield self._addToLog('json', '\n')
@@ -3589,9 +3610,17 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.binaryFailures.append('testapi')
         if jsc_results.get('allLibJSCToolsTestsPassed') is False:
             self.binaryFailures.append('testLibJSCTools')
-        self.flaky = jsc_results.get('flakyAndPassed')
+        flaky = jsc_results.get('flaky') or {}
+        # run-javascriptcore-tests builds this from jsc-stress-results/flaky, where 'S' is that file's successful
+        # int: nonzero means the retries ended in a pass, zero a test retried to the threshold and still failing.
+        self.flaky = {test: info for test, info in flaky.items() if info.get('S')}
         if self.flaky:
             self.setProperty(self.prefix + 'flaky_and_passed', self.flaky)
+        results = jsc_results.get('results') or {}
+        yield self.report_to_results_db(
+            {test: results[test] for test in self.flaky if test in results},
+            flaky_type=self.results_db_flaky_type, stage=self.results_db_stage,
+        )
         if self.binaryFailures:
             self.setProperty(self.prefix + 'binary_failures', self.binaryFailures)
 
@@ -3602,12 +3631,17 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             return
 
         self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
+        if results:
+            self.setProperty(self.prefix + 'results', results)
         is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
         if is_main and (self.stressTestFailures or self.binaryFailures):
             yield self.filter_failures_using_results_db(self.stressTestFailures, self.binaryFailures)
-            self.setProperty('jsc_stress_test_failures_filtered', sorted(self.stressTestFailures_filtered))
-            self.setProperty('jsc_binary_failures_filtered', sorted(self.binaryFailures_filtered))
-            self.setProperty('results-db_jsc_pre_existing', sorted(self.preexisting_failures_in_results_db))
+            self.setProperty(self.prefix + 'stress_test_failures_filtered', sorted(self.stressTestFailures_filtered))
+            self.setProperty(self.prefix + 'binary_failures_filtered', sorted(self.binaryFailures_filtered))
+            self.setProperty('results-db_' + self.prefix + 'pre_existing', sorted(self.preexisting_failures_in_results_db))
+            self.setProperty('results-db_' + self.prefix + 'flaky', self.flaky_failures_in_results_db)
+            self.setProperty('results-db_' + self.prefix + 'flaky_unsupported', sorted(self.unsupported_flakes_in_results_db))
+            self.setProperty('results-db_' + self.prefix + 'flaky_unknown', sorted(self.unknown_flakes_in_results_db))
 
     def evaluateCommand(self, cmd):
         platform = self.getProperty('platform')
@@ -3632,9 +3666,8 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             message = 'Passed JSC tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
-        elif (self.preexisting_failures_in_results_db and not self.stressTestFailures_filtered and not self.binaryFailures_filtered):
-            # This means all the tests which failed in this run were also failing or flaky in results database
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+        elif ((self.preexisting_failures_in_results_db or self.flaky_failures_in_results_db) and not self.stressTestFailures_filtered and not self.binaryFailures_filtered):
+            message = self.results_db_ignore_message()
             self.descriptionDone = message
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
@@ -3668,7 +3701,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
     @defer.inlineCallbacks
     def _check_for_preexisting_failures(self, tests, filtered_tests, configuration, identifier, has_commit):
-        for test in tests:
+        for test in tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]:
             data = yield ResultsDatabase.is_test_pre_existing_failure(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
@@ -3680,9 +3713,6 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
                 filtered_tests.remove(test)
             else:
                 yield self._addToLog(self.results_db_log_name, f'{test} is not a pre-existing failure, continuing with retry...')
-                # Optimization to skip consulting results-db for every failure if we encounter any new failure,
-                # since until there is atleast one failure which is not pre-existing, we will anayways have to continue with retry logic.
-                break
 
     @defer.inlineCallbacks
     def filter_failures_using_results_db(self, stress_test_failures, binary_failures):
@@ -3708,8 +3738,46 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         yield self._check_for_preexisting_failures(stress_test_failures, self.stressTestFailures_filtered, configuration, identifier, has_commit)
         yield self._check_for_preexisting_failures(binary_failures, self.binaryFailures_filtered, configuration, identifier, has_commit)
 
+        # TODO: Ask for a verdict on binary failures too. AnalyzeJSCTestsResults.report_failure reports
+        # only stress failures, so the database holds no binary-test row to match one against.
+        checked = stress_test_failures[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
+        unexplained = [test for test in checked if test in self.stressTestFailures_filtered]
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(unexplained, configuration=configuration, suite='javascriptcore-tests')
+        if flake_logs:
+            yield self._addToLog(self.results_db_log_name, flake_logs)
+
+        ignored, shadowed = [], []
+        for test in unexplained:
+            flake = flakes.get(test, FlakyVerdict(request_failed=True))
+            flake_summary = 'False'
+            if flake.is_flaky:
+                self.flaky_failures_in_results_db[test] = flake.flaky_type
+                if flake.flaky_type == ResultsDatabase.BETWEEN_BUILDS_VERDICT and not flake.intra_build_evidence:
+                    self.unsupported_flakes_in_results_db.append(test)
+                flake_summary = f'{flake.flaky_type}: {flake.evidence}'
+                if flake.flaky_type in self.INCLUDED_FLAKY_VERDICTS and test not in self.unsupported_flakes_in_results_db:
+                    ignored.append(test)
+                    if test in self.stressTestFailures_filtered:
+                        self.stressTestFailures_filtered.remove(test)
+                else:
+                    shadowed.append(test)
+            elif flake.request_failed:
+                self.unknown_flakes_in_results_db.append(test)
+                flake_summary = 'Unknown'
+
+            yield self._addToLog(self.results_db_log_name, f'\n{test}: pre-existing-flake={flake_summary}\n')
+
+        for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
+            if acted_on:
+                yield self._addToLog(
+                    self.results_db_log_name,
+                    f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
+                )
+
     def getResultSummary(self):
-        if self.results != SUCCESS and (self.stressTestFailures or self.binaryFailures):
+        if self.results != SUCCESS and not self.stressTestFailures_filtered and not self.binaryFailures_filtered and (self.preexisting_failures_in_results_db or self.flaky_failures_in_results_db):
+            return {'step': self.results_db_ignore_message()}
+        elif self.results != SUCCESS and (self.stressTestFailures or self.binaryFailures):
             status = ''
             if self.stressTestFailures:
                 num_failures = len(self.stressTestFailures)
@@ -3750,8 +3818,11 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
 
 class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
+    results_db_flaky_type = 'WithinStepCleanTree'
+    results_db_stage = 'clean-tree'
     name = 'jscore-test-without-change'
     prefix = 'jsc_clean_tree_'
+    INCLUDED_FLAKY_VERDICTS = ()
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
@@ -3759,8 +3830,9 @@ class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
         return rc
 
 
-class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
+class AnalyzeJSCTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLogMixin):
     name = 'analyze-jsc-tests-results'
+    suite = 'javascriptcore-tests'
     description = ['analyze-jsc-test-results']
     descriptionDone = ['analyze-jsc-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
@@ -3779,11 +3851,6 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
         flaky_stress_failures = sorted(list(flaky_stress_failures_with_change) + list(clean_tree_flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_stress_failures)
 
-        new_stress_failures = stress_failures_with_change - clean_tree_stress_failures
-        new_binary_failures = binary_failures_with_change - clean_tree_binary_failures
-        self.new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
-        self.new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
-
         yield self._addToLog('stderr', '\nFailures with change: {}'.format(list(binary_failures_with_change) + list(stress_failures_with_change))[:self.NUM_FAILURES_TO_DISPLAY])
         yield self._addToLog('stderr', '\nFlaky Tests with change: {}'.format(', '.join(flaky_stress_failures_with_change)))
         yield self._addToLog('stderr', '\nFailures on clean tree: {}'.format(clean_tree_failures_string))
@@ -3794,15 +3861,29 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
             # there should have been some test failures. Otherwise there is some unexpected issue.
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
             if clean_tree_run_status in [SUCCESS, WARNINGS]:
-                self.report_failure(set(), set())
+                yield self.report_failure(set(), set())
                 defer.returnValue(FAILURE)
             # TODO: email EWS admins
             self.retry_build('Unexpected infrastructure issue, retrying build')
             defer.returnValue(RETRY)
 
+        # Only set for builds against the default branch, hence the fallback. After the empty-check
+        # above, which needs the raw lists to tell an infrastructure issue from a filtered-away run.
+        stress_failures_filtered = self.getProperty('jsc_stress_test_failures_filtered', None)
+        if stress_failures_filtered is not None:
+            stress_failures_with_change = set(stress_failures_filtered)
+        binary_failures_filtered = self.getProperty('jsc_binary_failures_filtered', None)
+        if binary_failures_filtered is not None:
+            binary_failures_with_change = set(binary_failures_filtered)
+
+        new_stress_failures = stress_failures_with_change - clean_tree_stress_failures
+        new_binary_failures = binary_failures_with_change - clean_tree_binary_failures
+        self.new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
+        self.new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
+
         if new_stress_failures or new_binary_failures:
             yield self._addToLog('stderr', '\nNew binary failures: {}.\nNew stress test failures: {}\n'.format(self.new_binary_failures_to_display, self.new_stress_failures_to_display))
-            self.report_failure(new_binary_failures, new_stress_failures)
+            yield self.report_failure(new_binary_failures, new_stress_failures)
             defer.returnValue(FAILURE)
         else:
             yield self._addToLog('stderr', '\nNo new failures\n')
@@ -3827,7 +3908,12 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
         self.descriptionDone = message
         self.build.buildFinished([message], RETRY)
 
+    @defer.inlineCallbacks
     def report_failure(self, new_binary_failures, new_stress_failures):
+        # TODO: Include new_binary_failures, run-javascriptcore-tests:838-839 runs testapi twice under
+        # the one 'testapi' key in %reportData, so the second run's result overwrites the first's failure.
+        results = self.getProperty('jsc_results', None) or {}
+        yield self.report_to_results_db({test: results[test] for test in new_stress_failures if test in results})
         message = ''
         if (not new_binary_failures) and (not new_stress_failures):
             message = 'Found unexpected failure with change'
@@ -4124,7 +4210,6 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 commit=identifier if has_commit else None,
             )
 
-        # Only tests the database does not already expect to fail need a flakiness verdict
         unexplained = [test for test in tests if not pre_existing[test]['is_existing_failure']]
         flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(unexplained, configuration=configuration, suite=self.suite)
         if flake_logs:
@@ -4166,14 +4251,6 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                     self.results_db_log_name,
                     f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
                 )
-
-    def results_db_ignore_message(self) -> str:
-        parts = []
-        if self.preexisting_failures_in_results_db:
-            parts.append(f"pre-existing failures: {', '.join(self.preexisting_failures_in_results_db)}")
-        if self.flaky_failures_in_results_db:
-            parts.append(f"flaky tests: {', '.join(sorted(self.flaky_failures_in_results_db))}")
-        return f"Ignored {'; '.join(parts)} based on results-db"
 
     def evaluateResult(self, cmd):
         result = SUCCESS

@@ -1155,6 +1155,11 @@ sub runJSCStressTests
     if (defined($jsonFileName)) {
         $jsonData{'flaky'} =  \%jscStressFlakyInfo;
         $jsonData{'stressTestFailures'} = \@jscStressFailList;
+        my %notableResults = ();
+        foreach my $test (@jscStressFailList, keys %jscStressFlakyInfo, @jscStressNoResultList) {
+            $notableResults{$test} = $reportData{$test} if exists $reportData{$test};
+        }
+        $jsonData{'results'} = \%notableResults;
     }
 
     writeJsonDataIfApplicable();
