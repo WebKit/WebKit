@@ -38,8 +38,10 @@ class Failures {
             fetch(`api/failures/${suite}?${paramsToQuery(paramsToDispatch)}`).then(response => {
                 let result = [];
                 response.json().then(json => {
-                    if (!Array.isArray(json))
-                        return [];
+                    if (!Array.isArray(json)) {
+                        resolve(result);
+                        return;
+                    }
                     json.forEach((pairs) => {
                         pairs.results.forEach((run) => {
                             result.push(new Failures(suite, new Configuration(pairs.configuration), run));

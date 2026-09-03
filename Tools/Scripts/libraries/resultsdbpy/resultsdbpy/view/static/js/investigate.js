@@ -365,7 +365,7 @@ class _InvestigateDrawer {
             queryConfiguration,
             params,
         ).then(failures => {
-            this.agregate.failures = Failures.combine(...failures);
+            this.agregate.failures = failures.length ? Failures.combine(...failures) : new Failures(this.suite, this.agregate.configuration);
             this.data.forEach(datum => {
                 datum.failures = new Failures(this.suite, datum.configuration);
                 failures.forEach(failure => {
@@ -376,6 +376,12 @@ class _InvestigateDrawer {
                     )
                         datum.failures = Failures.combine(datum.failures, failure);
                 });
+            });
+            this.select(this.selected);
+        }).catch(() => {
+            this.agregate.failures = new Failures(this.suite, this.agregate.configuration);
+            this.data.forEach(datum => {
+                datum.failures = new Failures(this.suite, datum.configuration);
             });
             this.select(this.selected);
         });
