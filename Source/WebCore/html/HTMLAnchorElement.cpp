@@ -164,18 +164,46 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
     url.append('?', std::lround(absolutePosition.x()), ',', std::lround(absolutePosition.y()));
 }
 
+static bool isClickLikeEvent(Event& event)
+{
+    return event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent;
+}
+
 void HTMLAnchorElement::defaultEventHandler(Event& event)
 {
-    if (m_prefetchEagerness == PrefetchEagerness::Conservative && (event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent))
+    // Moderate eagerness (eagerly matched): hover starts a 200ms timer; pointerdown fires immediately.
+    if (m_prefetchEagerness == PrefetchEagerness::Moderate) {
+        if (event.type() == eventNames().pointerenterEvent)
+            startModerateHoverTimer();
+        else if (event.type() == eventNames().pointerleaveEvent)
+            cancelModerateHoverTimer();
+        else if (isClickLikeEvent(event)) {
+            cancelModerateHoverTimer();
+            protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
+        }
+    }
+    // Conservative eagerness (eagerly matched): prefetch on pointerdown/keydown.
+    else if (m_prefetchEagerness == PrefetchEagerness::Conservative && isClickLikeEvent(event))
         protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
-    else if (m_prefetchEagerness == PrefetchEagerness::None
-        && document().settings().speculationRulesPrefetchEnabled()
-        && (event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent)) {
-        // Lazy matching for conservative rules: evaluate at interaction time
-        // instead of scanning all links on every style recalculation.
-        if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this)) {
-            if (prefetchRule->eagerness != SpeculationRules::Eagerness::Immediate)
-                protect(document())->prefetch(href(), prefetchRule->tags, prefetchRule->referrerPolicy);
+    // Lazy path: no upfront scan matched this anchor. Evaluate rules at interaction time.
+    else if (m_prefetchEagerness == PrefetchEagerness::None && document().settings().speculationRulesPrefetchEnabled()) {
+        if (event.type() == eventNames().pointerenterEvent) {
+            // Lazy match on hover for moderate rules.
+            if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this)) {
+                if (prefetchRule->eagerness == SpeculationRules::Eagerness::Moderate) {
+                    setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
+                    startModerateHoverTimer();
+                }
+            }
+        } else if (event.type() == eventNames().pointerleaveEvent)
+            cancelModerateHoverTimer();
+        else if (isClickLikeEvent(event)) {
+            // Lazy match on click for conservative/moderate rules.
+            cancelModerateHoverTimer();
+            if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this)) {
+                if (prefetchRule->eagerness != SpeculationRules::Eagerness::Immediate)
+                    protect(document())->prefetch(href(), prefetchRule->tags, prefetchRule->referrerPolicy);
+            }
         }
     }
 
@@ -763,8 +791,18 @@ void HTMLAnchorElement::setFullURL(const URL& fullURL)
 void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
 {
     // Map SpeculationRules::Eagerness to the anchor's PrefetchEagerness.
-    // Only Immediate triggers immediate prefetch; all others fall back to conservative behavior.
-    m_prefetchEagerness = eagerness == SpeculationRules::Eagerness::Immediate ? PrefetchEagerness::Immediate : PrefetchEagerness::Conservative;
+    switch (eagerness) {
+    case SpeculationRules::Eagerness::Immediate:
+        m_prefetchEagerness = PrefetchEagerness::Immediate;
+        break;
+    case SpeculationRules::Eagerness::Moderate:
+        m_prefetchEagerness = PrefetchEagerness::Moderate;
+        break;
+    case SpeculationRules::Eagerness::Eager:
+    case SpeculationRules::Eagerness::Conservative:
+        m_prefetchEagerness = PrefetchEagerness::Conservative;
+        break;
+    }
     m_speculationRulesTags = WTF::move(tags);
     m_prefetchReferrerPolicy = WTF::move(referrerPolicy);
     if (m_prefetchEagerness == PrefetchEagerness::Immediate)
@@ -778,6 +816,8 @@ String HTMLAnchorElement::prefetchEagernessForTesting() const
         return "none"_s;
     case PrefetchEagerness::Conservative:
         return "conservative"_s;
+    case PrefetchEagerness::Moderate:
+        return "moderate"_s;
     case PrefetchEagerness::Immediate:
         return "immediate"_s;
     }
@@ -788,8 +828,9 @@ void HTMLAnchorElement::checkForSpeculationRules()
 {
     if (!document().settings().speculationRulesPrefetchEnabled())
         return;
-    // For conservative-only rules, defer matching to interaction time.
-    if (!document().speculationRules().hasNonConservativePrefetchRules()) {
+    // For moderate/conservative-only rules, defer matching to interaction time.
+    if (!document().speculationRules().hasImmediateOrEagerPrefetchRules()) {
+        cancelModerateHoverTimer();
         m_prefetchEagerness = PrefetchEagerness::None;
         m_speculationRulesTags.clear();
         m_prefetchReferrerPolicy = std::nullopt;
@@ -798,10 +839,29 @@ void HTMLAnchorElement::checkForSpeculationRules()
     if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this))
         setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
     else {
+        cancelModerateHoverTimer();
         m_prefetchEagerness = PrefetchEagerness::None;
         m_speculationRulesTags.clear();
         m_prefetchReferrerPolicy = std::nullopt;
     }
+}
+
+void HTMLAnchorElement::startModerateHoverTimer()
+{
+    if (!m_moderateHoverTimer)
+        m_moderateHoverTimer = makeUnique<Timer>(*this, &HTMLAnchorElement::moderateHoverTimerFired);
+    m_moderateHoverTimer->startOneShot(200_ms);
+}
+
+void HTMLAnchorElement::cancelModerateHoverTimer()
+{
+    if (m_moderateHoverTimer)
+        m_moderateHoverTimer->stop();
+}
+
+void HTMLAnchorElement::moderateHoverTimerFired()
+{
+    protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
 }
 
 }

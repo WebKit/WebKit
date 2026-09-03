@@ -385,11 +385,11 @@ bool SpeculationRules::parseSpeculationRules(Node& sourceNode, const StringView&
     return true;
 }
 
-bool SpeculationRules::hasNonConservativePrefetchRules() const
+bool SpeculationRules::hasImmediateOrEagerPrefetchRules() const
 {
     for (auto [node, rules] : m_prefetchRulesByNode) {
         for (const auto& rule : rules) {
-            if (rule.eagerness != Eagerness::Conservative)
+            if (rule.eagerness == Eagerness::Immediate || rule.eagerness == Eagerness::Eager)
                 return true;
         }
     }

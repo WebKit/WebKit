@@ -4896,9 +4896,9 @@ void Document::processSpeculationRules()
     ASSERT(frame);
 
     // Only scan all anchors if there are rules requiring eager matching
-    // (Immediate/Eager/Moderate). Conservative rules are matched lazily
+    // (Immediate/Eager). Moderate and conservative rules are matched lazily
     // on user interaction in HTMLAnchorElement::defaultEventHandler().
-    if (speculationRules().hasNonConservativePrefetchRules()) {
+    if (speculationRules().hasImmediateOrEagerPrefetchRules()) {
         auto anchors = links();
         auto iterator = anchors->createIterator(this);
         for (RefPtr element = iterator.next(); element; element = iterator.next()) {

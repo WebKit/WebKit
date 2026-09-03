@@ -110,7 +110,7 @@ public:
 
     const WeakHashMap<Node, Vector<Rule>, WeakPtrImplWithEventTargetData>& prefetchRules() const LIFETIME_BOUND { return m_prefetchRulesByNode; }
 
-    bool NODELETE hasNonConservativePrefetchRules() const;
+    bool NODELETE hasImmediateOrEagerPrefetchRules() const;
 
 private:
     SpeculationRules() = default;

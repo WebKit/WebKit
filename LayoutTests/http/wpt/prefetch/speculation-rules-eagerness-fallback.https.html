@@ -96,8 +96,8 @@ promise_test(async t => {
   t.add_cleanup(() => rules.remove());
 
   await new Promise(resolve => t.step_timeout(resolve, 2000));
-  assert_equals(await isUrlPrefetched(url), 0, 'moderate eagerness should fall back to conservative (no immediate prefetch)');
-}, 'Document rule with moderate eagerness falls back to conservative');
+  assert_equals(await isUrlPrefetched(url), 0, 'moderate eagerness should not prefetch immediately (hover-triggered)');
+}, 'Document rule with moderate eagerness does not prefetch immediately');
 
 promise_test(async t => {
   const url = getPrefetchUrl({ test: 'conservative' });
