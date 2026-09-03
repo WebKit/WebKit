@@ -997,6 +997,8 @@ public:
     enum class EventRegionInvalidationReason { Paint, SettingDidChange, Style, NonCompositedFrame };
     bool invalidateEventRegion(EventRegionInvalidationReason);
 
+    EventTrackingRegions touchEventRegionsForTesting() const;
+
     String debugDescription() const;
 
     bool setIsOpportunisticStackingContext(bool);

@@ -19,13 +19,22 @@
         }
     </style>
     <script src="resources/touch-regions-helper.js"></script>
+    <script src="../../../../../resources/ui-helper.js"></script>
     <script>
-        if (window.testRunner)
+        async function getRegions() {
+            await UIHelper.ensurePresentationUpdate();
+            dumpRegions();
+            testRunner.notifyDone();
+        }
+
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         window.addEventListener('load', () => {
             scroller.scrollTo(0, 200);
-            dumpRegions();
+            getRegions();
         }, false);
     </script>
 </head>

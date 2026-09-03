@@ -6519,6 +6519,16 @@ void Document::updateEventRegions()
     }
 }
 
+Vector<EventTrackingRegions> Document::touchEventRegionsForTesting() const
+{
+    if (CheckedPtr view = renderView()) {
+        if (view->usesCompositing())
+            return view->compositor().touchEventRegionsForTesting();
+    }
+    return { };
+}
+
+
 void Document::scheduleDeferredAXObjectCacheUpdate()
 {
     if (m_scheduledDeferredAXObjectCacheUpdate)

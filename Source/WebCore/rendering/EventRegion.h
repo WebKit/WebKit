@@ -174,6 +174,10 @@ public:
     void clearInteractionRegions();
 #endif
 
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    EventTrackingRegions touchEventListenerRegions() const { return m_touchEventListenerRegion; }
+#endif
+
 private:
     friend struct IPC::ArgumentCoder<EventRegion>;
 #if ENABLE(TOUCH_ACTION_REGIONS)

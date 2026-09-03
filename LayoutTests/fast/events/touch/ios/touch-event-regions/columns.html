@@ -15,11 +15,20 @@
         }
     </style>
     <script src="resources/touch-regions-helper.js"></script>
+    <script src="../../../../../resources/ui-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.dumpAsText();
+        async function getRegions() {
+            await UIHelper.ensurePresentationUpdate();
+            dumpRegions();
+            testRunner.notifyDone();
+        }
 
-        window.addEventListener('load', dumpRegions, false);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', getRegions, false);
     </script>
 </head>
 <body>

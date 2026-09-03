@@ -1012,6 +1012,21 @@ void RenderLayerCompositor::updateEventRegions()
     m_renderView.setNeedsEventRegionUpdateForNonCompositedFrame(false);
 }
 
+Vector<EventTrackingRegions> RenderLayerCompositor::touchEventRegionsForTesting() const
+{
+    Vector<EventTrackingRegions> eventRegions;
+    Vector<CheckedPtr<RenderLayer>> layers = { m_renderView.layer() };
+    while (!layers.isEmpty()) {
+        if (CheckedPtr layer = layers.takeLast()) {
+            eventRegions.append(layer->touchEventRegionsForTesting());
+            for (auto* childLayer = layer->firstChild(); childLayer; childLayer = childLayer->nextSibling())
+                layers.append(childLayer);
+        }
+
+    }
+    return eventRegions;
+}
+
 static std::optional<ScrollingNodeID> frameHostingNodeForFrame(LocalFrame& frame)
 {
     if (!frame.document() || !frame.view())

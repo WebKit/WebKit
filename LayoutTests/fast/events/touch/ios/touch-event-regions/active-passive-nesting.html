@@ -28,9 +28,23 @@
         }
     </style>
     <script src="resources/touch-regions-helper.js"></script>
+    <script src="../../../../../resources/ui-helper.js"></script>
+
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+
+        async function getRegions() {
+            await UIHelper.ensurePresentationUpdate();
+            dumpRegions();
+            testRunner.notifyDone();
+        }
+
+
+        window.addEventListener('load', getRegions, false);
 
         function doTest()
         {
@@ -44,7 +58,7 @@
                 element.addEventListener('touchstart', function(e) { }, { 'passive': true });
             }
             
-            dumpRegions();
+            getRegions();
         }
 
         window.addEventListener('load', doTest, false);

@@ -4441,6 +4441,16 @@ void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFrag
     }
 }
 
+EventTrackingRegions RenderLayer::touchEventRegionsForTesting() const
+{
+    EventTrackingRegions region;
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    if (auto* backing = this->backing())
+        return backing->graphicsLayer()->eventRegion().touchEventListenerRegions();
+#endif
+    return region;
+}
+
 void RenderLayer::collectAccessibilityRegionsForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior)
 {
     ASSERT(is<AccessibilityRegionContext>(localPaintingInfo.regionContext));
