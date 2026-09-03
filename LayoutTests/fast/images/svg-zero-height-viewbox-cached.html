@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG image with a specified height of 0 and a viewBox is not stretched to its containing block</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#containingBlock { width: 740px; }
+#containingBlock img { display: block; }
+</style>
+<div id="containingBlock"></div>
+<div id="log"></div>
+<script>
+const SRC = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' height='0' viewBox='0 0 600 200'></svg>";
+const CONTAINING_BLOCK_WIDTH = 740;
+
+promise_test(async () => {
+  // Load the image first, so that it is already available when the img element
+  // below is attached. This is what a reload gets from the memory cache, but
+  // without needing a reload.
+  await new Promise(resolve => {
+    const preload = new Image();
+    preload.addEventListener("load", resolve, { once: true });
+    preload.addEventListener("error", resolve, { once: true });
+    preload.src = SRC;
+  });
+
+  const img = document.createElement("img");
+  img.src = SRC;
+  document.getElementById("containingBlock").appendChild(img);
+
+  // Only the stretching is asserted. The natural dimensions are reported rather
+  // than asserted, as what they should be for this image has changed over time,
+  // whereas filling the containing block is wrong either way: it means layout
+  // treated the natural width as unknown and sized from the aspect ratio.
+  const sizes = `natural ${img.naturalWidth}x${img.naturalHeight}, ` +
+                `laid out ${img.offsetWidth}x${img.offsetHeight}`;
+  assert_not_equals(img.offsetWidth, CONTAINING_BLOCK_WIDTH,
+                    `filled its containing block (${sizes})`);
+}, "img is not stretched when the image is available before it is attached");
+</script>
