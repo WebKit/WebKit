@@ -51,6 +51,9 @@ die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" un
 checkBuild();
 
 my $appPath = shift(@ARGV);
+if (isVisionOSWebKit()) {
+    exit exitStatus(runVisionOSWebKitApp($appPath));
+}
 if (isIOSWebKit()) {
     exit exitStatus(runIOSWebKitApp($appPath));
 }
