@@ -420,7 +420,11 @@ void MessagePort::dispatchEvent(Event& event)
     if (isDetached())
         return;
 
-    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(context.get())) {
         if (globalScope->isClosing())
             return;
     }
