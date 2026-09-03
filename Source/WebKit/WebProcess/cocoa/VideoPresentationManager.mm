@@ -874,9 +874,13 @@ void VideoPresentationManager::didCleanupFullscreen(WebCore::MediaPlayerClientId
         videoElement->didExitFullscreenOrPictureInPicture();
 
     interface->setFullscreenStandby(false);
-    if (interface->fullscreenMode() != HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
+    auto currentMode = interface->fullscreenMode();
+    if (currentMode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
         interface->setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-        removeClientForContext(contextId);
+        // A client is only added when the mode leaves VideoFullscreenModeNone, so only remove one
+        // when it returns to it.
+        if (currentMode != HTMLMediaElementEnums::VideoFullscreenModeNone)
+            removeClientForContext(contextId);
     }
 
     if (!videoElement || !targetIsFullscreen || mode == HTMLMediaElementEnums::VideoFullscreenModeNone || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
