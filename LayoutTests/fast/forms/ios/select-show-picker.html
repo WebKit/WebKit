@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<select id="select">
+    <option>Apple</option>
+    <option>Banana</option>
+    <option>Cherry</option>
+</select>
+<button onclick="select.showPicker()" id="button">Show select picker</button>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Test that HTMLSelectElement.showPicker() works on iOS by displaying the native picker.");
+
+    // Test 1: showPicker() without user activation should throw
+    debug("=== Test 1: showPicker() without user activation should throw ===");
+
+    shouldThrow("select.showPicker()", '"NotAllowedError: Select showPicker() requires a user gesture."');
+
+    // Test 2: showPicker() with user activation should display the picker
+    debug("");
+    debug("=== Test 2: showPicker() with user activation should display the picker ===");
+
+    // Verify select is not open yet
+    shouldBeFalse("select.matches(':open')");
+
+    await UIHelper.activateElement(button);
+
+    // Wait for the context menu (native picker) to appear
+    await UIHelper.waitForContextMenuToShow();
+    debug("Native picker appeared after showPicker()");
+
+    // Verify select matches :open pseudo-class
+    shouldBeTrue("select.matches(':open')");
+
+    // In-page options should not be visible (since native picker is used).
+    shouldBeFalse("select.options[0].checkVisibility()");
+
+    // Dismiss the picker
+    await UIHelper.dismissMenu();
+    await UIHelper.waitForContextMenuToHide();
+
+    // Verify select no longer matches :open
+    shouldBeFalse("select.matches(':open')");
+
+    finishJSTest();
+});
+</script>
+</html>
