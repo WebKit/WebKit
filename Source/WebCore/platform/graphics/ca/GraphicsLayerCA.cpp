@@ -5351,16 +5351,21 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
         return 0;
 
     // contentsLayer is given to us, so we don't really know anything about its contents.
-    // FIXME: ignores layer clones.
-    
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        return tiledBacking->retainedTileBackingStoreMemory();
+    double memoryEstimate = 0;
 
-    if (!backingStoreAttached())
-        return 0;
+    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        memoryEstimate += tiledBacking->retainedTileBackingStoreMemory();
+    } else if (backingStoreAttached()) {
+        Ref layer = *m_layer;
+        memoryEstimate += layer->backingStoreBytesPerPixel() * size().width() * layer->contentsScale() * size().height() * layer->contentsScale();
+    }
 
-    Ref layer = *m_layer;
-    return layer->backingStoreBytesPerPixel() * size().width() * layer->contentsScale() * size().height() * layer->contentsScale();
+    // Note: Clones share the same backing store contents with the original layer (they don't
+    // have separate backing stores), so we don't count their memory separately to avoid double-counting.
+    // The clones copy contents from the original layer via copyContentsFromLayer() when the original
+    // layer updates, but this is just sharing references to the same underlying backing store.
+
+    return memoryEstimate;
 }
 
 Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCA::acceleratedAnimationsForTesting() const
