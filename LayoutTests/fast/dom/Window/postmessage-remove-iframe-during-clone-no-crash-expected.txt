@@ -1,0 +1,21 @@
+Tests that removing an iframe during postMessage structured cloning does not crash. The structured clone algorithm runs JS getters, which can remove the target iframe mid-serialization.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing: object getter removes iframe
+PASS object getter removes iframe did not crash.
+
+Testing: proxy ownKeys removes iframe
+PASS proxy ownKeys removes iframe did not crash.
+
+Testing: nested object deep getter removes iframe
+PASS nested object deep getter removes iframe did not crash.
+
+Testing: rapid-fire postMessage with getter
+PASS rapid-fire postMessage with getter did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
