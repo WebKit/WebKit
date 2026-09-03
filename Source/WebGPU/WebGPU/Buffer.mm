@@ -481,7 +481,14 @@ bool Buffer::isValid() const
 
 static DrawIndexCacheContainerKey makeKey(uint32_t firstIndex, uint32_t indexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb)
 {
-    return { firstIndex, indexCount, primitiveOffset | static_cast<uint32_t>(indexType << 1), static_cast<uint32_t>(icb.gpuResourceID._impl & 0xffffffff), static_cast<uint32_t>((icb.gpuResourceID._impl >> 32) & 0xffffffff) };
+    static_assert(sizeof(icb.gpuResourceID._impl) == 8, "key assumes gpuResourceID is 64 bits");
+    return {
+        firstIndex,
+        indexCount,
+        (primitiveOffset ? 1u : 0u) | (indexType == MTLIndexTypeUInt16 ? 0u : 2u),
+        static_cast<uint32_t>(icb.gpuResourceID._impl & 0xffffffff),
+        static_cast<uint32_t>((icb.gpuResourceID._impl >> 32) & 0xffffffff)
+    };
 }
 
 std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb) const
