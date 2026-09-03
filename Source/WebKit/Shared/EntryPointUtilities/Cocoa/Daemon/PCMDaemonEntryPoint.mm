@@ -53,8 +53,7 @@ static CompletionHandler<void(PCM::EncodedMessage&&)> replySender(PCM::MessageTy
     if (!PCM::messageTypeSendsReply(messageType))
         return nullptr;
     return [request = WTF::move(request)] (PCM::EncodedMessage&& message) {
-        // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(request.get()));
+        OSObjectPtr reply = adoptOSObject(xpc_dictionary_create_reply(request.get()));
         PCM::addVersionAndEncodedMessageToDictionary(WTF::move(message), reply.get());
         xpc_connection_send_message(OSObjectPtr<xpc_connection_t> { xpc_dictionary_get_remote_connection(request.get()) }.get(), reply.get());
     };
@@ -82,8 +81,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_activity_register("com.apple.webkit.adattributiond.activity", XPC_ACTIVITY_CHECK_IN, ^(xpc_activity_t activity) {
         if (xpc_activity_get_state(activity) == XPC_ACTIVITY_STATE_CHECK_IN) {
             NSLog(@"Activity checking in");
-            // FIXME: This is a false positive. <rdar://164843889>
-            SUPPRESS_RETAINPTR_CTOR_ADOPT auto criteria = adoptOSObject(xpc_activity_copy_criteria(activity));
+            OSObjectPtr criteria = adoptOSObject(xpc_activity_copy_criteria(activity));
 
             // These values should align with values from com.apple.webkit.adattributiond.plist
             constexpr auto oneHourSeconds = 3600;

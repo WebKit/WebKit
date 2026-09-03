@@ -554,15 +554,13 @@ static void attemptConnectionInProcessWithoutEntitlement()
 {
 #if USE(APPLE_INTERNAL_SDK)
     __block bool done = false;
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", mainDispatchQueueSingleton(), 0));
+    OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
         EXPECT_EQ(event, XPC_ERROR_CONNECTION_INTERRUPTED);
         done = true;
     });
     xpc_connection_activate(connection.get());
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_connection_send_message(connection.get(), dictionary.get());
     TestWebKitAPI::Util::run(&done);
 #endif

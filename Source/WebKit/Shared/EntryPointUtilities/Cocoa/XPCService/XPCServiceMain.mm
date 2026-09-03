@@ -252,8 +252,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 return;
             }
 
-            // FIXME: This is a false positive. <rdar://164843889>
-            SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
+            OSObjectPtr reply = adoptOSObject(xpc_dictionary_create_reply(event));
             xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
             xpc_connection_send_message(OSObjectPtr<xpc_connection_t> { xpc_dictionary_get_remote_connection(event) }.get(), reply.get());
 
@@ -288,8 +287,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
 int XPCServiceMain(int, const char**)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
+    OSObjectPtr bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

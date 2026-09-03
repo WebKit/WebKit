@@ -461,8 +461,7 @@ private:
 
 OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(TestEncoder&& encoder) const
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     uint64_t protocolVersion = WebKit::WebPushD::protocolVersionValue;
     if (m_shouldIncrementProtocolVersionForTesting)
@@ -474,8 +473,7 @@ OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFr
     OSObjectPtr dispatchData = adoptOSObject(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         blockBytes.clear();
     }));
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    OSObjectPtr encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encoderData.get());
 
@@ -539,8 +537,7 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
 
 OSObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
+    OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
@@ -556,8 +553,7 @@ TEST(WebPushD, BasicCommunication)
 {
     NSURL *tempDir = setUpTestWebPushD();
 
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
+    OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
     __block bool webPushDaemonDone = false;
     __block bool interrupted = false;

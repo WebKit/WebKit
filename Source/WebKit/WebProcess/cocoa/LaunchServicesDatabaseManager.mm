@@ -61,8 +61,7 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 
 void LaunchServicesDatabaseManager::didConnect()
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName);
 
     auto connection = this->connection();

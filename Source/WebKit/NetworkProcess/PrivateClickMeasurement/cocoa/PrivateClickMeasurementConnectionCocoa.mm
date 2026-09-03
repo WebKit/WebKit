@@ -64,8 +64,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
 
 OSObjectPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     addVersionAndEncodedMessageToDictionary(WTF::move(message), dictionary.get());
     xpc_dictionary_set_uint64(dictionary.get(), protocolMessageTypeKey, static_cast<uint64_t>(messageType));
     return dictionary;

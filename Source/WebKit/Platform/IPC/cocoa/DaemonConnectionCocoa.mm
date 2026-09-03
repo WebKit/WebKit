@@ -72,8 +72,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 {
     if (m_connection)
         return;
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), mainDispatchQueueSingleton(), 0));
+    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         // Promote `weakThis` to a stack-local strong reference before doing anything else.
         // Clearing m_connection below may release the last strong reference to the

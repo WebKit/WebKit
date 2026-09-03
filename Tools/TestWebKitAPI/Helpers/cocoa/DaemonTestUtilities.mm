@@ -83,8 +83,7 @@ RetainPtr<NSURL> currentExecutableDirectory()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static OSObjectPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr xpc = adoptOSObject(xpc_array_create(nullptr, 0));
+    OSObjectPtr xpc = adoptOSObject(xpc_array_create(nullptr, 0));
     for (id value in array) {
         if ([value isKindOfClass:NSString.class])
             xpc_array_set_string(xpc.get(), XPC_ARRAY_APPEND, [value UTF8String]);
@@ -96,8 +95,7 @@ static OSObjectPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 
 static OSObjectPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, id> *dictionary)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr xpc = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr xpc = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     for (NSString *key in dictionary) {
         ASSERT([key isKindOfClass:NSString.class]);
         const char* keyUTF8 = key.UTF8String;

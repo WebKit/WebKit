@@ -227,8 +227,7 @@ OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 
 RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
     NSError* error = nil;
     auto coordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithXPCRepresentation:xpcRepresentation.get() error:&error];
@@ -239,8 +238,7 @@ RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::cr
 
 RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
     xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
     NSError* error = nil;

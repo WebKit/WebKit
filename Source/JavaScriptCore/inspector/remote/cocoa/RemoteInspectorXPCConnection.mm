@@ -186,8 +186,7 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (!xpcDictionary)
         return;
 
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto msg = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr msg = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_value(msg.get(), RemoteInspectorXPCConnectionSerializedMessageKey, xpcDictionary.get());
     xpc_connection_send_message(m_connection.get(), msg.get());
 }

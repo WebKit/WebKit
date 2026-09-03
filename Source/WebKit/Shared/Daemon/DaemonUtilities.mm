@@ -39,8 +39,7 @@ namespace WebKit {
 
 void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t))
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), XPC_CONNECTION_MACH_SERVICE_LISTENER));
+    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), XPC_CONNECTION_MACH_SERVICE_LISTENER));
     xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
         if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
             return;
@@ -83,8 +82,7 @@ void startListeningForMachServiceConnections(const char* serviceName, ASCIILiter
 
 OSObjectPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&& vector)
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptOSObject(xpc_data_create_with_dispatch_data(makeDispatchData(WTF::move(vector)).get()));
+    return adoptOSObject(xpc_data_create_with_dispatch_data(makeDispatchData(WTF::move(vector)).get()));
 }
 
 OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
@@ -96,8 +94,7 @@ OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
         blockEncoder.moveToUniquePtr();
     }));
 
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 }
 
 } // namespace WebKit

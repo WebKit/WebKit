@@ -42,8 +42,7 @@ namespace WebKit {
 
 XPCEndpoint::XPCEndpoint()
 {
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create(nullptr, nullptr));
+    m_connection = adoptOSObject(xpc_connection_create(nullptr, nullptr));
     SUPPRESS_RETAINPTR_CTOR_ADOPT m_endpoint = adoptOSObject(xpc_endpoint_create(m_connection.get()));
 
     xpc_connection_set_target_queue(m_connection.get(), mainDispatchQueueSingleton());
@@ -84,8 +83,7 @@ void XPCEndpoint::sendEndpointToConnection(xpc_connection_t connection)
     if (!connection)
         return;
 
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), xpcEndpointMessageNameKey(), xpcEndpointMessageName());
     xpc_dictionary_set_value(message.get(), xpcEndpointNameKey(), m_endpoint.get());
 

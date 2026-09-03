@@ -360,8 +360,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
     }
 #endif
 
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(request));
+    OSObjectPtr reply = adoptOSObject(xpc_dictionary_create_reply(request));
     auto replyHandler = [xpcConnection = WTF::move(xpcConnection), reply = WTF::move(reply)] (UniqueRef<IPC::Encoder>&& encoder) {
         RELEASE_ASSERT(RunLoop::isMain());
         auto xpcData = WebKit::encoderToXPCData(WTF::move(encoder));
