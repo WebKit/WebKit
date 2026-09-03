@@ -37,7 +37,7 @@ function test()
             error: dumpSamples
         },
         {
-            message: "SampleIds from a any probe are sequential and start counting from one.",
+            message: "SampleIds from any probe are sequential and start counting from one.",
             predicate: function samplesHaveSequentialIds() {
                 let initialSampleId = samples[0].sampleId;
                 for (let i = 0; i < samples.length; ++i) {
