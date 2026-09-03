@@ -34,6 +34,20 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         this.element.classList.add("layout-panel");
     }
 
+    // Public
+
+    supportsDOMNode(nodeToInspect)
+    {
+        let tabContentView = WI.tabBrowser?.selectedTabContentView;
+        if (tabContentView?.contentBrowser) {
+            let currentContentView = tabContentView.contentBrowser.currentContentView;
+            if (currentContentView?.representedObject instanceof WI.AccessibilityTree)
+                return false;
+        }
+
+        return super.supportsDOMNode(nodeToInspect);
+    }
+
     // Protected
 
     attached()

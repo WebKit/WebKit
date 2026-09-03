@@ -131,9 +131,12 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
             return new WI.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WI.DOMTree)
+        if (representedObject instanceof WI.DOMTree) 
             return new WI.FrameDOMTreeContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WI.AccessibilityTree) 
+            return new WI.FrameAccessibilityTreeContentView(representedObject, extraArguments);
+    
         if (representedObject instanceof WI.DOMSearchMatchObject) {
             var resultView = new WI.FrameDOMTreeContentView(WI.networkManager.mainFrame.domTree, extraArguments);
             resultView.restoreFromCookie({nodeToSelect: representedObject.domNode});
@@ -237,6 +240,9 @@ WI.ContentView = class ContentView extends WI.View
 
     static resolvedRepresentedObjectForRepresentedObject(representedObject)
     {
+        if (representedObject instanceof WI.AccessibilityTree)
+            return representedObject;
+
         if (representedObject instanceof WI.Frame)
             return representedObject.mainResource;
 
@@ -304,6 +310,8 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.IndexedDatabaseObjectStore)
             return true;
         if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
+            return true;
+        if (representedObject instanceof WI.AccessibilityTree)
             return true;
         if (representedObject instanceof WI.DOMTree)
             return true;

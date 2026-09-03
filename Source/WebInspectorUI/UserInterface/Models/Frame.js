@@ -209,6 +209,13 @@ WI.Frame = class Frame extends WI.Object
             this._domTree = new WI.DOMTree(this);
         return this._domTree;
     }
+    
+    get accessibilityTree()
+    {
+        if (!this._accessibilityTree)
+            this._accessibilityTree = new WI.AccessibilityTree(this);
+        return this._accessibilityTree;
+    }
 
     get pageExecutionContext()
     {
@@ -474,6 +481,10 @@ WI.Frame = class Frame extends WI.Object
         if (this._domTree) {
             this._domTree.disconnect();
             this._domTree = null;
+        }
+        if (this._accessibilityTree) {
+            this._accessibilityTree.disconnect();
+            this._accessibilityTree = null;
         }
 
         this._parentFrame = null;

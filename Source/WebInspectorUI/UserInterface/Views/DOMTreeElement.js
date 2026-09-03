@@ -1436,24 +1436,104 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         // After editing is committed updateTitle will be called.
         if (this._editing && !this._forceUpdateTitle)
             return;
-
         if (onlySearchQueryChanged) {
             if (this._highlightResult)
                 this._updateSearchHighlight(false);
         } else {
             this.title = document.createElement("span");
-            this.title.appendChild(this._nodeTitleInfo().titleDOM);
+            if(!!this.treeOutline?.isAccessibilityTree){
+                let domNode = this.representedObject;
+                domNode.accessibilityProperties((accessibilityProps) => {
+                    let accessibilityNode = new WI.AccessibilityNode(domNode, accessibilityProps);
+                    
+                    if (!accessibilityNode.shouldBeDisplayed() || this._elementCloseTag) {
+                        this.hasChildren = false;
+                        if (this.parent) {
+                            this.parent.removeChild(this);
+                        }
+                        return;
+                    }
+                    
+                    let baseURL = domNode.frame ? domNode.frame.url : null;
+                    let titleDOM = this._buildAccessibilityDOM(accessibilityNode, baseURL);
+                    this.title.textContent = ""; 
+                    this.title.appendChild(titleDOM);
+                });
+
+            }
+            else{
+                this.title.appendChild(this._nodeTitleInfo().titleDOM);
+                this._createBadges();
+            }
             this._highlightResult = undefined;
         }
-        this._createBadges();
-
-        // Setting this.title will implicitly remove all children. Clear the
-        // selection element so that we properly recreate it if necessary.
         this._selectionElement = null;
         this.updateSelectionArea();
         this._highlightSearchResults();
         this._updatePseudoClassIndicator();
         this._updateBreakpointStatus();
+    }
+
+    _buildAccessibilityDOM(accessibilityNode, baseURL)
+    {
+        var domNode = accessibilityNode.domNode;
+        var titleDOM = document.createDocumentFragment();
+        var tagElement = document.createElement("span");
+        tagElement.className = "accessibility-tree-node";
+        if (accessibilityNode.isIgnored) 
+            tagElement.classList.add("disabled-element");
+        
+        var tagNameElement = document.createElement("span");
+        let roleSpan = document.createElement("span");
+        roleSpan.className = "accessibility-role";
+        roleSpan.textContent = accessibilityNode.computedRole.charAt(0).toUpperCase() + accessibilityNode.computedRole.slice(1);
+        tagNameElement.appendChild(roleSpan);
+        if (accessibilityNode.computedLabel) {
+            let colon = document.createTextNode(": ");
+            let labelSpan = document.createElement("span");
+            labelSpan.className = "accessibility-label";
+            labelSpan.textContent = `"${accessibilityNode.computedLabel}"`;
+            tagNameElement.appendChild(colon);
+            tagNameElement.appendChild(labelSpan);
+        }
+        if (typeof accessibilityNode.focused === "boolean") {
+            let focusSpan = document.createElement("span");
+            focusSpan.className = "accessibility-focus";
+            focusSpan.textContent = WI.UIString(" Focused: %s").format(accessibilityNode.focused);
+            tagNameElement.appendChild(focusSpan);
+        }
+        var attributes = domNode.attributes();
+        for (var i = 0; i < attributes.length; ++i) {
+            var attr = attributes[i];
+            if (attr.name === "src" || /\bhref\b/.test(attr.name)) {
+                let rewrittenURL = absoluteURL(attr.value, baseURL);
+                if (rewrittenURL) {
+                    let urlSpan = document.createElement("span");
+                    urlSpan.className = "accessibility-base-url";
+                    urlSpan.textContent = WI.UIString(" Url: %s").format(rewrittenURL);
+                    tagNameElement.appendChild(urlSpan);
+                }
+            }
+        }
+        if (accessibilityNode.hasWarnings)
+            this._addAccessibilityWarnings(tagNameElement, accessibilityNode);
+        tagElement.appendChild(tagNameElement);
+        titleDOM.appendChild(tagElement);
+        titleDOM.append("\u200B");
+        return titleDOM;
+    }
+
+    _addAccessibilityWarnings(tagNameElement, accessibilityNode)
+    {
+        let warningSpan = document.createElement("span");
+        warningSpan.className = "accessibility-warning";
+        
+        for (let warningMessage of accessibilityNode.warningMessages) {
+            let warningIcon = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "accessibility-warning-icon", warningMessage);
+            warningSpan.appendChild(warningIcon);
+        }
+        
+        tagNameElement.appendChild(warningSpan);
     }
 
     _buildAttributeDOM(parentElement, name, value, node)

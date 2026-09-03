@@ -241,6 +241,8 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     _attach()
     {
+        if (this._shouldHideFromAxTree)
+            return;
         if (!this._listItemNode || this.parent._shouldRefreshChildren) {
             if (this.parent._shouldRefreshChildren)
                 this._detach();

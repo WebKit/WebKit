@@ -2,6 +2,9 @@ var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
 localizedStrings[" (line %s)"] = " (line %s)";
+localizedStrings[" Focused: %s"] = " Focused: %s";
+localizedStrings[" Url: %s"] = " Url: %s";
+localizedStrings[": \"%s\""] = ": \"%s\"";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["% Progress"] = "% Progress";
 localizedStrings["%.0f B"] = "%.0f B";
@@ -691,12 +694,14 @@ localizedStrings["Element is the root element"] = "Element is the root element";
 localizedStrings["Element may overlap another compositing element"] = "Element may overlap another compositing element";
 localizedStrings["Element overlaps other compositing element"] = "Element overlaps other compositing element";
 localizedStrings["Elements"] = "Elements";
+localizedStrings["Elements:"] = "Elements:";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
 /* Checkbox shown in the Console to cause future evaluations as though they are in response to user interaction. */
 localizedStrings["Emulate User Gesture @ Console"] = "Emulate User Gesture";
 /* Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction. */
 localizedStrings["Emulate User Gesture @ breakpoint action configuration"] = "Emulate User Gesture";
+localizedStrings["Enable Accessibility Tree View"] = "Enable Accessibility Tree View";
 localizedStrings["Enable All"] = "Enable All";
 localizedStrings["Enable Audit"] = "Enable Audit";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
@@ -863,6 +868,7 @@ localizedStrings["General"] = "General";
 localizedStrings["General @ Local Override Type"] = "General";
 /* Title for General Section in Media Sidebar */
 localizedStrings["General @ Media Sidebar"] = "General";
+localizedStrings["Generic <%s>"] = "Generic <%s>";
 localizedStrings["Getter"] = "Getter";
 localizedStrings["Global Code"] = "Global Code";
 localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
@@ -870,6 +876,8 @@ localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
 localizedStrings["Global Search From Selection @ Settings"] = "%s from selection";
 localizedStrings["Global Variables"] = "Global Variables";
 localizedStrings["Go to variable"] = "Go to variable";
+localizedStrings["Go to Accessibility Tree"] = "Go to Accessibility Tree";
+localizedStrings["Go to DOM Tree"] = "Go to DOM Tree";
 localizedStrings["Grammar"] = "Grammar";
 /* Name of Graphics Tab */
 localizedStrings["Graphics Tab Name"] = "Graphics";
@@ -938,7 +946,9 @@ localizedStrings["If the URL of any script matches one of the regular expression
 localizedStrings["Ignore"] = "Ignore";
 localizedStrings["Ignore script when debugging"] = "Ignore script when debugging";
 localizedStrings["Ignored"] = "Ignored";
+localizedStrings["Ignored <%s>"] = "Ignored <%s>";
 localizedStrings["Image"] = "Image";
+localizedStrings["Image elements should have a label for accessibility"] = "Image elements should have a label for accessibility";
 localizedStrings["Image Size"] = "Image Size";
 localizedStrings["Images"] = "Images";
 localizedStrings["Images:"] = "Images:";
@@ -1043,6 +1053,8 @@ localizedStrings["Linear Gradient"] = "Linear Gradient";
 localizedStrings["Linear sRGB @ Color Space"] = "Linear sRGB";
 /* Property value for `font-variant-numeric: lining-nums`. */
 localizedStrings["Lining Numerals @ Font Details Sidebar Property Value"] = "Lining Numerals";
+localizedStrings["Link elements should have a label for accessibility"] = "Link elements should have a label for accessibility";
+localizedStrings["Textbox elements should have a label for accessibility"] = "Textbox elements should have a label for accessibility";
 localizedStrings["Live"] = "Live";
 localizedStrings["Live Activity"] = "Live Activity";
 localizedStrings["Live Size"] = "Live Size";

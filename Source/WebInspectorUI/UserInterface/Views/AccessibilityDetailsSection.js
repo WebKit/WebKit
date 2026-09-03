@@ -23,417 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMDetailsSidebarPanel
-{
-    constructor()
+WI.AccessibilityDetailsSection = class AccessibilityDetailsSection {
+    constructor(domNode)
     {
-        super("dom-node-details", WI.UIString("Node"));
+        console.assert(domNode instanceof WI.DOMNode);
+        this.domNode = domNode;
+        this._accessibilityEmptyRow = new WI.DetailsSectionRow(WI.UIString("No Accessibility Information"));
+        this._accessibilityNodeActiveDescendantRow = new WI.DetailsSectionSimpleRow(WI.UIString("Shared Focus"));
+        this._accessibilityNodeBusyRow = new WI.DetailsSectionSimpleRow(WI.UIString("Busy"));
+        this._accessibilityNodeCheckedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Checked"));
+        this._accessibilityNodeSwitchStateRow = new WI.DetailsSectionSimpleRow(WI.UIString("State"));
+        this._accessibilityNodeChildrenRow = new WI.DetailsSectionSimpleRow(WI.UIString("Children"));
+        this._accessibilityNodeControlsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Controls"));
+        this._accessibilityNodeCurrentRow = new WI.DetailsSectionSimpleRow(WI.UIString("Current"));
+        this._accessibilityNodeDisabledRow = new WI.DetailsSectionSimpleRow(WI.UIString("Disabled"));
+        this._accessibilityNodeExpandedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Expanded"));
+        this._accessibilityNodeFlowsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Flows"));
+        this._accessibilityNodeFocusedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Focused"));
+        this._accessibilityNodeHeadingLevelRow = new WI.DetailsSectionSimpleRow(WI.UIString("Heading Level"));
+        this._accessibilityNodehierarchyLevelRow = new WI.DetailsSectionSimpleRow(WI.UIString("Hierarchy Level"));
+        this._accessibilityNodeIgnoredRow = new WI.DetailsSectionSimpleRow(WI.UIString("Ignored"));
+        this._accessibilityNodeInvalidRow = new WI.DetailsSectionSimpleRow(WI.UIString("Invalid"));
+        this._accessibilityNodeLiveRegionStatusRow = new WI.DetailsSectionSimpleRow(WI.UIString("Live"));
+        this._accessibilityNodeMouseEventRow = new WI.DetailsSectionSimpleRow("");
+        this._accessibilityNodeLabelRow = new WI.DetailsSectionSimpleRow(WI.UIString("Label"));
+        this._accessibilityNodeOwnsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Owns"));
+        this._accessibilityNodeParentRow = new WI.DetailsSectionSimpleRow(WI.UIString("Parent"));
+        this._accessibilityNodePressedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Pressed"));
+        this._accessibilityNodeReadonlyRow = new WI.DetailsSectionSimpleRow(WI.UIString("Readonly"));
+        this._accessibilityNodeRequiredRow = new WI.DetailsSectionSimpleRow(WI.UIString("Required"));
+        this._accessibilityNodeRoleRow = new WI.DetailsSectionSimpleRow(WI.UIString("Role"));
+        this._accessibilityNodeSelectedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Selected"));
+        this._accessibilityNodeSelectedChildrenRow = new WI.DetailsSectionSimpleRow(WI.UIString("Selected Items"));
 
-        this._eventListenerGroupingMethodSetting = new WI.Setting("dom-node-event-listener-grouping-method", WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
+        this._accessibilityGroup = new WI.DetailsSectionGroup([this._accessibilityEmptyRow]);
+        var accessibilitySection = new WI.DetailsSection("dom-node-accessibility", WI.UIString("Accessibility"), [this._accessibilityGroup]);
 
-        this.element.classList.add("dom-node");
-
-        this._nodeRemoteObject = null;
+        this.element = accessibilitySection.element;
     }
-
-    // Public
-
-    supportsDOMNode(nodeToInspect)
+    set domNode(node)
     {
-        let tabContentView = WI.tabBrowser?.selectedTabContentView;
-        if (tabContentView?.contentBrowser) {
-            let currentContentView = tabContentView.contentBrowser.currentContentView;
-            if (currentContentView?.representedObject instanceof WI.AccessibilityTree)
-                return false;
-        }
-
-        return super.supportsDOMNode(nodeToInspect);
+        console.assert(node instanceof WI.DOMNode);
+        this._domNode = node;
     }
-
-    closed()
+    get domNode()
     {
-        if (this.didInitialLayout) {
-            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
-            WI.domManager.removeEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
-        }
-
-        super.closed();
-    }
-
-    // Protected
-
-    initialLayout()
-    {
-        super.initialLayout();
-
-        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeModified, this._attributesChanged, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._attributesChanged, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._characterDataModified, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.CustomElementStateChanged, this._customElementStateChanged, this);
-
-        this._identityNodeTypeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
-        this._identityNodeNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
-        this._identityNodeValueRow = new WI.DetailsSectionSimpleRow(WI.UIString("Value"));
-        this._identityNodeContentSecurityPolicyHashRow = new WI.DetailsSectionSimpleRow(WI.UIString("CSP Hash"));
-
-        var identityGroup = new WI.DetailsSectionGroup([this._identityNodeTypeRow, this._identityNodeNameRow, this._identityNodeValueRow, this._identityNodeContentSecurityPolicyHashRow]);
-        var identitySection = new WI.DetailsSection("dom-node-identity", WI.UIString("Identity"), [identityGroup]);
-        this.contentView.element.appendChild(identitySection.element);
-
-        this._attributesDataGridRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Attributes"));
-
-        var attributesGroup = new WI.DetailsSectionGroup([this._attributesDataGridRow]);
-        var attributesSection = new WI.DetailsSection("dom-node-attributes", WI.UIString("Attributes"), [attributesGroup]);
-        this.contentView.element.appendChild(attributesSection.element);
-
-        if (InspectorBackend.hasCommand("DOM.resolveNode")) {
-            this._propertiesRow = new WI.DetailsSectionRow;
-            let propertiesGroup = new WI.DetailsSectionGroup([this._propertiesRow]);
-            let propertiesSection = new WI.DetailsSection("dom-node-properties", WI.UIString("Properties"), [propertiesGroup]);
-            this.contentView.element.appendChild(propertiesSection.element);
-        }
-
-        let eventListenersFilterElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter", WI.UIString("Grouping Method"));
-        WI.addMouseDownContextMenuHandlers(eventListenersFilterElement, this._populateEventListenersFilterContextMenu.bind(this));
-
-        this._eventListenersSectionGroup = new WI.DetailsSectionGroup;
-        let eventListenersSection = new WI.DetailsSection("dom-node-event-listeners", WI.UIString("Event Listeners"), [this._eventListenersSectionGroup], eventListenersFilterElement);
-        this.contentView.element.appendChild(eventListenersSection.element);
-
-        if (InspectorBackend.hasCommand("DOM.getDataBindingsForNode")) {
-            this._dataBindingsSection = new WI.DetailsSection("dom-node-data-bindings", WI.UIString("Data Bindings"), []);
-            this.contentView.element.appendChild(this._dataBindingsSection.element);
-        }
-
-        if (InspectorBackend.hasCommand("DOM.getAssociatedDataForNode")) {
-            this._associatedDataGrid = new WI.DetailsSectionRow(WI.UIString("No Associated Data"));
-
-            let associatedDataGroup = new WI.DetailsSectionGroup([this._associatedDataGrid]);
-
-            let associatedSection = new WI.DetailsSection("dom-node-associated-data", WI.UIString("Associated Data"), [associatedDataGroup]);
-            this.contentView.element.appendChild(associatedSection.element);
-        }
-
-        if (this._accessibilitySupported()) {
-            this._accessibilitySection = new WI.AccessibilityDetailsSection(this.domNode);
-            this.contentView.element.appendChild(this._accessibilitySection.element);
-       }
-    }
-
-    layout()
-    {
-        super.layout();
-
-        if (!this.domNode || this.domNode.destroyed)
-            return;
-
-        this._refreshIdentity();
-        this._refreshAttributes();
-        this._refreshProperties();
-        this._refreshEventListeners();
-        this._refreshDataBindings();
-        this._refreshAssociatedData();
-        if (this._accessibilitySection) {
-            this._accessibilitySection.domNode = this.domNode;
-            this._accessibilitySection._refreshProperties();
-        }
-    }
-
-    sizeDidChange()
-    {
-        super.sizeDidChange();
-
-        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
-        this._attributesDataGridRow.sizeDidChange();
-    }
-
-    attached()
-    {
-        super.attached();
-
-        WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
-    }
-
-    detached()
-    {
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
-
-        super.detached();
-    }
-
-    // Private
-
-    _accessibilitySupported()
-    {
-        return InspectorBackend.hasCommand("DOM.getAccessibilityPropertiesForNode");
-    }
-
-    _refreshIdentity()
-    {
-        const domNode = this.domNode;
-        this._identityNodeTypeRow.value = this._nodeTypeDisplayName();
-        this._identityNodeNameRow.value = domNode.nodeNameInCorrectCase();
-        this._identityNodeValueRow.value = domNode.nodeValue();
-        this._identityNodeContentSecurityPolicyHashRow.value = domNode.contentSecurityPolicyHash();
-    }
-
-    _refreshAttributes()
-    {
-        let domNode = this.domNode;
-        if (!domNode || !domNode.hasAttributes()) {
-            // Remove the DataGrid to show the placeholder text.
-            this._attributesDataGridRow.dataGrid = null;
-            return;
-        }
-
-        let dataGrid = this._attributesDataGridRow.dataGrid;
-        if (!dataGrid) {
-            const columns = {
-                name: {title: WI.UIString("Name"), width: "30%"},
-                value: {title: WI.UIString("Value")},
-            };
-            dataGrid = this._attributesDataGridRow.dataGrid = new WI.DataGrid(columns);
-        }
-
-        dataGrid.removeChildren();
-
-        let attributes = domNode.attributes();
-        attributes.sort((a, b) => a.name.extendedLocaleCompare(b.name));
-        for (let attribute of attributes) {
-            let dataGridNode = new WI.EditableDataGridNode(attribute);
-            dataGridNode.addEventListener(WI.EditableDataGridNode.Event.ValueChanged, this._attributeNodeValueChanged, this);
-            dataGrid.appendChild(dataGridNode);
-        }
-
-        dataGrid.updateLayoutIfNeeded();
+        return this._domNode;
     }
 
     _refreshProperties()
-    {
-        if (!this._propertiesRow)
-            return;
-
-        if (this._nodeRemoteObject) {
-            this._nodeRemoteObject.release();
-            this._nodeRemoteObject = null;
-        }
-
-        let target = WI.assumingMainTarget();
-
-        const objectGroup = "dom-node-details-sidebar-properties-object-group";
-        target.RuntimeAgent.releaseObjectGroup(objectGroup);
-
-        let domNode = this.domNode;
-        WI.RemoteObject.resolveNode(domNode, objectGroup).then((object) => {
-            // Bail if the DOM node changed while we were waiting for the async response.
-            if (this.domNode !== domNode)
-                return;
-
-            this._nodeRemoteObject = object;
-
-            function inspectedPage_node_collectPrototypes()
-            {
-                // This builds an object with numeric properties. This is easier than dealing with arrays
-                // with the way RemoteObject works. Start at 1 since we use parseInt later and parseInt
-                // returns 0 for non-numeric strings make it ambiguous.
-                var prototype = this;
-                var result = [];
-                var counter = 1;
-
-                while (prototype) {
-                    result[counter++] = prototype;
-                    prototype = prototype.__proto__;
-                }
-
-                return result;
-            }
-
-            const args = undefined;
-            const generatePreview = false;
-            object.callFunction(inspectedPage_node_collectPrototypes, args, generatePreview, nodePrototypesReady.bind(this));
-        }).catch((error) => {
-            // Bail if the DOM node changed while we were waiting for the async response.
-            if (this.domNode !== domNode)
-                return;
-
-            console.assert(false, "Cannot resolve node.", error, domNode);
-        });
-
-        function nodePrototypesReady(error, object, wasThrown)
-        {
-            if (error || wasThrown || !object)
-                return;
-
-            // Bail if the DOM node changed while we were waiting for the async response.
-            if (this.domNode !== domNode)
-                return;
-
-            object.getPropertyDescriptors(fillSection.bind(this), {ownProperties: true});
-        }
-
-        function fillSection(prototypes)
-        {
-            if (!prototypes)
-                return;
-
-            // Bail if the DOM node changed while we were waiting for the async response.
-            if (this.domNode !== domNode)
-                return;
-
-            let element = this._propertiesRow.element;
-            element.removeChildren();
-
-            let propertyPath = new WI.PropertyPath(this._nodeRemoteObject, "node");
-
-            let initialSection = true;
-            for (let i = 0; i < prototypes.length; ++i) {
-                // The only values we care about are numeric, as assigned in collectPrototypes.
-                if (!parseInt(prototypes[i].name, 10))
-                    continue;
-
-                let prototype = prototypes[i].value;
-                let prototypeName = prototype.description;
-                let title = prototypeName;
-                if (/Prototype$/.test(title)) {
-                    prototypeName = prototypeName.replace(/Prototype$/, "");
-                    title = prototypeName + WI.UIString(" (Prototype)");
-                } else if (title === "Object")
-                    title = title + WI.UIString(" (Prototype)");
-
-                let mode = initialSection ? WI.ObjectTreeView.Mode.Properties : WI.ObjectTreeView.Mode.PureAPI;
-                let objectTree = new WI.ObjectTreeView(prototype, mode, propertyPath);
-                objectTree.showOnlyProperties();
-                objectTree.setPrototypeNameOverride(prototypeName);
-
-                let detailsSection = new WI.DetailsSection(prototype.description.hash + "-prototype-properties", title, null, null, true);
-                detailsSection.groups[0].rows = [new WI.ObjectPropertiesDetailSectionRow(objectTree, detailsSection)];
-
-                element.appendChild(detailsSection.element);
-
-                initialSection = false;
-            }
-        }
-    }
-
-    async _refreshEventListeners()
-    {
-        var domNode = this.domNode;
-        if (!domNode)
-            return;
-
-        let {listeners} = await domNode.getEventListeners();
-
-        // Bail if the DOM node changed while we were waiting for the async response.
-        if (this.domNode !== domNode)
-            return;
-
-        if (!listeners.length) {
-            let emptyRow = new WI.DetailsSectionRow(WI.UIString("No Event Listeners"));
-            emptyRow.showEmptyMessage();
-            this._eventListenersSectionGroup.rows = [emptyRow];
-            return;
-        }
-
-        switch (this._eventListenerGroupingMethodSetting.value) {
-        case WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event:
-            this._eventListenersSectionGroup.rows = WI.EventListenerSectionGroup.groupIntoSectionsByEvent(listeners);
-            break;
-
-        case WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target:
-            this._eventListenersSectionGroup.rows = WI.EventListenerSectionGroup.groupIntoSectionsByTarget(listeners, domNode);
-            break;
-        }
-    }
-
-    _refreshDataBindings()
-    {
-        if (!this._dataBindingsSection)
-            return;
-
-        let domNode = this.domNode;
-        if (!domNode)
-            return;
-
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.getDataBindingsForNode(this.domNode.id).then(({dataBindings}) => {
-            if (this.domNode !== domNode)
-                return;
-
-            if (!dataBindings.length) {
-                let emptyRow = new WI.DetailsSectionRow(WI.UIString("No Data Bindings"));
-                emptyRow.showEmptyMessage();
-                this._dataBindingsSection.groups = [new WI.DetailsSectionGroup([emptyRow])];
-                return;
-            }
-
-            let groups = [];
-            for (let {binding, type, value} of dataBindings) {
-                groups.push(new WI.DetailsSectionGroup([
-                    new WI.DetailsSectionSimpleRow(WI.UIString("Binding"), binding),
-                    new WI.DetailsSectionSimpleRow(WI.UIString("Type"), type),
-                    new WI.DetailsSectionSimpleRow(WI.UIString("Value"), value),
-                ]));
-            }
-            this._dataBindingsSection.groups = groups;
-        });
-    }
-
-    _refreshAssociatedData()
-    {
-        if (!this._associatedDataGrid)
-            return;
-
-        let target = WI.assumingMainTarget();
-
-        const objectGroup = "dom-node-details-sidebar-associated-data-object-group";
-        target.RuntimeAgent.releaseObjectGroup(objectGroup);
-
-        let domNode = this.domNode;
-        if (!domNode)
-            return;
-
-        target.DOMAgent.getAssociatedDataForNode(domNode.id).then(({associatedData}) => {
-            if (this.domNode !== domNode)
-                return;
-
-            if (!associatedData) {
-                this._associatedDataGrid.showEmptyMessage();
-                return;
-            }
-
-            let expression = associatedData;
-            const options = {
-                objectGroup,
-                doNotPauseOnExceptionsAndMuteConsole: true,
-            };
-            WI.runtimeManager.evaluateInInspectedWindow(expression, options, (result, wasThrown) => {
-                console.assert(!wasThrown);
-
-                if (!result) {
-                    this._associatedDataGrid.showEmptyMessage();
-                    return;
-                }
-
-                this._associatedDataGrid.hideEmptyMessage();
-
-                const propertyPath = null;
-                const forceExpanding = true;
-                let element = WI.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(result, propertyPath, forceExpanding);
-
-                let objectTree = element.__objectTree;
-                if (objectTree) {
-                    objectTree.showOnlyJSON();
-                    objectTree.expand();
-                }
-
-                this._associatedDataGrid.element.appendChild(element);
-            });
-        });
-    }
-
-    _refreshAccessibility()
     {
         if (!this._accessibilitySupported())
             return;
@@ -544,12 +182,12 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                         break;
                     }
                 }
-
+                //
                 // Accessibility tree children are not a 1:1 mapping with DOM tree children.
                 var childNodeLinkList = linkListForNodeIds(accessibilityProperties.childNodeIds);
                 var controlledNodeLinkList = linkListForNodeIds(accessibilityProperties.controlledNodeIds);
 
-                let current;
+                var current = "";
                 switch (accessibilityProperties.current) {
                 case InspectorBackend.Enum.DOM.AccessibilityPropertiesCurrent.True:
                     current = WI.UIString("True");
@@ -597,7 +235,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
                 var label = accessibilityProperties.label;
 
-                let liveRegionStatus;
+                var liveRegionStatus = "";
                 var liveRegionStatusNode = null;
                 var liveRegionStatusToken = accessibilityProperties.liveRegionStatus;
                 switch (liveRegionStatusToken) {
@@ -792,109 +430,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
     }
 
-    _populateEventListenersFilterContextMenu(contextMenu)
+    _accessibilitySupported()
     {
-        let addGroupingMethodCheckboxItem = (label, groupingMethod) => {
-            contextMenu.appendCheckboxItem(label, () => {
-                this._eventListenerGroupingMethodSetting.value = groupingMethod;
-
-                this._refreshEventListeners();
-            }, this._eventListenerGroupingMethodSetting.value === groupingMethod);
-        };
-
-        addGroupingMethodCheckboxItem(WI.UIString("Group by Event", "Group by Event @ Node Event Listeners", "Group DOM event listeners by DOM event"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
-        addGroupingMethodCheckboxItem(WI.UIString("Group by Target", "Group by Target @ Node Event Listeners", "Group DOM event listeners by DOM node"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target);
+        return InspectorBackend.hasCommand("DOM.getAccessibilityPropertiesForNode");
     }
-
-    _eventListenersChanged(event)
-    {
-        if (event.target === this.domNode || event.target.isAncestor(this.domNode))
-            this._refreshEventListeners();
-    }
-
-    _attributesChanged(event)
-    {
-        if (event.data.node !== this.domNode)
-            return;
-        this._refreshAttributes();
-        this._accessibilitySection._refreshProperties();
-        this._refreshDataBindings();
-    }
-
-    _attributeNodeValueChanged(event)
-    {
-        let change = event.data;
-        let data = event.target.data;
-
-        if (change.columnIdentifier === "name") {
-            this.domNode.removeAttribute(data[change.columnIdentifier], (error) => {
-                this.domNode.setAttribute(change.value, `${change.value}="${data.value}"`);
-            });
-        } else if (change.columnIdentifier === "value")
-            this.domNode.setAttributeValue(data.name, change.value);
-    }
-
-    _characterDataModified(event)
-    {
-        if (event.data.node !== this.domNode)
-            return;
-        this._identityNodeValueRow.value = this.domNode.nodeValue();
-    }
-
-    _customElementStateChanged(event)
-    {
-        if (event.data.node !== this.domNode)
-            return;
-        this._refreshIdentity();
-    }
-
-    _nodeTypeDisplayName()
-    {
-        switch (this.domNode.nodeType()) {
-        case Node.ELEMENT_NODE: {
-            const nodeName = WI.UIString("Element");
-            const state = this._customElementState();
-            return state === null ? nodeName : `${nodeName} (${state})`;
-        }
-        case Node.TEXT_NODE:
-            return WI.UIString("Text Node");
-        case Node.COMMENT_NODE:
-            return WI.UIString("Comment");
-        case Node.DOCUMENT_NODE:
-            return WI.UIString("Document");
-        case Node.DOCUMENT_TYPE_NODE:
-            return WI.UIString("Document Type");
-        case Node.DOCUMENT_FRAGMENT_NODE:
-            return WI.UIString("Document Fragment");
-        case Node.CDATA_SECTION_NODE:
-            return WI.UIString("Character Data");
-        case Node.PROCESSING_INSTRUCTION_NODE:
-            return WI.UIString("Processing Instruction");
-        default:
-            console.error("Unknown DOM node type: ", this.domNode.nodeType());
-            return this.domNode.nodeType();
-        }
-    }
-
-    _customElementState()
-    {
-        const state = this.domNode.customElementState();
-        switch (state) {
-        case WI.DOMNode.CustomElementState.Builtin:
-            return null;
-        case WI.DOMNode.CustomElementState.Custom:
-            return WI.UIString("Custom");
-        case WI.DOMNode.CustomElementState.Waiting:
-            return WI.UIString("Undefined custom element");
-        case WI.DOMNode.CustomElementState.Failed:
-            return WI.UIString("Failed to upgrade");
-        }
-        console.error("Unknown DOM custom element state: ", state);
-        return null;
-    }
-};
-
-WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod = {
-    Event: "event",
-    Target: "target",
 };

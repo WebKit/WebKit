@@ -1015,6 +1015,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         target.DOMAgent.getAccessibilityPropertiesForNode(this.backendNodeId, accessibilityPropertiesCallback.bind(this));
     }
 
+
     path()
     {
         var path = [];

@@ -237,6 +237,7 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
+    experimentalEnableAccessibilityTreeView: new WI.Setting("experimental-accessibility-tree-view", false),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),

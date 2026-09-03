@@ -48,7 +48,13 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         if (InspectorBackend.hasDomain("LayerTree"))
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
+        detailsSidebarPanelConstructors.push(WI.AccessibilityDetailsSidebarPanel);
+
         super(ElementsTabContentView.tabInfo(), {detailsSidebarPanelConstructors, hideBackForwardButtons: true, disableBackForwardNavigation: true});
+
+        this._domTreeView = null;
+        this._accessibilityTreeView = null;
+        this._domTreeDetailsSidePanels = detailsSidebarPanelConstructors;
     }
 
     static tabInfo()
@@ -84,7 +90,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
 
     canShowRepresentedObject(representedObject)
     {
-        return representedObject instanceof WI.DOMTree;
+        return representedObject instanceof WI.DOMTree || representedObject instanceof WI.AccessibilityTree;
     }
 
     showRepresentedObject(representedObject, cookie)
@@ -95,9 +101,10 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
             return;
 
         let domTreeContentView = this.contentBrowser.currentContentView;
-        console.assert(domTreeContentView instanceof WI.DOMTreeContentView, "Unexpected DOMTreeContentView representedObject.", domTreeContentView);
-
-        domTreeContentView.selectAndRevealDOMNode(cookie.nodeToSelect);
+        console.assert(domTreeContentView instanceof WI.DOMTreeContentView || domTreeContentView instanceof WI.FrameAccessibilityTreeContentView, "Unexpected ContentView representedObject.", domTreeContentView);
+        
+        if (domTreeContentView && typeof domTreeContentView.selectAndRevealDOMNode === "function")
+            domTreeContentView.selectAndRevealDOMNode(cookie.nodeToSelect);
 
         // Because nodeToSelect is ephemeral, we don't want to keep
         // it around in the back-forward history entries.
@@ -127,6 +134,69 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         super.initialLayout();
 
         this.element.appendChild(WI.ReferencePage.ElementsTab.DOMTree.createLinkElement());
+        if(WI.settings.experimentalEnableAccessibilityTreeView.value)
+            this.element.appendChild(this.createAccessibilityTreeButton());
+    }
+
+    createAccessibilityTreeButton()
+    {
+        let wrapper = document.createElement("span");
+        wrapper.className = "accessibility-tree-container";
+        this._accessibilityTreeToggleButton = new WI.ToggleButtonNavigationItem("accessibility-tree-button", 
+            WI.UIString("Go to Accessibility Tree"), 
+            WI.UIString("Go to DOM Tree"), 
+            "Images/Accessibility.svg", 
+            "Images/Accessibility-fill.svg"
+        );
+        this._accessibilityTreeToggleButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+        this._accessibilityTreeToggleButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, (event) =>{
+            this._toggleTreeView();
+        }, this);
+        wrapper.appendChild(this._accessibilityTreeToggleButton.element);
+        return wrapper;
+    }
+
+    _toggleTreeView()
+    {
+        let mainFrame = WI.networkManager.mainFrame;
+        if (!mainFrame)
+            return;
+
+        let currentView = this.contentBrowser.currentContentView;
+        if (currentView?.domTreeOutline)
+            this._lastSelectedNode = currentView.domTreeOutline.selectedDOMNode();
+
+        const showingAccessibilityTree = this.contentBrowser.currentContentView?.representedObject instanceof WI.AccessibilityTree;
+        const newRepresentedObject = showingAccessibilityTree ? mainFrame.domTree : mainFrame.accessibilityTree;
+        
+        this.contentBrowser.showContentViewForRepresentedObject(newRepresentedObject);
+        this._accessibilityTreeToggleButton.toggled = !showingAccessibilityTree;
+        let newView = this.contentBrowser.currentContentView;
+        if (this._lastSelectedNode) {
+            if (newView.selectAndRevealDOMNode) {
+                newView.selectAndRevealDOMNode(this._lastSelectedNode);
+                
+                if (!showingAccessibilityTree) { 
+                    setTimeout(() => {
+                        if (newView._domTreeOutline) {
+                            newView._domTreeOutline.updateSelectionArea();
+                            
+                            let selectedTreeElement = newView._domTreeOutline.selectedTreeElement;
+                            if (selectedTreeElement && selectedTreeElement.updateSelectionArea) 
+                                selectedTreeElement.updateSelectionArea();
+                        }
+                        if (newView.layout) {
+                            newView.layout();
+                        }
+                        if (newView._domTreeOutline && newView._domTreeOutline.selectedDOMNode()) {
+                            let selectedNode = newView._domTreeOutline.selectedDOMNode();
+                            WI.domManager.hideDOMNodeHighlight();
+                            WI.domManager.highlightDOMNodeList([selectedNode]);
+                        }
+                    }, 100);
+                }
+            }
+        }
     }
 
     closed()

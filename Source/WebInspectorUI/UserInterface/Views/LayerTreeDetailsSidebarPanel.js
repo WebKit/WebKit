@@ -54,6 +54,12 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     supportsDOMNode(nodeToInspect)
     {
+        let tabContentView = WI.tabBrowser.selectedTabContentView;
+        if (tabContentView.contentBrowser) {
+            let currentContentView = tabContentView.contentBrowser.currentContentView;
+            if (currentContentView?.representedObject instanceof WI.AccessibilityTree)
+                return false;
+        }
         return WI.layerTreeManager.supported && nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 

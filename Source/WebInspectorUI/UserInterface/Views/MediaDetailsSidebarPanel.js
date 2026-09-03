@@ -103,6 +103,12 @@ WI.MediaDetailsSidebarPanel = class MediaDetailsSidebarPanel extends WI.DOMDetai
 
     supportsDOMNode(nodeToInspect)
     {
+        let tabContentView = WI.tabBrowser.selectedTabContentView;
+        if (tabContentView.contentBrowser) {
+            let currentContentView = tabContentView.contentBrowser.currentContentView;
+            if (currentContentView?.representedObject instanceof WI.AccessibilityTree)
+                return false;
+        }
         return nodeToInspect.isMediaElement();
     }
 
