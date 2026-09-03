@@ -955,6 +955,15 @@ bool Element::isFocusable() const
             return false;
     }
 
+    // SVG elements inside hidden containers (e.g. <defs>, <g display="none">)
+    // are never rendered and should not be focusable per the SVG spec.
+    if (renderer()) {
+        for (CheckedPtr ancestor = renderer()->parent(); ancestor; ancestor = ancestor->parent()) {
+            if (ancestor->isRenderSVGHiddenContainer() || ancestor->isLegacyRenderSVGHiddenContainer())
+                return false;
+        }
+    }
+
     return hasFocusableStyle();
 }
 
