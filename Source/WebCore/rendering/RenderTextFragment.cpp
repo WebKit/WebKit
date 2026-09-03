@@ -79,7 +79,7 @@ bool RenderTextFragment::canBeSelectionLeaf() const
     return anonymousInlineWrapper && anonymousInlineWrapper->firstLetterRemainingText();
 }
 
-void RenderTextFragment::setTextInternal(const String& newText, bool force)
+void RenderTextFragment::setTextInternal(const String& newText, bool force, bool)
 {
     RenderText::setTextInternal(newText, force);
 

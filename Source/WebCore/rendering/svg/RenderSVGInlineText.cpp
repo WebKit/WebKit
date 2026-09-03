@@ -98,7 +98,7 @@ String RenderSVGInlineText::originalText() const
     return textNode().data();
 }
 
-void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
+void RenderSVGInlineText::setTextInternal(const String& newText, bool force, bool)
 {
     RenderText::setTextInternal(newText, force);
     m_legacyLineBoxes.dirtyForTextChange(*this);

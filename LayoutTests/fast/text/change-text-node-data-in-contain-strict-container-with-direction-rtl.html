@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body {
+        font-size: 0px;
+    }
+    span {
+        display: inline-block;
+        background: silver;
+        width: 100px;
+        height: 100px;
+        margin: 20px;
+        font-size: 25px;
+        contain: strict;
+        line-height: 1;
+        white-space: pre;
+        direction: rtl;
+    }
+    .first-line::first-line {
+        font-size: 35px;
+    }
+  </style>
+  <script>
+    const originalValues = [
+        "foo",
+        "foofoo foofoo",
+        "foofoofoo foofoofoo foofoofoo foofoofoo foofoofoo",
+        "foo",
+        "foo foo foo foo foo",
+        "foo",
+        "foo",
+        "foo",
+    ];
+    const newValues = [
+        "baar",
+        "baarbaar baarbaar",
+        "baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar baarbaarbaar",
+        "baar baar baar baar",
+        "baar",
+        "b \u55e8",
+        "baar\tbaar\tbaar\tbaar",
+        "baar\nbaar\nbaar\nbaar",
+    ];
+    function setupTest() {
+        {
+            let div = document.createElement("div");
+            originalValues.forEach((text) => {
+                let span = document.createElement("span");
+                span.appendChild(document.createTextNode(text));
+                div.appendChild(span);
+            });
+            document.body.appendChild(div);
+        }
+
+        {
+            let div = document.createElement("div");
+            originalValues.forEach((text) => {
+                let span = document.createElement("span");
+                span.className = "first-line";
+                span.appendChild(document.createTextNode(text));
+                div.appendChild(span);
+            });
+            document.body.appendChild(div);
+        }
+    }
+    function changeTextNodeData() {
+        let divs = document.getElementsByTagName("span");
+        for (let i = 0; i < divs.length; i++) {
+            divs[i].childNodes[0].data = newValues[i % newValues.length];
+        }
+    }
+    function runTest() {
+        setupTest();
+        document.body.offsetLeft; // Force layout.
+        changeTextNodeData();
+    }
+  </script>
+  <body onload="runTest();">
+  </body>
+</html>
