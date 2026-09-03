@@ -51,7 +51,6 @@ class MachSendRight;
 namespace WebGPU {
 
 class Adapter;
-class CommandBuffer;
 class Device;
 class PresentationContext;
 class Texture;
@@ -74,8 +73,6 @@ public:
 
     bool isValid() const { return m_isValid; }
     void retainDevice(Device&, id<MTLCommandBuffer>);
-    void retainCommandBuffer(CommandBuffer&, id<MTLCommandBuffer>);
-    void waitForCommandBufferCompletions();
 
     // This can be called on a background thread.
     using WorkItem = Function<void()>;
@@ -93,8 +90,7 @@ private:
     // This can be used on a background thread.
     Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;
-    HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances;
-    Vector<std::pair<Ref<CommandBuffer>, WeakObjCPtr<id<MTLCommandBuffer>>>> m_retainedCommandBufferInstances;
+    HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances WTF_GUARDED_BY_LOCK(m_lock);
     const std::optional<const MachSendRight> m_webProcessID;
     const WGPUScheduleWorkBlock m_scheduleWorkBlock;
     Lock m_lock;

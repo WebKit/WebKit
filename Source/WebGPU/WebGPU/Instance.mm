@@ -28,7 +28,6 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
-#import "CommandBuffer.h"
 #import "HardwareCapabilities.h"
 #import "PresentationContext.h"
 #import <cstring>
@@ -74,18 +73,6 @@ Instance::Instance()
 }
 
 Instance::~Instance() = default;
-
-void Instance::waitForCommandBufferCompletions()
-{
-    auto retainedCommandBuffers { std::exchange(m_retainedCommandBufferInstances, { }) };
-    auto retainedDevices { std::exchange(retainedDeviceInstances, { }) };
-    for (auto& pair : retainedCommandBuffers)
-        [pair.second.get().get() waitUntilCompleted];
-    for (auto& container : retainedDevices.values()) {
-        for (auto& mtlCommandBuffer : container)
-            [mtlCommandBuffer.get().get() waitUntilCompleted];
-    }
-}
 
 Ref<PresentationContext> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
@@ -207,6 +194,7 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
 void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)
 {
+    Locker locker(m_lock);
     auto& container = retainedDeviceInstances.ensure(device, [] {
         return CommandBufferContainer { };
     }).iterator->value;
@@ -221,14 +209,6 @@ void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)
     retainedDeviceInstances.removeIf([&](auto& pair) {
         return !pair.value.size();
     });
-}
-
-void Instance::retainCommandBuffer(CommandBuffer& commandBuffer, id<MTLCommandBuffer> mtlCommandBuffer)
-{
-    m_retainedCommandBufferInstances.removeAllMatching([](auto& pair) {
-        return !pair.second;
-    });
-    m_retainedCommandBufferInstances.append({ commandBuffer, mtlCommandBuffer });
 }
 
 id<MTLDevice> Instance::device() const
@@ -247,7 +227,6 @@ void NODELETE wgpuInstanceReference(WGPUInstance instance)
 
 void wgpuInstanceRelease(WGPUInstance instance)
 {
-    protect(WebGPU::fromAPI(instance))->waitForCommandBufferCompletions();
     WebGPU::fromAPI(instance).deref();
 }
 
