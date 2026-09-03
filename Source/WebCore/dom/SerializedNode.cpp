@@ -106,6 +106,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
             serializedDocument.baseURLOverride,
             serializedDocument.documentURI,
             document.compatibilityMode(),
+            document.parserContentPolicy(),
             document,
             RefPtr { document.securityOriginPolicy() }.get(),
             serializedDocument.contentType,

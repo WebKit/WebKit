@@ -1244,6 +1244,8 @@ ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<
         return stringValueHolder.releaseException();
 
     Ref document = HTMLDocument::create(nullptr, context.settings(), URL { });
+    document->setContextDocument(protect(context.contextDocument()));
+    document->setSecurityOriginPolicy(context.securityOriginPolicy());
     document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots });
     return { document };
 }
@@ -5797,7 +5799,7 @@ ClonedDocumentType Document::clonedDocumentType() const
 
 Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry) const
 {
-    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), baseURLOverride(), m_documentURI, m_compatibilityMode, protect(contextDocument()), securityOriginPolicy(), contentType(), protect(decoder()).get());
+    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), baseURLOverride(), m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), securityOriginPolicy(), contentType(), protect(decoder()).get());
     switch (type) {
     case CloningOperation::SelfOnly:
     case CloningOperation::SelfWithTemplateContent:
@@ -5832,7 +5834,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
     };
 }
 
-Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
+Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
 {
     Ref clone = [&] -> Ref<Document> {
         switch (clonedDocumentType) {
@@ -5855,6 +5857,7 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
     clone->m_baseURLOverride = baseURLOverride;
     clone->m_documentURI = documentURI;
     clone->setCompatibilityMode(compatibilityMode);
+    clone->setParserContentPolicy(parserContentPolicy);
     clone->setContextDocument(contextDocument);
     clone->setSecurityOriginPolicy(securityOriginPolicy);
     clone->overrideMIMEType(contentType);

@@ -110,6 +110,9 @@ PASS DOMParser (includeShadowRoots is historical)
 PASS createHTMLDocument with innerHTML - not supported
 PASS createContextualFragment - not supported
 PASS XMLHttpRequest - not supported
+PASS XMLHttpRequest document.open() does not enable declarative shadow DOM when it is previously disabled
+PASS XMLHttpRequest cloned document document.open() does not enable declarative shadow DOM when it is previously disabled
+PASS document.open() of a document created with parseHTMLUnsafe keeps declarative shadow DOM opt-in
 PASS insertAdjacentHTML on element - not supported
 PASS document.write allowed from synchronous script loaded from main document
 PASS document.write disallowed on fresh document

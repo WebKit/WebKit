@@ -469,7 +469,7 @@ public:
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
-    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
+    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, OptionSet<ParserContentPolicy>, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
 
     virtual ~Document();
 
