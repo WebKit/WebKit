@@ -456,6 +456,7 @@ public:
         Yes
     };
     void clearScrollAnchor(IncludeAncestors = IncludeAncestors::No);
+    void notifyScrollAnchoringControllerOfScrollPositionChange();
     void adjustScrollAnchoringPosition();
     virtual ScrollAnchoringController* scrollAnchoringController() const { return nullptr; }
 

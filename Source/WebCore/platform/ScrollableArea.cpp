@@ -312,6 +312,12 @@ void ScrollableArea::clearScrollAnchor(IncludeAncestors includeAncestors)
         controller->clearAnchor(includeAncestors == IncludeAncestors::Yes);
 }
 
+void ScrollableArea::notifyScrollAnchoringControllerOfScrollPositionChange()
+{
+    if (CheckedPtr controller = scrollAnchoringController())
+        controller->scrollPositionDidChange();
+}
+
 void ScrollableArea::adjustScrollAnchoringPosition()
 {
     if (CheckedPtr controller = scrollAnchoringController())
