@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Rob Buis (rwlbuis@gmail.com)
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
@@ -241,9 +241,14 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         if (media == m_media)
             return;
         m_media = WTF::move(media);
-        process();
-        if (m_sheet && !isDisabled())
-            m_styleScope->didChangeActiveStyleSheetCandidates();
+        // A media change is not a reason to re-fetch the stylesheet.
+        // https://html.spec.whatwg.org/multipage/links.html#link-type-stylesheet
+        if (m_sheet) {
+            m_sheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, document().cssParserContext()));
+            if (!isDisabled())
+                m_styleScope->didChangeStyleSheetContents();
+        } else
+            process();
         break;
     }
     case AttributeNames::crossoriginAttr:
