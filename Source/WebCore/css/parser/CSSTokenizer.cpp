@@ -659,7 +659,8 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
 CSSParserToken CSSTokenizer::consumeStringTokenUntil(char16_t endingCodePoint)
 {
     // Strings without escapes get handled without allocations
-    for (unsigned size = 0; ; size++) {
+    unsigned size = 0;
+    for (; ; size++) {
         char16_t cc = m_input.peek(size);
         if (cc == endingCodePoint) {
             unsigned startOffset = m_input.offset();
@@ -675,6 +676,12 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(char16_t endingCodePoint)
     }
 
     StringBuilder output;
+    // Bulk-append the already-validated prefix instead of re-consuming character by character.
+    if (size) {
+        unsigned startOffset = m_input.offset();
+        m_input.advance(size);
+        output.append(m_input.rangeAt(startOffset, size));
+    }
     while (true) {
         char16_t cc = consume();
         if (cc == endingCodePoint || cc == kEndOfFileMarker)
@@ -804,7 +811,8 @@ bool CSSTokenizer::consumeIfNext(char16_t character)
 StringView CSSTokenizer::consumeName()
 {
     // Names without escapes get handled without allocations
-    for (unsigned size = 0; ; ++size) {
+    unsigned size = 0;
+    for (; ; ++size) {
         char16_t cc = m_input.peek(size);
         if (isNameCodePoint(cc))
             continue;
@@ -821,6 +829,12 @@ StringView CSSTokenizer::consumeName()
     }
 
     StringBuilder result;
+    // Bulk-append the already-validated prefix instead of re-consuming character by character.
+    if (size) {
+        unsigned startOffset = m_input.offset();
+        m_input.advance(size);
+        result.append(m_input.rangeAt(startOffset, size));
+    }
     while (true) {
         char16_t cc = consume();
         if (isNameCodePoint(cc)) {
