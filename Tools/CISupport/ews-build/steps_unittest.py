@@ -30,7 +30,7 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import Any, Generator, Optional
+from typing import Any, Generator, Iterable, Optional
 from unittest import skip as skipTest
 from unittest.mock import call, create_autospec, patch
 
@@ -4287,9 +4287,12 @@ class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.T
 
     @staticmethod
     def fake_verdicts(verdicts: dict, queried: Optional[list] = None) -> classmethod:
-        def flaky_verdicts_for(cls, tests: list, configuration: Optional[dict] = None, suite: Optional[str] = None) -> defer.Deferred:
+        def flaky_verdicts_for(
+            cls, tests: list, configuration: Optional[dict] = None, suite: Optional[str] = None,
+            authors: Optional[Iterable] = None, pr_number: Optional[int] = None,
+        ) -> defer.Deferred:
             if queried is not None:
-                queried.append((sorted(tests), configuration, suite))
+                queried.append((sorted(tests), configuration, suite, authors, pr_number))
             return defer.succeed(({test: verdicts.get(test, FlakyVerdict()) for test in tests}, ''))
         return classmethod(flaky_verdicts_for)
 
@@ -4352,7 +4355,7 @@ class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.T
 
         yield step.run()
 
-        self.assertEqual(queried, [(['suite.new'], {'platform': 'mac', 'style': 'release'}, 'api-tests')])
+        self.assertEqual(queried, [(['suite.new'], {'platform': 'mac', 'style': 'release'}, 'api-tests', [], None)])
 
     @defer.inlineCallbacks
     def test_a_test_flaky_only_between_builds_without_intra_build_evidence_is_unsupported(self) -> Generator[Any, Any, None]:
@@ -4390,7 +4393,19 @@ class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.T
 
         yield step.run()
 
-        self.assertEqual([len(tests) for tests, _, _ in queried], [cap])
+        self.assertEqual([len(tests) for tests, _, _, _, _ in queried], [cap])
+
+    @defer.inlineCallbacks
+    def test_the_api_read_forwards_the_change_identity(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.new'], ['suite.new'], [])
+        self.setProperty('owners', ['jappleseed'])
+        self.setProperty('github.number', 42)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', self.fake_verdicts({}, queried))
+
+        yield step.run()
+
+        self.assertEqual([(authors, pr_number) for _, _, _, authors, pr_number in queried], [(['jappleseed'], 42)])
 
 
 class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
@@ -13246,6 +13261,9 @@ if __name__ == '__main__':
 
 
 class TestIsTestFlakyClassifier(unittest.TestCase):
+    SUBMITTER = 'issacroy'
+    TEST = 'layout/test.html'
+
     def _response(self, rows=None):
         # rows=None simulates the find endpoint's 404 (no results for this test in that table).
         if rows is None:
@@ -13253,13 +13271,22 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         payload = [{'test': 'layout/test.html', 'configuration': {}, 'results': rows}]
         return TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
 
-    def _flaky_row(self, flaky_type, build_url=None, pr_number=None, authors=None):
+    def _flaky_row(
+        self, flaky_type: Optional[str], build: Optional[int] = None,
+        pr_number: Optional[int] = None, authors: Optional[list] = None,
+    ) -> dict:
         return {'flaky_type': flaky_type, 'details': {
-            'build_url': build_url, 'pr_number': pr_number, 'authors': authors or [],
+            'build_url': self._builder_url(build) if build is not None else None,
+            'pr_number': pr_number, 'authors': authors or [],
         }}
 
-    def _failed_row(self, pr_number=None, authors=None, build_url=None):
-        return {'details': {'pr_number': pr_number, 'authors': authors or [], 'build_url': build_url}}
+    def _failed_row(
+        self, build: Optional[int] = None, pr_number: Optional[int] = None, authors: Optional[list] = None,
+    ) -> dict:
+        return {'details': {
+            'build_url': self._builder_url(build) if build is not None else None,
+            'pr_number': pr_number, 'authors': authors or [],
+        }}
 
     def _mock(self, flaky_response, failed_response):
         # The flaky table is asked first, then the failed one; route on which table was requested.
@@ -13268,124 +13295,247 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
             return defer.succeed(flaky_response if params.get('flaky') == 'true' else failed_response)
         return patch('ews-build.results_db.TwistedAdditions.request', fake_request)
 
+    def _builder_url(self, build: int) -> str:
+        return f'https://ews-build.webkit.org/#/builders/72/builds/{build}'
+
+    @defer.inlineCallbacks
+    def _verdicts_for(
+        self, flaky_rows: Optional[list] = None, failed_rows: Optional[list] = None,
+        authors: tuple = (SUBMITTER,), pr_number: Optional[int] = None,
+    ) -> Generator[Any, Any, tuple]:
+        with self._mock(self._response(rows=flaky_rows), self._response(rows=failed_rows)):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(
+                [self.TEST], suite='layout-tests', authors=list(authors), pr_number=pr_number,
+            )
+        return (verdicts, logs)
+
     @defer.inlineCallbacks
     def test_a_clean_tree_flake_is_flaky(self):
-        flaky = self._response(rows=[self._flaky_row('WithinStepCleanTree', build_url='https://build/1/builds/7')])
-        with self._mock(flaky, self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertEqual(result.flaky_type, 'CleanTree')
-            self.assertEqual(result.build_urls, {'https://build/1/builds/7'})
+        rows = [self._flaky_row('WithinStepCleanTree', 7), self._flaky_row('WithinStepCleanTree', 8)]
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'CleanTree')
+        self.assertEqual(result.build_urls, {self._builder_url(7), self._builder_url(8)})
+
+    @defer.inlineCallbacks
+    def test_a_single_build_of_clean_tree_evidence_does_not_convict(self) -> Generator[Any, Any, None]:
+        # GTK-WK2-Tests-EWS build 153043 excused a crash on evidence from build 153004, the same pull
+        # request by the same author, and the test then failed 9 of 14 runs on main after it landed.
+        rows = [self._flaky_row('WithinStepCleanTree', 153004, 72787, [self.SUBMITTER])]
+        verdicts, logs = yield self._verdicts_for(rows)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn('1 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+        self.assertNotIn("recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_clean_tree_own_pull_request_and_author_row_still_counts_toward_the_threshold(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepCleanTree', 153004, 72787, [self.SUBMITTER]),
+            self._flaky_row('WithinStepCleanTree', 152980, 72701, ['aperturedev']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows, pr_number=72787)
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'CleanTree')
+        self.assertEqual(result.authors, {self.SUBMITTER, 'aperturedev'})
+        self.assertEqual(result.pr_numbers, {72787, 72701})
+        self.assertEqual(result.build_urls, {self._builder_url(153004), self._builder_url(152980)})
+        self.assertNotIn("recorded by this change's own pull request", logs)
+        self.assertNotIn("recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_a_clean_tree_row_the_change_wrote_itself_is_within_build_evidence(self) -> Generator[Any, Any, None]:
+        failed = [self._failed_row(pr_number=n, authors=[author]) for n, author in enumerate(['alice', 'bob', 'alice'], start=1)]
+        own = [self._flaky_row('WithinStepCleanTree', 153004, 72787, ['webkit-commit-queue'])]
+        verdicts, logs = yield self._verdicts_for(own, failed, pr_number=72787)
+        self.assertEqual(verdicts[self.TEST].flaky_type, 'BetweenBuilds')
+        self.assertTrue(verdicts[self.TEST].intra_build_evidence)
+        self.assertNotIn('BetweenBuilds with no within-build flakiness recorded', logs)
+
+    @defer.inlineCallbacks
+    def test_clean_tree_rows_sharing_one_build_do_not_convict(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepCleanTree', 153004, 72787, ['aperturedev']),
+            self._flaky_row('WithinStepCleanTree', 153004, 72701, ['jsmith-webkit']),
+            self._flaky_row('WithinStepCleanTree', 153004, 72650, ['dpettifer']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn('3 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+
+    @defer.inlineCallbacks
+    def test_a_single_build_of_clean_tree_evidence_falls_through_to_the_dirty_tree_rule(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepCleanTree', 153004, 72787, [self.SUBMITTER]),
+            self._flaky_row('WithinStepDirtyTree', 152980, 72701, ['aperturedev']),
+            self._flaky_row('WithinStepDirtyTree', 152950, 72650, ['jsmith-webkit']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows)
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'DirtyTree')
+        self.assertEqual(result.pr_numbers, {72701, 72650})
+        self.assertIn('1 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+
+    @defer.inlineCallbacks
+    def test_clean_tree_evidence_below_its_threshold_does_not_fill_the_dirty_tree_quota(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepCleanTree', 1, 101, ['alice']),
+            self._flaky_row('WithinStepDirtyTree', 2, 102, ['bob']),
+        ]
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_the_dirty_tree_rule_does_not_count_the_change_s_own_author(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', 153004, 72787, [self.SUBMITTER]),
+            self._flaky_row('WithinStepDirtyTree', 152980, 72701, ['aperturedev']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn("Ignored 1 WithinStepDirtyTree row(s) recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_the_dirty_tree_rule_does_not_count_the_change_s_own_pull_request(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', 153004, 72787, ['webkit-commit-queue']),
+            self._flaky_row('BetweenStepsDirtyTree', 152980, 72701, ['aperturedev', 'jsmith-webkit']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows, pr_number=72787)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn("Ignored 1 WithinStepDirtyTree row(s) recorded by this change's own pull request (#72787)", logs)
+
+    @defer.inlineCallbacks
+    def test_the_dirty_tree_rule_convicts_when_the_submitter_wrote_none_of_the_rows(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', 152980, 72701, ['aperturedev']),
+            self._flaky_row('BetweenStepsDirtyTree', 152950, 72650, ['jsmith-webkit']),
+        ]
+        verdicts, logs = yield self._verdicts_for(rows)
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'DirtyTree')
+        self.assertEqual(result.pr_numbers, {72701, 72650})
+        self.assertEqual(result.authors, {'aperturedev', 'jsmith-webkit'})
+        self.assertNotIn("recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_the_dirty_tree_rule_with_every_row_written_by_the_submitter(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build, 72787, [self.SUBMITTER])
+            for build in (153004, 153043)
+        ]
+        verdicts, logs = yield self._verdicts_for(rows)
+        self.assertEqual(verdicts[self.TEST], FlakyVerdict())
+        self.assertIsNone(verdicts[self.TEST].flaky_type)
+        self.assertIn("Ignored 2 WithinStepDirtyTree row(s) recorded by this change's own author(s)", logs)
 
     @defer.inlineCallbacks
     def test_two_dirty_tree_pull_requests_is_flaky(self):
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n, authors=[author])
+            self._flaky_row('WithinStepDirtyTree', n, n, [author])
             for n, author in enumerate(['alice', 'bob'], start=1)
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertEqual(result.flaky_type, 'DirtyTree')
-            self.assertEqual(result.pr_numbers, {1, 2})
-            self.assertEqual(result.authors, {'alice', 'bob'})
-            self.assertEqual(result.build_urls, {'https://build/1/builds/1', 'https://build/1/builds/2'})
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'DirtyTree')
+        self.assertEqual(result.pr_numbers, {1, 2})
+        self.assertEqual(result.authors, {'alice', 'bob'})
+        self.assertEqual(result.build_urls, {self._builder_url(1), self._builder_url(2)})
 
     @defer.inlineCallbacks
     def test_retrying_one_pull_request_does_not_excuse_its_own_failure(self):
         # build_url carries the build number, so an EWS retry is a distinct build.
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=99, authors=['alice'])
+            self._flaky_row('WithinStepDirtyTree', n, 99, ['alice'])
             for n in range(1, 6)
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
 
     @defer.inlineCallbacks
     def test_a_missing_pull_request_is_not_a_second_pull_request(self):
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=1, authors=['alice']),
-            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/2', authors=['bob']),
+            self._flaky_row('WithinStepDirtyTree', 1, 1, ['alice']),
+            self._flaky_row('WithinStepDirtyTree', 2, authors=['bob']),
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
 
     @defer.inlineCallbacks
     def test_a_single_author_across_two_pull_requests_is_not_flaky(self) -> Generator[Any, Any, None]:
         # A stack of pull requests is one author's work, so the parent commit's own regression must
         # not excuse itself: a build's first run writes rows its own re-run then reads.
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n, authors=['alice'])
+            self._flaky_row('WithinStepDirtyTree', n, n, ['alice'])
             for n in range(1, 4)
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
 
     @defer.inlineCallbacks
     def test_dirty_tree_pull_requests_with_no_author_not_flaky(self):
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n)
+            self._flaky_row('WithinStepDirtyTree', n, n)
             for n in range(1, 4)
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
 
     @defer.inlineCallbacks
     def test_a_row_recording_no_flakiness_at_all_is_ignored(self):
         # flaky_type is required in the flaky table, so a null means malformed data.
         rows = [
-            self._flaky_row(None, build_url='https://build/1/builds/1'),
-            self._flaky_row('SomethingNewerReports', build_url='https://build/1/builds/2'),
+            self._flaky_row(None, 1),
+            self._flaky_row('SomethingNewerReports', 2),
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        verdicts, logs = yield self._verdicts_for(rows, authors=())
 
-        self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
         self.assertIn('SomethingNewerReports', logs)
 
     @defer.inlineCallbacks
     def test_flakiness_recorded_under_an_unknown_name_is_reported(self):
         # A results database holding a value this EWS does not know counts the row for nothing, which
         # is what deploying the two halves out of order looks like.
-        rows = [self._flaky_row('SomethingNewerReports', build_url='https://build/1/builds/7')]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        rows = [self._flaky_row('SomethingNewerReports', 7)]
+        verdicts, logs = yield self._verdicts_for(rows, authors=())
 
-        self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
         self.assertIn('SomethingNewerReports', logs)
+
+    @defer.inlineCallbacks
+    def test_a_flake_row_with_no_flaky_type_logs_its_own_line(self) -> Generator[Any, Any, None]:
+        rows = [self._flaky_row(None, 1)]
+        verdicts, logs = yield self._verdicts_for(rows, authors=())
+
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn('Ignored 1 flake row(s) that carried no flaky_type', logs)
+        self.assertNotIn('Ignored flakiness recorded as Failed', logs)
 
     @defer.inlineCallbacks
     def test_dirty_tree_same_build_deduped_not_flaky(self):
         rows = [
-            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/42', pr_number=7, authors=['alice'])
+            self._flaky_row('WithinStepDirtyTree', 42, 7, ['alice'])
             for _ in range(3)
         ]
-        with self._mock(self._response(rows=rows), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertFalse(result.is_flaky)
+        verdicts, _ = yield self._verdicts_for(rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertFalse(result.is_flaky)
 
     @defer.inlineCallbacks
     def test_a_verdict_records_whether_any_build_saw_the_flakiness(self):
         failed = [self._failed_row(pr_number=n, authors=[a]) for n, a in enumerate(['alice', 'bob', 'alice'], start=1)]
-        with self._mock(self._response(), self._response(rows=failed)):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-        self.assertFalse(verdicts['layout/test.html'].intra_build_evidence)
+        verdicts, _ = yield self._verdicts_for(failed_rows=failed, authors=())
+        self.assertFalse(verdicts[self.TEST].intra_build_evidence)
 
-        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=9)]
-        with self._mock(self._response(rows=short_of_a_verdict), self._response(rows=failed)):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-        self.assertTrue(verdicts['layout/test.html'].intra_build_evidence)
+        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', 1, 9)]
+        verdicts, _ = yield self._verdicts_for(short_of_a_verdict, failed, authors=())
+        self.assertTrue(verdicts[self.TEST].intra_build_evidence)
 
     @defer.inlineCallbacks
     def test_a_conviction_keeps_its_evidence_when_a_later_query_fails(self):
         convicted = [{'test': 'a.html', 'configuration': {}, 'results': [
-            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=1, authors=['alice']),
-            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/2', pr_number=2, authors=['bob']),
+            self._flaky_row('WithinStepDirtyTree', 1, 1, ['alice']),
+            self._flaky_row('WithinStepDirtyTree', 2, 2, ['bob']),
         ]}]
         flaky = TwistedAdditions.Response(status_code=200, content=json.dumps(convicted).encode('utf-8'))
 
@@ -13408,35 +13558,48 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
             for n, author in enumerate(['alice', 'bob', 'alice'], start=1)
         ]
 
-        with self._mock(self._response(), self._response(rows=failed)):
-            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-        self.assertEqual(verdicts['layout/test.html'].flaky_type, 'BetweenBuilds')
+        verdicts, logs = yield self._verdicts_for(failed_rows=failed, authors=())
+        self.assertEqual(verdicts[self.TEST].flaky_type, 'BetweenBuilds')
         self.assertIn('BetweenBuilds with no within-build flakiness recorded', logs)
-        self.assertIn('layout/test.html', logs)
+        self.assertIn(self.TEST, logs)
 
         # One dirty-tree row is short of a verdict on its own, but it is still an inconsistency
         # some build observed, so this conviction is not the between-builds rule acting alone.
-        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=9)]
-        with self._mock(self._response(rows=short_of_a_verdict), self._response(rows=failed)):
-            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-        self.assertEqual(verdicts['layout/test.html'].flaky_type, 'BetweenBuilds')
+        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', 1, 9)]
+        verdicts, logs = yield self._verdicts_for(short_of_a_verdict, failed, authors=())
+        self.assertEqual(verdicts[self.TEST].flaky_type, 'BetweenBuilds')
+        self.assertNotIn('BetweenBuilds with no within-build flakiness recorded', logs)
+
+    @defer.inlineCallbacks
+    def test_a_within_build_row_the_change_wrote_itself_is_not_within_build_evidence(self) -> Generator[Any, Any, None]:
+        failed = [self._failed_row(pr_number=n, authors=[author]) for n, author in enumerate(['alice', 'bob', 'alice'], start=1)]
+        own = [self._flaky_row('WithinStepDirtyTree', 153004, 72787, ['webkit-commit-queue'])]
+        verdicts, logs = yield self._verdicts_for(own, failed, pr_number=72787)
+        self.assertEqual(verdicts[self.TEST].flaky_type, 'BetweenBuilds')
+        self.assertFalse(verdicts[self.TEST].intra_build_evidence)
+        self.assertIn('BetweenBuilds with no within-build flakiness recorded', logs)
+
+    @defer.inlineCallbacks
+    def test_a_within_build_row_from_another_pull_request_is_within_build_evidence(self) -> Generator[Any, Any, None]:
+        failed = [self._failed_row(pr_number=n, authors=[author]) for n, author in enumerate(['alice', 'bob', 'alice'], start=1)]
+        elsewhere = [self._flaky_row('WithinStepDirtyTree', 152980, 72701, ['aperturedev'])]
+        verdicts, logs = yield self._verdicts_for(elsewhere, failed, pr_number=72787)
+        self.assertEqual(verdicts[self.TEST].flaky_type, 'BetweenBuilds')
+        self.assertTrue(verdicts[self.TEST].intra_build_evidence)
         self.assertNotIn('BetweenBuilds with no within-build flakiness recorded', logs)
 
     @defer.inlineCallbacks
     def test_between_builds_three_prs_two_authors_is_flaky(self):
         rows = [
-            self._failed_row(pr_number=1, authors=['alice'], build_url='https://build/1/builds/1'),
-            self._failed_row(pr_number=2, authors=['bob'], build_url='https://build/1/builds/2'),
-            self._failed_row(pr_number=3, authors=['alice'], build_url='https://build/1/builds/3'),
+            self._failed_row(1, 1, ['alice']),
+            self._failed_row(2, 2, ['bob']),
+            self._failed_row(3, 3, ['alice']),
         ]
-        with self._mock(self._response(), self._response(rows=rows)):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertEqual(result.flaky_type, 'BetweenBuilds')
-            self.assertEqual(result.pr_numbers, {1, 2, 3})
-            self.assertEqual(result.build_urls, {
-                'https://build/1/builds/1', 'https://build/1/builds/2', 'https://build/1/builds/3',
-            })
+        verdicts, _ = yield self._verdicts_for(failed_rows=rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'BetweenBuilds')
+        self.assertEqual(result.pr_numbers, {1, 2, 3})
+        self.assertEqual(result.build_urls, {self._builder_url(1), self._builder_url(2), self._builder_url(3)})
 
     @defer.inlineCallbacks
     def test_between_builds_too_few_prs_not_flaky(self):
@@ -13444,26 +13607,123 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
             self._failed_row(pr_number=1, authors=['alice']),
             self._failed_row(pr_number=2, authors=['bob']),
         ]
-        with self._mock(self._response(), self._response(rows=rows)):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertFalse(result.is_flaky)
+        verdicts, _ = yield self._verdicts_for(failed_rows=rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertFalse(result.is_flaky)
 
     @defer.inlineCallbacks
     def test_between_builds_single_author_not_flaky(self):
         # 3 PRs but all from one author-set -> fails the >=2 distinct author-sets floor.
         rows = [self._failed_row(pr_number=n, authors=['alice']) for n in range(1, 4)]
-        with self._mock(self._response(), self._response(rows=rows)):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertFalse(result.is_flaky)
+        verdicts, _ = yield self._verdicts_for(failed_rows=rows, authors=())
+        result = verdicts[self.TEST]
+        self.assertFalse(result.is_flaky)
+
+    @defer.inlineCallbacks
+    def test_between_builds_does_not_count_the_change_s_own_pull_request(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(153004, 72787, ['webkit-commit-queue']),
+            self._failed_row(152980, 72701, ['aperturedev']),
+            self._failed_row(152950, 72650, ['jsmith-webkit']),
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows, pr_number=72787)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn("Ignored 1 Failed row(s) recorded by this change's own pull request (#72787)", logs)
+
+    @defer.inlineCallbacks
+    def test_the_change_s_own_pull_request_does_not_fill_the_between_builds_quota(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(153004, 72787, ['webkit-commit-queue']),
+            self._failed_row(153043, 72787, ['webkit-commit-queue']),
+            self._failed_row(152980, 72701, ['aperturedev']),
+            self._failed_row(152950, 72650, ['jsmith-webkit']),
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows, pr_number=72787)
+        result = verdicts[self.TEST]
+        self.assertFalse(result.is_flaky)
+        self.assertIn("Ignored 2 Failed row(s) recorded by this change's own pull request (#72787)", logs)
+
+    @defer.inlineCallbacks
+    def test_the_two_rejection_reasons_are_reported_separately(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(153004, 72787, ['webkit-commit-queue']),
+            self._failed_row(152901, 72602, [self.SUBMITTER]),
+            self._failed_row(152980, 72701, ['aperturedev']),
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows, pr_number=72787)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn("Ignored 1 Failed row(s) recorded by this change's own pull request (#72787)", logs)
+        self.assertIn("Ignored 1 Failed row(s) recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_does_not_count_the_change_s_own_author(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(153004, 72787, [self.SUBMITTER]),
+        ] + [
+            self._failed_row(build, pr, ['aperturedev'])
+            for pr, build in ((72701, 152980), (72650, 152950), (72602, 152901))
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn("Ignored 1 Failed row(s) recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_convicts_when_the_submitter_wrote_none_of_the_rows(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(152980, 72701, ['aperturedev']),
+            self._failed_row(152950, 72650, ['jsmith-webkit']),
+            self._failed_row(152901, 72602, ['aperturedev']),
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows)
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'BetweenBuilds')
+        self.assertEqual(result.pr_numbers, {72701, 72650, 72602})
+        self.assertEqual(result.authors, {'aperturedev', 'jsmith-webkit'})
+        self.assertNotIn("recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_still_reports_rows_recording_no_author(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(build, pr)
+            for pr, build in ((72701, 152980), (72650, 152950), (72602, 152901))
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows)
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn('3 row(s) record no author, so the between-builds rule saw 0 of the 2 it needs', logs)
+        self.assertIn('across 3 pull request(s)', logs)
+        self.assertNotIn("recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_with_every_row_written_by_the_submitter(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(build, 72787, [self.SUBMITTER])
+            for build in (153004, 153043)
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows)
+        self.assertEqual(verdicts[self.TEST], FlakyVerdict())
+        self.assertIsNone(verdicts[self.TEST].flaky_type)
+        self.assertIn("Ignored 2 Failed row(s) recorded by this change's own author(s)", logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_counts_a_row_the_submitter_co_authored(self) -> Generator[Any, Any, None]:
+        rows = [
+            self._failed_row(153004, 72787, ['aperturedev', self.SUBMITTER]),
+            self._failed_row(152980, 72701, ['jsmith-webkit']),
+            self._failed_row(152950, 72650, ['dpettifer']),
+            self._failed_row(152870, 72590, [self.SUBMITTER]),
+        ]
+        verdicts, logs = yield self._verdicts_for(failed_rows=rows)
+        result = verdicts[self.TEST]
+        self.assertEqual(result.flaky_type, 'BetweenBuilds')
+        self.assertEqual(result.pr_numbers, {72787, 72701, 72650})
+        self.assertEqual(result.authors, {'aperturedev', 'issacroy', 'jsmith-webkit', 'dpettifer'})
+        self.assertIn("Ignored 1 Failed row(s) recorded by this change's own author(s)", logs)
 
     @defer.inlineCallbacks
     def test_no_history_not_flaky(self):
-        with self._mock(self._response(), self._response()):
-            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
-            result = verdicts['layout/test.html']
-            self.assertFalse(result.is_flaky)
+        verdicts, _ = yield self._verdicts_for(authors=())
+        result = verdicts[self.TEST]
+        self.assertFalse(result.is_flaky)
 
     @defer.inlineCallbacks
     def test_a_body_that_is_not_a_list_of_entries_is_a_failed_query(self):
@@ -13497,7 +13757,7 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
     def test_an_entry_naming_no_test_is_a_failed_query(self):
         # A results database predating the batched endpoint answers without naming the test. Matching
         # nothing, those entries would otherwise be dropped and every test would read as not flaky.
-        payload = [{'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]}]
+        payload = [{'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', 1)]}]
         nameless = TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
         with self._mock(nameless, self._response()):
             verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['a.html'], suite='layout-tests')
@@ -13511,8 +13771,12 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         # Two of the three are convicted by the first table. Dropping them from the list while
         # iterating it would skip the one in between, which would then read as not flaky.
         rows = [
-            {'test': 'a.html', 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]},
-            {'test': 'b.html', 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/2')]},
+            {'test': 'a.html', 'configuration': {}, 'results': [
+                self._flaky_row('WithinStepCleanTree', 1), self._flaky_row('WithinStepCleanTree', 2),
+            ]},
+            {'test': 'b.html', 'configuration': {}, 'results': [
+                self._flaky_row('WithinStepCleanTree', 3), self._flaky_row('WithinStepCleanTree', 4),
+            ]},
         ]
         flaky = TwistedAdditions.Response(status_code=200, content=json.dumps(rows).encode('utf-8'))
         with self._mock(flaky, self._response()):
@@ -13534,8 +13798,10 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
             captured.append(params)
             asked = params['tests']
             rows = [
-                {'test': test, 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url=f'build/{test}')]}
-                for test in asked
+                {'test': test, 'configuration': {}, 'results': [
+                    self._flaky_row('WithinStepCleanTree', n), self._flaky_row('WithinStepCleanTree', n + 1000),
+                ]}
+                for n, test in enumerate(asked, start=1)
             ] if params.get('flaky') == 'true' else []
             if not rows:
                 return defer.succeed(TwistedAdditions.Response(status_code=404))
@@ -13564,7 +13830,9 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
             if params.get('flaky') != 'true' or len(answered) == 1:
                 return defer.succeed(TwistedAdditions.Response(status_code=404))
             rows = [
-                {'test': test, 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]}
+                {'test': test, 'configuration': {}, 'results': [
+                    self._flaky_row('WithinStepCleanTree', 1), self._flaky_row('WithinStepCleanTree', 2),
+                ]}
                 for test in params['tests']
             ]
             return defer.succeed(TwistedAdditions.Response(status_code=200, content=json.dumps(rows).encode('utf-8')))

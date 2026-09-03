@@ -4211,7 +4211,11 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             )
 
         unexplained = [test for test in tests if not pre_existing[test]['is_existing_failure']]
-        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(unexplained, configuration=configuration, suite=self.suite)
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(
+            unexplained, configuration=configuration, suite=self.suite,
+            authors=self.getProperty('owners', []),
+            pr_number=self.getProperty('github.number', None),
+        )
         if flake_logs:
             yield self._addToLog(self.results_db_log_name, flake_logs)
 
@@ -6183,7 +6187,11 @@ class AnalyzeAPITestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLog
         configuration = self.results_db_query_configuration()
         yield self._addToLog(self.results_db_log_name, f'Checking Results database for flakiness of {len(tests)} new failure(s). Configuration: {configuration}\n')
 
-        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(tests, configuration=configuration, suite=self.suite)
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(
+            tests, configuration=configuration, suite=self.suite,
+            authors=self.getProperty('owners', []),
+            pr_number=self.getProperty('github.number', None),
+        )
         if flake_logs:
             yield self._addToLog(self.results_db_log_name, flake_logs)
 
