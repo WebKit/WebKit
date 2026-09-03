@@ -782,6 +782,21 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-DHAVE_CORE_PREDICTION=1>")
 
+# Xcode injects UIDeviceFamily into processed Info.plists from the platform's
+# default TARGETED_DEVICE_FAMILY -- 7 for visionOS, 1 for iOS -- which none of
+# the XPC service targets override. Read it from the same place instead of
+# keeping a table here.
+get_filename_component(_wk_platform_dir "${CMAKE_OSX_SYSROOT}/../../.." ABSOLUTE)
+execute_process(
+    COMMAND plutil -extract DefaultProperties.TARGETED_DEVICE_FAMILY raw -o - "${_wk_platform_dir}/Info.plist"
+    OUTPUT_VARIABLE WEBKIT_UI_DEVICE_FAMILY
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET)
+if (NOT WEBKIT_UI_DEVICE_FAMILY MATCHES "^[0-9,]+$")
+    message(FATAL_ERROR "Could not read TARGETED_DEVICE_FAMILY from ${_wk_platform_dir}/Info.plist")
+endif ()
+unset(_wk_platform_dir)
+
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
 set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
 set(PRODUCT_NAME "WebKit")
@@ -1874,14 +1889,18 @@ with open(sys.argv[2], 'wb') as f:
         set(BUNDLE_VERSION ${MACOSX_FRAMEWORK_BUNDLE_VERSION})
         set(SHORT_VERSION_STRING ${WEBKIT_MAC_VERSION})
         set(EXECUTABLE_NAME ${_executable_name})
-        set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_identifier}.Service)
+        # launchd registers the XPC service under its CFBundleIdentifier, and
+        # ProcessLauncherCocoa.mm looks it up as "com.apple.WebKit.WebContent"
+        # (see :168). A ".Service" suffix here makes that look-up fail with
+        # "No such process", so the process never launches.
+        set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_identifier})
         set(PRODUCT_NAME ${_bundle_identifier})
         configure_file(${_info_plist} ${_service_dir}/Info.plist)
 
         execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_service_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1]" ${_service_dir}/Info.plist)
+        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${WEBKIT_UI_DEVICE_FAMILY}]" ${_service_dir}/Info.plist)
         execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_service_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_service_dir}/Info.plist)
+        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_service_dir}/Info.plist)
 
         target_link_options(${_target} PRIVATE
             "LINKER:-rpath,@executable_path/.."
@@ -2066,7 +2085,16 @@ with open(sys.argv[2], 'wb') as f:
 
         # Add platform keys required by runningboardd/ExtensionKit validation.
         execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${_appex_dir}/Info.plist)
+        # Extensions override the platform default. Read the value out of the
+        # xcconfig so there is one source of truth for it.
+        file(STRINGS ${WEBKIT_DIR}/Configurations/BaseExtension.xcconfig _ext_family_line
+            REGEX "^TARGETED_DEVICE_FAMILY[ \t]*=")
+        string(REGEX REPLACE "^TARGETED_DEVICE_FAMILY[ \t]*=[ \t]*([0-9,]+).*$" "\\1"
+            _ext_family "${_ext_family_line}")
+        if (NOT _ext_family MATCHES "^[0-9,]+$")
+            message(FATAL_ERROR "Could not read TARGETED_DEVICE_FAMILY from BaseExtension.xcconfig")
+        endif ()
+        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_ext_family}]" ${_appex_dir}/Info.plist)
         execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_appex_dir}/Info.plist)
         execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_appex_dir}/Info.plist)
 
