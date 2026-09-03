@@ -20,16 +20,47 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import math
+import os
+import shlex
 import subprocess
 import sys
-import time
 import threading
+import time
+import traceback
+from subprocess import CompletedProcess, TimeoutExpired
+from typing import Sequence, Union
 
 from webkitcorepy import Timeout
 
-TimeoutExpired = subprocess.TimeoutExpired
-CompletedProcess = subprocess.CompletedProcess
+__all__ = ['CompletedProcess', 'Thread', 'TimeoutExpired', 'join_subprocess_args', 'run']
+
+log = logging.getLogger(__name__)
+
+
+def join_subprocess_args(
+    args: Union[str, bytes, os.PathLike, Sequence[Union[str, bytes, os.PathLike]]],
+) -> Sequence[str]:
+    """Runs shlex.join() for any valid subprocess.Popen args"""
+    if isinstance(args, (str, bytes, os.PathLike)):
+        args = [args]
+    else:
+        args = list(args)
+
+    result = []
+    for arg in args:
+        if isinstance(arg, os.PathLike):
+            arg = os.fspath(arg)
+
+        if isinstance(arg, bytes):
+            arg = os.fsdecode(arg)
+        elif not isinstance(arg, str):
+            raise TypeError(f'expected str, bytes, or PathLike, got {type(arg)}')
+
+        result.append(arg)
+
+    return shlex.join(result)
 
 
 # Allows native integration with the Timeout context
@@ -49,7 +80,32 @@ def run(*popenargs, **kwargs):
                 raise ValueError('stdout and stderr arguments may not be used with capture_output.')
             kwargs['stdout'] = subprocess.PIPE
             kwargs['stderr'] = subprocess.PIPE
-        return subprocess.run(*popenargs, timeout=timeout, **kwargs)
+
+        args_for_log = join_subprocess_args(popenargs[0])
+
+        try:
+            proc = subprocess.run(*popenargs, timeout=timeout, **kwargs)
+        except Exception:
+            end_time = time.time()
+            etype, value, _ = sys.exc_info()
+            formatted_exception = ''.join(traceback.format_exception_only(etype, value)).strip('\n')
+            log.debug(
+                "Ran '%s', but got exception %s after %.2f s",
+                args_for_log,
+                formatted_exception,
+                end_time - current_time,
+            )
+            raise
+        else:
+            end_time = time.time()
+            log.debug(
+                "Ran '%s' in %.2f s, exited with %d",
+                args_for_log,
+                end_time - current_time,
+                proc.returncode,
+            )
+
+        return proc
 
 
 class Thread(threading.Thread):
