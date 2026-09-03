@@ -2450,15 +2450,15 @@ void CanvasRenderingContext2DBase::willUpdateContents(std::optional<FloatRect> r
     else
 #endif
     {
-        // Inflate dirty rect to cover antialiasing on image buffers.
-        if (context->shouldAntialias())
-            dirtyRect.inflate(1);
 #if USE(COORDINATED_GRAPHICS)
         // In COORDINATED_GRAPHICS graphics layer is tiled and tiling logic handles dirty rects
         // internally and thus no unification of rects is needed here because that causes
         // unnecessary invalidation of tiles which are actually not dirty
         m_dirtyRect = dirtyRect;
 #else
+        // Inflate dirty rect to cover antialiasing on image buffers.
+        if (context->shouldAntialias())
+            dirtyRect.inflate(1);
         m_dirtyRect.unite(dirtyRect);
 #endif
         protect(canvasBase())->willUpdateContents(m_dirtyRect, shouldApplyPostProcessing);
