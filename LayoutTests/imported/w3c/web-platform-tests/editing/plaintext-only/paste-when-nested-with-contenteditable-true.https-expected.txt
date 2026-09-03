@@ -1,0 +1,18 @@
+abc
+ABC
+
+PASS Initializing the clipboard with <b>abc</b>...
+PASS The result should depend on the outermost editing host in the innermost non-editable element whether pasting with or without format
+PASS pasting in contenteditable="plaintext-only" in contenteditable="true"
+PASS pasting in contenteditable="plaintext-only" in contenteditable="true" and contenteditable="false"
+PASS pasting in contenteditable="true" in contenteditable="plaintext-only"
+PASS pasting in contenteditable="true" in contenteditable="plaintext-only" and contenteditable="false"
+FAIL pasting in contenteditable="plaintext-only" in contenteditable="true": beforeinput assert_equals: beforeinput.inputType should be insertFromPaste expected (string) "insertFromPaste" but got (undefined) undefined
+FAIL pasting in contenteditable="plaintext-only" in contenteditable="true": innerHTML assert_equals: expected "<div contenteditable=\"true\"><div contenteditable=\"plaintext-only\"><b>abc</b></div></div>" but got "<div contenteditable=\"true\"><div contenteditable=\"plaintext-only\">ABC</div></div>"
+FAIL pasting in contenteditable="plaintext-only" in contenteditable="true" and contenteditable="false": beforeinput assert_equals: beforeinput.inputType should be insertFromPaste expected (string) "insertFromPaste" but got (undefined) undefined
+FAIL pasting in contenteditable="plaintext-only" in contenteditable="true" and contenteditable="false": innerHTML assert_equals: expected "<div contenteditable=\"true\"><div contenteditable=\"false\"><div contenteditable=\"plaintext-only\">abc</div></div></div>" but got "<div contenteditable=\"true\"><div contenteditable=\"false\"><div contenteditable=\"plaintext-only\">ABC</div></div></div>"
+FAIL pasting in contenteditable="true" in contenteditable="plaintext-only": beforeinput assert_equals: beforeinput.inputType should be insertFromPaste expected (string) "insertFromPaste" but got (undefined) undefined
+FAIL pasting in contenteditable="true" in contenteditable="plaintext-only": innerHTML assert_equals: expected "<div contenteditable=\"plaintext-only\"><div contenteditable=\"true\">abc</div></div>" but got "<div contenteditable=\"plaintext-only\"><div contenteditable=\"true\">ABC</div></div>"
+FAIL pasting in contenteditable="true" in contenteditable="plaintext-only" and contenteditable="false": beforeinput assert_equals: beforeinput.inputType should be insertFromPaste expected (string) "insertFromPaste" but got (undefined) undefined
+FAIL pasting in contenteditable="true" in contenteditable="plaintext-only" and contenteditable="false": innerHTML assert_equals: expected "<div contenteditable=\"plaintext-only\"><div contenteditable=\"false\"><div contenteditable=\"true\"><b>abc</b></div></div></div>" but got "<div contenteditable=\"plaintext-only\"><div contenteditable=\"false\"><div contenteditable=\"true\">ABC</div></div></div>"
+

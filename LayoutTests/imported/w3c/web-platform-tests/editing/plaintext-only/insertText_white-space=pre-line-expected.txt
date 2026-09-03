@@ -1,0 +1,60 @@
+A
+
+a
+
+
+PASS execCommand("insertText", false, " ") when {}<br>
+PASS Typing " " when {}<br>
+PASS execCommand("insertText", false, "a") when {}<br>
+PASS Typing "a" when {}<br>
+PASS execCommand("insertText", false, "a") when []\n
+PASS Typing "a" when []\n
+PASS execCommand("insertText", false, "b") when a[]<br>
+PASS Typing "b" when a[]<br>
+PASS execCommand("insertText", false, "b") when a[]\n
+PASS Typing "b" when a[]\n
+PASS execCommand("insertText", false, "a") when A[]B
+PASS Typing "a" when A[]B
+PASS execCommand("insertText", false, "a") when <b>A[]B</b>
+PASS Typing "a" when <b>A[]B</b>
+PASS execCommand("insertText", false, " ") when A[]B
+PASS Typing " " when A[]B
+PASS execCommand("insertText", false, " ") when <b>A[]B</b>
+PASS Typing " " when <b>A[]B</b>
+PASS execCommand("insertText", false, "  ") when <b>A[]B</b>
+PASS Typing "  " when <b>A[]B</b>
+PASS execCommand("insertText", false, "  ") when <p style="white-space:normal">A[]B</p>
+PASS Typing "  " when <p style="white-space:normal">A[]B</p>
+PASS execCommand("insertText", false, "  ") when <p style="white-space:pre">A[]B</p>
+PASS Typing "  " when <p style="white-space:pre">A[]B</p>
+PASS execCommand("insertText", false, "  ") when <p style="white-space:pre-line">A[]B</p>
+PASS Typing "  " when <p style="white-space:pre-line">A[]B</p>
+PASS execCommand("insertText", false, "  ") when <p style="white-space:pre-wrap">A[]B</p>
+PASS Typing "  " when <p style="white-space:pre-wrap">A[]B</p>
+PASS execCommand("insertText", false, "a") when <p><b>[]AB</b></p> and execCommand("insertParagraph")
+PASS Typing "a" when <p><b>[]AB</b></p> and execCommand("insertParagraph")
+PASS execCommand("insertText", false, "a") when <p><b>A[]B</b></p> and execCommand("insertParagraph")
+PASS Typing "a" when <p><b>A[]B</b></p> and execCommand("insertParagraph")
+PASS execCommand("insertText", false, "a") when <p><b>AB[]</b></p> and execCommand("insertParagraph")
+PASS Typing "a" when <p><b>AB[]</b></p> and execCommand("insertParagraph")
+FAIL execCommand("insertText", false, "a") when <p><b>[AB]</b></p> and execCommand("insertParagraph") assert_equals: expected "<p><b><br></b></p><p><b>a</b></p>" but got "<p><br></p><p style=\"font-weight: 700;\">a</p>"
+FAIL Typing "a" when <p><b>[AB]</b></p> and execCommand("insertParagraph") assert_equals: expected "<p><b><br></b></p><p><b>a</b></p>" but got "<p><br></p><p style=\"font-weight: 700;\">a</p>"
+PASS execCommand("insertText", false, "a") when <p><b>[]AB</b></p> and execCommand("insertLineBreak")
+PASS Typing "a" when <p><b>[]AB</b></p> and execCommand("insertLineBreak")
+PASS execCommand("insertText", false, "a") when <p><b>A[]B</b></p> and execCommand("insertLineBreak")
+PASS Typing "a" when <p><b>A[]B</b></p> and execCommand("insertLineBreak")
+PASS execCommand("insertText", false, "a") when <p><b>AB[]</b></p> and execCommand("insertLineBreak")
+PASS Typing "a" when <p><b>AB[]</b></p> and execCommand("insertLineBreak")
+FAIL execCommand("insertText", false, "a") when <p><b>[AB]</b></p> and execCommand("insertLineBreak") assert_equals: expected "<p><b>\na</b></p>" but got "<p>\na</p>"
+FAIL Typing "a" when <p><b>[AB]</b></p> and execCommand("insertLineBreak") assert_equals: expected "<p><b>\na</b></p>" but got "<p>\na</p>"
+FAIL execCommand("insertText", false, "a") when <p><b>[AB]</b></p> and execCommand("delete") assert_equals: expected "<p><b>a</b></p>" but got "<p style=\"font-weight: 700;\">a</p>"
+FAIL Typing "a" when <p><b>[AB]</b></p> and execCommand("delete") assert_equals: expected "<p><b>a</b></p>" but got "<p style=\"font-weight: 700;\">a</p>"
+FAIL execCommand("insertText", false, "a") when <p><b>A[]</b></p><p>B</p> and execCommand("delete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+FAIL Typing "a" when <p><b>A[]</b></p><p>B</p> and execCommand("delete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+FAIL execCommand("insertText", false, "a") when <p><b>[]A</b></p><p>B</p> and execCommand("forwardDelete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+FAIL Typing "a" when <p><b>[]A</b></p><p>B</p> and execCommand("forwardDelete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+FAIL execCommand("insertText", false, "a") when <p><b>[A]</b></p><p>B</p> and execCommand("delete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+FAIL Typing "a" when <p><b>[A]</b></p><p>B</p> and execCommand("delete") and move caret to the following paragraph temporarily assert_equals: expected "<p><b>a</b></p><p>B</p>" but got "<p>a</p><p>B</p>"
+PASS execCommand("insertText", false, "a") when <p><b>A[]</b></b> and execCommand("insertParagraph") and move caret to the preceding paragraph temporarily
+PASS Typing "a" when <p><b>A[]</b></b> and execCommand("insertParagraph") and move caret to the preceding paragraph temporarily
+
