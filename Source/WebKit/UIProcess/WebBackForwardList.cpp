@@ -41,6 +41,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <wtf/Borrow.h>
+#include <WebCore/Page.h>
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -759,8 +760,12 @@ void WebBackForwardList::backForwardAddItem(IPC::Connection& connection, Ref<Fra
         backForwardAddItemShared(connection, WTF::move(navigatedFrameState), webPageProxy->didLoadWebArchive() ? LoadedWebArchive::Yes : LoadedWebArchive::No);
 }
 
-static bool messageCheckItemURLs(Ref<FrameState>& frameState, Ref<WebProcessProxy>& process)
+static constexpr unsigned maxFrameStateDepthForMessageCheck = WebCore::Page::maxFrameDepth;
+
+static bool messageCheckItemURLs(Ref<FrameState>& frameState, Ref<WebProcessProxy>& process, unsigned depth = 0)
 {
+    MESSAGE_CHECK_WITH_RETURN_VALUE(process, depth < maxFrameStateDepthForMessageCheck, false);
+
     URL itemURL { frameState->urlString };
     URL itemOriginalURL { frameState->originalURLString };
 #if PLATFORM(COCOA)
@@ -775,6 +780,11 @@ static bool messageCheckItemURLs(Ref<FrameState>& frameState, Ref<WebProcessProx
 #if PLATFORM(COCOA)
     }
 #endif
+
+    for (auto& child : frameState->children) {
+        if (!messageCheckItemURLs(child, process, depth + 1))
+            return false;
+    }
     return true;
 }
 
