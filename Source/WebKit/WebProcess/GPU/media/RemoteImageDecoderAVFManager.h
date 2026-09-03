@@ -35,6 +35,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -68,7 +69,11 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&, uint64_t frameCount, const WebCore::IntSize&, bool hasTrack);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
+#else
+    HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders WTF_GUARDED_BY_CAPABILITY(mainRunLoop);
+#endif
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
