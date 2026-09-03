@@ -64,6 +64,7 @@ private:
     const RenderBlock& NODELETE root() const;
 
     PaintInfo& m_paintInfo;
+    // FIXME: (webkit.org/b/309800) This should maybe be a FloatPoint to indicate paint-ready geometry.
     const LayoutPoint m_paintOffset;
     LayoutRect m_damageRect;
     const RenderInline* m_inlineBoxWithLayer { nullptr };
