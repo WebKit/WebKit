@@ -700,7 +700,7 @@ void Buffer::skippedDrawIndirectIndexedValidation(CommandEncoder& commandEncoder
         protectedThis->m_skippedValidationCommandEncoders.remove(commandEncoder.uniqueId());
         if (protectedThis->m_mustTakeSlowIndexValidationPath
             || !protectedThis->m_indirectCache.committed
-            || protectedThis->indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount)) {
+            || protectedThis->indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, apiIndexBuffer->indexContentsGeneration())) {
             protectedThis->takeSlowIndirectIndexValidationPath(commandBuffer, *apiIndexBuffer.get(), indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, primitiveType);
             commandBuffer.addPostCommitHandler([protectedThis = WTF::move(protectedThis)](id<MTLCommandBuffer>) {
                 protectedThis->clearMustTakeSlowIndexValidationPath();
@@ -747,8 +747,18 @@ bool Buffer::indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32
     return m_indirectCache.indirectOffset != indirectOffset || m_indirectCache.minVertexCount != minVertexCount || m_indirectCache.minInstanceCount != minInstanceCount || m_indirectCache.drawType != IndirectArgsCache::IndirectDraw;
 }
 
-bool Buffer::indirectIndexedBufferRequiresRecomputation(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const
+bool Buffer::indirectIndexedBufferRequiresRecomputation(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, uint64_t indexContentsGeneration) const
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    UNUSED_PARAM(indexContentsGeneration);
+#else
+    // Every other term below describes this buffer, but the clamp verdict was reached by reading the
+    // index buffer's values. Those can change without touching anything here: a writeBuffer to the
+    // index buffer whose values stay at or below its validated high-water mark skips
+    // indirectBufferInvalidated() altogether, so the generation must be part of the comparison.
+    if (m_indirectCache.indexContentsGeneration != indexContentsGeneration)
+        return true;
+#endif // RC_REMOVE_SEC_ACCEL_3
     return Buffer::indirectBufferRequiresRecomputation(indirectOffset, minVertexCount, minInstanceCount) || m_indirectCache.indexType != indexType || m_indirectCache.indexBufferOffsetInBytes != indexBufferOffsetInBytes || m_indirectCache.drawType != IndirectArgsCache::IndirectIndexedDraw;
 }
 
@@ -761,13 +771,14 @@ void Buffer::indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVerte
     m_indirectCache.committed = committed;
 }
 
-void Buffer::indirectIndexedBufferRecomputed(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed)
+void Buffer::indirectIndexedBufferRecomputed(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, uint64_t indexContentsGeneration, bool committed)
 {
     m_indirectCache.indexType = indexType;
     m_indirectCache.indexBufferOffsetInBytes = indexBufferOffsetInBytes;
     m_indirectCache.indirectOffset = indirectOffset;
     m_indirectCache.minVertexCount = minVertexCount;
     m_indirectCache.minInstanceCount = minInstanceCount;
+    m_indirectCache.indexContentsGeneration = indexContentsGeneration;
     m_indirectCache.drawType = IndirectArgsCache::IndirectIndexedDraw;
     m_indirectCache.committed = committed;
 }
@@ -854,6 +865,7 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,
         .indexBufferOffsetInBytes = UINT64_MAX,
+        .indexContentsGeneration = UINT64_MAX,
         .minVertexCount = 0,
         .minInstanceCount = 0,
         .indexType = MTLIndexTypeUInt16
