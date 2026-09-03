@@ -1444,6 +1444,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             for (CheckedPtr childLayer : layer.negativeZOrderLayers()) {
                 computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState);
 
+                if (currentState.subtreeIsCompositing && willBeComposited)
+                    layer.setNeedsCompositingConfigurationUpdate();
                 // If we have to make a layer for this child, make one now so we can have a contents layer
                 // (since we need to ensure that the -ve z-order child renders underneath our contents).
                 if (!willBeComposited && currentState.subtreeIsCompositing) {
