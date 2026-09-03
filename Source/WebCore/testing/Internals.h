@@ -1673,6 +1673,7 @@ public:
     void setPDFDisplayModeForTesting(Element&, const String&) const;
     void unlockPDFDocumentForTesting(Element&, const String&) const;
     bool sendEditingCommandToPDFForTesting(Element&, const String& commandName, const String& argument) const;
+    Vector<String> pdfContextMenuItemTitlesForTesting(Element&, int x, int y) const;
     void registerPDFTest(Ref<VoidCallback>&&, Element&);
 
     String NODELETE defaultSpatialTrackingLabel() const;

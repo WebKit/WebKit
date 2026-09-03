@@ -1159,6 +1159,11 @@ void PluginView::setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigne
     return m_plugin->setTextAnnotationValueForTesting(pageIndex, annotationIndex, value);
 }
 
+Vector<String> PluginView::pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint& pointInRootView) const
+{
+    return m_plugin->contextMenuItemTitlesForTesting(pointInRootView);
+}
+
 void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
 {
     m_plugin->registerPDFTest(WTF::move(callback));

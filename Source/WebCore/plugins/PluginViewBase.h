@@ -76,6 +76,7 @@ public:
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
     virtual void unlockPDFDocumentForTesting(const String&) { }
     virtual void setPDFTextAnnotationValueForTesting(unsigned /* pageIndex */, unsigned /* annotationIndex */, const String& /* value */) { };
+    virtual Vector<String> pdfContextMenuItemTitlesForTesting(const IntPoint& /* pointInRootView */) const { return { }; }
 
     virtual void releaseMemory() { }
 

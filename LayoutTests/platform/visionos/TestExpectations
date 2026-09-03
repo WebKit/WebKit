@@ -139,6 +139,8 @@ imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 pdf/annotations [ Skip ]
 pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
 
+pdf/mac [ Skip ]
+
 ### END OF Legitimate failures
 ###################################################################################################
 

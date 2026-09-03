@@ -314,6 +314,7 @@ public:
     virtual Vector<WebCore::FloatRect> annotationRectsForTesting() const { return { }; }
     virtual void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) { }
     virtual void setPDFDisplayModeForTesting(const String&) { }
+    virtual Vector<String> contextMenuItemTitlesForTesting(const WebCore::IntPoint&) const { return { }; }
     void registerPDFTest(RefPtr<WebCore::VoidCallback>&&);
 
     void navigateToURL(const URL&, std::optional<WebCore::PlatformMouseEvent>&& = std::nullopt);

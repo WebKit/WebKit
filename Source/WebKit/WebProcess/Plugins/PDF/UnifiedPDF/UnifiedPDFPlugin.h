@@ -85,6 +85,7 @@ struct PDFContextMenu;
 struct PDFContextMenuItem;
 
 enum class WebEventType : uint32_t;
+enum class WebEventInputSource : uint8_t;
 enum class WebMouseEventButton : int8_t;
 enum class WebEventModifier : uint8_t;
 
@@ -381,12 +382,12 @@ private:
         Unknown,
     };
 
-    std::optional<PDFContextMenu> createContextMenu(const WebMouseEvent&) const;
+    std::optional<PDFContextMenu> createContextMenu(const WebCore::IntPoint& contextMenuEventRootViewPoint, WebEventInputSource) const;
     PDFContextMenuItem contextMenuItem(ContextMenuItemTag, bool hasAction = true) const;
     String titleForContextMenuItemTag(ContextMenuItemTag) const;
     bool NODELETE isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
     PDFContextMenuItem NODELETE separatorContextMenuItem() const;
-    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint, bool shouldPresentLookupAndSearchOptions) const;
+    Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     Vector<PDFContextMenuItem> navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
@@ -396,6 +397,8 @@ private:
 
     ContextMenuItemTag NODELETE contextMenuItemTagFromDisplayMode(const PDFPluginDisplayMode&) const;
     PDFPluginDisplayMode NODELETE displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
+
+    Vector<String> contextMenuItemTitlesForTesting(const WebCore::IntPoint& contextMenuEventRootViewPoint) const final;
 #endif
 
     // Autoscroll

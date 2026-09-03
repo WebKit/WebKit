@@ -8648,6 +8648,19 @@ bool Internals::sendEditingCommandToPDFForTesting(Element& element, const String
     return pluginViewBase->sendEditingCommandToPDFForTesting(commandName, argument);
 }
 
+Vector<String> Internals::pdfContextMenuItemTitlesForTesting(Element& element, int x, int y) const
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return { };
+
+    RefPtr pluginViewBase = pluginElement->pluginWidget();
+    if (!pluginViewBase)
+        return { };
+
+    return pluginViewBase->pdfContextMenuItemTitlesForTesting({ x, y });
+}
+
 Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Element& element) const
 {
     Vector<PDFAnnotationRect> annotationRects;

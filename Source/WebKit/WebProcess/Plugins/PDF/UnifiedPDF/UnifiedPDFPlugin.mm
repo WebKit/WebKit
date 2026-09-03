@@ -2295,12 +2295,14 @@ PlatformWheelEvent UnifiedPDFPlugin::wheelEventCopyWithVelocity(const PlatformWh
 bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
 #if ENABLE(CONTEXT_MENUS)
+    ASSERT(isContextMenuEvent(event));
+
     RefPtr frame = m_frame.get();
     RefPtr webPage = frame ? frame->page() : nullptr;
     if (!webPage)
         return false;
 
-    auto contextMenu = createContextMenu(event);
+    auto contextMenu = createContextMenu(flooredIntPoint(event.position()), event.inputSource());
     if (!contextMenu)
         return false;
 
@@ -2605,10 +2607,8 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) -> ContextMenuItemTag
     return isKnownContextMenuItemTag ? static_cast<ContextMenuItemTag>(tagValue) : ContextMenuItemTag::Unknown;
 }
 
-std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouseEvent& contextMenuEvent) const
+std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuEventRootViewPoint, WebEventInputSource inputSource) const
 {
-    ASSERT(isContextMenuEvent(contextMenuEvent));
-
     RefPtr frame = m_frame.get();
     if (!frame || !frame->coreLocalFrame())
         return std::nullopt;
@@ -2617,17 +2617,14 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
     if (!frameView)
         return std::nullopt;
 
-    auto contextMenuEventRootViewPoint = flooredIntPoint(contextMenuEvent.position());
-
     Vector<PDFContextMenuItem> menuItems;
 
     auto addSeparator = [item = separatorContextMenuItem(), &menuItems] {
         menuItems.append(item);
     };
 
-    if ([m_pdfDocument allowsCopying] && hasSelection()) {
-        bool shouldPresentLookupAndSearchOptions = !isInBaseSystem();
-        menuItems.appendVector(selectionContextMenuItems(contextMenuEventRootViewPoint, shouldPresentLookupAndSearchOptions));
+    if (hasSelection()) {
+        menuItems.appendVector(selectionContextMenuItems(contextMenuEventRootViewPoint));
         addSeparator();
     }
 
@@ -2659,8 +2656,21 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
         contextMenuPoint,
         WTF::move(menuItems),
         WTF::move(openInDefaultViewerTag),
-        contextMenuEvent.inputSource()
+        inputSource
     };
+}
+
+Vector<String> UnifiedPDFPlugin::contextMenuItemTitlesForTesting(const IntPoint& contextMenuEventRootViewPoint) const
+{
+    auto contextMenu = createContextMenu(contextMenuEventRootViewPoint, WebEventInputSource::UserDriven);
+    if (!contextMenu)
+        return { };
+
+    return WTF::compactMap(contextMenu->items, [](auto& item) -> std::optional<String> {
+        if (item.separator == ContextMenuItemIsSeparator::Yes)
+            return std::nullopt;
+        return item.title;
+    });
 }
 
 bool UnifiedPDFPlugin::isDisplayModeContextMenuItemTag(ContextMenuItemTag tag) const
@@ -2739,13 +2749,17 @@ PDFContextMenuItem UnifiedPDFPlugin::separatorContextMenuItem() const
     return { { }, 0, std::to_underlying(ContextMenuItemTag::Invalid), ContextMenuItemTagNoAction, ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes };
 }
 
-Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuEventRootViewPoint, bool shouldPresentLookupAndSearchOptions) const
+Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuEventRootViewPoint) const
 {
-    if (![m_pdfDocument allowsCopying] || !hasSelection())
-        return { };
+    Vector<PDFContextMenuItem> items;
+    if (!hasSelection())
+        return items;
 
-    Vector<PDFContextMenuItem> items { contextMenuItem(ContextMenuItemTag::Copy) };
+    bool allowsCopying = [m_pdfDocument allowsCopying];
+    if (allowsCopying)
+        items.append(contextMenuItem(ContextMenuItemTag::Copy));
 
+    bool shouldPresentLookupAndSearchOptions = !isInBaseSystem();
     if (shouldPresentLookupAndSearchOptions) {
         items.insertVector(0, Vector<PDFContextMenuItem> {
             contextMenuItem(ContextMenuItemTag::DictionaryLookup),
@@ -2755,7 +2769,9 @@ Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const Int
         });
     }
 
-    if (RetainPtr annotation = annotationForRootViewPoint(contextMenuEventRootViewPoint); annotation && annotationIsExternalLink(annotation.get()))
+    RetainPtr annotation = annotationForRootViewPoint(contextMenuEventRootViewPoint);
+    bool externalLinkUnderContextMenu = annotation && annotationIsExternalLink(annotation);
+    if (allowsCopying && externalLinkUnderContextMenu)
         items.append(contextMenuItem(ContextMenuItemTag::CopyLink));
 
     return items;

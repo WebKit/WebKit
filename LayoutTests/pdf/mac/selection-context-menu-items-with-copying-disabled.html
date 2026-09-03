@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+embed {
+    display: block;
+    width: 400px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<script>
+description("Verifies that text selection items in a PDF context menu are present even when the document disallows copying.");
+
+jsTestIsAsync = true;
+
+let menuItemTitles;
+
+function hasMenuItem(title)
+{
+    return menuItemTitles.includes(title);
+}
+
+function hasMenuItemStartingWith(prefix)
+{
+    return menuItemTitles.some(title => title.startsWith(prefix));
+}
+
+function whenPDFIsLoaded(plugin)
+{
+    return new Promise(resolve => internals.registerPDFTest(resolve, plugin));
+}
+
+function contextMenuItemTitlesForSelectionIn(plugin)
+{
+    internals.sendEditingCommandToPDFForTesting(plugin, "selectAll");
+    let bounds = plugin.getBoundingClientRect();
+    return internals.pdfContextMenuItemTitlesForTesting(plugin, bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+}
+
+addEventListener("load", async () => {
+    let copyingDisabled = document.getElementById("copying-disabled");
+    let copyingEnabled = document.getElementById("copying-enabled");
+
+    await whenPDFIsLoaded(copyingDisabled);
+    await whenPDFIsLoaded(copyingEnabled);
+
+    debug("Context menu for a selection in a PDF that disallows copying:");
+    menuItemTitles = contextMenuItemTitlesForSelectionIn(copyingDisabled);
+    shouldBeTrue(`hasMenuItem("Zoom In")`);
+    shouldBeTrue(`hasMenuItemStartingWith("Look Up ")`);
+    shouldBeTrue(`hasMenuItemStartingWith("Search with ")`);
+    shouldBeFalse(`hasMenuItem("Copy")`);
+    debug("");
+
+    debug("Context menu for a selection in a PDF that allows copying:");
+    menuItemTitles = contextMenuItemTitlesForSelectionIn(copyingEnabled);
+    shouldBeTrue(`hasMenuItem("Zoom In")`);
+    shouldBeTrue(`hasMenuItemStartingWith("Look Up ")`);
+    shouldBeTrue(`hasMenuItemStartingWith("Search with ")`);
+    shouldBeTrue(`hasMenuItem("Copy")`);
+
+    finishJSTest();
+});
+</script>
+<embed id="copying-disabled" src="../resources/copying-disabled.pdf"></embed>
+<embed id="copying-enabled" src="../resources/fullscreen.pdf"></embed>
+</body>
+</html>
