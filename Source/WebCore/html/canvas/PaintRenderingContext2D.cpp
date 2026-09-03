@@ -72,7 +72,7 @@ CustomPaintCanvas& PaintRenderingContext2D::canvas() const
 GraphicsContext* PaintRenderingContext2D::drawingContext() const
 {
     if (!m_recordingContext)
-        m_recordingContext.emplace(canvasBase().size());
+        m_recordingContext.emplace(FloatRect { { }, canvasBase().size() });
     return &*m_recordingContext;
 }
 

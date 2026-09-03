@@ -441,10 +441,262 @@ struct TrivialRotate {
     }
 };
 
+// When the recorder does not know the replay target's state, setting a state property to its default
+// value must still be recorded: the target may not be at that default.
+
+struct SetDefaultFillBrush {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setFillColor(WebCore::Color::black);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-inline-fill-color
+  (color #000000)))DL"_s;
+    }
+};
+
+struct SetDefaultFillRule {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setFillRule(WebCore::WindRule::NonZero);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [fill-rule])
+  (fill-rule NON-ZERO)))DL"_s;
+    }
+};
+
+struct SetDefaultStrokeBrush {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setStrokeColor(WebCore::Color::black);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-inline-stroke
+  (color #000000)))DL"_s;
+    }
+};
+
+struct SetDefaultStrokeThickness {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setStrokeThickness(0);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-inline-stroke
+  (thickness 0.00)))DL"_s;
+    }
+};
+
+struct SetDefaultStrokeStyle {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setStrokeStyle(WebCore::StrokeStyle::SolidStroke);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [stroke-style])
+  (stroke-style solid-stroke)))DL"_s;
+    }
+};
+
+struct SetDefaultCompositeMode {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setCompositeOperation(WebCore::CompositeOperator::SourceOver, WebCore::BlendMode::Normal);
+    }
+
+    static String description()
+    {
+        // Note: the literals are split around the space TextStream emits after a nested group name,
+        // so that it does not end up as trailing whitespace in this file.
+        return R"DL(
+(set-state
+  (change-flags [composite-mode])
+  (composite-mode)DL" " " R"DL(
+    (composite-operation source-over)
+    (blend-mode normal))))DL"_s;
+    }
+};
+
+struct SetDefaultDropShadow {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.clearDropShadow();
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [drop-shadow])
+  (drop-shadow nullopt)))DL"_s;
+    }
+};
+
+struct SetDefaultStyle {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setStyle(std::nullopt);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [style])
+  (style nullopt)))DL"_s;
+    }
+};
+
+struct SetDefaultAlpha {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setAlpha(1);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [alpha])
+  (alpha 1.00)))DL"_s;
+    }
+};
+
+struct SetDefaultImageInterpolationQuality {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setImageInterpolationQuality(WebCore::InterpolationQuality::Default);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [image-interpolation-quality])
+  (image-interpolation-quality default)))DL"_s;
+    }
+};
+
+struct SetDefaultTextDrawingMode {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setTextDrawingMode(WebCore::TextDrawingMode::Fill);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [text-drawing-mode])
+  (text-drawing-mode [fill])))DL"_s;
+    }
+};
+
+struct SetDefaultShouldAntialias {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(true);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 1)))DL"_s;
+    }
+};
+
+struct SetDefaultShouldSmoothFonts {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldSmoothFonts(true);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-smooth-fonts])
+  (should-smooth-fonts 1)))DL"_s;
+    }
+};
+
+struct SetDefaultShouldSubpixelQuantizeFonts {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        // shouldDumpItem() hides a set-state whose only change is should-subpixel-quantize-fonts, so
+        // set another property to its default value too to make the recorded item observable.
+        c.setFillRule(WebCore::WindRule::NonZero);
+        c.setShouldSubpixelQuantizeFonts(true);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [fill-rule, should-subpixel-quantize-fonts])
+  (fill-rule NON-ZERO)
+  (should-subpixel-quantize-fonts 1)))DL"_s;
+    }
+};
+
+struct SetDefaultShadowsIgnoreTransforms {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShadowsIgnoreTransforms(false);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [shadows-ignore-transforms])
+  (shadows-ignore-transforms 0)))DL"_s;
+    }
+};
+
+struct SetDefaultDrawLuminanceMask {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setDrawLuminanceMask(false);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [draw-luminance-mask])
+  (draw-luminance-mask 0)))DL"_s;
+    }
+};
+
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect>;
+    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
+    SetDefaultFillBrush, SetDefaultFillRule, SetDefaultStrokeBrush, SetDefaultStrokeThickness, SetDefaultStrokeStyle,
+    SetDefaultCompositeMode, SetDefaultDropShadow, SetDefaultStyle, SetDefaultAlpha, SetDefaultImageInterpolationQuality,
+    SetDefaultTextDrawingMode, SetDefaultShouldAntialias, SetDefaultShouldSmoothFonts, SetDefaultShouldSubpixelQuantizeFonts,
+    SetDefaultShadowsIgnoreTransforms, SetDefaultDrawLuminanceMask>;
 
 }
 
@@ -454,7 +706,7 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 {
     auto refTarget = createReferenceTarget();
     auto& ref = refTarget->context();
-    WebCore::DisplayList::RecorderImpl tested { { testContextWidth, testContextHeight } };
+    WebCore::DisplayList::RecorderImpl tested { { 0, 0, testContextWidth, testContextHeight } };
     EXPECT_TRUE(checkEqualState(ref, tested));
 
     forBoth(ref, tested, this->operation());

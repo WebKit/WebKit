@@ -40,7 +40,7 @@ using namespace WebCore;
 
 Ref<RemoteSnapshotRecorder> RemoteSnapshotRecorder::create(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteRenderingBackend& renderingBackend)
 {
-    Ref instance = adoptRef(*new RemoteSnapshotRecorder(makeUniqueRef<DisplayList::RecorderImpl>(FloatSize { }), identifier, snapshot, renderingBackend));
+    Ref instance = adoptRef(*new RemoteSnapshotRecorder(makeUniqueRef<DisplayList::RecorderImpl>(FloatRect { }), identifier, snapshot, renderingBackend));
     instance->startListeningForIPC();
     return instance;
 }

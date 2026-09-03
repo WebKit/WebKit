@@ -120,7 +120,7 @@ bool Recorder::updateStateForRestore(GraphicsContextState::Purpose purpose)
     GraphicsContext::restore(purpose);
     m_stateStack.removeLast();
     m_committedState.copyPropertiesFrom(m_state, committedChanges);
-    ASSERT(m_state.propertiesEqual(m_committedState));
+    ASSERT(m_state.propertiesEqualIgnoring(m_committedState, m_state.indeterminateProperties()));
     return true;
 }
 
@@ -134,6 +134,9 @@ void Recorder::commitStateChanges(GraphicsContextState::ChangeFlags changes)
 {
     m_committedState.copyPropertiesFrom(m_state, changes);
     currentState().committedChanges.add(changes);
+    // These properties have now been written out, so their value in the target is known until the
+    // enclosing save() is restored.
+    m_state.markDeterminate(changes);
     m_state.didApplyChanges();
 }
 
@@ -216,7 +219,7 @@ bool Recorder::updateStateForEndTransparencyLayer()
     m_stateStack.removeLast();
     GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
     m_committedState.copyPropertiesFrom(m_state, committedChanges);
-    ASSERT(m_state.propertiesEqual(m_committedState));
+    ASSERT(m_state.propertiesEqualIgnoring(m_committedState, m_state.indeterminateProperties()));
     return true;
 }
 

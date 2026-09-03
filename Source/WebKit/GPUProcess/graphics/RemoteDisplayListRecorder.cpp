@@ -35,7 +35,7 @@ using namespace WebCore;
 
 Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
 {
-    Ref instance = adoptRef(*new RemoteDisplayListRecorder(makeUniqueRef<DisplayList::RecorderImpl>(FloatSize { }), identifier, renderingBackend));
+    Ref instance = adoptRef(*new RemoteDisplayListRecorder(makeUniqueRef<DisplayList::RecorderImpl>(FloatRect { }), identifier, renderingBackend));
     instance->startListeningForIPC();
     return instance;
 }
