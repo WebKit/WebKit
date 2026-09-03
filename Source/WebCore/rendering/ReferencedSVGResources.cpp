@@ -166,6 +166,45 @@ ReferencedSVGResources::~ReferencedSVGResources()
         removeClientForTarget(targetID);
 }
 
+bool ReferencedSVGResources::resourceContainsCycles(SVGResourceElementClient& client, SingleThreadWeakHashSet<RenderElement>& activeClients, SingleThreadWeakHashSet<RenderElement>& acyclicClients)
+{
+    auto& renderer = client.renderer();
+
+    if (activeClients.contains(renderer))
+        return true;
+
+    if (acyclicClients.contains(renderer))
+        return false;
+
+    RefPtr element = dynamicDowncast<SVGElement>(renderer.element());
+    if (!element)
+        return false;
+
+    activeClients.add(renderer);
+
+    for (auto& client : element->referencingCSSClients()) {
+        if (client && resourceContainsCycles(*client, activeClients, acyclicClients))
+            return true;
+    }
+
+    activeClients.remove(renderer);
+    acyclicClients.add(renderer);
+    return false;
+}
+
+bool ReferencedSVGResources::resourceContainsCycles(SVGElement& targetElement)
+{
+    SingleThreadWeakHashSet<RenderElement> acyclicResources;
+    SingleThreadWeakHashSet<RenderElement> activeResources;
+
+    for (auto& client : targetElement.referencingCSSClients()) {
+        if (client && resourceContainsCycles(*client, activeResources, acyclicResources))
+            return true;
+    }
+
+    return false;
+}
+
 void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
 {
     m_elementClients.ensure(targetID, [&] {
@@ -262,6 +301,12 @@ void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, con
             continue;
 
         addClientForTarget(*element, targetID);
+
+        if (resourceContainsCycles(*element)) {
+            oldKeys.add(targetID);
+            continue;
+        }
+
         oldKeys.remove(targetID);
     }
 

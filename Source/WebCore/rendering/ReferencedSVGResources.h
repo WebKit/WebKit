@@ -89,6 +89,9 @@ private:
     static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const SVGQualifiedName& tagName);
     static RefPtr<SVGElement> elementForResourceIDs(TreeScope&, const AtomString& resourceID, const SVGQualifiedNames& tagNames);
 
+    bool resourceContainsCycles(SVGResourceElementClient&, SingleThreadWeakHashSet<RenderElement>& activeClients, SingleThreadWeakHashSet<RenderElement>& acyclicClients);
+    bool resourceContainsCycles(SVGElement& targetElement);
+
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(const AtomString&);
 
