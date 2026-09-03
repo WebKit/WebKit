@@ -2014,15 +2014,6 @@ bool Quirks::needsPopupFromMicrosoftOfficeToOneDrive(const URL& targetURL) const
 }
 #endif
 
-// rdar://127398734
-bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    auto url = protect(m_document)->url();
-    return url.protocolIs("https"_s) && url.host() == "login.microsoftonline.com"_s && requestURL.protocolIs("https"_s) && requestURL.host() == "www.bing.com"_s;
-}
-
 bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
