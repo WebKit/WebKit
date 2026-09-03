@@ -107,6 +107,8 @@ class SpatialVideoSupport extends MediaControllerSupport
     _resolveProjection(media, host)
     {
         const declared = ProjectionAttributeValues[media.getAttribute("x-webkit-projection")?.trim().toLowerCase()];
+        if (declared === "none")
+            return null;
         if (declared)
             return { projection: declared, fovDegrees: null };
 
@@ -494,6 +496,7 @@ SpatialVideoSupport.CameraFOV = 80;
 SpatialVideoSupport.DragTolerance = 3;
 SpatialVideoSupport.DragSpeed = 0.005;
 const ProjectionAttributeValues = {
+    "none": "none",
     "equirectangular": "equirect360",
     "360": "equirect360",
     "halfequirectangular": "equirect180",
