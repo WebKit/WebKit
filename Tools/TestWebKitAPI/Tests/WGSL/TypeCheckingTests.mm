@@ -852,6 +852,16 @@ TEST(WGSLTypeCheckingTests, Visibility)
         "fn f() { storageBarrier(); }"
         "@fragment fn main() { f(); }"_s,
         "built-in cannot be used by fragment pipeline stage"_s);
+
+    expectTypeError(
+        "fn f() { discard; }"
+        "@compute @workgroup_size(1) fn main() { f(); }"_s,
+        "discard statement cannot be used by compute pipeline stage"_s);
+
+    expectTypeError(
+        "fn f() { discard; }"
+        "@vertex fn main() -> @builtin(position) vec4f { f(); return vec4f(1); }"_s,
+        "discard statement cannot be used by vertex pipeline stage"_s);
 }
 
 TEST(WGSLTypeCheckingTests, While)

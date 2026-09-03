@@ -42,6 +42,7 @@ public:
 
     void visit(AST::Function&) override;
     void visit(AST::CallExpression&) override;
+    void visit(AST::DiscardStatement&) override;
 
 private:
     template<typename... Arguments>
@@ -82,6 +83,12 @@ void VisibilityValidator::visit(AST::CallExpression& call)
     AST::Visitor::visit(call);
     if (!call.visibility().contains(m_stage))
         error(call.span(), "built-in cannot be used by "_s, toString(m_stage), " pipeline stage"_s);
+}
+
+void VisibilityValidator::visit(AST::DiscardStatement& statement)
+{
+    if (m_stage != ShaderStage::Fragment)
+        error(statement.span(), "discard statement cannot be used by "_s, toString(m_stage), " pipeline stage"_s);
 }
 
 template<typename... Arguments>
