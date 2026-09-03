@@ -37,9 +37,9 @@
 namespace WebCore {
 
 static constexpr auto privateClickMeasurementTriggerAttributionPath = "/.well-known/private-click-measurement/trigger-attribution/"_s;
-static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
-static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-token-public-key/";
-static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
+static constexpr auto privateClickMeasurementTokenSignaturePath = "/.well-known/private-click-measurement/sign-unlinkable-token/"_s;
+static constexpr auto privateClickMeasurementTokenPublicKeyPath = "/.well-known/private-click-measurement/get-token-public-key/"_s;
+static constexpr auto privateClickMeasurementReportAttributionPath = "/.well-known/private-click-measurement/report-attribution/"_s;
 static constexpr auto privateClickMeasurementToSKAdNetworkURLPrefix = "https://apps.apple.com/app/id"_s;
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
@@ -279,9 +279,9 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
     return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
-static URL makeValidURL(const RegistrableDomain& domain, const char* path)
+static URL makeValidURL(const RegistrableDomain& domain, ASCIILiteral path)
 {
-    URL validURL { makeString("https://"_s, domain.string(), unsafeSpan(path)) };
+    URL validURL { makeString("https://"_s, domain.string(), path) };
     return validURL.isValid() ? validURL : URL { };
 }
 
