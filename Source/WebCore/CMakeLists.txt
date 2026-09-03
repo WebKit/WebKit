@@ -3327,6 +3327,13 @@ if (APPLE)
         add_dependencies(WebCore webrtc)
     endif ()
 
+    if (TARGET ANGLE-shared)
+        # Weak too, matching -weak-lANGLE-shared in Configurations/WebCore.xcconfig.
+        # ANGLE arrives through the ANGLE::* interface targets, so override the
+        # link feature rather than the link itself.
+        set_property(TARGET WebCore PROPERTY LINK_LIBRARY_OVERRIDE_ANGLE-shared WEAK_LIBRARY)
+    endif ()
+
     # Use target_link_options with LINKER: so CMake translates these for
     # whichever linker driver is used (clang or swiftc).
     target_link_options(WebCore PRIVATE
