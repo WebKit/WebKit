@@ -59,7 +59,6 @@
                 }
             },
             "environment": {
-                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
                 "CCACHE_BASEDIR": "${sourceDir}"
             }
         },
