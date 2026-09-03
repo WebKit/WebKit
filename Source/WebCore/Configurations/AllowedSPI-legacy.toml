@@ -38,7 +38,7 @@ requires = ["HAVE_WEBCONTENTRESTRICTIONS"]
 selectors = [
     { name = "_getCookiesForPartition:completionHandler:", class = "?" },
 ]
-requires = ["HAVE_ALLOW_ONLY_PARTITIONED_COOKIES"]
+requires = ["ENABLE_OPT_IN_PARTITIONED_COOKIES"]
 
 [[legacy]]
 symbols = [
