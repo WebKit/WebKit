@@ -1095,6 +1095,21 @@ String WebBackForwardListWrapper::loggingString()
 
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 
+uint64_t cxxRefCountedLayoutSignature()
+{
+    uint64_t signature = static_cast<uint64_t>(sizeof(WTF::RefCountedBase))
+        | (static_cast<uint64_t>(sizeof(WTF::ThreadSafeRefCountedBase)) << 8)
+        | (static_cast<uint64_t>(sizeof(WTF::RefCountDebugger)) << 16)
+        | (static_cast<uint64_t>(sizeof(WTF::ThreadSafeRefCountDebugger)) << 24);
+#if ASSERT_ENABLED
+    signature |= 1ULL << 32;
+#endif
+#if ENABLE(SECURITY_ASSERTIONS)
+    signature |= 1ULL << 33;
+#endif
+    return signature;
+}
+
 WebCore::BackForwardFrameItemIdentifier generateBackForwardFrameItemIdentifier()
 {
     return WebCore::BackForwardFrameItemIdentifier::generate();
