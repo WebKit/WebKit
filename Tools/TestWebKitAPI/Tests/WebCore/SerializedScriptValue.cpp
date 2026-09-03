@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Helpers/Test.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <WebCore/IDBBindingUtilities.h>
@@ -32,6 +33,7 @@
 #include <WebCore/ParsedContentRange.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ThreadSafeDataBuffer.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
@@ -11482,6 +11484,30 @@ TEST(WebCore, SerializedScriptValueReadTerminalImageDataTag)
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
     deserializeJSValue(bytes);
+}
+
+// Deserializing is allowed in the WebContent process. The tests above cover the other allowed
+// case, a process that is not a WebKit auxiliary process at all.
+TEST(WebCore, SerializedScriptValueDeserializeInWebProcess)
+{
+    constexpr auto bytes = WTF::toArray<uint8_t>({ 0x00 });
+    auto previousProcessType = processType();
+    setAuxiliaryProcessTypeForTesting(WTF::AuxiliaryProcessType::WebContent);
+    deserializeJSValue(bytes);
+    setAuxiliaryProcessTypeForTesting(previousProcessType);
+}
+
+// Deserializing in any other auxiliary process is a security assertion failure.
+TEST(WebCoreDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(SerializedScriptValueDeserializeInNetworkProcess))
+{
+    // deserializeJSValue() hops to the IndexedDB serialization thread, so the child process has to
+    // be re-executed rather than forked out of this multi-threaded one.
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    ASSERT_DEATH_IF_SUPPORTED({
+        constexpr auto bytes = WTF::toArray<uint8_t>({ 0x00 });
+        setAuxiliaryProcessTypeForTesting(WTF::AuxiliaryProcessType::Network);
+        deserializeJSValue(bytes); // This should assert.
+    }, "ASSERTION FAILED: !isInAuxiliaryProcess\\(\\) \\|\\| isInWebProcess\\(\\)");
 }
 
 } // namespace TestWebKitAPI

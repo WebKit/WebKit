@@ -136,6 +136,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -1986,6 +1987,7 @@ public:
         , uint64_t exposedMessagePortCount
         )
     {
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInAuxiliaryProcess() || isInWebProcess()); // NOLINT
         if (!buffer.size())
             return { jsNull(), SerializationReturnCode::UnspecifiedError };
         CloneDeserializer deserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, WTF::move(detachedImageBitmaps)
