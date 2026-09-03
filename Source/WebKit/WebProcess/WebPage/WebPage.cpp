@@ -10268,14 +10268,6 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
     return completionHandler(localTopDocument->loader()->lastNavigationWasAppInitiated());
 }
 
-#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-
-void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
-{
-    send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
-}
-#endif
-
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint&)
 {
     RefPtr frameView = localMainFrameView();
