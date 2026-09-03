@@ -136,15 +136,19 @@ static Color colorCompositedOverCanvasColor(CSSValueID cssValue, OptionSet<Style
     return blendSourceOver(backingColor, foregroundColor);
 }
 
-static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, const PaintInfo& paintInfo, [[maybe_unused]] const FloatRect& rect, Path path)
+static void drawFocusRingForPathIfNeededForVectorBasedControls(const RenderElement& box, const PaintInfo& paintInfo, [[maybe_unused]] const FloatRect& rect, Path path)
 {
+    CheckedRef style = box.style();
+    if (!RenderTheme::singleton().appearsFocused(box) || style->outlineStyle() != OutlineStyle::Auto)
+        return;
+
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
     // macOS controls have never honored outline offset.
 #if PLATFORM(IOS_FAMILY)
-    auto deviceScaleFactor = box.style().deviceScaleFactor();
-    auto outlineOffset = Style::evaluate<float>(box.style().usedOutlineOffset(), box.style().usedZoomForLength(), deviceScaleFactor);
+    auto deviceScaleFactor = style->deviceScaleFactor();
+    auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), deviceScaleFactor);
 
     if (outlineOffset > 0) {
         const auto center = rect.center();
@@ -159,7 +163,7 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
 
     // We pass 0.f as the border thickness because the parameter is not used by
     // the context. It will determine an appropriate value for us.
-    context.drawFocusRing(path, 0.f, focusRingColor, box.style().usedZoom());
+    context.drawFocusRing(path, 0.f, focusRingColor, style->usedZoom());
 }
 
 #if PLATFORM(MAC)
@@ -669,7 +673,7 @@ static bool renderThemePaintLiquidGlassSwitchThumb(OptionSet<ControlStyle::State
 
     // On Mac, we paint the focus ring using the track path.
     if (states.contains(ControlStyle::State::Focused))
-        drawFocusRingForPathForVectorBasedControls(renderer, paintInfo, thumbRoundedRect.rect(), thumbPath);
+        drawFocusRingForPathIfNeededForVectorBasedControls(renderer, paintInfo, thumbRoundedRect.rect(), thumbPath);
 #endif
 
     return false;
@@ -723,7 +727,7 @@ static bool renderThemePaintLiquidGlassSwitchTrack(OptionSet<ControlStyle::State
     // we do during thumb painting on iOS, draw the ring outside the track in order
     // to keep the ring easily discernible.
     if (states.contains(ControlStyle::State::Focused))
-        drawFocusRingForPathForVectorBasedControls(renderer, paintInfo, roundedTrackRect.rect(), trackPath);
+        drawFocusRingForPathIfNeededForVectorBasedControls(renderer, paintInfo, roundedTrackRect.rect(), trackPath);
 #endif
 
     return false;
@@ -1461,18 +1465,22 @@ bool RenderThemeCocoa::controlSupportsTints(const RenderElement& box) const
 #if PLATFORM(MAC)
     switch (box.style().usedAppearance()) {
     case StyleAppearance::Button:
-        return isSubmitStyleButton(box.element());
+        return isSubmitStyleButton(box.element()) || isFocused(box);
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio:
-        return isChecked(box) || isIndeterminate(box);
+        return isChecked(box) || isIndeterminate(box) || isFocused(box);
     case StyleAppearance::InnerSpinButton:
     case StyleAppearance::ListButton:
     case StyleAppearance::ProgressBar:
     case StyleAppearance::SliderHorizontal:
     case StyleAppearance::SliderVertical:
         return true;
+    case StyleAppearance::SearchField:
+    case StyleAppearance::TextField:
+    case StyleAppearance::TextArea:
+        return isFocused(box);
     case StyleAppearance::Switch:
-        return isChecked(box);
+        return isChecked(box) || isFocused(box);
     default:
         break;
     }
@@ -1587,11 +1595,6 @@ constexpr auto nativeControlBorderInlineSizeForVectorBasedControls = 1.0f;
 
 constexpr auto checkboxRadioSizeForVectorBasedControls = 16.f;
 constexpr auto checkboxRadioBorderWidthForVectorBasedControls = 1.5f;
-
-static bool controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(const RenderElement& renderer)
-{
-    return RenderTheme::singleton().isFocused(renderer) && renderer.style().outlineStyle() == OutlineStyle::Auto;
-}
 
 static constexpr auto checkboxRadioBorderDisabledOpacityForVectorBasedControls = 0.5f;
 
@@ -2008,8 +2011,7 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     auto indeterminate = controlStates.contains(ControlStyle::State::Indeterminate);
     auto empty = !checked && !indeterminate;
 
-    if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
-        drawFocusRingForPathForVectorBasedControls(box, paintInfo, paintRect, path);
+    drawFocusRingForPathIfNeededForVectorBasedControls(box, paintInfo, paintRect, path);
 
     context.clipPath(path);
 
@@ -2157,9 +2159,7 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
         drawShapeWithBorder(context, deviceScaleFactor, boundingPath, paintRect, backgroundColor, borderThickness, borderColor);
     }
 
-    if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
-        drawFocusRingForPathForVectorBasedControls(box, paintInfo, paintRect, boundingPath);
-
+    drawFocusRingForPathIfNeededForVectorBasedControls(box, paintInfo, paintRect, boundingPath);
     return true;
 }
 
@@ -2216,9 +2216,7 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
 #endif
 
     drawShapeWithBorder(context, deviceScaleFactor, path, boundingRect, backgroundColor, borderWidth, borderColor);
-
-    if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
-        drawFocusRingForPathForVectorBasedControls(box, paintInfo, boundingRect, path);
+    drawFocusRingForPathIfNeededForVectorBasedControls(box, paintInfo, boundingRect, path);
 
     return true;
 }
@@ -3099,10 +3097,7 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
 
     const auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
     drawShapeWithBorder(context, deviceScaleFactor, path, rect, backgroundColor, borderThicknessForTextBasedControl * usedZoom, borderColor);
-
-    if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
-        drawFocusRingForPathForVectorBasedControls(box, paintInfo, rect, path);
-
+    drawFocusRingForPathIfNeededForVectorBasedControls(box, paintInfo, rect, path);
     return true;
 }
 
@@ -4242,8 +4237,7 @@ bool RenderThemeCocoa::paintSearchFieldForVectorBasedControls(const RenderElemen
             borderColor = borderColor.colorWithAlphaMultipliedBy(0.5f);
     }
 
-    if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
-        drawFocusRingForPathForVectorBasedControls(box, paintInfo, boundingRect, path);
+    drawFocusRingForPathIfNeededForVectorBasedControls(box, paintInfo, boundingRect, path);
 
     context.setFillColor(borderColor);
     context.fillPath(path);

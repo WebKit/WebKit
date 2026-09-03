@@ -184,12 +184,7 @@ fast/forms/form-control-refresh/autofilled-text-input-light-mode.html [ ImageOnl
 fast/forms/form-control-refresh/submit-button-appearance-matches-button-window-inactive.html [ ImageOnlyFailure ]
 
 # Window inactive appearance is only used on macOS.
-fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Skip ]
-fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
-fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
-fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
-fast/forms/form-control-refresh/spinbutton-window-inactive-state-dark-mode.html [ Skip ]
-fast/forms/form-control-refresh/spinbutton-window-inactive-state-light-mode.html [ Skip ]
+fast/forms/form-control-refresh/window-inactive [ Skip ]
 
 # webkit.org/b/300929 REGRESSION(297559@main): interaction-region/form-control-refresh/date-native-interaction-region.html does not pass on visionOS
 interaction-region/form-control-refresh/date-native-interaction-region.html [ Failure ]

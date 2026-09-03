@@ -141,8 +141,10 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
 void PlatformWebView::setWindowIsKey(bool isKey)
 {
     m_windowIsKey = isKey;
+
+    // Since this is a borderless window, we have to post the notification ourself.
     if (m_windowIsKey)
-        [m_window makeKeyWindow];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidBecomeKeyNotification object:m_window];
     else
         [m_window resignKeyWindow];
 }
