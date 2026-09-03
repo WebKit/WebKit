@@ -72,8 +72,10 @@ public:
     friend void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
 
     void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
-    JSValue select(JSGlobalObject*, double value) const;
+    JSValue select(JSGlobalObject*, double targetValue) const;
+    JSValue select(JSGlobalObject*, IntlMathematicalValue&& targetValue) const;
     JSValue selectRange(JSGlobalObject*, double start, double end) const;
+    JSValue selectRange(JSGlobalObject*, IntlMathematicalValue&& start, IntlMathematicalValue&& end) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
 private:
