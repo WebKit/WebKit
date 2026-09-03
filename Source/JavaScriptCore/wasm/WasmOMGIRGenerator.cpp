@@ -3815,8 +3815,92 @@ auto OMGIRGenerator::addArrayNewDefault(TypeSignatureIndex typeIndex, Expression
 
 auto OMGIRGenerator::addArrayNewData(TypeSignatureIndex typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
 {
-    result = pushArrayNewFromSegment(operationWasmArrayNewData, typeIndex, dataIndex, arraySize, offset, ExceptionType::BadArrayNewInitData);
+    Value* sizeValue = get(arraySize);
+    Value* srcOffsetValue = get(offset);
 
+    auto emitCCall = [&]() -> Value* {
+        Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNewData,
+            instanceValue(), constant(Int32, typeIndex.rawIndex()),
+            constant(Int32, dataIndex),
+            sizeValue, srcOffsetValue);
+        emitNullCheck(resultValue, ExceptionType::BadArrayNewInitData);
+        return resultValue;
+    };
+
+    constexpr unsigned maxInlinePassiveBits = sizeof(void*) * 8 - 1;
+    if (dataIndex >= maxInlinePassiveBits) {
+        result = push(emitCCall());
+        return { };
+    }
+
+    auto* bits = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfPassiveDataSegments()));
+    auto* isInline = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), static_cast<uintptr_t>(1) << maxInlinePassiveBits));
+
+    auto* inlinePath = m_proc.addBlock();
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+    auto* phi = continuation->appendNew<Value>(m_proc, Phi, wasmRefType(), origin());
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isInline,
+        FrequentedBlock(inlinePath), FrequentedBlock(slowPath, FrequencyClass::Rare));
+    inlinePath->addPredecessor(m_currentBlock);
+    slowPath->addPredecessor(m_currentBlock);
+
+    m_currentBlock = inlinePath;
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
+    size_t elementSize = elementType.elementSize();
+    ASSERT(!isRefType(elementType.unpacked()));
+
+    auto* srcOffsetPtr = pointerOfInt32(srcOffsetValue);
+    auto* byteCount = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), pointerOfInt32(sizeValue),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementSize));
+    auto* srcSum = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), srcOffsetPtr, byteCount);
+    auto* dropped = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), static_cast<uintptr_t>(1) << dataIndex)),
+        constant(pointerType(), 0));
+    auto* segmentSize = m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), dropped,
+        constant(pointerType(), 0),
+        constant(pointerType(), m_info.data[dataIndex]->sizeInBytes()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Below, origin(), srcSum, srcOffsetPtr),
+        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), srcSum, segmentSize));
+    if (elementSize > 1) {
+        outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Above, origin(), pointerOfInt32(sizeValue),
+                constant(pointerType(), static_cast<uintptr_t>(-1) / elementSize)),
+            outOfBounds);
+    }
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
+    check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, origin, ExceptionType::BadArrayNewInitData);
+    });
+
+    auto* structureID = loadGCObjectStructureID(typeIndex);
+    Ref<const RTT> rtt = m_info.rtt(typeIndex);
+    int32_t allocatorsBaseOffset = safeCast<int32_t>(JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
+    m_proc.setUsesWasmGCArrayAllocations();
+    auto* array = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, sizeValue);
+    m_heaps.decorateWasmArrayNew(&m_heaps.VM_heapState, array);
+
+    m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryCopy, origin(),
+        emitArrayElementAddress(elementType, array, constant(Int32, 0)),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(),
+            constant(pointerType(), std::bit_cast<uintptr_t>(m_info.data[dataIndex]->span().data())),
+            srcOffsetPtr),
+        byteCount);
+    mutatorFence();
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), array, phi);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), emitCCall(), phi);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
+    result = push(phi);
     return { };
 }
 
