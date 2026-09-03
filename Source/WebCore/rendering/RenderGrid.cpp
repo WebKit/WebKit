@@ -438,7 +438,7 @@ const std::optional<LayoutUnit> RenderGrid::availableLogicalHeightForContentBox(
         return { };
 
     if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
-        return constrainContentBoxLogicalHeightByMinMax(*overridingLogicalHeight - borderAndPaddingLogicalHeight(), { });
+        return constrainContentBoxLogicalHeightByMinMax(*overridingLogicalHeight - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), { });
     return availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
 }
 
