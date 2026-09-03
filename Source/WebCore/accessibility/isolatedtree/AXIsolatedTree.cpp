@@ -2398,6 +2398,10 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::Language, WTF::move(language).isolatedCopy());
         setProperty(AXProperty::IsEnabled, object.isEnabled());
         setProperty(AXProperty::IsHiddenUntilFoundContainer, object.isHiddenUntilFoundContainer());
+        // AXCoreObject::hierarchicalLevel() walks the ancestor chain of a tree item looking for
+        // authored role="group" containers, and those containers are often ignored, so this has to
+        // be cached for ignored objects too.
+        setProperty(AXProperty::HasExplicitGroupRole, object.hasExplicitGroupRole());
         if (object.isBlockFlow()) {
             setProperty(AXProperty::IsBlockFlow, true);
             setProperty(AXProperty::StitchGroups, object.stitchGroups());
@@ -2447,7 +2451,6 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::IsAttachment, object.isAttachment());
         setProperty(AXProperty::IsBusy, object.isBusy());
         setProperty(AXProperty::IsExpanded, object.isExpanded());
-        setProperty(AXProperty::HasExplicitGroupRole, object.hasExplicitGroupRole());
 
         // FIXME: Caching isSecureField would require caching an additional property (on top of input type), so for now, let's still cache this.
         setProperty(AXProperty::IsSecureField, object.isSecureField());
